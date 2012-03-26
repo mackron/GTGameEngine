@@ -215,4 +215,14 @@ namespace GTEngine
 
         return nullptr;
     }
+
+
+    /*** Misc Stuff ***/
+    glm::vec3 SceneViewport::Project(const glm::vec3 &position)
+    {
+        auto viewportCamera = this->cameraNode->GetComponent<GTEngine::CameraComponent>();
+        assert(viewportCamera != nullptr);
+
+        return glm::project(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
+    }
 }

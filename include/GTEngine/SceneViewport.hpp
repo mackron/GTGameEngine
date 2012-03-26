@@ -130,6 +130,15 @@ namespace GTEngine
         SceneNode* PickSceneNode(int x, int y);
 
 
+    // Misc stuff.
+    public:
+
+        /// Projects a 3D point to windows coordinates based on the viewport.
+        /// @param position [in] The point in 3D space being projected.
+        glm::vec3 Project(const glm::vec3 &position);
+
+
+
     private:
 
         /// The scene this viewport is attached to.
@@ -159,6 +168,11 @@ namespace GTEngine
 
         /// The cache of point light nodes.
         GTCore::Vector<SceneNode*> pointLightNodes;
+
+
+    private: // No copying.
+        SceneViewport(const SceneViewport &);
+        SceneViewport & operator=(const SceneViewport &);
     };
 }
 
