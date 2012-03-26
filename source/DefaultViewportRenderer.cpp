@@ -362,7 +362,7 @@ namespace GTEngine
 
             // Step 1: Begin the frame.
             rcBegin.Init(this->framebuffer);
-            Renderer::BackBuffer->Append(&rcBegin);
+            Renderer::BackBuffer->Append(rcBegin);
 
             // Step 2: Material pass. This will also fill the depth buffer. No lighting is done here.
             this->DoMaterialPass(modelNodes);
@@ -372,7 +372,7 @@ namespace GTEngine
 
             // Step 4: End the frame.
             rcEnd.Init(this->framebuffer);
-            Renderer::BackBuffer->Append(&rcEnd);
+            Renderer::BackBuffer->Append(rcEnd);
         }
     }
 
@@ -519,7 +519,7 @@ namespace GTEngine
 
 
                         // Now we simply append the render command...
-                        Renderer::BackBuffer->Append(rc);
+                        Renderer::BackBuffer->Append(*rc);
                     }
                 }
             }
@@ -535,7 +535,7 @@ namespace GTEngine
         (void)pointLightNodes;
 
         auto rc = new DefaultViewportRenderer_RCBeginLighting(this->framebuffer);
-        Renderer::BackBuffer->Append(rc);
+        Renderer::BackBuffer->Append(*rc);
 
         bool doneFirstLightingPass = false;
 
@@ -581,7 +581,7 @@ namespace GTEngine
         assert(lightComponent != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        Renderer::BackBuffer->Append(new DefaultViewportRenderer_RCBeginLightingPass(this->framebuffer, this->Shaders.lightingA1, this->screenSize, glm::vec3()));  // Cam pos is not used...
+        Renderer::BackBuffer->Append(*new DefaultViewportRenderer_RCBeginLightingPass(this->framebuffer, this->Shaders.lightingA1, this->screenSize, glm::vec3()));  // Cam pos is not used...
 
         for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
         {
@@ -611,7 +611,7 @@ namespace GTEngine
                     rc->SetParameter("MVPMatrix",    MVPMatrix);
                     rc->SetParameter("NormalMatrix", NormalMatrix);
 
-                    Renderer::BackBuffer->Append(rc);
+                    Renderer::BackBuffer->Append(*rc);
                 }
             }
         }
@@ -625,7 +625,7 @@ namespace GTEngine
         assert(lightComponent != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        Renderer::BackBuffer->Append(new DefaultViewportRenderer_RCBeginLightingPass(this->framebuffer, this->Shaders.lightingD1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition()));
+        Renderer::BackBuffer->Append(*new DefaultViewportRenderer_RCBeginLightingPass(this->framebuffer, this->Shaders.lightingD1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition()));
 
         for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
         {
@@ -658,7 +658,7 @@ namespace GTEngine
                     rc->SetParameter("MVPMatrix",       MVPMatrix);
                     rc->SetParameter("NormalMatrix",    NormalMatrix);
 
-                    Renderer::BackBuffer->Append(rc);
+                    Renderer::BackBuffer->Append(*rc);
                 }
             }
         }
@@ -672,7 +672,7 @@ namespace GTEngine
         assert(lightComponent != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        Renderer::BackBuffer->Append(new DefaultViewportRenderer_RCBeginLightingPass(this->framebuffer, this->Shaders.lightingP1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition()));
+        Renderer::BackBuffer->Append(*new DefaultViewportRenderer_RCBeginLightingPass(this->framebuffer, this->Shaders.lightingP1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition()));
 
         for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
         {
@@ -708,7 +708,7 @@ namespace GTEngine
                     rc->SetParameter("MVPMatrix",       MVPMatrix);
                     rc->SetParameter("NormalMatrix",    NormalMatrix);
 
-                    Renderer::BackBuffer->Append(rc);
+                    Renderer::BackBuffer->Append(*rc);
                 }
             }
         }
@@ -723,6 +723,6 @@ namespace GTEngine
         this->framebuffer.SwapLightingBuffers();
 
         auto rcSetLightingBuffers = new DefaultViewportRenderer_RCSetLightingBuffers(this->framebuffer);
-        Renderer::BackBuffer->Append(rcSetLightingBuffers);
+        Renderer::BackBuffer->Append(*rcSetLightingBuffers);
     }
 }

@@ -12,11 +12,9 @@
 #include <GTCore/Strings/Copy.hpp>
 #include <GTCore/Strings/Equal.hpp>
 
-// TODO: New versions of Clang like the break with <vector>. We'll need to do our own.
-// TODO: See what we can get rid of here. Might want to do our own vector/array class in GTCore.
 #include <GTCore/Vector.hpp>
-#include <string>
-//#include <vector>
+#include <GTCore/String.hpp>
+
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -589,8 +587,8 @@ namespace GTEngine
                 delete optics;
             }
             
-            std::string id;
-            std::string name;
+            GTCore::String id;
+            GTCore::String name;
             
             _asset  *asset;
             _optics *optics;
@@ -614,7 +612,7 @@ namespace GTEngine
                 }
             }
             
-            std::string url;
+            GTCore::String url;
         };
         
         // <instance_light>
@@ -630,7 +628,7 @@ namespace GTEngine
                 }
             }
             
-            std::string url;
+            GTCore::String url;
         };
         
         // <instance_geometry>
@@ -652,7 +650,7 @@ namespace GTEngine
                 }
             }
             
-            std::string url;
+            GTCore::String url;
             
             // TODO: Materials.
         };
@@ -764,8 +762,8 @@ namespace GTEngine
                 }
             }
             
-            std::string id;
-            std::string type;
+            GTCore::String id;
+            GTCore::String type;
             
             _asset *asset;
             
@@ -829,7 +827,7 @@ namespace GTEngine
                 }
             }
             
-            _camera * find(const std::string &id)
+            _camera * find(const GTCore::String &id)
             {
                 for (auto i = this->cameras.root; i != nullptr; i = i->next)
                 {
@@ -950,8 +948,8 @@ namespace GTEngine
                 delete point;
             }
             
-            std::string id;
-            std::string name;
+            GTCore::String id;
+            GTCore::String name;
             
             _point *point;
 
@@ -987,7 +985,7 @@ namespace GTEngine
                 }
             }
             
-            _light * find(const std::string &id)
+            _light * find(const GTCore::String &id)
             {
                 for (auto i = this->lights.root; i != nullptr; i = i->next)
                 {
@@ -1029,8 +1027,8 @@ namespace GTEngine
                 }
             }
             
-            std::string name;
-            std::string type;
+            GTCore::String name;
+            GTCore::String type;
         };
         
         // <accessor>
@@ -1082,7 +1080,7 @@ namespace GTEngine
                 }
             }
             
-            std::string source;
+            GTCore::String source;
             size_t count;
             size_t stride;
             
@@ -1125,7 +1123,7 @@ namespace GTEngine
                 }
             }
             
-            std::string id;
+            GTCore::String id;
             
             // The count. Isn't really used.
             size_t count;
@@ -1173,7 +1171,7 @@ namespace GTEngine
                 delete accessor;
             }
             
-            std::string id;
+            GTCore::String id;
             
             // The float array, if any.
             _float_array *float_array;
@@ -1212,8 +1210,8 @@ namespace GTEngine
                 }
             }
             
-            std::string semantic;
-            std::string source;
+            GTCore::String semantic;
+            GTCore::String source;
             size_t offset;
         };
         
@@ -1241,7 +1239,7 @@ namespace GTEngine
                 delete input;
             }
             
-            std::string id;
+            GTCore::String id;
             _input *input;
 
         private:    // No copying.
@@ -1373,7 +1371,7 @@ namespace GTEngine
                 delete p;
             }
             
-            std::string material;
+            GTCore::String material;
             size_t count;
             
             // The list of inputs.
@@ -1430,7 +1428,7 @@ namespace GTEngine
                 delete vertices;
             }
             
-            _source * find_source(const std::string &url)
+            _source * find_source(const GTCore::String &url)
             {
                 for (auto i = this->sources.root; i != nullptr; i = i->next)
                 {
@@ -1688,8 +1686,8 @@ namespace GTEngine
                 }
             }
             
-            std::string id;
-            std::string name;
+            GTCore::String id;
+            GTCore::String name;
             
             // The asset tag. This is set during the constructor. If the element does not have an asset element, it inherits the
             // parent asset. Otherwise it uses it's own.
@@ -1747,7 +1745,7 @@ namespace GTEngine
                 }
             }
             
-            _geometry * find(const std::string &id)
+            _geometry * find(const GTCore::String &id)
             {
                 for (auto i = geometries.root; i != nullptr; i = i->next)
                 {
@@ -1791,8 +1789,8 @@ namespace GTEngine
                 }
             }
             
-            std::string symbol;
-            std::string target;
+            GTCore::String symbol;
+            GTCore::String target;
         };
         
         // <bind_material>
@@ -1862,8 +1860,8 @@ namespace GTEngine
                 }
             }
             
-            std::string id;
-            std::string name;
+            GTCore::String id;
+            GTCore::String name;
             
             _asset *asset;
             
@@ -1918,7 +1916,7 @@ namespace GTEngine
             }
             
             // Finds and returns the visual scene whose id matches the input id.
-            _visual_scene * find(const std::string &id)
+            _visual_scene * find(const GTCore::String &id)
             {
                 for (auto i = this->visual_scenes.root; i != nullptr; i = i->next)
                 {
@@ -1957,7 +1955,7 @@ namespace GTEngine
                 }
             }
             
-            std::string url;
+            GTCore::String url;
         };
         
         // <scene>
@@ -2044,21 +2042,24 @@ namespace GTEngine
         
         // Compares a URL to an ID. Returns true if the URL is an ID and matches the given ID. If the URL is not
         // and ID, it will return false.
-        static bool CompareURLToID(const std::string &url, const std::string &id)
+        static bool CompareURLToID(const GTCore::String &url, const GTCore::String &id)
         {
             if (IsURLToID(url))
             {
-                return GTCore::Strings::Equal(id.c_str(), url.substr(1).c_str());
+                if (url.GetLength() > 0)
+                {
+                    return GTCore::Strings::Equal(id.c_str(), url.c_str() + 1); // +1 to get past the '#'
+                }
             }
             
             return false;
         }
         
         // Determines whether or not a URL is an ID.
-        static bool IsURLToID(const std::string &url)
+        static bool IsURLToID(const GTCore::String &url)
         {
             // The URL references an ID if it's first character is a hash.
-            if (url.length() > 0 && url[0] == '#')
+            if (url.GetLength() > 0 && url.c_str()[0] == '#')
             {
                 return true;
             }
@@ -2107,7 +2108,7 @@ namespace GTEngine
             {
                 if (camera->optics->perspective)
                 {
-                    CameraComponent *cameraComponent = sceneNode->AddComponent<CameraComponent>();
+                    auto cameraComponent = sceneNode->AddComponent<CameraComponent>();
                     
                     float xfov = camera->optics->perspective->xfov;
                     float yfov = camera->optics->perspective->yfov;

@@ -139,14 +139,6 @@ namespace GTEngine
         {
             this->attributes[i] = VertexAttribs::End;
         }
-
-// TODO: Use this when it's available. I like this feature...
-#if 0
-        for (int &i : this->attributes)
-        {
-            i = VertexAttribs::End;
-        }
-#endif
     }
 }
 

@@ -38,6 +38,26 @@ namespace GTEngine
         DepthFunc_Always,
     };
 
+    enum BlendFunc
+    {
+        BlendFunc_SourceColour,
+        BlendFunc_OneMinusSourceColour,
+        BlendFunc_SourceAlpha,
+        BlendFunc_OneMinusSourceAlpha,
+
+        BlendFunc_DestColour,
+        BlendFunc_OneMinusDestColour,
+        BlendFunc_DestAlpha,
+        BlendFunc_OneMinusDestAlpha,
+
+        BlendFunc_ConstantColour,
+        BlendFunc_OneMinusConstantColour,
+        BlendFunc_ConstantAlpha,
+        BlendFunc_OneMinusConstantAlpha,
+
+        BlendFunc_SourceAlphaSaturate,
+    };
+
     /**
     *   \brief  Class representing a renderer.
     *
@@ -73,7 +93,7 @@ namespace GTEngine
         /**
         *   \brief  Adds a RenderCommand object to the back cache.
         */
-        static void AppendToBackBuffer(RenderCommand *call);
+        static void AppendToBackBuffer(RenderCommand &cmd);
 
         /**
         *   \brief  Executes and clears every draw call in the front cache.
@@ -203,11 +223,17 @@ namespace GTEngine
         /// Disables scissor testing.
         static void DisableScissorTest();
 
-        // TODO: Improve the way blending works.
-        static void EnableAlphaBlending();
+        /// Enables blending.
+        static void EnableBlending();
 
         /// Disables blending.
         static void DisableBlending();
+
+        /// Sets the blending function.
+        static void SetBlendFunc(BlendFunc sourceFactor, BlendFunc destFactor);
+
+        // TODO: Improve the way blending works.
+        static void EnableAlphaBlending();
 
         /// Enables depth testing.
         static void EnableDepthTest();
@@ -226,7 +252,7 @@ namespace GTEngine
         /// Disables sRGB.
         static void DisableSRGB();
 
-        // TODO: Should try handling MRT. Not supported in core GLES, though.
+
         /**
         *   \brief                   Sets the current framebuffer for future rendering operations.
         *   \param  framebuffer [in] A pointer to the framebuffer to use for future rendering operations. Can be null; see remarks.

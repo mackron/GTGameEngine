@@ -234,6 +234,33 @@ namespace GTEngine
 
         return TempOpenGLObjects.drawBuffers;
     }
+
+    GLenum ToOpenGLBlendFunc(BlendFunc func)
+    {
+        switch (func)
+        {
+        case BlendFunc_SourceColour:            return GL_SRC_COLOR;
+        case BlendFunc_OneMinusSourceColour:    return GL_ONE_MINUS_SRC_COLOR;
+        case BlendFunc_SourceAlpha:             return GL_SRC_ALPHA;
+        case BlendFunc_OneMinusSourceAlpha:     return GL_ONE_MINUS_SRC_ALPHA;
+
+        case BlendFunc_DestColour:              return GL_DST_COLOR;
+        case BlendFunc_OneMinusDestColour:      return GL_ONE_MINUS_DST_COLOR;
+        case BlendFunc_DestAlpha:               return GL_DST_ALPHA;
+        case BlendFunc_OneMinusDestAlpha:       return GL_ONE_MINUS_DST_ALPHA;
+
+        case BlendFunc_ConstantColour:          return GL_CONSTANT_COLOR;
+        case BlendFunc_OneMinusConstantColour:  return GL_ONE_MINUS_CONSTANT_COLOR;
+        case BlendFunc_ConstantAlpha:           return GL_CONSTANT_ALPHA;
+        case BlendFunc_OneMinusConstantAlpha:   return GL_ONE_MINUS_CONSTANT_ALPHA;
+
+        case BlendFunc_SourceAlphaSaturate:     return GL_SRC_ALPHA_SATURATE;
+
+        default: break;
+        }
+
+        return GL_SRC_COLOR;
+    }
 }
 
 // Renderer Globals. Needs to be before the renderer support utils.
@@ -274,6 +301,7 @@ namespace GTEngine
             : CurrentShader(nullptr),
               ViewportX(0), ViewportY(0), ViewportWidth(0), ViewportHeight(0),
               ScissorX(0), ScissorY(0), ScissorWidth(0), ScissorHeight(0), IsScissorEnabled(false),
+              IsBlendingEnabled(false),
               SwapInterval(1), SwapIntervalChanged(false)
         {
         }
@@ -294,6 +322,8 @@ namespace GTEngine
         unsigned int ScissorHeight;
         bool IsScissorEnabled;
 
+        /// The current blending state.
+        bool IsBlendingEnabled;
 
         /// Swap interval.
         int  SwapInterval;
@@ -412,7 +442,7 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    void Renderer::AppendToBackBuffer(RenderCommand *cmd)
+    void Renderer::AppendToBackBuffer(RenderCommand &cmd)
     {
         Renderer::BackBuffer->Append(cmd);
     }
@@ -721,11 +751,16 @@ namespace GTEngine
     {
         if (texture != nullptr)
         {
-            // TODO: Need to check for floating-point support.
-
-            Texture2D_GL20 *textureData = (Texture2D_GL20 *)texture->GetRendererData();
+            auto textureData = static_cast<Texture2D_GL20*>(texture->GetRendererData());
             if (textureData == nullptr)
             {
+                // We can't sync if we don't support the given format.
+                if (texture->IsFloatingPointFormat() && !Renderer::SupportFloatTextures())
+                {
+                    Log("Error synchronizing Texture2D: Floating-point textures are not supported.");
+                    return false;
+                }
+
                 textureData = new Texture2D_GL20;
                 glGenTextures(1, &textureData->object);
 
@@ -1360,16 +1395,34 @@ namespace GTEngine
         RendererState.IsScissorEnabled = false;
     }
 
-    void Renderer::EnableAlphaBlending()
+
+
+    void Renderer::EnableBlending()
     {
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        RendererState.IsBlendingEnabled = true;
     }
 
     void Renderer::DisableBlending()
     {
         glDisable(GL_BLEND);
+        RendererState.IsBlendingEnabled = false;
     }
+
+    void Renderer::SetBlendFunc(BlendFunc sourceFactor, BlendFunc destFactor)
+    {
+        GLenum sfactor = ToOpenGLBlendFunc(sourceFactor);
+        GLenum dfactor = ToOpenGLBlendFunc(destFactor);
+
+        glBlendFunc(sfactor, dfactor);
+    }
+
+    void Renderer::EnableAlphaBlending()
+    {
+        Renderer::EnableBlending();
+        Renderer::SetBlendFunc(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
+    }
+
 
     void Renderer::EnableDepthTest()
     {

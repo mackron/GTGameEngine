@@ -5,7 +5,7 @@
 #include "RenderCommands.hpp"
 #include "ShaderStages.hpp"
 #include "DrawModes.hpp"
-#include <GTCore/List.hpp>
+#include <GTCore/Vector.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -44,7 +44,8 @@ namespace GTEngine
         *   \remarks
         *       You can append a chain of draw calls by using Append(RenderCommand *, RenderCommand *).
         */
-        void Append(RenderCommand *cmd);
+        void Append(RenderCommand &cmd);
+
         /**
         *   \brief  Executes all of the commands in the buffer, but does not clear it.
         *
@@ -64,7 +65,7 @@ namespace GTEngine
         */
         bool IsEmpty() const
         {
-            return this->commands.IsEmpty();
+            return this->commands.count == 0;
         }
 
 
@@ -90,9 +91,8 @@ namespace GTEngine
 
     private:
 
-        // TODO: Experiment with a vector instead of a list. May actually be quicker in the long run.
         /// The list containing all of the rendering commands.
-        GTCore::List<RenderCommand *> commands;
+        GTCore::Vector<RenderCommand*> commands;
 
 
     private:    // No copying.

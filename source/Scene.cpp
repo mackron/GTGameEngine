@@ -7,7 +7,7 @@
 namespace GTEngine
 {
     Scene::Scene()
-        : currentRCBuffer(nullptr), paused(false)
+        : /*currentRCBuffer(nullptr), */paused(false)
     {
     }
 
@@ -15,6 +15,7 @@ namespace GTEngine
     {
     }
 
+    /*
     void Scene::SetCurrentRCBuffer(RenderCommandBuffer *rcBuffer)
     {
         // Default to the renderer's back buffer if we passed null.
@@ -35,7 +36,7 @@ namespace GTEngine
     {
         this->currentRCBuffer->Append(cmd);
     }
-
+    */
 
     void Scene::Pause()
     {
