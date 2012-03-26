@@ -1,0 +1,13 @@
+
+<material>
+    <vertexshader   id='Engine_MVP_P3T2N3_VS' />
+    <fragmentshader id='Engine_SimpleEmissive_FS' />
+    
+    <diffuse  id='Engine_NoDiffuse_FS' />
+    <emissive id='Engine_SimpleEmissive2_FS' />
+    
+    <defaultproperties>
+        <float3    name='EmissiveColour' >1.0 1.0 1.0</float3>
+        <!--<texture2D name='Texture'>textures/test-texture.png</texture2D>-->
+    </defaultproperties>
+</material>

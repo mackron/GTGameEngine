@@ -1,0 +1,439 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="source\Components">
+      <UniqueIdentifier>{792bf59e-29c9-4c81-bdf9-c80a9393bb2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Rendering">
+      <UniqueIdentifier>{353b9b8e-5f16-4220-bf77-4a085d66393d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Rendering\DrawCalls">
+      <UniqueIdentifier>{f50a079f-a06d-4dc2-92cb-97605cba6921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Components">
+      <UniqueIdentifier>{68a7bad5-f8a2-4277-9776-4b95cbea9a84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Rendering">
+      <UniqueIdentifier>{c7d99900-c8d9-4157-8ea3-7a8bad79520a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Rendering\DrawCalls">
+      <UniqueIdentifier>{7e125a77-c21e-4605-a758-2a65d4baa724}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{8c79b2e2-bed3-4c3a-bca1-1614ff94e284}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\cg">
+      <UniqueIdentifier>{7764bd8a-3aef-448c-b66e-4fa31039efd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Physics">
+      <UniqueIdentifier>{d8119c95-3d54-4b89-92d1-26fbcc81c958}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physics">
+      <UniqueIdentifier>{d950cabf-7e05-4241-b76d-78f95767283f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="materials">
+      <UniqueIdentifier>{831aaadb-65e3-4748-89b5-803dcf4c0b70}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\bin\data\shaders\engine\cg\core.shader">
+      <Filter>shaders\cg</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\shaders\engine\cg\gui.shader">
+      <Filter>shaders\cg</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\shaders\engine\cg\lines.shader">
+      <Filter>shaders\cg</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\shaders\engine\cg\materials.shader">
+      <Filter>shaders\cg</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\materials\engine\simple-diffuse.material">
+      <Filter>materials</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\materials\engine\simple-emissive.material">
+      <Filter>materials</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\shaders\engine\cg\defaultrenderer.shader">
+      <Filter>shaders\cg</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ColladaLoader.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Component.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultScene.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Errors.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\FontManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Game.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameEvent.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameEventCodes.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameEventQueue.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameUpdateJob.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameWindowEventHandler.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GUIEventHandler.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Logging.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Material.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\MaterialLibrary.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Math.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Model.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scene.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNode.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeFactory.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\UserConfig.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCBufferPair.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommandBuffer.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\ShaderStages.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Texture2D.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexArray.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexAttributes.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexFormat.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\Draw.hpp">
+      <Filter>include\Rendering\DrawCalls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetFramebuffer.hpp">
+      <Filter>include\Rendering\DrawCalls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetParameter.hpp">
+      <Filter>include\Rendering\DrawCalls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetScissor.hpp">
+      <Filter>include\Rendering\DrawCalls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetShader.hpp">
+      <Filter>include\Rendering\DrawCalls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetViewport.hpp">
+      <Filter>include\Rendering\DrawCalls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\Bullet.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionObject.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionWorld.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\DynamicsWorld.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\GhostObject.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\KinematicMotionState.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\CameraComponent.hpp">
+      <Filter>include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\LightComponent.hpp">
+      <Filter>include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ModelComponent.hpp">
+      <Filter>include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\SpriteComponent.hpp">
+      <Filter>include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GTEngine.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ViewportRenderer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\DynamicsComponent.hpp">
+      <Filter>include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
+      <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\DynamicsComponent.cpp">
+      <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\LightComponent.cpp">
+      <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\ModelComponent.cpp">
+      <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\SpriteComponent.cpp">
+      <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\CollisionObject.cpp">
+      <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\CollisionWorld.cpp">
+      <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\DynamicsWorld.cpp">
+      <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\GhostObject.cpp">
+      <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\KinematicMotionState.cpp">
+      <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp">
+      <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp">
+      <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\Draw.cpp">
+      <Filter>source\Rendering\DrawCalls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetFramebuffer.cpp">
+      <Filter>source\Rendering\DrawCalls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetParameter.cpp">
+      <Filter>source\Rendering\DrawCalls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetScissor.cpp">
+      <Filter>source\Rendering\DrawCalls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetShader.cpp">
+      <Filter>source\Rendering\DrawCalls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetViewport.cpp">
+      <Filter>source\Rendering\DrawCalls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp">
+      <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp">
+      <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\RenderCommandBuffer.cpp">
+      <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\RenderCommands.cpp">
+      <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp">
+      <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Shader.cpp">
+      <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Texture2D.cpp">
+      <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\VertexArray.cpp">
+      <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\VertexFormat.cpp">
+      <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ApplicationConfig.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ColladaLoader.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Component.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultScene.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Errors.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\FontManager.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Game.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameEventQueue.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameUpdateJob.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameWindowEventHandler.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GTEngine.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUIEventHandler.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Logging.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Material.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MaterialLibrary.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Math.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Model.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ModelLibrary.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneNode.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneNodeFactory.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneViewport.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderLibrary.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\UserConfig.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\VertexArrayLibrary.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ViewportRenderer.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

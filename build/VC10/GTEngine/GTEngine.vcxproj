@@ -1,0 +1,311 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7AD692C9-2E6E-43BC-84DC-9D245C5010D8}</ProjectGuid>
+    <RootNamespace>LickEngine</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>../../../lib/windows-vc10/</OutDir>
+    <TargetName>$(ProjectName)-debug</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>../../../lib/windows-vc10/</OutDir>
+    <TargetName>$(ProjectName)-debug-x64</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>../../../lib/windows-vc10/</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>../../../lib/windows-vc10/</OutDir>
+    <TargetName>$(ProjectName)-x64</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="..\..\..\bin\data\materials\engine\simple-diffuse.material">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\..\bin\data\materials\engine\simple-emissive.material">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\..\bin\data\shaders\engine\cg\core.shader">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\..\bin\data\shaders\engine\cg\defaultrenderer.shader">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\..\..\bin\data\shaders\engine\cg\gui.shader" />
+    <None Include="..\..\..\bin\data\shaders\engine\cg\lines.shader" />
+    <None Include="..\..\..\bin\data\shaders\engine\cg\materials.shader">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ColladaLoader.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Component.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\CameraComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\DynamicsComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\LightComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ModelComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\SpriteComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultScene.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Errors.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\FontManager.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Game.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\GameEvent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\GameEventCodes.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\GameEventQueue.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\GameUpdateJob.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\GameWindowEventHandler.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\GTEngine.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\GUIEventHandler.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Logging.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Material.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\MaterialLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Math.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Model.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\Bullet.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionObject.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionWorld.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\DynamicsWorld.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\GhostObject.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\KinematicMotionState.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\Draw.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetFramebuffer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetParameter.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetScissor.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetShader.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetViewport.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCBufferPair.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommandBuffer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\ShaderStages.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Texture2D.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexArray.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexAttributes.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexFormat.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Scene.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNode.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeFactory.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\UserConfig.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ViewportRenderer.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\source\ApplicationConfig.cpp" />
+    <ClCompile Include="..\..\..\source\ColladaLoader.cpp" />
+    <ClCompile Include="..\..\..\source\Component.cpp" />
+    <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Components\DynamicsComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Components\LightComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Components\ModelComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Components\SpriteComponent.cpp" />
+    <ClCompile Include="..\..\..\source\DefaultScene.cpp" />
+    <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp" />
+    <ClCompile Include="..\..\..\source\Errors.cpp" />
+    <ClCompile Include="..\..\..\source\FontManager.cpp" />
+    <ClCompile Include="..\..\..\source\Game.cpp" />
+    <ClCompile Include="..\..\..\source\GameEventQueue.cpp" />
+    <ClCompile Include="..\..\..\source\GameUpdateJob.cpp" />
+    <ClCompile Include="..\..\..\source\GameWindowEventHandler.cpp" />
+    <ClCompile Include="..\..\..\source\GTEngine.cpp" />
+    <ClCompile Include="..\..\..\source\GUIEventHandler.cpp" />
+    <ClCompile Include="..\..\..\source\Logging.cpp" />
+    <ClCompile Include="..\..\..\source\Material.cpp" />
+    <ClCompile Include="..\..\..\source\MaterialLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\Math.cpp" />
+    <ClCompile Include="..\..\..\source\Model.cpp" />
+    <ClCompile Include="..\..\..\source\ModelLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\CollisionObject.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\CollisionWorld.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\DynamicsWorld.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\GhostObject.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\KinematicMotionState.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\Draw.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetFramebuffer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetParameter.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetScissor.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetShader.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetViewport.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\RenderCommandBuffer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\RenderCommands.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\Shader.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\Texture2D.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\VertexArray.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\VertexFormat.cpp" />
+    <ClCompile Include="..\..\..\source\Scene.cpp" />
+    <ClCompile Include="..\..\..\source\SceneNode.cpp" />
+    <ClCompile Include="..\..\..\source\SceneNodeFactory.cpp" />
+    <ClCompile Include="..\..\..\source\SceneViewport.cpp" />
+    <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\UserConfig.cpp" />
+    <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp" />
+    <ClCompile Include="..\..\..\source\VertexArrayLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\ViewportRenderer.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
