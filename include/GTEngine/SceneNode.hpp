@@ -376,7 +376,22 @@ namespace GTEngine
         void SetWorldScale(float x, float y, float z) { this->SetWorldScale(glm::vec3(x, y, z)); }
         
 
+        /**
+        *   \brief              Looks at a point in the world.
+        *   \param  target [in] The position in the world to look at.
+        *   \param  up     [in] The up direction. Defaults to (0, 1, 0). Must be normalized.
+        *
+        *   \remarks
+        *       For efficiency, the up vector is not normalized internally.
+        */
+        void LookAt(const glm::vec3 &target, const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 0.0f));
 
+        /**
+        *   \brief  Looks at another scene node.
+        *   \param  target [in] The other scene node to look at.
+        *   \param  up     [in] The up direction. Defaults to (0, 1, 0). Must be normalized.
+        */
+        void LookAt(const SceneNode &target, const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 0.0f));
 
         
         /**

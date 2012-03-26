@@ -8,6 +8,7 @@
 #include <GTCore/Strings/Equal.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/orthonormalize.hpp>
 
 namespace GTEngine
 {
@@ -445,6 +446,32 @@ namespace GTEngine
         {
             this->SetScale(worldScale);
         }
+    }
+
+
+    void SceneNode::LookAt(const glm::vec3 &target, const glm::vec3 &up)
+    {
+        glm::vec3 f = glm::normalize(target - this->GetWorldPosition());
+        glm::vec3 s = glm::normalize(glm::cross(f, up));
+		glm::vec3 u = glm::cross(s, f);
+
+        glm::mat3 orientation(glm::mat3::null);
+        orientation[0][0] =  s.x;
+		orientation[0][1] =  s.y;
+		orientation[0][2] =  s.z;
+		orientation[1][0] =  u.x;
+		orientation[1][1] =  u.y;
+		orientation[1][2] =  u.z;
+		orientation[2][0] = -f.x;
+		orientation[2][1] = -f.y;
+		orientation[2][2] = -f.z;
+
+        this->SetWorldOrientation(glm::quat_cast(orientation));
+    }
+
+    void SceneNode::LookAt(const SceneNode &target, const glm::vec3 &up)
+    {
+        this->LookAt(target.GetWorldPosition(), up);
     }
 
 
