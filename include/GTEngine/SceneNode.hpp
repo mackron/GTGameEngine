@@ -375,21 +375,24 @@ namespace GTEngine
         void SetWorldScale(const glm::vec3 &worldScale);
         void SetWorldScale(float x, float y, float z) { this->SetWorldScale(glm::vec3(x, y, z)); }
         
+
+
+
         
         /**
         *   \brief  Retrieves a normalised vector pointing in the forward direction of the node.
         */
-        glm::vec3 Forward() const;
+        glm::vec3 GetForwardVector() const;
         
         /**
         *   \brief  Retrieves a normalised vector pointing in the right direction of the node.
         */
-        glm::vec3 Right() const;
+        glm::vec3 GetRightVector() const;
         
         /**
         *   \brief  Retrieves a normalised vector pointing in the up direction of the node.
         */
-        glm::vec3 Up() const;
+        glm::vec3 GetUpVector() const;
 
 
         /**

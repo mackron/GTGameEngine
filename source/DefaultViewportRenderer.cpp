@@ -629,7 +629,7 @@ namespace GTEngine
                     auto rc = new DefaultViewportRenderer_RCDrawMesh(mesh->va);
 
                     rc->SetParameter("DLights[0].Colour",    lightComponent->GetColour());
-                    rc->SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * lightNode->Forward())); // TODO: Test that we actually need this normalize.
+                    rc->SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * lightNode->GetForwardVector())); // TODO: Test that we actually need this normalize.
 
                     rc->SetParameter("ModelViewMatrix", ModelViewMatrix);
                     rc->SetParameter("MVPMatrix",       MVPMatrix);

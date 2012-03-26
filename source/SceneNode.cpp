@@ -448,17 +448,17 @@ namespace GTEngine
     }
 
 
-    glm::vec3 SceneNode::Forward() const
+    glm::vec3 SceneNode::GetForwardVector() const
     {
         return this->orientation * glm::vec3(0.0f, 0.0f, -1.0f);
     }
 
-    glm::vec3 SceneNode::Right() const
+    glm::vec3 SceneNode::GetRightVector() const
     {
         return this->orientation * glm::vec3(1.0f, 0.0f, 0.0f);
     }
 
-    glm::vec3 SceneNode::Up() const
+    glm::vec3 SceneNode::GetUpVector() const
     {
         return this->orientation * glm::vec3(0.0f, 1.0f, 0.0f);
     }
