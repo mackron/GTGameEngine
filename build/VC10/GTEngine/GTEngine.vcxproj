@@ -228,6 +228,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCBufferPair.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommandBuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFramebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\ShaderStages.hpp" />

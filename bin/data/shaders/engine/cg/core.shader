@@ -22,7 +22,7 @@
 	}
 </shader>
 
-<shader id="GTEngine_FullscreenQuad_FS">
+<shader id="Engine_FullscreenQuad_FS">
     struct FragmentInput
 	{
 		float2 TexCoord : TEXCOORD0;

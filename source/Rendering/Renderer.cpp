@@ -1670,6 +1670,7 @@ namespace GTEngine
         }
 
         Renderer::DisableDepthTest();             // No need for depth testing.
+        Renderer::DisableDepthWrites();
 
         // Here we could apply a post-process effect if we wanted... Instead, we're just going to draw a simple quad
         // using the engine's default fullscreen quad shader. We set the texture to the viewport renderer's colour
@@ -1680,5 +1681,6 @@ namespace GTEngine
         Renderer::Draw(VertexArrayLibrary::GetFullscreenQuadVA());
 
         Renderer::EnableDepthTest();              // We best re-enable depth testing...
+        Renderer::EnableDepthWrites();
     }
 }

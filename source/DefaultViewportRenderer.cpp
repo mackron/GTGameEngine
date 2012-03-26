@@ -42,6 +42,8 @@ namespace GTEngine
             Renderer::SetFramebuffer(this->framebuffer);
             Renderer::SetDrawBuffers(2, drawBuffers);
 
+            Renderer::SetViewport(0, 0, this->viewportWidth, this->viewportHeight);
+
             Renderer::ClearColour(0.0f, 0.0f, 0.0f, 1.0f);
             Renderer::ClearDepth(1.0f);
             Renderer::Clear(GTEngine::ColourBuffer | GTEngine::DepthBuffer);
@@ -235,7 +237,7 @@ namespace GTEngine
 
 
 
-    // RCSwapLightingBuffers
+    // RCSetLightingBuffers
     DefaultViewportRenderer_RCSetLightingBuffers::DefaultViewportRenderer_RCSetLightingBuffers(DefaultViewportRendererFramebuffer &framebuffer)
         : framebuffer(framebuffer), lightingDiffuse(framebuffer.lightingDiffuseOutput), lightingSpecular(framebuffer.lightingSpecularOutput)
     {

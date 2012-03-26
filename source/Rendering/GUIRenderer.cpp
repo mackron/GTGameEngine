@@ -70,7 +70,7 @@ namespace GTEngine
             GUIViewportHeight = viewportHeight;
             GUIProjection     = glm::ortho(0.0f, (float)GUIViewportWidth, (float)GUIViewportHeight, 0.0f, 0.0f, -1.0f);
         }
-
+        
         Renderer::SetViewport(0, 0, viewportWidth, viewportHeight);
 
         Renderer::EnableScissorTest();

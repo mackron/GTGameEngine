@@ -27,7 +27,7 @@ namespace GTEngine
         : isInitialised(false), closing(false), eventQueue(), eventQueueLock(), window(nullptr), windowEventHandler(*this), threads(nullptr), updateThread(nullptr), updateJob(nullptr), 
           deltaTimeInSeconds(0.0), updateTimer(), fontServer(nullptr), defaultFont(nullptr),
           gui(nullptr), guiEventHandler(nullptr),
-          scene(nullptr), currentRCBuffer(nullptr),
+          scene(nullptr), /*currentRCBuffer(nullptr),*/
           paused(false),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
@@ -97,7 +97,7 @@ namespace GTEngine
         // We need to make sure the scene is rendering to the correct RC buffer.
         if (this->scene != nullptr)
         {
-            this->scene->SetCurrentRCBuffer(this->currentRCBuffer);
+            //this->scene->SetCurrentRCBuffer(this->currentRCBuffer);
         }
     }
 
@@ -197,6 +197,7 @@ namespace GTEngine
         }
     }
 
+    /*
     void Game::SetCurrentRCBuffer(RenderCommandBuffer *rcBuffer)
     {
         if (rcBuffer == nullptr)
@@ -217,6 +218,7 @@ namespace GTEngine
     {
         return this->currentRCBuffer;
     }
+    */
 
     void Game::Pause()
     {
@@ -349,7 +351,7 @@ namespace GTEngine
             this->updateJob = new GameUpdateJob(*this);
 
             // The current rendering command buffer will be the renderer's back buffer.
-            this->currentRCBuffer = Renderer::BackBuffer;
+            //this->currentRCBuffer = Renderer::BackBuffer;
 
 
             // We'll want to set a few window properties before showing it... We want to show the window relatively early to make
@@ -543,12 +545,14 @@ namespace GTEngine
 
     void Game::SwapRCBuffers()
     {
+        /*
         // First we swap our own objects. With the renderer, if the game's current render command buffer is the renderer's back buffer,
         // we need to set it to the renderer's front buffer (which is about to become it's back buffer).
         if (this->currentRCBuffer == Renderer::BackBuffer)
         {
             this->SetCurrentRCBuffer(Renderer::FrontBuffer);
         }
+        */
 
         // Now the renderer...
         Renderer::SwapRCBuffers();

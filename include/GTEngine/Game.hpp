@@ -167,7 +167,7 @@ namespace GTEngine
         *   \remarks
         *       If rcBuffer is null, rendering commands will occur directly on the renderer's back RC buffer.
         */
-        void SetCurrentRCBuffer(RenderCommandBuffer *rcBuffer);
+        //void SetCurrentRCBuffer(RenderCommandBuffer *rcBuffer);
 
         /**
         *   \brief  Retrieves the render command buffer that rendering commands are being placed into.
@@ -175,7 +175,7 @@ namespace GTEngine
         *   \remarks
         *       It is possible that this will return Renderer::BackBuffer. This will occur if SetCurrentRCBuffer() was called with nullptr.
         */
-        RenderCommandBuffer * GetCurrentRCBuffer();
+        //RenderCommandBuffer * GetCurrentRCBuffer();
 
 
         /**
@@ -465,7 +465,7 @@ namespace GTEngine
         Scene *scene;
 
         /// The current render command buffer that rendering operations are being buffered into.
-        RenderCommandBuffer *currentRCBuffer;
+        //RenderCommandBuffer *currentRCBuffer;
 
         /// Whether or not the game is paused. A paused game will continue to render, but scene nodes and animations will not tick.
         bool paused;

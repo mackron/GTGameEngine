@@ -1,5 +1,5 @@
 
-<shader id="GTEngine_GUIQuad_VS">
+<shader id="Engine_GUIQuad_VS">
     struct VertexInput
 	{
 		float2 Position : ATTR0;
@@ -25,7 +25,7 @@
 	}
 </shader>
 
-<shader id="GTEngine_GUIQuad_FS">
+<shader id="Engine_GUIQuad_FS">
     struct FragmentInput
 	{
 		float2 TexCoord : TEXCOORD0;
@@ -49,7 +49,7 @@
 	}
 </shader>
     
-<shader id="GTEngine_GUIQuad_NoTexture_FS">
+<shader id="Engine_GUIQuad_NoTexture_FS">
     struct FragmentInput
 	{
 		float2 TexCoord : TEXCOORD0;
@@ -73,7 +73,7 @@
 </shader>
 
 <!-- Text Shader -->
-<shader id="GTEngine_GUIText_VS">
+<shader id="Engine_GUIText_VS">
     struct VertexInput
     {
         float3 Position : ATTR0;
@@ -100,7 +100,7 @@
     }
 </shader>
 
-<shader id="GTEngine_GUIText_FS">
+<shader id="Engine_GUIText_FS">
     struct FragmentInput
     {
         float2 TexCoord : TEXCOORD0;

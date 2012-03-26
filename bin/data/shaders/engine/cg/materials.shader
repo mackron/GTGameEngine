@@ -23,21 +23,29 @@
 </shader>
 
 
-<shader id="Engine_NoDiffuse_FS">
+<shader id="Material_NoDiffuse">
     float3 Diffuse()
     {
         return float3(0.0f, 0.0f, 0.0f);
     }
 </shader>
 
-<shader id="Engine_NoEmissive_FS">
+<shader id="Material_NoEmissive">
     float3 Emissive()
     {
         return float3(0.0f, 0.0f, 0.0f);
     }
 </shader>
 
-<shader id="Engine_SimpleDiffuse2_FS">
+<shader id="Material_NoShininess">
+    float Shininess()
+    {
+        return 0.0;
+    }
+</shader>
+
+
+<shader id="Material_SimpleDiffuse">
     uniform float3 DiffuseColour;
     
     float3 Diffuse()
@@ -46,7 +54,7 @@
     }
 </shader>
 
-<shader id="Engine_SimpleEmissive2_FS">
+<shader id="Material_SimpleEmissive">
     uniform float3 EmissiveColour;
     
     float3 Emissive()
@@ -55,7 +63,17 @@
     }
 </shader>
 
-<shader id="Engine_TexturedDiffuse_FS">
+<shader id="Material_SimpleShininess">
+    uniform float ShininessFactor;
+    
+    float Shininess()
+    {
+        return ShininessFactor;
+    }
+</shader>
+
+
+<shader id="Material_TexturedDiffuse">
     uniform sampler2D DiffuseTexture;
     
     float3 Diffuse()

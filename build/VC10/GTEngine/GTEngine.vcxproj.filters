@@ -42,6 +42,9 @@
     <Filter Include="materials">
       <UniqueIdentifier>{831aaadb-65e3-4748-89b5-803dcf4c0b70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Rendering\RenderCommands">
+      <UniqueIdentifier>{8e88d608-164c-4a59-88f1-cfcf42d7d1f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\shaders\engine\cg\core.shader">
@@ -264,6 +267,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp">
       <Filter>include\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFramebuffer.hpp">
+      <Filter>include\Rendering\RenderCommands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

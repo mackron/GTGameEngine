@@ -616,7 +616,7 @@ namespace GTEngine
     {
         if (GUIQuadShader == nullptr)
         {
-            GUIQuadShader = new Shader(ShaderLibrary::GetShaderString("GTEngine_GUIQuad_VS"), ShaderLibrary::GetShaderString("GTEngine_GUIQuad_FS"));
+            GUIQuadShader = new Shader(ShaderLibrary::GetShaderString("Engine_GUIQuad_VS"), ShaderLibrary::GetShaderString("Engine_GUIQuad_FS"));
         }
 
         return GUIQuadShader;
@@ -626,7 +626,7 @@ namespace GTEngine
     {
         if (GUITextShader == nullptr)
         {
-            GUITextShader = new Shader(ShaderLibrary::GetShaderString("GTEngine_GUIText_VS"), ShaderLibrary::GetShaderString("GTEngine_GUIText_FS"));
+            GUITextShader = new Shader(ShaderLibrary::GetShaderString("Engine_GUIText_VS"), ShaderLibrary::GetShaderString("Engine_GUIText_FS"));
         }
 
         return GUITextShader;
@@ -636,7 +636,7 @@ namespace GTEngine
     {
         if (FullscreenQuadShader == nullptr)
         {
-            FullscreenQuadShader = new Shader(ShaderLibrary::GetShaderString("Engine_FullscreenQuad_VS"), ShaderLibrary::GetShaderString("GTEngine_FullscreenQuad_FS"));
+            FullscreenQuadShader = new Shader(ShaderLibrary::GetShaderString("Engine_FullscreenQuad_VS"), ShaderLibrary::GetShaderString("Engine_FullscreenQuad_FS"));
         }
 
         return FullscreenQuadShader;
@@ -646,7 +646,7 @@ namespace GTEngine
     {
         if (LineShader == nullptr)
         {
-            LineShader = new Shader(ShaderLibrary::GetShaderString("GTEngine_SimpleLine_VS"), ShaderLibrary::GetShaderString("GTEngine_SimpleLine_FS"));
+            LineShader = new Shader(ShaderLibrary::GetShaderString("Engine_SimpleLine_VS"), ShaderLibrary::GetShaderString("Engine_SimpleLine_FS"));
         }
 
         return LineShader;
