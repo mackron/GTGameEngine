@@ -271,6 +271,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFramebuffer.hpp">
       <Filter>include\Rendering\RenderCommands</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\MaterialShaderCache.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -439,6 +442,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ViewportRenderer.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MaterialShaderCache.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

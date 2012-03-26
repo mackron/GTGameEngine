@@ -5,11 +5,15 @@
 #include "ViewportRenderer.hpp"
 #include "SceneViewport.hpp"
 #include "ShaderParameter.hpp"
+#include "Material.hpp"
+#include "MaterialShaderCache.hpp"
 #include "Rendering/Framebuffer.hpp"
 #include "Rendering/Renderer.hpp"
 #include "Rendering/RenderCommands.hpp"
 #include <GTCore/Map.hpp>
 #include <GTCore/Dictionary.hpp>
+#include <GTCore/String.hpp>
+
 
 namespace GTEngine
 {
@@ -476,7 +480,11 @@ namespace GTEngine
 
             Shader* combiner;
 
+            /// A cache of shaders used by materials in the material pass.
+            MaterialShaderCache materialPassShaders;
+
         }Shaders;
+
 
         /// The cached rendering commands.
         struct

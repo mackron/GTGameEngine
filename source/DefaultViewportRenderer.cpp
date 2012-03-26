@@ -8,7 +8,6 @@
 #include <GTEngine/Components/CameraComponent.hpp>
 #include <GTCore/Strings/List.hpp>
 
-
 namespace GTEngine
 {
     DefaultViewportRenderer_RCBegin::DefaultViewportRenderer_RCBegin()
@@ -285,7 +284,21 @@ namespace GTEngine
     {
         ShaderLibrary::Unacquire(Shaders.lightingD1);
         ShaderLibrary::Unacquire(Shaders.lightingA1);
+        ShaderLibrary::Unacquire(Shaders.lightingP1);
         ShaderLibrary::Unacquire(Shaders.combiner);
+
+        /// The material shaders need to be deleted.
+        auto &shaders = this->Shaders.materialPassShaders.GetShaders();
+        for (size_t i = 0; i < shaders.count; ++i)
+        {
+            delete shaders.buffer[i]->value;
+        }
+
+        /// Each material's metadata needs to be deleted.
+        for (size_t i = 0; i < this->materialMetadata.count; ++i)
+        {
+            delete this->materialMetadata.buffer[i]->value;
+        }
     }
 
     void DefaultViewportRenderer::SetOwnerViewport(SceneViewport* owner)
@@ -415,27 +428,37 @@ namespace GTEngine
 
     Shader* DefaultViewportRenderer::CreateMaterialPassShader(Material &material)
     {
-        // TODO (PRIORITY): At the moment there will be a shader created for each material instantiation. This is bad. Instead
-        //                  we want to reuse shaders where possible.
+        auto &materialDefinition = material.GetDefinition();
 
-        // There are two parts to the shader. There is the base shader and then the material components.
-        const char* baseShaderVS      = ShaderLibrary::GetShaderString("Engine_MaterialPass_VS");
-        const char* baseShaderFS      = ShaderLibrary::GetShaderString("Engine_MaterialPass_FS");
-        const char* materialDiffuse   = ShaderLibrary::GetShaderString(material.GetDiffuseShaderID());
-        const char* materialEmissive  = ShaderLibrary::GetShaderString(material.GetEmissiveShaderID());
-        const char* materialShininess = ShaderLibrary::GetShaderString(material.GetShininessShaderID());
+        // If a shader already exists for this material, we just reuse that.
+        Shader* shader = this->Shaders.materialPassShaders.GetShader(materialDefinition);
+        if (shader == nullptr)
+        {
+            // If we get here, it means the shader does not exist. We need to create it and then add it to the cache.
+            // There are two parts to the shader. There is the base shader and then the material components.
+            const char* baseShaderVS      = ShaderLibrary::GetShaderString("Engine_MaterialPass_VS");
+            const char* baseShaderFS      = ShaderLibrary::GetShaderString("Engine_MaterialPass_FS");
+            const char* materialDiffuse   = ShaderLibrary::GetShaderString(material.GetDiffuseShaderID());
+            const char* materialEmissive  = ShaderLibrary::GetShaderString(material.GetEmissiveShaderID());
+            const char* materialShininess = ShaderLibrary::GetShaderString(material.GetShininessShaderID());
 
-        // With the shader strings retrieved, we need to concatinate the shaders and create the shader object.
-        GTCore::Strings::List<char> fragmentShaderString;
-        fragmentShaderString.Append(baseShaderFS);
-        fragmentShaderString.Append("\n");
-        fragmentShaderString.Append(materialDiffuse);
-        fragmentShaderString.Append("\n");
-        fragmentShaderString.Append(materialEmissive);
-        fragmentShaderString.Append("\n");
-        fragmentShaderString.Append(materialShininess);
+            // With the shader strings retrieved, we need to concatinate the shaders and create the shader object.
+            GTCore::Strings::List<char> fragmentShaderString;
+            fragmentShaderString.Append(baseShaderFS);
+            fragmentShaderString.Append("\n");
+            fragmentShaderString.Append(materialDiffuse);
+            fragmentShaderString.Append("\n");
+            fragmentShaderString.Append(materialEmissive);
+            fragmentShaderString.Append("\n");
+            fragmentShaderString.Append(materialShininess);
 
-        return new Shader(baseShaderVS, fragmentShaderString.c_str());
+            shader = new Shader(baseShaderVS, fragmentShaderString.c_str());
+
+            // With the shader created, we now add it to the cache.
+            this->Shaders.materialPassShaders.SetShader(materialDefinition, *shader);
+        }
+
+        return shader;
     }
 
     void DefaultViewportRenderer::DoMaterialPass(const GTCore::Vector<SceneNode*> &modelNodes)
@@ -629,7 +652,7 @@ namespace GTEngine
                     auto rc = new DefaultViewportRenderer_RCDrawMesh(mesh->va);
 
                     rc->SetParameter("DLights[0].Colour",    lightComponent->GetColour());
-                    rc->SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * lightNode->GetForwardVector())); // TODO: Test that we actually need this normalize.
+                    rc->SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * lightNode->GetForwardVector()));
 
                     rc->SetParameter("ModelViewMatrix", ModelViewMatrix);
                     rc->SetParameter("MVPMatrix",       MVPMatrix);

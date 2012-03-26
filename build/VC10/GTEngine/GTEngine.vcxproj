@@ -203,6 +203,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Logging.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Material.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\MaterialLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\MaterialShaderCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Math.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Model.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp" />
@@ -270,6 +271,7 @@
     <ClCompile Include="..\..\..\source\Logging.cpp" />
     <ClCompile Include="..\..\..\source\Material.cpp" />
     <ClCompile Include="..\..\..\source\MaterialLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\MaterialShaderCache.cpp" />
     <ClCompile Include="..\..\..\source\Math.cpp" />
     <ClCompile Include="..\..\..\source\Model.cpp" />
     <ClCompile Include="..\..\..\source\ModelLibrary.cpp" />
