@@ -136,6 +136,50 @@ namespace GTEngine
         w = GTCore::Parse<float>(temp);
     }
 
+    void Collada_ToFloat3x3(const char *value, glm::mat3x3 &dest)
+    {
+        char temp[64];
+        GTCore::Strings::Tokenizer token(value);
+
+        // Row 0
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[0][0] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[0][1] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[0][2] = GTCore::Parse<float>(temp);
+        ++token;
+
+        // Row 1
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[1][0] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[1][1] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[1][2] = GTCore::Parse<float>(temp);
+        ++token;
+
+        // Row 2
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[2][0] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[2][1] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[2][2] = GTCore::Parse<float>(temp);
+    }
+
 
     /**
     *   \brief  Structure containing the data from the first pass of the collada file.
@@ -320,6 +364,45 @@ namespace GTEngine
         // <lookat>
         struct _lookat : public _transform
         {
+            _lookat(xml_node<> *node)
+                : _transform(transform_type_lookat),
+                  px(),  py(),  pz(),
+                  ix(),  iy(),  iz(),
+                  upx(), upy(), upz()
+            {
+                if (node != nullptr)
+                {
+                    glm::mat3x3 value;
+                    Collada_ToFloat3x3(node->value(), value);
+
+                    this->px = value[0][0];
+                    this->py = value[0][1];
+                    this->pz = value[0][2];
+
+                    this->ix = value[1][0];
+                    this->iy = value[1][1];
+                    this->iz = value[1][2];
+
+                    this->upx = value[2][0];
+                    this->upy = value[2][1];
+                    this->upz = value[2][2];
+                }
+                else
+                {
+                    this->px = 0.0f;
+                    this->py = 0.0f;
+                    this->pz = 0.0f;
+
+                    this->ix = 0.0f;
+                    this->iy = 0.0f;
+                    this->iz = 0.0f;
+
+                    this->upx = 0.0f;
+                    this->upy = 0.0f;
+                    this->upz = 0.0f;
+                }
+            }
+
             _lookat()
                 : _transform(transform_type_lookat),
                   px(0.0f),  py(0.0f),  pz(0.0f),
@@ -620,6 +703,10 @@ namespace GTEngine
                     else if (GTCore::Strings::Equal(child->name(), "scale"))
                     {
                         this->transforms.Append(new _scale(child));
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "lookat"))
+                    {
+                        this->transforms.Append(new _lookat(child));
                     }
                     else if (GTCore::Strings::Equal(child->name(), "instance_camera"))
                     {
@@ -2100,7 +2187,7 @@ namespace GTEngine
                     {
                         case Collada::transform_type_translate:
                         {
-                            auto translate = (Collada::_translate *)transform;
+                            auto translate = static_cast<Collada::_translate*>(transform);
                             newNode->Translate(glm::vec3(translate->x, translate->y, translate->z));
                             
                             break;
@@ -2108,7 +2195,7 @@ namespace GTEngine
                         
                         case Collada::transform_type_rotate:
                         {
-                            auto rotate = (Collada::_rotate *)transform;
+                            auto rotate = static_cast<Collada::_rotate*>(transform);
                             newNode->Rotate(rotate->angle, glm::vec3(rotate->x, rotate->y, rotate->z));
                             
                             break;
@@ -2116,7 +2203,7 @@ namespace GTEngine
                         
                         case Collada::transform_type_scale:
                         {
-                            auto scale = (Collada::_scale *)transform;
+                            auto scale = static_cast<Collada::_scale*>(transform);
                             newNode->Scale(glm::vec3(scale->x, scale->y, scale->z));
                             
                             break;
@@ -2124,7 +2211,10 @@ namespace GTEngine
 
                         case Collada::transform_type_lookat:
                         {
-                            // TODO: Implement.
+                            auto lookat = static_cast<Collada::_lookat*>(transform);
+                            newNode->SetPosition(lookat->px, lookat->py, lookat->pz);
+                            newNode->LookAt(glm::vec3(lookat->ix, lookat->iy, lookat->iz), glm::vec3(lookat->upx, lookat->upy, lookat->upz));
+
                             break;
                         }
 
