@@ -20,7 +20,7 @@
 #if defined(LICK_PLATFORM_WINDOWS)
 #include <windows.h>
 #else
-#include <GTWindow/X11/X11.hpp>
+#include <GTCore/X11/X11.hpp>
 #endif
 
 // OpenGL Utilities
@@ -1090,7 +1090,7 @@ namespace GTEngine
 
                     // We're going to initialise the X11 sub-system from here.
                 #ifdef GTGL_GLX
-                    GTWindow::X11::Initialize(gtglGetDisplay());
+                    GTCore::X11::Initialize(gtglGetDisplay());
                 #endif
 
                     IsRendererInitialised = true;
@@ -1129,7 +1129,7 @@ namespace GTEngine
         }
     }
 
-    GTWindow::Window * Renderer::CreateGameWindow()
+    GTCore::Window * Renderer::CreateGameWindow()
     {
         if (!IsRendererInitialised)
         {
@@ -1139,21 +1139,21 @@ namespace GTEngine
             }
         }
 
-        // When creating a window, we use GTWindow to create the main window. Then we do platform specific stuff to get it working with the GTGL context.
+        // When creating a window, we use GTCore to create the main window. Then we do platform specific stuff to get it working with the GTGL context.
 #ifdef LICK_PLATFORM_WINDOWS
-        GTWindow::Window *window = new GTWindow::Window();
-        const GTWindow::InternalWindowObjects &iwo = window->GetInternalObjects();
+        GTCore::Window *window = new GTCore::Window();
+        const GTCore::InternalWindowObjects &iwo = window->GetInternalObjects();
 
         ::SetPixelFormat(iwo.hDC, gtglGetPixelFormat(), gtglGetPFD());
 
         // We now need to make the window current.
         gtglSetCurrentDC(iwo.hDC);
 #else
-        GTWindow::InternalWindowObjects iwo;
+        GTCore::InternalWindowObjects iwo;
         iwo.vi       = gtglGetVisualInfo();
         iwo.colormap = gtglGetColormap();
 
-        GTWindow::Window *window = new GTWindow::Window(iwo);
+        GTCore::Window *window = new GTCore::Window(iwo);
 
         // The window needs to be made current...
         gtglSetCurrentWindow(window->GetInternalObjects().window);

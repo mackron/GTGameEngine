@@ -118,7 +118,7 @@ namespace GTEngine
         /**
         *   \brief  Retrieves a pointer to the main game window.
         */
-        GTWindow::Window * GetWindow() { return this->window; }
+        GTCore::Window * GetWindow() { return this->window; }
 
         /**
         *   \brief  Retrieves the current position of the mouse. This is relative to the main game window.
@@ -266,13 +266,13 @@ namespace GTEngine
         virtual void OnSize(unsigned int width, unsigned int height);
         virtual void OnMouseMove(int x, int y);
         virtual void OnMouseWheel(int delta, int x, int y);
-        virtual void OnMouseButtonDown(GTWindow::MouseButton button, int x, int y);
-        virtual void OnMouseButtonUp(GTWindow::MouseButton button, int x, int y);
-        virtual void OnMouseButtonDoubleClick(GTWindow::MouseButton button, int x, int y);
-        virtual void OnKeyPressed(GTWindow::Key key);
-        virtual void OnKeyReleased(GTWindow::Key key);
-        virtual void OnKeyDown(GTWindow::Key key);
-        virtual void OnKeyUp(GTWindow::Key key);
+        virtual void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
+        virtual void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
+        virtual void OnMouseButtonDoubleClick(GTCore::MouseButton button, int x, int y);
+        virtual void OnKeyPressed(GTCore::Key key);
+        virtual void OnKeyReleased(GTCore::Key key);
+        virtual void OnKeyDown(GTCore::Key key);
+        virtual void OnKeyUp(GTCore::Key key);
 
 
         /**
@@ -426,7 +426,7 @@ namespace GTEngine
         GTCore::Mutex eventQueueLock;
 
         /// The game's window.
-        GTWindow::Window *window;
+        GTCore::Window *window;
 
         /// The event handler for the main window.
         GameWindowEventHandler windowEventHandler;

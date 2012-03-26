@@ -34,9 +34,9 @@ namespace GTEngine
     {
         switch (cursor)
         {
-        case GTGUI::Cursor_Arrow: game.GetWindow()->SetCursor(GTWindow::SystemCursor_Arrow);    break;
-        case GTGUI::Cursor_Beam:  game.GetWindow()->SetCursor(GTWindow::SystemCursor_IBeam);    break;
-        case GTGUI::Cursor_Hand:  game.GetWindow()->SetCursor(GTWindow::SystemCursor_Hand);     break;
+        case GTGUI::Cursor_Arrow: game.GetWindow()->SetCursor(GTCore::SystemCursor_Arrow);    break;
+        case GTGUI::Cursor_Beam:  game.GetWindow()->SetCursor(GTCore::SystemCursor_IBeam);    break;
+        case GTGUI::Cursor_Hand:  game.GetWindow()->SetCursor(GTCore::SystemCursor_Hand);     break;
 
         default: break;
         }

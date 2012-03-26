@@ -7,7 +7,7 @@
 #include "Framebuffer.hpp"
 #include "Shader.hpp"
 #include "VertexArray.hpp"
-#include <GTWindow/Window.hpp>
+#include <GTCore/Window.hpp>
 #include <GTGUI/Server.hpp>
 
 #if defined(__GNUC__)
@@ -149,7 +149,7 @@ namespace GTEngine
 
 
         /// Creates the game window.
-        static GTWindow::Window * CreateGameWindow();
+        static GTCore::Window * CreateGameWindow();
 
         /// Determines whether or not the renderer uses upside down textures. True for OpenGL.
         static bool HasFlippedTextures();

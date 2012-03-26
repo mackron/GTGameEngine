@@ -157,7 +157,7 @@ namespace GTEngine
 
     void Game::CaptureMouse()
     {
-        GTWindow::HideMouse();
+        GTCore::HideMouse();
         this->mouseCaptured = true;
         this->GetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
 
@@ -172,7 +172,7 @@ namespace GTEngine
 
     void Game::ReleaseMouse()
     {
-        GTWindow::ShowMouse();
+        GTCore::ShowMouse();
         this->mouseCaptured = false;
 
         this->SetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
@@ -287,31 +287,31 @@ namespace GTEngine
     {
     }
 
-    void Game::OnMouseButtonDown(GTWindow::MouseButton, int, int)
+    void Game::OnMouseButtonDown(GTCore::MouseButton, int, int)
     {
     }
 
-    void Game::OnMouseButtonUp(GTWindow::MouseButton, int, int)
+    void Game::OnMouseButtonUp(GTCore::MouseButton, int, int)
     {
     }
 
-    void Game::OnMouseButtonDoubleClick(GTWindow::MouseButton, int, int)
+    void Game::OnMouseButtonDoubleClick(GTCore::MouseButton, int, int)
     {
     }
 
-    void Game::OnKeyPressed(GTWindow::Key)
+    void Game::OnKeyPressed(GTCore::Key)
     {
     }
 
-    void Game::OnKeyReleased(GTWindow::Key)
+    void Game::OnKeyReleased(GTCore::Key)
     {
     }
 
-    void Game::OnKeyDown(GTWindow::Key)
+    void Game::OnKeyDown(GTCore::Key)
     {
     }
 
-    void Game::OnKeyUp(GTWindow::Key)
+    void Game::OnKeyUp(GTCore::Key)
     {
     }
 
@@ -464,7 +464,7 @@ namespace GTEngine
         while (!this->closing)
         {
             // First we need to handle any pending window messages. We do not want to wait here (first argument).
-            while (GTWindow::PumpNextWindowEvent(false));
+            while (GTCore::PumpNextWindowEvent(false));
 
             // We want our events to be handled synchronously on the main thread.
             this->HandleEvents();
@@ -623,15 +623,15 @@ namespace GTEngine
 
     void Game::HandleEvent_OnMouseButtonDown(GameEvent &e)
     {
-        if (e.mousedown.button == GTWindow::MouseButton::Left)
+        if (e.mousedown.button == GTCore::MouseButton_Left)
         {
             this->gui->OnLMBDown();
         }
-        else if (e.mousedown.button == GTWindow::MouseButton::Right)
+        else if (e.mousedown.button == GTCore::MouseButton_Right)
         {
             this->gui->OnRMBDown();
         }
-        else if (e.mousedown.button == GTWindow::MouseButton::Middle)
+        else if (e.mousedown.button == GTCore::MouseButton_Middle)
         {
             this->gui->OnMMBDown();
         }
@@ -641,15 +641,15 @@ namespace GTEngine
 
     void Game::HandleEvent_OnMouseButtonUp(GameEvent &e)
     {
-        if (e.mouseup.button == GTWindow::MouseButton::Left)
+        if (e.mouseup.button == GTCore::MouseButton_Left)
         {
             this->gui->OnLMBUp();
         }
-        else if (e.mouseup.button == GTWindow::MouseButton::Right)
+        else if (e.mouseup.button == GTCore::MouseButton_Right)
         {
             this->gui->OnRMBUp();
         }
-        else if (e.mouseup.button == GTWindow::MouseButton::Middle)
+        else if (e.mouseup.button == GTCore::MouseButton_Middle)
         {
             this->gui->OnMMBUp();
         }
@@ -659,15 +659,15 @@ namespace GTEngine
 
     void Game::HandleEvent_OnMouseButtonDoubleClick(GameEvent &e)
     {
-        if (e.mousedoubleclick.button == GTWindow::MouseButton::Left)
+        if (e.mousedoubleclick.button == GTCore::MouseButton_Left)
         {
             this->gui->OnLMBDoubleClick();
         }
-        else if (e.mousedoubleclick.button == GTWindow::MouseButton::Right)
+        else if (e.mousedoubleclick.button == GTCore::MouseButton_Right)
         {
             this->gui->OnLMBDoubleClick();
         }
-        else if (e.mousedoubleclick.button == GTWindow::MouseButton::Middle)
+        else if (e.mousedoubleclick.button == GTCore::MouseButton_Middle)
         {
             this->gui->OnLMBDoubleClick();
         }
