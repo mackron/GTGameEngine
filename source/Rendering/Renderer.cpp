@@ -273,7 +273,8 @@ namespace GTEngine
         _RendererState()
             : CurrentShader(nullptr),
               ViewportX(0), ViewportY(0), ViewportWidth(0), ViewportHeight(0),
-              ScissorX(0), ScissorY(0), ScissorWidth(0), ScissorHeight(0), IsScissorEnabled(false)
+              ScissorX(0), ScissorY(0), ScissorWidth(0), ScissorHeight(0), IsScissorEnabled(false),
+              SwapInterval(1), SwapIntervalChanged(false)
         {
         }
 
@@ -292,6 +293,11 @@ namespace GTEngine
         unsigned int ScissorWidth;
         unsigned int ScissorHeight;
         bool IsScissorEnabled;
+
+
+        /// Swap interval.
+        int  SwapInterval;
+        bool SwapIntervalChanged;
 
 
     private:    // No copying.
@@ -392,10 +398,10 @@ namespace GTEngine
         {
         }
 
-        GTCore::List<void *> Texture2Ds;
-        GTCore::List<void *> Framebuffers;
-        GTCore::List<void *> Shaders;
-        GTCore::List<void *> VertexArrays;
+        GTCore::List<void*> Texture2Ds;
+        GTCore::List<void*> Framebuffers;
+        GTCore::List<void*> Shaders;
+        GTCore::List<void*> VertexArrays;
 
         GTCore::Mutex Lock;
 
@@ -426,12 +432,24 @@ namespace GTEngine
     void Renderer::SwapRCBuffers()
     {
         // All we do is swap the pointers. Easy.
-        RenderCommandBuffer *temp = Renderer::BackBuffer;
+        RenderCommandBuffer* temp = Renderer::BackBuffer;
         Renderer::BackBuffer      = Renderer::FrontBuffer;
         Renderer::FrontBuffer     = temp;
 
         // We also want to clear the back buffer.
         Renderer::ClearBackBuffer();
+    }
+
+    
+    void Renderer::SetSwapInterval(int interval)
+    {
+        // We don't actually change the swap interval immediately. Instead we delay it until the next call to SwapBuffer(). Doing
+        // it this way means an application doesn't need to worry about calling this function on the rendering thread.
+        if (RendererState.SwapInterval != interval)
+        {
+            RendererState.SwapInterval        = interval;
+            RendererState.SwapIntervalChanged = true;
+        }
     }
 
 
@@ -1159,9 +1177,8 @@ namespace GTEngine
         gtglSetCurrentWindow(window->GetInternalObjects().window);
 #endif
 
-        // Disable v-sync for now.
-        // TODO: Rip this out and let applications control v-sync themselves.
-        gtglSwapInterval(0);
+        // We will set the swap interval to the default value.
+        gtglSwapInterval(RendererState.SwapInterval);
 
 
         return window;
@@ -1174,6 +1191,13 @@ namespace GTEngine
 
     void Renderer::SwapBuffers()
     {
+        // Before swapping the buffers, lets make sure we have the correct swap interval set.
+        if (RendererState.SwapIntervalChanged)
+        {
+            gtglSwapInterval(RendererState.SwapInterval);
+            RendererState.SwapIntervalChanged = false;
+        }
+
         gtglSwapBuffers();
     }
 

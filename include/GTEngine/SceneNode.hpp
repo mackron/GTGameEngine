@@ -165,8 +165,6 @@ namespace GTEngine
     *   distinguished with a key. When retrieving or setting a data pointer, you must also specify a key for that data pointer.
     *   The node itself does not use any predefined keys, but if using classes/objects which also use a scene node, you must
     *   ensure your data pointer keys do not conflict.
-    *
-    *   Scene nodes should never be inheritted. Instead, use components and data pointers.
     */
     class SceneNode
     {
@@ -193,31 +191,31 @@ namespace GTEngine
         /**
         *   \brief  Retrieves the name of the node.
         */
-        const char * GetName() const;
+        const char* GetName() const;
 
         /**
         *   \brief  Sets the name of the node.
         */
-        void SetName(const char *name);
+        void SetName(const char* name);
 
         
         /**
         *   \brief  Retrieves the parent node, or null if the node does not have a parent.
         */
-        SceneNode * GetParent();
+        SceneNode* GetParent();
 
 
         /// Retrieves a pointer to the first child node.
-        SceneNode * GetFirstChild();
+        SceneNode* GetFirstChild();
 
         /// Retrieves a pointer to the last child node.
-        SceneNode * GetLastChild();
+        SceneNode* GetLastChild();
 
         /// Retrieves a pointer to the previous sibling. Returns null if the node is the first of it's siblings, or does not have any.
-        SceneNode * GetPrevSibling();
+        SceneNode* GetPrevSibling();
 
         /// Retrieves a pointer to the next sibling. Returns null if the node if the last of it's siblings, or does not have any.
-        SceneNode * GetNextSibling();
+        SceneNode* GetNextSibling();
         
 
         /**
@@ -288,15 +286,15 @@ namespace GTEngine
         *   \param  name [in] The name of the child to return.
         *   \param  recursive [in] Whether or not to do a deep recursive search. False by default.
         */
-        SceneNode * FindFirstChild(const char *name, bool recursive = false);
+        SceneNode* FindFirstChild(const char *name, bool recursive = false);
 
         /**
         *   \brief  Retrieves the first child node with the given component.
         */
-        SceneNode * FindFirstChildWithComponent(const char *componentName, bool recursive = false);
+        SceneNode* FindFirstChildWithComponent(const char *componentName, bool recursive = false);
 
         template <typename T>
-        SceneNode * FindFirstChildWithComponent(bool recursive = false)
+        SceneNode* FindFirstChildWithComponent(bool recursive = false)
         {
             return this->FindFirstChildWithComponent(T::Name, recursive);
         }
@@ -460,7 +458,7 @@ namespace GTEngine
         /**
         *   \brief  Rotates the node.
         */
-        void Rotate(float angle, const glm::vec3 &axis);
+        void Rotate(float angleDegrees, const glm::vec3 &axis);
         
         /**
         *   \brief  Scales the node.
@@ -472,7 +470,45 @@ namespace GTEngine
         *   \brief  Translates the node based along the world coordinates.
         */
         void TranslateWorld(const glm::vec3 &offset);
+
+
+        /**
+        *   \brief  Moves the entity in the direction of its forward vector.
+        *   \param  distance [in] The distance to move.
+        */
+        void MoveForward(float distance) { this->Translate(glm::vec3(0.0f, 0.0f, distance)); }
+
+        /**
+        *   \brief  Moves the entity in the direction of its right vector.
+        *   \param  distance [in] The distance to move.
+        */
+        void MoveRight(float distance) { this->Translate(glm::vec3(distance, 0.0f, 0.0f)); }
+
+        /**
+        *   \brief  Moves the entity in the direction of its up vector.
+        *   \param  distance [in] The distance to move.
+        */
+        void MoveUp(float distance) { this->Translate(glm::vec3(0.0f, distance, 0.0f)); }
         
+
+        /**
+        *   \brief  Rotates the entity around it's local x axis.
+        *   \param  angleDegress [in] The angle in degrees to rotate.
+        */
+        void RotateX(float angleDegrees) { this->Rotate(angleDegrees, glm::vec3(1.0f, 0.0f, 0.0f)); }
+
+        /**
+        *   \brief  Rotates the entity around it's local y axis.
+        *   \param  angleDegress [in] The angle in degrees to rotate.
+        */
+        void RotateY(float angleDegrees) { this->Rotate(angleDegrees, glm::vec3(0.0f, 1.0f, 0.0f)); }
+
+        /**
+        *   \brief  Rotates the entity around it's local z axis.
+        *   \param  angleDegress [in] The angle in degrees to rotate.
+        */
+        void RotateZ(float angleDegrees) { this->Rotate(angleDegrees, glm::vec3(0.0f, 0.0f, 1.0f)); }
+
 
         /**
         *   \brief  Retrieves a pointer to the component as specified by 'T'.

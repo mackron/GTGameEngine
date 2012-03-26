@@ -99,6 +99,16 @@ namespace GTEngine
         static void SwapRCBuffers();
 
 
+        /**
+        *   \brief                Sets the swap interval (controls v-sync).
+        *   \param  interval [in] The swap interval to use. 0 means v-sync is disabled, 1 means v-sync is enabled.
+        *
+        *   \remarks
+        *       The interval can also be set to -1, in which case it will use synchronization but will tear on late frames.
+        */
+        static void SetSwapInterval(int interval);
+
+
         /*************************
         * Garbage Collection
         **************************/
@@ -117,10 +127,10 @@ namespace GTEngine
         *       Internally, this function will take the 'rendererData' pointer of the resource and cache it. Then it will
         *       call Delete*Data() where it can then be deleted.
         */
-        static void MarkForCollection(Texture2D *texture);
-        static void MarkForCollection(Framebuffer *framebuffer);
-        static void MarkForCollection(Shader *shader);
-        static void MarkForCollection(VertexArray *vertexArray);
+        static void MarkForCollection(Texture2D* texture);
+        static void MarkForCollection(Framebuffer* framebuffer);
+        static void MarkForCollection(Shader* shader);
+        static void MarkForCollection(VertexArray* vertexArray);
 
         /**
         *   \brief  Collects any garbage-collected resources.
@@ -184,7 +194,7 @@ namespace GTEngine
         static void ClearDepth(float depth);
 
         /// Draws a vertex array.
-        static void Draw(const VertexArray *vertexArray, DrawMode mode = DrawMode_Triangles);
+        static void Draw(const VertexArray* vertexArray, DrawMode mode = DrawMode_Triangles);
         static void Draw(const float *vertices, const unsigned int *indices, size_t indexCount, const VertexFormat &format, DrawMode mode = DrawMode_Triangles);
 
         /// Enabled scissor testing.
@@ -224,7 +234,7 @@ namespace GTEngine
         *   \remarks
         *       If framebuffer is set to nullptr, rendering operations will be performed on the main framebuffer.
         */
-        static void SetFramebuffer(Framebuffer *framebuffer);
+        static void SetFramebuffer(Framebuffer* framebuffer);
 
 
         /**

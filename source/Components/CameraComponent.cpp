@@ -22,7 +22,7 @@ namespace GTEngine
         this->zNear  = zNear;
         this->zFar   = zFar;
         
-        this->projection = glm::perspective(fov * 0.5f, aspect, zNear, zFar);   // Halving the FOV is correct.
+        this->projection = glm::perspective(fov * 0.5f, aspect, zNear, zFar);   // Although unintuitive, halving the FOV here is correct.
     }
 
     void CameraComponent::Set2DProjection(float left, float right, float bottom, float top, float zNear, float zFar)
