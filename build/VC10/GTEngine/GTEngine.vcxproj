@@ -281,7 +281,6 @@
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\RenderCommand.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommandBuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp" />

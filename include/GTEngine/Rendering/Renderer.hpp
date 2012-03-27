@@ -226,7 +226,7 @@ namespace GTEngine
         /// Sets the blending function.
         static void SetBlendFunc(BlendFunc sourceFactor, BlendFunc destFactor);
 
-        // TODO: Improve the way blending works.
+        /// Helper for enabling alpha blending.
         static void EnableAlphaBlending();
 
         /// Enables depth testing.

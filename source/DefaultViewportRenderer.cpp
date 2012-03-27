@@ -10,13 +10,13 @@
 
 namespace GTEngine
 {
-    DefaultViewportRenderer_RCBegin::DefaultViewportRenderer_RCBegin()
+    DVR_RCBegin::DVR_RCBegin()
         : framebuffer(nullptr), depthStencil(nullptr), materialDiffuse(nullptr), materialEmissive(nullptr),
           viewportWidth(0), viewportHeight(0)
     {
     }
 
-    void DefaultViewportRenderer_RCBegin::Init(DefaultViewportRendererFramebuffer &framebuffer)
+    void DVR_RCBegin::Init(DVRFramebuffer &framebuffer)
     {
         this->framebuffer      = &framebuffer;
         this->depthStencil     = framebuffer.depthStencil;
@@ -27,7 +27,7 @@ namespace GTEngine
         this->viewportHeight = framebuffer.height;
     }
 
-    void DefaultViewportRenderer_RCBegin::Execute()
+    void DVR_RCBegin::Execute()
     {
         if (this->framebuffer != nullptr)
         {
@@ -55,14 +55,14 @@ namespace GTEngine
 
 
 
-    DefaultViewportRenderer_RCBeginLighting::DefaultViewportRenderer_RCBeginLighting()
+    DVR_RCBeginLighting::DVR_RCBeginLighting()
         : framebuffer(nullptr),
           lightingDiffuseInput(nullptr),  lightingDiffuseOutput(nullptr),
           lightingSpecularInput(nullptr), lightingSpecularOutput(nullptr)
     {
     }
 
-    void DefaultViewportRenderer_RCBeginLighting::Execute()
+    void DVR_RCBeginLighting::Execute()
     {
         // NOTE: The draw buffer will have already been set previously by DefaultViewportRenderer_RCBegin.
 
@@ -89,13 +89,13 @@ namespace GTEngine
 
 
 
-    DefaultViewportRenderer_RCBeginLightingPass::DefaultViewportRenderer_RCBeginLightingPass()
+    DVR_RCBeginLightingPass::DVR_RCBeginLightingPass()
         : framebuffer(nullptr), lightingDiffuseInput(nullptr), lightingSpecularInput(nullptr),
           shader(nullptr), screenSize(), cameraPosition()
     {
     }
 
-    void DefaultViewportRenderer_RCBeginLightingPass::Execute()
+    void DVR_RCBeginLightingPass::Execute()
     {
         Renderer::SetShader(this->shader);
 
@@ -107,12 +107,12 @@ namespace GTEngine
     
 
 
-    DefaultViewportRenderer_RCEnd::DefaultViewportRenderer_RCEnd()
+    DVR_RCEnd::DVR_RCEnd()
         : framebuffer(nullptr), combinerShader(nullptr)
     {
     }
 
-    void DefaultViewportRenderer_RCEnd::Init(DefaultViewportRendererFramebuffer &framebuffer)
+    void DVR_RCEnd::Init(DVRFramebuffer &framebuffer)
     {
         this->framebuffer       = &framebuffer;
         this->finalOutputBuffer = framebuffer.finalOutput;
@@ -122,7 +122,7 @@ namespace GTEngine
         this->materialEmissive  = framebuffer.materialEmissive;
     }
 
-    void DefaultViewportRenderer_RCEnd::Execute()
+    void DVR_RCEnd::Execute()
     {
         if (this->framebuffer != nullptr)
         {
@@ -148,12 +148,12 @@ namespace GTEngine
 
 
     // RCSetLightingBuffers
-    DefaultViewportRenderer_RCSetLightingBuffers::DefaultViewportRenderer_RCSetLightingBuffers()
+    DVR_RCSetLightingBuffers::DVR_RCSetLightingBuffers()
         : framebuffer(nullptr), lightingDiffuse(nullptr), lightingSpecular(nullptr)
     {
     }
 
-    void DefaultViewportRenderer_RCSetLightingBuffers::Execute()
+    void DVR_RCSetLightingBuffers::Execute()
     {
         int drawBuffers[] = {0, 1};
 
@@ -179,7 +179,7 @@ namespace GTEngine
 
         Shaders.lightingD1 = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_D1");
         Shaders.lightingA1 = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_A1");
-        Shaders.lightingP1 = ShaderLibrary::Acquire("Engine_LightingPass_P1_VS", "Engine_LightingPass_P1");
+        Shaders.lightingP1 = ShaderLibrary::Acquire("Engine_DefaultVS", "Engine_LightingPass_P1");
         Shaders.combiner   = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_LightingMaterialCombiner");
 
         RenderCommands.rcEnd[0].combinerShader = Shaders.combiner;

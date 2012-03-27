@@ -28,7 +28,7 @@ namespace GTEngine
     void FontManager::OnCreateFont(GTType::FontServer &, GTType::Font &font)
     {
         // We need a texture to associate with the font.
-        Texture2D *fontTexture = new Texture2D;
+        Texture2D* fontTexture = new Texture2D;
    
         const GTImage::Mipmap &fontBitmap = font.GetBitmap().GetMipmap(0);
 

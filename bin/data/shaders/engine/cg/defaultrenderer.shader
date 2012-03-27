@@ -138,47 +138,6 @@ uses 1 or each light, it will use the following: A1D1P1.
     </include>
 </shader>
 
-<shader id="Engine_LightingPass_P1_VS">
-    struct VertexInput
-	{
-		float3 Position : ATTR0;
-		float2 TexCoord : ATTR1;
-		float3 Normal   : ATTR2;
-	};
-		
-	struct VertexOutput
-	{
-		float4 ClipPosition : POSITION;
-
-		float2 TexCoord  : TEXCOORD0;
-		float3 Normal    : TEXCOORD1;
-        float4 Position  : TEXCOORD2;
-        
-        float4 LightPos0 : TEXCOORD3;
-	};
-		
-    uniform float4x4 ModelViewMatrix;
-	uniform float4x4 MVPMatrix;
-    uniform float3x3 NormalMatrix;          // transpose(inverse(float3x3(ModelViewMatrix)))
-    
-    struct PointLightVS
-    {
-        float3 Position;
-    };
-    uniform PointLightVS PLights[1];
-		
-	void main(VertexInput IN, out VertexOutput OUT)
-	{
-		OUT.ClipPosition = mul(MVPMatrix, float4(IN.Position, 1.0));
-        
-		OUT.TexCoord = IN.TexCoord;
-		OUT.Normal   = normalize(mul(NormalMatrix, IN.Normal));
-        
-        OUT.Position  = mul(ModelViewMatrix, float4(IN.Position, 1.0));
-        OUT.LightPos0 = float4(PLights[0].Position, 1.0);
-	}
-</shader>
-
 <shader id="Engine_LightingPass_P1">
     <!-- <include url="#Engine_FragmentInput" /> -->
     <include url="#Engine_FragmentLightingOutput" />
@@ -201,6 +160,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         struct PointLightFS
         {
             float3 Colour;
+            float3 Position;
             float  ConstantAttenuation;
             float  LinearAttenuation;
             float  QuadraticAttenuation;
@@ -225,7 +185,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             // D - Distance between the light and the vertex
         
             float3 N     = normalize(IN.Normal);
-            float3 L     = IN.LightPos0.xyz - IN.Position.xyz;
+            float3 L     = light.Position - IN.Position.xyz;
             float  D     = length(L);
             float3 V     = normalize(CameraPosition - IN.Position.xyz);
             float3 H     = normalize(L + V);

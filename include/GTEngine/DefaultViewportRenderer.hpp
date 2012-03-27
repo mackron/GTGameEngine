@@ -1,4 +1,6 @@
 
+// In this file, DVR = DefaultViewportRenderer.
+
 #ifndef __GTEngine_DefaultViewportRenderer_hpp_
 #define __GTEngine_DefaultViewportRenderer_hpp_
 
@@ -13,17 +15,16 @@
 #include "Rendering/RenderCommands/RCDrawVA.hpp"
 #include "Rendering/RCCache.hpp"
 #include <GTCore/Map.hpp>
-#include <GTCore/Dictionary.hpp>
 #include <GTCore/String.hpp>
 
 
 namespace GTEngine
 {
-    class DefaultViewportRendererFramebuffer : public Framebuffer
+    class DVRFramebuffer : public Framebuffer
     {
     public:
 
-        DefaultViewportRendererFramebuffer()
+        DVRFramebuffer()
             : Framebuffer(),
               width(0), height(0),
               depthStencil(nullptr),
@@ -38,7 +39,7 @@ namespace GTEngine
             this->CreateAttachments(1, 1);
         }
 
-        ~DefaultViewportRendererFramebuffer()
+        ~DVRFramebuffer()
         {
             this->DeleteAll();
         }
@@ -227,13 +228,13 @@ namespace GTEngine
 namespace GTEngine
 {
     // RCBegin
-    class DefaultViewportRenderer_RCBegin : public RenderCommand
+    class DVR_RCBegin : public RenderCommand
     {
     public:
 
-        DefaultViewportRenderer_RCBegin();
+        DVR_RCBegin();
 
-        void Init(DefaultViewportRendererFramebuffer &framebuffer);
+        void Init(DVRFramebuffer &framebuffer);
 
         void Execute();
 
@@ -241,7 +242,7 @@ namespace GTEngine
     public:
 
         /// The framebuffer to make current.
-        DefaultViewportRendererFramebuffer* framebuffer;
+        DVRFramebuffer* framebuffer;
 
         Texture2D* depthStencil;
         Texture2D* materialDiffuse;
@@ -253,14 +254,14 @@ namespace GTEngine
 
 
     // RCBeginLighting
-    class DefaultViewportRenderer_RCBeginLighting : public RenderCommand
+    class DVR_RCBeginLighting : public RenderCommand
     {
     public:
 
-        DefaultViewportRenderer_RCBeginLighting();
+        DVR_RCBeginLighting();
 
         /// Sets the framebuffer.
-        void SetFramebuffer(DefaultViewportRendererFramebuffer &framebuffer)
+        void SetFramebuffer(DVRFramebuffer &framebuffer)
         {
             this->framebuffer = &framebuffer;
             this->lightingDiffuseInput   = framebuffer.lightingDiffuseInput;
@@ -274,7 +275,7 @@ namespace GTEngine
 
     private:
 
-        DefaultViewportRendererFramebuffer* framebuffer;
+        DVRFramebuffer* framebuffer;
 
         Texture2D* lightingDiffuseInput;
         Texture2D* lightingDiffuseOutput;
@@ -284,13 +285,13 @@ namespace GTEngine
 
 
     // RCBeginLightingPass
-    class DefaultViewportRenderer_RCBeginLightingPass : public RenderCommand
+    class DVR_RCBeginLightingPass : public RenderCommand
     {
     public:
 
-        DefaultViewportRenderer_RCBeginLightingPass();
+        DVR_RCBeginLightingPass();
 
-        void Init(DefaultViewportRendererFramebuffer &framebuffer, Shader* shader, const glm::vec2 &screenSize, const glm::vec3 &cameraPosition)
+        void Init(DVRFramebuffer &framebuffer, Shader* shader, const glm::vec2 &screenSize, const glm::vec3 &cameraPosition)
         {
             this->framebuffer = &framebuffer;
             this->lightingDiffuseInput  = framebuffer.lightingDiffuseInput;
@@ -307,7 +308,7 @@ namespace GTEngine
 
     private:
 
-        DefaultViewportRendererFramebuffer* framebuffer;
+        DVRFramebuffer* framebuffer;
 
         Texture2D* lightingDiffuseInput;
         Texture2D* lightingSpecularInput;
@@ -320,13 +321,13 @@ namespace GTEngine
 
     
     // RCEnd
-    class DefaultViewportRenderer_RCEnd : public RenderCommand
+    class DVR_RCEnd : public RenderCommand
     {
     public:
         
-        DefaultViewportRenderer_RCEnd();
+        DVR_RCEnd();
 
-        void Init(DefaultViewportRendererFramebuffer &framebuffer);
+        void Init(DVRFramebuffer &framebuffer);
 
         void Execute();
 
@@ -334,7 +335,7 @@ namespace GTEngine
     public:
 
         /// The framebuffer to make current.
-        DefaultViewportRendererFramebuffer* framebuffer;
+        DVRFramebuffer* framebuffer;
 
         /// The combiner shader.
         Shader* combinerShader;
@@ -352,13 +353,13 @@ namespace GTEngine
 
 
     // RCSetLightingBuffers
-    class DefaultViewportRenderer_RCSetLightingBuffers : public RenderCommand
+    class DVR_RCSetLightingBuffers : public RenderCommand
     {
     public:
 
-        DefaultViewportRenderer_RCSetLightingBuffers();
+        DVR_RCSetLightingBuffers();
 
-        void SetFramebuffer(DefaultViewportRendererFramebuffer &framebuffer)
+        void SetFramebuffer(DVRFramebuffer &framebuffer)
         {
             this->framebuffer = &framebuffer;
             this->lightingDiffuse  = framebuffer.lightingDiffuseOutput;
@@ -370,7 +371,7 @@ namespace GTEngine
 
     private:
 
-        DefaultViewportRendererFramebuffer* framebuffer;
+        DVRFramebuffer* framebuffer;
 
         Texture2D* lightingDiffuse;
         Texture2D* lightingSpecular;
@@ -456,7 +457,7 @@ namespace GTEngine
         SceneViewport* owner;
 
         /// The framebuffer where the final output will be drawn to.
-        DefaultViewportRendererFramebuffer framebuffer;
+        DVRFramebuffer framebuffer;
 
         /// Structure containing the different shaders.
         struct
@@ -477,13 +478,13 @@ namespace GTEngine
         /// The cached rendering commands.
         struct
         {
-            DefaultViewportRenderer_RCBegin         rcBegin[2];
-            DefaultViewportRenderer_RCBeginLighting rcBeginLighting[2];
-            DefaultViewportRenderer_RCEnd           rcEnd[2];
+            DVR_RCBegin         rcBegin[2];
+            DVR_RCBeginLighting rcBeginLighting[2];
+            DVR_RCEnd           rcEnd[2];
 
-            RCCache<DefaultViewportRenderer_RCBeginLightingPass,  32> rcBeginLightingPass[2];
-            RCCache<DefaultViewportRenderer_RCSetLightingBuffers, 32> rcSetLightingBuffers[2];
-            RCCache<RCDrawVA>                                         rcDrawVA[2];
+            RCCache<DVR_RCBeginLightingPass,  32> rcBeginLightingPass[2];
+            RCCache<DVR_RCSetLightingBuffers, 32> rcSetLightingBuffers[2];
+            RCCache<RCDrawVA>                     rcDrawVA[2];
 
         }RenderCommands;
 

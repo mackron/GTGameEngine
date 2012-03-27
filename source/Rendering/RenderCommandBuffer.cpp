@@ -24,7 +24,7 @@ namespace GTEngine
 
     void RenderCommandBuffer::Clear()
     {
-        // Just to ensure we don't cycle over and attempt to call destructors, we'll simply set the count to 0
+        // Just to make sure we don't cycle over and attempt to call destructors, we'll simply set the count to 0
         // which is enough to clear the buffer. We would otherwise use this->commands.Clear();
         this->commands.count = 0;
     }

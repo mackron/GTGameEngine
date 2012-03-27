@@ -414,9 +414,6 @@
     <ClCompile Include="..\..\..\source\MaterialShaderCache.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\RenderCommand.cpp">
-      <Filter>source\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp">
       <Filter>source</Filter>
     </ClCompile>
