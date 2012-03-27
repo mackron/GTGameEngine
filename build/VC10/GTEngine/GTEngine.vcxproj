@@ -227,8 +227,10 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCBufferPair.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommand.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommandBuffer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCDrawVA.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFramebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp" />
@@ -243,6 +245,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\UserConfig.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />
@@ -292,6 +295,7 @@
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommand.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommandBuffer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Shader.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Texture2D.cpp" />
@@ -302,6 +306,7 @@
     <ClCompile Include="..\..\..\source\SceneNodeFactory.cpp" />
     <ClCompile Include="..\..\..\source\SceneViewport.cpp" />
     <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp" />
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp" />
     <ClCompile Include="..\..\..\source\UserConfig.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp" />

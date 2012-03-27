@@ -45,6 +45,9 @@
     <Filter Include="include\Rendering\RenderCommands">
       <UniqueIdentifier>{8e88d608-164c-4a59-88f1-cfcf42d7d1f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Rendering\RenderCommands">
+      <UniqueIdentifier>{1a05c513-045a-4cf3-88ab-5c1d4e113fa1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\shaders\engine\cg\core.shader">
@@ -274,6 +277,15 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommand.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCDrawVA.hpp">
+      <Filter>include\Rendering\RenderCommands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -446,6 +458,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\RenderCommand.cpp">
       <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp">
+      <Filter>source\Rendering\RenderCommands</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

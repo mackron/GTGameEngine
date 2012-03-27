@@ -380,6 +380,9 @@ namespace GTEngine
     {
         this->backRCIndex = !this->backRCIndex;
 
+        // The new back RC caches need to be reset in preparation for the next frame.
+        this->RenderCommands.rcDrawVA[this->backRCIndex].Reset();
+
         // When a framebuffer is resized, it marks the previous buffers for deletion, but does not delete them straight away. It is
         // done this way because the rendering thread may not have finished with those buffers by the time the resize occurs. The
         // call below will clean the dead buffers.
@@ -485,9 +488,9 @@ namespace GTEngine
 
                     if (material != nullptr)
                     {
-                        // We'll be drawing something. Here is a good time to create the render command. The way we do this will
-                        // probably change later on to use a cache.
-                        auto rc = new DefaultViewportRenderer_RCDrawMesh(mesh->va);
+                        // We need to grab a render command from the cache...
+                        auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                        rc.SetVertexArray(mesh->va);
 
                         // Here is where we need to retrieve a shader for the material. This managed completely by the viewport
                         // renderer. For now we are using a simple unlit shader, but this will need to change as we add things
@@ -501,10 +504,10 @@ namespace GTEngine
                         }
 
                         // Now that we have the shader, we can set some properties and set it on the render command.
-                        rc->shader = materialMetadata.materialPassShader;
-                            
-                        rc->SetParameter("MVPMatrix",    MVPMatrix);
-                        rc->SetParameter("NormalMatrix", NormalMatrix);
+                        rc.SetShader(materialMetadata.materialPassShader);
+
+                        rc.SetParameter("MVPMatrix",    MVPMatrix);
+                        rc.SetParameter("NormalMatrix", NormalMatrix);
                             
                         // The material may have pending properties. These need to be set on the shader also.
                         auto &materialParams = material->GetPendingParameters();
@@ -514,12 +517,12 @@ namespace GTEngine
                             assert(iParam        != nullptr);
                             assert(iParam->value != nullptr);
 
-                            rc->SetParameter(iParam->key, CopyShaderParameter(iParam->value));
+                            rc.SetParameter(iParam->key, iParam->value);
                         }
 
 
                         // Now we simply append the render command...
-                        Renderer::BackBuffer->Append(*rc);
+                        Renderer::BackBuffer->Append(rc);
                     }
                 }
             }
@@ -602,16 +605,16 @@ namespace GTEngine
                     auto mesh = model->meshes[iMesh];
                     assert(mesh != nullptr);
 
-                    // We'll be drawing something. Here is a good time to create the render command. The way we do this will
-                    // probably change later on to use a cache.
-                    auto rc = new DefaultViewportRenderer_RCDrawMesh(mesh->va);
+                    // We need to grab a render command from the cache...
+                    auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                    rc.SetVertexArray(mesh->va);
 
-                    rc->SetParameter("ALights[0].Colour", lightComponent->GetColour());
+                    rc.SetParameter("ALights[0].Colour", lightComponent->GetColour());
 
-                    rc->SetParameter("MVPMatrix",    MVPMatrix);
-                    rc->SetParameter("NormalMatrix", NormalMatrix);
+                    rc.SetParameter("MVPMatrix",    MVPMatrix);
+                    rc.SetParameter("NormalMatrix", NormalMatrix);
 
-                    Renderer::BackBuffer->Append(*rc);
+                    Renderer::BackBuffer->Append(rc);
                 }
             }
         }
@@ -647,18 +650,18 @@ namespace GTEngine
                     auto mesh = model->meshes[iMesh];
                     assert(mesh != nullptr);
 
-                    // We'll be drawing something. Here is a good time to create the render command. The way we do this will
-                    // probably change later on to use a cache.
-                    auto rc = new DefaultViewportRenderer_RCDrawMesh(mesh->va);
+                    // We need to grab a render command from the cache...
+                    auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                    rc.SetVertexArray(mesh->va);
 
-                    rc->SetParameter("DLights[0].Colour",    lightComponent->GetColour());
-                    rc->SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * lightNode->GetForwardVector()));
+                    rc.SetParameter("DLights[0].Colour",    lightComponent->GetColour());
+                    rc.SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * lightNode->GetForwardVector()));
 
-                    rc->SetParameter("ModelViewMatrix", ModelViewMatrix);
-                    rc->SetParameter("MVPMatrix",       MVPMatrix);
-                    rc->SetParameter("NormalMatrix",    NormalMatrix);
+                    rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
+                    rc.SetParameter("MVPMatrix",       MVPMatrix);
+                    rc.SetParameter("NormalMatrix",    NormalMatrix);
 
-                    Renderer::BackBuffer->Append(*rc);
+                    Renderer::BackBuffer->Append(rc);
                 }
             }
         }
@@ -694,21 +697,21 @@ namespace GTEngine
                     auto mesh = model->meshes[iMesh];
                     assert(mesh != nullptr);
 
-                    // We'll be drawing something. Here is a good time to create the render command. The way we do this will
-                    // probably change later on to use a cache.
-                    auto rc = new DefaultViewportRenderer_RCDrawMesh(mesh->va);
+                    // We need to grab a render command from the cache...
+                    auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                    rc.SetVertexArray(mesh->va);
 
-                    rc->SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(lightNode->GetWorldPosition(), 1.0f)));
-                    rc->SetParameter("PLights[0].Colour",               lightComponent->GetColour());
-                    rc->SetParameter("PLights[0].ConstantAttenuation",  lightComponent->GetConstantAttenuation());
-                    rc->SetParameter("PLights[0].LinearAttenuation",    lightComponent->GetLinearAttenuation());
-                    rc->SetParameter("PLights[0].QuadraticAttenuation", lightComponent->GetQuadraticAttenuation());
+                    rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(lightNode->GetWorldPosition(), 1.0f)));
+                    rc.SetParameter("PLights[0].Colour",               lightComponent->GetColour());
+                    rc.SetParameter("PLights[0].ConstantAttenuation",  lightComponent->GetConstantAttenuation());
+                    rc.SetParameter("PLights[0].LinearAttenuation",    lightComponent->GetLinearAttenuation());
+                    rc.SetParameter("PLights[0].QuadraticAttenuation", lightComponent->GetQuadraticAttenuation());
                     
-                    rc->SetParameter("ModelViewMatrix", ModelViewMatrix);
-                    rc->SetParameter("MVPMatrix",       MVPMatrix);
-                    rc->SetParameter("NormalMatrix",    NormalMatrix);
+                    rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
+                    rc.SetParameter("MVPMatrix",       MVPMatrix);
+                    rc.SetParameter("NormalMatrix",    NormalMatrix);
 
-                    Renderer::BackBuffer->Append(*rc);
+                    Renderer::BackBuffer->Append(rc);
                 }
             }
         }

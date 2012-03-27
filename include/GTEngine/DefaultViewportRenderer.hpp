@@ -10,6 +10,8 @@
 #include "Rendering/Framebuffer.hpp"
 #include "Rendering/Renderer.hpp"
 #include "Rendering/RenderCommand.hpp"
+#include "Rendering/RenderCommands/RCDrawVA.hpp"
+#include "Rendering/RCCache.hpp"
 #include <GTCore/Map.hpp>
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/String.hpp>
@@ -292,8 +294,6 @@ namespace GTEngine
 
         Texture2D* lightingDiffuseInput;
         Texture2D* lightingSpecularInput;
-
-        
     };
 
     
@@ -328,48 +328,8 @@ namespace GTEngine
     };
 
 
-    // RCDrawMesh
-    class DefaultViewportRenderer_RCDrawMesh : public RenderCommand
-    {
-    public:
 
-        DefaultViewportRenderer_RCDrawMesh(VertexArray* mesh);
-       ~DefaultViewportRenderer_RCDrawMesh();
-        void Execute();
-        void OnExecuted() { delete this; }  // TODO: Delete this. Use a cache later.
-
-        /// Helpers for setting properties. We use MaterialProperty classes here.
-        void SetParameter(const char* name, float x);
-        void SetParameter(const char* name, float x, float y);
-        void SetParameter(const char* name, float x, float y, float z);
-        void SetParameter(const char* name, float x, float y, float z, float w);
-
-        void SetParameter(const char* name, const glm::vec2 &v) { this->SetParameter(name, v.x, v.y); }
-        void SetParameter(const char* name, const glm::vec3 &v) { this->SetParameter(name, v.x, v.y, v.z); }
-        void SetParameter(const char* name, const glm::vec4 &v) { this->SetParameter(name, v.x, v.y, v.z, v.w); }
-
-        void SetParameter(const char* name, const glm::mat2 &v);
-        void SetParameter(const char* name, const glm::mat3 &v);
-        void SetParameter(const char* name, const glm::mat4 &v);
-
-        void SetParameter(const char* name, Texture2D* texture);
-
-        void SetParameter(const char* name, ShaderParameter* parameter);
-
-    public:
-
-        /// The mesh to draw.
-        VertexArray* mesh;
-
-        /// A pointer to the shader to draw the node with.
-        Shader* shader;
-
-        /// The list of properties needing to be set on the shader before drawing the mesh.
-        GTCore::Dictionary<char, ShaderParameter*> parameters;
-    };
-
-
-    // RCSwapLightingBuffers
+    // RCSetLightingBuffers
     class DefaultViewportRenderer_RCSetLightingBuffers : public RenderCommand
     {
     public:
@@ -491,6 +451,9 @@ namespace GTEngine
         {
             DefaultViewportRenderer_RCBegin rcBegin[2];
             DefaultViewportRenderer_RCEnd   rcEnd[2];
+
+            /// The cache's of RCDrawVA's. These are swapped just like the others.
+            RCCache<RCDrawVA> rcDrawVA[2];
 
         }RenderCommands;
 
