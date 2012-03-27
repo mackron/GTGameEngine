@@ -27,7 +27,6 @@ namespace GTEngine
         : isInitialised(false), closing(false), eventQueue(), eventQueueLock(), window(nullptr), windowEventHandler(*this), threads(nullptr), updateThread(nullptr), updateJob(nullptr), 
           deltaTimeInSeconds(0.0), updateTimer(), fontServer(nullptr), defaultFont(nullptr),
           gui(nullptr), guiEventHandler(nullptr),
-          scene(nullptr), /*currentRCBuffer(nullptr),*/
           paused(false),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
@@ -87,18 +86,6 @@ namespace GTEngine
     {
         assert(this->gui != nullptr);
         this->gui->Step(deltaTimeInSeconds);
-    }
-
-
-    void Game::SetScene(Scene *scene)
-    {
-        this->scene = scene;
-
-        // We need to make sure the scene is rendering to the correct RC buffer.
-        if (this->scene != nullptr)
-        {
-            //this->scene->SetCurrentRCBuffer(this->currentRCBuffer);
-        }
     }
 
 
@@ -197,40 +184,11 @@ namespace GTEngine
         }
     }
 
-    /*
-    void Game::SetCurrentRCBuffer(RenderCommandBuffer *rcBuffer)
-    {
-        if (rcBuffer == nullptr)
-        {
-            rcBuffer = Renderer::BackBuffer;
-        }
-
-        this->currentRCBuffer = rcBuffer;
-
-        // We tie the game and scene RC buffer target...
-        if (this->scene != nullptr)
-        {
-            this->scene->SetCurrentRCBuffer(this->currentRCBuffer);
-        }
-    }
-
-    RenderCommandBuffer * Game::GetCurrentRCBuffer()
-    {
-        return this->currentRCBuffer;
-    }
-    */
-
     void Game::Pause()
     {
         if (!this->paused)
         {
             this->paused = true;
-            
-            if (this->scene != nullptr)
-            {
-                this->scene->Pause();
-            }
-
             this->OnPause();
         }
     }
@@ -240,22 +198,12 @@ namespace GTEngine
         if (this->paused)
         {
             this->paused = false;
-
-            if (this->scene != nullptr)
-            {
-                this->scene->Resume();
-            }
-
             this->OnResume();
         }
     }
 
 
     void Game::OnUpdate()
-    {
-    }
-
-    void Game::OnPostUpdate()
     {
     }
 
@@ -349,9 +297,6 @@ namespace GTEngine
 
             // Now the job that will be doing the game update.
             this->updateJob = new GameUpdateJob(*this);
-
-            // The current rendering command buffer will be the renderer's back buffer.
-            //this->currentRCBuffer = Renderer::BackBuffer;
 
 
             // We'll want to set a few window properties before showing it... We want to show the window relatively early to make
@@ -518,16 +463,6 @@ namespace GTEngine
     {
         // The game needs to know that we're updating.
         this->OnUpdate();
-
-        // Here we just update the game's current scene. Scene implementations should render everything to it's
-        // current RC buffer, which will be set when the game's RC buffer is set.
-        if (this->scene != nullptr)
-        {
-            this->scene->Update(this->deltaTimeInSeconds);
-        }
-
-        // The game now needs to know we've just finished updating the scene.
-        this->OnPostUpdate();
     }
 
     void Game::Draw() //[Main Thread]
@@ -545,15 +480,6 @@ namespace GTEngine
 
     void Game::SwapRCBuffers()
     {
-        /*
-        // First we swap our own objects. With the renderer, if the game's current render command buffer is the renderer's back buffer,
-        // we need to set it to the renderer's front buffer (which is about to become it's back buffer).
-        if (this->currentRCBuffer == Renderer::BackBuffer)
-        {
-            this->SetCurrentRCBuffer(Renderer::FrontBuffer);
-        }
-        */
-
         // Now the renderer...
         Renderer::SwapRCBuffers();
 

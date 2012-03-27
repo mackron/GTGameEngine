@@ -99,23 +99,6 @@ namespace GTEngine
 
 
         /**
-        *   \brief  Sets the scene.
-        */
-        void SetScene(Scene *scene);
-
-        /**
-        *   \brief  Retrieves the current scene.
-        */
-        Scene * GetScene() { return this->scene; }
-
-        template <typename T>
-        T * GetScene()
-        {
-            return static_cast<T *>(this->scene);
-        }
-
-
-        /**
         *   \brief  Retrieves a pointer to the main game window.
         */
         GTCore::Window * GetWindow() { return this->window; }
@@ -159,23 +142,6 @@ namespace GTEngine
         *   \brief  Releases the mouse.
         */
         void ReleaseMouse();
-
-        /**
-        *   \brief                Sets the render command buffer that future rendering operations should occur on.
-        *   \param  rcBuffer [in] The render command buffer that future rendering commands will occur on. Can be null.
-        *
-        *   \remarks
-        *       If rcBuffer is null, rendering commands will occur directly on the renderer's back RC buffer.
-        */
-        //void SetCurrentRCBuffer(RenderCommandBuffer *rcBuffer);
-
-        /**
-        *   \brief  Retrieves the render command buffer that rendering commands are being placed into.
-        *
-        *   \remarks
-        *       It is possible that this will return Renderer::BackBuffer. This will occur if SetCurrentRCBuffer() was called with nullptr.
-        */
-        //RenderCommandBuffer * GetCurrentRCBuffer();
 
 
         /**
@@ -224,11 +190,6 @@ namespace GTEngine
         *   \brief  Called when the game is updating. This is called from the update thread, just before the scene is updated.
         */
         virtual void OnUpdate();
-
-        /**
-        *   \brief  Called after the current scene has been update and just before the buffers are swapped.
-        */
-        virtual void OnPostUpdate();
 
         /**
         *   \brief  Called on the rendering thread just before the main scene is drawn.
@@ -460,12 +421,6 @@ namespace GTEngine
 
         /// The event handler for the GUI. This is constructed at the same time as 'gui'.
         GTGUI::ServerEventHandler *guiEventHandler;
-
-        /// The current scene. This can be set with Game::SetScene().
-        Scene *scene;
-
-        /// The current render command buffer that rendering operations are being buffered into.
-        //RenderCommandBuffer *currentRCBuffer;
 
         /// Whether or not the game is paused. A paused game will continue to render, but scene nodes and animations will not tick.
         bool paused;

@@ -95,22 +95,6 @@ namespace GTEngine
     public:
 
         /**
-        *   \brief  Sets the render command buffer that rendering operations should occur on.
-        */
-        //void SetCurrentRCBuffer(RenderCommandBuffer *rcBuffer);
-
-        /**
-        *   \brief  Retrieves the current render commadn buffer.
-        */
-        //RenderCommandBuffer * GetCurrentRCBuffer();
-
-        /**
-        *   \brief  Appends a rendering command to the scene current RC buffer.
-        */
-        //void AppendRC(RenderCommand *cmd);
-
-
-        /**
         *   \brief  Pauses the scene.
         *
         *   \remarks
@@ -161,9 +145,6 @@ namespace GTEngine
 
 
     protected:
-
-        /// The render command buffer that rendering operations will be placed.
-        //RenderCommandBuffer *currentRCBuffer;
 
         /// Whether or not the scene is paused.
         bool paused;
