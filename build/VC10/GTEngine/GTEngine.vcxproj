@@ -227,8 +227,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCBufferPair.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommand.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommandBuffer.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFramebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp" />
@@ -290,8 +290,8 @@
     <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetViewport.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\RenderCommand.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommandBuffer.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\RenderCommands.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Shader.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Texture2D.cpp" />

@@ -2,7 +2,7 @@
 #ifndef __GTEngine_Rendering_RCSetFramebuffer_hpp_
 #define __GTEngine_Rendering_RCSetFramebuffer_hpp_
 
-#include "../RenderCommands.hpp"
+#include "../RenderCommand.hpp"
 #include "../Renderer.hpp"
 
 namespace GTEngine

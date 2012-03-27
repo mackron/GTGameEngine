@@ -1,6 +1,6 @@
 
-#ifndef __GTEngine_RenderCommands_hpp_
-#define __GTEngine_RenderCommands_hpp_
+#ifndef __GTEngine_RenderCommand_hpp_
+#define __GTEngine_RenderCommand_hpp_
 
 #include "VertexArray.hpp"
 #include "DrawModes.hpp"

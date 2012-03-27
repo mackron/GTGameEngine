@@ -2,7 +2,7 @@
 #ifndef __GTEngine_DrawCall_SetScissor_hpp_
 #define __GTEngine_DrawCall_SetScissor_hpp_
 
-#include "../RenderCommands.hpp"
+#include "../RenderCommand.hpp"
 
 namespace GTEngine
 {

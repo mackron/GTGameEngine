@@ -2,7 +2,7 @@
 #ifndef __GTEngine_DrawCall_SetShader_hpp_
 #define __GTEngine_DrawCall_SetShader_hpp_
 
-#include "../RenderCommands.hpp"
+#include "../RenderCommand.hpp"
 
 namespace GTEngine
 {

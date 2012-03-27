@@ -2,7 +2,7 @@
 #ifndef __GTEngine_DrawCall_SetParameter_hpp_
 #define __GTEngine_DrawCall_SetParameter_hpp_
 
-#include "../RenderCommands.hpp"
+#include "../RenderCommand.hpp"
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push

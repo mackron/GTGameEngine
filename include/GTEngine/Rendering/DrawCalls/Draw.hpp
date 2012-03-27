@@ -2,7 +2,7 @@
 #ifndef __GTEngine_DrawCall_Draw_hpp_
 #define __GTEngine_DrawCall_Draw_hpp_
 
-#include "../RenderCommands.hpp"
+#include "../RenderCommand.hpp"
 #include "../DrawModes.hpp"
 
 namespace GTEngine

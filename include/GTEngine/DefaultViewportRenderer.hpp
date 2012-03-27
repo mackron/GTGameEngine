@@ -9,7 +9,7 @@
 #include "MaterialShaderCache.hpp"
 #include "Rendering/Framebuffer.hpp"
 #include "Rendering/Renderer.hpp"
-#include "Rendering/RenderCommands.hpp"
+#include "Rendering/RenderCommand.hpp"
 #include <GTCore/Map.hpp>
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/String.hpp>

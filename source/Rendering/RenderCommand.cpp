@@ -1,5 +1,5 @@
 
-#include <GTEngine/Rendering/RenderCommands.hpp>
+#include <GTEngine/Rendering/RenderCommand.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 
 namespace GTEngine
