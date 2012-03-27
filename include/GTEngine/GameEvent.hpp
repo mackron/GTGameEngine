@@ -56,6 +56,10 @@ namespace GTEngine
 
             struct
             {
+            }receivefocus, losefocus;
+
+            struct
+            {
                 void * data0;
                 void * data1;
                 void * data2;

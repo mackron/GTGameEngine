@@ -119,4 +119,20 @@ namespace GTEngine
 
         this->game.SendEvent(e);
     }
+
+    void GameWindowEventHandler::OnReceiveFocus()
+    {
+        GameEvent e;
+        e.code = EventCodes::OnReceiveFocus;
+        
+        this->game.SendEvent(e);
+    }
+
+    void GameWindowEventHandler::OnLoseFocus()
+    {
+        GameEvent e;
+        e.code = EventCodes::OnLoseFocus;
+        
+        this->game.SendEvent(e);
+    }
 }

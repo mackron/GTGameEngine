@@ -144,6 +144,12 @@ namespace GTEngine
         void ReleaseMouse();
 
 
+        /// Determines if a key is currently pressed.
+        /// @param key [in] The key code to check.
+        /// @return True if the key is current held down.
+        bool IsKeyDown(GTCore::Key key) const;
+
+
         /**
         *   \brief  Pauses the game.
         *
@@ -234,6 +240,8 @@ namespace GTEngine
         virtual void OnKeyReleased(GTCore::Key key);
         virtual void OnKeyDown(GTCore::Key key);
         virtual void OnKeyUp(GTCore::Key key);
+        virtual void OnReceiveFocus();
+        virtual void OnLoseFocus();
 
 
         /**
@@ -356,6 +364,8 @@ namespace GTEngine
         void HandleEvent_OnKeyReleased(GameEvent &e);
         void HandleEvent_OnKeyDown(GameEvent &e);
         void HandleEvent_OnKeyUp(GameEvent &e);
+        void HandleEvent_OnReceiveFocus(GameEvent &e);
+        void HandleEvent_OnLoseFocus(GameEvent &e);
 
 
     protected:
@@ -424,6 +434,12 @@ namespace GTEngine
 
         /// Whether or not the game is paused. A paused game will continue to render, but scene nodes and animations will not tick.
         bool paused;
+
+        /// Whether or not the game window has focus.
+        bool focused;
+
+        /// A map of key states. This is modified as keys are pushed and released.
+        GTCore::Map<char32_t, bool> keyDownMap;
 
 
         bool mouseCaptured;

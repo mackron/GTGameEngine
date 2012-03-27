@@ -27,7 +27,8 @@ namespace GTEngine
         : isInitialised(false), closing(false), eventQueue(), eventQueueLock(), window(nullptr), windowEventHandler(*this), threads(nullptr), updateThread(nullptr), updateJob(nullptr), 
           deltaTimeInSeconds(0.0), updateTimer(), fontServer(nullptr), defaultFont(nullptr),
           gui(nullptr), guiEventHandler(nullptr),
-          paused(false),
+          paused(false), focused(true),
+          keyDownMap(),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0)
@@ -166,6 +167,21 @@ namespace GTEngine
     }
 
 
+    bool Game::IsKeyDown(GTCore::Key key) const
+    {
+        if (this->focused)  // Keys will never be down if we're not focused...
+        {
+            auto iKey = this->keyDownMap.Find(key);
+            if (iKey != nullptr)
+            {
+                return iKey->value;
+            }
+        }
+
+        return false;
+    }
+
+
     void Game::CacheMousePosition()
     {
         if (this->mouseCaptured)
@@ -260,6 +276,14 @@ namespace GTEngine
     }
 
     void Game::OnKeyUp(GTCore::Key)
+    {
+    }
+
+    void Game::OnReceiveFocus()
+    {
+    }
+
+    void Game::OnLoseFocus()
     {
     }
 
@@ -515,6 +539,8 @@ namespace GTEngine
             case EventCodes::OnKeyReleased:               this->HandleEvent_OnKeyReleased(e);             break;
             case EventCodes::OnKeyDown:                   this->HandleEvent_OnKeyDown(e);                 break;
             case EventCodes::OnKeyUp:                     this->HandleEvent_OnKeyUp(e);                   break;
+            case EventCodes::OnReceiveFocus:              this->HandleEvent_OnReceiveFocus(e);            break;
+            case EventCodes::OnLoseFocus:                 this->HandleEvent_OnLoseFocus(e);               break;
 
             // Any generic events are posted as an event to the game so that an application can handle it itself.
             default:
@@ -603,11 +629,19 @@ namespace GTEngine
 
     void Game::HandleEvent_OnKeyPressed(GameEvent &e)
     {
+        this->keyDownMap.Add(e.keypressed.key, true);
+
         this->OnKeyPressed(e.keypressed.key);
     }
 
     void Game::HandleEvent_OnKeyReleased(GameEvent &e)
     {
+        auto iKeyDown = this->keyDownMap.Find(e.keyreleased.key);
+        if (iKeyDown != nullptr)
+        {
+            iKeyDown->value = false;
+        }
+
         this->OnKeyReleased(e.keyreleased.key);
     }
 
@@ -621,6 +655,35 @@ namespace GTEngine
     {
         this->gui->OnKeyUp(e.keyup.key);
         this->OnKeyUp(e.keyup.key);
+    }
+
+    void Game::HandleEvent_OnReceiveFocus(GameEvent &)
+    {
+        this->focused = true;
+
+        this->OnReceiveFocus();
+    }
+
+    void Game::HandleEvent_OnLoseFocus(GameEvent &)
+    {
+        this->focused = false;
+
+        // We need to post key released/up events for any key that is currently down.
+        for (size_t i = 0; i < this->keyDownMap.count; ++i)
+        {
+            auto iKey = this->keyDownMap.buffer[i];
+            assert(iKey != nullptr);
+
+            if (iKey->value)
+            {
+                this->OnKeyReleased(iKey->key);
+                this->OnKeyUp(iKey->key);
+
+                iKey->value = false;
+            }
+        }
+
+        this->OnLoseFocus();
     }
 }
 

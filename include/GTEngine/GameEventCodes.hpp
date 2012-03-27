@@ -22,6 +22,8 @@ namespace GTEngine
         static const EventCode OnMouseButtonDown        = 9;
         static const EventCode OnMouseButtonUp          = 10;
         static const EventCode OnMouseButtonDoubleClick = 11;
+        static const EventCode OnReceiveFocus           = 12;
+        static const EventCode OnLoseFocus              = 13;
 
         static const EventCode Custom                   = 1024;
     };

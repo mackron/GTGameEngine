@@ -476,7 +476,7 @@ namespace GTEngine
         *   \brief  Moves the entity in the direction of its forward vector.
         *   \param  distance [in] The distance to move.
         */
-        void MoveForward(float distance) { this->Translate(glm::vec3(0.0f, 0.0f, distance)); }
+        void MoveForward(float distance) { this->Translate(glm::vec3(0.0f, 0.0f, -distance)); }
 
         /**
         *   \brief  Moves the entity in the direction of its right vector.

@@ -39,14 +39,8 @@ namespace GTEngine
         void OnKeyDown(GTCore::Key key, unsigned int repeatCount);
         void OnKeyUp(GTCore::Key key);
         
-        
-        void OnReceiveFocus()   // OnFocus
-        {
-        }
-        
-        void OnLoseFocus()      // OnBlur
-        {
-        }
+        void OnReceiveFocus();
+        void OnLoseFocus();
 
 
     public:
