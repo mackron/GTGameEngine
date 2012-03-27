@@ -257,14 +257,24 @@ namespace GTEngine
     {
     public:
 
-        DefaultViewportRenderer_RCBeginLighting(DefaultViewportRendererFramebuffer &framebuffer);
+        DefaultViewportRenderer_RCBeginLighting();
+
+        /// Sets the framebuffer.
+        void SetFramebuffer(DefaultViewportRendererFramebuffer &framebuffer)
+        {
+            this->framebuffer = &framebuffer;
+            this->lightingDiffuseInput   = framebuffer.lightingDiffuseInput;
+            this->lightingSpecularInput  = framebuffer.lightingSpecularInput;
+            this->lightingDiffuseOutput  = framebuffer.lightingDiffuseOutput;
+            this->lightingSpecularOutput = framebuffer.lightingSpecularOutput;
+        }
+
         void Execute();
-        void OnExecuted() { delete this; }  // TODO: Delete this. Use a cache later.
 
 
     private:
 
-        DefaultViewportRendererFramebuffer &framebuffer;
+        DefaultViewportRendererFramebuffer* framebuffer;
 
         Texture2D* lightingDiffuseInput;
         Texture2D* lightingDiffuseOutput;
@@ -278,22 +288,34 @@ namespace GTEngine
     {
     public:
 
-        DefaultViewportRenderer_RCBeginLightingPass(DefaultViewportRendererFramebuffer &framebuffer, Shader* shader, const glm::vec2 &screenSize, const glm::vec3 &cameraPosition);
+        DefaultViewportRenderer_RCBeginLightingPass();
+
+        void Init(DefaultViewportRendererFramebuffer &framebuffer, Shader* shader, const glm::vec2 &screenSize, const glm::vec3 &cameraPosition)
+        {
+            this->framebuffer = &framebuffer;
+            this->lightingDiffuseInput  = framebuffer.lightingDiffuseInput;
+            this->lightingSpecularInput = framebuffer.lightingSpecularInput;
+
+            this->shader = shader;
+            
+            this->screenSize     = screenSize;
+            this->cameraPosition = cameraPosition;
+        }
+
         void Execute();
-        void OnExecuted() { delete this; }  // TODO: Delete this. Use a cache later.
 
 
     private:
 
-        DefaultViewportRendererFramebuffer &framebuffer;
+        DefaultViewportRendererFramebuffer* framebuffer;
+
+        Texture2D* lightingDiffuseInput;
+        Texture2D* lightingSpecularInput;
 
         Shader* shader;
 
         glm::vec2 screenSize;
         glm::vec3 cameraPosition;
-
-        Texture2D* lightingDiffuseInput;
-        Texture2D* lightingSpecularInput;
     };
 
     
@@ -334,14 +356,21 @@ namespace GTEngine
     {
     public:
 
-        DefaultViewportRenderer_RCSetLightingBuffers(DefaultViewportRendererFramebuffer &framebuffer);
+        DefaultViewportRenderer_RCSetLightingBuffers();
+
+        void SetFramebuffer(DefaultViewportRendererFramebuffer &framebuffer)
+        {
+            this->framebuffer = &framebuffer;
+            this->lightingDiffuse  = framebuffer.lightingDiffuseOutput;
+            this->lightingSpecular = framebuffer.lightingSpecularOutput;
+        }
+
         void Execute();
-        void OnExecuted();  // TODO: Delete this. Use a cache later.
 
 
     private:
 
-        DefaultViewportRendererFramebuffer &framebuffer;
+        DefaultViewportRendererFramebuffer* framebuffer;
 
         Texture2D* lightingDiffuse;
         Texture2D* lightingSpecular;
@@ -378,12 +407,11 @@ namespace GTEngine
         struct MaterialMetadata
         {
             MaterialMetadata()
-                : materialPassShader(nullptr), simpleUnlitShader(nullptr)
+                : materialPassShader(nullptr)
             {
             }
 
             Shader* materialPassShader;  ///< The shader for the material pass.
-            Shader* simpleUnlitShader;   ///< A temporary shader that will simply render using no lighting, but full bright (not darkness).
         };
 
 
@@ -449,11 +477,13 @@ namespace GTEngine
         /// The cached rendering commands.
         struct
         {
-            DefaultViewportRenderer_RCBegin rcBegin[2];
-            DefaultViewportRenderer_RCEnd   rcEnd[2];
+            DefaultViewportRenderer_RCBegin         rcBegin[2];
+            DefaultViewportRenderer_RCBeginLighting rcBeginLighting[2];
+            DefaultViewportRenderer_RCEnd           rcEnd[2];
 
-            /// The cache's of RCDrawVA's. These are swapped just like the others.
-            RCCache<RCDrawVA> rcDrawVA[2];
+            RCCache<DefaultViewportRenderer_RCBeginLightingPass,  32> rcBeginLightingPass[2];
+            RCCache<DefaultViewportRenderer_RCSetLightingBuffers, 32> rcSetLightingBuffers[2];
+            RCCache<RCDrawVA>                                         rcDrawVA[2];
 
         }RenderCommands;
 

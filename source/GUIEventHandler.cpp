@@ -1,8 +1,8 @@
 
 #include <GTEngine/GUIEventHandler.hpp>
 #include <GTEngine/Game.hpp>
-#include <GTCore/Errors.hpp>
-#include <GTCore/Log.hpp>
+#include <GTEngine/Errors.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -15,19 +15,19 @@ namespace GTEngine
     {
     }
 
-    void GUIEventHandler::OnError(const char *msg)
+    void GUIEventHandler::OnError(const char* msg)
     {
-        GTCore::PostError("%s", msg);
+        GTEngine::PostError("%s", msg);
     }
 
-    void GUIEventHandler::OnWarning(const char *msg)
+    void GUIEventHandler::OnWarning(const char* msg)
     {
-        GTCore::GlobalLog.Write("%s", msg);
+        GTEngine::Log("%s", msg);
     }
 
-    void GUIEventHandler::OnLog(const char *msg)
+    void GUIEventHandler::OnLog(const char* msg)
     {
-        GTCore::GlobalLog.Write("%s", msg);
+        GTEngine::Log("%s", msg);
     }
 
     void GUIEventHandler::OnChangeCursor(GTGUI::Cursor cursor)

@@ -55,35 +55,33 @@ namespace GTEngine
 
 
 
-    DefaultViewportRenderer_RCBeginLighting::DefaultViewportRenderer_RCBeginLighting(DefaultViewportRendererFramebuffer &framebuffer)
-        : framebuffer(framebuffer),
-          lightingDiffuseInput(framebuffer.lightingDiffuseInput),   lightingDiffuseOutput(framebuffer.lightingDiffuseOutput),
-          lightingSpecularInput(framebuffer.lightingSpecularInput), lightingSpecularOutput(framebuffer.lightingSpecularOutput)
+    DefaultViewportRenderer_RCBeginLighting::DefaultViewportRenderer_RCBeginLighting()
+        : framebuffer(nullptr),
+          lightingDiffuseInput(nullptr),  lightingDiffuseOutput(nullptr),
+          lightingSpecularInput(nullptr), lightingSpecularOutput(nullptr)
     {
     }
 
     void DefaultViewportRenderer_RCBeginLighting::Execute()
     {
-        int drawBuffers[] = {0, 1};
+        // NOTE: The draw buffer will have already been set previously by DefaultViewportRenderer_RCBegin.
 
         // The first pass will be the lighting pass. We need to setup the framebuffer for this. The input lighting buffers
         // need to be cleared to 0.0. We also clear the depth/stencil buffer at the same time.
-        this->framebuffer.AttachColourBuffer(this->lightingDiffuseInput,  0);
-        this->framebuffer.AttachColourBuffer(this->lightingSpecularInput, 1);
+        this->framebuffer->AttachColourBuffer(this->lightingDiffuseInput,  0);
+        this->framebuffer->AttachColourBuffer(this->lightingSpecularInput, 1);
 
-        Renderer::SetFramebuffer(&this->framebuffer);
-        Renderer::SetDrawBuffers(2, drawBuffers);
+        Renderer::SetFramebuffer(this->framebuffer);
 
-        // Now we clear everything. We also clear
+        // Clearing to black is important here.
         Renderer::ClearColour(0.0f, 0.0f, 0.0f, 1.0f);
         Renderer::Clear(GTEngine::ColourBuffer);
 
         // With everything clear, we now need to change the colour attachments.
-        this->framebuffer.AttachColourBuffer(this->lightingDiffuseOutput,  0);
-        this->framebuffer.AttachColourBuffer(this->lightingSpecularOutput, 1);
+        this->framebuffer->AttachColourBuffer(this->lightingDiffuseOutput,  0);
+        this->framebuffer->AttachColourBuffer(this->lightingSpecularOutput, 1);
 
-        Renderer::SetFramebuffer(&this->framebuffer);    // <-- This is required, otherwise the framebuffer won't have a chance to sync for the new colour attachments.
-        Renderer::SetDrawBuffers(2, drawBuffers);
+        Renderer::SetFramebuffer(this->framebuffer);    // <-- This is required, otherwise the framebuffer won't have a chance to sync for the new colour attachments.
 
         Renderer::SetDepthFunc(DepthFunc_Equal);
         Renderer::DisableDepthWrites();
@@ -91,9 +89,9 @@ namespace GTEngine
 
 
 
-    DefaultViewportRenderer_RCBeginLightingPass::DefaultViewportRenderer_RCBeginLightingPass(DefaultViewportRendererFramebuffer &framebuffer, Shader* shader, const glm::vec2 &screenSize, const glm::vec3 &cameraPosition)
-        : framebuffer(framebuffer), shader(shader), screenSize(screenSize), cameraPosition(cameraPosition),
-          lightingDiffuseInput(framebuffer.lightingDiffuseInput), lightingSpecularInput(framebuffer.lightingSpecularInput)
+    DefaultViewportRenderer_RCBeginLightingPass::DefaultViewportRenderer_RCBeginLightingPass()
+        : framebuffer(nullptr), lightingDiffuseInput(nullptr), lightingSpecularInput(nullptr),
+          shader(nullptr), screenSize(), cameraPosition()
     {
     }
 
@@ -149,96 +147,9 @@ namespace GTEngine
 
 
 
-    DefaultViewportRenderer_RCDrawMesh::DefaultViewportRenderer_RCDrawMesh(VertexArray* mesh)
-        : mesh(mesh), shader(nullptr), parameters()
-    {
-    }
-
-    DefaultViewportRenderer_RCDrawMesh::~DefaultViewportRenderer_RCDrawMesh()
-    {
-        // The list of properties need to be deleted.
-        for (size_t i = 0; i < this->parameters.count; ++i)
-        {
-            delete this->parameters.buffer[i]->value;
-        }
-    }
-
-    void DefaultViewportRenderer_RCDrawMesh::Execute()
-    {
-        // The first thing to do is activate the shader, if we have one. It's possible that the shader has already been set
-        // by a previous command. If this->shader is null, it means that is the case and we don't want to change it.
-        if (this->shader != nullptr)
-        {
-            Renderer::SetShader(this->shader);
-        }
-
-        // Now properties need to be set on the shader.
-        for (size_t i = 0; i < this->parameters.count; ++i)
-        {
-            auto iParam = this->parameters.buffer[i];
-            assert(iParam->value != nullptr);
-
-            iParam->value->SetOnCurrentShader(iParam->key);
-        }
-
-        // Now we draw the mesh.
-        Renderer::Draw(this->mesh);
-    }
-
-
-    void DefaultViewportRenderer_RCDrawMesh::SetParameter(const char* name, float x)
-    {
-        this->SetParameter(name, new ShaderParameter_Float(x));
-    }
-    void DefaultViewportRenderer_RCDrawMesh::SetParameter(const char* name, float x, float y)
-    {
-        this->SetParameter(name, new ShaderParameter_Float2(x, y));
-    }
-    void DefaultViewportRenderer_RCDrawMesh::SetParameter(const char* name, float x, float y, float z)
-    {
-        this->SetParameter(name, new ShaderParameter_Float3(x, y, z));
-    }
-    void DefaultViewportRenderer_RCDrawMesh::SetParameter(const char* name, float x, float y, float z, float w)
-    {
-        this->SetParameter(name, new ShaderParameter_Float4(x, y, z, w));
-    }
-
-    void DefaultViewportRenderer_RCDrawMesh::SetParameter(const char* name, const glm::mat2 &v)
-    {
-        this->SetParameter(name, new ShaderParameter_Float2x2(v));
-    }
-    void DefaultViewportRenderer_RCDrawMesh::SetParameter(const char* name, const glm::mat3 &v)
-    {
-        this->SetParameter(name, new ShaderParameter_Float3x3(v));
-    }
-    void DefaultViewportRenderer_RCDrawMesh::SetParameter(const char* name, const glm::mat4 &v)
-    {
-        this->SetParameter(name, new ShaderParameter_Float4x4(v));
-    }
-
-    void DefaultViewportRenderer_RCDrawMesh::SetParameter(const char* name, Texture2D* texture)
-    {
-        this->SetParameter(name, new ShaderParameter_Texture2D(texture));
-    }
-
-    void DefaultViewportRenderer_RCDrawMesh::SetParameter(const char* name, ShaderParameter* parameter)
-    {
-        // If a property of the same name already exists, it means it is being overwritten. We need to ensure the old
-        // ShaderParameter object is deleted.
-        auto iProperty = this->parameters.Find(name);
-        if (iProperty != nullptr)
-        {
-            delete iProperty->value;
-        }
-
-        this->parameters.Add(name, parameter);
-    }
-
-
-
     // RCSetLightingBuffers
-    DefaultViewportRenderer_RCSetLightingBuffers::DefaultViewportRenderer_RCSetLightingBuffers(DefaultViewportRendererFramebuffer &framebuffer)
-        : framebuffer(framebuffer), lightingDiffuse(framebuffer.lightingDiffuseOutput), lightingSpecular(framebuffer.lightingSpecularOutput)
+    DefaultViewportRenderer_RCSetLightingBuffers::DefaultViewportRenderer_RCSetLightingBuffers()
+        : framebuffer(nullptr), lightingDiffuse(nullptr), lightingSpecular(nullptr)
     {
     }
 
@@ -246,16 +157,11 @@ namespace GTEngine
     {
         int drawBuffers[] = {0, 1};
 
-        this->framebuffer.AttachColourBuffer(this->lightingDiffuse,  0);
-        this->framebuffer.AttachColourBuffer(this->lightingSpecular, 1);
+        this->framebuffer->AttachColourBuffer(this->lightingDiffuse,  0);
+        this->framebuffer->AttachColourBuffer(this->lightingSpecular, 1);
 
-        Renderer::SetFramebuffer(&this->framebuffer);
+        Renderer::SetFramebuffer(this->framebuffer);
         Renderer::SetDrawBuffers(2, drawBuffers);
-    }
-
-    void DefaultViewportRenderer_RCSetLightingBuffers::OnExecuted()
-    {
-        delete this;
     }
 }
 
@@ -381,6 +287,8 @@ namespace GTEngine
         this->backRCIndex = !this->backRCIndex;
 
         // The new back RC caches need to be reset in preparation for the next frame.
+        this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Reset();
+        this->RenderCommands.rcSetLightingBuffers[this->backRCIndex].Reset();
         this->RenderCommands.rcDrawVA[this->backRCIndex].Reset();
 
         // When a framebuffer is resized, it marks the previous buffers for deletion, but does not delete them straight away. It is
@@ -534,11 +442,11 @@ namespace GTEngine
                                                  const GTCore::Vector<SceneNode*> &directionalLightNodes,
                                                  const GTCore::Vector<SceneNode*> &pointLightNodes)
     {
-        (void)ambientLightNodes;
-        (void)pointLightNodes;
+        auto &rc = this->RenderCommands.rcBeginLighting[this->backRCIndex];
+        rc.SetFramebuffer(this->framebuffer);
 
-        auto rc = new DefaultViewportRenderer_RCBeginLighting(this->framebuffer);
-        Renderer::BackBuffer->Append(*rc);
+        Renderer::BackBuffer->Append(rc);
+
 
         bool doneFirstLightingPass = false;
 
@@ -584,7 +492,10 @@ namespace GTEngine
         assert(lightComponent != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        Renderer::BackBuffer->Append(*new DefaultViewportRenderer_RCBeginLightingPass(this->framebuffer, this->Shaders.lightingA1, this->screenSize, glm::vec3()));  // Cam pos is not used...
+        auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
+        rc.Init(this->framebuffer, this->Shaders.lightingA1, this->screenSize, glm::vec3());
+
+        Renderer::BackBuffer->Append(rc);
 
         for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
         {
@@ -628,7 +539,10 @@ namespace GTEngine
         assert(lightComponent != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        Renderer::BackBuffer->Append(*new DefaultViewportRenderer_RCBeginLightingPass(this->framebuffer, this->Shaders.lightingD1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition()));
+        auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
+        rc.Init(this->framebuffer, this->Shaders.lightingD1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition());
+
+        Renderer::BackBuffer->Append(rc);
 
         for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
         {
@@ -675,7 +589,10 @@ namespace GTEngine
         assert(lightComponent != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        Renderer::BackBuffer->Append(*new DefaultViewportRenderer_RCBeginLightingPass(this->framebuffer, this->Shaders.lightingP1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition()));
+        auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
+        rc.Init(this->framebuffer, this->Shaders.lightingP1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition());
+
+        Renderer::BackBuffer->Append(rc);
 
         for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
         {
@@ -725,7 +642,10 @@ namespace GTEngine
         // With the sub-pass done, we need to swap the input and output lighting buffers.
         this->framebuffer.SwapLightingBuffers();
 
-        auto rcSetLightingBuffers = new DefaultViewportRenderer_RCSetLightingBuffers(this->framebuffer);
-        Renderer::BackBuffer->Append(*rcSetLightingBuffers);
+        //auto rcSetLightingBuffers = new DefaultViewportRenderer_RCSetLightingBuffers();
+        auto &rc = this->RenderCommands.rcSetLightingBuffers[this->backRCIndex].Acquire();
+        rc.SetFramebuffer(this->framebuffer);
+
+        Renderer::BackBuffer->Append(rc);
     }
 }
