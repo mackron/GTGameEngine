@@ -7,18 +7,12 @@
 #include "Framebuffer.hpp"
 #include "Shader.hpp"
 #include "VertexArray.hpp"
+#include "DrawModes.hpp"
+#include "../Math.hpp"
+
 #include <GTCore/Window.hpp>
 #include <GTGUI/Server.hpp>
 
-#if defined(__GNUC__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#endif
-#define GLM_FORCE_ONLY_XYZW
-#include <glm/glm.hpp>
-#if defined(__GNUC__)
-    #pragma GCC diagnostic pop
-#endif
 
 namespace GTEngine
 {

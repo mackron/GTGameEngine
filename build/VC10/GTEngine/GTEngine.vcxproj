@@ -217,12 +217,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\Draw.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetFramebuffer.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetParameter.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetScissor.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetShader.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetViewport.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp" />
@@ -285,12 +279,6 @@
     <ClCompile Include="..\..\..\source\Physics\KinematicMotionState.cpp" />
     <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp" />
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\Draw.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetFramebuffer.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetParameter.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetScissor.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetShader.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetViewport.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommand.cpp" />

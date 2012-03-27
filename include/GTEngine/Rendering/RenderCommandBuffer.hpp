@@ -1,30 +1,12 @@
 
-#ifndef __GTEngine_DrawCallCache_hpp_
-#define __GTEngine_DrawCallCache_hpp_
+#ifndef __GTEngine_RenderCommandBuffer_hpp_
+#define __GTEngine_RenderCommandBuffer_hpp_
 
 #include "RenderCommand.hpp"
-#include "ShaderStages.hpp"
-#include "DrawModes.hpp"
 #include <GTCore/Vector.hpp>
-
-#if defined(__GNUC__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#endif
-#define GLM_FORCE_ONLY_XYZW
-#include <glm/glm.hpp>
-#if defined(__GNUC__)
-    #pragma GCC diagnostic pop
-#endif
 
 namespace GTEngine
 {
-    class Texture2D;
-    class Shader;
-    class Framebuffer;
-    class VertexArray;
-    class Material;
-
     /**
     *   \brief  Class representing a buffer of rendering commands.
     *
@@ -69,26 +51,6 @@ namespace GTEngine
         }
 
 
-    // The methods below are helper functions for caching an engine draw call. These methods will create the appropriate
-    // RenderCommand class and add them with Append().
-    public:
-
-        void SetViewport(int x, int y, unsigned int width, unsigned int height);
-        void SetScissor(int x, int y, unsigned int width, unsigned int height);
-        void Draw(const VertexArray *vertexArray, DrawMode mode = DrawMode_Triangles);
-
-        void SetShader(Shader *shader);
-        void SetShaderParameter(const char *name, Texture2D *value);
-        void SetShaderParameter(const char *name, float value);
-        void SetShaderParameter(const char *name, const glm::vec2 &value);
-        void SetShaderParameter(const char *name, const glm::vec3 &value);
-        void SetShaderParameter(const char *name, const glm::vec4 &value);
-        void SetShaderParameter(const char *name, const glm::mat2 &value);
-        void SetShaderParameter(const char *name, const glm::mat3 &value);
-        void SetShaderParameter(const char *name, const glm::mat4 &value);
-
-        void SetFramebuffer(Framebuffer *framebuffer);
-
     private:
 
         /// The list containing all of the rendering commands.
@@ -98,7 +60,6 @@ namespace GTEngine
     private:    // No copying.
         RenderCommandBuffer(const RenderCommandBuffer &);
         RenderCommandBuffer & operator=(const RenderCommandBuffer &);
-
     };
 }
 

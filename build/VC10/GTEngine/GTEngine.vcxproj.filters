@@ -15,17 +15,11 @@
     <Filter Include="source\Rendering">
       <UniqueIdentifier>{353b9b8e-5f16-4220-bf77-4a085d66393d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Rendering\DrawCalls">
-      <UniqueIdentifier>{f50a079f-a06d-4dc2-92cb-97605cba6921}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\Components">
       <UniqueIdentifier>{68a7bad5-f8a2-4277-9776-4b95cbea9a84}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\Rendering">
       <UniqueIdentifier>{c7d99900-c8d9-4157-8ea3-7a8bad79520a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\Rendering\DrawCalls">
-      <UniqueIdentifier>{7e125a77-c21e-4605-a758-2a65d4baa724}</UniqueIdentifier>
     </Filter>
     <Filter Include="shaders">
       <UniqueIdentifier>{8c79b2e2-bed3-4c3a-bca1-1614ff94e284}</UniqueIdentifier>
@@ -196,24 +190,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexFormat.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\Draw.hpp">
-      <Filter>include\Rendering\DrawCalls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetFramebuffer.hpp">
-      <Filter>include\Rendering\DrawCalls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetParameter.hpp">
-      <Filter>include\Rendering\DrawCalls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetScissor.hpp">
-      <Filter>include\Rendering\DrawCalls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetShader.hpp">
-      <Filter>include\Rendering\DrawCalls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawCalls\SetViewport.hpp">
-      <Filter>include\Rendering\DrawCalls</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Physics\Bullet.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
@@ -323,24 +299,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp">
       <Filter>source\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\Draw.cpp">
-      <Filter>source\Rendering\DrawCalls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetFramebuffer.cpp">
-      <Filter>source\Rendering\DrawCalls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetParameter.cpp">
-      <Filter>source\Rendering\DrawCalls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetScissor.cpp">
-      <Filter>source\Rendering\DrawCalls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetShader.cpp">
-      <Filter>source\Rendering\DrawCalls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\DrawCalls\SetViewport.cpp">
-      <Filter>source\Rendering\DrawCalls</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp">
       <Filter>source\Rendering</Filter>
