@@ -1,12 +1,14 @@
 
 #include <GTEngine/Rendering/Texture2D.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/UserConfig.hpp>
 
 namespace GTEngine
 {
     // Make sure the members are initialised in the correct order here.
     Texture2D::Texture2D()
-        : GTImage::Image(), filter(TextureFilter_Linear), wrapMode(TextureWrapMode_Repeat), framebuffers(), rendererData(nullptr), refCount(1), syncinfo()
+        : GTImage::Image(), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat), framebuffers(), rendererData(nullptr), refCount(1), keepClientSideData(false),
+          syncinfo()
     {
         if (Renderer::HasFlippedTextures())     // <-- Will return true with OpenGL, but not necessarily everything else - thus why we need it.
         {
@@ -15,7 +17,8 @@ namespace GTEngine
     }
 
     Texture2D::Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data)
-        : GTImage::Image(), filter(TextureFilter_Linear), wrapMode(TextureWrapMode_Repeat), framebuffers(), rendererData(nullptr), refCount(1), syncinfo()
+        : GTImage::Image(), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat), framebuffers(), rendererData(nullptr), refCount(1), keepClientSideData(false),
+          syncinfo()
     {
         if (Renderer::HasFlippedTextures())
         {
@@ -26,14 +29,19 @@ namespace GTEngine
     }
 
     Texture2D::Texture2D(const char *filename)
-        : GTImage::Image(filename), filter(TextureFilter_Linear), wrapMode(TextureWrapMode_Repeat), framebuffers(), rendererData(nullptr), refCount(1), syncinfo()
+        : GTImage::Image(filename), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat), framebuffers(), rendererData(nullptr), refCount(1), keepClientSideData(false),
+          syncinfo()
     {
         if (Renderer::HasFlippedTextures())
         {
             this->FlipVertically();
         }
 
-        this->LoadMipmapFromFile(0);
+        // This pulls every mipmap from the image file.
+        this->PullAllMipmaps();
+        this->GenerateMipmaps();
+
+        //this->LoadMipmapFromFile(0);
     }
 
     Texture2D::~Texture2D()
@@ -55,6 +63,24 @@ namespace GTEngine
         this->syncinfo.filterChanged = true;
     }
 
+    TextureFilter Texture2D::GetFilter() const
+    {
+        return this->filter;
+    }
+
+    void Texture2D::SetAnisotropy(unsigned int newAnisotropy)
+    {
+        this->anisotropy = newAnisotropy;
+        
+        // The texture is out of sync.
+        this->syncinfo.filterChanged = true;
+    }
+
+    unsigned int Texture2D::GetAnisotropy() const
+    {
+        return this->anisotropy;
+    }
+
     void Texture2D::SetWrapMode(TextureWrapMode wrapMode)
     {
         this->wrapMode = wrapMode;
@@ -73,9 +99,14 @@ namespace GTEngine
         this->syncinfo.dataChanged = true;
     }
 
-    void Texture2D::OnMipmapChanged(unsigned int)
+    void Texture2D::OnMipmapChanged(unsigned int mipmapIndex)
     {
         this->syncinfo.dataChanged = true;
+
+        if (!this->syncinfo.changedMipmaps.Exists(mipmapIndex))
+        {
+            this->syncinfo.changedMipmaps.PushBack(mipmapIndex);
+        }
     }
 
 

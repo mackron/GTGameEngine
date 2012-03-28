@@ -63,6 +63,11 @@ namespace GTEngine
         case TextureFilter_Nearest: return GL_NEAREST;
         case TextureFilter_Linear:  return GL_LINEAR;
 
+        case TextureFilter_NearestNearest: return GL_NEAREST_MIPMAP_NEAREST;
+        case TextureFilter_NearestLinear:  return GL_NEAREST_MIPMAP_LINEAR;
+        case TextureFilter_LinearNearest:  return GL_LINEAR_MIPMAP_NEAREST;
+        case TextureFilter_LinearLinear:   return GL_LINEAR_MIPMAP_LINEAR;
+
         default: break;
         }
 
@@ -775,10 +780,23 @@ namespace GTEngine
             // If anything is out of sync, it needs to be re-synced.
             if (texture->syncinfo.filterChanged)
             {
-                GLint filter = ToOpenGLTextureFilter(texture->GetFilter());
+                // The minification filter is different depending on whether or not we are using mipmapping.
+                size_t baseMipLevel, maxMipLevel;
+                texture->GetValidMipmapRange(baseMipLevel, maxMipLevel);
 
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+                if (maxMipLevel > baseMipLevel)
+                {
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->GetFilter() == TextureFilter_Linear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST);
+                }
+                else
+                {
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->GetFilter() == TextureFilter_Linear ? GL_LINEAR : GL_NEAREST);
+                }
+                
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->GetFilter() == TextureFilter_Linear ? GL_LINEAR : GL_NEAREST);
+
+                // Anisotropy is considered part of the filter.
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texture->GetAnisotropy());
 
                 texture->syncinfo.filterChanged = false;
             }
@@ -795,13 +813,30 @@ namespace GTEngine
 
             if (texture->syncinfo.dataChanged && texture->GetMipmapCount() > 0)
             {
-                GTImage::Mipmap &base = texture->GetMipmap(0);
+                size_t baseMipLevel, maxMipLevel;
+                texture->GetValidMipmapRange(baseMipLevel, maxMipLevel);
+
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, static_cast<GLint>(baseMipLevel));
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL,  static_cast<GLint>(maxMipLevel));
 
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-                glTexImage2D(GL_TEXTURE_2D, 0, ToOpenGLInternalFormat(base.format), (GLsizei)base.width, (GLsizei)base.height, 0, ToOpenGLFormat(base.format), ToOpenGLType(base.format), base.data);
+
+                // Now we need to loop over each mip level and update the data if required.
+                for (size_t i = baseMipLevel; i <= maxMipLevel; ++i)
+                {
+                    if (texture->syncinfo.changedMipmaps.Exists(i))
+                    {
+                        auto &mipmap = texture->GetMipmap(i);
+                        glTexImage2D(GL_TEXTURE_2D, i, ToOpenGLInternalFormat(mipmap.format), static_cast<GLsizei>(mipmap.width), static_cast<GLsizei>(mipmap.height), 0, ToOpenGLFormat(mipmap.format), ToOpenGLType(mipmap.format), mipmap.data);
+
+                        mipmap.DeleteLocalData();
+                    }
+                }
+
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
                 texture->syncinfo.dataChanged = false;
+                texture->syncinfo.changedMipmaps.Clear();
             }
 
             return true;

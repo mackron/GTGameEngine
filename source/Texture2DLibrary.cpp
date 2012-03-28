@@ -1,5 +1,6 @@
 
 #include <GTEngine/Texture2DLibrary.hpp>
+#include <GTEngine/UserConfig.hpp>
 #include <GTCore/Dictionary.hpp>
 
 // *** Globals ***
@@ -36,6 +37,7 @@ namespace GTEngine
         if (iTexture == nullptr)
         {
             auto newTexture = new Texture2D(fileName);
+                newTexture->SetAnisotropy(UserConfig::GetInteger("Display.Textures.Anisotropy"));
                 LoadedTextures.Add(fileName, newTexture);
             return newTexture;
         }

@@ -37,8 +37,6 @@ namespace GTEngine
 
         // And now we map the texture to the font.
         FontTextureMap.Add(&font, fontTexture);
-
-        // TODO: Unload the font's copy of the image data.
     }
 
     void FontManager::OnDeleteFont(GTType::FontServer &, GTType::Font &font)

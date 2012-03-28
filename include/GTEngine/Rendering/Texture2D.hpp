@@ -14,6 +14,11 @@ namespace GTEngine
         TextureFilter_Nearest = 1,
         TextureFilter_Linear,
 
+        TextureFilter_NearestNearest,
+        TextureFilter_NearestLinear,
+        TextureFilter_LinearNearest,
+        TextureFilter_LinearLinear,
+
         TextureFilter_Point = TextureFilter_Nearest
     };
 
@@ -63,7 +68,16 @@ namespace GTEngine
         /**
         *   \brief  Retrieves the filter.
         */
-        TextureFilter GetFilter() const { return this->filter; }
+        TextureFilter GetFilter() const;
+
+
+        /// Sets the level of anisotropic filtering to use with this texture.
+        /// @param newAnisotropy [in] The new level of anisotropic filtering to use. This is clamped against the renderers maxiumum.
+        void SetAnisotropy(unsigned int newAnisotropy);
+
+        /// Retrieves the level of anisotropic filtering being used with this texture.
+        unsigned int GetAnisotropy() const;
+
 
         /**
         *   \brief  Sets the wrapping mode (repeat, clamp, etc).
@@ -94,6 +108,14 @@ namespace GTEngine
         void SetRendererData(void *rendererData) { this->rendererData = rendererData; }
 
 
+        /// Sets whether or not client-side image data should be kept after syncing with the renderer.
+        void KeepClientSideData(bool keepClientSideData) { this->keepClientSideData = keepClientSideData; }
+
+        /// Determines whether or not client-side data should be kept after syncing with the renderer.
+        bool KeepClientSideData() const { return this->keepClientSideData; }
+
+
+
     private:    // GTImage Image events.
 
         void OnMipmapCreated(unsigned int mipmapIndex);
@@ -119,6 +141,9 @@ namespace GTEngine
         /// The filtering mode.
         TextureFilter filter;
 
+        /// The level of aniostropic filtering to use with the image. Defaults to 1.
+        unsigned int anisotropy;
+
         /// The wrapping mode.
         TextureWrapMode wrapMode;
 
@@ -132,6 +157,9 @@ namespace GTEngine
         /// We store a reference count which will be used by the Texture2DLibrary. Initializes to 1.
         int refCount;
 
+        /// Keeps track of whether or not the client-side texture data should be kept after it has been synced with the renderer. Defaults to false.
+        bool keepClientSideData;
+
 
     public:
 
@@ -143,13 +171,15 @@ namespace GTEngine
         struct _syncinfo
         {
             _syncinfo()
-                : filterChanged(true), wrapModeChanged(true), dataChanged(true)
+                : filterChanged(true), wrapModeChanged(true), dataChanged(true), changedMipmaps()
             {
             }
 
             bool filterChanged;     //< Whether or not a texture filter has changed.
             bool wrapModeChanged;   //< Whether or not the wrapping mode has changed.
             bool dataChanged;       //< Whether or not the texture data has been updated.
+
+            GTCore::Vector<unsigned int> changedMipmaps;
 
         private:    // No copying.
             _syncinfo(const _syncinfo &);

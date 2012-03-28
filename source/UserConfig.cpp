@@ -23,6 +23,11 @@ namespace GTEngine
             "    Width  = 1280;\n"
             "    Height = 720;\n"
             "    FOV    = 90;\n"
+            "    \n"
+            "    Textures =\n"
+            "    {\n"
+            "        Anisotropy = 4;\n"
+            "    }\n"
             "};\n";
 
         if (UserConfig::Load(serverDefaultConfig))
