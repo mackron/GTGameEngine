@@ -445,6 +445,8 @@ namespace GTEngine
         void DoLightingPass_D1(SceneNode* lightNode, const GTCore::Vector<SceneNode*> &modelNodes);
         void DoLightingPass_A1(SceneNode* lightNode, const GTCore::Vector<SceneNode*> &modelNodes);
         void DoLightingPass_P1(SceneNode* lightNode, const GTCore::Vector<SceneNode*> &modelNodes);
+        void DoLightingPass_A1D1(SceneNode* A0, SceneNode* D0, const GTCore::Vector<SceneNode*> &modelNodes);
+        void DoLightingPass_A1P1(SceneNode* A0, SceneNode* P0, const GTCore::Vector<SceneNode*> &modelNodes);
 
 
         /// Swaps the lighting buffers in preperation for future lighting sub-passes.
@@ -466,6 +468,7 @@ namespace GTEngine
             Shader* lightingA1;
             Shader* lightingP1;
             Shader* lightingA1D1;
+            Shader* lightingA1P1;
 
             Shader* combiner;
 

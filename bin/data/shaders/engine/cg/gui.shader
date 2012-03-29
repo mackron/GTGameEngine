@@ -118,7 +118,6 @@
     {
         FragmentOutput OUT;
 
-        //OUT.Color = tex2D(Texture, IN.TexCoord) * float4(Color, 1.0);
         OUT.Color = float4(Color, tex2D(Texture, IN.TexCoord).a);
 
         return OUT;

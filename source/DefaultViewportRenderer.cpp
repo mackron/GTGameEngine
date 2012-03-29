@@ -177,10 +177,12 @@ namespace GTEngine
         RenderCommands.rcBegin[0].framebuffer = &this->framebuffer;
         RenderCommands.rcBegin[1].framebuffer = &this->framebuffer;
 
-        Shaders.lightingD1 = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_D1");
-        Shaders.lightingA1 = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_A1");
-        Shaders.lightingP1 = ShaderLibrary::Acquire("Engine_DefaultVS", "Engine_LightingPass_P1");
-        Shaders.combiner   = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_LightingMaterialCombiner");
+        Shaders.lightingD1   = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_D1");
+        Shaders.lightingA1   = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_A1");
+        Shaders.lightingP1   = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_P1");
+        Shaders.lightingA1D1 = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_A1D1");
+        Shaders.lightingA1P1 = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_A1P1");
+        Shaders.combiner     = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_LightingMaterialCombiner");
 
         RenderCommands.rcEnd[0].combinerShader = Shaders.combiner;
         RenderCommands.rcEnd[1].combinerShader = Shaders.combiner;
@@ -191,6 +193,7 @@ namespace GTEngine
         ShaderLibrary::Unacquire(Shaders.lightingD1);
         ShaderLibrary::Unacquire(Shaders.lightingA1);
         ShaderLibrary::Unacquire(Shaders.lightingP1);
+        ShaderLibrary::Unacquire(Shaders.lightingA1D1);
         ShaderLibrary::Unacquire(Shaders.combiner);
 
         /// The material shaders need to be deleted.
@@ -450,7 +453,31 @@ namespace GTEngine
 
         bool doneFirstLightingPass = false;
 
-        for (size_t iALight = 0; iALight < ambientLightNodes.count; ++iALight)
+        size_t iALight = 0;
+        size_t iDLight = 0;
+        size_t iPLight = 0;
+
+        // A1D1 passes.
+        while (ambientLightNodes.count     - iALight >= 1 &&
+               directionalLightNodes.count - iDLight >= 1)
+        {
+            this->DoLightingPass_A1D1(ambientLightNodes[iALight], directionalLightNodes[iDLight], modelNodes);
+            ++iALight;
+            ++iDLight;
+        }
+
+        // A1P1 passes.
+        while (ambientLightNodes.count - iALight >= 1 &&
+               pointLightNodes.count   - iPLight >= 1)
+        {
+            this->DoLightingPass_A1P1(ambientLightNodes[iALight], pointLightNodes[iPLight], modelNodes);
+            ++iALight;
+            ++iPLight;
+        }
+
+
+        // Now we just cycle through any remaining lights. Hopefully there won't be too many of these...
+        for ( ; iALight < ambientLightNodes.count; ++iALight)
         {
             if (doneFirstLightingPass)
             {
@@ -461,7 +488,7 @@ namespace GTEngine
             doneFirstLightingPass = true;
         }
         
-        for (size_t iDLight = 0; iDLight < directionalLightNodes.count; ++iDLight)
+        for ( ; iDLight < directionalLightNodes.count; ++iDLight)
         {
             if (doneFirstLightingPass)
             {
@@ -472,7 +499,7 @@ namespace GTEngine
             doneFirstLightingPass = true;
         }
 
-        for (size_t iPLight = 0; iPLight < pointLightNodes.count; ++iPLight)
+        for ( ; iPLight < pointLightNodes.count; ++iPLight)
         {
             if (doneFirstLightingPass)
             {
@@ -624,6 +651,124 @@ namespace GTEngine
                     rc.SetParameter("PLights[0].LinearAttenuation",    lightComponent->GetLinearAttenuation());
                     rc.SetParameter("PLights[0].QuadraticAttenuation", lightComponent->GetQuadraticAttenuation());
                     
+                    rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
+                    rc.SetParameter("MVPMatrix",       MVPMatrix);
+                    rc.SetParameter("NormalMatrix",    NormalMatrix);
+
+                    Renderer::BackBuffer->Append(rc);
+                }
+            }
+        }
+    }
+
+
+    void DefaultViewportRenderer::DoLightingPass_A1D1(SceneNode* A0, SceneNode* D0, const GTCore::Vector<SceneNode*> &modelNodes)
+    {
+        assert(A0 != nullptr);
+        assert(D0 != nullptr);
+
+        auto ambientLightComponent     = A0->GetComponent<AmbientLightComponent>();
+        auto directionalLightComponent = D0->GetComponent<DirectionalLightComponent>();
+
+        assert(ambientLightComponent     != nullptr);
+        assert(directionalLightComponent != nullptr);
+
+
+        // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
+        auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
+        rc.Init(this->framebuffer, this->Shaders.lightingA1D1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition());
+
+        Renderer::BackBuffer->Append(rc);
+
+        for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
+        {
+            auto modelNode = modelNodes[iNode];
+            assert(modelNode != nullptr);
+            
+            auto modelComponent = modelNode->GetComponent<ModelComponent>();
+            assert(modelComponent != nullptr);
+
+            auto model = modelComponent->GetModel();
+            if (model != nullptr)
+            {
+                glm::mat4 ModelViewMatrix = this->view * modelNode->GetWorldTransformMatrix();
+                glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
+                glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
+
+                for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
+                {
+                    auto mesh = model->meshes[iMesh];
+                    assert(mesh != nullptr);
+
+                    // We need to grab a render command from the cache...
+                    auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                    rc.SetVertexArray(mesh->va);
+
+                    rc.SetParameter("ALights[0].Colour",    ambientLightComponent->GetColour());
+
+                    rc.SetParameter("DLights[0].Colour",    directionalLightComponent->GetColour());
+                    rc.SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * D0->GetForwardVector()));
+
+                    rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
+                    rc.SetParameter("MVPMatrix",       MVPMatrix);
+                    rc.SetParameter("NormalMatrix",    NormalMatrix);
+
+                    Renderer::BackBuffer->Append(rc);
+                }
+            }
+        }
+    }
+
+    void DefaultViewportRenderer::DoLightingPass_A1P1(SceneNode* A0, SceneNode* P0, const GTCore::Vector<SceneNode*> &modelNodes)
+    {
+        assert(A0 != nullptr);
+        assert(P0 != nullptr);
+
+        auto ambientLightComponent = A0->GetComponent<AmbientLightComponent>();
+        auto pointLightComponent   = P0->GetComponent<PointLightComponent>();
+
+        assert(ambientLightComponent != nullptr);
+        assert(pointLightComponent   != nullptr);
+
+
+        // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
+        auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
+        rc.Init(this->framebuffer, this->Shaders.lightingA1P1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition());
+
+        Renderer::BackBuffer->Append(rc);
+
+        for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
+        {
+            auto modelNode = modelNodes[iNode];
+            assert(modelNode != nullptr);
+            
+            auto modelComponent = modelNode->GetComponent<ModelComponent>();
+            assert(modelComponent != nullptr);
+
+            auto model = modelComponent->GetModel();
+            if (model != nullptr)
+            {
+                glm::mat4 ModelViewMatrix = this->view * modelNode->GetWorldTransformMatrix();
+                glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
+                glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
+
+                for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
+                {
+                    auto mesh = model->meshes[iMesh];
+                    assert(mesh != nullptr);
+
+                    // We need to grab a render command from the cache...
+                    auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                    rc.SetVertexArray(mesh->va);
+
+                    rc.SetParameter("ALights[0].Colour",    ambientLightComponent->GetColour());
+
+                    rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(P0->GetWorldPosition(), 1.0f)));
+                    rc.SetParameter("PLights[0].Colour",               pointLightComponent->GetColour());
+                    rc.SetParameter("PLights[0].ConstantAttenuation",  pointLightComponent->GetConstantAttenuation());
+                    rc.SetParameter("PLights[0].LinearAttenuation",    pointLightComponent->GetLinearAttenuation());
+                    rc.SetParameter("PLights[0].QuadraticAttenuation", pointLightComponent->GetQuadraticAttenuation());
+
                     rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
                     rc.SetParameter("MVPMatrix",       MVPMatrix);
                     rc.SetParameter("NormalMatrix",    NormalMatrix);
