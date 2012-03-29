@@ -77,38 +77,3 @@
         OUT.Position = mul(ModelViewMatrix, float4(IN.Position, 1.0));
 	}
 </shader>
-
-<shader id="Engine_DefaultFS">
-    struct FragmentInput
-	{
-		float2 TexCoord : TEXCOORD0;
-		float3 Normal   : TEXCOORD1;
-	};
-		
-	struct FragmentOutput
-	{
-		float4 Color0 : COLOR0;
-	};
-    
-    FragmentInput  IN;
-    FragmentOutput OUT;
-    
-
-	uniform float3    LightDirection;
-	uniform float3    LightColour;
-	uniform float3    AmbientColour;
-    
-    
-	void main()
-	{
-        float4 materialDiffuse  = Diffuse();
-        float4 materialEmissive = Emissive();
-    
-		float NdotL = max(0.0, dot(IN.Normal, -LightDirection));
-			
-		float4 diffuse = float4(LightColour, 1.0) * NdotL;
-		float4 ambient = float4(AmbientColour, 1.0);
-		
-		OUT.Color0 = (materialDiffuse * (diffuse + ambient)) + materialEmissive;
-	}
-</shader>

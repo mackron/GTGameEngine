@@ -28,7 +28,6 @@ uses 1 or each light, it will use the following: A1D1P1.
         float4 Position       : TEXCOORD2;
         float4 WindowPosition : WPOS;
 	};
-    
     in FragmentInput IN;
 </shader>
 
@@ -59,6 +58,19 @@ uses 1 or each light, it will use the following: A1D1P1.
         float3 Colour;
         float3 Direction;
     };
+    
+    void CalculateDirectionalLighting(DirectionalLight light, vec3 cameraPos, out float3 diffuseOut, out float3 specularOut)
+    {
+        float3 N     = normalize(IN.Normal);
+        float3 L     = -light.Direction;
+        float3 V     = normalize(cameraPos - IN.Position.xyz);
+        float3 H     = normalize(L + V);
+        float  NdotL = max(0.0, dot(N, L));
+        float  NdotH = max(0.0, pow(max(dot(N, H), 0), 64.0));
+            
+        diffuseOut  = light.Colour * NdotL;
+        specularOut = light.Colour * NdotH;
+    }
 </shader>
 
 <shader id="Engine_PointLight">
@@ -70,6 +82,39 @@ uses 1 or each light, it will use the following: A1D1P1.
         float  LinearAttenuation;
         float  QuadraticAttenuation;
     };
+    
+    float CalculatePointLightAttenuation(PointLight light, float d)     // d = distance
+    {
+        float c = light.ConstantAttenuation;
+        float l = light.LinearAttenuation;
+        float q = light.QuadraticAttenuation;
+            
+        return 1.0 / (c + (l * d) + (q * d * d));
+    }
+    
+    void CalculatePointLighting(PointLight light, vec3 cameraPos, out float4 diffuseOut, out float4 specularOut)
+    {
+        // N - Input normal
+        // L - Light vector from the light to the vertex
+        // D - Distance between the light and the vertex
+        
+        float3 N     = normalize(IN.Normal);
+        float3 L     = light.Position - IN.Position.xyz;
+        float  D     = length(L);
+        float3 V     = normalize(cameraPos - IN.Position.xyz);
+        float3 H     = normalize(L + V);
+        float  NdotL = max(0.0, dot(N, normalize(L)));
+        float  NdotH = max(0.0, pow(max(dot(N, H), 0), 64.0));         // Last argument is shininess. Larger values means smaller, more focused specular highlight.
+            
+        float attenuation = CalculatePointLightAttenuation(light, D);
+            
+        diffuseOut  = float4(light.Colour, 1.0) * NdotL * attenuation;
+        specularOut = float4(light.Colour, 1.0) * NdotH * attenuation;
+    }
+</shader>
+
+<shader id="Engine_Attenuation">
+    
 </shader>
 
 
@@ -107,26 +152,13 @@ uses 1 or each light, it will use the following: A1D1P1.
         uniform DirectionalLight DLights[1];
         uniform float3 CameraPosition;
         
-        void CalculateDirectionalLighting(DirectionalLight light, out float3 diffuseOut, out float3 specularOut)
-        {
-            float3 N     = normalize(IN.Normal);
-            float3 L     = -light.Direction;
-            float3 V     = normalize(CameraPosition - IN.Position.xyz);
-            float3 H     = normalize(L + V);
-            float  NdotL = max(0.0, dot(N, L));
-            float  NdotH = max(0.0, pow(max(dot(N, H), 0), 64.0));
-            
-            diffuseOut  = light.Colour * NdotL;
-            specularOut = light.Colour * NdotH;
-        }
-        
 	    void main(out FragmentOutput OUT)
 	    {
             float2 fragCoord = IN.WindowPosition.xy / ScreenSize;
             
             float3 diffuse  = float3(0.0, 0.0, 0.0);
             float3 specular = float3(0.0, 0.0, 0.0);
-            CalculateDirectionalLighting(DLights[0], diffuse, specular);
+            CalculateDirectionalLighting(DLights[0], cameraPos, diffuse, specular);
 
 
 		    OUT.Color0.rgb = tex2D(Lighting_Diffuse, fragCoord).rgb + diffuse;
@@ -139,64 +171,14 @@ uses 1 or each light, it will use the following: A1D1P1.
 </shader>
 
 <shader id="Engine_LightingPass_P1">
-    <!-- <include url="#Engine_FragmentInput" /> -->
+    <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
-    <include url="#Engine_PointLightFS" />
+    <include url="#Engine_PointLight" />
     
     <include>
-        struct FragmentInput
-	    {
-		    float2 TexCoord       : TEXCOORD0;
-		    float3 Normal         : TEXCOORD1;
-            float4 Position       : TEXCOORD2;
-            
-            float4 LightPos0      : TEXCOORD3;
-            
-            float4 WindowPosition : WPOS;
-	    };
-        in FragmentInput IN;
-        
-        struct PointLightFS
-        {
-            float3 Colour;
-            float3 Position;
-            float  ConstantAttenuation;
-            float  LinearAttenuation;
-            float  QuadraticAttenuation;
-        };
-        uniform PointLightFS PLights[1];
-        
-        uniform float3 CameraPosition;
-        
-        float CalculateLightAttenuation(PointLightFS light, float d)     // d = distance
-        {
-            float c = light.ConstantAttenuation;
-            float l = light.LinearAttenuation;
-            float q = light.QuadraticAttenuation;
-            
-            return 1.0 / (c + (l * d) + (q * d * d));
-        }
-        
-        void CalculateLighting(PointLightFS light, out float4 diffuseOut, out float4 specularOut)
-        {
-            // N - Input normal
-            // L - Light vector from the light to the vertex
-            // D - Distance between the light and the vertex
-        
-            float3 N     = normalize(IN.Normal);
-            float3 L     = light.Position - IN.Position.xyz;
-            float  D     = length(L);
-            float3 V     = normalize(CameraPosition - IN.Position.xyz);
-            float3 H     = normalize(L + V);
-            float  NdotL = max(0.0, dot(N, normalize(L)));
-            float  NdotH = max(0.0, pow(max(dot(N, H), 0), 64.0));         // Last argument is shininess. Larger values means smaller, more focused specular highlight.
-            
-            float attenuation = CalculateLightAttenuation(light, D);
-            
-            diffuseOut  = float4(light.Colour, 1.0) * NdotL * attenuation;
-            specularOut = float4(light.Colour, 1.0) * NdotH * attenuation;
-        }
+        uniform PointLight PLights[1];
+        uniform float3     CameraPosition;
         
 	    void main(out FragmentOutput OUT)
 	    {
@@ -204,7 +186,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             
             float4 diffuse  = float4(0.0, 0.0, 0.0, 0.0);
             float4 specular = float4(0.0, 0.0, 0.0, 0.0);
-            CalculateLighting(PLights[0], diffuse, specular);
+            CalculatePointLighting(PLights[0], CameraPosition, diffuse, specular);
             
 		    OUT.Color0   = tex2D(Lighting_Diffuse, fragCoord) + diffuse;
             OUT.Color0.a = 1.0f;
