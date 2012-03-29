@@ -42,6 +42,12 @@
     <Filter Include="source\Rendering\RenderCommands">
       <UniqueIdentifier>{1a05c513-045a-4cf3-88ab-5c1d4e113fa1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Editor">
+      <UniqueIdentifier>{2c1f8a87-c70b-43e6-8d32-b8a0bb1188a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Editor">
+      <UniqueIdentifier>{6d25c8ec-ce35-4291-92db-dca2ad72eb2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\shaders\engine\cg\core.shader">
@@ -262,6 +268,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -419,6 +428,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp">
       <Filter>source\Rendering\RenderCommands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

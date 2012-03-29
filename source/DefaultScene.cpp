@@ -181,7 +181,10 @@ namespace GTEngine
         this->DoPreUpdateClean();
 
         // Before doing anything we're going to step the dynamics.
-        this->dynamicsWorld.stepSimulation(static_cast<btScalar>(deltaTimeInSeconds));
+        if (!this->IsPaused())
+        {
+            this->dynamicsWorld.stepSimulation(static_cast<btScalar>(deltaTimeInSeconds));
+        }
 
 
         // TODO: Look into using Bullet for frustum and occlusion culling. For now we'll do a horribly unoptimized implementation.

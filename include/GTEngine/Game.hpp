@@ -6,7 +6,9 @@
 #include "GameWindowEventHandler.hpp"
 #include "Scene.hpp"
 #include "UserConfig.hpp"
+#include "Editor.hpp"
 #include "Rendering/Renderer.hpp"
+#include "Rendering/RenderCommands/RCSetFramebuffer.hpp"
 #include <GTCore/Threading.hpp>
 #include <GTCore/Timing.hpp>
 #include <GTType/FontServer.hpp>
@@ -172,6 +174,16 @@ namespace GTEngine
         *   \brief  Determines whether or not the game is paused.
         */
         bool IsPaused() const { return this->paused; }
+
+
+        /// Opens the editor.
+        void OpenEditor();
+
+        /// Closes the editor.
+        void CloseEditor();
+
+        /// Determines whether or not the editor is open.
+        bool IsEditorOpen() const;
 
 
     // Operators.
@@ -440,6 +452,14 @@ namespace GTEngine
 
         /// A map of key states. This is modified as keys are pushed and released.
         GTCore::Map<char32_t, bool> keyDownMap;
+
+
+        /// A render command for switching to the main framebuffer.
+        RCSetFramebuffer rcSwitchToMainFB;
+
+
+        /// Class representing the editor.
+        Editor editor;
 
 
         bool mouseCaptured;

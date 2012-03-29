@@ -1,0 +1,452 @@
+<!--
+The editor is made up of 5 sections: Top, bottom, center, left and right. The center section is the main viewport.
+-->
+
+<include url="menubar.xml" />
+
+<script>
+<![CDATA[
+    
+
+
+    -- When the main editor window is resized, we need to size the main viewport area.
+    EditorMain:OnSize(function(data)
+        EditorCenterPanel:SetHeight(EditorMain:GetInnerHeight() - (EditorTopPanel:GetHeight() + EditorBottomPanel:GetHeight()));
+    end)
+    
+    EditorCenterPanel:OnSize(function(data)
+        EditorViewportPanel:SetWidth(EditorCenterPanel:GetInnerWidth()  - (EditorLeftPanel:GetWidth() + EditorRightPanel:GetWidth()));
+ 
+        -- The game needs to know that the viewport has changed size
+        --Game.OnEditorViewportSize(viewportWidth, viewportHeight);
+    end)
+    
+    EditorViewportPanel:OnMMBDown(function(data)
+        if data.receiver == EditorViewportPanel then
+            HideActiveMenu();
+            
+            Game.Editor.OnViewportMMBDown();
+        end
+    end)
+    
+    EditorViewportPanel:OnMMBUp(function(data)
+        if data.receiver == EditorViewportPanel then
+            --print("blah...");
+            Game.Editor.OnViewportMMBUp();
+        end
+    end)
+    
+    
+    InitMenu(Menu_File, MenuButton_File);
+    InitMenu(Menu_Edit, MenuButton_Edit);
+    InitMenu(Menu_View, MenuButton_View);
+    
+    
+    Menu_File_New:OnPressed(function()
+        HideActiveMenu();
+        ShowNewSceneDialog();
+    end)
+    
+    Menu_File_Open:OnPressed(function()
+        HideActiveMenu();
+        ShowOpenSceneDialog();
+    end)
+    
+    Menu_File_Exit:OnPressed(function()
+        Game.Close();
+    end)
+    
+    
+    OpenSceneDialog_FileList:ListBox();
+]]>
+</script>
+
+<script url="scripts/dialogs.lua" />
+<script url="scripts/listbox.lua" />
+
+<style>
+    var sidePanelSize:        28px
+    var menuBackgroundColour: #333
+    var menuBorder:           1px #666
+    
+    *
+    {
+        font-family: dejavu sans
+        font-size:   9pt
+        font-color:  #ddd
+    }
+    
+    editbox
+    {
+        background-color: #fff
+        border:           1px #666
+        padding:          2px 0px
+        height:           20px
+        width:            192px
+        
+        editable-text:    true
+        cursor:           beam
+        vertical-align:   center
+    }
+    
+    button
+    {
+        background-color: #333
+        border:           1px #ddd
+        width:            auto
+        height:           auto
+        padding:          4px
+        horizontal-align: center
+        vertical-align:   center
+        font-style:       bold
+    }
+    
+    button:hovered
+    {
+        background-color: #555
+    }
+    
+    button:pushed
+    {
+        background-color: #777
+    }
+    
+    listbox
+    {
+        height:           auto;
+        background-color: #fff;
+        border:           1px #666;
+        child-plane:      vertical;
+    }
+    
+    listbox-item
+    {
+        width:            100%
+        height:           20px
+        background-color: #fff
+        vertical-align:   center
+        padding:          4px 0px
+    }
+    
+    listbox-item:hovered
+    {
+        background-color: #f4f4ff
+    }
+    
+    listbox-item-selected
+    {
+        background-color: #eef
+    }
+    
+    listbox-item-selected:hovered
+    {
+        background-color: #eef
+    }
+    
+    
+    
+    #EditorMain
+    {
+        width:   100%
+        height:  100%
+        
+        background-color: #333
+    }
+    
+    #EditorTopPanel
+    {
+        width:          100%
+        height:         20px
+        child-plane:    horizontal
+        vertical-align: center
+        padding-left:   28px
+    }
+    
+    #EditorBottomPanel
+    {
+        width:       100%
+        height:      sidePanelSize
+        child-plane: horizontal
+    }
+    
+    #EditorCenterPanel
+    {
+        height:      0px
+        width:       100%
+        child-plane: horizontal
+    }
+    
+    #EditorLeftPanel
+    {
+        width:  sidePanelSize
+        height: 100%
+    }
+    
+    #EditorRightPanel
+    {
+        width:  sidePanelSize
+        height: 100%
+    }
+    
+    
+    #EditorViewportPanel
+    {
+        height: 100%;
+    
+        border: 1px #222
+    }
+    
+    
+    
+
+    menu-button
+    {
+        width:          auto
+        height:         100%
+        font-family:    liberation sans
+        font-size:      9pt
+        font-color:     #888
+        
+        padding:        8px 0px
+        vertical-align: center
+    }
+    
+    menu-button:hovered
+    {
+        background-color: #333
+        border:           1px #888
+        border-top:       none
+        border-bottom:    none
+    
+        padding: 7px 0px
+    }
+    
+    
+    menu
+    {
+        visible:     false
+        
+        child-plane: vertical
+        width:       auto
+        height:      100%
+    }
+    
+    menu-title
+    {
+        width:       auto
+        height:      100%
+        font-family: liberation sans
+        font-size:   9pt
+        font-color:  #aaa
+        
+        background-color: menuBackgroundColour
+        
+        border:           menuBorder
+        border-top:       none
+        border-bottom:    none
+        
+        padding:          7px 0px
+        vertical-align:   center
+    }
+    
+    menu-body
+    {
+        positioning: relative
+        //z-index:     1
+        
+        top: 20px;
+        width:192px
+        height:auto
+        
+        background-color: menuBackgroundColour
+        border:           menuBorder
+        
+        padding: 0px 4px
+    }
+    
+    menu-body-button
+    {
+        width:          100%
+        height:         20px
+        vertical-align: center
+        
+        font-family:    liberation sans
+        font-size:      9pt
+        font-color:     #aaa
+        
+        padding:        8px 0px
+    }
+    
+    menu-body-button:hovered
+    {
+        background-color: #555
+        border:           1px #666
+        border-left:      none
+        border-right:     none
+        
+        font-color:     #bbb
+    }
+    
+    menu-body-button:pushed
+    {
+        background-color: #777
+        border:           1px #888
+        border-left:      none
+        border-right:     none
+        
+        font-color:     #ccc
+    }
+    
+    
+    
+    menu-body-separator-outer
+    {
+        width:   100%
+        height:  1px
+        margin:  0px 4px
+        padding: 8px 0px
+    }
+    
+    menu-body-separator-inner
+    {
+        width:            100%
+        height:           1px
+        background-color: #999
+    }
+    
+    
+    menu-border-hider
+    {
+        positioning: relative
+        //z-index:     2
+        
+        top: 20px;
+        width:  100%
+        height: 1px
+        background-color: #333
+        border:        1px #666
+        border-top:    none
+        border-bottom: none
+    }
+</style>
+
+<!-- Dialog styles -->
+<style>
+    dialog
+    {
+        positioning:      relative
+        left:             36px
+        top:              28px
+        width:            auto
+        height:           auto
+        padding:          4px
+        border:           1px #666
+        background-color: #f9f9ff
+        visible:          false
+    }
+    
+    dialog-title
+    {
+        padding-bottom: 4px
+        margin-bottom:  8px
+        font-style:     bold
+        border-bottom:  1px #666
+    }
+    
+    dialog-body
+    {
+        child-plane:    horizontal
+        vertical-align: center
+        width:          100%
+    }
+    
+    dialog-footer
+    {
+        width:            100%
+        horizontal-align: right
+        child-plane:      horizontal
+        margin-top:       8px
+        padding-top:      4px
+        border-top:       1px #ccc
+    }
+</style>
+
+<div id="EditorMain">
+    <div id="EditorTopPanel">
+        <!-- File -->
+        <div id="MenuButton_File" styleclass="menu-button">File</div>
+        <div id="Menu_File" styleclass="menu">
+            <div id="Menu_File_Title" styleclass="menu-title">File</div>
+            <div styleclass="menu-body">
+                <div id="Menu_File_New"    styleclass="menu-body-button">New...</div>
+                <div id="Menu_File_Open"   styleclass="menu-body-button">Open...</div>
+                <div styleclass="menu-body-separator-outer"><div styleclass="menu-body-separator-inner" /></div>
+                <div id="Menu_File_Save"   styleclass="menu-body-button">Save</div>
+                <div id="Menu_File_SaveAs" styleclass="menu-body-button">Save As...</div>
+                <div styleclass="menu-body-separator-outer"><div styleclass="menu-body-separator-inner" /></div>
+                <div id="Menu_File_Exit"   styleclass="menu-body-button">Exit</div>
+            </div>
+            <div styleclass="menu-border-hider" />
+        </div>
+
+        <!-- Edit -->
+        <div id="MenuButton_Edit" styleclass="menu-button">Edit</div>
+        <div id="Menu_Edit" styleclass="menu">
+            <div id="Menu_Edit_Title" styleclass="menu-title">Edit</div>
+            <div styleclass="menu-body">
+                <div styleclass="menu-body-separator-outer"><div styleclass="menu-body-separator-inner" /></div>
+            </div>
+            <div styleclass="menu-border-hider" />
+        </div>
+        
+        <!-- View -->
+        <div id="MenuButton_View" styleclass="menu-button">View</div>
+        <div id="Menu_View" styleclass="menu">
+            <div id="Menu_View_Title" styleclass="menu-title">View</div>
+            <div styleclass="menu-body">
+                <div styleclass="menu-body-separator-outer"><div styleclass="menu-body-separator-inner" /></div>
+            </div>
+            <div styleclass="menu-border-hider" />
+        </div>
+    </div>
+
+    <div id="EditorCenterPanel">
+        <div id="EditorLeftPanel"></div>
+        <div id="EditorViewportPanel"></div>
+        <div id="EditorRightPanel"></div>
+    </div>
+
+    <div id="EditorBottomPanel">
+    </div>
+  
+    <!-- This section contains relative positioned controls. Usually dialog boxes. -->
+    <!-- File->New -->
+    <div id="NewSceneDialog" styleclass="dialog" style="width:256px;">
+        <div styleclass="dialog-title">Create New Scene...</div>
+        
+        <div styleclass="dialog-body">
+            <div style="font-color:#666; width:auto; margin-right:8px">Width:</div>
+            <div id="NewSceneDialog_Width" styleclass="editbox" style="width:128px" />
+        </div>
+        
+        <div styleclass="dialog-footer">
+            <div id="NewSceneDialog_OK"     styleclass="button" style="width:72px; margin-right:2px;">OK</div>
+            <div id="NewSceneDialog_Cancel" styleclass="button" style="width:72px; margin-left:2px;">Cancel</div>
+        </div>
+    </div>
+  
+    <!-- File->Open -->
+    <div id="OpenSceneDialog" styleclass="dialog" style="width:256px;">
+        <div styleclass="dialog-title">Open Scene...</div>
+        
+        <div styleclass="dialog-body">
+            <div id="OpenSceneDialog_FileList" styleclass="listbox" style="width:100%;"></div>
+        </div>
+        
+        
+        <div styleclass="dialog-footer">
+            <div id="OpenSceneDialog_OK"     styleclass="button" style="width:72px; margin-right:2px;">OK</div>
+            <div id="OpenSceneDialog_Cancel" styleclass="button" style="width:72px; margin-left:2px;">Cancel</div>
+        </div>
+    </div>
+</div>

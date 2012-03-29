@@ -190,6 +190,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\SpriteComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultScene.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Errors.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\FontManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Game.hpp" />
@@ -257,6 +258,7 @@
     <ClCompile Include="..\..\..\source\Components\SpriteComponent.cpp" />
     <ClCompile Include="..\..\..\source\DefaultScene.cpp" />
     <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp" />
+    <ClCompile Include="..\..\..\source\Editor.cpp" />
     <ClCompile Include="..\..\..\source\Errors.cpp" />
     <ClCompile Include="..\..\..\source\FontManager.cpp" />
     <ClCompile Include="..\..\..\source\Game.cpp" />

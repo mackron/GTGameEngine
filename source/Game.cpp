@@ -29,6 +29,8 @@ namespace GTEngine
           gui(nullptr), guiEventHandler(nullptr),
           paused(false), focused(true),
           keyDownMap(),
+          rcSwitchToMainFB(nullptr),
+          editor(),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0)
@@ -219,6 +221,32 @@ namespace GTEngine
     }
 
 
+    void Game::OpenEditor()
+    {
+        this->Pause();  // The game is always paused while the editor is running.
+
+        if (!this->editor.IsStarted())
+        {
+            this->editor.Startup(*this->gui);
+        }
+
+        this->editor.Open();
+    }
+
+    void Game::CloseEditor()
+    {
+        this->editor.Close();
+
+        // We can now unpause the game.
+        this->Resume();
+    }
+
+    bool Game::IsEditorOpen() const
+    {
+        return this->editor.IsOpen();
+    }
+
+
     void Game::OnUpdate()
     {
     }
@@ -347,6 +375,7 @@ namespace GTEngine
             {
                 Log("Error loading GUI.");
             }
+
 
             return true;
         }
@@ -495,6 +524,7 @@ namespace GTEngine
         Renderer::ExecuteFrontBuffer();
 
         // We draw the GUI on top of everything else...
+        Renderer::SetFramebuffer(nullptr);
         Renderer::DrawGUI(this->GetGUI());
 
         this->OnPostDraw();
