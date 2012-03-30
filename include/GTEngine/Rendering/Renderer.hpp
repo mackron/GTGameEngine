@@ -2,7 +2,7 @@
 #ifndef __GTEngine_Renderer_hpp_
 #define __GTEngine_Renderer_hpp_
 
-#include "RenderCommandBuffer.hpp"
+#include "RCQueue.hpp"
 #include "Texture2D.hpp"
 #include "Framebuffer.hpp"
 #include "Shader.hpp"
@@ -90,27 +90,27 @@ namespace GTEngine
         static void AppendToBackBuffer(RenderCommand &cmd);
 
         /**
-        *   \brief  Executes and clears every draw call in the front cache.
+        *   \brief  Executes and clears every RC in the front RC queue.
         *
         *   \remarks
         *       This will also collect any garbage.
         */
-        static void ExecuteFrontBuffer();
+        static void ExecuteFrontRCQueue();
 
         /**
-        *   \brief  Clears the back command buffer.
+        *   \brief  Clears the back RC queue.
         */
-        static void ClearBackBuffer();
+        static void ClearBackRCQueue();
 
         /**
-        *   \brief  Swaps the back and front rendering command buffers.
+        *   \brief  Swaps the back and front rendering RC queues.
         *
         *   \remarks
-        *       You'll usually want to ensure ExecuteFrontBuffer() has been executed before swapping the caches.
+        *       You'll usually want to ensure ExecuteFrontRCQueue() has been executed before swapping the caches.
         *       \par
-        *       This function will also clear the back buffer.
+        *       This function will also clear the back RC queue.
         */
-        static void SwapRCBuffers();
+        static void SwapRCQueues();
 
 
         /**
@@ -335,10 +335,10 @@ namespace GTEngine
     public:
 
         /// A pointer to the back cache. Will never be null after the renderer has been successfully initialised.
-        static RenderCommandBuffer *BackBuffer;
+        static RCQueue* BackRCQueue;
 
         /// A pointer to the front cache. Will never be null after the renderer has been successfully initialised.
-        static RenderCommandBuffer *FrontBuffer;
+        static RCQueue* FrontRCQueue;
         
 
 

@@ -1,12 +1,12 @@
 #ifndef __GTEngine_RCBufferPair_hpp_
 #define __GTEngine_RCBufferPair_hpp_
 
-#include "RenderCommandBuffer.hpp"
+#include "RCQueue.hpp"
 
 namespace GTEngine
 {
     /**
-    *   \brief  Small class representing a pair of render command buffers.
+    *   \brief  Small class representing a pair of render command queues.
     */
     class RCBufferPair
     {
@@ -42,16 +42,16 @@ namespace GTEngine
     public:
 
         /// The back RC buffer.
-        RenderCommandBuffer * back;
+        RCQueue * back;
 
         /// The front RC buffer.
-        RenderCommandBuffer * front;
+        RCQueue * front;
 
 
     private:
 
         /// The two buffers.
-        RenderCommandBuffer buffers[2];
+        RCQueue buffers[2];
 
 
     private:    // No copying.

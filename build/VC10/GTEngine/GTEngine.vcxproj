@@ -229,8 +229,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCBufferPair.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCQueue.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommand.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommandBuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCDrawVA.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFramebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp" />
@@ -289,7 +289,7 @@
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\RenderCommandBuffer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Shader.cpp" />

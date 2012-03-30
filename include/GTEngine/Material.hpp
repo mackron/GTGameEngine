@@ -6,7 +6,7 @@
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/String.hpp>
 #include "Rendering/Shader.hpp"
-#include "Rendering/RenderCommandBuffer.hpp"
+#include "Rendering/RCQueue.hpp"
 #include "ShaderParameter.hpp"
 
 namespace GTEngine

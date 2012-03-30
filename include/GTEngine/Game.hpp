@@ -257,9 +257,9 @@ namespace GTEngine
 
 
         /**
-        *   \brief  Called when any rendering command buffers need to be swapped.
+        *   \brief  Called when any rendering RC queues need to be swapped.
         */
-        virtual void OnSwapRCBuffers();
+        virtual void OnSwapRCQueues();
 
 
         /**
@@ -347,12 +347,12 @@ namespace GTEngine
         void Draw();
 
         /**
-        *   \brief  Swaps the rendering command buffers of various objects, including the renderer and GUI.
+        *   \brief  Swaps the RC queues of various objects, including the renderer and GUI.
         *
         *   \remarks
-        *       This will call the OnSwapRCBuffers() event AFTER the other buffers have been swapped (Renderer, etc).
+        *       This will call the OnSwapRCQueues() event AFTER the other queues have been swapped (Renderer, etc).
         */
-        void SwapRCBuffers();
+        void SwapRCQueues();
 
 
     // The methods below are used to handle events.

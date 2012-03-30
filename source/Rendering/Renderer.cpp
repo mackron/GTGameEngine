@@ -423,8 +423,8 @@ namespace GTEngine
 // Renderer globals.
 namespace GTEngine
 {
-    RenderCommandBuffer * Renderer::BackBuffer  = nullptr;
-    RenderCommandBuffer * Renderer::FrontBuffer = nullptr;
+    RCQueue* Renderer::BackRCQueue  = nullptr;
+    RCQueue* Renderer::FrontRCQueue = nullptr;
 
     struct _RendererGC
     {
@@ -449,30 +449,30 @@ namespace GTEngine
 {
     void Renderer::AppendToBackBuffer(RenderCommand &cmd)
     {
-        Renderer::BackBuffer->Append(cmd);
+        Renderer::BackRCQueue->Append(cmd);
     }
 
-    void Renderer::ClearBackBuffer()
+    void Renderer::ClearBackRCQueue()
     {
-        Renderer::BackBuffer->Clear();
+        Renderer::BackRCQueue->Clear();
     }
 
-    void Renderer::ExecuteFrontBuffer()
+    void Renderer::ExecuteFrontRCQueue()
     {
-        Renderer::FrontBuffer->Execute();
+        Renderer::FrontRCQueue->Execute();
         Renderer::CollectGarbage();
     }
 
     
-    void Renderer::SwapRCBuffers()
+    void Renderer::SwapRCQueues()
     {
         // All we do is swap the pointers. Easy.
-        RenderCommandBuffer* temp = Renderer::BackBuffer;
-        Renderer::BackBuffer      = Renderer::FrontBuffer;
-        Renderer::FrontBuffer     = temp;
+        auto temp              = Renderer::BackRCQueue;
+        Renderer::BackRCQueue  = Renderer::FrontRCQueue;
+        Renderer::FrontRCQueue = temp;
 
         // We also want to clear the back buffer.
-        Renderer::ClearBackBuffer();
+        Renderer::ClearBackRCQueue();
     }
 
     
@@ -1164,8 +1164,8 @@ namespace GTEngine
 
                 if (InitialiseCg())
                 {
-                    Renderer::BackBuffer  = new RenderCommandBuffer;
-                    Renderer::FrontBuffer = new RenderCommandBuffer;
+                    Renderer::BackRCQueue  = new RCQueue;
+                    Renderer::FrontRCQueue = new RCQueue;
 
                     // We need a GUI renderer.
                     GUIRenderer::Initialise();
@@ -1202,8 +1202,8 @@ namespace GTEngine
     {
         if (IsRendererInitialised)
         {
-            delete Renderer::BackBuffer;
-            delete Renderer::FrontBuffer;
+            delete Renderer::BackRCQueue;
+            delete Renderer::FrontRCQueue;
 
             GUIRenderer::Uninitialise();
 

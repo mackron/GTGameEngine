@@ -199,9 +199,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCBufferPair.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommandBuffer.hpp">
-      <Filter>include\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
@@ -298,6 +295,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCQueue.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -340,9 +340,6 @@
       <Filter>source\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp">
-      <Filter>source\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\RenderCommandBuffer.cpp">
       <Filter>source\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp">
@@ -458,6 +455,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp">
+      <Filter>source\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

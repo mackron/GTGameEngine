@@ -315,7 +315,7 @@ namespace GTEngine
     {
     }
 
-    void Game::OnSwapRCBuffers()
+    void Game::OnSwapRCQueues()
     {
     }
 
@@ -492,9 +492,9 @@ namespace GTEngine
         // We need to cache the current position of the mouse. We need to do this in order to get smooth mouse movement.
         this->CacheMousePosition();
 
-        // Here is where we swap rendering command buffers'. We post an OnSwapRCBuffers() event from here so that a game can do
+        // Here is where we swap RC queues. We post an OnSwapRCQueues() event from here so that a game can do
         // it's own buffer swaps if required.
-        this->SwapRCBuffers();
+        this->SwapRCQueues();
 
         // Now we let the game know that we're starting the frame.
         this->OnStartFrame();
@@ -521,7 +521,7 @@ namespace GTEngine
     void Game::Draw() //[Main Thread]
     {
         this->OnDraw();
-        Renderer::ExecuteFrontBuffer();
+        Renderer::ExecuteFrontRCQueue();
 
         // We draw the GUI on top of everything else...
         Renderer::SetFramebuffer(nullptr);
@@ -532,16 +532,16 @@ namespace GTEngine
         Renderer::SwapBuffers();
     }
 
-    void Game::SwapRCBuffers()
+    void Game::SwapRCQueues()
     {
         // Now the renderer...
-        Renderer::SwapRCBuffers();
+        Renderer::SwapRCQueues();
 
         // Now the GUI...
         this->gui->SwapRCQueues();
 
         // Now we call the event and allow the game to do it's own buffer swaps if it so wishes.
-        this->OnSwapRCBuffers();
+        this->OnSwapRCQueues();
     }
 
     void Game::HandleEvents()

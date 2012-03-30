@@ -45,7 +45,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will not be called on the rendering thread. It's recommended to cache the new framebuffer size and do the
-        ///     actual resize in OnSwapRCBuffers().
+        ///     actual resize in OnSwapRCQueues().
         virtual void ResizeFramebuffer(unsigned int newWidth, unsigned int newHeight) = 0;
 
 
@@ -65,7 +65,7 @@ namespace GTEngine
         ///
         /// This function is called synchronously between frames, so it's a good time to do any rendering object modifications if
         /// required. In particular, doing the actual framebuffer resize might be best done here.
-        virtual void OnSwapRCBuffers() = 0;
+        virtual void OnSwapRCQueues() = 0;
 
 
         /// Retrieves the buffer containing the final colour output.
