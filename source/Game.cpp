@@ -538,7 +538,7 @@ namespace GTEngine
         Renderer::SwapRCBuffers();
 
         // Now the GUI...
-        this->gui->SwapRCBuffers();
+        this->gui->SwapRCQueues();
 
         // Now we call the event and allow the game to do it's own buffer swaps if it so wishes.
         this->OnSwapRCBuffers();

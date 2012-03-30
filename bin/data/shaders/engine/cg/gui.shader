@@ -5,22 +5,22 @@
 		float2 Position : ATTR0;
 		float2 TexCoord : ATTR1;
 	};
-		
+
 	struct VertexOutput
 	{
 		float4 Position : POSITION;
 		float2 TexCoord : TEXCOORD0;
 	};
-        
+
     uniform float4x4 Projection;
-		
+
 	VertexOutput main(in VertexInput IN)
 	{
 		VertexOutput OUT;
-		
+
 		OUT.Position = mul(Projection, float4(IN.Position, 0.0, 1.0));
 		OUT.TexCoord = IN.TexCoord;
-			
+
 		return OUT;
 	}
 </shader>
@@ -30,20 +30,20 @@
 	{
 		float2 TexCoord : TEXCOORD0;
 	};
-		
+
 	struct FragmentOutput
 	{
 		float4 Color : COLOR;
 	};
-		
+
 	uniform sampler2D Texture;
-    uniform float3    Color;
+    uniform float4    Color;
 		
 	FragmentOutput main(in FragmentInput IN)
 	{
 		FragmentOutput OUT;
 			
-		OUT.Color = tex2D(Texture, IN.TexCoord) * float4(Color, 1.0);
+		OUT.Color = tex2D(Texture, IN.TexCoord) * Color;
 			
 		return OUT;
 	}
@@ -66,7 +66,7 @@
 	{
 		FragmentOutput OUT;
 			
-		OUT.Color = float4(Color, 1.0);
+		OUT.Color = Color;
 			
 		return OUT;
 	}
@@ -112,13 +112,14 @@
     };
 
     uniform sampler2D Texture;
-    uniform float3    Color;
+    uniform float4    Color;
 
     FragmentOutput main(in FragmentInput IN)
     {
         FragmentOutput OUT;
 
-        OUT.Color = float4(Color, tex2D(Texture, IN.TexCoord).a);
+        //OUT.Color = tex2D(Texture, IN.TexCoord) * Color;
+        OUT.Color = float4(Color.rgb, Color.a * tex2D(Texture, IN.TexCoord).a);
 
         return OUT;
     }

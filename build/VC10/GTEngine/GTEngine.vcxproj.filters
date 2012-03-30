@@ -48,6 +48,15 @@
     <Filter Include="source\Editor">
       <UniqueIdentifier>{6d25c8ec-ce35-4291-92db-dca2ad72eb2f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="editor">
+      <UniqueIdentifier>{bd0a5c6e-8747-41b0-b402-5c1f4bcedf57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editor\styles">
+      <UniqueIdentifier>{3ad68f6d-5eda-4933-8d52-14f96e46f7e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editor\scripts">
+      <UniqueIdentifier>{f2e1548b-914c-4d62-a178-8c604488e273}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\shaders\engine\cg\core.shader">
@@ -70,6 +79,24 @@
     </None>
     <None Include="..\..\..\bin\data\shaders\engine\cg\defaultrenderer.shader">
       <Filter>shaders\cg</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\scripts\dialogs.lua">
+      <Filter>editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\scripts\listbox.lua">
+      <Filter>editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\scripts\menubar.lua">
+      <Filter>editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\styles\theme.style">
+      <Filter>editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\main.xml">
+      <Filter>editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\menubar.xml">
+      <Filter>editor</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

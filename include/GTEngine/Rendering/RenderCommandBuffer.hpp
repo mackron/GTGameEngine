@@ -20,12 +20,7 @@ namespace GTEngine
         /// Constructor.
         RenderCommandBuffer();
 
-        /**
-        *   \brief  Appends a single draw call to the end of the cache.
-        *
-        *   \remarks
-        *       You can append a chain of draw calls by using Append(RenderCommand *, RenderCommand *).
-        */
+        /// Appends a single draw call to the end of the cache.
         void Append(RenderCommand &cmd);
 
         /**
@@ -37,14 +32,10 @@ namespace GTEngine
         */
         void Execute();
 
-        /**
-        *   \brief  Clears the buffer.
-        */
+        /// Clears the buffer.
         void Clear();
 
-        /**
-        *   \brief  Checks if the cache is empty.
-        */
+        /// Checks if the cache is empty.
         bool IsEmpty() const
         {
             return this->commands.count == 0;

@@ -2,6 +2,8 @@
 The editor is made up of 5 sections: Top, bottom, center, left and right. The center section is the main viewport.
 -->
 
+<style url="styles/theme.style" />
+
 <include url="menubar.xml" />
 
 <script>
@@ -65,16 +67,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script url="scripts/listbox.lua" />
 
 <style>
-    var sidePanelSize:        28px
-    var menuBackgroundColour: #333
-    var menuBorder:           1px #666
     
-    *
-    {
-        font-family: dejavu sans
-        font-size:   9pt
-        font-color:  #ddd
-    }
+    
+    
     
     editbox
     {
@@ -203,8 +198,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     {
         width:          auto
         height:         100%
-        font-family:    liberation sans
-        font-size:      9pt
         font-color:     #888
         
         padding:        8px 0px
@@ -213,10 +206,12 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     menu-button:hovered
     {
-        background-color: #333
-        border:           1px #888
+        background-color: menuBackgroundColour;
+        border:           menuBorder
         border-top:       none
         border-bottom:    none
+        
+        font-color:       #aaa
     
         padding: 7px 0px
     }
@@ -235,8 +230,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     {
         width:       auto
         height:      100%
-        font-family: liberation sans
-        font-size:   9pt
         font-color:  #aaa
         
         background-color: menuBackgroundColour
@@ -270,8 +263,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         height:         20px
         vertical-align: center
         
-        font-family:    liberation sans
-        font-size:      9pt
         font-color:     #aaa
         
         padding:        8px 0px
@@ -284,7 +275,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         border-left:      none
         border-right:     none
         
-        font-color:     #bbb
+        font-color:       #bbb
     }
     
     menu-body-button:pushed

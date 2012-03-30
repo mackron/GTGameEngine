@@ -84,10 +84,11 @@ namespace GTEngine
         Renderer::SetShaderParameter("Projection", GUIProjection);
         Renderer::SetShaderParameter("Texture",    GUIWhiteTexture);
 
-        server.ExecuteFrontRCBuffer();
+        server.ExecuteFrontRCQueue();
 
         // Here we reset the applicable properties.
         Renderer::DisableScissorTest();
+        Renderer::DisableBlending();
         Renderer::EnableDepthTest();
         Renderer::EnableDepthWrites();
     }
@@ -103,7 +104,7 @@ namespace GTEngine
 }
 
 // These are GTGUI rendering command implementations.
-void GTGUI::RenderingCommand_SetScissorRect::Execute()
+void GTGUI::RCSetScissorRect::Execute()
 {
     // GTGUI is top-down, but the renderer uses bottom-up. We need to convert appropriately.
     unsigned int width  = rect.right - rect.left;
@@ -114,7 +115,7 @@ void GTGUI::RenderingCommand_SetScissorRect::Execute()
     GTEngine::Renderer::SetScissor(x, y, width, height);
 }
 
-void GTGUI::RenderingCommand_DrawQuad::Execute()
+void GTGUI::RCDrawQuad::Execute()
 {
     // For ease of use...
     float left   = static_cast<float>(rect.left);
@@ -129,12 +130,26 @@ void GTGUI::RenderingCommand_DrawQuad::Execute()
 
     GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIQuadShader());
     GTEngine::Renderer::SetShaderParameter("Texture", GTEngine::GUIWhiteTexture);
-    GTEngine::Renderer::SetShaderParameter("Color",   colour.r, colour.g, colour.b);
+    GTEngine::Renderer::SetShaderParameter("Color",   colour.r, colour.g, colour.b, this->opacity);
 
-    GTEngine::Renderer::Draw(GTEngine::GUIQuadVertices, GTEngine::GUIQuadIndices, 6, GTEngine::VertexFormat::P2T2);
+    // Need to check if blending should be enabled.
+    if (this->opacity > 0.0f && this->opacity < 1.0f)
+    {
+        GTEngine::Renderer::EnableAlphaBlending();
+    }
+    else
+    {
+        GTEngine::Renderer::DisableBlending();  // Ensure blending is disabled for performance.
+    }
+
+    // Only draw the quad if we can actually see it...
+    if (this->opacity > 0.0f)
+    {
+        GTEngine::Renderer::Draw(GTEngine::GUIQuadVertices, GTEngine::GUIQuadIndices, 6, GTEngine::VertexFormat::P2T2);
+    }
 }
 
-void GTGUI::RenderingCommand_DrawText::Execute()
+void GTGUI::RCDrawText::Execute()
 {
     assert(this->renderingInfo != nullptr);
 
@@ -149,7 +164,7 @@ void GTGUI::RenderingCommand_DrawText::Execute()
     GTEngine::Renderer::EnableAlphaBlending();
     GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUITextShader());
     GTEngine::Renderer::SetShaderParameter("Offset",  offsetX, offsetY);
-    GTEngine::Renderer::SetShaderParameter("Color",   colour.r, colour.g, colour.b);
+    GTEngine::Renderer::SetShaderParameter("Color",   colour.r, colour.g, colour.b, this->opacity);
 
     for (auto i = this->renderingInfo->sections.root; i != nullptr; i = i->next)
     {
@@ -159,6 +174,4 @@ void GTGUI::RenderingCommand_DrawText::Execute()
             GTEngine::Renderer::Draw(i->value->vertices, i->value->indices, i->value->indexCount, GTEngine::VertexFormat::P2T2);
         }
     }
-
-    GTEngine::Renderer::DisableBlending();
 }
