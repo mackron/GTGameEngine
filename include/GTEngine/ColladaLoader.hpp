@@ -2,10 +2,10 @@
 #ifndef __GTEngine_ColladaLoader_hpp_
 #define __GTEngine_ColladaLoader_hpp_
 
-#include "SceneNode.hpp"
-
 namespace GTEngine
 {
+    class SceneNode;
+
     /**
     *   \brief  Static class for loading COLLADA files.
     *

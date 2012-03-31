@@ -2,7 +2,6 @@
 #ifndef __GTEngine_Physics_hpp_
 #define __GTEngine_Physics_hpp_
 
-#include "Physics/KinematicMotionState.hpp"
 #include "Physics/CollisionWorld.hpp"
 #include "Physics/DynamicsWorld.hpp"
 #include "Physics/SceneNodeMotionState.hpp"

@@ -3,10 +3,13 @@
 #define __GTEngine_ShaderParameterCache_hpp_
 
 #include "ShaderParameter.hpp"
+#include "Math.hpp"
 #include <GTCore/Dictionary.hpp>
 
 namespace GTEngine
 {
+    class Texture2D;
+
     /// Class representing a cache of shader parameters.
     class ShaderParameterCache
     {
@@ -35,11 +38,12 @@ namespace GTEngine
         void Set(const char* name, Texture2D* texture);
 
         /// This overload makes a local copy of the input parameter.
-        void Set(const char* name, ShaderParameter* parameter);
+        void Set(const char* name, const ShaderParameter* parameter);
 
 
         /// Retrieves a parameter by its name.
         /// @param name [in] The name of the parameter to retrieve.
+        ShaderParameter* Get(const char* name) const;
         ShaderParameter* Get(const char* name);
 
         /// Retrieves a parameter by its index.
@@ -49,16 +53,20 @@ namespace GTEngine
         ///     Use GetCount() to iterate over each parameter.
         ///     @par
         ///     This does not do run-time checks for index validity. If the index is invalid, an assert will fail.
-        ShaderParameter* Get(size_t index);
+        ShaderParameter* GetByIndex(size_t index) const;
+        ShaderParameter* GetByIndex(size_t index);
 
         /// Retrieves the name of a parameter by it's index.
         /// @param index [in] The index of the parameter whose name is being retrieved. This is an O(1) direct accessor.
-        const char* GetName(size_t index) const;
+        const char* GetNameByIndex(size_t index) const;
 
 
         /// Retrieves the number of parameters in the cache.
         size_t GetCount() const;
 
+        /// Retrieves a reference to the internal map of parameters.
+        const GTCore::Dictionary<char, ShaderParameter*> & GetParameters() const { return this->parameters; }
+              GTCore::Dictionary<char, ShaderParameter*> & GetParameters()       { return this->parameters; }
 
         /// Clears the cache.
         void Clear();

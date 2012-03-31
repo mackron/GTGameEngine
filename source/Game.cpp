@@ -1,18 +1,12 @@
 
 #include <GTEngine/Game.hpp>
 #include <GTEngine/GameUpdateJob.hpp>
-#include <GTEngine/ApplicationConfig.hpp>
-#include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/FontManager.hpp>
 #include <GTEngine/GUIEventHandler.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/Rendering/Renderer.hpp>
 #include <GTCore/System.hpp>
-#include <GTCore/CommandLine.hpp>
-#include <GTCore/Math.hpp>
-
-#include <GTEngine/ColladaLoader.hpp>
-#include <GTEngine/DefaultScene.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -29,7 +23,6 @@ namespace GTEngine
           gui(nullptr), guiEventHandler(nullptr),
           paused(false), focused(true),
           keyDownMap(),
-          rcSwitchToMainFB(nullptr),
           editor(),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),

@@ -2,8 +2,6 @@
 #ifndef __GTEngine_hpp_
 #define __GTEngine_hpp_
 
-#include "UserConfig.hpp"
-
 // Startup/Shutdown.
 namespace GTEngine
 {

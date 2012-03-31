@@ -12,6 +12,7 @@ allows games to include the editor as part of the game itself, like Age of Empir
 
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Game.hpp>
+#include <GTEngine/Rendering/Renderer.hpp>
 
 class EditorGame : public GTEngine::Game
 {

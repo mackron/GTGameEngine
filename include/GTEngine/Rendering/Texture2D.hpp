@@ -155,7 +155,7 @@ namespace GTEngine
         void *rendererData;
 
         /// We store a reference count which will be used by the Texture2DLibrary. Initializes to 1.
-        int refCount;
+        mutable int refCount;
 
         /// Keeps track of whether or not the client-side texture data should be kept after it has been synced with the renderer. Defaults to false.
         bool keepClientSideData;
@@ -175,9 +175,9 @@ namespace GTEngine
             {
             }
 
-            bool filterChanged;     //< Whether or not a texture filter has changed.
-            bool wrapModeChanged;   //< Whether or not the wrapping mode has changed.
-            bool dataChanged;       //< Whether or not the texture data has been updated.
+            bool filterChanged;     ///< Whether or not a texture filter has changed.
+            bool wrapModeChanged;   ///< Whether or not the wrapping mode has changed.
+            bool dataChanged;       ///< Whether or not the texture data has been updated.
 
             GTCore::Vector<unsigned int> changedMipmaps;
 

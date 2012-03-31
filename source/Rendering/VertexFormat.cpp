@@ -121,7 +121,7 @@ namespace GTEngine
 
     VertexFormat & VertexFormat::operator= (const VertexFormat &other)
     {
-        for (auto i = 0; i < LICKENGINE_VERTEX_FORMAT_SIZE; ++i)
+        for (auto i = 0; i < GTENGINE_VERTEX_FORMAT_SIZE; ++i)
         {
             this->attributes[i] = other.attributes[i];
         }
@@ -135,7 +135,7 @@ namespace GTEngine
 
     void VertexFormat::ctor()
     {
-        for (auto i = 0; i < LICKENGINE_VERTEX_FORMAT_SIZE; ++i)
+        for (auto i = 0; i < GTENGINE_VERTEX_FORMAT_SIZE; ++i)
         {
             this->attributes[i] = VertexAttribs::End;
         }

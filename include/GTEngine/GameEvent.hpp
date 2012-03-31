@@ -3,8 +3,8 @@
 #define __GTEngine_GameEvent_hpp_
 
 #include "GameEventCodes.hpp"
-#include <GTCore/Window.hpp>
-#include <cstdint>
+#include <GTCore/Windowing/Keys.hpp>
+#include <GTCore/Windowing/MouseButtons.hpp>
 
 namespace GTEngine
 {
@@ -60,10 +60,10 @@ namespace GTEngine
 
             struct
             {
-                void * data0;
-                void * data1;
-                void * data2;
-                void * data3;
+                void* data0;
+                void* data1;
+                void* data2;
+                void* data3;
             }custom;
         };
     };

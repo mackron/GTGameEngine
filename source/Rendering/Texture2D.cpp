@@ -1,7 +1,6 @@
 
 #include <GTEngine/Rendering/Texture2D.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/UserConfig.hpp>
 
 namespace GTEngine
 {

@@ -10,11 +10,11 @@
 
 namespace GTEngine
 {
-    /// Helper function for retrieving the 'Data' directory from teh config script.
-    const char * ApplicationConfig_GetDataDirectory();
+    /// Helper function for retrieving the 'Data' directory from the config script.
+    const char* ApplicationConfig_GetDataDirectory();
 
     /// The script for the config file. If this is null, we know the configuration is not yet loaded.
-    static GTCore::Script *ConfigScript = nullptr;
+    static GTCore::Script* ConfigScript = nullptr;
     
     /**
     *   \brief  Structure for storing the different directories.
@@ -28,10 +28,10 @@ namespace GTEngine
         
         ~_ConfigDirectories()
         {
-            GTCore::Strings::Delete((char *)this->data);
+            GTCore::Strings::Delete((char*)this->data);
         }
         
-        const char *data;
+        const char* data;
         
     private:    // No copying.
         _ConfigDirectories(const _ConfigDirectories &);
@@ -68,15 +68,15 @@ namespace GTEngine
     }
     
 
-    const char * ApplicationConfig::Directories::Data()
+    const char* ApplicationConfig::Directories::Data()
     {
         return ConfigDirectories.data;
     }
 
 
-    const char * ApplicationConfig_GetDataDirectory()
+    const char* ApplicationConfig_GetDataDirectory()
     {
-        const char *result = nullptr;
+        const char* result = nullptr;
         
         if (ConfigScript)
         {

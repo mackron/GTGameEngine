@@ -2,12 +2,14 @@
 #ifndef __GTEngine_RCDrawVA_hpp_
 #define __GTEngine_RCDrawVA_hpp_
 
-#include "../VertexArray.hpp"
-#include "../Shader.hpp"
+#include "../RenderCommand.hpp"
 #include "../../ShaderParameterCache.hpp"
 
 namespace GTEngine
 {
+    class VertexArray;
+    class Shader;
+
     /// A generic render command for drawing a vertex array with a shader.
     ///
     /// Where possible, it may be more efficient to use a specialized render command. However, this class is very useful

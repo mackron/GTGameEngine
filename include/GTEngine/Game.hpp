@@ -4,14 +4,13 @@
 
 #include "GameEventQueue.hpp"
 #include "GameWindowEventHandler.hpp"
-#include "Scene.hpp"
 #include "UserConfig.hpp"
 #include "Editor.hpp"
-#include "Rendering/Renderer.hpp"
 #include "Rendering/RenderCommands/RCSetFramebuffer.hpp"
 #include <GTCore/Threading.hpp>
 #include <GTCore/Timing.hpp>
 #include <GTType/FontServer.hpp>
+#include <GTGUI/Server.hpp>
 
 namespace GTEngine
 {
@@ -439,7 +438,7 @@ namespace GTEngine
         /// The GUI of this game. There is only a single GUI for every game. A game should dynamically show and hide root elements
         /// to show different GUI's for different game states. We use a pointer here because we need to pass it a font server to
         /// it's constructor, which will not be constructed until Game::Initialise().
-        GTGUI::Server *gui;
+        GTGUI::Server* gui;
 
         /// The event handler for the GUI. This is constructed at the same time as 'gui'.
         GTGUI::ServerEventHandler *guiEventHandler;
@@ -452,10 +451,6 @@ namespace GTEngine
 
         /// A map of key states. This is modified as keys are pushed and released.
         GTCore::Map<char32_t, bool> keyDownMap;
-
-
-        /// A render command for switching to the main framebuffer.
-        RCSetFramebuffer rcSwitchToMainFB;
 
 
         /// Class representing the editor.

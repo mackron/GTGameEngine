@@ -1,8 +1,6 @@
 
 #include <GTEngine/UserConfig.hpp>
 #include <GTEngine/Errors.hpp>
-
-#include <GTCore/Strings/List.hpp>
 #include <GTCore/Script.hpp>
 #include <cassert>
 

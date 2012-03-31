@@ -2,11 +2,12 @@
 #ifndef __GTEngine_RCQueue_hpp_
 #define __GTEngine_RCQueue_hpp_
 
-#include "RenderCommand.hpp"
 #include <GTCore/Vector.hpp>
 
 namespace GTEngine
 {
+    class RenderCommand;
+
     /// Class representing a buffer of rendering commands.
     ///
     /// This class does not make copies of any attached draw calls. It is the applications responsibility to manage

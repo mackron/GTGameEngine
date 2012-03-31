@@ -220,7 +220,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionWorld.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\DynamicsWorld.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\GhostObject.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Physics\KinematicMotionState.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering.hpp" />
@@ -283,13 +282,13 @@
     <ClCompile Include="..\..\..\source\Physics\CollisionWorld.cpp" />
     <ClCompile Include="..\..\..\source\Physics\DynamicsWorld.cpp" />
     <ClCompile Include="..\..\..\source\Physics\GhostObject.cpp" />
-    <ClCompile Include="..\..\..\source\Physics\KinematicMotionState.cpp" />
     <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp" />
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCSetFramebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Shader.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Texture2D.cpp" />
@@ -300,6 +299,7 @@
     <ClCompile Include="..\..\..\source\SceneNodeFactory.cpp" />
     <ClCompile Include="..\..\..\source\SceneViewport.cpp" />
     <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\ShaderParameter.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp" />
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp" />
     <ClCompile Include="..\..\..\source\UserConfig.cpp" />

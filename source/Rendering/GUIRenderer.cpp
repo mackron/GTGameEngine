@@ -7,11 +7,12 @@
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Math.hpp>
 #include <GTEngine/FontManager.hpp>
+#include <GTGUI/Server.hpp>
 
 namespace GTEngine
 {
     /// A white texture. We use this for quads that don't use a texture.
-    Texture2D *GUIWhiteTexture = nullptr;
+    Texture2D* GUIWhiteTexture = nullptr;
 
     /// The array containing a quad's vertex data. This changes dynamically.
     float GUIQuadVertices[] =

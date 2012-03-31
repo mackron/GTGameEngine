@@ -6,12 +6,9 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTCore/Math.hpp>
-#include <GTCore/Threading/Mutex.hpp>
-#include <GTCore/Strings/Replacer.hpp>
-#include <GTCore/Strings/Equal.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
-#include <GTCore/String.hpp>
 #include <GTCore/ToString.hpp>
+#include <GTGUI/Server.hpp>
 
 #include <gtgl/gtgl.h>
 #include <Cg/cg.h>
@@ -1044,7 +1041,8 @@ namespace GTEngine
                 iParam->value->SetOnCurrentShader(iParam->key);
             }
 
-            // With the pending parameters set, it's important that we clear them.
+            // It's important that pending parameters are cleared after setting so that they aren't set again
+            // the next time it is made current.
             shader->ClearPendingParameters();
 
             return true;

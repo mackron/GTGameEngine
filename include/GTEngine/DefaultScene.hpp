@@ -3,9 +3,7 @@
 #define __GTEngine_DefaultScene_hpp_
 
 #include "Scene.hpp"
-#include "SceneViewport.hpp"
 #include "Physics.hpp"
-#include "Rendering/Renderer.hpp"
 #include <GTCore/List.hpp>
 #include <GTCore/Vector.hpp>
 
@@ -28,29 +26,29 @@ namespace GTEngine
         */
         ~DefaultScene();
 
-        /// Scene::AddSceneNode(SceneNode *)
-        void AddSceneNode(SceneNode& node);
+        /// Scene::AddSceneNode(SceneNode &)
+        void AddSceneNode(SceneNode &node);
 
-        /// Scene::RemoveSceneNode(SceneNode&)
-        void RemoveSceneNode(SceneNode& node);
+        /// Scene::RemoveSceneNode(SceneNode &)
+        void RemoveSceneNode(SceneNode &node);
 
         /// Scene::Update(double)
         void Update(double deltaTimeInSeconds);
 
-        /// Scene::OnSceneNodeAdded(SceneNode *)
-        void OnSceneNodeAdded(SceneNode& node);
+        /// Scene::OnSceneNodeAdded(SceneNode &)
+        void OnSceneNodeAdded(SceneNode &node);
 
-        /// Scene::OnSceneNodeRemoved(SceneNode *)
-        void OnSceneNodeRemoved(SceneNode& node);
+        /// Scene::OnSceneNodeRemoved(SceneNode &)
+        void OnSceneNodeRemoved(SceneNode &node);
 
-        /// Scene::FindFirstNode(const char *)
-        SceneNode * FindFirstNode(const char *name);
+        /// Scene::FindFirstNode(const char*)
+        SceneNode* FindFirstNode(const char* name);
 
-        /// Scene::FindFirstNodeWithComponent(const char *)
-        SceneNode * FindFirstNodeWithComponent(const char *componentName);
+        /// Scene::FindFirstNodeWithComponent(const char*)
+        SceneNode* FindFirstNodeWithComponent(const char* componentName);
 
         template <typename T>
-        SceneNode * FindFirstNodeWithComponent()
+        SceneNode* FindFirstNodeWithComponent()
         {
             return this->FindFirstNodeWithComponent(T::Name);
         }
@@ -124,9 +122,6 @@ namespace GTEngine
 
     private:
 
-        /// The root scene node. Everything inherits from this node.
-        //SceneNode rootNode;
-
         /// The list of viewports currently attached to this scene.
         GTCore::List<SceneViewport*> viewports;
 
@@ -142,35 +137,20 @@ namespace GTEngine
         CollisionWorld occlusionCollisionWorld;
 
 
-        /*
-        /// The default camera node.
-        SceneNode *defaultCameraNode;
-
-        Texture2D *colourBuffer;
-        Texture2D *depthStencilBuffer;
-
-        Shader *defaultShader;
-        Shader *hdrQuadShader;
-        Texture2D *defaultTexture;
-        Framebuffer *defaultFramebuffer;
-        */
 
         /// The list of camera nodes in the scene.
-        GTCore::List<SceneNode *> cameraNodes;
+        GTCore::List<SceneNode*> cameraNodes;
 
         /// The list of static nodes. These nodes are not updated.
-        GTCore::List<SceneNode *> staticNodes;
+        GTCore::List<SceneNode*> staticNodes;
 
         /// The list of dynamic nodes. These nodes are updated, unlike static nodes.
-        GTCore::List<SceneNode *> dynamicNodes;
+        GTCore::List<SceneNode*> dynamicNodes;
 
 
     private:    // No copying.
         DefaultScene(const DefaultScene &);
         DefaultScene & operator=(const DefaultScene &);
-
-
-    friend class DrawHDRQuad;
     };
 }
 

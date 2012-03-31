@@ -232,9 +232,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\GhostObject.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Physics\KinematicMotionState.hpp">
-      <Filter>include\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
@@ -322,9 +319,6 @@
       <Filter>source\Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\GhostObject.cpp">
-      <Filter>source\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Physics\KinematicMotionState.cpp">
       <Filter>source\Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp">
@@ -455,6 +449,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp">
       <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCSetFramebuffer.cpp">
+      <Filter>source\Rendering\RenderCommands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderParameter.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

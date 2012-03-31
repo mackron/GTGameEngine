@@ -3,17 +3,7 @@
 #define __GTEngine_LightComponent_hpp_
 
 #include "../Component.hpp"
-
-#if defined(__GNUC__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#endif
-#define GLM_FORCE_ONLY_XYZW
-#include <glm/glm.hpp>
-#if defined(__GNUC__)
-    #pragma GCC diagnostic pop
-#endif
-
+#include "../Math.hpp"
 
 /// PointLight.
 namespace GTEngine

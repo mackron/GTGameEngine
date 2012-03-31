@@ -3,8 +3,7 @@
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
-#include <GTCore/IO.hpp>
+#include <GTEngine/ShaderParameter.hpp>
 #include <GTCore/Parse.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
 
@@ -46,19 +45,16 @@ namespace GTEngine
     MaterialDefinition::~MaterialDefinition()
     {
         // Default properties need to be deleted. Textures need to be unacquired.
-        for (size_t i = 0; i < this->defaultParams.count; ++i)
+        for (size_t i = 0; i < this->defaultParams.GetCount(); ++i)
         {
-            auto iParam = this->defaultParams.buffer[i];
-            assert(iParam        != nullptr);
-            assert(iParam->value != nullptr);
+            auto param = this->defaultParams.GetByIndex(i);
+            assert(param != nullptr);
 
             // If it's a texture property, it needs to be unacquired.
-            if (iParam->value->type == ShaderParameterType_Texture2D)
+            if (param->type == ShaderParameterType_Texture2D)
             {
-                Texture2DLibrary::Unacquire(ShaderParameter_Texture2D::Upcast(iParam->value)->value);
+                Texture2DLibrary::Unacquire(ShaderParameter_Texture2D::Upcast(param)->value);
             }
-
-            delete iParam->value;
         }
 
         this->defaultParams.Clear();
@@ -172,7 +168,7 @@ namespace GTEngine
                             float value[1];
                             MaterialDefinition::ParseFloatArray(valueStr, value, 1);
 
-                            this->defaultParams.Add(nameAttr->value(), new ShaderParameter_Float(value[0]));
+                            this->defaultParams.Set(nameAttr->value(), value[0]);
                         }
                     }
                     else if (GTCore::Strings::Equal("float2", child->name()))
@@ -185,7 +181,7 @@ namespace GTEngine
                             float value[2];
                             MaterialDefinition::ParseFloatArray(valueStr, value, 2);
 
-                            this->defaultParams.Add(nameAttr->value(), new ShaderParameter_Float2(value[0], value[1]));
+                            this->defaultParams.Set(nameAttr->value(), value[0], value[1]);
                         }
                     }
                     else if (GTCore::Strings::Equal("float3", child->name()))
@@ -198,7 +194,7 @@ namespace GTEngine
                             float value[3];
                             MaterialDefinition::ParseFloatArray(valueStr, value, 3);
 
-                            this->defaultParams.Add(nameAttr->value(), new ShaderParameter_Float3(value[0], value[1], value[2]));
+                            this->defaultParams.Set(nameAttr->value(), value[0], value[1], value[2]);
                         }
                     }
                     else if (GTCore::Strings::Equal("float4", child->name()))
@@ -211,7 +207,7 @@ namespace GTEngine
                             float value[4];
                             MaterialDefinition::ParseFloatArray(valueStr, value, 4);
 
-                            this->defaultParams.Add(nameAttr->value(), new ShaderParameter_Float4(value[0], value[1], value[2], value[3]));
+                            this->defaultParams.Set(nameAttr->value(), value[0], value[1], value[2], value[3]);
                         }
                     }
                     else if (GTCore::Strings::Equal("texture2D", child->name()))
@@ -221,7 +217,7 @@ namespace GTEngine
                         {
                             auto valueStr = child->value();
                             
-                            this->defaultParams.Add(nameAttr->value(), new ShaderParameter_Texture2D(Texture2DLibrary::Acquire(valueStr)));
+                            this->defaultParams.Set(nameAttr->value(), Texture2DLibrary::Acquire(valueStr));
                         }
                     }
 
@@ -299,88 +295,14 @@ namespace GTEngine
     Material::Material(const MaterialDefinition &definition)
         : definition(definition), parameters()
     {
-        for (size_t i = 0; i < definition.defaultParams.count; ++i)
+        for (size_t i = 0; i < definition.defaultParams.GetCount(); ++i)
         {
-            auto iParam = definition.defaultParams.buffer[i];
-            assert(iParam        != nullptr);
-            assert(iParam->value != nullptr);
-
-            this->SetParameter(iParam->key, CopyShaderParameter(iParam->value));
+            this->SetParameter(definition.defaultParams.GetNameByIndex(i), definition.defaultParams.GetByIndex(i));
         }
     }
 
     Material::~Material()
     {
-        this->ClearPendingParameters();
-    }
-
-
-    void Material::SetParameter(const char* name, float value)
-    {
-        this->SetParameter<ShaderParameter_Float>(name, value);
-    }
-
-    void Material::SetParameter(const char* name, const glm::vec2 &value)
-    {
-        this->SetParameter<ShaderParameter_Float2>(name, value);
-    }
-    void Material::SetParameter(const char* name, const glm::vec3 &value)
-    {
-        this->SetParameter<ShaderParameter_Float3>(name, value);
-    }
-    void Material::SetParameter(const char* name, const glm::vec4 &value)
-    {
-        this->SetParameter<ShaderParameter_Float4>(name, value);
-    }
-
-    void Material::SetParameter(const char* name, const glm::mat2 &value)
-    {
-        this->SetParameter<ShaderParameter_Float2x2>(name, value);
-    }
-    void Material::SetParameter(const char* name, const glm::mat3 &value)
-    {
-        this->SetParameter<ShaderParameter_Float3x3>(name, value);
-    }
-    void Material::SetParameter(const char* name, const glm::mat4 &value)
-    {
-        this->SetParameter<ShaderParameter_Float4x4>(name, value);
-    }
-
-    void Material::SetParameter(const char* name, Texture2D* value)
-    {
-        this->SetParameter<ShaderParameter_Texture2D>(name, value);
-    }
-
-
-    void Material::ClearPendingParameters()
-    {
-        // Pending properties need to be cleared. Textures need to be unacquired.
-        for (size_t i = 0; i < this->parameters.count; ++i)
-        {
-            auto iProp = this->parameters.buffer[i];
-            assert(iProp != nullptr);
-            assert(iProp->value != nullptr);
-
-            // Now we can delete the parameter.
-            delete iProp->value;
-        }
-
         this->parameters.Clear();
-    }
-
-    
-    // **** Private ****
-    void Material::SetParameter(const char* name, ShaderParameter* prop)
-    {
-        // If a property of the same name already exists, it means it is being overwritten.
-        auto iParam = this->parameters.Find(name);
-        if (iParam != nullptr)
-        {
-            delete iParam->value;
-        }
-        else
-        {
-            this->parameters.Add(name, prop);
-        }
     }
 }

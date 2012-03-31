@@ -17,7 +17,26 @@
 #include <BulletCollision/Gimpact/btBoxCollision.h>                  // <-- for btAABB.
 #include <BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
-#include <btBulletDynamicsCommon.h>
+
+#include <BulletCollision/CollisionDispatch/btCollisionWorld.h>
+#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
+#include <BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h>
+#include <BulletCollision/CollisionDispatch/btCollisionDispatcher.h>
+
+#include <BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
+
+#include <BulletCollision/CollisionShapes/btBoxShape.h>
+#include <BulletCollision/CollisionShapes/btSphereShape.h>
+#include <BulletCollision/CollisionShapes/btCompoundShape.h>
+#include <BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h>
+#include <BulletCollision/CollisionShapes/btEllipsoidShape.h>
+
+#include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
+#include <BulletDynamics/Dynamics/btRigidBody.h>
+
+#include <BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
+
+//#include <btBulletDynamicsCommon.h>
 #if defined(_MSC_VER)
     #pragma warning(pop)
 #elif defined(__GNUC__)

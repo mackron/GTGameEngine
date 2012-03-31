@@ -1,14 +1,6 @@
 
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Scene.hpp>
-#include <GTEngine/Model.hpp>
-#include <GTEngine/Components/ModelComponent.hpp>
-#include <GTEngine/Components/CameraComponent.hpp>
-#include <GTCore/Strings/Create.hpp>
-#include <GTCore/Strings/Equal.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtx/orthonormalize.hpp>
 
 namespace GTEngine
 {

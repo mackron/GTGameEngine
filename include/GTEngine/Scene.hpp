@@ -4,7 +4,6 @@
 
 #include "SceneNode.hpp"
 #include "SceneViewport.hpp"
-#include "Rendering/RCQueue.hpp"
 
 namespace GTEngine
 {

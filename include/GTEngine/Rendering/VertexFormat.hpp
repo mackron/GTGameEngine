@@ -5,8 +5,8 @@
 #include <cstddef>
 #include "VertexAttributes.hpp"
 
-#define LICKENGINE_MAX_VERTEX_ATTRIBS       16
-#define LICKENGINE_VERTEX_FORMAT_SIZE       (LICKENGINE_MAX_VERTEX_ATTRIBS * 2 + 1)
+#define GTENGINE_MAX_VERTEX_ATTRIBS       16
+#define GTENGINE_VERTEX_FORMAT_SIZE       (GTENGINE_MAX_VERTEX_ATTRIBS * 2 + 1)
 
 namespace GTEngine
 {
@@ -99,7 +99,7 @@ namespace GTEngine
     private:
 
         /// The internal array containing the attribute information. We initialise every item in this array to -1 (VertexAttribs::End).
-        int attributes[LICKENGINE_VERTEX_FORMAT_SIZE];
+        int attributes[GTENGINE_VERTEX_FORMAT_SIZE];
 
         /// The number of number of valid integers in 'attributes'. This does not include the trailing -1 value.
         size_t count;

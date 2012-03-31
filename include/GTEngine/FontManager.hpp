@@ -2,11 +2,12 @@
 #ifndef __GTEngine_FontManager_hpp_
 #define __GTEngine_FontManager_hpp_
 
-#include "Rendering/Texture2D.hpp"
 #include <GTType/FontEventHandler.hpp>
 
 namespace GTEngine
 {
+    class Texture2D;
+
     /**
     *   \brief  Class for managing fonts.
     */
@@ -27,7 +28,7 @@ namespace GTEngine
         /**
         *   \brief  Retrieves the texture that is mapped to the given font.
         */
-        static Texture2D * GetTexture(const GTType::Font &font);
+        static Texture2D* GetTexture(const GTType::Font &font);
 
 
         /// Called by GTEngine::FontEventHandler.

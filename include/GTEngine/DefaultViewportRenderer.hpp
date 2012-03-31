@@ -1,4 +1,6 @@
 
+// TODO: Garbage collector for dead resources.
+
 // In this file, DVR = DefaultViewportRenderer.
 
 #ifndef __GTEngine_DefaultViewportRenderer_hpp_

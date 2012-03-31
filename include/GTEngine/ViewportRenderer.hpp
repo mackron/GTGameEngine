@@ -10,11 +10,7 @@ namespace GTEngine
     class SceneViewport;
     class Framebuffer;
     class Texture2D;
-}
 
-// Test.
-namespace GTEngine
-{
     /// Base class for rendering the contents of a scene's viewport.
     ///
     /// Viewport renderers always render to a framebuffer object, and never the main framebuffer. We do this for ease-of-use and flexibility.

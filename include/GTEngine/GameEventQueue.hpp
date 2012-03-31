@@ -37,7 +37,7 @@ namespace GTEngine
         *       \par
         *       The caller is free to modify the returned event if required.
         */
-        GameEvent * PeekLast();
+        GameEvent* PeekLast();
 
 
     private:
@@ -49,7 +49,7 @@ namespace GTEngine
     private:
 
         /// The buffer containing the events.
-        GameEvent *buffer;
+        GameEvent* buffer;
 
         /// The size of the buffer, in GameEvents.
         size_t bufferSize;

@@ -1,5 +1,6 @@
 
 #include <GTEngine/FontManager.hpp>
+#include <GTEngine/Rendering/Texture2D.hpp>
 #include <GTType/Font.hpp>
 #include <GTCore/Map.hpp>
 

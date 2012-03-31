@@ -1,5 +1,4 @@
 
-#include <GTEngine/Components/DynamicsComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 
 namespace GTEngine

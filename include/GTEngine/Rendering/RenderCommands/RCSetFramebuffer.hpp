@@ -3,7 +3,6 @@
 #define __GTEngine_Rendering_RCSetFramebuffer_hpp_
 
 #include "../RenderCommand.hpp"
-#include "../Renderer.hpp"
 
 namespace GTEngine
 {
@@ -14,20 +13,10 @@ namespace GTEngine
     {
     public:
 
-        RCSetFramebuffer()
-            : framebuffer(nullptr)
-        {
-        }
+        RCSetFramebuffer();
+        RCSetFramebuffer(Framebuffer* framebuffer);
 
-        RCSetFramebuffer(Framebuffer* framebuffer)
-            : framebuffer(framebuffer)
-        {
-        }
-
-        void RCSetFramebuffer::Execute()
-        {
-            Renderer::SetFramebuffer(this->framebuffer);
-        }
+        void Execute();
 
 
     private:

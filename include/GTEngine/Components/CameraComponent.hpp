@@ -3,12 +3,7 @@
 #define __GTEngine_CameraComponent_hpp_
 
 #include "../Component.hpp"
-#include "../Rendering/Framebuffer.hpp"
-
-
-#define GLM_FORCE_ONLY_XYZW
-#include <glm/glm.hpp>
-
+#include "../Math.hpp"
 
 namespace GTEngine
 {

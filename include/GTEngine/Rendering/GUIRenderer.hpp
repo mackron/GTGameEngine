@@ -2,7 +2,10 @@
 #ifndef __GTEngine_GUIRenderer_hpp_
 #define __GTEngine_GUIRenderer_hpp_
 
-#include <GTGUI/Server.hpp>
+namespace GTGUI
+{
+    class Server;
+};
 
 namespace GTEngine
 {

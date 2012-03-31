@@ -1,6 +1,6 @@
 
 #include <GTEngine/Rendering/RCQueue.hpp>
-#include <GTEngine/Material.hpp>
+#include <GTEngine/Rendering/RenderCommand.hpp>
 
 namespace GTEngine
 {

@@ -1,5 +1,7 @@
 
 #include <GTEngine/Rendering/RenderCommands/RCDrawVA.hpp>
+#include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/ShaderParameter.hpp>
 
 namespace GTEngine
 {
@@ -32,8 +34,8 @@ namespace GTEngine
         // Now properties need to be set on the shader.
         for (size_t i = 0; i < this->parameters.GetCount(); ++i)
         {
-            auto iParamName  = this->parameters.GetName(i);
-            auto iParamValue = this->parameters.Get(i);
+            auto iParamName  = this->parameters.GetNameByIndex(i);
+            auto iParamValue = this->parameters.GetByIndex(i);
 
             iParamValue->SetOnCurrentShader(iParamName);
         }

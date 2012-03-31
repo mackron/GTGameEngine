@@ -1,5 +1,4 @@
 
-#include <GTEngine/Components/CameraComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <glm/gtx/transform.hpp>
 

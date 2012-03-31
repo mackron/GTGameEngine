@@ -59,7 +59,7 @@ namespace GTEngine
         return texture;
     }
 
-    void Texture2DLibrary::Unacquire(Texture2D* texture)
+    void Texture2DLibrary::Unacquire(const Texture2D* texture)
     {
         assert(texture != nullptr);
 

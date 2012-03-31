@@ -1,17 +1,11 @@
 
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTCore/Errors.hpp>
 #include <GTCore/IO.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Dictionary.hpp>
-#include <GTCore/Log.hpp>
 #include <GTCore/Vector.hpp>
 #include <GTCore/String.hpp>
-#include <GTCore/Strings/Create.hpp>
-#include <GTCore/Strings/Equal.hpp>
-#include <GTCore/Strings/List.hpp>
-
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -421,12 +415,12 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTCore::PostError("ShaderLibrary - There was an unknown error loading a <shader> tag. This shader will be ignored.");
+                    GTEngine::PostError("ShaderLibrary - There was an unknown error loading a <shader> tag. This shader will be ignored.");
                 }
             }
             else
             {
-                GTCore::PostError("ShaderLibrary - <shader> tags must have an 'id' attribute.");
+                GTEngine::PostError("ShaderLibrary - <shader> tags must have an 'id' attribute.");
             }
         }
 

@@ -2,13 +2,12 @@
 #define __GTEngine_Shader_hpp_
 
 #include "ShaderStages.hpp"
-#include "Texture2D.hpp"
 #include "../Math.hpp"
-#include <GTCore/Dictionary.hpp>
+#include "../ShaderParameterCache.hpp"
 
 namespace GTEngine
 {
-    struct ShaderParameter;
+    class Texture2D;
 
     /// Class representing a shader.
     ///
@@ -50,16 +49,11 @@ namespace GTEngine
     // Property setters.
     public:
 
-        void SetParameter(const char* name, float value);
-        void SetParameter(const char* name, const glm::vec2 &value);
-        void SetParameter(const char* name, const glm::vec3 &value);
-        void SetParameter(const char* name, const glm::vec4 &value);
-
-        void SetParameter(const char* name, const glm::mat2 &value);
-        void SetParameter(const char* name, const glm::mat3 &value);
-        void SetParameter(const char* name, const glm::mat4 &value);
-
-        void SetParameter(const char* name, Texture2D* value);
+        template <typename T>
+        void SetParameter(const char* name, const T &value)
+        {
+            this->pendingParameters.Set(name, value);
+        }
 
         void SetParameter(const char* name, float x, float y)                   { this->SetParameter(name, glm::vec2(x, y)); }
         void SetParameter(const char* name, float x, float y, float z)          { this->SetParameter(name, glm::vec3(x, y, z)); }
@@ -85,37 +79,11 @@ namespace GTEngine
 
         /// Retrieves the internal list of pending parameters.
         /// @return A reference to the internal list of rendering parameters waiting to be set.
-        GTCore::Dictionary<char, ShaderParameter*> & GetPendingParameters() { return this->pendingParams; }
+        GTCore::Dictionary<char, ShaderParameter*> & GetPendingParameters() { return this->pendingParameters.GetParameters(); }
 
         /// Clears the pending parameters.
         void ClearPendingParameters();
 
-
-    private:
-
-        /// Sets the value of a parameter. T is the type class (ShaderParameter_Float2, etc) and U is the value type (vec2, mat4, Texture2D, etc).
-        template <typename T, typename U>
-        void SetParameter(const char* name, const U &value)
-        {
-            auto iParam = this->pendingParams.Find(name);
-            if (iParam != nullptr)
-            {
-                auto param = T::Upcast(iParam->value);
-                if (param != nullptr)
-                {
-                    param->value = value;
-                }
-                else
-                {
-                    delete iParam;
-                    this->pendingParams.Add(name, new T(value));
-                }
-            }
-            else
-            {
-                this->pendingParams.Add(name, new T(value));
-            }
-        }
 
 
     private:
@@ -124,21 +92,19 @@ namespace GTEngine
         char* vertexSource;
         char* fragmentSource;
 
-        /// The parameters that are waiting to be set on the shader. This will be cleared when the shader is
-        /// make current on the renderer.
-        GTCore::Dictionary<char, ShaderParameter*> pendingParams;
+        /// The parameters that are waiting to be set on the shader. This will be cleared when the shader is made current on the renderer.
+        ShaderParameterCache pendingParameters;
 
         /// A pointer to renderer-specific data.
         void *rendererData;
-
-        
-
-        friend class Renderer;
 
 
     private:    // No copying.
         Shader(const Shader &);
         Shader & operator=(const Shader &);
+
+
+    friend class Renderer;
     };
 }
 

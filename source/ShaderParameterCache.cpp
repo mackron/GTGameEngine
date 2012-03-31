@@ -1,5 +1,6 @@
 
 #include <GTEngine/ShaderParameterCache.hpp>
+#include <GTEngine/ShaderParameter.hpp>
 
 namespace GTEngine
 {
@@ -53,7 +54,7 @@ namespace GTEngine
         this->SetGeneric<ShaderParameter_Texture2D>(name, value);
     }
 
-    void ShaderParameterCache::Set(const char* name, ShaderParameter* parameter)
+    void ShaderParameterCache::Set(const char* name, const ShaderParameter* parameter)
     {
         // This overload is a special case. We need to create a copy here and set it manually, making sure we delete the old value if any.
         auto iParam = this->parameters.Find(name);
@@ -66,6 +67,11 @@ namespace GTEngine
     }
 
 
+    ShaderParameter* ShaderParameterCache::Get(const char* name) const
+    {
+        return const_cast<ShaderParameterCache*>(this)->Get(name);
+    }
+
     ShaderParameter* ShaderParameterCache::Get(const char* name)
     {
         auto iParam = this->parameters.Find(name);
@@ -75,9 +81,15 @@ namespace GTEngine
         }
 
         return nullptr;
+        
     }
 
-    ShaderParameter* ShaderParameterCache::Get(size_t index)
+    ShaderParameter* ShaderParameterCache::GetByIndex(size_t index) const
+    {
+        return const_cast<ShaderParameterCache*>(this)->GetByIndex(index);
+    }
+
+    ShaderParameter* ShaderParameterCache::GetByIndex(size_t index)
     {
         assert(index < this->parameters.count);
         assert(this->parameters.buffer[index] != nullptr);
@@ -85,7 +97,7 @@ namespace GTEngine
         return this->parameters.buffer[index]->value;
     }
 
-    const char* ShaderParameterCache::GetName(size_t index) const
+    const char* ShaderParameterCache::GetNameByIndex(size_t index) const
     {
         assert(index < this->parameters.count);
         assert(this->parameters.buffer[index] != nullptr);

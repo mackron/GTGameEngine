@@ -15,7 +15,7 @@ namespace GTEngine
         *   \remarks
         *       You must call Close() when finished with the configuration.
         */
-        static bool Open(const char *fileName);
+        static bool Open(const char* fileName);
         
         /**
         *   \brief  Closes the application configuration.

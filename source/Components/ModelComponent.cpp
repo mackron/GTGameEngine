@@ -1,6 +1,5 @@
 
 #include <GTEngine/Components/ModelComponent.hpp>
-#include <GTEngine/SceneNode.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 
 namespace GTEngine

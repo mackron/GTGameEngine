@@ -1,20 +1,11 @@
 
 #include <GTEngine/ColladaLoader.hpp>
-#include <GTEngine/Components/CameraComponent.hpp>
-#include <GTEngine/Components/LightComponent.hpp>
-#include <GTEngine/Components/ModelComponent.hpp>
-#include <GTEngine/Rendering/VertexArray.hpp>
-#include <GTCore/Parse.hpp>
-#include <GTCore/List.hpp>
-#include <GTCore/IO.hpp>
-#include <GTCore/Log.hpp>
-#include <GTCore/Strings/Tokenizer.hpp>
-#include <GTCore/Strings/Copy.hpp>
-#include <GTCore/Strings/Equal.hpp>
+#include <GTEngine/SceneNode.hpp>
 
 #include <GTCore/Vector.hpp>
 #include <GTCore/String.hpp>
-
+#include <GTCore/Parse.hpp>
+#include <GTCore/Strings/Tokenizer.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -1523,7 +1514,7 @@ namespace GTEngine
                         Collada::_source *texCoordSource = nullptr;
                         size_t texCoordOffset = 0;
                         
-                        VertexArray *newMesh = nullptr;
+                        VertexArray* newMesh = nullptr;
 
                         // Now we need the inputs for the mesh.
                         switch (primitive->type)

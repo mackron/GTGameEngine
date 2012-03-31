@@ -46,7 +46,7 @@ namespace GTEngine
 
         /// Unacquires a texture.
         /// @param texture [in] A pointer to the texture to unacquire.
-        static void Unacquire(Texture2D* texture);
+        static void Unacquire(const Texture2D* texture);
 
 
     /// System/Engine textures.

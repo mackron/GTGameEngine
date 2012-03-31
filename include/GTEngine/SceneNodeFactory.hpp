@@ -18,17 +18,17 @@ namespace GTEngine
         /**
         *   \brief  Creates an empty scene node.
         */
-        static SceneNode * CreateEmptyNode();
+        static SceneNode* CreateEmptyNode();
 
         /**
         *   \brief  Creates a 2D camera node.
         */
-        static SceneNode * Create2DCameraNode(float left, float right, float bottom, float yop, float znear, float zfar);
+        static SceneNode* Create2DCameraNode(float left, float right, float bottom, float yop, float znear, float zfar);
 
         /**
         *   \brief  Creates a 3D camera node.
         */
-        static SceneNode * Create3DCameraNode(float fov, float aspect, float znear, float zfar);
+        static SceneNode* Create3DCameraNode(float fov, float aspect, float znear, float zfar);
 
         /**
         *   \brief             Creates a node with a model component attached to it.
@@ -37,7 +37,7 @@ namespace GTEngine
         *   \remarks
         *       If \c model is null, an empty node is created.
         */
-        static SceneNode * CreateModelNode(Model *model, bool giveOwnership = false);
+        static SceneNode* CreateModelNode(Model* model, bool giveOwnership = false);
 
 
     // Deleting
@@ -46,7 +46,7 @@ namespace GTEngine
         /**
         *   \brief  Deletes a node created with this factory.
         */
-        static void DeleteNode(SceneNode *nodeToDelete);
+        static void DeleteNode(SceneNode* nodeToDelete);
 
     };
 }

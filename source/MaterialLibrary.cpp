@@ -1,6 +1,5 @@
 
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/Material.hpp>
 #include <GTCore/Dictionary.hpp>
 
 namespace GTEngine

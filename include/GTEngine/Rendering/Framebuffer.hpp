@@ -2,15 +2,10 @@
 #ifndef __GTEngine_Framebuffer_hpp_
 #define __GTEngine_Framebuffer_hpp_
 
-#include "Texture2D.hpp"
-
-#if defined(_MSC_VER)
-    #pragma warning(push)
-    #pragma warning(disable:4482)   // nonstandard extension.
-#endif
-
 namespace GTEngine
 {
+    class Texture2D;
+
     /**
     *   \brief  Class representing a framebuffer.
     *
@@ -192,9 +187,5 @@ namespace GTEngine
     friend class Renderer;
     };
 }
-
-#if defined(_MSC_VER)
-    #pragma warning(pop)
-#endif
 
 #endif

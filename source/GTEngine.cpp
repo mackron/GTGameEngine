@@ -1,12 +1,12 @@
 
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
+#include <GTEngine/UserConfig.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Rendering.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
-
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/IO.hpp>
 

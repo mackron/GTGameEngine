@@ -18,7 +18,7 @@ namespace GTEngine
         /**
         *   \brief  Creates a vertex array from an AABB.
         */
-        static VertexArray * CreateWireframeFromAABB(const btAABB &aabb);
+        static VertexArray* CreateWireframeFromAABB(const btAABB &aabb);
 
         /**
         *   \brief              Creates a flat on the XZ axis, facing +Y.
@@ -30,7 +30,7 @@ namespace GTEngine
         *       \par
         *       This is a single-sided plane.
         */
-        static VertexArray * CreatePlaneXZ(float width, float height, VertexFormat &format = VertexFormat::P3T2N3);
+        static VertexArray* CreatePlaneXZ(float width, float height, VertexFormat &format = VertexFormat::P3T2N3);
 
 
     // Deleting.

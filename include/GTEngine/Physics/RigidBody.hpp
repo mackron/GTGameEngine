@@ -22,9 +22,9 @@ namespace GTEngine
         /**
         *   \brief  Constructor.
         */
-        RigidBody(btScalar mass, const btCollisionShape& collisionShape, const btVector3& localInertia, btMotionState* motionState);
-        RigidBody(btScalar mass, const btCollisionShape& collisionShape, btMotionState* motionState);
-        RigidBody(const btRigidBodyConstructionInfo& constructionInfo);
+        RigidBody(btScalar mass, const btCollisionShape &collisionShape, const btVector3 &localInertia, btMotionState *motionState);
+        RigidBody(btScalar mass, const btCollisionShape &collisionShape, btMotionState* motionState);
+        RigidBody(const btRigidBodyConstructionInfo &constructionInfo);
 
         /**
         *   \brief  Destructor.
@@ -38,18 +38,18 @@ namespace GTEngine
         *   \remarks
         *       This should only ever be used internally by DynamicsWorld. Do NOT use this to add the rigid body to the world. Use DynamicsWorld::addRigidBody().
         */
-        void setWorld(DynamicsWorld *world);
+        void setWorld(DynamicsWorld* world);
 
         /**
         *   \brief  Retrieves a pointer to the world these body is part of.
         */
-        DynamicsWorld * getWorld();
+        DynamicsWorld* getWorld();
 
 
     private:
 
         /// A pointer to the dynamics world.
-        DynamicsWorld *world;
+        DynamicsWorld* world;
     };
 }
 

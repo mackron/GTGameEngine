@@ -180,7 +180,7 @@ namespace GTEngine
         btAABB aabb;
 
         /// The vertex array that can be used to draw the model's AABB.
-        VertexArray * aabbVA;
+        VertexArray* aabbVA;
     };    
 }
 

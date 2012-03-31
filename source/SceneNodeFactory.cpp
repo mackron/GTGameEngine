@@ -1,7 +1,5 @@
 
 #include <GTEngine/SceneNodeFactory.hpp>
-#include <GTEngine/Components/CameraComponent.hpp>
-#include <GTEngine/Components/ModelComponent.hpp>
 #include <cassert>
 
 namespace GTEngine
@@ -33,7 +31,7 @@ namespace GTEngine
         return node;
     }
 
-    SceneNode * SceneNodeFactory::CreateModelNode(Model * model, bool giveOwnership)
+    SceneNode * SceneNodeFactory::CreateModelNode(Model* model, bool giveOwnership)
     {
         auto node = SceneNodeFactory::CreateEmptyNode();
         assert(node != nullptr);

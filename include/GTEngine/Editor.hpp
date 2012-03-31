@@ -2,7 +2,11 @@
 #ifndef __GTEngine_Editor_hpp_
 #define __GTEngine_Editor_hpp_
 
-#include <GTGUI/Element.hpp>
+namespace GTGUI
+{
+    class Element;
+    class Server;
+}
 
 namespace GTEngine
 {

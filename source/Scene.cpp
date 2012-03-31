@@ -1,8 +1,5 @@
 
 #include <GTEngine/Scene.hpp>
-#include <GTEngine/Components/CameraComponent.hpp>
-#include <GTEngine/Components/SpriteComponent.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
 
 namespace GTEngine
 {

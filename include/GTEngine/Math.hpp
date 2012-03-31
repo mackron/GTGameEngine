@@ -9,6 +9,7 @@
 #define GLM_FORCE_ONLY_XYZW
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop

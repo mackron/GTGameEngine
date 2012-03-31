@@ -2,12 +2,8 @@
 #ifndef __GTEngine_Material_hpp_
 #define __GTEngine_Material_hpp_
 
-#include <GTCore/Script.hpp>
-#include <GTCore/Dictionary.hpp>
 #include <GTCore/String.hpp>
-#include "Rendering/Shader.hpp"
-#include "Rendering/RCQueue.hpp"
-#include "ShaderParameter.hpp"
+#include "ShaderParameterCache.hpp"
 
 namespace GTEngine
 {
@@ -51,7 +47,7 @@ namespace GTEngine
         GTCore::String shininessShaderID;
 
         /// The default parameters.
-        GTCore::Dictionary<char, ShaderParameter*> defaultParams;
+        ShaderParameterCache defaultParams;
 
 
     private:
@@ -93,24 +89,21 @@ namespace GTEngine
         const char* GetShininessShaderID() const { return this->definition.shininessShaderID.c_str(); }
 
         /// Retrieves a reference to the list of default parameters.
-        const GTCore::Dictionary<char, ShaderParameter*> & DetDefaultParameters() const { return this->definition.defaultParams; }
+        const GTCore::Dictionary<char, ShaderParameter*> & DetDefaultParameters() const { return this->definition.defaultParams.GetParameters(); }
 
 
         /// Retrieves a reference to the list of pending properties.
-        const GTCore::Dictionary<char, ShaderParameter*> & GetPendingParameters() const { return this->parameters; }
+        const GTCore::Dictionary<char, ShaderParameter*> & GetPendingParameters() const { return this->parameters.GetParameters(); }
 
 
-        /// Sets a float property.
-        void SetParameter(const char* name, float value);
-        void SetParameter(const char* name, const glm::vec2 &value);
-        void SetParameter(const char* name, const glm::vec3 &value);
-        void SetParameter(const char* name, const glm::vec4 &value);
+    // Parameter setters.
+    public:
 
-        void SetParameter(const char* name, const glm::mat2 &value);
-        void SetParameter(const char* name, const glm::mat3 &value);
-        void SetParameter(const char* name, const glm::mat4 &value);
-
-        void SetParameter(const char* name, Texture2D* value);
+        template <typename T>
+        void SetParameter(const char* name, const T &value)
+        {
+            this->parameters.Set(name, value);
+        }
 
         void SetParameter(const char* name, float x, float y)                   { this->SetParameter(name, glm::vec2(x, y)); }
         void SetParameter(const char* name, float x, float y, float z)          { this->SetParameter(name, glm::vec3(x, y, z)); }
@@ -120,44 +113,11 @@ namespace GTEngine
 
     private:
 
-        /// Generic function used internally for setting a property.
-        void SetParameter(const char* name, ShaderParameter* prop);
-
-        /// Sets the value of a parameter. T is the type class (ShaderParameter_Float2, etc) and U is the value type (vec2, mat4, Texture2D, etc).
-        template <typename T, typename U>
-        void SetParameter(const char* name, const U &value)
-        {
-            auto iParam = this->parameters.Find(name);
-            if (iParam != nullptr)
-            {
-                auto param = T::Upcast(iParam->value);
-                if (param != nullptr)
-                {
-                    param->value = value;
-                }
-                else
-                {
-                    delete iParam;
-                    this->parameters.Add(name, new T(value));
-                }
-            }
-            else
-            {
-                this->parameters.Add(name, new T(value));
-            }
-        }
-
-        /// Clears pending properties.
-        void ClearPendingParameters();
-
-
-    private:
-
         /// The material definition.
         const MaterialDefinition &definition;
 
-        /// The dictionary of parameters being used by the material.
-        GTCore::Dictionary<char, ShaderParameter*> parameters;
+        /// The parameters being used by the material.
+        ShaderParameterCache parameters;
     };
 }
 

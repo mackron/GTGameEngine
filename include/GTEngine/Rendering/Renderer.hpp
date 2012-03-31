@@ -11,8 +11,11 @@
 #include "../Math.hpp"
 
 #include <GTCore/Window.hpp>
-#include <GTGUI/Server.hpp>
 
+namespace GTGUI
+{
+    class Server;
+}
 
 namespace GTEngine
 {

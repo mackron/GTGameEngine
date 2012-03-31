@@ -4,9 +4,6 @@
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/Components/ModelComponent.hpp>
-#include <GTEngine/Components/CameraComponent.hpp>
-#include <GTCore/Strings/List.hpp>
 
 namespace GTEngine
 {
