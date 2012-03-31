@@ -196,9 +196,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCBufferPair.hpp">
-      <Filter>include\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>

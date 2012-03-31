@@ -227,7 +227,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCBufferPair.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCQueue.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommand.hpp" />

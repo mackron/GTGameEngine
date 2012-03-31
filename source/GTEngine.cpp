@@ -18,8 +18,8 @@ namespace GTEngine
         GTCore::CommandLine cmdLine(argc, argv);
         GTCore::IO::SetCurrentDirectory(cmdLine.GetApplicationDirectory());
 
-        // The first thing we're going to do is load up the config file and move into the data directory. From there we can
-        // read the configs and setup the log file.
+        // After moving into the application directory, we need to load up the config file and move into the data directory. From
+        // there we can read the user configs and setup the log file.
         //
         // This is different from a user configuration (which are located in the 'configs' folder). The application configuration
         // usually remains constant. It defines things like directories. We won't return false if we fail to open, in which case
