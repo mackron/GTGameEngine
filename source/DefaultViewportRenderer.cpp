@@ -88,7 +88,7 @@ namespace GTEngine
 
     DVR_RCBeginLightingPass::DVR_RCBeginLightingPass()
         : framebuffer(nullptr), lightingDiffuseInput(nullptr), lightingSpecularInput(nullptr),
-          shader(nullptr), screenSize(), cameraPosition()
+          shader(nullptr), screenSize()
     {
     }
 
@@ -99,7 +99,6 @@ namespace GTEngine
         Renderer::SetShaderParameter("Lighting_Diffuse",  this->lightingDiffuseInput);
         Renderer::SetShaderParameter("Lighting_Specular", this->lightingSpecularInput);
         Renderer::SetShaderParameter("ScreenSize",        this->screenSize);
-        Renderer::SetShaderParameter("CameraPosition",    this->cameraPosition);
     }
     
 
@@ -456,6 +455,8 @@ namespace GTEngine
             this->DoLightingPass_A1D1(ambientLightNodes[iALight], directionalLightNodes[iDLight], modelNodes);
             ++iALight;
             ++iDLight;
+
+            doneFirstLightingPass = true;
         }
 
         // A1P1 passes.
@@ -465,6 +466,8 @@ namespace GTEngine
             this->DoLightingPass_A1P1(ambientLightNodes[iALight], pointLightNodes[iPLight], modelNodes);
             ++iALight;
             ++iPLight;
+
+            doneFirstLightingPass = true;
         }
 
 
@@ -512,7 +515,7 @@ namespace GTEngine
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
-        rc.Init(this->framebuffer, this->Shaders.lightingA1, this->screenSize, glm::vec3());
+        rc.Init(this->framebuffer, this->Shaders.lightingA1, this->screenSize);
 
         Renderer::BackRCQueue->Append(rc);
 
@@ -559,7 +562,7 @@ namespace GTEngine
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
-        rc.Init(this->framebuffer, this->Shaders.lightingD1, this->screenSize, this->GetCameraPositionForShaders());
+        rc.Init(this->framebuffer, this->Shaders.lightingD1, this->screenSize);
 
         Renderer::BackRCQueue->Append(rc);
 
@@ -609,7 +612,7 @@ namespace GTEngine
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
-        rc.Init(this->framebuffer, this->Shaders.lightingP1, this->screenSize, this->GetCameraPositionForShaders());
+        rc.Init(this->framebuffer, this->Shaders.lightingP1, this->screenSize);
 
         Renderer::BackRCQueue->Append(rc);
 
@@ -668,7 +671,7 @@ namespace GTEngine
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
-        rc.Init(this->framebuffer, this->Shaders.lightingA1D1, this->screenSize, this->GetCameraPositionForShaders());
+        rc.Init(this->framebuffer, this->Shaders.lightingA1D1, this->screenSize);
 
         Renderer::BackRCQueue->Append(rc);
 
@@ -725,7 +728,7 @@ namespace GTEngine
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
-        rc.Init(this->framebuffer, this->Shaders.lightingA1P1, this->screenSize, this->GetCameraPositionForShaders());
+        rc.Init(this->framebuffer, this->Shaders.lightingA1P1, this->screenSize);
 
         Renderer::BackRCQueue->Append(rc);
 
@@ -784,10 +787,5 @@ namespace GTEngine
         rc.SetFramebuffer(this->framebuffer);
 
         Renderer::BackRCQueue->Append(rc);
-    }
-
-    glm::vec3 DefaultViewportRenderer::GetCameraPositionForShaders() const
-    {
-        return glm::vec3(this->view * glm::vec4(this->owner->GetCameraNode()->GetWorldPosition(), 1.0f));
     }
 }

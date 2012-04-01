@@ -245,7 +245,7 @@ namespace GTEngine
 
         DVR_RCBeginLightingPass();
 
-        void Init(DVRFramebuffer &framebuffer, Shader* shader, const glm::vec2 &screenSize, const glm::vec3 &cameraPosition)
+        void Init(DVRFramebuffer &framebuffer, Shader* shader, const glm::vec2 &screenSize)
         {
             this->framebuffer = &framebuffer;
             this->lightingDiffuseInput  = framebuffer.lightingDiffuseInput;
@@ -253,8 +253,7 @@ namespace GTEngine
 
             this->shader = shader;
             
-            this->screenSize     = screenSize;
-            this->cameraPosition = cameraPosition;
+            this->screenSize = screenSize;
         }
 
         void Execute();
@@ -270,7 +269,6 @@ namespace GTEngine
         Shader* shader;
 
         glm::vec2 screenSize;
-        glm::vec3 cameraPosition;
     };
 
     
@@ -406,11 +404,6 @@ namespace GTEngine
         /// Swaps the lighting buffers in preperation for future lighting sub-passes.
         void SwapLightingBuffers();
 
-
-    private:
-
-        /// Retrieves the camera position to use in shaders.
-        glm::vec3 GetCameraPositionForShaders() const;
 
 
     private:
