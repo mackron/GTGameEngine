@@ -147,17 +147,19 @@ namespace GTEngine
 {
     bool GlobalVertexFormatsInitialised = false;
 
-    int TempP2[]     = {VertexAttribs::Position, 2, VertexAttribs::End};
-    int TempP3[]     = {VertexAttribs::Position, 3, VertexAttribs::End};
-    int TempP2T2[]   = {VertexAttribs::Position, 2, VertexAttribs::TexCoord, 2, VertexAttribs::End};
-    int TempP3T2[]   = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::End};
-    int TempP3T2N3[] = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::Normal, 3, VertexAttribs::End};
+    int TempP2[]         = {VertexAttribs::Position, 2, VertexAttribs::End};
+    int TempP3[]         = {VertexAttribs::Position, 3, VertexAttribs::End};
+    int TempP2T2[]       = {VertexAttribs::Position, 2, VertexAttribs::TexCoord, 2, VertexAttribs::End};
+    int TempP3T2[]       = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::End};
+    int TempP3T2N3[]     = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::Normal, 3, VertexAttribs::End};
+    int TempP3T2N3T3B3[] = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::Normal, 3, VertexAttribs::Tangent, 3, VertexAttribs::Binormal, 3, VertexAttribs::End};
 
     VertexFormat VertexFormat::P2(TempP2);
     VertexFormat VertexFormat::P3(TempP3);
     VertexFormat VertexFormat::P2T2(TempP2T2);
     VertexFormat VertexFormat::P3T2(TempP3T2);
     VertexFormat VertexFormat::P3T2N3(TempP3T2N3);
+    VertexFormat VertexFormat::P3T2N3T3B3(TempP3T2N3T3B3);
 }
 
 

@@ -113,6 +113,7 @@ namespace GTEngine
         static VertexFormat P2T2;       // 2D position, 2D texture coord.
         static VertexFormat P3T2;       // 3D position, 2D texture coord.
         static VertexFormat P3T2N3;     // 3D position, 2D texture coord, 3D normal.
+        static VertexFormat P3T2N3T3B3; // 3D position, 2D texture coord, 3D normal, 3D tangent, 3D binormal.
     };
 }
 

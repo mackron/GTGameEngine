@@ -8,18 +8,19 @@
 namespace GTEngine
 {
     DVR_RCBegin::DVR_RCBegin()
-        : framebuffer(nullptr), depthStencil(nullptr), materialDiffuse(nullptr), materialEmissive(nullptr), materialBuffer2(nullptr),
+        : framebuffer(nullptr), depthStencil(nullptr), finalOutput(nullptr), materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr),
           viewportWidth(0), viewportHeight(0)
     {
     }
 
     void DVR_RCBegin::Init(DVRFramebuffer &framebuffer)
     {
-        this->framebuffer      = &framebuffer;
-        this->depthStencil     = framebuffer.depthStencil;
-        this->materialDiffuse  = framebuffer.materialDiffuse;
-        this->materialEmissive = framebuffer.materialEmissive;
-        this->materialBuffer2  = framebuffer.materialBuffer2;
+        this->framebuffer     = &framebuffer;
+        this->depthStencil    = framebuffer.depthStencil;
+        this->finalOutput     = framebuffer.finalOutput;
+        this->materialBuffer0 = framebuffer.materialBuffer0;
+        this->materialBuffer1 = framebuffer.materialBuffer1;
+        this->materialBuffer2 = framebuffer.materialBuffer2;
 
         this->viewportWidth  = framebuffer.width;
         this->viewportHeight = framebuffer.height;
@@ -33,9 +34,9 @@ namespace GTEngine
 
             // We will prepare the framebuffer for the first pass, which is the material pass.
             this->framebuffer->AttachDepthStencilBuffer(this->depthStencil);
-            this->framebuffer->AttachColourBuffer(this->materialDiffuse,  0);
-            this->framebuffer->AttachColourBuffer(this->materialEmissive, 1);
-            this->framebuffer->AttachColourBuffer(this->materialBuffer2,  2);
+            this->framebuffer->AttachColourBuffer(this->materialBuffer0, 0);
+            this->framebuffer->AttachColourBuffer(this->materialBuffer1, 1);
+            this->framebuffer->AttachColourBuffer(this->materialBuffer2, 2);
 
             Renderer::SetFramebuffer(this->framebuffer);
             Renderer::SetDrawBuffers(3, drawBuffers);
@@ -117,8 +118,8 @@ namespace GTEngine
         this->finalOutputBuffer = framebuffer.finalOutput;
         this->lightingDiffuse   = framebuffer.lightingDiffuseOutput;
         this->lightingSpecular  = framebuffer.lightingSpecularOutput;
-        this->materialDiffuse   = framebuffer.materialDiffuse;
-        this->materialEmissive  = framebuffer.materialEmissive;
+        this->materialBuffer0   = framebuffer.materialBuffer0;
+        this->materialBuffer1   = framebuffer.materialBuffer1;
         this->materialBuffer2   = framebuffer.materialBuffer2;
     }
 
@@ -135,8 +136,8 @@ namespace GTEngine
             Renderer::SetShader(this->combinerShader);
             Renderer::SetShaderParameter("Lighting_Diffuse",  this->lightingDiffuse);
             Renderer::SetShaderParameter("Lighting_Specular", this->lightingSpecular);
-            Renderer::SetShaderParameter("MaterialBuffer0",   this->materialDiffuse);
-            Renderer::SetShaderParameter("MaterialBuffer1",   this->materialEmissive);
+            Renderer::SetShaderParameter("MaterialBuffer0",   this->materialBuffer0);
+            Renderer::SetShaderParameter("MaterialBuffer1",   this->materialBuffer1);
             Renderer::SetShaderParameter("MaterialBuffer2",   this->materialBuffer2);
 
             Renderer::DisableDepthTest();
