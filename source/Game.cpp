@@ -5,6 +5,7 @@
 #include <GTEngine/GUIEventHandler.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/GarbageCollector.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTCore/System.hpp>
 
@@ -17,6 +18,8 @@
 
 namespace GTEngine
 {
+    extern bool IsGameObjectCreated;
+
     Game::Game(int argc, char** argv)
         : isInitialised(false), closing(false), eventQueue(), eventQueueLock(), window(nullptr), windowEventHandler(*this), threads(nullptr), updateThread(nullptr), updateJob(nullptr), 
           deltaTimeInSeconds(0.0), updateTimer(), fontServer(nullptr), defaultFont(nullptr),
@@ -28,12 +31,24 @@ namespace GTEngine
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0)
     {
-        this->isInitialised = this->Initialise(argc, argv);
+        if (!IsGameObjectCreated)
+        {
+            this->isInitialised = this->Initialise(argc, argv);
+            if (this->isInitialised)
+            {
+                IsGameObjectCreated = true;
+            }
+        }
+        else
+        {
+            PostError("A Game object has already been created. Only a single Game object can be created for each application.");
+        }
     }
 
     Game::~Game()
     {
         this->Uninitialise();
+        IsGameObjectCreated = false;
     }
 
     int Game::Run()
@@ -498,6 +513,12 @@ namespace GTEngine
 
     void Game::EndFrame() // [Main Thread]
     {
+        // We need to collect garbage.
+        GarbageCollector::CollectTexture2Ds();
+        GarbageCollector::CollectShaders();
+        GarbageCollector::CollectFramebuffers();
+        GarbageCollector::CollectVertexArrays();
+
         // First we need to block until all threads have finished executing...
         this->updateThread->Wait();
 

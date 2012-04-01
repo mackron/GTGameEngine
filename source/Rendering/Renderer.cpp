@@ -1135,6 +1135,7 @@ namespace GTEngine
                 Log("    EXT_framebuffer_object:             %s", GTGL_EXT_framebuffer_object             ? "yes" : "no");
                 Log("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
                 Log("    EXT_texture_filter_anisotropic:     %s", GTGL_EXT_texture_filter_anisotropic     ? "yes" : "no");
+                //Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
                 
                 /*
                 const char *extensions = (const char *)glGetString(GL_EXTENSIONS);

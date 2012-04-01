@@ -10,6 +10,16 @@
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/IO.hpp>
 
+// Basic globals.
+namespace GTEngine
+{
+    /// Keeps track of whether or not a Game object has been created. Currently, only a single game object can be instantiated
+    /// for each application. The reason is due to how the Game class uses global/static classes such as GarbageCollector and
+    /// Renderer. The use of these static classes may be reassessed later, but for now we will restrict each application to a
+    /// single Game object, which shouldn't be much of a problem at all...
+    bool IsGameObjectCreated = false;
+}
+
 namespace GTEngine
 {
     bool Startup(int argc, char** argv, const char* clientDefaultConfig)

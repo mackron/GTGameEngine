@@ -11,6 +11,7 @@
 #include "ShaderParameter.hpp"
 #include "Material.hpp"
 #include "MaterialShaderCache.hpp"
+#include "GarbageCollector.hpp"
 #include "Rendering/Framebuffer.hpp"
 #include "Rendering/Renderer.hpp"
 #include "Rendering/RenderCommand.hpp"
@@ -32,11 +33,7 @@ namespace GTEngine
               depthStencil(nullptr),
               finalOutput(nullptr),
               lightingDiffuseOutput(nullptr), lightingDiffuseInput(nullptr), lightingSpecularOutput(nullptr), lightingSpecularInput(nullptr),
-              materialDiffuse(nullptr), materialEmissive(nullptr),
-              depthStencilDead(nullptr),
-              finalOutputDead(nullptr),
-              lightingDiffuseOutputDead(nullptr), lightingDiffuseInputDead(nullptr), lightingSpecularOutputDead(nullptr), lightingSpecularInputDead(nullptr),
-              materialDiffuseDead(nullptr), materialEmissiveDead(nullptr)
+              materialDiffuse(nullptr), materialEmissive(nullptr)
         {
             this->CreateAttachments(1, 1);
         }
@@ -65,12 +62,6 @@ namespace GTEngine
             auto tempSpecular            = this->lightingSpecularInput;
             this->lightingSpecularInput  = this->lightingSpecularOutput;
             this->lightingSpecularOutput = tempSpecular;
-        }
-
-        /// Performs a cleanup of dead attachments.
-        void DoCleanup()
-        {
-            this->DeleteDeadAttachments();
         }
 
 
@@ -119,8 +110,6 @@ namespace GTEngine
         /// Deletes the attachments.
         void DeleteAll()
         {
-            this->DeleteDeadAttachments();
-
             delete this->depthStencil;
             delete this->finalOutput;
             delete this->lightingDiffuseInput;
@@ -145,14 +134,14 @@ namespace GTEngine
         {
             this->DetachAllBuffers();
 
-            this->depthStencilDead           = this->depthStencil;
-            this->finalOutputDead            = this->finalOutput;
-            this->lightingDiffuseInputDead   = this->lightingDiffuseInput;
-            this->lightingDiffuseOutputDead  = this->lightingDiffuseOutput;
-            this->lightingSpecularInputDead  = this->lightingSpecularInput;
-            this->lightingSpecularOutputDead = this->lightingSpecularOutput;
-            this->materialDiffuseDead        = this->materialDiffuse;
-            this->materialEmissiveDead       = this->materialEmissive;
+            if (this->depthStencil           != nullptr) GarbageCollector::MarkForCollection(*this->depthStencil);
+            if (this->finalOutput            != nullptr) GarbageCollector::MarkForCollection(*this->finalOutput);
+            if (this->lightingDiffuseInput   != nullptr) GarbageCollector::MarkForCollection(*this->lightingDiffuseInput);
+            if (this->lightingDiffuseOutput  != nullptr) GarbageCollector::MarkForCollection(*this->lightingDiffuseOutput);
+            if (this->lightingSpecularInput  != nullptr) GarbageCollector::MarkForCollection(*this->lightingSpecularInput);
+            if (this->lightingSpecularOutput != nullptr) GarbageCollector::MarkForCollection(*this->lightingSpecularOutput);
+            if (this->materialDiffuse        != nullptr) GarbageCollector::MarkForCollection(*this->materialDiffuse);
+            if (this->materialEmissive       != nullptr) GarbageCollector::MarkForCollection(*this->materialEmissive);
 
             this->depthStencil           = nullptr;
             this->finalOutput            = nullptr;
@@ -162,32 +151,6 @@ namespace GTEngine
             this->lightingSpecularOutput = nullptr;
             this->materialDiffuse        = nullptr;
             this->materialEmissive       = nullptr;
-        }
-
-        /// When the framebuffer is resized, buffers are marked for deletion. This will delete the dead buffers.
-        void DeleteDeadAttachments()
-        {
-            // We will do a quick check to see if deletion needs to occur. We can simply check just one of the dead buffers for null.
-            if (this->finalOutputDead != nullptr)
-            {
-                delete this->depthStencilDead;
-                delete this->finalOutputDead;
-                delete this->lightingDiffuseInputDead;
-                delete this->lightingDiffuseOutputDead;
-                delete this->lightingSpecularInputDead;
-                delete this->lightingSpecularOutputDead;
-                delete this->materialDiffuseDead;
-                delete this->materialEmissiveDead;
-            
-                this->depthStencilDead           = nullptr;
-                this->finalOutputDead            = nullptr;
-                this->lightingDiffuseInputDead   = nullptr;
-                this->lightingDiffuseOutputDead  = nullptr;
-                this->lightingSpecularInputDead  = nullptr;
-                this->lightingSpecularOutputDead = nullptr;
-                this->materialDiffuseDead        = nullptr;
-                this->materialEmissiveDead       = nullptr;
-            }
         }
 
 
@@ -212,17 +175,6 @@ namespace GTEngine
         // The material buffers.
         Texture2D* materialDiffuse;
         Texture2D* materialEmissive;
-
-
-        // Dead buffers.
-        Texture2D* depthStencilDead;
-        Texture2D* finalOutputDead;
-        Texture2D* lightingDiffuseOutputDead;
-        Texture2D* lightingDiffuseInputDead;
-        Texture2D* lightingSpecularOutputDead;
-        Texture2D* lightingSpecularInputDead;
-        Texture2D* materialDiffuseDead;
-        Texture2D* materialEmissiveDead;
     };
 }
 

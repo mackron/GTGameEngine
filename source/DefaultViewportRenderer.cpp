@@ -291,11 +291,6 @@ namespace GTEngine
         this->RenderCommands.rcSetLightingBuffers[this->backRCIndex].Reset();
         this->RenderCommands.rcDrawVA[this->backRCIndex].Reset();
 
-        // When a framebuffer is resized, it marks the previous buffers for deletion, but does not delete them straight away. It is
-        // done this way because the rendering thread may not have finished with those buffers by the time the resize occurs. The
-        // call below will clean the dead buffers.
-        this->framebuffer.DoCleanup();
-
         // If the framebuffer needs to be resized, we best do that now. Resizing the framebuffer leaves 
         if (this->framebufferNeedsResize)
         {
