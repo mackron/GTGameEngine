@@ -25,7 +25,11 @@ uses 1 or each light, it will use the following: A1D1P1.
 	{
 		float2 TexCoord       : TEXCOORD0;
 		float3 Normal         : TEXCOORD1;
-        float4 Position       : TEXCOORD2;
+        //float3 Tangent        : TEXCOORD2;
+        //float3 Binormal       : TEXCOORD3;
+        
+        float4 Position       : TEXCOORD4;
+        
         float4 WindowPosition : WPOS;
 	};
     in FragmentInput IN;

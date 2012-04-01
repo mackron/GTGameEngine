@@ -1377,13 +1377,12 @@ namespace GTEngine
         // If any attributes need to be disable, we need to do that now. This is where our enabled bitfields come in handy.
         while (oldVertexAttribEnableBits != 0)
         {
-            uint32_t nextBit      = (1 << GTCore::NextBitIndex(oldVertexAttribEnableBits));
-            GLuint   attribIndex  = static_cast<GLuint>(nextBit);
+            GLuint attribIndex  = static_cast<GLuint>(GTCore::NextBitIndex(oldVertexAttribEnableBits));
 
             glDisableVertexAttribArray(attribIndex);
 
             // The bit needs to be cleared in preperation for the next iteration.
-            oldVertexAttribEnableBits &= ~nextBit;
+            oldVertexAttribEnableBits &= ~(1 << attribIndex);
         }
 
         // Now we need to set the renderer's enabled bits to our new bits.

@@ -5,7 +5,7 @@
 namespace GTEngine
 {
     Model::Model()
-        : meshes(), collisionShape(nullptr), aabb(), aabbVA(nullptr)
+        : meshes(), materials()
     {
     }
 
@@ -16,22 +16,14 @@ namespace GTEngine
         {
             delete this->meshes[i];
         }
-
-        VertexArrayFactory::DeleteVertexArray(this->aabbVA);
     }
 
-    void Model::AttachMesh(VertexArray* va, Material* material, bool buildCollisionShape)
+    void Model::AttachMesh(VertexArray* va, Material* material)
     {
-        auto newMesh = new Mesh(va, buildCollisionShape);
+        auto newMesh = new Mesh(va);
 
         this->meshes.PushBack(newMesh);
         this->materials.PushBack(material);
-
-        if (buildCollisionShape)
-        {
-            this->collisionShape.addChildShape(btTransform::getIdentity(), newMesh->collisionShape);
-            this->UpdateAABB();
-        }
     }
 
     void Model::ApplyTransformation(const glm::mat4 &transform)
@@ -39,7 +31,6 @@ namespace GTEngine
         glm::mat3 normalTransform = glm::inverse(glm::transpose(glm::mat3(transform)));
 
         // We need to do this for all meshes...
-        //for (auto iMesh = this->meshes.root; iMesh != nullptr; iMesh = iMesh->next)
         for (size_t i = 0; i < this->meshes.count; ++i)
         {
             auto mesh = this->meshes[i];
@@ -141,38 +132,7 @@ namespace GTEngine
 
             mesh->va->UnmapIndexData();
             mesh->va->UnmapVertexData();
-
-            // The collision shape needs to be updated.
-            this->collisionShape.removeChildShape(mesh->collisionShape);
-            mesh->RebuildCollisionShape();
-            this->collisionShape.addChildShape(btTransform::getIdentity(), mesh->collisionShape);
-
-            this->UpdateAABB();
         }
-    }
-
-    const btAABB & Model::GetAABB() const
-    {
-        return this->aabb;
-    }
-
-    const btCollisionShape & Model::GetCollisionShape() const
-    {
-        return this->collisionShape;
-    }
-
-    const VertexArray * Model::GetAABBVertexArray() const
-    {
-        return this->aabbVA;
-    }
-
-
-    void Model::UpdateAABB()
-    {
-        this->collisionShape.getAabb(btTransform::getIdentity(), this->aabb.m_min, this->aabb.m_max);
-
-        GTEngine::VertexArrayFactory::DeleteVertexArray(this->aabbVA);
-        this->aabbVA = GTEngine::VertexArrayFactory::CreateWireframeFromAABB(this->aabb);
     }
 }
 

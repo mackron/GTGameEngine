@@ -53,8 +53,8 @@
 		float3 Position : ATTR0;
 		float2 TexCoord : ATTR1;
 		float3 Normal   : ATTR2;
-        //float3 Tangent  : ATTR3;
-        //float3 Binormal : ATTR4;
+        float3 Tangent  : ATTR3;
+        float3 Binormal : ATTR4;
 	};
 		
 	struct VertexOutput

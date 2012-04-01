@@ -1556,6 +1556,11 @@ namespace GTEngine
                                         vertexFormat.AddAttribute(VertexAttribs::TexCoord, static_cast<int>(texCoordSource->accessor->stride));
                                     }
                                 }
+
+                                // We also need to allocate for tangents and binormals. These will be calculated later.
+                                vertexFormat.AddAttribute(VertexAttribs::Tangent,  3);
+                                vertexFormat.AddAttribute(VertexAttribs::Binormal, 3);
+
                                 
                                 // We can now grab the size of an element for future use.
                                 size_t elementSize = vertexFormat.GetSize();
@@ -2145,16 +2150,19 @@ namespace GTEngine
     {
         if (geometry)
         {
-            ModelComponent *modelComponent = sceneNode->AddComponent<ModelComponent>();
+            auto modelComponent = sceneNode->AddComponent<ModelComponent>();
             
             // Now we can create a model and attach it to the component.
-            Model *newModel = new Model;
+            auto newModel = new Model;
             
             // Now we just need to loop through each mesh in the geometry node and attach it to the model.
             for (auto i = geometry->meshes.root; i != nullptr; i = i->next)
             {
                 newModel->AttachMesh(i->value, nullptr);
             }
+
+            // Here we will generate our tangents and binormals for every mesh.
+            //newModel->GenerateTangentsAndBinormals();
             
             // Now lets attach the model to the component.
             modelComponent->SetModel(newModel);
@@ -2310,7 +2318,6 @@ namespace GTEngine
             
             
             // Now we need to loop through all of the children and call this function recursively.
-            //for (size_t i = 0; i < colladaNode->nodes.size(); ++i)
             for (auto i = colladaNode->nodes.root; i != nullptr; i = i->next)
             {
                 SceneNode *childNode = ToSceneNode((Collada::_node *)i->value, collada);
