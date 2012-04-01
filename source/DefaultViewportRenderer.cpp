@@ -559,7 +559,7 @@ namespace GTEngine
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
-        rc.Init(this->framebuffer, this->Shaders.lightingD1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition());
+        rc.Init(this->framebuffer, this->Shaders.lightingD1, this->screenSize, this->GetCameraPositionForShaders());
 
         Renderer::BackRCQueue->Append(rc);
 
@@ -609,7 +609,7 @@ namespace GTEngine
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
-        rc.Init(this->framebuffer, this->Shaders.lightingP1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition());
+        rc.Init(this->framebuffer, this->Shaders.lightingP1, this->screenSize, this->GetCameraPositionForShaders());
 
         Renderer::BackRCQueue->Append(rc);
 
@@ -668,7 +668,7 @@ namespace GTEngine
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
-        rc.Init(this->framebuffer, this->Shaders.lightingA1D1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition());
+        rc.Init(this->framebuffer, this->Shaders.lightingA1D1, this->screenSize, this->GetCameraPositionForShaders());
 
         Renderer::BackRCQueue->Append(rc);
 
@@ -725,7 +725,7 @@ namespace GTEngine
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
-        rc.Init(this->framebuffer, this->Shaders.lightingA1P1, this->screenSize, this->owner->GetCameraNode()->GetWorldPosition());
+        rc.Init(this->framebuffer, this->Shaders.lightingA1P1, this->screenSize, this->GetCameraPositionForShaders());
 
         Renderer::BackRCQueue->Append(rc);
 
@@ -784,5 +784,10 @@ namespace GTEngine
         rc.SetFramebuffer(this->framebuffer);
 
         Renderer::BackRCQueue->Append(rc);
+    }
+
+    glm::vec3 DefaultViewportRenderer::GetCameraPositionForShaders() const
+    {
+        return glm::vec3(this->view * glm::vec4(this->owner->GetCameraNode()->GetWorldPosition(), 1.0f));
     }
 }

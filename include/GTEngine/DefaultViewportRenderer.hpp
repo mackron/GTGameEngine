@@ -409,6 +409,12 @@ namespace GTEngine
 
     private:
 
+        /// Retrieves the camera position to use in shaders.
+        glm::vec3 GetCameraPositionForShaders() const;
+
+
+    private:
+
         /// The owner viewport. This can be null, thus it needs to be a pointer.
         SceneViewport* owner;
 

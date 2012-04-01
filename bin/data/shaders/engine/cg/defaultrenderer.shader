@@ -82,7 +82,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         float3 V     = normalize(cameraPos - IN.Position.xyz);
         float3 H     = normalize(L + V);
         float  NdotL = max(0.0, dot(N, L));
-        float  NdotH = max(0.0, pow(max(dot(N, H), 0), 64.0));
+        float  NdotH = max(0.0, pow(max(dot(N, H), 0), 16.0));
             
         diffuseOut  += light.Colour * NdotL;
         specularOut += light.Colour * NdotH;
