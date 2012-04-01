@@ -24,7 +24,7 @@ namespace GTEngine
             "    \n"
             "    Textures =\n"
             "    {\n"
-            "        Anisotropy = 1;\n"
+            "        Anisotropy = 16;\n"
             "    }\n"
             "};\n";
 

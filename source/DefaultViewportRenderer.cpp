@@ -448,6 +448,7 @@ namespace GTEngine
         size_t iDLight = 0;
         size_t iPLight = 0;
 
+
         // A1D1 passes.
         while (ambientLightNodes.count     - iALight >= 1 &&
                directionalLightNodes.count - iDLight >= 1)

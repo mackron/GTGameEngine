@@ -66,6 +66,12 @@ uses 1 or each light, it will use the following: A1D1P1.
     {
         float3 Colour;
     };
+    
+    void CalculateAmbientLighting(AmbientLight light, in out float3 diffuseOut, in out float3 specularOut)
+    {
+        diffuseOut  += light.Colour;
+        specularOut += float3(0.0, 0.0, 0.0);
+    }
 </shader>
 
 <shader id="Engine_DirectionalLight">
@@ -143,15 +149,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include>
         uniform AmbientLight ALights[1];
         
-	    void main(out FragmentOutput OUT)
+	    FragmentOutput main()
 	    {
-            float2 fragCoord = IN.WindowPosition.xy / ScreenSize;
-
-		    OUT.Color0   = tex2D(Lighting_Diffuse, fragCoord) + float4(ALights[0].Colour, 1.0);
-            OUT.Color0.a = 1.0f;
+            float3 diffuse  = float3(0.0, 0.0, 0.0);
+            float3 specular = float3(0.0, 0.0, 0.0);
+            CalculateAmbientLighting(ALights[0], diffuse, specular);
             
-            OUT.Color1   = tex2D(Lighting_Specular, fragCoord) + float4(0.0, 0.0, 0.0, 1.0);
-            OUT.Color1.a = 1.0f;
+            return DoFinalLightingOutput(Lighting_Diffuse, Lighting_Specular, ScreenSize, diffuse, specular);
 	    }
     </include>
 </shader>
@@ -165,20 +169,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include>
         uniform DirectionalLight DLights[1];
         
-	    void main(out FragmentOutput OUT)
+	    FragmentOutput main()
 	    {
-            float2 fragCoord = IN.WindowPosition.xy / ScreenSize;
-            
             float3 diffuse  = float3(0.0, 0.0, 0.0);
             float3 specular = float3(0.0, 0.0, 0.0);
             CalculateDirectionalLighting(DLights[0], diffuse, specular);
 
-
-		    OUT.Color0.rgb = tex2D(Lighting_Diffuse, fragCoord).rgb + diffuse;
-            OUT.Color0.a   = 1.0f;
-            
-            OUT.Color1.rgb = tex2D(Lighting_Specular, fragCoord).rgb + specular;
-            OUT.Color1.a   = 1.0f;
+		    return DoFinalLightingOutput(Lighting_Diffuse, Lighting_Specular, ScreenSize, diffuse, specular);
 	    }
     </include>
 </shader>
@@ -192,19 +189,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include>
         uniform PointLight PLights[1];
         
-	    void main(out FragmentOutput OUT)
+	    FragmentOutput main()
 	    {
-            float2 fragCoord = IN.WindowPosition.xy / ScreenSize;
-            
             float3 diffuse  = float3(0.0, 0.0, 0.0);
             float3 specular = float3(0.0, 0.0, 0.0);
             CalculatePointLighting(PLights[0], diffuse, specular);
             
-		    OUT.Color0   = tex2D(Lighting_Diffuse, fragCoord) + float4(diffuse, 1.0);
-            OUT.Color0.a = 1.0f;
-            
-            OUT.Color1   = tex2D(Lighting_Specular, fragCoord) + float4(specular, 1.0);
-            OUT.Color1.a = 1.0f;
+		    return DoFinalLightingOutput(Lighting_Diffuse, Lighting_Specular, ScreenSize, diffuse, specular);
 	    }
     </include>
 </shader>
