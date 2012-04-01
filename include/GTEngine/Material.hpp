@@ -46,6 +46,9 @@ namespace GTEngine
         /// The ID of the shininess shader.
         GTCore::String shininessShaderID;
 
+        /// The ID of the normal shader.
+        GTCore::String normalShaderID;
+
         /// The default parameters.
         ShaderParameterCache defaultParams;
 
@@ -87,6 +90,9 @@ namespace GTEngine
 
         /// Retrieves the ID of the shininess shader.
         const char* GetShininessShaderID() const { return this->definition.shininessShaderID.c_str(); }
+
+        /// Retrieves the ID of the normals shader.
+        const char* GetNormalShaderID() const { return this->definition.normalShaderID.c_str(); }
 
         /// Retrieves a reference to the list of default parameters.
         const GTCore::Dictionary<char, ShaderParameter*> & DetDefaultParameters() const { return this->definition.defaultParams.GetParameters(); }

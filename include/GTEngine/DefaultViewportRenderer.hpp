@@ -31,7 +31,7 @@ namespace GTEngine
               depthStencil(nullptr),
               finalOutput(nullptr),
               lightingDiffuseOutput(nullptr), lightingDiffuseInput(nullptr), lightingSpecularOutput(nullptr), lightingSpecularInput(nullptr),
-              materialDiffuse(nullptr), materialEmissive(nullptr)
+              materialDiffuse(nullptr), materialEmissive(nullptr), materialBuffer2(nullptr)
         {
             this->CreateAttachments(1, 1);
         }
@@ -82,6 +82,7 @@ namespace GTEngine
                 this->lightingSpecularInput  = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
                 this->materialDiffuse        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
                 this->materialEmissive       = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                this->materialBuffer2        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
             }
             else
             {
@@ -92,6 +93,7 @@ namespace GTEngine
                 this->lightingSpecularInput  = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                 this->materialDiffuse        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                 this->materialEmissive       = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->materialBuffer2        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
             }
 
             this->finalOutput->SetFilter(GTEngine::TextureFilter_Nearest);
@@ -100,6 +102,7 @@ namespace GTEngine
             this->lightingSpecularInput->SetFilter(GTEngine::TextureFilter_Nearest);
             this->lightingSpecularOutput->SetFilter(GTEngine::TextureFilter_Nearest);
             this->materialDiffuse->SetFilter(GTEngine::TextureFilter_Nearest);
+            this->materialEmissive->SetFilter(GTEngine::TextureFilter_Nearest);
             this->materialEmissive->SetFilter(GTEngine::TextureFilter_Nearest);
 
             this->finalOutput->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
@@ -116,6 +119,7 @@ namespace GTEngine
             delete this->lightingSpecularOutput;
             delete this->materialDiffuse;
             delete this->materialEmissive;
+            delete this->materialBuffer2;
             
             this->depthStencil           = nullptr;
             this->finalOutput            = nullptr;
@@ -125,6 +129,7 @@ namespace GTEngine
             this->lightingSpecularOutput = nullptr;
             this->materialDiffuse        = nullptr;
             this->materialEmissive       = nullptr;
+            this->materialBuffer2        = nullptr;
         }
 
         /// Marks all of the currently attachment buffers as dead. Also detaches them.
@@ -140,6 +145,7 @@ namespace GTEngine
             if (this->lightingSpecularOutput != nullptr) GarbageCollector::MarkForCollection(*this->lightingSpecularOutput);
             if (this->materialDiffuse        != nullptr) GarbageCollector::MarkForCollection(*this->materialDiffuse);
             if (this->materialEmissive       != nullptr) GarbageCollector::MarkForCollection(*this->materialEmissive);
+            if (this->materialBuffer2        != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer2);
 
             this->depthStencil           = nullptr;
             this->finalOutput            = nullptr;
@@ -149,6 +155,7 @@ namespace GTEngine
             this->lightingSpecularOutput = nullptr;
             this->materialDiffuse        = nullptr;
             this->materialEmissive       = nullptr;
+            this->materialBuffer2        = nullptr;
         }
 
 
@@ -171,8 +178,9 @@ namespace GTEngine
         Texture2D* lightingSpecularInput;
 
         // The material buffers.
-        Texture2D* materialDiffuse;
-        Texture2D* materialEmissive;
+        Texture2D* materialDiffuse;     // RGB = Diffuse.  A = Shininess.
+        Texture2D* materialEmissive;    // RGB = Emissive. A = Transparency.
+        Texture2D* materialBuffer2;     // RGB = Normals as used for normal mapping. A = nothing.
     };
 }
 
@@ -199,6 +207,7 @@ namespace GTEngine
         Texture2D* depthStencil;
         Texture2D* materialDiffuse;
         Texture2D* materialEmissive;
+        Texture2D* materialBuffer2;
 
         unsigned int viewportWidth;
         unsigned int viewportHeight;
@@ -298,6 +307,7 @@ namespace GTEngine
         Texture2D* lightingSpecular;
         Texture2D* materialDiffuse;
         Texture2D* materialEmissive;
+        Texture2D* materialBuffer2;
     };
 
 

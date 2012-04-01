@@ -284,17 +284,20 @@ uses 1 or each light, it will use the following: A1D1P1.
         {
             float4 Color0 : COLOR0;
             float4 Color1 : COLOR1;
+            float4 Color2 : COLOR2;
         };
         
         float3 Diffuse();
         float3 Emissive();
         float  Shininess();
+        float3 Normal();
         
 	    void main(out FragmentOutput OUT)
 	    {
             float3 materialDiffuse   = Diffuse();
             float3 materialEmissive  = Emissive();
             float  materialShininess = Shininess();
+            float3 materialNormal    = Normal();
         
 		    OUT.Color0.rgb = materialDiffuse;
             OUT.Color0.a   = 1.0f;
@@ -320,9 +323,10 @@ uses 1 or each light, it will use the following: A1D1P1.
     };
     
     uniform sampler2D Lighting_Diffuse;     // rgb = diffuse;  a = nothing
-    uniform sampler2D Lighting_Specular;    // rgb = specular; a = noting
+    uniform sampler2D Lighting_Specular;    // rgb = specular; a = nothing
     uniform sampler2D MaterialBuffer0;      // rgb = diffuse;  a = transparancy
     uniform sampler2D MaterialBuffer1;      // rgb = emissive; a = shininess
+    uniform sampler2D MaterialBuffer2;      // rgb = normals;  a = nothing
     
     void main(out FragmentOutput OUT)
     {

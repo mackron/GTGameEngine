@@ -8,7 +8,7 @@
 namespace GTEngine
 {
     DVR_RCBegin::DVR_RCBegin()
-        : framebuffer(nullptr), depthStencil(nullptr), materialDiffuse(nullptr), materialEmissive(nullptr),
+        : framebuffer(nullptr), depthStencil(nullptr), materialDiffuse(nullptr), materialEmissive(nullptr), materialBuffer2(nullptr),
           viewportWidth(0), viewportHeight(0)
     {
     }
@@ -19,6 +19,7 @@ namespace GTEngine
         this->depthStencil     = framebuffer.depthStencil;
         this->materialDiffuse  = framebuffer.materialDiffuse;
         this->materialEmissive = framebuffer.materialEmissive;
+        this->materialBuffer2  = framebuffer.materialBuffer2;
 
         this->viewportWidth  = framebuffer.width;
         this->viewportHeight = framebuffer.height;
@@ -28,15 +29,16 @@ namespace GTEngine
     {
         if (this->framebuffer != nullptr)
         {
-            int drawBuffers[] = {0, 1};
+            int drawBuffers[] = {0, 1, 2};
 
             // We will prepare the framebuffer for the first pass, which is the material pass.
             this->framebuffer->AttachDepthStencilBuffer(this->depthStencil);
             this->framebuffer->AttachColourBuffer(this->materialDiffuse,  0);
             this->framebuffer->AttachColourBuffer(this->materialEmissive, 1);
+            this->framebuffer->AttachColourBuffer(this->materialBuffer2,  2);
 
             Renderer::SetFramebuffer(this->framebuffer);
-            Renderer::SetDrawBuffers(2, drawBuffers);
+            Renderer::SetDrawBuffers(3, drawBuffers);
 
             Renderer::SetViewport(0, 0, this->viewportWidth, this->viewportHeight);
 
@@ -61,7 +63,7 @@ namespace GTEngine
 
     void DVR_RCBeginLighting::Execute()
     {
-        // NOTE: The draw buffer will have already been set previously by DefaultViewportRenderer_RCBegin.
+        int drawBuffers[] = {0, 1};
 
         // The first pass will be the lighting pass. We need to setup the framebuffer for this. The input lighting buffers
         // need to be cleared to 0.0. We also clear the depth/stencil buffer at the same time.
@@ -69,6 +71,7 @@ namespace GTEngine
         this->framebuffer->AttachColourBuffer(this->lightingSpecularInput, 1);
 
         Renderer::SetFramebuffer(this->framebuffer);
+        Renderer::SetDrawBuffers(2, drawBuffers);
 
         // Clearing to black is important here.
         Renderer::ClearColour(0.0f, 0.0f, 0.0f, 1.0f);
@@ -116,6 +119,7 @@ namespace GTEngine
         this->lightingSpecular  = framebuffer.lightingSpecularOutput;
         this->materialDiffuse   = framebuffer.materialDiffuse;
         this->materialEmissive  = framebuffer.materialEmissive;
+        this->materialBuffer2   = framebuffer.materialBuffer2;
     }
 
     void DVR_RCEnd::Execute()
@@ -133,6 +137,7 @@ namespace GTEngine
             Renderer::SetShaderParameter("Lighting_Specular", this->lightingSpecular);
             Renderer::SetShaderParameter("MaterialBuffer0",   this->materialDiffuse);
             Renderer::SetShaderParameter("MaterialBuffer1",   this->materialEmissive);
+            Renderer::SetShaderParameter("MaterialBuffer2",   this->materialBuffer2);
 
             Renderer::DisableDepthTest();
 
@@ -190,6 +195,7 @@ namespace GTEngine
         ShaderLibrary::Unacquire(Shaders.lightingA1);
         ShaderLibrary::Unacquire(Shaders.lightingP1);
         ShaderLibrary::Unacquire(Shaders.lightingA1D1);
+        ShaderLibrary::Unacquire(Shaders.lightingA1P1);
         ShaderLibrary::Unacquire(Shaders.combiner);
 
         /// The material shaders need to be deleted.
@@ -346,6 +352,7 @@ namespace GTEngine
             const char* materialDiffuse   = ShaderLibrary::GetShaderString(material.GetDiffuseShaderID());
             const char* materialEmissive  = ShaderLibrary::GetShaderString(material.GetEmissiveShaderID());
             const char* materialShininess = ShaderLibrary::GetShaderString(material.GetShininessShaderID());
+            const char* materialNormal    = ShaderLibrary::GetShaderString(material.GetNormalShaderID());
 
             // With the shader strings retrieved, we need to concatinate the shaders and create the shader object.
             GTCore::Strings::List<char> fragmentShaderString;
@@ -356,6 +363,8 @@ namespace GTEngine
             fragmentShaderString.Append(materialEmissive);
             fragmentShaderString.Append("\n");
             fragmentShaderString.Append(materialShininess);
+            fragmentShaderString.Append("\n");
+            fragmentShaderString.Append(materialNormal);
 
             shader = new Shader(baseShaderVS, fragmentShaderString.c_str());
 

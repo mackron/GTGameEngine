@@ -2,7 +2,7 @@
 
 <!-- Default material shaders. These shaders will be used when the applicable shader is omitted in a material definition. -->
 <shader id="Material_DefaultDiffuse">
-    float4 Diffuse()
+    float3 Diffuse()
     {
         return float4(1.0, 1.0, 1.0);
     }
@@ -11,7 +11,7 @@
 <shader id="Material_DefaultEmissive">
     float3 Emissive()
     {
-        return float4(0.0, 0.0, 0.0);
+        return float3(0.0, 0.0, 0.0);
     }
 </shader>
 
@@ -19,6 +19,13 @@
     float Shininess()
     {
         return 0.5;
+    }
+</shader>
+
+<shader id="Material_DefaultNormal">
+    float3 Normal()
+    {
+        return float3(0.0f, 0.0f, 1.0f);
     }
 </shader>
 
@@ -79,5 +86,14 @@
     float3 Diffuse()
     {
         return tex2D(DiffuseTexture, IN.TexCoord).rgb;
+    }
+</shader>
+
+<shader id="Material_TexturedNormal">   <!-- Use this one for standard normal mapping using a texture. -->
+    uniform sampler2D NormalMap;
+    
+    float3 Normal()
+    {
+        return tex2D(NormalMap, IN.TexCoord).rgb;
     }
 </shader>

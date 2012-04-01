@@ -150,6 +150,30 @@ namespace GTEngine
                 this->shininessShaderID = "Material_DefaultShininess";
             }
 
+            // <normal>
+            auto normalNode = materialNode->first_node("normal");
+            if (normalNode != nullptr)
+            {
+                auto idAttr = normalNode->first_attribute("id");
+                if (idAttr != nullptr)
+                {
+                    this->normalShaderID = idAttr->value();
+                }
+                else
+                {
+                    GenerateAnonymousShaderID(this->normalShaderID);
+                }
+
+                if (normalNode->value_size() > 0)
+                {
+                    ShaderLibrary::AddShaderString(this->normalShaderID.c_str(), normalNode->value());
+                }
+            }
+            else
+            {
+                this->normalShaderID = "Material_DefaultNormal";
+            }
+
 
             // <defaultproperties>. Optional.
             auto defaultpropertiesNode = materialNode->first_node("defaultproperties");
