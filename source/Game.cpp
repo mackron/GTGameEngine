@@ -255,6 +255,37 @@ namespace GTEngine
     }
 
 
+    void Game::ShowDebugging()
+    {
+        // If we haven't yet initialised the debugging GUI, we need to do it.
+        if (!DebuggingGUI.isInitialised)
+        {
+            this->DebuggingGUI.Initialise(*this->gui);
+        }
+
+        if (this->DebuggingGUI.DebuggingMain != nullptr)
+        {
+            this->DebuggingGUI.DebuggingMain->Show();
+            this->DebuggingGUI.isShowing = true;
+        }
+    }
+
+    void Game::HideDebugging()
+    {
+        if (this->DebuggingGUI.DebuggingMain != nullptr)
+        {
+            this->DebuggingGUI.DebuggingMain->Hide();
+            this->DebuggingGUI.isShowing = false;
+        }
+    }
+
+    bool Game::IsDebuggingOpen() const
+    {
+        return this->DebuggingGUI.isShowing;
+    }
+
+
+
     void Game::OnUpdate()
     {
     }
@@ -530,19 +561,24 @@ namespace GTEngine
     {
         // The game needs to know that we're updating.
         this->OnUpdate();
+
+        // If the debugging overlay is open, we need to show the debugging information.
+        if (this->IsDebuggingOpen())
+        {
+            this->DebuggingGUI.Step();
+        }
     }
 
     void Game::Draw() //[Main Thread]
     {
         this->OnDraw();
         Renderer::ExecuteFrontRCQueue();
+        this->OnPostDraw();
 
         // We draw the GUI on top of everything else...
         Renderer::SetFramebuffer(nullptr);
         Renderer::DrawGUI(this->GetGUI());
 
-        this->OnPostDraw();
-        
         Renderer::SwapBuffers();
     }
 

@@ -185,6 +185,16 @@ namespace GTEngine
         bool IsEditorOpen() const;
 
 
+        /// Shows the debugging overlay.
+        void ShowDebugging();
+
+        /// Hides the debugging overlay.
+        void HideDebugging();
+
+        /// Determines whether or now the debugging overlay is shown.
+        bool IsDebuggingOpen() const;
+
+
     // Operators.
     public:
 
@@ -197,7 +207,6 @@ namespace GTEngine
     protected:
 
         void CacheMousePosition();
-
 
 
         
@@ -455,6 +464,100 @@ namespace GTEngine
 
         /// Class representing the editor.
         Editor editor;
+
+
+        /// Structure containing the debuggin GUI elements.
+        struct _DebuggingGUI
+        {
+            _DebuggingGUI()
+                : gui(nullptr),
+                  DebuggingMain(nullptr),
+                  FPSValue(nullptr), DeltaValue(nullptr),
+                  updateIntervalInSeconds(0.5), timer(), totalStepCount(0), averageDelta(0.0),
+                  isInitialised(false), isShowing(false)
+            {
+            }
+
+            bool Initialise(GTGUI::Server &gui)
+            {
+                if (!this->isInitialised)
+                {
+                    this->gui = &gui;
+
+                    if (this->gui->LoadFromFile("gui/engine/debugging.xml"))
+                    {
+                        this->DebuggingMain = this->gui->GetElementByID("DebuggingMain");
+                        this->FPSValue      = this->gui->GetElementByID("FPSValue");
+                        this->DeltaValue    = this->gui->GetElementByID("DeltaValue");
+
+                        this->isInitialised = true;
+                    }
+                }
+
+                return this->isInitialised;
+            }
+
+            // Updates the debugging information. This should be called once per frame.
+            // Returns true if the debugging information was refreshed based on the update interval. False otherwise.
+            void Step()
+            {
+                if (this->timer.GetTimeSinceLastUpdate() >= updateIntervalInSeconds)
+                {
+                    this->averageDelta   = this->timer.GetTimeSinceLastUpdate() / GTCore::Max(static_cast<double>(this->totalStepCount), 1.0);
+                    this->totalStepCount = 0;
+
+                    this->timer.Update();
+
+                    char tempStr[64];
+                    if (this->FPSValue != nullptr)
+                    {
+                        GTCore::IO::snprintf(tempStr, 64, "%.1f", 1.0 / this->averageDelta);
+                        this->FPSValue->SetText(tempStr);
+                    }
+
+                    if (this->DeltaValue != nullptr)
+                    {
+                        GTCore::IO::snprintf(tempStr, 64, "%f", this->averageDelta);
+                        this->DeltaValue->SetText(tempStr);
+                    }
+                }
+
+                ++this->totalStepCount;
+            }
+
+            /// A pointer to the main GUI server this debugging GUI is part of. This is set in Initialise().
+            GTGUI::Server* gui;
+
+            /// The main editor element. Every single element used by the editor is a child of this element.
+            GTGUI::Element* DebuggingMain;
+
+            /// The FPSValue element.
+            GTGUI::Element* FPSValue;
+
+            /// The DeltaValue element.
+            GTGUI::Element* DeltaValue;
+
+
+            /// The amount of time to wait to update the debug information, in seconds.
+            double updateIntervalInSeconds;
+
+            /// The timer for keeping track of the debugging interval.
+            GTCore::Timer timer;
+
+            /// The number of steps that were performed during the sum of 'totalFPS'.
+            unsigned int totalStepCount;
+
+            /// The averages FPS based on totalFPSTime and totalFPSCount.
+            double averageDelta;
+
+
+            /// Whether or not the debugging GUI has been initialised.
+            bool isInitialised;
+
+            /// Whether or not the debugging GUI is currently showing.
+            bool isShowing;
+
+        }DebuggingGUI;
 
 
         bool mouseCaptured;

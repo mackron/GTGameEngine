@@ -1,8 +1,8 @@
 
 <!--
 This files contains all of the shaders used by the default viewport renderer (DefaultViewportRenderer). This renderer uses
-multiple passes to get the appropriate effects. There are two main passes, each of which are split into sub-passes: the
-lighting pass and the material pass.
+multiple passes to get the appropriate effects. There are two main passes: the lighting pass and the material pass. The
+lighting pass is sometimes split into sub-passes in order to get the lighting fully correct.
 
 The lighting pass retrieves all of the lighting information. The material pass retrieves the colours of the material
 which will be combined with the lighting pass.
@@ -344,7 +344,6 @@ uses 1 or each light, it will use the following: A1D1P1.
     uniform sampler2D Lighting_Specular;    // rgb = specular; a = nothing
     uniform sampler2D MaterialBuffer0;      // rgb = diffuse;  a = transparancy
     uniform sampler2D MaterialBuffer1;      // rgb = emissive; a = shininess
-    uniform sampler2D MaterialBuffer2;      // rgb = normals;  a = nothing
     
     void main(out FragmentOutput OUT)
     {
@@ -352,7 +351,6 @@ uses 1 or each light, it will use the following: A1D1P1.
         float4 lightingTexel1 = tex2D(Lighting_Specular, IN.TexCoord);
         float4 materialTexel0 = tex2D(MaterialBuffer0,   IN.TexCoord);
         float4 materialTexel1 = tex2D(MaterialBuffer1,   IN.TexCoord);
-        float4 materialTexel2 = tex2D(MaterialBuffer2,   IN.TexCoord);
         
         float3 lightDiffuse  = lightingTexel0.rgb;
         float3 lightSpecular = lightingTexel1.rgb;
@@ -363,8 +361,9 @@ uses 1 or each light, it will use the following: A1D1P1.
         float  materialShininess    = materialTexel1.a;
         
         OUT.Color0.rgb = (materialDiffuse * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
-        //OUT.Color0.rgb = materialTexel2.rgb;
         OUT.Color0.a   = 1.0f;
+        
+        OUT.Color0.rgb = pow(OUT.Color0.rgb, 1.0 / 2.2);   // sRGB (approx.)
     }
 </shader>
 

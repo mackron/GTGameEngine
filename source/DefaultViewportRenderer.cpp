@@ -139,7 +139,6 @@ namespace GTEngine
             Renderer::SetShaderParameter("Lighting_Specular", this->lightingSpecular);
             Renderer::SetShaderParameter("MaterialBuffer0",   this->materialBuffer0);
             Renderer::SetShaderParameter("MaterialBuffer1",   this->materialBuffer1);
-            Renderer::SetShaderParameter("MaterialBuffer2",   this->materialBuffer2);
 
             Renderer::DisableDepthTest();
 
