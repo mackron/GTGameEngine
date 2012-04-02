@@ -25,8 +25,8 @@ uses 1 or each light, it will use the following: A1D1P1.
 	{
 		float2 TexCoord       : TEXCOORD0;
 		float3 Normal         : TEXCOORD1;
-        //float3 Tangent        : TEXCOORD2;
-        //float3 Binormal       : TEXCOORD3;
+        float3 Tangent        : TEXCOORD2;
+        float3 Bitangent      : TEXCOORD3;
         
         float4 Position       : TEXCOORD4;
         
@@ -62,6 +62,7 @@ uses 1 or each light, it will use the following: A1D1P1.
 <shader id="Engine_FragmentLightingUniforms">
     uniform sampler2D Lighting_Diffuse;
     uniform sampler2D Lighting_Specular;
+    uniform sampler2D Lighting_Normals;
     uniform float2    ScreenSize;
 </shader>
 
@@ -87,7 +88,9 @@ uses 1 or each light, it will use the following: A1D1P1.
     
     void CalculateDirectionalLighting(DirectionalLight light, in out float3 diffuseOut, in out float3 specularOut)
     {
-        float3 N     = normalize(IN.Normal);
+        float2 fragCoord = IN.WindowPosition.xy / ScreenSize;
+    
+        float3 N     = tex2D(Lighting_Normals, fragCoord).rgb;
         float3 L     = -light.Direction;
         float3 H     = normalize(L - normalize(IN.Position.xyz));
         float  NdotL = max(0.0, dot(N, L));
@@ -123,7 +126,9 @@ uses 1 or each light, it will use the following: A1D1P1.
         // L - Light vector from the light to the vertex
         // D - Distance between the light and the vertex
         
-        float3 N     = normalize(IN.Normal);
+        float2 fragCoord = IN.WindowPosition.xy / ScreenSize;
+        
+        float3 N     = tex2D(Lighting_Normals, fragCoord).rgb;
         float3 L     = light.Position - IN.Position.xyz;
         float  D     = length(L);
         float3 H     = normalize(normalize(L) - normalize(IN.Position.xyz));
@@ -254,9 +259,11 @@ uses 1 or each light, it will use the following: A1D1P1.
 <shader id="Engine_MaterialPass_VS">
     struct VertexInput
 	{
-		float3 Position : ATTR0;
-		float2 TexCoord : ATTR1;
-		float3 Normal   : ATTR2;
+		float3 Position  : ATTR0;
+		float2 TexCoord  : ATTR1;
+		float3 Normal    : ATTR2;
+        float3 Tangent   : ATTR3;
+        float3 Bitangent : ATTR4;
 	};
 		
 	struct VertexOutput
@@ -265,6 +272,8 @@ uses 1 or each light, it will use the following: A1D1P1.
 
 		float2 TexCoord  : TEXCOORD0;
 		float3 Normal    : TEXCOORD1;
+        float3 Tangent   : TEXCOORD2;
+        float3 Bitangent : TEXCOORD3;
 	};
 
 	uniform float4x4 MVPMatrix;
@@ -274,8 +283,10 @@ uses 1 or each light, it will use the following: A1D1P1.
 	{
 		OUT.ClipPosition = mul(MVPMatrix, float4(IN.Position, 1.0));
         
-		OUT.TexCoord = IN.TexCoord;
-		OUT.Normal   = normalize(mul(NormalMatrix, IN.Normal));
+		OUT.TexCoord  = IN.TexCoord;
+		OUT.Normal    = normalize(mul(NormalMatrix, IN.Normal));
+        OUT.Tangent   = normalize(mul(NormalMatrix, IN.Tangent));
+        OUT.Bitangent = normalize(mul(NormalMatrix, IN.Bitangent));
 	}
 </shader>
 
@@ -304,10 +315,13 @@ uses 1 or each light, it will use the following: A1D1P1.
             float3 materialNormal    = Normal();
         
 		    OUT.Color0.rgb = materialDiffuse;
-            OUT.Color0.a   = 1.0f;
+            OUT.Color0.a   = 1.0;
             
             OUT.Color1.rgb = materialEmissive;
             OUT.Color1.a   = materialShininess;
+            
+            OUT.Color2.rgb = normalize(mul(materialNormal, float3x3(IN.Tangent, IN.Bitangent, IN.Normal)));
+            OUT.Color2.a   = 1.0;
 	    }
     </include>
 </shader>
@@ -338,6 +352,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         float4 lightingTexel1 = tex2D(Lighting_Specular, IN.TexCoord);
         float4 materialTexel0 = tex2D(MaterialBuffer0,   IN.TexCoord);
         float4 materialTexel1 = tex2D(MaterialBuffer1,   IN.TexCoord);
+        float4 materialTexel2 = tex2D(MaterialBuffer2,   IN.TexCoord);
         
         float3 lightDiffuse  = lightingTexel0.rgb;
         float3 lightSpecular = lightingTexel1.rgb;
@@ -348,6 +363,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         float  materialShininess    = materialTexel1.a;
         
         OUT.Color0.rgb = (materialDiffuse * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
+        //OUT.Color0.rgb = materialTexel2.rgb;
         OUT.Color0.a   = 1.0f;
     }
 </shader>

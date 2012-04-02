@@ -1557,9 +1557,9 @@ namespace GTEngine
                                     }
                                 }
 
-                                // We also need to allocate for tangents and binormals. These will be calculated later.
-                                vertexFormat.AddAttribute(VertexAttribs::Tangent,  3);
-                                vertexFormat.AddAttribute(VertexAttribs::Binormal, 3);
+                                // We also need to allocate for tangents and bitangents. These will be calculated later.
+                                vertexFormat.AddAttribute(VertexAttribs::Tangent,   3);
+                                vertexFormat.AddAttribute(VertexAttribs::Bitangent, 3);
 
                                 
                                 // We can now grab the size of an element for future use.
@@ -2161,8 +2161,8 @@ namespace GTEngine
                 newModel->AttachMesh(i->value, nullptr);
             }
 
-            // Here we will generate our tangents and binormals for every mesh.
-            //newModel->GenerateTangentsAndBinormals();
+            // Here we will generate our tangents and bitangent for every mesh.
+            newModel->GenerateTangentsAndBitangents();
             
             // Now lets attach the model to the component.
             modelComponent->SetModel(newModel);

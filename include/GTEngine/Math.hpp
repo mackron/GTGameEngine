@@ -11,6 +11,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/orthonormalize.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif

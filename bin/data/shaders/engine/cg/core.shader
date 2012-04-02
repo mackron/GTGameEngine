@@ -50,23 +50,23 @@
 <shader id="Engine_DefaultVS">
     struct VertexInput
 	{
-		float3 Position : ATTR0;
-		float2 TexCoord : ATTR1;
-		float3 Normal   : ATTR2;
-        float3 Tangent  : ATTR3;
-        float3 Binormal : ATTR4;
+		float3 Position  : ATTR0;
+		float2 TexCoord  : ATTR1;
+		float3 Normal    : ATTR2;
+        float3 Tangent   : ATTR3;
+        float3 Bitangent : ATTR4;
 	};
 		
 	struct VertexOutput
 	{
 		float4 ClipPosition : POSITION;
         
-		float2 TexCoord    : TEXCOORD0;
-		float3 Normal      : TEXCOORD1;
-        //float3 Tangent     : TEXCOORD2;
-        //float3 Binormal    : TEXCOORD3;
+		float2 TexCoord  : TEXCOORD0;
+		float3 Normal    : TEXCOORD1;
+        float3 Tangent   : TEXCOORD2;
+        float3 Bitangent : TEXCOORD3;
         
-        float4 Position    : TEXCOORD4;
+        float4 Position  : TEXCOORD4;
 	};
 		
     uniform float4x4 ModelViewMatrix;
@@ -77,8 +77,10 @@
 	{
 		OUT.ClipPosition = mul(MVPMatrix, float4(IN.Position, 1.0));
         
-		OUT.TexCoord = IN.TexCoord;
-		OUT.Normal   = normalize(mul(NormalMatrix, IN.Normal));
-        OUT.Position = mul(ModelViewMatrix, float4(IN.Position, 1.0));
+		OUT.TexCoord  = IN.TexCoord;
+		OUT.Normal    = normalize(mul(NormalMatrix, IN.Normal));
+        OUT.Tangent   = normalize(mul(NormalMatrix, IN.Tangent));
+        OUT.Bitangent = normalize(mul(NormalMatrix, IN.Bitangent));
+        OUT.Position  = mul(ModelViewMatrix, float4(IN.Position, 1.0));
 	}
 </shader>

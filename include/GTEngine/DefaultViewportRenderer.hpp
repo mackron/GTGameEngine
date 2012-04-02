@@ -258,6 +258,7 @@ namespace GTEngine
             this->framebuffer = &framebuffer;
             this->lightingDiffuseInput  = framebuffer.lightingDiffuseInput;
             this->lightingSpecularInput = framebuffer.lightingSpecularInput;
+            this->materialBuffer2       = framebuffer.materialBuffer2;
 
             this->shader = shader;
             
@@ -273,6 +274,7 @@ namespace GTEngine
 
         Texture2D* lightingDiffuseInput;
         Texture2D* lightingSpecularInput;
+        Texture2D* materialBuffer2;
 
         Shader* shader;
 

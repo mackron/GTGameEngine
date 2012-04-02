@@ -56,7 +56,7 @@ namespace GTEngine
                 auto vertexSrc = vertexData + (index * vertexSize);
                 auto vertexDst = newVertexData + (index * vertexSize);
 
-                // Positions and normals need to be transformed. Tangents and binormals will also need to be done in the future.
+                // Positions and normals need to be transformed. Tangents and bitangents be recalculated at the end.
                 glm::vec4 position(0.0f, 0.0f, 0.0f, 1.0f);
                 glm::vec3 normal;
 
@@ -132,6 +132,16 @@ namespace GTEngine
 
             mesh->va->UnmapIndexData();
             mesh->va->UnmapVertexData();
+        }
+
+        this->GenerateTangentsAndBitangents();
+    }
+
+    void Model::GenerateTangentsAndBitangents()
+    {
+        for (size_t i = 0; i < this->meshes.count; ++i)
+        {
+            this->meshes[i]->GenerateTangentsAndBitangents();
         }
     }
 }

@@ -91,7 +91,7 @@ namespace GTEngine
 
 
     DVR_RCBeginLightingPass::DVR_RCBeginLightingPass()
-        : framebuffer(nullptr), lightingDiffuseInput(nullptr), lightingSpecularInput(nullptr),
+        : framebuffer(nullptr), lightingDiffuseInput(nullptr), lightingSpecularInput(nullptr), materialBuffer2(nullptr),
           shader(nullptr), screenSize()
     {
     }
@@ -102,6 +102,7 @@ namespace GTEngine
 
         Renderer::SetShaderParameter("Lighting_Diffuse",  this->lightingDiffuseInput);
         Renderer::SetShaderParameter("Lighting_Specular", this->lightingSpecularInput);
+        Renderer::SetShaderParameter("Lighting_Normals",  this->materialBuffer2);
         Renderer::SetShaderParameter("ScreenSize",        this->screenSize);
     }
     
@@ -389,8 +390,9 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 MVPMatrix    = this->projection * (this->view * modelNode->GetWorldTransformMatrix());
-                glm::mat3 NormalMatrix = glm::inverse(glm::transpose(glm::mat3(MVPMatrix)));
+                glm::mat4 ModelViewMatrix = this->view * modelNode->GetWorldTransformMatrix();
+                glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
+                glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
                 for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
                 {

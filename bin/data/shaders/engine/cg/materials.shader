@@ -94,6 +94,6 @@
     
     float3 Normal()
     {
-        return tex2D(NormalMap, IN.TexCoord).rgb;
+        return normalize(tex2D(NormalMap, IN.TexCoord).rgb * 2.0 - 1.0);
     }
 </shader>
