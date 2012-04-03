@@ -42,17 +42,15 @@ uses 1 or each light, it will use the following: A1D1P1.
         float4 Color1 : COLOR1;
 	};
     
-    FragmentOutput DoFinalLightingOutput(in sampler2D diffuseInput, in sampler2D specularInput, in float2 screenSize, in float3 diffuse, in float3 specular)
+    FragmentOutput DoFinalLightingOutput(in float3 diffuse, in float3 specular)
     {
         FragmentOutput OUT;
         
-        float2 fragCoord = IN.WindowPosition.xy / screenSize;
-
-		OUT.Color0.rgb = tex2D(diffuseInput, fragCoord).rgb + diffuse;
-        OUT.Color0.a   = 1.0;
-            
-        OUT.Color1.rgb = tex2D(specularInput, fragCoord).rgb + specular;
-        OUT.Color1.a   = 1.0;
+        OUT.Color0.rgb = diffuse;
+        OUT.Color0.a   = 0.0;
+        
+        OUT.Color1.rgb = specular;
+        OUT.Color1.a   = 0.0;
         
         return OUT;
     }
@@ -60,8 +58,6 @@ uses 1 or each light, it will use the following: A1D1P1.
 </shader>
 
 <shader id="Engine_FragmentLightingUniforms">
-    uniform sampler2D Lighting_Diffuse;
-    uniform sampler2D Lighting_Specular;
     uniform sampler2D Lighting_Normals;
     uniform float2    ScreenSize;
 </shader>
@@ -164,7 +160,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             float3 specular = float3(0.0, 0.0, 0.0);
             CalculateAmbientLighting(ALights[0], diffuse, specular);
             
-            return DoFinalLightingOutput(Lighting_Diffuse, Lighting_Specular, ScreenSize, diffuse, specular);
+            return DoFinalLightingOutput(diffuse, specular);
 	    }
     </include>
 </shader>
@@ -184,7 +180,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             float3 specular = float3(0.0, 0.0, 0.0);
             CalculateDirectionalLighting(DLights[0], diffuse, specular);
 
-		    return DoFinalLightingOutput(Lighting_Diffuse, Lighting_Specular, ScreenSize, diffuse, specular);
+		    return DoFinalLightingOutput(diffuse, specular);
 	    }
     </include>
 </shader>
@@ -204,7 +200,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             float3 specular = float3(0.0, 0.0, 0.0);
             CalculatePointLighting(PLights[0], diffuse, specular);
             
-		    return DoFinalLightingOutput(Lighting_Diffuse, Lighting_Specular, ScreenSize, diffuse, specular);
+		    return DoFinalLightingOutput(diffuse, specular);
 	    }
     </include>
 </shader>
@@ -227,7 +223,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             float3 specular = float3(0.0, 0.0, 0.0);
             CalculateDirectionalLighting(DLights[0], diffuse, specular);
             
-            return DoFinalLightingOutput(Lighting_Diffuse, Lighting_Specular, ScreenSize, diffuse, specular);
+            return DoFinalLightingOutput(diffuse, specular);
 	    }
     </include>
 </shader>
@@ -249,7 +245,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             float3 specular = float3(0.0, 0.0, 0.0);
             CalculatePointLighting(PLights[0], diffuse, specular);
 
-		    return DoFinalLightingOutput(Lighting_Diffuse, Lighting_Specular, ScreenSize, diffuse, specular);
+		    return DoFinalLightingOutput(diffuse, specular);
 	    }
     </include>
 </shader>

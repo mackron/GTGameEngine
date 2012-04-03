@@ -57,8 +57,7 @@ namespace GTEngine
 
     DVR_RCBeginLighting::DVR_RCBeginLighting()
         : framebuffer(nullptr),
-          lightingDiffuseInput(nullptr),  lightingDiffuseOutput(nullptr),
-          lightingSpecularInput(nullptr), lightingSpecularOutput(nullptr)
+          lightingBuffer0(nullptr), lightingBuffer1(nullptr)
     {
     }
 
@@ -66,10 +65,9 @@ namespace GTEngine
     {
         int drawBuffers[] = {0, 1};
 
-        // The first pass will be the lighting pass. We need to setup the framebuffer for this. The input lighting buffers
-        // need to be cleared to 0.0. We also clear the depth/stencil buffer at the same time.
-        this->framebuffer->AttachColourBuffer(this->lightingDiffuseInput,  0);
-        this->framebuffer->AttachColourBuffer(this->lightingSpecularInput, 1);
+        // The lighting buffers need to be cleared to black at the start of the frame.
+        this->framebuffer->AttachColourBuffer(this->lightingBuffer0, 0);
+        this->framebuffer->AttachColourBuffer(this->lightingBuffer1, 1);
 
         Renderer::SetFramebuffer(this->framebuffer);
         Renderer::SetDrawBuffers(2, drawBuffers);
@@ -78,20 +76,19 @@ namespace GTEngine
         Renderer::ClearColour(0.0f, 0.0f, 0.0f, 1.0f);
         Renderer::Clear(GTEngine::ColourBuffer);
 
-        // With everything clear, we now need to change the colour attachments.
-        this->framebuffer->AttachColourBuffer(this->lightingDiffuseOutput,  0);
-        this->framebuffer->AttachColourBuffer(this->lightingSpecularOutput, 1);
-
-        Renderer::SetFramebuffer(this->framebuffer);    // <-- This is required, otherwise the framebuffer won't have a chance to sync for the new colour attachments.
-
         Renderer::SetDepthFunc(DepthFunc_Equal);
         Renderer::DisableDepthWrites();
+
+        // We combine lighting passes using standard blending.
+        Renderer::EnableBlending();
+        Renderer::SetBlendEquation(BlendEquation_Add);
+        Renderer::SetBlendFunc(BlendFunc_One, BlendFunc_One);
     }
 
 
 
     DVR_RCBeginLightingPass::DVR_RCBeginLightingPass()
-        : framebuffer(nullptr), lightingDiffuseInput(nullptr), lightingSpecularInput(nullptr), materialBuffer2(nullptr),
+        : framebuffer(nullptr), materialBuffer2(nullptr),
           shader(nullptr), screenSize()
     {
     }
@@ -100,10 +97,8 @@ namespace GTEngine
     {
         Renderer::SetShader(this->shader);
 
-        Renderer::SetShaderParameter("Lighting_Diffuse",  this->lightingDiffuseInput);
-        Renderer::SetShaderParameter("Lighting_Specular", this->lightingSpecularInput);
-        Renderer::SetShaderParameter("Lighting_Normals",  this->materialBuffer2);
-        Renderer::SetShaderParameter("ScreenSize",        this->screenSize);
+        Renderer::SetShaderParameter("Lighting_Normals", this->materialBuffer2);
+        Renderer::SetShaderParameter("ScreenSize",       this->screenSize);
     }
     
 
@@ -117,8 +112,8 @@ namespace GTEngine
     {
         this->framebuffer       = &framebuffer;
         this->finalOutputBuffer = framebuffer.finalOutput;
-        this->lightingDiffuse   = framebuffer.lightingDiffuseOutput;
-        this->lightingSpecular  = framebuffer.lightingSpecularOutput;
+        this->lightingBuffer0   = framebuffer.lightingBuffer0;
+        this->lightingBuffer1   = framebuffer.lightingBuffer1;
         this->materialBuffer0   = framebuffer.materialBuffer0;
         this->materialBuffer1   = framebuffer.materialBuffer1;
         this->materialBuffer2   = framebuffer.materialBuffer2;
@@ -135,35 +130,16 @@ namespace GTEngine
             Renderer::SetDrawBuffers(1, drawBuffers);
 
             Renderer::SetShader(this->combinerShader);
-            Renderer::SetShaderParameter("Lighting_Diffuse",  this->lightingDiffuse);
-            Renderer::SetShaderParameter("Lighting_Specular", this->lightingSpecular);
+            Renderer::SetShaderParameter("Lighting_Diffuse",  this->lightingBuffer0);
+            Renderer::SetShaderParameter("Lighting_Specular", this->lightingBuffer1);
             Renderer::SetShaderParameter("MaterialBuffer0",   this->materialBuffer0);
             Renderer::SetShaderParameter("MaterialBuffer1",   this->materialBuffer1);
 
             Renderer::DisableDepthTest();
+            Renderer::DisableBlending();
 
             Renderer::Draw(VertexArrayLibrary::GetFullscreenQuadVA());
         }
-    }
-
-
-
-
-    // RCSetLightingBuffers
-    DVR_RCSetLightingBuffers::DVR_RCSetLightingBuffers()
-        : framebuffer(nullptr), lightingDiffuse(nullptr), lightingSpecular(nullptr)
-    {
-    }
-
-    void DVR_RCSetLightingBuffers::Execute()
-    {
-        int drawBuffers[] = {0, 1};
-
-        this->framebuffer->AttachColourBuffer(this->lightingDiffuse,  0);
-        this->framebuffer->AttachColourBuffer(this->lightingSpecular, 1);
-
-        Renderer::SetFramebuffer(this->framebuffer);
-        Renderer::SetDrawBuffers(2, drawBuffers);
     }
 }
 
@@ -294,7 +270,6 @@ namespace GTEngine
 
         // The new back RC caches need to be reset in preparation for the next frame.
         this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Reset();
-        this->RenderCommands.rcSetLightingBuffers[this->backRCIndex].Reset();
         this->RenderCommands.rcDrawVA[this->backRCIndex].Reset();
 
         // If the framebuffer needs to be resized, we best do that now. Resizing the framebuffer leaves 
@@ -453,13 +428,11 @@ namespace GTEngine
         Renderer::BackRCQueue->Append(rc);
 
 
-        bool doneFirstLightingPass = false;
-
         size_t iALight = 0;
         size_t iDLight = 0;
         size_t iPLight = 0;
 
-
+        
         // A1D1 passes.
         while (ambientLightNodes.count     - iALight >= 1 &&
                directionalLightNodes.count - iDLight >= 1)
@@ -467,8 +440,6 @@ namespace GTEngine
             this->DoLightingPass_A1D1(ambientLightNodes[iALight], directionalLightNodes[iDLight], modelNodes);
             ++iALight;
             ++iDLight;
-
-            doneFirstLightingPass = true;
         }
 
         // A1P1 passes.
@@ -478,43 +449,23 @@ namespace GTEngine
             this->DoLightingPass_A1P1(ambientLightNodes[iALight], pointLightNodes[iPLight], modelNodes);
             ++iALight;
             ++iPLight;
-
-            doneFirstLightingPass = true;
         }
-
+        
 
         // Now we just cycle through any remaining lights. Hopefully there won't be too many of these...
         for ( ; iALight < ambientLightNodes.count; ++iALight)
         {
-            if (doneFirstLightingPass)
-            {
-                this->SwapLightingBuffers();
-            }
-
             this->DoLightingPass_A1(ambientLightNodes[iALight], modelNodes);
-            doneFirstLightingPass = true;
         }
         
         for ( ; iDLight < directionalLightNodes.count; ++iDLight)
         {
-            if (doneFirstLightingPass)
-            {
-                this->SwapLightingBuffers();
-            }
-
             this->DoLightingPass_D1(directionalLightNodes[iDLight], modelNodes);
-            doneFirstLightingPass = true;
         }
 
         for ( ; iPLight < pointLightNodes.count; ++iPLight)
         {
-            if (doneFirstLightingPass)
-            {
-                this->SwapLightingBuffers();
-            }
-
             this->DoLightingPass_P1(pointLightNodes[iPLight], modelNodes);
-            doneFirstLightingPass = true;
         }
     }
 
@@ -784,20 +735,5 @@ namespace GTEngine
                 }
             }
         }
-    }
-
-
-
-
-    void DefaultViewportRenderer::SwapLightingBuffers()
-    {
-        // With the sub-pass done, we need to swap the input and output lighting buffers.
-        this->framebuffer.SwapLightingBuffers();
-
-        //auto rcSetLightingBuffers = new DefaultViewportRenderer_RCSetLightingBuffers();
-        auto &rc = this->RenderCommands.rcSetLightingBuffers[this->backRCIndex].Acquire();
-        rc.SetFramebuffer(this->framebuffer);
-
-        Renderer::BackRCQueue->Append(rc);
     }
 }

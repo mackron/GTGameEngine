@@ -30,7 +30,7 @@ namespace GTEngine
               width(0), height(0),
               depthStencil(nullptr),
               finalOutput(nullptr),
-              lightingDiffuseOutput(nullptr), lightingDiffuseInput(nullptr), lightingSpecularOutput(nullptr), lightingSpecularInput(nullptr),
+              lightingBuffer0(nullptr), lightingBuffer1(nullptr),
               materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr)
         {
             this->CreateAttachments(1, 1);
@@ -50,18 +50,6 @@ namespace GTEngine
             this->CreateAttachments(newWidth, newHeight);
         }
 
-        /// Swaps the output and input lighting buffers.
-        void SwapLightingBuffers()
-        {
-            auto tempDiffuse            = this->lightingDiffuseInput;
-            this->lightingDiffuseInput  = this->lightingDiffuseOutput;
-            this->lightingDiffuseOutput = tempDiffuse;
-
-            auto tempSpecular            = this->lightingSpecularInput;
-            this->lightingSpecularInput  = this->lightingSpecularOutput;
-            this->lightingSpecularOutput = tempSpecular;
-        }
-
 
     private:
 
@@ -76,10 +64,8 @@ namespace GTEngine
             if (Renderer::SupportFloatTextures())
             {
                 this->finalOutput            = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->lightingDiffuseOutput  = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->lightingDiffuseInput   = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->lightingSpecularOutput = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->lightingSpecularInput  = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                this->lightingBuffer0        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                this->lightingBuffer1        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
                 this->materialBuffer0        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
                 this->materialBuffer1        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
                 this->materialBuffer2        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
@@ -87,20 +73,16 @@ namespace GTEngine
             else
             {
                 this->finalOutput            = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                this->lightingDiffuseOutput  = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                this->lightingDiffuseInput   = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                this->lightingSpecularOutput = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                this->lightingSpecularInput  = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->lightingBuffer0        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->lightingBuffer1        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                 this->materialBuffer0        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                 this->materialBuffer1        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                 this->materialBuffer2        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
             }
 
             this->finalOutput->SetFilter(GTEngine::TextureFilter_Nearest);
-            this->lightingDiffuseInput->SetFilter(GTEngine::TextureFilter_Nearest);
-            this->lightingDiffuseOutput->SetFilter(GTEngine::TextureFilter_Nearest);
-            this->lightingSpecularInput->SetFilter(GTEngine::TextureFilter_Nearest);
-            this->lightingSpecularOutput->SetFilter(GTEngine::TextureFilter_Nearest);
+            this->lightingBuffer0->SetFilter(GTEngine::TextureFilter_Nearest);
+            this->lightingBuffer1->SetFilter(GTEngine::TextureFilter_Nearest);
             this->materialBuffer0->SetFilter(GTEngine::TextureFilter_Nearest);
             this->materialBuffer1->SetFilter(GTEngine::TextureFilter_Nearest);
             this->materialBuffer2->SetFilter(GTEngine::TextureFilter_Nearest);
@@ -113,20 +95,16 @@ namespace GTEngine
         {
             delete this->depthStencil;
             delete this->finalOutput;
-            delete this->lightingDiffuseInput;
-            delete this->lightingDiffuseOutput;
-            delete this->lightingSpecularInput;
-            delete this->lightingSpecularOutput;
+            delete this->lightingBuffer0;
+            delete this->lightingBuffer1;
             delete this->materialBuffer0;
             delete this->materialBuffer1;
             delete this->materialBuffer2;
             
             this->depthStencil           = nullptr;
             this->finalOutput            = nullptr;
-            this->lightingDiffuseInput   = nullptr;
-            this->lightingDiffuseOutput  = nullptr;
-            this->lightingSpecularInput  = nullptr;
-            this->lightingSpecularOutput = nullptr;
+            this->lightingBuffer0        = nullptr;
+            this->lightingBuffer1        = nullptr;
             this->materialBuffer0        = nullptr;
             this->materialBuffer1        = nullptr;
             this->materialBuffer2        = nullptr;
@@ -139,20 +117,16 @@ namespace GTEngine
 
             if (this->depthStencil           != nullptr) GarbageCollector::MarkForCollection(*this->depthStencil);
             if (this->finalOutput            != nullptr) GarbageCollector::MarkForCollection(*this->finalOutput);
-            if (this->lightingDiffuseInput   != nullptr) GarbageCollector::MarkForCollection(*this->lightingDiffuseInput);
-            if (this->lightingDiffuseOutput  != nullptr) GarbageCollector::MarkForCollection(*this->lightingDiffuseOutput);
-            if (this->lightingSpecularInput  != nullptr) GarbageCollector::MarkForCollection(*this->lightingSpecularInput);
-            if (this->lightingSpecularOutput != nullptr) GarbageCollector::MarkForCollection(*this->lightingSpecularOutput);
+            if (this->lightingBuffer0        != nullptr) GarbageCollector::MarkForCollection(*this->lightingBuffer0);
+            if (this->lightingBuffer1        != nullptr) GarbageCollector::MarkForCollection(*this->lightingBuffer1);
             if (this->materialBuffer0        != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer0);
             if (this->materialBuffer1        != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer1);
             if (this->materialBuffer2        != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer2);
 
             this->depthStencil           = nullptr;
             this->finalOutput            = nullptr;
-            this->lightingDiffuseInput   = nullptr;
-            this->lightingDiffuseOutput  = nullptr;
-            this->lightingSpecularInput  = nullptr;
-            this->lightingSpecularOutput = nullptr;
+            this->lightingBuffer0        = nullptr;
+            this->lightingBuffer1        = nullptr;
             this->materialBuffer0        = nullptr;
             this->materialBuffer1        = nullptr;
             this->materialBuffer2        = nullptr;
@@ -169,18 +143,14 @@ namespace GTEngine
         Texture2D* depthStencil;
         Texture2D* finalOutput;
 
-        // The lighting buffers are going to be swapped back and forth as rendering takes place. One buffer will be used for output,
-        // while the other will be used as input. The reason is because often multiple passes will need to occur, and each pass needs
-        // the output from the previous pass.
-        Texture2D* lightingDiffuseOutput;
-        Texture2D* lightingDiffuseInput;
-        Texture2D* lightingSpecularOutput;
-        Texture2D* lightingSpecularInput;
+        // The lighting buffers.
+        Texture2D* lightingBuffer0;     // RGB = Diffuse.  A = nothing.
+        Texture2D* lightingBuffer1;     // RGB = Specular. A = nothing.
 
         // The material buffers.
         Texture2D* materialBuffer0;     // RGB = Diffuse.  A = Shininess.
         Texture2D* materialBuffer1;     // RGB = Emissive. A = Transparency.
-        Texture2D* materialBuffer2;     // RGB = Normals as used for normal mapping. A = nothing.
+        Texture2D* materialBuffer2;     // RGB = Normals for normal mapping. A = nothing.
     };
 }
 
@@ -226,10 +196,8 @@ namespace GTEngine
         void SetFramebuffer(DVRFramebuffer &framebuffer)
         {
             this->framebuffer = &framebuffer;
-            this->lightingDiffuseInput   = framebuffer.lightingDiffuseInput;
-            this->lightingSpecularInput  = framebuffer.lightingSpecularInput;
-            this->lightingDiffuseOutput  = framebuffer.lightingDiffuseOutput;
-            this->lightingSpecularOutput = framebuffer.lightingSpecularOutput;
+            this->lightingBuffer0 = framebuffer.lightingBuffer0;
+            this->lightingBuffer1 = framebuffer.lightingBuffer1;
         }
 
         void Execute();
@@ -239,13 +207,12 @@ namespace GTEngine
 
         DVRFramebuffer* framebuffer;
 
-        Texture2D* lightingDiffuseInput;
-        Texture2D* lightingDiffuseOutput;
-        Texture2D* lightingSpecularInput;
-        Texture2D* lightingSpecularOutput;
+        Texture2D* lightingBuffer0;
+        Texture2D* lightingBuffer1;
     };
 
 
+    // TODO: Look into removing this. All it does it set shader variables. We can update these manually only when needed.
     // RCBeginLightingPass
     class DVR_RCBeginLightingPass : public RenderCommand
     {
@@ -256,9 +223,8 @@ namespace GTEngine
         void Init(DVRFramebuffer &framebuffer, Shader* shader, const glm::vec2 &screenSize)
         {
             this->framebuffer = &framebuffer;
-            this->lightingDiffuseInput  = framebuffer.lightingDiffuseInput;
-            this->lightingSpecularInput = framebuffer.lightingSpecularInput;
-            this->materialBuffer2       = framebuffer.materialBuffer2;
+
+            this->materialBuffer2 = framebuffer.materialBuffer2;
 
             this->shader = shader;
             
@@ -272,8 +238,6 @@ namespace GTEngine
 
         DVRFramebuffer* framebuffer;
 
-        Texture2D* lightingDiffuseInput;
-        Texture2D* lightingSpecularInput;
         Texture2D* materialBuffer2;
 
         Shader* shader;
@@ -306,38 +270,11 @@ namespace GTEngine
         Texture2D* finalOutputBuffer;
 
         /// Input textures for the combiner.
-        Texture2D* lightingDiffuse;
-        Texture2D* lightingSpecular;
+        Texture2D* lightingBuffer0;
+        Texture2D* lightingBuffer1;
         Texture2D* materialBuffer0;
         Texture2D* materialBuffer1;
         Texture2D* materialBuffer2;
-    };
-
-
-
-    // RCSetLightingBuffers
-    class DVR_RCSetLightingBuffers : public RenderCommand
-    {
-    public:
-
-        DVR_RCSetLightingBuffers();
-
-        void SetFramebuffer(DVRFramebuffer &framebuffer)
-        {
-            this->framebuffer = &framebuffer;
-            this->lightingDiffuse  = framebuffer.lightingDiffuseOutput;
-            this->lightingSpecular = framebuffer.lightingSpecularOutput;
-        }
-
-        void Execute();
-
-
-    private:
-
-        DVRFramebuffer* framebuffer;
-
-        Texture2D* lightingDiffuse;
-        Texture2D* lightingSpecular;
     };
 }
 
@@ -412,10 +349,6 @@ namespace GTEngine
         void DoLightingPass_A1P1(SceneNode* A0, SceneNode* P0, const GTCore::Vector<SceneNode*> &modelNodes);
 
 
-        /// Swaps the lighting buffers in preperation for future lighting sub-passes.
-        void SwapLightingBuffers();
-
-
 
     private:
 
@@ -449,9 +382,8 @@ namespace GTEngine
             DVR_RCBeginLighting rcBeginLighting[2];
             DVR_RCEnd           rcEnd[2];
 
-            RCCache<DVR_RCBeginLightingPass,  32> rcBeginLightingPass[2];
-            RCCache<DVR_RCSetLightingBuffers, 32> rcSetLightingBuffers[2];
-            RCCache<RCDrawVA>                     rcDrawVA[2];
+            RCCache<DVR_RCBeginLightingPass, 32> rcBeginLightingPass[2];
+            RCCache<RCDrawVA>                    rcDrawVA[2];
 
         }RenderCommands;
 
