@@ -30,15 +30,9 @@ namespace GTEngine
     {
         if (this->framebuffer != nullptr)
         {
-            int drawBuffers[] = {0, 1, 2};
-
-            // We will prepare the framebuffer for the first pass, which is the material pass.
-            this->framebuffer->AttachDepthStencilBuffer(this->depthStencil);
-            this->framebuffer->AttachColourBuffer(this->materialBuffer0, 0);
-            this->framebuffer->AttachColourBuffer(this->materialBuffer1, 1);
-            this->framebuffer->AttachColourBuffer(this->materialBuffer2, 2);
-
             Renderer::SetFramebuffer(this->framebuffer);
+
+            int drawBuffers[] = {1, 2, 3};      // Material Buffers 0/1/2
             Renderer::SetDrawBuffers(3, drawBuffers);
 
             Renderer::SetViewport(0, 0, this->viewportWidth, this->viewportHeight);
@@ -63,13 +57,7 @@ namespace GTEngine
 
     void DVR_RCBeginLighting::Execute()
     {
-        int drawBuffers[] = {0, 1};
-
-        // The lighting buffers need to be cleared to black at the start of the frame.
-        this->framebuffer->AttachColourBuffer(this->lightingBuffer0, 0);
-        this->framebuffer->AttachColourBuffer(this->lightingBuffer1, 1);
-
-        Renderer::SetFramebuffer(this->framebuffer);
+        int drawBuffers[] = {4, 5};     // Lighting Buffers 0/1
         Renderer::SetDrawBuffers(2, drawBuffers);
 
         // Clearing to black is important here.
@@ -123,10 +111,7 @@ namespace GTEngine
     {
         if (this->framebuffer != nullptr)
         {
-            int drawBuffers[] = {0};
-
-            this->framebuffer->AttachColourBuffer(this->finalOutputBuffer, 0);
-            Renderer::SetFramebuffer(this->framebuffer);
+            int drawBuffers[] = {0};        // Final output buffer.
             Renderer::SetDrawBuffers(1, drawBuffers);
 
             Renderer::SetShader(this->combinerShader);

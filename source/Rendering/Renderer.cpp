@@ -89,19 +89,25 @@ namespace GTEngine
     {
         switch (format)
         {
-        case GTImage::ImageFormat_R8:                return GL_R8;
-        case GTImage::ImageFormat_RG8:               return GL_RG8;
-        case GTImage::ImageFormat_RGB8:              return GL_RGB8;
-        case GTImage::ImageFormat_RGBA8:             return GL_RGBA8;
-        case GTImage::ImageFormat_RGBA16:            return GL_RGBA16;
-        case GTImage::ImageFormat_RGBA32:            return GL_RGBA32UI;
-        case GTImage::ImageFormat_RGBA16F:           return GL_RGBA16F;
-        case GTImage::ImageFormat_RGBA32F:           return GL_RGBA32F;
+        case GTImage::ImageFormat_R8:               return GL_R8;
+        case GTImage::ImageFormat_RG8:              return GL_RG8;
+        case GTImage::ImageFormat_RGB8:             return GL_RGB8;
+        case GTImage::ImageFormat_RGBA8:            return GL_RGBA8;
+        case GTImage::ImageFormat_RGBA16:           return GL_RGBA16;
+        case GTImage::ImageFormat_RGBA32:           return GL_RGBA32UI;
+        case GTImage::ImageFormat_R16F:             return GL_R16F;
+        case GTImage::ImageFormat_RG16F:            return GL_RG16F;
+        case GTImage::ImageFormat_RGB16F:           return GL_RGB16F;
+        case GTImage::ImageFormat_RGBA16F:          return GL_RGBA16F;
+        case GTImage::ImageFormat_R32F:             return GL_R32F;
+        case GTImage::ImageFormat_RG32F:            return GL_RG32F;
+        case GTImage::ImageFormat_RGB32F:           return GL_RGB32F;
+        case GTImage::ImageFormat_RGBA32F:          return GL_RGBA32F;
 
-        case GTImage::ImageFormat_Depth16:           return GL_DEPTH_COMPONENT16;
-        case GTImage::ImageFormat_Depth24:           return GL_DEPTH_COMPONENT24;
-        case GTImage::ImageFormat_Depth32:           return GL_DEPTH_COMPONENT32;
-        case GTImage::ImageFormat_Depth24_Stencil8:  return GL_DEPTH24_STENCIL8;
+        case GTImage::ImageFormat_Depth16:          return GL_DEPTH_COMPONENT16;
+        case GTImage::ImageFormat_Depth24:          return GL_DEPTH_COMPONENT24;
+        case GTImage::ImageFormat_Depth32:          return GL_DEPTH_COMPONENT32;
+        case GTImage::ImageFormat_Depth24_Stencil8: return GL_DEPTH24_STENCIL8;
 
         case GTImage::ImageFormat_Auto:
         default: break;
@@ -114,9 +120,26 @@ namespace GTEngine
     {
         switch (format)
         {
-        case GTImage::ImageFormat_R8:        return GL_RED;
-        case GTImage::ImageFormat_RG8:       return GL_RG;
-        case GTImage::ImageFormat_RGB8:      return GL_RGB;
+        case GTImage::ImageFormat_R8:
+        case GTImage::ImageFormat_R16F:
+        case GTImage::ImageFormat_R32F:
+            {
+                return GL_RED;
+            }
+
+        case GTImage::ImageFormat_RG8:
+        case GTImage::ImageFormat_RG16F:
+        case GTImage::ImageFormat_RG32F:
+            {
+                return GL_RG;
+            }
+
+        case GTImage::ImageFormat_RGB8:
+        case GTImage::ImageFormat_RGB16F:
+        case GTImage::ImageFormat_RGB32F:
+            {
+                return GL_RGB;
+            }
 
         case GTImage::ImageFormat_RGBA8:
         case GTImage::ImageFormat_RGBA16:
@@ -168,7 +191,13 @@ namespace GTEngine
                 return GL_UNSIGNED_INT;
             }
 
+        case GTImage::ImageFormat_R16F:
+        case GTImage::ImageFormat_RG16F:
+        case GTImage::ImageFormat_RGB16F:
         case GTImage::ImageFormat_RGBA16F:
+        case GTImage::ImageFormat_R32F:
+        case GTImage::ImageFormat_RG32F:
+        case GTImage::ImageFormat_RGB32F:
         case GTImage::ImageFormat_RGBA32F:
             {
                 return GL_FLOAT;

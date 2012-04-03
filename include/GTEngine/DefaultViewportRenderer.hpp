@@ -63,21 +63,21 @@ namespace GTEngine
 
             if (Renderer::SupportFloatTextures())
             {
-                this->finalOutput            = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->lightingBuffer0        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->lightingBuffer1        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->materialBuffer0        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->materialBuffer1        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->materialBuffer2        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                this->finalOutput     = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                this->lightingBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                this->lightingBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                this->materialBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                this->materialBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
             }
             else
             {
-                this->finalOutput            = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                this->lightingBuffer0        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                this->lightingBuffer1        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                this->materialBuffer0        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                this->materialBuffer1        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                this->materialBuffer2        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->finalOutput     = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->lightingBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->lightingBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->materialBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->materialBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
             }
 
             this->finalOutput->SetFilter(GTEngine::TextureFilter_Nearest);
@@ -88,11 +88,21 @@ namespace GTEngine
             this->materialBuffer2->SetFilter(GTEngine::TextureFilter_Nearest);
 
             this->finalOutput->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
+
+            this->AttachDepthStencilBuffer(this->depthStencil);
+            this->AttachColourBuffer(this->finalOutput,     0);
+            this->AttachColourBuffer(this->materialBuffer0, 1);
+            this->AttachColourBuffer(this->materialBuffer1, 2);
+            this->AttachColourBuffer(this->materialBuffer2, 3);
+            this->AttachColourBuffer(this->lightingBuffer0, 4);
+            this->AttachColourBuffer(this->lightingBuffer1, 5);
         }
 
         /// Deletes the attachments.
         void DeleteAll()
         {
+            this->DetachAllBuffers();
+
             delete this->depthStencil;
             delete this->finalOutput;
             delete this->lightingBuffer0;
@@ -101,13 +111,13 @@ namespace GTEngine
             delete this->materialBuffer1;
             delete this->materialBuffer2;
             
-            this->depthStencil           = nullptr;
-            this->finalOutput            = nullptr;
-            this->lightingBuffer0        = nullptr;
-            this->lightingBuffer1        = nullptr;
-            this->materialBuffer0        = nullptr;
-            this->materialBuffer1        = nullptr;
-            this->materialBuffer2        = nullptr;
+            this->depthStencil    = nullptr;
+            this->finalOutput     = nullptr;
+            this->lightingBuffer0 = nullptr;
+            this->lightingBuffer1 = nullptr;
+            this->materialBuffer0 = nullptr;
+            this->materialBuffer1 = nullptr;
+            this->materialBuffer2 = nullptr;
         }
 
         /// Marks all of the currently attachment buffers as dead. Also detaches them.
@@ -115,21 +125,21 @@ namespace GTEngine
         {
             this->DetachAllBuffers();
 
-            if (this->depthStencil           != nullptr) GarbageCollector::MarkForCollection(*this->depthStencil);
-            if (this->finalOutput            != nullptr) GarbageCollector::MarkForCollection(*this->finalOutput);
-            if (this->lightingBuffer0        != nullptr) GarbageCollector::MarkForCollection(*this->lightingBuffer0);
-            if (this->lightingBuffer1        != nullptr) GarbageCollector::MarkForCollection(*this->lightingBuffer1);
-            if (this->materialBuffer0        != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer0);
-            if (this->materialBuffer1        != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer1);
-            if (this->materialBuffer2        != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer2);
+            if (this->depthStencil    != nullptr) GarbageCollector::MarkForCollection(*this->depthStencil);
+            if (this->finalOutput     != nullptr) GarbageCollector::MarkForCollection(*this->finalOutput);
+            if (this->lightingBuffer0 != nullptr) GarbageCollector::MarkForCollection(*this->lightingBuffer0);
+            if (this->lightingBuffer1 != nullptr) GarbageCollector::MarkForCollection(*this->lightingBuffer1);
+            if (this->materialBuffer0 != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer0);
+            if (this->materialBuffer1 != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer1);
+            if (this->materialBuffer2 != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer2);
 
-            this->depthStencil           = nullptr;
-            this->finalOutput            = nullptr;
-            this->lightingBuffer0        = nullptr;
-            this->lightingBuffer1        = nullptr;
-            this->materialBuffer0        = nullptr;
-            this->materialBuffer1        = nullptr;
-            this->materialBuffer2        = nullptr;
+            this->depthStencil    = nullptr;
+            this->finalOutput     = nullptr;
+            this->lightingBuffer0 = nullptr;
+            this->lightingBuffer1 = nullptr;
+            this->materialBuffer0 = nullptr;
+            this->materialBuffer1 = nullptr;
+            this->materialBuffer2 = nullptr;
         }
 
 
