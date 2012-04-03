@@ -503,7 +503,7 @@ namespace GTEngine
             {
                 if (this->timer.GetTimeSinceLastUpdate() >= updateIntervalInSeconds)
                 {
-                    this->averageDelta   = this->timer.GetTimeSinceLastUpdate() / GTCore::Max(static_cast<double>(this->totalStepCount), 1.0);
+                    this->averageDelta   = this->timer.GetTimeSinceLastUpdate() / static_cast<double>(GTCore::Max(this->totalStepCount, 1U));
                     this->totalStepCount = 0;
 
                     this->timer.Update();

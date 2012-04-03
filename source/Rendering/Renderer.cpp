@@ -241,6 +241,9 @@ namespace GTEngine
     {
         switch (func)
         {
+        case BlendFunc_Zero:                    return GL_ZERO;
+        case BlendFunc_One:                     return GL_ONE;
+
         case BlendFunc_SourceColour:            return GL_SRC_COLOR;
         case BlendFunc_OneMinusSourceColour:    return GL_ONE_MINUS_SRC_COLOR;
         case BlendFunc_SourceAlpha:             return GL_SRC_ALPHA;
@@ -262,6 +265,20 @@ namespace GTEngine
         }
 
         return GL_SRC_COLOR;
+    }
+
+    GLenum ToOpenGLBlendEquation(BlendEquation equation)
+    {
+        switch (equation)
+        {
+        case BlendEquation_Add:             return GL_FUNC_ADD;
+        case BlendEquation_Subtract:        return GL_FUNC_SUBTRACT;
+        case BlendEquation_ReverseSubtract: return GL_FUNC_REVERSE_SUBTRACT;
+        case BlendEquation_Min:             return GL_MIN;
+        case BlendEquation_Max:             return GL_MAX;
+        }
+
+        return GL_FUNC_ADD;
     }
 }
 
@@ -303,7 +320,7 @@ namespace GTEngine
             : CurrentShader(nullptr),
               ViewportX(0), ViewportY(0), ViewportWidth(0), ViewportHeight(0),
               ScissorX(0), ScissorY(0), ScissorWidth(0), ScissorHeight(0), IsScissorEnabled(false),
-              IsBlendingEnabled(false),
+              IsBlendingEnabled(false), CurrentBlendSourceFactor(BlendFunc_One), CurrentBlendDestFactor(BlendFunc_Zero), CurrentBlendEquation(BlendEquation_Add),
               SwapInterval(1), SwapIntervalChanged(false)
         {
         }
@@ -326,6 +343,9 @@ namespace GTEngine
 
         /// The current blending state.
         bool IsBlendingEnabled;
+        BlendFunc     CurrentBlendSourceFactor;
+        BlendFunc     CurrentBlendDestFactor;
+        BlendEquation CurrentBlendEquation;
 
         /// Swap interval.
         int  SwapInterval;
@@ -482,6 +502,11 @@ namespace GTEngine
             RendererState.SwapInterval        = interval;
             RendererState.SwapIntervalChanged = true;
         }
+    }
+
+    int Renderer::GetSwapInterval()
+    {
+        return RendererState.SwapInterval;
     }
 
 
@@ -1432,22 +1457,44 @@ namespace GTEngine
 
     void Renderer::EnableBlending()
     {
-        glEnable(GL_BLEND);
-        RendererState.IsBlendingEnabled = true;
+        if (!RendererState.IsBlendingEnabled)
+        {
+            glEnable(GL_BLEND);
+            RendererState.IsBlendingEnabled = true;
+        }
     }
 
     void Renderer::DisableBlending()
     {
-        glDisable(GL_BLEND);
-        RendererState.IsBlendingEnabled = false;
+        if (RendererState.IsBlendingEnabled)
+        {
+            glDisable(GL_BLEND);
+            RendererState.IsBlendingEnabled = false;
+        }
     }
 
     void Renderer::SetBlendFunc(BlendFunc sourceFactor, BlendFunc destFactor)
     {
-        GLenum sfactor = ToOpenGLBlendFunc(sourceFactor);
-        GLenum dfactor = ToOpenGLBlendFunc(destFactor);
+        if (RendererState.CurrentBlendSourceFactor != sourceFactor || RendererState.CurrentBlendDestFactor != destFactor)
+        {
+            GLenum sfactor = ToOpenGLBlendFunc(sourceFactor);
+            GLenum dfactor = ToOpenGLBlendFunc(destFactor);
 
-        glBlendFunc(sfactor, dfactor);
+            glBlendFunc(sfactor, dfactor);
+
+            RendererState.CurrentBlendSourceFactor = sourceFactor;
+            RendererState.CurrentBlendDestFactor   = destFactor;
+        }
+    }
+
+    void Renderer::SetBlendEquation(BlendEquation equation)
+    {
+        if (RendererState.CurrentBlendEquation != equation)
+        {
+            glBlendEquation(ToOpenGLBlendEquation(equation));
+
+            RendererState.CurrentBlendEquation = equation;
+        }
     }
 
     void Renderer::EnableAlphaBlending()

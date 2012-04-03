@@ -37,6 +37,9 @@ namespace GTEngine
 
     enum BlendFunc
     {
+        BlendFunc_Zero,
+        BlendFunc_One,
+
         BlendFunc_SourceColour,
         BlendFunc_OneMinusSourceColour,
         BlendFunc_SourceAlpha,
@@ -53,6 +56,15 @@ namespace GTEngine
         BlendFunc_OneMinusConstantAlpha,
 
         BlendFunc_SourceAlphaSaturate,
+    };
+
+    enum BlendEquation
+    {
+        BlendEquation_Add,
+        BlendEquation_Subtract,
+        BlendEquation_ReverseSubtract,
+        BlendEquation_Min,
+        BlendEquation_Max
     };
 
     /**
@@ -124,6 +136,11 @@ namespace GTEngine
         *       The interval can also be set to -1, in which case it will use synchronization but will tear on late frames.
         */
         static void SetSwapInterval(int interval);
+
+        /**
+        *   \brief  Retrieves the swap interval.
+        */
+        static int GetSwapInterval();
 
 
         /*************************
@@ -228,6 +245,9 @@ namespace GTEngine
 
         /// Sets the blending function.
         static void SetBlendFunc(BlendFunc sourceFactor, BlendFunc destFactor);
+
+        /// Sets the blending equation.
+        static void SetBlendEquation(BlendEquation equation);
 
         /// Helper for enabling alpha blending.
         static void EnableAlphaBlending();
