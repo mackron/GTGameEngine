@@ -130,10 +130,10 @@ namespace GTEngine
             Renderer::SetDrawBuffers(1, drawBuffers);
 
             Renderer::SetShader(this->combinerShader);
-            Renderer::SetShaderParameter("Lighting_Diffuse",  this->lightingBuffer0);
-            Renderer::SetShaderParameter("Lighting_Specular", this->lightingBuffer1);
-            Renderer::SetShaderParameter("MaterialBuffer0",   this->materialBuffer0);
-            Renderer::SetShaderParameter("MaterialBuffer1",   this->materialBuffer1);
+            Renderer::SetShaderParameter("LightingBuffer0", this->lightingBuffer0);
+            Renderer::SetShaderParameter("LightingBuffer1", this->lightingBuffer1);
+            Renderer::SetShaderParameter("MaterialBuffer0", this->materialBuffer0);
+            Renderer::SetShaderParameter("MaterialBuffer1", this->materialBuffer1);
 
             Renderer::DisableDepthTest();
             Renderer::DisableBlending();

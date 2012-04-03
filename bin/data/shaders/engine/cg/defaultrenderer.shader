@@ -336,17 +336,17 @@ uses 1 or each light, it will use the following: A1D1P1.
         float4 Color0 : COLOR0;
     };
     
-    uniform sampler2D Lighting_Diffuse;     // rgb = diffuse;  a = nothing
-    uniform sampler2D Lighting_Specular;    // rgb = specular; a = nothing
+    uniform sampler2D LightingBuffer0;      // rgb = diffuse;  a = nothing
+    uniform sampler2D LightingBuffer1;      // rgb = specular; a = nothing
     uniform sampler2D MaterialBuffer0;      // rgb = diffuse;  a = transparancy
     uniform sampler2D MaterialBuffer1;      // rgb = emissive; a = shininess
     
     void main(out FragmentOutput OUT)
     {
-        float4 lightingTexel0 = tex2D(Lighting_Diffuse,  IN.TexCoord);
-        float4 lightingTexel1 = tex2D(Lighting_Specular, IN.TexCoord);
-        float4 materialTexel0 = tex2D(MaterialBuffer0,   IN.TexCoord);
-        float4 materialTexel1 = tex2D(MaterialBuffer1,   IN.TexCoord);
+        float4 lightingTexel0 = tex2D(LightingBuffer0, IN.TexCoord);
+        float4 lightingTexel1 = tex2D(LightingBuffer1, IN.TexCoord);
+        float4 materialTexel0 = tex2D(MaterialBuffer0, IN.TexCoord);
+        float4 materialTexel1 = tex2D(MaterialBuffer1, IN.TexCoord);
         
         float3 lightDiffuse  = lightingTexel0.rgb;
         float3 lightSpecular = lightingTexel1.rgb;
