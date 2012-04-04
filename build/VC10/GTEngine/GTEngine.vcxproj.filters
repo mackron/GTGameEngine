@@ -57,6 +57,12 @@
     <Filter Include="editor\scripts">
       <UniqueIdentifier>{f2e1548b-914c-4d62-a178-8c604488e273}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui">
+      <UniqueIdentifier>{28cb7ce6-8488-4fe5-b04e-b638be71e2a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\engine">
+      <UniqueIdentifier>{52c8e8e3-1d5c-4476-bc99-c7786e423779}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\shaders\engine\cg\core.shader">
@@ -97,6 +103,9 @@
     </None>
     <None Include="..\..\..\bin\data\editor\menubar.xml">
       <Filter>editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\gui\engine\debugging.xml">
+      <Filter>gui\engine</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

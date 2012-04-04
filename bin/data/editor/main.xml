@@ -8,9 +8,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
 <script>
 <![CDATA[
-    
-
-
     -- When the main editor window is resized, we need to size the main viewport area.
     EditorMain:OnSize(function(data)
         EditorCenterPanel:SetHeight(EditorMain:GetInnerHeight() - (EditorTopPanel:GetHeight() + EditorBottomPanel:GetHeight()));
@@ -67,10 +64,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script url="scripts/listbox.lua" />
 
 <style>
-    
-    
-    
-    
     editbox
     {
         background-color: #fff
@@ -189,6 +182,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         height: 100%;
     
         border: 1px #222
+        
+        background-image: url(images/arrow-down.png)
+        background-align: left top
     }
     
     
@@ -224,6 +220,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         child-plane: vertical
         width:       auto
         height:      100%
+        
+        
     }
     
     menu-title

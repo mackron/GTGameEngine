@@ -1021,7 +1021,7 @@ namespace GTEngine
                 {
                     fragmentProgram = cgCreateProgram(ShaderContext, CG_SOURCE, shader->GetFragmentSource(), FragmentShaderProfile, "main", nullptr);
                     Renderer_LogLastCgListing(shader->GetFragmentSource());
-                    Renderer_LogCgShaderString(fragmentProgram);
+                    //Renderer_LogCgShaderString(fragmentProgram);
                 }
                 
                 // Vertex and fragment shaders need to be combined where applicable.

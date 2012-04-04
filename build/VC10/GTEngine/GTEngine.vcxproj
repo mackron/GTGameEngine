@@ -161,12 +161,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="..\..\..\bin\data\editor\main.xml" />
+    <None Include="..\..\..\bin\data\editor\main.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="..\..\..\bin\data\editor\menubar.xml" />
     <None Include="..\..\..\bin\data\editor\scripts\dialogs.lua" />
     <None Include="..\..\..\bin\data\editor\scripts\listbox.lua" />
     <None Include="..\..\..\bin\data\editor\scripts\menubar.lua" />
     <None Include="..\..\..\bin\data\editor\styles\theme.style" />
+    <None Include="..\..\..\bin\data\gui\engine\debugging.xml" />
     <None Include="..\..\..\bin\data\materials\engine\simple-diffuse.material">
       <SubType>Designer</SubType>
     </None>
