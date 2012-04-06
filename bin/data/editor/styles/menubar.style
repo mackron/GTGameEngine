@@ -1,0 +1,81 @@
+
+var menuBackgroundColour: #3a3a3a
+var menuOpacity:          100%
+var menuBorder:           1px #666
+
+menubar
+{
+    width:          50%
+    height:         100%
+    child-plane:    horizontal
+    vertical-align: center
+}
+
+menubar-item
+{
+    width:            auto
+    height:           100%
+    font-color:       #888
+        
+    padding:          8px 0px
+    vertical-align:   center
+    horizontal-align: right
+}
+
+menubar-item:hovered
+{
+    background-color: menuBackgroundColour
+    border:           menuBorder
+    border-top:       none
+    border-bottom:    none
+        
+    font-color:       #aaa
+    
+    padding: 7px 0px
+}
+
+menubar-item-title
+{
+    transparent-mouse-input:true;
+}
+
+
+menubar-item-active
+{
+    width:       auto
+    height:      100%
+    font-color:  #aaa
+        
+    background-color: menuBackgroundColour
+        
+    border:           menuBorder
+    border-top:       none
+    border-bottom:    none
+        
+    padding:          7px 0px
+    vertical-align:   center
+        
+    opacity:          menuOpacity
+}
+
+
+menubar-item-border-mask
+{
+    visible:          false
+
+    positioning:      relative
+    //z-index:          2
+
+    top:              100%
+    width:            100%
+    height:           1px
+    background-color: menuBackgroundColour
+    border:           1px #666
+    border-top:       none
+    border-bottom:    none
+        
+    opacity:          menuOpacity
+
+    relative-width-mode: outer
+    position-origin:     outer
+}

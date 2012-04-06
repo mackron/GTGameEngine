@@ -2,6 +2,8 @@
 #ifndef __GTEngine_Editor_hpp_
 #define __GTEngine_Editor_hpp_
 
+#include "Editor/ModelEditor.hpp"
+
 namespace GTGUI
 {
     class Element;
@@ -10,6 +12,8 @@ namespace GTGUI
 
 namespace GTEngine
 {
+    class Game;
+    
     /// Class representing the editor.
     ///
     /// An editor object with every Game object.
@@ -18,7 +22,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        Editor();
+        Editor(Game &game);
 
         /// Destructor.
         ~Editor();
@@ -41,20 +45,33 @@ namespace GTEngine
         bool IsOpen() const { return this->isOpen; }
 
 
+        /// Updates the editor so that it can do rendering and whatnot.
+        void Update(double deltaTimeInSeconds);
+
+        /// Swaps the RC queues.
+        void SwapRCQueues();
+
+
     private:
+
+        /// The game that owns this editor object.
+        Game &game;
 
         /// Structure containing the GUI elements.
         struct _GUI
         {
             _GUI()
-                : main(nullptr)
+                : EditorMain(nullptr)
             {
             }
 
             /// The main editor element. Every single element used by the editor is a child of this element.
-            GTGUI::Element* main;
+            GTGUI::Element* EditorMain;
 
         }GUI;
+
+        /// The model editor.
+        ModelEditor modelEditor;
 
         /// Whether or not the editor has be started up.
         bool isStarted;

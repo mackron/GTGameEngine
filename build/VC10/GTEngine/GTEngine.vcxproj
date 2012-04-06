@@ -161,13 +161,20 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\..\..\bin\data\editor\combobox.xml" />
     <None Include="..\..\..\bin\data\editor\main.xml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="..\..\..\bin\data\editor\menu.xml" />
     <None Include="..\..\..\bin\data\editor\menubar.xml" />
+    <None Include="..\..\..\bin\data\editor\scripts\combobox.lua" />
     <None Include="..\..\..\bin\data\editor\scripts\dialogs.lua" />
     <None Include="..\..\..\bin\data\editor\scripts\listbox.lua" />
+    <None Include="..\..\..\bin\data\editor\scripts\menu.lua" />
     <None Include="..\..\..\bin\data\editor\scripts\menubar.lua" />
+    <None Include="..\..\..\bin\data\editor\styles\combobox.style" />
+    <None Include="..\..\..\bin\data\editor\styles\menu.style" />
+    <None Include="..\..\..\bin\data\editor\styles\menubar.style" />
     <None Include="..\..\..\bin\data\editor\styles\theme.style" />
     <None Include="..\..\..\bin\data\gui\engine\debugging.xml" />
     <None Include="..\..\..\bin\data\materials\engine\simple-diffuse.material">
@@ -182,7 +189,9 @@
     <None Include="..\..\..\bin\data\shaders\engine\cg\defaultrenderer.shader">
       <SubType>Designer</SubType>
     </None>
-    <None Include="..\..\..\bin\data\shaders\engine\cg\gui.shader" />
+    <None Include="..\..\..\bin\data\shaders\engine\cg\gui.shader">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="..\..\..\bin\data\shaders\engine\cg\lines.shader" />
     <None Include="..\..\..\bin\data\shaders\engine\cg\materials.shader">
       <SubType>Designer</SubType>
@@ -200,6 +209,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultScene.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\ModelEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Errors.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\FontManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Game.hpp" />
@@ -267,6 +277,7 @@
     <ClCompile Include="..\..\..\source\DefaultScene.cpp" />
     <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Editor.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\ModelEditor.cpp" />
     <ClCompile Include="..\..\..\source\Errors.cpp" />
     <ClCompile Include="..\..\..\source\FontManager.cpp" />
     <ClCompile Include="..\..\..\source\Game.cpp" />

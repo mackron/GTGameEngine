@@ -5,6 +5,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <style url="styles/theme.style" />
 
 <include url="menubar.xml" />
+<include url="combobox.xml" />
 
 <script>
 <![CDATA[
@@ -14,59 +15,39 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     end)
     
     EditorCenterPanel:OnSize(function(data)
-        EditorViewportPanel:SetWidth(EditorCenterPanel:GetInnerWidth()  - (EditorLeftPanel:GetWidth() + EditorRightPanel:GetWidth()));
- 
-        -- The game needs to know that the viewport has changed size
-        --Game.OnEditorViewportSize(viewportWidth, viewportHeight);
+        ModelViewport:SetWidth(EditorCenterPanel:GetInnerWidth()  - (ModelEditorLeftPanel:GetWidth() --[[+ ModelEditorRightPanel:GetWidth()]]));
     end)
-    
-    EditorViewportPanel:OnMMBDown(function(data)
-        if data.receiver == EditorViewportPanel then
-            HideActiveMenu();
-            
-            Game.Editor.OnViewportMMBDown();
-        end
-    end)
-    
-    EditorViewportPanel:OnMMBUp(function(data)
-        if data.receiver == EditorViewportPanel then
-            --print("blah...");
-            Game.Editor.OnViewportMMBUp();
-        end
-    end)
-    
-    
-    InitMenu(Menu_File, MenuButton_File);
-    InitMenu(Menu_Edit, MenuButton_Edit);
-    InitMenu(Menu_View, MenuButton_View);
-    
-    
-    Menu_File_New:OnPressed(function()
-        HideActiveMenu();
-        ShowNewSceneDialog();
-    end)
-    
-    Menu_File_Open:OnPressed(function()
-        HideActiveMenu();
-        ShowOpenSceneDialog();
-    end)
-    
-    Menu_File_Exit:OnPressed(function()
-        Game.Close();
-    end)
-    
-    
-    OpenSceneDialog_FileList:ListBox();
 ]]>
 </script>
 
-<script url="scripts/dialogs.lua" />
+<script>
+<![CDATA[
+    MenuBar_ModelMode:MenuBar();
+    file = MenuBar_ModelMode:AppendItem("File");
+    file.menu:AppendItem("Open...");
+    file.menu:AppendSeparator();
+    file.menu:AppendItem("Save");
+    file.menu:AppendItem("Save As...");
+    file.menu:AppendSeparator();
+    file.menu:AppendItem("Exit"):OnPush(function()
+        Game.Close();
+    end);
+    
+    MenuBar_ModelMode:AppendItem("Edit");
+    MenuBar_ModelMode:AppendItem("View");
+
+    ModeSwitcher:ComboBox();
+    ModeSwitcher:AppendItem("Model Edit Mode");
+    --ModeSwitcher:AppendItem("Material Edit Mode");
+]]>
+</script>
+
 <script url="scripts/listbox.lua" />
 
 <style>
-    editbox
+    textbox
     {
-        background-color: #fff
+        background-color: #3a3a3a
         border:           1px #666
         padding:          2px 0px
         height:           20px
@@ -74,6 +55,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         
         editable-text:    true
         cursor:           beam
+        text-cursor-color: #999
+        font-color:        #999
         vertical-align:   center
     }
     
@@ -144,17 +127,41 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     #EditorTopPanel
     {
         width:          100%
-        height:         20px
+        height:         22px
         child-plane:    horizontal
         vertical-align: center
-        padding-left:   28px
+        padding-left:   4px
+        
+        border-bottom: 1px #2b2b2b
     }
+    
+    #EditorTopPanel_Left
+    {
+        width:          50%
+        height:         100%
+        child-plane:    horizontal
+        vertical-align: center
+    }
+    
+    #EditorTopPanel_Right
+    {
+        width:            50%
+        height:           100%
+        child-plane:      horizontal
+        vertical-align:   center
+        horizontal-align: right
+    }
+    
     
     #EditorBottomPanel
     {
         width:       100%
         height:      sidePanelSize
         child-plane: horizontal
+        
+        border-top: 1px #2b2b2b
+        
+        vertical-align: center
     }
     
     #EditorCenterPanel
@@ -164,158 +171,37 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         child-plane: horizontal
     }
     
-    #EditorLeftPanel
+    #ModelEditorLeftPanel
     {
-        width:  sidePanelSize
+        width:  350px
         height: 100%
     }
     
-    #EditorRightPanel
+    //#ModelEditorRightPanel
+    //{
+    //    visible: false
+    //    width:  0px
+    //    height: 100%
+    //}
+    
+    
+    #ModelViewport
     {
-        width:  sidePanelSize
-        height: 100%
+        height:        100%
+        width:         100%
+    
+        border-left:   1px #222
+        //border-top:    none
+        //border-bottom: none
     }
     
     
-    #EditorViewportPanel
+    #ModelEditor
     {
-        height: 100%;
-    
-        border: 1px #222
-        
-        background-image: url(images/arrow-down.png)
-        background-align: left top
-    }
-    
-    
-    
-
-    menu-button
-    {
-        width:          auto
-        height:         100%
-        font-color:     #888
-        
-        padding:        8px 0px
-        vertical-align: center
-    }
-    
-    menu-button:hovered
-    {
-        background-color: menuBackgroundColour;
-        border:           menuBorder
-        border-top:       none
-        border-bottom:    none
-        
-        font-color:       #aaa
-    
-        padding: 7px 0px
-    }
-    
-    
-    menu
-    {
-        visible:     false
-        
-        child-plane: vertical
-        width:       auto
-        height:      100%
-        
-        
-    }
-    
-    menu-title
-    {
-        width:       auto
-        height:      100%
-        font-color:  #aaa
-        
-        background-color: menuBackgroundColour
-        
-        border:           menuBorder
-        border-top:       none
-        border-bottom:    none
-        
-        padding:          7px 0px
-        vertical-align:   center
-    }
-    
-    menu-body
-    {
-        positioning: relative
-        //z-index:     1
-        
-        top: 20px;
-        width:192px
-        height:auto
-        
-        background-color: menuBackgroundColour
-        border:           menuBorder
-        
-        padding: 0px 4px
-    }
-    
-    menu-body-button
-    {
-        width:          100%
-        height:         20px
-        vertical-align: center
-        
-        font-color:     #aaa
-        
-        padding:        8px 0px
-    }
-    
-    menu-body-button:hovered
-    {
-        background-color: #555
-        border:           1px #666
-        border-left:      none
-        border-right:     none
-        
-        font-color:       #bbb
-    }
-    
-    menu-body-button:pushed
-    {
-        background-color: #777
-        border:           1px #888
-        border-left:      none
-        border-right:     none
-        
-        font-color:     #ccc
-    }
-    
-    
-    
-    menu-body-separator-outer
-    {
-        width:   100%
-        height:  1px
-        margin:  0px 4px
-        padding: 8px 0px
-    }
-    
-    menu-body-separator-inner
-    {
-        width:            100%
-        height:           1px
-        background-color: #999
-    }
-    
-    
-    menu-border-hider
-    {
-        positioning: relative
-        //z-index:     2
-        
-        top: 20px;
         width:  100%
-        height: 1px
-        background-color: #333
-        border:        1px #666
-        border-top:    none
-        border-bottom: none
+        height: 100%
+        
+        child-plane: horizontal
     }
 </style>
 
@@ -362,80 +248,34 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
 <div id="EditorMain">
     <div id="EditorTopPanel">
-        <!-- File -->
-        <div id="MenuButton_File" styleclass="menu-button">File</div>
-        <div id="Menu_File" styleclass="menu">
-            <div id="Menu_File_Title" styleclass="menu-title">File</div>
-            <div styleclass="menu-body">
-                <div id="Menu_File_New"    styleclass="menu-body-button">New...</div>
-                <div id="Menu_File_Open"   styleclass="menu-body-button">Open...</div>
-                <div styleclass="menu-body-separator-outer"><div styleclass="menu-body-separator-inner" /></div>
-                <div id="Menu_File_Save"   styleclass="menu-body-button">Save</div>
-                <div id="Menu_File_SaveAs" styleclass="menu-body-button">Save As...</div>
-                <div styleclass="menu-body-separator-outer"><div styleclass="menu-body-separator-inner" /></div>
-                <div id="Menu_File_Exit"   styleclass="menu-body-button">Exit</div>
-            </div>
-            <div styleclass="menu-border-hider" />
-        </div>
-
-        <!-- Edit -->
-        <div id="MenuButton_Edit" styleclass="menu-button">Edit</div>
-        <div id="Menu_Edit" styleclass="menu">
-            <div id="Menu_Edit_Title" styleclass="menu-title">Edit</div>
-            <div styleclass="menu-body">
-                <div styleclass="menu-body-separator-outer"><div styleclass="menu-body-separator-inner" /></div>
-            </div>
-            <div styleclass="menu-border-hider" />
+        <!--
+        The top panel is split into two parts. The left side contains the normal menu bar. The right side contains additional stuff
+        such as the mode switcher.
+        -->
+        <div id="EditorTopPanel_Left">
+            <div id="MenuBar_ModelMode" styleclass="menubar" />
         </div>
         
-        <!-- View -->
-        <div id="MenuButton_View" styleclass="menu-button">View</div>
-        <div id="Menu_View" styleclass="menu">
-            <div id="Menu_View_Title" styleclass="menu-title">View</div>
-            <div styleclass="menu-body">
-                <div styleclass="menu-body-separator-outer"><div styleclass="menu-body-separator-inner" /></div>
-            </div>
-            <div styleclass="menu-border-hider" />
+        <div id="EditorTopPanel_Right" style="horizontal-align:right; vertical-align:center; padding-right:0px;">
+            <div id="ModeSwitcher" styleclass="combobox" style="height:100%; margin-right:0px;" />
         </div>
     </div>
 
+    <!--
+    The center panel is where individual editting tools can use their own GUIs.
+    -->
     <div id="EditorCenterPanel">
-        <div id="EditorLeftPanel"></div>
-        <div id="EditorViewportPanel"></div>
-        <div id="EditorRightPanel"></div>
+        <div id="ModelEditor">
+            <div id="ModelEditorLeftPanel"></div>
+            <div id="ModelViewport"></div>
+            <!-- <div id="ModelEditorRightPanel"></div> -->
+        </div>
     </div>
 
     <div id="EditorBottomPanel">
+        <div style="width:auto; margin-left:4px; margin-right:8px; font-color:#888;">Command:</div>
+        <div id="CommandTextBox" styleclass="textbox" style="height:22px; width:400px" />
     </div>
   
     <!-- This section contains relative positioned controls. Usually dialog boxes. -->
-    <!-- File->New -->
-    <div id="NewSceneDialog" styleclass="dialog" style="width:256px;">
-        <div styleclass="dialog-title">Create New Scene...</div>
-        
-        <div styleclass="dialog-body">
-            <div style="font-color:#666; width:auto; margin-right:8px">Width:</div>
-            <div id="NewSceneDialog_Width" styleclass="editbox" style="width:128px" />
-        </div>
-        
-        <div styleclass="dialog-footer">
-            <div id="NewSceneDialog_OK"     styleclass="button" style="width:72px; margin-right:2px;">OK</div>
-            <div id="NewSceneDialog_Cancel" styleclass="button" style="width:72px; margin-left:2px;">Cancel</div>
-        </div>
-    </div>
-  
-    <!-- File->Open -->
-    <div id="OpenSceneDialog" styleclass="dialog" style="width:256px;">
-        <div styleclass="dialog-title">Open Scene...</div>
-        
-        <div styleclass="dialog-body">
-            <div id="OpenSceneDialog_FileList" styleclass="listbox" style="width:100%;"></div>
-        </div>
-        
-        
-        <div styleclass="dialog-footer">
-            <div id="OpenSceneDialog_OK"     styleclass="button" style="width:72px; margin-right:2px;">OK</div>
-            <div id="OpenSceneDialog_Cancel" styleclass="button" style="width:72px; margin-left:2px;">Cancel</div>
-        </div>
-    </div>
 </div>

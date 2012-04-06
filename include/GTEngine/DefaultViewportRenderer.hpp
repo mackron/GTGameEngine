@@ -192,6 +192,10 @@ namespace GTEngine
 
         unsigned int viewportWidth;
         unsigned int viewportHeight;
+
+        glm::vec3 clearColour;
+
+        bool colourClearingEnabled;
     };
 
 
@@ -309,6 +313,16 @@ namespace GTEngine
 
         Texture2D* GetFinalColourOutputBuffer();
         Texture2D* GetFinalDepthStencilOutputBuffer();
+
+
+        /// Sets the clear colour.
+        void SetClearColour(float r, float g, float b);
+
+        /// Disables clearing of the colour buffers.
+        void DisableColourClears();
+
+        /// Enables colour clearing.
+        void EnableColourClears();
 
 
     // Private Structures.

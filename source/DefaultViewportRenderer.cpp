@@ -9,7 +9,8 @@ namespace GTEngine
 {
     DVR_RCBegin::DVR_RCBegin()
         : framebuffer(nullptr), depthStencil(nullptr), finalOutput(nullptr), materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr),
-          viewportWidth(0), viewportHeight(0)
+          viewportWidth(0), viewportHeight(0),
+          clearColour(0.5f, 0.5f, 0.5f), colourClearingEnabled(false)
     {
     }
 
@@ -37,9 +38,15 @@ namespace GTEngine
 
             Renderer::SetViewport(0, 0, this->viewportWidth, this->viewportHeight);
 
-            Renderer::ClearColour(0.0f, 0.0f, 0.0f, 1.0f);
+            unsigned int clearbuffers = GTEngine::DepthBuffer;
+            if (this->colourClearingEnabled)
+            {
+                clearbuffers |= GTEngine::ColourBuffer;
+                Renderer::ClearColour(this->clearColour.x, this->clearColour.y, this->clearColour.z, 1.0f);
+            }
+
             Renderer::ClearDepth(1.0f);
-            Renderer::Clear(GTEngine::ColourBuffer | GTEngine::DepthBuffer);
+            Renderer::Clear(clearbuffers);
 
             Renderer::EnableDepthTest();
             Renderer::SetDepthFunc(DepthFunc_LEqual);
@@ -275,6 +282,25 @@ namespace GTEngine
         return this->framebuffer.depthStencil;
     }
 
+
+    void DefaultViewportRenderer::SetClearColour(float r, float g, float b)
+    {
+        // Probably should set this like this, but it won't crash.
+        this->RenderCommands.rcBegin[0].clearColour = glm::vec3(r, g, b);
+        this->RenderCommands.rcBegin[1].clearColour = glm::vec3(r, g, b);
+    }
+
+    void DefaultViewportRenderer::DisableColourClears()
+    {
+        this->RenderCommands.rcBegin[0].colourClearingEnabled = false;
+        this->RenderCommands.rcBegin[1].colourClearingEnabled = false;
+    }
+
+    void DefaultViewportRenderer::EnableColourClears()
+    {
+        this->RenderCommands.rcBegin[0].colourClearingEnabled = true;
+        this->RenderCommands.rcBegin[1].colourClearingEnabled = true;
+    }
 
 
 

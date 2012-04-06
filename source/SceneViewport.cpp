@@ -74,12 +74,12 @@ namespace GTEngine
 
     void SceneViewport::Resize(unsigned int newWidth, unsigned int newHeight)
     {
-        this->width  = newWidth;
-        this->height = newHeight;
+        this->width  = GTCore::Max(newWidth, 1U);
+        this->height = GTCore::Max(newHeight, 1U);
 
         if (this->renderer != nullptr)
         {
-            this->renderer->ResizeFramebuffer(newWidth, newHeight);
+            this->renderer->ResizeFramebuffer(this->width, this->height);
         }
     }
 

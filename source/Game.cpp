@@ -25,8 +25,8 @@ namespace GTEngine
           deltaTimeInSeconds(0.0), updateTimer(), fontServer(nullptr), defaultFont(nullptr),
           gui(nullptr), guiEventHandler(nullptr),
           paused(false), focused(true),
-          keyDownMap(),
-          editor(),
+          keyDownMap(), mouseButtonDownMap(),
+          editor(*this),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0)
@@ -128,10 +128,10 @@ namespace GTEngine
             {
                 size_t bufferIndex = (this->mousePosBufferIndex - i) % MouseBufferSize;
 
-                totalX += (float)this->mousePosXBuffer[bufferIndex] * iFactor;
-                totalY += (float)this->mousePosYBuffer[bufferIndex] * iFactor;
+                totalX += static_cast<float>(this->mousePosXBuffer[bufferIndex] * iFactor);
+                totalY += static_cast<float>(this->mousePosYBuffer[bufferIndex] * iFactor);
 
-                averageFactor += 1.0f;//iFactor;
+                averageFactor += 1.0; //iFactor;
                 iFactor *= MouseSmoothFactor;
             }
 
@@ -155,25 +155,31 @@ namespace GTEngine
 
     void Game::CaptureMouse()
     {
-        GTCore::HideMouse();
-        this->mouseCaptured = true;
-        this->GetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
+        if (!this->mouseCaptured)
+        {
+            GTCore::HideMouse();
+            this->mouseCaptured = true;
+            this->GetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
 
-        // The mouse needs to be moved to the middle of the window.
-        unsigned int windowWidth, windowHeight;
-        this->window->GetSize(windowWidth, windowHeight);
+            // The mouse needs to be moved to the middle of the window.
+            unsigned int windowWidth, windowHeight;
+            this->window->GetSize(windowWidth, windowHeight);
 
-        this->mouseCenterX = (int)windowWidth  / 2;
-        this->mouseCenterY = (int)windowHeight / 2;
-        this->SetMousePosition(this->mouseCenterX, this->mouseCenterY);
+            this->mouseCenterX = (int)windowWidth  / 2;
+            this->mouseCenterY = (int)windowHeight / 2;
+            this->SetMousePosition(this->mouseCenterX, this->mouseCenterY);
+        }
     }
 
     void Game::ReleaseMouse()
     {
-        GTCore::ShowMouse();
-        this->mouseCaptured = false;
+        if (this->mouseCaptured)
+        {
+            GTCore::ShowMouse();
+            this->mouseCaptured = false;
 
-        this->SetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
+            this->SetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
+        }
     }
 
 
@@ -191,6 +197,20 @@ namespace GTEngine
         return false;
     }
 
+    bool Game::IsMouseButtonDown(GTCore::MouseButton button) const
+    {
+        if (this->focused)  // Keys will never be down if we're not focused...
+        {
+            auto iButton = this->mouseButtonDownMap.Find(button);
+            if (iButton != nullptr)
+            {
+                return iButton->value;
+            }
+        }
+
+        return false;
+    }
+
 
     void Game::CacheMousePosition()
     {
@@ -201,6 +221,8 @@ namespace GTEngine
 
             offsetX -= this->mouseCenterX;
             offsetY -= this->mouseCenterY;
+
+            //printf("%d %d\n", offsetX, offsetY);
 
             this->mousePosXBuffer[this->mousePosBufferIndex] = offsetX;
             this->mousePosYBuffer[this->mousePosBufferIndex] = offsetY;
@@ -562,6 +584,12 @@ namespace GTEngine
         // The game needs to know that we're updating.
         this->OnUpdate();
 
+        // If the editor is open it also needs to be updated.
+        if (this->editor.IsOpen())
+        {
+            this->editor.Update(this->GetDeltaTimeInSeconds());
+        }
+
         // If the debugging overlay is open, we need to show the debugging information.
         if (this->IsDebuggingOpen())
         {
@@ -589,6 +617,12 @@ namespace GTEngine
 
         // Now the GUI...
         this->gui->SwapRCQueues();
+
+        // And the editor...
+        if (this->editor.IsOpen())
+        {
+            this->editor.SwapRCQueues();
+        }
 
         // Now we call the event and allow the game to do it's own buffer swaps if it so wishes.
         this->OnSwapRCQueues();
@@ -655,6 +689,8 @@ namespace GTEngine
 
     void Game::HandleEvent_OnMouseButtonDown(GameEvent &e)
     {
+        this->mouseButtonDownMap.Add(e.mousedown.button, true);
+
         if (e.mousedown.button == GTCore::MouseButton_Left)
         {
             this->gui->OnLMBDown();
@@ -673,6 +709,12 @@ namespace GTEngine
 
     void Game::HandleEvent_OnMouseButtonUp(GameEvent &e)
     {
+        auto iButtonDown = this->mouseButtonDownMap.Find(e.mouseup.button);
+        if (iButtonDown != nullptr)
+        {
+            iButtonDown->value = false;
+        }
+
         if (e.mouseup.button == GTCore::MouseButton_Left)
         {
             this->gui->OnLMBUp();

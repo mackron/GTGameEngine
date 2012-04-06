@@ -14,7 +14,7 @@
 
 namespace GTEngine
 {
-    static const size_t MouseBufferSize   = 3;
+    static const size_t MouseBufferSize   = 2;
     static const float  MouseSmoothFactor = 0.5f;
 
     /**
@@ -144,11 +144,19 @@ namespace GTEngine
         */
         void ReleaseMouse();
 
+        /// Determines whether or not the mouse is captured.
+        bool IsMouseCaptured() const { return this->mouseCaptured; }
+
 
         /// Determines if a key is currently pressed.
         /// @param key [in] The key code to check.
-        /// @return True if the key is current held down.
+        /// @return True if the key is currently held down.
         bool IsKeyDown(GTCore::Key key) const;
+
+        /// Determines if a mouse button is currently pressed.
+        /// @param button [in] The mouse button code to check.
+        /// @return True if the mouse button is currently held down.
+        bool IsMouseButtonDown(GTCore::MouseButton button) const;
 
 
         /**
@@ -388,7 +396,7 @@ namespace GTEngine
         void HandleEvent_OnLoseFocus(GameEvent &e);
 
 
-    protected:
+    public:
 
         /// The GUI FFI.
         struct GUIFFI
@@ -460,6 +468,10 @@ namespace GTEngine
 
         /// A map of key states. This is modified as keys are pushed and released.
         GTCore::Map<char32_t, bool> keyDownMap;
+
+        /// A map containing mouse button states. This is modified as mouse buttons are pushed and released. These are index by
+        /// the GTCore::MouseButton enum.
+        GTCore::Map<GTCore::MouseButton, bool> mouseButtonDownMap;
 
 
         /// Class representing the editor.
@@ -576,7 +588,6 @@ namespace GTEngine
         Game & operator=(const Game &);
 
 
-    // Friends.
     friend class GameUpdateJob;     // <-- GameUpdateJob is basically a part of this class...
     };
 }

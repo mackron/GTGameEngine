@@ -72,6 +72,54 @@
 	}
 </shader>
 
+<!-- Shadow Shader -->
+<shader id="Engine_GUIShadow_VS">
+    struct VertexInput
+	{
+		float2 Position : ATTR0;
+		float4 Color    : ATTR5;
+	};
+
+	struct VertexOutput
+	{
+		float4 Position : POSITION;
+		float4 Color    : TEXCOORD0;
+	};
+
+    uniform float4x4 Projection;
+
+	VertexOutput main(in VertexInput IN)
+	{
+		VertexOutput OUT;
+
+		OUT.Position = mul(Projection, float4(IN.Position, 0.0, 1.0));
+		OUT.Color    = IN.Color;
+
+		return OUT;
+	}
+</shader>
+
+<shader id="Engine_GUIShadow_FS">
+    struct FragmentInput
+	{
+		float4 Color : TEXCOORD0;
+	};
+
+	struct FragmentOutput
+	{
+		float4 Color : COLOR;
+	};
+
+	FragmentOutput main(in FragmentInput IN)
+	{
+		FragmentOutput OUT;
+			
+		OUT.Color = IN.Color;
+			
+		return OUT;
+	}
+</shader>
+
 <!-- Text Shader -->
 <shader id="Engine_GUIText_VS">
     struct VertexInput

@@ -23,7 +23,7 @@ function Server.Element:ListBox()
     
     -- Removes an item. When an item is removed, it is completely deleted.
     function self:RemoveItem(item)
-        self:RemoveItemByIndex(table.indexof(item));  -- table.indexof() is NOT standard. It is implemented via LickCore.
+        self:RemoveItemByIndex(table.indexof(item));  -- table.indexof() is NOT standard. It is implemented via GTCore.
     end
     
     -- Removes an item based on it's index.

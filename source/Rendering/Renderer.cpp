@@ -1084,21 +1084,6 @@ namespace GTEngine
             // Here we just bind the shader like normal...
             cgGLBindProgram(rendererData->object);
 
-            // With the shader bound, we will now loop through each pending parameter and set them.
-            auto &pendingParams = shader->GetPendingParameters();
-            for (size_t i = 0; i < pendingParams.count; ++i)
-            {
-                auto iParam = pendingParams.buffer[i];
-                assert(iParam        != nullptr);
-                assert(iParam->value != nullptr);
-
-                iParam->value->SetOnCurrentShader(iParam->key);
-            }
-
-            // It's important that pending parameters are cleared after setting so that they aren't set again
-            // the next time it is made current.
-            shader->ClearPendingParameters();
-
             return true;
         }
 
@@ -1628,6 +1613,21 @@ namespace GTEngine
         if (shader != nullptr && Renderer_SyncShader(shader))
         {
             RendererState.CurrentShader = shader;
+
+            // With the shader bound, we will now loop through each pending parameter and set them.
+            auto &pendingParams = shader->GetPendingParameters();
+            for (size_t i = 0; i < pendingParams.count; ++i)
+            {
+                auto iParam = pendingParams.buffer[i];
+                assert(iParam        != nullptr);
+                assert(iParam->value != nullptr);
+
+                iParam->value->SetOnCurrentShader(iParam->key);
+            }
+
+            // It's important that pending parameters are cleared after setting so that they aren't set again
+            // the next time it is made current.
+            shader->ClearPendingParameters();
         }
         else
         {

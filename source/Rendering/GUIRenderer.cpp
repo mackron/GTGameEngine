@@ -92,12 +92,17 @@ namespace GTEngine
         Renderer::DisableDepthTest();
         Renderer::DisableDepthWrites();
 
-        Renderer::SetShader(ShaderLibrary::GetGUITextShader());
-        Renderer::SetShaderParameter("Projection", GUIProjection);
+        // Here we set a few shader parameters that only need to be set once. We need to do this for all shaders. Cases like this is where a
+        // uniform buffer would come in real handy. I must look into that...
+        auto textShader = ShaderLibrary::GetGUITextShader();
+        textShader->SetParameter("Projection", GUIProjection);
 
-        Renderer::SetShader(ShaderLibrary::GetGUIQuadShader());
-        Renderer::SetShaderParameter("Projection", GUIProjection);
-        Renderer::SetShaderParameter("Texture",    GUIWhiteTexture);
+        auto quadShader = ShaderLibrary::GetGUIQuadShader();
+        quadShader->SetParameter("Projection", GUIProjection);
+        
+        auto shadowShader = ShaderLibrary::GetGUIShadowShader();
+        shadowShader->SetParameter("Projection", GUIProjection);
+
 
         server.ExecuteFrontRCQueue();
 
@@ -172,6 +177,67 @@ void GTGUI::RCDrawQuad::Execute()
     {
         GTEngine::Renderer::Draw(GTEngine::GUIQuadVertices, GTEngine::GUIQuadIndices, 6, GTEngine::VertexFormat::P2T2);
     }
+}
+
+void GTGUI::RCDrawShadow::Execute()
+{
+    // For ease of use...
+    float innerLeft   = static_cast<float>(this->innerRect.left);
+    float innerRight  = static_cast<float>(this->innerRect.right);
+    float innerTop    = static_cast<float>(this->innerRect.top);
+    float innerBottom = static_cast<float>(this->innerRect.bottom);
+    float outerLeft   = static_cast<float>(this->outerRect.left);
+    float outerRight  = static_cast<float>(this->outerRect.right);
+    float outerTop    = static_cast<float>(this->outerRect.top);
+    float outerBottom = static_cast<float>(this->outerRect.bottom);
+
+    // The shadow geometry will consist of 8 vertices: 4 for the inner rectangle and 4 for the outer rectangle. Each vertex contains
+    // 2 positional and 4 colour attributes. Totals 48 floats.
+    float vertices[48];
+
+    // Inner vertices.
+    vertices[0 ] = innerLeft;      vertices[1 ] = innerBottom;
+    vertices[2 ] = this->colour.r; vertices[3 ] = this->colour.g; vertices[4 ] = this->colour.b; vertices[5 ] = this->opacity;
+
+    vertices[6 ] = innerRight;     vertices[7 ] = innerBottom;
+    vertices[8 ] = this->colour.r; vertices[9 ] = this->colour.g; vertices[10] = this->colour.b; vertices[11] = this->opacity;
+
+    vertices[12] = innerRight;     vertices[13] = innerTop;
+    vertices[14] = this->colour.r; vertices[15] = this->colour.g; vertices[16] = this->colour.b; vertices[17] = this->opacity;
+
+    vertices[18] = innerLeft;      vertices[19] = innerTop;
+    vertices[20] = this->colour.r; vertices[21] = this->colour.g; vertices[22] = this->colour.b; vertices[23] = this->opacity;
+
+    // Outer vertices.
+    vertices[24] = outerLeft;      vertices[25] = outerBottom;
+    vertices[26] = this->colour.r; vertices[27] = this->colour.g; vertices[28] = this->colour.b; vertices[29] = 0.0f;
+
+    vertices[30] = outerRight;     vertices[31] = outerBottom;
+    vertices[32] = this->colour.r; vertices[33] = this->colour.g; vertices[34] = this->colour.b; vertices[35] = 0.0f;
+
+    vertices[36] = outerRight;     vertices[37] = outerTop;
+    vertices[38] = this->colour.r; vertices[39] = this->colour.g; vertices[40] = this->colour.b; vertices[41] = 0.0f;
+
+    vertices[42] = outerLeft;      vertices[43] = outerTop;
+    vertices[44] = this->colour.r; vertices[45] = this->colour.g; vertices[46] = this->colour.b; vertices[47] = 0.0f;
+
+
+    // We are drawing the shadow volume as triangles. There are 30 indices here. 6 for each quad, 5 quads (1 inner, 4 outer).
+    unsigned indices[30] =
+    {
+        0, 1, 2, 2, 3, 0,   // Inner.
+        4, 5, 1, 1, 0, 4,   // Outer bottom.
+        5, 6, 2, 2, 1, 5,   // Outer right.
+        6, 7, 3, 3, 2, 6,   // Outer top.
+        7, 4, 0, 0, 3, 7    // Outer left.
+    };
+    
+
+
+    GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIShadowShader());
+    GTEngine::Renderer::EnableAlphaBlending();
+
+    GTEngine::Renderer::Draw(vertices, indices, 30, GTEngine::VertexFormat::P2C4);
 }
 
 void GTGUI::RCDrawText::Execute()

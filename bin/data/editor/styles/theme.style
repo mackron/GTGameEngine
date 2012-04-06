@@ -1,5 +1,7 @@
+
 var sidePanelSize:        28px
-var menuBackgroundColour: #333
+var menuBackgroundColour: #3a3a3a
+var menuOpacity:          100%
 var menuBorder:           1px #666
 
 *

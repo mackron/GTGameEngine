@@ -26,7 +26,7 @@ public:
         this->GetWindow()->SetSize(1280, 720);
 
         // Disable v-sync for now.
-        GTEngine::Renderer::SetSwapInterval(0);
+        //GTEngine::Renderer::SetSwapInterval(0);
 
         // We open the editor straight away.
         this->OpenEditor();

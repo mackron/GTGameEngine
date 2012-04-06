@@ -107,6 +107,27 @@
     <None Include="..\..\..\bin\data\gui\engine\debugging.xml">
       <Filter>gui\engine</Filter>
     </None>
+    <None Include="..\..\..\bin\data\editor\combobox.xml">
+      <Filter>editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\scripts\combobox.lua">
+      <Filter>editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\styles\combobox.style">
+      <Filter>editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\styles\menubar.style">
+      <Filter>editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\scripts\menu.lua">
+      <Filter>editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\styles\menu.style">
+      <Filter>editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\editor\menu.xml">
+      <Filter>editor</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -304,6 +325,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\GarbageCollector.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\ModelEditor.hpp">
+      <Filter>include\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -470,6 +494,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\GarbageCollector.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\ModelEditor.cpp">
+      <Filter>source\Editor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

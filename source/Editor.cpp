@@ -3,10 +3,15 @@
 #include <GTEngine/Errors.hpp>
 #include <GTGUI/Server.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4355)   // 'this' used in initialise list.
+#endif
+
 namespace GTEngine
 {
-    Editor::Editor()
-        : GUI(), isStarted(false), isOpen(false)
+    Editor::Editor(Game &game)
+        : game(game), GUI(), modelEditor(game, *this), isStarted(false), isOpen(false)
     {
     }
 
@@ -21,7 +26,23 @@ namespace GTEngine
             // We need to grab the main elements from the server.
             if (guiServer.LoadFromFile("editor/main.xml"))
             {
-                this->GUI.main = guiServer.GetElementByID("EditorMain");
+                this->GUI.EditorMain = guiServer.GetElementByID("EditorMain");
+                
+                // Here we setup the common editor FFI. We need to ensure there is a Game.Editor namespace.
+                auto &script = guiServer.GetScriptServer().GetScript();
+                
+                script.GetGlobal("Game");
+                if (script.IsTable(-1))
+                {
+                    script.Push("Editor");
+                    script.PushNewTable();
+                    script.SetTableValue(-3);
+                }
+                script.Pop(1);
+
+
+                // Here is where we startup our sub-editors.
+                this->modelEditor.Startup(guiServer);
 
 
                 this->isStarted = true;
@@ -40,7 +61,7 @@ namespace GTEngine
     {
         if (!this->isOpen)
         {
-            this->GUI.main->Show();
+            this->GUI.EditorMain->Show();
 
             this->isOpen = true;
         }
@@ -50,9 +71,33 @@ namespace GTEngine
     {
         if (this->isOpen)
         {
-            this->GUI.main->Hide();
+            this->GUI.EditorMain->Hide();
 
             this->isOpen = false;
         }
     }
+
+
+    void Editor::Update(double deltaTimeInSeconds)
+    {
+        if (this->isOpen)
+        {
+            this->modelEditor.Update(deltaTimeInSeconds);
+        }
+    }
+
+
+    void Editor::SwapRCQueues()
+    {
+        if (this->isOpen)
+        {
+            this->modelEditor.SwapRCQueues();
+        }
+    }
 }
+
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
