@@ -33,7 +33,7 @@ combobox-expanded:hovered
 combobox-title
 {
     font-style:              bold
-    font-color:              #bbb
+    text-color:              #bbb
 
     width:                   140px
     vertical-align:          center
@@ -84,7 +84,7 @@ combobox-menu:hovered
 
 combobox-menu-item
 {
-    font-color: #aaa
+    text-color: #aaa
     padding: 8px 4px
 }
 

@@ -208,6 +208,16 @@ namespace GTEngine
             this->modelEditor.game.ReleaseMouse();
         }
     }
+
+    void ModelViewportEventHandler::OnMouseMove(GTGUI::Element &, int, int)
+    {
+        //printf("Mouse Moved: %d %d\n", x, y);
+    }
+
+    void ModelViewportEventHandler::OnMouseWheel(GTGUI::Element &, int delta, int x, int y)
+    {
+        printf("Mouse Wheel: %d %d %d\n", delta, x, y);
+    }
 }
 
 #if defined(_MSC_VER)

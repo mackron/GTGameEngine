@@ -65,8 +65,8 @@ namespace GTEngine
         size_t GetCount() const;
 
         /// Retrieves a reference to the internal map of parameters.
-        const GTCore::Dictionary<char, ShaderParameter*> & GetParameters() const { return this->parameters; }
-              GTCore::Dictionary<char, ShaderParameter*> & GetParameters()       { return this->parameters; }
+        const GTCore::Dictionary<ShaderParameter*> & GetParameters() const { return this->parameters; }
+              GTCore::Dictionary<ShaderParameter*> & GetParameters()       { return this->parameters; }
 
         /// Clears the cache.
         void Clear();
@@ -102,7 +102,7 @@ namespace GTEngine
     private:
 
         /// The dictionary containing pointers to ShaderParameter objects. The key is the parameter name.
-        GTCore::Dictionary<char, ShaderParameter*> parameters;
+        GTCore::Dictionary<ShaderParameter*> parameters;
     };
 }
 

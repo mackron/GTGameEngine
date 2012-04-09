@@ -833,15 +833,15 @@ namespace GTEngine
 
         /// The list of pointers of the event handlers that are attached to this node. This should usually always have at
         /// least a single entry, but doesn't have to.
-        GTCore::List<SceneNodeEventHandler *> eventHandlers;
+        GTCore::List<SceneNodeEventHandler*> eventHandlers;
 
         /// A map of components. More than one type of component is not allowed. We index this map by the component name.
-        GTCore::Dictionary<char, Component *> components;
+        GTCore::Dictionary<Component*> components;
 
         /// A map of data pointers. A SceneNode should not be inheritted. Instead, additional data can be attached to the scene
         /// node with a size_t as it's key. We use a size_t so we can use a pointer as a key if needed. This could be useful for
         /// component-specific data (use a key equal to the pointer to the component).
-        GTCore::Map<size_t, void *> dataPointers;
+        GTCore::Map<size_t, void*> dataPointers;
 
         /// The index of the layer this scene node is sitting on. Nodes with a larger layer index will be rendered on top of
         /// those with a lower index.

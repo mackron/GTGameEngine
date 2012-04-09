@@ -39,6 +39,12 @@ namespace GTEngine
         /// OnRMBUp.
         void OnRMBUp(GTGUI::Element &element, int x, int y);
 
+        /// OnMouseMove
+        void OnMouseMove(GTGUI::Element &element, int x, int y);
+
+        /// OnMouseWhee
+        void OnMouseWheel(GTGUI::Element &element, int delta, int x, int y);
+
 
     private:
 

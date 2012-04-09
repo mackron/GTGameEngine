@@ -684,6 +684,7 @@ namespace GTEngine
 
     void Game::HandleEvent_OnMouseWheel(GameEvent &e)
     {
+        this->gui->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
         this->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
     }
 

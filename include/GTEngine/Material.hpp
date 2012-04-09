@@ -95,11 +95,11 @@ namespace GTEngine
         const char* GetNormalShaderID() const { return this->definition.normalShaderID.c_str(); }
 
         /// Retrieves a reference to the list of default parameters.
-        const GTCore::Dictionary<char, ShaderParameter*> & DetDefaultParameters() const { return this->definition.defaultParams.GetParameters(); }
+        const GTCore::Dictionary<ShaderParameter*> & DetDefaultParameters() const { return this->definition.defaultParams.GetParameters(); }
 
 
         /// Retrieves a reference to the list of pending properties.
-        const GTCore::Dictionary<char, ShaderParameter*> & GetPendingParameters() const { return this->parameters.GetParameters(); }
+        const GTCore::Dictionary<ShaderParameter*> & GetPendingParameters() const { return this->parameters.GetParameters(); }
 
 
     // Parameter setters.

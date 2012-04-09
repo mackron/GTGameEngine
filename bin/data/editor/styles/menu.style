@@ -8,9 +8,10 @@ menu
     positioning: relative
     //z-index:     1
         
-    top:    20px;
     width:  192px
     height: auto
+
+    position-origin:inner;
         
     background-color: menuBackgroundColour
     border:           menuBorder
@@ -34,7 +35,7 @@ menu-item
     height:         20px
     vertical-align: center
         
-    font-color:     #aaa
+    text-color:     #aaa
         
     padding:        8px 0px
 }
@@ -46,7 +47,7 @@ menu-item:hovered
     border-left:      none
     border-right:     none
         
-    font-color:       #bbb
+    text-color:       #bbb
         
     inherit-opacity: false
 }
@@ -58,7 +59,7 @@ menu-item:pushed
     border-left:      none
     border-right:     none
         
-    font-color:     #ccc
+    text-color:     #ccc
 }
 
 menu-separator-outer

@@ -7,7 +7,7 @@
 namespace GTEngine
 {
     /// The list of loaded textures, indexed by file name.
-    GTCore::Dictionary<char, Texture2D*> LoadedTextures;
+    GTCore::Dictionary<Texture2D*> LoadedTextures;
 }
 
 namespace GTEngine

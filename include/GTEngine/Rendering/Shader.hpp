@@ -75,11 +75,11 @@ namespace GTEngine
         *   \remarks
         *       This does not deallocate the previous renderer data. That is the responsibility of the caller.
         */
-        void SetRendererData(void *rendererData) { this->rendererData = rendererData; }
+        void SetRendererData(void* rendererData) { this->rendererData = rendererData; }
 
         /// Retrieves the internal list of pending parameters.
         /// @return A reference to the internal list of rendering parameters waiting to be set.
-        GTCore::Dictionary<char, ShaderParameter*> & GetPendingParameters() { return this->pendingParameters.GetParameters(); }
+        GTCore::Dictionary<ShaderParameter*> & GetPendingParameters() { return this->pendingParameters.GetParameters(); }
 
         /// Clears the pending parameters.
         void ClearPendingParameters();

@@ -176,7 +176,9 @@
     <None Include="..\..\..\bin\data\editor\styles\menu.style" />
     <None Include="..\..\..\bin\data\editor\styles\menubar.style" />
     <None Include="..\..\..\bin\data\editor\styles\theme.style" />
-    <None Include="..\..\..\bin\data\gui\engine\debugging.xml" />
+    <None Include="..\..\..\bin\data\gui\engine\debugging.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="..\..\..\bin\data\materials\engine\simple-diffuse.material">
       <SubType>Designer</SubType>
     </None>

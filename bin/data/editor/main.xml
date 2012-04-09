@@ -15,7 +15,11 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     end)
     
     EditorCenterPanel:OnSize(function(data)
-        ModelViewport:SetWidth(EditorCenterPanel:GetInnerWidth()  - (ModelEditorLeftPanel:GetWidth() --[[+ ModelEditorRightPanel:GetWidth()]]));
+        ModelViewport:SetWidth(EditorCenterPanel:GetInnerWidth()  - ModelEditorLeftPanel:GetWidth());
+    end)
+    
+    ModelEditorLeftPanel:OnMouseWheel(function(data)
+        print("Mouse Wheel from Lua: " .. tostring(data.delta) .. " " .. tostring(data.x) .. " " .. tostring(data.y));
     end)
 ]]>
 </script>
@@ -29,7 +33,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     file.menu:AppendItem("Save");
     file.menu:AppendItem("Save As...");
     file.menu:AppendSeparator();
-    file.menu:AppendItem("Exit"):OnPush(function()
+    file.menu:AppendItem("Exit"):OnPressed(function()
         Game.Close();
     end);
     
@@ -56,7 +60,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         editable-text:    true
         cursor:           beam
         text-cursor-color: #999
-        font-color:        #999
+        text-color:        #999
         vertical-align:   center
     }
     
@@ -176,23 +180,13 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         width:  350px
         height: 100%
     }
-    
-    //#ModelEditorRightPanel
-    //{
-    //    visible: false
-    //    width:  0px
-    //    height: 100%
-    //}
-    
-    
+
     #ModelViewport
     {
         height:        100%
         width:         100%
     
         border-left:   1px #222
-        //border-top:    none
-        //border-bottom: none
     }
     
     
@@ -266,15 +260,16 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     -->
     <div id="EditorCenterPanel">
         <div id="ModelEditor">
-            <div id="ModelEditorLeftPanel"></div>
-            <div id="ModelViewport"></div>
-            <!-- <div id="ModelEditorRightPanel"></div> -->
+            <div id="ModelEditorLeftPanel">
+            </div>
+            <div id="ModelViewport">
+            </div>
         </div>
     </div>
 
     <div id="EditorBottomPanel">
-        <div style="width:auto; margin-left:4px; margin-right:8px; font-color:#888;">Command:</div>
-        <div id="CommandTextBox" styleclass="textbox" style="height:22px; width:400px" />
+        <div style="width:auto; margin-left:4px; margin-right:8px; text-color:#888;">Command:</div>
+        <div id="CommandTextBox" styleclass="textbox" style="height:22px; width:400px; inner-offset-x:16px;" />
     </div>
   
     <!-- This section contains relative positioned controls. Usually dialog boxes. -->

@@ -274,9 +274,9 @@ namespace GTEngine
     private:
 
         /// The map containing pointers to each of the loaded shaders, indexed by their ID.
-        static GTCore::Dictionary<char, ShaderLibraryShader*> Shaders;
+        static GTCore::Dictionary<ShaderLibraryShader*> Shaders;
     };
-    GTCore::Dictionary<char, ShaderLibraryShader*> ShaderLibraryShaders::Shaders;
+    GTCore::Dictionary<ShaderLibraryShader*> ShaderLibraryShaders::Shaders;
 }
 
 namespace GTEngine

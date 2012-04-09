@@ -12,7 +12,7 @@ function Server.Element:MenuBar()
 
     -- Attaches a new menu bar item.
     function self:AppendItem(title)
-        local item = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menubar-item'>" .. title .. "</div>");
+        local item = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menubar-item' />");
         item:MenuBarItem(title, self);
 
         self.items[#self.items + 1] = item;
@@ -70,7 +70,7 @@ end
 function Server.Element:MenuBarItem(title, parent)
 
     -- The title element.
-    self.title = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menubar-item-title' />");
+    self.title = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menubar-item-title'>" .. title .. "</div>");
 
     -- The menu associated with the item. Do not set this directly. Instead, use SetMenu().
     self.menu = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menu' style='visible:false; position-origin:outer; top:100%; left:0px;' />");
