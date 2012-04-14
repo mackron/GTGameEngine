@@ -96,6 +96,11 @@ namespace GTEngine
         void ApplyScaling(float x, float y, float z);
 
 
+        /// Sets the linear velocity of the physics object.
+        void SetLinearVelocity(float x, float y, float z);
+
+        /// Sets the angular velocity of the physics object.
+        void SetAngularVelocity(float x, float y, float z);
         
 
     private:

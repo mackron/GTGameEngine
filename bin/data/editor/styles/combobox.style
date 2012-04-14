@@ -6,13 +6,13 @@ combobox
     padding:          4px 0px
     child-plane:      horizontal
     border:           1px #666
-    background-color: #444
+    background-color: #3c3c3c
     vertical-align:   center
 }
 
 combobox:hovered
 {
-    background-color:#4d4d4d
+    background-color:#4a4a4a
 }
 
 combobox:pushed
@@ -36,8 +36,11 @@ combobox-title
     text-color:              #bbb
 
     width:                   140px
+    height:                  100%
     vertical-align:          center
     transparent-mouse-input: true
+
+    inner-offset-y: 1px;
 }
 
 combobox-arrow

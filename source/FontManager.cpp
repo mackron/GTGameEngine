@@ -4,6 +4,8 @@
 #include <GTType/Font.hpp>
 #include <GTCore/Map.hpp>
 
+// TODO: (Priority) This needs synchronization! Use the garbage collector.
+
 namespace GTEngine
 {
     /// Used to map a font with a texture.

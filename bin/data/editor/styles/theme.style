@@ -8,5 +8,5 @@ var menuBorder:           1px #666
 {
     font-family: liberation sans
     font-size:   9pt
-    text-color:  #ddd
+    //text-color:  #ddd
 }

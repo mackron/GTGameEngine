@@ -65,6 +65,7 @@ namespace GTEngine
           layer(0),
           scene(nullptr),
           isStatic(false), isVisible(true),
+          inheritPosition(true), inheritOrientation(true), inheritScale(true),
           position(), orientation(), scale(1.0f, 1.0f, 1.0f),
           eventLockCounter(0)
     {
@@ -323,9 +324,21 @@ namespace GTEngine
 
     glm::vec3 SceneNode::GetWorldPosition() const
     {
-        if (this->parent != nullptr)
+        if (this->parent != nullptr && this->inheritPosition)
         {
-            return this->parent->GetWorldPosition() + (this->parent->GetWorldOrientation() * (this->parent->GetWorldScale() * this->position));
+            glm::quat orientation;
+            if (this->inheritOrientation)
+            {
+                orientation = this->parent->GetWorldOrientation();
+            }
+
+            glm::vec3 scale(1.0f, 1.0f, 1.0f);
+            if (this->inheritScale)
+            {
+                scale = this->parent->GetWorldScale();
+            }
+
+            return this->parent->GetWorldPosition() + (orientation * (scale * this->position));
         }
         
         return this->position;
@@ -333,7 +346,7 @@ namespace GTEngine
 
     void SceneNode::SetWorldPosition(const glm::vec3 &worldPosition)
     {
-        if (this->parent != nullptr)
+        if (this->parent != nullptr && this->inheritPosition)
         {
             glm::vec3 Pp = this->parent->GetWorldPosition();
             glm::vec3 Ps = this->parent->GetWorldScale();
@@ -371,7 +384,7 @@ namespace GTEngine
 
     glm::quat SceneNode::GetWorldOrientation() const
     {
-        if (this->parent != nullptr)
+        if (this->parent != nullptr && this->inheritOrientation)
         {
             return this->parent->GetWorldOrientation() * this->orientation;
         }
@@ -381,7 +394,7 @@ namespace GTEngine
 
     void SceneNode::SetWorldOrientation(const glm::quat &worldOrientation)
     {
-        if (this->parent != nullptr)
+        if (this->parent != nullptr && this->inheritOrientation)
         {
             this->SetOrientation(worldOrientation * glm::inverse(this->parent->GetWorldOrientation()));
         }
@@ -420,7 +433,7 @@ namespace GTEngine
 
     glm::vec3 SceneNode::GetWorldScale() const
     {
-        if (this->parent != nullptr)
+        if (this->parent != nullptr && this->inheritScale)
         {
             return this->parent->GetWorldScale() * this->scale;
         }
@@ -430,7 +443,7 @@ namespace GTEngine
 
     void SceneNode::SetWorldScale(const glm::vec3 &worldScale)
     {
-        if (this->parent != nullptr)
+        if (this->parent != nullptr && this->inheritScale)
         {
             this->SetScale(worldScale / this->parent->GetWorldScale());
         }
@@ -660,6 +673,52 @@ namespace GTEngine
                 this->OnVisibleChanged();
             }
         }
+    }
+
+
+    void SceneNode::DisablePositionInheritance()
+    {
+        auto worldPosition = this->GetWorldPosition();
+
+        this->inheritPosition = false;
+        this->SetWorldPosition(worldPosition);     // This will ensure the position is correct.
+    }
+    void SceneNode::EnablePositionInheritance()
+    {
+        auto worldPosition = this->GetWorldPosition();
+
+        this->inheritPosition = true;
+        this->SetWorldPosition(worldPosition);     // This will ensure the position is correct.
+    }
+
+    void SceneNode::DisableOrientationInheritance()
+    {
+        auto worldOrientation = this->GetWorldOrientation();
+        
+        this->inheritOrientation = false;
+        this->SetWorldOrientation(worldOrientation);
+    }
+    void SceneNode::EnableOrientationInheritance()
+    {
+        auto worldOrientation = this->GetWorldOrientation();
+        
+        this->inheritOrientation = true;
+        this->SetWorldOrientation(worldOrientation);
+    }
+
+    void SceneNode::DisableScaleInheritance()
+    {
+        auto worldScale = this->GetWorldScale();
+        
+        this->inheritScale = false;
+        this->SetWorldScale(worldScale);
+    }
+    void SceneNode::EnableScaleInheritance()
+    {
+        auto worldScale = this->GetWorldScale();
+        
+        this->inheritScale = true;
+        this->SetWorldScale(worldScale);
     }
 
 

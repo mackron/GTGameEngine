@@ -74,5 +74,5 @@ menu-separator-inner
 {
     width:            100%
     height:           1px
-    background-color: #999
+    background-color: #777
 }

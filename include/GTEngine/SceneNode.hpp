@@ -718,6 +718,25 @@ namespace GTEngine
         inline void Hide() { this->SetVisible(false); }
 
 
+        /// Disables position inheritance.
+        void DisablePositionInheritance();
+
+        /// Enables position inheritance.
+        void EnablePositionInheritance();
+
+        /// Disables orientation inheritance.
+        void DisableOrientationInheritance();
+
+        /// Enables orientation inheritance.
+        void EnableOrientationInheritance();
+
+        /// Disables scale inheritance.
+        void DisableScaleInheritance();
+
+        /// Enables scale inheritance.
+        void EnableScaleInheritance();
+
+
     // Component helpers. Use these to make attaching specific components a little easier...
     public:
 
@@ -862,6 +881,15 @@ namespace GTEngine
 
         /// Keeps track of whether or not the node is visible. True by default.
         bool isVisible;
+
+        /// Keeps track of whether or not position inheritance is enabled. True by default.
+        bool inheritPosition;
+
+        /// Keeps track of whether or not orientation inheritance is enabled. True by default.
+        bool inheritOrientation;
+
+        /// Keeps track of whether or not scale inheritance is enabled. True by default.
+        bool inheritScale;
 
 
         /// The position of the node, relative to the parent node.

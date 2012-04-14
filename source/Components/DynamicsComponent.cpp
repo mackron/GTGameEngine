@@ -218,6 +218,17 @@ namespace GTEngine
     }
 
 
+    void DynamicsComponent::SetLinearVelocity(float x, float y, float z)
+    {
+        this->rigidBody->setLinearVelocity(btVector3(x, y, z));
+    }
+
+    void DynamicsComponent::SetAngularVelocity(float x, float y, float z)
+    {
+        this->rigidBody->setAngularVelocity(btVector3(x, y, z));
+    }
+
+
     void DynamicsComponent::AddCollisionShape(btCollisionShape* shape, float offsetX, float offsetY, float offsetZ)
     {
         // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body

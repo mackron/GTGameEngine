@@ -15,6 +15,8 @@ menubar-item
 {
     width:            auto
     height:           100%
+
+    text-color:       #888
         
     padding:          8px 0px
     vertical-align:   center
@@ -28,21 +30,19 @@ menubar-item:hovered
     border-top:       none
     border-bottom:    none
 
+    text-color:       #aaa
+
     padding: 7px 0px
 }
 
 menubar-item-title
 {
-    width:      auto
-    height:     100%
-    text-color: #888
+    width:          auto
+    height:         100%
+    //text-color:     inherit
+    vertical-align: center
     
     transparent-mouse-input:true;
-}
-
-menubar-item-title:hovered
-{
-    text-color: #aaa
 }
 
 

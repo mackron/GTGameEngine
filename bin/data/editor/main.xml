@@ -6,21 +6,10 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
 <include url="menubar.xml" />
 <include url="combobox.xml" />
+<include url="file-explorer.xml" />
 
 <script>
 <![CDATA[
-    -- When the main editor window is resized, we need to size the main viewport area.
-    EditorMain:OnSize(function(data)
-        EditorCenterPanel:SetHeight(EditorMain:GetInnerHeight() - (EditorTopPanel:GetHeight() + EditorBottomPanel:GetHeight()));
-    end)
-    
-    EditorCenterPanel:OnSize(function(data)
-        ModelViewport:SetWidth(EditorCenterPanel:GetInnerWidth()  - ModelEditorLeftPanel:GetWidth());
-    end)
-    
-    ModelEditorLeftPanel:OnMouseWheel(function(data)
-        print("Mouse Wheel from Lua: " .. tostring(data.delta) .. " " .. tostring(data.x) .. " " .. tostring(data.y));
-    end)
 ]]>
 </script>
 
@@ -28,7 +17,10 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <![CDATA[
     MenuBar_ModelMode:MenuBar();
     file = MenuBar_ModelMode:AppendItem("File");
-    file.menu:AppendItem("Open...");
+    file.menu:AppendItem("Open..."):OnPressed(function()
+        MenuBar_ModelMode:CollapseMenu();
+        OpenModelDialog:Show();
+    end);
     file.menu:AppendSeparator();
     file.menu:AppendItem("Save");
     file.menu:AppendItem("Save As...");
@@ -41,8 +33,23 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     MenuBar_ModelMode:AppendItem("View");
 
     ModeSwitcher:ComboBox();
-    ModeSwitcher:AppendItem("Model Edit Mode");
-    --ModeSwitcher:AppendItem("Material Edit Mode");
+    ModeSwitcher:AppendItem("Model Editor");
+    --ModeSwitcher:AppendItem("Material Editor");
+]]>
+</script>
+
+<!-- Model Editor Dialog Box -->
+<script>
+<![CDATA[
+    OpenModelDialog_FileExplorer:FileExplorer();
+
+    btnOpenModelDialog_Open:OnPressed(function()
+        OpenModelDialog:Hide();
+    end);
+
+    btnOpenModelDialog_Close:OnPressed(function()
+        OpenModelDialog:Hide();
+    end);
 ]]>
 </script>
 
@@ -51,34 +58,35 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <style>
     textbox
     {
-        background-color: #3a3a3a
-        border:           1px #666
-        padding:          2px 0px
-        height:           20px
-        width:            192px
+        background-color:  #3a3a3a
+        border:            1px #666
+        padding:           2px 0px
+        height:            20px
+        width:             192px
         
-        editable-text:    true
-        cursor:           beam
+        editable-text:     true
+        cursor:            beam
         text-cursor-color: #999
         text-color:        #999
-        vertical-align:   center
+        vertical-align:    center
     }
     
     button
     {
-        background-color: #333
-        border:           1px #ddd
+        background-color: #555
+        border:           1px #aaa
         width:            auto
         height:           auto
         padding:          4px
         horizontal-align: center
         vertical-align:   center
         font-style:       bold
+        text-color:       #aaa
     }
     
     button:hovered
     {
-        background-color: #555
+        background-color: #666
     }
     
     button:pushed
@@ -125,6 +133,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         width:   100%
         height:  100%
         
+        flex-child-height:true
+        
         background-color: #333
     }
     
@@ -170,24 +180,12 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     #EditorCenterPanel
     {
-        height:      0px
+        height:      100%
         width:       100%
         child-plane: horizontal
     }
     
-    #ModelEditorLeftPanel
-    {
-        width:  350px
-        height: 100%
-    }
-
-    #ModelViewport
-    {
-        height:        100%
-        width:         100%
     
-        border-left:   1px #222
-    }
     
     
     #ModelEditor
@@ -195,31 +193,78 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         width:  100%
         height: 100%
         
+        flex-child-width:true
+        
         child-plane: horizontal
+    }
+    
+    #ModelEditorLeftPanel
+    {
+        width:  350px
+        height: 100%
+        
+        allow-mouse-resize:true;
+        right-gripper-width:8px;
+        
+        border-right:   1px #222
+    }
+
+    #ModelViewport
+    {
+        width:         100%
+        height:        100%
     }
 </style>
 
 <!-- Dialog styles -->
 <style>
-    dialog
+    dialog-container
+    {
+        positioning: absolute
+        width:       100%
+        height:      100%
+        
+        background-color: #000
+        opacity:          0.50
+        
+        visible: false
+        
+        z-index: 100
+    }
+    
+    dialog  // Elements using this will be children of elements using 'dialog-container'
     {
         positioning:      relative
         left:             36px
         top:              28px
-        width:            auto
-        height:           auto
-        padding:          4px
+        width:            300px
+        height:           200px
+        padding:          8px
         border:           1px #666
-        background-color: #f9f9ff
-        visible:          false
+        background-color: #444
+        
+        allow-mouse-drag: true
+        
+        allow-mouse-resize:   true
+        right-gripper-width:  8px
+        bottom-gripper-width: 8px
+        
+        compound-opacity: false
+        
+        enable-shadow:      true
+        shadow-extrusion-x: 8px
+        shadow-extrusion-y: 8px
+        shadow-blur-radius: 8px
+        shadow-opacity:     1.0
     }
+
     
     dialog-title
     {
         padding-bottom: 4px
         margin-bottom:  8px
         font-style:     bold
-        border-bottom:  1px #666
+        border-bottom:  1px #999
     }
     
     dialog-body
@@ -259,7 +304,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     The center panel is where individual editting tools can use their own GUIs.
     -->
     <div id="EditorCenterPanel">
-        <div id="ModelEditor">
+        <div id="ModelEditor" style="text-color:#f00">
             <div id="ModelEditorLeftPanel">
             </div>
             <div id="ModelViewport">
@@ -273,4 +318,13 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     </div>
   
     <!-- This section contains relative positioned controls. Usually dialog boxes. -->
+    <div id="OpenModelDialog" styleclass="dialog-container">
+        <div styleclass="dialog" style="horizontal-align:right; padding-top:20px; flex-child-height:true">
+            <div id="OpenModelDialog_FileExplorer" styleclass="file-explorer" style="border-bottom:1px #999; padding-bottom:8px;" />
+            <div style="width:auto; height:auto; margin-top:8px; child-plane:horizontal; transparent-mouse-input:true;">
+                <div id="btnOpenModelDialog_Open"  styleclass="button" style="margin-right:4px; width:100px">Open</div>
+                <div id="btnOpenModelDialog_Close" styleclass="button" style="                  width:100px">Close</div>
+            </div>
+        </div>
+    </div>
 </div>

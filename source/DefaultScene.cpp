@@ -119,37 +119,9 @@ namespace GTEngine
 
 
     DefaultScene::DefaultScene()
-        : /*rootNode(), */viewports(), nodes(), dynamicsWorld(), occlusionCollisionWorld(),
-          /*defaultCameraNode(nullptr), colourBuffer(nullptr), depthStencilBuffer(nullptr), defaultShader(nullptr), hdrQuadShader(nullptr), defaultTexture(nullptr), defaultFramebuffer(nullptr),*/
+        : viewports(), nodes(), dynamicsWorld(), occlusionCollisionWorld(),
           cameraNodes(), staticNodes(), dynamicNodes()
     {
-        /*
-        // The very first thing we need to do is let rootNode know that this is it's scene.
-        rootNode.SetScene(this);
-
-        this->defaultCameraNode = SceneNodeFactory::Create3DCameraNode(90.0f, 1280.0f / 720.0f, 0.001f, 1000.0f);
-        this->AddSceneNode(*this->defaultCameraNode);
-
-        this->defaultShader     = new Shader(ShaderLibrary::GetShaderString("SimpleMVP_P3T2N3_Vertex"), ShaderLibrary::GetShaderString("TextureLight_Fragment"));
-        this->defaultTexture    = new Texture2D("textures/default.png");
-
-        if (Renderer::SupportFloatTextures())
-        {
-            this->colourBuffer  = new Texture2D(1280, 720, GTImage::ImageFormat_RGBA16F);
-            this->hdrQuadShader = new Shader(ShaderLibrary::GetShaderString("FullscreenQuad_Vertex"), ShaderLibrary::GetShaderString("HDRQuad_Fragment"));
-        }
-        else
-        {
-            this->colourBuffer  = new Texture2D(1280, 720, GTImage::ImageFormat_RGBA8);
-            this->hdrQuadShader = new Shader(ShaderLibrary::GetShaderString("FullscreenQuad_Vertex"), ShaderLibrary::GetShaderString("NoHDRQuad_Fragment"));
-        }
-
-        this->depthStencilBuffer = new Texture2D(1280, 720, GTImage::ImageFormat_Depth24_Stencil8);
-        
-        this->defaultFramebuffer = new Framebuffer();
-        this->defaultFramebuffer->AttachColourBuffer(this->colourBuffer, 0);
-        this->defaultFramebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
-        */
     }
 
     DefaultScene::~DefaultScene()
@@ -183,7 +155,7 @@ namespace GTEngine
         // Before doing anything we're going to step the dynamics.
         if (!this->IsPaused())
         {
-            this->dynamicsWorld.stepSimulation(static_cast<btScalar>(deltaTimeInSeconds));
+            this->dynamicsWorld.stepSimulation(static_cast<btScalar>(deltaTimeInSeconds), 4);
         }
 
 
