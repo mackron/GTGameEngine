@@ -210,6 +210,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\DynamicsComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\LightComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ModelComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ProximityComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\SpriteComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultScene.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp" />
@@ -278,6 +279,7 @@
     <ClCompile Include="..\..\..\source\Components\DynamicsComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\LightComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ModelComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Components\ProximityComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\SpriteComponent.cpp" />
     <ClCompile Include="..\..\..\source\DefaultScene.cpp" />
     <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp" />

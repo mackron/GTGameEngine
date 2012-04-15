@@ -12,6 +12,7 @@
 #include "Components/ModelComponent.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/DynamicsComponent.hpp"
+#include "Components/ProximityComponent.hpp"
 
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/List.hpp>
@@ -126,6 +127,22 @@ namespace GTEngine
         *   \param  deltaTimeInSeconds [in] The since the last update, in seconds.
         */
         virtual void OnUpdate(SceneNode& node, double deltaTimeInSeconds);
+
+
+        /// Called when a physics object is touching another object.
+        ///
+        /// @param node  [in] A reference to the owner of the event.
+        /// @param other [in] The other node the node is touching.
+        /// @param pt    [in] Contact information.
+        ///
+        /// @remarks
+        ///     This event is not only called when two objects go from a non-colliding to colliding state. Also, it will be called every frame
+        ///     that the nodes are touching.
+        ///     @par
+        ///     This event will only be called for scene nodes with dynamics components whose collisions are detectable by the physics system. Kinematic/Kinematic,
+        ///     Static/Static and Kinematic/Static collisions will not be handled.
+        virtual void OnContact(SceneNode &node, SceneNode &other, const btManifoldPoint &pt);
+
 
 
     public:
@@ -298,6 +315,17 @@ namespace GTEngine
         {
             return this->FindFirstChildWithComponent(T::Name, recursive);
         }
+
+
+        /// Determines whether or not the given node is an ancestor.
+        bool IsAncestor(SceneNode &other) const;
+
+        /// Determines whether or not the given node is a descendant.
+        bool IsDescendant(SceneNode &other) const;
+
+        /// Determines whether or not the given scene node is related to this node (is an ancestor or descendant).
+        bool IsRelated(SceneNode &other) const { return this->IsAncestor(other) || this->IsDescendant(other); } 
+
 
         /**
         *   \brief  Retrieves the position of the node relative to the parent.
@@ -724,17 +752,41 @@ namespace GTEngine
         /// Enables position inheritance.
         void EnablePositionInheritance();
 
+        /// Determines whether or not position inheritance is enabled.
+        bool IsPositionInheritanceEnabled() const { return this->inheritPosition; }
+
+
         /// Disables orientation inheritance.
         void DisableOrientationInheritance();
 
         /// Enables orientation inheritance.
         void EnableOrientationInheritance();
 
+        /// Determines whether or not orientation inheritance is enabled.
+        bool IsOrientationInheritanceEnabled() const { return this->inheritOrientation; }
+
+
         /// Disables scale inheritance.
         void DisableScaleInheritance();
 
         /// Enables scale inheritance.
         void EnableScaleInheritance();
+
+        /// Determines whether or not scale inheritance is enabled.
+        bool IsScaleInheritanceEnabled() const { return this->inheritScale; }
+
+
+        /// Sets the ID flags of this scene node.
+        ///
+        /// @param newIDFlags [in] The new ID flags.
+        ///
+        /// @remarks
+        ///     Do SetIDFlags(GetIDFlags() | SomeFlag), etc to do bitwise modifications.
+        void SetIDFlags(unsigned int newIDFlags) { this->idFlags = newIDFlags; }
+
+        /// Retrieves the ID flags of this scene node.
+        unsigned int GetIDFlags() const { return this->idFlags; }
+
 
 
     // Component helpers. Use these to make attaching specific components a little easier...
@@ -797,6 +849,7 @@ namespace GTEngine
         void OnComponentAttached(Component& component);
         void OnComponentDetached(Component& component);
         void OnUpdate(double deltaTimeInSeconds);
+        void OnContact(SceneNode &other, const btManifoldPoint &pt);
 
 
     public:
@@ -905,6 +958,12 @@ namespace GTEngine
         /// The counter used for event locks. If it is > 0, the events are locked. Otherwise they are unlocked. Defaults to 0. LockEvents()
         /// will increment, whereas UnlockEvents() will decrement.
         int eventLockCounter;
+
+
+        /// Sometimes it will be required to able to generically identity scene nodes. This member is an integer that can be set by client
+        /// applications for identification purposes. It is controlled with SetIDFlags() and GetIDFlags(). Defaults to 0.
+        unsigned int idFlags;
+
 
     
     private:    // No copying.

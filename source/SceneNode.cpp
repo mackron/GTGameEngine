@@ -51,6 +51,10 @@ namespace GTEngine
     void SceneNodeEventHandler::OnUpdate(SceneNode &, double)
     {
     }
+
+    void SceneNodeEventHandler::OnContact(SceneNode &, SceneNode &, const btManifoldPoint &)
+    {
+    }
 }
 
 
@@ -67,7 +71,8 @@ namespace GTEngine
           isStatic(false), isVisible(true),
           inheritPosition(true), inheritOrientation(true), inheritScale(true),
           position(), orientation(), scale(1.0f, 1.0f, 1.0f),
-          eventLockCounter(0)
+          eventLockCounter(0),
+          idFlags(0)
     {
     }
 
@@ -82,38 +87,38 @@ namespace GTEngine
         this->RemoveAllComponents();
     }
 
-    const char * SceneNode::GetName() const
+    const char* SceneNode::GetName() const
     {
         return this->name.c_str();
     }
 
-    void SceneNode::SetName(const char *newName)
+    void SceneNode::SetName(const char* newName)
     {
         this->name = newName;
     }
 
-    SceneNode * SceneNode::GetParent()
+    SceneNode* SceneNode::GetParent()
     {
         return this->parent;
     }
 
 
-    SceneNode * SceneNode::GetFirstChild()
+    SceneNode* SceneNode::GetFirstChild()
     {
         return this->firstChild;
     }
 
-    SceneNode * SceneNode::GetLastChild()
+    SceneNode* SceneNode::GetLastChild()
     {
         return this->lastChild;
     }
 
-    SceneNode * SceneNode::GetPrevSibling()
+    SceneNode* SceneNode::GetPrevSibling()
     {
         return this->prevSibling;
     }
 
-    SceneNode * SceneNode::GetNextSibling()
+    SceneNode* SceneNode::GetNextSibling()
     {
         return this->nextSibling;
     }
@@ -176,12 +181,12 @@ namespace GTEngine
         }
     }
 
-    void SceneNode::AttachTo(SceneNode& parent)
+    void SceneNode::AttachTo(SceneNode &parent)
     {
         parent.AttachChild(*this);
     }
 
-    void SceneNode::DetachChild(SceneNode& child)
+    void SceneNode::DetachChild(SceneNode &child)
     {
         assert(child.GetParent() == this);
 
@@ -239,7 +244,7 @@ namespace GTEngine
         }
     }
 
-    SceneNode * SceneNode::FindFirstChild(const char *name, bool recursive)
+    SceneNode* SceneNode::FindFirstChild(const char* name, bool recursive)
     {
         for (auto iChild = this->firstChild; iChild != nullptr; iChild = iChild->GetNextSibling())
         {
@@ -263,7 +268,7 @@ namespace GTEngine
         return nullptr;
     }
 
-    SceneNode * SceneNode::FindFirstChildWithComponent(const char *componentName, bool recursive)
+    SceneNode* SceneNode::FindFirstChildWithComponent(const char *componentName, bool recursive)
     {
         for (auto iChild = this->firstChild; iChild != nullptr; iChild = iChild->GetNextSibling())
         {
@@ -286,6 +291,42 @@ namespace GTEngine
 
         return nullptr;
     }
+
+    bool SceneNode::IsAncestor(SceneNode &other) const
+    {
+        if (this->parent != nullptr)
+        {
+            if (this->parent == &other)
+            {
+                return true;
+            }
+
+            return this->parent->IsAncestor(other);
+        }
+
+        return false;
+    }
+
+    bool SceneNode::IsDescendant(SceneNode &other) const
+    {
+        for (auto iChild = this->firstChild; iChild != nullptr; iChild = iChild->nextSibling)
+        {
+            if (iChild == &other)
+            {
+                return true;
+            }
+            else
+            {
+                if (iChild->IsDescendant(other))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     void SceneNode::_SetParent(SceneNode *parent)
     {
@@ -417,13 +458,6 @@ namespace GTEngine
             glm::vec3 prevScale = this->scale;
             this->scale = scale;
 
-            // If we have a dynamics component, we need to apply scaling there, too.
-            auto dynamicsComponent = this->GetComponent<DynamicsComponent>();
-            if (dynamicsComponent != nullptr)
-            {
-                dynamicsComponent->ApplyScaling(scale.x, scale.y, scale.z);
-            }
-            
             if (!this->EventsLocked())
             {
                 this->OnScale(prevScale);
@@ -824,6 +858,16 @@ namespace GTEngine
         {
             this->scene->OnSceneNodeTransform(*this);
         }
+
+
+        // When the transformation changes on a parent, the children will also have changed if they have inheritance.
+        for (auto i = this->firstChild; i != nullptr; i = i->nextSibling)
+        {
+            if (i->IsPositionInheritanceEnabled() || i->IsOrientationInheritanceEnabled())
+            {
+                i->OnTransform();
+            }
+        }
     }
 
     void SceneNode::OnScale(const glm::vec3 &prevScale)
@@ -836,6 +880,16 @@ namespace GTEngine
         if (this->scene != nullptr)
         {
             this->scene->OnSceneNodeScale(*this, prevScale);
+        }
+
+
+        // When the scale changes on a parent, the children will also have changed scales if they have inheritted scaling enabled.
+        for (auto i = this->firstChild; i != nullptr; i = i->nextSibling)
+        {
+            if (i->IsScaleInheritanceEnabled())
+            {
+                i->OnScale(i->GetScale());
+            }
         }
     }
 
@@ -922,6 +976,14 @@ namespace GTEngine
         for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
         {
             i->value->OnUpdate(*this, deltaTimeInSeconds);
+        }
+    }
+
+    void SceneNode::OnContact(SceneNode &other, const btManifoldPoint &pt)
+    {
+        for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
+        {
+            i->value->OnContact(*this, other, pt);
         }
     }
 }

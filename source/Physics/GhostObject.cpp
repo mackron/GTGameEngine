@@ -6,6 +6,7 @@ namespace GTEngine
     GhostObject::GhostObject()
         : world(nullptr)
     {
+        this->setCollisionFlags(this->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
     }
 
     GhostObject::~GhostObject()

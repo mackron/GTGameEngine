@@ -10,101 +10,6 @@
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTCore/Strings/Equal.hpp>
 
-#if 0
-namespace GTEngine
-{
-    class Clear : public RenderCommand
-    {
-    public:
-
-        Clear()
-        {
-        }
-
-        void Execute()
-        {
-            Renderer::ClearColour(0.5f, 0.25f, 0.25f, 1.0f);
-            Renderer::ClearDepth(1.0f);
-            Renderer::Clear(GTEngine::ColourBuffer | GTEngine::DepthBuffer);
-        }
-
-        void OnExecuted()
-        {
-            Clear::Deallocate(this);
-        }
-
-
-    public: // Allocation/Deallocation.
-
-        static Clear * Allocate()
-        {
-            return new Clear();
-        }
-
-        static void Deallocate(Clear *call)
-        {
-            delete call;
-        }
-    };
-
-    class DrawHDRQuad : public RenderCommand
-    {
-    public:
-
-        DrawHDRQuad(DefaultScene *scene)
-            : scene(scene)
-        {
-        }
-
-        void Execute()
-        {
-            Renderer::SetFramebuffer(nullptr);
-            Renderer::DisableDepthTest();
-
-            Renderer::SetShader(scene->hdrQuadShader);
-            Renderer::SetShaderParameter("Texture",   scene->defaultFramebuffer->GetColourBuffer(0));
-
-            if (Renderer::SupportFloatTextures())
-            {
-                Renderer::SetShaderParameter("Exposure",  1.0f);
-                Renderer::SetShaderParameter("MaxBright", 4.0f);
-            }
-
-            Renderer::Draw(VertexArrayLibrary::GetFullscreenQuadVA());
-
-            Renderer::EnableDepthTest();
-        }
-
-        void OnExecuted()
-        {
-            DrawHDRQuad::Deallocate(this);
-        }
-
-
-    public: // Allocation/Deallocation.
-
-        static DrawHDRQuad * Allocate(DefaultScene *scene)
-        {
-            return new DrawHDRQuad(scene);
-        }
-
-        static void Deallocate(DrawHDRQuad *call)
-        {
-            delete call;
-        }
-
-    private:
-
-        DefaultScene *scene;
-
-
-    private:    // No copying.
-        DrawHDRQuad(const DrawHDRQuad &);
-        DrawHDRQuad & operator=(const DrawHDRQuad &);
-    };
-}
-#endif
-
 namespace GTEngine
 {
     namespace CollisionGroup
@@ -137,7 +42,6 @@ namespace GTEngine
 
     void DefaultScene::AddSceneNode(SceneNode &node)
     {
-        //this->rootNode.AttachChild(node);
         node.SetScene(this);
     }
 
@@ -156,6 +60,30 @@ namespace GTEngine
         if (!this->IsPaused())
         {
             this->dynamicsWorld.stepSimulation(static_cast<btScalar>(deltaTimeInSeconds), 4);
+
+            // Here is where we're going to check for collisions with other rigid bodies.
+            int numManifolds = this->dynamicsWorld.getDispatcher()->getNumManifolds();
+	        for (int i = 0; i < numManifolds; i++)
+	        {
+		        btPersistentManifold* contactManifold = this->dynamicsWorld.getDispatcher()->getManifoldByIndexInternal(i);
+		        btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
+		        btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
+
+                // We'll just use the first contact point for ours. Should probably experiment with looping over all points.
+                for (int iContact = 0; iContact < contactManifold->getNumContacts(); ++iContact)
+                {
+                    btManifoldPoint& pt = contactManifold->getContactPoint(iContact);
+
+                    auto dataA = static_cast<SceneNode*>(obA->getUserPointer());
+                    auto dataB = static_cast<SceneNode*>(obB->getUserPointer());
+
+                    if (dataA != nullptr && dataB != nullptr)
+                    {
+                        dataA->OnContact(*dataB, pt);
+                        dataB->OnContact(*dataA, pt);
+                    }
+                }
+            }
         }
 
 
@@ -312,6 +240,10 @@ namespace GTEngine
         auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
         if (dynamicsComponent != nullptr)
         {
+            // The very first thing we're going to do is ensure the scaling has been applied. We do this in OnSceneNodeScaled(), too.
+            dynamicsComponent->ApplyScaling(node.GetWorldScale());
+
+            // Now we need to ensure the rigid body is transformed correctly.
             auto &rigidBody = dynamicsComponent->GetRigidBody();
 
             btTransform transform;
@@ -320,8 +252,27 @@ namespace GTEngine
                 rigidBody.getMotionState()->getWorldTransform(transform);
                 rigidBody.setWorldTransform(transform);
             }
-
+            
             this->dynamicsWorld.addRigidBody(&rigidBody, dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
+        }
+
+        // Just like DynamicsComponent, if we have proximity component, we need to add that also.
+        auto proximityComponent = node.GetComponent<ProximityComponent>();
+        if (proximityComponent != nullptr)
+        {
+            proximityComponent->ApplyScaling(node.GetWorldScale());
+            
+            // The very first thing we're going to do is ensure the scaling has been applied. We do this in OnSceneNodeScaled(), too.
+            proximityComponent->ApplyScaling(node.GetWorldScale());
+
+            // Now we need to ensure the rigid body is transformed correctly.
+            auto &ghostObject = proximityComponent->GetGhostObject();
+
+            btTransform transform;
+            node.GetWorldTransform(transform);
+            ghostObject.setWorldTransform(transform);
+
+            this->dynamicsWorld.addGhostObject(&ghostObject, proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
         }
 
 
@@ -394,6 +345,13 @@ namespace GTEngine
             this->dynamicsWorld.removeRigidBody(&dynamicsComponent->GetRigidBody());
         }
 
+        // Same for the proximity component as the dynamics component.
+        auto proximityComponent = node.GetComponent<ProximityComponent>();
+        if (proximityComponent != nullptr)
+        {
+            this->dynamicsWorld.removeGhostObject(&proximityComponent->GetGhostObject());
+        }
+
         // If we have metadata, it needs to be removed. 
         auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
         delete metadata;
@@ -420,6 +378,23 @@ namespace GTEngine
 
     void DefaultScene::OnSceneNodeTransform(SceneNode &node)
     {
+        // We need to update the transformations of the ghost objects in the proximity component, if applicable.
+        auto proximityComponent = node.GetComponent<ProximityComponent>();
+        if (proximityComponent != nullptr)
+        {
+            auto &ghostObject = proximityComponent->GetGhostObject();
+
+            auto world = ghostObject.getWorld();
+            if (world != nullptr)
+            {
+                btTransform transform;
+                node.GetWorldTransform(transform);
+
+                ghostObject.setWorldTransform(transform);
+                world->updateSingleAabb(&ghostObject);
+            }
+        }
+
         auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
         if (metadata != nullptr)    // Use an assert?
         {
@@ -461,6 +436,20 @@ namespace GTEngine
             }
 
             this->occlusionCollisionWorld.updateSingleAabb(&metadata->pickingObject);
+        }
+
+        // The dynamics component needs to have scaling applied.
+        auto dynamics = node.GetComponent<DynamicsComponent>();
+        if (dynamics != nullptr)
+        {
+            dynamics->ApplyScaling(node.GetWorldScale());
+        }
+
+        // Like dynamics, scaling must be applied to the proximity component.
+        auto proximity = node.GetComponent<DynamicsComponent>();
+        if (proximity != nullptr)
+        {
+            proximity->ApplyScaling(node.GetWorldScale());
         }
     }
 

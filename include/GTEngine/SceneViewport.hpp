@@ -133,7 +133,7 @@ namespace GTEngine
     // Misc stuff.
     public:
 
-        /// Projects a 3D point to windows coordinates based on the viewport.
+        /// Projects a 3D point to window coordinates based on the viewport.
         /// @param position [in] The point in 3D space being projected.
         glm::vec3 Project(const glm::vec3 &position);
 

@@ -94,6 +94,7 @@ namespace GTEngine
 
         /// Applies a scale to the rigid body.
         void ApplyScaling(float x, float y, float z);
+        void ApplyScaling(const glm::vec3 &scale) { this->ApplyScaling(scale.x, scale.y, scale.z); }
 
 
         /// Sets the linear velocity of the physics object.
