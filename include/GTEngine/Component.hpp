@@ -3,7 +3,7 @@
 #define __GTEngine_Component_hpp_
 
 #define GTENGINE_DECL_COMPONENT_START(className) \
-    class className : public Component \
+    class className : public GTEngine::Component \
     { \
     public: \
         static const char* const Name; \

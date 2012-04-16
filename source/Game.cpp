@@ -581,9 +581,6 @@ namespace GTEngine
 
     void Game::Update() //[Update Thread]
     {
-        // The game needs to know that we're updating.
-        this->OnUpdate();
-
         // If the editor is open it also needs to be updated.
         if (this->editor.IsOpen())
         {
@@ -595,6 +592,9 @@ namespace GTEngine
         {
             this->DebuggingGUI.Step();
         }
+
+        // The game needs to know that we're updating.
+        this->OnUpdate();
     }
 
     void Game::Draw() //[Main Thread]

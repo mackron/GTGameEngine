@@ -776,16 +776,16 @@ namespace GTEngine
         bool IsScaleInheritanceEnabled() const { return this->inheritScale; }
 
 
-        /// Sets the ID flags of this scene node.
+        /// Sets the application-defined type ID of this scene node.
         ///
-        /// @param newIDFlags [in] The new ID flags.
+        /// @param newTypeID [in] The new type ID.
         ///
         /// @remarks
-        ///     Do SetIDFlags(GetIDFlags() | SomeFlag), etc to do bitwise modifications.
-        void SetIDFlags(unsigned int newIDFlags) { this->idFlags = newIDFlags; }
+        ///     Do SetTypeID(GetTypeID() | SomeFlag), etc to do bitwise modifications.
+        void SetTypeID(unsigned int newTypeID) { this->typeID = newTypeID; }
 
-        /// Retrieves the ID flags of this scene node.
-        unsigned int GetIDFlags() const { return this->idFlags; }
+        /// Retrieves the application-defined type ID of this scene node.
+        unsigned int GetTypeID() const { return this->typeID; }
 
 
 
@@ -961,8 +961,8 @@ namespace GTEngine
 
 
         /// Sometimes it will be required to able to generically identity scene nodes. This member is an integer that can be set by client
-        /// applications for identification purposes. It is controlled with SetIDFlags() and GetIDFlags(). Defaults to 0.
-        unsigned int idFlags;
+        /// applications for identification purposes. It is controlled with SetTypeID() and GetTypeID(). Defaults to 0.
+        unsigned int typeID;
 
 
     

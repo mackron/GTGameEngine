@@ -72,7 +72,7 @@ namespace GTEngine
           inheritPosition(true), inheritOrientation(true), inheritScale(true),
           position(), orientation(), scale(1.0f, 1.0f, 1.0f),
           eventLockCounter(0),
-          idFlags(0)
+          typeID(0)
     {
     }
 

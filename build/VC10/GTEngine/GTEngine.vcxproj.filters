@@ -259,9 +259,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\Bullet.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionObject.hpp">
-      <Filter>include\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionWorld.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
@@ -339,6 +336,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Components\ProximityComponent.hpp">
       <Filter>include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionObject.hpp">
+      <Filter>include\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
