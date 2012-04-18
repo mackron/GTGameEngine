@@ -63,6 +63,15 @@
     <Filter Include="gui\engine">
       <UniqueIdentifier>{52c8e8e3-1d5c-4476-bc99-c7786e423779}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Audio">
+      <UniqueIdentifier>{260101a0-706e-47f8-a3b2-081aa25b426a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Audio">
+      <UniqueIdentifier>{5b4b1217-03ef-456b-8f16-d4e2d6adcb69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Audio\Streamers">
+      <UniqueIdentifier>{c92af52c-eeb2-458c-9ef7-2e04404fd365}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\shaders\engine\cg\core.shader">
@@ -340,6 +349,24 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionObject.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\Sound.hpp">
+      <Filter>include\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp">
+      <Filter>include\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp">
+      <Filter>source\Audio\Streamers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp">
+      <Filter>source\Audio\Streamers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundStreamer.hpp">
+      <Filter>include\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -512,6 +539,21 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Components\ProximityComponent.cpp">
       <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\Sound.cpp">
+      <Filter>source\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp">
+      <Filter>source\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\SoundStreamer.cpp">
+      <Filter>source\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.cpp">
+      <Filter>source\Audio\Streamers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.cpp">
+      <Filter>source\Audio\Streamers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

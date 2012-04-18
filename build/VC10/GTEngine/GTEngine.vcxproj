@@ -204,6 +204,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\Sound.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundStreamer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ColladaLoader.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Component.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\CameraComponent.hpp" />
@@ -270,9 +274,16 @@
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ViewportRenderer.hpp" />
+    <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
+    <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\ApplicationConfig.cpp" />
+    <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp" />
+    <ClCompile Include="..\..\..\source\Audio\Sound.cpp" />
+    <ClCompile Include="..\..\..\source\Audio\SoundStreamer.cpp" />
+    <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.cpp" />
+    <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.cpp" />
     <ClCompile Include="..\..\..\source\ColladaLoader.cpp" />
     <ClCompile Include="..\..\..\source\Component.cpp" />
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp" />

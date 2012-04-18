@@ -4,6 +4,7 @@
 #include <GTEngine/UserConfig.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Rendering.hpp>
+#include <GTEngine/Audio/AudioComposer.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
@@ -58,11 +59,22 @@ namespace GTEngine
 
 
         // With the log file created, we can startup all of our other sub-systems.
+        Log("Starting Rendering Sub-System...");
         if (Renderer::Startup())
         {
             Log("Loading Shaders...");
             ShaderLibrary::LoadFromDirectory("shaders/engine/cg");
             ShaderLibrary::LoadFromDirectory("shaders/cg");
+        }
+        else
+        {
+            return false;
+        }
+
+        Log("Starting Audio Sub-System...");
+        if (AudioComposer::Startup())
+        {
+            // Perhaps allow some cached sounds?
         }
         else
         {
@@ -91,6 +103,7 @@ namespace GTEngine
 
         // We shutdown major sub-systems before logging. This allows us to log shutdown info.
         Renderer::Shutdown();
+        AudioComposer::Shutdown();
 
         // Now we can shutdown the minor sub-systems, remembering to do logging last.
         UserConfig::Shutdown();
