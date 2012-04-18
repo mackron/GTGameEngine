@@ -410,7 +410,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultScene::OnSceneNodeScale(SceneNode &node, const glm::vec3 &)
+    void DefaultScene::OnSceneNodeScale(SceneNode &node)
     {
         auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
         if (metadata != nullptr)    // Use an assert?

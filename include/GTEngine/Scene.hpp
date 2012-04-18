@@ -130,10 +130,8 @@ namespace GTEngine
         /// Called when a scene node is moved, rotated or both. This is not called for scaling. Use OnSceneNodeScale() that.
         /// @param node [in] A reference to the node that has been transformed.
         virtual void OnSceneNodeTransform(SceneNode &node);
-        
-        virtual void OnSceneNodeMove(SceneNode& node, const glm::vec3 &prevPosition);
-        virtual void OnSceneNodeRotate(SceneNode& node, const glm::quat &prevOrientation);
-        virtual void OnSceneNodeScale(SceneNode& node, const glm::vec3 &prevScale);
+
+        virtual void OnSceneNodeScale(SceneNode& node);
         virtual void OnSceneNodeStaticChanged(SceneNode& node);
         virtual void OnSceneNodeVisibleChanged(SceneNode& node);
         virtual void OnSceneNodeComponentAttached(SceneNode& node, Component& component);

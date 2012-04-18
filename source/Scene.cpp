@@ -44,15 +44,7 @@ namespace GTEngine
     {
     }
 
-    void Scene::OnSceneNodeMove(SceneNode &, const glm::vec3 &)
-    {
-    }
-
-    void Scene::OnSceneNodeRotate(SceneNode &, const glm::quat &)
-    {
-    }
-
-    void Scene::OnSceneNodeScale(SceneNode &, const glm::vec3 &)
+    void Scene::OnSceneNodeScale(SceneNode &)
     {
     }
 

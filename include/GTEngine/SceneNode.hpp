@@ -24,10 +24,6 @@ namespace GTEngine
     class Scene;            // <-- Needed by SceneNode.
     class SceneNode;        // <-- Needed by SceneNodeEventHandler.
 
-    class Model;
-    class ModelComponent;
-    class CameraComponent;
-
     /**
     *   \brief  Base class for handling events on scene nodes.
     *
@@ -42,7 +38,7 @@ namespace GTEngine
         *   \param  node      [in] A pointer to the node whose just had 'childNode' attached to it.
         *   \param  childNode [in] A pointer to the child node that was just attached as a child to 'node'.
         */
-        virtual void OnAttach(SceneNode& node, SceneNode& childNode);
+        virtual void OnAttach(SceneNode &node, SceneNode &childNode);
         
         /**
         *   \brief                 Called after a child has been detached from the node.
@@ -54,7 +50,7 @@ namespace GTEngine
         *       it is not attached to anything. Remember, this function is called AFTER the child has been detached from
         *       the parent.
         */
-        virtual void OnDetach(SceneNode& node, SceneNode& childNode);
+        virtual void OnDetach(SceneNode &node, SceneNode &childNode);
         
         /**
         *   \brief  Called just before the node is destroyed.
@@ -84,41 +80,41 @@ namespace GTEngine
         *       the current scale of the node. The value returned by node->GetScale() will always be different than
         *       prevScale.
         */
-        virtual void OnScale(SceneNode& node, const glm::vec3 &prevScale);
+        virtual void OnScale(SceneNode &node);
 
         /**
         *   \brief  Called after the layer the node is sitting on has changed.
         */
-        virtual void OnLayerChanged(SceneNode& node, unsigned int prevLayer);
+        virtual void OnLayerChanged(SceneNode &node, unsigned int prevLayer);
 
         /**
         *   \brief  Called after a scene node has changed scenes.
         */
-        virtual void OnSceneChanged(SceneNode& node, Scene *prevScene);
+        virtual void OnSceneChanged(SceneNode &node, Scene *prevScene);
 
         /**
         *   \brief  Called after a scene node has changed from static to dynamic, or vice-versa.
         */
-        virtual void OnStaticChanged(SceneNode& node);
+        virtual void OnStaticChanged(SceneNode &node);
 
         /**
         *   \brief  Called after a scene node has changed visibility.
         */
-        virtual void OnVisibleChanged(SceneNode& node);
+        virtual void OnVisibleChanged(SceneNode &node);
 
         /**
         *   \brief                 Called after a component is attached to the scene node.
         *   \param  node      [in] A pointer to the node that has had a component attached.
         *   \param  component [in] A pointer to the component that was just attached.
         */
-        virtual void OnComponentAttached(SceneNode& node, Component& component);
+        virtual void OnComponentAttached(SceneNode &node, Component &component);
 
         /**
         *   \brief                 Called after a component is detached from the scene node.
         *   \param  node      [in] A pointer to the node that has had a component detached.
         *   \param  component [in] A pointer to the component that was just detached.
         */
-        virtual void OnComponentDetached(SceneNode& node, Component& component);
+        virtual void OnComponentDetached(SceneNode &node, Component &component);
 
 
         /**
@@ -126,7 +122,7 @@ namespace GTEngine
         *   \param  node               [in] A pointer to the node that is being updated.
         *   \param  deltaTimeInSeconds [in] The since the last update, in seconds.
         */
-        virtual void OnUpdate(SceneNode& node, double deltaTimeInSeconds);
+        virtual void OnUpdate(SceneNode &node, double deltaTimeInSeconds);
 
 
         /// Called when a physics object is touching another object.
@@ -140,7 +136,7 @@ namespace GTEngine
         ///     that the nodes are touching.
         ///     @par
         ///     This event will only be called for scene nodes with dynamics components whose collisions are detectable by the physics system. Kinematic/Kinematic,
-        ///     Static/Static and Kinematic/Static collisions will not be handled.
+        ///     Static/Static and Kinematic/Static collisions will not be handled. If these collisions are required, consider using a proximity component.
         virtual void OnContact(SceneNode &node, SceneNode &other, const btManifoldPoint &pt);
 
 
@@ -233,6 +229,13 @@ namespace GTEngine
 
         /// Retrieves a pointer to the next sibling. Returns null if the node if the last of it's siblings, or does not have any.
         SceneNode* GetNextSibling();
+
+
+        /// Retrieves the top-level ancestor.
+        ///
+        /// @remarks
+        ///     Returns <this> if the node has not parents.
+        SceneNode* GetTopAncestor();
         
 
         /**
@@ -268,7 +271,7 @@ namespace GTEngine
         *       \par
         *       If the child is already attached to a different scene as this node, it will be removed from that scene.
         */
-        void AttachChild(SceneNode& childNode);
+        void AttachChild(SceneNode &childNode);
 
         /**
         *   \brief              Attaches this node to another node.
@@ -277,7 +280,7 @@ namespace GTEngine
         *   \remarks
         *       This function is the same as Attach(), only the other way around. This is more intuitive in some cases.
         */
-        void AttachTo(SceneNode& parent);
+        void AttachTo(SceneNode &parent);
         
         /**
         *   \brief                 Detaches/orphans a child from the node.
@@ -303,12 +306,12 @@ namespace GTEngine
         *   \param  name [in] The name of the child to return.
         *   \param  recursive [in] Whether or not to do a deep recursive search. False by default.
         */
-        SceneNode* FindFirstChild(const char *name, bool recursive = false);
+        SceneNode* FindFirstChild(const char* name, bool recursive = false);
 
         /**
         *   \brief  Retrieves the first child node with the given component.
         */
-        SceneNode* FindFirstChildWithComponent(const char *componentName, bool recursive = false);
+        SceneNode* FindFirstChildWithComponent(const char* componentName, bool recursive = false);
 
         template <typename T>
         SceneNode* FindFirstChildWithComponent(bool recursive = false)
@@ -841,7 +844,7 @@ namespace GTEngine
         void OnDetach(SceneNode& childNode);
         void OnDestroy();
         void OnTransform();
-        void OnScale(const glm::vec3 &prevScale);
+        void OnScale();
         void OnLayerChanged(unsigned int prevLayer);
         void OnSceneChanged(Scene *prevScene);
         void OnStaticChanged();

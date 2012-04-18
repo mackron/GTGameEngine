@@ -20,7 +20,7 @@ namespace GTEngine
     {
     }
 
-    void SceneNodeEventHandler::OnScale(SceneNode &, const glm::vec3 &)
+    void SceneNodeEventHandler::OnScale(SceneNode &)
     {
     }
 
@@ -121,6 +121,16 @@ namespace GTEngine
     SceneNode* SceneNode::GetNextSibling()
     {
         return this->nextSibling;
+    }
+
+    SceneNode* SceneNode::GetTopAncestor()
+    {
+        if (this->parent != nullptr)
+        {
+            return this->parent->GetTopAncestor();
+        }
+
+        return this;
     }
 
 
@@ -460,7 +470,7 @@ namespace GTEngine
 
             if (!this->EventsLocked())
             {
-                this->OnScale(prevScale);
+                this->OnScale();
             }
         }
     }
@@ -870,16 +880,16 @@ namespace GTEngine
         }
     }
 
-    void SceneNode::OnScale(const glm::vec3 &prevScale)
+    void SceneNode::OnScale()
     {
         for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
         {
-            i->value->OnScale(*this, prevScale);
+            i->value->OnScale(*this);
         }
 
         if (this->scene != nullptr)
         {
-            this->scene->OnSceneNodeScale(*this, prevScale);
+            this->scene->OnSceneNodeScale(*this);
         }
 
 
@@ -888,7 +898,7 @@ namespace GTEngine
         {
             if (i->IsScaleInheritanceEnabled())
             {
-                i->OnScale(i->GetScale());
+                i->OnScale();
             }
         }
     }

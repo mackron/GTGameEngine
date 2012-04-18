@@ -68,7 +68,7 @@ namespace GTEngine
     public:
 
         void OnSceneNodeTransform(SceneNode &node);
-        void OnSceneNodeScale(SceneNode &node, const glm::vec3 &prevPosition);
+        void OnSceneNodeScale(SceneNode &node);
 
 #if 0
         void OnSceneNodeStaticChanged(SceneNode& node);

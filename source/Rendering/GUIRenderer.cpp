@@ -283,6 +283,8 @@ namespace GTEngine
             else
             {
                 auto newTexture = new Texture2D(image->GetWidth(), image->GetHeight(), image->GetFormat(), image->GetBaseMipmapData());
+                newTexture->GenerateMipmaps();
+
                 GUITextures.Add(image, newTexture);
 
                 return newTexture;
