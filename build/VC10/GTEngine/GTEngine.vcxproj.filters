@@ -367,6 +367,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Random.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\MeshBuilder.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -554,6 +560,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.cpp">
       <Filter>source\Audio\Streamers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Random.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MeshBuilder.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -65,6 +65,7 @@ namespace GTEngine
 
 
         /// Called after a node has been moved, rotated or both.
+        ///
         /// @param node [in] A reference to the node that has been transformed.
         ///
         /// @remarks

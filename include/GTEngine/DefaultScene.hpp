@@ -64,6 +64,8 @@ namespace GTEngine
         /// Scene::PickSceneNode()
         SceneNode* PickSceneNode(const glm::vec3 &rayStart, const glm::vec3 &rayEnd);
 
+        /// Scene::RayTest()
+        SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd);
 
     public:
 

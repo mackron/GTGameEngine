@@ -210,6 +210,24 @@ namespace GTEngine
         return nullptr;
     }
 
+    SceneNode* DefaultScene::RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd)
+    {
+        // This will store the result of our ray-test query.
+        btCollisionWorld::ClosestRayResultCallback rayTestResult(GTEngine::ToBulletVector3(rayStart), GTEngine::ToBulletVector3(rayStart));
+        //rayTestResult.m_collisionFilterGroup = CollisionGroup::Picking;
+        //rayTestResult.m_collisionFilterMask  = CollisionGroup::Picking;      // We only want collisions with picking objects.
+
+        // We use the occlusion world for picking. This will cause objects to be picked based on their mesh volumes. The scene node pointer
+        // is stored as the user pointer on the collision object.
+        this->dynamicsWorld.rayTest(rayStart, rayEnd, rayTestResult);
+        if (rayTestResult.hasHit())
+        {
+            return static_cast<SceneNode*>(rayTestResult.m_collisionObject->getUserPointer());
+        }
+
+        return nullptr;
+    }
+
 
     void DefaultScene::UpdateNode(SceneNode &node, double deltaTimeInSeconds)
     {

@@ -236,6 +236,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\MaterialLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\MaterialShaderCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Math.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\MeshBuilder.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Model.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics.hpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\GhostObject.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Random.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
@@ -310,6 +312,7 @@
     <ClCompile Include="..\..\..\source\MaterialLibrary.cpp" />
     <ClCompile Include="..\..\..\source\MaterialShaderCache.cpp" />
     <ClCompile Include="..\..\..\source\Math.cpp" />
+    <ClCompile Include="..\..\..\source\MeshBuilder.cpp" />
     <ClCompile Include="..\..\..\source\Model.cpp" />
     <ClCompile Include="..\..\..\source\ModelLibrary.cpp" />
     <ClCompile Include="..\..\..\source\Physics\CollisionObject.cpp" />
@@ -318,6 +321,7 @@
     <ClCompile Include="..\..\..\source\Physics\GhostObject.cpp" />
     <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp" />
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
+    <ClCompile Include="..\..\..\source\Random.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />

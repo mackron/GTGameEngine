@@ -89,6 +89,10 @@ namespace GTEngine
         virtual SceneNode* PickSceneNode(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
 
 
+        /// Performs a ray test on the scene nodes against their dynamics components.
+        virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
+
+
 
     // Non-virtual functions.
     public:
