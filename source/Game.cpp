@@ -512,8 +512,9 @@ namespace GTEngine
     {
         this->fontServer->UnacquireFont(*this->defaultFont);
         
-        delete this->fontServer;
+        // Deleting the GUI will unacquire fonts during destruction, so ensure it is destructed before the font server.
         delete this->gui;
+        delete this->fontServer;
         delete this->guiEventHandler;
         delete this->window;
     }
