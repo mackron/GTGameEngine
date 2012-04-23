@@ -182,6 +182,16 @@ namespace GTEngine
         }
     }
 
+    void Game::ShowCursor()
+    {
+        GTCore::ShowMouse();
+    }
+
+    void Game::HideCursor()
+    {
+        GTCore::HideMouse();
+    }
+
 
     bool Game::IsKeyDown(GTCore::Key key) const
     {

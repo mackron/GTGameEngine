@@ -148,6 +148,13 @@ namespace GTEngine
         bool IsMouseCaptured() const { return this->mouseCaptured; }
 
 
+        /// Shows the mouse cursor.
+        void ShowCursor();
+
+        /// Hides the mouse cursor.
+        void HideCursor();
+
+
         /// Determines if a key is currently pressed.
         /// @param key [in] The key code to check.
         /// @return True if the key is currently held down.

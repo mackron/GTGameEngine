@@ -137,6 +137,15 @@ namespace GTEngine
         /// @param position [in] The point in 3D space being projected.
         glm::vec3 Project(const glm::vec3 &position);
 
+        /// Retrieves a 2D projection matrix for this viewport.
+        ///
+        /// @param yDown [in] Whether or not the +y axis should move from top to bottom. Defaults to false (+y up).
+        ///
+        /// @return A new 2D projection matrix for this viewport.
+        ///
+        /// @remarks
+        ///     This method does a full construction of the matrix. Do not assume it does a direct access.
+        glm::mat4 Get2DProjectionMatrix(bool yDown = false);
 
 
     private:

@@ -1,5 +1,5 @@
 
-<shader id="GTEngine_SimpleLine_VS">
+<shader id="Engine_SimpleLine_VS">
 	struct VertexInput
 	{
 		float3 Position : ATTR0;
@@ -22,7 +22,7 @@
 	}
 </shader>
     
-<shader id="GTEngine_SimpleLine_FS">
+<shader id="Engine_SimpleLine_FS">
 	struct FragmentOutput
 	{
 		float4 Color : COLOR;

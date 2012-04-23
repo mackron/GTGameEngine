@@ -616,6 +616,11 @@ namespace GTEngine
     }
 
 
+    void SceneNode::InterpolatePosition(const glm::vec3 &dest, float a)
+    {
+        this->SetPosition(glm::mix(this->position, dest, a));
+    }
+
 
 
     void SceneNode::SetLayer(unsigned int layer)

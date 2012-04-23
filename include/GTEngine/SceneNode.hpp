@@ -542,6 +542,12 @@ namespace GTEngine
         void RotateZ(float angleDegrees) { this->Rotate(angleDegrees, glm::vec3(0.0f, 0.0f, 1.0f)); }
 
 
+
+        /// Performs a linear interpolation of the node's position.
+        void InterpolatePosition(const glm::vec3 &dest, float a);
+
+
+
         /**
         *   \brief  Retrieves a pointer to the component as specified by 'T'.
         *   \return A pointer to the component as specified by 'T", or null if the component does not exist.

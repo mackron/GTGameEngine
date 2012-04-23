@@ -499,10 +499,10 @@ namespace GTEngine
 
     struct ShaderInfo
     {
-        Shader*          shader;
+        Shader*        shader;
         GTCore::String vertexShaderID;
         GTCore::String fragmentShaderID;
-        int              refCount;
+        int            refCount;
     };
     GTCore::Vector<ShaderInfo*> AcquiredShaders;
 

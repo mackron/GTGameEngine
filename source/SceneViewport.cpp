@@ -225,4 +225,16 @@ namespace GTEngine
 
         return glm::project(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
     }
+
+    glm::mat4 SceneViewport::Get2DProjectionMatrix(bool yDown)
+    {
+        if (!yDown)
+        {
+            return glm::ortho(0.0f, static_cast<float>(this->width), 0.0f, static_cast<float>(this->height));
+        }
+        else
+        {
+            return glm::ortho(0.0f, static_cast<float>(this->width), static_cast<float>(this->height), 0.0f);
+        }
+    }
 }
