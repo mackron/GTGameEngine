@@ -14,7 +14,7 @@ namespace GTEngine
 
         // We load the server defaults first because it will allow the client defaults to override the server defaults if desired.
         const char* serverDefaultConfig =
-            "LogFile = 'logs/engine.html';\n"
+            "LogFile = 'var/logs/engine.html';\n"
 
             "Display =\n"
             "{\n"

@@ -6,6 +6,6 @@
     
     <defaultproperties>
         <float3    name='EmissiveColour' >1.0 1.0 1.0</float3>
-        <!--<texture2D name='Texture'>textures/test-texture.png</texture2D>-->
+        <!--<texture2D name='Texture'>engine/textures/test-texture.png</texture2D>-->
     </defaultproperties>
 </material>

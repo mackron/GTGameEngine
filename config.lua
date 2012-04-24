@@ -6,6 +6,6 @@ Directories =
 
 Shaders =
 {
-    "shaders/engine/cg";
+    "engine/shaders/cg";
     "shaders/cg";
 }

@@ -24,7 +24,7 @@ namespace GTEngine
         if (!this->isStarted)
         {
             // We need to grab the main elements from the server.
-            if (guiServer.LoadFromFile("editor/main.xml"))
+            if (guiServer.LoadFromFile("engine/editor/main.xml"))
             {
                 this->GUI.EditorMain = guiServer.GetElementByID("EditorMain");
                 
