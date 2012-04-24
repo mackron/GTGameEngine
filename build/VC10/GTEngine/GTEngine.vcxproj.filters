@@ -21,20 +21,11 @@
     <Filter Include="include\Rendering">
       <UniqueIdentifier>{c7d99900-c8d9-4157-8ea3-7a8bad79520a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shaders">
-      <UniqueIdentifier>{8c79b2e2-bed3-4c3a-bca1-1614ff94e284}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="shaders\cg">
-      <UniqueIdentifier>{7764bd8a-3aef-448c-b66e-4fa31039efd1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\Physics">
       <UniqueIdentifier>{d8119c95-3d54-4b89-92d1-26fbcc81c958}</UniqueIdentifier>
     </Filter>
     <Filter Include="source\Physics">
       <UniqueIdentifier>{d950cabf-7e05-4241-b76d-78f95767283f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="materials">
-      <UniqueIdentifier>{831aaadb-65e3-4748-89b5-803dcf4c0b70}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\Rendering\RenderCommands">
       <UniqueIdentifier>{8e88d608-164c-4a59-88f1-cfcf42d7d1f1}</UniqueIdentifier>
@@ -48,21 +39,6 @@
     <Filter Include="source\Editor">
       <UniqueIdentifier>{6d25c8ec-ce35-4291-92db-dca2ad72eb2f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="editor">
-      <UniqueIdentifier>{bd0a5c6e-8747-41b0-b402-5c1f4bcedf57}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="editor\styles">
-      <UniqueIdentifier>{3ad68f6d-5eda-4933-8d52-14f96e46f7e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="editor\scripts">
-      <UniqueIdentifier>{f2e1548b-914c-4d62-a178-8c604488e273}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="gui">
-      <UniqueIdentifier>{28cb7ce6-8488-4fe5-b04e-b638be71e2a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="gui\engine">
-      <UniqueIdentifier>{52c8e8e3-1d5c-4476-bc99-c7786e423779}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\Audio">
       <UniqueIdentifier>{260101a0-706e-47f8-a3b2-081aa25b426a}</UniqueIdentifier>
     </Filter>
@@ -72,80 +48,6 @@
     <Filter Include="source\Audio\Streamers">
       <UniqueIdentifier>{c92af52c-eeb2-458c-9ef7-2e04404fd365}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\bin\data\shaders\engine\cg\core.shader">
-      <Filter>shaders\cg</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\shaders\engine\cg\gui.shader">
-      <Filter>shaders\cg</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\shaders\engine\cg\lines.shader">
-      <Filter>shaders\cg</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\shaders\engine\cg\materials.shader">
-      <Filter>shaders\cg</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\materials\engine\simple-diffuse.material">
-      <Filter>materials</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\materials\engine\simple-emissive.material">
-      <Filter>materials</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\shaders\engine\cg\defaultrenderer.shader">
-      <Filter>shaders\cg</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\scripts\dialogs.lua">
-      <Filter>editor\scripts</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\scripts\listbox.lua">
-      <Filter>editor\scripts</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\scripts\menubar.lua">
-      <Filter>editor\scripts</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\styles\theme.style">
-      <Filter>editor\styles</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\main.xml">
-      <Filter>editor</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\menubar.xml">
-      <Filter>editor</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\gui\engine\debugging.xml">
-      <Filter>gui\engine</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\combobox.xml">
-      <Filter>editor</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\scripts\combobox.lua">
-      <Filter>editor\scripts</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\styles\combobox.style">
-      <Filter>editor\styles</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\styles\menubar.style">
-      <Filter>editor\styles</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\scripts\menu.lua">
-      <Filter>editor\scripts</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\styles\menu.style">
-      <Filter>editor\styles</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\menu.xml">
-      <Filter>editor</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\scripts\file-explorer.lua">
-      <Filter>editor\scripts</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\styles\file-explorer.style">
-      <Filter>editor\styles</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\editor\file-explorer.xml">
-      <Filter>editor</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -367,9 +269,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Random.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\MeshBuilder.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -560,9 +459,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.cpp">
       <Filter>source\Audio\Streamers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Random.cpp">
-      <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\MeshBuilder.cpp">
       <Filter>source</Filter>

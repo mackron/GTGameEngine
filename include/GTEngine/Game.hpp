@@ -503,7 +503,7 @@ namespace GTEngine
                 {
                     this->gui = &gui;
 
-                    if (this->gui->LoadFromFile("gui/engine/debugging.xml"))
+                    if (this->gui->LoadFromFile("engine/gui/debugging.xml"))
                     {
                         this->DebuggingMain = this->gui->GetElementByID("DebuggingMain");
                         this->FPSValue      = this->gui->GetElementByID("FPSValue");

@@ -24,8 +24,8 @@ namespace GTEngine
         cameraNode.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
         cameraNode.MoveForward(-10.0f);
 
-        auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromCollada("models/engine/default.dae"));
-        modelComponent->GetModel()->materials[0] = GTEngine::MaterialLibrary::Create("materials/floor.material");
+        auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromCollada("engine/models/default.dae"));
+        modelComponent->GetModel()->materials[0] = GTEngine::MaterialLibrary::Create("engine/materials/floor.material");
 
         // Here we setup the viewport.
         this->renderer.SetClearColour(0.1f, 0.1f, 0.1f);

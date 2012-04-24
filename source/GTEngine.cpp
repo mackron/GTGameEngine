@@ -63,7 +63,7 @@ namespace GTEngine
         if (Renderer::Startup())
         {
             Log("Loading Shaders...");
-            ShaderLibrary::LoadFromDirectory("shaders/engine/cg");
+            ShaderLibrary::LoadFromDirectory("engine/shaders/cg");
             ShaderLibrary::LoadFromDirectory("shaders/cg");
         }
         else

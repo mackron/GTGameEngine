@@ -463,8 +463,8 @@ namespace GTEngine
     {
         // We're currently in the Data directory as definied by the application configuration. In this directory
         // should be a fonts directory. We'll load that up into the font cache.
-        this->fontServer = new GTType::FontServer("fonts/fonts.cache");
-        if (!this->fontServer->LoadDirectory("fonts"))
+        this->fontServer = new GTType::FontServer("var/fonts.cache");
+        if (!this->fontServer->LoadDirectory("engine/fonts"))
         {
             // We failed to load the "fonts" directory, so we'll try just loading the system fonts. If this fails,
             // we have to return false. On Windows, the system fonts are all fonts in the "Windows/Fonts" directory.

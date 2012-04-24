@@ -161,48 +161,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="..\..\..\bin\data\editor\combobox.xml" />
-    <None Include="..\..\..\bin\data\editor\file-explorer.xml" />
-    <None Include="..\..\..\bin\data\editor\main.xml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\bin\data\editor\menu.xml" />
-    <None Include="..\..\..\bin\data\editor\menubar.xml" />
-    <None Include="..\..\..\bin\data\editor\scripts\combobox.lua" />
-    <None Include="..\..\..\bin\data\editor\scripts\dialogs.lua" />
-    <None Include="..\..\..\bin\data\editor\scripts\file-explorer.lua" />
-    <None Include="..\..\..\bin\data\editor\scripts\listbox.lua" />
-    <None Include="..\..\..\bin\data\editor\scripts\menu.lua" />
-    <None Include="..\..\..\bin\data\editor\scripts\menubar.lua" />
-    <None Include="..\..\..\bin\data\editor\styles\combobox.style" />
-    <None Include="..\..\..\bin\data\editor\styles\file-explorer.style" />
-    <None Include="..\..\..\bin\data\editor\styles\menu.style" />
-    <None Include="..\..\..\bin\data\editor\styles\menubar.style" />
-    <None Include="..\..\..\bin\data\editor\styles\theme.style" />
-    <None Include="..\..\..\bin\data\gui\engine\debugging.xml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\bin\data\materials\engine\simple-diffuse.material">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\bin\data\materials\engine\simple-emissive.material">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\bin\data\shaders\engine\cg\core.shader">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\bin\data\shaders\engine\cg\defaultrenderer.shader">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\bin\data\shaders\engine\cg\gui.shader">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="..\..\..\bin\data\shaders\engine\cg\lines.shader" />
-    <None Include="..\..\..\bin\data\shaders\engine\cg\materials.shader">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp" />
@@ -247,7 +205,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\GhostObject.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Random.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
@@ -321,7 +278,6 @@
     <ClCompile Include="..\..\..\source\Physics\GhostObject.cpp" />
     <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp" />
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
-    <ClCompile Include="..\..\..\source\Random.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
