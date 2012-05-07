@@ -75,6 +75,8 @@ namespace GTEngine
         /// @param index          [in ] The index of the attribute whose information is being retrieved.
         /// @param componentCount [out] The number of components for the given attribute.
         /// @param offset         [out] The offset of the data for the given attribute in floats.
+        ///
+        /// @return True if the attribute exists; false otherwise.
         bool GetAttributeInfo(int index, size_t &componentCount, size_t &offset) const;
 
 
