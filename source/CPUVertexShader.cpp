@@ -57,29 +57,30 @@ namespace GTEngine
 
     glm::vec4 CPUVertexShader::Vertex::Get(int attribute)
     {
-        size_t componentCount = this->format.GetAttributeComponentCount(attribute);
-        size_t stride         = this->format.GetAttributeOffset(attribute);
-
-        auto data = this->data + stride;
-
-        // We get the value from the input vertex.
         glm::vec4 value(0.0f, 0.0f, 0.0f, 1.0f);
 
-        if (componentCount > 0)
+        size_t componentCount;
+        size_t stride;
+        if (this->format.GetAttributeInfo(attribute, componentCount, stride))
         {
-            value.x = *(data + 0);
+            auto data = this->data + stride;
 
-            if (componentCount > 1)
+            if (componentCount > 0)
             {
-                value.y = *(data + 1);
+                value.x = *(data + 0);
 
-                if (componentCount > 2)
+                if (componentCount > 1)
                 {
-                    value.z = *(data + 2);
+                    value.y = *(data + 1);
 
-                    if (componentCount > 3)
+                    if (componentCount > 2)
                     {
-                        value.w = *(data + 3);
+                        value.z = *(data + 2);
+
+                        if (componentCount > 3)
+                        {
+                            value.w = *(data + 3);
+                        }
                     }
                 }
             }
@@ -105,26 +106,28 @@ namespace GTEngine
 
     void CPUVertexShader::Vertex::Set(int attribute, const glm::vec4 &value)
     {
-        size_t componentCount = this->format.GetAttributeComponentCount(attribute);
-        size_t stride         = this->format.GetAttributeOffset(attribute);
-
-        auto data = this->data + stride;
-
-        if (componentCount > 0)
+        size_t componentCount;
+        size_t stride;
+        if (this->format.GetAttributeInfo(attribute, componentCount, stride))
         {
-            *(data + 0) = value.x;
+            auto data = this->data + stride;
 
-            if (componentCount > 1)
+            if (componentCount > 0)
             {
-                *(data + 1) = value.y;
+                *(data + 0) = value.x;
 
-                if (componentCount > 2)
+                if (componentCount > 1)
                 {
-                    *(data + 2) = value.z;
+                    *(data + 1) = value.y;
 
-                    if (componentCount > 3)
+                    if (componentCount > 2)
                     {
-                        *(data + 3) = value.w;
+                        *(data + 2) = value.z;
+
+                        if (componentCount > 3)
+                        {
+                            *(data + 3) = value.w;
+                        }
                     }
                 }
             }
