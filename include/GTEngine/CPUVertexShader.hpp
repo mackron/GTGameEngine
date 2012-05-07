@@ -25,25 +25,14 @@ namespace GTEngine
         /// Default constructor.
         CPUVertexShader();
 
-        /// Constructor for initialising in-place.
-        CPUVertexShader(const float* input, size_t vertexCount, const VertexFormat &format, float* output);
-
         /// Destructor.
         virtual ~CPUVertexShader();
 
 
-        /// Initialises the vertex shader.
-        bool Initialise(const float* input, size_t vertexCount, const VertexFormat &format, float* output);
-
         /// Executes the vertex shader.
         ///
         /// @return True if the shader is executed successfully; false otherwise.
-        bool Execute();
-
-
-        
-
-
+        bool Execute(const float* input, size_t vertexCount, const VertexFormat &format, float* output);
 
 
     // Processing.
