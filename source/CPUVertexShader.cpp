@@ -8,30 +8,20 @@ namespace GTEngine
     {
     }
 
-    CPUVertexShader::CPUVertexShader(const float* input, size_t vertexCount, const VertexFormat &format, float* output)
-        : input(input), vertexCount(vertexCount), format(format), vertexSizeInFloats(format.GetSize()), output(output)
-    {
-    }
-
     CPUVertexShader::~CPUVertexShader()
     {
     }
 
-    bool CPUVertexShader::Initialise(const float* input, size_t vertexCount, const VertexFormat &format, float* output)
+    bool CPUVertexShader::Execute(const float* input, size_t vertexCount, const VertexFormat &format, float* output)
     {
-        this->input              = input;
-        this->vertexCount        = vertexCount;
-        this->format             = format;
-        this->vertexSizeInFloats = this->format.GetSize();
-        this->output             = output;
-
-        return true;
-    }
-
-    bool CPUVertexShader::Execute()
-    {
-        if (this->input != nullptr && this->output != nullptr)
+        if (input != nullptr && output != nullptr)
         {
+            this->input              = input;
+            this->vertexCount        = vertexCount;
+            this->format             = format;
+            this->vertexSizeInFloats = this->format.GetSize();
+            this->output             = output;
+
             // We need to iterate over each vertex and process it.
             for (size_t i = 0; i < this->vertexCount; ++i)
             {
