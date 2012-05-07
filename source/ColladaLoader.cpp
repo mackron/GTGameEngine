@@ -1077,6 +1077,49 @@ namespace GTEngine
             
             GTCore::List<_param *> params;
         };
+
+
+        // <bool_array>
+        struct _bool_array
+        {
+            _bool_array(xml_node<> *node)
+                : id(), count(0), values()
+            {
+                // Attributes.
+                xml_attribute<> *attr = node->first_attribute();
+                while (attr != nullptr)
+                {
+                    if (GTCore::Strings::Equal(attr->name(), "id"))
+                    {
+                        this->id = attr->value();
+                    }
+                    else if (GTCore::Strings::Equal(attr->name(), "count"))
+                    {
+                        this->count = GTCore::Parse<size_t>(attr->value());
+                    }
+
+                    attr = attr->next_attribute(nullptr);
+                }
+
+
+                // This will not have children, so we just parse the value directly.
+                GTCore::Strings::Tokenizer token(node->value());
+                while (token)
+                {
+                    values.PushBack(token.Equals("true"));
+
+                    ++token;
+                }
+            }
+            
+            GTCore::String id;
+            
+            // The count. Isn't really used.
+            size_t count;
+            
+            // The list of floats. It's easiest to keep this with random access.
+            GTCore::Vector<bool> values;
+        };
         
         // <float_array>
         struct _float_array
@@ -1122,12 +1165,116 @@ namespace GTEngine
             // The list of floats. It's easiest to keep this with random access.
             GTCore::Vector<float> values;
         };
+
+        // <int_array>
+        struct _int_array
+        {
+            _int_array(xml_node<> *node)
+                : id(), count(0), values()
+            {
+                // Attributes.
+                xml_attribute<> *attr = node->first_attribute();
+                while (attr != nullptr)
+                {
+                    if (GTCore::Strings::Equal(attr->name(), "id"))
+                    {
+                        this->id = attr->value();
+                    }
+                    else if (GTCore::Strings::Equal(attr->name(), "count"))
+                    {
+                        this->count = GTCore::Parse<size_t>(attr->value());
+                    }
+
+                    attr = attr->next_attribute(nullptr);
+                }
+
+
+                // This will not have children, so we just parse the value directly.
+                char temp[64];
+
+                GTCore::Strings::Tokenizer token(node->value());
+                while (token)
+                {
+                    GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+                    values.PushBack(GTCore::Parse<int>(temp));
+
+                    ++token;
+                }
+            }
+            
+            GTCore::String id;
+            
+            // The count. Isn't really used.
+            size_t count;
+            
+            // The list of floats. It's easiest to keep this with random access.
+            GTCore::Vector<int> values;
+        };
+
+        // Generic function for a string array. This will be used for IDREF_array, SIDREF_array and Name_array.
+        struct _string_array
+        {
+            _string_array(xml_node<> *node)
+                : id(), count(0), values()
+            {
+                // Attributes.
+                xml_attribute<> *attr = node->first_attribute();
+                while (attr != nullptr)
+                {
+                    if (GTCore::Strings::Equal(attr->name(), "id"))
+                    {
+                        this->id = attr->value();
+                    }
+                    else if (GTCore::Strings::Equal(attr->name(), "count"))
+                    {
+                        this->count = GTCore::Parse<size_t>(attr->value());
+                    }
+
+                    attr = attr->next_attribute(nullptr);
+                }
+
+
+                GTCore::Strings::Tokenizer token(node->value());
+                while (token)
+                {
+                    values.PushBack(GTCore::Strings::Create(token.start, token.GetSizeInTs()));
+
+                    ++token;
+                }
+            }
+
+            ~_string_array()
+            {
+                for (size_t i = 0; i < this->values.count; ++i)
+                {
+                    GTCore::Strings::Delete(const_cast<char*>(this->values[i]));
+                }
+            }
+            
+            GTCore::String id;
+            
+            // The count. Isn't really used.
+            size_t count;
+            
+            // The list of floats. It's easiest to keep this with random access.
+            GTCore::Vector<const char*> values;
+        };
+
+        // <Name_array>
+        typedef _string_array _Name_array;
+        
+        // <IDREF_array>
+        typedef _string_array _IDREF_array;
+
+        // <SIDREF_array>
+        typedef _string_array _SIDREF_array;
+
         
         // <source>
         struct _source
         {
             _source(xml_node<> *node)
-                : id(), float_array(nullptr), accessor(nullptr)
+                : id(), bool_array(nullptr), float_array(nullptr), Name_array(nullptr), accessor(nullptr)
             {
                 xml_attribute<> *attr = node->first_attribute("id");
                 if (attr != nullptr)
@@ -1138,10 +1285,29 @@ namespace GTEngine
                 xml_node<> *child = node->first_node();
                 while (child)
                 {
-                    if (GTCore::Strings::Equal(child->name(), "float_array"))
+                    if (GTCore::Strings::Equal(child->name(), "bool_array"))
                     {
-                        // We have found a camera. We need the ID and name attributes of the camera.
+                        this->bool_array = new _bool_array(child);
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "float_array"))
+                    {
                         this->float_array = new _float_array(child);
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "int_array"))
+                    {
+                        this->int_array = new _int_array(child);
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "Name_array"))
+                    {
+                        this->Name_array = new _Name_array(child);
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "IDREF_array"))
+                    {
+                        this->IDREF_array = new _IDREF_array(child);
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "SIDREF_array"))
+                    {
+                        this->SIDREF_array = new _SIDREF_array(child);
                     }
                     else if (GTCore::Strings::Equal(child->name(), "technique_common"))
                     {
@@ -1158,14 +1324,35 @@ namespace GTEngine
             
             ~_source()
             {
+                delete bool_array;
                 delete float_array;
+                delete int_array;
+                delete Name_array;
+                delete IDREF_array;
+                delete SIDREF_array;
                 delete accessor;
             }
             
             GTCore::String id;
+
+            // The bool array, if any.
+            _bool_array* bool_array;
             
             // The float array, if any.
-            _float_array *float_array;
+            _float_array* float_array;
+
+            // The int array, if any.
+            _int_array* int_array;
+
+            // The Name array, if any.
+            _Name_array* Name_array;
+
+            // The IDREF array, if any.
+            _IDREF_array* IDREF_array;
+
+            // The SIDREF array, if any.
+            _SIDREF_array* SIDREF_array;
+
             
             // The accessor.
             _accessor *accessor;
@@ -1798,6 +1985,270 @@ namespace GTEngine
             }
         };
         
+
+        enum sampler_behaviour
+        {
+            sampler_behaviour_undefined,
+            sampler_behaviour_constant,
+            sampler_behaviour_gradient,
+            sampler_behaviour_cycle,
+            sampler_behaviour_oscillate,
+            sampler_behaviour_cycle_relative,
+        };
+
+        static sampler_behaviour ToSamplerBehaviour(const char* valueStr)
+        {
+            if (GTCore::Strings::Equal<false>(valueStr, "UNDEFINED"))
+            {
+                return sampler_behaviour_undefined;
+            }
+            else if (GTCore::Strings::Equal<false>(valueStr, "CONSTANT"))
+            {
+                return sampler_behaviour_undefined;
+            }
+            else if (GTCore::Strings::Equal<false>(valueStr, "GRADIENT"))
+            {
+                return sampler_behaviour_undefined;
+            }
+            else if (GTCore::Strings::Equal<false>(valueStr, "CYCLE"))
+            {
+                return sampler_behaviour_undefined;
+            }
+            else if (GTCore::Strings::Equal<false>(valueStr, "OSCILLATE"))
+            {
+                return sampler_behaviour_undefined;
+            }
+            else if (GTCore::Strings::Equal<false>(valueStr, "CYCLE_RELATIVE"))
+            {
+                return sampler_behaviour_undefined;
+            }
+
+            // UNDEFINED by default.
+            return sampler_behaviour_undefined;
+        }
+
+        // <sampler>
+        struct _sampler
+        {
+            _sampler(xml_node<> *node)
+                : id(), pre_behaviour(sampler_behaviour_undefined), post_behaviour(sampler_behaviour_undefined)
+            {
+                // Attributes.
+                xml_attribute<> *attr = node->first_attribute("id");
+                if (attr != nullptr)
+                {
+                    this->id = attr->value();
+                }
+
+                attr = node->first_attribute("pre_behaviour");
+                if (attr != nullptr)
+                {
+                    this->pre_behaviour = ToSamplerBehaviour(attr->value());
+                }
+
+                attr = node->first_attribute("post_behaviour");
+                if (attr != nullptr)
+                {
+                    this->post_behaviour = ToSamplerBehaviour(attr->value());
+                }
+                
+
+                // Children.
+                xml_node<> *child = node->first_node();
+                while (child)
+                {
+                    if (GTCore::Strings::Equal(child->name(), "input"))
+                    {
+                        this->inputs.PushBack(new _input(child));
+                    }
+                    
+                    child = child->next_sibling();
+                }
+            }
+
+            ~_sampler()
+            {
+                for (size_t i = 0; i < this->inputs.count; ++i)
+                {
+                    delete inputs[i];
+                }
+            }
+
+            GTCore::String id;
+            
+            sampler_behaviour pre_behaviour;
+            sampler_behaviour post_behaviour;
+
+            GTCore::Vector<_input*> inputs;
+        };
+
+        // <channel>
+        struct _channel
+        {
+            _channel(xml_node<> *node)
+                : source(), target()
+            {
+                xml_attribute<> *attr = node->first_attribute("source");
+                if (attr != nullptr)
+                {
+                    this->source = attr->value();
+                }
+
+                attr = node->first_attribute("target");
+                if (attr != nullptr)
+                {
+                    this->target = attr->value();
+                }
+            }
+
+            GTCore::String source;
+            GTCore::String target;
+        };
+
+
+        // <animation>
+        struct _animation
+        {
+            _animation(xml_node<>* node, _asset* parentAsset)
+                : id(), name(),
+                  asset(nullptr), children(), sources(), samplers(), channels()
+            {
+                // Children.
+                xml_node<> *assetNode = node->first_node("asset");
+                if (assetNode)
+                {
+                    this->asset = new _asset(assetNode);
+                }
+                else
+                {
+                    this->asset = new _asset(parentAsset);
+                }
+                
+                xml_node<> *child = node->first_node();
+                while (child)
+                {
+                    if (GTCore::Strings::Equal(child->name(), "animation"))
+                    {
+                        this->children.PushBack(new _animation(child, this->asset));
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "source"))
+                    {
+                        this->sources.PushBack(new _source(child));
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "sampler"))
+                    {
+                        this->samplers.PushBack(new _sampler(child));
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "channel"))
+                    {
+                        this->channels.PushBack(new _channel(child));
+                    }
+                    
+                    child = child->next_sibling();
+                }
+            }
+
+            ~_animation()
+            {
+                delete this->asset;
+
+                for (size_t i = 0; i < this->children.count; ++i)
+                {
+                    delete this->children[i];
+                }
+
+                for (size_t i = 0; i < this->sources.count; ++i)
+                {
+                    delete this->sources[i];
+                }
+
+                for (size_t i = 0; i < this->samplers.count; ++i)
+                {
+                    delete this->samplers[i];
+                }
+
+                for (size_t i = 0; i < this->channels.count; ++i)
+                {
+                    delete this->channels[i];
+                }
+            }
+
+            GTCore::String id;
+            GTCore::String name;
+
+            _asset* asset;
+            GTCore::Vector<_animation*> children;
+            GTCore::Vector<_source*>    sources;
+            GTCore::Vector<_sampler*>   samplers;
+            GTCore::Vector<_channel*>   channels;
+        };
+
+
+        // <library_animations>
+        struct _library_animations
+        {
+            _library_animations(xml_node<> *node, _asset *parentAsset)
+                : animations(), asset(nullptr)
+            {
+                xml_node<> *assetNode = node->first_node("asset");
+                if (assetNode)
+                {
+                    this->asset = new _asset(assetNode);
+                }
+                else
+                {
+                    this->asset = new _asset(parentAsset);
+                }
+                
+                xml_node<> *child = node->first_node();
+                while (child)
+                {
+                    if (GTCore::Strings::Equal(child->name(), "animation"))
+                    {
+                        this->animations.Append(new _animation(child, this->asset));
+                    }
+                    
+                    child = child->next_sibling();
+                }
+            }
+            
+            ~_library_animations()
+            {
+                delete asset;
+                
+                while (this->animations.root != nullptr)
+                {
+                    delete this->animations.root->value;
+                    this->animations.RemoveRoot();
+                }
+            }
+            
+            _animation * find(const GTCore::String &id)
+            {
+                for (auto i = animations.root; i != nullptr; i = i->next)
+                {
+                    auto animation = i->value;
+
+                    if (Collada::CompareURLToID(id, animation->id))
+                    {
+                        return animation;
+                    }
+                }
+                
+                return nullptr;
+            }
+            
+            // The list of animations in the library.
+            GTCore::List<_animation *> animations;
+            
+            // The asset inheritted from the parent and used by it's children.
+            _asset *asset;
+
+
+        private:    // No copying.
+            _library_animations(const _library_animations &);
+            _library_animations & operator=(const _library_animations &);
+        };
         
         
         
@@ -1987,7 +2438,7 @@ namespace GTEngine
         
         
         Collada(xml_node<> *node)
-            : asset(nullptr), library_cameras(nullptr), library_lights(nullptr), library_geometries(nullptr), library_visual_scenes(nullptr), scene(nullptr)
+            : asset(nullptr), library_cameras(nullptr), library_lights(nullptr), library_geometries(nullptr), library_animations(nullptr), library_visual_scenes(nullptr), scene(nullptr)
         {
             if (node != nullptr)
             {
@@ -2011,6 +2462,10 @@ namespace GTEngine
                     {
                         this->library_geometries = new _library_geometries(child, this->asset);
                     }
+                    else if (GTCore::Strings::Equal(child->name(), "library_animations"))
+                    {
+                        this->library_animations = new _library_animations(child, this->asset);
+                    }
                     else if (GTCore::Strings::Equal(child->name(), "library_visual_scenes"))
                     {
                         this->library_visual_scenes = new _library_visual_scenes(child, this->asset);
@@ -2031,6 +2486,7 @@ namespace GTEngine
             delete library_cameras;
             delete library_lights;
             delete library_geometries;
+            delete library_animations;
             delete library_visual_scenes;
             delete scene;
         }
@@ -2075,12 +2531,16 @@ namespace GTEngine
         
         // The geometries library.
         _library_geometries *library_geometries;
+
+        // The animations library.
+        _library_animations *library_animations;
         
         // The visual scenes library.
         _library_visual_scenes *library_visual_scenes;
         
         // The scene. Can only be 0 or 1.
         _scene *scene;
+
 
     private:    // No copying.
         Collada(const Collada &);
@@ -2170,7 +2630,7 @@ namespace GTEngine
     }
 
 
-    SceneNode * ToSceneNode(Collada::_node *colladaNode, Collada &collada)
+    SceneNode* ToSceneNode(Collada::_node *colladaNode, Collada &collada)
     {
         if (colladaNode)
         {

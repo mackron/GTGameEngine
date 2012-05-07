@@ -29,10 +29,7 @@ namespace GTEngine
         {
             for (int i = 0; other[i] != VertexAttribs::End; i += 2)
             {
-                this->attributes[count]     = (other[i]);
-                this->attributes[count + 1] = (other[i + 1]);
-
-                this->count += 2;
+                this->AddAttribute(other[i], other[i + 1]);
             }
         }
     }
