@@ -47,31 +47,54 @@ namespace GTEngine
 
 
     // Processing.
-    public:
+    protected:
+
+        /// Sub-class representing a vertex in a vertex shader. These vertex objects are passed to ProcessVertex() for processing. This system will make it
+        /// easier to do multi-threaded vertex processing.
+        class Vertex
+        {
+        public:
+
+            Vertex(float* data, const VertexFormat &format);
+           ~Vertex();
+
+            /// Retrieves a vertex attribute as a vec4/float4.
+            ///
+            /// @param attribute [in] The index of the vertex attribute to retrieve. E.g. VertexAttribs::Position, VertexAttribute::Normal.
+            ///
+            /// @return A copy of the vertex attribute as a vec4. See remarks.
+            ///
+            /// @remarks
+            ///     If the vertex attribute is not a vec4, the return value will be padded with 0.0f, except for the w component, which will be set to 1.0f.
+            glm::vec4 Get(int attribute);
+            
+            /// Sets a vertex attribute.
+            ///
+            /// @remarks
+            ///     This should only be called in ProcessVertex().
+            void Set(int attribute, float value);
+            void Set(int attribute, const glm::vec2 &value);
+            void Set(int attribute, const glm::vec3 &value);
+            void Set(int attribute, const glm::vec4 &value);
+
+
+        private:
+
+            /// A pointer to the vertex's data.
+            float* data;
+
+            /// The format of the vertex.
+            const VertexFormat &format;
+
+        private:    // No copying.
+            Vertex(const Vertex &);
+            Vertex & operator=(const Vertex &);
+        };
+
 
         /// A virtual method that will be called when a vertex needs to be processed.
-        virtual void ProcessVertex() = 0;
+        virtual void ProcessVertex(Vertex &vertex) = 0;
 
-        /// Retrieves a vertex attribute as a vec4/float4.
-        ///
-        /// @param attribute [in] The index of the vertex attribute to retrieve. E.g. VertexAttribs::Position, VertexAttribute::Normal.
-        ///
-        /// @return A copy of the vertex attribute as a vec4. See remarks.
-        ///
-        /// @remarks
-        ///     If the vertex attribute is not a vec4, the return value will be padded with 0.0f, except for the w component, which will be set to 1.0f.
-        ///     @par
-        ///     This should only be called in ProcessVertex().
-        glm::vec4 Get(int attribute);
-
-        /// Sets a vertex attribute.
-        ///
-        /// @remarks
-        ///     This should only be called in ProcessVertex().
-        void Set(int attribute, float value);
-        void Set(int attribute, const glm::vec2 &value);
-        void Set(int attribute, const glm::vec3 &value);
-        void Set(int attribute, const glm::vec4 &value);
 
 
     private:
@@ -91,10 +114,6 @@ namespace GTEngine
 
         /// The output buffer.
         float* output;
-
-
-        /// The index of the vertex currently being processed.
-        size_t currentVertexIndex;
     };
 }
 

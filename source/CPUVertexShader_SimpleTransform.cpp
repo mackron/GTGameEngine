@@ -19,13 +19,13 @@ namespace GTEngine
         this->normalTransform = glm::inverse(glm::transpose(glm::mat3(transform)));
     }
 
-    void CPUVertexShader_SimpleTransform::ProcessVertex()
+    void CPUVertexShader_SimpleTransform::ProcessVertex(Vertex &vertex)
     {
         // We only care about the position and normal here.
-        glm::vec4 positionIn = this->Get(VertexAttribs::Position);
-        glm::vec4 normalIn   = this->Get(VertexAttribs::Normal);
+        glm::vec4 positionIn = vertex.Get(VertexAttribs::Position);
+        glm::vec4 normalIn   = vertex.Get(VertexAttribs::Normal);
 
-        this->Set(VertexAttribs::Position, this->transform       * positionIn);
-        this->Set(VertexAttribs::Normal,   this->normalTransform * glm::vec3(normalIn));
+        vertex.Set(VertexAttribs::Position, this->transform       * positionIn);
+        vertex.Set(VertexAttribs::Normal,   this->normalTransform * glm::vec3(normalIn));
     }
 }
