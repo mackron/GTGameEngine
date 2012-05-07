@@ -24,8 +24,10 @@ namespace GTEngine
         void SetTransform(const glm::mat4 &transform);
 
 
+    protected:
+
         /// CPUVertexShader::ProcessVertex()
-        void ProcessVertex();
+        void ProcessVertex(Vertex &vertex);
 
 
     private:
