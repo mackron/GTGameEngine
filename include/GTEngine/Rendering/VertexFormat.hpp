@@ -68,13 +68,22 @@ namespace GTEngine
         *   \brief  Retrieves the number of attributes in the format.
         */
         inline size_t GetAttributeCount() const { return this->count; }
+
+
+        /// Retrieves information about a vertex attribute.
+        ///
+        /// @param index          [in ] The index of the attribute whose information is being retrieved.
+        /// @param componentCount [out] The number of components for the given attribute.
+        /// @param offset         [out] The offset of the data for the given attribute in floats.
+        bool GetAttributeInfo(int index, size_t &componentCount, size_t &offset) const;
+
+
         
         /**
         *   \brief  Retrieves the number of floats making up a vertex. This will just be the sum of 'count' from AddAttribute().
         */
         size_t GetSize() const;
         size_t GetSizeInBytes() const;
-        
         
         /**
         *   \brief  Retrieves a pointer to the array making up the format.

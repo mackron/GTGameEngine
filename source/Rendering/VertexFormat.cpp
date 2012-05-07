@@ -37,10 +37,10 @@ namespace GTEngine
         }
     }
 
-    void VertexFormat::AddAttribute(int index, int count)
+    void VertexFormat::AddAttribute(int index, int numComponents)
     {
         this->attributes[this->count]     = index;
-        this->attributes[this->count + 1] = count;
+        this->attributes[this->count + 1] = numComponents;
 
         this->count += 2;
     }
@@ -73,6 +73,28 @@ namespace GTEngine
         }
         
         return -1;
+    }
+
+    bool VertexFormat::GetAttributeInfo(int index, size_t &componentCount, size_t &offset) const
+    {
+        offset = 0;
+        
+        for (size_t i = 0; i < this->count; i += 2)
+        {
+            if (this->attributes[i] == index)
+            {
+                componentCount = this->attributes[i + 1];
+                return true;
+            }
+            
+            offset += this->attributes[i + 1];
+        }
+
+
+        componentCount = 0;
+        offset         = 0;
+
+        return false;
     }
 
     size_t VertexFormat::GetSize() const
