@@ -1,6 +1,7 @@
 
 #include <GTEngine/Model.hpp>
 #include <GTEngine/VertexArrayFactory.hpp>
+#include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
 
 namespace GTEngine
 {
@@ -28,6 +29,28 @@ namespace GTEngine
 
     void Model::ApplyTransformation(const glm::mat4 &transform)
     {
+        // We're going to use a CPU vertex shader here.
+        CPUVertexShader_SimpleTransform shader(transform);
+        
+        // We need to apply the shader to all meshes.
+        for (size_t i = 0; i < this->meshes.count; ++i)
+        {
+            auto mesh = this->meshes[i];
+            assert(mesh != nullptr);
+
+            auto & format      = mesh->va->GetFormat();
+            auto   vertexCount = mesh->va->GetVertexCount();
+            auto   vertexData  = mesh->va->MapVertexData();
+
+            shader.Initialise(vertexData, vertexCount, format, vertexData);
+            shader.Execute();
+
+            mesh->va->UnmapVertexData();
+        }
+
+
+
+        /*
         glm::mat3 normalTransform = glm::inverse(glm::transpose(glm::mat3(transform)));
 
         // We need to do this for all meshes...
@@ -48,13 +71,13 @@ namespace GTEngine
             auto   positionComponentCount = format.GetAttributeComponentCount(VertexAttribs::Position);
 
             // The buffer containing the new vertex information.
-            auto newVertexData = reinterpret_cast<float *>(malloc(sizeof(float) * vertexCount * vertexSize));
+            //auto newVertexData = reinterpret_cast<float *>(malloc(sizeof(float) * vertexCount * vertexSize));
 
-            for (auto iIndex = 0U; iIndex < indexCount; ++iIndex)
+            for (auto iIndex = 0U; iIndex < vertexCount; ++iIndex)
             {
-                auto index = indexData[iIndex];
+                auto index = iIndex; //indexData[iIndex];
                 auto vertexSrc = vertexData + (index * vertexSize);
-                auto vertexDst = newVertexData + (index * vertexSize);
+                auto vertexDst = vertexData + (index * vertexSize);
 
                 // Positions and normals need to be transformed. Tangents and bitangents be recalculated at the end.
                 glm::vec4 position(0.0f, 0.0f, 0.0f, 1.0f);
@@ -98,10 +121,10 @@ namespace GTEngine
             }
 
             // Now we need to copy over the new data.
-            for (auto iIndex = 0U; iIndex < indexCount; ++iIndex)
+            for (auto iIndex = 0U; iIndex < vertexCount; ++iIndex)
             {
-                auto index = indexData[iIndex];
-                auto vertexSrc = newVertexData + (index * vertexSize);
+                auto index = iIndex; //indexData[iIndex];
+                auto vertexSrc = vertexData + (index * vertexSize);
                 auto vertexDst = vertexData    + (index * vertexSize);
 
                 // 1) Position.
@@ -127,12 +150,14 @@ namespace GTEngine
                     *(vertexNormalDst + 2) = *(vertexNormalSrc + 2);
                 }
             }
+            
 
-            free(newVertexData);
+            //free(newVertexData);
 
             mesh->va->UnmapIndexData();
             mesh->va->UnmapVertexData();
         }
+        */
 
         this->GenerateTangentsAndBitangents();
     }
