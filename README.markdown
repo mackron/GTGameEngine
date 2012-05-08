@@ -19,6 +19,7 @@ GTGameEngine depends on the following libraries:
 * GTImage, libpng, zlib
 * GTType, FreeType 2
 * GTGUI
+* assimp
 
 
 
