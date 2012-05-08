@@ -125,7 +125,7 @@ namespace GTEngine
         w = GTCore::Parse<float>(temp);
     }
 
-    void Collada_ToFloat3x3(const char *value, glm::mat3x3 &dest)
+    void Collada_ToFloat3x3(const char *value, glm::mat3 &dest)
     {
         char temp[64];
         GTCore::Strings::Tokenizer token(value);
@@ -167,6 +167,79 @@ namespace GTEngine
 
         GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
         dest[2][2] = GTCore::Parse<float>(temp);
+    }
+
+    void Collada_ToFloat4x4(const char *value, glm::mat4 &dest)
+    {
+        char temp[64];
+        GTCore::Strings::Tokenizer token(value);
+
+        // Row 0
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[0][0] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[0][1] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[0][2] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[0][3] = GTCore::Parse<float>(temp);
+        ++token;
+
+
+        // Row 1
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[1][0] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[1][1] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[1][2] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[1][3] = GTCore::Parse<float>(temp);
+        ++token;
+
+
+        // Row 2
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[2][0] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[2][1] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[2][2] = GTCore::Parse<float>(temp);
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[2][3] = GTCore::Parse<float>(temp);
+
+
+        // Row 3
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[3][0] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[3][1] = GTCore::Parse<float>(temp);
+        ++token;
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[3][2] = GTCore::Parse<float>(temp);
+
+        GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+        dest[3][3] = GTCore::Parse<float>(temp);
     }
 
 
@@ -286,7 +359,8 @@ namespace GTEngine
             transform_type_translate,
             transform_type_rotate,
             transform_type_scale,
-            transform_type_lookat
+            transform_type_lookat,
+            transform_type_matrix,
         };
         
         // Base class for transforms (<translate>, <rotate>, <scale>).
@@ -403,6 +477,26 @@ namespace GTEngine
             float px,  py,  pz;
             float ix,  iy,  iz;
             float upx, upy, upz;
+        };
+
+        // <matrix>
+        struct _matrix : public _transform
+        {
+            _matrix(xml_node<> *node)
+                : _transform(transform_type_matrix), value()
+            {
+                if (node != nullptr)
+                {
+                    Collada_ToFloat4x4(node->value(), this->value);
+                }
+            }
+
+            _matrix()
+                : _transform(transform_type_lookat), value()
+            {
+            }
+
+            glm::mat4 value;
         };
         
         
@@ -1274,7 +1368,7 @@ namespace GTEngine
         struct _source
         {
             _source(xml_node<> *node)
-                : id(), bool_array(nullptr), float_array(nullptr), Name_array(nullptr), accessor(nullptr)
+                : id(), bool_array(nullptr), float_array(nullptr), int_array(nullptr), Name_array(nullptr), IDREF_array(nullptr), SIDREF_array(nullptr), accessor(nullptr)
             {
                 xml_attribute<> *attr = node->first_attribute("id");
                 if (attr != nullptr)
@@ -2250,6 +2344,261 @@ namespace GTEngine
             _library_animations & operator=(const _library_animations &);
         };
         
+
+
+        // <joints>
+        struct _joints
+        {
+            _joints(xml_node<> *node)
+                : inputs()
+            {
+                xml_node<> *child = node->first_node();
+                while (child)
+                {
+                    if (GTCore::Strings::Equal(child->name(), "input"))
+                    {
+                        this->inputs.PushBack(new _input(child));
+                    }
+                    
+                    child = child->next_sibling();
+                }
+            }
+
+            ~_joints()
+            {
+                for (size_t i = 0; i < this->inputs.count; ++i)
+                {
+                    delete this->inputs[i];
+                }
+            }
+
+            GTCore::Vector<_input*> inputs;
+        };
+
+        // <vertex_weights>
+        struct _vertex_weights
+        {
+            _vertex_weights(xml_node<>* node)
+                : count(),
+                  inputs(), vcount(nullptr), v()
+            {
+                xml_attribute<>* attr = node->first_attribute("count");
+                if (attr != nullptr)
+                {
+                    this->count = GTCore::Parse<size_t>(attr->value());
+                }
+
+                xml_node<> *child = node->first_node();
+                while (child)
+                {
+                    if (GTCore::Strings::Equal(child->name(), "input"))
+                    {
+                        this->inputs.PushBack(new _input(child));
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "vcount"))
+                    {
+                        this->vcount = new _vcount(child);
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "v"))
+                    {
+                        char temp[64];
+
+                        GTCore::Strings::Tokenizer token(node->value());
+                        while (token)
+                        {
+                            GTCore::Strings::Copy(temp, 64, token.start, token.GetSizeInTs());
+                            v.PushBack(GTCore::Parse<int>(temp));
+
+                            ++token;
+                        }
+                    }
+                    
+                    child = child->next_sibling();
+                }
+            }
+
+            ~_vertex_weights()
+            {
+                for (size_t i = 0; i < this->inputs.count; ++i)
+                {
+                    delete this->inputs[i];
+                }
+
+                delete this->vcount;
+            }
+
+            size_t count;
+
+            GTCore::Vector<_input*> inputs;
+            _vcount* vcount;
+            GTCore::Vector<int> v;      // <-- needs to be 'int' because -1 can be used as an inded.
+        };
+
+        // <skin>
+        struct _skin
+        {
+            _skin(xml_node<>* node)
+                : source(), bind_shape_matrix(), sources(), joints(nullptr), vertex_weights(nullptr)
+            {
+                xml_attribute<>* attr = node->first_attribute("source");
+                if (attr != nullptr)
+                {
+                    this->source = attr->value();
+                }
+
+                xml_node<> *child = node->first_node();
+                while (child)
+                {
+                    if (GTCore::Strings::Equal(child->name(), "bind_shape_matrix"))
+                    {
+                        Collada_ToFloat4x4(child->name(), this->bind_shape_matrix);
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "source"))
+                    {
+                        this->sources.PushBack(new _source(child));
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "joints"))
+                    {
+                        this->joints = new _joints(child);
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "vertex_weights"))
+                    {
+                        this->vertex_weights = new _vertex_weights(child);
+                    }
+                    
+                    child = child->next_sibling();
+                }
+            }
+
+            ~_skin()
+            {
+                for (size_t i = 0; i < this->sources.count; ++i)
+                {
+                    delete this->sources[i];
+                }
+            }
+
+            GTCore::String source;
+
+            glm::mat4 bind_shape_matrix;
+            GTCore::Vector<_source*> sources;
+            _joints* joints;
+            _vertex_weights* vertex_weights;
+        };
+
+
+        enum morph_method
+        {
+            morph_method_normalized,
+            morph_method_relative,
+        };
+
+        // <targets>
+        struct _targets
+        {
+            _targets(xml_node<>* node)
+                : inputs()
+            {
+                xml_node<> *child = node->first_node();
+                while (child)
+                {
+                    if (GTCore::Strings::Equal(child->name(), "input"))
+                    {
+                        this->inputs.PushBack(new _input(child));
+                    }
+                    
+                    child = child->next_sibling();
+                }
+            }
+
+            ~_targets()
+            {
+                for (size_t i = 0; i < this->inputs.count; ++i)
+                {
+                    delete this->inputs[i];
+                }
+            }
+
+            GTCore::Vector<_input*> inputs;
+        };
+
+        // <morph>
+        struct _morph
+        {
+            _morph(xml_node<>* node)
+                : source(), method(morph_method_normalized),
+                  sources(), targets(nullptr)
+            {
+                xml_attribute<>* attr = node->first_attribute("source");
+                if (attr != nullptr)
+                {
+                    this->source = attr->value();
+                }
+
+                attr = node->first_attribute("method");
+                if (attr != nullptr)
+                {
+                    if (GTCore::Strings::Equal(attr->value(), "RELATIVE"))
+                    {
+                        this->method = morph_method_relative;
+                    }
+                    else
+                    {
+                        // NORMALIZED by default; set in the initialisers.
+                    }
+                }
+
+
+                xml_node<> *child = node->first_node();
+                while (child)
+                {
+                    if (GTCore::Strings::Equal(child->name(), "source"))
+                    {
+                        this->sources.PushBack(new _source(child));
+                    }
+                    else if (GTCore::Strings::Equal(child->name(), "targets"))
+                    {
+                        this->targets = new _targets(child);
+                    }
+                    
+                    child = child->next_sibling();
+                }
+            }
+
+            ~_morph()
+            {
+                for (size_t i = 0; i < this->sources.count; ++i)
+                {
+                    delete this->sources[i];
+                }
+
+                delete this->targets;
+            }
+
+            GTCore::String source;
+            morph_method   method;
+
+            GTCore::Vector<_source*> sources;
+            _targets* targets;
+        };
+
+        // <controller>
+        struct _controller
+        {
+            _controller(xml_node<>* node, _asset* parentAsset)
+                : id(), name()
+            {
+            }
+
+            ~_controller()
+            {
+            }
+
+            GTCore::String id;
+            GTCore::String name;
+
+
+        };
         
         
         // <visual_scene>
