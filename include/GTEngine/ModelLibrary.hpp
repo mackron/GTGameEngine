@@ -17,6 +17,11 @@ namespace GTEngine
     // Create functions.
     public:
 
+
+        /// Loads a model from a file.
+        static Model* LoadFromFile(const char* fileName);
+
+
         /**
         *   \brief  Creates a model from a collada file.
         */
