@@ -17,19 +17,10 @@ namespace GTEngine
     // Create functions.
     public:
 
-
         /// Loads a model from a file.
         static Model* LoadFromFile(const char* fileName);
 
-
-        /**
-        *   \brief  Creates a model from a collada file.
-        */
-        static Model* LoadFromCollada(const char* filename);
-
-        /**
-        *   \brief  Creates a flat plane on the XZ axis, facing the +Y axis.
-        */
+        /// Creates a flat plane on the XZ axis, facing the +Y axis.
         static Model* CreatePlaneXZ(float width, float height, VertexFormat &format = VertexFormat::P3T2N3);
 
 
@@ -37,9 +28,7 @@ namespace GTEngine
     // Delete functions.
     public:
 
-        /**
-        *   \brief  Deletes a model that was created with the model factory.
-        */
+        /// Deletes a model that was created with the model factory.
         static void Delete(Model* model);
     };
 }
