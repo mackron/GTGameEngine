@@ -53,9 +53,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\ColladaLoader.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Component.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -335,9 +332,6 @@
       <Filter>source\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ApplicationConfig.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\ColladaLoader.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Component.cpp">
