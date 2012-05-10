@@ -31,7 +31,9 @@ namespace GTEngine
     public:
 
         /// Creates a new material from a file.
+        ///
         /// @param fileName [in] The name of the material file to load.
+        ///
         /// @return A pointer to the new material.
         ///
         /// @remarks
@@ -40,7 +42,12 @@ namespace GTEngine
         static Material* Create(const char* fileName);
 
         /// Creates a copy of the given material.
-        static Material* CreateCopy(Material* source);
+        ///
+        /// @param source [in] A reference to the material to copy.
+        ///
+        /// @remarks
+        ///     A pointer to the new material, or null if an error occurs.
+        static Material* CreateCopy(const Material &source);
 
 
         /// Deletes a material created with Create().

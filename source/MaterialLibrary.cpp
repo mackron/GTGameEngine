@@ -56,14 +56,9 @@ namespace GTEngine
         return newMaterial;
     }
 
-    Material* MaterialLibrary::CreateCopy(Material* source)
+    Material* MaterialLibrary::CreateCopy(const Material &source)
     {
-        if (source != nullptr)
-        {
-            return new Material(source->GetDefinition());
-        }
-
-        return nullptr;
+        return new Material(source.GetDefinition());
     }
 
 
