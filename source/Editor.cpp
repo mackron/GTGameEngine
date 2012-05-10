@@ -1,7 +1,9 @@
 
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/Game.hpp>
 #include <GTGUI/Server.hpp>
+
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -61,6 +63,7 @@ namespace GTEngine
     {
         if (!this->isOpen)
         {
+            this->game.ShowCursor();
             this->GUI.EditorMain->Show();
 
             this->isOpen = true;

@@ -39,6 +39,10 @@ namespace GTEngine
         ///     deleted manually.
         static Material* Create(const char* fileName);
 
+        /// Creates a copy of the given material.
+        static Material* CreateCopy(Material* source);
+
+
         /// Deletes a material created with Create().
         /// @param materialToDelete [in] A pointer to the material being deleted.
         static void Delete(Material* materialToDelete);

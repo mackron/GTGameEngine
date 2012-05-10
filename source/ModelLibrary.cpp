@@ -1,9 +1,9 @@
 
 #include <GTEngine/ModelLibrary.hpp>
+#include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/VertexArrayFactory.hpp>
-#include <GTEngine/SceneNode.hpp>
-#include <GTEngine/Components/ModelComponent.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/Logging.hpp>
 
 #include <GTCore/Path.hpp>
 
@@ -11,8 +11,106 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+// Globals.
 namespace GTEngine
 {
+    /// Structure containing information about a loaded model.
+    struct LoadedModelInfo
+    {
+        /// Destructor.
+        ~LoadedModelInfo()
+        {
+            for (size_t i = 0; i < this->geometries.count; ++i)
+            {
+                delete this->geometries[i];
+            }
+
+            for (size_t i = 0; i < this->defaultMaterials.count; ++i)
+            {
+                MaterialLibrary::Delete(this->defaultMaterials[i]);
+            }
+        }
+
+        /// The list of vertex arrays containing the geometric data of each mesh.
+        GTCore::Vector<VertexArray*> geometries;
+
+        /// The default materials. There will always be an equal number of materials as there are meshes. Each material in this list
+        /// has a one-to-one correspondance with a mesh in <meshes>. For example, the material at index 0 is the material to use with
+        /// the mesh at index 0.
+        GTCore::Vector<Material*> defaultMaterials;
+
+        /// The list of skeletons. There will be one skeleton pointer for each mesh. If the mesh does not have a skeleton, the pointer
+        /// will be set to null.
+        //GTCore::Vector<Skeleton*> defaultSkeletons;
+    };
+
+    /// The list of loaded models.
+    GTCore::Dictionary<LoadedModelInfo*> LoadedModels;
+}
+
+// Startup/Shutdown
+namespace GTEngine
+{
+    bool ModelLibrary::Startup()
+    {
+        return true;
+    }
+
+    void ModelLibrary::Shutdown()
+    {
+        // We need to unload the loaded model information.
+        for (size_t i = 0; i < LoadedModels.count; ++i)
+        {
+            delete LoadedModels.buffer[i]->value;
+        }
+    }
+}
+
+// Loading
+namespace GTEngine
+{
+    const aiNode* FindNodeByName(const aiScene &scene, const aiNode &node, const aiString &name, unsigned int &depth)
+    {
+        if (node.mName == name)
+        {
+            return &node;
+        }
+
+        // Now we need to increment the depth.
+        ++depth;
+
+        // We need to keep track of this so we can restore it for each child iteration.
+        auto childrenDepth = depth;
+
+
+        // We'll get here if the node was not found. We need to check the children.
+        for (unsigned int iChild = 0; iChild < node.mNumChildren; ++iChild)
+        {
+            auto child = node.mChildren[iChild];
+            assert(child != nullptr);
+
+            auto result = FindNodeByName(scene, *child, name, depth);
+            if (result != nullptr)
+            {
+                // We'll get here if the child found the node. In this case, we just return that node.
+                return result;
+            }
+
+            // With a new child iteration, the depth will need to be set back.
+            depth = childrenDepth;
+        }
+
+        // If we get here, not even the children could find it.
+        return nullptr;
+    }
+
+    const aiNode* FindNodeByName(const aiScene &scene, const aiString &name, unsigned int &depth)
+    {
+        assert(scene.mRootNode != nullptr);
+
+        return FindNodeByName(scene, *scene.mRootNode, name, depth);
+    }
+
     void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, Model &model)
     {
         // First we need to grab the transformation to apply to the mesh.
@@ -107,6 +205,69 @@ namespace GTEngine
 
                 model.AttachMesh(va, nullptr);
             }
+
+            // Here we need to build the meshes skeleton, if it has one. What we do here is store bone information in a list. One of the attributes
+            // of this data is the depth of the bone relative to the root node. The bone with the lowest depth (closest to the root) will be the
+            // root bone.
+            struct BoneData
+            {
+                BoneData(unsigned int depth, const aiNode* node, const aiBone* bone)
+                    : depth(depth), node(node), bone(bone)
+                {
+                }
+
+                unsigned int  depth;
+                const aiNode* node;
+                const aiBone* bone;
+            };
+
+            // This will hold a list of every bone in the model.
+            GTCore::Vector<BoneData> boneList(mesh->mNumBones);
+
+            // This will point to the bone data with the lowest depth. By the time the bone iteration is complete, this will point to the root node.
+            BoneData* rootBoneData = nullptr;
+
+
+            for (unsigned int iBone = 0; iBone < mesh->mNumBones; ++iBone)
+            {
+                //GTEngine::Log("Bone Name: %s", mesh->mBones[iBone]->mName.C_Str());
+
+                auto bone = mesh->mBones[iBone];
+                assert(bone != nullptr);
+
+                // The name of the bone refers to a scene node. We need to find that node.
+                auto boneDepth = 0U;
+                auto boneNode  = FindNodeByName(scene, bone->mName, boneDepth);
+                if (boneNode != nullptr)
+                {
+                    // We need to push the item onto the list before checking if it's the new root. The reason is because we'll retrieve a reference
+                    // to the new item from the list to use as the object.
+                    boneList.PushBack(BoneData(boneDepth, &node, bone));
+
+                    // Now we need to check if the depth is lower than the existing root bone.
+                    auto &iBoneData = boneList.GetBack();
+
+                    if (rootBoneData != nullptr)
+                    {
+                        if (iBoneData.depth < rootBoneData->depth)
+                        {
+                            rootBoneData = &iBoneData;
+                        }
+                    }
+                    else
+                    {
+                        rootBoneData = &iBoneData;
+                    }
+                }
+            }
+
+            // By this stage we have the list of bones and the root bone. Now we need to build the skeleton.
+            if (rootBoneData != nullptr)
+            {
+                GTEngine::Log("Root Bone: %s", rootBoneData->bone->mName.C_Str());
+
+
+            }
         }
 
         // Now we need to iterate over the children and copy them.
@@ -121,6 +282,27 @@ namespace GTEngine
 
     Model* ModelLibrary::LoadFromFile(const char* fileName)
     {
+        /*
+
+        // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
+        auto modelInfo = LoadedModels.Find(fileName);
+        if (modelInfo == nullptr)
+        {
+
+        }
+        
+        // Now that we have information about the model, we can create a new Model object and return it.
+        if (modelInfo != nullptr)
+        {
+        }
+
+        */
+
+
+
+
+
+
         Assimp::Importer importer;
 
         auto scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType | aiProcess_GenSmoothNormals);
@@ -146,12 +328,27 @@ namespace GTEngine
                 // We need to generate tangents and bitangents.
                 model->GenerateTangentsAndBitangents();
 
+
+                // Here we will grab the animations.
+                for (unsigned int iAnimation = 0; iAnimation < scene->mNumAnimations; ++iAnimation)
+                {
+                    auto animation = scene->mAnimations[iAnimation];
+                    assert(animation != nullptr);
+
+                    //animation->
+
+                    GTEngine::Log("Animation: %s", animation->mName.C_Str());
+                }
+
+
                 return model;
             }
             else
             {
                 GTEngine::PostError("Error importing %s: Root node not found.", fileName);
             }
+
+            
         }
         else
         {

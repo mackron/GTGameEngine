@@ -8,6 +8,7 @@
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
+#include <GTEngine/ModelLibrary.hpp>
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/IO.hpp>
 
@@ -89,6 +90,9 @@ namespace GTEngine
         Log("Initializing Material Library...");
         MaterialLibrary::Startup();
 
+        Log("Initializing Model Library...");
+        ModelLibrary::Startup();
+
 
         return true;
     }
@@ -96,6 +100,7 @@ namespace GTEngine
     void Shutdown()
     {
         // We kill our libraries before the major sub-systems.
+        ModelLibrary::Shutdown();
         MaterialLibrary::Shutdown();
         ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();
