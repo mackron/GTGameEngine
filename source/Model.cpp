@@ -6,7 +6,7 @@
 namespace GTEngine
 {
     Model::Model()
-        : meshes(), materials()
+        : meshes()
     {
     }
 
@@ -19,12 +19,11 @@ namespace GTEngine
         }
     }
 
-    void Model::AttachMesh(VertexArray* va, Material* material)
+    void Model::AttachMesh(VertexArray* geometry, Material* material)
     {
-        auto newMesh = new Mesh(va);
+        auto newMesh = new Mesh(geometry, material);
 
         this->meshes.PushBack(newMesh);
-        this->materials.PushBack(material);
     }
 
     void Model::ApplyTransformation(const glm::mat4 &transform)
@@ -38,13 +37,15 @@ namespace GTEngine
             auto mesh = this->meshes[i];
             assert(mesh != nullptr);
 
-            auto &format      = mesh->va->GetFormat();
-            auto  vertexCount = mesh->va->GetVertexCount();
-            auto  vertexData  = mesh->va->MapVertexData();
+            auto geometry = mesh->GetGeometry();
+
+            auto &format      = geometry->GetFormat();
+            auto  vertexCount = geometry->GetVertexCount();
+            auto  vertexData  = geometry->MapVertexData();
 
             shader.Execute(vertexData, vertexCount, format, vertexData);
 
-            mesh->va->UnmapVertexData();
+            geometry->UnmapVertexData();
         }
 
 

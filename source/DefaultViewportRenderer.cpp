@@ -381,15 +381,16 @@ namespace GTEngine
 
                 for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
                 {
-                    auto mesh     = model->meshes[iMesh];
-                    auto material = model->materials[iMesh];
+                    auto mesh = model->meshes[iMesh];
                     assert(mesh != nullptr);
+
+                    auto material = mesh->GetMaterial();
 
                     if (material != nullptr)
                     {
                         // We need to grab a render command from the cache...
                         auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                        rc.SetVertexArray(mesh->va);
+                        rc.SetVertexArray(mesh->GetGeometry());
 
                         // Here is where we need to retrieve a shader for the material. This managed completely by the viewport
                         // renderer. For now we are using a simple unlit shader, but this will need to change as we add things
@@ -514,7 +515,7 @@ namespace GTEngine
 
                     // We need to grab a render command from the cache...
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                    rc.SetVertexArray(mesh->va);
+                    rc.SetVertexArray(mesh->GetGeometry());
 
                     rc.SetParameter("ALights[0].Colour", lightComponent->GetColour());
 
@@ -562,7 +563,7 @@ namespace GTEngine
 
                     // We need to grab a render command from the cache...
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                    rc.SetVertexArray(mesh->va);
+                    rc.SetVertexArray(mesh->GetGeometry());
 
                     rc.SetParameter("DLights[0].Colour",    lightComponent->GetColour());
                     rc.SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * lightNode->GetForwardVector()));
@@ -612,7 +613,7 @@ namespace GTEngine
 
                     // We need to grab a render command from the cache...
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                    rc.SetVertexArray(mesh->va);
+                    rc.SetVertexArray(mesh->GetGeometry());
 
                     rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(lightNode->GetWorldPosition(), 1.0f)));
                     rc.SetParameter("PLights[0].Colour",               lightComponent->GetColour());
@@ -671,7 +672,7 @@ namespace GTEngine
 
                     // We need to grab a render command from the cache...
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                    rc.SetVertexArray(mesh->va);
+                    rc.SetVertexArray(mesh->GetGeometry());
 
                     rc.SetParameter("ALights[0].Colour",    ambientLightComponent->GetColour());
 
@@ -728,7 +729,7 @@ namespace GTEngine
 
                     // We need to grab a render command from the cache...
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                    rc.SetVertexArray(mesh->va);
+                    rc.SetVertexArray(mesh->GetGeometry());
 
                     rc.SetParameter("ALights[0].Colour",    ambientLightComponent->GetColour());
 

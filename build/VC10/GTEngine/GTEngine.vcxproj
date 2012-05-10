@@ -166,6 +166,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\Sound.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundStreamer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Bone.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Component.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\CameraComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\DynamicsComponent.hpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\MaterialLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\MaterialShaderCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Math.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Mesh.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\MeshBuilder.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Model.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp" />
@@ -229,6 +231,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Skeleton.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SkeletonAnimation.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\UserConfig.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />
@@ -244,6 +248,7 @@
     <ClCompile Include="..\..\..\source\Audio\SoundStreamer.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.cpp" />
+    <ClCompile Include="..\..\..\source\Bone.cpp" />
     <ClCompile Include="..\..\..\source\Component.cpp" />
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\DynamicsComponent.cpp" />
@@ -271,6 +276,7 @@
     <ClCompile Include="..\..\..\source\MaterialLibrary.cpp" />
     <ClCompile Include="..\..\..\source\MaterialShaderCache.cpp" />
     <ClCompile Include="..\..\..\source\Math.cpp" />
+    <ClCompile Include="..\..\..\source\Mesh.cpp" />
     <ClCompile Include="..\..\..\source\MeshBuilder.cpp" />
     <ClCompile Include="..\..\..\source\Model.cpp" />
     <ClCompile Include="..\..\..\source\ModelLibrary.cpp" />
@@ -297,6 +303,8 @@
     <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameter.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp" />
+    <ClCompile Include="..\..\..\source\Skeleton.cpp" />
+    <ClCompile Include="..\..\..\source\SkeletonAnimation.cpp" />
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp" />
     <ClCompile Include="..\..\..\source\UserConfig.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp" />

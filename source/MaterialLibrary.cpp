@@ -56,6 +56,16 @@ namespace GTEngine
         return newMaterial;
     }
 
+    Material* MaterialLibrary::CreateCopy(Material* source)
+    {
+        if (source != nullptr)
+        {
+            return new Material(source->GetDefinition());
+        }
+
+        return nullptr;
+    }
+
 
     void MaterialLibrary::Delete(Material* material)
     {
