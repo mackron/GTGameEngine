@@ -45,7 +45,7 @@ namespace GTEngine
     };
 
     /// The list of loaded models.
-    GTCore::Dictionary<LoadedModelInfo*> LoadedModels;
+    static GTCore::Dictionary<LoadedModelInfo*> LoadedModels;
 }
 
 // Startup/Shutdown
@@ -111,7 +111,7 @@ namespace GTEngine
         return FindNodeByName(scene, *scene.mRootNode, name, depth);
     }
 
-    void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, Model &model)
+    void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, LoadedModelInfo &model)
     {
         // First we need to grab the transformation to apply to the mesh.
         aiMatrix4x4 transform = accumulatedTransform * node.mTransformation;
@@ -134,7 +134,7 @@ namespace GTEngine
             {
                 auto format = VertexFormat::P3T2N3T3B3;
 
-                auto va = new VertexArray(VertexArrayUsage_Static, format);       // TODO: Check if the mesh is animated and determine whether or not the mesh should be dynamic or static.
+                auto va = new VertexArray(VertexArrayUsage_Static, format);
                 va->SetData(nullptr, mesh->mNumVertices, nullptr, mesh->mNumFaces * 3);
 
                 auto vertexData = va->MapVertexData();
@@ -203,7 +203,8 @@ namespace GTEngine
                 va->UnmapVertexData();
                 va->UnmapIndexData();
 
-                model.AttachMesh(va, nullptr);
+                model.geometries.PushBack(va);
+                model.defaultMaterials.PushBack(nullptr);
             }
 
             // Here we need to build the meshes skeleton, if it has one. What we do here is store bone information in a list. One of the attributes
@@ -282,78 +283,91 @@ namespace GTEngine
 
     Model* ModelLibrary::LoadFromFile(const char* fileName)
     {
-        /*
+        LoadedModelInfo* modelInfo = nullptr;
+        bool firstLoad = false;
 
         // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
-        auto modelInfo = LoadedModels.Find(fileName);
-        if (modelInfo == nullptr)
+        auto iModelInfo = LoadedModels.Find(fileName);
+        if (iModelInfo == nullptr)
         {
+            Assimp::Importer importer;
 
+            auto scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType | aiProcess_GenSmoothNormals);
+            if (scene != nullptr)
+            {
+                // We need to recursively read each scene node and attach the meshes where possible.
+                auto root = scene->mRootNode;
+                if (root != nullptr)
+                {
+                    modelInfo = new LoadedModelInfo;
+
+                    // If we get here, it means this is the first time this model is being loaded. In this situation we need to do some first-load operations.
+                    firstLoad = true;
+
+                    // We're going to use a different transformation depending on whether or not we are importing a blender file. This is a bit of a hacky, so this may
+                    // be moved layer on.
+                    aiMatrix4x4 transform;
+
+                    // With blender files we need to rotate on the X axis to get everything right.
+                    if (GTCore::Path::ExtensionEqual(fileName, "blend"))
+                    {
+                        transform.RotationX(glm::radians(-90.0f), transform);
+                    }
+
+                    // This is where we take the assimp meshes and create the GTEngine meshes.
+                    CopyNodesWithMeshes(*scene, *root, transform, *modelInfo);
+
+
+                    // Here we will grab the animations.
+                    for (unsigned int iAnimation = 0; iAnimation < scene->mNumAnimations; ++iAnimation)
+                    {
+                        auto animation = scene->mAnimations[iAnimation];
+                        assert(animation != nullptr);
+
+                        //animation->
+
+                        GTEngine::Log("Animation: %s", animation->mName.C_Str());
+                    }
+
+
+                    // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
+                    LoadedModels.Add(fileName, modelInfo);
+                }
+                else
+                {
+                    GTEngine::PostError("Error importing %s: Root node not found.", fileName);
+                }
+            }
+            else
+            {
+                GTEngine::PostError("Error importing %s: %s", fileName, importer.GetErrorString());
+            }
         }
+        else
+        {
+            modelInfo = iModelInfo->value;
+        }
+
         
         // Now that we have information about the model, we can create a new Model object and return it.
         if (modelInfo != nullptr)
         {
-        }
+            auto model = new Model;
 
-        */
-
-
-
-
-
-
-        Assimp::Importer importer;
-
-        auto scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType | aiProcess_GenSmoothNormals);
-        if (scene != nullptr)
-        {
-            // We need to recursively read each scene node and attach the meshes where possible.
-            auto root = scene->mRootNode;
-            if (root != nullptr)
+            for (size_t i = 0; i < modelInfo->geometries.count; ++i)
             {
-                auto model = new Model;
+                model->AttachMesh(modelInfo->geometries[i], modelInfo->defaultMaterials[i]);
+            }
 
-                // We're going to use a different transformation depending on whether or not we are importing a blender file. This is a bit of a hacky, so this may
-                // be moved layer on.
-                aiMatrix4x4 transform;
-
-                if (GTCore::Path::ExtensionEqual(fileName, "blend"))
-                {
-                    transform.RotationX(glm::radians(-90.0f), transform);
-                }
-
-                CopyNodesWithMeshes(*scene, *root, transform, *model);
-
-                // We need to generate tangents and bitangents.
+            // If this is the first time this model is loaded we will calculate tangents and bitangents.
+            if (firstLoad)
+            {
                 model->GenerateTangentsAndBitangents();
-
-
-                // Here we will grab the animations.
-                for (unsigned int iAnimation = 0; iAnimation < scene->mNumAnimations; ++iAnimation)
-                {
-                    auto animation = scene->mAnimations[iAnimation];
-                    assert(animation != nullptr);
-
-                    //animation->
-
-                    GTEngine::Log("Animation: %s", animation->mName.C_Str());
-                }
-
-
-                return model;
-            }
-            else
-            {
-                GTEngine::PostError("Error importing %s: Root node not found.", fileName);
             }
 
-            
+            return model;
         }
-        else
-        {
-            GTEngine::PostError("Error importing %s: %s", fileName, importer.GetErrorString());
-        }
+
 
         return nullptr;
     }
