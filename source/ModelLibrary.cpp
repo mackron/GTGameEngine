@@ -11,12 +11,100 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+// assimp helpers
+namespace GTEngine
+{
+    glm::mat4 AssimpToGLM(const aiMatrix4x4 &value)
+    {
+        glm::mat4 result;
+        memcpy(&result[0][0], &value[0][0], sizeof(glm::mat4));
+
+        return result;
+    }
+
+
+
+    void SetBoneData(Bone &outputBone, const aiBone &inputBone)
+    {
+        outputBone.SetOffsetMatrix(AssimpToGLM(inputBone.mOffsetMatrix));
+
+        for (unsigned int i = 0; i < inputBone.mNumWeights; ++i)
+        {
+            outputBone.AddWeight(inputBone.mWeights[i].mVertexId, inputBone.mWeights[i].mWeight);
+        }
+    }
+
+    Bone* CreateEmptyBone(const aiNode &inputNode)
+    {
+        auto newBone = new Bone;
+        newBone->SetName(inputNode.mName.C_Str());
+        newBone->SetTransform(AssimpToGLM(inputNode.mTransformation));
+
+        return newBone;
+    }
+
+    Bone* CreateBone(const aiNode &inputNode, const aiBone &inputBone)
+    {
+        auto newBone = CreateEmptyBone(inputNode);
+        assert(newBone != nullptr);
+
+        SetBoneData(*newBone, inputBone);
+
+        return newBone;
+    }
+
+    
+
+    
+    const aiNode* FindNodeByName(const aiScene &scene, const aiNode &node, const aiString &name)
+    {
+        if (node.mName == name)
+        {
+            return &node;
+        }
+
+        // We'll get here if the node was not found. We need to check the children.
+        for (unsigned int iChild = 0; iChild < node.mNumChildren; ++iChild)
+        {
+            auto child = node.mChildren[iChild];
+            assert(child != nullptr);
+
+            auto result = FindNodeByName(scene, *child, name);
+            if (result != nullptr)
+            {
+                // We'll get here if the child found the node. In this case, we just return that node.
+                return result;
+            }
+        }
+
+        // If we get here, not even the children could find it.
+        return nullptr;
+    }
+
+    const aiNode* FindNodeByName(const aiScene &scene, const aiString &name)
+    {
+        assert(scene.mRootNode != nullptr);
+
+        return FindNodeByName(scene, *scene.mRootNode, name);
+    }
+    
+}
+
+
 // Globals.
 namespace GTEngine
 {
     /// Structure containing information about a loaded model.
     struct LoadedModelInfo
     {
+        /// Constructor.
+        LoadedModelInfo()
+            : geometries(), defaultMaterials(), defaultArmatures(),
+              bones(),
+              haveCreatedModel(false)
+        {
+        }
+
         /// Destructor.
         ~LoadedModelInfo()
         {
@@ -29,7 +117,118 @@ namespace GTEngine
             {
                 MaterialLibrary::Delete(this->defaultMaterials[i]);
             }
+
+            for (size_t i = 0; i < this->defaultArmatures.count; ++i)
+            {
+                delete this->defaultArmatures[i];
+            }
+
+            for (size_t i = 0; i < this->bones.count; ++i)
+            {
+                delete this->bones.buffer[i]->value;
+            }
         }
+
+
+        // Adds a bone, including it's ancestors.
+        Bone* AddBone(const aiScene &scene, const aiBone &bone)
+        {
+            auto node = FindNodeByName(scene, bone.mName);
+            assert(node != nullptr);
+
+            auto iExistingBone = this->bones.Find(bone.mName.C_Str());
+            if (iExistingBone == nullptr)
+            {
+                // We now have enough information to create a GTEngine bone object.
+                auto newBone = CreateBone(*node, bone);
+                assert(newBone != nullptr);
+
+                this->bones.Add(bone.mName.C_Str(), newBone);
+
+                // Now we need to iterate over the ancestores and make sure we have bones for them.
+                if (node->mParent != nullptr)
+                {
+                    auto parent = this->AddBone(*node->mParent);
+                    if (parent != nullptr)
+                    {
+                        parent->AttachChild(*newBone);
+                    }
+                }
+
+                return newBone;
+            }
+            else
+            {
+                // If it already exists, we need to ensure we have data.
+                auto newBone = iExistingBone->value;
+                assert(newBone != nullptr);
+
+                if (newBone->IsEmpty())
+                {
+                    // Here is where we fill the bone with data.
+                    SetBoneData(*newBone, bone);
+                }
+
+                return newBone;
+            }
+        }
+
+        // Adds an empty bone based only on a node. This will also add ancestors. If a bone of the same name already exists, this function will do nothing.
+        Bone* AddBone(const aiNode &node)
+        {
+            auto iExistingBone = this->bones.Find(node.mName.C_Str());
+            if (iExistingBone == nullptr)
+            {
+                auto newBone = CreateEmptyBone(node);
+                assert(newBone != nullptr);
+
+                this->bones.Add(node.mName.C_Str(), newBone);
+
+                // Now we need to do ancestors.
+                if (node.mParent != nullptr)
+                {
+                    auto parent = this->AddBone(*node.mParent);
+                    if (parent != nullptr)
+                    {
+                        parent->AttachChild(*newBone);
+                    }
+                }
+
+                return newBone;
+            }
+            else
+            {
+                return iExistingBone->value;
+            }
+        }
+
+
+        /// Creates a Model object from this info.
+        Model* CreateModel()
+        {
+            auto model = new Model;
+
+            // We need to create copies of the bones. It is important that this is done before adding the meshes.
+            model->CopyAndAttachBones(this->bones);
+
+            // Now we need to create the meshes. This must be done after adding the bones.
+            for (size_t i = 0; i < this->geometries.count; ++i)
+            {
+                model->AttachMesh(this->geometries[i], this->defaultMaterials[i], this->defaultArmatures[i]);
+            }
+
+
+            // If this is the first model we've created we need to generate tangents and bitangents for the meshes.
+            if (!this->haveCreatedModel)
+            {
+                model->GenerateTangentsAndBitangents();
+
+                this->haveCreatedModel = true;
+            }
+
+            return model;
+        }
+
 
         /// The list of vertex arrays containing the geometric data of each mesh.
         GTCore::Vector<VertexArray*> geometries;
@@ -39,9 +238,18 @@ namespace GTEngine
         /// the mesh at index 0.
         GTCore::Vector<Material*> defaultMaterials;
 
-        /// The list of skeletons. There will be one skeleton pointer for each mesh. If the mesh does not have a skeleton, the pointer
+        /// The list of armatures. There will be one armature pointer for each mesh. If the mesh does not have an armature, the pointer
         /// will be set to null.
-        //GTCore::Vector<Skeleton*> defaultSkeletons;
+        GTCore::Vector<Armature*> defaultArmatures;
+
+
+        /// A map of every bone of the model, indexed by it's name. We use a map here to make it easier for avoiding duplication and
+        /// also fast lookups.
+        GTCore::Dictionary<Bone*> bones;
+
+
+        /// This keeps track of whether or not we have previously created a model from this info.
+        bool haveCreatedModel;
     };
 
     /// The list of loaded models.
@@ -69,48 +277,6 @@ namespace GTEngine
 // Loading
 namespace GTEngine
 {
-    const aiNode* FindNodeByName(const aiScene &scene, const aiNode &node, const aiString &name, unsigned int &depth)
-    {
-        if (node.mName == name)
-        {
-            return &node;
-        }
-
-        // Now we need to increment the depth.
-        ++depth;
-
-        // We need to keep track of this so we can restore it for each child iteration.
-        auto childrenDepth = depth;
-
-
-        // We'll get here if the node was not found. We need to check the children.
-        for (unsigned int iChild = 0; iChild < node.mNumChildren; ++iChild)
-        {
-            auto child = node.mChildren[iChild];
-            assert(child != nullptr);
-
-            auto result = FindNodeByName(scene, *child, name, depth);
-            if (result != nullptr)
-            {
-                // We'll get here if the child found the node. In this case, we just return that node.
-                return result;
-            }
-
-            // With a new child iteration, the depth will need to be set back.
-            depth = childrenDepth;
-        }
-
-        // If we get here, not even the children could find it.
-        return nullptr;
-    }
-
-    const aiNode* FindNodeByName(const aiScene &scene, const aiString &name, unsigned int &depth)
-    {
-        assert(scene.mRootNode != nullptr);
-
-        return FindNodeByName(scene, *scene.mRootNode, name, depth);
-    }
-
     void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, LoadedModelInfo &model)
     {
         // First we need to grab the transformation to apply to the mesh.
@@ -207,67 +373,50 @@ namespace GTEngine
                 model.defaultMaterials.PushBack(nullptr);
             }
 
-            // Here we need to build the meshes skeleton, if it has one. What we do here is store bone information in a list. One of the attributes
-            // of this data is the depth of the bone relative to the root node. The bone with the lowest depth (closest to the root) will be the
-            // root bone.
-            struct BoneData
-            {
-                BoneData(unsigned int depth, const aiNode* node, const aiBone* bone)
-                    : depth(depth), node(node), bone(bone)
-                {
-                }
 
-                unsigned int  depth;
-                const aiNode* node;
-                const aiBone* bone;
-            };
-
-            // This will hold a list of every bone in the model.
-            GTCore::Vector<BoneData> boneList(mesh->mNumBones);
-
-            // This will point to the bone data with the lowest depth. By the time the bone iteration is complete, this will point to the root node.
-            BoneData* rootBoneData = nullptr;
-
+            // Here is where we build the mesh's armature, if it has one. We need to create the GTEngine bone objects for each applicable node.
+            GTCore::Vector<Bone*> localBones;
 
             for (unsigned int iBone = 0; iBone < mesh->mNumBones; ++iBone)
             {
-                //GTEngine::Log("Bone Name: %s", mesh->mBones[iBone]->mName.C_Str());
-
                 auto bone = mesh->mBones[iBone];
                 assert(bone != nullptr);
 
-                // The name of the bone refers to a scene node. We need to find that node.
-                auto boneDepth = 0U;
-                auto boneNode  = FindNodeByName(scene, bone->mName, boneDepth);
-                if (boneNode != nullptr)
+                auto newBone = model.AddBone(scene, *bone);
+                if (newBone != nullptr)
                 {
-                    // We need to push the item onto the list before checking if it's the new root. The reason is because we'll retrieve a reference
-                    // to the new item from the list to use as the object.
-                    boneList.PushBack(BoneData(boneDepth, &node, bone));
-
-                    // Now we need to check if the depth is lower than the existing root bone.
-                    auto &iBoneData = boneList.GetBack();
-
-                    if (rootBoneData != nullptr)
-                    {
-                        if (iBoneData.depth < rootBoneData->depth)
-                        {
-                            rootBoneData = &iBoneData;
-                        }
-                    }
-                    else
-                    {
-                        rootBoneData = &iBoneData;
-                    }
+                    localBones.PushBack(newBone);
                 }
             }
 
-            // By this stage we have the list of bones and the root bone. Now we need to build the skeleton.
-            if (rootBoneData != nullptr)
+            // By this stage every bone will be created. We now need to build the armature for this mesh. The way we do this is we loop through each
+            // local bone and find the highest level ancestor. This ancestor will be a root node in the armature.
+            if (localBones.count > 0)
             {
-                GTEngine::Log("Root Bone: %s", rootBoneData->bone->mName.C_Str());
+                auto armature = new Armature;
 
+                for (size_t iLocalBone = 0; iLocalBone < localBones.count; ++iLocalBone)
+                {
+                    auto localBone = localBones[iLocalBone];
+                    assert(localBone != nullptr);
 
+                    auto topLevelBone = localBone->GetTopLevelBone();   // <-- this will never return nullptr. If the local bone is already the top level, that will be returned.
+                    assert(topLevelBone != nullptr);
+
+                    // Now we add the top level bone to the armature. The armature will ensure no duplicates are made.
+                    armature->AddRootBone(*topLevelBone);
+                }
+
+                // Here we add the armature to the model info..
+                model.defaultArmatures.PushBack(armature);
+
+                // Here we'll print the armature bone names for testing...
+                armature->LogInfo();
+            }
+            else
+            {
+                // If we don't have any bones, we won't have an armature. We need to push nullptr for the armature.
+                model.defaultArmatures.PushBack(nullptr);
             }
         }
 
@@ -324,7 +473,7 @@ namespace GTEngine
                         auto animation = scene->mAnimations[iAnimation];
                         assert(animation != nullptr);
 
-                        //animation->
+                        //animation->mChannels[0]
 
                         GTEngine::Log("Animation: %s", animation->mName.C_Str());
                     }
@@ -352,18 +501,25 @@ namespace GTEngine
         // Now that we have information about the model, we can create a new Model object and return it.
         if (modelInfo != nullptr)
         {
+            /*
             auto model = new Model;
 
             for (size_t i = 0; i < modelInfo->geometries.count; ++i)
             {
-                model->AttachMesh(modelInfo->geometries[i], modelInfo->defaultMaterials[i]);
+                model->AttachMesh(modelInfo->geometries[i], modelInfo->defaultMaterials[i], modelInfo->defaultArmatures[i]);
             }
+            */
+
+            // We create a model instantiation from the model info.
+            auto model = modelInfo->CreateModel();
 
             // If this is the first time this model is loaded we will calculate tangents and bitangents.
+            /*
             if (firstLoad)
             {
                 model->GenerateTangentsAndBitangents();
             }
+            */
 
             return model;
         }
@@ -377,7 +533,7 @@ namespace GTEngine
     {
         auto model = new Model;
 
-        model->AttachMesh(VertexArrayFactory::CreatePlaneXZ(width, height, format), nullptr);
+        model->AttachMesh(VertexArrayFactory::CreatePlaneXZ(width, height, format), nullptr, nullptr);
 
         return model;
     }
