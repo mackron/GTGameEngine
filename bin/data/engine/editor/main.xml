@@ -314,7 +314,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
     <div id="EditorBottomPanel">
         <div style="width:auto; margin-left:4px; margin-right:8px; text-color:#888;">Command:</div>
-        <div id="CommandTextBox" styleclass="textbox" style="height:22px; width:400px; inner-offset-x:16px;" />
+        <div id="CommandTextBox" styleclass="textbox" style="height:22px; width:400px;" />
     </div>
   
     <!-- This section contains relative positioned controls. Usually dialog boxes. -->

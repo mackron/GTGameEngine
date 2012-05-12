@@ -48,6 +48,18 @@
     <Filter Include="source\Audio\Streamers">
       <UniqueIdentifier>{c92af52c-eeb2-458c-9ef7-2e04404fd365}</UniqueIdentifier>
     </Filter>
+    <Filter Include="data">
+      <UniqueIdentifier>{a565d275-47fb-4cec-83eb-5abfee9d9c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data\editor">
+      <UniqueIdentifier>{9f53f0d5-a40a-4879-8da0-c3751efa57b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data\editor\scripts">
+      <UniqueIdentifier>{9af53b4b-04ce-4faa-8e57-21d872db1b63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data\editor\styles">
+      <UniqueIdentifier>{067851f4-e322-4859-b1e7-3ff84672af77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -493,5 +505,55 @@
     <ClCompile Include="..\..\..\source\ArmatureAnimation.cpp">
       <Filter>source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\bin\data\engine\editor\combobox.xml">
+      <Filter>data\editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\file-explorer.xml">
+      <Filter>data\editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\main.xml">
+      <Filter>data\editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\menu.xml">
+      <Filter>data\editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\menubar.xml">
+      <Filter>data\editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\combobox.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\file-explorer.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\menu.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\menubar.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\theme.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\combobox.lua">
+      <Filter>data\editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\dialogs.lua">
+      <Filter>data\editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\file-explorer.lua">
+      <Filter>data\editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\listbox.lua">
+      <Filter>data\editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\menu.lua">
+      <Filter>data\editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\menubar.lua">
+      <Filter>data\editor\scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>
