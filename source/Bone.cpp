@@ -49,15 +49,28 @@ namespace GTEngine
         }
     }
 
+
     void Bone::SetTransform(const glm::mat4 &transform)
     {
         this->transform = transform;
     }
 
+    const glm::mat4 & Bone::GetTransform() const
+    {
+        return this->transform;
+    }
+
+
     void Bone::SetOffsetMatrix(const glm::mat4 &offsetMatrix)
     {
-        this->transform = offsetMatrix;
+        this->offsetMatrix = offsetMatrix;
     }
+
+    const glm::mat4 & Bone::GetOffsetMatrix() const
+    {
+        return this->offsetMatrix;
+    }
+
 
     void Bone::AddWeight(unsigned int vertexID, float weight)
     {

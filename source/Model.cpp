@@ -84,6 +84,54 @@ namespace GTEngine
         }
     }
 
+    void Model::CopyAndAddAnimations(const GTCore::Dictionary<ArmatureAnimation*> &inputAnimations)
+    {
+        for (size_t i = 0; i < inputAnimations.count; ++i)
+        {
+            auto animation = inputAnimations.buffer[i]->value;
+            assert(animation != nullptr);
+
+            auto newAnimation = new ArmatureAnimation(animation->GetName());
+
+            // Duration.
+            newAnimation->SetDurationInSeconds(animation->GetDurationInSeconds());
+
+            // Channels.
+            for (size_t i = 0; i < animation->GetChannelCount(); ++i)
+            {
+                auto &channel = animation->GetChannel(i);
+
+                auto bone = this->bones.Find(channel.GetBone().GetName())->value;
+                assert(bone != nullptr);
+
+                
+                auto newChannel = newAnimation->AddChannel(*bone);
+                assert(newChannel != nullptr);
+
+                // Positions.
+                for (size_t iKey = 0; iKey < channel.GetPositionKeyCount(); ++iKey)
+                {
+                    auto &key = channel.GetPositionKey(iKey);
+                    newChannel->AddPositionKey(key.time, key.value);
+                }
+
+                // Rotations.
+                for (size_t iKey = 0; iKey < channel.GetRotationKeyCount(); ++iKey)
+                {
+                    auto &key = channel.GetRotationKey(iKey);
+                    newChannel->AddRotationKey(key.time, key.value);
+                }
+
+                // Scales.
+                for (size_t iKey = 0; iKey < channel.GetScaleKeyCount(); ++iKey)
+                {
+                    auto &key = channel.GetScaleKey(iKey);
+                    newChannel->AddScaleKey(key.time, key.value);
+                }
+            }
+        }
+    }
+
 
     void Model::ApplyTransformation(const glm::mat4 &transform)
     {

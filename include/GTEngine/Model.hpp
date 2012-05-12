@@ -37,6 +37,9 @@ namespace GTEngine
         ///     If a bone of the same name already exists, this method will do nothing.
         void CopyAndAttachBones(const GTCore::Dictionary<Bone*> &bones);
 
+        /// Creates copies and adds a list of animations.
+        void CopyAndAddAnimations(const GTCore::Dictionary<ArmatureAnimation*> &animations);
+
 
         /// Applies a transformation to the model's geometric data.
         void ApplyTransformation(const glm::mat4 &transform);

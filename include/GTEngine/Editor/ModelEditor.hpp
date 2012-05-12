@@ -143,6 +143,13 @@ namespace GTEngine
         float cameraYRotation;      ///< The camera's current Y rotation.
 
 
+
+        // TESTING
+        //
+        // The map of scene nodes representing the bones of the model.
+        GTCore::Dictionary<SceneNode*> boneSceneNodes;
+
+
     private:
 
         /// Foreign Function Interface for the editor GUI.

@@ -32,8 +32,6 @@ namespace GTEngine
 
     void GUIEventHandler::OnChangeCursor(GTGUI::Cursor cursor)
     {
-        GTEngine::Log("Setting cursor: %d", (int)cursor);
-
         switch (cursor)
         {
         case GTGUI::Cursor_Arrow:    game.GetWindow()->SetCursor(GTCore::SystemCursor_Arrow);       break;

@@ -67,8 +67,16 @@ namespace GTEngine
         /// Sets the transform of the bone.
         void SetTransform(const glm::mat4 &transform);
 
+        /// Retrieves the transform of the bone.
+        const glm::mat4 & GetTransform() const;
+
+
         /// Sets the offset matrix of the bone.
         void SetOffsetMatrix(const glm::mat4 &transform);
+
+        /// Retrieves the offset matrix of the bone.
+        const glm::mat4 & GetOffsetMatrix() const;
+
 
         /// Sets the vertex weights.
         void AddWeight(unsigned int vertexID, float weight);
