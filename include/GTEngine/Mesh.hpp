@@ -4,6 +4,7 @@
 
 #include "Rendering/VertexArray.hpp"
 #include "Material.hpp"
+#include "Armature.hpp"
 #include "Physics.hpp"
 #include "Math.hpp"
 
@@ -26,22 +27,25 @@ namespace GTEngine
 
         /// Default constructor.
         Mesh()
-            : geometry(nullptr), material(nullptr), collisionVA(nullptr)
+            : geometry(nullptr), material(nullptr), armature(nullptr),
+              collisionVA(nullptr)
         {
         }
 
         /// Constructor.
-        Mesh(VertexArray* geometry, Material* material)
-            : geometry(geometry), material(material)
+        Mesh(VertexArray* geometry, Material* material, Armature* armature)
+            : geometry(geometry), material(material), armature(armature),
+              collisionVA(nullptr)
         {
         }
 
         /// Destructor.
         ///
         /// @remarks
-        ///     The destructor does not delete any internal attributes.
+        ///     The destructor does not delete the geometry, material or armature.
         ~Mesh()
         {
+            delete this->collisionVA;
         }
 
 
@@ -56,6 +60,9 @@ namespace GTEngine
         /// Sets the material of the mesh.
         void SetMaterial(Material* newMaterial) { this->material = newMaterial; }
 
+        /// Sets the skeleton of the mesh.
+        void SetArmature(Armature* newArmature) { this->armature = newArmature; }
+
 
         /// Retrieves the geometry of the mesh.
               VertexArray* GetGeometry()       { return this->geometry; }
@@ -64,6 +71,10 @@ namespace GTEngine
         /// Retrieves the material of the mesh.
               Material* GetMaterial()       { return this->material; }
         const Material* GetMaterial() const { return this->material; }
+
+        /// Retrieves the armature of the mesh.
+              Armature* GetArmature()       { return this->armature; }
+        const Armature* GetArmature() const { return this->armature; }
 
 
         /// Generates the tangents and binormals.
@@ -93,7 +104,7 @@ namespace GTEngine
         Material* material;
 
         /// The skeleton to use with this mesh for animations.
-        //Skeleton* skeleton;
+        Armature* armature;
 
         /// The vertex array for use with the collision shape.
         btTriangleIndexVertexArray* collisionVA;

@@ -278,13 +278,13 @@
     <ClInclude Include="..\..\..\include\GTEngine\Bone.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Skeleton.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\SkeletonAnimation.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Mesh.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Armature.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ArmatureAnimation.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -484,13 +484,13 @@
     <ClCompile Include="..\..\..\source\Bone.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Skeleton.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\SkeletonAnimation.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Mesh.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Armature.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ArmatureAnimation.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
