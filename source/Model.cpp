@@ -6,7 +6,8 @@
 namespace GTEngine
 {
     Model::Model()
-        : meshes(), bones(), animations()
+        : meshes(), bones(), animations(),
+          currentAnimation(nullptr)
     {
     }
 
@@ -17,6 +18,12 @@ namespace GTEngine
         {
             delete this->meshes[i]->GetArmature();
             delete this->meshes[i];
+        }
+
+        // Animations.
+        for (size_t i = 0; i < this->animations.count; ++i)
+        {
+            delete this->animations.buffer[i]->value;
         }
 
         // Bones
@@ -108,27 +115,17 @@ namespace GTEngine
                 auto newChannel = newAnimation->AddChannel(*bone);
                 assert(newChannel != nullptr);
 
-                // Positions.
-                for (size_t iKey = 0; iKey < channel.GetPositionKeyCount(); ++iKey)
-                {
-                    auto &key = channel.GetPositionKey(iKey);
-                    newChannel->AddPositionKey(key.time, key.value);
-                }
 
-                // Rotations.
-                for (size_t iKey = 0; iKey < channel.GetRotationKeyCount(); ++iKey)
+                // Keys.
+                for (size_t iKey = 0; iKey < channel.GetKeyCount(); ++iKey)
                 {
-                    auto &key = channel.GetRotationKey(iKey);
-                    newChannel->AddRotationKey(key.time, key.value);
-                }
-
-                // Scales.
-                for (size_t iKey = 0; iKey < channel.GetScaleKeyCount(); ++iKey)
-                {
-                    auto &key = channel.GetScaleKey(iKey);
-                    newChannel->AddScaleKey(key.time, key.value);
+                    auto &key = channel.GetKey(iKey);
+                    newChannel->AddKey(key.time, key.position, key.rotation, key.scale);
                 }
             }
+
+            // Now we add the new animation to our local animation map.
+            this->animations.Add(newAnimation->GetName(), newAnimation);
         }
     }
 
@@ -164,6 +161,69 @@ namespace GTEngine
         for (size_t i = 0; i < this->meshes.count; ++i)
         {
             this->meshes[i]->GenerateTangentsAndBitangents();
+        }
+    }
+
+
+
+    // !!! Animation !!!
+    void Model::PlayAnimation(const char* animationName, bool loop)
+    {
+        auto iAnimation = this->animations.Find(animationName);
+        if (iAnimation != nullptr)
+        {
+            this->currentAnimation = iAnimation->value;
+
+            this->currentAnimation->Play(loop);
+        }
+    }
+
+    void Model::StopAnimation()
+    {
+        if (this->currentAnimation != nullptr)
+        {
+            this->currentAnimation->Stop();
+
+            this->currentAnimation = nullptr;
+        }
+    }
+
+    void Model::PauseAnimation()
+    {
+        if (this->currentAnimation != nullptr)
+        {
+            this->currentAnimation->Pause();
+        }
+    }
+
+    void Model::ResumeAnimation()
+    {
+        if (this->currentAnimation != nullptr)
+        {
+            this->currentAnimation->Play();
+        }
+    }
+
+    ArmatureAnimation* Model::GetCurrentAnimation()
+    {
+        return this->currentAnimation;
+    }
+
+    const char* Model::GetCurrentAnimationName() const
+    {
+        if (this->currentAnimation != nullptr)
+        {
+            return this->currentAnimation->GetName();
+        }
+
+        return nullptr;
+    }
+
+    void Model::StepAnimation(double deltaSeconds)
+    {
+        if (this->currentAnimation != nullptr)
+        {
+            this->currentAnimation->Step(deltaSeconds);
         }
     }
 }

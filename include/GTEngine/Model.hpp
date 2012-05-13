@@ -48,6 +48,36 @@ namespace GTEngine
         void GenerateTangentsAndBitangents();
 
 
+
+    // Animation.
+    public:
+
+        /// Plays the given animation.
+        ///
+        /// @param animationName [in] The name of the animation to start playing.
+        void PlayAnimation(const char* animationName, bool loop = true);
+
+        /// Completely stops the current animation, returning the model to it's default pose.
+        void StopAnimation();
+
+        /// Pauses the current animation.
+        void PauseAnimation();
+
+        /// Resumes the animation if it was paused.
+        void ResumeAnimation();
+
+        /// Retrieves a pointer to the current ArmatureAnimation object.
+        ArmatureAnimation* GetCurrentAnimation();
+
+        /// Retrieves the name of the current animation.
+        const char* GetCurrentAnimationName() const;
+
+        /// Steps the current animation by the given time amount.
+        ///
+        /// @param deltaTimeInSeconds [in] The amount of seconds to step the animation by.
+        void StepAnimation(double deltaTimeInSeconds);
+
+
     public:
 
         /// The list of meshes making up the model.
@@ -58,6 +88,9 @@ namespace GTEngine
 
         /// The list of animations. The bones referenced in these animations are pointers to the bones in <bones>
         GTCore::Dictionary<ArmatureAnimation*> animations;
+
+        /// A pointer to the animation that is currently being played. Set to null when no animation is playing.
+        ArmatureAnimation* currentAnimation;
     };    
 }
 
