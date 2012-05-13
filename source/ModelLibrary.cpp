@@ -539,32 +539,23 @@ namespace GTEngine
                             auto newChannel = newAnimation->AddChannel(*bone);
                             assert(newChannel != nullptr);
 
-                            // Position Keys.
-                            for (unsigned int iKey = 0; iKey < channel->mNumPositionKeys; ++iKey)
+
+                            // TODO: Check that this assertion is valid. If not, we need to combine them all into a single list.
+                            assert(channel->mNumPositionKeys == channel->mNumRotationKeys && channel->mNumPositionKeys == channel->mNumScalingKeys);
+
+                            unsigned int keyCount = channel->mNumPositionKeys;
+                            for (unsigned int iKey = 0; iKey < keyCount; ++iKey)
                             {
-                                auto &key = channel->mPositionKeys[iKey];
+                                auto &positionKey = channel->mPositionKeys[iKey];
+                                auto &rotationKey = channel->mRotationKeys[iKey];
+                                auto &scaleKey    = channel->mScalingKeys[iKey];
 
-                                newChannel->AddPositionKey(key.mTime, AssimpToGLM(key.mValue));
-                            }
-
-                            // Rotation Keys.
-                            for (unsigned int iKey = 0; iKey < channel->mNumRotationKeys; ++iKey)
-                            {
-                                auto &key = channel->mRotationKeys[iKey];
-
-                                newChannel->AddRotationKey(key.mTime, AssimpToGLM(key.mValue));
-                            }
-
-                            // Scale keys.
-                            for (unsigned int iKey = 0; iKey < channel->mNumScalingKeys; ++iKey)
-                            {
-                                auto &key = channel->mScalingKeys[iKey];
-
-                                newChannel->AddScaleKey(key.mTime, AssimpToGLM(key.mValue));
+                                newChannel->AddKey(positionKey.mTime, AssimpToGLM(positionKey.mValue), AssimpToGLM(rotationKey.mValue), AssimpToGLM(scaleKey.mValue));
                             }
                         }
 
-                        GTEngine::Log("Animation: %s", animation->mName.C_Str());
+                        // Can't forget to add the new animation to the model's info structure.
+                        modelInfo->animations.Add(newAnimation->GetName(), newAnimation);
                     }
 
 

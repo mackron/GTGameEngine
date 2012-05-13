@@ -10,14 +10,13 @@
 namespace GTEngine
 {
     /// A transformation key for armature animations.
-    template <typename T>
     class ArmatureAnimationKey
     {
     public:
 
         /// Constructor.
-        ArmatureAnimationKey(double timeIn, const T &valueIn)
-            : time(timeIn), value(valueIn)
+        ArmatureAnimationKey(double timeIn, const glm::vec3 &positionIn, const glm::quat &rotationIn, const glm::vec3 &scaleIn)
+            : time(timeIn), position(positionIn), rotation(rotationIn), scale(scaleIn)
         {
         }
 
@@ -27,9 +26,16 @@ namespace GTEngine
         /// The time of the key.
         double time;
 
-        /// The transformation matrix attached to this key.
-        T value;
+        /// The position.
+        glm::vec3 position;
+
+        /// The rotation.
+        glm::quat rotation;
+
+        /// The scale.
+        glm::vec3 scale;
     };
+
 
 
     /// Class representing a channel in an armature animation.
@@ -39,7 +45,7 @@ namespace GTEngine
 
         /// Constructor.
         ArmatureAnimationChannel(Bone &bone)
-            : bone(bone), positionKeys(), rotationKeys(), scaleKeys()
+            : bone(bone), keys()
         {
         }
 
@@ -53,43 +59,120 @@ namespace GTEngine
         Bone & GetBone() { return this->bone; }
 
 
-        /// Adds a position key.
-        void AddPositionKey(double time, const glm::vec3 &position)
+        /// Adds a key.
+        void AddKey(double time, const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale)
         {
-            this->positionKeys.Add(time, ArmatureAnimationKey<glm::vec3>(time, position));
+            this->keys.Add(time, ArmatureAnimationKey(time, position, rotation, scale));
         }
 
-        /// Adds a rotation key.
-        void AddRotationKey(double time, const glm::quat &rotation)
+        /// Retrieves the number of keys in the animation.
+        size_t GetKeyCount() const { return this->keys.count; }
+
+        /// Retrieves a reference to the key at the given index.
+        ArmatureAnimationKey & GetKey(size_t index) { return this->keys.buffer[index]->value; }
+
+
+        /// Retrieves the time of the first key.
+        double GetFirstKeyTime() const
         {
-            this->rotationKeys.Add(time, ArmatureAnimationKey<glm::quat>(time, rotation));
+            if (this->keys.count > 0)
+            {
+                return this->keys.buffer[0]->value.time;
+            }
+            
+            return 0.0;
         }
 
-        /// Adds a scale key.
-        void AddScaleKey(double time, const glm::vec3 &scale)
+        /// Retrieves the time of the last key.
+        double GetLastKeyTime() const
         {
-            this->scaleKeys.Add(time, ArmatureAnimationKey<glm::vec3>(time, scale));
+            if (this->keys.count > 0)
+            {
+                return this->keys.buffer[this->keys.count - 1]->value.time;
+            }
+
+            return 0.0;
         }
 
 
-        /// Retrieves the number of position keys.
-        size_t GetPositionKeyCount() const { return this->positionKeys.count; }
+    // Playback.
+    public:
 
-        /// Retrieves the number of rotation keys.
-        size_t GetRotationKeyCount() const { return this->rotationKeys.count; }
+        /// Updates the channel based on the given time.
+        ///
+        /// @param time [in] The animation time.
+        void Update(double time)
+        {
+            ArmatureAnimationKey* currentKey;
+            ArmatureAnimationKey* nextKey;
+            float ratio;
+            if (this->FindKeys(time, currentKey, nextKey, ratio))
+            {
+                glm::vec3 position = glm::mix(currentKey->position, nextKey->position, ratio);
+                glm::quat rotation = glm::mix(currentKey->rotation, nextKey->rotation, ratio);
+                glm::vec3 scale    = glm::mix(currentKey->scale,    nextKey->scale,    ratio);
 
-        /// Retrieves the number of scale keys.
-        size_t GetScaleKeyCount() const { return this->scaleKeys.count; }
+                bone.SetTransform(glm::translate(position) * glm::mat4_cast(rotation) * glm::scale(scale));
+            }
+        }
 
 
-        /// Retrieves the position key at the given index.
-        ArmatureAnimationKey<glm::vec3> & GetPositionKey(size_t index) { return this->positionKeys.buffer[index]->value; }
 
-        /// Retrieves the rotation key at the given index.
-        ArmatureAnimationKey<glm::quat> & GetRotationKey(size_t index) { return this->rotationKeys.buffer[index]->value; }
+    private:
 
-        /// Retrieves the scale key at the given index.
-        ArmatureAnimationKey<glm::vec3> & GetScaleKey(size_t index) { return this->scaleKeys.buffer[index]->value; }
+        /// Helper method for retrieving the keys for the current playback time.
+        bool FindKeys(double time, ArmatureAnimationKey* &currentKey, ArmatureAnimationKey* &nextKey, float &ratio)
+        {
+            assert(time >= 0.0);
+
+            if (this->keys.count > 0)
+            {
+                if (time < this->GetFirstKeyTime())
+                {
+                    // We will get here if the time is lower than the time of the first key. In this case we should interpolate between the last and the first keys.
+                    currentKey = &this->keys.buffer[this->keys.count - 1]->value;
+                    nextKey    = &this->keys.buffer[0]->value;
+                    ratio      = static_cast<float>(time / nextKey->time);
+                }
+                else if (time >= this->GetLastKeyTime())
+                {
+                    // We will get here if the time is higher than the time of the last key. In this case we will just clamp the model to the last key.
+                    currentKey = nextKey = &this->keys.buffer[this->keys.count - 1]->value;
+                    ratio      = 1.0f;
+                }
+                else
+                {
+                    // We will get here if the time is somewhere between the first and last keys.
+                    size_t iCurrent = 0;
+                    for ( ; iCurrent < (this->keys.count); ++iCurrent)
+                    {
+                        auto &key = this->keys.buffer[iCurrent]->value;
+
+                        if (key.time <= time)
+                        {
+                            currentKey = &key;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    // Based on previous checks, we should be able to assert that the current index will in bounds.
+                    assert(iCurrent < this->keys.count);
+                    nextKey = &this->keys.buffer[iCurrent]->value;
+
+
+                    double frameTime           = nextKey->time - currentKey->time;
+                    double timeSinceCurrentKey = time - currentKey->time;
+                    ratio = static_cast<float>(timeSinceCurrentKey / frameTime);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
 
 
 
@@ -98,14 +181,8 @@ namespace GTEngine
         /// The bone this channel affects.
         Bone &bone;
 
-        /// The list of position keys for this channel. This should be sorted by the time of the channel. Thus, we're going to use a map.
-        GTCore::Map<double, ArmatureAnimationKey<glm::vec3>> positionKeys;
-
-        /// The list of rotation keys for this channel.
-        GTCore::Map<double, ArmatureAnimationKey<glm::quat>> rotationKeys;
-
-        /// The list of scale keys for this channel.
-        GTCore::Map<double, ArmatureAnimationKey<glm::vec3>> scaleKeys;
+        /// The list of keys for this channel. This should be sorted by the time of the channel. Thus, we're going to use a map.
+        GTCore::Map<double, ArmatureAnimationKey> keys;
     };
 }
 
@@ -155,16 +232,60 @@ namespace GTEngine
         ArmatureAnimationChannel & GetChannel(size_t index);
 
 
+    // Playback.
+    public:
+
+        /// Plays the animation.
+        void Play();
+        void Play(bool loop);
+
+        /// Stops the animation.
+        ///
+        /// @remarks
+        ///     This will bring the animation back to it's first frame. Use Pause() to pause the animation.
+        void Stop();
+
+        /// Pauses the animation.
+        void Pause();
+
+        /// Steps the animation by the given time.
+        ///
+        /// @param deltaTimeInSeconds [in] The amount of time to step the animation.
+        void Step(double deltaTimeInSeconds);
+
+
+
+    private:
+
+        /// Helper method for finding the time of the first key.
+        void MoveToFirstKey();
+
+
+
     private:
 
         /// The name of the animation.
         GTCore::String name;
 
-        /// The duration of the animations in seconds.
+        /// The duration of the animation in seconds.
         double durationSeconds;
 
         /// The list of channels affected by this animation.
         GTCore::Vector<ArmatureAnimationChannel*> channels;
+
+
+        /// Keeps track of whether or not the animation is currently playing.
+        bool isPlaying;
+
+        /// Keeps track of whether or not the animation should loop.
+        bool isLooping;
+
+        /// Keeps track of whether or not the animation has been played yet. We need to use this for checking where the playback time should
+        /// start in Play().
+        bool hasPlayed;
+
+        /// Keeps track of the current animation time.
+        double playbackTime;
     };
 }
 
