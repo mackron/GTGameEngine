@@ -139,7 +139,7 @@ namespace GTEngine
 {
     DefaultViewportRenderer::DefaultViewportRenderer()
         : owner(nullptr), framebuffer(), Shaders(), RenderCommands(), backRCIndex(0),
-          materialMetadata(),
+          materialMetadata(), skinnedGeometry(),
           projection(), view(),
           screenSize(),
           framebufferNeedsResize(false)
@@ -236,7 +236,6 @@ namespace GTEngine
             // First we'll grab the render command objects we'll be adding to the back buffer.
             auto &rcBegin = this->RenderCommands.rcBegin[this->backRCIndex];
             auto &rcEnd   = this->RenderCommands.rcEnd[this->backRCIndex];
-
             
             
 
@@ -263,6 +262,9 @@ namespace GTEngine
         // The new back RC caches need to be reset in preparation for the next frame.
         this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Reset();
         this->RenderCommands.rcDrawVA[this->backRCIndex].Reset();
+
+        // The map of skinned geometries needs to be reset also.
+        this->ClearSkinnedGeometry(this->backRCIndex);
 
         // If the framebuffer needs to be resized, we best do that now. Resizing the framebuffer leaves 
         if (this->framebufferNeedsResize)
@@ -390,7 +392,34 @@ namespace GTEngine
                     {
                         // We need to grab a render command from the cache...
                         auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                        rc.SetVertexArray(mesh->GetGeometry());
+
+                        // This is the pass where the animated geometry needs to be applied, if applicable. To do this, we first check that
+                        // the model is being animated. If so, we need to create a skinned geometry vertex array and calculate build the
+                        // vertex information.
+                        if (model->IsAnimating())
+                        {
+                            auto baseGeometry    = mesh->GetGeometry();
+                            assert(baseGeometry != nullptr);
+
+                            auto skinnedGeometry = new VertexArray(VertexArrayUsage_Stream, baseGeometry->GetFormat());
+                            skinnedGeometry->SetData(/*baseGeometry->GetVertexDataPtr()*/ nullptr, baseGeometry->GetVertexCount(), baseGeometry->GetIndexDataPtr(), baseGeometry->GetIndexCount());
+
+                            auto skinnedGeometryVertexData = skinnedGeometry->MapVertexData();
+                            memset(skinnedGeometryVertexData, 0, baseGeometry->GetFormat().GetSize() * baseGeometry->GetVertexCount() * sizeof(float));
+                            skinnedGeometry->UnmapVertexData();
+
+                            // Now that we have skinned geometry vertex array, we need to apply the skinning to it.
+                            mesh->ApplySkinning(*skinnedGeometry);
+
+
+                            this->skinnedGeometry[this->backRCIndex].Add(mesh, skinnedGeometry);
+
+                            rc.SetVertexArray(skinnedGeometry);
+                        }
+                        else
+                        {
+                            rc.SetVertexArray(mesh->GetGeometry());
+                        }
 
                         // Here is where we need to retrieve a shader for the material. This managed completely by the viewport
                         // renderer. For now we are using a simple unlit shader, but this will need to change as we add things
@@ -515,7 +544,7 @@ namespace GTEngine
 
                     // We need to grab a render command from the cache...
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                    rc.SetVertexArray(mesh->GetGeometry());
+                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
                     rc.SetParameter("ALights[0].Colour", lightComponent->GetColour());
 
@@ -563,7 +592,7 @@ namespace GTEngine
 
                     // We need to grab a render command from the cache...
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                    rc.SetVertexArray(mesh->GetGeometry());
+                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
                     rc.SetParameter("DLights[0].Colour",    lightComponent->GetColour());
                     rc.SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * lightNode->GetForwardVector()));
@@ -613,7 +642,7 @@ namespace GTEngine
 
                     // We need to grab a render command from the cache...
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                    rc.SetVertexArray(mesh->GetGeometry());
+                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
                     rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(lightNode->GetWorldPosition(), 1.0f)));
                     rc.SetParameter("PLights[0].Colour",               lightComponent->GetColour());
@@ -672,7 +701,7 @@ namespace GTEngine
 
                     // We need to grab a render command from the cache...
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                    rc.SetVertexArray(mesh->GetGeometry());
+                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
                     rc.SetParameter("ALights[0].Colour",    ambientLightComponent->GetColour());
 
@@ -729,7 +758,7 @@ namespace GTEngine
 
                     // We need to grab a render command from the cache...
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
-                    rc.SetVertexArray(mesh->GetGeometry());
+                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
                     rc.SetParameter("ALights[0].Colour",    ambientLightComponent->GetColour());
 
@@ -747,5 +776,31 @@ namespace GTEngine
                 }
             }
         }
+    }
+
+    void DefaultViewportRenderer::ClearSkinnedGeometry(size_t index)
+    {
+        assert(index == 0 || index == 1);
+
+        for (size_t iGeometry = 0; iGeometry < this->skinnedGeometry[index].count; ++iGeometry)
+        {
+            delete this->skinnedGeometry[index].buffer[iGeometry]->value;
+        }
+
+        this->skinnedGeometry[index].Clear();
+    }
+
+    VertexArray* DefaultViewportRenderer::GetMeshGeometry(Mesh &mesh, bool animating)
+    {
+        if (animating)
+        {
+            auto iSkinnedGeometry = this->skinnedGeometry[this->backRCIndex].Find(&mesh);
+            if (iSkinnedGeometry != nullptr)
+            {
+                return iSkinnedGeometry->value;
+            }
+        }
+        
+        return mesh.GetGeometry();
     }
 }

@@ -165,6 +165,16 @@ namespace GTEngine
     }
 
 
+    bool Model::IsAnimating() const
+    {
+        if (this->currentAnimation != nullptr)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 
     // !!! Animation !!!
     void Model::PlayAnimation(const char* animationName, bool loop)

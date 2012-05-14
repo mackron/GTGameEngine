@@ -137,4 +137,99 @@ namespace GTEngine
 
         return newCollisionShape;
     }
+
+
+    void Mesh::ApplySkinning(VertexArray &destVA)
+    {
+        if (this->geometry != nullptr)
+        {
+            auto srcVertices = this->geometry->MapVertexData();
+            auto dstVertices = destVA.MapVertexData();
+
+            if (this->armature != nullptr)
+            {
+                auto &rootBones = this->armature->GetRootBones();
+                for (size_t iBone = 0; iBone < rootBones.count; ++iBone)
+                {
+                    auto bone = rootBones[iBone];
+                    assert(bone != nullptr);
+
+                    this->ApplySkinning(*rootBones[iBone], this->geometry->GetFormat(), srcVertices, dstVertices);
+                }
+            }
+            else
+            {
+                memcpy(dstVertices, srcVertices, this->geometry->GetFormat().GetSize() * this->geometry->GetVertexCount());
+            }
+
+            this->geometry->UnmapVertexData();
+            destVA.UnmapVertexData();
+        }
+    }
+
+    void Mesh::ApplySkinning(const Bone &bone, const VertexFormat &format, const float* srcVertices, float* dstVertices)
+    {
+        auto vertexSize      = format.GetSize();
+        auto positionOffset  = format.GetAttributeOffset(VertexAttribs::Position);
+        auto normalOffset    = format.GetAttributeOffset(VertexAttribs::Normal);
+        auto tangentOffset   = format.GetAttributeOffset(VertexAttribs::Tangent);
+        auto bitangentOffset = format.GetAttributeOffset(VertexAttribs::Bitangent);
+
+
+        const glm::mat4 &boneTransform       = bone.GetAbsoluteSkinningTransform();
+              //glm::mat3  boneNormalTransform = glm::inverse(glm::transpose(glm::mat3(boneTransform)));
+              glm::mat3  boneNormalTransform = glm::mat3(boneTransform);
+
+        for (size_t i = 0; i < bone.GetWeightCount(); ++i)
+        {
+            auto &weight = bone.GetWeight(i);
+
+            auto srcVertex = srcVertices + (weight.vertexID * vertexSize);
+            auto dstVertex = dstVertices + (weight.vertexID * vertexSize);
+
+            glm::vec4 srcPosition( srcVertex[positionOffset  + 0], srcVertex[positionOffset  + 1], srcVertex[positionOffset  + 2], 1.0f);
+            glm::vec3 srcNormal(   srcVertex[normalOffset    + 0], srcVertex[normalOffset    + 1], srcVertex[normalOffset    + 2]);
+            glm::vec3 srcTangent(  srcVertex[tangentOffset   + 0], srcVertex[tangentOffset   + 1], srcVertex[tangentOffset   + 2]);
+            glm::vec3 srcBitangent(srcVertex[bitangentOffset + 0], srcVertex[bitangentOffset + 1], srcVertex[bitangentOffset + 2]);
+
+            glm::vec4 dstPosition( dstVertex[positionOffset  + 0], dstVertex[positionOffset  + 1], dstVertex[positionOffset  + 2], 1.0f);
+            glm::vec3 dstNormal(   dstVertex[normalOffset    + 0], dstVertex[normalOffset    + 1], dstVertex[normalOffset    + 2]);
+            glm::vec3 dstTangent(  dstVertex[tangentOffset   + 0], dstVertex[tangentOffset   + 1], dstVertex[tangentOffset   + 2]);
+            glm::vec3 dstBitangent(dstVertex[bitangentOffset + 0], dstVertex[bitangentOffset + 1], dstVertex[bitangentOffset + 2]);
+
+            dstPosition  += weight.weight * (boneTransform       * srcPosition);
+            dstNormal    += weight.weight * (boneNormalTransform * srcNormal);
+            dstTangent   += weight.weight * (boneNormalTransform * srcTangent);
+            dstBitangent += weight.weight * (boneNormalTransform * srcBitangent);
+
+
+            // Write the results...
+            dstVertex[positionOffset  + 0] = dstPosition.x;
+            dstVertex[positionOffset  + 1] = dstPosition.y;
+            dstVertex[positionOffset  + 2] = dstPosition.z;
+
+            dstVertex[normalOffset    + 0] = dstNormal.x;
+            dstVertex[normalOffset    + 1] = dstNormal.y;
+            dstVertex[normalOffset    + 2] = dstNormal.z;
+
+            dstVertex[tangentOffset   + 0] = dstTangent.x;
+            dstVertex[tangentOffset   + 1] = dstTangent.y;
+            dstVertex[tangentOffset   + 2] = dstTangent.z;
+
+            dstVertex[bitangentOffset + 0] = dstBitangent.x;
+            dstVertex[bitangentOffset + 1] = dstBitangent.y;
+            dstVertex[bitangentOffset + 2] = dstBitangent.z;
+        }
+
+
+        // Now we need to iterate over the child bones and do the same thing.
+        auto &children = bone.GetChildren();
+        for (size_t iChildBone = 0; iChildBone < children.count; ++iChildBone)
+        {
+            auto childBone = children[iChildBone];
+            assert(childBone != nullptr);
+
+            this->ApplySkinning(*childBone, format, srcVertices, dstVertices);
+        }
+    }
 }

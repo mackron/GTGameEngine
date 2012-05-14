@@ -92,7 +92,18 @@ namespace GTEngine
         ///     Deletes the returned shape with 'delete'.
         btGImpactMeshShape* BuildCollisionShape(const glm::vec3 &scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
+        
+        /// Fills the given vertex array will a skinned version of the base geometry using the current state of the mesh's armature.
+        ///
+        /// @remarks
+        ///     This method asserts that <destination> is already pre-allocated.
+        void ApplySkinning(VertexArray &destination);
 
+
+    private:
+
+        /// Recursively applies the blended geometry of the given bone.
+        void ApplySkinning(const Bone &bone, const VertexFormat &format, const float* srcVertices, float* dstVertices);
 
 
     private:

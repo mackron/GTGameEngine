@@ -40,7 +40,18 @@ namespace GTEngine
 
     void SetBoneData(Bone &outputBone, const aiBone &inputBone)
     {
-        outputBone.SetOffsetMatrix(AssimpToGLM(inputBone.mOffsetMatrix));
+        //outputBone.SetOffsetMatrix(AssimpToGLM(inputBone.mOffsetMatrix));
+
+        aiVector3D   scale;
+        aiQuaternion rotation;
+        aiVector3D   position;
+        inputBone.mOffsetMatrix.Decompose(scale, rotation, position);
+
+        outputBone.SetOffsetMatrix(
+            glm::translate(position.x, position.y, position.z) *
+            glm::mat4_cast(AssimpToGLM(rotation) * glm::angleAxis(90.0f, glm::vec3(1.0f, 0.0f, 0.0f))) *        // <-- TODO: Check if this rotation is a bug in Assimp or Blender.
+            glm::scale(scale.x, scale.y, scale.z));
+
 
         for (unsigned int i = 0; i < inputBone.mNumWeights; ++i)
         {
@@ -52,7 +63,18 @@ namespace GTEngine
     {
         auto newBone = new Bone;
         newBone->SetName(inputNode.mName.C_Str());
-        newBone->SetTransform(AssimpToGLM(inputNode.mTransformation));
+        
+        //newBone->SetTransform(AssimpToGLM(inputNode.mTransformation));
+
+        aiVector3D   scale;
+        aiQuaternion rotation;
+        aiVector3D   position;
+        inputNode.mTransformation.Decompose(scale, rotation, position);
+
+        newBone->SetPosition(AssimpToGLM(position));
+        newBone->SetRotation(AssimpToGLM(rotation));
+        newBone->SetScale(AssimpToGLM(scale));
+
 
         return newBone;
     }
@@ -165,6 +187,8 @@ namespace GTEngine
 
                 this->bones.Add(bone.mName.C_Str(), newBone);
 
+                // TODO: Don't go any higher than the mesh node...
+
                 // Now we need to iterate over the ancestores and make sure we have bones for them.
                 if (node->mParent != nullptr)
                 {
@@ -196,6 +220,8 @@ namespace GTEngine
         // Adds an empty bone based only on a node. This will also add ancestors. If a bone of the same name already exists, this function will do nothing.
         Bone* AddBone(const aiNode &node)
         {
+            // TODO: Don't go any higher than the mesh node.
+
             auto iExistingBone = this->bones.Find(node.mName.C_Str());
             if (iExistingBone == nullptr)
             {

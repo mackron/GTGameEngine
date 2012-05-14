@@ -8,7 +8,7 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Math.hpp>
 
-#include <glm/gtx/string_cast.hpp>
+//#include <glm/gtx/string_cast.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -27,7 +27,9 @@ namespace GTEngine
         cameraNode.MoveForward(-10.0f);
 
         auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/animation-test.dae"));
-        modelComponent->GetModel()->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
+        auto model = modelComponent->GetModel();
+        //model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("materials/troll.material"));
+        model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
 
         // Here we setup the viewport.
         this->renderer.SetClearColour(0.1f, 0.1f, 0.1f);
@@ -39,11 +41,11 @@ namespace GTEngine
         this->scene.AddViewport(this->viewport);
 
         this->scene.AddSceneNode(this->cameraNode);
-        //this->scene.AddSceneNode(this->modelNode);
+        this->scene.AddSceneNode(this->modelNode);
 
         
 
-
+#if 0
         // TESTING.
         //
         // Here we are going to build a chain of scene nodes representing the bones.
@@ -60,10 +62,14 @@ namespace GTEngine
             boneSceneNode->SetName(bone->GetName());
 
 
-            glm::mat4 transform = bone->GetTransform();
+            //glm::mat4 transform = bone->GetTransform();
 
-            boneSceneNode->SetPosition(glm::vec3(transform[3]));
-            boneSceneNode->SetOrientation(glm::quat(transform));
+            //boneSceneNode->SetPosition(glm::vec3(transform[3]));
+            //boneSceneNode->SetOrientation(glm::quat(transform));
+
+            boneSceneNode->SetPosition(bone->GetPosition());
+            boneSceneNode->SetOrientation(bone->GetRotation());
+            boneSceneNode->SetScale(bone->GetScale());
             
             boneSceneNode->SetDataPointer(0, bone);
 
@@ -94,6 +100,7 @@ namespace GTEngine
                 parentSceneNode->AttachChild(*boneSceneNode);
             }
         }
+#endif
 
         modelComponent->GetModel()->PlayAnimation("", true);
     }
@@ -130,6 +137,7 @@ namespace GTEngine
     {
         if (this->GUI.ModelViewport->IsVisible())
         {
+#if 0
             // TESTING
             //
             // We will grab the model and step it's animation.
@@ -137,7 +145,9 @@ namespace GTEngine
                 auto model = this->modelNode.GetComponent<ModelComponent>()->GetModel();
                 assert(model != nullptr);
 
+
                 model->StepAnimation(deltaTimeInSeconds);
+
 
                 // With the animation stepped, we're going to need to update the scene nodes.
                 for (size_t i = 0; i < this->boneSceneNodes.count; ++i)
@@ -145,12 +155,17 @@ namespace GTEngine
                     auto boneSceneNode = this->boneSceneNodes.buffer[i]->value;
                     auto bone = boneSceneNode->GetDataPointer<Bone>(0);
 
-                    glm::mat4 transform = bone->GetTransform();
+                    //glm::mat4 transform = bone->GetTransform();
 
-                    boneSceneNode->SetPosition(glm::vec3(transform[3]));
-                    boneSceneNode->SetOrientation(glm::quat(transform));
+                    //boneSceneNode->SetPosition(glm::vec3(transform[3]));
+                    //boneSceneNode->SetOrientation(glm::quat(transform));
+
+                    boneSceneNode->SetPosition(bone->GetPosition());
+                    boneSceneNode->SetOrientation(bone->GetRotation());
+                    boneSceneNode->SetScale(bone->GetScale());
                 }
             }
+#endif
 
 
             // If the mouse is captured we may need to move the screen around.

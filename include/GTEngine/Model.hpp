@@ -48,6 +48,9 @@ namespace GTEngine
         void GenerateTangentsAndBitangents();
 
 
+        /// Determines whether or not the model is animating. Basically, this is used in determining whether or not the model should have vertex blending applied.
+        bool IsAnimating() const;
+
 
     // Animation.
     public:
