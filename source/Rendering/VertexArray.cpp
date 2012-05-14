@@ -34,7 +34,7 @@ namespace GTEngine
         this->syncinfo.verticesChanged = true;
         this->vertexCount = vertexCount;
 
-        delete this->vertices;
+        delete [] this->vertices;
 
         size_t vertexDataSize = vertexCount * this->format.GetSize();
         this->vertices        = new float[vertexDataSize];
@@ -56,7 +56,7 @@ namespace GTEngine
         this->syncinfo.indicesChanged  = true;
         this->indexCount = indexCount;
 
-        delete this->indices;
+        delete [] this->indices;
         this->indices = new unsigned int[indexCount];
 
         if (indices != nullptr)

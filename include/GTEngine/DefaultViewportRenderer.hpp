@@ -9,6 +9,7 @@
 #include "ShaderParameter.hpp"
 #include "Material.hpp"
 #include "MaterialShaderCache.hpp"
+#include "Mesh.hpp"
 #include "GarbageCollector.hpp"
 #include "Rendering/Framebuffer.hpp"
 #include "Rendering/Renderer.hpp"
@@ -373,6 +374,18 @@ namespace GTEngine
         void DoLightingPass_A1P1(SceneNode* A0, SceneNode* P0, const GTCore::Vector<SceneNode*> &modelNodes);
 
 
+        /// Clears the skinned geometries for the given index.
+        void ClearSkinnedGeometry(size_t index);
+
+        /// Retrieves the vertex array to use with the given mesh.
+        ///
+        /// @param mesh      [in] A reference to the mesh whose vertex array is being retrieved.
+        /// @param animating [in] Whether or not the mesh is being animated. This is used to determine whether or not to retrieve the skinned geometry, or the base geometry.
+        ///
+        /// @remarks
+        ///     Don't use this in the material pass.
+        VertexArray* GetMeshGeometry(Mesh &mesh, bool animating);
+
 
     private:
 
@@ -417,6 +430,9 @@ namespace GTEngine
 
         /// A map containing the metadata of every material.
         GTCore::Map<Material*, MaterialMetadata*> materialMetadata;
+
+        /// A map containing the skinned geometry of animated meshes. This is used to keep track of the vertex array over multiple passes.
+        GTCore::Map<Mesh*, VertexArray*> skinnedGeometry[2];
 
 
         /// The projection matrix. This is updated at the start of each render.

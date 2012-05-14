@@ -112,7 +112,9 @@ namespace GTEngine
                 glm::quat rotation = glm::mix(currentKey->rotation, nextKey->rotation, ratio);
                 glm::vec3 scale    = glm::mix(currentKey->scale,    nextKey->scale,    ratio);
 
-                bone.SetTransform(glm::translate(position) * glm::mat4_cast(rotation) * glm::scale(scale));
+                bone.SetPosition(position);
+                bone.SetRotation(rotation);
+                bone.SetScale(scale);
             }
         }
 
