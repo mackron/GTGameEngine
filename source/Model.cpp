@@ -13,10 +13,9 @@ namespace GTEngine
 
     Model::~Model()
     {
-        // Meshes and Armatures.
+        // Meshes.
         for (size_t i = 0; i < this->meshes.count; ++i)
         {
-            delete this->meshes[i]->GetArmature();
             delete this->meshes[i];
         }
 
@@ -33,48 +32,29 @@ namespace GTEngine
         }
     }
 
-    Mesh* Model::AttachMesh(VertexArray* geometry, Material* material, const Armature* armature)
+
+    Mesh* Model::AttachMesh(VertexArray* geometry, Material* material)
     {
         auto newMesh = new Mesh(geometry, material);
 
-        if (armature != nullptr)
-        {
-            auto &armatureRootBones = armature->GetRootBones();
-            for (size_t i = 0; i < armatureRootBones.count; ++i)
-            {
-                this->AddBoneToMesh(*newMesh, static_cast<BoneWithWeights&>(*armatureRootBones[i]));
-            }
-        }
-
-        
-
-
-
-        /*
-        Armature* newArmature = nullptr;
-
-        // We need to create a copy of the armature.
-        if (armature != nullptr)
-        {
-            newArmature = new Armature;
-
-            auto &armatureRootBones = armature->GetRootBones();
-            for (size_t i = 0; i < armatureRootBones.count; ++i)
-            {
-                auto iBone = this->bones.Find(armatureRootBones[i]->GetName());
-                if (iBone != nullptr)
-                {
-                    newArmature->AddRootBone(*iBone->value);
-                }
-            }
-        }
-
-        // Now we create the mesh object...
-        auto newMesh = new Mesh(geometry, material, newArmature);
-        */
-
-        // We need to keep track of the new mesh...
         this->meshes.PushBack(newMesh);
+
+        return newMesh;
+    }
+
+    Mesh* Model::AttachMesh(VertexArray* geometry, Material* material, const GTCore::Vector<BoneWithWeights*> &bones)
+    {
+        auto newMesh = this->AttachMesh(geometry, material);
+        if (newMesh != nullptr)
+        {
+            for (size_t i = 0; i < bones.count; ++i)
+            {
+                auto bone = static_cast<BoneWithWeights*>(bones[i]);
+                assert(bone != nullptr);
+
+                this->AddBoneToMesh(*newMesh, *bone);
+            }
+        }
 
         return newMesh;
     }
@@ -269,16 +249,7 @@ namespace GTEngine
         auto localBone = iLocalBone->value;
         assert(localBone != nullptr);
 
-        mesh.AttachBoneWeights(*localBone, bone.GetWeightCount(), bone.GetWeightsBuffer());   // <-- First argument: The local bone the mesh will be referencing. Second Argument: The corresponding bone containing the vertex/weight information.
-
-        // TODO: Remove this once we start using non-recursive mode.
-        //
-        // We need to call this recursively on the children.
-        auto &children = bone.GetChildren();
-        for (size_t i = 0; i < children.count; ++i)
-        {
-            this->AddBoneToMesh(mesh, static_cast<BoneWithWeights&>(*children[i]));
-        }
+        mesh.AttachBoneWeights(*localBone, bone.GetWeightCount(), bone.GetWeightsBuffer());
     }
 }
 

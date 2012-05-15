@@ -167,8 +167,8 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    /// Class representing a bone in an armature where the weights are specified as vertex/weight instead of bone/weight. This is only used during
-    /// loading of model data via assimp.
+    /// Class representing a bone where the weights are specified as vertex/weight instead of bone/weight. This is only used during
+    /// loading of model data.
     class BoneWithWeights : public Bone
     {
     public:

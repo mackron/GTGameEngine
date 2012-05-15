@@ -162,7 +162,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Armature.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ArmatureAnimation.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp" />
@@ -245,7 +244,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\ApplicationConfig.cpp" />
-    <ClCompile Include="..\..\..\source\Armature.cpp" />
     <ClCompile Include="..\..\..\source\ArmatureAnimation.cpp" />
     <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Sound.cpp" />

@@ -4,7 +4,6 @@
 
 #include "Rendering/VertexArray.hpp"
 #include "Material.hpp"
-#include "Armature.hpp"
 #include "Physics.hpp"
 #include "Math.hpp"
 #include "SkinningVertexAttribute.hpp"
@@ -52,14 +51,14 @@ namespace GTEngine
 
         /// Default constructor.
         Mesh()
-            : geometry(nullptr), material(nullptr), armature(nullptr),
+            : geometry(nullptr), material(nullptr),
               collisionVA(nullptr), skinningData(nullptr)
         {
         }
 
         /// Constructor.
-        Mesh(VertexArray* geometry, Material* material/*, Armature* armature*/)
-            : geometry(geometry), material(material), armature(/*armature*/nullptr),
+        Mesh(VertexArray* geometry, Material* material)
+            : geometry(geometry), material(material),
               collisionVA(nullptr), skinningData(nullptr)
         {
         }
@@ -67,7 +66,7 @@ namespace GTEngine
         /// Destructor.
         ///
         /// @remarks
-        ///     The destructor does not delete the geometry, material or armature.
+        ///     The destructor does not delete the geometry vertex array or material.
         ~Mesh()
         {
             delete this->collisionVA;
@@ -86,9 +85,6 @@ namespace GTEngine
         /// Sets the material of the mesh.
         void SetMaterial(Material* newMaterial) { this->material = newMaterial; }
 
-        /// Sets the skeleton of the mesh.
-        void SetArmature(Armature* newArmature) { this->armature = newArmature; }
-
 
         /// Retrieves the geometry of the mesh.
               VertexArray* GetGeometry()       { return this->geometry; }
@@ -97,23 +93,6 @@ namespace GTEngine
         /// Retrieves the material of the mesh.
               Material* GetMaterial()       { return this->material; }
         const Material* GetMaterial() const { return this->material; }
-
-        /// Retrieves the armature of the mesh.
-              Armature* GetArmature()       { return this->armature; }
-        const Armature* GetArmature() const { return this->armature; }
-
-
-
-        /// Enables skinning on this mesh.
-        ///
-        /// @param sourceArmature [in] A reference to the source armature, whose bones are made up of BoneWithWeights objects.
-        ///
-        /// @remarks
-        ///     It's important to note that the bones in <sourceArmature> are BoneWithWeights bones. This is because this method needs to know which indices the input bones
-        ///     are refering to.
-        ///     @par
-        ///     This method will create a copy of <sourceArmature> which means it can be safely deleted after calling this method.
-        //void EnableSkinning(const Armature &sourceArmature);
 
 
         /// Attaches the bone weights using a local bone and a source bone.
@@ -141,7 +120,7 @@ namespace GTEngine
         btGImpactMeshShape* BuildCollisionShape(const glm::vec3 &scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
         
-        /// Fills the given vertex array will a skinned version of the base geometry using the current state of the mesh's armature.
+        /// Fills the given vertex array will a skinned version of the base geometry using the current state of the mesh's bones.
         ///
         /// @remarks
         ///     This method asserts that <destination> is already pre-allocated.
@@ -161,9 +140,6 @@ namespace GTEngine
 
         /// The material to use with this mesh.
         Material* material;
-
-        /// The skeleton to use with this mesh for animations.
-        Armature* armature;
 
         /// The vertex array for use with the collision shape.
         btTriangleIndexVertexArray* collisionVA;
