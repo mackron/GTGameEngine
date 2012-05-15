@@ -5,15 +5,14 @@ namespace GTEngine
 {
     Bone::Bone()
         : parent(nullptr), children(),
-          name(), /*transform(),*/ position(), rotation(), scale(1.0f, 1.0f, 1.0f), offsetMatrix(), weights()
+          name(), position(), rotation(), scale(1.0f, 1.0f, 1.0f), offsetMatrix()
     {
     }
 
     Bone::Bone(const Bone &other)
         : parent(nullptr), children(),
-          name(other.name), /*transform(other.transform),*/ position(other.position), rotation(other.rotation), scale(other.scale), offsetMatrix(other.offsetMatrix), weights(other.weights)
+          name(other.name), position(other.position), rotation(other.rotation), scale(other.scale), offsetMatrix(other.offsetMatrix)
     {
-
     }
 
     Bone::~Bone()
@@ -49,17 +48,6 @@ namespace GTEngine
         }
     }
 
-    /*
-    void Bone::SetTransform(const glm::mat4 &transform)
-    {
-        this->transform = transform;
-    }
-
-    const glm::mat4 & Bone::GetTransform() const
-    {
-        return this->transform;
-    }
-    */
 
     const glm::vec3 & Bone::GetPosition() const
     {
@@ -147,20 +135,6 @@ namespace GTEngine
 
 
 
-    /*
-    glm::mat4 Bone::GetAbsoluteTransform() const
-    {
-        if (this->parent != nullptr)
-        {
-            return this->parent->GetAbsoluteTransform() * this->transform;
-        }
-        else
-        {
-            return this->transform;
-        }
-    }
-    */
-
     glm::mat4 Bone::GetTransform() const
     {
         return glm::translate(this->position) * glm::mat4_cast(this->rotation) * glm::scale(this->scale);
@@ -176,7 +150,7 @@ namespace GTEngine
         return glm::translate(position) * glm::mat4_cast(rotation) * glm::scale(scale);
     }
 
-    glm::mat4 Bone::GetAbsoluteSkinningTransform() const
+    glm::mat4 Bone::GetSkinningTransform() const
     {
         glm::mat4 result(this->offsetMatrix);
 
@@ -201,10 +175,7 @@ namespace GTEngine
     }
 
 
-    void Bone::AddWeight(unsigned int vertexID, float weight)
-    {
-        this->weights.PushBack(VertexWeight(vertexID, weight));
-    }
+    
 
 
     Bone* Bone::GetTopLevelBone()
@@ -225,13 +196,40 @@ namespace GTEngine
     void Bone::AccumulateTransform(glm::mat4 &result) const
     {
         result = this->GetTransform() * result;
-        //result = result * this->GetTransform();
 
         if (this->parent != nullptr)
         {
             this->parent->AccumulateTransform(result);
         }
+    }
+}
 
-        //result *= this->transform;
+
+
+
+
+
+// BoneWithWeights
+namespace GTEngine
+{
+    BoneWithWeights::BoneWithWeights()
+        : Bone(), weights()
+    {
+    }
+
+    BoneWithWeights::BoneWithWeights(const BoneWithWeights &other)
+        : Bone(other), weights(other.weights)
+    {
+
+    }
+
+    BoneWithWeights::~BoneWithWeights()
+    {
+    }
+
+
+    void BoneWithWeights::AddWeight(unsigned int vertexID, float weight)
+    {
+        this->weights.PushBack(VertexWeight(vertexID, weight));
     }
 }

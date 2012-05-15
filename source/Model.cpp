@@ -60,7 +60,7 @@ namespace GTEngine
         this->meshes.PushBack(newMesh);
     }
 
-    void Model::CopyAndAttachBones(const GTCore::Dictionary<Bone*> &inputBones)
+    void Model::CopyAndAttachBones(const GTCore::Dictionary<BoneWithWeights*> &inputBones)
     {
         // We do this in two passes. The first pass makes copies but does not link with parents. The second pass will link the bones together.
         for (size_t i = 0; i < inputBones.count; ++i)
@@ -68,7 +68,7 @@ namespace GTEngine
             auto bone = inputBones.buffer[i]->value;
             assert(bone != nullptr);
 
-            auto newBone = new Bone(*bone);
+            auto newBone = new BoneWithWeights(*bone);
             this->bones.Add(newBone->GetName(), newBone);
         }
 

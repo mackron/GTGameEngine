@@ -153,7 +153,7 @@ namespace GTEngine
                 for (size_t i = 0; i < this->boneSceneNodes.count; ++i)
                 {
                     auto boneSceneNode = this->boneSceneNodes.buffer[i]->value;
-                    auto bone = boneSceneNode->GetDataPointer<Bone>(0);
+                    auto bone = boneSceneNode->GetDataPointer<BoneWithWeights>(0);
 
                     //glm::mat4 transform = bone->GetTransform();
 

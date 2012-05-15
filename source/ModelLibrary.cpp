@@ -38,10 +38,8 @@ namespace GTEngine
 
 
 
-    void SetBoneData(Bone &outputBone, const aiBone &inputBone)
+    void SetBoneData(BoneWithWeights &outputBone, const aiBone &inputBone)
     {
-        //outputBone.SetOffsetMatrix(AssimpToGLM(inputBone.mOffsetMatrix));
-
         aiVector3D   scale;
         aiQuaternion rotation;
         aiVector3D   position;
@@ -59,13 +57,11 @@ namespace GTEngine
         }
     }
 
-    Bone* CreateEmptyBone(const aiNode &inputNode)
+    BoneWithWeights* CreateEmptyBone(const aiNode &inputNode)
     {
-        auto newBone = new Bone;
+        auto newBone = new BoneWithWeights;
         newBone->SetName(inputNode.mName.C_Str());
         
-        //newBone->SetTransform(AssimpToGLM(inputNode.mTransformation));
-
         aiVector3D   scale;
         aiQuaternion rotation;
         aiVector3D   position;
@@ -79,7 +75,7 @@ namespace GTEngine
         return newBone;
     }
 
-    Bone* CreateBone(const aiNode &inputNode, const aiBone &inputBone)
+    BoneWithWeights* CreateBone(const aiNode &inputNode, const aiBone &inputBone)
     {
         auto newBone = CreateEmptyBone(inputNode);
         assert(newBone != nullptr);
@@ -176,7 +172,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not search beyond <meshNode> or it's parent.
-        Bone* AddBone(const aiScene &scene, const aiBone &bone)
+        BoneWithWeights* AddBone(const aiScene &scene, const aiBone &bone)
         {
             auto node = FindNodeByName(scene, bone.mName);
             assert(node != nullptr);
@@ -219,7 +215,7 @@ namespace GTEngine
         }
 
         // Adds an empty bone based only on a node. This will also add ancestors. If a bone of the same name already exists, this function will do nothing.
-        Bone* AddBone(const aiNode &node)
+        BoneWithWeights* AddBone(const aiNode &node)
         {
             auto iExistingBone = this->bones.Find(node.mName.C_Str());
             if (iExistingBone == nullptr)
@@ -295,7 +291,7 @@ namespace GTEngine
 
         /// A map of every bone of the model, indexed by it's name. We use a map here to make it easier for avoiding duplication and
         /// also fast lookups.
-        GTCore::Dictionary<Bone*> bones;
+        GTCore::Dictionary<BoneWithWeights*> bones;
 
         /// A map of animations.
         GTCore::Dictionary<ArmatureAnimation*> animations;
@@ -428,7 +424,7 @@ namespace GTEngine
 
 
             // Here is where we build the mesh's armature, if it has one. We need to create the GTEngine bone objects for each applicable node.
-            GTCore::Vector<Bone*> localBones;
+            GTCore::Vector<BoneWithWeights*> localBones;
 
             for (unsigned int iBone = 0; iBone < mesh->mNumBones; ++iBone)
             {
@@ -457,7 +453,7 @@ namespace GTEngine
                     assert(topLevelBone != nullptr);
 
                     // Now we add the top level bone to the armature. The armature will ensure no duplicates are made.
-                    armature->AddRootBone(*topLevelBone);
+                    armature->AddRootBone(static_cast<BoneWithWeights&>(*topLevelBone));
                 }
 
                 // Here we add the armature to the model info..
@@ -554,7 +550,7 @@ namespace GTEngine
                             // We need to retrieve the bone that this channel is modifying. There is a chance this bone is not part of the model's main bone list yet, in
                             // which case we need to add it. We include this instead of ignoring because the application may need the bone information, even though it's
                             // not affecting the mesh itself.
-                            Bone* bone = nullptr;
+                            BoneWithWeights* bone = nullptr;
 
                             auto iBone = modelInfo->bones.Find(channel->mNodeName.C_Str());
                             if (iBone == nullptr)

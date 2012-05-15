@@ -7,6 +7,17 @@
 #include "Armature.hpp"
 #include "Physics.hpp"
 #include "Math.hpp"
+#include "SkinningVertexAttribute.hpp"
+
+namespace GTEngine
+{
+    /// Structure containing the skinning information of a mesh.
+    struct MeshSkinningData
+    {
+        /// A pointer to the buffer containing the skinning vertex attributes for the CPU skinning shader.
+        const SkinningVertexAttribute* skinningVertexAttributes;
+    };
+};
 
 namespace GTEngine
 {
@@ -28,14 +39,14 @@ namespace GTEngine
         /// Default constructor.
         Mesh()
             : geometry(nullptr), material(nullptr), armature(nullptr),
-              collisionVA(nullptr)
+              collisionVA(nullptr), skinningData(nullptr)
         {
         }
 
         /// Constructor.
         Mesh(VertexArray* geometry, Material* material, Armature* armature)
             : geometry(geometry), material(material), armature(armature),
-              collisionVA(nullptr)
+              collisionVA(nullptr), skinningData(nullptr)
         {
         }
 
@@ -77,6 +88,16 @@ namespace GTEngine
         const Armature* GetArmature() const { return this->armature; }
 
 
+        /// Sets the skinning vertex attributes.
+        ///
+        /// @remarks
+        ///     This essentially "enables" skinning.
+        //void SetSkinningVertexAttributes(const SkinningVertexAttribute* skinningVertexAttributes);
+
+        /// Enables skinning on this mesh.
+        void EnableSkinning(Armature &newArmature);
+
+
         /// Generates the tangents and binormals.
         ///
         /// @remarks
@@ -103,7 +124,7 @@ namespace GTEngine
     private:
 
         /// Recursively applies the blended geometry of the given bone.
-        void ApplySkinning(const Bone &bone, const VertexFormat &format, const float* srcVertices, float* dstVertices);
+        void ApplySkinning(const BoneWithWeights &bone, const VertexFormat &format, const float* srcVertices, float* dstVertices);
 
 
     private:
@@ -119,6 +140,9 @@ namespace GTEngine
 
         /// The vertex array for use with the collision shape.
         btTriangleIndexVertexArray* collisionVA;
+
+        /// A pointer to the skinning data of the mesh. This will be set to null if the mesh is not animated.
+        MeshSkinningData* skinningData;
     };
 }
 

@@ -17,7 +17,7 @@ namespace GTEngine
         }
     }
 
-    ArmatureAnimationChannel* ArmatureAnimation::AddChannel(Bone &bone)
+    ArmatureAnimationChannel* ArmatureAnimation::AddChannel(BoneWithWeights &bone)
     {
         auto newChannel = new ArmatureAnimationChannel(bone);
         

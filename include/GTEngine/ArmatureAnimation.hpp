@@ -44,7 +44,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        ArmatureAnimationChannel(Bone &bone)
+        ArmatureAnimationChannel(BoneWithWeights &bone)
             : bone(bone), keys()
         {
         }
@@ -56,7 +56,7 @@ namespace GTEngine
 
 
         /// Retrieves the bone that is affected by this channel.
-        Bone & GetBone() { return this->bone; }
+        BoneWithWeights & GetBone() { return this->bone; }
 
 
         /// Adds a key.
@@ -181,7 +181,7 @@ namespace GTEngine
     private:
 
         /// The bone this channel affects.
-        Bone &bone;
+        BoneWithWeights &bone;
 
         /// The list of keys for this channel. This should be sorted by the time of the channel. Thus, we're going to use a map.
         GTCore::Map<double, ArmatureAnimationKey> keys;
@@ -221,7 +221,7 @@ namespace GTEngine
         /// @param bone [in] A reference to the bone that is affected by the channel.
         ///
         /// @return A pointer to the new animation channel.
-        ArmatureAnimationChannel* AddChannel(Bone &bone);
+        ArmatureAnimationChannel* AddChannel(BoneWithWeights &bone);
 
 
         /// Retrieves the number of channels in the animation.

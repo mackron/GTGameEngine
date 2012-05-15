@@ -167,7 +167,7 @@ namespace GTEngine
         }
     }
 
-    void Mesh::ApplySkinning(const Bone &bone, const VertexFormat &format, const float* srcVertices, float* dstVertices)
+    void Mesh::ApplySkinning(const BoneWithWeights &bone, const VertexFormat &format, const float* srcVertices, float* dstVertices)
     {
         auto vertexSize      = format.GetSize();
         auto positionOffset  = format.GetAttributeOffset(VertexAttribs::Position);
@@ -176,8 +176,7 @@ namespace GTEngine
         auto bitangentOffset = format.GetAttributeOffset(VertexAttribs::Bitangent);
 
 
-        const glm::mat4 &boneTransform       = bone.GetAbsoluteSkinningTransform();
-              //glm::mat3  boneNormalTransform = glm::inverse(glm::transpose(glm::mat3(boneTransform)));
+        const glm::mat4 &boneTransform       = bone.GetSkinningTransform();
               glm::mat3  boneNormalTransform = glm::mat3(boneTransform);
 
         for (size_t i = 0; i < bone.GetWeightCount(); ++i)
@@ -229,7 +228,9 @@ namespace GTEngine
             auto childBone = children[iChildBone];
             assert(childBone != nullptr);
 
-            this->ApplySkinning(*childBone, format, srcVertices, dstVertices);
+            // TEMP.
+            this->ApplySkinning(static_cast<BoneWithWeights&>(*childBone), format, srcVertices, dstVertices);
+            //this->ApplySkinning(*childBone, format, srcVertices, dstVertices);
         }
     }
 }
