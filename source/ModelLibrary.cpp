@@ -298,7 +298,7 @@ namespace GTEngine
         GTCore::Dictionary<BoneWithWeights*> bones;
 
         /// A map of animations.
-        GTCore::Dictionary<ArmatureAnimation*> animations;
+        GTCore::Dictionary<SkeletalAnimation*> animations;
 
 
         /// This keeps track of whether or not we have previously created a model from this info.
@@ -512,7 +512,7 @@ namespace GTEngine
                         auto animation = scene->mAnimations[iAnimation];
                         assert(animation != nullptr);
 
-                        auto newAnimation = new ArmatureAnimation(animation->mName.C_Str());
+                        auto newAnimation = new SkeletalAnimation(animation->mName.C_Str());
 
                         // Duration.
                         if (animation->mTicksPerSecond > 0)

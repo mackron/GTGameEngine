@@ -1,6 +1,6 @@
 
-#ifndef __GTEngine_ArmatureAnimation_hpp_
-#define __GTEngine_ArmatureAnimation_hpp_
+#ifndef __GTEngine_SkeletalAnimation_hpp_
+#define __GTEngine_SkeletalAnimation_hpp_
 
 #include <GTEngine/Bone.hpp>
 #include <GTCore/String.hpp>
@@ -10,12 +10,12 @@
 namespace GTEngine
 {
     /// A transformation key for armature animations.
-    class ArmatureAnimationKey
+    class SkeletalAnimationKey
     {
     public:
 
         /// Constructor.
-        ArmatureAnimationKey(double timeIn, const glm::vec3 &positionIn, const glm::quat &rotationIn, const glm::vec3 &scaleIn)
+        SkeletalAnimationKey(double timeIn, const glm::vec3 &positionIn, const glm::quat &rotationIn, const glm::vec3 &scaleIn)
             : time(timeIn), position(positionIn), rotation(rotationIn), scale(scaleIn)
         {
         }
@@ -39,18 +39,18 @@ namespace GTEngine
 
 
     /// Class representing a channel in an armature animation.
-    class ArmatureAnimationChannel
+    class SkeletalAnimationChannel
     {
     public:
 
         /// Constructor.
-        ArmatureAnimationChannel(Bone &bone)
+        SkeletalAnimationChannel(Bone &bone)
             : bone(bone), keys()
         {
         }
 
         /// Destructor.
-        ~ArmatureAnimationChannel()
+        ~SkeletalAnimationChannel()
         {
         }
 
@@ -62,14 +62,14 @@ namespace GTEngine
         /// Adds a key.
         void AddKey(double time, const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale)
         {
-            this->keys.Add(time, ArmatureAnimationKey(time, position, rotation, scale));
+            this->keys.Add(time, SkeletalAnimationKey(time, position, rotation, scale));
         }
 
         /// Retrieves the number of keys in the animation.
         size_t GetKeyCount() const { return this->keys.count; }
 
         /// Retrieves a reference to the key at the given index.
-        ArmatureAnimationKey & GetKey(size_t index) { return this->keys.buffer[index]->value; }
+        SkeletalAnimationKey & GetKey(size_t index) { return this->keys.buffer[index]->value; }
 
 
         /// Retrieves the time of the first key.
@@ -103,8 +103,8 @@ namespace GTEngine
         /// @param time [in] The animation time.
         void Update(double time)
         {
-            ArmatureAnimationKey* currentKey;
-            ArmatureAnimationKey* nextKey;
+            SkeletalAnimationKey* currentKey;
+            SkeletalAnimationKey* nextKey;
             float ratio;
             if (this->FindKeys(time, currentKey, nextKey, ratio))
             {
@@ -123,7 +123,7 @@ namespace GTEngine
     private:
 
         /// Helper method for retrieving the keys for the current playback time.
-        bool FindKeys(double time, ArmatureAnimationKey* &currentKey, ArmatureAnimationKey* &nextKey, float &ratio)
+        bool FindKeys(double time, SkeletalAnimationKey* &currentKey, SkeletalAnimationKey* &nextKey, float &ratio)
         {
             assert(time >= 0.0);
 
@@ -184,22 +184,22 @@ namespace GTEngine
         Bone &bone;
 
         /// The list of keys for this channel. This should be sorted by the time of the channel. Thus, we're going to use a map.
-        GTCore::Map<double, ArmatureAnimationKey> keys;
+        GTCore::Map<double, SkeletalAnimationKey> keys;
     };
 }
 
 
 namespace GTEngine
 {
-    class ArmatureAnimation
+    class SkeletalAnimation
     {
     public:
 
         /// Constructor.
-        ArmatureAnimation(const char* name);
+        SkeletalAnimation(const char* name);
 
         /// Destructor.
-        ~ArmatureAnimation();
+        ~SkeletalAnimation();
 
 
         /// Retrieves the name of the animation.
@@ -221,7 +221,7 @@ namespace GTEngine
         /// @param bone [in] A reference to the bone that is affected by the channel.
         ///
         /// @return A pointer to the new animation channel.
-        ArmatureAnimationChannel* AddChannel(Bone &bone);
+        SkeletalAnimationChannel* AddChannel(Bone &bone);
 
 
         /// Retrieves the number of channels in the animation.
@@ -231,7 +231,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Use GetChannelCount() for determining the number of channels.
-        ArmatureAnimationChannel & GetChannel(size_t index);
+        SkeletalAnimationChannel & GetChannel(size_t index);
 
 
     // Playback.
@@ -273,7 +273,7 @@ namespace GTEngine
         double durationSeconds;
 
         /// The list of channels affected by this animation.
-        GTCore::Vector<ArmatureAnimationChannel*> channels;
+        GTCore::Vector<SkeletalAnimationChannel*> channels;
 
 
         /// Keeps track of whether or not the animation is currently playing.

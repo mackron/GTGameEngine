@@ -90,14 +90,14 @@ namespace GTEngine
         }
     }
 
-    void Model::CopyAndAddAnimations(const GTCore::Dictionary<ArmatureAnimation*> &inputAnimations)
+    void Model::CopyAndAddAnimations(const GTCore::Dictionary<SkeletalAnimation*> &inputAnimations)
     {
         for (size_t i = 0; i < inputAnimations.count; ++i)
         {
             auto animation = inputAnimations.buffer[i]->value;
             assert(animation != nullptr);
 
-            auto newAnimation = new ArmatureAnimation(animation->GetName());
+            auto newAnimation = new SkeletalAnimation(animation->GetName());
 
             // Duration.
             newAnimation->SetDurationInSeconds(animation->GetDurationInSeconds());
@@ -213,7 +213,7 @@ namespace GTEngine
         }
     }
 
-    ArmatureAnimation* Model::GetCurrentAnimation()
+    SkeletalAnimation* Model::GetCurrentAnimation()
     {
         return this->currentAnimation;
     }
