@@ -299,6 +299,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\ArmatureAnimation.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_Skinning.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -503,6 +506,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ArmatureAnimation.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\CPUVertexShader_Skinning.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -172,7 +172,10 @@ namespace GTEngine
         }
 
 
-        // Adds a bone, including it's ancestors.
+        /// Adds a bone, including it's ancestors.
+        ///
+        /// @remarks
+        ///     This does not search beyond <meshNode> or it's parent.
         Bone* AddBone(const aiScene &scene, const aiBone &bone)
         {
             auto node = FindNodeByName(scene, bone.mName);
@@ -186,8 +189,6 @@ namespace GTEngine
                 assert(newBone != nullptr);
 
                 this->bones.Add(bone.mName.C_Str(), newBone);
-
-                // TODO: Don't go any higher than the mesh node...
 
                 // Now we need to iterate over the ancestores and make sure we have bones for them.
                 if (node->mParent != nullptr)
@@ -220,8 +221,6 @@ namespace GTEngine
         // Adds an empty bone based only on a node. This will also add ancestors. If a bone of the same name already exists, this function will do nothing.
         Bone* AddBone(const aiNode &node)
         {
-            // TODO: Don't go any higher than the mesh node.
-
             auto iExistingBone = this->bones.Find(node.mName.C_Str());
             if (iExistingBone == nullptr)
             {
@@ -494,8 +493,15 @@ namespace GTEngine
         if (iModelInfo == nullptr)
         {
             Assimp::Importer importer;
+            importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_COLORS | aiComponent_LIGHTS | aiComponent_CAMERAS);
 
-            auto scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType | aiProcess_GenSmoothNormals);
+            auto scene = importer.ReadFile(fileName,
+                aiProcess_Triangulate           |
+                aiProcess_JoinIdenticalVertices |
+                aiProcess_SortByPType           |
+                aiProcess_ImproveCacheLocality  |
+                aiProcess_GenSmoothNormals      |
+                aiProcess_RemoveComponent);
             if (scene != nullptr)
             {
                 // We need to recursively read each scene node and attach the meshes where possible.
@@ -545,8 +551,9 @@ namespace GTEngine
                             auto channel = animation->mChannels[iChannel];
                             assert(channel != nullptr);
 
-                            // We need to retrieve the bone that this channel is modifying. There is a chance this bone is not part of the model's main bone list yet. In that case, we need
-                            // to ensure we add it.
+                            // We need to retrieve the bone that this channel is modifying. There is a chance this bone is not part of the model's main bone list yet, in
+                            // which case we need to add it. We include this instead of ignoring because the application may need the bone information, even though it's
+                            // not affecting the mesh itself.
                             Bone* bone = nullptr;
 
                             auto iBone = modelInfo->bones.Find(channel->mNodeName.C_Str());
@@ -561,6 +568,8 @@ namespace GTEngine
                             {
                                 bone = iBone->value;
                             }
+
+                            assert(bone != nullptr);
 
                             auto newChannel = newAnimation->AddChannel(*bone);
                             assert(newChannel != nullptr);

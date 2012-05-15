@@ -44,8 +44,14 @@ namespace GTEngine
         {
         public:
 
-            Vertex(float* data, const VertexFormat &format);
+            Vertex(unsigned int id, float* data, const VertexFormat &format);
            ~Vertex();
+
+            /// Retrieves the ID of the vertex.
+            ///
+            /// @remarks
+            ///     Use this for accessing things like vertex attributes.
+            unsigned int GetID() const;
 
             /// Retrieves a vertex attribute as a vec4/float4.
             ///
@@ -68,6 +74,9 @@ namespace GTEngine
 
 
         private:
+
+            /// The ID of the vertex.
+            unsigned int id;
 
             /// A pointer to the vertex's data.
             float* data;

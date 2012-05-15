@@ -31,7 +31,7 @@ namespace GTEngine
                 memcpy(vertexOutput, vertexInput, this->vertexSizeInFloats * sizeof(float));
 
                 // Now we can process the vertex.
-                Vertex vertex(vertexOutput, this->format);
+                Vertex vertex(i, vertexOutput, this->format);
                 this->ProcessVertex(vertex);
             }
 
@@ -46,13 +46,18 @@ namespace GTEngine
 // CPUVertexShader::Vertex
 namespace GTEngine
 {
-    CPUVertexShader::Vertex::Vertex(float* data, const VertexFormat &format)
-        : data(data), format(format)
+    CPUVertexShader::Vertex::Vertex(unsigned int id, float* data, const VertexFormat &format)
+        : id(id), data(data), format(format)
     {
     }
 
     CPUVertexShader::Vertex::~Vertex()
     {
+    }
+
+    unsigned int CPUVertexShader::Vertex::GetID() const
+    {
+        return this->id;
     }
 
     glm::vec4 CPUVertexShader::Vertex::Get(int attribute)

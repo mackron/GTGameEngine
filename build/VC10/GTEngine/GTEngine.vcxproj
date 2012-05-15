@@ -178,6 +178,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\SpriteComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_SimpleTransform.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_Skinning.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultScene.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp" />
@@ -260,6 +261,7 @@
     <ClCompile Include="..\..\..\source\Components\SpriteComponent.cpp" />
     <ClCompile Include="..\..\..\source\CPUVertexShader.cpp" />
     <ClCompile Include="..\..\..\source\CPUVertexShader_SimpleTransform.cpp" />
+    <ClCompile Include="..\..\..\source\CPUVertexShader_Skinning.cpp" />
     <ClCompile Include="..\..\..\source\DefaultScene.cpp" />
     <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Editor.cpp" />
