@@ -17,7 +17,7 @@ namespace GTEngine
         }
     }
 
-    ArmatureAnimationChannel* ArmatureAnimation::AddChannel(BoneWithWeights &bone)
+    ArmatureAnimationChannel* ArmatureAnimation::AddChannel(Bone &bone)
     {
         auto newChannel = new ArmatureAnimationChannel(bone);
         
@@ -86,6 +86,16 @@ namespace GTEngine
             assert(channel != nullptr);
 
             channel->Update(this->playbackTime);
+        }
+
+        // Now we need to loop over each channel again and update the skinning transformations. It's important that this is done separately from the
+        // loop above to ensure all dependants have been updated beforehand.
+        for (size_t i = 0; i < this->channels.count; ++i)
+        {
+            auto channel = this->channels[i];
+            assert(channel != nullptr);
+
+            channel->GetBone().UpdateSkinningTransform();
         }
     }
 

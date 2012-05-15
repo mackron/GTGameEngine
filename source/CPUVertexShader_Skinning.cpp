@@ -26,9 +26,9 @@ namespace GTEngine
         auto &skinningData = this->skinningVertexAttributes[vertex.GetID()];
 
         glm::vec4 position  = vertex.Get(VertexAttribs::Position);
-        glm::vec4 normal    = vertex.Get(VertexAttribs::Normal);
-        glm::vec4 tangent   = vertex.Get(VertexAttribs::Tangent);
-        glm::vec4 bitangent = vertex.Get(VertexAttribs::Bitangent);
+        glm::vec4 normal    = vertex.Get(VertexAttribs::Normal);    normal.w    = 0.0f;
+        glm::vec4 tangent   = vertex.Get(VertexAttribs::Tangent);   tangent.w   = 0.0f;
+        glm::vec4 bitangent = vertex.Get(VertexAttribs::Bitangent); bitangent.w = 0.0f;
 
         glm::vec4 newPosition(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newNormal(0.0f, 0.0f, 0.0f, 0.0f);
@@ -43,18 +43,22 @@ namespace GTEngine
 
             assert(bone != nullptr);
 
-            glm::mat4 skinningTransform       = bone->GetSkinningTransform();
-            glm::mat3 skinningNormalTransform = glm::mat3(skinningTransform);
+            const glm::mat4 &skinningTransform = bone->GetSkinningTransform();
+            //glm::mat3 skinningNormalTransform = glm::mat3(skinningTransform);
 
-            newPosition  += weight * (skinningTransform       * position);
-            newNormal    += glm::vec4(weight * (skinningNormalTransform * glm::vec3(normal)),    0.0f);
+            newPosition  += weight * (skinningTransform * position);
+            newNormal    += weight * (skinningTransform * normal);
+            newTangent   += weight * (skinningTransform * tangent);
+            newBitangent += weight * (skinningTransform * bitangent);
+
+            /*newNormal    += glm::vec4(weight * (skinningNormalTransform * glm::vec3(normal)),    0.0f);
             newTangent   += glm::vec4(weight * (skinningNormalTransform * glm::vec3(tangent)),   0.0f);
-            newBitangent += glm::vec4(weight * (skinningNormalTransform * glm::vec3(bitangent)), 0.0f);
+            newBitangent += glm::vec4(weight * (skinningNormalTransform * glm::vec3(bitangent)), 0.0f);*/
         }
 
-        vertex.Set(VertexAttribs::Position,  position);
-        vertex.Set(VertexAttribs::Normal,    normal);
-        vertex.Set(VertexAttribs::Tangent,   tangent);
-        vertex.Set(VertexAttribs::Bitangent, bitangent);
+        vertex.Set(VertexAttribs::Position,  newPosition);
+        vertex.Set(VertexAttribs::Normal,    newNormal);
+        vertex.Set(VertexAttribs::Tangent,   newTangent);
+        vertex.Set(VertexAttribs::Bitangent, newBitangent);
     }
 }
