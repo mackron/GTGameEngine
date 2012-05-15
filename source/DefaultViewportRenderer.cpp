@@ -404,9 +404,9 @@ namespace GTEngine
                             auto skinnedGeometry = new VertexArray(VertexArrayUsage_Stream, baseGeometry->GetFormat());
                             skinnedGeometry->SetData(/*baseGeometry->GetVertexDataPtr()*/ nullptr, baseGeometry->GetVertexCount(), baseGeometry->GetIndexDataPtr(), baseGeometry->GetIndexCount());
 
-                            auto skinnedGeometryVertexData = skinnedGeometry->MapVertexData();
-                            memset(skinnedGeometryVertexData, 0, baseGeometry->GetFormat().GetSize() * baseGeometry->GetVertexCount() * sizeof(float));
-                            skinnedGeometry->UnmapVertexData();
+                            //auto skinnedGeometryVertexData = skinnedGeometry->MapVertexData();
+                            //memset(skinnedGeometryVertexData, 0, baseGeometry->GetFormat().GetSize() * baseGeometry->GetVertexCount() * sizeof(float));
+                            //skinnedGeometry->UnmapVertexData();
 
                             // Now that we have skinned geometry vertex array, we need to apply the skinning to it.
                             mesh->ApplySkinning(*skinnedGeometry);

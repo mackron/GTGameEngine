@@ -33,8 +33,24 @@ namespace GTEngine
         }
     }
 
-    void Model::AttachMesh(VertexArray* geometry, Material* material, const Armature* armature)
+    Mesh* Model::AttachMesh(VertexArray* geometry, Material* material, const Armature* armature)
     {
+        auto newMesh = new Mesh(geometry, material);
+
+        if (armature != nullptr)
+        {
+            auto &armatureRootBones = armature->GetRootBones();
+            for (size_t i = 0; i < armatureRootBones.count; ++i)
+            {
+                this->AddBoneToMesh(*newMesh, static_cast<BoneWithWeights&>(*armatureRootBones[i]));
+            }
+        }
+
+        
+
+
+
+        /*
         Armature* newArmature = nullptr;
 
         // We need to create a copy of the armature.
@@ -55,9 +71,12 @@ namespace GTEngine
 
         // Now we create the mesh object...
         auto newMesh = new Mesh(geometry, material, newArmature);
+        */
 
-        // ... and add it to the list.
+        // We need to keep track of the new mesh...
         this->meshes.PushBack(newMesh);
+
+        return newMesh;
     }
 
     void Model::CopyAndAttachBones(const GTCore::Dictionary<BoneWithWeights*> &inputBones)
@@ -234,6 +253,31 @@ namespace GTEngine
         if (this->currentAnimation != nullptr)
         {
             this->currentAnimation->Step(deltaSeconds);
+        }
+    }
+}
+
+
+// PRIVATE
+namespace GTEngine
+{
+    void Model::AddBoneToMesh(Mesh &mesh, const BoneWithWeights &bone)
+    {
+        auto iLocalBone = this->bones.Find(bone.GetName());
+        assert(iLocalBone != nullptr);
+
+        auto localBone = iLocalBone->value;
+        assert(localBone != nullptr);
+
+        mesh.AttachBoneWeights(*localBone, bone.GetWeightCount(), bone.GetWeightsBuffer());   // <-- First argument: The local bone the mesh will be referencing. Second Argument: The corresponding bone containing the vertex/weight information.
+
+        // TODO: Remove this once we start using non-recursive mode.
+        //
+        // We need to call this recursively on the children.
+        auto &children = bone.GetChildren();
+        for (size_t i = 0; i < children.count; ++i)
+        {
+            this->AddBoneToMesh(mesh, static_cast<BoneWithWeights&>(*children[i]));
         }
     }
 }

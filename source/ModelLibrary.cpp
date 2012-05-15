@@ -119,7 +119,6 @@ namespace GTEngine
 
         return FindNodeByName(scene, *scene.mRootNode, name);
     }
-    
 }
 
 
@@ -259,6 +258,8 @@ namespace GTEngine
             for (size_t i = 0; i < this->geometries.count; ++i)
             {
                 model->AttachMesh(this->geometries[i], this->defaultMaterials[i], this->defaultArmatures[i]);
+
+
             }
 
             
@@ -458,9 +459,6 @@ namespace GTEngine
 
                 // Here we add the armature to the model info..
                 model.defaultArmatures.PushBack(armature);
-
-                // Here we'll print the armature bone names for testing...
-                armature->LogInfo();
             }
             else
             {

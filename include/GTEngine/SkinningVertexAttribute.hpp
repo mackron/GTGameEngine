@@ -10,7 +10,7 @@ namespace GTEngine
     /// Structure representing a bone/weight pair that should be applied to a vertex.
     struct BoneWeightPair
     {
-        BoneWeightPair(BoneWithWeights &bone, float weight)
+        BoneWeightPair(const Bone &bone, float weight)
             : bone(&bone), weight(weight)
         {
         }
@@ -20,7 +20,7 @@ namespace GTEngine
         {
         }
 
-        BoneWithWeights* bone;
+        const Bone* bone;
         float weight;
     };
 

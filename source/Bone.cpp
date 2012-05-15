@@ -5,13 +5,15 @@ namespace GTEngine
 {
     Bone::Bone()
         : parent(nullptr), children(),
-          name(), position(), rotation(), scale(1.0f, 1.0f, 1.0f), offsetMatrix()
+          name(), position(), rotation(), scale(1.0f, 1.0f, 1.0f),
+          offsetMatrix(), skinningMatrix()
     {
     }
 
     Bone::Bone(const Bone &other)
         : parent(nullptr), children(),
-          name(other.name), position(other.position), rotation(other.rotation), scale(other.scale), offsetMatrix(other.offsetMatrix)
+          name(other.name), position(other.position), rotation(other.rotation), scale(other.scale),
+          offsetMatrix(other.offsetMatrix), skinningMatrix(other.skinningMatrix)
     {
     }
 
@@ -150,17 +152,16 @@ namespace GTEngine
         return glm::translate(position) * glm::mat4_cast(rotation) * glm::scale(scale);
     }
 
-    glm::mat4 Bone::GetSkinningTransform() const
+
+    void Bone::UpdateSkinningTransform()
     {
-        glm::mat4 result(this->offsetMatrix);
+        this->skinningMatrix = this->GetAbsoluteTransform() * this->offsetMatrix;
+    }
 
-        this->AccumulateTransform(result);
-
-        return result;
-
-
+    const glm::mat4 & Bone::GetSkinningTransform() const
+    {
+        return this->skinningMatrix;
         //return this->GetAbsoluteTransform() * this->offsetMatrix;
-        //return this->offsetMatrix * this->GetAbsoluteTransform();
     }
 
 
@@ -190,21 +191,6 @@ namespace GTEngine
 }
 
 
-// PRIVATE
-namespace GTEngine
-{
-    void Bone::AccumulateTransform(glm::mat4 &result) const
-    {
-        result = this->GetTransform() * result;
-
-        if (this->parent != nullptr)
-        {
-            this->parent->AccumulateTransform(result);
-        }
-    }
-}
-
-
 
 
 
@@ -230,6 +216,6 @@ namespace GTEngine
 
     void BoneWithWeights::AddWeight(unsigned int vertexID, float weight)
     {
-        this->weights.PushBack(VertexWeight(vertexID, weight));
+        this->weights.PushBack(VertexWeightPair(vertexID, weight));
     }
 }

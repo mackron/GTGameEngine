@@ -1,8 +1,29 @@
 
 #include <GTEngine/Mesh.hpp>
+#include <GTEngine/CPUVertexShader_Skinning.hpp>
 
 namespace GTEngine
 {
+    void Mesh::AttachBoneWeights(const Bone &localBone, size_t weightCount, const VertexWeightPair* weightBuffer)
+    {
+        if (weightCount > 0 && weightBuffer != nullptr)
+        {
+            assert(this->geometry != nullptr);  // <-- the meshes geometry must be set beforehand.
+
+            // We first need to ensure we have a skinning data structure.
+            if (this->skinningData == nullptr)
+            {
+                this->skinningData = new MeshSkinningData(this->geometry->GetVertexCount());
+            }
+
+            // At this point we can assert that we have skinning data and we can attach the bone weights to each vertex via the skinning vertex attributes.
+            for (size_t i = 0; i < weightCount; ++i)
+            {
+                this->skinningData->skinningVertexAttributes[weightBuffer[i].vertexID].bones.PushBack(BoneWeightPair(localBone, weightBuffer[i].weight));
+            }
+        }
+    }
+
     bool Mesh::GenerateTangentsAndBitangents()
     {
         auto &format      = this->geometry->GetFormat();
@@ -146,6 +167,19 @@ namespace GTEngine
             auto srcVertices = this->geometry->MapVertexData();
             auto dstVertices = destVA.MapVertexData();
 
+            if (this->skinningData != nullptr)
+            {
+                CPUVertexShader_Skinning shader;
+                shader.SetSkinningVertexAttributes(this->skinningData->skinningVertexAttributes);
+
+                shader.Execute(srcVertices, this->geometry->GetVertexCount(), this->geometry->GetFormat(), dstVertices);
+            }
+            else
+            {
+                memcpy(dstVertices, srcVertices, this->geometry->GetFormat().GetSize() * this->geometry->GetVertexCount());
+            }
+
+            /*
             if (this->armature != nullptr)
             {
                 auto &rootBones = this->armature->GetRootBones();
@@ -154,13 +188,14 @@ namespace GTEngine
                     auto bone = rootBones[iBone];
                     assert(bone != nullptr);
 
-                    this->ApplySkinning(*rootBones[iBone], this->geometry->GetFormat(), srcVertices, dstVertices);
+                    this->ApplySkinning(static_cast<BoneWithWeights&>(*rootBones[iBone]), this->geometry->GetFormat(), srcVertices, dstVertices);
                 }
             }
             else
             {
                 memcpy(dstVertices, srcVertices, this->geometry->GetFormat().GetSize() * this->geometry->GetVertexCount());
             }
+            */
 
             this->geometry->UnmapVertexData();
             destVA.UnmapVertexData();

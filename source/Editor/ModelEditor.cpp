@@ -45,7 +45,7 @@ namespace GTEngine
 
         
 
-#if 1
+#if 0
         // TESTING.
         //
         // Here we are going to build a chain of scene nodes representing the bones.
@@ -137,7 +137,7 @@ namespace GTEngine
     {
         if (this->GUI.ModelViewport->IsVisible())
         {
-#if 1
+#if 0
             // TESTING
             //
             // We will grab the model and step it's animation.

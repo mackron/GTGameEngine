@@ -14,8 +14,22 @@ namespace GTEngine
     /// Structure containing the skinning information of a mesh.
     struct MeshSkinningData
     {
+        /// Constructor.
+        MeshSkinningData(size_t vertexCount)
+            : skinningVertexAttributes(nullptr)
+        {
+            skinningVertexAttributes = new SkinningVertexAttribute[vertexCount];
+        }
+
+        /// Destructor.
+        ~MeshSkinningData()
+        {
+            delete [] this->skinningVertexAttributes;
+        }
+
+
         /// A pointer to the buffer containing the skinning vertex attributes for the CPU skinning shader.
-        const SkinningVertexAttribute* skinningVertexAttributes;
+        SkinningVertexAttribute* skinningVertexAttributes;
     };
 };
 
@@ -44,8 +58,8 @@ namespace GTEngine
         }
 
         /// Constructor.
-        Mesh(VertexArray* geometry, Material* material, Armature* armature)
-            : geometry(geometry), material(material), armature(armature),
+        Mesh(VertexArray* geometry, Material* material/*, Armature* armature*/)
+            : geometry(geometry), material(material), armature(/*armature*/nullptr),
               collisionVA(nullptr), skinningData(nullptr)
         {
         }
@@ -57,6 +71,7 @@ namespace GTEngine
         ~Mesh()
         {
             delete this->collisionVA;
+            delete this->skinningData;
         }
 
 
@@ -88,14 +103,26 @@ namespace GTEngine
         const Armature* GetArmature() const { return this->armature; }
 
 
-        /// Sets the skinning vertex attributes.
-        ///
-        /// @remarks
-        ///     This essentially "enables" skinning.
-        //void SetSkinningVertexAttributes(const SkinningVertexAttribute* skinningVertexAttributes);
 
         /// Enables skinning on this mesh.
-        void EnableSkinning(Armature &newArmature);
+        ///
+        /// @param sourceArmature [in] A reference to the source armature, whose bones are made up of BoneWithWeights objects.
+        ///
+        /// @remarks
+        ///     It's important to note that the bones in <sourceArmature> are BoneWithWeights bones. This is because this method needs to know which indices the input bones
+        ///     are refering to.
+        ///     @par
+        ///     This method will create a copy of <sourceArmature> which means it can be safely deleted after calling this method.
+        //void EnableSkinning(const Armature &sourceArmature);
+
+
+        /// Attaches the bone weights using a local bone and a source bone.
+        ///
+        /// @param localBone    [in] A reference to the bone the mesh will be directly referening when doing skinning.
+        /// @param weightCount  [in] The number of weights in the weight buffer.
+        /// @param weightBuffer [in] A pointer to the buffer containing the vertex/weight pairs.
+        void AttachBoneWeights(const Bone &localBone, size_t weightCount, const VertexWeightPair* weightBuffer);
+
 
 
         /// Generates the tangents and binormals.

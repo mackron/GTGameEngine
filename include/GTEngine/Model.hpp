@@ -23,13 +23,15 @@ namespace GTEngine
 
         /// Attaches a mesh to the model.
         ///
+        /// @return A pointer to the new mesh.
+        ///
         /// @remarks
         ///     The new mesh will use <mesh> and <material> directory, but <armature> will be copied. The reason for this is that the input
         ///     armature will be pointing to different bones.
         ///     @par
         ///     For armatures to work correctly, the bones must have been set first with CopyAndAttachBones(). If this is not the case, the
         ///     armature will be incorrect.
-        void AttachMesh(VertexArray* mesh, Material* material, const Armature* armature);
+        Mesh* AttachMesh(VertexArray* mesh, Material* material, const Armature* armature);
 
         /// Creates copies and attaches a list of bones.
         ///
@@ -81,13 +83,27 @@ namespace GTEngine
         void StepAnimation(double deltaTimeInSeconds);
 
 
+    private:
+
+        /// Private method for recursively attaching a bone to the given mesh.
+        ///
+        /// @param mesh [in] A reference to the mesh whose having the bone information added.
+        /// @param bone [in] A reference to the bone containing the vertex/weight information for the mesh.
+        ///
+        /// @remarks
+        ///     This is called recursively on all of the bone's children.
+        // TODO: This should not be recursive! What happens if there are two bones sharing the same parent, but each bone is for a different mesh? This requires a change in the design or armatures.
+        void AddBoneToMesh(Mesh &mesh, const BoneWithWeights &bone);
+
+
+
     public:
 
         /// The list of meshes making up the model.
         GTCore::Vector<Mesh*> meshes;
 
         /// The list of bones in the model.
-        GTCore::Dictionary<BoneWithWeights*> bones;
+        GTCore::Dictionary<Bone*> bones;
 
         /// The list of animations. The bones referenced in these animations are pointers to the bones in <bones>
         GTCore::Dictionary<ArmatureAnimation*> animations;

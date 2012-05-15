@@ -5,9 +5,6 @@
 #include "Bone.hpp"
 #include <GTCore/Vector.hpp>
 
-// Just for temporary testing.
-#include "Logging.hpp"
-
 namespace GTEngine
 {
     /// Class representing the armature of a mesh.
@@ -32,31 +29,22 @@ namespace GTEngine
 
 
         /// Adds a root level bone.
-        void AddRootBone(BoneWithWeights &rootBone);
+        void AddRootBone(Bone &rootBone);
 
         /// Removes a root level bone.
-        void RemoveRootBone(BoneWithWeights &rootBone);
+        void RemoveRootBone(Bone &rootBone);
 
         /// Retrieves a direct reference to the internal vector containing the root bones.
-              GTCore::Vector<BoneWithWeights*> & GetRootBones()       { return this->rootBones; }
-        const GTCore::Vector<BoneWithWeights*> & GetRootBones() const { return this->rootBones; }
+              GTCore::Vector<Bone*> & GetRootBones()       { return this->rootBones; }
+        const GTCore::Vector<Bone*> & GetRootBones() const { return this->rootBones; }
 
-
-
-        // Testing for debugging.
-        void LogInfo()
-        {
-            for (size_t i = 0; i < this->rootBones.count; ++i)
-            {
-                this->rootBones[i]->LogInfo();
-            }
-        }
 
 
     private:
 
-        /// The list of root level bones.
-        GTCore::Vector<BoneWithWeights*> rootBones;
+        /// The list of root level bones. Whether or not these are simply Bone or BoneWithWeights objects depends on the context in
+        /// which the armature is used.
+        GTCore::Vector<Bone*> rootBones;
     };
 }
 
