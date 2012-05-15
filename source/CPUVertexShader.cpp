@@ -1,10 +1,19 @@
 
 #include <GTEngine/CPUVertexShader.hpp>
+#include <GTCore/Timing.hpp>
+
+// Benchmarking Notes:
+//
+// NOTE: Clear these notes when the test data changes.
+//
+// 16/05/2012 - i7 2600K @ 4.5GHz
+//    Debug   (Pure / SSE): ~0.005sec   / ~0.0001sec   : +50x
+//    Release (Pure / SSE): ~0.00011sec / ~0.000075sec : +1.46x
 
 // Helpers
 namespace GTEngine
 {
-    inline glm::vec4 GetVertexAttribute4(const float* data, size_t componentCount, size_t offset)
+    inline glm::simdVec4 GetVertexAttribute4(const float* data, size_t componentCount, size_t offset)
     {
         if (data != nullptr)
         {
@@ -13,38 +22,39 @@ namespace GTEngine
             // We'll try and be clever here and predict the most common scenarios and put them first.
             if (componentCount == 3)
             {
-                return glm::vec4(data[0], data[1], data[2], 0.0f);
+                return glm::simdVec4(data[0], data[1], data[2], 0.0f);
             }
             else if (componentCount == 2)
             {
-                return glm::vec4(data[0], data[1], 0.0f, 0.0f);
+                return glm::simdVec4(data[0], data[1], 0.0f, 0.0f);
             }
             else if (componentCount == 4)
             {
-                return glm::vec4(data[0], data[1], data[2], data[3]);
+                return glm::simdVec4(data[0], data[1], data[2], data[3]);
             }
             else if (componentCount == 1)
             {
-                return glm::vec4(data[0], 0.0f, 0.0f, 0.0f);
+                return glm::simdVec4(data[0], 0.0f, 0.0f, 0.0f);
             }
             else
             {
-                return glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+                return glm::simdVec4(0.0f, 0.0f, 0.0f, 0.0f);
             }
         }
         else
         {
-            return glm::vec4();
+            return glm::simdVec4();
         }
     }
 
-    inline void SetVertexAttribute4(float* data, size_t componentCount, size_t offset, const glm::vec4 &value)
+    inline void SetVertexAttribute4(float* data, size_t componentCount, size_t offset, const glm::simdVec4 &value)
     {
         if (data != nullptr)
         {
             data += offset;
 
             // As above, we'll try and be clever here and predict the most common scenarios and put them first.
+            /*
             if (componentCount == 3)
             {
                 data[0] = value.x;
@@ -67,8 +77,9 @@ namespace GTEngine
             {
                 data[0] = value.x;
             }
+            */
 
-            /*
+            
             if (componentCount == 3)
             {
                 data[0] = value.Data.m128_f32[0];
@@ -91,13 +102,17 @@ namespace GTEngine
             {
                 data[0] = value.Data.m128_f32[0];
             }
-            */
+            
         }
     }
 }
 
 namespace GTEngine
 {
+    // Temp benchmarker.
+    GTCore::Benchmarker benchmarker;
+
+
     CPUVertexShader::CPUVertexShader()
         : input(nullptr), vertexCount(0), format(), vertexSizeInFloats(format.GetSize()), output(nullptr)
     {
@@ -111,6 +126,9 @@ namespace GTEngine
     {
         if (input != nullptr && output != nullptr)
         {
+            benchmarker.Start();
+
+
             this->input              = input;
             this->vertexCount        = vertexCount;
             this->format             = format;
@@ -164,6 +182,16 @@ namespace GTEngine
                 if (loadBitangent) SetVertexAttribute4(vertexOutput, bitangentComponentCount, bitangentOffset, vertex.Bitangent);
             }
 
+
+            benchmarker.End();
+
+            if (benchmarker.counter == 200)
+            {
+                printf("CPU Vertex Shader Time: %f\n", static_cast<float>(benchmarker.GetAverageTime()));
+                benchmarker.Reset();
+            }
+
+
             return true;
         }
         
@@ -196,7 +224,7 @@ namespace GTEngine
 
     glm::vec4 CPUVertexShader::Vertex::Get(int attribute)
     {
-        glm::vec4 value(0.0f, 0.0f, 0.0f, 1.0f);
+        glm::simdVec4 value(0.0f, 0.0f, 0.0f, 1.0f);
 
         size_t componentCount;
         size_t stride;
@@ -205,8 +233,8 @@ namespace GTEngine
             value = GetVertexAttribute4(this->data, componentCount, stride);
         }
 
-        return glm::vec4(value.x, value.y, value.z, value.w);
-        //return glm::vec4(value.Data.m128_f32[0], value.Data.m128_f32[1], value.Data.m128_f32[2], value.Data.m128_f32[3]);
+        //return glm::vec4(value.x, value.y, value.z, value.w);
+        return glm::vec4(value.Data.m128_f32[0], value.Data.m128_f32[1], value.Data.m128_f32[2], value.Data.m128_f32[3]);
     }
 
     void CPUVertexShader::Vertex::Set(int attribute, float value)
@@ -230,7 +258,7 @@ namespace GTEngine
         size_t stride;
         if (this->format.GetAttributeInfo(attribute, componentCount, stride))
         {
-            SetVertexAttribute4(this->data, componentCount, stride, glm::vec4(value));
+            SetVertexAttribute4(this->data, componentCount, stride, glm::simdVec4(value));
         }
     }
 }

@@ -3,7 +3,6 @@
 
 namespace GTEngine
 {
-    /*
     glm::simdVec4 mul(const glm::simdMat4 &m, const glm::simdVec4 &v)
     {
         return glm::simdVec4(_mm_add_ps(
@@ -11,7 +10,6 @@ namespace GTEngine
             _mm_add_ps(_mm_mul_ps(m[2].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(2,2,2,2))), _mm_mul_ps(m[3].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(3,3,3,3)))))
         );
     }
-    */
 
 
     CPUVertexShader_Skinning::CPUVertexShader_Skinning()
@@ -36,7 +34,7 @@ namespace GTEngine
 
         auto &skinningData = this->skinningVertexAttributes[vertex.GetID()];
 
-        
+        /*
         vertex.Position.w  = 1.0f;
         vertex.Normal.w    = 0.0f;
         vertex.Tangent.w   = 0.0f;
@@ -46,9 +44,9 @@ namespace GTEngine
         glm::vec4 newNormal(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newTangent(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newBitangent(0.0f, 0.0f, 0.0f, 0.0f);
-        
+        */
 
-        /*
+        
         vertex.Position.Data.m128_f32[3]  = 1.0f;
         vertex.Normal.Data.m128_f32[3]    = 0.0f;
         vertex.Tangent.Data.m128_f32[3]   = 0.0f;
@@ -58,7 +56,7 @@ namespace GTEngine
         glm::simdVec4 newNormal(0.0f, 0.0f, 0.0f, 0.0f);
         glm::simdVec4 newTangent(0.0f, 0.0f, 0.0f, 0.0f);
         glm::simdVec4 newBitangent(0.0f, 0.0f, 0.0f, 0.0f);
-        */
+        
         
         
         // For each bone...
@@ -70,22 +68,23 @@ namespace GTEngine
             assert(bone != nullptr);
 
             
+            /*
             const glm::mat4 &skinningTransform = bone->GetSkinningTransform();
             
             newPosition  += weight * (skinningTransform * vertex.Position);
             newNormal    += weight * (skinningTransform * vertex.Normal);
             newTangent   += weight * (skinningTransform * vertex.Tangent);
             newBitangent += weight * (skinningTransform * vertex.Bitangent);
-            
+            */
 
-            /*
+            
             glm::simdMat4 skinningTransform(bone->GetSkinningTransform());
 
             newPosition  += weight * mul(skinningTransform, vertex.Position);
             newNormal    += weight * mul(skinningTransform, vertex.Normal);
             newTangent   += weight * mul(skinningTransform, vertex.Tangent);
             newBitangent += weight * mul(skinningTransform, vertex.Bitangent);
-            */
+            
             
         }
 

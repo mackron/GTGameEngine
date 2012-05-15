@@ -88,11 +88,11 @@ namespace GTEngine
         public:
 
             // The variables below are for fast-access to common attributes.
-            glm::vec4 Position;
-            glm::vec4 TexCoord;
-            glm::vec4 Normal;
-            glm::vec4 Tangent;
-            glm::vec4 Bitangent;
+            glm::simdVec4 Position;
+            glm::simdVec4 TexCoord;
+            glm::simdVec4 Normal;
+            glm::simdVec4 Tangent;
+            glm::simdVec4 Bitangent;
 
 
         private:    // No copying.
