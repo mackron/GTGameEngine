@@ -35,7 +35,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If a bone of the same name already exists, this method will do nothing.
-        void CopyAndAttachBones(const GTCore::Dictionary<Bone*> &bones);
+        void CopyAndAttachBones(const GTCore::Dictionary<BoneWithWeights*> &bones);
 
         /// Creates copies and adds a list of animations.
         void CopyAndAddAnimations(const GTCore::Dictionary<ArmatureAnimation*> &animations);
@@ -87,7 +87,7 @@ namespace GTEngine
         GTCore::Vector<Mesh*> meshes;
 
         /// The list of bones in the model.
-        GTCore::Dictionary<Bone*> bones;
+        GTCore::Dictionary<BoneWithWeights*> bones;
 
         /// The list of animations. The bones referenced in these animations are pointers to the bones in <bones>
         GTCore::Dictionary<ArmatureAnimation*> animations;

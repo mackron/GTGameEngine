@@ -302,6 +302,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_Skinning.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">

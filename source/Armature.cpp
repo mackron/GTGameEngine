@@ -12,7 +12,7 @@ namespace GTEngine
     {
     }
 
-    void Armature::AddRootBone(Bone &bone)
+    void Armature::AddRootBone(BoneWithWeights &bone)
     {
         // Don't add it if it already exists...
         if (!this->rootBones.Exists(&bone))
@@ -21,7 +21,7 @@ namespace GTEngine
         }
     }
 
-    void Armature::RemoveRootBone(Bone &bone)
+    void Armature::RemoveRootBone(BoneWithWeights &bone)
     {
         this->rootBones.RemoveFirst(&bone);
     }

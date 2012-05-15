@@ -234,6 +234,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\UserConfig.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />

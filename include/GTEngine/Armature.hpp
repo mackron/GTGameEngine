@@ -32,14 +32,14 @@ namespace GTEngine
 
 
         /// Adds a root level bone.
-        void AddRootBone(Bone &rootBone);
+        void AddRootBone(BoneWithWeights &rootBone);
 
         /// Removes a root level bone.
-        void RemoveRootBone(Bone &rootBone);
+        void RemoveRootBone(BoneWithWeights &rootBone);
 
         /// Retrieves a direct reference to the internal vector containing the root bones.
-              GTCore::Vector<Bone*> & GetRootBones()       { return this->rootBones; }
-        const GTCore::Vector<Bone*> & GetRootBones() const { return this->rootBones; }
+              GTCore::Vector<BoneWithWeights*> & GetRootBones()       { return this->rootBones; }
+        const GTCore::Vector<BoneWithWeights*> & GetRootBones() const { return this->rootBones; }
 
 
 
@@ -56,7 +56,7 @@ namespace GTEngine
     private:
 
         /// The list of root level bones.
-        GTCore::Vector<Bone*> rootBones;
+        GTCore::Vector<BoneWithWeights*> rootBones;
     };
 }
 
