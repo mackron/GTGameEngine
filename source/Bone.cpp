@@ -161,7 +161,6 @@ namespace GTEngine
     const glm::mat4 & Bone::GetSkinningTransform() const
     {
         return this->skinningMatrix;
-        //return this->GetAbsoluteTransform() * this->offsetMatrix;
     }
 
 

@@ -394,7 +394,7 @@ namespace GTEngine
                         auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
 
                         // This is the pass where the animated geometry needs to be applied, if applicable. To do this, we first check that
-                        // the model is being animated. If so, we need to create a skinned geometry vertex array and calculate build the
+                        // the model is being animated. If so, we need to create a skinned geometry vertex array and calculate the blended
                         // vertex information.
                         if (model->IsAnimating())
                         {
@@ -402,11 +402,7 @@ namespace GTEngine
                             assert(baseGeometry != nullptr);
 
                             auto skinnedGeometry = new VertexArray(VertexArrayUsage_Stream, baseGeometry->GetFormat());
-                            skinnedGeometry->SetData(/*baseGeometry->GetVertexDataPtr()*/ nullptr, baseGeometry->GetVertexCount(), baseGeometry->GetIndexDataPtr(), baseGeometry->GetIndexCount());
-
-                            //auto skinnedGeometryVertexData = skinnedGeometry->MapVertexData();
-                            //memset(skinnedGeometryVertexData, 0, baseGeometry->GetFormat().GetSize() * baseGeometry->GetVertexCount() * sizeof(float));
-                            //skinnedGeometry->UnmapVertexData();
+                            skinnedGeometry->SetData(nullptr, baseGeometry->GetVertexCount(), baseGeometry->GetIndexDataPtr(), baseGeometry->GetIndexCount());
 
                             // Now that we have skinned geometry vertex array, we need to apply the skinning to it.
                             mesh->ApplySkinning(*skinnedGeometry);

@@ -293,9 +293,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Mesh.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Armature.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\ArmatureAnimation.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -503,9 +500,6 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Mesh.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Armature.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ArmatureAnimation.cpp">

@@ -128,9 +128,11 @@ namespace GTEngine
     /// Structure containing information about a loaded model.
     struct LoadedModelInfo
     {
+        // TODO: rename geomtries to meshGeometries and defaultMaterials to meshMaterials. Bit more descriptive that way.
+
         /// Constructor.
         LoadedModelInfo()
-            : geometries(), defaultMaterials(), defaultArmatures(),
+            : geometries(), defaultMaterials(), meshBones(),
               bones(),
               animations(),
               haveCreatedModel(false)
@@ -150,9 +152,9 @@ namespace GTEngine
                 MaterialLibrary::Delete(this->defaultMaterials[i]);
             }
 
-            for (size_t i = 0; i < this->defaultArmatures.count; ++i)
+            for (size_t i = 0; i < this->meshBones.count; ++i)
             {
-                delete this->defaultArmatures[i];
+                delete this->meshBones[i];
             }
 
             for (size_t i = 0; i < this->bones.count; ++i)
@@ -168,9 +170,6 @@ namespace GTEngine
 
 
         /// Adds a bone, including it's ancestors.
-        ///
-        /// @remarks
-        ///     This does not search beyond <meshNode> or it's parent.
         BoneWithWeights* AddBone(const aiScene &scene, const aiBone &bone)
         {
             auto node = FindNodeByName(scene, bone.mName);
@@ -257,9 +256,14 @@ namespace GTEngine
             // Now we need to create the meshes. This must be done after adding the bones.
             for (size_t i = 0; i < this->geometries.count; ++i)
             {
-                model->AttachMesh(this->geometries[i], this->defaultMaterials[i], this->defaultArmatures[i]);
-
-
+                if (this->meshBones[i] != nullptr)
+                {
+                    model->AttachMesh(this->geometries[i], this->defaultMaterials[i], *this->meshBones[i]);
+                }
+                else
+                {
+                    model->AttachMesh(this->geometries[i], this->defaultMaterials[i]);
+                }
             }
 
             
@@ -285,9 +289,8 @@ namespace GTEngine
         /// the mesh at index 0.
         GTCore::Vector<Material*> defaultMaterials;
 
-        /// The list of armatures. There will be one armature pointer for each mesh. If the mesh does not have an armature, the pointer
-        /// will be set to null.
-        GTCore::Vector<Armature*> defaultArmatures;
+        /// The list of bone lists for each mesh. If the mesh does not use any bones, the entry will be set to null.
+        GTCore::Vector<GTCore::Vector<BoneWithWeights*>*> meshBones;
 
 
         /// A map of every bone of the model, indexed by it's name. We use a map here to make it easier for avoiding duplication and
@@ -424,46 +427,28 @@ namespace GTEngine
             }
 
 
-            // Here is where we build the mesh's armature, if it has one. We need to create the GTEngine bone objects for each applicable node.
-            GTCore::Vector<BoneWithWeights*> localBones;
-
-            for (unsigned int iBone = 0; iBone < mesh->mNumBones; ++iBone)
+            // Here is where we create all of the bones for the mesh.
+            if (mesh->mNumBones > 0)
             {
-                auto bone = mesh->mBones[iBone];
-                assert(bone != nullptr);
+                auto localBones = new GTCore::Vector<BoneWithWeights*>;
 
-                auto newBone = model.AddBone(scene, *bone);
-                if (newBone != nullptr)
+                for (unsigned int iBone = 0; iBone < mesh->mNumBones; ++iBone)
                 {
-                    localBones.PushBack(newBone);
-                }
-            }
+                    auto bone = mesh->mBones[iBone];
+                    assert(bone != nullptr);
 
-            // By this stage every bone will be created. We now need to build the armature for this mesh. The way we do this is we loop through each
-            // local bone and find the highest level ancestor. This ancestor will be a root node in the armature.
-            if (localBones.count > 0)
-            {
-                auto armature = new Armature;
-
-                for (size_t iLocalBone = 0; iLocalBone < localBones.count; ++iLocalBone)
-                {
-                    auto localBone = localBones[iLocalBone];
-                    assert(localBone != nullptr);
-
-                    auto topLevelBone = localBone->GetTopLevelBone();   // <-- this will never return nullptr. If the local bone is already the top level, that will be returned.
-                    assert(topLevelBone != nullptr);
-
-                    // Now we add the top level bone to the armature. The armature will ensure no duplicates are made.
-                    armature->AddRootBone(static_cast<BoneWithWeights&>(*topLevelBone));
+                    auto newBone = model.AddBone(scene, *bone);
+                    if (newBone != nullptr)
+                    {
+                        localBones->PushBack(newBone);
+                    }
                 }
 
-                // Here we add the armature to the model info..
-                model.defaultArmatures.PushBack(armature);
+                model.meshBones.PushBack(localBones);
             }
             else
             {
-                // If we don't have any bones, we won't have an armature. We need to push nullptr for the armature.
-                model.defaultArmatures.PushBack(nullptr);
+                model.meshBones.PushBack(nullptr);
             }
         }
 
@@ -623,7 +608,7 @@ namespace GTEngine
     {
         auto model = new Model;
 
-        model->AttachMesh(VertexArrayFactory::CreatePlaneXZ(width, height, format), nullptr, nullptr);
+        model->AttachMesh(VertexArrayFactory::CreatePlaneXZ(width, height, format), nullptr);
 
         return model;
     }

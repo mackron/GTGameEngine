@@ -104,17 +104,6 @@ namespace GTEngine
 
                 // if node is visible.
                 {
-                    // If the node has a model, and that model is animating, we should step the animation.
-                    auto modelComponent = node.GetComponent<ModelComponent>();
-                    if (modelComponent != nullptr)
-                    {
-                        auto model = modelComponent->GetModel();
-                        if (model != nullptr && model->IsAnimating())
-                        {
-                            model->StepAnimation(deltaTimeInSeconds);
-                        }
-                    }
-
                     // Here we let the viewports know about this node.
                     for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
                     {
@@ -243,6 +232,17 @@ namespace GTEngine
 
     void DefaultScene::UpdateNode(SceneNode &node, double deltaTimeInSeconds)
     {
+        // If the node has a model, and that model is animating, we should step the animation.
+        auto modelComponent = node.GetComponent<ModelComponent>();
+        if (modelComponent != nullptr)
+        {
+            auto model = modelComponent->GetModel();
+            if (model != nullptr && model->IsAnimating())
+            {
+                model->StepAnimation(deltaTimeInSeconds);
+            }
+        }
+
         // The node needs to know that it's being updated.
         node.OnUpdate(deltaTimeInSeconds);
     }
