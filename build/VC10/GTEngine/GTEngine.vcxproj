@@ -162,7 +162,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\ArmatureAnimation.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\Sound.hpp" />
@@ -233,6 +232,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SkeletalAnimation.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\UserConfig.hpp" />
@@ -244,7 +244,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\ApplicationConfig.cpp" />
-    <ClCompile Include="..\..\..\source\ArmatureAnimation.cpp" />
     <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Sound.cpp" />
     <ClCompile Include="..\..\..\source\Audio\SoundStreamer.cpp" />
@@ -306,6 +305,7 @@
     <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameter.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp" />
+    <ClCompile Include="..\..\..\source\SkeletalAnimation.cpp" />
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp" />
     <ClCompile Include="..\..\..\source\UserConfig.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp" />

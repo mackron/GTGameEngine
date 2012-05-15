@@ -293,13 +293,13 @@
     <ClInclude Include="..\..\..\include\GTEngine\Mesh.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\ArmatureAnimation.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_Skinning.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SkeletalAnimation.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -502,10 +502,10 @@
     <ClCompile Include="..\..\..\source\Mesh.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\ArmatureAnimation.cpp">
+    <ClCompile Include="..\..\..\source\CPUVertexShader_Skinning.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\CPUVertexShader_Skinning.cpp">
+    <ClCompile Include="..\..\..\source\SkeletalAnimation.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

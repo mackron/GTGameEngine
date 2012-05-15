@@ -1,15 +1,15 @@
 
-#include <GTEngine/ArmatureAnimation.hpp>
+#include <GTEngine/SkeletalAnimation.hpp>
 
 namespace GTEngine
 {
-    ArmatureAnimation::ArmatureAnimation(const char *nameIn)
+    SkeletalAnimation::SkeletalAnimation(const char *nameIn)
         : name(nameIn), durationSeconds(0.0), channels(),
           isPlaying(false), isLooping(true), playbackTime(0.0)
     {
     }
 
-    ArmatureAnimation::~ArmatureAnimation()
+    SkeletalAnimation::~SkeletalAnimation()
     {
         for (size_t i = 0; i < this->channels.count; ++i)
         {
@@ -17,28 +17,28 @@ namespace GTEngine
         }
     }
 
-    ArmatureAnimationChannel* ArmatureAnimation::AddChannel(Bone &bone)
+    SkeletalAnimationChannel* SkeletalAnimation::AddChannel(Bone &bone)
     {
-        auto newChannel = new ArmatureAnimationChannel(bone);
+        auto newChannel = new SkeletalAnimationChannel(bone);
         
         this->channels.PushBack(newChannel);
 
         return newChannel;
     }
 
-    ArmatureAnimationChannel & ArmatureAnimation::GetChannel(size_t index)
+    SkeletalAnimationChannel & SkeletalAnimation::GetChannel(size_t index)
     {
         return *this->channels[index];
     }
 
 
     // !!! Playback !!!
-    void ArmatureAnimation::Play()
+    void SkeletalAnimation::Play()
     {
         this->Play(this->isLooping);
     }
 
-    void ArmatureAnimation::Play(bool loop)
+    void SkeletalAnimation::Play(bool loop)
     {
         this->isPlaying = true;
         this->isLooping = loop;
@@ -51,18 +51,18 @@ namespace GTEngine
         }
     }
 
-    void ArmatureAnimation::Stop()
+    void SkeletalAnimation::Stop()
     {
         this->isPlaying = false;
         this->MoveToFirstKey();
     }
 
-    void ArmatureAnimation::Pause()
+    void SkeletalAnimation::Pause()
     {
         this->isPlaying = false;
     }
 
-    void ArmatureAnimation::Step(double deltaSeconds)
+    void SkeletalAnimation::Step(double deltaSeconds)
     {
         this->playbackTime += deltaSeconds;
 
@@ -101,7 +101,7 @@ namespace GTEngine
 
 
 
-    void ArmatureAnimation::MoveToFirstKey()
+    void SkeletalAnimation::MoveToFirstKey()
     {
         if (this->channels.count > 0)
         {

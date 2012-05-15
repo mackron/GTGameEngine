@@ -3,7 +3,7 @@
 #define __GTEngine_Model_hpp_
 
 #include "Mesh.hpp"
-#include "ArmatureAnimation.hpp"
+#include "SkeletalAnimation.hpp"
 #include <GTCore/Vector.hpp>
 
 namespace GTEngine
@@ -38,7 +38,7 @@ namespace GTEngine
         void CopyAndAttachBones(const GTCore::Dictionary<BoneWithWeights*> &bones);
 
         /// Creates copies and adds a list of animations.
-        void CopyAndAddAnimations(const GTCore::Dictionary<ArmatureAnimation*> &animations);
+        void CopyAndAddAnimations(const GTCore::Dictionary<SkeletalAnimation*> &animations);
 
 
         /// Applies a transformation to the model's geometric data.
@@ -69,8 +69,8 @@ namespace GTEngine
         /// Resumes the animation if it was paused.
         void ResumeAnimation();
 
-        /// Retrieves a pointer to the current ArmatureAnimation object.
-        ArmatureAnimation* GetCurrentAnimation();
+        /// Retrieves a pointer to the current SkeletalAnimation object.
+        SkeletalAnimation* GetCurrentAnimation();
 
         /// Retrieves the name of the current animation.
         const char* GetCurrentAnimationName() const;
@@ -103,10 +103,10 @@ namespace GTEngine
         GTCore::Dictionary<Bone*> bones;
 
         /// The list of animations. The bones referenced in these animations are pointers to the bones in <bones>
-        GTCore::Dictionary<ArmatureAnimation*> animations;
+        GTCore::Dictionary<SkeletalAnimation*> animations;
 
         /// A pointer to the animation that is currently being played. Set to null when no animation is playing.
-        ArmatureAnimation* currentAnimation;
+        SkeletalAnimation* currentAnimation;
     };    
 }
 
