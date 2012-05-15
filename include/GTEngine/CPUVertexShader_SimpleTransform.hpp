@@ -1,6 +1,6 @@
 
-#ifndef __CPUVertexShader_SimpleTransform_hpp_
-#define __CPUVertexShader_SimpleTransform_hpp_
+#ifndef __GTEngine_CPUVertexShader_SimpleTransform_hpp_
+#define __GTEngine_CPUVertexShader_SimpleTransform_hpp_
 
 #include "CPUVertexShader.hpp"
 

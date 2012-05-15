@@ -45,7 +45,7 @@ namespace GTEngine
 
         
 
-#if 0
+#if 1
         // TESTING.
         //
         // Here we are going to build a chain of scene nodes representing the bones.
@@ -137,7 +137,7 @@ namespace GTEngine
     {
         if (this->GUI.ModelViewport->IsVisible())
         {
-#if 0
+#if 1
             // TESTING
             //
             // We will grab the model and step it's animation.
@@ -146,7 +146,7 @@ namespace GTEngine
                 assert(model != nullptr);
 
 
-                model->StepAnimation(deltaTimeInSeconds);
+                //model->StepAnimation(deltaTimeInSeconds);
 
 
                 // With the animation stepped, we're going to need to update the scene nodes.
