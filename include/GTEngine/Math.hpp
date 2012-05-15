@@ -7,11 +7,13 @@
     #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 #define GLM_FORCE_ONLY_XYZW
+#define GLM_FORCE_SSE2
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/orthonormalize.hpp>
+#include <glm/gtx/simd_mat4.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif

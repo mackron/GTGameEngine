@@ -3,6 +3,17 @@
 
 namespace GTEngine
 {
+    /*
+    glm::simdVec4 mul(const glm::simdMat4 &m, const glm::simdVec4 &v)
+    {
+        return glm::simdVec4(_mm_add_ps(
+            _mm_add_ps(_mm_mul_ps(m[0].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(0,0,0,0))), _mm_mul_ps(m[1].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(1,1,1,1)))),
+            _mm_add_ps(_mm_mul_ps(m[2].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(2,2,2,2))), _mm_mul_ps(m[3].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(3,3,3,3)))))
+        );
+    }
+    */
+
+
     CPUVertexShader_Skinning::CPUVertexShader_Skinning()
         : CPUVertexShader(),
           skinningVertexAttributes(nullptr)
@@ -25,15 +36,30 @@ namespace GTEngine
 
         auto &skinningData = this->skinningVertexAttributes[vertex.GetID()];
 
-        glm::vec4 position  = vertex.Get(VertexAttribs::Position);
-        glm::vec4 normal    = vertex.Get(VertexAttribs::Normal);    normal.w    = 0.0f;
-        glm::vec4 tangent   = vertex.Get(VertexAttribs::Tangent);   tangent.w   = 0.0f;
-        glm::vec4 bitangent = vertex.Get(VertexAttribs::Bitangent); bitangent.w = 0.0f;
+        
+        vertex.Position.w  = 1.0f;
+        vertex.Normal.w    = 0.0f;
+        vertex.Tangent.w   = 0.0f;
+        vertex.Bitangent.w = 0.0f;
 
         glm::vec4 newPosition(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newNormal(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newTangent(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newBitangent(0.0f, 0.0f, 0.0f, 0.0f);
+        
+
+        /*
+        vertex.Position.Data.m128_f32[3]  = 1.0f;
+        vertex.Normal.Data.m128_f32[3]    = 0.0f;
+        vertex.Tangent.Data.m128_f32[3]   = 0.0f;
+        vertex.Bitangent.Data.m128_f32[3] = 0.0f;
+
+        glm::simdVec4 newPosition(0.0f, 0.0f, 0.0f, 0.0f);
+        glm::simdVec4 newNormal(0.0f, 0.0f, 0.0f, 0.0f);
+        glm::simdVec4 newTangent(0.0f, 0.0f, 0.0f, 0.0f);
+        glm::simdVec4 newBitangent(0.0f, 0.0f, 0.0f, 0.0f);
+        */
+        
         
         // For each bone...
         for (size_t i = 0; i < skinningData.bones.count; ++i)
@@ -43,22 +69,29 @@ namespace GTEngine
 
             assert(bone != nullptr);
 
+            
             const glm::mat4 &skinningTransform = bone->GetSkinningTransform();
-            //glm::mat3 skinningNormalTransform = glm::mat3(skinningTransform);
+            
+            newPosition  += weight * (skinningTransform * vertex.Position);
+            newNormal    += weight * (skinningTransform * vertex.Normal);
+            newTangent   += weight * (skinningTransform * vertex.Tangent);
+            newBitangent += weight * (skinningTransform * vertex.Bitangent);
+            
 
-            newPosition  += weight * (skinningTransform * position);
-            newNormal    += weight * (skinningTransform * normal);
-            newTangent   += weight * (skinningTransform * tangent);
-            newBitangent += weight * (skinningTransform * bitangent);
+            /*
+            glm::simdMat4 skinningTransform(bone->GetSkinningTransform());
 
-            /*newNormal    += glm::vec4(weight * (skinningNormalTransform * glm::vec3(normal)),    0.0f);
-            newTangent   += glm::vec4(weight * (skinningNormalTransform * glm::vec3(tangent)),   0.0f);
-            newBitangent += glm::vec4(weight * (skinningNormalTransform * glm::vec3(bitangent)), 0.0f);*/
+            newPosition  += weight * mul(skinningTransform, vertex.Position);
+            newNormal    += weight * mul(skinningTransform, vertex.Normal);
+            newTangent   += weight * mul(skinningTransform, vertex.Tangent);
+            newBitangent += weight * mul(skinningTransform, vertex.Bitangent);
+            */
+            
         }
 
-        vertex.Set(VertexAttribs::Position,  newPosition);
-        vertex.Set(VertexAttribs::Normal,    newNormal);
-        vertex.Set(VertexAttribs::Tangent,   newTangent);
-        vertex.Set(VertexAttribs::Bitangent, newBitangent);
+        vertex.Position  = newPosition;
+        vertex.Normal    = newNormal;
+        vertex.Tangent   = newTangent;
+        vertex.Bitangent = newBitangent;
     }
 }

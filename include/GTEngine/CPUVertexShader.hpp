@@ -84,6 +84,17 @@ namespace GTEngine
             /// The format of the vertex.
             const VertexFormat &format;
 
+
+        public:
+
+            // The variables below are for fast-access to common attributes.
+            glm::vec4 Position;
+            glm::vec4 TexCoord;
+            glm::vec4 Normal;
+            glm::vec4 Tangent;
+            glm::vec4 Bitangent;
+
+
         private:    // No copying.
             Vertex(const Vertex &);
             Vertex & operator=(const Vertex &);
