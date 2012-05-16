@@ -34,7 +34,7 @@ namespace GTEngine
         /// Executes the vertex shader.
         ///
         /// @return True if the shader is executed successfully; false otherwise.
-        bool Execute(const float* input, size_t vertexCount, const VertexFormat &format, float* output, size_t threadCount = 4);
+        bool Execute(const float* input, size_t vertexCount, const VertexFormat &format, float* output, size_t threadCount = 1);
 
 
     // Processing.

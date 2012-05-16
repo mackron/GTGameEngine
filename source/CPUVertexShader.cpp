@@ -235,11 +235,8 @@ namespace GTEngine
                 ProcessVertexShaderJob** jobs = new ProcessVertexShaderJob*[threadCount];
 
 
-                // With the helper threads created, we can now divide up the work and start executing.
-                size_t vertexChunkSize = this->vertexCount / (threadCount + 1);
-                size_t firstVertexID   = 0;
-
-                for (size_t i = 0; (i < threadCount) && (firstVertexID < this->vertexCount - 1); ++i)
+                // First we will grab as many threads as we can.
+                for (size_t i = 0; i < threadCount; ++i)
                 {
                     auto thread = ThreadCache::AcquireThread();
                     if (thread != nullptr)
@@ -250,16 +247,6 @@ namespace GTEngine
                         // Now we need a job. We need to keep track of this job so we can delete it later.
                         auto job = new ProcessVertexShaderJob;
                         jobs[i] = job;
-                        
-
-                        size_t lastVertexID = GTCore::Min(firstVertexID + vertexChunkSize, this->vertexCount - 1);
-                        job->SetVertexRange(*this, firstVertexID, lastVertexID);
-                        
-                    
-                        thread->Start(*job, false);     // <-- second argument specifies not to wait for the execution of the current procedure to complete. It will be guaranteed that the thread won't already be running.
-
-                        // We have a new first index.
-                        firstVertexID = lastVertexID + 1;
                     }
                     else
                     {
@@ -267,6 +254,27 @@ namespace GTEngine
                         threadCount = i;
                         break;
                     }
+                }
+
+
+                // With the helper threads created, we can now divide up the work and start executing.
+                size_t vertexChunkSize = this->vertexCount / (threadCount + 1);
+                size_t firstVertexID   = 0;
+
+                for (size_t i = 0; (i < threadCount) && (firstVertexID < this->vertexCount - 1); ++i)
+                {
+                    auto thread = threads[i];
+                    auto job    = jobs[i];
+
+                    assert(thread != nullptr && job != nullptr);
+
+                    size_t lastVertexID = GTCore::Min(firstVertexID + vertexChunkSize, this->vertexCount - 1);
+                    job->SetVertexRange(*this, firstVertexID, lastVertexID);
+                        
+                    thread->Start(*job, false);     // <-- second argument specifies not to wait for the execution of the current procedure to complete. It will be guaranteed that the thread won't already be running.
+
+                    // We have a new first index.
+                    firstVertexID = lastVertexID + 1;
                 }
 
 
