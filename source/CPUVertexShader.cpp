@@ -1,5 +1,6 @@
 
 #include <GTEngine/CPUVertexShader.hpp>
+#include <GTEngine/ThreadCache.hpp>
 #include <GTCore/Timing.hpp>
 
 // Benchmarking Notes:
@@ -144,17 +145,15 @@ namespace GTEngine
     {
     public:
 
-        /// Constructor.
-        /*
-        ProcessVertexShaderJob(CPUVertexShader &shader)
-            : shader(shader), firstVertexID(0), lastVertexID(0)
-        {
-        }
-        */
-
-        /// Constructor.
+        /// Default constructor.
         ProcessVertexShaderJob()
             : shader(nullptr), firstVertexID(0), lastVertexID(0)
+        {
+        }
+
+        /// Constructor.
+        ProcessVertexShaderJob(CPUVertexShader &shader, size_t firstVertexID, size_t lastVertexID)
+            : shader(&shader), firstVertexID(firstVertexID), lastVertexID(lastVertexID)
         {
         }
 
@@ -196,36 +195,13 @@ namespace GTEngine
     // Temp benchmarker.
     GTCore::Benchmarker benchmarker;
 
-    // This is a temporary list of threads for testing how a pool of threads may help.
-    GTCore::Vector<GTCore::Thread*>* ShaderThreadPool = nullptr;
-    GTCore::Vector<ProcessVertexShaderJob*>* ShaderJobPool = nullptr;
-
-
     CPUVertexShader::CPUVertexShader()
         : input(nullptr), vertexCount(0), format(), vertexSizeInFloats(format.GetSize()), output(nullptr)
     {
-        if (ShaderThreadPool == nullptr)
-        {
-            ShaderThreadPool = new GTCore::Vector<GTCore::Thread*>(8);
-            ShaderJobPool    = new GTCore::Vector<ProcessVertexShaderJob*>(8);
-            
-            for (size_t i = 0; i < 8; ++i)
-            {
-                ShaderThreadPool->PushBack(new GTCore::Thread);
-                ShaderJobPool->PushBack(new ProcessVertexShaderJob);
-            }
-        }
     }
 
     CPUVertexShader::~CPUVertexShader()
     {
-        // All threads need to be deleted.
-        /*
-        for (size_t i = 0; i < this->helperThreads.count; ++i)
-        {
-            delete this->helperThreads[i];
-        }
-        */
     }
 
 
@@ -233,7 +209,7 @@ namespace GTEngine
     {
         if (input != nullptr && output != nullptr)
         {
-            benchmarker.Start();
+            //benchmarker.Start();
 
             this->input              = input;
             this->vertexCount        = vertexCount;
@@ -254,22 +230,9 @@ namespace GTEngine
                 // What we do here is modify <threadCount> to store the number of helper threads. That is, the number of thread, not including the calling thread.
                 --threadCount;
 
-                // If we dont already have enough threads, we need to create them.
-                /*
-                for (size_t i = this->helperThreads.count; i < threadCount; ++i)
-                {
-                    this->helperThreads.PushBack(new GTCore::Thread);
-                }
-                */
-
-                // The list of jobs each corresponding to a helper thread.
-                /*
-                GTCore::Vector<ProcessVertexShaderJob*> jobs(threadCount);
-                for (size_t i = 0; i < threadCount; ++i)
-                {
-                    jobs.PushBack(new ProcessVertexShaderJob(*this));
-                }
-                */
+                // This is a temporary buffer containing the threads we've acquired.
+                GTCore::Thread** threads      = new GTCore::Thread*[threadCount];
+                ProcessVertexShaderJob** jobs = new ProcessVertexShaderJob*[threadCount];
 
 
                 // With the helper threads created, we can now divide up the work and start executing.
@@ -278,23 +241,32 @@ namespace GTEngine
 
                 for (size_t i = 0; (i < threadCount) && (firstVertexID < this->vertexCount - 1); ++i)
                 {
-                    //auto thread = this->helperThreads[i];
-                    //auto job    = jobs[i];
-                    auto thread = ShaderThreadPool->Get(i);
-                    auto job    = ShaderJobPool->Get(i);
+                    auto thread = ThreadCache::AcquireThread();
+                    if (thread != nullptr)
+                    {
+                        // We need to keep track of this thread so we can sync and unacquire afterwards.
+                        threads[i] = thread;
 
-                    assert(thread != nullptr && job != nullptr);
+                        // Now we need a job. We need to keep track of this job so we can delete it later.
+                        auto job = new ProcessVertexShaderJob;
+                        jobs[i] = job;
+                        
 
-                    size_t lastVertexID = GTCore::Min(firstVertexID + vertexChunkSize, this->vertexCount - 1);
-                    job->SetVertexRange(*this, firstVertexID, lastVertexID);
+                        size_t lastVertexID = GTCore::Min(firstVertexID + vertexChunkSize, this->vertexCount - 1);
+                        job->SetVertexRange(*this, firstVertexID, lastVertexID);
                         
                     
-                    thread->Start(*job, false);     // <-- second argument specifies not to wait for the execution of the current procedure to complete. It will be guaranteed that the thread won't already be running.
+                        thread->Start(*job, false);     // <-- second argument specifies not to wait for the execution of the current procedure to complete. It will be guaranteed that the thread won't already be running.
 
-                    
-
-                    // We have a new first index.
-                    firstVertexID = lastVertexID + 1;
+                        // We have a new first index.
+                        firstVertexID = lastVertexID + 1;
+                    }
+                    else
+                    {
+                        // If we get here there were not enough available threads. Thus, we will have a new thread count and we need to break and give the remaining vertices to the calling thread.
+                        threadCount = i;
+                        break;
+                    }
                 }
 
 
@@ -305,14 +277,14 @@ namespace GTEngine
                 // Now we need to do a cleanup.
                 for (size_t i = 0; i < threadCount; ++i)
                 {
-                    //this->helperThreads[i]->Wait();
+                    threads[i]->Wait();
+                    ThreadCache::UnacquireThread(threads[i]);
                     
-                    ShaderThreadPool->Get(i)->Wait();
-                    
-
-                    
-                    //delete jobs[i];
+                    delete jobs[i];
                 }
+
+                delete [] jobs;
+                delete [] threads;
             }
             else
             {
@@ -321,35 +293,7 @@ namespace GTEngine
             }
 
 
-
             /*
-            // We need to iterate over each vertex and process it.
-            for (size_t i = 0; i < this->vertexCount; ++i)
-            {
-                // The first step is to copy the vertex data to the output buffer.
-                auto vertexOutput = this->output + (i * this->vertexSizeInFloats);
-                auto vertexInput  = this->input  + (i * this->vertexSizeInFloats);
-                //memcpy(vertexOutput, vertexInput, this->vertexSizeInFloats * sizeof(float));
-
-                // Now we can process the vertex.
-                Vertex vertex(i, vertexOutput, this->format);
-                if (this->usingPosition)  vertex.Position  = GetVertexAttribute4(vertexInput, this->positionComponentCount,  this->positionOffset);
-                if (this->usingTexCoord)  vertex.TexCoord  = GetVertexAttribute4(vertexInput, this->texCoordComponentCount,  this->texCoordOffset);
-                if (this->usingNormal)    vertex.Normal    = GetVertexAttribute4(vertexInput, this->normalComponentCount,    this->normalOffset);
-                if (this->usingTangent)   vertex.Tangent   = GetVertexAttribute4(vertexInput, this->tangentComponentCount,   this->tangentOffset);
-                if (this->usingBitangent) vertex.Bitangent = GetVertexAttribute4(vertexInput, this->bitangentComponentCount, this->bitangentOffset);
-
-                this->ProcessVertex(vertex);
-
-                if (this->usingPosition)  SetVertexAttribute4(vertexOutput, this->positionComponentCount,  this->positionOffset,  vertex.Position);
-                if (this->usingTexCoord)  SetVertexAttribute4(vertexOutput, this->texCoordComponentCount,  this->texCoordOffset,  vertex.TexCoord);
-                if (this->usingNormal)    SetVertexAttribute4(vertexOutput, this->normalComponentCount,    this->normalOffset,    vertex.Normal);
-                if (this->usingTangent)   SetVertexAttribute4(vertexOutput, this->tangentComponentCount,   this->tangentOffset,   vertex.Tangent);
-                if (this->usingBitangent) SetVertexAttribute4(vertexOutput, this->bitangentComponentCount, this->bitangentOffset, vertex.Bitangent);
-            }
-            */
-
-
             benchmarker.End();
 
             if (benchmarker.counter == 200)
@@ -357,7 +301,7 @@ namespace GTEngine
                 printf("CPU Vertex Shader Time: %f\n", static_cast<float>(benchmarker.GetAverageTime()));
                 benchmarker.Reset();
             }
-
+            */
 
             return true;
         }

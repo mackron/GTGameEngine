@@ -9,6 +9,7 @@
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/ModelLibrary.hpp>
+#include <GTEngine/ThreadCache.hpp>
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/IO.hpp>
 
@@ -57,6 +58,11 @@ namespace GTEngine
 
         // We need to initialise our logging stuff before starting up any major sub-systems, such as the renderer.
         Logging::Startup(UserConfig::GetString("LogFile"));
+
+        
+        // Here we'll startup the thread cache. We will do this before starting the sub-systems so that they themselves can do some
+        // multithreaded initialisation if needed.
+        ThreadCache::Startup();
 
 
         // With the log file created, we can startup all of our other sub-systems.
@@ -113,5 +119,8 @@ namespace GTEngine
         // Now we can shutdown the minor sub-systems, remembering to do logging last.
         UserConfig::Shutdown();
         Logging::Shutdown();
+
+        // Thread cache.
+        ThreadCache::Shutdown();
     }
 }
