@@ -5,10 +5,12 @@ namespace GTEngine
 {
     glm::simdVec4 mul(const glm::simdMat4 &m, const glm::simdVec4 &v)
     {
-        return glm::simdVec4(_mm_add_ps(
-            _mm_add_ps(_mm_mul_ps(m[0].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(0,0,0,0))), _mm_mul_ps(m[1].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(1,1,1,1)))),
-            _mm_add_ps(_mm_mul_ps(m[2].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(2,2,2,2))), _mm_mul_ps(m[3].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(3,3,3,3)))))
-        );
+        __m128 v0 = _mm_mul_ps(m[0].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(0,0,0,0)));
+        __m128 v1 = _mm_mul_ps(m[1].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(1,1,1,1)));
+        __m128 v2 = _mm_mul_ps(m[2].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(2,2,2,2)));
+        __m128 v3 = _mm_mul_ps(m[3].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(3,3,3,3)));
+
+        return glm::simdVec4(_mm_add_ps(_mm_add_ps(v0, v1), _mm_add_ps(v2, v3)));
     }
 
 

@@ -4,6 +4,8 @@
 
 #include "Rendering/VertexFormat.hpp"
 #include "Math.hpp"
+#include <GTCore/Vector.hpp>
+#include <GTCore/Threading.hpp>
 
 namespace GTEngine
 {
@@ -32,7 +34,7 @@ namespace GTEngine
         /// Executes the vertex shader.
         ///
         /// @return True if the shader is executed successfully; false otherwise.
-        bool Execute(const float* input, size_t vertexCount, const VertexFormat &format, float* output);
+        bool Execute(const float* input, size_t vertexCount, const VertexFormat &format, float* output, size_t threadCount = 1);
 
 
     // Processing.
@@ -123,6 +125,32 @@ namespace GTEngine
 
         /// The output buffer.
         float* output;
+
+
+        /// The variables below control whether or not the various common vertex attributes are used by the vertex shader.
+        bool usingPosition;
+        bool usingTexCoord;
+        bool usingNormal;
+        bool usingTangent;
+        bool usingBitangent;
+
+        size_t positionComponentCount;
+        size_t positionOffset;
+
+        size_t texCoordComponentCount;
+        size_t texCoordOffset;
+
+        size_t normalComponentCount;
+        size_t normalOffset;
+
+        size_t tangentComponentCount;
+        size_t tangentOffset;
+
+        size_t bitangentComponentCount;
+        size_t bitangentOffset;
+
+
+    friend void ProcessVertexShader(CPUVertexShader &shader, size_t firstVertexID, size_t lastVertexID);
     };
 }
 
