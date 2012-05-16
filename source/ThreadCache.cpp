@@ -25,7 +25,7 @@ namespace GTEngine
         Threads       = new GTCore::Map<GTCore::Thread*, bool>;
         ForcedThreads = new GTCore::Map<GTCore::Thread*, bool>;
 
-        unsigned int threadCount = GTCore::Max(minThreadCount, GTCore::System::GetCPUCount());
+        unsigned int threadCount = GTCore::Max(minThreadCount, GTCore::System::GetCPUCount() - 1);
         for (unsigned int i = 0; i < threadCount; ++i)
         {
             Threads->Add(new GTCore::Thread, false);
