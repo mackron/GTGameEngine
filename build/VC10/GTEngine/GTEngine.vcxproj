@@ -231,6 +231,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\SkeletalAnimation.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ThreadCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\UserConfig.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />
@@ -303,6 +304,7 @@
     <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp" />
     <ClCompile Include="..\..\..\source\SkeletalAnimation.cpp" />
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\ThreadCache.cpp" />
     <ClCompile Include="..\..\..\source\UserConfig.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayLibrary.cpp" />

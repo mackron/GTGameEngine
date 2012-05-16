@@ -437,15 +437,13 @@ namespace GTEngine
         /// The event handler for the main window.
         GameWindowEventHandler windowEventHandler;
 
-        /// The array of threads that the game will use. There will always be at least one thread. That thread will be the
-        /// update thread. The renderer will run on the main thread.
-        GTCore::Thread *threads;
 
         /// A pointer to the update thread. This will point to a member in the 'threads' array.
         GTCore::Thread *updateThread;
 
         /// The job that will do the game updates.
         GTCore::Threading::Job *updateJob;
+
 
         /// The time between the last two frames. Use this for time-based operations.
         double deltaTimeInSeconds;

@@ -6,6 +6,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/GarbageCollector.hpp>
+#include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTCore/System.hpp>
 
@@ -21,7 +22,7 @@ namespace GTEngine
     extern bool IsGameObjectCreated;
 
     Game::Game(int argc, char** argv)
-        : isInitialised(false), closing(false), eventQueue(), eventQueueLock(), window(nullptr), windowEventHandler(*this), threads(nullptr), updateThread(nullptr), updateJob(nullptr), 
+        : isInitialised(false), closing(false), eventQueue(), eventQueueLock(), window(nullptr), windowEventHandler(*this), /*threads(nullptr),*/ updateThread(nullptr), updateJob(nullptr), 
           deltaTimeInSeconds(0.0), updateTimer(), fontServer(nullptr), defaultFont(nullptr),
           gui(nullptr), guiEventHandler(nullptr),
           paused(false), focused(true),
@@ -412,11 +413,9 @@ namespace GTEngine
         this->window = Renderer::CreateGameWindow();
         if (this->window != nullptr)
         {
-            // We need threads. We create a thread for each core. Those, plus the main thread, should work nicely since the main
-            // thread will be running mostly on the GPU, and then there will be additional threads for each logical CPU. Should
-            // probably do some proper testing, though...
-            this->threads      = new GTCore::Thread[GTCore::System::GetCPUCount()];
-            this->updateThread = &this->threads[0];
+            // We'll need to grab the update thread object. We grab this from the thread cache which will have been initialised
+            // in GTEngine::Startup(). It's important that we have a thread here, so we need to force it (first argument = true).
+            this->updateThread = ThreadCache::AcquireThread(true);
 
             // Now the job that will be doing the game update.
             this->updateJob = new GameUpdateJob(*this);
