@@ -83,10 +83,6 @@ namespace GTEngine
         void OnSceneNodeComponentAttached(SceneNode& node, Component& component);
         void OnSceneNodeComponentDetached(SceneNode& node, Component& component);
 
-#if 0
-        void OnSceneNodeStaticChanged(SceneNode& node);
-#endif
-    
 
     private:
 
@@ -95,6 +91,11 @@ namespace GTEngine
         /// Does a pre-update clean of dead nodes, caches, etc. This is the very first function called in Update().
         void DoPreUpdateClean();
 
+        /// Adds culling objects for the given point light.
+        void AddPointLightCullingObjects(PointLightComponent &light);
+
+        /// Removes culling objects for the given point light.
+        void RemovePointLightCullingObjects(PointLightComponent &light);
         
 
 
@@ -103,29 +104,86 @@ namespace GTEngine
         /// Structure containing metadata about a scene node.
         struct SceneNodeMetadata
         {
-            /// The collision object used for picking.
-            CollisionObject pickingObject;
+            /// A pointer to the collision object for the model component. Can be null.
+            CollisionObject* modelCollisionObject;
 
-            /// The collision shape to use with picking. This is a compound object.
-            btCompoundShape pickingShape;
+            /// The collision shape to use with the model. Can be null only if <modelCollisionObject> is also null.
+            btCompoundShape* modelCollisionShape;
+
+
+            /// A pointer to the collision object for the point light component. Can be null.
+            CollisionObject* pointLightCollisionObject;
+
+            /// The collision shape to use with the point light collision object. Can be null only if <pointLightCollisionObject> is also null.
+            btSphereShape* pointLightCollisionShape;
 
 
 
             SceneNodeMetadata()
-                : pickingObject(), pickingShape()
+                : modelCollisionObject(nullptr), modelCollisionShape(nullptr),
+                  pointLightCollisionObject(nullptr), pointLightCollisionShape()
             {
             }
 
             ~SceneNodeMetadata()
             {
-                while (this->pickingShape.getNumChildShapes() > 0)
-                {
-                    auto child = this->pickingShape.getChildShape(0);
-                    this->pickingShape.removeChildShapeByIndex(0);
-
-                    delete child;
-                }
+                this->DeleteModelCollisionObject();
+                this->DeletePointLightCollisionObject();
             }
+
+            /// Allocates the model collision object and shape.
+            void AllocateModelCollisionObject()
+            {
+                this->DeleteModelCollisionObject();
+
+                modelCollisionObject = new CollisionObject;
+                modelCollisionShape  = new btCompoundShape;
+            }
+
+            /// Deletes the model collision object and shape.
+            void DeleteModelCollisionObject()
+            {
+                if (modelCollisionShape != nullptr)
+                {
+                    while (this->modelCollisionShape->getNumChildShapes() > 0)
+                    {
+                        auto child = this->modelCollisionShape->getChildShape(0);
+                        this->modelCollisionShape->removeChildShapeByIndex(0);
+
+                        delete child;
+                    }
+                }
+
+                delete this->modelCollisionObject;
+                delete this->modelCollisionShape;
+
+                this->modelCollisionObject = nullptr;
+                this->modelCollisionShape  = nullptr;
+            }
+
+
+
+            /// Allocates the point light culling object and shape.
+            void AllocatePointLightCollisionObject(float radius)
+            {
+                this->DeletePointLightCollisionObject();
+
+                pointLightCollisionObject = new CollisionObject;
+                pointLightCollisionShape  = new btSphereShape(radius);
+            }
+
+            /// Deletes the point light culling object and shape.
+            void DeletePointLightCollisionObject()
+            {
+                delete this->pointLightCollisionObject;
+                delete this->pointLightCollisionShape;
+
+                this->pointLightCollisionObject = nullptr;
+                this->pointLightCollisionShape  = nullptr;
+            }
+
+
+
 
         private:    // No copying.
             SceneNodeMetadata(const SceneNodeMetadata &);
@@ -148,15 +206,13 @@ namespace GTEngine
         /// The list of directional light components.
         GTCore::List<DirectionalLightComponent*> directionalLightComponents;
 
-        /// TEMP: The list of point light components.
-        GTCore::List<PointLightComponent*> pointLightComponents;
-
 
         /// The dynamics world for everything involving physics and collision detection.
         DynamicsWorld dynamicsWorld; 
 
         /// The collision world that will do occlusion culling and other collision detection functionality. We also use this
-        /// world for picking.
+        /// world for picking. This world contains objects for each relevant component of an entity. The scene distringuishes
+        /// between components types by looking at the collision group.
         CollisionWorld occlusionCollisionWorld;
 
 

@@ -153,6 +153,10 @@ namespace GTEngine
         virtual void OnSceneNodeComponentAttached(SceneNode& node, Component& component);
         virtual void OnSceneNodeComponentDetached(SceneNode& node, Component& component);
 
+        /// Sometimes when a component changes, the scene needs to update some information. An example is when the attenuation of a point light
+        /// changes, the scene may need to update culling information.
+        virtual void OnSceneNodeComponentChanged(SceneNode& node, Component& component);
+
         virtual void OnPause();
         virtual void OnResume();
 
