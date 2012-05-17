@@ -167,6 +167,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Audio\Sound.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundStreamer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Bone.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\CollisionGroups.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Component.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\CameraComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\DynamicsComponent.hpp" />

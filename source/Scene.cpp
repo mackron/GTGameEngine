@@ -64,6 +64,10 @@ namespace GTEngine
     {
     }
 
+    void Scene::OnSceneNodeComponentChanged(SceneNode &, Component &)
+    {
+    }
+
     void Scene::OnPause()
     {
     }

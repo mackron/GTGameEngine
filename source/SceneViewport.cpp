@@ -123,7 +123,8 @@ namespace GTEngine
 
 
             // TESTING
-            printf("Model Count: %d\n", this->modelComponents.count);
+            //printf("Point Light Count: %d\n", this->pointLightComponents.count);
+            //printf("Model Count: %d\n", this->modelComponents.count);
         }
     }
 

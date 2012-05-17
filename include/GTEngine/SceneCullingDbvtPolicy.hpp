@@ -8,6 +8,8 @@
 namespace GTEngine
 {
     class SceneNode;
+    class ModelComponent;
+    class PointLightComponent;
 
     /// The Dbvt collision policy to use for scene node culling.
     ///
@@ -30,7 +32,13 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will be called for each collision object, meaning it is possible that it will be called multiple times for a single scene node.
-        virtual void ProcessSceneNode(SceneNode &) {};
+        //virtual void ProcessSceneNode(SceneNode &) {};
+
+        /// Virtual function that will be called for every visible model component.
+        virtual void ProcessModel(ModelComponent &) {}
+
+        /// Virtual function that will be called for every visible point light component.
+        virtual void ProcessPointLight(PointLightComponent &) {}
 
 
 
