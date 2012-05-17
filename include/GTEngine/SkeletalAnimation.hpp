@@ -9,6 +9,22 @@
 
 namespace GTEngine
 {
+    // Workaround for glm::tquat<T>::mix().
+    template <typename T>
+    GLM_FUNC_QUALIFIER glm::detail::tquat<T> mix
+	(
+		glm::detail::tquat<T> const & x, 
+		glm::detail::tquat<T> const & y, 
+		T const & a
+	)
+    {
+		return glm::normalize(x * glm::pow(glm::inverse(x) * y, a));
+	}
+}
+
+
+namespace GTEngine
+{
     /// A transformation key for armature animations.
     class SkeletalAnimationKey
     {
@@ -109,7 +125,7 @@ namespace GTEngine
             if (this->FindKeys(time, currentKey, nextKey, ratio))
             {
                 glm::vec3 position = glm::mix(currentKey->position, nextKey->position, ratio);
-                glm::quat rotation = glm::mix(currentKey->rotation, nextKey->rotation, ratio);
+                glm::quat rotation =      mix(currentKey->rotation, nextKey->rotation, ratio);
                 glm::vec3 scale    = glm::mix(currentKey->scale,    nextKey->scale,    ratio);
 
                 bone.SetPosition(position);

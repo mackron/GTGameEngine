@@ -67,15 +67,24 @@ namespace GTEngine
         /// Scene::RayTest()
         SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd);
 
+
+    // Occlusion.
+    public:
+
+        /// Scene::GetVisibleNodes(const SceneViewport &);
+        void AddVisibleComponents(SceneViewport &viewport);
+
+
     public:
 
         void OnSceneNodeTransform(SceneNode &node);
         void OnSceneNodeScale(SceneNode &node);
 
-#if 0
-        void OnSceneNodeStaticChanged(SceneNode& node);
         void OnSceneNodeComponentAttached(SceneNode& node, Component& component);
         void OnSceneNodeComponentDetached(SceneNode& node, Component& component);
+
+#if 0
+        void OnSceneNodeStaticChanged(SceneNode& node);
 #endif
     
 
@@ -85,6 +94,8 @@ namespace GTEngine
 
         /// Does a pre-update clean of dead nodes, caches, etc. This is the very first function called in Update().
         void DoPreUpdateClean();
+
+        
 
 
     private:
@@ -129,6 +140,16 @@ namespace GTEngine
 
         /// The list of nodes in the viewport. This is a flat list for now, but will be optimized later.
         GTCore::List<SceneNode*> nodes;
+
+
+        /// The list of ambient light components.
+        GTCore::List<AmbientLightComponent*> ambientLightComponents;
+
+        /// The list of directional light components.
+        GTCore::List<DirectionalLightComponent*> directionalLightComponents;
+
+        /// TEMP: The list of point light components.
+        GTCore::List<PointLightComponent*> pointLightComponents;
 
 
         /// The dynamics world for everything involving physics and collision detection.

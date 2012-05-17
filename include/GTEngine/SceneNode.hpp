@@ -557,13 +557,20 @@ namespace GTEngine
         {
             return static_cast<T*>(this->GetComponentByName(T::Name));
         }
+
+        template <typename T>
+        const T* GetComponent() const
+        {
+            return static_cast<const T*>(this->GetComponentByName(T::Name));
+        }
+
         
         /**
         *   \brief            Retrievse a component based on it's name.
         *   \param  name [in] The name of the component to retrieve.
         *   \return           A pointer to the component whose name is that of 'name'. Returns null if no such component exists.
         */
-        Component * GetComponentByName(const char *name)
+        Component* GetComponentByName(const char *name)
         {
             auto item = this->components.Find(name);
             if (item != nullptr)
@@ -573,6 +580,12 @@ namespace GTEngine
 
             return nullptr;
         }
+
+        const Component* GetComponentByName(const char* name) const
+        {
+            return const_cast<SceneNode*>(this)->GetComponentByName(name);
+        }
+
         
         /**
         *   \brief  Adds a component of the type given by 'T'.

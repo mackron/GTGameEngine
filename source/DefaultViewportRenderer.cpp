@@ -227,10 +227,10 @@ namespace GTEngine
 
 
             // We need to iterate over the renderable scene nodes and draw them.
-            auto &modelNodes            = this->owner->GetModelNodes();
-            auto &ambientLightNodes     = this->owner->GetAmbientLightNodes();
-            auto &directionalLightNodes = this->owner->GetDirectionalLightNodes();
-            auto &pointLightNodes       = this->owner->GetPointLightNodes();
+            auto &modelNodes                 = this->owner->GetModelComponents();
+            auto &ambientLightComponents     = this->owner->GetAmbientLightComponents();
+            auto &directionalLightComponents = this->owner->GetDirectionalLightComponents();
+            auto &pointLightNodes            = this->owner->GetPointLightComponents();
 
 
             // First we'll grab the render command objects we'll be adding to the back buffer.
@@ -247,7 +247,7 @@ namespace GTEngine
             this->DoMaterialPass(modelNodes);
 
             // Step 3: The lighting pass.
-            this->DoLightingPass(modelNodes, ambientLightNodes, directionalLightNodes, pointLightNodes);
+            this->DoLightingPass(modelNodes, ambientLightComponents, directionalLightComponents, pointLightNodes);
 
             // Step 4: End the frame.
             rcEnd.Init(this->framebuffer);
@@ -364,20 +364,17 @@ namespace GTEngine
         return shader;
     }
 
-    void DefaultViewportRenderer::DoMaterialPass(const GTCore::Vector<SceneNode*> &modelNodes)
+    void DefaultViewportRenderer::DoMaterialPass(const GTCore::Vector<ModelComponent*> &models)
     {
-        for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
+        for (size_t iComponent = 0; iComponent < models.count; ++iComponent)
         {
-            auto modelNode = modelNodes[iNode];
-            assert(modelNode != nullptr);
-            
-            auto modelComponent = modelNode->GetComponent<ModelComponent>();
+            auto modelComponent = models[iComponent];
             assert(modelComponent != nullptr);
 
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelNode->GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
@@ -454,10 +451,10 @@ namespace GTEngine
         }
     }
 
-    void DefaultViewportRenderer::DoLightingPass(const GTCore::Vector<SceneNode*> &modelNodes,
-                                                 const GTCore::Vector<SceneNode*> &ambientLightNodes,
-                                                 const GTCore::Vector<SceneNode*> &directionalLightNodes,
-                                                 const GTCore::Vector<SceneNode*> &pointLightNodes)
+    void DefaultViewportRenderer::DoLightingPass(const GTCore::Vector<ModelComponent*> &modelNodes,
+                                                 const GTCore::Vector<AmbientLightComponent*> &ambientLightNodes,
+                                                 const GTCore::Vector<DirectionalLightComponent*> &directionalLightNodes,
+                                                 const GTCore::Vector<PointLightComponent*> &pointLightNodes)
     {
         auto &rc = this->RenderCommands.rcBeginLighting[this->backRCIndex];
         rc.SetFramebuffer(this->framebuffer);
@@ -506,12 +503,9 @@ namespace GTEngine
         }
     }
 
-    void DefaultViewportRenderer::DoLightingPass_A1(SceneNode* lightNode, const GTCore::Vector<SceneNode*> &modelNodes)
+    void DefaultViewportRenderer::DoLightingPass_A1(AmbientLightComponent* A0, const GTCore::Vector<ModelComponent*> &models)
     {
-        assert(lightNode != nullptr);
-
-        auto lightComponent = lightNode->GetComponent<AmbientLightComponent>();
-        assert(lightComponent != nullptr);
+        assert(A0 != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
@@ -519,18 +513,15 @@ namespace GTEngine
 
         Renderer::BackRCQueue->Append(rc);
 
-        for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
+        for (size_t iComponent = 0; iComponent < models.count; ++iComponent)
         {
-            auto modelNode = modelNodes[iNode];
-            assert(modelNode != nullptr);
-            
-            auto modelComponent = modelNode->GetComponent<ModelComponent>();
+            auto modelComponent = models[iComponent];
             assert(modelComponent != nullptr);
 
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 MVPMatrix    = this->projection * (this->view * modelNode->GetWorldTransformMatrix());
+                glm::mat4 MVPMatrix    = this->projection * (this->view * modelComponent->GetNode().GetWorldTransformMatrix());
                 glm::mat3 NormalMatrix = glm::inverse(glm::transpose(glm::mat3(MVPMatrix)));
 
                 for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
@@ -542,7 +533,7 @@ namespace GTEngine
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
                     rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
-                    rc.SetParameter("ALights[0].Colour", lightComponent->GetColour());
+                    rc.SetParameter("ALights[0].Colour", A0->GetColour());
 
                     rc.SetParameter("MVPMatrix",    MVPMatrix);
                     rc.SetParameter("NormalMatrix", NormalMatrix);
@@ -553,12 +544,10 @@ namespace GTEngine
         }
     }
 
-    void DefaultViewportRenderer::DoLightingPass_D1(SceneNode* lightNode, const GTCore::Vector<SceneNode*> &modelNodes)
+    void DefaultViewportRenderer::DoLightingPass_D1(DirectionalLightComponent *D0, const GTCore::Vector<ModelComponent*> &models)
     {
-        assert(lightNode != nullptr);
+        assert(D0 != nullptr);
 
-        auto lightComponent = lightNode->GetComponent<DirectionalLightComponent>();
-        assert(lightComponent != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
@@ -566,18 +555,15 @@ namespace GTEngine
 
         Renderer::BackRCQueue->Append(rc);
 
-        for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
+        for (size_t iComponent = 0; iComponent < models.count; ++iComponent)
         {
-            auto modelNode = modelNodes[iNode];
-            assert(modelNode != nullptr);
-            
-            auto modelComponent = modelNode->GetComponent<ModelComponent>();
+            auto modelComponent = models[iComponent];
             assert(modelComponent != nullptr);
 
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelNode->GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
@@ -590,8 +576,8 @@ namespace GTEngine
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
                     rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
-                    rc.SetParameter("DLights[0].Colour",    lightComponent->GetColour());
-                    rc.SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * lightNode->GetForwardVector()));
+                    rc.SetParameter("DLights[0].Colour",    D0->GetColour());
+                    rc.SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * D0->GetNode().GetForwardVector()));
 
                     rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
                     rc.SetParameter("MVPMatrix",       MVPMatrix);
@@ -603,12 +589,9 @@ namespace GTEngine
         }
     }
 
-    void DefaultViewportRenderer::DoLightingPass_P1(SceneNode* lightNode, const GTCore::Vector<SceneNode*> &modelNodes)
+    void DefaultViewportRenderer::DoLightingPass_P1(PointLightComponent* P0, const GTCore::Vector<ModelComponent*> &models)
     {
-        assert(lightNode != nullptr);
-
-        auto lightComponent = lightNode->GetComponent<PointLightComponent>();
-        assert(lightComponent != nullptr);
+        assert(P0 != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
@@ -616,18 +599,15 @@ namespace GTEngine
 
         Renderer::BackRCQueue->Append(rc);
 
-        for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
+        for (size_t iComponent = 0; iComponent < models.count; ++iComponent)
         {
-            auto modelNode = modelNodes[iNode];
-            assert(modelNode != nullptr);
-            
-            auto modelComponent = modelNode->GetComponent<ModelComponent>();
+            auto modelComponent = models[iComponent];
             assert(modelComponent != nullptr);
 
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelNode->GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
@@ -640,11 +620,11 @@ namespace GTEngine
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
                     rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
-                    rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(lightNode->GetWorldPosition(), 1.0f)));
-                    rc.SetParameter("PLights[0].Colour",               lightComponent->GetColour());
-                    rc.SetParameter("PLights[0].ConstantAttenuation",  lightComponent->GetConstantAttenuation());
-                    rc.SetParameter("PLights[0].LinearAttenuation",    lightComponent->GetLinearAttenuation());
-                    rc.SetParameter("PLights[0].QuadraticAttenuation", lightComponent->GetQuadraticAttenuation());
+                    rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
+                    rc.SetParameter("PLights[0].Colour",               P0->GetColour());
+                    rc.SetParameter("PLights[0].ConstantAttenuation",  P0->GetConstantAttenuation());
+                    rc.SetParameter("PLights[0].LinearAttenuation",    P0->GetLinearAttenuation());
+                    rc.SetParameter("PLights[0].QuadraticAttenuation", P0->GetQuadraticAttenuation());
                     
                     rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
                     rc.SetParameter("MVPMatrix",       MVPMatrix);
@@ -657,16 +637,10 @@ namespace GTEngine
     }
 
 
-    void DefaultViewportRenderer::DoLightingPass_A1D1(SceneNode* A0, SceneNode* D0, const GTCore::Vector<SceneNode*> &modelNodes)
+    void DefaultViewportRenderer::DoLightingPass_A1D1(AmbientLightComponent* A0, DirectionalLightComponent* D0, const GTCore::Vector<ModelComponent*> &models)
     {
         assert(A0 != nullptr);
         assert(D0 != nullptr);
-
-        auto ambientLightComponent     = A0->GetComponent<AmbientLightComponent>();
-        auto directionalLightComponent = D0->GetComponent<DirectionalLightComponent>();
-
-        assert(ambientLightComponent     != nullptr);
-        assert(directionalLightComponent != nullptr);
 
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
@@ -675,18 +649,15 @@ namespace GTEngine
 
         Renderer::BackRCQueue->Append(rc);
 
-        for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
+        for (size_t iComponent = 0; iComponent < models.count; ++iComponent)
         {
-            auto modelNode = modelNodes[iNode];
-            assert(modelNode != nullptr);
-            
-            auto modelComponent = modelNode->GetComponent<ModelComponent>();
+            auto modelComponent = models[iComponent];
             assert(modelComponent != nullptr);
 
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelNode->GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
@@ -699,10 +670,10 @@ namespace GTEngine
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
                     rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
-                    rc.SetParameter("ALights[0].Colour",    ambientLightComponent->GetColour());
+                    rc.SetParameter("ALights[0].Colour",    A0->GetColour());
 
-                    rc.SetParameter("DLights[0].Colour",    directionalLightComponent->GetColour());
-                    rc.SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * D0->GetForwardVector()));
+                    rc.SetParameter("DLights[0].Colour",    D0->GetColour());
+                    rc.SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * D0->GetNode().GetForwardVector()));
 
                     rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
                     rc.SetParameter("MVPMatrix",       MVPMatrix);
@@ -714,17 +685,10 @@ namespace GTEngine
         }
     }
 
-    void DefaultViewportRenderer::DoLightingPass_A1P1(SceneNode* A0, SceneNode* P0, const GTCore::Vector<SceneNode*> &modelNodes)
+    void DefaultViewportRenderer::DoLightingPass_A1P1(AmbientLightComponent* A0, PointLightComponent* P0, const GTCore::Vector<ModelComponent*> &models)
     {
         assert(A0 != nullptr);
         assert(P0 != nullptr);
-
-        auto ambientLightComponent = A0->GetComponent<AmbientLightComponent>();
-        auto pointLightComponent   = P0->GetComponent<PointLightComponent>();
-
-        assert(ambientLightComponent != nullptr);
-        assert(pointLightComponent   != nullptr);
-
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
         auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
@@ -732,18 +696,15 @@ namespace GTEngine
 
         Renderer::BackRCQueue->Append(rc);
 
-        for (size_t iNode = 0; iNode < modelNodes.count; ++iNode)
+        for (size_t iComponent = 0; iComponent < models.count; ++iComponent)
         {
-            auto modelNode = modelNodes[iNode];
-            assert(modelNode != nullptr);
-            
-            auto modelComponent = modelNode->GetComponent<ModelComponent>();
+            auto modelComponent = models[iComponent];
             assert(modelComponent != nullptr);
 
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelNode->GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
@@ -756,13 +717,13 @@ namespace GTEngine
                     auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
                     rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
-                    rc.SetParameter("ALights[0].Colour",    ambientLightComponent->GetColour());
+                    rc.SetParameter("ALights[0].Colour",    A0->GetColour());
 
-                    rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(P0->GetWorldPosition(), 1.0f)));
-                    rc.SetParameter("PLights[0].Colour",               pointLightComponent->GetColour());
-                    rc.SetParameter("PLights[0].ConstantAttenuation",  pointLightComponent->GetConstantAttenuation());
-                    rc.SetParameter("PLights[0].LinearAttenuation",    pointLightComponent->GetLinearAttenuation());
-                    rc.SetParameter("PLights[0].QuadraticAttenuation", pointLightComponent->GetQuadraticAttenuation());
+                    rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
+                    rc.SetParameter("PLights[0].Colour",               P0->GetColour());
+                    rc.SetParameter("PLights[0].ConstantAttenuation",  P0->GetConstantAttenuation());
+                    rc.SetParameter("PLights[0].LinearAttenuation",    P0->GetLinearAttenuation());
+                    rc.SetParameter("PLights[0].QuadraticAttenuation", P0->GetQuadraticAttenuation());
 
                     rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
                     rc.SetParameter("MVPMatrix",       MVPMatrix);

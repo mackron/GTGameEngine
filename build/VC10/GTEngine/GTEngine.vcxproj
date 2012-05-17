@@ -83,7 +83,8 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4201</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -100,7 +101,8 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4201</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -119,7 +121,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4201</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -141,7 +144,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4201</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -222,6 +226,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexAttributes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexFormat.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scene.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SceneCullingDbvtPolicy.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNode.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeFactory.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp" />
@@ -296,6 +301,7 @@
     <ClCompile Include="..\..\..\source\Rendering\VertexArray.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\VertexFormat.cpp" />
     <ClCompile Include="..\..\..\source\Scene.cpp" />
+    <ClCompile Include="..\..\..\source\SceneCullingDbvtPolicy.cpp" />
     <ClCompile Include="..\..\..\source\SceneNode.cpp" />
     <ClCompile Include="..\..\..\source\SceneNodeFactory.cpp" />
     <ClCompile Include="..\..\..\source\SceneViewport.cpp" />

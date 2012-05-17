@@ -93,6 +93,18 @@ namespace GTEngine
         virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
 
 
+    // Occlusion
+    public:
+
+        /// Adds the applicable visible components using the given viewport's Add*Component() API.
+        ///
+        /// @param viewport [in] A reference to the viewport whose having visible components added.
+        ///
+        /// @remarks
+        ///     You should not need to call this method directly. It is intended to be used internally by SceneViewport.
+        virtual void AddVisibleComponents(SceneViewport &viewport) = 0;
+
+
 
     // Non-virtual functions.
     public:

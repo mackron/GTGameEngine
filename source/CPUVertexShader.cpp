@@ -209,7 +209,7 @@ namespace GTEngine
     {
         if (input != nullptr && output != nullptr)
         {
-            //benchmarker.Start();
+            benchmarker.Start();
 
             this->input              = input;
             this->vertexCount        = vertexCount;
@@ -301,7 +301,7 @@ namespace GTEngine
             }
 
 
-            /*
+            
             benchmarker.End();
 
             if (benchmarker.counter == 200)
@@ -309,7 +309,7 @@ namespace GTEngine
                 printf("CPU Vertex Shader Time: %f\n", static_cast<float>(benchmarker.GetAverageTime()));
                 benchmarker.Reset();
             }
-            */
+            
 
             return true;
         }
