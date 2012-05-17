@@ -361,17 +361,25 @@ namespace GTEngine
 
 
         /// Performs the material pass. This pass will fill the depth buffer..
-        void DoMaterialPass(const GTCore::Vector<SceneNode*> &nodes);
+        void DoMaterialPass(const GTCore::Vector<ModelComponent*> &nodes);
 
         /// Performs the lighting pass.
-        void DoLightingPass(const GTCore::Vector<SceneNode*> &modelNodes, const GTCore::Vector<SceneNode*> &ambientLightNodes, const GTCore::Vector<SceneNode*> &directionalLightNodes, const GTCore::Vector<SceneNode*> &pointLightNodes);
+        void DoLightingPass(
+            const GTCore::Vector<ModelComponent*> &modelNodes,
+            const GTCore::Vector<AmbientLightComponent*> &ambientLightNodes,
+            const GTCore::Vector<DirectionalLightComponent*> &directionalLightNodes,
+            const GTCore::Vector<PointLightComponent*> &pointLightNodes);
+
+
+        /// Performs a lighting pass for an ambient light.
+        void DoLightingPass_A1(AmbientLightComponent* A0, const GTCore::Vector<ModelComponent*> &models);
 
         /// Performs a lighting pass for a directional light.
-        void DoLightingPass_D1(SceneNode* lightNode, const GTCore::Vector<SceneNode*> &modelNodes);
-        void DoLightingPass_A1(SceneNode* lightNode, const GTCore::Vector<SceneNode*> &modelNodes);
-        void DoLightingPass_P1(SceneNode* lightNode, const GTCore::Vector<SceneNode*> &modelNodes);
-        void DoLightingPass_A1D1(SceneNode* A0, SceneNode* D0, const GTCore::Vector<SceneNode*> &modelNodes);
-        void DoLightingPass_A1P1(SceneNode* A0, SceneNode* P0, const GTCore::Vector<SceneNode*> &modelNodes);
+        void DoLightingPass_D1(DirectionalLightComponent* D0, const GTCore::Vector<ModelComponent*> &models);
+        
+        void DoLightingPass_P1(PointLightComponent* P0, const GTCore::Vector<ModelComponent*> &models);
+        void DoLightingPass_A1D1(AmbientLightComponent* A0, DirectionalLightComponent* D0, const GTCore::Vector<ModelComponent*> &models);
+        void DoLightingPass_A1P1(AmbientLightComponent* A0, PointLightComponent* P0, const GTCore::Vector<ModelComponent*> &models);
 
 
         /// Clears the skinned geometries for the given index.

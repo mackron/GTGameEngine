@@ -3,6 +3,9 @@
 #define __GTEngine_SceneViewport_hpp_
 
 #include <GTCore/Vector.hpp>
+#include <GTEngine/Components/LightComponent.hpp>
+#include <GTEngine/Components/ModelComponent.hpp>
+#include <GTEngine/Components/SpriteComponent.hpp>
 #include "Math.hpp"
 
 namespace GTEngine
@@ -47,7 +50,8 @@ namespace GTEngine
         void SetCameraNode(SceneNode* cameraNode);
 
         /// Retrieves a pointer to the camera node. Can return null if a camera hasn't been set, or SetCameraNode() was set with an argument of null.
-        SceneNode* GetCameraNode();
+              SceneNode* GetCameraNode();
+        const SceneNode* GetCameraNode() const;
 
         
         /// Sets the renderer.
@@ -69,30 +73,34 @@ namespace GTEngine
         void Resize(unsigned int newWidth, unsigned int newHeight);
 
 
-        /// Retrieves a reference to the cache of model nodes.
-        GTCore::Vector<SceneNode*> & GetModelNodes();
 
-        /// Retrieves a reference to the cache of ambient light nodes.
-        GTCore::Vector<SceneNode*> & GetAmbientLightNodes();
+        /// Retrieves a reference to the cache of model components.
+        GTCore::Vector<ModelComponent*> & GetModelComponents() { return this->modelComponents; }
 
-        /// Retrieves a reference to the cache of directional light nodes.
-        GTCore::Vector<SceneNode*> & GetDirectionalLightNodes();
+        /// Retrieves a reference to the cache of ambient light components.
+        GTCore::Vector<AmbientLightComponent*> & GetAmbientLightComponents() { return this->ambientLightComponents; }
 
-        /// Retrieves a reference to the cache of point light nodes.
-        GTCore::Vector<SceneNode*> & GetPointLightNodes();
+        /// Retrieves a reference to the cache of directional light components.
+        GTCore::Vector<DirectionalLightComponent*> & GetDirectionalLightComponents() { return this->directionalLightComponents; }
+
+        /// Retrieves a reference to the cache of point light components.
+        GTCore::Vector<PointLightComponent*> & GetPointLightComponents() { return this->pointLightComponents; }
+
+        
 
 
-        /// Clears the cache of visible nodes. This also clears the lighting nodes.
-        void ClearVisibleNodes();
+        /// Adds a model component.
+        void AddModelComponent(ModelComponent &component);
 
-        // TODO: Consider replacing this will specific versions for the sake of efficiency.
-        /// Adds a node to the internal cache of visible nodes.
-        /// @param node [in] A reference to the node being added.
-        ///
-        /// @remarks.
-        ///     This method should be called for lighting nodes, too. Lighting nodes will filtered into their own caches which
-        ///     can be retrieved with the Get*Nodes() methods.
-        void AddVisibleNode(SceneNode &node);
+        /// Adds an ambient light component.
+        void AddAmbientLightComponent(AmbientLightComponent &component);
+
+        /// Adds a directional light component.
+        void AddDirectionalLightComponent(DirectionalLightComponent &component);
+
+        /// Adds a point light component.
+        void AddPointLightComponent(PointLightComponent &component);
+
 
 
         /// Draws the content of the viewport using the attached renderer. If no renderer is attached, this will do nothing.
@@ -148,6 +156,16 @@ namespace GTEngine
         glm::mat4 Get2DProjectionMatrix(bool yDown = false);
 
 
+
+    private:
+
+        /// Updates the internal rendering data in preparation for rendering.
+        void UpdateRenderingData();
+
+        /// Clears the internal rendering data.
+        void ClearRenderingData();
+
+
     private:
 
         /// The scene this viewport is attached to.
@@ -166,17 +184,18 @@ namespace GTEngine
         unsigned int height;
 
 
-        /// The cache of model scene nodes.
-        GTCore::Vector<SceneNode*> modelNodes;
+        /// The cache of model components.
+        GTCore::Vector<ModelComponent*> modelComponents;
 
-        /// The cache of ambient light nodes.
-        GTCore::Vector<SceneNode*> ambientLightNodes;
+        /// The cache of ambient light components.
+        GTCore::Vector<AmbientLightComponent*> ambientLightComponents;
 
-        /// The cache of directional light nodes.
-        GTCore::Vector<SceneNode*> directionalLightNodes;
+        /// The cache of directional light components.
+        GTCore::Vector<DirectionalLightComponent*> directionalLightComponents;
 
-        /// The cache of point light nodes.
-        GTCore::Vector<SceneNode*> pointLightNodes;
+        /// The cache of point light components.
+        GTCore::Vector<PointLightComponent*> pointLightComponents;
+
 
 
     private: // No copying.

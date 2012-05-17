@@ -36,23 +36,18 @@ namespace GTEngine
 
         auto &skinningData = this->skinningVertexAttributes[vertex.GetID()];
 
-        /*
+
         vertex.Position.w  = 1.0f;
         vertex.Normal.w    = 0.0f;
         vertex.Tangent.w   = 0.0f;
         vertex.Bitangent.w = 0.0f;
 
+        /*
         glm::vec4 newPosition(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newNormal(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newTangent(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newBitangent(0.0f, 0.0f, 0.0f, 0.0f);
         */
-
-        
-        vertex.Position.Data.m128_f32[3]  = 1.0f;
-        vertex.Normal.Data.m128_f32[3]    = 0.0f;
-        vertex.Tangent.Data.m128_f32[3]   = 0.0f;
-        vertex.Bitangent.Data.m128_f32[3] = 0.0f;
 
         glm::simdVec4 newPosition(0.0f, 0.0f, 0.0f, 0.0f);
         glm::simdVec4 newNormal(0.0f, 0.0f, 0.0f, 0.0f);
@@ -70,24 +65,13 @@ namespace GTEngine
             assert(bone != nullptr);
 
             
-            /*
-            const glm::mat4 &skinningTransform = bone->GetSkinningTransform();
+            //const glm::mat4 &skinningTransform = bone->GetSkinningTransform();
+            glm::simdMat4 skinningTransform(bone->GetSkinningTransform());
             
             newPosition  += weight * (skinningTransform * vertex.Position);
             newNormal    += weight * (skinningTransform * vertex.Normal);
             newTangent   += weight * (skinningTransform * vertex.Tangent);
             newBitangent += weight * (skinningTransform * vertex.Bitangent);
-            */
-
-            
-            glm::simdMat4 skinningTransform(bone->GetSkinningTransform());
-
-            newPosition  += weight * mul(skinningTransform, vertex.Position);
-            newNormal    += weight * mul(skinningTransform, vertex.Normal);
-            newTangent   += weight * mul(skinningTransform, vertex.Tangent);
-            newBitangent += weight * mul(skinningTransform, vertex.Bitangent);
-            
-            
         }
 
         vertex.Position  = newPosition;

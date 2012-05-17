@@ -305,6 +305,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\ThreadCache.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneCullingDbvtPolicy.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -512,6 +515,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ThreadCache.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneCullingDbvtPolicy.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

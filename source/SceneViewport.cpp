@@ -7,7 +7,7 @@ namespace GTEngine
 {
     SceneViewport::SceneViewport(unsigned int width, unsigned int height)
         : scene(nullptr), cameraNode(nullptr), renderer(nullptr), width(width), height(height),
-          modelNodes(), ambientLightNodes(), directionalLightNodes(), pointLightNodes()
+          modelComponents(), ambientLightComponents(), directionalLightComponents(), pointLightComponents()
     {
     }
 
@@ -33,6 +33,10 @@ namespace GTEngine
     }
 
     SceneNode* SceneViewport::GetCameraNode()
+    {
+        return this->cameraNode;
+    }
+    const SceneNode* SceneViewport::GetCameraNode() const
     {
         return this->cameraNode;
     }
@@ -84,61 +88,25 @@ namespace GTEngine
     }
 
 
-    GTCore::Vector<SceneNode*> & SceneViewport::GetModelNodes()
+
+    void SceneViewport::AddModelComponent(ModelComponent &component)
     {
-        return this->modelNodes;
+        this->modelComponents.PushBack(&component);
     }
 
-    GTCore::Vector<SceneNode*> & SceneViewport::GetAmbientLightNodes()
+    void SceneViewport::AddAmbientLightComponent(AmbientLightComponent &component)
     {
-        return this->ambientLightNodes;
+        this->ambientLightComponents.PushBack(&component);
     }
 
-    GTCore::Vector<SceneNode*> & SceneViewport::GetDirectionalLightNodes()
+    void SceneViewport::AddDirectionalLightComponent(DirectionalLightComponent &component)
     {
-        return this->directionalLightNodes;
+        this->directionalLightComponents.PushBack(&component);
     }
 
-    GTCore::Vector<SceneNode*> & SceneViewport::GetPointLightNodes()
+    void SceneViewport::AddPointLightComponent(PointLightComponent &component)
     {
-        return this->pointLightNodes;
-    }
-
-
-    void SceneViewport::ClearVisibleNodes()
-    {
-        //this->visibleNodes.Clear();
-        this->modelNodes.Clear();
-        this->ambientLightNodes.Clear();
-        this->directionalLightNodes.Clear();
-        this->pointLightNodes.Clear();
-    }
-
-    void SceneViewport::AddVisibleNode(SceneNode &node)
-    {
-        // Note here how we're not usine 'else' statements. It entirely acceptable for a light to be a combination or
-        // ambient, directional and point. For example, it makes sense for a Sun light to have both a directional and
-        // ambient component.
-        if (node.HasComponent<AmbientLightComponent>())
-        {
-            this->ambientLightNodes.PushBack(&node);
-        }
-
-        if (node.HasComponent<DirectionalLightComponent>())
-        {
-            this->directionalLightNodes.PushBack(&node);
-        }
-
-        if (node.HasComponent<PointLightComponent>())
-        {
-            this->pointLightNodes.PushBack(&node);
-        }
-
-
-        if (node.HasComponent<ModelComponent>())
-        {
-            this->modelNodes.PushBack(&node);
-        }
+        this->pointLightComponents.PushBack(&component);
     }
 
 
@@ -146,7 +114,16 @@ namespace GTEngine
     {
         if (this->renderer != nullptr)
         {
+            // We first need to update the rendering data. This will retrieve all of the components that are required for drawing the scene from
+            // this viewport's perspective.
+            this->UpdateRenderingData();
+
+            // Now that we have the rendered components cached, we can render the viewport.
             this->renderer->Render();
+
+
+            // TESTING
+            printf("Model Count: %d\n", this->modelComponents.count);
         }
     }
 
@@ -236,5 +213,27 @@ namespace GTEngine
         {
             return glm::ortho(0.0f, static_cast<float>(this->width), static_cast<float>(this->height), 0.0f);
         }
+    }
+}
+
+// Private
+namespace GTEngine
+{
+    void SceneViewport::UpdateRenderingData()
+    {
+        this->ClearRenderingData();
+        
+        if (this->scene != nullptr)
+        {
+            this->scene->AddVisibleComponents(*this);
+        }
+    }
+
+    void SceneViewport::ClearRenderingData()
+    {
+        this->modelComponents.Clear();
+        this->ambientLightComponents.Clear();
+        this->directionalLightComponents.Clear();
+        this->pointLightComponents.Clear();
     }
 }

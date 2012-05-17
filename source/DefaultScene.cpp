@@ -8,7 +8,52 @@
 #include <GTEngine/SceneNodeFactory.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
+#include <GTEngine/SceneCullingDbvtPolicy.hpp>
 #include <GTCore/Strings/Equal.hpp>
+
+
+namespace GTEngine
+{
+    /// Dbvt culling policy for the default scene.
+    struct DefaultSceneCullingDbvtPolicy : SceneCullingDbvtPolicy
+    {
+        /// Constructor.
+        DefaultSceneCullingDbvtPolicy(SceneViewport &viewport)
+            : viewport(viewport)
+        {
+        }
+
+        /// Destructor.
+        ~DefaultSceneCullingDbvtPolicy()
+        {
+        }
+
+
+        /// SceneCullingDbvtPolicy::Process(SceneNode &)
+        void ProcessSceneNode(SceneNode &node)
+        {
+            auto modelComponent = node.GetComponent<ModelComponent>();
+            if (modelComponent != nullptr)
+            {
+                viewport.AddModelComponent(*modelComponent);
+                //viewport.AddVisibleNode(node);
+            }
+        }
+
+
+        //////////////////////////////////////////////////////////////////
+        // Attributes
+
+        /// The viewport this policy will be retrieving nodes for.
+        SceneViewport &viewport;
+
+
+    private:    // No copying.
+        DefaultSceneCullingDbvtPolicy(const DefaultSceneCullingDbvtPolicy &);
+        DefaultSceneCullingDbvtPolicy & operator=(const DefaultSceneCullingDbvtPolicy &);
+    };
+}
+
 
 namespace GTEngine
 {
@@ -87,10 +132,7 @@ namespace GTEngine
         }
 
 
-        // TODO: Look into using Bullet for frustum and occlusion culling. For now we'll do a horribly unoptimized implementation.
-        //
-        // We first need to loop over all of our nodes and update them. As we update, we will check if it's a drawable node. If it
-        // is, it will be added to each viewports visible nodes cache.
+        // We need to update before rendering.
         for (auto iNode = this->nodes.root; iNode != nullptr; iNode = iNode->next)
         {
             if (iNode->value != nullptr)
@@ -101,17 +143,6 @@ namespace GTEngine
                 {
                     this->UpdateNode(node, deltaTimeInSeconds);
                 }
-
-                // if node is visible.
-                {
-                    // Here we let the viewports know about this node.
-                    for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
-                    {
-                        assert(iViewport->value != nullptr);
-
-                        iViewport->value->AddVisibleNode(node);
-                    }
-                }
             }
         }
 
@@ -119,9 +150,10 @@ namespace GTEngine
         // Now we need to draw everything on every attached viewport.
         for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
         {
-            assert(iViewport->value != nullptr);
+            auto viewport = iViewport->value;
+            assert(viewport != nullptr);
 
-            iViewport->value->Render();
+            viewport->Render();
         }
     }
 
@@ -230,6 +262,82 @@ namespace GTEngine
     }
 
 
+    void DefaultScene::AddVisibleComponents(SceneViewport &viewport)
+    {
+        // First we need to grab the veiwport's camera. If we don't have one, nothing will be visible...
+        auto cameraNode = viewport.GetCameraNode();
+        if (cameraNode != nullptr)
+        {
+            // Now we need to grab the camera component. If we don't have one, nothing will be visible...
+            auto camera = cameraNode->GetComponent<CameraComponent>();
+            if (camera != nullptr)
+            {
+                // We're using Bullet for this. Specifically, we're using the Dbvt broadphase of the collision world.
+                btDbvtBroadphase &broadphase = this->occlusionCollisionWorld;
+
+                glm::mat4 mvp = camera->GetProjectionMatrix() * camera->GetViewMatrix();
+
+                btVector3 planes_n[6];
+		        btScalar  planes_o[6];
+
+			    planes_n[0]	= btVector3(mvp[0][3] - mvp[0][0], mvp[1][3] - mvp[1][0], mvp[2][3] - mvp[2][0]);     // Right
+			    planes_n[1]	= btVector3(mvp[0][3] + mvp[0][0], mvp[1][3] + mvp[1][0], mvp[2][3] + mvp[2][0]);     // Left
+			    planes_n[2]	= btVector3(mvp[0][3] - mvp[0][1], mvp[1][3] - mvp[1][1], mvp[2][3] - mvp[2][1]);     // Top
+			    planes_n[3]	= btVector3(mvp[0][3] + mvp[0][1], mvp[1][3] + mvp[1][1], mvp[2][3] + mvp[2][1]);     // Bottom
+			    planes_n[4]	= btVector3(mvp[0][3] - mvp[0][2], mvp[1][3] - mvp[1][2], mvp[2][3] - mvp[2][2]);     // Far
+                planes_n[5]	= btVector3(mvp[0][3] + mvp[0][2], mvp[1][3] + mvp[1][2], mvp[2][3] + mvp[2][2]);     // Near
+	
+			    planes_o[0] = mvp[3][3] - mvp[3][0];    // Right
+			    planes_o[1] = mvp[3][3] + mvp[3][0];    // Left
+			    planes_o[2] = mvp[3][3] - mvp[3][1];    // Top
+			    planes_o[3] = mvp[3][3] + mvp[3][1];    // Bottom
+			    planes_o[4] = mvp[3][3] - mvp[3][2];    // Far
+                planes_o[5] = mvp[3][3] + mvp[3][2];    // Near
+
+
+                DefaultSceneCullingDbvtPolicy dbvtPolicy(viewport);
+
+                btDbvt::collideKDOP(broadphase.m_sets[1].m_root, planes_n, planes_o, 6, dbvtPolicy);
+			    btDbvt::collideKDOP(broadphase.m_sets[0].m_root, planes_n, planes_o, 6, dbvtPolicy);
+
+
+
+                // Here is where we manually add visible components. Ambient and Directional lights are always visible, so they are added.
+                
+                // Ambient.
+                for (auto i = this->ambientLightComponents.root; i != nullptr; i = i->next)
+                {
+                    auto light = i->value;
+                    if (light != nullptr && light->GetNode().IsVisible())
+                    {
+                        viewport.AddAmbientLightComponent(*light);
+                    }
+                }
+
+                // Directional.
+                for (auto i = this->directionalLightComponents.root; i != nullptr; i = i->next)
+                {
+                    auto light = i->value;
+                    if (light != nullptr && light->GetNode().IsVisible())
+                    {
+                        viewport.AddDirectionalLightComponent(*light);
+                    }
+                }
+
+                // TEMP: Point.
+                for (auto i = this->pointLightComponents.root; i != nullptr; i = i->next)
+                {
+                    auto light = i->value;
+                    if (light != nullptr && light->GetNode().IsVisible())
+                    {
+                        viewport.AddPointLightComponent(*light);
+                    }
+                }
+            }
+        }
+    }
+
+
     void DefaultScene::UpdateNode(SceneNode &node, double deltaTimeInSeconds)
     {
         // If the node has a model, and that model is animating, we should step the animation.
@@ -249,12 +357,14 @@ namespace GTEngine
 
     void DefaultScene::DoPreUpdateClean()
     {
+        /*
         for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
         {
             assert(iViewport->value != nullptr);
 
             iViewport->value->ClearVisibleNodes();
         }
+        */
     }
 
 
@@ -263,6 +373,28 @@ namespace GTEngine
     void DefaultScene::OnSceneNodeAdded(SceneNode &node)
     {
         this->nodes.Append(&node);
+
+        // Here we'll check the lighting components.
+        auto ambientLightComponent = node.GetComponent<AmbientLightComponent>();
+        if (ambientLightComponent != nullptr)
+        {
+            this->ambientLightComponents.Append(ambientLightComponent);
+        }
+        auto directionalLightComponent = node.GetComponent<DirectionalLightComponent>();
+        if (directionalLightComponent != nullptr)
+        {
+            this->directionalLightComponents.Append(directionalLightComponent);
+        }
+
+        // TEMP: Point.
+        auto pointLightComponent = node.GetComponent<PointLightComponent>();
+        if (pointLightComponent != nullptr)
+        {
+            this->pointLightComponents.Append(pointLightComponent);
+        }
+
+
+
 
         // If the scene node has a dynamics component, we need to add it's rigid body.
         auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
@@ -364,6 +496,28 @@ namespace GTEngine
     void DefaultScene::OnSceneNodeRemoved(SceneNode& node)
     {
         this->nodes.Remove(this->nodes.Find(&node));
+
+        // The lighting components needs to be removed if applicable.
+        auto ambientLightComponent = node.GetComponent<AmbientLightComponent>();
+        if (ambientLightComponent != nullptr)
+        {
+            this->ambientLightComponents.Remove(this->ambientLightComponents.Find(ambientLightComponent));
+        }
+        auto directionalLightComponent = node.GetComponent<DirectionalLightComponent>();
+        if (directionalLightComponent != nullptr)
+        {
+            this->directionalLightComponents.Remove(this->directionalLightComponents.Find(directionalLightComponent));
+        }
+
+        // TEMP: Point light.
+        auto pointLightComponent = node.GetComponent<PointLightComponent>();
+        if (pointLightComponent != nullptr)
+        {
+            this->pointLightComponents.Remove(this->pointLightComponents.Find(pointLightComponent));
+        }
+
+
+
 
         // TODO: Need to handle cases where we may be in the middle of a simulation...
         // If the node has a dynamics component, the rigid body needs to be removed.
@@ -484,10 +638,23 @@ namespace GTEngine
 
 
 
-#if 0
 
-    void DefaultScene::OnSceneNodeComponentAttached(SceneNode& node, Component& component)
+    void DefaultScene::OnSceneNodeComponentAttached(SceneNode&, Component& component)
     {
+        if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        {
+            this->ambientLightComponents.Append(static_cast<AmbientLightComponent*>(&component));
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        {
+            this->directionalLightComponents.Append(static_cast<DirectionalLightComponent*>(&component));
+        }
+        // TEMP: Point.
+        else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        {
+            this->pointLightComponents.Append(static_cast<PointLightComponent*>(&component));
+        }
+
 #if 0
         // If the component is a camera component, we need to ensure the node is in the camera nodes list.
         if (GTCore::Strings::Equal(component.GetName(), CameraComponent::Name) && this->cameraNodes.Find(&node) == nullptr)
@@ -497,8 +664,22 @@ namespace GTEngine
 #endif
     }
 
-    void DefaultScene::OnSceneNodeComponentDetached(SceneNode& node, Component& component)
+    void DefaultScene::OnSceneNodeComponentDetached(SceneNode&, Component& component)
     {
+        if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        {
+            this->ambientLightComponents.Remove(this->ambientLightComponents.Find(static_cast<AmbientLightComponent*>(&component)));
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        {
+            this->directionalLightComponents.Remove(this->directionalLightComponents.Find(static_cast<DirectionalLightComponent*>(&component)));
+        }
+        // TEMP: Point.
+        else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        {
+            this->pointLightComponents.Remove(this->pointLightComponents.Find(static_cast<PointLightComponent*>(&component)));
+        }
+
 #if 0
         // If the component is a camera component, we need to ensure the node is removed from the camera nodes list.
         if (GTCore::Strings::Equal(component.GetName(), CameraComponent::Name))
@@ -508,6 +689,10 @@ namespace GTEngine
 #endif
     }
 
+
+
+
+#if 0
     void DefaultScene::OnSceneNodeStaticChanged(SceneNode& node)
     {
 #if 0
