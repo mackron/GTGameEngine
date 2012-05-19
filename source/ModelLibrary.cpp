@@ -40,14 +40,14 @@ namespace GTEngine
 
     void SetBoneData(BoneWithWeights &outputBone, const aiBone &inputBone)
     {
-        aiVector3D   scale;
+        aiVector3D   scale(1.0f, 1.0f, 1.0f);
         aiQuaternion rotation;
         aiVector3D   position;
         inputBone.mOffsetMatrix.Decompose(scale, rotation, position);
 
         outputBone.SetOffsetMatrix(
             glm::translate(position.x, position.y, position.z) *
-            glm::mat4_cast(AssimpToGLM(rotation) * glm::angleAxis(90.0f, glm::vec3(1.0f, 0.0f, 0.0f))) *        // <-- TODO: Check if this rotation is a bug in Assimp or Blender.
+            glm::mat4_cast(AssimpToGLM(rotation) /** glm::angleAxis(90.0f, glm::vec3(1.0f, 0.0f, 0.0f))*/) *        // <-- TODO: Check if this rotation is a bug in Assimp or Blender.
             glm::scale(scale.x, scale.y, scale.z));
 
 
@@ -62,7 +62,7 @@ namespace GTEngine
         auto newBone = new BoneWithWeights;
         newBone->SetName(inputNode.mName.C_Str());
         
-        aiVector3D   scale;
+        aiVector3D   scale(1.0f, 1.0f, 1.0f);
         aiQuaternion rotation;
         aiVector3D   position;
         inputNode.mTransformation.Decompose(scale, rotation, position);
@@ -154,6 +154,15 @@ namespace GTEngine
 
             for (size_t i = 0; i < this->meshBones.count; ++i)
             {
+                auto meshBone = this->meshBones[i];
+                if (meshBone != nullptr)
+                {
+                    for (size_t j = 0; j < meshBone->count; ++j)
+                    {
+                        delete meshBone->buffer[j]->value;
+                    }
+                }
+
                 delete this->meshBones[i];
             }
 
@@ -290,7 +299,10 @@ namespace GTEngine
         GTCore::Vector<Material*> defaultMaterials;
 
         /// The list of bone lists for each mesh. If the mesh does not use any bones, the entry will be set to null.
-        GTCore::Vector<GTCore::Vector<BoneWithWeights*>*> meshBones;
+        //GTCore::Vector<GTCore::Vector<BoneWithWeights*>*> meshBones;
+
+        /// The list of bone weights for each mesh. If the mesh does not use any bones, the entry will be set to null.
+        GTCore::Vector<GTCore::Dictionary<BoneWeights*>*> meshBones;
 
 
         /// A map of every bone of the model, indexed by it's name. We use a map here to make it easier for avoiding duplication and
@@ -430,7 +442,8 @@ namespace GTEngine
             // Here is where we create all of the bones for the mesh.
             if (mesh->mNumBones > 0)
             {
-                auto localBones = new GTCore::Vector<BoneWithWeights*>;
+                //auto localBones = new GTCore::Vector<BoneWithWeights*>;
+                auto localBones = new GTCore::Dictionary<BoneWeights*>;
 
                 for (unsigned int iBone = 0; iBone < mesh->mNumBones; ++iBone)
                 {
@@ -440,9 +453,22 @@ namespace GTEngine
                     auto newBone = model.AddBone(scene, *bone);
                     if (newBone != nullptr)
                     {
-                        localBones->PushBack(newBone);
+                        // Here we create the VertexWeights object for this bone.
+                        auto weights = new BoneWeights(bone->mName.C_Str());
+                        weights->weights.Reserve(bone->mNumWeights);
+
+                        for (unsigned int iWeight = 0; iWeight < bone->mNumWeights; ++iWeight)
+                        {
+                            weights->weights.PushBack(VertexWeightPair(bone->mWeights[iWeight].mVertexId, bone->mWeights[iWeight].mWeight));
+                        }
+
+                        localBones->Add(newBone->GetName(), weights);
+                        //localBones->PushBack(newBone);
                     }
                 }
+
+                
+                // Now we need to create our bone weights
 
                 model.meshBones.PushBack(localBones);
             }

@@ -334,6 +334,7 @@
     <None Include="..\..\..\bin\data\engine\editor\styles\menu.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\menubar.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\theme.style" />
+    <None Include="..\..\..\bin\data\engine\shaders\cg\gui.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

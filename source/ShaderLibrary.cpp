@@ -602,12 +602,13 @@ namespace GTEngine
 namespace GTEngine
 {
     static Shader* GUIQuadShader        = nullptr;
+    static Shader* GUIDrawShader        = nullptr;
     static Shader* GUITextShader        = nullptr;
     static Shader* GUIShadowShader      = nullptr;
     static Shader* FullscreenQuadShader = nullptr;
     static Shader* LineShader           = nullptr;
 
-    Shader * ShaderLibrary::GetGUIQuadShader()
+    Shader* ShaderLibrary::GetGUIQuadShader()
     {
         if (GUIQuadShader == nullptr)
         {
@@ -617,7 +618,17 @@ namespace GTEngine
         return GUIQuadShader;
     }
 
-    Shader * ShaderLibrary::GetGUITextShader()
+    Shader* ShaderLibrary::GetGUIDrawShader()
+    {
+        if (GUIDrawShader == nullptr)
+        {
+            GUIDrawShader = new Shader(ShaderLibrary::GetShaderString("Engine_GUIDraw_VS"), ShaderLibrary::GetShaderString("Engine_GUIDraw_FS"));
+        }
+
+        return GUIDrawShader;
+    }
+
+    Shader* ShaderLibrary::GetGUITextShader()
     {
         if (GUITextShader == nullptr)
         {
@@ -627,7 +638,7 @@ namespace GTEngine
         return GUITextShader;
     }
 
-    Shader * ShaderLibrary::GetGUIShadowShader()
+    Shader* ShaderLibrary::GetGUIShadowShader()
     {
         if (GUIShadowShader == nullptr)
         {
@@ -637,7 +648,7 @@ namespace GTEngine
         return GUIShadowShader;
     }
 
-    Shader * ShaderLibrary::GetFullscreenQuadShader()
+    Shader* ShaderLibrary::GetFullscreenQuadShader()
     {
         if (FullscreenQuadShader == nullptr)
         {
@@ -647,7 +658,7 @@ namespace GTEngine
         return FullscreenQuadShader;
     }
 
-    Shader * ShaderLibrary::GetLineShader()
+    Shader* ShaderLibrary::GetLineShader()
     {
         if (LineShader == nullptr)
         {

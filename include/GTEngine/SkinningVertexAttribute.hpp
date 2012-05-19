@@ -29,7 +29,7 @@ namespace GTEngine
     /// This simply contains an array of bone/weight pairs that should be applied to the vertex.
     struct SkinningVertexAttribute
     {
-        void AddBoneWeightPair(BoneWithWeights &bone, float weight)
+        void AddBoneWeightPair(const Bone &bone, float weight)
         {
             this->bones.PushBack(BoneWeightPair(bone, weight));
             this->bones.OptimizeBuffer();                           // <-- we do this to ensure we keep the buffer tightly bound to the data. Avoids wastage since there will be a lot of instantiations here (one for each vertex).

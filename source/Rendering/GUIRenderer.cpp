@@ -179,6 +179,25 @@ void GTGUI::RCDrawQuad::Execute()
     }
 }
 
+void GTGUI::RCDraw::Execute()
+{
+    auto texture = GTEngine::GUIRenderer_AcquireTexture2DFromImage(this->image);
+
+    GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIDrawShader());
+    GTEngine::Renderer::SetShaderParameter("Texture", texture);
+
+    if (this->enableOpacity)
+    {
+        GTEngine::Renderer::EnableAlphaBlending();
+    }
+    else
+    {
+        GTEngine::Renderer::DisableBlending();  // Ensure blending is disabled for performance.
+    }
+
+    GTEngine::Renderer::Draw(this->vertices, this->indices, this->indexCount, GTEngine::VertexFormat::P2T2C4);
+}
+
 void GTGUI::RCDrawShadow::Execute()
 {
     // For ease of use...

@@ -72,6 +72,63 @@
 	}
 </shader>
 
+
+<!-- Shader for RCDraw -->
+<shader id="Engine_GUIDraw_VS">
+    struct VertexInput
+	{
+		float2 Position : ATTR0;
+		float2 TexCoord : ATTR1;
+        float4 Colour   : ATTR2;
+	};
+
+	struct VertexOutput
+	{
+		float4 Position : POSITION;
+		float2 TexCoord : TEXCOORD0;
+        float4 Colour   : TEXCOORD1;
+	};
+
+    uniform float4x4 Projection;
+
+	VertexOutput main(in VertexInput IN)
+	{
+		VertexOutput OUT;
+
+		OUT.Position = mul(Projection, float4(IN.Position, 0.0, 1.0));
+		OUT.TexCoord = IN.TexCoord;
+        OUT.Colour   = IN.Colour;
+
+		return OUT;
+	}
+</shader>
+
+<shader id="Engine_GUIDraw_FS">
+    struct FragmentInput
+	{
+		float2 TexCoord : TEXCOORD0;
+        float4 Colour   : TEXCOORD1;
+	};
+
+	struct FragmentOutput
+	{
+		float4 Colour : COLOR;
+	};
+
+	uniform sampler2D Texture;
+		
+	FragmentOutput main(in FragmentInput IN)
+	{
+		FragmentOutput OUT;
+			
+		OUT.Colour = tex2D(Texture, IN.TexCoord) * IN.Colour;
+			
+		return OUT;
+	}
+</shader>
+
+
+
 <!-- Shadow Shader -->
 <shader id="Engine_GUIShadow_VS">
     struct VertexInput

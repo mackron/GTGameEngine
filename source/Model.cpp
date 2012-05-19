@@ -42,14 +42,14 @@ namespace GTEngine
         return newMesh;
     }
 
-    Mesh* Model::AttachMesh(VertexArray* geometry, Material* material, const GTCore::Vector<BoneWithWeights*> &bones)
+    Mesh* Model::AttachMesh(VertexArray* geometryIn, Material* materialIn, const GTCore::Vector<BoneWithWeights*> &bonesIn)
     {
-        auto newMesh = this->AttachMesh(geometry, material);
+        auto newMesh = this->AttachMesh(geometryIn, materialIn);
         if (newMesh != nullptr)
         {
-            for (size_t i = 0; i < bones.count; ++i)
+            for (size_t i = 0; i < bonesIn.count; ++i)
             {
-                auto bone = static_cast<BoneWithWeights*>(bones[i]);
+                auto bone = static_cast<BoneWithWeights*>(bonesIn[i]);
                 assert(bone != nullptr);
 
                 this->AddBoneToMesh(*newMesh, *bone);
@@ -58,6 +58,24 @@ namespace GTEngine
 
         return newMesh;
     }
+
+    Mesh* Model::AttachMesh(VertexArray* geometryIn, Material* materialIn, const GTCore::Dictionary<BoneWeights*> &bonesIn)
+    {
+        auto newMesh = this->AttachMesh(geometryIn, materialIn);
+        if (newMesh != nullptr)
+        {
+            for (size_t i = 0; i < bonesIn.count; ++i)
+            {
+                auto bone = bonesIn.buffer[i]->value;
+                assert(bone != nullptr);
+
+                this->AddBoneWeightsToMesh(*newMesh, *bone);
+            }
+        }
+
+        return newMesh;
+    }
+
 
     void Model::CopyAndAttachBones(const GTCore::Dictionary<BoneWithWeights*> &inputBones)
     {
@@ -250,6 +268,17 @@ namespace GTEngine
         assert(localBone != nullptr);
 
         mesh.AttachBoneWeights(*localBone, bone.GetWeightCount(), bone.GetWeightsBuffer());
+    }
+
+    void Model::AddBoneWeightsToMesh(Mesh &mesh, const BoneWeights &bone)
+    {
+        auto iLocalBone = this->bones.Find(bone.name.c_str());
+        assert(iLocalBone != nullptr);
+
+        auto localBone = iLocalBone->value;
+        assert(localBone != nullptr);
+
+        mesh.AttachBoneWeights(*localBone, bone.weights.count, bone.weights.buffer);
     }
 }
 
