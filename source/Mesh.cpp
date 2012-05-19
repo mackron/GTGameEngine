@@ -20,7 +20,6 @@ namespace GTEngine
             for (size_t i = 0; i < weightCount; ++i)
             {
                 this->skinningData->skinningVertexAttributes[weightBuffer[i].vertexID].AddBoneWeightPair(localBone, weightBuffer[i].weight);
-                //this->skinningData->skinningVertexAttributes[weightBuffer[i].vertexID].bones.PushBack(BoneWeightPair(localBone, weightBuffer[i].weight));
             }
         }
     }

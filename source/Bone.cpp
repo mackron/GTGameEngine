@@ -188,33 +188,3 @@ namespace GTEngine
         return this;
     }
 }
-
-
-
-
-
-
-// BoneWithWeights
-namespace GTEngine
-{
-    BoneWithWeights::BoneWithWeights()
-        : Bone(), weights()
-    {
-    }
-
-    BoneWithWeights::BoneWithWeights(const BoneWithWeights &other)
-        : Bone(other), weights(other.weights)
-    {
-
-    }
-
-    BoneWithWeights::~BoneWithWeights()
-    {
-    }
-
-
-    void BoneWithWeights::AddWeight(unsigned int vertexID, float weight)
-    {
-        this->weights.PushBack(VertexWeightPair(vertexID, weight));
-    }
-}

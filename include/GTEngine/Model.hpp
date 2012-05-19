@@ -28,15 +28,14 @@ namespace GTEngine
         /// @remarks
         ///     It's important that <bones> refers to a list of BoneWithWeights pointers since the vertex/weight information will be needed to set the skinning vertex attributes.
         Mesh* AttachMesh(VertexArray* mesh, Material* material);
-        Mesh* AttachMesh(VertexArray* mesh, Material* material, const GTCore::Vector<BoneWithWeights*> &bones);
-        Mesh* AttachMesh(VertexArray* mesh, Material* material, const GTCore::Dictionary<BoneWeights*> &bones);
+        Mesh* AttachMesh(VertexArray* mesh, Material* material, const GTCore::Vector<BoneWeights*> &bones);
         
 
         /// Creates copies and attaches a list of bones.
         ///
         /// @remarks
         ///     If a bone of the same name already exists, this method will do nothing.
-        void CopyAndAttachBones(const GTCore::Dictionary<BoneWithWeights*> &bones);
+        void CopyAndAttachBones(const GTCore::Dictionary<Bone*> &bones);
 
         /// Creates copies and adds a list of animations.
         void CopyAndAddAnimations(const GTCore::Dictionary<SkeletalAnimation*> &animations);
@@ -83,15 +82,6 @@ namespace GTEngine
 
 
     private:
-
-        /// Private method for recursively attaching a bone to the given mesh.
-        ///
-        /// @param mesh [in] A reference to the mesh whose having the bone information added.
-        /// @param bone [in] A reference to the bone containing the vertex/weight information for the mesh.
-        ///
-        /// @remarks
-        ///     This is called recursively on all of the bone's children.
-        void AddBoneToMesh(Mesh &mesh, const BoneWithWeights &bone);
 
         /// Priave method for attaching a bone to the given mesh.
         ///

@@ -42,31 +42,14 @@ namespace GTEngine
         return newMesh;
     }
 
-    Mesh* Model::AttachMesh(VertexArray* geometryIn, Material* materialIn, const GTCore::Vector<BoneWithWeights*> &bonesIn)
+    Mesh* Model::AttachMesh(VertexArray* geometryIn, Material* materialIn, const GTCore::Vector<BoneWeights*> &bonesIn)
     {
         auto newMesh = this->AttachMesh(geometryIn, materialIn);
         if (newMesh != nullptr)
         {
             for (size_t i = 0; i < bonesIn.count; ++i)
             {
-                auto bone = static_cast<BoneWithWeights*>(bonesIn[i]);
-                assert(bone != nullptr);
-
-                this->AddBoneToMesh(*newMesh, *bone);
-            }
-        }
-
-        return newMesh;
-    }
-
-    Mesh* Model::AttachMesh(VertexArray* geometryIn, Material* materialIn, const GTCore::Dictionary<BoneWeights*> &bonesIn)
-    {
-        auto newMesh = this->AttachMesh(geometryIn, materialIn);
-        if (newMesh != nullptr)
-        {
-            for (size_t i = 0; i < bonesIn.count; ++i)
-            {
-                auto bone = bonesIn.buffer[i]->value;
+                auto bone = bonesIn.buffer[i];
                 assert(bone != nullptr);
 
                 this->AddBoneWeightsToMesh(*newMesh, *bone);
@@ -77,7 +60,7 @@ namespace GTEngine
     }
 
 
-    void Model::CopyAndAttachBones(const GTCore::Dictionary<BoneWithWeights*> &inputBones)
+    void Model::CopyAndAttachBones(const GTCore::Dictionary<Bone*> &inputBones)
     {
         // We do this in two passes. The first pass makes copies but does not link with parents. The second pass will link the bones together.
         for (size_t i = 0; i < inputBones.count; ++i)
@@ -85,7 +68,7 @@ namespace GTEngine
             auto bone = inputBones.buffer[i]->value;
             assert(bone != nullptr);
 
-            auto newBone = new BoneWithWeights(*bone);
+            auto newBone = new Bone(*bone);
             this->bones.Add(newBone->GetName(), newBone);
         }
 
@@ -256,20 +239,9 @@ namespace GTEngine
 }
 
 
-// PRIVATE
+// Private
 namespace GTEngine
 {
-    void Model::AddBoneToMesh(Mesh &mesh, const BoneWithWeights &bone)
-    {
-        auto iLocalBone = this->bones.Find(bone.GetName());
-        assert(iLocalBone != nullptr);
-
-        auto localBone = iLocalBone->value;
-        assert(localBone != nullptr);
-
-        mesh.AttachBoneWeights(*localBone, bone.GetWeightCount(), bone.GetWeightsBuffer());
-    }
-
     void Model::AddBoneWeightsToMesh(Mesh &mesh, const BoneWeights &bone)
     {
         auto iLocalBone = this->bones.Find(bone.name.c_str());
