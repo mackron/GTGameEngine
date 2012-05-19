@@ -23,6 +23,26 @@ namespace GTEngine
 
 namespace GTEngine
 {
+    /// Structure containing weights for a given bone.
+    struct BoneWeights
+    {
+        BoneWeights(const char* name)
+            : name(name), weights()
+        {
+        }
+
+        /// The name of the bone these weights are referring to.
+        GTCore::String name;
+
+        /// The lsit of vertex/weight pairs.
+        GTCore::Vector<VertexWeightPair> weights;
+    };
+}
+
+
+
+namespace GTEngine
+{
     /// Class representing a bone in a skeleton.
     class Bone
     {

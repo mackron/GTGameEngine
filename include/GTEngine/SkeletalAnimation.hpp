@@ -18,7 +18,13 @@ namespace GTEngine
 		T const & a
 	)
     {
-		return glm::normalize(x * glm::pow(glm::inverse(x) * y, a));
+        if (x == y)
+        {
+            return x;
+        }
+
+        T angle = glm::acos(glm::dot(x, y));
+		return (glm::sin((T(1) - a) * angle) * x + glm::sin(a * angle) * y) / glm::sin(angle);
 	}
 }
 
@@ -128,9 +134,9 @@ namespace GTEngine
                 glm::quat rotation =      mix(currentKey->rotation, nextKey->rotation, ratio);
                 glm::vec3 scale    = glm::mix(currentKey->scale,    nextKey->scale,    ratio);
 
-                bone.SetPosition(position);
-                bone.SetRotation(rotation);
-                bone.SetScale(scale);
+                this->bone.SetPosition(position);
+                this->bone.SetRotation(rotation);
+                this->bone.SetScale(scale);
             }
         }
 

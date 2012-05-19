@@ -19,7 +19,8 @@ namespace GTEngine
             // At this point we can assert that we have skinning data and we can attach the bone weights to each vertex via the skinning vertex attributes.
             for (size_t i = 0; i < weightCount; ++i)
             {
-                this->skinningData->skinningVertexAttributes[weightBuffer[i].vertexID].bones.PushBack(BoneWeightPair(localBone, weightBuffer[i].weight));
+                this->skinningData->skinningVertexAttributes[weightBuffer[i].vertexID].AddBoneWeightPair(localBone, weightBuffer[i].weight);
+                //this->skinningData->skinningVertexAttributes[weightBuffer[i].vertexID].bones.PushBack(BoneWeightPair(localBone, weightBuffer[i].weight));
             }
         }
     }

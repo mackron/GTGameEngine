@@ -30,6 +30,9 @@ namespace GTEngine
         auto model = modelComponent->GetModel();
         //model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("materials/troll.material"));
         model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
+        model->meshes[1]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
+        model->meshes[2]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
+        model->meshes[3]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
 
         // Here we setup the viewport.
         this->renderer.SetClearColour(0.1f, 0.1f, 0.1f);

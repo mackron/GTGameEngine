@@ -123,6 +123,9 @@ namespace GTEngine
         */
         static Shader* GetGUIQuadShader();
 
+        /// Retrieves the shader that is used with the RCDraw rendering command from GTGUI.
+        static Shader* GetGUIDrawShader();
+
         /**
         *   \brief  Retrieves the shader that is used to draw text on a GUI.
         */
