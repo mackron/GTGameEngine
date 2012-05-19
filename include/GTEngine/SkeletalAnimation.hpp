@@ -18,13 +18,38 @@ namespace GTEngine
 		T const & a
 	)
     {
-        if (x == y)
+        if (a <= T(0))
         {
             return x;
         }
+        if (a >= T(1))
+        {
+            return y;
+        }
+        
 
-        T angle = glm::acos(glm::dot(x, y));
-		return (glm::sin((T(1) - a) * angle) * x + glm::sin(a * angle) * y) / glm::sin(angle);
+        glm::detail::tquat<T> z;
+
+        float d = glm::dot(x, y);
+        if (d < T(0))
+        {
+            d = -d;
+            z = -y;
+        }
+        else
+        {
+            z = y;
+        }
+
+        float angle = glm::acos(d);
+        if (angle > T(0))
+        {
+            return (glm::sin((T(1) - a) * angle) * x + glm::sin(a * angle) * z) / glm::sin(angle);
+        }
+        else
+        {
+            return x;
+        }
 	}
 }
 

@@ -30,9 +30,12 @@ namespace GTEngine
         auto model = modelComponent->GetModel();
         //model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("materials/troll.material"));
         model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
+
+        /*
         model->meshes[1]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
         model->meshes[2]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
         model->meshes[3]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
+        */
 
         // Here we setup the viewport.
         this->renderer.SetClearColour(0.1f, 0.1f, 0.1f);
@@ -156,7 +159,7 @@ namespace GTEngine
                 for (size_t i = 0; i < this->boneSceneNodes.count; ++i)
                 {
                     auto boneSceneNode = this->boneSceneNodes.buffer[i]->value;
-                    auto bone = boneSceneNode->GetDataPointer<BoneWithWeights>(0);
+                    auto bone = boneSceneNode->GetDataPointer<Bone>(0);
 
                     //glm::mat4 transform = bone->GetTransform();
 
