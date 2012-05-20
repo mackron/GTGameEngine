@@ -1,6 +1,7 @@
 
 #include <GTEngine/Components/ModelComponent.hpp>
 #include <GTEngine/ModelLibrary.hpp>
+#include <GTEngine/Scene.hpp>
 
 namespace GTEngine
 {
@@ -23,6 +24,13 @@ namespace GTEngine
     {
         this->model   = model;
         this->isOwner = takeOwnership;
+
+        // This component has changed. We need to let the scene know about this so that it can change culling information and whatnot.
+        auto scene = this->GetNode().GetScene();
+        if (scene != nullptr)
+        {
+            scene->OnSceneNodeComponentChanged(this->GetNode(), *this);
+        }
     }
 
     Model* ModelComponent::GetModel()

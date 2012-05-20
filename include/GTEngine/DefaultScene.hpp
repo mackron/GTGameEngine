@@ -82,6 +82,7 @@ namespace GTEngine
 
         void OnSceneNodeComponentAttached(SceneNode& node, Component& component);
         void OnSceneNodeComponentDetached(SceneNode& node, Component& component);
+        void OnSceneNodeComponentChanged(SceneNode& node, Component& component);
 
 
     private:
@@ -90,6 +91,13 @@ namespace GTEngine
 
         /// Does a pre-update clean of dead nodes, caches, etc. This is the very first function called in Update().
         void DoPreUpdateClean();
+
+
+        /// Adds culling objects for the given model.
+        void AddModelCullingObjects(ModelComponent &modelComponent);
+
+        /// Removes culling objects for the given model.
+        void RemoveModelCullingObjects(ModelComponent &modelComponent);
 
         /// Adds culling objects for the given point light.
         void AddPointLightCullingObjects(PointLightComponent &light);

@@ -339,6 +339,48 @@ namespace GTEngine
     }
 
 
+    void DefaultScene::AddModelCullingObjects(ModelComponent &modelComponent)
+    {
+        auto metadata = modelComponent.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+        if (metadata != nullptr)
+        {
+            auto model = modelComponent.GetModel();
+            if (model != nullptr)
+            {
+                auto &node = modelComponent.GetNode();
+
+                // We first need to ensure we have the objects allocated.
+                metadata->AllocateModelCollisionObject();
+
+                metadata->modelCollisionObject->setCollisionShape(metadata->modelCollisionShape);
+                metadata->modelCollisionObject->setUserPointer(&node);
+
+                // With the objects allocated, we now fill them with the appropriate data.
+                for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
+                {
+                    metadata->modelCollisionShape->addChildShape(btTransform::getIdentity(), model->meshes[iMesh]->BuildCollisionShape(node.GetWorldScale()));
+                }
+
+                btTransform transform;
+                node.GetWorldTransform(transform);
+                metadata->modelCollisionObject->setWorldTransform(transform);
+
+                this->occlusionCollisionWorld.addCollisionObject(metadata->modelCollisionObject,
+                    CollisionGroups::Picking | CollisionGroups::Model,          // The collision group
+                    CollisionGroups::Picking | CollisionGroups::PointLight);    // The collision mask (what this object can collide with)
+            }
+        }
+    }
+
+    void DefaultScene::RemoveModelCullingObjects(ModelComponent &modelComponent)
+    {
+        auto metadata = modelComponent.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+        if (metadata != nullptr)
+        {
+            metadata->DeleteModelCollisionObject();
+        }
+    }
+
     void DefaultScene::AddPointLightCullingObjects(PointLightComponent &light)
     {
         auto metadata = light.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
@@ -437,29 +479,7 @@ namespace GTEngine
         auto modelComponent = node.GetComponent<ModelComponent>();
         if (modelComponent != nullptr)
         {
-            auto model = modelComponent->GetModel();
-            if (model != nullptr)
-            {
-                // We first need to ensure we have the objects allocated.
-                metadata->AllocateModelCollisionObject();
-
-                metadata->modelCollisionObject->setCollisionShape(metadata->modelCollisionShape);
-                metadata->modelCollisionObject->setUserPointer(&node);
-
-                // With the objects allocated, we now fill them with the appropriate data.
-                for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
-                {
-                    metadata->modelCollisionShape->addChildShape(btTransform::getIdentity(), model->meshes[iMesh]->BuildCollisionShape(node.GetWorldScale()));
-                }
-
-                btTransform transform;
-                node.GetWorldTransform(transform);
-                metadata->modelCollisionObject->setWorldTransform(transform);
-
-                this->occlusionCollisionWorld.addCollisionObject(metadata->modelCollisionObject,
-                    CollisionGroups::Picking | CollisionGroups::Model,          // The collision group
-                    CollisionGroups::Picking | CollisionGroups::PointLight);    // The collision mask (what this object can collide with)
-            }
+            this->AddModelCullingObjects(*modelComponent);
         }
 
         // We also need to add culling objects for point lights.
@@ -640,6 +660,22 @@ namespace GTEngine
         else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
         {
             this->RemovePointLightCullingObjects(static_cast<PointLightComponent&>(component));
+        }
+    }
+
+    void DefaultScene::OnSceneNodeComponentChanged(SceneNode&, Component &component)
+    {
+        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+        {
+            // The component is a model. We'll need to update the culling information.
+            this->RemoveModelCullingObjects(static_cast<ModelComponent&>(component));
+            this->AddModelCullingObjects(static_cast<ModelComponent&>(component));
+        }
+        if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        {
+            // The component is a point light. We'll need to update the culling information.
+            this->RemovePointLightCullingObjects(static_cast<PointLightComponent&>(component));
+            this->AddPointLightCullingObjects(static_cast<PointLightComponent&>(component));
         }
     }
 }

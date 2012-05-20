@@ -1,9 +1,28 @@
 
 #include <GTEngine/Mesh.hpp>
 #include <GTEngine/CPUVertexShader_Skinning.hpp>
+#include <GTEngine/Rendering.hpp>
 
 namespace GTEngine
 {
+    const VertexArray* Mesh::GetSkinnedGeometry() const
+    {
+        return const_cast<Mesh*>(this)->GetSkinnedGeometry();
+    }
+
+    VertexArray* Mesh::GetSkinnedGeometry()
+    {
+        if (this->skinningData != nullptr)
+        {
+            return this->skinningData->skinnedGeometry[Renderer::BackIndex];
+        }
+        else
+        {
+            return this->geometry;
+        }
+    }
+
+
     void Mesh::AttachBoneWeights(const Bone &localBone, size_t weightCount, const VertexWeightPair* weightBuffer)
     {
         if (weightCount > 0 && weightBuffer != nullptr)
@@ -36,10 +55,10 @@ namespace GTEngine
 
         if (positionStride != -1 && normalStride != -1 && texCoordStride != -1 && tangentStride != -1 && bitangentStride != -1)
         {
-            auto vertexSize  = format.GetSize();
-            auto indexCount  = this->geometry->GetIndexCount();
-            auto indexData   = this->geometry->MapIndexData();
-            auto vertexData  = this->geometry->MapVertexData();
+            auto vertexSize = format.GetSize();
+            auto indexCount = this->geometry->GetIndexCount();
+            auto indexData  = this->geometry->MapIndexData();
+            auto vertexData = this->geometry->MapVertexData();
 
             // We need to loop over each triangle, which is every 3 indices.
             for (size_t iVertex = 0; iVertex < indexCount; iVertex += 3)
@@ -160,12 +179,14 @@ namespace GTEngine
     }
 
 
-    void Mesh::ApplySkinning(VertexArray &destVA)
+    void Mesh::ApplySkinning()
     {
         if (this->geometry != nullptr)
         {
+            auto dstVertexArray = this->GetSkinnedGeometry();
+
             auto srcVertices = this->geometry->MapVertexData();
-            auto dstVertices = destVA.MapVertexData();
+            auto dstVertices = dstVertexArray->MapVertexData();
 
             if (this->skinningData != nullptr)
             {
@@ -181,11 +202,12 @@ namespace GTEngine
 
 
             this->geometry->UnmapVertexData();
-            destVA.UnmapVertexData();
+            dstVertexArray->UnmapVertexData();
         }
     }
 
 
+    /*
     VertexArray* Mesh::GetAnimatedGeometry(size_t index)
     {
         assert(index == 0 || index == 1);
@@ -197,4 +219,5 @@ namespace GTEngine
 
         return nullptr;
     }
+    */
 }

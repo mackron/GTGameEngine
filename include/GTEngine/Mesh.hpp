@@ -21,12 +21,12 @@ namespace GTEngine
         /// Constructor.
         MeshSkinningData(VertexArray &source)
             : skinningVertexAttributes(nullptr),
-              animatedGeometry()
+              skinnedGeometry()
         {
             skinningVertexAttributes = new SkinningVertexAttribute[source.GetVertexCount()];
             
-            animatedGeometry[0] = nullptr;      // <-- AllocateAnimatedGeometryArrays() deletes these before setting the new data. Thus, initting to null is required.
-            animatedGeometry[1] = nullptr;      // <-- as above
+            skinnedGeometry[0] = nullptr;      // <-- AllocateAnimatedGeometryArrays() deletes these before setting the new data. Thus, initting to null is required.
+            skinnedGeometry[1] = nullptr;      // <-- as above
             this->AllocateAnimatedGeometryArrays(source);
         }
 
@@ -34,21 +34,21 @@ namespace GTEngine
         ~MeshSkinningData()
         {
             delete [] this->skinningVertexAttributes;
-            delete this->animatedGeometry[0];
-            delete this->animatedGeometry[1];
+            delete this->skinnedGeometry[0];
+            delete this->skinnedGeometry[1];
         }
 
         /// Allocates the vertex arrays for the animated geometry.
         void AllocateAnimatedGeometryArrays(VertexArray &source)
         {
-            delete this->animatedGeometry[0];
-            delete this->animatedGeometry[1];
+            delete this->skinnedGeometry[0];
+            delete this->skinnedGeometry[1];
 
-            this->animatedGeometry[0] = new VertexArray(VertexArrayUsage_Stream, source.GetFormat());
-            this->animatedGeometry[1] = new VertexArray(VertexArrayUsage_Stream, source.GetFormat());
+            this->skinnedGeometry[0] = new VertexArray(VertexArrayUsage_Stream, source.GetFormat());
+            this->skinnedGeometry[1] = new VertexArray(VertexArrayUsage_Stream, source.GetFormat());
 
-            this->animatedGeometry[0]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
-            this->animatedGeometry[1]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
+            this->skinnedGeometry[0]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
+            this->skinnedGeometry[1]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
         }
 
 
@@ -60,7 +60,7 @@ namespace GTEngine
         /// Thus, we store two copies of the buffers.
         ///
         /// TODO: Look into changing this with a cache or something. Storing copies of the buffers for each mesh may be too expensive on memory.
-        VertexArray* animatedGeometry[2];
+        VertexArray* skinnedGeometry[2];
     };
 };
 
@@ -119,12 +119,29 @@ namespace GTEngine
 
 
         /// Retrieves the geometry of the mesh.
-              VertexArray* GetGeometry()       { return this->geometry; }
+        ///
+        /// @param skinned [in] Controls whether or not the skinned geometry should be retrieved.
+        ///
+        /// @remarks
+        ///     If <skinned> if false, this will return a pointer to the base geometry vertex array.
         const VertexArray* GetGeometry() const { return this->geometry; }
+              VertexArray* GetGeometry()       { return this->geometry; }
+
+        /// Retrieves a pointer to the vertex array containing the skinned geometry.
+        ///
+        /// @remarks
+        ///     If the mesh is not animated, this will return the base geometry vertex array.
+        ///     @par
+        ///     There are two vertex arrays storing skinned geometry. One is being used by the rendering thread and the other is being used by the update
+        ///     thread. This is where the <rcIndex> comes in. It simply controls
+        const VertexArray* GetSkinnedGeometry() const;
+              VertexArray* GetSkinnedGeometry();
+        
 
         /// Retrieves the material of the mesh.
-              Material* GetMaterial()       { return this->material; }
         const Material* GetMaterial() const { return this->material; }
+              Material* GetMaterial()       { return this->material; }
+        
 
 
         /// Attaches the bone weights using a local bone and a source bone.
@@ -156,14 +173,14 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This method asserts that <destination> is already pre-allocated.
-        void ApplySkinning(VertexArray &destination);
+        void ApplySkinning();
 
 
 
         /// Retrieves a pointer to the animated geometry of the given index.
         ///
         /// @param index [in] The index of the animated geometry to retrieve - 0 or 1.
-        VertexArray* GetAnimatedGeometry(size_t index);
+        //VertexArray* GetAnimatedGeometry(size_t index);
 
 
 

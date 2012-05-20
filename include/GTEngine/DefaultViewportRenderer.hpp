@@ -429,9 +429,6 @@ namespace GTEngine
 
         }RenderCommands;
 
-        /// There is two of every render command. We use this index to tell us which one is the back one.
-        int backRCIndex;
-
 
         /// A map containing the metadata of every material.
         GTCore::Map<Material*, MaterialMetadata*> materialMetadata;
