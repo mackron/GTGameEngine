@@ -8,27 +8,59 @@
 #include "Math.hpp"
 #include "SkinningVertexAttribute.hpp"
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4351)
+#endif
+
 namespace GTEngine
 {
     /// Structure containing the skinning information of a mesh.
     struct MeshSkinningData
     {
         /// Constructor.
-        MeshSkinningData(size_t vertexCount)
-            : skinningVertexAttributes(nullptr)
+        MeshSkinningData(VertexArray &source)
+            : skinningVertexAttributes(nullptr),
+              animatedGeometry()
         {
-            skinningVertexAttributes = new SkinningVertexAttribute[vertexCount];
+            skinningVertexAttributes = new SkinningVertexAttribute[source.GetVertexCount()];
+            
+            animatedGeometry[0] = nullptr;      // <-- AllocateAnimatedGeometryArrays() deletes these before setting the new data. Thus, initting to null is required.
+            animatedGeometry[1] = nullptr;      // <-- as above
+            this->AllocateAnimatedGeometryArrays(source);
         }
 
         /// Destructor.
         ~MeshSkinningData()
         {
             delete [] this->skinningVertexAttributes;
+            delete this->animatedGeometry[0];
+            delete this->animatedGeometry[1];
+        }
+
+        /// Allocates the vertex arrays for the animated geometry.
+        void AllocateAnimatedGeometryArrays(VertexArray &source)
+        {
+            delete this->animatedGeometry[0];
+            delete this->animatedGeometry[1];
+
+            this->animatedGeometry[0] = new VertexArray(VertexArrayUsage_Stream, source.GetFormat());
+            this->animatedGeometry[1] = new VertexArray(VertexArrayUsage_Stream, source.GetFormat());
+
+            this->animatedGeometry[0]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
+            this->animatedGeometry[1]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
         }
 
 
         /// A pointer to the buffer containing the skinning vertex attributes for the CPU skinning shader.
         SkinningVertexAttribute* skinningVertexAttributes;
+
+        /// As a mesh is animated, it needs to store it's own local copy of the animated data (each mesh can be in a different animated
+        /// state). Since one of these buffers will be used on the rendering thread, we'll need a separate one for the update thread.
+        /// Thus, we store two copies of the buffers.
+        ///
+        /// TODO: Look into changing this with a cache or something. Storing copies of the buffers for each mesh may be too expensive on memory.
+        VertexArray* animatedGeometry[2];
     };
 };
 
@@ -128,6 +160,13 @@ namespace GTEngine
 
 
 
+        /// Retrieves a pointer to the animated geometry of the given index.
+        ///
+        /// @param index [in] The index of the animated geometry to retrieve - 0 or 1.
+        VertexArray* GetAnimatedGeometry(size_t index);
+
+
+
     private:
 
         /// The vertex array containing the geometric data of the mesh.
@@ -143,5 +182,10 @@ namespace GTEngine
         MeshSkinningData* skinningData;
     };
 }
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 #endif

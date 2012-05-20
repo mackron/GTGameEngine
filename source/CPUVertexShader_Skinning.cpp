@@ -3,6 +3,7 @@
 
 namespace GTEngine
 {
+    /*
     glm::simdVec4 mul(const glm::simdMat4 &m, const glm::simdVec4 &v)
     {
         __m128 v0 = _mm_mul_ps(m[0].Data, _mm_shuffle_ps(v.Data, v.Data, _MM_SHUFFLE(0,0,0,0)));
@@ -12,6 +13,7 @@ namespace GTEngine
 
         return glm::simdVec4(_mm_add_ps(_mm_add_ps(v0, v1), _mm_add_ps(v2, v3)));
     }
+    */
 
 
     CPUVertexShader_Skinning::CPUVertexShader_Skinning()

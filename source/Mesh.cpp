@@ -13,7 +13,7 @@ namespace GTEngine
             // We first need to ensure we have a skinning data structure.
             if (this->skinningData == nullptr)
             {
-                this->skinningData = new MeshSkinningData(this->geometry->GetVertexCount());
+                this->skinningData = new MeshSkinningData(*this->geometry);
             }
 
             // At this point we can assert that we have skinning data and we can attach the bone weights to each vertex via the skinning vertex attributes.
@@ -183,5 +183,18 @@ namespace GTEngine
             this->geometry->UnmapVertexData();
             destVA.UnmapVertexData();
         }
+    }
+
+
+    VertexArray* Mesh::GetAnimatedGeometry(size_t index)
+    {
+        assert(index == 0 || index == 1);
+
+        if (this->skinningData != nullptr)
+        {
+            return this->skinningData->animatedGeometry[index];
+        }
+
+        return nullptr;
     }
 }
