@@ -139,7 +139,7 @@ namespace GTEngine
 {
     DefaultViewportRenderer::DefaultViewportRenderer()
         : owner(nullptr), framebuffer(), Shaders(), RenderCommands(), backRCIndex(0),
-          materialMetadata(), skinnedGeometry(),
+          materialMetadata(),
           projection(), view(),
           screenSize(),
           framebufferNeedsResize(false)
@@ -262,9 +262,6 @@ namespace GTEngine
         // The new back RC caches need to be reset in preparation for the next frame.
         this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Reset();
         this->RenderCommands.rcDrawVA[this->backRCIndex].Reset();
-
-        // The map of skinned geometries needs to be reset also.
-        this->ClearSkinnedGeometry(this->backRCIndex);
 
         // If the framebuffer needs to be resized, we best do that now. Resizing the framebuffer leaves 
         if (this->framebufferNeedsResize)
@@ -395,17 +392,12 @@ namespace GTEngine
                         // vertex information.
                         if (model->IsAnimating())
                         {
-                            auto baseGeometry    = mesh->GetGeometry();
-                            assert(baseGeometry != nullptr);
-
-                            auto skinnedGeometry = new VertexArray(VertexArrayUsage_Stream, baseGeometry->GetFormat());
-                            skinnedGeometry->SetData(nullptr, baseGeometry->GetVertexCount(), baseGeometry->GetIndexDataPtr(), baseGeometry->GetIndexCount());
-
-                            // Now that we have skinned geometry vertex array, we need to apply the skinning to it.
-                            mesh->ApplySkinning(*skinnedGeometry);
-
-
-                            this->skinnedGeometry[this->backRCIndex].Add(mesh, skinnedGeometry);
+                            auto skinnedGeometry = mesh->GetAnimatedGeometry(this->backRCIndex);
+                            if (skinnedGeometry != nullptr)
+                            {
+                                // Now that we have skinned geometry vertex array, we need to apply the skinning to it.
+                                mesh->ApplySkinning(*skinnedGeometry);
+                            }
 
                             rc.SetVertexArray(skinnedGeometry);
                         }
@@ -735,26 +727,15 @@ namespace GTEngine
         }
     }
 
-    void DefaultViewportRenderer::ClearSkinnedGeometry(size_t index)
-    {
-        assert(index == 0 || index == 1);
-
-        for (size_t iGeometry = 0; iGeometry < this->skinnedGeometry[index].count; ++iGeometry)
-        {
-            delete this->skinnedGeometry[index].buffer[iGeometry]->value;
-        }
-
-        this->skinnedGeometry[index].Clear();
-    }
 
     VertexArray* DefaultViewportRenderer::GetMeshGeometry(Mesh &mesh, bool animating)
     {
         if (animating)
         {
-            auto iSkinnedGeometry = this->skinnedGeometry[this->backRCIndex].Find(&mesh);
-            if (iSkinnedGeometry != nullptr)
+            auto skinnedGeometry = mesh.GetAnimatedGeometry(this->backRCIndex);
+            if (skinnedGeometry != nullptr)
             {
-                return iSkinnedGeometry->value;
+                return skinnedGeometry;
             }
         }
         

@@ -382,9 +382,6 @@ namespace GTEngine
         void DoLightingPass_A1P1(AmbientLightComponent* A0, PointLightComponent* P0, const GTCore::Vector<ModelComponent*> &models);
 
 
-        /// Clears the skinned geometries for the given index.
-        void ClearSkinnedGeometry(size_t index);
-
         /// Retrieves the vertex array to use with the given mesh.
         ///
         /// @param mesh      [in] A reference to the mesh whose vertex array is being retrieved.
@@ -438,9 +435,6 @@ namespace GTEngine
 
         /// A map containing the metadata of every material.
         GTCore::Map<Material*, MaterialMetadata*> materialMetadata;
-
-        /// A map containing the skinned geometry of animated meshes. This is used to keep track of the vertex array over multiple passes.
-        GTCore::Map<Mesh*, VertexArray*> skinnedGeometry[2];
 
 
         /// The projection matrix. This is updated at the start of each render.
