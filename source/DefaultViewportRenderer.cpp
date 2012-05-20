@@ -138,7 +138,7 @@ namespace GTEngine
 namespace GTEngine
 {
     DefaultViewportRenderer::DefaultViewportRenderer()
-        : owner(nullptr), framebuffer(), Shaders(), RenderCommands(), backRCIndex(0),
+        : owner(nullptr), framebuffer(), Shaders(), RenderCommands(),
           materialMetadata(),
           projection(), view(),
           screenSize(),
@@ -234,8 +234,8 @@ namespace GTEngine
 
 
             // First we'll grab the render command objects we'll be adding to the back buffer.
-            auto &rcBegin = this->RenderCommands.rcBegin[this->backRCIndex];
-            auto &rcEnd   = this->RenderCommands.rcEnd[this->backRCIndex];
+            auto &rcBegin = this->RenderCommands.rcBegin[Renderer::BackIndex];
+            auto &rcEnd   = this->RenderCommands.rcEnd[Renderer::BackIndex];
             
             
 
@@ -257,11 +257,9 @@ namespace GTEngine
 
     void DefaultViewportRenderer::OnSwapRCQueues()
     {
-        this->backRCIndex = !this->backRCIndex;
-
         // The new back RC caches need to be reset in preparation for the next frame.
-        this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Reset();
-        this->RenderCommands.rcDrawVA[this->backRCIndex].Reset();
+        this->RenderCommands.rcBeginLightingPass[Renderer::BackIndex].Reset();
+        this->RenderCommands.rcDrawVA[Renderer::BackIndex].Reset();
 
         // If the framebuffer needs to be resized, we best do that now. Resizing the framebuffer leaves 
         if (this->framebufferNeedsResize)
@@ -385,18 +383,18 @@ namespace GTEngine
                     if (material != nullptr)
                     {
                         // We need to grab a render command from the cache...
-                        auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                        auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
 
                         // This is the pass where the animated geometry needs to be applied, if applicable. To do this, we first check that
                         // the model is being animated. If so, we need to create a skinned geometry vertex array and calculate the blended
                         // vertex information.
                         if (model->IsAnimating())
                         {
-                            auto skinnedGeometry = mesh->GetAnimatedGeometry(this->backRCIndex);
+                            auto skinnedGeometry = mesh->GetSkinnedGeometry();
                             if (skinnedGeometry != nullptr)
                             {
                                 // Now that we have skinned geometry vertex array, we need to apply the skinning to it.
-                                mesh->ApplySkinning(*skinnedGeometry);
+                                mesh->ApplySkinning();
                             }
 
                             rc.SetVertexArray(skinnedGeometry);
@@ -448,7 +446,7 @@ namespace GTEngine
                                                  const GTCore::Vector<DirectionalLightComponent*> &directionalLightNodes,
                                                  const GTCore::Vector<PointLightComponent*> &pointLightNodes)
     {
-        auto &rc = this->RenderCommands.rcBeginLighting[this->backRCIndex];
+        auto &rc = this->RenderCommands.rcBeginLighting[Renderer::BackIndex];
         rc.SetFramebuffer(this->framebuffer);
 
         Renderer::BackRCQueue->Append(rc);
@@ -500,7 +498,7 @@ namespace GTEngine
         assert(A0 != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
+        auto &rc = this->RenderCommands.rcBeginLightingPass[Renderer::BackIndex].Acquire();
         rc.Init(this->framebuffer, this->Shaders.lightingA1, this->screenSize);
 
         Renderer::BackRCQueue->Append(rc);
@@ -522,7 +520,7 @@ namespace GTEngine
                     assert(mesh != nullptr);
 
                     // We need to grab a render command from the cache...
-                    auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
                     rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
                     rc.SetParameter("ALights[0].Colour", A0->GetColour());
@@ -542,7 +540,7 @@ namespace GTEngine
 
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
+        auto &rc = this->RenderCommands.rcBeginLightingPass[Renderer::BackIndex].Acquire();
         rc.Init(this->framebuffer, this->Shaders.lightingD1, this->screenSize);
 
         Renderer::BackRCQueue->Append(rc);
@@ -565,7 +563,7 @@ namespace GTEngine
                     assert(mesh != nullptr);
 
                     // We need to grab a render command from the cache...
-                    auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
                     rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
                     rc.SetParameter("DLights[0].Colour",    D0->GetColour());
@@ -586,7 +584,7 @@ namespace GTEngine
         assert(P0 != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
+        auto &rc = this->RenderCommands.rcBeginLightingPass[Renderer::BackIndex].Acquire();
         rc.Init(this->framebuffer, this->Shaders.lightingP1, this->screenSize);
 
         Renderer::BackRCQueue->Append(rc);
@@ -609,7 +607,7 @@ namespace GTEngine
                     assert(mesh != nullptr);
 
                     // We need to grab a render command from the cache...
-                    auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
                     rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
                     rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
@@ -636,7 +634,7 @@ namespace GTEngine
 
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
+        auto &rc = this->RenderCommands.rcBeginLightingPass[Renderer::BackIndex].Acquire();
         rc.Init(this->framebuffer, this->Shaders.lightingA1D1, this->screenSize);
 
         Renderer::BackRCQueue->Append(rc);
@@ -659,7 +657,7 @@ namespace GTEngine
                     assert(mesh != nullptr);
 
                     // We need to grab a render command from the cache...
-                    auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
                     rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
                     rc.SetParameter("ALights[0].Colour",    A0->GetColour());
@@ -683,7 +681,7 @@ namespace GTEngine
         assert(P0 != nullptr);
 
         // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
-        auto &rc = this->RenderCommands.rcBeginLightingPass[this->backRCIndex].Acquire();
+        auto &rc = this->RenderCommands.rcBeginLightingPass[Renderer::BackIndex].Acquire();
         rc.Init(this->framebuffer, this->Shaders.lightingA1P1, this->screenSize);
 
         Renderer::BackRCQueue->Append(rc);
@@ -706,10 +704,10 @@ namespace GTEngine
                     assert(mesh != nullptr);
 
                     // We need to grab a render command from the cache...
-                    auto &rc = this->RenderCommands.rcDrawVA[this->backRCIndex].Acquire();
+                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
                     rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
 
-                    rc.SetParameter("ALights[0].Colour",    A0->GetColour());
+                    rc.SetParameter("ALights[0].Colour", A0->GetColour());
 
                     rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
                     rc.SetParameter("PLights[0].Colour",               P0->GetColour());
@@ -732,7 +730,7 @@ namespace GTEngine
     {
         if (animating)
         {
-            auto skinnedGeometry = mesh.GetAnimatedGeometry(this->backRCIndex);
+            auto skinnedGeometry = mesh.GetSkinnedGeometry();
             if (skinnedGeometry != nullptr)
             {
                 return skinnedGeometry;

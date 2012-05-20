@@ -290,7 +290,7 @@ namespace GTEngine
         *   \param  shader [in] A pointer to the shader to bind. Can be null; see remarks.
         *
         *   \remarks
-        *       Shaders in GTEngine are OpenGL-style where a single shader object is used for each stage.
+        *       Shaders in GTEngine are OpenGL-style where a single shader object is used for everything.
         *       \par
         *       If \c shader is null, fixed function will be used for that particular stage.
         */
@@ -342,6 +342,7 @@ namespace GTEngine
         static void DrawGUI(const GTGUI::Server &gui);
 
 
+
     // Features support. These are set at initialisation time and can be called on any thread without syncs.
     public:
 
@@ -363,6 +364,12 @@ namespace GTEngine
         /// A pointer to the front cache. Will never be null after the renderer has been successfully initialised.
         static RCQueue* FrontRCQueue;
         
+        /// In many cases it is appropriate to use a pair of objects to manage the multithreaded environment correctly. For example, meshes use
+        /// a pair of VertexArray's to store skinned geometry. One of them will be updated by the update thread while the other is used by the
+        /// rendering thread. BackIndex is used to access the array item to use for updating on the non-rendering threads. This will always be
+        /// 0 or 1. This is toggled between 0 and 1 during every call to SwapRCQueues().
+        static size_t BackIndex;
+
 
 
     // Helpers.

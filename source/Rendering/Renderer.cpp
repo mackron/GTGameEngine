@@ -471,6 +471,7 @@ namespace GTEngine
 {
     RCQueue* Renderer::BackRCQueue  = nullptr;
     RCQueue* Renderer::FrontRCQueue = nullptr;
+    size_t   Renderer::BackIndex    = 0;
 
     struct _RendererGC
     {
@@ -519,6 +520,9 @@ namespace GTEngine
 
         // We also want to clear the back buffer.
         Renderer::ClearBackRCQueue();
+
+        // Here we swap the back index.
+        Renderer::BackIndex = !Renderer::BackIndex;
     }
 
     
