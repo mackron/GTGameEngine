@@ -26,7 +26,8 @@ namespace GTEngine
         cameraNode.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
         cameraNode.MoveForward(-10.0f);
 
-        auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/animation-test.dae"));
+        //auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/animation-test.dae"));
+        auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/default.dae"));
         auto model = modelComponent->GetModel();
         //model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("materials/troll.material"));
         model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
@@ -36,6 +37,9 @@ namespace GTEngine
         model->meshes[2]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
         model->meshes[3]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
         */
+
+        //modelComponent->GetModel()->PlayAnimation("", true);
+
 
         // Here we setup the viewport.
         this->renderer.SetClearColour(0.1f, 0.1f, 0.1f);
@@ -108,7 +112,7 @@ namespace GTEngine
         }
 #endif
 
-        modelComponent->GetModel()->PlayAnimation("", true);
+        
     }
 
     ModelEditor::~ModelEditor()

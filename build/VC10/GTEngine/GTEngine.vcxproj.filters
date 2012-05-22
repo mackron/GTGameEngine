@@ -582,5 +582,17 @@
     <None Include="..\..\..\bin\data\engine\shaders\cg\gui.shader">
       <Filter>data\shaders\cg</Filter>
     </None>
+    <None Include="..\..\..\bin\data\engine\shaders\cg\core.shader">
+      <Filter>data\shaders\cg</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\shaders\cg\defaultrenderer.shader">
+      <Filter>data\shaders\cg</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\shaders\cg\lines.shader">
+      <Filter>data\shaders\cg</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\shaders\cg\materials.shader">
+      <Filter>data\shaders\cg</Filter>
+    </None>
   </ItemGroup>
 </Project>

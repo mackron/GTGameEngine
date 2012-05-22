@@ -42,6 +42,12 @@ namespace GTEngine
             viewport.AddPointLightComponent(pointLightComponent);
         }
 
+        /// SceneCullingDbvtPolicy::ProcessModel(SpotLightComponent &)
+        void ProcessSpotLight(SpotLightComponent &spotLightComponent)
+        {
+            viewport.AddSpotLightComponent(spotLightComponent);
+        }
+
 
         //////////////////////////////////////////////////////////////////
         // Attributes
@@ -411,6 +417,36 @@ namespace GTEngine
         }
     }
 
+    void DefaultScene::AddSpotLightCullingObjects(SpotLightComponent &light)
+    {
+        auto metadata = light.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+        if (metadata != nullptr)
+        {
+            metadata->AllocateSpotLightCollisionObject(light.GetOuterAngle(), light.GetApproximateLength());
+
+            metadata->spotLightCollisionObject->setCollisionShape(metadata->spotLightCollisionShape);
+            metadata->spotLightCollisionObject->setUserPointer(&light.GetNode());
+
+
+            btTransform transform;
+            light.GetNode().GetWorldTransform(transform);
+            metadata->spotLightCollisionObject->setWorldTransform(transform);
+
+            this->occlusionCollisionWorld.addCollisionObject(metadata->spotLightCollisionObject,
+                    CollisionGroups::SpotLight,           // The collision group
+                    CollisionGroups::Model);              // The collision mask (what this object can collide with)
+        }
+    }
+
+    void DefaultScene::RemoveSpotLightCullingObjects(SpotLightComponent &light)
+    {
+        auto metadata = light.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+        if (metadata != nullptr)
+        {
+            metadata->DeleteSpotLightCollisionObject();
+        }
+    }
+
 
     void DefaultScene::OnSceneNodeAdded(SceneNode &node)
     {
@@ -427,7 +463,6 @@ namespace GTEngine
         {
             this->directionalLightComponents.Append(directionalLightComponent);
         }
-
 
 
         // If the scene node has a dynamics component, we need to add it's rigid body.
@@ -482,11 +517,18 @@ namespace GTEngine
             this->AddModelCullingObjects(*modelComponent);
         }
 
-        // We also need to add culling objects for point lights.
+        // We also need to add culling objects for point lights...
         auto pointLightComponent = node.GetComponent<PointLightComponent>();
         if (pointLightComponent != nullptr)
         {
             this->AddPointLightCullingObjects(*pointLightComponent);
+        }
+
+        // ... and spot lights.
+        auto spotLightComponent = node.GetComponent<SpotLightComponent>();
+        if (spotLightComponent != nullptr)
+        {
+            this->AddSpotLightCullingObjects(*spotLightComponent);
         }
     }
 
@@ -505,7 +547,6 @@ namespace GTEngine
         {
             this->directionalLightComponents.Remove(this->directionalLightComponents.Find(directionalLightComponent));
         }
-
 
 
         // TODO: Need to handle cases where we may be in the middle of a simulation...
@@ -576,6 +617,16 @@ namespace GTEngine
                     this->occlusionCollisionWorld.updateSingleAabb(metadata->pointLightCollisionObject);
                 }
             }
+
+            if (metadata->spotLightCollisionObject != nullptr)
+            {
+                auto world = metadata->spotLightCollisionObject->getWorld();
+                if (world != nullptr)
+                {
+                    metadata->spotLightCollisionObject->setWorldTransform(transform);
+                    this->occlusionCollisionWorld.updateSingleAabb(metadata->spotLightCollisionObject);
+                }
+            }
         }
     }
 
@@ -609,7 +660,7 @@ namespace GTEngine
                 this->occlusionCollisionWorld.updateSingleAabb(metadata->modelCollisionObject);
             }
 
-            // NOTE: We are not supporting point light scaling at the moment. The light radius should be controlled via it's attenuation.
+            // NOTE: We are not supporting light scaling at the moment. The light radius should be controlled via it's attenuation.
         }
 
         // The dynamics component needs to have scaling applied.
@@ -645,6 +696,10 @@ namespace GTEngine
         {
             this->AddPointLightCullingObjects(static_cast<PointLightComponent&>(component));
         }
+        else if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        {
+            this->AddSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
+        }
     }
 
     void DefaultScene::OnSceneNodeComponentDetached(SceneNode&, Component& component)
@@ -661,6 +716,10 @@ namespace GTEngine
         {
             this->RemovePointLightCullingObjects(static_cast<PointLightComponent&>(component));
         }
+        else if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        {
+            this->RemoveSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
+        }
     }
 
     void DefaultScene::OnSceneNodeComponentChanged(SceneNode&, Component &component)
@@ -676,6 +735,12 @@ namespace GTEngine
             // The component is a point light. We'll need to update the culling information.
             this->RemovePointLightCullingObjects(static_cast<PointLightComponent&>(component));
             this->AddPointLightCullingObjects(static_cast<PointLightComponent&>(component));
+        }
+        if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        {
+            // The component is a point light. We'll need to update the culling information.
+            this->RemoveSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
+            this->AddSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
         }
     }
 }

@@ -104,6 +104,12 @@ namespace GTEngine
 
         /// Removes culling objects for the given point light.
         void RemovePointLightCullingObjects(PointLightComponent &light);
+
+        /// Adds culling objects for the given spot light.
+        void AddSpotLightCullingObjects(SpotLightComponent &light);
+
+        /// Removes culling objects for the given spot light.
+        void RemoveSpotLightCullingObjects(SpotLightComponent &light);
         
 
 
@@ -126,10 +132,19 @@ namespace GTEngine
             btSphereShape* pointLightCollisionShape;
 
 
+            /// A pointer to the collision object for the spot light component. Can be null.
+            CollisionObject* spotLightCollisionObject;
+
+            /// The collision shape to use with the spot light collision object. Can be null only if <spotLightCollisionObject> is also null. We
+            /// need to use a compound shape here because the cone will need to be offset by half it's height.
+            btCompoundShape* spotLightCollisionShape;
+
+
 
             SceneNodeMetadata()
                 : modelCollisionObject(nullptr), modelCollisionShape(nullptr),
-                  pointLightCollisionObject(nullptr), pointLightCollisionShape()
+                  pointLightCollisionObject(nullptr), pointLightCollisionShape(),
+                  spotLightCollisionObject(nullptr), spotLightCollisionShape()
             {
             }
 
@@ -137,6 +152,7 @@ namespace GTEngine
             {
                 this->DeleteModelCollisionObject();
                 this->DeletePointLightCollisionObject();
+                this->DeleteSpotLightCollisionObject();
             }
 
             /// Allocates the model collision object and shape.
@@ -188,6 +204,44 @@ namespace GTEngine
 
                 this->pointLightCollisionObject = nullptr;
                 this->pointLightCollisionShape  = nullptr;
+            }
+
+
+            
+            /// Allocates the spot light culling object and shape.
+            void AllocateSpotLightCollisionObject(float outerAngle, float height)
+            {
+                this->DeleteSpotLightCollisionObject();
+
+                spotLightCollisionObject = new CollisionObject;
+                spotLightCollisionShape  = new btCompoundShape;
+
+                // Here we create the cone shape. We need to offset by half the height because Bullet creates it's cones centered.
+                btTransform coneTransform;
+                coneTransform.setIdentity();
+                coneTransform.setOrigin(btVector3(0.0f, 0.0f, -height * 0.5f));
+                spotLightCollisionShape->addChildShape(coneTransform, new btConeShapeZ(glm::sin(glm::radians(outerAngle)) * height, height));
+            }
+
+            /// Deletes a spot light culling object and shape.
+            void DeleteSpotLightCollisionObject()
+            {
+                if (modelCollisionShape != nullptr)
+                {
+                    while (this->modelCollisionShape->getNumChildShapes() > 0)
+                    {
+                        auto child = this->modelCollisionShape->getChildShape(0);
+                        this->modelCollisionShape->removeChildShapeByIndex(0);
+
+                        delete child;
+                    }
+                }
+
+                delete this->spotLightCollisionObject;
+                delete this->spotLightCollisionShape;
+
+                this->spotLightCollisionObject = nullptr;
+                this->spotLightCollisionShape  = nullptr;
             }
 
 

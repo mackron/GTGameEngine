@@ -150,6 +150,7 @@ namespace GTEngine
         Shaders.lightingD1   = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_D1");
         Shaders.lightingA1   = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_A1");
         Shaders.lightingP1   = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_P1");
+        Shaders.lightingS1   = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_S1");
         Shaders.lightingA1D1 = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_A1D1");
         Shaders.lightingA1P1 = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_A1P1");
         Shaders.combiner     = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_LightingMaterialCombiner");
@@ -163,6 +164,7 @@ namespace GTEngine
         ShaderLibrary::Unacquire(Shaders.lightingD1);
         ShaderLibrary::Unacquire(Shaders.lightingA1);
         ShaderLibrary::Unacquire(Shaders.lightingP1);
+        ShaderLibrary::Unacquire(Shaders.lightingS1);
         ShaderLibrary::Unacquire(Shaders.lightingA1D1);
         ShaderLibrary::Unacquire(Shaders.lightingA1P1);
         ShaderLibrary::Unacquire(Shaders.combiner);
@@ -227,10 +229,11 @@ namespace GTEngine
 
 
             // We need to iterate over the renderable scene nodes and draw them.
-            auto &modelNodes                 = this->owner->GetModelComponents();
+            auto &modelComponents            = this->owner->GetModelComponents();
             auto &ambientLightComponents     = this->owner->GetAmbientLightComponents();
             auto &directionalLightComponents = this->owner->GetDirectionalLightComponents();
-            auto &pointLightNodes            = this->owner->GetPointLightComponents();
+            auto &pointLightComponents       = this->owner->GetPointLightComponents();
+            auto &spotLightComponents        = this->owner->GetSpotLightComponents();
 
 
             // First we'll grab the render command objects we'll be adding to the back buffer.
@@ -244,10 +247,10 @@ namespace GTEngine
             Renderer::BackRCQueue->Append(rcBegin);
 
             // Step 2: Material pass. This will also fill the depth buffer. No lighting is done here.
-            this->DoMaterialPass(modelNodes);
+            this->DoMaterialPass(modelComponents);
 
             // Step 3: The lighting pass.
-            this->DoLightingPass(modelNodes, ambientLightComponents, directionalLightComponents, pointLightNodes);
+            this->DoLightingPass(modelComponents, ambientLightComponents, directionalLightComponents, pointLightComponents, spotLightComponents);
 
             // Step 4: End the frame.
             rcEnd.Init(this->framebuffer);
@@ -444,7 +447,8 @@ namespace GTEngine
     void DefaultViewportRenderer::DoLightingPass(const GTCore::Vector<ModelComponent*> &modelNodes,
                                                  const GTCore::Vector<AmbientLightComponent*> &ambientLightNodes,
                                                  const GTCore::Vector<DirectionalLightComponent*> &directionalLightNodes,
-                                                 const GTCore::Vector<PointLightComponent*> &pointLightNodes)
+                                                 const GTCore::Vector<PointLightComponent*> &pointLightNodes,
+                                                 const GTCore::Vector<SpotLightComponent*> &spotLightNodes)
     {
         auto &rc = this->RenderCommands.rcBeginLighting[Renderer::BackIndex];
         rc.SetFramebuffer(this->framebuffer);
@@ -455,6 +459,7 @@ namespace GTEngine
         size_t iALight = 0;
         size_t iDLight = 0;
         size_t iPLight = 0;
+        size_t iSLight = 0;
 
         
         // A1D1 passes.
@@ -490,6 +495,11 @@ namespace GTEngine
         for ( ; iPLight < pointLightNodes.count; ++iPLight)
         {
             this->DoLightingPass_P1(pointLightNodes[iPLight], modelNodes);
+        }
+
+        for ( ; iSLight < spotLightNodes.count; ++iSLight)
+        {
+            this->DoLightingPass_S1(spotLightNodes[iSLight], modelNodes);
         }
     }
 
@@ -615,6 +625,56 @@ namespace GTEngine
                     rc.SetParameter("PLights[0].ConstantAttenuation",  P0->GetConstantAttenuation());
                     rc.SetParameter("PLights[0].LinearAttenuation",    P0->GetLinearAttenuation());
                     rc.SetParameter("PLights[0].QuadraticAttenuation", P0->GetQuadraticAttenuation());
+                    
+                    rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
+                    rc.SetParameter("MVPMatrix",       MVPMatrix);
+                    rc.SetParameter("NormalMatrix",    NormalMatrix);
+
+                    Renderer::BackRCQueue->Append(rc);
+                }
+            }
+        }
+    }
+
+    void DefaultViewportRenderer::DoLightingPass_S1(SpotLightComponent* S0, const GTCore::Vector<ModelComponent*> &models)
+    {
+        assert(S0 != nullptr);
+
+        // Right from the start we can set some shader parameters. These will remain constant for every model in this pass.
+        auto &rc = this->RenderCommands.rcBeginLightingPass[Renderer::BackIndex].Acquire();
+        rc.Init(this->framebuffer, this->Shaders.lightingS1, this->screenSize);
+
+        Renderer::BackRCQueue->Append(rc);
+
+        for (size_t iComponent = 0; iComponent < models.count; ++iComponent)
+        {
+            auto modelComponent = models[iComponent];
+            assert(modelComponent != nullptr);
+
+            auto model = modelComponent->GetModel();
+            if (model != nullptr)
+            {
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
+                glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
+                glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
+
+                for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
+                {
+                    auto mesh = model->meshes[iMesh];
+                    assert(mesh != nullptr);
+
+                    // We need to grab a render command from the cache...
+                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
+                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
+
+                    rc.SetParameter("SLights[0].Position",             glm::vec3(this->view * glm::vec4(S0->GetNode().GetWorldPosition(), 1.0f)));
+                    rc.SetParameter("SLights[0].Direction",            glm::normalize(glm::mat3(this->view) * S0->GetNode().GetForwardVector()));
+                    rc.SetParameter("SLights[0].CosAngleInner",        glm::cos(glm::radians(S0->GetInnerAngle())));
+                    rc.SetParameter("SLights[0].CosAngleOuter",        glm::cos(glm::radians(S0->GetOuterAngle())));
+                    rc.SetParameter("SLights[0].Colour",               S0->GetColour());
+                    rc.SetParameter("SLights[0].ConstantAttenuation",  S0->GetConstantAttenuation());
+                    rc.SetParameter("SLights[0].LinearAttenuation",    S0->GetLinearAttenuation());
+                    rc.SetParameter("SLights[0].QuadraticAttenuation", S0->GetQuadraticAttenuation());
                     
                     rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
                     rc.SetParameter("MVPMatrix",       MVPMatrix);

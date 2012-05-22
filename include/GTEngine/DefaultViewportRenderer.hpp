@@ -368,7 +368,8 @@ namespace GTEngine
             const GTCore::Vector<ModelComponent*> &modelNodes,
             const GTCore::Vector<AmbientLightComponent*> &ambientLightNodes,
             const GTCore::Vector<DirectionalLightComponent*> &directionalLightNodes,
-            const GTCore::Vector<PointLightComponent*> &pointLightNodes);
+            const GTCore::Vector<PointLightComponent*> &pointLightNodes,
+            const GTCore::Vector<SpotLightComponent*> &spotLightNodes);
 
 
         /// Performs a lighting pass for an ambient light.
@@ -377,7 +378,12 @@ namespace GTEngine
         /// Performs a lighting pass for a directional light.
         void DoLightingPass_D1(DirectionalLightComponent* D0, const GTCore::Vector<ModelComponent*> &models);
         
+        /// Performs a lighting pass for a point light.
         void DoLightingPass_P1(PointLightComponent* P0, const GTCore::Vector<ModelComponent*> &models);
+
+        /// Performs a lighting pass for a spot light.
+        void DoLightingPass_S1(SpotLightComponent* S0, const GTCore::Vector<ModelComponent*> &models);
+
         void DoLightingPass_A1D1(AmbientLightComponent* A0, DirectionalLightComponent* D0, const GTCore::Vector<ModelComponent*> &models);
         void DoLightingPass_A1P1(AmbientLightComponent* A0, PointLightComponent* P0, const GTCore::Vector<ModelComponent*> &models);
 
@@ -406,6 +412,7 @@ namespace GTEngine
             Shader* lightingD1;
             Shader* lightingA1;
             Shader* lightingP1;
+            Shader* lightingS1;
             Shader* lightingA1D1;
             Shader* lightingA1P1;
 
