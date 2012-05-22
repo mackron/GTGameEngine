@@ -26,6 +26,13 @@ namespace GTEngine
         cameraNode.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
         cameraNode.MoveForward(-10.0f);
 
+        /*
+        auto spotlight = cameraNode.AddComponent<SpotLightComponent>();
+        spotlight->SetAngles(10.0f, 20.0f);
+        spotlight->SetColour(glm::vec3(0.75f, 0.75f, 0.75f));
+        */
+
+
         //auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/animation-test.dae"));
         auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/default.dae"));
         auto model = modelComponent->GetModel();
@@ -38,7 +45,7 @@ namespace GTEngine
         model->meshes[3]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
         */
 
-        //modelComponent->GetModel()->PlayAnimation("", true);
+        modelComponent->GetModel()->PlayAnimation("", true);
 
 
         // Here we setup the viewport.

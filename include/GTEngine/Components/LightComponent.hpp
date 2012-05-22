@@ -15,11 +15,6 @@ namespace GTEngine
         PointLightComponent(SceneNode &node);
         
         /**
-        *   \brief  Initialises the light.
-        */
-        void Initialise(const glm::vec3 &colour, float constantAttenuation, float linearAttenuation, float quadraticAttenuation);
-        
-        /**
         *   \brief  Retrievs the colour of the light.
         */
         const glm::vec3 & GetColour() const { return this->colour; }
