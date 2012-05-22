@@ -1,5 +1,21 @@
 
 #include <GTEngine/Components/LightComponent.hpp>
+#include <GTEngine/Scene.hpp>
+
+// Lighting utils.
+namespace GTEngine
+{
+    float GetApproximateAttenuationRadius(double c, double l, double q)
+    {
+        // If 'q' is 0.0, we'll end up with a division by 0 bug. In this case, we'll replace it with a tiny value for approximation.
+        if (q == 0.0)
+        {
+            q = 0.000001;
+        }
+
+        return static_cast<float>((-l + sqrt(l * l - 4.0 * (c - 100.0) * q)) / (2.0 * q));      // <-- <c - 100.0f> was previously <c - 1000.0f>. Might need to keep experimenting here.
+    }
+}
 
 // PointLight
 namespace GTEngine
@@ -11,28 +27,23 @@ namespace GTEngine
     {
     }
 
-    void PointLightComponent::Initialise(const glm::vec3 &colour, float constant, float linear, float quadratic)
-    {
-        this->colour               = colour;
-        this->constantAttenuation  = constant;
-        this->linearAttenuation    = linear;
-        this->quadraticAttenuation = quadratic;
-    }
-
     void PointLightComponent::SetAttenuation(float constant, float linear, float quadratic)
     {
         this->constantAttenuation  = constant;
         this->linearAttenuation    = linear;
         this->quadraticAttenuation = quadratic;
+
+        // The scene will need to update things like culling information. We need to let it know about this.
+        auto scene = this->node.GetScene();
+        if (scene != nullptr)
+        {
+            scene->OnSceneNodeComponentChanged(this->node, *this);
+        }
     }
 
     float PointLightComponent::GetApproximateRadius() const
     {
-        double c = this->constantAttenuation;
-        double l = this->linearAttenuation;
-        double q = this->quadraticAttenuation;
-
-        return static_cast<float>((-l + sqrt(l * l - 4.0 * (c - 100.0) * q)) / (2.0 * q));      // <-- <c - 100.0f> was previously <c - 1000.0f>. Might need to keep experimenting here.
+        return GetApproximateAttenuationRadius(this->constantAttenuation, this->linearAttenuation, this->quadraticAttenuation);
     }
 }
 
@@ -51,6 +62,13 @@ namespace GTEngine
         this->constantAttenuation  = constant;
         this->linearAttenuation    = linear;
         this->quadraticAttenuation = quadratic;
+
+        // The scene will need to update things like culling information. We need to let it know about this.
+        auto scene = this->node.GetScene();
+        if (scene != nullptr)
+        {
+            scene->OnSceneNodeComponentChanged(this->node, *this);
+        }
     }
 
     float SpotLightComponent::GetApproximateLength() const

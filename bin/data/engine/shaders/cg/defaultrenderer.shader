@@ -15,6 +15,7 @@ In this file, we use simple codes to identify the lights used in a particular sh
     A - Ambient light.
     D - Directional light.
     P - Point light.
+    S - Spot light.
     
 Each code is followed by a number to indicate how many of those lights are used in the shader. For example, if the shader
 uses 1 or each light, it will use the following: A1D1P1.
@@ -54,12 +55,34 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         return OUT;
     }
-    
 </shader>
 
 <shader id="Engine_FragmentLightingUniforms">
     uniform sampler2D Lighting_Normals;
     uniform float2    ScreenSize;
+</shader>
+
+<shader id="Engine_LightingUtils">
+    float DiffuseFactor(float3 N, float3 L)
+    {
+        return max(0.0, dot(N, L));
+    }
+    
+    float SpecularFactor(float3 N, float3 H, float power)
+    {
+        return max(0.0, pow(max(dot(N, H), 0.0), power));       // The 'power' is the size of the highlight. Larger values means smaller, more focused specular highlights.
+    }
+    
+    float SpotFactor(float3 L, float3 lightDirection, float cosAngleInner, float cosAngleOuter)
+    {
+        float angle = dot(normalize(-L), lightDirection);
+        return clamp((angle - cosAngleOuter) / (cosAngleInner - cosAngleOuter), 0.0, 1.0);
+    }
+    
+    float AttenuationFactor(float c, float l, float q, float d)     // d = distance
+    {
+        return 1.0 / (c + (l * d) + (q * d * d));
+    }
 </shader>
 
 <shader id="Engine_AmbientLight">
@@ -86,14 +109,15 @@ uses 1 or each light, it will use the following: A1D1P1.
     {
         float2 fragCoord = IN.WindowPosition.xy / ScreenSize;
     
-        float3 N     = tex2D(Lighting_Normals, fragCoord).rgb;
-        float3 L     = -light.Direction;
-        float3 H     = normalize(L - normalize(IN.Position.xyz));
-        float  NdotL = max(0.0, dot(N, L));
-        float  NdotH = max(0.0, pow(max(dot(N, H), 0.0), 32.0));         // Last argument is shininess. Larger values means smaller, more focused specular highlight.
+        float3 N = tex2D(Lighting_Normals, fragCoord).rgb;
+        float3 L = -light.Direction;
+        float3 H = normalize(L - normalize(IN.Position.xyz));
+        
+        float diffuse  = DiffuseFactor(N, L);
+        float specular = SpecularFactor(N, H, 64.0);
             
-        diffuseOut  += light.Colour * NdotL;
-        specularOut += light.Colour * NdotH;
+        diffuseOut  += light.Colour * diffuse;
+        specularOut += light.Colour * specular;
     }
 </shader>
 
@@ -102,39 +126,29 @@ uses 1 or each light, it will use the following: A1D1P1.
     {
         float3 Colour;
         float3 Position;
+        
         float  ConstantAttenuation;
         float  LinearAttenuation;
         float  QuadraticAttenuation;
     };
-    
-    float CalculatePointLightAttenuation(PointLight light, float d)     // d = distance
-    {
-        float c = light.ConstantAttenuation;
-        float l = light.LinearAttenuation;
-        float q = light.QuadraticAttenuation;
-            
-        return 1.0 / (c + (l * d) + (q * d * d));
-    }
-    
+
     void CalculatePointLighting(PointLight light, in out float3 diffuseOut, in out float3 specularOut)
     {
         // N - Input normal
         // L - Light vector from the light to the vertex
-        // D - Distance between the light and the vertex
         
         float2 fragCoord = IN.WindowPosition.xy / ScreenSize;
         
-        float3 N     = tex2D(Lighting_Normals, fragCoord).rgb;
-        float3 L     = light.Position - IN.Position.xyz;
-        float  D     = length(L);
-        float3 H     = normalize(normalize(L) - normalize(IN.Position.xyz));
-        float  NdotL = max(0.0, dot(N, normalize(L)));
-        float  NdotH = max(0.0, pow(max(dot(N, H), 0.0), 64.0));         // Last argument is shininess. Larger values means smaller, more focused specular highlight.
-            
-        float attenuation = CalculatePointLightAttenuation(light, D);
-            
-        diffuseOut  += light.Colour * NdotL * attenuation;
-        specularOut += light.Colour * NdotH * attenuation;
+        float3 N = tex2D(Lighting_Normals, fragCoord).rgb;
+        float3 L = light.Position - IN.Position.xyz;
+        float3 H = normalize(normalize(L) - normalize(IN.Position.xyz));
+
+        float diffuse     = DiffuseFactor(N, normalize(L));
+        float specular    = SpecularFactor(N, H, 64.0);
+        float attenuation = AttenuationFactor(light.ConstantAttenuation, light.LinearAttenuation, light.QuadraticAttenuation, length(L));
+
+        diffuseOut  += light.Colour * diffuse  * attenuation;
+        specularOut += light.Colour * specular * attenuation;
     }
 </shader>
 
@@ -146,19 +160,11 @@ uses 1 or each light, it will use the following: A1D1P1.
         float3 Direction;
         float  CosAngleInner;               // cos(radians(degrees))
         float  CosAngleOuter;               // cos(radians(degrees))
+        
         float  ConstantAttenuation;
         float  LinearAttenuation;
         float  QuadraticAttenuation;
     };
-    
-    float CalculateSpotLightAttenuation(SpotLight light, float d)     // d = distance
-    {
-        float c = light.ConstantAttenuation;
-        float l = light.LinearAttenuation;
-        float q = light.QuadraticAttenuation;
-            
-        return 1.0 / (c + (l * d) + (q * d * d));
-    }
     
     void CalculateSpotLighting(SpotLight light, in out float3 diffuseOut, in out float3 specularOut)
     {
@@ -170,27 +176,20 @@ uses 1 or each light, it will use the following: A1D1P1.
         float3 N     = tex2D(Lighting_Normals, fragCoord).rgb;
         float3 L     = light.Position - IN.Position.xyz;
         float3 H     = normalize(normalize(L) - normalize(IN.Position.xyz));
-        float  NdotL = max(0.0, dot(N, normalize(L)));
-        float  NdotH = max(0.0, pow(max(dot(N, H), 0.0), 64.0));         // Last argument is shininess. Larger values means smaller, more focused specular highlight.
         
-        float attenuation = CalculateSpotLightAttenuation(light, length(L));
-        
-        // Spot lighting.
-        float angle = dot(normalize(-L), light.Direction);
-        float spot = clamp(
-            (angle - light.CosAngleOuter) / (light.CosAngleInner - light.CosAngleOuter),
-            0.0, 1.0);
+        float diffuse     = DiffuseFactor(N, normalize(L));
+        float specular    = SpecularFactor(N, H, 64.0);
+        float attenuation = AttenuationFactor(light.ConstantAttenuation, light.LinearAttenuation, light.QuadraticAttenuation, length(L));
+        float spot        = SpotFactor(L, light.Direction, light.CosAngleInner, light.CosAngleOuter);
             
-        diffuseOut  += light.Colour * NdotL * attenuation * spot;
-        specularOut += light.Colour * NdotH * attenuation * spot;
+        diffuseOut  += light.Colour * diffuse  * attenuation * spot;
+        specularOut += light.Colour * specular * attenuation * spot;
     }
 </shader>
 
 
 
-<shader id="Engine_Attenuation">
-    
-</shader>
+
 
 
 
@@ -199,6 +198,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
+    <include url="#Engine_LightingUtils" />
     <include url="#Engine_AmbientLight" />
     
     <include>
@@ -219,6 +219,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
+    <include url="#Engine_LightingUtils" />
     <include url="#Engine_DirectionalLight" />
     
     <include>
@@ -239,6 +240,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
+    <include url="#Engine_LightingUtils" />
     <include url="#Engine_PointLight" />
     
     <include>
@@ -259,6 +261,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
+    <include url="#Engine_LightingUtils" />
     <include url="#Engine_SpotLight" />
     
     <include>
@@ -280,6 +283,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
+    <include url="#Engine_LightingUtils" />
     <include url="#Engine_AmbientLight" />
     <include url="#Engine_DirectionalLight" />
     
@@ -302,6 +306,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
+    <include url="#Engine_LightingUtils" />
     <include url="#Engine_AmbientLight" />
     <include url="#Engine_PointLight" />
     

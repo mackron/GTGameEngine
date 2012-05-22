@@ -335,7 +335,9 @@
     <None Include="..\..\..\bin\data\engine\editor\styles\menubar.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\theme.style" />
     <None Include="..\..\..\bin\data\engine\shaders\cg\core.shader" />
-    <None Include="..\..\..\bin\data\engine\shaders\cg\defaultrenderer.shader" />
+    <None Include="..\..\..\bin\data\engine\shaders\cg\defaultrenderer.shader">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="..\..\..\bin\data\engine\shaders\cg\gui.shader" />
     <None Include="..\..\..\bin\data\engine\shaders\cg\lines.shader" />
     <None Include="..\..\..\bin\data\engine\shaders\cg\materials.shader" />

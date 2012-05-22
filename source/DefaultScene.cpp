@@ -405,6 +405,8 @@ namespace GTEngine
             this->occlusionCollisionWorld.addCollisionObject(metadata->pointLightCollisionObject,
                     CollisionGroups::PointLight,          // The collision group
                     CollisionGroups::Model);              // The collision mask (what this object can collide with)
+
+            printf("light radius: %f\n", light.GetApproximateRadius());
         }
     }
 
