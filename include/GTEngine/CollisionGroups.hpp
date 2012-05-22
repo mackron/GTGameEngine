@@ -15,6 +15,7 @@ namespace GTEngine
 
         static const short Model      = (1 << 2);       ///< The collision object represents a model.
         static const short PointLight = (1 << 3);       ///< The collision object represents a point light.
+        static const short SpotLight  = (1 << 4);       ///< The collision object represents a spot light.
     }
 }
 

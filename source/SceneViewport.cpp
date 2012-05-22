@@ -7,7 +7,7 @@ namespace GTEngine
 {
     SceneViewport::SceneViewport(unsigned int width, unsigned int height)
         : scene(nullptr), cameraNode(nullptr), renderer(nullptr), width(width), height(height),
-          modelComponents(), ambientLightComponents(), directionalLightComponents(), pointLightComponents()
+          modelComponents(), ambientLightComponents(), directionalLightComponents(), pointLightComponents(), spotLightComponents()
     {
     }
 
@@ -109,6 +109,11 @@ namespace GTEngine
         this->pointLightComponents.PushBack(&component);
     }
 
+    void SceneViewport::AddSpotLightComponent(SpotLightComponent &component)
+    {
+        this->spotLightComponents.PushBack(&component);
+    }
+
 
     void SceneViewport::Render()
     {
@@ -123,6 +128,7 @@ namespace GTEngine
 
 
             // TESTING
+            //printf("Spot Light Count: %d\n", this->spotLightComponents.count);
             //printf("Point Light Count: %d\n", this->pointLightComponents.count);
             //printf("Model Count: %d\n", this->modelComponents.count);
         }
@@ -236,5 +242,6 @@ namespace GTEngine
         this->ambientLightComponents.Clear();
         this->directionalLightComponents.Clear();
         this->pointLightComponents.Clear();
+        this->spotLightComponents.Clear();
     }
 }

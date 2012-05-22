@@ -86,6 +86,9 @@ namespace GTEngine
         /// Retrieves a reference to the cache of point light components.
         GTCore::Vector<PointLightComponent*> & GetPointLightComponents() { return this->pointLightComponents; }
 
+        /// Retrieves a reference to the cache of spot light components.
+        GTCore::Vector<SpotLightComponent*> & GetSpotLightComponents() { return this->spotLightComponents; }
+
         
 
 
@@ -100,6 +103,9 @@ namespace GTEngine
 
         /// Adds a point light component.
         void AddPointLightComponent(PointLightComponent &component);
+
+        /// Adds a spot light component.
+        void AddSpotLightComponent(SpotLightComponent &component);
 
 
 
@@ -195,6 +201,9 @@ namespace GTEngine
 
         /// The cache of point light components.
         GTCore::Vector<PointLightComponent*> pointLightComponents;
+
+        /// The cache of spot light components.
+        GTCore::Vector<SpotLightComponent*> spotLightComponents;
 
 
 

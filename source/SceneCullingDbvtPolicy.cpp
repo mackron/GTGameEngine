@@ -41,8 +41,13 @@ namespace GTEngine
 
                 this->ProcessPointLight(*pointLightComponent);
             }
+            else if (proxy->m_collisionFilterGroup & CollisionGroups::SpotLight)
+            {
+                auto spotLightComponent = sceneNode->GetComponent<SpotLightComponent>();
+                assert(spotLightComponent != nullptr);
 
-            //this->ProcessSceneNode(*sceneNode);
+                this->ProcessSpotLight(*spotLightComponent);
+            }
         }
     }
 }

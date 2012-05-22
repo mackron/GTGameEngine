@@ -138,6 +138,56 @@ uses 1 or each light, it will use the following: A1D1P1.
     }
 </shader>
 
+<shader id="Engine_SpotLight">
+    struct SpotLight
+    {
+        float3 Colour;
+        float3 Position;
+        float3 Direction;
+        float  CosAngleInner;               // cos(radians(degrees))
+        float  CosAngleOuter;               // cos(radians(degrees))
+        float  ConstantAttenuation;
+        float  LinearAttenuation;
+        float  QuadraticAttenuation;
+    };
+    
+    float CalculateSpotLightAttenuation(SpotLight light, float d)     // d = distance
+    {
+        float c = light.ConstantAttenuation;
+        float l = light.LinearAttenuation;
+        float q = light.QuadraticAttenuation;
+            
+        return 1.0 / (c + (l * d) + (q * d * d));
+    }
+    
+    void CalculateSpotLighting(SpotLight light, in out float3 diffuseOut, in out float3 specularOut)
+    {
+        // N - Input normal
+        // L - Non-normalized light vector from the light to the vertex
+        
+        float2 fragCoord = IN.WindowPosition.xy / ScreenSize;
+        
+        float3 N     = tex2D(Lighting_Normals, fragCoord).rgb;
+        float3 L     = light.Position - IN.Position.xyz;
+        float3 H     = normalize(normalize(L) - normalize(IN.Position.xyz));
+        float  NdotL = max(0.0, dot(N, normalize(L)));
+        float  NdotH = max(0.0, pow(max(dot(N, H), 0.0), 64.0));         // Last argument is shininess. Larger values means smaller, more focused specular highlight.
+        
+        float attenuation = CalculateSpotLightAttenuation(light, length(L));
+        
+        // Spot lighting.
+        float angle = dot(normalize(-L), light.Direction);
+        float spot = clamp(
+            (angle - light.CosAngleOuter) / (light.CosAngleInner - light.CosAngleOuter),
+            0.0, 1.0);
+            
+        diffuseOut  += light.Colour * NdotL * attenuation * spot;
+        specularOut += light.Colour * NdotH * attenuation * spot;
+    }
+</shader>
+
+
+
 <shader id="Engine_Attenuation">
     
 </shader>
@@ -199,6 +249,26 @@ uses 1 or each light, it will use the following: A1D1P1.
             float3 diffuse  = float3(0.0, 0.0, 0.0);
             float3 specular = float3(0.0, 0.0, 0.0);
             CalculatePointLighting(PLights[0], diffuse, specular);
+            
+		    return DoFinalLightingOutput(diffuse, specular);
+	    }
+    </include>
+</shader>
+
+<shader id="Engine_LightingPass_S1">
+    <include url="#Engine_FragmentInput" />
+    <include url="#Engine_FragmentLightingOutput" />
+    <include url="#Engine_FragmentLightingUniforms" />
+    <include url="#Engine_SpotLight" />
+    
+    <include>
+        uniform SpotLight SLights[1];
+        
+	    FragmentOutput main()
+	    {
+            float3 diffuse  = float3(0.0, 0.0, 0.0);
+            float3 specular = float3(0.0, 0.0, 0.0);
+            CalculateSpotLighting(SLights[0], diffuse, specular);
             
 		    return DoFinalLightingOutput(diffuse, specular);
 	    }
