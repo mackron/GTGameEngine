@@ -106,6 +106,16 @@ namespace GTEngine
 
 
 
+    // Physics.
+    public:
+
+        /// Sets the scene's gravity.
+        ///
+        virtual void SetGravity(float x, float y, float z) = 0;
+                void SetGravity(const glm::vec3 &gravity) { this->SetGravity(gravity.x, gravity.y, gravity.z); }
+
+
+
     // Non-virtual functions.
     public:
 
