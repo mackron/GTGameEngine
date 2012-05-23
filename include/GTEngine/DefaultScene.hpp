@@ -75,6 +75,13 @@ namespace GTEngine
         void AddVisibleComponents(SceneViewport &viewport);
 
 
+    // Physics.
+    public:
+
+        /// Scene::SetGravity(float, float, float)
+        void SetGravity(float x, float y, float z);
+
+
     public:
 
         void OnSceneNodeTransform(SceneNode &node);

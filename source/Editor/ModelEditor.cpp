@@ -26,11 +26,11 @@ namespace GTEngine
         cameraNode.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
         cameraNode.MoveForward(-10.0f);
 
-        /*
+        
         auto spotlight = cameraNode.AddComponent<SpotLightComponent>();
         spotlight->SetAngles(10.0f, 20.0f);
         spotlight->SetColour(glm::vec3(0.75f, 0.75f, 0.75f));
-        */
+        
 
 
         //auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/animation-test.dae"));
@@ -330,7 +330,11 @@ namespace GTEngine
 
     void ModelViewportEventHandler::OnMouseWheel(GTGUI::Element &, int delta, int x, int y)
     {
-        printf("Mouse Wheel: %d %d %d\n", delta, x, y);
+        (void)delta;
+        (void)x;
+        (void)y;
+
+        //printf("Mouse Wheel: %d %d %d\n", delta, x, y);
     }
 }
 

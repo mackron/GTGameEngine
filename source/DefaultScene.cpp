@@ -322,6 +322,14 @@ namespace GTEngine
         }
     }
 
+    void DefaultScene::SetGravity(float x, float y, float z)
+    {
+        this->dynamicsWorld.setGravity(btVector3(x, y, z));
+    }
+
+
+
+
 
     void DefaultScene::UpdateNode(SceneNode &node, double deltaTimeInSeconds)
     {
