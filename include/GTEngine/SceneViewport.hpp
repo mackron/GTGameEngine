@@ -151,6 +151,10 @@ namespace GTEngine
         /// @param position [in] The point in 3D space being projected.
         glm::vec3 Project(const glm::vec3 &position);
 
+        /// Unprojects a 2D point into 3D space.
+        /// @param position [in] The point in 2D space being unprojected.
+        glm::vec3 Unproject(const glm::vec3 &position);
+
         /// Retrieves a 2D projection matrix for this viewport.
         ///
         /// @param yDown [in] Whether or not the +y axis should move from top to bottom. Defaults to false (+y up).

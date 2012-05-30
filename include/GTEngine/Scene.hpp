@@ -7,6 +7,18 @@
 
 namespace GTEngine
 {
+    /// Structure containing the results of a ray test.
+    struct RayTestResult
+    {
+        /// The intersection point in world coordinates.
+        glm::vec3 intersectionPoint;
+
+        /// The intersection normal in world coordinates.
+        glm::vec3 intersectionNormal;
+    };
+
+
+
     /**
     *   \brief  Base class for scenes.
     *
@@ -91,6 +103,7 @@ namespace GTEngine
 
         /// Performs a ray test on the scene nodes against their dynamics components.
         virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
+        virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestResult &result) = 0;
 
 
     // Occlusion
