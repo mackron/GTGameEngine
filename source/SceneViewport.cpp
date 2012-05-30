@@ -210,6 +210,14 @@ namespace GTEngine
         return glm::project(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
     }
 
+    glm::vec3 SceneViewport::Unproject(const glm::vec3 &position)
+    {
+        auto viewportCamera = this->cameraNode->GetComponent<GTEngine::CameraComponent>();
+        assert(viewportCamera != nullptr);
+
+        return glm::unProject(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
+    }
+
     glm::mat4 SceneViewport::Get2DProjectionMatrix(bool yDown)
     {
         if (!yDown)
