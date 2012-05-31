@@ -1,5 +1,6 @@
 
 #include <GTEngine/SceneNode.hpp>
+#include <GTEngine/Physics.hpp>
 
 namespace GTEngine
 {
@@ -48,15 +49,27 @@ namespace GTEngine
     {
         // Bullet's sphere shape does not support scaling, so we will create an ellipsoid instead.
         this->AddEllipsoidCollisionShape(radius, radius, radius, offsetX, offsetY, offsetZ);
-
-        //btVector3 position(0.0f, 0.0f, 0.0f);
-        //this->AddCollisionShape(new btMultiSphereShape(&position, &radius, 1), offsetX, offsetY, offsetZ);
     }
 
     void DynamicsComponent::AddEllipsoidCollisionShape(float radiusX, float radiusY, float radiusZ, float offsetX, float offsetY, float offsetZ)
     {
         this->AddCollisionShape(new btEllipsoidShape(btVector3(radiusX, radiusY, radiusZ)), offsetX, offsetY, offsetZ);
     }
+
+
+    void DynamicsComponent::AddCylinderXCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCylinderShapeX(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
+    }
+    void DynamicsComponent::AddCylinderYCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCylinderShape(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
+    }
+    void DynamicsComponent::AddCylinderZCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCylinderShapeZ(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
+    }
+
 
     void DynamicsComponent::RemoveAllCollisionShapes()
     {
@@ -220,12 +233,45 @@ namespace GTEngine
 
     void DynamicsComponent::SetLinearVelocity(float x, float y, float z)
     {
-        this->rigidBody->setLinearVelocity(btVector3(x, y, z));
+        this->rigidBody->setLinearVelocity(btVector3(x, y, z) * this->rigidBody->getLinearFactor());
     }
+
+    glm::vec3 DynamicsComponent::GetLinearVelocity() const
+    {
+        return GTEngine::ToGLMVector3(this->rigidBody->getLinearVelocity());
+    }
+
 
     void DynamicsComponent::SetAngularVelocity(float x, float y, float z)
     {
-        this->rigidBody->setAngularVelocity(btVector3(x, y, z));
+        this->rigidBody->setAngularVelocity(btVector3(x, y, z) * this->rigidBody->getAngularFactor());
+    }
+
+    glm::vec3 DynamicsComponent::GetAngularVelocity() const
+    {
+        return GTEngine::ToGLMVector3(this->rigidBody->getAngularVelocity());
+    }
+
+
+    void DynamicsComponent::SetLinearFactor(float x, float y, float z)
+    {
+        this->rigidBody->setLinearFactor(btVector3(x, y, z));
+    }
+
+    void DynamicsComponent::SetAngularFactor(float factor)
+    {
+        this->rigidBody->setAngularFactor(factor);
+    }
+
+
+    void DynamicsComponent::SetGravity(float x, float y, float z)
+    {
+        this->rigidBody->setGravity(btVector3(x, y, z));
+    }
+
+    void DynamicsComponent::ApplyGravity()
+    {
+        this->rigidBody->applyGravity();
     }
 
 
