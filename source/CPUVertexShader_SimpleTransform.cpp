@@ -15,17 +15,14 @@ namespace GTEngine
 
     void CPUVertexShader_SimpleTransform::SetTransform(const glm::mat4 &transform)
     {
-        this->transform       = transform;
+        this->transform       = glm::simdMat4(transform);
         this->normalTransform = glm::inverse(glm::transpose(glm::mat3(transform)));
     }
 
     void CPUVertexShader_SimpleTransform::ProcessVertex(Vertex &vertex)
     {
         // We only care about the position and normal here.
-        glm::vec4 positionIn = vertex.Get(VertexAttribs::Position);
-        glm::vec4 normalIn   = vertex.Get(VertexAttribs::Normal);
-
-        vertex.Set(VertexAttribs::Position, this->transform       * positionIn);
-        vertex.Set(VertexAttribs::Normal,   this->normalTransform * glm::vec3(normalIn));
+        vertex.Position = this->transform * vertex.Position;
+        vertex.Normal   = glm::simdVec4(this->normalTransform * glm::vec3(vertex.Normal.x, vertex.Normal.y, vertex.Normal.z), 0.0f);
     }
 }

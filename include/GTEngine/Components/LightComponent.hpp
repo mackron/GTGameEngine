@@ -22,6 +22,7 @@ namespace GTEngine
         /**
         *   \brief  Sets the colour of the light.
         */
+        void SetColour(float r, float g, float b) { this->SetColour(glm::vec3(r, g, b)); }
         void SetColour(const glm::vec3 &colour) { this->colour = colour; }
         
         /**

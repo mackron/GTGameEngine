@@ -30,6 +30,12 @@ namespace GTEngine
         /// Adds an elipsoid collision shape.
         void AddEllipsoidCollisionShape(float radiusX, float radiusY, float radiusZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
 
+        /// Adds a cylinder collision shape.
+        void AddCylinderXCollisionShape(float halfX, float halfY, float halfZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+        void AddCylinderYCollisionShape(float halfX, float halfY, float halfZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+        void AddCylinderZCollisionShape(float halfX, float halfY, float halfZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+        
+
         /// Removes every collision shape.
         void RemoveAllCollisionShapes();
 
@@ -99,10 +105,36 @@ namespace GTEngine
 
         /// Sets the linear velocity of the physics object.
         void SetLinearVelocity(float x, float y, float z);
+        void SetLinearVelocity(const glm::vec3 &velocity) { this->SetLinearVelocity(velocity.x, velocity.y, velocity.z); }
+
+        /// Retrieves the linear velocity of the object.
+        glm::vec3 GetLinearVelocity() const;
+
 
         /// Sets the angular velocity of the physics object.
         void SetAngularVelocity(float x, float y, float z);
+        void SetAngularVelocity(const glm::vec3 &velocity) { this->SetAngularVelocity(velocity.x, velocity.y, velocity.z); }
+
+        /// Retrieves the angular velocity of the object.
+        glm::vec3 GetAngularVelocity() const;
         
+
+        /// Sets the linear factor.
+        void SetLinearFactor(float x, float y, float z);
+        void SetLinearFactor(const glm::vec3 &factor) { this->SetLinearFactor(factor.x, factor.y, factor.z); }
+
+        /// Sets the angular factor.
+        void SetAngularFactor(float factor);
+
+
+        /// Sets the gravity of the object.
+        void SetGravity(float x, float y, float z);
+        void SetGravity(const glm::vec3 &gravity) { this->SetGravity(gravity.x, gravity.y, gravity.z); }
+
+        /// Applies the objects gravity.
+        void ApplyGravity();
+
+
 
     private:
 

@@ -329,6 +329,21 @@ namespace GTEngine
 // Loading
 namespace GTEngine
 {
+    /// The flags to use with assimp's ReadFile() and ReadFileFromMemory().
+    static const unsigned int AssimpReadFileFlags =
+        aiProcess_Triangulate           |
+        aiProcess_JoinIdenticalVertices |
+        aiProcess_SortByPType           |
+        aiProcess_ImproveCacheLocality  |
+        aiProcess_GenSmoothNormals      |
+        aiProcess_RemoveComponent;
+
+    static const int AssimpRemovedComponentsFlags =
+        aiComponent_COLORS |
+        aiComponent_LIGHTS |
+        aiComponent_CAMERAS;
+
+
     void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, LoadedModelInfo &model)
     {
         // First we need to grab the transformation to apply to the mesh.
@@ -470,128 +485,176 @@ namespace GTEngine
         }
     }
 
+    /// This function creates a new LoadedModelInfo structure from the given assimp scene.
+    ///
+    /// @remarks
+    ///     The returned structure is allocated with 'new'.
+    LoadedModelInfo* ModelLibrary_LoadFromAssimpScene(const aiScene &scene)
+    {
+        // We need to recursively read each scene node and attach the meshes where possible.
+        auto root = scene.mRootNode;
+        if (root != nullptr)
+        {
+            auto modelInfo = new LoadedModelInfo;
+
+            // This is where we take the assimp meshes and create the GTEngine meshes.
+            aiMatrix4x4 transform;
+            CopyNodesWithMeshes(scene, *root, transform, *modelInfo);
+
+
+            // Here we will grab the animations.
+            for (unsigned int iAnimation = 0; iAnimation < scene.mNumAnimations; ++iAnimation)
+            {
+                auto animation = scene.mAnimations[iAnimation];
+                assert(animation != nullptr);
+
+                auto newAnimation = new SkeletalAnimation(animation->mName.C_Str());
+
+                // Duration.
+                if (animation->mTicksPerSecond > 0)
+                {
+                    newAnimation->SetDurationInSeconds(animation->mDuration / animation->mTicksPerSecond);
+                }
+                else
+                {
+                    newAnimation->SetDurationInSeconds(animation->mDuration);
+                }
+
+                // Channels.
+                for (unsigned int iChannel = 0; iChannel < animation->mNumChannels; ++iChannel)
+                {
+                    auto channel = animation->mChannels[iChannel];
+                    assert(channel != nullptr);
+
+                    // We need to retrieve the bone that this channel is modifying. There is a chance this bone is not part of the model's main bone list yet, in
+                    // which case we need to add it. We include this instead of ignoring because the application may need the bone information, even though it's
+                    // not affecting the mesh itself.
+                    Bone* bone = nullptr;
+
+                    auto iBone = modelInfo->bones.Find(channel->mNodeName.C_Str());
+                    if (iBone == nullptr)
+                    {
+                        auto newNode = FindNodeByName(scene, channel->mNodeName);
+                        assert(newNode != nullptr);
+
+                        bone = modelInfo->AddBone(*newNode);
+                    }
+                    else
+                    {
+                        bone = iBone->value;
+                    }
+
+                    assert(bone != nullptr);
+
+                    auto newChannel = newAnimation->AddChannel(*bone);
+                    assert(newChannel != nullptr);
+
+
+                    // TODO: Check that this assertion is valid. If not, we need to combine them all into a single list.
+                    assert(channel->mNumPositionKeys == channel->mNumRotationKeys && channel->mNumPositionKeys == channel->mNumScalingKeys);
+
+                    unsigned int keyCount = channel->mNumPositionKeys;
+                    for (unsigned int iKey = 0; iKey < keyCount; ++iKey)
+                    {
+                        auto &positionKey = channel->mPositionKeys[iKey];
+                        auto &rotationKey = channel->mRotationKeys[iKey];
+                        auto &scaleKey    = channel->mScalingKeys[iKey];
+
+                        newChannel->AddKey(positionKey.mTime, AssimpToGLM(positionKey.mValue), AssimpToGLM(rotationKey.mValue), AssimpToGLM(scaleKey.mValue));
+                    }
+                }
+
+                // Can't forget to add the new animation to the model's info structure.
+                modelInfo->animations.Add(newAnimation->GetName(), newAnimation);
+            }
+
+            return modelInfo;
+        }
+
+        return nullptr;
+    }
+
+
+
+
     Model* ModelLibrary::LoadFromFile(const char* fileName)
     {
         LoadedModelInfo* modelInfo = nullptr;
-        bool firstLoad = false;
 
         // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
         auto iModelInfo = LoadedModels.Find(fileName);
         if (iModelInfo == nullptr)
         {
             Assimp::Importer importer;
-            importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_COLORS | aiComponent_LIGHTS | aiComponent_CAMERAS);
+            importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
 
-            auto scene = importer.ReadFile(fileName,
-                aiProcess_Triangulate           |
-                aiProcess_JoinIdenticalVertices |
-                aiProcess_SortByPType           |
-                aiProcess_ImproveCacheLocality  |
-                aiProcess_GenSmoothNormals      |
-                aiProcess_RemoveComponent);
+            auto scene = importer.ReadFile(fileName, AssimpReadFileFlags);
             if (scene != nullptr)
             {
-                // We need to recursively read each scene node and attach the meshes where possible.
-                auto root = scene->mRootNode;
-                if (root != nullptr)
+                modelInfo = ModelLibrary_LoadFromAssimpScene(*scene);
+                if (modelInfo != nullptr)
                 {
-                    modelInfo = new LoadedModelInfo;
-
-                    // If we get here, it means this is the first time this model is being loaded. In this situation we need to do some first-load operations.
-                    firstLoad = true;
-
-                    // We're going to use a different transformation depending on whether or not we are importing a blender file. This is a bit of a hacky, so this may
-                    // be moved layer on.
-                    aiMatrix4x4 transform;
-
-                    // With blender files we need to rotate on the X axis to get everything right.
-                    if (GTCore::Path::ExtensionEqual(fileName, "blend"))
-                    {
-                        transform.RotationX(glm::radians(-90.0f), transform);
-                    }
-
-                    // This is where we take the assimp meshes and create the GTEngine meshes.
-                    CopyNodesWithMeshes(*scene, *root, transform, *modelInfo);
-
-
-                    // Here we will grab the animations.
-                    for (unsigned int iAnimation = 0; iAnimation < scene->mNumAnimations; ++iAnimation)
-                    {
-                        auto animation = scene->mAnimations[iAnimation];
-                        assert(animation != nullptr);
-
-                        auto newAnimation = new SkeletalAnimation(animation->mName.C_Str());
-
-                        // Duration.
-                        if (animation->mTicksPerSecond > 0)
-                        {
-                            newAnimation->SetDurationInSeconds(animation->mDuration / animation->mTicksPerSecond);
-                        }
-                        else
-                        {
-                            newAnimation->SetDurationInSeconds(animation->mDuration);
-                        }
-
-                        // Channels.
-                        for (unsigned int iChannel = 0; iChannel < animation->mNumChannels; ++iChannel)
-                        {
-                            auto channel = animation->mChannels[iChannel];
-                            assert(channel != nullptr);
-
-                            // We need to retrieve the bone that this channel is modifying. There is a chance this bone is not part of the model's main bone list yet, in
-                            // which case we need to add it. We include this instead of ignoring because the application may need the bone information, even though it's
-                            // not affecting the mesh itself.
-                            Bone* bone = nullptr;
-
-                            auto iBone = modelInfo->bones.Find(channel->mNodeName.C_Str());
-                            if (iBone == nullptr)
-                            {
-                                auto newNode = FindNodeByName(*scene, channel->mNodeName);
-                                assert(newNode != nullptr);
-
-                                bone = modelInfo->AddBone(*newNode);
-                            }
-                            else
-                            {
-                                bone = iBone->value;
-                            }
-
-                            assert(bone != nullptr);
-
-                            auto newChannel = newAnimation->AddChannel(*bone);
-                            assert(newChannel != nullptr);
-
-
-                            // TODO: Check that this assertion is valid. If not, we need to combine them all into a single list.
-                            assert(channel->mNumPositionKeys == channel->mNumRotationKeys && channel->mNumPositionKeys == channel->mNumScalingKeys);
-
-                            unsigned int keyCount = channel->mNumPositionKeys;
-                            for (unsigned int iKey = 0; iKey < keyCount; ++iKey)
-                            {
-                                auto &positionKey = channel->mPositionKeys[iKey];
-                                auto &rotationKey = channel->mRotationKeys[iKey];
-                                auto &scaleKey    = channel->mScalingKeys[iKey];
-
-                                newChannel->AddKey(positionKey.mTime, AssimpToGLM(positionKey.mValue), AssimpToGLM(rotationKey.mValue), AssimpToGLM(scaleKey.mValue));
-                            }
-                        }
-
-                        // Can't forget to add the new animation to the model's info structure.
-                        modelInfo->animations.Add(newAnimation->GetName(), newAnimation);
-                    }
-
-
                     // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
                     LoadedModels.Add(fileName, modelInfo);
                 }
                 else
                 {
-                    GTEngine::PostError("Error importing %s: Root node not found.", fileName);
+                    GTEngine::PostError("Error creating model info for %s: %s", fileName, importer.GetErrorString());
                 }
             }
             else
             {
                 GTEngine::PostError("Error importing %s: %s", fileName, importer.GetErrorString());
+            }
+        }
+        else
+        {
+            modelInfo = iModelInfo->value;
+        }
+
+        
+        // Now that we have information about the model, we can create a new Model object and return it.
+        if (modelInfo != nullptr)
+        {
+            // We create a model instantiation from the model info.
+            return modelInfo->CreateModel();
+        }
+
+
+        return nullptr;
+    }
+
+    Model* ModelLibrary::LoadFromNFF(const char* content, const char* name)
+    {
+        GTCore::String nffFileName("__nff:");
+        nffFileName.Append(name);
+
+        LoadedModelInfo* modelInfo = nullptr;
+
+        // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
+        auto iModelInfo = LoadedModels.Find(nffFileName.c_str());
+        if (iModelInfo == nullptr)
+        {
+            Assimp::Importer importer;
+            importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
+
+            auto scene = importer.ReadFileFromMemory(content, GTCore::Strings::SizeInBytes(content), AssimpReadFileFlags, "nff");
+            if (scene != nullptr)
+            {
+                modelInfo = ModelLibrary_LoadFromAssimpScene(*scene);
+                if (modelInfo != nullptr)
+                {
+                    // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
+                    LoadedModels.Add(nffFileName.c_str(), modelInfo);
+                }
+                else
+                {
+                    GTEngine::PostError("Error creating model info for %s", content);
+                }
+            }
+            else
+            {
+                GTEngine::PostError("Error importing %s: %s", content, importer.GetErrorString());
             }
         }
         else
@@ -617,6 +680,67 @@ namespace GTEngine
         auto model = new Model;
 
         model->AttachMesh(VertexArrayFactory::CreatePlaneXZ(width, height, format), nullptr);
+
+        return model;
+    }
+
+
+    Model* ModelLibrary::CreateBox(float halfWidth, float halfHeight, float halfDepth)
+    {
+        // We need a unique identifier for this mesh. We will base it on the size of the box.
+        char name[128];
+        GTCore::IO::snprintf(name, 128, "box(%.4f %.4f %.4f)", halfWidth, halfHeight, halfDepth);
+
+        // We're going to check if we can find the model info before loading. This will allow us to determine whether or not we
+        // need to apply the transformation.
+        bool applyTransform = LoadedModels.Find((GTCore::String("__nff:") + name).c_str()) == nullptr;
+
+        // For now the way we will do this is load an NFF file. We use a radius of 1, and then scale that with a transformation.
+        auto model = ModelLibrary::LoadFromNFF("hex 0 0 0 1", name);
+        if (model != nullptr && applyTransform)
+        {
+            model->ApplyTransformation(glm::scale(halfWidth, halfHeight, halfDepth));
+        }
+
+        return model;
+    }
+
+    Model* ModelLibrary::CreateSphere(float radius)
+    {
+        // We need to create the content of the NFF file.
+        char content[128];
+        GTCore::IO::snprintf(content, 128, "s 0 0 0 %.4f", radius);
+
+        // We need a unique identifier for this mesh. We will base it on the size of the box.
+        char name[128];
+        GTCore::IO::snprintf(name, 128, "sphere(%.4f)", radius);
+
+        // Now that we have the content and the name, we simply load the NFF file.
+        return ModelLibrary::LoadFromNFF(content, name);
+    }
+
+    Model* ModelLibrary::CreateCylinder(float radius, float length)
+    {
+        float halfLength = length * 0.5f;
+
+        // We need to create the content of the NFF file.
+        char content[128];
+        GTCore::IO::snprintf(content, 128, "c\n0 -%.4f 0 %.4f\n0 %.4f 0 %.4f", halfLength, radius, halfLength, radius);
+
+        // We need a unique identifier for this mesh. We will base it on the size of the box.
+        char name[128];
+        GTCore::IO::snprintf(name, 128, "cyl(%.4f %.4f)", radius, length);
+
+        // We're going to check if we can find the model info before loading. This will allow us to determine whether or not we
+        // need to apply the transformation.
+        bool applyTransform = LoadedModels.Find((GTCore::String("__nff:") + name).c_str()) == nullptr;
+
+        // For now the way we will do this is load an NFF file. We use a radius of 1, and then scale that with a transformation.
+        auto model = ModelLibrary::LoadFromNFF(content, name);
+        if (model != nullptr && applyTransform)
+        {
+            //model->ApplyTransformation(glm::scale(halfWidth, halfHeight, halfDepth));
+        }
 
         return model;
     }
