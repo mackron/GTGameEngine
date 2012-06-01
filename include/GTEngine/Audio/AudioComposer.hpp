@@ -29,6 +29,7 @@ namespace GTEngine
         /// @param fileName [in] The file name of the sound to play.
         static bool Play(const char* fileName);
         static bool Play(const char* fileName, float x, float y, float z);
+        static bool Play(const char* fileName, const glm::vec3 &position) { return Play(fileName, position.x, position.y, position.z); }
 
 
 
@@ -37,6 +38,7 @@ namespace GTEngine
 
         /// Sets the position of the listener.
         static void SetListenerPosition(float x, float y, float z);
+        static void SetListenerPosition(const glm::vec3 &position) { SetListenerPosition(position.x, position.y, position.z); }
 
         /// Sets the orientation of the listener.
         static void SetListenerOrientation(const glm::quat &orientation);

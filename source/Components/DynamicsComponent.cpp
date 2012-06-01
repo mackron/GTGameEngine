@@ -71,6 +71,20 @@ namespace GTEngine
     }
 
 
+    void DynamicsComponent::AddCapsuleXCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCapsuleShapeX(radius, length), offsetX, offsetY, offsetZ);
+    }
+    void DynamicsComponent::AddCapsuleYCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCapsuleShape(radius, length), offsetX, offsetY, offsetZ);
+    }
+    void DynamicsComponent::AddCapsuleZCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCapsuleShapeZ(radius, length), offsetX, offsetY, offsetZ);
+    }
+
+
     void DynamicsComponent::RemoveAllCollisionShapes()
     {
         // Since the shapes are being changed we need to remove the rigid body from the world first.
@@ -272,6 +286,32 @@ namespace GTEngine
     void DynamicsComponent::ApplyGravity()
     {
         this->rigidBody->applyGravity();
+    }
+
+
+    void DynamicsComponent::ApplyCentralForce(float x, float y, float z)
+    {
+        this->rigidBody->activate();
+        this->rigidBody->applyCentralForce(btVector3(x, y, z));
+    }
+
+    void DynamicsComponent::ApplyTorque(float x, float y, float z)
+    {
+        this->rigidBody->activate();
+        this->rigidBody->applyTorque(btVector3(x, y, z));
+    }
+
+
+    void DynamicsComponent::ApplyCentralImpulse(float x, float y, float z)
+    {
+        this->rigidBody->activate();
+        this->rigidBody->applyCentralImpulse(btVector3(x, y, z));
+    }
+
+    void DynamicsComponent::ApplyTorqueImpulse(float x, float y, float z)
+    {
+        this->rigidBody->activate();
+        this->rigidBody->applyTorqueImpulse(btVector3(x, y, z));
     }
 
 
