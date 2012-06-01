@@ -33,17 +33,8 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the internal ghost object.
-        GhostObject & GetGhostObject() { return this->ghostObject; }
-
-        /// Determines whether or a scene node is in the proximity of the ghost object of this component.
-        ///
-        /// @param node [in] The node to check for proximity.
-        ///
-        /// @return True if <node> is in proximity of this component; false otherwise.
-        ///
-        /// @remarks
-        ////    This will compare against other proximity components and also dynamics components.
-        //bool InProximity(GTEngine::SceneNode &node);
+              GhostObject & GetGhostObject()       { return this->ghostObject; }
+        const GhostObject & GetGhostObject() const { return this->ghostObject; }
 
 
         /// Sets the collision group and masks to use with the scene node.

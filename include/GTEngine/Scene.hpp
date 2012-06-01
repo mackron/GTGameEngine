@@ -4,6 +4,29 @@
 
 #include "SceneNode.hpp"
 #include "SceneViewport.hpp"
+#include "Physics.hpp"
+
+
+/// Contact test callback.
+namespace GTEngine
+{
+    /// The callback structure for doing contact tests.
+    struct ContactTestCallback
+    {
+        short collisionGroup;
+        short collisionMask;
+
+        /// Constructor.
+        ContactTestCallback(short collisionGroup = 1, short collisionMask = static_cast<short>(-1))
+            : collisionGroup(collisionGroup), collisionMask(collisionMask)
+        {
+        }
+
+        /// Called when two objects are touching.
+        virtual void ProcessCollision(SceneNode &objectA, SceneNode &objectB, btManifoldPoint &cp) = 0;
+    };
+}
+
 
 namespace GTEngine
 {
@@ -104,6 +127,10 @@ namespace GTEngine
         /// Performs a ray test on the scene nodes against their dynamics components.
         virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
         virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestResult &result) = 0;
+
+        /// Performs a contact test against the proximity volume of the given scene node.
+        virtual void ContactTest(const SceneNode &node, ContactTestCallback &callback) = 0;
+
 
 
     // Occlusion

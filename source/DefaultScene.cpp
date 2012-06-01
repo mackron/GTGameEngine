@@ -62,6 +62,44 @@ namespace GTEngine
     };
 }
 
+namespace GTEngine
+{
+    struct DefaultSceneContactTestCallback : public btCollisionWorld::ContactResultCallback
+    {
+        ContactTestCallback &callback;
+
+
+        DefaultSceneContactTestCallback(ContactTestCallback &callback)
+            : callback(callback)
+        {
+            this->m_collisionFilterGroup = callback.collisionGroup;
+            this->m_collisionFilterMask  = callback.collisionMask;
+        }
+
+        virtual	btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObject* colObj0, int, int, const btCollisionObject* colObj1, int, int)
+        {
+            assert(colObj0 != nullptr);
+            assert(colObj1 != nullptr);
+
+            // We assume the user pointer is the scene node.
+            auto sceneNodeA = static_cast<SceneNode*>(colObj0->getUserPointer());
+            auto sceneNodeB = static_cast<SceneNode*>(colObj1->getUserPointer());
+
+            if (sceneNodeA != nullptr && sceneNodeB != nullptr)
+            {
+                callback.ProcessCollision(*sceneNodeA, *sceneNodeB, cp);
+            }
+
+            return 0.0f;
+        }
+
+
+    private:
+        DefaultSceneContactTestCallback(const DefaultSceneContactTestCallback &);
+        DefaultSceneContactTestCallback & operator=(const DefaultSceneContactTestCallback &);
+    };
+}
+
 
 namespace GTEngine
 {
@@ -276,6 +314,20 @@ namespace GTEngine
         }
 
         return nullptr;
+    }
+
+    void DefaultScene::ContactTest(const SceneNode &node, ContactTestCallback &callback)
+    {
+        // We do the contact test against the nodes proximity component.
+        auto proximity = node.GetComponent<GTEngine::ProximityComponent>();
+        if (proximity != nullptr)
+        {
+            callback.collisionGroup = proximity->GetCollisionGroup();
+            callback.collisionMask  = proximity->GetCollisionMask();
+
+            DefaultSceneContactTestCallback bulletCallback(callback);
+            this->dynamicsWorld.contactTest(const_cast<GhostObject*>(&proximity->GetGhostObject()), bulletCallback);
+        }
     }
 
 

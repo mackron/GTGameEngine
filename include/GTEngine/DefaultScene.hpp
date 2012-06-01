@@ -68,6 +68,10 @@ namespace GTEngine
         SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd);
         SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestResult &result);
 
+        /// Scene::ContactTest()
+        void ContactTest(const SceneNode &node, ContactTestCallback &callback);
+
+
 
     // Occlusion.
     public:

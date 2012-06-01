@@ -38,62 +38,24 @@ namespace GTEngine
         this->SetShape(new btEllipsoidShape(btVector3(radiusX, radiusY, radiusZ)));
     }
 
-    /*
-    bool ProximityComponent::InProximity(GTEngine::SceneNode &node)
+    
+    void ProximityComponent::SetCollisionFilter(short group, short mask)
     {
-        auto world = this->ghostObject.getWorld();
-        if (world != nullptr)
+        if (this->collisionGroup != group || this->collisionMask != mask)
         {
-            btManifoldArray manifoldArray;
-            auto &pairArray = this->ghostObject.getOverlappingPairCache()->getOverlappingPairArray();
-            int numPairs = pairArray.size();
+            this->collisionGroup = group;
+            this->collisionMask  = mask;
 
-            for (int i = 0; i < numPairs; ++i)
+            // The body needs to be removed and re-added to it's world for changes to take effect.
+            auto world = this->ghostObject.getWorld();
+            if (world != nullptr)
             {
-                manifoldArray.clear();
-
-                auto &pair = pairArray[i];
-         
-                //unless we manually perform collision detection on this pair, the contacts are in the dynamics world paircache:
-                auto collisionPair = world->getPairCache()->findPair(pair.m_pProxy0, pair.m_pProxy1);
-                if (collisionPair != nullptr)
-                {
-                    if (collisionPair->m_algorithm)
-                    {
-                        collisionPair->m_algorithm->getAllContactManifolds(manifoldArray);
-                    }
-
-                    for (int j = 0; j < manifoldArray.size(); ++j)
-                    {
-                        auto manifold = manifoldArray[j];
-                        if (manifold->getNumContacts() > 0)
-                        {
-                            auto bodyA = static_cast<btCollisionObject*>(manifold->getBody0());
-                            auto bodyB = static_cast<btCollisionObject*>(manifold->getBody1());
-
-                            if (bodyA == &this->ghostObject)
-                            {
-                                if (bodyB->getUserPointer() == &node)
-                                {
-                                    return true;
-                                }
-                            }
-                            else
-                            {
-                                if (bodyA->getUserPointer() == &node)
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
+                world->removeGhostObject(&this->ghostObject);
+                world->addGhostObject(&this->ghostObject, this->collisionGroup, this->collisionMask);
             }
         }
-
-        return false;
     }
-    */
+
 
     void ProximityComponent::ApplyScaling(float x, float y, float z)
     {

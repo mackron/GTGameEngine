@@ -34,6 +34,11 @@ namespace GTEngine
         void AddCylinderXCollisionShape(float halfX, float halfY, float halfZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
         void AddCylinderYCollisionShape(float halfX, float halfY, float halfZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
         void AddCylinderZCollisionShape(float halfX, float halfY, float halfZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+
+        /// Adds a capsule collision shape.
+        void AddCapsuleXCollisionShape(float radius, float length, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+        void AddCapsuleYCollisionShape(float radius, float length, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+        void AddCapsuleZCollisionShape(float radius, float length, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
         
 
         /// Removes every collision shape.
@@ -133,6 +138,24 @@ namespace GTEngine
 
         /// Applies the objects gravity.
         void ApplyGravity();
+
+
+        /// Applies a central force to the body.
+        void ApplyCentralForce(float x, float y, float z);
+        void ApplyCentralForce(const glm::vec3 &force) { this->ApplyCentralForce(force.x, force.y, force.z); }
+
+        /// Applies torque to the body.
+        void ApplyTorque(float x, float y, float z);
+        void ApplyTorque(const glm::vec3 &torque) { this->ApplyTorque(torque.x, torque.y, torque.z); }
+
+
+        /// Applies a central impulse to the body.
+        void ApplyCentralImpulse(float x, float y, float z);
+        void ApplyCentralImpulse(const glm::vec3 &impulse) { this->ApplyCentralImpulse(impulse.x, impulse.y, impulse.z); }
+
+        /// Applies a torque impulse.
+        void ApplyTorqueImpulse(float x, float y, float z);
+        void ApplyTorqueImpulse(const glm::vec3 &impulse) { this->ApplyCentralImpulse(impulse.x, impulse.y, impulse.z); }
 
 
 
