@@ -62,6 +62,8 @@ namespace GTEngine
     };
 }
 
+
+// Bullet collision test callbacks.
 namespace GTEngine
 {
     struct DefaultSceneContactTestCallback : public btCollisionWorld::ContactResultCallback
@@ -75,6 +77,20 @@ namespace GTEngine
             this->m_collisionFilterGroup = callback.collisionGroup;
             this->m_collisionFilterMask  = callback.collisionMask;
         }
+
+        virtual bool needsCollision(btBroadphaseProxy *proxy0) const
+		{
+            auto collisionObject = static_cast<btCollisionObject*>(proxy0->m_clientObject);
+            assert(collisionObject != nullptr);
+
+            auto sceneNode = static_cast<SceneNode*>(collisionObject->getUserPointer());
+            if (sceneNode != nullptr)
+            {
+                return this->callback.NeedsCollision(proxy0->m_collisionFilterGroup, proxy0->m_collisionFilterMask, *sceneNode);
+            }
+
+            return false;
+		}
 
         virtual	btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObject* colObj0, int, int, const btCollisionObject* colObj1, int, int)
         {
@@ -97,6 +113,73 @@ namespace GTEngine
     private:
         DefaultSceneContactTestCallback(const DefaultSceneContactTestCallback &);
         DefaultSceneContactTestCallback & operator=(const DefaultSceneContactTestCallback &);
+    };
+
+
+
+    struct DefaultSceneBulletRayResultCallback : public btCollisionWorld::RayResultCallback
+    {
+        /// A reference to the GTEngine ray test callback object that is used for input and output.
+        RayTestCallback &callback;
+
+        /// A pointer to the closest scene node.
+        SceneNode* closestSceneNode;
+
+
+        /// Constructor.
+        DefaultSceneBulletRayResultCallback(RayTestCallback &callback)
+            : callback(callback), closestSceneNode(nullptr)
+        {
+            this->m_collisionFilterGroup = callback.collisionGroup;
+            this->m_collisionFilterMask  = callback.collisionMask;
+        }
+
+        virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+		{
+            auto collisionObject = static_cast<btCollisionObject*>(proxy0->m_clientObject);
+            assert(collisionObject != nullptr);
+
+            auto sceneNode = static_cast<SceneNode*>(collisionObject->getUserPointer());
+            if (sceneNode != nullptr)
+            {
+                return this->callback.NeedsCollision(proxy0->m_collisionFilterGroup, proxy0->m_collisionFilterMask, *sceneNode);
+            }
+
+            return false;
+		}
+
+        virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult &rayResult, bool normalInWorldSpace)
+		{
+            // The user data of the collision object should be a scene node.
+            auto sceneNode = static_cast<SceneNode*>(rayResult.m_collisionObject->getUserPointer());
+            if (sceneNode != nullptr)
+            {
+                this->closestSceneNode = sceneNode;
+
+                // Now we need to find the world position and normal.
+                glm::vec3 worldHitPosition = glm::mix(callback.rayStart, callback.rayEnd, rayResult.m_hitFraction);
+                glm::vec3 worldHitNormal;
+
+                if (normalInWorldSpace)
+                {
+                    worldHitNormal = ToGLMVector3(rayResult.m_hitNormalLocal);
+                }
+                else
+                {
+                    worldHitNormal = ToGLMVector3(rayResult.m_collisionObject->getWorldTransform().getBasis() * rayResult.m_hitNormalLocal);
+                }
+
+                // Now we can call the corresponding handler on the GTEngine callback.
+                this->callback.ProcessResult(*sceneNode, worldHitPosition, worldHitNormal);
+            }
+
+            return this->m_closestHitFraction;
+		}
+
+
+    private:    // No copying.
+        DefaultSceneBulletRayResultCallback(const DefaultSceneBulletRayResultCallback &);
+        DefaultSceneBulletRayResultCallback & operator=(const DefaultSceneBulletRayResultCallback &);
     };
 }
 
@@ -276,6 +359,7 @@ namespace GTEngine
         return nullptr;
     }
 
+    /*
     SceneNode* DefaultScene::RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd)
     {
         // This will store the result of our ray-test query.
@@ -314,6 +398,21 @@ namespace GTEngine
         }
 
         return nullptr;
+    }
+    */
+
+    SceneNode* DefaultScene::RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback)
+    {
+        // Before creating the Bullet ray test callback object, we first need to set the rayStart and rayEnd attributes of the input callback structure. We do this
+        // because the Bullet callback will use them in calculating the world position of interestion points.
+        callback.rayStart = rayStart;
+        callback.rayEnd   = rayEnd;
+
+        // We need to use our own ray test callback for this.
+        DefaultSceneBulletRayResultCallback rayTestResult(callback);
+        this->dynamicsWorld.rayTest(rayStart, rayEnd, rayTestResult);
+
+        return rayTestResult.closestSceneNode;
     }
 
     void DefaultScene::ContactTest(const SceneNode &node, ContactTestCallback &callback)
