@@ -7,10 +7,10 @@
 #include "Physics.hpp"
 
 
-/// Contact test callback.
+/// Contact test callbacks.
 namespace GTEngine
 {
-    /// The callback structure for doing contact tests.
+    /// The base callback structure for doing contact tests.
     struct ContactTestCallback
     {
         short collisionGroup;
@@ -22,26 +22,119 @@ namespace GTEngine
         {
         }
 
+        /// Destructor.
+        virtual ~ContactTestCallback()
+        {
+        }
+
+        /// Called when determining whether or not a collision needs to be made.
+        ///
+        /// @remarks
+        ///     By default this function will do a standard group/mask check.
+        virtual bool NeedsCollision(short collisionGroupIn, short collisionMaskIn, SceneNode &object)
+        {
+            (void)object;
+
+            return (this->collisionMask  & collisionGroupIn) != 0 &&
+                   (this->collisionGroup & collisionMaskIn)  != 0;
+        }
+
         /// Called when two objects are touching.
         virtual void ProcessCollision(SceneNode &objectA, SceneNode &objectB, btManifoldPoint &cp) = 0;
+    };
+
+
+    /// The base callback structure for ray tests.
+    struct RayTestCallback
+    {
+        short collisionGroup;
+        short collisionMask;
+
+        // rayStart and rayEnd should be set by whatever is doing the ray test.
+        glm::vec3 rayStart;
+        glm::vec3 rayEnd;
+
+
+        /// Default constructor.
+        RayTestCallback()
+            : collisionGroup(static_cast<short>(-1)), collisionMask(static_cast<short>(-1)),
+              rayStart(), rayEnd()
+        {
+        }
+
+        /// Constructor.
+        RayTestCallback(short collisionGroup, short collisionMask)
+            : collisionGroup(collisionGroup), collisionMask(collisionMask),
+              rayStart(), rayEnd()
+        {
+        }
+
+        /// Destructor.
+        virtual ~RayTestCallback()
+        {
+        }
+
+
+        /// Called when determining whether or not a collision needs to be made.
+        ///
+        /// @remarks
+        ///     By default this function will do a standard group/mask check.
+        virtual bool NeedsCollision(short collisionGroupIn, short collisionMaskIn, SceneNode &object)
+        {
+            (void)object;
+
+            return (this->collisionMask  & collisionGroupIn) != 0 &&
+                   (this->collisionGroup & collisionMaskIn)  != 0;
+        }
+
+        /// Called when a collision needs to be processed.
+        virtual void ProcessResult(SceneNode &object, const glm::vec3 &worldPosition, const glm::vec3 &worldNormal) = 0;
+    };
+
+    /// The ray test callback structure for keeping track of the closest object.
+    struct ClosestRayTestCallback : public RayTestCallback
+    {
+        SceneNode* sceneNode;
+
+        glm::vec3 worldHitPosition;
+        glm::vec3 worldHitNormal;
+
+        /// Default constructor.
+        ClosestRayTestCallback()
+            : RayTestCallback(), sceneNode(nullptr)
+        {
+        }
+
+        /// Constructor.
+        ClosestRayTestCallback(short collisionGroup, short collisionMask)
+            : RayTestCallback(collisionGroup, collisionMask), sceneNode(nullptr)
+        {
+        }
+
+        /// Destructor.
+        virtual ~ClosestRayTestCallback()
+        {
+        }
+
+
+        /// RayTestCallback::ProcessResult()
+        virtual void ProcessResult(SceneNode& object, const glm::vec3 &worldHitPositionIn, const glm::vec3 &worldHitNormalIn)
+        {
+            // The first object to be processed will be the closest object.
+
+            if (this->sceneNode == nullptr)
+            {
+                this->sceneNode        = &object;
+                this->worldHitPosition = worldHitPositionIn;
+                this->worldHitNormal   = worldHitNormalIn;
+            }
+        }
     };
 }
 
 
 namespace GTEngine
 {
-    /// Structure containing the results of a ray test.
-    struct RayTestResult
-    {
-        /// The intersection point in world coordinates.
-        glm::vec3 intersectionPoint;
-
-        /// The intersection normal in world coordinates.
-        glm::vec3 intersectionNormal;
-    };
-
-
-
     /**
     *   \brief  Base class for scenes.
     *
@@ -125,8 +218,9 @@ namespace GTEngine
 
 
         /// Performs a ray test on the scene nodes against their dynamics components.
-        virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
-        virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestResult &result) = 0;
+        //virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
+        //virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestResult &result) = 0;
+        virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback) = 0;
 
         /// Performs a contact test against the proximity volume of the given scene node.
         virtual void ContactTest(const SceneNode &node, ContactTestCallback &callback) = 0;

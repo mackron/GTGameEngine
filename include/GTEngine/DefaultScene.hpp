@@ -65,8 +65,9 @@ namespace GTEngine
         SceneNode* PickSceneNode(const glm::vec3 &rayStart, const glm::vec3 &rayEnd);
 
         /// Scene::RayTest()
-        SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd);
-        SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestResult &result);
+        //SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd);
+        //SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestResult &result);
+        SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback);
 
         /// Scene::ContactTest()
         void ContactTest(const SceneNode &node, ContactTestCallback &callback);
