@@ -59,6 +59,16 @@ namespace GTEngine
 
 
 
+        /// Shows the game object.
+        void Show() { this->sceneNode.Show(); }
+
+        /// Hides the game object.
+        void Hide() { this->sceneNode.Hide(); }
+
+        /// Determines whether or not the game object is visible.
+        bool IsVisible() const { return this->sceneNode.IsVisible(); }
+
+
 
         /////////////////////////////////////////////////////////////////////////
         // Garbage collection
