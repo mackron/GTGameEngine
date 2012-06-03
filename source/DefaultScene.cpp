@@ -156,6 +156,10 @@ namespace GTEngine
             {
                 this->closestSceneNode = sceneNode;
 
+                // Some stuff for Bullet.
+                this->m_closestHitFraction = rayResult.m_hitFraction;
+                this->m_collisionObject    = rayResult.m_collisionObject;
+
                 // Now we need to find the world position and normal.
                 glm::vec3 worldHitPosition = glm::mix(callback.rayStart, callback.rayEnd, rayResult.m_hitFraction);
                 glm::vec3 worldHitNormal;

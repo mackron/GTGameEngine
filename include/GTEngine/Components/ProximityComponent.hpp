@@ -67,11 +67,10 @@ namespace GTEngine
         public:
 
             /// Constructor.
-            Iterator(ProximityComponent &component)
-                : component(component), otherNode(nullptr), manifoldArray(), i(0)
-            {
-                ++(*this);
-            }
+            Iterator(ProximityComponent &component);
+
+            /// Constructor.
+            Iterator(SceneNode &sceneNode);
 
 
             // Pre-incement.
@@ -84,7 +83,7 @@ namespace GTEngine
         public:
 
             /// The component we're iterating over.
-            ProximityComponent &component;
+            ProximityComponent* component;
 
             /// A pointer to the othe scene node that is in proximity to this one.
             SceneNode* otherNode;
