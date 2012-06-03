@@ -120,14 +120,9 @@ namespace GTEngine
         /// RayTestCallback::ProcessResult()
         virtual void ProcessResult(SceneNode& object, const glm::vec3 &worldHitPositionIn, const glm::vec3 &worldHitNormalIn)
         {
-            // The first object to be processed will be the closest object.
-
-            if (this->sceneNode == nullptr)
-            {
-                this->sceneNode        = &object;
-                this->worldHitPosition = worldHitPositionIn;
-                this->worldHitNormal   = worldHitNormalIn;
-            }
+            this->sceneNode        = &object;
+            this->worldHitPosition = worldHitPositionIn;
+            this->worldHitNormal   = worldHitNormalIn;
         }
     };
 }

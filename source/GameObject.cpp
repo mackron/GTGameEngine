@@ -9,7 +9,8 @@
 namespace GTEngine
 {
     GameObject::GameObject()
-        : sceneNode(), sceneNodeEventHandler(*this)
+        : sceneNode(), sceneNodeEventHandler(*this),
+          gcCounter(0)
     {
         this->sceneNode.AttachEventHandler(this->sceneNodeEventHandler);
     }

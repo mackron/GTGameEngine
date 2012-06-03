@@ -106,69 +106,84 @@ namespace GTEngine
 // Iterator
 namespace GTEngine
 {
+    ProximityComponent::Iterator::Iterator(ProximityComponent &component)
+        : component(&component), otherNode(nullptr), manifoldArray(), i(0)
+    {
+        ++(*this);
+    }
+
+    ProximityComponent::Iterator::Iterator(SceneNode &sceneNode)
+        : component(sceneNode.GetComponent<GTEngine::ProximityComponent>()), otherNode(nullptr), manifoldArray(), i(0)
+    {
+        ++(*this);
+    }
+
     ProximityComponent::Iterator & ProximityComponent::Iterator::operator++()
     {
-        this->otherNode = nullptr;
-
-        auto world = this->component.ghostObject.getWorld();
-        if (world != nullptr)
+        if (this->component != nullptr)
         {
-            auto &pairArray = this->component.ghostObject.getOverlappingPairCache()->getOverlappingPairArray();
+            this->otherNode = nullptr;
 
-            GTEngine::SceneNode* nextNode = nullptr;
-
-            while (nextNode == nullptr && this->i < pairArray.size())
+            auto world = this->component->ghostObject.getWorld();
+            if (world != nullptr)
             {
-                this->manifoldArray.clear();
+                auto &pairArray = this->component->ghostObject.getOverlappingPairCache()->getOverlappingPairArray();
 
-                auto &pair = pairArray[this->i];
+                GTEngine::SceneNode* nextNode = nullptr;
 
-                auto collisionPair = world->getPairCache()->findPair(pair.m_pProxy0, pair.m_pProxy1);
-                if (collisionPair != nullptr)
+                while (nextNode == nullptr && this->i < pairArray.size())
                 {
-                    auto bodyA = static_cast<btCollisionObject*>(pair.m_pProxy0->m_clientObject);
-                    auto bodyB = static_cast<btCollisionObject*>(pair.m_pProxy1->m_clientObject);
+                    this->manifoldArray.clear();
 
-                    if (bodyA == &this->component.ghostObject)
+                    auto &pair = pairArray[this->i];
+
+                    auto collisionPair = world->getPairCache()->findPair(pair.m_pProxy0, pair.m_pProxy1);
+                    if (collisionPair != nullptr)
                     {
-                        nextNode = static_cast<GTEngine::SceneNode*>(bodyB->getUserPointer());
-                    }
-                    else if (bodyB == &this->component.ghostObject)
-                    {
-                        nextNode = static_cast<GTEngine::SceneNode*>(bodyA->getUserPointer());
-                    }
+                        auto bodyA = static_cast<btCollisionObject*>(pair.m_pProxy0->m_clientObject);
+                        auto bodyB = static_cast<btCollisionObject*>(pair.m_pProxy1->m_clientObject);
+
+                        if (bodyA == &this->component->ghostObject)
+                        {
+                            nextNode = static_cast<GTEngine::SceneNode*>(bodyB->getUserPointer());
+                        }
+                        else if (bodyB == &this->component->ghostObject)
+                        {
+                            nextNode = static_cast<GTEngine::SceneNode*>(bodyA->getUserPointer());
+                        }
 
                         
-                    if (nextNode != nullptr)
-                    {
-                        if (this->component.node.IsRelated(*nextNode))
+                        if (nextNode != nullptr)
                         {
-                            nextNode = nullptr;
-                        }
-                        else
-                        {
-                            // Here is where we check the contact manifolds. If we don't find anything here, the nodes aren't touching.
-                            if (collisionPair->m_algorithm)
+                            if (this->component->node.IsRelated(*nextNode))
                             {
-                                collisionPair->m_algorithm->getAllContactManifolds(manifoldArray);
+                                nextNode = nullptr;
                             }
-
-                            for (int j = 0; j < manifoldArray.size(); ++j)
+                            else
                             {
-                                auto manifold = manifoldArray[j];
-                                if (manifold->getNumContacts() == 0)
+                                // Here is where we check the contact manifolds. If we don't find anything here, the nodes aren't touching.
+                                if (collisionPair->m_algorithm)
                                 {
-                                    nextNode = nullptr;
+                                    collisionPair->m_algorithm->getAllContactManifolds(manifoldArray);
+                                }
+
+                                for (int j = 0; j < manifoldArray.size(); ++j)
+                                {
+                                    auto manifold = manifoldArray[j];
+                                    if (manifold->getNumContacts() == 0)
+                                    {
+                                        nextNode = nullptr;
+                                    }
                                 }
                             }
                         }
                     }
+
+                    ++this->i;
                 }
 
-                ++this->i;
+                this->otherNode = nextNode;
             }
-
-            this->otherNode = nextNode;
         }
 
         return *this;
@@ -177,6 +192,6 @@ namespace GTEngine
 
     ProximityComponent::Iterator::operator bool() const
     {
-        return this->otherNode != nullptr;
+        return this->component != nullptr && this->otherNode != nullptr;
     }
 }

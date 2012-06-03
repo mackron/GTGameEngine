@@ -60,6 +60,18 @@ namespace GTEngine
 
 
 
+        /////////////////////////////////////////////////////////////////////////
+        // Garbage collection
+
+        /// Retrieves the GC counter. Should only need to be used by the garbage collector.
+        size_t GetGCCounter() const { return this->gcCounter; }
+
+        /// Increments the GC counter.
+        void IncrementGCCounter() { ++this->gcCounter; }
+
+        /// Decrements the GC counter.
+        void DecrementGCCounter() { --this->gcCounter; }
+
 
 
     // Events from the main scene node.
@@ -169,6 +181,10 @@ namespace GTEngine
             GameObjectEventHandler & operator=(const GameObjectEventHandler &);
 
         } sceneNodeEventHandler;
+
+
+        /// The counter to use for garbage collection.
+        size_t gcCounter;
 
 
     private:    // No copying.
