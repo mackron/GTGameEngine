@@ -87,6 +87,9 @@ namespace GTEngine
         /// Scene::SetGravity(float, float, float)
         void SetGravity(float x, float y, float z);
 
+        /// Scene::GetGravity(glm::vec3 &)
+        void GetGravity(float &x, float &y, float &z) const;
+
 
     public:
 
