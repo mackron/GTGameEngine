@@ -79,7 +79,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     By default this function will do a standard group/mask check.
-        virtual bool NeedsCollision(short collisionGroupIn, short collisionMaskIn, SceneNode &object)
+        virtual bool NeedsCollision(short collisionGroupIn, short collisionMaskIn, SceneNode &object) const
         {
             (void)object;
 
@@ -243,6 +243,21 @@ namespace GTEngine
         virtual void SetGravity(float x, float y, float z) = 0;
                 void SetGravity(const glm::vec3 &gravity) { this->SetGravity(gravity.x, gravity.y, gravity.z); }
 
+        /// Retrieves the scene's gravity.
+        virtual void GetGravity(float &x, float &y, float &z) const = 0;
+
+        glm::vec3 GetGravity() const
+        {
+            glm::vec3 gravity;
+            this->GetGravity(gravity.x, gravity.y, gravity.z);
+
+            return gravity;
+        }
+
+        void GetGravity(glm::vec3 &gravity) const
+        {
+            this->GetGravity(gravity.x, gravity.y, gravity.z);
+        }
 
 
     // Non-virtual functions.

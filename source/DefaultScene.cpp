@@ -504,6 +504,14 @@ namespace GTEngine
         this->dynamicsWorld.setGravity(btVector3(x, y, z));
     }
 
+    void DefaultScene::GetGravity(float &x, float &y, float &z) const
+    {
+        btVector3 gravity = this->dynamicsWorld.getGravity();
+        x = gravity.x();
+        y = gravity.y();
+        z = gravity.z();
+    }
+
 
 
 
