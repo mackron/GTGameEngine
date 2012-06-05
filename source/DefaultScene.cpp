@@ -191,8 +191,10 @@ namespace GTEngine
 namespace GTEngine
 {
     DefaultScene::DefaultScene()
-        : viewports(), nodes(), dynamicsWorld(), occlusionCollisionWorld(),
-          cameraNodes(), staticNodes(), dynamicNodes()
+        : viewports(), nodes(),
+          ambientLightComponents(), directionalLightComponents(),
+          navigationPointComponents(),
+          dynamicsWorld(), occlusionCollisionWorld()
     {
     }
 

@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.63.0 r45996</authoring_tool>
     </contributor>
-    <created>2012-06-05T13:25:19</created>
-    <modified>2012-06-05T13:25:19</modified>
+    <created>2012-06-05T13:26:55</created>
+    <modified>2012-06-05T13:26:55</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -148,7 +148,7 @@
         <rotate sid="rotationZ">0 0 1 0</rotate>
         <rotate sid="rotationY">0 1 0 0</rotate>
         <rotate sid="rotationX">1 0 0 0</rotate>
-        <scale sid="scale">1 1 1</scale>
+        <scale sid="scale">0.5 0.5 0.5</scale>
         <instance_geometry url="#Cube_001-mesh"/>
       </node>
       <node id="Lamp" type="NODE">
