@@ -22,30 +22,14 @@ namespace GTEngine
           cameraXRotation(0.0f), cameraYRotation(0.0f)
     {
         cameraNode.Add3DCameraComponent(90.0f, static_cast<float>(16.0f) / static_cast<float>(9.0f), 0.1f, 1000.0f);
-        cameraNode.AddDirectionalLightComponent(0.25f, 0.25f, 0.25f);
+        cameraNode.AddDirectionalLightComponent(0.5f, 0.5f, 0.5f);
         cameraNode.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
         cameraNode.MoveForward(-10.0f);
 
         
-        auto spotlight = cameraNode.AddComponent<SpotLightComponent>();
-        spotlight->SetAngles(10.0f, 20.0f);
-        spotlight->SetColour(glm::vec3(0.75f, 0.75f, 0.75f));
-        
-
-
-        //auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/animation-test.dae"));
         auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/default.dae"));
         auto model = modelComponent->GetModel();
-        //model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("materials/troll.material"));
-        model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
-
-        /*
-        model->meshes[1]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
-        model->meshes[2]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
-        model->meshes[3]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/floor.material"));
-        */
-
-        modelComponent->GetModel()->PlayAnimation("", true);
+        model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/default.material"));
 
 
         // Here we setup the viewport.
@@ -330,11 +314,10 @@ namespace GTEngine
 
     void ModelViewportEventHandler::OnMouseWheel(GTGUI::Element &, int delta, int x, int y)
     {
-        (void)delta;
         (void)x;
         (void)y;
 
-        //printf("Mouse Wheel: %d %d %d\n", delta, x, y);
+        this->modelEditor.cameraNode.MoveForward(delta * 1.0f);
     }
 }
 

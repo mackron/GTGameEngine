@@ -284,6 +284,9 @@ namespace GTEngine
         /// The list of directional light components.
         GTCore::List<DirectionalLightComponent*> directionalLightComponents;
 
+        /// The list of navigation point components. We'll use these in finding paths.
+        GTCore::List<NavigationPointComponent*> navigationPointComponents;
+
 
         /// The dynamics world for everything involving physics and collision detection.
         DynamicsWorld dynamicsWorld; 
@@ -293,16 +296,6 @@ namespace GTEngine
         /// between components types by looking at the collision group.
         CollisionWorld occlusionCollisionWorld;
 
-
-
-        /// The list of camera nodes in the scene.
-        GTCore::List<SceneNode*> cameraNodes;
-
-        /// The list of static nodes. These nodes are not updated.
-        GTCore::List<SceneNode*> staticNodes;
-
-        /// The list of dynamic nodes. These nodes are updated, unlike static nodes.
-        GTCore::List<SceneNode*> dynamicNodes;
 
 
     private:    // No copying.
