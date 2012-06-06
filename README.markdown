@@ -15,11 +15,18 @@ libraries (.so/.dll).
 
 GTGameEngine depends on the following libraries:
 
-* GTCore, pcre
-* GTImage, libpng, zlib
-* GTType, FreeType 2
+* GTCore
+  * pcre (http://www.pcre.org/)
+  * Lua (http://www.lua.org/)
+* GTImage
+  * libpng (http://www.libpng.org/)
+  * zlib (http://zlib.net/)
+* GTType
+  * FreeType 2 (http://www.freetype.org/)
 * GTGUI
-* assimp
+* Bullet (http://bulletphysics.org/wordpress/)
+* assimp (http://assimp.sourceforge.net/)
+* Recast+Detour (http://code.google.com/p/recastnavigation/)
 
 
 
