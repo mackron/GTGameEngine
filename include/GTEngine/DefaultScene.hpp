@@ -4,6 +4,7 @@
 
 #include "Scene.hpp"
 #include "Physics.hpp"
+#include "NavigationMesh.hpp"
 #include <GTCore/List.hpp>
 #include <GTCore/Vector.hpp>
 
@@ -60,6 +61,11 @@ namespace GTEngine
         /// Scene::RemoveViewport(SceneViewport &);
         void RemoveViewport(SceneViewport &viewport);
 
+
+        /// Scene::GetAABB(glm::vec3 &, glm::vec3 &);
+        void GetAABB(glm::vec3 &min, glm::vec3 &max) const;
+
+
         
         /// Scene::PickSceneNode()
         SceneNode* PickSceneNode(const glm::vec3 &rayStart, const glm::vec3 &rayEnd);
@@ -91,6 +97,34 @@ namespace GTEngine
         void GetGravity(float &x, float &y, float &z) const;
 
 
+    // AI.
+    public:
+
+        void SetWalkableHeight(float height);
+        void SetWalkableRadius(float radius);
+        void SetWalkableSlopeAngle(float angle);
+        void SetWalkableClimbHeight(float height);
+
+        float GetWalkableHeight() const;
+        float GetWalkableRadius() const;
+        float GetWalkableSlopeAngle() const;
+        float GetWalkableClimbHeight() const;
+
+
+        /// Rebuilds the navigation mesh that will be used for doing navigation paths.
+        void BuildNavigationMesh();
+
+        /// Retrieves the points on a navigation path between the given start and end positions.
+        void FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output);
+
+
+        /// Shows the navigation mesh.
+        void ShowNavigationMesh();
+
+        /// Hides the navigation mesh.
+        void HideNavigationMesh();
+
+
     public:
 
         void OnSceneNodeTransform(SceneNode &node);
@@ -99,6 +133,13 @@ namespace GTEngine
         void OnSceneNodeComponentAttached(SceneNode& node, Component& component);
         void OnSceneNodeComponentDetached(SceneNode& node, Component& component);
         void OnSceneNodeComponentChanged(SceneNode& node, Component& component);
+
+
+
+    public:
+
+        /// A hacky temp method for retrieving a reference to the internal list of scene nodes. (Used with NavigationMesh. Will be replaced later.)
+        const GTCore::List<SceneNode*> & GetSceneNodes() const { return this->nodes; }
 
 
     private:
@@ -126,6 +167,8 @@ namespace GTEngine
 
         /// Removes culling objects for the given spot light.
         void RemoveSpotLightCullingObjects(SpotLightComponent &light);
+        
+
         
 
 
@@ -296,6 +339,15 @@ namespace GTEngine
         /// between components types by looking at the collision group.
         CollisionWorld occlusionCollisionWorld;
 
+
+        /// The navigation mesh for doing navigation paths.
+        NavigationMesh navigationMesh;
+
+        /// The scene node for the navigation mesh.
+        SceneNode navigationMeshNode;
+
+        /// The model for drawing the navigation mesh.
+        Model navigationMeshModel;
 
 
     private:    // No copying.

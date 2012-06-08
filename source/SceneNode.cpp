@@ -561,7 +561,7 @@ namespace GTEngine
         return glm::translate(this->position) * glm::mat4_cast(this->orientation) * glm::scale(this->scale);
     }
 
-    glm::mat4 SceneNode::GetWorldTransformMatrix() const
+    glm::mat4 SceneNode::GetWorldTransform() const
     {
         glm::vec3 position    = this->GetWorldPosition();
         glm::quat orientation = this->GetWorldOrientation();

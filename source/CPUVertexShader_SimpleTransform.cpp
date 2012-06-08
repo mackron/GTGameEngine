@@ -22,6 +22,8 @@ namespace GTEngine
     void CPUVertexShader_SimpleTransform::ProcessVertex(Vertex &vertex)
     {
         // We only care about the position and normal here.
+        vertex.Position.w = 1.0f;
+
         vertex.Position = this->transform * vertex.Position;
         vertex.Normal   = glm::simdVec4(this->normalTransform * glm::vec3(vertex.Normal.x, vertex.Normal.y, vertex.Normal.z), 0.0f);
     }

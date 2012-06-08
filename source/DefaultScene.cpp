@@ -10,6 +10,7 @@
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/SceneCullingDbvtPolicy.hpp>
 #include <GTEngine/CollisionGroups.hpp>
+#include <GTEngine/MaterialLibrary.hpp>
 #include <GTCore/Strings/Equal.hpp>
 
 
@@ -194,8 +195,11 @@ namespace GTEngine
         : viewports(), nodes(),
           ambientLightComponents(), directionalLightComponents(),
           navigationPointComponents(),
-          dynamicsWorld(), occlusionCollisionWorld()
+          dynamicsWorld(), occlusionCollisionWorld(),
+          navigationMesh(), navigationMeshNode(), navigationMeshModel()
     {
+        this->AddSceneNode(this->navigationMeshNode);
+        this->navigationMeshNode.Hide();
     }
 
     DefaultScene::~DefaultScene()
@@ -344,6 +348,17 @@ namespace GTEngine
 
             viewport.SetScene(nullptr);
         }
+    }
+
+
+    void DefaultScene::GetAABB(glm::vec3 &min, glm::vec3 &max) const
+    {
+        btVector3 tempMin;
+        btVector3 tempMax;
+        this->dynamicsWorld.getBroadphaseAabb(tempMin, tempMax);
+
+        min = ToGLMVector3(tempMin);
+        max = ToGLMVector3(tempMax);
     }
 
 
@@ -515,6 +530,78 @@ namespace GTEngine
     }
 
 
+    void DefaultScene::SetWalkableHeight(float height)
+    {
+        this->navigationMesh.SetWalkableHeight(height);
+    }
+    void DefaultScene::SetWalkableRadius(float radius)
+    {
+        this->navigationMesh.SetWalkableRadius(radius);
+    }
+    void DefaultScene::SetWalkableSlopeAngle(float angle)
+    {
+        this->navigationMesh.SetWalkableSlope(angle);
+    }
+    void DefaultScene::SetWalkableClimbHeight(float height)
+    {
+        this->navigationMesh.SetWalkableClimb(height);
+    }
+
+
+    float DefaultScene::GetWalkableHeight() const
+    {
+        return this->navigationMesh.GetWalkableHeight();
+    }
+    float DefaultScene::GetWalkableRadius() const
+    {
+        return this->navigationMesh.GetWalkableRadius();
+    }
+    float DefaultScene::GetWalkableSlopeAngle() const
+    {
+        return this->navigationMesh.GetWalkableSlope();
+    }
+    float DefaultScene::GetWalkableClimbHeight() const
+    {
+        return this->navigationMesh.GetWalkableClimb();
+    }
+
+    void DefaultScene::BuildNavigationMesh()
+    {
+        this->navigationMesh.Build(*this);
+
+        // TODO: Update the navigation meshe's bounding volume so that it's not erroneously culled.
+    }
+
+    void DefaultScene::FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output)
+    {
+        this->navigationMesh.FindPath(start, end, output);
+    }
+
+
+    void DefaultScene::ShowNavigationMesh()
+    {
+        if (!this->navigationMeshNode.IsVisible())
+        {
+            auto component = this->navigationMeshNode.GetComponent<GTEngine::ModelComponent>();
+            if (component == nullptr)
+            {
+                this->navigationMeshModel.AttachMesh(&this->navigationMesh.visualVA, MaterialLibrary::Create("engine/materials/simple-emissive.material"));
+                this->navigationMeshModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.5f, 0.75f, 0.75f);
+
+                component = this->navigationMeshNode.AddModelComponent(&this->navigationMeshModel);
+            }
+
+            this->navigationMeshNode.Show();
+        }
+    }
+
+    void DefaultScene::HideNavigationMesh()
+    {
+        if (this->navigationMeshNode.IsVisible())
+        {
+            this->navigationMeshNode.Hide();
+        }
+    }
 
 
 

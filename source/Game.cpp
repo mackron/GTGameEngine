@@ -22,7 +22,7 @@ namespace GTEngine
     extern bool IsGameObjectCreated;
 
     Game::Game(int argc, char** argv)
-        : isInitialised(false), closing(false), eventQueue(), eventQueueLock(), window(nullptr), windowEventHandler(*this), /*threads(nullptr),*/ updateThread(nullptr), updateJob(nullptr), 
+        : isInitialised(false), closing(false), eventQueue(), eventQueueLock(), window(nullptr), windowEventHandler(*this), updateThread(nullptr), updateJob(nullptr), 
           deltaTimeInSeconds(0.0), updateTimer(), fontServer(nullptr), defaultFont(nullptr),
           gui(nullptr), guiEventHandler(nullptr),
           paused(false), focused(true),
@@ -113,6 +113,7 @@ namespace GTEngine
             y = 0;
         }
     }
+
 
     void Game::GetSmoothedMouseOffset(float &x, float &y)
     {
@@ -242,6 +243,7 @@ namespace GTEngine
             this->SetMousePosition(this->mouseCenterX, this->mouseCenterY);
         }
     }
+
 
     void Game::Pause()
     {

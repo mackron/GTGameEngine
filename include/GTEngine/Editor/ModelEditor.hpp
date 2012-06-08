@@ -143,7 +143,6 @@ namespace GTEngine
         float cameraYRotation;      ///< The camera's current Y rotation.
 
 
-
         // TESTING
         //
         // The map of scene nodes representing the bones of the model.
