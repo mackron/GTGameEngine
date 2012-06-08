@@ -3,8 +3,9 @@
 #define __PAG1_MeshBuilder_hpp_
 
 #include <GTCore/Vector.hpp>
-#include <GTEngine/Rendering/DrawModes.hpp>
-#include <GTEngine/Rendering/VertexFormat.hpp>
+#include "Rendering/DrawModes.hpp"
+#include "Rendering/VertexFormat.hpp"
+#include "Math.hpp"
 
 namespace GTEngine
 {
@@ -19,7 +20,7 @@ namespace GTEngine
         MeshBuilder(size_t vertexSizeInFloats);
 
         /// Destructor.
-        ~MeshBuilder();
+        virtual ~MeshBuilder();
 
 
         /// Emits a vertex.
@@ -51,19 +52,22 @@ namespace GTEngine
 
 
         /// Retrieves a pointer to the buffer containing the vertex data.
-        float* GetVertexData() { return this->vertexBuffer.buffer; }
+              float* GetVertexData() { return this->vertexBuffer.buffer; }
+        const float* GetVertexData() const { return this->vertexBuffer.buffer; }
 
         /// Retrieves the number of vertices in the vertex buffer.
         size_t GetVertexCount() const { return this->vertexBuffer.count / vertexSizeInFloats; }
 
+
         /// Retrieves a pointer to the buffer containing the indices.
-        unsigned int* GetIndexData() { return this->indexBuffer.buffer; }
+              unsigned int* GetIndexData() { return this->indexBuffer.buffer; }
+        const unsigned int* GetIndexData() const { return this->indexBuffer.buffer; }
 
         /// Retrieves the number of indices in the vertex buffer.
         size_t GetIndexCount() const { return this->indexBuffer.count; }
 
 
-    private:
+    protected:
 
         /// The number of floats making up each vertex.
         size_t vertexSizeInFloats;
@@ -73,6 +77,26 @@ namespace GTEngine
 
         /// The buffer containing the indices.
         GTCore::Vector<unsigned int> indexBuffer;
+    };
+}
+
+
+namespace GTEngine
+{
+    /// Mesh builder class optimized for the common P3T2N3 texture format.
+    class MeshBuilderP3T2N3 : public MeshBuilder
+    {
+    public:
+
+        /// Default constructor.
+        MeshBuilderP3T2N3();
+
+        /// Destructor.
+        ~MeshBuilderP3T2N3();
+
+
+        /// Emits a vertex with a position, texture coordinate and normal.
+        void EmitVertex(const glm::vec3 &position, const glm::vec2 &texCoord, const glm::vec3 &normal);
     };
 }
 

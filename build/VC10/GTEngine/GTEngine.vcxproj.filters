@@ -556,6 +556,9 @@
     <ClCompile Include="..\..\..\source\Components\NavigationPointComponent.cpp">
       <Filter>source\Components</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\NavigationMesh.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\engine\editor\combobox.xml">

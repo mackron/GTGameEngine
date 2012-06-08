@@ -467,7 +467,7 @@ namespace GTEngine
         /**
         *   \brief  Calculates a transformation matrix for this object, in world space.
         */
-        glm::mat4 GetWorldTransformMatrix() const;
+        glm::mat4 GetWorldTransform() const;
 
         /**
         *   \brief                       Retrieves the Bullet transform for use with physics.

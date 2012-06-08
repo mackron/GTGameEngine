@@ -2,10 +2,18 @@
 #ifndef __GTEngine_NavigationMesh_hpp_
 #define __GTEngine_NavigationMesh_hpp_
 
-#include "Recast.h"
+#include <Recast.h>
+#include <DetourNavMesh.h>
+#include <DetourNavMeshBuilder.h>
+#include <DetourNavMeshQuery.h>
+#include <GTCore/Vector.hpp>
+#include "Math.hpp"
+#include "Rendering/VertexArray.hpp"
 
 namespace GTEngine
 {
+    class DefaultScene;
+
     /// Class representing a navigation mesh.
     ///
     /// A navigation mesh is used for allowing an actor to know where it is able to move while navigating between two points.
@@ -25,10 +33,85 @@ namespace GTEngine
         ~NavigationMesh();
 
 
+        /// Builds the navigation mesh from a scene.
+        ///
+        /// @remarks
+        ///     This is build from the static dynamic objects.
+        ///     @par
+        ///     This will need to be called when the navigation mesh needs to be updated.
+        bool Build(const DefaultScene &scene);
+
+
+        /// Sets the cell size that will be used when building the navigation mesh.
+        ///
+        /// @param size [in] The width, height and depth of each cell.
+        ///
+        /// @remarks
+        ///     A smaller cell size means a higher resolution mesh will be generated at the expense of performance. Defaults to 0.5 (half a meter).
+        void SetCellSize(float size);
+
+        void SetWalkableHeight(float height);
+        void SetWalkableRadius(float radius);
+        void SetWalkableSlope(float angle);
+        void SetWalkableClimb(float height);
+
+        float GetWalkableHeight() const;
+        float GetWalkableRadius() const;
+        float GetWalkableSlope() const;
+        float GetWalkableClimb() const;
+
+
+        /// Retrieves the points of a path between the given start and end positions.
+        ///
+        /// @param start  [in] The start position.
+        /// @param end    [in] The end position.
+        /// @param output [in] The vector that will receive the positions of the points on the path.
+        ///
+        /// @return True if the path is generated successfully; false otherwise.
+        bool FindPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output);
+
+
+
     private:
+
+        /// Rebuilds the vertex array for doing the visual representation of the nav mesh.
+        void RebuildVisualVA();
+
+
+
+    public:
 
         /// The configuration for building the Recast navmesh.
         rcConfig config;
+
+        /// A pointer to the main navigation mesh.
+        rcPolyMesh* mesh;
+
+        /// A pointer to the detail mesh containing height information.
+        rcPolyMeshDetail* detailMesh;
+
+        /// A pointer to the detour nav mesh.
+        dtNavMesh* detourNavMesh;
+
+        /// A pointer to the detour nav mesh query object for doing pathfinding queries.
+        dtNavMeshQuery* navMeshQuery;
+
+
+        /// The walkable height in units. Defaults to 2.0.
+        float walkableHeight;
+
+        /// The walkable radius in units. Defaults to 0.5.
+        float walkableRadius;
+
+        /// The walkable slope. Defaults to 27.5.
+        float walkableSlope;
+
+        /// The size of a step an actor can step over. Defaults to 0.25.
+        float walkableClimb;
+
+
+        /// The vertex array containing geometric data for the visual representation.
+        VertexArray visualVA;
     };
 }
 

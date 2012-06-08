@@ -3,6 +3,7 @@
 #define __GTEngine_VertexArray_hpp_
 
 #include "VertexFormat.hpp"
+#include "../Math.hpp"
 
 namespace GTEngine
 {
@@ -114,6 +115,9 @@ namespace GTEngine
         void UnmapIndexData();
 
 
+        
+
+
 
         /**
         *   \brief  Retrieves the vertex format of this array.
@@ -141,6 +145,26 @@ namespace GTEngine
         *       This does not deallocate the previous renderer data. That is the responsibility of the renderer itself.
         */
         inline void SetRendererData(void *rendererData) const { this->rendererData = rendererData; }
+
+
+
+    // Transforms.
+    //
+    // TODO: Move this function. VertexArray should be relatively low level. Maybe create a MeshUtils static class?
+    public:
+
+        /// Generates tangents and bitanges if the format is suitable.
+        bool GenerateTangentsAndBitangents();
+
+        /// Applies the given transformation to the vertex array.
+        void ApplyTransform(const glm::mat4 &transform);
+
+        /// Optimizes the vertex array to remove duplicate vertices.
+        void Optimize();
+
+        /// Swaps the triangle winding of the array. Assumes the array is made up of triangles. This only modifies the indices.
+        void SwapTriangleWinding();
+
 
     private:
 

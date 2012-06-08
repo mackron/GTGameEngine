@@ -172,14 +172,12 @@ namespace GTEngine
             // If the mouse is captured we may need to move the screen around.
             if (this->game.IsMouseCaptured())
             {
-                const float moveSpeed   = 3.0f;
-                const float rotateSpeed = 14.0f;
+                const float moveSpeed   = 0.05f;
+                const float rotateSpeed = 0.1f;
 
-                float mouseOffsetX, mouseOffsetY;
+                float mouseOffsetX;
+                float mouseOffsetY;
                 this->game.GetSmoothedMouseOffset(mouseOffsetX, mouseOffsetY);
-
-                mouseOffsetX *= static_cast<float>(deltaTimeInSeconds);
-                mouseOffsetY *= static_cast<float>(deltaTimeInSeconds);
 
                 if (this->game.IsMouseButtonDown(GTCore::MouseButton_Left))
                 {
@@ -283,7 +281,10 @@ namespace GTEngine
 
     void ModelViewportEventHandler::OnLMBDown(GTGUI::Element &, int, int)
     {
-        this->modelEditor.game.CaptureMouse();
+        if (!this->modelEditor.game.IsMouseCaptured())
+        {
+            this->modelEditor.game.CaptureMouse();
+        }
     }
 
     void ModelViewportEventHandler::OnLMBUp(GTGUI::Element &, int, int)
@@ -296,7 +297,10 @@ namespace GTEngine
 
     void ModelViewportEventHandler::OnRMBDown(GTGUI::Element &, int, int)
     {
-        this->modelEditor.game.CaptureMouse();
+        if (!this->modelEditor.game.IsMouseCaptured())
+        {
+            this->modelEditor.game.CaptureMouse();
+        }
     }
 
     void ModelViewportEventHandler::OnRMBUp(GTGUI::Element &, int, int)

@@ -90,7 +90,7 @@ namespace GTEngine
         /**
         *   \brief  Retrieves a pointer to the array making up the format.
         */
-        const int * ToArray() const;
+        const int* ToArray() const;
         
         bool operator== (const VertexFormat &other);
         bool operator!= (const VertexFormat &other) { return !(*this == other); }

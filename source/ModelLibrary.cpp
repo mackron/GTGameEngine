@@ -2,6 +2,7 @@
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/VertexArrayFactory.hpp>
+#include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 
@@ -122,11 +123,9 @@ namespace GTEngine
     /// Structure containing information about a loaded model.
     struct LoadedModelInfo
     {
-        // TODO: rename geomtries to meshGeometries and defaultMaterials to meshMaterials. Bit more descriptive that way.
-
         /// Constructor.
         LoadedModelInfo()
-            : geometries(), defaultMaterials(), meshBones(),
+            : meshGeometries(), meshMaterials(), meshBones(),
               bones(),
               animations(),
               haveCreatedModel(false)
@@ -136,14 +135,14 @@ namespace GTEngine
         /// Destructor.
         ~LoadedModelInfo()
         {
-            for (size_t i = 0; i < this->geometries.count; ++i)
+            for (size_t i = 0; i < this->meshGeometries.count; ++i)
             {
-                delete this->geometries[i];
+                delete this->meshGeometries[i];
             }
 
-            for (size_t i = 0; i < this->defaultMaterials.count; ++i)
+            for (size_t i = 0; i < this->meshMaterials.count; ++i)
             {
-                MaterialLibrary::Delete(this->defaultMaterials[i]);
+                MaterialLibrary::Delete(this->meshMaterials[i]);
             }
 
             for (size_t i = 0; i < this->meshBones.count; ++i)
@@ -253,15 +252,15 @@ namespace GTEngine
             model->CopyAndAddAnimations(this->animations);
 
             // Now we need to create the meshes. This must be done after adding the bones.
-            for (size_t i = 0; i < this->geometries.count; ++i)
+            for (size_t i = 0; i < this->meshGeometries.count; ++i)
             {
                 if (this->meshBones[i] != nullptr)
                 {
-                    model->AttachMesh(this->geometries[i], this->defaultMaterials[i], *this->meshBones[i]);
+                    model->AttachMesh(this->meshGeometries[i], this->meshMaterials[i], *this->meshBones[i]);
                 }
                 else
                 {
-                    model->AttachMesh(this->geometries[i], this->defaultMaterials[i]);
+                    model->AttachMesh(this->meshGeometries[i], this->meshMaterials[i]);
                 }
             }
 
@@ -281,12 +280,12 @@ namespace GTEngine
 
 
         /// The list of vertex arrays containing the geometric data of each mesh.
-        GTCore::Vector<VertexArray*> geometries;
+        GTCore::Vector<VertexArray*> meshGeometries;
 
         /// The default materials. There will always be an equal number of materials as there are meshes. Each material in this list
         /// has a one-to-one correspondance with a mesh in <meshes>. For example, the material at index 0 is the material to use with
         /// the mesh at index 0.
-        GTCore::Vector<Material*> defaultMaterials;
+        GTCore::Vector<Material*> meshMaterials;
 
         /// The list of bone weights for each mesh. If the mesh does not use any bones, the entry will be set to null.
         GTCore::Vector<GTCore::Vector<BoneWeights*>*> meshBones;
@@ -306,6 +305,14 @@ namespace GTEngine
 
     /// The list of loaded models.
     static GTCore::Dictionary<LoadedModelInfo*> LoadedModels;
+
+
+    /// Creates a model from a primitive's vertex array.
+    ///
+    /// @param name [in] The name of the primitive.
+    /// @param va   [in] The vertex array of the primitive. This can be nullptr, but only if the primitive has already been created.
+    Model* ModelLibrary_CreateFromPrimitive(const char* name, VertexArray* va);
+
 }
 
 // Startup/Shutdown
@@ -436,8 +443,8 @@ namespace GTEngine
                 va->UnmapVertexData();
                 va->UnmapIndexData();
 
-                model.geometries.PushBack(va);
-                model.defaultMaterials.PushBack(nullptr);
+                model.meshGeometries.PushBack(va);
+                model.meshMaterials.PushBack(nullptr);
             }
 
 
@@ -689,8 +696,22 @@ namespace GTEngine
     {
         // We need a unique identifier for this mesh. We will base it on the size of the box.
         char name[128];
-        GTCore::IO::snprintf(name, 128, "box(%.4f %.4f %.4f)", halfWidth, halfHeight, halfDepth);
+        GTCore::IO::snprintf(name, 128, "prim:box(%.4f %.4f %.4f)", halfWidth, halfHeight, halfDepth);
 
+        // We create the model from a primitive. To do this we need a non-const vertex array.
+        VertexArray* va = nullptr;
+
+        bool exists = LoadedModels.Find(name) != nullptr;
+        if (!exists)
+        {
+            va = VertexArrayLibrary::CreateBox(halfWidth, halfHeight, halfDepth);
+        }
+
+        return ModelLibrary_CreateFromPrimitive(name, va);
+        
+
+
+        /*
         // We're going to check if we can find the model info before loading. This will allow us to determine whether or not we
         // need to apply the transformation.
         bool applyTransform = LoadedModels.Find((GTCore::String("__nff:") + name).c_str()) == nullptr;
@@ -703,6 +724,7 @@ namespace GTEngine
         }
 
         return model;
+        */
     }
 
     Model* ModelLibrary::CreateSphere(float radius)
@@ -749,5 +771,41 @@ namespace GTEngine
     void ModelLibrary::Delete(Model* model)
     {
         delete model;
+    }
+}
+
+
+
+// These are private functions implementations for ModelLibrary.
+namespace GTEngine
+{
+    Model* ModelLibrary_CreateFromPrimitive(const char* name, VertexArray* va)
+    {
+        LoadedModelInfo* modelInfo = nullptr;
+
+        // We first need to retrieve our model info.
+        auto iModelInfo = LoadedModels.Find(name);
+        if (iModelInfo == nullptr)
+        {
+            modelInfo = new LoadedModelInfo;
+            modelInfo->meshGeometries.PushBack(va);
+            modelInfo->meshMaterials.PushBack(nullptr);
+            modelInfo->meshBones.PushBack(nullptr);
+
+            LoadedModels.Add(name, modelInfo);
+        }
+        else
+        {
+            modelInfo = iModelInfo->value;
+        }
+
+
+        // Now that we have the model information we can create a model from it.
+        if (modelInfo != nullptr)
+        {
+            return modelInfo->CreateModel();
+        }
+
+        return nullptr;
     }
 }

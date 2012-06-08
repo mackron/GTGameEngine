@@ -372,7 +372,7 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransform();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
@@ -521,7 +521,7 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 MVPMatrix    = this->projection * (this->view * modelComponent->GetNode().GetWorldTransformMatrix());
+                glm::mat4 MVPMatrix    = this->projection * (this->view * modelComponent->GetNode().GetWorldTransform());
                 glm::mat3 NormalMatrix = glm::inverse(glm::transpose(glm::mat3(MVPMatrix)));
 
                 for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
@@ -563,7 +563,7 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransform();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
@@ -607,7 +607,7 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransform();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
@@ -654,7 +654,7 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransform();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
@@ -707,7 +707,7 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransform();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
@@ -754,7 +754,7 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransformMatrix();
+                glm::mat4 ModelViewMatrix = this->view * modelComponent->GetNode().GetWorldTransform();
                 glm::mat4 MVPMatrix       = this->projection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 

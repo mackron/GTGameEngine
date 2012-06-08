@@ -203,6 +203,10 @@ namespace GTEngine
         virtual void RemoveViewport(SceneViewport &viewport) = 0;
 
 
+        /// Retrieves the AABB of the scene.
+        virtual void GetAABB(glm::vec3 &min, glm::vec3 &max) const = 0;
+
+
     // Picking.
     public:
 
@@ -258,6 +262,60 @@ namespace GTEngine
         {
             this->GetGravity(gravity.x, gravity.y, gravity.z);
         }
+
+
+    // A.I.
+    public:
+
+        /// Sets the walkable height of actors for navigation.
+        ///
+        /// @remarks
+        ///     Default value is 2.0 (2 meters).
+        virtual void SetWalkableHeight(float height) = 0;
+
+        /// Sets the walkable radius of actors for navigation.
+        ///
+        /// @remarks
+        ///     Default value is 0.5 (0.5 meters).
+        virtual void SetWalkableRadius(float radius) = 0;
+
+        /// Sets the walkable slope angle.
+        ///
+        /// @remarks
+        ///     Default value is 10.0 degrees.
+        virtual void SetWalkableSlopeAngle(float angle) = 0;
+
+        /// Sets the walkable climb height (for stepping).
+        ///
+        /// @remarks
+        ///     Default value is 0.25.
+        virtual void SetWalkableClimbHeight(float height) = 0;
+
+
+        /// Retrieves the walkable height of actors for navigation.
+        ///
+        /// @remarks
+        ///     Default value is 2.0 (2 meters).
+        virtual float GetWalkableHeight() const = 0;
+
+        /// Retrieves the walkable radius of actors for navigation.
+        ///
+        /// @remarks
+        ///     Default value is 0.5 (0.5 meters).
+        virtual float GetWalkableRadius() const = 0;
+
+        /// Retrieves the walkable slope angle.
+        ///
+        /// @remarks
+        ///     Default value is 10.0 degrees.
+        virtual float GetWalkableSlopeAngle() const = 0;
+
+        /// Retrieves the walkable climb height (for stepping).
+        ///
+        /// @remarks
+        ///     Default value is 0.25.
+        virtual float GetWalkableClimbHeight() const = 0;
+
 
 
     // Non-virtual functions.

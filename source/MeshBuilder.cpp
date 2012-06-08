@@ -38,7 +38,7 @@ namespace GTEngine
         {
             if (this->Equal(this->vertexBuffer.buffer + (i * vertexSizeInFloats), vertexData))
             {
-                indexOut = static_cast<unsigned int>(indexOut);
+                indexOut = static_cast<unsigned int>(i);
                 return true;
             }
         }
@@ -59,5 +59,30 @@ namespace GTEngine
 
         // If we make it here, it means we are equal.
         return true;
+    }
+}
+
+
+namespace GTEngine
+{
+    MeshBuilderP3T2N3::MeshBuilderP3T2N3()
+        : MeshBuilder(8)
+    {
+    }
+
+    MeshBuilderP3T2N3::~MeshBuilderP3T2N3()
+    {
+    }
+
+    void MeshBuilderP3T2N3::EmitVertex(const glm::vec3 &position, const glm::vec2 &texCoord, const glm::vec3 &normal)
+    {
+        float data[8] =
+        {
+            position.x, position.y, position.z,
+            texCoord.x, texCoord.y,
+            normal.x,   normal.y,   normal.z
+        };
+
+        MeshBuilder::EmitVertex(data);
     }
 }

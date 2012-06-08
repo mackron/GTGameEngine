@@ -166,6 +166,16 @@ namespace GTEngine
         }
     }
 
+    bool DynamicsComponent::IsKinematic() const
+    {
+        return this->isKinematic;
+    }
+
+    bool DynamicsComponent::IsStatic() const
+    {
+        return this->mass == 0.0f && !this->isKinematic;
+    }
+
 
     void DynamicsComponent::SetFriction(float friction)
     {
@@ -313,6 +323,66 @@ namespace GTEngine
         this->rigidBody->activate();
         this->rigidBody->applyTorqueImpulse(btVector3(x, y, z));
     }
+
+
+    VertexArray* DynamicsComponent::CreateCollisionShapeMesh(bool applyNodeTransform)
+    {
+        int shapeCount = this->collisionShape.getNumChildShapes();
+
+        // The way we do things is we first build vertex arrays for each individual shape. We that combine them all into a single
+        // vertex array to produce the final array.
+        GTCore::Vector<VertexArray*> shapeGeometry(shapeCount);
+
+        for (int i = 0; i < shapeCount; ++i)
+        {
+            auto shape = this->collisionShape.getChildShape(i);
+            assert(shape != nullptr);
+
+            auto va = VertexArrayLibrary::CreateFromShape(*shape);
+            if (va != nullptr)
+            {
+                va->ApplyTransform(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+                shapeGeometry.PushBack(va);
+            }
+        }
+
+        // At this point we will have a list of vertex arrays for each shape. We need to combine them into a single vertex array.
+        if (shapeGeometry.count > 0)
+        {
+            // TODO:
+            //
+            // If later one we decide to return a format other than P3, we can do an optimization where we just return shapeGeometry[0] in cases where there is only
+            // a single vertex array.
+
+            // Need to combine.
+            auto combined = VertexArrayLibrary::CreateCombined(shapeGeometry.buffer, shapeGeometry.count, VertexFormat::P3);
+            assert(combined != nullptr);
+
+            // We need to ensure the temp vertex arrays are deleted...
+            for (size_t i = 0; i < shapeGeometry.count; ++i)
+            {
+                delete shapeGeometry[i];
+            }
+
+            if (applyNodeTransform)
+            {
+                combined->ApplyTransform(this->node.GetWorldTransform());
+            }
+            else
+            {
+                // We still need to apply the scaling in any case.
+                combined->ApplyTransform(glm::scale(this->node.GetWorldScale()));
+            }
+
+            // Here we optimize the vertex array to remove duplicate values.
+            combined->Optimize();
+
+            return combined;
+        }
+
+        return nullptr;
+    }
+
 
 
     void DynamicsComponent::AddCollisionShape(btCollisionShape* shape, float offsetX, float offsetY, float offsetZ)

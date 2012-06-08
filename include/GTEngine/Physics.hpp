@@ -24,6 +24,14 @@ namespace GTEngine
         return glm::quat(v.w(), v.x(), v.y(), v.z());
     }
 
+    inline glm::mat4 ToGLMMatrix4(const btTransform &t)
+    {
+        glm::mat4 result;
+        t.getOpenGLMatrix(&result[0][0]);
+
+        return result;
+    }
+
 
     namespace BulletUtils
     {

@@ -293,6 +293,7 @@
     <ClCompile Include="..\..\..\source\MeshBuilder.cpp" />
     <ClCompile Include="..\..\..\source\Model.cpp" />
     <ClCompile Include="..\..\..\source\ModelLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\NavigationMesh.cpp" />
     <ClCompile Include="..\..\..\source\Physics\CollisionObject.cpp" />
     <ClCompile Include="..\..\..\source\Physics\CollisionWorld.cpp" />
     <ClCompile Include="..\..\..\source\Physics\DynamicsWorld.cpp" />

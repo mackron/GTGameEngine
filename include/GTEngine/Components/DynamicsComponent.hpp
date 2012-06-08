@@ -4,6 +4,7 @@
 
 #include "../Component.hpp"
 #include "../Physics.hpp"
+#include "../VertexArrayLibrary.hpp"
 #include <GTCore/Vector.hpp>
 
 namespace GTEngine
@@ -56,6 +57,9 @@ namespace GTEngine
 
         /// Returns whether or not the rigid body is kinematic.
         bool IsKinematic() const;
+
+        /// Determines whether or not the rigid body is static.
+        bool IsStatic() const;
 
 
         /// Sets the friction of the object.
@@ -156,6 +160,18 @@ namespace GTEngine
         /// Applies a torque impulse.
         void ApplyTorqueImpulse(float x, float y, float z);
         void ApplyTorqueImpulse(const glm::vec3 &impulse) { this->ApplyCentralImpulse(impulse.x, impulse.y, impulse.z); }
+
+
+
+        /// Creates a vertex array containing the collision mesh vertices.
+        ///
+        /// @param applyNodeTransform [in] Whether or not the scene node's world transformation should be applied.
+        ///
+        /// @remarks
+        ///     This only contains vertex positions. No texture coordinates. No normals.
+        ///     @par
+        ///     This is useful for use by Recast (for navigation mesh generation).
+        VertexArray* CreateCollisionShapeMesh(bool applyNodeTransform = false);
 
 
 
