@@ -13,6 +13,7 @@ namespace GTEngine
           rigidBody(new RigidBody(0.0f, collisionShape, &motionState)),
           mass(0.0f),
           isKinematic(false),
+          useWithNavigationMesh(true),
           collisionGroup(1), collisionMask(-1)
     {
         this->rigidBody->setUserPointer(&node);
@@ -82,6 +83,12 @@ namespace GTEngine
     void DynamicsComponent::AddCapsuleZCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
     {
         this->AddCollisionShape(new btCapsuleShapeZ(radius, length), offsetX, offsetY, offsetZ);
+    }
+
+
+    void DynamicsComponent::AddStaticPlaneShape(float a, float b, float c, float d)
+    {
+        this->AddCollisionShape(new btStaticPlaneShape(btVector3(a, b, c), d), 0.0f, 0.0f, 0.0f);
     }
 
 
@@ -322,6 +329,35 @@ namespace GTEngine
     {
         this->rigidBody->activate();
         this->rigidBody->applyTorqueImpulse(btVector3(x, y, z));
+    }
+
+
+    void DynamicsComponent::DisableDeactivation()
+    {
+        this->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+        this->rigidBody->activate();
+    }
+
+    void DynamicsComponent::EnableDeactivation()
+    {
+        this->rigidBody->setActivationState(ACTIVE_TAG);
+        this->rigidBody->setDeactivationTime(0.0f);
+    }
+
+
+    void DynamicsComponent::DisableNavigationMeshGeneration()
+    {
+        this->useWithNavigationMesh = false;
+    }
+
+    void DynamicsComponent::EnableNavigationMeshGeneration()
+    {
+        this->useWithNavigationMesh = true;
+    }
+
+    bool DynamicsComponent::UseWithNavigationMeshGeneration() const
+    { 
+        return this->useWithNavigationMesh && this->IsStatic();
     }
 
 

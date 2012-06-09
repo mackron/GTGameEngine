@@ -63,6 +63,7 @@ namespace GTEngine
         // The context. This only exists so we can pass it around to the rc* functions. We get a failed assertion if we pass null, unfortunately.
         rcContext context;
 
+        // NOTE: WE WILL CRASH IF THERE IS A STATIC PLANE IN THE SCENE. NEED TO FIX.
 
         // We need a heightfield...
         auto heightfield = rcAllocHeightfield();
@@ -79,7 +80,7 @@ namespace GTEngine
                 assert(node != nullptr);
 
                 auto dynamics = node->GetComponent<GTEngine::DynamicsComponent>();
-                if (dynamics != nullptr && dynamics->IsStatic())
+                if (dynamics != nullptr && dynamics->UseWithNavigationMeshGeneration())
                 {
                     auto mesh = dynamics->CreateCollisionShapeMesh(true);   // <-- 'true' means to apply the scene node's transformation.
                     if (mesh != nullptr)
@@ -99,7 +100,6 @@ namespace GTEngine
 
                         delete [] walkableAreas;
                         delete mesh;
-                        
                     }
                 }
             }

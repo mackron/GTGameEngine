@@ -332,7 +332,7 @@ namespace GTEngine
 
 
         /// The dynamics world for everything involving physics and collision detection.
-        DynamicsWorld dynamicsWorld; 
+        mutable DynamicsWorld dynamicsWorld; 
 
         /// The collision world that will do occlusion culling and other collision detection functionality. We also use this
         /// world for picking. This world contains objects for each relevant component of an entity. The scene distringuishes
