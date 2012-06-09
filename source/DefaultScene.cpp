@@ -353,9 +353,12 @@ namespace GTEngine
 
     void DefaultScene::GetAABB(glm::vec3 &min, glm::vec3 &max) const
     {
+        // TODO: For some reason using the dynamics world will given too-large a bounding box. Using the occlusion collision world
+        //       gives good results. Not sure why dynamicsWorld is not working properly...
+
         btVector3 tempMin;
         btVector3 tempMax;
-        this->dynamicsWorld.getBroadphaseAabb(tempMin, tempMax);
+        this->occlusionCollisionWorld.getBroadphaseAabb(tempMin, tempMax);
 
         min = ToGLMVector3(tempMin);
         max = ToGLMVector3(tempMax);

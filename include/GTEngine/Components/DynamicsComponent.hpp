@@ -40,6 +40,9 @@ namespace GTEngine
         void AddCapsuleXCollisionShape(float radius, float length, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
         void AddCapsuleYCollisionShape(float radius, float length, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
         void AddCapsuleZCollisionShape(float radius, float length, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+
+        /// Adds a static plane shape. This does not move with the node.
+        void AddStaticPlaneShape(float a, float b, float c, float d);
         
 
         /// Removes every collision shape.
@@ -162,6 +165,23 @@ namespace GTEngine
         void ApplyTorqueImpulse(const glm::vec3 &impulse) { this->ApplyCentralImpulse(impulse.x, impulse.y, impulse.z); }
 
 
+        /// Disables deactivation of the rigid body.
+        void DisableDeactivation();
+
+        /// Enables deactivation of the rigid body.
+        void EnableDeactivation();
+
+
+        /// Disables navigation mesh generation.
+        void DisableNavigationMeshGeneration();
+
+        /// Enables navigation mesh generation.
+        void EnableNavigationMeshGeneration();
+
+        /// Determines whether or not the component should be used with navigation mesh generation.
+        bool UseWithNavigationMeshGeneration() const;
+
+
 
         /// Creates a vertex array containing the collision mesh vertices.
         ///
@@ -172,7 +192,6 @@ namespace GTEngine
         ///     @par
         ///     This is useful for use by Recast (for navigation mesh generation).
         VertexArray* CreateCollisionShapeMesh(bool applyNodeTransform = false);
-
 
 
     private:
@@ -202,6 +221,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not the object is kinematic.
         bool isKinematic;
+
+        /// Keeps track of whether or not this object should be used for navigation mesh generation. Defaults to true.
+        bool useWithNavigationMesh;
 
 
         /// The collision group the scene node is part of. This is set with SetCollisionFilter(). Defaults to 1.
