@@ -125,6 +125,38 @@ namespace GTEngine
             this->worldHitNormal   = worldHitNormalIn;
         }
     };
+
+    /// The ray test callback structure for checking the closest object, not includeing the given scene node.
+    struct ClosestRayExceptMeTestCallback : public ClosestRayTestCallback
+    {
+        SceneNode* excludedNode;
+
+        ClosestRayExceptMeTestCallback()
+            : ClosestRayTestCallback(), excludedNode(nullptr)
+        {
+        }
+
+        ClosestRayExceptMeTestCallback(short collisionGroup, short collisionMask)
+            : ClosestRayTestCallback(collisionGroup, collisionMask), excludedNode(nullptr)
+        {
+        }
+
+        ClosestRayExceptMeTestCallback(short collisionGroup, short collisionMask, SceneNode &excluded)
+            : ClosestRayTestCallback(collisionGroup, collisionMask), excludedNode(&excluded)
+        {
+        }
+
+        /// RayTestCallback::NeedsCollision().
+        virtual bool NeedsCollision(short collisionGroupIn, short collisionMaskIn, SceneNode &object) const
+        {
+            if (this->excludedNode == &object)
+            {
+                return false;
+            }
+
+            return ClosestRayTestCallback::NeedsCollision(collisionGroupIn, collisionMaskIn, object);
+        }
+    };
 }
 
 

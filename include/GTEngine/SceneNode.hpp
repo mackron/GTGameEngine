@@ -622,7 +622,7 @@ namespace GTEngine
             {
                 // The OnComponentDetached() event needs to be called before destruction, but after it's been removed.
                 this->components.Remove(T::Name);
-                this->OnComponentDetached(component);
+                this->OnComponentDetached(*component);
 
                 delete component;
             }

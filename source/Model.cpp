@@ -101,7 +101,7 @@ namespace GTEngine
             auto newAnimation = new SkeletalAnimation(animation->GetName());
 
             // Duration.
-            newAnimation->SetDurationInSeconds(animation->GetDurationInSeconds());
+            //newAnimation->SetDurationInSeconds(animation->GetDurationInSeconds());
 
             // Channels.
             for (size_t i = 0; i < animation->GetChannelCount(); ++i)
@@ -185,6 +185,17 @@ namespace GTEngine
             this->currentAnimation = iAnimation->value;
 
             this->currentAnimation->Play(loop);
+        }
+    }
+
+    void Model::PlayAnimation(size_t startFrame, size_t endFrame, bool loop)
+    {
+        auto iAnimation = this->animations.Find("");
+        if (iAnimation != nullptr)
+        {
+            this->currentAnimation = iAnimation->value;
+
+            this->currentAnimation->Play(startFrame, endFrame, loop);
         }
     }
 

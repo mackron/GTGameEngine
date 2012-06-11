@@ -45,6 +45,7 @@ namespace GTEngine
 
         /// Sets the shader to use when rendering the vertex array.
         void SetShader(Shader* shader) { this->shader = shader; }
+
         
         
     // The methods below are called on the rendering thread.

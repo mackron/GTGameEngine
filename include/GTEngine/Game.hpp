@@ -119,10 +119,18 @@ namespace GTEngine
         */
         void SetMousePosition(int x, int y);
 
+
         /**
         *   \brief  Retrieves the time in seconds between the last two frames. Allows time based movement.
         */
         double GetDeltaTimeInSeconds() const { return this->deltaTimeInSeconds; }
+
+        /// Retrieves the time in seconds since the game was launched, not including pause time.
+        ///
+        /// @remarks
+        ///     This is useful for doing timer-based stuff where pausing the game should not be contributing to the timer.
+        double GetTimeInSeconds() const { return this->totalRunninTimeInSeconds; }
+
 
         /**
         *   \brief  Retrieves a pointer to the games font cache.
@@ -447,6 +455,10 @@ namespace GTEngine
 
         /// The time between the last two frames. Use this for time-based operations.
         double deltaTimeInSeconds;
+
+        /// The amount of time the game has been running, not including pause time.
+        double totalRunninTimeInSeconds;
+
 
         /// The timer for timing updates. This is needed for retrieving the delta time.
         GTCore::Timer updateTimer;

@@ -15,6 +15,7 @@
 #include "Rendering/Renderer.hpp"
 #include "Rendering/RenderCommand.hpp"
 #include "Rendering/RenderCommands/RCDrawVA.hpp"
+#include "Rendering/RenderCommands/RCSetFaceCulling.hpp"
 #include "Rendering/RCCache.hpp"
 #include <GTCore/Map.hpp>
 #include <GTCore/String.hpp>
@@ -398,6 +399,13 @@ namespace GTEngine
         VertexArray* GetMeshGeometry(Mesh &mesh, bool animating);
 
 
+        /// Acquires render commands and sets common properties for the given model component.
+        ///
+        /// @return True if the commands were retrieved successfully; false otherwise.
+        bool AcquireMeshRCs(ModelComponent &modelComponent, size_t meshIndex, const glm::mat4 &mvpMatrix, const glm::mat3 &normalMatrix, RCDrawVA* &rcDrawVA, RCSetFaceCulling* &rcSetFaceCulling);
+        bool AcquireMeshRCs(ModelComponent &modelComponent, size_t meshIndex, const glm::mat4 &mvpMatrix, const glm::mat3 &normalMatrix, const glm::mat4 &modelViewMatrix, RCDrawVA* &rcDrawVA, RCSetFaceCulling* &rcSetFaceCulling);
+
+
     private:
 
         /// The owner viewport. This can be null, thus it needs to be a pointer.
@@ -433,6 +441,7 @@ namespace GTEngine
 
             RCCache<DVR_RCBeginLightingPass, 32> rcBeginLightingPass[2];
             RCCache<RCDrawVA>                    rcDrawVA[2];
+            RCCache<RCSetFaceCulling>            rcSetFaceCulling[2];
 
         }RenderCommands;
 

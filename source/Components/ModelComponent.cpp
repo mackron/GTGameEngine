@@ -8,7 +8,9 @@ namespace GTEngine
     GTENGINE_IMPL_COMPONENT(ModelComponent, "Model");
 
     ModelComponent::ModelComponent(SceneNode &node)
-        : Component(node), model(nullptr), isOwner(false)
+        : Component(node), model(nullptr),
+          cullFrontFaces(false), cullBackFaces(true),
+          isOwner(false)
     {
     }
 
@@ -36,6 +38,12 @@ namespace GTEngine
     Model* ModelComponent::GetModel()
     {
         return this->model;
+    }
+
+    void ModelComponent::SetFaceCulling(bool cullFront, bool cullBack)
+    {
+        this->cullFrontFaces = cullFront;
+        this->cullBackFaces  = cullBack;
     }
     
     void ModelComponent::MakeOwner()

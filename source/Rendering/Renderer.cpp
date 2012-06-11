@@ -1567,6 +1567,34 @@ namespace GTEngine
         glDepthFunc(funcGL);
     }
 
+    void Renderer::SetFaceCulling(bool cullFront, bool cullBack)
+    {
+        if (cullFront || cullBack)
+        {
+            glEnable(GL_CULL_FACE);
+
+            if (cullFront && cullBack)
+            {
+                glCullFace(GL_FRONT_AND_BACK);
+            }
+            else
+            {
+                if (cullFront)
+                {
+                    glCullFace(GL_FRONT);
+                }
+                else
+                {
+                    glCullFace(GL_BACK);
+                }
+            }
+        }
+        else
+        {
+            glDisable(GL_CULL_FACE);
+        }
+    }
+
     void Renderer::EnableSRGB()
     {
         if (!IsSRGBEnabled)
