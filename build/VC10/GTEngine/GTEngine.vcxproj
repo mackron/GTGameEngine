@@ -161,6 +161,12 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\Animation.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationChannel.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKey.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKeyFrame.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSequence.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationTimeline.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp" />
@@ -252,6 +258,12 @@
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\Animation\Animation.cpp" />
+    <ClCompile Include="..\..\..\source\Animation\AnimationChannel.cpp" />
+    <ClCompile Include="..\..\..\source\Animation\AnimationKey.cpp" />
+    <ClCompile Include="..\..\..\source\Animation\AnimationKeyFrame.cpp" />
+    <ClCompile Include="..\..\..\source\Animation\AnimationSequence.cpp" />
+    <ClCompile Include="..\..\..\source\Animation\AnimationTimeline.cpp" />
     <ClCompile Include="..\..\..\source\ApplicationConfig.cpp" />
     <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Sound.cpp" />
