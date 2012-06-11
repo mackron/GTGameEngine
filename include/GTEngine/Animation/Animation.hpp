@@ -22,6 +22,28 @@ namespace GTEngine
         ~Animation();
 
 
+        /// Appends a new key frame.
+        ///
+        /// @param time [in] The time in the timeline to append the keyframe.
+        ///
+        /// @return A reference to the new key frame.
+        ///
+        /// @remarks
+        ///     If a key frame at the same time already exists, this function will return the existing frame.
+        AnimationKeyFrame & AppendKeyFrame(double time);
+
+        /// Retrieves the key frame at the given time.
+        ///
+        /// @param time [in] The time of the key frame.
+        ///
+        /// @return A pointer to the key frame at the given time.
+        AnimationKeyFrame* GetKeyFrame(double time);
+
+
+        /// Retrieves the number of key frames in the timeline.
+        size_t GetKeyFrameCount() const { return this->keyFrames.count; }
+
+
         /// Adds a channel to the animation.
         ///
         /// @return The new channel.
@@ -41,6 +63,9 @@ namespace GTEngine
 
         /// The main timeline of the animation.
         AnimationTimeline timeline;
+
+        /// The map of key frames, sorted by time.
+        GTCore::Map<double, AnimationKeyFrame> keyFrames;
 
         /// The list of channels attached to the animation.
         GTCore::Vector<AnimationChannel*> channels;
