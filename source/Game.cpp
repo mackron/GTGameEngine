@@ -23,7 +23,8 @@ namespace GTEngine
 
     Game::Game(int argc, char** argv)
         : isInitialised(false), closing(false), eventQueue(), eventQueueLock(), window(nullptr), windowEventHandler(*this), updateThread(nullptr), updateJob(nullptr), 
-          deltaTimeInSeconds(0.0), updateTimer(), fontServer(nullptr), defaultFont(nullptr),
+          totalRunninTimeInSeconds(0.0), deltaTimeInSeconds(0.0), updateTimer(),
+          fontServer(nullptr), defaultFont(nullptr),
           gui(nullptr), guiEventHandler(nullptr),
           paused(false), focused(true),
           keyDownMap(), mouseButtonDownMap(),
@@ -561,6 +562,13 @@ namespace GTEngine
     {
         // The first thing we do is retrieve the delta time...
         this->deltaTimeInSeconds = GTCore::Min(this->updateTimer.Update(), 1.0);
+        
+        // We also need to increment the total running time, but only if we're not paused.
+        if (!this->IsPaused())
+        {
+            this->totalRunninTimeInSeconds += this->deltaTimeInSeconds;
+        }
+
 
         // We need to cache the current position of the mouse. We need to do this in order to get smooth mouse movement.
         this->CacheMousePosition();

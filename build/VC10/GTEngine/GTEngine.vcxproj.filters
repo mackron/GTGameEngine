@@ -332,6 +332,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\NavigationMesh.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFaceCulling.hpp">
+      <Filter>include\Rendering\RenderCommands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -558,6 +561,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\NavigationMesh.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCSetFaceCulling.cpp">
+      <Filter>source\Rendering\RenderCommands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

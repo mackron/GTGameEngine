@@ -517,15 +517,18 @@ namespace GTEngine
 
                 auto newAnimation = new SkeletalAnimation(animation->mName.C_Str());
 
+                
                 // Duration.
                 if (animation->mTicksPerSecond > 0)
                 {
-                    newAnimation->SetDurationInSeconds(animation->mDuration / animation->mTicksPerSecond);
+                    //newAnimation->SetDurationInSeconds(animation->mDuration / animation->mTicksPerSecond);
+                    printf("Duraction: %f\n", animation->mDuration / animation->mTicksPerSecond);
                 }
                 else
                 {
-                    newAnimation->SetDurationInSeconds(animation->mDuration);
+                    //newAnimation->SetDurationInSeconds(animation->mDuration);
                 }
+                
 
                 // Channels.
                 for (unsigned int iChannel = 0; iChannel < animation->mNumChannels; ++iChannel)

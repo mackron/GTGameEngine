@@ -85,6 +85,7 @@ namespace GTEngine
     DefaultProjectile::DefaultProjectile(Scene &sceneIn, short collisionGroupIn, short collisionMaskIn)
         : scene(sceneIn), collisionGroup(collisionGroupIn), collisionMask(collisionMaskIn),
           acceleration(),
+          gravityFactor(1.0f, 1.0f, 1.0f),
           ignoredNode(nullptr)
     {
     }

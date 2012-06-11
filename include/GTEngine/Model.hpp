@@ -60,6 +60,10 @@ namespace GTEngine
         /// @param animationName [in] The name of the animation to start playing.
         void PlayAnimation(const char* animationName, bool loop = true);
 
+        /// Plays the models animation between the given the given frames. This is useful for models with only a single animation track.
+        void PlayAnimation(size_t startFrame, size_t endFrame, bool loop = true);
+
+
         /// Completely stops the current animation, returning the model to it's default pose.
         void StopAnimation();
 
@@ -104,6 +108,12 @@ namespace GTEngine
 
         /// A pointer to the animation that is currently being played. Set to null when no animation is playing.
         SkeletalAnimation* currentAnimation;
+
+        /// The index of the frame to start at.
+        size_t startFrame;
+
+        /// The index of the frame to end at.
+        size_t endFrame;
     };    
 }
 

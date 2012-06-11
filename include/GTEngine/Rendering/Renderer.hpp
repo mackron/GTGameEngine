@@ -263,6 +263,13 @@ namespace GTEngine
 
         static void SetDepthFunc(DepthFunc func);
 
+        /// Sets the face culling mode.
+        ///
+        /// @param  cullFront [in] Specifies whether or not front faces should be culled. A value of true will cull.
+        /// @param  cullBack  [in] Specified whether or not back faces should be culled. A value of true will cull.
+        static void SetFaceCulling(bool cullFront, bool cullBack);
+
+
         /// Enables sRGB.
         static void EnableSRGB();
 

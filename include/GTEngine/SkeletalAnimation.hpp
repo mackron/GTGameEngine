@@ -141,6 +141,17 @@ namespace GTEngine
             return 0.0;
         }
 
+        /// Retrieves the time of a key.
+        double GetKeyTime(size_t key) const
+        {
+            if (this->keys.count > key)
+            {
+                return this->keys.buffer[key]->value.time;
+            }
+
+            return 0.0;
+        }
+
 
     // Playback.
     public:
@@ -148,12 +159,12 @@ namespace GTEngine
         /// Updates the channel based on the given time.
         ///
         /// @param time [in] The animation time.
-        void Update(double time)
+        void Update(double time, size_t startKey, size_t endKey)
         {
             SkeletalAnimationKey* currentKey;
             SkeletalAnimationKey* nextKey;
             float ratio;
-            if (this->FindKeys(time, currentKey, nextKey, ratio))
+            if (this->FindKeys(time, startKey, endKey, currentKey, nextKey, ratio))
             {
                 glm::vec3 position = glm::mix(currentKey->position, nextKey->position, ratio);
                 glm::quat rotation =      mix(currentKey->rotation, nextKey->rotation, ratio);
@@ -170,30 +181,32 @@ namespace GTEngine
     private:
 
         /// Helper method for retrieving the keys for the current playback time.
-        bool FindKeys(double time, SkeletalAnimationKey* &currentKey, SkeletalAnimationKey* &nextKey, float &ratio)
+        bool FindKeys(double time, size_t startKey, size_t endKey, SkeletalAnimationKey* &currentKey, SkeletalAnimationKey* &nextKey, float &ratio)
         {
             assert(time >= 0.0);
+            assert(startKey < this->keys.count);
+            assert(endKey   < this->keys.count);
 
             if (this->keys.count > 0)
             {
-                if (time < this->GetFirstKeyTime())
+                if (time < this->GetKeyTime(startKey) || time >= this->GetKeyTime(endKey))
                 {
                     // We will get here if the time is lower than the time of the first key. In this case we should interpolate between the last and the first keys.
-                    currentKey = &this->keys.buffer[this->keys.count - 1]->value;
-                    nextKey    = &this->keys.buffer[0]->value;
+                    currentKey = &this->keys.buffer[endKey]->value;
+                    nextKey    = &this->keys.buffer[startKey]->value;
                     ratio      = static_cast<float>(time / nextKey->time);
                 }
-                else if (time >= this->GetLastKeyTime())
+                /*else if (time >= this->GetKeyTime(endKey))
                 {
                     // We will get here if the time is higher than the time of the last key. In this case we will just clamp the model to the last key.
-                    currentKey = nextKey = &this->keys.buffer[this->keys.count - 1]->value;
+                    currentKey = nextKey = &this->keys.buffer[endKey]->value;
                     ratio      = 1.0f;
-                }
+                }*/
                 else
                 {
                     // We will get here if the time is somewhere between the first and last keys.
-                    size_t iCurrent = 0;
-                    for ( ; iCurrent < (this->keys.count); ++iCurrent)
+                    size_t iCurrent = startKey;
+                    for ( ; iCurrent <= endKey; ++iCurrent)
                     {
                         auto &key = this->keys.buffer[iCurrent]->value;
 
@@ -257,7 +270,7 @@ namespace GTEngine
 
 
         /// Sets the duration of the animation.
-        void SetDurationInSeconds(double seconds) { this->durationSeconds = seconds; }
+        //void SetDurationInSeconds(double seconds) { this->durationSeconds = seconds; }
 
         /// Retrieves the duration of the animation in seconds.
         double GetDurationInSeconds() const { return this->durationSeconds; }
@@ -287,6 +300,7 @@ namespace GTEngine
         /// Plays the animation.
         void Play();
         void Play(bool loop);
+        void Play(size_t startFrame, size_t endFrame, bool loop);
 
         /// Stops the animation.
         ///
@@ -335,6 +349,13 @@ namespace GTEngine
 
         /// Keeps track of the current animation time.
         double playbackTime;
+
+
+        /// The start frame.
+        size_t startFrame;
+
+        /// The end frame.
+        size_t endFrame;
     };
 }
 
