@@ -311,9 +311,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\SkeletalAnimation.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\ThreadCache.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -353,10 +350,13 @@
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSequence.hpp">
       <Filter>include\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationTimeline.hpp">
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\Animation.hpp">
       <Filter>include\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Animation\Animation.hpp">
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSegment.hpp">
+      <Filter>include\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKeyFrameQueue.hpp">
       <Filter>include\Animation</Filter>
     </ClInclude>
   </ItemGroup>
@@ -562,9 +562,6 @@
     <ClCompile Include="..\..\..\source\CPUVertexShader_Skinning.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\SkeletalAnimation.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\ThreadCache.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -601,10 +598,10 @@
     <ClCompile Include="..\..\..\source\Animation\AnimationSequence.cpp">
       <Filter>source\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Animation\AnimationTimeline.cpp">
+    <ClCompile Include="..\..\..\source\Animation\Animation.cpp">
       <Filter>source\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Animation\Animation.cpp">
+    <ClCompile Include="..\..\..\source\Animation\AnimationKeyFrameQueue.cpp">
       <Filter>source\Animation</Filter>
     </ClCompile>
   </ItemGroup>

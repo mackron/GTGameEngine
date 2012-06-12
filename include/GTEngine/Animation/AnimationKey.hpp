@@ -33,7 +33,7 @@ namespace GTEngine
         ~TransformAnimationKey();
 
 
-    private:
+    public:
 
         /// The position.
         glm::vec3 position;

@@ -165,8 +165,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationChannel.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKey.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKeyFrame.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKeyFrameQueue.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSegment.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSequence.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationTimeline.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp" />
@@ -246,7 +247,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\SkeletalAnimation.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ThreadCache.hpp" />
@@ -262,8 +262,8 @@
     <ClCompile Include="..\..\..\source\Animation\AnimationChannel.cpp" />
     <ClCompile Include="..\..\..\source\Animation\AnimationKey.cpp" />
     <ClCompile Include="..\..\..\source\Animation\AnimationKeyFrame.cpp" />
+    <ClCompile Include="..\..\..\source\Animation\AnimationKeyFrameQueue.cpp" />
     <ClCompile Include="..\..\..\source\Animation\AnimationSequence.cpp" />
-    <ClCompile Include="..\..\..\source\Animation\AnimationTimeline.cpp" />
     <ClCompile Include="..\..\..\source\ApplicationConfig.cpp" />
     <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Sound.cpp" />
@@ -333,7 +333,6 @@
     <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameter.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp" />
-    <ClCompile Include="..\..\..\source\SkeletalAnimation.cpp" />
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ThreadCache.cpp" />
     <ClCompile Include="..\..\..\source\UserConfig.cpp" />

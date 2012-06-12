@@ -2,12 +2,13 @@
 #include <GTEngine/Model.hpp>
 #include <GTEngine/VertexArrayFactory.hpp>
 #include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
+#include <GTEngine/Math.hpp>
 
 namespace GTEngine
 {
     Model::Model()
-        : meshes(), bones(), animations(),
-          currentAnimation(nullptr)
+        : meshes(), bones(),
+          animation(), animationChannelBones(), animationKeyCache()
     {
     }
 
@@ -19,16 +20,16 @@ namespace GTEngine
             delete this->meshes[i];
         }
 
-        // Animations.
-        for (size_t i = 0; i < this->animations.count; ++i)
-        {
-            delete this->animations.buffer[i]->value;
-        }
-
         // Bones
         for (size_t i = 0; i < this->bones.count; ++i)
         {
             delete this->bones.buffer[i]->value;
+        }
+
+        // Animation keys.
+        for (size_t i = 0; i < this->animationKeyCache.count; ++i)
+        {
+            delete this->animationKeyCache[i];
         }
     }
 
@@ -91,41 +92,38 @@ namespace GTEngine
         }
     }
 
-    void Model::CopyAndAddAnimations(const GTCore::Dictionary<SkeletalAnimation*> &inputAnimations)
+    void Model::CopyAnimation(Animation &sourceAnimation, GTCore::Map<AnimationChannel*, Bone*> &sourceAnimationChannelBones)
     {
-        for (size_t i = 0; i < inputAnimations.count; ++i)
+        // We first need to create all of the key frames.
+        for (size_t iKeyFrame = 0; iKeyFrame < sourceAnimation.GetKeyFrameCount(); ++iKeyFrame)
         {
-            auto animation = inputAnimations.buffer[i]->value;
-            assert(animation != nullptr);
+            this->animation.AppendKeyFrame(sourceAnimation.GetKeyFrameTimeByIndex(iKeyFrame));
+        }
 
-            auto newAnimation = new SkeletalAnimation(animation->GetName());
 
-            // Duration.
-            //newAnimation->SetDurationInSeconds(animation->GetDurationInSeconds());
+        // Here we add all of our channels to the animation. They will be empty to begin with, but filled below.
+        for (size_t iChannel = 0; iChannel < sourceAnimationChannelBones.count; ++iChannel)
+        {
+            auto sourceChannel = sourceAnimationChannelBones.buffer[iChannel]->key;
+            auto sourceBone    = sourceAnimationChannelBones.buffer[iChannel]->value;
 
-            // Channels.
-            for (size_t i = 0; i < animation->GetChannelCount(); ++i)
+            auto bone = this->bones.Find(sourceBone->GetName())->value;
+            assert(bone != nullptr);
+
+            auto &newChannel = this->animation.CreateChannel();
+            this->animationChannelBones.Add(&newChannel, bone);
+
+            // Now we loop through all the keys and add them.
+            auto &sourceKeys = sourceChannel->GetKeys();
+            for (size_t iKey = 0; iKey < sourceKeys.count; ++iKey)
             {
-                auto &channel = animation->GetChannel(i);
+                auto sourceKey = static_cast<TransformAnimationKey*>(sourceKeys.buffer[iKey]->value);
 
-                auto bone = this->bones.Find(channel.GetBone().GetName())->value;
-                assert(bone != nullptr);
+                auto newKey = new TransformAnimationKey(sourceKey->position, sourceKey->rotation, sourceKey->scale);
+                this->animationKeyCache.PushBack(newKey);
 
-                
-                auto newChannel = newAnimation->AddChannel(*bone);
-                assert(newChannel != nullptr);
-
-
-                // Keys.
-                for (size_t iKey = 0; iKey < channel.GetKeyCount(); ++iKey)
-                {
-                    auto &key = channel.GetKey(iKey);
-                    newChannel->AddKey(key.time, key.position, key.rotation, key.scale);
-                }
+                newChannel.SetKey(sourceKeys.buffer[iKey]->key, newKey);
             }
-
-            // Now we add the new animation to our local animation map.
-            this->animations.Add(newAnimation->GetName(), newAnimation);
         }
     }
 
@@ -167,84 +165,68 @@ namespace GTEngine
 
     bool Model::IsAnimating() const
     {
-        if (this->currentAnimation != nullptr)
-        {
-            return true;
-        }
-
-        return false;
+        return this->animation.IsPlaying();
     }
 
 
-    // !!! Animation !!!
-    void Model::PlayAnimation(const char* animationName, bool loop)
+   
+    ///////////////////////////////////////////////////////////////////
+    // Animation.
+
+    void Model::PlayAnimation(const AnimationSequence &sequence)
     {
-        auto iAnimation = this->animations.Find(animationName);
-        if (iAnimation != nullptr)
-        {
-            this->currentAnimation = iAnimation->value;
-
-            this->currentAnimation->Play(loop);
-        }
-    }
-
-    void Model::PlayAnimation(size_t startFrame, size_t endFrame, bool loop)
-    {
-        auto iAnimation = this->animations.Find("");
-        if (iAnimation != nullptr)
-        {
-            this->currentAnimation = iAnimation->value;
-
-            this->currentAnimation->Play(startFrame, endFrame, loop);
-        }
+        this->animation.Play(sequence);
     }
 
     void Model::StopAnimation()
     {
-        if (this->currentAnimation != nullptr)
-        {
-            this->currentAnimation->Stop();
-
-            this->currentAnimation = nullptr;
-        }
+        this->animation.Stop();
     }
 
     void Model::PauseAnimation()
     {
-        if (this->currentAnimation != nullptr)
-        {
-            this->currentAnimation->Pause();
-        }
+        this->animation.Pause();
     }
 
     void Model::ResumeAnimation()
     {
-        if (this->currentAnimation != nullptr)
+        this->animation.Resume();
+    }
+
+    void Model::StepAnimation(double step)
+    {
+        this->animation.Step(step);
+
+        // Now that we've stepped the animation, we need to update the bone positions.
+        size_t startKeyFrame;
+        size_t endKeyFrame;
+        auto interpolationFactor = this->animation.GetKeyFramesAtCurrentPlayback(startKeyFrame, endKeyFrame);
+
+        for (size_t i = 0; i < this->animationChannelBones.count; ++i)
         {
-            this->currentAnimation->Play();
+            auto iChannelBone = this->animationChannelBones.buffer[i];
+
+            auto firstKey = static_cast<TransformAnimationKey*>(iChannelBone->key->GetKey(startKeyFrame));
+            auto endKey   = static_cast<TransformAnimationKey*>(iChannelBone->key->GetKey(endKeyFrame));
+            auto bone     = iChannelBone->value;
+
+            if (firstKey != nullptr && endKey != nullptr)
+            {
+                glm::vec3 position = glm::mix(firstKey->position, endKey->position, interpolationFactor);
+                glm::quat rotation =      mix(firstKey->rotation, endKey->rotation, interpolationFactor);
+                glm::vec3 scale    = glm::mix(firstKey->scale,    endKey->scale,    interpolationFactor);
+
+                bone->SetPosition(position);
+                bone->SetRotation(rotation);
+                bone->SetScale(scale);
+            }
         }
-    }
 
-    SkeletalAnimation* Model::GetCurrentAnimation()
-    {
-        return this->currentAnimation;
-    }
-
-    const char* Model::GetCurrentAnimationName() const
-    {
-        if (this->currentAnimation != nullptr)
+        // Now we need to loop over each channel again and update the skinning transformations. It's important that this is done separately from the
+        // loop above to ensure all dependants have been updated beforehand.
+        for (size_t i = 0; i < this->animationChannelBones.count; ++i)
         {
-            return this->currentAnimation->GetName();
-        }
-
-        return nullptr;
-    }
-
-    void Model::StepAnimation(double deltaSeconds)
-    {
-        if (this->currentAnimation != nullptr)
-        {
-            this->currentAnimation->Step(deltaSeconds);
+            this->animationChannelBones.buffer[i]->value->UpdateSkinningTransform();
         }
     }
 }

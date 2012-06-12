@@ -12,6 +12,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+
 // assimp helpers
 namespace GTEngine
 {
@@ -127,7 +128,7 @@ namespace GTEngine
         LoadedModelInfo()
             : meshGeometries(), meshMaterials(), meshBones(),
               bones(),
-              animations(),
+              animation(), animationChannelBones(), animationKeyCache(),
               haveCreatedModel(false)
         {
         }
@@ -164,9 +165,9 @@ namespace GTEngine
                 delete this->bones.buffer[i]->value;
             }
 
-            for (size_t i = 0; i < this->animations.count; ++i)
+            for (size_t i = 0; i < this->animationKeyCache.count; ++i)
             {
-                delete this->animations.buffer[i]->value;
+                delete this->animationKeyCache[i];
             }
         }
 
@@ -248,8 +249,9 @@ namespace GTEngine
             // We need to create copies of the bones. It is important that this is done before adding the meshes.
             model->CopyAndAttachBones(this->bones);
 
-            // Now we'll copy over the animations. This must come after adding the bones.
-            model->CopyAndAddAnimations(this->animations);
+            // Now the animation.
+            model->CopyAnimation(this->animation, this->animationChannelBones);
+
 
             // Now we need to create the meshes. This must be done after adding the bones.
             for (size_t i = 0; i < this->meshGeometries.count; ++i)
@@ -279,6 +281,23 @@ namespace GTEngine
         }
 
 
+        /// Creates an animation key for the given bone and returns it.
+        TransformAnimationKey* CreateAnimationKey(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale)
+        {
+            auto newKey = new TransformAnimationKey(position, rotation, scale);
+            this->animationKeyCache.PushBack(newKey);
+
+            return newKey;
+        }
+
+        /// Maps a bone to an animation channel.
+        void MapBoneToAnimationChannel(AnimationChannel &channel, Bone* bone)
+        {
+            this->animationChannelBones.Add(&channel, bone);
+        }
+
+
+
         /// The list of vertex arrays containing the geometric data of each mesh.
         GTCore::Vector<VertexArray*> meshGeometries;
 
@@ -295,8 +314,16 @@ namespace GTEngine
         /// also fast lookups.
         GTCore::Dictionary<Bone*> bones;
 
-        /// A map of animations.
-        GTCore::Dictionary<SkeletalAnimation*> animations;
+
+
+        /// The model's animation object.
+        Animation animation;
+
+        /// The map for mapping a bone to an animation channel. The key is the channel index.
+        GTCore::Map<AnimationChannel*, Bone*> animationChannelBones;
+
+        /// The cache of animation keys.
+        GTCore::Vector<TransformAnimationKey*> animationKeyCache;
 
 
         /// This keeps track of whether or not we have previously created a model from this info.
@@ -509,28 +536,21 @@ namespace GTEngine
             CopyNodesWithMeshes(scene, *root, transform, *modelInfo);
 
 
-            // Here we will grab the animations.
-            for (unsigned int iAnimation = 0; iAnimation < scene.mNumAnimations; ++iAnimation)
+            // Here is where we load up the animations. Assimp has multiple animations, but GTEngine uses only a single animation. To
+            // resolve, we simply copy over each animation into the main animation and create a named segment for that animation.
+            double segmentStartTime = 0.0;
+            
+            for (auto iAnimation = 0U; iAnimation < scene.mNumAnimations; ++iAnimation)
             {
                 auto animation = scene.mAnimations[iAnimation];
                 assert(animation != nullptr);
 
-                auto newAnimation = new SkeletalAnimation(animation->mName.C_Str());
+                // The starting keyframe will be equal to the number of keyframes in the animation at this point.
+                size_t startKeyFrame = modelInfo->animation.GetKeyFrameCount();
 
-                
-                // Duration.
-                if (animation->mTicksPerSecond > 0)
-                {
-                    //newAnimation->SetDurationInSeconds(animation->mDuration / animation->mTicksPerSecond);
-                    printf("Duraction: %f\n", animation->mDuration / animation->mTicksPerSecond);
-                }
-                else
-                {
-                    //newAnimation->SetDurationInSeconds(animation->mDuration);
-                }
-                
-
-                // Channels.
+                // Now we need to loop through and add the actual key frames to the animation. This is done a little strange, but the Animation class
+                // will make sure everything is clean. Basically, we loop through every channel and then add the keys for each channel. It's slow, but
+                // it should work nicely.
                 for (unsigned int iChannel = 0; iChannel < animation->mNumChannels; ++iChannel)
                 {
                     auto channel = animation->mChannels[iChannel];
@@ -556,26 +576,46 @@ namespace GTEngine
 
                     assert(bone != nullptr);
 
-                    auto newChannel = newAnimation->AddChannel(*bone);
-                    assert(newChannel != nullptr);
-
-
                     // TODO: Check that this assertion is valid. If not, we need to combine them all into a single list.
                     assert(channel->mNumPositionKeys == channel->mNumRotationKeys && channel->mNumPositionKeys == channel->mNumScalingKeys);
 
-                    unsigned int keyCount = channel->mNumPositionKeys;
-                    for (unsigned int iKey = 0; iKey < keyCount; ++iKey)
+
+
+                    // Now we create the channel.
+                    auto &newChannel = modelInfo->animation.CreateChannel();
+                    modelInfo->MapBoneToAnimationChannel(newChannel, bone);
+
+                    // Here is where we add the key frames. Since we are looping over the channels, each key frame will probably be creating twice. This is OK because
+                    // Animation will make sure there are no duplicate key frames.
+                    for (unsigned int iKey = 0; iKey < channel->mNumPositionKeys; ++iKey)
                     {
                         auto &positionKey = channel->mPositionKeys[iKey];
                         auto &rotationKey = channel->mRotationKeys[iKey];
                         auto &scaleKey    = channel->mScalingKeys[iKey];
 
-                        newChannel->AddKey(positionKey.mTime, AssimpToGLM(positionKey.mValue), AssimpToGLM(rotationKey.mValue), AssimpToGLM(scaleKey.mValue));
+                        size_t keyFrameIndex = modelInfo->animation.AppendKeyFrame(segmentStartTime + positionKey.mTime);
+
+                        auto key = modelInfo->CreateAnimationKey(AssimpToGLM(positionKey.mValue), AssimpToGLM(rotationKey.mValue), AssimpToGLM(scaleKey.mValue));
+                        newChannel.SetKey(keyFrameIndex, key);
                     }
                 }
+                
 
-                // Can't forget to add the new animation to the model's info structure.
-                modelInfo->animations.Add(newAnimation->GetName(), newAnimation);
+
+                
+
+                // At this point we can now create the named segment.
+                modelInfo->animation.AddNamedSegment(animation->mName.C_Str(), startKeyFrame, modelInfo->animation.GetKeyFrameCount());
+
+                // The start time of the next segment will be equal to the previous start time plus the duration of iAnimation.
+                if (animation->mTicksPerSecond > 0)
+                {
+                    segmentStartTime += animation->mDuration / animation->mTicksPerSecond;
+                }
+                else
+                {
+                    segmentStartTime += animation->mDuration;
+                }
             }
 
             return modelInfo;
@@ -711,23 +751,6 @@ namespace GTEngine
         }
 
         return ModelLibrary_CreateFromPrimitive(name, va);
-        
-
-
-        /*
-        // We're going to check if we can find the model info before loading. This will allow us to determine whether or not we
-        // need to apply the transformation.
-        bool applyTransform = LoadedModels.Find((GTCore::String("__nff:") + name).c_str()) == nullptr;
-
-        // For now the way we will do this is load an NFF file. We use a radius of 1, and then scale that with a transformation.
-        auto model = ModelLibrary::LoadFromNFF("hex 0 0 0 1", name);
-        if (model != nullptr && applyTransform)
-        {
-            model->ApplyTransformation(glm::scale(halfWidth, halfHeight, halfDepth));
-        }
-
-        return model;
-        */
     }
 
     Model* ModelLibrary::CreateSphere(float radius)

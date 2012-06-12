@@ -58,6 +58,50 @@ namespace GTEngine
             float HeightAtX(float x, float y0, float a, float g, float v);
         }
     }
+
+
+    // Workaround for glm::tquat<T>::mix().
+    template <typename T>
+    GLM_FUNC_QUALIFIER glm::detail::tquat<T> mix
+	(
+		glm::detail::tquat<T> const & x, 
+		glm::detail::tquat<T> const & y, 
+		T const & a
+	)
+    {
+        if (a <= T(0))
+        {
+            return x;
+        }
+        if (a >= T(1))
+        {
+            return y;
+        }
+        
+
+        glm::detail::tquat<T> z;
+
+        float d = glm::dot(x, y);
+        if (d < T(0))
+        {
+            d = -d;
+            z = -y;
+        }
+        else
+        {
+            z = y;
+        }
+
+        float angle = glm::acos(d);
+        if (angle > T(0))
+        {
+            return (glm::sin((T(1) - a) * angle) * x + glm::sin(a * angle) * z) / glm::sin(angle);
+        }
+        else
+        {
+            return x;
+        }
+	}
 }
 
 #endif
