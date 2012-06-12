@@ -3,7 +3,7 @@
 #define __GTEngine_Model_hpp_
 
 #include "Mesh.hpp"
-#include "SkeletalAnimation.hpp"
+#include "Animation/Animation.hpp"
 #include <GTCore/Vector.hpp>
 
 namespace GTEngine
@@ -37,8 +37,9 @@ namespace GTEngine
         ///     If a bone of the same name already exists, this method will do nothing.
         void CopyAndAttachBones(const GTCore::Dictionary<Bone*> &bones);
 
-        /// Creates copies and adds a list of animations.
-        void CopyAndAddAnimations(const GTCore::Dictionary<SkeletalAnimation*> &animations);
+
+        /// Copies the given animation.
+        void CopyAnimation(Animation &sourceAnimation, GTCore::Map<AnimationChannel*, Bone*> &sourceAnimationChannelBones);
 
 
         /// Applies a transformation to the model's geometric data.
@@ -48,23 +49,13 @@ namespace GTEngine
         void GenerateTangentsAndBitangents();
 
 
-        /// Determines whether or not the model is animating. Basically, this is used in determining whether or not the model should have vertex blending applied.
-        bool IsAnimating() const;
-
-
     // Animation.
     public:
 
-        /// Plays the given animation.
-        ///
-        /// @param animationName [in] The name of the animation to start playing.
-        void PlayAnimation(const char* animationName, bool loop = true);
+        /// Plays the given animation sequence.
+        void PlayAnimation(const AnimationSequence &sequence);
 
-        /// Plays the models animation between the given the given frames. This is useful for models with only a single animation track.
-        void PlayAnimation(size_t startFrame, size_t endFrame, bool loop = true);
-
-
-        /// Completely stops the current animation, returning the model to it's default pose.
+        /// Stops the current animation.
         void StopAnimation();
 
         /// Pauses the current animation.
@@ -73,16 +64,11 @@ namespace GTEngine
         /// Resumes the animation if it was paused.
         void ResumeAnimation();
 
-        /// Retrieves a pointer to the current SkeletalAnimation object.
-        SkeletalAnimation* GetCurrentAnimation();
+        /// Steps the current animation.
+        void StepAnimation(double time);
 
-        /// Retrieves the name of the current animation.
-        const char* GetCurrentAnimationName() const;
-
-        /// Steps the current animation by the given time amount.
-        ///
-        /// @param deltaTimeInSeconds [in] The amount of seconds to step the animation by.
-        void StepAnimation(double deltaTimeInSeconds);
+        /// Determines whether or not the model is animating. Basically, this is used in determining whether or not the model should have vertex blending applied.
+        bool IsAnimating() const;
 
 
     private:
@@ -103,17 +89,15 @@ namespace GTEngine
         /// The list of bones in the model.
         GTCore::Dictionary<Bone*> bones;
 
-        /// The list of animations. The bones referenced in these animations are pointers to the bones in <bones>
-        GTCore::Dictionary<SkeletalAnimation*> animations;
 
-        /// A pointer to the animation that is currently being played. Set to null when no animation is playing.
-        SkeletalAnimation* currentAnimation;
+        /// The model's animation object.
+        Animation animation;
 
-        /// The index of the frame to start at.
-        size_t startFrame;
+        /// The bones associated with each channel in the animation.
+        GTCore::Map<AnimationChannel*, Bone*> animationChannelBones;
 
-        /// The index of the frame to end at.
-        size_t endFrame;
+        /// The cache of animation keys.
+        GTCore::Vector<TransformAnimationKey*> animationKeyCache;
     };    
 }
 

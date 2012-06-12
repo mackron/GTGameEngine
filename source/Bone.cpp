@@ -152,7 +152,6 @@ namespace GTEngine
         return glm::translate(position) * glm::mat4_cast(rotation) * glm::scale(scale);
     }
 
-
     void Bone::UpdateSkinningTransform()
     {
         this->skinningMatrix = this->GetAbsoluteTransform() * this->offsetMatrix;

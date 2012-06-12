@@ -12,9 +12,9 @@ namespace GTEngine
     {
     }
 
-    AnimationKey* AnimationChannel::GetKey(AnimationKeyFrame &keyframe)
+    AnimationKey* AnimationChannel::GetKey(size_t keyframe)
     {
-        auto item = this->keys.Find(&keyframe);
+        auto item = this->keys.Find(keyframe);
         if (item != nullptr)
         {
             return item->value;
@@ -23,8 +23,8 @@ namespace GTEngine
         return nullptr;
     }
 
-    void AnimationChannel::SetKey(AnimationKeyFrame &keyframe, AnimationKey &key)
+    void AnimationChannel::SetKey(size_t keyframe, AnimationKey* key)
     {
-        this->keys.Add(&keyframe, &key);
+        this->keys.Add(keyframe, key);
     }
 }
