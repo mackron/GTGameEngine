@@ -325,6 +325,10 @@ namespace GTEngine
     // For some VirtualBox hacking...
     bool RendererIsChromium = false;
 
+    // For some Intel hacking...
+    bool RendererIsIntel = false;
+
+
     // This is a bitfield containing bits representing which vertex attributes are currently enabled on the OpenGL side.
     uint32_t VertexAttribEnableBits = 0x0;
 
@@ -653,8 +657,10 @@ namespace GTEngine
             {
                 cgGLSetDebugMode(CG_TRUE);
 
-                // If we're Chromium, we must always use the GLSL profiles (the default).
-                if (!RendererIsChromium)
+                // If we're Intel or Chromium, we must always use the GLSL profiles (the default).
+                //
+                // With Intel, the ARBVP/ARBFP profiles don't want to work with the default renderer. More research is needed here.
+                if (!RendererIsIntel && !RendererIsChromium)
                 {
                     VertexShaderProfile   = cgGLGetLatestProfile(CG_GL_VERTEX);
                     FragmentShaderProfile = cgGLGetLatestProfile(CG_GL_FRAGMENT);
@@ -1202,7 +1208,8 @@ namespace GTEngine
                 
                 // VirtualBox with Cg doesn't work very well at all. So far I've got it working in a very specific situation. The Cg profiles must
                 // be GLSL. Anything else, and it will crash. Also, whenever setting a parameter, the shader needs to be re-bound.
-                RendererIsChromium = GTCore::Strings::Equal((const char *)glGetString(GL_RENDERER), "Chromium");
+                RendererIsChromium = GTCore::Strings::Equal<false>((const char *)glGetString(GL_RENDERER), "Chromium");
+                RendererIsIntel    = GTCore::Strings::Equal<false>((const char *)glGetString(GL_VENDOR), "Intel");
 
                 if (InitialiseCg())
                 {

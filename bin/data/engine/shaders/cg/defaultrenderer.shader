@@ -202,13 +202,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_AmbientLight" />
     
     <include>
-        uniform AmbientLight ALights[1];
+        uniform AmbientLight ALights0;
         
 	    FragmentOutput main()
 	    {
             float3 diffuse  = float3(0.0, 0.0, 0.0);
             float3 specular = float3(0.0, 0.0, 0.0);
-            CalculateAmbientLighting(ALights[0], diffuse, specular);
+            CalculateAmbientLighting(ALights0, diffuse, specular);
             
             return DoFinalLightingOutput(diffuse, specular);
 	    }
@@ -223,13 +223,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_DirectionalLight" />
     
     <include>
-        uniform DirectionalLight DLights[1];
+        uniform DirectionalLight DLights0;
         
 	    FragmentOutput main()
 	    {
             float3 diffuse  = float3(0.0, 0.0, 0.0);
             float3 specular = float3(0.0, 0.0, 0.0);
-            CalculateDirectionalLighting(DLights[0], diffuse, specular);
+            CalculateDirectionalLighting(DLights0, diffuse, specular);
 
 		    return DoFinalLightingOutput(diffuse, specular);
 	    }
@@ -244,13 +244,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_PointLight" />
     
     <include>
-        uniform PointLight PLights[1];
+        uniform PointLight PLights0;
         
 	    FragmentOutput main()
 	    {
             float3 diffuse  = float3(0.0, 0.0, 0.0);
             float3 specular = float3(0.0, 0.0, 0.0);
-            CalculatePointLighting(PLights[0], diffuse, specular);
+            CalculatePointLighting(PLights0, diffuse, specular);
             
 		    return DoFinalLightingOutput(diffuse, specular);
 	    }
@@ -265,13 +265,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_SpotLight" />
     
     <include>
-        uniform SpotLight SLights[1];
+        uniform SpotLight SLights0;
         
 	    FragmentOutput main()
 	    {
             float3 diffuse  = float3(0.0, 0.0, 0.0);
             float3 specular = float3(0.0, 0.0, 0.0);
-            CalculateSpotLighting(SLights[0], diffuse, specular);
+            CalculateSpotLighting(SLights0, diffuse, specular);
             
 		    return DoFinalLightingOutput(diffuse, specular);
 	    }
@@ -288,14 +288,14 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_DirectionalLight" />
     
     <include>
-        uniform AmbientLight     ALights[1];
-        uniform DirectionalLight DLights[1];
+        uniform AmbientLight     ALights0;
+        uniform DirectionalLight DLights0;
         
 	    FragmentOutput main()
 	    {
-            float3 diffuse  = ALights[0].Colour;
+            float3 diffuse  = ALights0.Colour;
             float3 specular = float3(0.0, 0.0, 0.0);
-            CalculateDirectionalLighting(DLights[0], diffuse, specular);
+            CalculateDirectionalLighting(DLights0, diffuse, specular);
             
             return DoFinalLightingOutput(diffuse, specular);
 	    }
@@ -311,14 +311,14 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_PointLight" />
     
     <include>
-        uniform AmbientLight ALights[1];
-        uniform PointLight   PLights[1];
+        uniform AmbientLight ALights0;
+        uniform PointLight   PLights0;
         
 	    FragmentOutput main()
 	    {
-            float3 diffuse  = ALights[0].Colour;
+            float3 diffuse  = ALights0.Colour;
             float3 specular = float3(0.0, 0.0, 0.0);
-            CalculatePointLighting(PLights[0], diffuse, specular);
+            CalculatePointLighting(PLights0, diffuse, specular);
 
 		    return DoFinalLightingOutput(diffuse, specular);
 	    }
@@ -432,6 +432,8 @@ uses 1 or each light, it will use the following: A1D1P1.
         float  materialShininess    = materialTexel1.a;
         
         OUT.Color0.rgb = (materialDiffuse * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
+        //OUT.Color0.rgb = lightDiffuse;
+        //OUT.Color0.rgb = materialDiffuse;
         OUT.Color0.a   = 1.0f;
         
         OUT.Color0.rgb = pow(OUT.Color0.rgb, 1.0 / 2.2);   // sRGB (approx.)

@@ -89,7 +89,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>GTEngine-debug.lib;GTGUI-debug.lib;GTType-debug.lib;GTImage-debug.lib;GTCore-debug.lib;gtgl-debug.lib;lua-debug.lib;freetype-debug.lib;assimpD.lib;png-debug.lib;z-debug.lib;pcre-debug.lib;cg.lib;cgGL.lib;BulletCollision_debug.lib;BulletDynamics_debug.lib;LinearMath_debug.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GTEngine-debug.lib;GTGUI-debug.lib;GTType-debug.lib;GTImage-debug.lib;GTCore-debug.lib;gtgl-debug.lib;lua-debug.lib;freetype-debug.lib;assimpD.lib;png-debug.lib;z-debug.lib;pcre-debug.lib;cg.lib;cgGL.lib;BulletCollision_debug.lib;BulletDynamics_debug.lib;LinearMath_debug.lib;Recast-debug.lib;Detour-debug.lib;DetourTileCache-debug.lib;DetourCrowd-debug.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../../lib/windows-vc10;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

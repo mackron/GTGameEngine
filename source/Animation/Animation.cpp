@@ -90,6 +90,9 @@ namespace GTEngine
     {
         // First we need to make sure our queue is reset.
         this->keyFrameQueue.RemoveAll();
+
+        /// The loop index needs to reset.
+        this->loopStartQueueIndex = static_cast<size_t>(-1);
      
         // If we don't have any key frames, we won't bother doing anything.
         if (this->keyFrames.count > 0)
@@ -129,6 +132,10 @@ namespace GTEngine
                     // We calculate transition times for frames by looking at the times of each and getting the difference. This variable keeps track of
                     // the previous frame's time.
                     double prevFrameTime = 0.0f;
+                    if (keyFrameStart > 0)
+                    {
+                        prevFrameTime = this->keyFrames.buffer[keyFrameStart - 1]->value.GetTime();
+                    }
 
                     // Now we can loop through each remaining key frame.
                     for (size_t j = keyFrameStart; j <= keyFrameEnd; ++j)

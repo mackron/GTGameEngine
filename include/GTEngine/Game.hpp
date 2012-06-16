@@ -310,6 +310,25 @@ namespace GTEngine
         virtual void OnResume();
 
 
+        /// Called just before the editor is trying to be opened.
+        ///
+        /// @return True to let the editor continue opening; false otherwise. Returns true by default.
+        virtual bool OnEditorOpening();
+
+        /// Called just before the editor is closing.
+        ///
+        /// @return True to let the editor continue closing; false otherwise. Returns true by default.
+        virtual bool OnEditorClosing();
+
+        /// Called just after the editor has been opened.
+        virtual void OnEditorOpen();
+
+        /// Called just after the editor has been closed.
+        virtual void OnEditorClose();
+
+        
+
+
     private:
 
         /**

@@ -267,22 +267,32 @@ namespace GTEngine
 
     void Game::OpenEditor()
     {
-        this->Pause();  // The game is always paused while the editor is running.
-
-        if (!this->editor.IsStarted())
+        if (this->OnEditorOpening())
         {
-            this->editor.Startup(*this->gui);
-        }
+            this->Pause();  // The game is always paused while the editor is running.
 
-        this->editor.Open();
+            if (!this->editor.IsStarted())
+            {
+                this->editor.Startup(*this->gui);
+            }
+
+            this->editor.Open();
+            
+            this->OnEditorOpen();
+        }
     }
 
     void Game::CloseEditor()
     {
-        this->editor.Close();
+        if (this->OnEditorClosing())
+        {
+            this->editor.Close();
 
-        // We can now unpause the game.
-        this->Resume();
+            // We can now unpause the game.
+            this->Resume();
+
+            this->OnEditorClose();
+        }
     }
 
     bool Game::IsEditorOpen() const
@@ -403,6 +413,25 @@ namespace GTEngine
     }
 
     void Game::OnResume()
+    {
+    }
+
+
+    bool Game::OnEditorOpening()
+    {
+        return true;
+    }
+
+    bool Game::OnEditorClosing()
+    {
+        return true;
+    }
+
+    void Game::OnEditorOpen()
+    {
+    }
+
+    void Game::OnEditorClose()
     {
     }
 
