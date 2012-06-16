@@ -91,6 +91,17 @@ namespace GTEngine
 
             this->finalOutput->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
 
+            /*
+            this->AttachDepthStencilBuffer(this->depthStencil);
+            this->AttachColourBuffer(this->finalOutput,     0);
+            this->AttachColourBuffer(this->lightingBuffer0, 1);
+            this->AttachColourBuffer(this->lightingBuffer1, 2);
+            this->AttachColourBuffer(this->materialBuffer0, 3);
+            this->AttachColourBuffer(this->materialBuffer1, 4);
+            this->AttachColourBuffer(this->materialBuffer2, 5);
+            */
+
+            
             this->AttachDepthStencilBuffer(this->depthStencil);
             this->AttachColourBuffer(this->finalOutput,     0);
             this->AttachColourBuffer(this->materialBuffer0, 1);
@@ -98,6 +109,7 @@ namespace GTEngine
             this->AttachColourBuffer(this->materialBuffer2, 3);
             this->AttachColourBuffer(this->lightingBuffer0, 4);
             this->AttachColourBuffer(this->lightingBuffer1, 5);
+            
         }
 
         /// Deletes the attachments.

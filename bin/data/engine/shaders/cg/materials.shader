@@ -97,3 +97,12 @@
         return normalize(tex2D(NormalMap, IN.TexCoord).rgb * 2.0 - 1.0);
     }
 </shader>
+
+<shader id="Material_TexturedEmissive">   <!-- Use this one for standard normal mapping using a texture. -->
+    uniform sampler2D EmissiveMap;
+    
+    float3 Emissive()
+    {
+        return tex2D(EmissiveMap, IN.TexCoord).rgb;
+    }
+</shader>

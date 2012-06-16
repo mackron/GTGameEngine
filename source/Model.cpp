@@ -8,7 +8,8 @@ namespace GTEngine
 {
     Model::Model()
         : meshes(), bones(),
-          animation(), animationChannelBones(), animationKeyCache()
+          animation(), animationChannelBones(), animationKeyCache(),
+          animationPlaybackSpeed(1.0)
     {
     }
 
@@ -195,7 +196,7 @@ namespace GTEngine
 
     void Model::StepAnimation(double step)
     {
-        this->animation.Step(step);
+        this->animation.Step(step * this->animationPlaybackSpeed);
 
         // Now that we've stepped the animation, we need to update the bone positions.
         size_t startKeyFrame;
@@ -228,6 +229,11 @@ namespace GTEngine
         {
             this->animationChannelBones.buffer[i]->value->UpdateSkinningTransform();
         }
+    }
+
+    void Model::SetAnimationPlaybackSpeed(double speed)
+    {
+        this->animationPlaybackSpeed = speed;
     }
 }
 

@@ -302,7 +302,7 @@ namespace GTEngine
         return nullptr;
     }
 
-    bool SceneNode::IsAncestor(SceneNode &other) const
+    bool SceneNode::IsAncestor(const SceneNode &other) const
     {
         if (this->parent != nullptr)
         {
@@ -317,7 +317,7 @@ namespace GTEngine
         return false;
     }
 
-    bool SceneNode::IsDescendant(SceneNode &other) const
+    bool SceneNode::IsDescendant(const SceneNode &other) const
     {
         for (auto iChild = this->firstChild; iChild != nullptr; iChild = iChild->nextSibling)
         {

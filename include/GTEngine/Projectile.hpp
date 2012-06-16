@@ -148,7 +148,7 @@ namespace GTEngine
 {
     class  Scene;
     class  SceneNode;
-    struct RayTestCallback;
+    struct ClosestRayTestCallback;
 
     /// Class representing a default projectile that can be used in most situations.
     ///
@@ -218,7 +218,7 @@ namespace GTEngine
         // Events.
 
         /// Called when the projectile collides with a scene node.
-        virtual void OnCollide(SceneNode &, RayTestCallback &) {}
+        virtual void OnCollide(SceneNode &, ClosestRayTestCallback &) {}
 
 
 

@@ -427,7 +427,7 @@ namespace GTEngine
                         rcDrawVA->SetShader(materialMetadata.materialPassShader);
 
                         // The material may have pending properties. These need to be set on the shader also.
-                        auto &materialParams = material->GetPendingParameters();
+                        auto &materialParams = material->GetParameters();
                         for (size_t iProperty = 0; iProperty < materialParams.count; ++iProperty)
                         {
                             auto iParam = materialParams.buffer[iProperty];
@@ -441,64 +441,6 @@ namespace GTEngine
                         // Now we simply append the render command...
                         Renderer::BackRCQueue->Append(*rcSetFaceCulling);
                         Renderer::BackRCQueue->Append(*rcDrawVA);
-                        
-                        
-
-                        /*
-                        // We need to grab a render command from the cache...
-                        auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
-
-                        // This is the pass where the animated geometry needs to be applied, if applicable. To do this, we first check that
-                        // the model is being animated. If so, we need to create a skinned geometry vertex array and calculate the blended
-                        // vertex information.
-                        if (model->IsAnimating())
-                        {
-                            auto skinnedGeometry = mesh->GetSkinnedGeometry();
-                            if (skinnedGeometry != nullptr)
-                            {
-                                // Now that we have skinned geometry vertex array, we need to apply the skinning to it.
-                                mesh->ApplySkinning();
-                            }
-
-                            rc.SetVertexArray(skinnedGeometry);
-                        }
-                        else
-                        {
-                            rc.SetVertexArray(mesh->GetGeometry());
-                        }
-
-                        // Here is where we need to retrieve a shader for the material. This managed completely by the viewport
-                        // renderer. For now we are using a simple unlit shader, but this will need to change as we add things
-                        // like multiple lights.
-                        auto &materialMetadata = this->GetMaterialMetadata(*material);
-
-                        // If we don't have a shader, it needs to be created.
-                        if (materialMetadata.materialPassShader == nullptr)
-                        {
-                            materialMetadata.materialPassShader = this->CreateMaterialPassShader(*material);
-                        }
-
-                        // Now that we have the shader, we can set some properties and set it on the render command.
-                        rc.SetShader(materialMetadata.materialPassShader);
-
-                        rc.SetParameter("MVPMatrix",    MVPMatrix);
-                        rc.SetParameter("NormalMatrix", NormalMatrix);
-                            
-                        // The material may have pending properties. These need to be set on the shader also.
-                        auto &materialParams = material->GetPendingParameters();
-                        for (size_t iProperty = 0; iProperty < materialParams.count; ++iProperty)
-                        {
-                            auto iParam = materialParams.buffer[iProperty];
-                            assert(iParam        != nullptr);
-                            assert(iParam->value != nullptr);
-
-                            rc.SetParameter(iParam->key, iParam->value);
-                        }
-
-
-                        // Now we simply append the render command...
-                        Renderer::BackRCQueue->Append(rc);
-                        */
                     }
                 }
             }
@@ -522,6 +464,7 @@ namespace GTEngine
         size_t iPLight = 0;
         size_t iSLight = 0;
 
+
         
         // A1D1 passes.
         while (ambientLightNodes.count     - iALight >= 1 &&
@@ -541,13 +484,14 @@ namespace GTEngine
             ++iPLight;
         }
         
+        
 
         // Now we just cycle through any remaining lights. Hopefully there won't be too many of these...
         for ( ; iALight < ambientLightNodes.count; ++iALight)
         {
             this->DoLightingPass_A1(ambientLightNodes[iALight], modelNodes);
         }
-        
+
         for ( ; iDLight < directionalLightNodes.count; ++iDLight)
         {
             this->DoLightingPass_D1(directionalLightNodes[iDLight], modelNodes);
@@ -587,9 +531,6 @@ namespace GTEngine
 
                 for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
                 {
-                    //auto mesh = model->meshes[iMesh];
-                    //assert(mesh != nullptr);
-
                     RCDrawVA*         rcDrawVA;
                     RCSetFaceCulling* rcSetFaceCulling;
                     this->AcquireMeshRCs(*modelComponent, iMesh, MVPMatrix, NormalMatrix, rcDrawVA, rcSetFaceCulling);
@@ -598,19 +539,10 @@ namespace GTEngine
                     assert(rcSetFaceCulling != nullptr);
 
 
-                    // We need to grab a render command from the cache...
-                    //auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
-                    //rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
-
-                    rcDrawVA->SetParameter("ALights[0].Colour", A0->GetColour());
+                    rcDrawVA->SetParameter("ALights0.Colour", A0->GetColour());
 
                     Renderer::BackRCQueue->Append(*rcSetFaceCulling);
                     Renderer::BackRCQueue->Append(*rcDrawVA);
-
-                    //rc.SetParameter("MVPMatrix",    MVPMatrix);
-                    //rc.SetParameter("NormalMatrix", NormalMatrix);
-
-                    //Renderer::BackRCQueue->Append(rc);
                 }
             }
         }
@@ -648,29 +580,11 @@ namespace GTEngine
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
 
-                    rcDrawVA->SetParameter("DLights[0].Colour",    D0->GetColour());
-                    rcDrawVA->SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * D0->GetNode().GetWorldForwardVector()));
+                    rcDrawVA->SetParameter("DLights0.Colour",    D0->GetColour());
+                    rcDrawVA->SetParameter("DLights0.Direction", glm::normalize(glm::mat3(this->view) * D0->GetNode().GetWorldForwardVector()));
 
                     Renderer::BackRCQueue->Append(*rcSetFaceCulling);
                     Renderer::BackRCQueue->Append(*rcDrawVA);
-
-                    /*
-                    auto mesh = model->meshes[iMesh];
-                    assert(mesh != nullptr);
-
-                    // We need to grab a render command from the cache...
-                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
-                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
-
-                    rc.SetParameter("DLights[0].Colour",    D0->GetColour());
-                    rc.SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * D0->GetNode().GetWorldForwardVector()));
-
-                    rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
-                    rc.SetParameter("MVPMatrix",       MVPMatrix);
-                    rc.SetParameter("NormalMatrix",    NormalMatrix);
-
-                    Renderer::BackRCQueue->Append(rc);
-                    */
                 }
             }
         }
@@ -707,35 +621,14 @@ namespace GTEngine
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
 
-                    rcDrawVA->SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
-                    rcDrawVA->SetParameter("PLights[0].Colour",               P0->GetColour());
-                    rcDrawVA->SetParameter("PLights[0].ConstantAttenuation",  P0->GetConstantAttenuation());
-                    rcDrawVA->SetParameter("PLights[0].LinearAttenuation",    P0->GetLinearAttenuation());
-                    rcDrawVA->SetParameter("PLights[0].QuadraticAttenuation", P0->GetQuadraticAttenuation());
+                    rcDrawVA->SetParameter("PLights0.Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
+                    rcDrawVA->SetParameter("PLights0.Colour",               P0->GetColour());
+                    rcDrawVA->SetParameter("PLights0.ConstantAttenuation",  P0->GetConstantAttenuation());
+                    rcDrawVA->SetParameter("PLights0.LinearAttenuation",    P0->GetLinearAttenuation());
+                    rcDrawVA->SetParameter("PLights0.QuadraticAttenuation", P0->GetQuadraticAttenuation());
 
                     Renderer::BackRCQueue->Append(*rcSetFaceCulling);
                     Renderer::BackRCQueue->Append(*rcDrawVA);
-
-                    /*
-                    auto mesh = model->meshes[iMesh];
-                    assert(mesh != nullptr);
-
-                    // We need to grab a render command from the cache...
-                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
-                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
-
-                    rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
-                    rc.SetParameter("PLights[0].Colour",               P0->GetColour());
-                    rc.SetParameter("PLights[0].ConstantAttenuation",  P0->GetConstantAttenuation());
-                    rc.SetParameter("PLights[0].LinearAttenuation",    P0->GetLinearAttenuation());
-                    rc.SetParameter("PLights[0].QuadraticAttenuation", P0->GetQuadraticAttenuation());
-                    
-                    rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
-                    rc.SetParameter("MVPMatrix",       MVPMatrix);
-                    rc.SetParameter("NormalMatrix",    NormalMatrix);
-
-                    Renderer::BackRCQueue->Append(rc);
-                    */
                 }
             }
         }
@@ -772,41 +665,17 @@ namespace GTEngine
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
 
-                    rcDrawVA->SetParameter("SLights[0].Position",             glm::vec3(this->view * glm::vec4(S0->GetNode().GetWorldPosition(), 1.0f)));
-                    rcDrawVA->SetParameter("SLights[0].Direction",            glm::normalize(glm::mat3(this->view) * S0->GetNode().GetWorldForwardVector()));
-                    rcDrawVA->SetParameter("SLights[0].CosAngleInner",        glm::cos(glm::radians(S0->GetInnerAngle())));
-                    rcDrawVA->SetParameter("SLights[0].CosAngleOuter",        glm::cos(glm::radians(S0->GetOuterAngle())));
-                    rcDrawVA->SetParameter("SLights[0].Colour",               S0->GetColour());
-                    rcDrawVA->SetParameter("SLights[0].ConstantAttenuation",  S0->GetConstantAttenuation());
-                    rcDrawVA->SetParameter("SLights[0].LinearAttenuation",    S0->GetLinearAttenuation());
-                    rcDrawVA->SetParameter("SLights[0].QuadraticAttenuation", S0->GetQuadraticAttenuation());
+                    rcDrawVA->SetParameter("SLights0.Position",             glm::vec3(this->view * glm::vec4(S0->GetNode().GetWorldPosition(), 1.0f)));
+                    rcDrawVA->SetParameter("SLights0.Direction",            glm::normalize(glm::mat3(this->view) * S0->GetNode().GetWorldForwardVector()));
+                    rcDrawVA->SetParameter("SLights0.CosAngleInner",        glm::cos(glm::radians(S0->GetInnerAngle())));
+                    rcDrawVA->SetParameter("SLights0.CosAngleOuter",        glm::cos(glm::radians(S0->GetOuterAngle())));
+                    rcDrawVA->SetParameter("SLights0.Colour",               S0->GetColour());
+                    rcDrawVA->SetParameter("SLights0.ConstantAttenuation",  S0->GetConstantAttenuation());
+                    rcDrawVA->SetParameter("SLights0.LinearAttenuation",    S0->GetLinearAttenuation());
+                    rcDrawVA->SetParameter("SLights0.QuadraticAttenuation", S0->GetQuadraticAttenuation());
 
                     Renderer::BackRCQueue->Append(*rcSetFaceCulling);
                     Renderer::BackRCQueue->Append(*rcDrawVA);
-
-                    /*
-                    auto mesh = model->meshes[iMesh];
-                    assert(mesh != nullptr);
-
-                    // We need to grab a render command from the cache...
-                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
-                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
-
-                    rc.SetParameter("SLights[0].Position",             glm::vec3(this->view * glm::vec4(S0->GetNode().GetWorldPosition(), 1.0f)));
-                    rc.SetParameter("SLights[0].Direction",            glm::normalize(glm::mat3(this->view) * S0->GetNode().GetWorldForwardVector()));
-                    rc.SetParameter("SLights[0].CosAngleInner",        glm::cos(glm::radians(S0->GetInnerAngle())));
-                    rc.SetParameter("SLights[0].CosAngleOuter",        glm::cos(glm::radians(S0->GetOuterAngle())));
-                    rc.SetParameter("SLights[0].Colour",               S0->GetColour());
-                    rc.SetParameter("SLights[0].ConstantAttenuation",  S0->GetConstantAttenuation());
-                    rc.SetParameter("SLights[0].LinearAttenuation",    S0->GetLinearAttenuation());
-                    rc.SetParameter("SLights[0].QuadraticAttenuation", S0->GetQuadraticAttenuation());
-                    
-                    rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
-                    rc.SetParameter("MVPMatrix",       MVPMatrix);
-                    rc.SetParameter("NormalMatrix",    NormalMatrix);
-
-                    Renderer::BackRCQueue->Append(rc);
-                    */
                 }
             }
         }
@@ -846,33 +715,13 @@ namespace GTEngine
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
 
-                    rcDrawVA->SetParameter("ALights[0].Colour",    A0->GetColour());
+                    rcDrawVA->SetParameter("ALights0.Colour",    A0->GetColour());
 
-                    rcDrawVA->SetParameter("DLights[0].Colour",    D0->GetColour());
-                    rcDrawVA->SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * D0->GetNode().GetWorldForwardVector()));
+                    rcDrawVA->SetParameter("DLights0.Colour",    D0->GetColour());
+                    rcDrawVA->SetParameter("DLights0.Direction", glm::normalize(glm::mat3(this->view) * D0->GetNode().GetWorldForwardVector()));
 
                     Renderer::BackRCQueue->Append(*rcSetFaceCulling);
                     Renderer::BackRCQueue->Append(*rcDrawVA);
-
-                    /*
-                    auto mesh = model->meshes[iMesh];
-                    assert(mesh != nullptr);
-
-                    // We need to grab a render command from the cache...
-                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
-                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
-
-                    rc.SetParameter("ALights[0].Colour",    A0->GetColour());
-
-                    rc.SetParameter("DLights[0].Colour",    D0->GetColour());
-                    rc.SetParameter("DLights[0].Direction", glm::normalize(glm::mat3(this->view) * D0->GetNode().GetWorldForwardVector()));
-
-                    rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
-                    rc.SetParameter("MVPMatrix",       MVPMatrix);
-                    rc.SetParameter("NormalMatrix",    NormalMatrix);
-
-                    Renderer::BackRCQueue->Append(rc);
-                    */
                 }
             }
         }
@@ -910,39 +759,16 @@ namespace GTEngine
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
 
-                    rcDrawVA->SetParameter("ALights[0].Colour", A0->GetColour());
+                    rcDrawVA->SetParameter("ALights0.Colour", A0->GetColour());
 
-                    rcDrawVA->SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
-                    rcDrawVA->SetParameter("PLights[0].Colour",               P0->GetColour());
-                    rcDrawVA->SetParameter("PLights[0].ConstantAttenuation",  P0->GetConstantAttenuation());
-                    rcDrawVA->SetParameter("PLights[0].LinearAttenuation",    P0->GetLinearAttenuation());
-                    rcDrawVA->SetParameter("PLights[0].QuadraticAttenuation", P0->GetQuadraticAttenuation());
+                    rcDrawVA->SetParameter("PLights0.Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
+                    rcDrawVA->SetParameter("PLights0.Colour",               P0->GetColour());
+                    rcDrawVA->SetParameter("PLights0.ConstantAttenuation",  P0->GetConstantAttenuation());
+                    rcDrawVA->SetParameter("PLights0.LinearAttenuation",    P0->GetLinearAttenuation());
+                    rcDrawVA->SetParameter("PLights0.QuadraticAttenuation", P0->GetQuadraticAttenuation());
 
                     Renderer::BackRCQueue->Append(*rcSetFaceCulling);
                     Renderer::BackRCQueue->Append(*rcDrawVA);
-
-                    /*
-                    auto mesh = model->meshes[iMesh];
-                    assert(mesh != nullptr);
-
-                    // We need to grab a render command from the cache...
-                    auto &rc = this->RenderCommands.rcDrawVA[Renderer::BackIndex].Acquire();
-                    rc.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
-
-                    rc.SetParameter("ALights[0].Colour", A0->GetColour());
-
-                    rc.SetParameter("PLights[0].Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
-                    rc.SetParameter("PLights[0].Colour",               P0->GetColour());
-                    rc.SetParameter("PLights[0].ConstantAttenuation",  P0->GetConstantAttenuation());
-                    rc.SetParameter("PLights[0].LinearAttenuation",    P0->GetLinearAttenuation());
-                    rc.SetParameter("PLights[0].QuadraticAttenuation", P0->GetQuadraticAttenuation());
-
-                    rc.SetParameter("ModelViewMatrix", ModelViewMatrix);
-                    rc.SetParameter("MVPMatrix",       MVPMatrix);
-                    rc.SetParameter("NormalMatrix",    NormalMatrix);
-
-                    Renderer::BackRCQueue->Append(rc);
-                    */
                 }
             }
         }

@@ -323,13 +323,13 @@ namespace GTEngine
 
 
         /// Determines whether or not the given node is an ancestor.
-        bool IsAncestor(SceneNode &other) const;
+        bool IsAncestor(const SceneNode &other) const;
 
         /// Determines whether or not the given node is a descendant.
-        bool IsDescendant(SceneNode &other) const;
+        bool IsDescendant(const SceneNode &other) const;
 
         /// Determines whether or not the given scene node is related to this node (is an ancestor or descendant).
-        bool IsRelated(SceneNode &other) const { return this->IsAncestor(other) || this->IsDescendant(other); } 
+        bool IsRelated(const SceneNode &other) const { return this->IsAncestor(other) || this->IsDescendant(other); } 
 
 
         /**

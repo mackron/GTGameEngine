@@ -70,6 +70,9 @@ namespace GTEngine
         /// Determines whether or not the model is animating. Basically, this is used in determining whether or not the model should have vertex blending applied.
         bool IsAnimating() const;
 
+        /// Sets the playback speed.
+        void SetAnimationPlaybackSpeed(double speed);
+
 
     private:
 
@@ -98,6 +101,9 @@ namespace GTEngine
 
         /// The cache of animation keys.
         GTCore::Vector<TransformAnimationKey*> animationKeyCache;
+
+        /// The playback speed of animations.
+        double animationPlaybackSpeed;
     };    
 }
 

@@ -98,8 +98,8 @@ namespace GTEngine
         const GTCore::Dictionary<ShaderParameter*> & DetDefaultParameters() const { return this->definition.defaultParams.GetParameters(); }
 
 
-        /// Retrieves a reference to the list of pending properties.
-        const GTCore::Dictionary<ShaderParameter*> & GetPendingParameters() const { return this->parameters.GetParameters(); }
+        /// Retrieves a reference to the list of parameters for this material.
+        const GTCore::Dictionary<ShaderParameter*> & GetParameters() const { return this->parameters.GetParameters(); }
 
 
     // Parameter setters.
