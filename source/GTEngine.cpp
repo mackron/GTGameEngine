@@ -111,6 +111,7 @@ namespace GTEngine
 
     void Shutdown()
     {
+        // Font manager.
         FontManager::Shutdown();
 
         // We kill our libraries before the major sub-systems.
@@ -130,5 +131,8 @@ namespace GTEngine
 
         // Thread cache.
         ThreadCache::Shutdown();
+
+        // Application config.
+        ApplicationConfig::Close();
     }
 }
