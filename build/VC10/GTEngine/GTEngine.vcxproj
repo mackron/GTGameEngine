@@ -364,6 +364,11 @@
     <None Include="..\..\..\bin\data\engine\shaders\cg\gui.shader" />
     <None Include="..\..\..\bin\data\engine\shaders\cg\lines.shader" />
     <None Include="..\..\..\bin\data\engine\shaders\cg\materials.shader" />
+    <None Include="..\..\..\bin\data\engine\shaders\glsl\core.shader" />
+    <None Include="..\..\..\bin\data\engine\shaders\glsl\defaultrenderer.shader" />
+    <None Include="..\..\..\bin\data\engine\shaders\glsl\gui.shader" />
+    <None Include="..\..\..\bin\data\engine\shaders\glsl\lines.shader" />
+    <None Include="..\..\..\bin\data\engine\shaders\glsl\materials.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

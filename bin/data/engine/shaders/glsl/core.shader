@@ -1,0 +1,54 @@
+
+<shader id="Engine_FullscreenQuad_VS">
+    attribute vec2 VertexInput_Position;
+
+    varying vec2 VertexOutput_TexCoord;
+
+	void main()
+	{
+        VertexOutput_TexCoord = (VertexInput_Position + 1.0) * 0.5;
+        gl_Position = vec4(VertexInput_Position, 0.0, 1.0);
+	}
+</shader>
+
+<shader id="Engine_FullscreenQuad_FS">
+    varying vec2 VertexOutput_TexCoord;
+
+	uniform sampler2D Texture;
+
+	void main()
+	{
+		gl_FragData[0] = texture2D(Texture, VertexOutput_TexCoord);
+	}
+</shader>
+
+
+
+<shader id="Engine_DefaultVS">
+    attribute vec3 VertexInput_Position;
+    attribute vec2 VertexInput_TexCoord;
+    attribute vec3 VertexInput_Normal;
+    attribute vec3 VertexInput_Tangent;
+    attribute vec3 VertexInput_Bitangent;
+    
+    varying vec2 VertexOutput_TexCoord;
+    varying vec3 VertexOutput_Normal;
+    varying vec3 VertexOutput_Tangent;
+    varying vec3 VertexOutput_Bitangent;
+    varying vec4 VertexOutput_Position;
+		
+    uniform mat4 ModelViewMatrix;
+	uniform mat4 MVPMatrix;
+    uniform mat3 NormalMatrix;
+		
+	void main()
+	{
+        gl_Position = MVPMatrix * vec4(VertexInput_Position, 1.0);
+        
+		VertexOutput_TexCoord  = VertexInput_TexCoord;
+		VertexOutput_Normal    = normalize(NormalMatrix * VertexInput_Normal);
+        VertexOutput_Tangent   = normalize(NormalMatrix * VertexInput_Tangent);
+        VertexOutput_Bitangent = normalize(NormalMatrix * VertexInput_Bitangent);
+        VertexOutput_Position  = ModelViewMatrix * vec4(VertexInput_Position, 1.0);
+	}
+</shader>

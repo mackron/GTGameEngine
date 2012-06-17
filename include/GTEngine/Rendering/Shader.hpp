@@ -45,6 +45,20 @@ namespace GTEngine
         const char* GetVertexSource() const   { return this->vertexSource; }
         const char* GetFragmentSource() const { return this->fragmentSource; }
 
+
+        /// Sets the location of a vertex attribute.
+        ///
+        /// @param name     [in] The name of the vertex attribute whose location is being set.
+        /// @param location [in] The new location of the vertex attribute.
+        ///
+        /// @remarks
+        ///     Changing attribute locations will force a re-link. It's best to only do this at load time, once.
+        void SetVertexAttributeLocation(const char* name, unsigned int location);
+
+
+        /// Helper function for setting the standard GTEngine vertex attribute locations for GLSL shaders.
+        void SetStandardGLSLVertexAttributeLocations();
+
         
     // Property setters.
     public:
@@ -93,6 +107,15 @@ namespace GTEngine
         void OnTextureParameterChanged(Texture2D* oldTexture);
 
 
+        /// Determines whether or no the shader needs to be relinked.
+        bool NeedsRelink() const { return this->needsRelink; }
+
+        /// Called after the shader has been linked.
+        void OnLink();
+
+        /// Retrieves the dictionary containing the vertex attribute locations.
+        const GTCore::Dictionary<unsigned int> & GetVertexAttributeLocations() const { return this->vertexAttributeLocations; }
+
 
     private:
 
@@ -110,6 +133,13 @@ namespace GTEngine
         /// We keep an array of texture 2Ds being used by the shader. As the shader parameters of a shader change, they are updated here. These
         /// are index by parameter name. This is NOT updated by SetParameter(), but is instead used internally by the renderer.
         GTCore::Dictionary<Texture2D*> currentTexture2Ds;
+
+
+        /// The dictionary of vertex attribute locations. This is only really needed for OpenGL. May be removed later if we use explicit attrib locations (extension, core in 3.3).
+        GTCore::Dictionary<unsigned int> vertexAttributeLocations;
+
+        /// Keeps track of whether or not the shader needs to be relinked. Only used internally by Renderer.
+        bool needsRelink;
 
 
     private:    // No copying.
