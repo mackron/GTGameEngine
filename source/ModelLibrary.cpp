@@ -121,6 +121,11 @@ namespace GTEngine
 // Globals.
 namespace GTEngine
 {
+    /// The list of loaded models. These will be deleted when the model library is shutdown.
+    static GTCore::List<Model*> LoadedModels;
+
+
+
     /// Structure containing information about a loaded model.
     struct LoadedModelInfo
     {
@@ -245,6 +250,7 @@ namespace GTEngine
         Model* CreateModel()
         {
             auto model = new Model;
+            LoadedModels.Append(model);
 
             // We need to create copies of the bones. It is important that this is done before adding the meshes.
             model->CopyAndAttachBones(this->bones);
@@ -330,8 +336,8 @@ namespace GTEngine
         bool haveCreatedModel;
     };
 
-    /// The list of loaded models.
-    static GTCore::Dictionary<LoadedModelInfo*> LoadedModels;
+    /// The list of loaded models info structures..
+    static GTCore::Dictionary<LoadedModelInfo*> LoadedModelInfos;
 
 
     /// Creates a model from a primitive's vertex array.
@@ -352,10 +358,17 @@ namespace GTEngine
 
     void ModelLibrary::Shutdown()
     {
-        // We need to unload the loaded model information.
-        for (size_t i = 0; i < LoadedModels.count; ++i)
+        // We need to unload all models.
+        while (LoadedModels.root != nullptr)
         {
-            delete LoadedModels.buffer[i]->value;
+            delete LoadedModels.root->value;
+            LoadedModels.RemoveRoot();
+        }
+
+        // We need to unload the loaded model information.
+        for (size_t i = 0; i < LoadedModelInfos.count; ++i)
+        {
+            delete LoadedModelInfos.buffer[i]->value;
         }
     }
 }
@@ -632,7 +645,7 @@ namespace GTEngine
         LoadedModelInfo* modelInfo = nullptr;
 
         // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
-        auto iModelInfo = LoadedModels.Find(fileName);
+        auto iModelInfo = LoadedModelInfos.Find(fileName);
         if (iModelInfo == nullptr)
         {
             Assimp::Importer importer;
@@ -645,7 +658,7 @@ namespace GTEngine
                 if (modelInfo != nullptr)
                 {
                     // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
-                    LoadedModels.Add(fileName, modelInfo);
+                    LoadedModelInfos.Add(fileName, modelInfo);
                 }
                 else
                 {
@@ -682,7 +695,7 @@ namespace GTEngine
         LoadedModelInfo* modelInfo = nullptr;
 
         // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
-        auto iModelInfo = LoadedModels.Find(nffFileName.c_str());
+        auto iModelInfo = LoadedModelInfos.Find(nffFileName.c_str());
         if (iModelInfo == nullptr)
         {
             Assimp::Importer importer;
@@ -695,7 +708,7 @@ namespace GTEngine
                 if (modelInfo != nullptr)
                 {
                     // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
-                    LoadedModels.Add(nffFileName.c_str(), modelInfo);
+                    LoadedModelInfos.Add(nffFileName.c_str(), modelInfo);
                 }
                 else
                 {
@@ -727,11 +740,20 @@ namespace GTEngine
 
     Model* ModelLibrary::CreatePlaneXZ(float width, float height, VertexFormat &format)
     {
-        auto model = new Model;
+        // We need a unique identifier for this mesh. We will base it on the size of the box.
+        char name[128];
+        GTCore::IO::snprintf(name, 128, "prim:planexz(%.4f %.4f)", width, height);
 
-        model->AttachMesh(VertexArrayFactory::CreatePlaneXZ(width, height, format), nullptr);
+        // We create the model from a primitive. To do this we need a non-const vertex array.
+        VertexArray* va = nullptr;
 
-        return model;
+        bool exists = LoadedModelInfos.Find(name) != nullptr;
+        if (!exists)
+        {
+            va = VertexArrayFactory::CreatePlaneXZ(width, height, format);
+        }
+
+        return ModelLibrary_CreateFromPrimitive(name, va);
     }
 
 
@@ -744,7 +766,7 @@ namespace GTEngine
         // We create the model from a primitive. To do this we need a non-const vertex array.
         VertexArray* va = nullptr;
 
-        bool exists = LoadedModels.Find(name) != nullptr;
+        bool exists = LoadedModelInfos.Find(name) != nullptr;
         if (!exists)
         {
             va = VertexArrayLibrary::CreateBox(halfWidth, halfHeight, halfDepth);
@@ -781,7 +803,7 @@ namespace GTEngine
 
         // We're going to check if we can find the model info before loading. This will allow us to determine whether or not we
         // need to apply the transformation.
-        bool applyTransform = LoadedModels.Find((GTCore::String("__nff:") + name).c_str()) == nullptr;
+        bool applyTransform = LoadedModelInfos.Find((GTCore::String("__nff:") + name).c_str()) == nullptr;
 
         // For now the way we will do this is load an NFF file. We use a radius of 1, and then scale that with a transformation.
         auto model = ModelLibrary::LoadFromNFF(content, name);
@@ -796,6 +818,7 @@ namespace GTEngine
 
     void ModelLibrary::Delete(Model* model)
     {
+        LoadedModels.Remove(LoadedModels.Find(model));
         delete model;
     }
 }
@@ -810,7 +833,7 @@ namespace GTEngine
         LoadedModelInfo* modelInfo = nullptr;
 
         // We first need to retrieve our model info.
-        auto iModelInfo = LoadedModels.Find(name);
+        auto iModelInfo = LoadedModelInfos.Find(name);
         if (iModelInfo == nullptr)
         {
             modelInfo = new LoadedModelInfo;
@@ -818,7 +841,7 @@ namespace GTEngine
             modelInfo->meshMaterials.PushBack(nullptr);
             modelInfo->meshBones.PushBack(nullptr);
 
-            LoadedModels.Add(name, modelInfo);
+            LoadedModelInfos.Add(name, modelInfo);
         }
         else
         {

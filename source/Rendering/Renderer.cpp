@@ -1172,6 +1172,8 @@ namespace GTEngine
 
             GUIRenderer::Uninitialise();
 
+            Renderer::CollectGarbage();
+
             gtglShutdown();
             OpenGLContext = nullptr;
 
@@ -1734,38 +1736,50 @@ namespace GTEngine
     }
 
 
-    void Renderer::DeleteTexture2DData(void *rendererData)
+    void Renderer::DeleteTexture2DData(void* rendererDataIn)
     {
+        auto rendererData = static_cast<Texture2D_GL20*>(rendererDataIn);
         if (rendererData != nullptr)
         {
-            glDeleteTextures(1, &((Texture2D_GL20 *)rendererData)->object);
+            glDeleteTextures(1, &rendererData->object);
+
+            delete rendererData;
         }
     }
 
-    void Renderer::DeleteFramebufferData(void *rendererData)
+    void Renderer::DeleteFramebufferData(void* rendererDataIn)
     {
+        auto rendererData = static_cast<Framebuffer_GL20*>(rendererDataIn);
         if (rendererData != nullptr)
         {
-            glDeleteFramebuffersEXT(1, &((Framebuffer_GL20 *)rendererData)->object);
+            glDeleteFramebuffersEXT(1, &rendererData->object);
+
+            delete rendererData;
         }
     }
 
-    void Renderer::DeleteShaderData(void *rendererData)
+    void Renderer::DeleteShaderData(void* rendererDataIn)
     {
+        auto rendererData = static_cast<Shader_GL20*>(rendererDataIn);
         if (rendererData != nullptr)
         {
-            glDeleteShader(static_cast<Shader_GL20*>(rendererData)->vertexShader);
-            glDeleteShader(static_cast<Shader_GL20*>(rendererData)->fragmentShader);
-            glDeleteProgram(static_cast<Shader_GL20*>(rendererData)->program);
+            glDeleteShader(rendererData->vertexShader);
+            glDeleteShader(rendererData->fragmentShader);
+            glDeleteProgram(rendererData->program);
+
+            delete rendererData;
         }
     }
 
-    void Renderer::DeleteVertexArrayData(void *rendererData)
+    void Renderer::DeleteVertexArrayData(void* rendererDataIn)
     {
+        auto rendererData = static_cast<VertexArray_GL20*>(rendererDataIn);
         if (rendererData != nullptr)
         {
-            glDeleteBuffers(1, &((VertexArray_GL20 *)rendererData)->verticesObject);
-            glDeleteBuffers(1, &((VertexArray_GL20 *)rendererData)->indicesObject);
+            glDeleteBuffers(1, &rendererData->verticesObject);
+            glDeleteBuffers(1, &rendererData->indicesObject);
+
+            delete rendererData;
         }
     }
 

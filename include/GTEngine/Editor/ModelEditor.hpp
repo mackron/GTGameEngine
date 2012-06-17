@@ -120,8 +120,6 @@ namespace GTEngine
         }GUIEventHandlers;
 
 
-        
-
 
         /// The scene that will contain the model node.
         DefaultScene scene;
@@ -141,12 +139,6 @@ namespace GTEngine
 
         float cameraXRotation;      ///< The camera's current X rotation.
         float cameraYRotation;      ///< The camera's current Y rotation.
-
-
-        // TESTING
-        //
-        // The map of scene nodes representing the bones of the model.
-        GTCore::Dictionary<SceneNode*> boneSceneNodes;
 
 
     private:

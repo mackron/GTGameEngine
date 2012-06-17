@@ -25,7 +25,7 @@
 <shader id="Material_DefaultNormal">
     vec3 Normal()
     {
-        return vec3(0.0f, 0.0f, 1.0f);
+        return vec3(0.0, 0.0, 1.0);
     }
 </shader>
 
@@ -33,14 +33,14 @@
 <shader id="Material_NoDiffuse">
     vec3 Diffuse()
     {
-        return vec3(0.0f, 0.0f, 0.0f);
+        return vec3(0.0, 0.0, 0.0);
     }
 </shader>
 
 <shader id="Material_NoEmissive">
     vec3 Emissive()
     {
-        return vec3(0.0f, 0.0f, 0.0f);
+        return vec3(0.0, 0.0, 0.0);
     }
 </shader>
 

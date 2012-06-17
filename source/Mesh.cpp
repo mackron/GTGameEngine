@@ -53,6 +53,8 @@ namespace GTEngine
     // TOOD: Scaling works, but we need to check that we can reuse the same vertex array.
     btGImpactMeshShape* Mesh::BuildCollisionShape(const glm::vec3 &scale)
     {
+        delete this->collisionVA;
+
         auto &vaFormat    = this->geometry->GetFormat();
         auto  indexCount  = this->geometry->GetIndexCount();
         auto  vertexCount = this->geometry->GetVertexCount();

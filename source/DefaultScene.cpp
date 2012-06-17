@@ -198,8 +198,8 @@ namespace GTEngine
           dynamicsWorld(), occlusionCollisionWorld(),
           navigationMesh(), navigationMeshNode(), navigationMeshModel()
     {
-        this->AddSceneNode(this->navigationMeshNode);
-        this->navigationMeshNode.Hide();
+        //this->AddSceneNode(this->navigationMeshNode);
+        //this->navigationMeshNode.Hide();
     }
 
     DefaultScene::~DefaultScene()
@@ -257,7 +257,7 @@ namespace GTEngine
             }
         }
 
-
+        
         // We need to update before rendering.
         for (auto iNode = this->nodes.root; iNode != nullptr; iNode = iNode->next)
         {
@@ -271,7 +271,7 @@ namespace GTEngine
                 }
             }
         }
-
+        
 
         // Now we need to draw everything on every attached viewport.
         for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
@@ -696,6 +696,7 @@ namespace GTEngine
     {
         this->nodes.Append(&node);
 
+        
         // Here we'll check the lighting components.
         auto ambientLightComponent = node.GetComponent<AmbientLightComponent>();
         if (ambientLightComponent != nullptr)

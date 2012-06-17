@@ -83,6 +83,7 @@ namespace GTEngine
     void ProximityComponent::SetShape(btCollisionShape* newShape)
     {
         auto oldShape = this->collisionShape;
+        this->collisionShape = newShape;
 
         auto world = this->ghostObject.getWorld();
         if (world != nullptr)

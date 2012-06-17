@@ -31,7 +31,7 @@ namespace GTEngine
             ConfigScript = new GTCore::Script;
             if (ConfigScript->LoadFile(fileName) && ConfigScript->Execute())
             {
-                DataDirectory = GTCore::Strings::Create(ApplicationConfig_GetDataDirectory());
+                DataDirectory = ApplicationConfig_GetDataDirectory();
             }
             else
             {

@@ -47,7 +47,7 @@ namespace GTEngine
 
     VertexArray * VertexArrayFactory::CreatePlaneXZ(float width, float height, VertexFormat &format)
     {
-        VertexArray * va = new VertexArray(VertexArrayUsage_Static, format);
+        auto va = new VertexArray(VertexArrayUsage_Static, format);
 
         auto vertexSize     = format.GetSize();
         auto positionOffset = format.GetAttributeOffset(VertexAttribs::Position);
