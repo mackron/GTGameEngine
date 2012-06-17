@@ -320,12 +320,6 @@ namespace GTEngine
     bool IsDepthTestingEnabled = false;     // <-- Always ensure this is initialised to false.
     bool IsSRGBEnabled         = false;
 
-    // For some VirtualBox hacking...
-    //bool RendererIsChromium = false;
-
-    // For some Intel hacking...
-    //bool RendererIsIntel = false;
-
 
     // This is a bitfield containing bits representing which vertex attributes are currently enabled on the OpenGL side.
     uint32_t VertexAttribEnableBits = 0x0;
@@ -386,15 +380,6 @@ namespace GTEngine
 
     }RendererState;
 
-
-    /// We create a global instantiation of this struct so that when it's destructed, it will call Renderer::Uninitialise().
-    struct _RendererKiller
-    {
-        ~_RendererKiller()
-        {
-            Renderer::Shutdown();
-        }
-    }RendererKiller;
 
 
     struct Texture2D_GL20

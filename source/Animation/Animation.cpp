@@ -13,6 +13,10 @@ namespace GTEngine
 
     Animation::~Animation()
     {
+        for (size_t i = 0; i < this->channels.count; ++i)
+        {
+            delete this->channels[i];
+        }
     }
 
 

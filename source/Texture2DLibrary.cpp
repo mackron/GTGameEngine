@@ -46,6 +46,7 @@ namespace GTEngine
 
 
         delete Black1x1Texture;
+        Black1x1Texture = nullptr;
     }
 }
 

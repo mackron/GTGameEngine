@@ -1,11 +1,15 @@
 
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTCore/Dictionary.hpp>
+#include <GTCore/List.hpp>
 
 namespace GTEngine
 {
     /// The list of loaded material definitions, indexed by their file path, relative to the data directory.
     static GTCore::Dictionary<MaterialDefinition*> MaterialDefinitions;
+
+    /// The list of loaded materials.
+    static GTCore::List<Material*> LoadedMaterials;
 
 
     bool MaterialLibrary::Startup()
@@ -18,6 +22,12 @@ namespace GTEngine
         for (size_t i = 0; i < MaterialDefinitions.count; ++i)
         {
             delete MaterialDefinitions.buffer[i]->value;
+        }
+
+        while (LoadedMaterials.root != nullptr)
+        {
+            delete LoadedMaterials.root->value;
+            LoadedMaterials.RemoveRoot();
         }
     }
 
@@ -53,6 +63,8 @@ namespace GTEngine
             newMaterial = new Material(*iMaterialDef->value);
         }
 
+        LoadedMaterials.Append(newMaterial);
+
         return newMaterial;
     }
 
@@ -64,6 +76,8 @@ namespace GTEngine
 
     void MaterialLibrary::Delete(Material* material)
     {
+        LoadedMaterials.Remove(LoadedMaterials.Find(material));
+
         delete material;
     }
 }

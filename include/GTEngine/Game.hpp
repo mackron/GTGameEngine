@@ -459,17 +459,17 @@ namespace GTEngine
         GTCore::Mutex eventQueueLock;
 
         /// The game's window.
-        GTCore::Window *window;
+        GTCore::Window* window;
 
         /// The event handler for the main window.
         GameWindowEventHandler windowEventHandler;
 
 
         /// A pointer to the update thread. This will point to a member in the 'threads' array.
-        GTCore::Thread *updateThread;
+        GTCore::Thread* updateThread;
 
         /// The job that will do the game updates.
-        GTCore::Threading::Job *updateJob;
+        GTCore::Threading::Job* updateJob;
 
 
         /// The time between the last two frames. Use this for time-based operations.
@@ -483,10 +483,10 @@ namespace GTEngine
         GTCore::Timer updateTimer;
 
         /// The font cache to use with this game.
-        GTType::FontServer *fontServer;
+        GTType::FontServer* fontServer;
 
         /// The generic font we'll use for basically everything.
-        GTType::Font *defaultFont;
+        GTType::Font* defaultFont;
 
         /// The GUI of this game. There is only a single GUI for every game. A game should dynamically show and hide root elements
         /// to show different GUI's for different game states. We use a pointer here because we need to pass it a font server to
@@ -494,7 +494,7 @@ namespace GTEngine
         GTGUI::Server* gui;
 
         /// The event handler for the GUI. This is constructed at the same time as 'gui'.
-        GTGUI::ServerEventHandler *guiEventHandler;
+        GTGUI::ServerEventHandler* guiEventHandler;
 
         /// Whether or not the game is paused. A paused game will continue to render, but scene nodes and animations will not tick.
         bool paused;

@@ -18,12 +18,12 @@ namespace GTEngine
         /**
         *   \brief  Initialises the font manager.
         */
-        static bool Initialise();
+        static bool Startup();
 
         /**
         *   \brief  Uninitialises the font manager.
         */
-        static void Uninitialise();
+        static void Shutdown();
 
         /**
         *   \brief  Retrieves the texture that is mapped to the given font.
