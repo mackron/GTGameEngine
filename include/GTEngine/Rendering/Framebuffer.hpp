@@ -165,13 +165,14 @@ namespace GTEngine
 
             ~_syncinfo()
             {
-                delete this->colourChanged;
+                delete [] this->colourChanged;
             }
 
             size_t colourCount;
 
-            bool *colourChanged;
+            bool* colourChanged;
             bool  depthStencilChanged;
+
 
         private:    // No copying.
             _syncinfo(const _syncinfo &);
