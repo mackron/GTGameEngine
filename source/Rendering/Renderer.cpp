@@ -340,8 +340,9 @@ namespace GTEngine
     // Hardware capabilities.
     struct _RendererCaps
     {
-        GLint MaxColourAttachments;         //< The maximum number of framebuffer colour attachments.
-        GLint MaxDrawBuffers;               //< The maximum number of draw buffers for MRT.
+        GLint MaxColourAttachments;         ///< The maximum number of framebuffer colour attachments.
+        GLint MaxDrawBuffers;               ///< The maximum number of draw buffers for MRT.
+        GLint MaxTextureUnits;              ///< The maximum number of active texture units.
 
     }RendererCaps;
 
@@ -438,8 +439,8 @@ namespace GTEngine
 
         GLuint object;
 
-        Texture2D ** colourAttachments;
-        Texture2D  * depthStencilAttachment;
+        Texture2D** colourAttachments;
+        Texture2D * depthStencilAttachment;
 
     private:    // No copying.
         Framebuffer_GL20(const Framebuffer_GL20 &);
@@ -690,7 +691,7 @@ namespace GTEngine
                 Log("    Vertex Shader Profile:   %s", cgGetProfileString(VertexShaderProfile));
                 Log("    Fragment Shader Profile: %s", cgGetProfileString(FragmentShaderProfile));
 
-                cgGLSetManageTextureParameters(ShaderContext, CG_TRUE);
+                //cgGLSetManageTextureParameters(ShaderContext, CG_TRUE);
 
                 IsCgInitialised = true;
             }
@@ -1115,7 +1116,7 @@ namespace GTEngine
         }
 
         // Syncing binds...
-        glBindBuffer(GL_ARRAY_BUFFER, vertexArrayData->verticesObject);
+        glBindBuffer(GL_ARRAY_BUFFER,         vertexArrayData->verticesObject);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexArrayData->indicesObject);
 
         if (vertexArray->syncinfo.verticesChanged)
@@ -1184,7 +1185,7 @@ namespace GTEngine
                 Log("    EXT_framebuffer_object:             %s", GTGL_EXT_framebuffer_object             ? "yes" : "no");
                 Log("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
                 Log("    EXT_texture_filter_anisotropic:     %s", GTGL_EXT_texture_filter_anisotropic     ? "yes" : "no");
-                //Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
+                Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
                 
                 /*
                 const char *extensions = (const char *)glGetString(GL_EXTENSIONS);
@@ -1199,17 +1200,20 @@ namespace GTEngine
             #endif
 
                 // Here we'll grab the renderer's capabilities.
-                glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &RendererCaps.MaxColourAttachments);
-                glGetIntegerv(GL_MAX_DRAW_BUFFERS,      &RendererCaps.MaxDrawBuffers);
+                glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS,   &RendererCaps.MaxColourAttachments);
+                glGetIntegerv(GL_MAX_DRAW_BUFFERS,        &RendererCaps.MaxDrawBuffers);
+                glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &RendererCaps.MaxTextureUnits);
 
                 Log("Renderer Caps:");
                 Log("    Max Colour Attachments: %d", RendererCaps.MaxColourAttachments);
                 Log("    Max Draw Buffers:       %d", RendererCaps.MaxDrawBuffers);
+                Log("    Max Texture Units:      %d", RendererCaps.MaxTextureUnits);
+
                 
                 // VirtualBox with Cg doesn't work very well at all. So far I've got it working in a very specific situation. The Cg profiles must
                 // be GLSL. Anything else, and it will crash. Also, whenever setting a parameter, the shader needs to be re-bound.
                 RendererIsChromium = GTCore::Strings::Equal<false>((const char *)glGetString(GL_RENDERER), "Chromium");
-                RendererIsIntel    = GTCore::Strings::Equal<false>((const char *)glGetString(GL_VENDOR), "Intel");
+                RendererIsIntel    = GTCore::Strings::Equal<false>((const char *)glGetString(GL_VENDOR),   "Intel");
 
                 if (InitialiseCg())
                 {
@@ -1653,20 +1657,8 @@ namespace GTEngine
         {
             RendererState.CurrentShader = shader;
 
-            // With the shader bound, we will now loop through each pending parameter and set them.
-            auto &pendingParams = shader->GetPendingParameters();
-            for (size_t i = 0; i < pendingParams.count; ++i)
-            {
-                auto iParam = pendingParams.buffer[i];
-                assert(iParam        != nullptr);
-                assert(iParam->value != nullptr);
-
-                iParam->value->SetOnCurrentShader(iParam->key);
-            }
-
-            // It's important that pending parameters are cleared after setting so that they aren't set again
-            // the next time it is made current.
-            shader->ClearPendingParameters();
+            Renderer::BindCurrentShaderTextures();
+            Renderer::UpdateCurrentShaderParameters();
         }
         else
         {
@@ -1681,8 +1673,98 @@ namespace GTEngine
         }
     }
 
+    void Renderer::UpdateCurrentShaderParameters()
+    {
+        if (RendererState.CurrentShader != nullptr)
+        {
+            // With the shader bound, we will now loop through each pending parameter and set them.
+            auto &pendingParams = RendererState.CurrentShader->GetPendingParameters();
+            for (size_t i = 0; i < pendingParams.count; ++i)
+            {
+                auto iParam = pendingParams.buffer[i];
+                assert(iParam        != nullptr);
+                assert(iParam->value != nullptr);
+
+                iParam->value->SetOnCurrentShader(iParam->key);
+            }
+
+
+            // It's important that pending parameters are cleared after setting so that they aren't set again
+            // the next time it is made current.
+            RendererState.CurrentShader->ClearPendingParameters();
+        }
+    }
+
+    void Renderer::BindCurrentShaderTextures()
+    {
+        CGprogram program = Renderer_GetCurrentCgProgram();
+        if (program != nullptr)
+        {
+            // With the shader current, we now need to bind the textures that are active on it. Each of these textures need to be synched on the appropriate texture unit.
+            for (size_t i = 0; i < RendererState.CurrentShader->currentTexture2Ds.count; ++i)
+            {
+                auto iTexture = RendererState.CurrentShader->currentTexture2Ds.buffer[i];
+
+                glActiveTexture(GL_TEXTURE0 + i);
+                glEnable(GL_TEXTURE_2D);
+
+                if (Renderer_SyncTexture2D(iTexture->value))       // <-- This will bind the texture.
+                {
+                    CGparameter param = cgGetNamedParameter(program, iTexture->key);
+                    cgGLSetTextureParameter(param, static_cast<Texture2D_GL20*>(iTexture->value->rendererData)->object);
+                    //cgGLEnableTextureParameter(param);    // Leaking memory?
+                }
+            }
+        }
+    }
+
+
     void Renderer::SetShaderParameter(const char *paramName, Texture2D *value)
     {
+        CGprogram program = Renderer_GetCurrentCgProgram();
+        if (program != nullptr)
+        {
+            auto iTexture = RendererState.CurrentShader->currentTexture2Ds.Find(paramName);
+            if (iTexture != nullptr)
+            {
+                // If the texture is the same, fall through.
+                if (iTexture->value != value)
+                {
+                    // We need to keep track of the old texture so we can check if the shader is using it elsewhere and then call Texture2D->OnShaderDetached() if appropriate.
+                    auto oldTexture = iTexture->value;
+                    iTexture->value = value;
+
+                    // All we need to do is change the binding for the texture.
+                    glActiveTexture(GL_TEXTURE0 + iTexture->index);
+
+                    if (Renderer_SyncTexture2D(iTexture->value))       // <-- This will bind the texture.
+                    {
+                        CGparameter param = cgGetNamedParameter(program, iTexture->key);
+                        cgGLSetTextureParameter(param, static_cast<Texture2D_GL20*>(iTexture->value->rendererData)->object);
+                        //cgGLEnableTextureParameter(param);
+                    }
+
+                    // Now we need to let the shader know about the old texture.
+                    RendererState.CurrentShader->OnTextureParameterChanged(oldTexture);
+                }
+            }
+            else
+            {
+                // The texture doesn't exist. We need to add it and then just rebind every texture.
+                RendererState.CurrentShader->currentTexture2Ds.Add(paramName, value);
+                Renderer::BindCurrentShaderTextures();
+            }
+
+
+            // The new texture needs to be aware that it is attached to a shader.
+            if (value != nullptr)
+            {
+                value->OnAttachToShader(RendererState.CurrentShader);
+            }
+        }
+
+
+#if 0
         CGprogram program = Renderer_GetCurrentCgProgram();
         if (program != nullptr)
         {
@@ -1712,6 +1794,7 @@ namespace GTEngine
                 cgGLBindProgram(program);
             }
         }
+#endif
     }
 
     void Renderer::SetShaderParameter(const char *paramName, float x)

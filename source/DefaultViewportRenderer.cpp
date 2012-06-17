@@ -538,6 +538,7 @@ namespace GTEngine
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
 
+                    rcDrawVA->SetShader(this->Shaders.lightingA1);
 
                     rcDrawVA->SetParameter("ALights0.Colour", A0->GetColour());
 
@@ -580,6 +581,8 @@ namespace GTEngine
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
 
+                    rcDrawVA->SetShader(this->Shaders.lightingD1);
+
                     rcDrawVA->SetParameter("DLights0.Colour",    D0->GetColour());
                     rcDrawVA->SetParameter("DLights0.Direction", glm::normalize(glm::mat3(this->view) * D0->GetNode().GetWorldForwardVector()));
 
@@ -620,6 +623,8 @@ namespace GTEngine
 
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
+
+                    rcDrawVA->SetShader(this->Shaders.lightingP1);
 
                     rcDrawVA->SetParameter("PLights0.Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
                     rcDrawVA->SetParameter("PLights0.Colour",               P0->GetColour());
@@ -664,6 +669,8 @@ namespace GTEngine
 
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
+
+                    rcDrawVA->SetShader(this->Shaders.lightingS1);
 
                     rcDrawVA->SetParameter("SLights0.Position",             glm::vec3(this->view * glm::vec4(S0->GetNode().GetWorldPosition(), 1.0f)));
                     rcDrawVA->SetParameter("SLights0.Direction",            glm::normalize(glm::mat3(this->view) * S0->GetNode().GetWorldForwardVector()));
@@ -715,8 +722,9 @@ namespace GTEngine
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
 
-                    rcDrawVA->SetParameter("ALights0.Colour",    A0->GetColour());
+                    rcDrawVA->SetShader(this->Shaders.lightingA1D1);
 
+                    rcDrawVA->SetParameter("ALights0.Colour",    A0->GetColour());
                     rcDrawVA->SetParameter("DLights0.Colour",    D0->GetColour());
                     rcDrawVA->SetParameter("DLights0.Direction", glm::normalize(glm::mat3(this->view) * D0->GetNode().GetWorldForwardVector()));
 
@@ -759,8 +767,9 @@ namespace GTEngine
                     assert(rcDrawVA         != nullptr);
                     assert(rcSetFaceCulling != nullptr);
 
-                    rcDrawVA->SetParameter("ALights0.Colour", A0->GetColour());
+                    rcDrawVA->SetShader(this->Shaders.lightingA1P1);
 
+                    rcDrawVA->SetParameter("ALights0.Colour", A0->GetColour());
                     rcDrawVA->SetParameter("PLights0.Position",             glm::vec3(this->view * glm::vec4(P0->GetNode().GetWorldPosition(), 1.0f)));
                     rcDrawVA->SetParameter("PLights0.Colour",               P0->GetColour());
                     rcDrawVA->SetParameter("PLights0.ConstantAttenuation",  P0->GetConstantAttenuation());

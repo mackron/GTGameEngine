@@ -85,6 +85,14 @@ namespace GTEngine
         void ClearPendingParameters();
 
 
+        /// Called when a texture is destructed and thus no longer part of the shader.
+        void OnTextureDeleted(Texture2D* texture);
+
+        /// Called when a texture parameter is being changed. We use this to check whether or not we need to let the texture
+        /// know that it's no longer being used by the shader.
+        void OnTextureParameterChanged(Texture2D* oldTexture);
+
+
 
     private:
 
@@ -97,6 +105,11 @@ namespace GTEngine
 
         /// A pointer to renderer-specific data.
         void *rendererData;
+
+
+        /// We keep an array of texture 2Ds being used by the shader. As the shader parameters of a shader change, they are updated here. These
+        /// are index by parameter name. This is NOT updated by SetParameter(), but is instead used internally by the renderer.
+        GTCore::Dictionary<Texture2D*> currentTexture2Ds;
 
 
     private:    // No copying.

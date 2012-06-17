@@ -303,6 +303,17 @@ namespace GTEngine
         */
         static void SetShader(Shader *shader);
 
+        /// Updates the shader parameters of the current shader.
+        ///
+        /// @remarks
+        ///     The renderer will apply shader parameters during SetShader(), but in order to change parameters on the current shader, an
+        ///     application will need to "apply" those parameters by using this function instead.
+        static void UpdateCurrentShaderParameters();
+
+        /// Activates, enables and binds the textures of the current shader.
+        static void BindCurrentShaderTextures();
+
+        
         static void SetShaderParameter(const char *paramName, Texture2D *texture);
         static void SetShaderParameter(const char *paramName, float x);
         static void SetShaderParameter(const char *paramName, float x, float y);
@@ -324,6 +335,7 @@ namespace GTEngine
         {
             SetShaderParameter(paramName, value.x, value.y, value.z, value.w);
         }
+        
 
 
 
