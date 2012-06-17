@@ -3,8 +3,56 @@
 #include <GTEngine/MeshBuilder.hpp>
 #include <GTCore/Math.hpp>
 
+
 namespace GTEngine
 {
+    static VertexArray* FullscreenQuad = nullptr;
+
+    VertexArray* VertexArrayLibrary::GetFullscreenQuadVA()
+    {
+        if (FullscreenQuad == nullptr)
+        {
+            FullscreenQuad = new VertexArray(VertexArrayUsage_Static, VertexFormat::P2);
+            
+            float vertices[] =
+            {
+                -1.0f, -1.0f,
+                 1.0f, -1.0f,
+                 1.0f,  1.0f,
+                -1.0f,  1.0f,
+            };
+
+            unsigned int indices[] =
+            {
+                0, 1, 2,
+                2, 3, 0,
+            };
+            
+            FullscreenQuad->SetData(vertices, 4, indices, 6);
+        }
+
+        return FullscreenQuad;
+    }
+}
+
+
+namespace GTEngine
+{
+    ////////////////////////////////////////////////////////////////
+    // Startup/Shutdown.
+
+    bool VertexArrayLibrary::Startup()
+    {
+        return true;
+    }
+
+    void VertexArrayLibrary::Shutdown()
+    {
+        delete FullscreenQuad;
+        FullscreenQuad = nullptr;
+    }
+
+
     ////////////////////////////////////////////////////////////////
     // Primitive Shapes
 
@@ -242,38 +290,5 @@ namespace GTEngine
         }
 
         return nullptr;
-    }
-}
-
-
-
-namespace GTEngine
-{
-    static VertexArray* FullscreenQuad = nullptr;
-
-    VertexArray* VertexArrayLibrary::GetFullscreenQuadVA()
-    {
-        if (FullscreenQuad == nullptr)
-        {
-            FullscreenQuad = new VertexArray(VertexArrayUsage_Static, VertexFormat::P2);
-            
-            float vertices[] =
-            {
-                -1.0f, -1.0f,
-                 1.0f, -1.0f,
-                 1.0f,  1.0f,
-                -1.0f,  1.0f,
-            };
-
-            unsigned int indices[] =
-            {
-                0, 1, 2,
-                2, 3, 0,
-            };
-            
-            FullscreenQuad->SetData(vertices, 4, indices, 6);
-        }
-
-        return FullscreenQuad;
     }
 }

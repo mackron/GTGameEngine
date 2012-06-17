@@ -9,15 +9,19 @@
 namespace GTEngine
 {
     /// Used to map a font with a texture.
-    GTCore::Map<const GTType::Font *, Texture2D *> FontTextureMap;
+    GTCore::Map<const GTType::Font*, Texture2D*> FontTextureMap;
 
-    bool FontManager::Initialise()
+    bool FontManager::Startup()
     {
         return true;
     }
 
-    void FontManager::Uninitialise()
+    void FontManager::Shutdown()
     {
+        for (size_t i = 0; i < FontTextureMap.count; ++i)
+        {
+            delete FontTextureMap.buffer[i]->value;
+        }
     }
 
     Texture2D * FontManager::GetTexture(const GTType::Font &font)

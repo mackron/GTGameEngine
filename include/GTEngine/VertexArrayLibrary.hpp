@@ -13,6 +13,18 @@ namespace GTEngine
     public:
 
         ////////////////////////////////////////////////////////////////
+        // Startup/Shutdown
+
+        /// Starts up the library.
+        static bool Startup();
+
+        /// Shuts down the library.
+        static void Shutdown();
+
+
+
+
+        ////////////////////////////////////////////////////////////////
         // Primitive Shapes
 
         /// Creates a vertex array for the given shape.

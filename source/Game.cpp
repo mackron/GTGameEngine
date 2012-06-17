@@ -558,6 +558,10 @@ namespace GTEngine
         delete this->fontServer;
         delete this->guiEventHandler;
         delete this->window;
+
+        ThreadCache::UnacquireThread(this->updateThread);
+
+        delete this->updateJob;
     }
 
     void Game::Loop()

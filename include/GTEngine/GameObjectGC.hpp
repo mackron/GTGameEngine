@@ -36,7 +36,9 @@ namespace GTEngine
         void MarkForCollection(GameObject &object);
 
         /// Collects any marked objects whose counters are 0.
-        void Collect();
+        ///
+        /// @param force [in] Controls whether or not to force deletetion of the objects regardless of their counters.
+        void Collect(bool force = false);
 
 
     private:

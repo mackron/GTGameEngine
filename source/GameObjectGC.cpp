@@ -10,6 +10,7 @@ namespace GTEngine
 
     GameObjectGC::~GameObjectGC()
     {
+        this->Collect(true);    // 'true' means to force deletion regardless of counters.
     }
 
 
@@ -22,7 +23,7 @@ namespace GTEngine
         }
     }
 
-    void GameObjectGC::Collect()
+    void GameObjectGC::Collect(bool force)
     {
         for (auto i = this->objects.root; i != nullptr; )
         {
@@ -31,7 +32,7 @@ namespace GTEngine
             auto object = i->value;
             assert(object != nullptr);
 
-            if (object->GetGCCounter() == 0)
+            if (force || object->GetGCCounter() == 0)
             {
                 delete object;
                 this->objects.Remove(i);

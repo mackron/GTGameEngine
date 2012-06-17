@@ -27,8 +27,7 @@ namespace GTEngine
         cameraNode.MoveForward(-10.0f);
 
         
-        auto modelComponent = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/default.dae"));
-        auto model = modelComponent->GetModel();
+        auto model = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/default.dae"))->GetModel();
         model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/default.material"));
 
 
@@ -43,71 +42,13 @@ namespace GTEngine
 
         this->scene.AddSceneNode(this->cameraNode);
         this->scene.AddSceneNode(this->modelNode);
-
-        
-
-#if 0
-        // TESTING.
-        //
-        // Here we are going to build a chain of scene nodes representing the bones.
-        //
-        // We'll build these in two passes. The first pass will construct a scene node for each bone, naming them appropriately. The second pass will
-        // link the nodes together to form the hierarchy.
-        auto &bones = modelComponent->GetModel()->bones;
-        for (size_t i = 0; i < bones.count; ++i)
-        {
-            auto bone = bones.buffer[i]->value;
-            assert(bone != nullptr);
-
-            auto boneSceneNode = new SceneNode;
-            boneSceneNode->SetName(bone->GetName());
-
-
-            //glm::mat4 transform = bone->GetTransform();
-
-            //boneSceneNode->SetPosition(glm::vec3(transform[3]));
-            //boneSceneNode->SetOrientation(glm::quat(transform));
-
-            boneSceneNode->SetPosition(bone->GetPosition());
-            boneSceneNode->SetOrientation(bone->GetRotation());
-            boneSceneNode->SetScale(bone->GetScale());
-            
-            boneSceneNode->SetDataPointer(0, bone);
-
-            auto model = boneSceneNode->AddModelComponent(ModelLibrary::LoadFromFile("engine/models/default.dae"))->GetModel();
-            model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
-            
-            this->boneSceneNodes.Add(bone->GetName(), boneSceneNode);
-            this->scene.AddSceneNode(*boneSceneNode);
-
-            //printf("Testing: %s\n", glm::to_string(boneSceneNode->GetWorldTransformMatrix()).c_str());
-            //printf("Testing: %s\n", glm::to_string(bone->GetOffsetMatrix()).c_str());
-            //printf("Testing: %s. %f %f %f.\n", boneSceneNode->GetName(), boneSceneNode->GetPosition().x, boneSceneNode->GetPosition().y, boneSceneNode->GetPosition().z);
-        }
-
-        for (size_t i = 0; i < bones.count; ++i)
-        {
-            auto bone = bones.buffer[i]->value;
-            assert(bone != nullptr);
-
-            if (bone->GetParent() != nullptr)
-            {
-                auto boneSceneNode = this->boneSceneNodes.Find(bone->GetName())->value;
-                assert(boneSceneNode != nullptr);
-
-                auto parentSceneNode = this->boneSceneNodes.Find(bone->GetParent()->GetName())->value;
-                assert(parentSceneNode != nullptr);
-
-                parentSceneNode->AttachChild(*boneSceneNode);
-            }
-        }
-#endif
-
-        
     }
 
     ModelEditor::~ModelEditor()
     {
+        auto model = modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
+        GTEngine::MaterialLibrary::Delete(model->meshes[0]->GetMaterial());
+        GTEngine::ModelLibrary::Delete(model);
     }
 
     bool ModelEditor::Startup(GTGUI::Server &guiServer)
@@ -138,37 +79,6 @@ namespace GTEngine
     {
         if (this->GUI.ModelViewport->IsVisible())
         {
-#if 0
-            // TESTING
-            //
-            // We will grab the model and step it's animation.
-            {
-                auto model = this->modelNode.GetComponent<ModelComponent>()->GetModel();
-                assert(model != nullptr);
-
-
-                //model->StepAnimation(deltaTimeInSeconds);
-
-
-                // With the animation stepped, we're going to need to update the scene nodes.
-                for (size_t i = 0; i < this->boneSceneNodes.count; ++i)
-                {
-                    auto boneSceneNode = this->boneSceneNodes.buffer[i]->value;
-                    auto bone = boneSceneNode->GetDataPointer<Bone>(0);
-
-                    //glm::mat4 transform = bone->GetTransform();
-
-                    //boneSceneNode->SetPosition(glm::vec3(transform[3]));
-                    //boneSceneNode->SetOrientation(glm::quat(transform));
-
-                    boneSceneNode->SetPosition(bone->GetPosition());
-                    boneSceneNode->SetOrientation(bone->GetRotation());
-                    boneSceneNode->SetScale(bone->GetScale());
-                }
-            }
-#endif
-
-
             // If the mouse is captured we may need to move the screen around.
             if (this->game.IsMouseCaptured())
             {

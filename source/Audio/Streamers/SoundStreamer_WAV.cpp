@@ -66,7 +66,7 @@ namespace GTEngine
     }
 
 
-    uint32_t SoundStreamer_WAV::ReadChunk(void *data)
+    uint32_t SoundStreamer_WAV::ReadChunk(void* data)
     {
         assert(data != nullptr);
 

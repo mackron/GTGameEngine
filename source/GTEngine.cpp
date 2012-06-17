@@ -10,6 +10,7 @@
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
+#include <GTEngine/FontManager.hpp>
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/IO.hpp>
 
@@ -100,11 +101,18 @@ namespace GTEngine
         ModelLibrary::Startup();
 
 
+        // The font manager.
+        Log("Initializing Font Manager...");
+        FontManager::Startup();
+
+
         return true;
     }
 
     void Shutdown()
     {
+        FontManager::Shutdown();
+
         // We kill our libraries before the major sub-systems.
         ModelLibrary::Shutdown();
         MaterialLibrary::Shutdown();
