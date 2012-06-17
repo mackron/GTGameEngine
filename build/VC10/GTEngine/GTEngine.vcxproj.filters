@@ -72,6 +72,9 @@
     <Filter Include="include\Animation">
       <UniqueIdentifier>{061ce260-9e51-4afa-ad1b-01d5a2b1e1b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="data\shaders\glsl">
+      <UniqueIdentifier>{532d38ed-b907-4c85-a37d-450db5e593b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -668,6 +671,21 @@
     </None>
     <None Include="..\..\..\bin\data\engine\shaders\cg\materials.shader">
       <Filter>data\shaders\cg</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\shaders\glsl\core.shader">
+      <Filter>data\shaders\glsl</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\shaders\glsl\defaultrenderer.shader">
+      <Filter>data\shaders\glsl</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\shaders\glsl\gui.shader">
+      <Filter>data\shaders\glsl</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\shaders\glsl\lines.shader">
+      <Filter>data\shaders\glsl</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\shaders\glsl\materials.shader">
+      <Filter>data\shaders\glsl</Filter>
     </None>
   </ItemGroup>
 </Project>

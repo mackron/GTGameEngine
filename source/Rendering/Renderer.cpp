@@ -11,8 +11,6 @@
 #include <GTGUI/Server.hpp>
 
 #include <gtgl/gtgl.h>
-#include <Cg/cg.h>
-#include <Cg/cgGL.h>
 
 #if defined(LICK_PLATFORM_WINDOWS)
 #include <windows.h>
@@ -323,19 +321,15 @@ namespace GTEngine
     bool IsSRGBEnabled         = false;
 
     // For some VirtualBox hacking...
-    bool RendererIsChromium = false;
+    //bool RendererIsChromium = false;
 
     // For some Intel hacking...
-    bool RendererIsIntel = false;
+    //bool RendererIsIntel = false;
 
 
     // This is a bitfield containing bits representing which vertex attributes are currently enabled on the OpenGL side.
     uint32_t VertexAttribEnableBits = 0x0;
 
-    // The global Cg context for shaders.
-    CGcontext ShaderContext         = nullptr;
-    CGprofile VertexShaderProfile   = CG_PROFILE_GLSLV;
-    CGprofile FragmentShaderProfile = CG_PROFILE_GLSLF;
 
     // Hardware capabilities.
     struct _RendererCaps
@@ -450,13 +444,18 @@ namespace GTEngine
     struct Shader_GL20
     {
         Shader_GL20()
-            : object(0), usingVertex(false), usingFragment(false)
+            : program(0), vertexShader(0), fragmentShader(0)
         {
         }
 
-        CGprogram object;
-        bool usingVertex;
-        bool usingFragment;
+        /// The main program object.
+        GLuint program;
+
+        /// The vertex shader object. We keep hold of this so we can relink when vertex atribute positions are changed.
+        GLuint vertexShader;
+
+        /// The fragment shader object. We keep hold of this so we can relink when vertex attribute positions are changed.
+        GLuint fragmentShader;
     };
 
     struct VertexArray_GL20
@@ -633,103 +632,35 @@ namespace GTEngine
 namespace GTEngine
 {
     /**
-    *   \brief  Callback function for Cg errors.
+    *   \brief  Retrieves the shader program object associated with the given shader.
     */
-    void CgErrorCallback()
-    {
-        auto error = cgGetError();
-        auto msg   = cgGetErrorString(error);
-
-        GTEngine::PostError("Cg error: %s", msg);
-    }
-
-    /**
-    *   \brief  Initialises Cg.
-    */
-    bool InitialiseCg()
-    {
-        if (!IsCgInitialised)
-        {
-            Log("Initialising Cg");
-
-            // Here we are initialising Cg.
-            ShaderContext = cgCreateContext();
-            if (ShaderContext != nullptr)
-            {
-                cgGLSetDebugMode(CG_TRUE);
-
-                // If we're Intel or Chromium, we must always use the GLSL profiles (the default).
-                //
-                // With Intel, the ARBVP/ARBFP profiles don't want to work with the default renderer. More research is needed here.
-                if (!RendererIsIntel && !RendererIsChromium)
-                {
-                    VertexShaderProfile   = cgGLGetLatestProfile(CG_GL_VERTEX);
-                    FragmentShaderProfile = cgGLGetLatestProfile(CG_GL_FRAGMENT);
-
-                    // Some profiles don't work well with MRT. We want to use at least GLSL, or ARBVP1/ARBFP1. If we retrieve FP20, FP30 or FP40, we want
-                    // to switch to either ARBVP1/ARBFP1 or GLSL.
-                    if (FragmentShaderProfile < CG_PROFILE_GLSLF && FragmentShaderProfile != CG_PROFILE_ARBFP1)
-                    {
-                        // We actually prefer ARB shaders here. In practice, most drivers should support ARBVP1 and ARBFP1. However, since it's an extension,
-                        // we'll do it correctly and check for it first.
-                        if (GTGL_ARB_fragment_program)
-                        {
-                            VertexShaderProfile   = CG_PROFILE_ARBVP1;
-                            FragmentShaderProfile = CG_PROFILE_ARBFP1;
-                        }
-                        else
-                        {
-                            VertexShaderProfile   = CG_PROFILE_GLSLV;
-                            FragmentShaderProfile = CG_PROFILE_GLSLF;
-                        }
-                    }
-                }
-                
-                cgGLSetOptimalOptions(VertexShaderProfile);
-                cgGLSetOptimalOptions(FragmentShaderProfile);
-
-                Log("    Vertex Shader Profile:   %s", cgGetProfileString(VertexShaderProfile));
-                Log("    Fragment Shader Profile: %s", cgGetProfileString(FragmentShaderProfile));
-
-                //cgGLSetManageTextureParameters(ShaderContext, CG_TRUE);
-
-                IsCgInitialised = true;
-            }
-        }
-
-        return IsCgInitialised;
-    }
-
-    /**
-    *   \brief  Retrieves the Cg program object associated with the given shader.
-    */
-    CGprogram Renderer_GetCgProgramFromShader(const Shader *shader)
+    GLuint Renderer_GetShaderProgramFromShader(const Shader* shader)
     {
         if (shader != nullptr)
         {
-            auto rendererData = (const Shader_GL20 *)shader->GetRendererData();
+            auto rendererData = static_cast<const Shader_GL20*>(shader->GetRendererData());
             if (rendererData != nullptr)
             {
-                return rendererData->object;
+                return rendererData->program;
             }
         }
 
-        return nullptr;
+        return 0;
     }
 
-    CGprogram Renderer_GetCurrentCgProgram()
+    GLuint Renderer_GetCurrentShaderProgram()
     {
-        return Renderer_GetCgProgramFromShader(RendererState.CurrentShader);
+        return Renderer_GetShaderProgramFromShader(RendererState.CurrentShader);
     }
 
     bool Renderer_IsShaderUsingVertex(const Shader *shader)
     {
         if (shader != nullptr)
         {
-            auto rendererData = (const Shader_GL20 *)shader->GetRendererData();
+            auto rendererData = static_cast<const Shader_GL20*>(shader->GetRendererData());
             if (rendererData != nullptr)
             {
-                return rendererData->usingVertex;
+                return rendererData->vertexShader != 0;
             }
         }
 
@@ -740,59 +671,101 @@ namespace GTEngine
     {
         if (shader != nullptr)
         {
-            auto rendererData = (const Shader_GL20 *)shader->GetRendererData();
+            auto rendererData = static_cast<const Shader_GL20*>(shader->GetRendererData());
             if (rendererData != nullptr)
             {
-                return rendererData->usingFragment;
+                return rendererData->fragmentShader != 0;
             }
         }
 
         return false;
     }
 
-    /**
-    *   \brief  Logs the last Cg listing. This needs to be called after every program is compiled.
-    */
-    void Renderer_LogLastCgListing(const char* source = nullptr)
+    // Helper for linking the given shader.
+    void Renderer_LinkShader(Shader* shader)
     {
-        const char *listing = cgGetLastListing(ShaderContext);
-        if (listing != nullptr)
+        auto rendererData = static_cast<const Shader_GL20*>(shader->GetRendererData());
+        if (rendererData != nullptr)
         {
-            Log("%s", listing);
-
-            // When we have a shader listing, we'll be best off showing the source so we can easily fix the error. We will also need
-            // line numbers. We're going to construct a string with line numbers so we can easily see where any errors are located.
-            if (source != nullptr)
+            // First we detach everything.
+            if (rendererData->program != 0)
             {
-                GTCore::String shaderString;
-
-                int lineNumber = 1;
-
-                // We can use a tokenizer to filter the lines.
-                GTCore::Strings::Tokenizer line(source, "\n");
-                while (line)
+                if (rendererData->vertexShader != 0)
                 {
-                    shaderString.Append(GTCore::ToString(lineNumber));
-                    shaderString.Append(":");
-                    shaderString.Append(line.start, line.GetSizeInTs());
-                    shaderString.Append("\n");
-
-                    ++line;
-                    ++lineNumber;
+                    //glDetachShader(rendererData->program, rendererData->vertexShader);
                 }
-
-                Log("%s", shaderString.c_str());
+                if (rendererData->fragmentShader != 0)
+                {
+                    //glDetachShader(rendererData->program, rendererData->fragmentShader);
+                }
             }
+
+
+            // Now we need to set the vertex attribute locations from the shader.
+            auto &attribs = shader->GetVertexAttributeLocations();
+            for (size_t i = 0; i < attribs.count; ++i)
+            {
+                auto iAttrib = attribs.buffer[i];
+                assert(iAttrib != nullptr);
+
+                glBindAttribLocation(rendererData->program, iAttrib->value, iAttrib->key);
+            }
+
+
+            // Finally we reattach the shaders, link the program and check for errors.
+            if (rendererData->vertexShader != 0)   glAttachShader(rendererData->program, rendererData->vertexShader);
+            if (rendererData->fragmentShader != 0) glAttachShader(rendererData->program, rendererData->fragmentShader);
+
+            glLinkProgram(rendererData->program);
+
+
+            // Check for link errors.
+            GLint linkStatus;
+            glGetProgramiv(rendererData->program, GL_LINK_STATUS, &linkStatus);
+
+            if (linkStatus == GL_FALSE)
+            {
+                GLint logLength;
+                glGetProgramiv(rendererData->program, GL_INFO_LOG_LENGTH, &logLength);
+
+                auto log = new char[logLength];
+                glGetProgramInfoLog(rendererData->program, logLength, nullptr, log);
+
+                Log("--- Program Link Status ---\n%s", log);
+
+                delete [] log;
+            }
+
+            // Shader needs to know that it was linked.
+            shader->OnLink();
         }
     }
 
-    /**
-    *   \brief  Logs the Cg generated shader string for the given Cg shader.
-    */
-    void Renderer_LogCgShaderString(CGprogram shader)
+
+    void Renderer_LogShaderInfoLog(GLuint shader, const char* source)
     {
-        Log("Shader String for %p:\n%s", shader, cgGetProgramString(shader, CG_COMPILED_PROGRAM));
+        GLint compileStatus;
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
+
+        if (compileStatus == GL_FALSE)
+        {
+            GLint shaderType;
+            glGetShaderiv(shader, GL_SHADER_TYPE, &shaderType);
+
+            GLint logLength;
+            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+
+            auto log = new char[logLength];
+            glGetShaderInfoLog(shader, logLength, nullptr, log);
+
+            Log("--- %s ---\n%s\n%s", (shaderType == GL_VERTEX_SHADER) ? "Vertex Shader Info Log" : "Fragment Shader Info Log", log, source);
+
+            delete [] log;
+        }
     }
+
+
+    
 
     /**
     *   \brief  Retrieves the OpenGL framebuffer object from the given framebuffer.
@@ -1018,82 +991,48 @@ namespace GTEngine
                 rendererData = new Shader_GL20;
                 shader->SetRendererData(rendererData);
 
-                CGprogram vertexProgram   = nullptr;
-                CGprogram fragmentProgram = nullptr;
-
                 if (shader->GetVertexSource() != nullptr)
                 {
-                    vertexProgram = cgCreateProgram(ShaderContext, CG_SOURCE, shader->GetVertexSource(), VertexShaderProfile, "main", nullptr);
-                    Renderer_LogLastCgListing(shader->GetVertexSource());
-                    //Renderer_LogCgShaderString(vertexProgram);
+                    auto source       = shader->GetVertexSource();
+                    auto sourceLength = static_cast<GLint>(GTCore::Strings::SizeInBytes(source));
+
+                    rendererData->vertexShader = glCreateShader(GL_VERTEX_SHADER);
+                    glShaderSource(rendererData->vertexShader, 1, &source, &sourceLength);
+                    glCompileShader(rendererData->vertexShader);
+
+                    Renderer_LogShaderInfoLog(rendererData->vertexShader, source);
                 }
 
                 if (shader->GetFragmentSource() != nullptr)
                 {
-                    fragmentProgram = cgCreateProgram(ShaderContext, CG_SOURCE, shader->GetFragmentSource(), FragmentShaderProfile, "main", nullptr);
-                    Renderer_LogLastCgListing(shader->GetFragmentSource());
-                    //Renderer_LogCgShaderString(fragmentProgram);
+                    auto source = shader->GetFragmentSource();
+                    auto sourceLength = static_cast<GLint>(GTCore::Strings::SizeInBytes(source));
+
+                    rendererData->fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+                    glShaderSource(rendererData->fragmentShader, 1, &source, &sourceLength);
+                    glCompileShader(rendererData->fragmentShader);
+
+                    Renderer_LogShaderInfoLog(rendererData->fragmentShader, source);
                 }
                 
-                // Vertex and fragment shaders need to be combined where applicable.
-                if (vertexProgram != nullptr && fragmentProgram != nullptr)
-                {
-                    rendererData->object = cgCombinePrograms2(vertexProgram, fragmentProgram);
-                    rendererData->usingVertex   = true;
-                    rendererData->usingFragment = true;
-                    
-                    cgDestroyProgram(vertexProgram);
-                    cgDestroyProgram(fragmentProgram);
 
-                    Renderer_LogLastCgListing();
-                }
-                else
-                {
-                    if (vertexProgram != nullptr)
-                    {
-                        rendererData->object      = vertexProgram;
-                        rendererData->usingVertex = true;
-                    }
-                    else if (fragmentProgram != nullptr)
-                    {
-                        rendererData->object        = fragmentProgram;
-                        rendererData->usingFragment = true;
-                    }
-                }
+                // With the individual shaders created, we now create the main program.
+                rendererData->program = glCreateProgram();
 
-                // Here we need to load the shader.
-                if (rendererData->object != nullptr)
-                {
-                    cgGLLoadProgram(rendererData->object);
-                }
-                else
-                {
-                    GTEngine::PostError("Error creating shader. All domains failed to compile.");
-                    return false;
-                }
-            }
-
-            // Now we need to bind everything.
-            if (rendererData->usingVertex)
-            {
-                cgGLEnableProfile(VertexShaderProfile);
+                // Now we just link.
+                Renderer_LinkShader(shader);
             }
             else
             {
-                cgGLDisableProfile(VertexShaderProfile);
+                // Here we will check if anything needs to be updated. If vertex attribute locations has changed, the program needs to be relinked.
+                if (shader->NeedsRelink())
+                {
+                    Renderer_LinkShader(shader);
+                }
             }
 
-            if (rendererData->usingFragment)
-            {
-                cgGLEnableProfile(FragmentShaderProfile);
-            }
-            else
-            {
-                cgGLDisableProfile(FragmentShaderProfile);
-            }
-
-            // Here we just bind the shader like normal...
-            cgGLBindProgram(rendererData->object);
+            // Syncing binds, so we need to "use" the shader.
+            glUseProgram(rendererData->program);
 
             return true;
         }
@@ -1212,34 +1151,28 @@ namespace GTEngine
                 
                 // VirtualBox with Cg doesn't work very well at all. So far I've got it working in a very specific situation. The Cg profiles must
                 // be GLSL. Anything else, and it will crash. Also, whenever setting a parameter, the shader needs to be re-bound.
-                RendererIsChromium = GTCore::Strings::Equal<false>((const char *)glGetString(GL_RENDERER), "Chromium");
-                RendererIsIntel    = GTCore::Strings::Equal<false>((const char *)glGetString(GL_VENDOR),   "Intel");
+                //RendererIsChromium = GTCore::Strings::Equal<false>((const char *)glGetString(GL_RENDERER), "Chromium");
+                //RendererIsIntel    = GTCore::Strings::Equal<false>((const char *)glGetString(GL_VENDOR),   "Intel");
 
-                if (InitialiseCg())
-                {
-                    Renderer::BackRCQueue  = new RCQueue;
-                    Renderer::FrontRCQueue = new RCQueue;
 
-                    // We need a GUI renderer.
-                    GUIRenderer::Initialise();
+                Renderer::BackRCQueue  = new RCQueue;
+                Renderer::FrontRCQueue = new RCQueue;
 
-                    // Now we'll set some defaults.
-                    Renderer::EnableDepthTest();
-                    glDepthFunc(GL_LEQUAL);
-                    glEnable(GL_TEXTURE_2D);
-                    glEnable(GL_CULL_FACE);
+                // We need a GUI renderer.
+                GUIRenderer::Initialise();
 
-                    // We're going to initialise the X11 sub-system from here.
-                #ifdef GTGL_GLX
-                    GTCore::X11::Initialize(gtglGetDisplay());
-                #endif
+                // Now we'll set some defaults.
+                Renderer::EnableDepthTest();
+                glDepthFunc(GL_LEQUAL);
+                glEnable(GL_TEXTURE_2D);
+                glEnable(GL_CULL_FACE);
 
-                    IsRendererInitialised = true;
-                }
-                else
-                {
-                    GTEngine::PostError("Failed to initialise Cg.");
-                }
+                // We're going to initialise the X11 sub-system from here.
+            #ifdef GTGL_GLX
+                GTCore::X11::Initialize(gtglGetDisplay());
+            #endif
+
+                IsRendererInitialised = true;
             }
             else
             {
@@ -1262,9 +1195,6 @@ namespace GTEngine
 
             gtglShutdown();
             OpenGLContext = nullptr;
-
-            cgDestroyContext(ShaderContext);
-            ShaderContext = nullptr;
 
             IsRendererInitialised = false;
         }
@@ -1663,12 +1593,7 @@ namespace GTEngine
         else
         {
             // Switch to fixed function...
-            cgGLUnbindProgram(VertexShaderProfile);
-            cgGLUnbindProgram(FragmentShaderProfile);
-
-            cgGLDisableProfile(VertexShaderProfile);
-            cgGLDisableProfile(FragmentShaderProfile);
-
+            glUseProgram(0);
             RendererState.CurrentShader = nullptr;
         }
     }
@@ -1697,6 +1622,25 @@ namespace GTEngine
 
     void Renderer::BindCurrentShaderTextures()
     {
+        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        if (rendererData != nullptr)
+        {
+            for (size_t i = 0; i < RendererState.CurrentShader->currentTexture2Ds.count; ++i)
+            {
+                auto iTexture = RendererState.CurrentShader->currentTexture2Ds.buffer[i];
+
+                glActiveTexture(GL_TEXTURE0 + i);
+                glEnable(GL_TEXTURE_2D);
+
+                if (Renderer_SyncTexture2D(iTexture->value))
+                {
+                    GLint location = glGetUniformLocation(rendererData->program, iTexture->key);
+                    glUniform1i(location, static_cast<GLint>(i));
+                }
+            }
+        }
+
+        /*
         CGprogram program = Renderer_GetCurrentCgProgram();
         if (program != nullptr)
         {
@@ -1716,11 +1660,48 @@ namespace GTEngine
                 }
             }
         }
+        */
     }
 
 
     void Renderer::SetShaderParameter(const char *paramName, Texture2D *value)
     {
+        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        if (rendererData != nullptr)
+        {
+            auto iTexture = RendererState.CurrentShader->currentTexture2Ds.Find(paramName);
+            if (iTexture != nullptr)
+            {
+                // If the texture is the same, fall through.
+                if (iTexture->value != value)
+                {
+                    // We need to keep track of the old texture so we can check if the shader is using it elsewhere and then call Texture2D->OnShaderDetached() if appropriate.
+                    auto oldTexture = iTexture->value;
+                    iTexture->value = value;
+
+                    // All we need to do is change the binding for the texture.
+                    glActiveTexture(GL_TEXTURE0 + iTexture->index);
+
+                    if (Renderer_SyncTexture2D(iTexture->value))       // <-- This will bind the texture.
+                    {
+                        GLint location = glGetUniformLocation(rendererData->program, iTexture->key);
+                        glUniform1i(location, static_cast<GLint>(iTexture->index));
+                    }
+
+                    // Now we need to let the shader know about the old texture.
+                    RendererState.CurrentShader->OnTextureParameterChanged(oldTexture);
+                }
+            }
+            else
+            {
+                // The texture doesn't exist. We need to add it and then just rebind every texture.
+                RendererState.CurrentShader->currentTexture2Ds.Add(paramName, value);
+                Renderer::BindCurrentShaderTextures();
+            }
+        }
+
+
+        /*
         CGprogram program = Renderer_GetCurrentCgProgram();
         if (program != nullptr)
         {
@@ -1762,6 +1743,7 @@ namespace GTEngine
                 value->OnAttachToShader(RendererState.CurrentShader);
             }
         }
+        */
 
 
 #if 0
@@ -1799,6 +1781,14 @@ namespace GTEngine
 
     void Renderer::SetShaderParameter(const char *paramName, float x)
     {
+        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        if (rendererData != nullptr)
+        {
+            GLuint location = glGetUniformLocation(rendererData->program, paramName);
+            glUniform1f(location, x);
+        }
+
+        /*
         CGprogram program = Renderer_GetCurrentCgProgram();
         if (program != nullptr)
         {
@@ -1810,9 +1800,18 @@ namespace GTEngine
                 cgGLBindProgram(program);
             }
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y)
     {
+        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        if (rendererData != nullptr)
+        {
+            GLint location = glGetUniformLocation(rendererData->program, paramName);
+            glUniform2f(location, x, y);
+        }
+
+        /*
         CGprogram program = Renderer_GetCurrentCgProgram();
         if (program != nullptr)
         {
@@ -1824,9 +1823,18 @@ namespace GTEngine
                 cgGLBindProgram(program);
             }
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y, float z)
     {
+        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        if (rendererData != nullptr)
+        {
+            GLint location = glGetUniformLocation(rendererData->program, paramName);
+            glUniform3f(location, x, y, z);
+        }
+
+        /*
         CGprogram program = Renderer_GetCurrentCgProgram();
         if (program != nullptr)
         {
@@ -1838,9 +1846,18 @@ namespace GTEngine
                 cgGLBindProgram(program);
             }
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y, float z, float w)
     {
+        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        if (rendererData != nullptr)
+        {
+            GLint location = glGetUniformLocation(rendererData->program, paramName);
+            glUniform4f(location, x, y, z, w);
+        }
+
+        /*
         CGprogram program = Renderer_GetCurrentCgProgram();
         if (program != nullptr)
         {
@@ -1852,11 +1869,20 @@ namespace GTEngine
                 cgGLBindProgram(program);
             }
         }
+        */
     }
 
     // Column-major for matrices.
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat2 &value)
     {
+        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        if (rendererData != nullptr)
+        {
+            GLint location = glGetUniformLocation(rendererData->program, paramName);
+            glUniformMatrix2fv(location, 1, false, &value[0][0]);
+        }
+
+        /*
         CGprogram program = Renderer_GetCurrentCgProgram();
         if (program != nullptr)
         {
@@ -1868,9 +1894,18 @@ namespace GTEngine
                 cgGLBindProgram(program);
             }
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat3 &value)
     {
+        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        if (rendererData != nullptr)
+        {
+            GLint location = glGetUniformLocation(rendererData->program, paramName);
+            glUniformMatrix3fv(location, 1, false, &value[0][0]);
+        }
+
+        /*
         CGprogram program = Renderer_GetCurrentCgProgram();
         if (program != nullptr)
         {
@@ -1882,9 +1917,18 @@ namespace GTEngine
                 cgGLBindProgram(program);
             }
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat4 &value)
     {
+        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        if (rendererData != nullptr)
+        {
+            GLint location = glGetUniformLocation(rendererData->program, paramName);
+            glUniformMatrix4fv(location, 1, false, &value[0][0]);
+        }
+
+        /*
         CGprogram program = Renderer_GetCurrentCgProgram();
         if (program != nullptr)
         {
@@ -1896,6 +1940,7 @@ namespace GTEngine
                 cgGLBindProgram(program);
             }
         }
+        */
     }
 
     void Renderer::SetDrawBuffers(size_t count, int *buffers)
@@ -1924,7 +1969,9 @@ namespace GTEngine
     {
         if (rendererData != nullptr)
         {
-            cgDestroyProgram(((Shader_GL20 *)rendererData)->object);
+            glDeleteShader(static_cast<Shader_GL20*>(rendererData)->vertexShader);
+            glDeleteShader(static_cast<Shader_GL20*>(rendererData)->fragmentShader);
+            glDeleteProgram(static_cast<Shader_GL20*>(rendererData)->program);
         }
     }
 
