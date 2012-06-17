@@ -4,7 +4,10 @@
 
 #include <GTCore/Strings/Create.hpp>
 
+
 #include <cstdlib>
+#include <crtdbg.h>
+
 #include <cstdarg>
 
 namespace GTEngine

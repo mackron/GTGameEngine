@@ -27,7 +27,7 @@ namespace GTEngine
         this->Load(width, height, format, data);
     }
 
-    Texture2D::Texture2D(const char *filename)
+    Texture2D::Texture2D(const char* filename)
         : GTImage::Image(filename), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat), framebuffers(), rendererData(nullptr), refCount(1), keepClientSideData(false),
           syncinfo()
     {

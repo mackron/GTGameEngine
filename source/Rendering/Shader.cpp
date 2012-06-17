@@ -1,12 +1,11 @@
 
 #include <GTEngine/Rendering/Shader.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTCore/Strings/Create.hpp>
 
 namespace GTEngine
 {
     Shader::Shader(const char* vertexSource, const char* fragmentSource)
-        : vertexSource(GTCore::Strings::Create(vertexSource)), fragmentSource(GTCore::Strings::Create(fragmentSource)),
+        : vertexSource(vertexSource), fragmentSource(fragmentSource),
           pendingParameters(),
           rendererData(nullptr),
           currentTexture2Ds(),
@@ -19,9 +18,6 @@ namespace GTEngine
 
     Shader::~Shader()
     {
-        GTCore::Strings::Delete(this->vertexSource);
-        GTCore::Strings::Delete(this->fragmentSource);
-
         this->ClearPendingParameters();
 
         // We need to let any textures know that they are no longer attached to this shader.
@@ -96,7 +92,10 @@ namespace GTEngine
             }
 
             // If the texture is no longer referenced, we let it know that it is detached from the shader.
-            oldTexture->OnDetachFromShader(this);
+            if (!referenced)
+            {
+                oldTexture->OnDetachFromShader(this);
+            }
         }
     }
 

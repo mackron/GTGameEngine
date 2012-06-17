@@ -690,13 +690,13 @@ namespace GTEngine
             // First we detach everything.
             if (rendererData->program != 0)
             {
-                if (rendererData->vertexShader != 0)
+                GLuint attachedShaders[2];
+                GLsizei count;
+                glGetAttachedShaders(rendererData->program, 2, &count, attachedShaders);
+
+                for (GLsizei i = 0; i < count; ++i)
                 {
-                    //glDetachShader(rendererData->program, rendererData->vertexShader);
-                }
-                if (rendererData->fragmentShader != 0)
-                {
-                    //glDetachShader(rendererData->program, rendererData->fragmentShader);
+                    glDetachShader(rendererData->program, attachedShaders[i]);
                 }
             }
 
@@ -1149,12 +1149,6 @@ namespace GTEngine
                 Log("    Max Texture Units:      %d", RendererCaps.MaxTextureUnits);
 
                 
-                // VirtualBox with Cg doesn't work very well at all. So far I've got it working in a very specific situation. The Cg profiles must
-                // be GLSL. Anything else, and it will crash. Also, whenever setting a parameter, the shader needs to be re-bound.
-                //RendererIsChromium = GTCore::Strings::Equal<false>((const char *)glGetString(GL_RENDERER), "Chromium");
-                //RendererIsIntel    = GTCore::Strings::Equal<false>((const char *)glGetString(GL_VENDOR),   "Intel");
-
-
                 Renderer::BackRCQueue  = new RCQueue;
                 Renderer::FrontRCQueue = new RCQueue;
 
@@ -1631,36 +1625,9 @@ namespace GTEngine
 
                 glActiveTexture(GL_TEXTURE0 + i);
                 glEnable(GL_TEXTURE_2D);
-
-                if (Renderer_SyncTexture2D(iTexture->value))
-                {
-                    GLint location = glGetUniformLocation(rendererData->program, iTexture->key);
-                    glUniform1i(location, static_cast<GLint>(i));
-                }
+                Renderer_SyncTexture2D(iTexture->value);        // <-- syncing binds.
             }
         }
-
-        /*
-        CGprogram program = Renderer_GetCurrentCgProgram();
-        if (program != nullptr)
-        {
-            // With the shader current, we now need to bind the textures that are active on it. Each of these textures need to be synched on the appropriate texture unit.
-            for (size_t i = 0; i < RendererState.CurrentShader->currentTexture2Ds.count; ++i)
-            {
-                auto iTexture = RendererState.CurrentShader->currentTexture2Ds.buffer[i];
-
-                glActiveTexture(GL_TEXTURE0 + i);
-                glEnable(GL_TEXTURE_2D);
-
-                if (Renderer_SyncTexture2D(iTexture->value))       // <-- This will bind the texture.
-                {
-                    CGparameter param = cgGetNamedParameter(program, iTexture->key);
-                    cgGLSetTextureParameter(param, static_cast<Texture2D_GL20*>(iTexture->value->rendererData)->object);
-                    //cgGLEnableTextureParameter(param);    // Leaking memory?
-                }
-            }
-        }
-        */
     }
 
 
@@ -1681,12 +1648,7 @@ namespace GTEngine
 
                     // All we need to do is change the binding for the texture.
                     glActiveTexture(GL_TEXTURE0 + iTexture->index);
-
-                    if (Renderer_SyncTexture2D(iTexture->value))       // <-- This will bind the texture.
-                    {
-                        GLint location = glGetUniformLocation(rendererData->program, iTexture->key);
-                        glUniform1i(location, static_cast<GLint>(iTexture->index));
-                    }
+                    Renderer_SyncTexture2D(iTexture->value);            // <-- syncing binds.
 
                     // Now we need to let the shader know about the old texture.
                     RendererState.CurrentShader->OnTextureParameterChanged(oldTexture);
@@ -1694,46 +1656,16 @@ namespace GTEngine
             }
             else
             {
-                // The texture doesn't exist. We need to add it and then just rebind every texture.
+                // The texture doesn't exist. We need to add it and then reset the uniform for every texture. We do this because we use a map to store the
+                // texture units, which will be rearranged as an entry is added.
                 RendererState.CurrentShader->currentTexture2Ds.Add(paramName, value);
                 Renderer::BindCurrentShaderTextures();
-            }
-        }
 
-
-        /*
-        CGprogram program = Renderer_GetCurrentCgProgram();
-        if (program != nullptr)
-        {
-            auto iTexture = RendererState.CurrentShader->currentTexture2Ds.Find(paramName);
-            if (iTexture != nullptr)
-            {
-                // If the texture is the same, fall through.
-                if (iTexture->value != value)
+                for (size_t i = 0; i < RendererState.CurrentShader->currentTexture2Ds.count; ++i)
                 {
-                    // We need to keep track of the old texture so we can check if the shader is using it elsewhere and then call Texture2D->OnShaderDetached() if appropriate.
-                    auto oldTexture = iTexture->value;
-                    iTexture->value = value;
-
-                    // All we need to do is change the binding for the texture.
-                    glActiveTexture(GL_TEXTURE0 + iTexture->index);
-
-                    if (Renderer_SyncTexture2D(iTexture->value))       // <-- This will bind the texture.
-                    {
-                        CGparameter param = cgGetNamedParameter(program, iTexture->key);
-                        cgGLSetTextureParameter(param, static_cast<Texture2D_GL20*>(iTexture->value->rendererData)->object);
-                        //cgGLEnableTextureParameter(param);
-                    }
-
-                    // Now we need to let the shader know about the old texture.
-                    RendererState.CurrentShader->OnTextureParameterChanged(oldTexture);
+                    GLint location = glGetUniformLocation(rendererData->program, RendererState.CurrentShader->currentTexture2Ds.buffer[i]->key);
+                    glUniform1i(location, static_cast<GLint>(i));
                 }
-            }
-            else
-            {
-                // The texture doesn't exist. We need to add it and then just rebind every texture.
-                RendererState.CurrentShader->currentTexture2Ds.Add(paramName, value);
-                Renderer::BindCurrentShaderTextures();
             }
 
 
@@ -1743,40 +1675,6 @@ namespace GTEngine
                 value->OnAttachToShader(RendererState.CurrentShader);
             }
         }
-        */
-
-
-#if 0
-        CGprogram program = Renderer_GetCurrentCgProgram();
-        if (program != nullptr)
-        {
-            CGparameter param = cgGetNamedParameter(program, paramName);
-
-            // NOTE: We're using automatic texture management using cgGLSetManageTextureParameters(), which is called in InitialiseCg(). The texture
-            //       state is only updated in cgGLBindProgram(), meaning we need to re-bind the program in order for us to make use of the texture.
-            //       This will need to be tested for efficiency. We'll probably need to rework our API to account for this better, or do manual state
-            //       management.
-            //
-            //       I'm thinking the problem may be that without auto state management, CG expects the appropriate texture unit to be activated.
-
-            // The texture needs to be synced before attempting to use it. If we fail to sync we disable that texture.
-            if (Renderer_SyncTexture2D(value))
-            {
-                cgGLSetTextureParameter(param, static_cast<Texture2D_GL20*>(value->rendererData)->object);
-                //cgGLEnableTextureParameter(param);
-            }
-            else
-            {
-                //cgGLDisableTextureParameter(param);
-            }
-
-            // If we're Chromium, setting a parameter will change the program binding. We don't want that.
-            //if (RendererIsChromium)
-            {
-                cgGLBindProgram(program);
-            }
-        }
-#endif
     }
 
     void Renderer::SetShaderParameter(const char *paramName, float x)
@@ -1787,20 +1685,6 @@ namespace GTEngine
             GLuint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform1f(location, x);
         }
-
-        /*
-        CGprogram program = Renderer_GetCurrentCgProgram();
-        if (program != nullptr)
-        {
-            CGparameter param = cgGetNamedParameter(program, paramName);
-            cgGLSetParameter1f(param, x);
-
-            if (RendererIsChromium)
-            {
-                cgGLBindProgram(program);
-            }
-        }
-        */
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y)
     {
@@ -1810,20 +1694,6 @@ namespace GTEngine
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform2f(location, x, y);
         }
-
-        /*
-        CGprogram program = Renderer_GetCurrentCgProgram();
-        if (program != nullptr)
-        {
-            CGparameter param = cgGetNamedParameter(program, paramName);
-            cgGLSetParameter2f(param, x, y);
-
-            if (RendererIsChromium)
-            {
-                cgGLBindProgram(program);
-            }
-        }
-        */
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y, float z)
     {
@@ -1833,20 +1703,6 @@ namespace GTEngine
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform3f(location, x, y, z);
         }
-
-        /*
-        CGprogram program = Renderer_GetCurrentCgProgram();
-        if (program != nullptr)
-        {
-            CGparameter param = cgGetNamedParameter(program, paramName);
-            cgGLSetParameter3f(param, x, y, z);
-
-            if (RendererIsChromium)
-            {
-                cgGLBindProgram(program);
-            }
-        }
-        */
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y, float z, float w)
     {
@@ -1856,20 +1712,6 @@ namespace GTEngine
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform4f(location, x, y, z, w);
         }
-
-        /*
-        CGprogram program = Renderer_GetCurrentCgProgram();
-        if (program != nullptr)
-        {
-            CGparameter param = cgGetNamedParameter(program, paramName);
-            cgGLSetParameter4f(param, x, y, z, w);
-
-            if (RendererIsChromium)
-            {
-                cgGLBindProgram(program);
-            }
-        }
-        */
     }
 
     // Column-major for matrices.
@@ -1881,20 +1723,6 @@ namespace GTEngine
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniformMatrix2fv(location, 1, false, &value[0][0]);
         }
-
-        /*
-        CGprogram program = Renderer_GetCurrentCgProgram();
-        if (program != nullptr)
-        {
-            CGparameter param = cgGetNamedParameter(program, paramName);
-            cgGLSetMatrixParameterfc(param, &value[0][0]);
-
-            if (RendererIsChromium)
-            {
-                cgGLBindProgram(program);
-            }
-        }
-        */
     }
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat3 &value)
     {
@@ -1904,20 +1732,6 @@ namespace GTEngine
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniformMatrix3fv(location, 1, false, &value[0][0]);
         }
-
-        /*
-        CGprogram program = Renderer_GetCurrentCgProgram();
-        if (program != nullptr)
-        {
-            CGparameter param = cgGetNamedParameter(program, paramName);
-            cgGLSetMatrixParameterfc(param, &value[0][0]);
-
-            if (RendererIsChromium)
-            {
-                cgGLBindProgram(program);
-            }
-        }
-        */
     }
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat4 &value)
     {
@@ -1927,20 +1741,6 @@ namespace GTEngine
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniformMatrix4fv(location, 1, false, &value[0][0]);
         }
-
-        /*
-        CGprogram program = Renderer_GetCurrentCgProgram();
-        if (program != nullptr)
-        {
-            CGparameter param = cgGetNamedParameter(program, paramName);
-            cgGLSetMatrixParameterfc(param, &value[0][0]);
-
-            if (RendererIsChromium)
-            {
-                cgGLBindProgram(program);
-            }
-        }
-        */
     }
 
     void Renderer::SetDrawBuffers(size_t count, int *buffers)

@@ -3,9 +3,12 @@
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTCore/Script.hpp>
 #include <GTCore/Errors.hpp>
-#include <GTCore/Strings/Create.hpp>
+#include <GTCore/String.hpp>
+
 
 #include <cstdlib>
+#include <crtdbg.h>
+
 #include <cstring>
 
 namespace GTEngine
@@ -15,38 +18,20 @@ namespace GTEngine
 
     /// The script for the config file. If this is null, we know the configuration is not yet loaded.
     static GTCore::Script* ConfigScript = nullptr;
+
+
+    /// The Data directory.
+    static GTCore::String DataDirectory;
     
-    /**
-    *   \brief  Structure for storing the different directories.
-    */
-    struct _ConfigDirectories
-    {
-        _ConfigDirectories()
-            : data(nullptr)
-        {
-        }
-        
-        ~_ConfigDirectories()
-        {
-            GTCore::Strings::Delete((char*)this->data);
-        }
-        
-        const char* data;
-        
-    private:    // No copying.
-        _ConfigDirectories(const _ConfigDirectories &);
-        _ConfigDirectories & operator=(const _ConfigDirectories &);
-        
-    }ConfigDirectories;
-    
-    bool ApplicationConfig::Open(const char *fileName)
+
+    bool ApplicationConfig::Open(const char* fileName)
     {
         if (!ConfigScript)
         {
             ConfigScript = new GTCore::Script;
             if (ConfigScript->LoadFile(fileName) && ConfigScript->Execute())
             {
-                ConfigDirectories.data = GTCore::Strings::Create(ApplicationConfig_GetDataDirectory());
+                DataDirectory = GTCore::Strings::Create(ApplicationConfig_GetDataDirectory());
             }
             else
             {
@@ -70,7 +55,7 @@ namespace GTEngine
 
     const char* ApplicationConfig::Directories::Data()
     {
-        return ConfigDirectories.data;
+        return DataDirectory.c_str();
     }
 
 
