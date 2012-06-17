@@ -8,6 +8,7 @@
 namespace GTEngine
 {
     class Framebuffer;
+    class Shader;
 
     enum TextureFilter
     {
@@ -123,17 +124,24 @@ namespace GTEngine
         void OnMipmapChanged(unsigned int mipmapIndex);
 
 
-    private:    // Called internally by GTGUI
+    private:    // Called internally by GTEngine
 
         /**
         *   \brief  Called when the texture is attached to a framebuffer.
         */
-        void OnAttachToFramebuffer(Framebuffer *framebuffer);
+        void OnAttachToFramebuffer(Framebuffer* framebuffer);
 
         /**
         *   \brief  Called when the texture is detached from a framebuffer.
         */
-        void OnDetachFromFramebuffer(Framebuffer *framebuffer);
+        void OnDetachFromFramebuffer(Framebuffer* framebuffer);
+
+
+        /// Called when the texture is attached to a shader.
+        void OnAttachToShader(Shader* shader);
+
+        /// Called when the texture is detached from a shader.
+        void OnDetachFromShader(Shader* shader);
 
 
     private:
@@ -148,7 +156,11 @@ namespace GTEngine
         TextureWrapMode wrapMode;
 
         /// The list of framebuffers that this texture is attached to.
-        GTCore::List<Framebuffer *> framebuffers;
+        GTCore::List<Framebuffer*> framebuffers;
+
+        /// The list of shaders that this texture is attached to.
+        GTCore::List<Shader*> shaders;
+
 
         /// The renderer will need to store it's own properties about the texture. This pointer can be used by the renderer
         /// to hold a pointer to some renderer-specific data.
@@ -196,6 +208,7 @@ namespace GTEngine
 
     friend class Renderer;
     friend class Framebuffer;
+    friend class Shader;
     friend class Texture2DLibrary;
     };
 }

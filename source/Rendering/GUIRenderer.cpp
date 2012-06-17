@@ -103,7 +103,6 @@ namespace GTEngine
         auto shadowShader = ShaderLibrary::GetGUIShadowShader();
         shadowShader->SetParameter("Projection", GUIProjection);
 
-
         server.ExecuteFrontRCQueue();
 
         // Here we reset the applicable properties.
@@ -156,7 +155,6 @@ void GTGUI::RCDrawQuad::Execute()
 
     GTEngine::GUIQuadVertices[12] = left;          GTEngine::GUIQuadVertices[13] = top;
     GTEngine::GUIQuadVertices[14] = this->uvLeft;  GTEngine::GUIQuadVertices[15] = this->uvTop;
-
 
     GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIQuadShader());
     GTEngine::Renderer::SetShaderParameter("Texture", texture);

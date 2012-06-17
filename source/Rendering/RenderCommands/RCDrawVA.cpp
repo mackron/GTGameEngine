@@ -28,9 +28,19 @@ namespace GTEngine
         // by a previous command. If this->shader is null, it means that is the case and we don't want to change it.
         if (this->shader != nullptr)
         {
+            for (size_t i = 0; i < this->parameters.GetCount(); ++i)
+            {
+                auto iParamName  = this->parameters.GetNameByIndex(i);
+                auto iParamValue = this->parameters.GetByIndex(i);
+
+                this->shader->SetParameter(iParamName, iParamValue);
+            }
+
             Renderer::SetShader(this->shader);
         }
 
+
+        /*
         // Now properties need to be set on the shader.
         for (size_t i = 0; i < this->parameters.GetCount(); ++i)
         {
@@ -39,6 +49,8 @@ namespace GTEngine
 
             iParamValue->SetOnCurrentShader(iParamName);
         }
+        */
+        
 
         // Now we draw the mesh.
         Renderer::Draw(this->va);
