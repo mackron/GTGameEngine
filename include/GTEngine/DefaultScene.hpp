@@ -285,12 +285,12 @@ namespace GTEngine
             /// Deletes a spot light culling object and shape.
             void DeleteSpotLightCollisionObject()
             {
-                if (modelCollisionShape != nullptr)
+                if (spotLightCollisionShape != nullptr)
                 {
-                    while (this->modelCollisionShape->getNumChildShapes() > 0)
+                    while (this->spotLightCollisionShape->getNumChildShapes() > 0)
                     {
-                        auto child = this->modelCollisionShape->getChildShape(0);
-                        this->modelCollisionShape->removeChildShapeByIndex(0);
+                        auto child = this->spotLightCollisionShape->getChildShape(0);
+                        this->spotLightCollisionShape->removeChildShapeByIndex(0);
 
                         delete child;
                     }

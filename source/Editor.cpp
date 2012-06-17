@@ -61,7 +61,7 @@ namespace GTEngine
 
     void Editor::Open()
     {
-        if (!this->isOpen)
+        if (!this->isOpen && this->GUI.EditorMain != nullptr)
         {
             this->game.ShowCursor();
             this->GUI.EditorMain->Show();

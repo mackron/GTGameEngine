@@ -13,7 +13,7 @@ namespace GTEngine
         if (Black1x1Texture == nullptr)
         {
             uint32_t texel = 0xFF000000;
-            return new Texture2D(1, 1, GTImage::ImageFormat_RGBA8, &texel);
+            Black1x1Texture = new Texture2D(1, 1, GTImage::ImageFormat_RGBA8, &texel);
         }
 
         return Black1x1Texture;

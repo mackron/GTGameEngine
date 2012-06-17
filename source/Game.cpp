@@ -97,8 +97,10 @@ namespace GTEngine
 
     void Game::StepGUI(double deltaTimeInSeconds)
     {
-        assert(this->gui != nullptr);
-        this->gui->Step(deltaTimeInSeconds);
+        if (this->gui != nullptr)
+        {
+            this->gui->Step(deltaTimeInSeconds);
+        }
     }
 
 
@@ -462,7 +464,6 @@ namespace GTEngine
             this->window->SetEventHandler(this->windowEventHandler);
             this->window->Show();
 
-            
 
             // Here we'll initialise the font cache. We purposly do it after moving into the Data directory.
             Log("Loading Fonts...");
@@ -470,6 +471,7 @@ namespace GTEngine
             {
                 Log("Error loading fonts.");
             }
+
 
             // Here we initialise the GUI. We need a font server for this, so it needs to be done after initialising fonts.
             Log("Loading GUI...");
@@ -524,6 +526,7 @@ namespace GTEngine
         this->gui = new GTGUI::Server(this->fontServer);
         this->gui->SetEventHandler(*this->guiEventHandler);
 
+        
         // We want to register some FFI stuff so games don't need to do it themselves...
         GTCore::Script &script = this->gui->GetScriptServer().GetScript();
 
@@ -551,7 +554,10 @@ namespace GTEngine
 
     void Game::Uninitialise()
     {
-        this->fontServer->UnacquireFont(*this->defaultFont);
+        if (this->defaultFont != nullptr)
+        {
+            this->fontServer->UnacquireFont(*this->defaultFont);
+        }
         
         // Deleting the GUI will unacquire fonts during destruction, so ensure it is destructed before the font server.
         delete this->gui;
@@ -578,7 +584,10 @@ namespace GTEngine
             // to do is remove this line - GTGUI::Server::Step() will also handle any pending events. I like to handle the GUI
             // events from here because it's nice to have GUI events handled at the same time as window events, since they're
             // kind of related.
-            this->gui->HandleEvents();
+            if (this->gui != nullptr)
+            {
+                this->gui->HandleEvents();
+            }
 
 
             // Here we want to start the next frame. Everything between StartFrame() and EndFrame() will be executed at the same
@@ -658,7 +667,11 @@ namespace GTEngine
 
         // We draw the GUI on top of everything else...
         Renderer::SetFramebuffer(nullptr);
-        Renderer::DrawGUI(this->GetGUI());
+
+        if (this->gui != nullptr)
+        {
+            Renderer::DrawGUI(*this->gui);
+        }
 
         Renderer::SwapBuffers();
     }
@@ -669,7 +682,10 @@ namespace GTEngine
         Renderer::SwapRCQueues();
 
         // Now the GUI...
-        this->gui->SwapRCQueues();
+        if (this->gui != nullptr)
+        {
+            this->gui->SwapRCQueues();
+        }
 
         // And the editor...
         if (this->editor.IsOpen())
@@ -721,7 +737,11 @@ namespace GTEngine
 
     void Game::HandleEvent_OnSize(GameEvent &e)
     {
-        this->gui->SetViewportSize(e.size.width, e.size.height);
+        if (this->gui != nullptr)
+        {
+            this->gui->SetViewportSize(e.size.width, e.size.height);
+        }
+
         this->OnSize(e.size.width, e.size.height);
     }
 
@@ -730,14 +750,22 @@ namespace GTEngine
         // We don't post mouse events if the mouse is captured.
         if (!this->mouseCaptured)
         {
-            this->gui->OnMouseMove(e.mousemove.x, e.mousemove.y);
+            if (this->gui != nullptr)
+            {
+                this->gui->OnMouseMove(e.mousemove.x, e.mousemove.y);
+            }
+
             this->OnMouseMove(e.mousemove.x, e.mousemove.y);
         }
     }
 
     void Game::HandleEvent_OnMouseWheel(GameEvent &e)
     {
-        this->gui->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+        if (this->gui != nullptr)
+        {
+            this->gui->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+        }
+
         this->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
     }
 
@@ -745,17 +773,20 @@ namespace GTEngine
     {
         this->mouseButtonDownMap.Add(e.mousedown.button, true);
 
-        if (e.mousedown.button == GTCore::MouseButton_Left)
+        if (this->gui != nullptr)
         {
-            this->gui->OnLMBDown();
-        }
-        else if (e.mousedown.button == GTCore::MouseButton_Right)
-        {
-            this->gui->OnRMBDown();
-        }
-        else if (e.mousedown.button == GTCore::MouseButton_Middle)
-        {
-            this->gui->OnMMBDown();
+            if (e.mousedown.button == GTCore::MouseButton_Left)
+            {
+                this->gui->OnLMBDown();
+            }
+            else if (e.mousedown.button == GTCore::MouseButton_Right)
+            {
+                this->gui->OnRMBDown();
+            }
+            else if (e.mousedown.button == GTCore::MouseButton_Middle)
+            {
+                this->gui->OnMMBDown();
+            }
         }
 
         this->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
@@ -769,17 +800,20 @@ namespace GTEngine
             iButtonDown->value = false;
         }
 
-        if (e.mouseup.button == GTCore::MouseButton_Left)
+        if (this->gui != nullptr)
         {
-            this->gui->OnLMBUp();
-        }
-        else if (e.mouseup.button == GTCore::MouseButton_Right)
-        {
-            this->gui->OnRMBUp();
-        }
-        else if (e.mouseup.button == GTCore::MouseButton_Middle)
-        {
-            this->gui->OnMMBUp();
+            if (e.mouseup.button == GTCore::MouseButton_Left)
+            {
+                this->gui->OnLMBUp();
+            }
+            else if (e.mouseup.button == GTCore::MouseButton_Right)
+            {
+                this->gui->OnRMBUp();
+            }
+            else if (e.mouseup.button == GTCore::MouseButton_Middle)
+            {
+                this->gui->OnMMBUp();
+            }
         }
 
         this->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
@@ -787,17 +821,20 @@ namespace GTEngine
 
     void Game::HandleEvent_OnMouseButtonDoubleClick(GameEvent &e)
     {
-        if (e.mousedoubleclick.button == GTCore::MouseButton_Left)
+        if (this->gui != nullptr)
         {
-            this->gui->OnLMBDoubleClick();
-        }
-        else if (e.mousedoubleclick.button == GTCore::MouseButton_Right)
-        {
-            this->gui->OnLMBDoubleClick();
-        }
-        else if (e.mousedoubleclick.button == GTCore::MouseButton_Middle)
-        {
-            this->gui->OnLMBDoubleClick();
+            if (e.mousedoubleclick.button == GTCore::MouseButton_Left)
+            {
+                this->gui->OnLMBDoubleClick();
+            }
+            else if (e.mousedoubleclick.button == GTCore::MouseButton_Right)
+            {
+                this->gui->OnLMBDoubleClick();
+            }
+            else if (e.mousedoubleclick.button == GTCore::MouseButton_Middle)
+            {
+                this->gui->OnLMBDoubleClick();
+            }
         }
 
         this->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
@@ -823,13 +860,21 @@ namespace GTEngine
 
     void Game::HandleEvent_OnKeyDown(GameEvent &e)
     {
-        this->gui->OnKeyDown(e.keydown.key);
+        if (this->gui != nullptr)
+        {
+            this->gui->OnKeyDown(e.keydown.key);
+        }
+
         this->OnKeyDown(e.keydown.key);
     }
 
     void Game::HandleEvent_OnKeyUp(GameEvent &e)
     {
-        this->gui->OnKeyUp(e.keyup.key);
+        if (this->gui != nullptr)
+        {
+            this->gui->OnKeyUp(e.keyup.key);
+        }
+
         this->OnKeyUp(e.keyup.key);
     }
 
@@ -870,7 +915,7 @@ namespace GTEngine
     Game & Game::GUIFFI::GetGameObject(GTCore::Script &script)
     {
         script.GetGlobal("__GamePtr");
-        auto game = static_cast<Game *>(script.ToPointer(-1));
+        auto game = static_cast<Game*>(script.ToPointer(-1));
         script.Pop(1);
 
         assert(game != nullptr);

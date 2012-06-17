@@ -26,7 +26,6 @@ namespace GTEngine
         cameraNode.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
         cameraNode.MoveForward(-10.0f);
 
-        
         auto model = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/default.dae"))->GetModel();
         model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/default.material"));
 
@@ -57,7 +56,7 @@ namespace GTEngine
         if (this->GUI.ModelViewport != nullptr)
         {
             this->GUI.ModelViewport->AttachEventHandler(this->GUIEventHandlers.ModelViewport);
-
+            
             // Here we need to setup the model editor's FFI. We assert that the Game.Editor namespace has already been created.
             auto &script = guiServer.GetScriptServer().GetScript();
 
@@ -77,7 +76,7 @@ namespace GTEngine
 
     void ModelEditor::Update(double deltaTimeInSeconds)
     {
-        if (this->GUI.ModelViewport->IsVisible())
+        if (this->GUI.ModelViewport != nullptr && this->GUI.ModelViewport->IsVisible())
         {
             // If the mouse is captured we may need to move the screen around.
             if (this->game.IsMouseCaptured())

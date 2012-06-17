@@ -9,6 +9,7 @@
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/ModelLibrary.hpp>
+#include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/FontManager.hpp>
 #include <GTCore/CommandLine.hpp>
@@ -97,6 +98,9 @@ namespace GTEngine
         Log("Initializing Material Library...");
         MaterialLibrary::Startup();
 
+        Log("Initializing Vertex Array Library...");
+        VertexArrayLibrary::Startup();
+
         Log("Initializing Model Library...");
         ModelLibrary::Startup();
 
@@ -111,10 +115,12 @@ namespace GTEngine
 
     void Shutdown()
     {
+        // Font manager.
         FontManager::Shutdown();
 
         // We kill our libraries before the major sub-systems.
         ModelLibrary::Shutdown();
+        VertexArrayLibrary::Shutdown();
         MaterialLibrary::Shutdown();
         ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();
@@ -130,5 +136,8 @@ namespace GTEngine
 
         // Thread cache.
         ThreadCache::Shutdown();
+
+        // Application config.
+        ApplicationConfig::Close();
     }
 }

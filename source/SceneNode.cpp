@@ -149,7 +149,7 @@ namespace GTEngine
     }
 
 
-    void SceneNode::AttachChild(SceneNode& child)
+    void SceneNode::AttachChild(SceneNode &child)
     {
         // If the childs parent is equal to this, it is already attached and so we don't need to do anything.
         if (child.GetParent() != this)
@@ -176,10 +176,11 @@ namespace GTEngine
             child._SetNextSibling(nullptr);
             this->lastChild = &child;
             
-
+            
             // The child needs to know that this is it's new parent.
             child._SetParent(this);
             
+
             // The event handlers need to know about the new child.
             if (!this->EventsLocked())
             {
