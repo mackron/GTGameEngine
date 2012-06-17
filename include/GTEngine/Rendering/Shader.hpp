@@ -4,6 +4,7 @@
 #include "ShaderStages.hpp"
 #include "../Math.hpp"
 #include "../ShaderParameterCache.hpp"
+#include <GTCore/String.hpp>
 
 namespace GTEngine
 {
@@ -42,8 +43,8 @@ namespace GTEngine
         /**
         *   \brief  Retrieves the shader source string.
         */
-        const char* GetVertexSource() const   { return this->vertexSource; }
-        const char* GetFragmentSource() const { return this->fragmentSource; }
+        const char* GetVertexSource() const   { return this->vertexSource.c_str(); }
+        const char* GetFragmentSource() const { return this->fragmentSource.c_str(); }
 
 
         /// Sets the location of a vertex attribute.
@@ -120,14 +121,14 @@ namespace GTEngine
     private:
 
         /// The source of the shader.
-        char* vertexSource;
-        char* fragmentSource;
+        GTCore::String vertexSource;
+        GTCore::String fragmentSource;
 
         /// The parameters that are waiting to be set on the shader. This will be cleared when the shader is made current on the renderer.
         ShaderParameterCache pendingParameters;
 
         /// A pointer to renderer-specific data.
-        void *rendererData;
+        void* rendererData;
 
 
         /// We keep an array of texture 2Ds being used by the shader. As the shader parameters of a shader change, they are updated here. These

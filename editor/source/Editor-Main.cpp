@@ -58,6 +58,9 @@ int main(int argc, char** argv)
     XInitThreads();
 #endif
 
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+
     int retValue = 1;
 
     // The first thing to do is startup the engine.
@@ -77,6 +80,7 @@ int main(int argc, char** argv)
     // a clean termination. Note how we're shutting down AFTER destructing the game object. It's best to
     // do cleaning up before shutting down.
     GTEngine::Shutdown();
+
 
     return retValue;
 }

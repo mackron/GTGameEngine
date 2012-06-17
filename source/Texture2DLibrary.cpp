@@ -3,6 +3,24 @@
 #include <GTEngine/UserConfig.hpp>
 #include <GTCore/Dictionary.hpp>
 
+// Engine textures.
+namespace GTEngine
+{
+    static Texture2D* Black1x1Texture = nullptr;
+
+    Texture2D* Texture2DLibrary::Get1x1BlackTexture()
+    {
+        if (Black1x1Texture == nullptr)
+        {
+            uint32_t texel = 0xFF000000;
+            return new Texture2D(1, 1, GTImage::ImageFormat_RGBA8, &texel);
+        }
+
+        return Black1x1Texture;
+    }
+}
+
+
 // *** Globals ***
 namespace GTEngine
 {
@@ -25,6 +43,9 @@ namespace GTEngine
             delete LoadedTextures.buffer[i]->value;
         }
         LoadedTextures.Clear();
+
+
+        delete Black1x1Texture;
     }
 }
 
@@ -84,20 +105,3 @@ namespace GTEngine
     }
 }
 
-
-// Engine textures.
-namespace GTEngine
-{
-    static Texture2D* Black1x1Texture = nullptr;
-
-    Texture2D* Texture2DLibrary::Get1x1BlackTexture()
-    {
-        if (Black1x1Texture == nullptr)
-        {
-            uint32_t texel = 0xFF000000;
-            return new Texture2D(1, 1, GTImage::ImageFormat_RGBA8, &texel);
-        }
-
-        return Black1x1Texture;
-    }
-}

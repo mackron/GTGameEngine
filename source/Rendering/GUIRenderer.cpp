@@ -71,6 +71,11 @@ namespace GTEngine
     void GUIRenderer::Uninitialise()
     {
         delete GUIWhiteTexture;
+
+        for (size_t i = 0; i < GUITextures.count; ++i)
+        {
+            delete GUITextures.buffer[i]->value;
+        }
     }
 
     void GUIRenderer::DrawGUI(const GTGUI::Server &server)

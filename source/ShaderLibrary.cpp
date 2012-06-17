@@ -43,53 +43,45 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        ShaderLibraryShader(const char *id)
-            : id(nullptr), includes(), anonIncludes(), content(nullptr)
+        ShaderLibraryShader(const char* id)
+            : id(id), includes(), anonIncludes(), content(nullptr)
         {
-            if (id != nullptr)
-            {
-                this->id = GTCore::Strings::Create(id);
-            }
         }
 
         /// Destructor.
         ~ShaderLibraryShader()
         {
-            GTCore::Strings::Delete(this->id);
-            GTCore::Strings::Delete(this->content);
-            
             this->DeleteAnonymousIncludes();
         }
 
         /**
         *   \brief  Retrieves the ID of the shader.
         */
-        const char * GetID() const { return this->id; }
+        const char* GetID() const { return this->id.c_str(); }
 
         /**
         *   \brief  Retrieves the content of the shader.
         *
         *   \remarks
         *       The first time this is called, the content will be constructed from it's includes. If any include has not yet
-        *       had it's content set, nullptr will be returned.
+        *       had it's content set, an empty string will be returned.
         */
-        const char * GetContent()
+        const char* GetContent()
         {
-            if (this->content == nullptr)
+            if (this->content == "")
             {
                 this->ConstructContent();
             }
 
-            return this->content;
+            return this->content.c_str();
         }
 
         /**
         *   \brief  Sets the content fo the shader directly.
         */
-        void SetContent(const char *content)
+        void SetContent(const char* content)
         {
-            GTCore::Strings::Delete(this->content);
-            this->content = GTCore::Strings::Create(content);
+            this->content = content;
         }
 
 
@@ -106,7 +98,7 @@ namespace GTEngine
         */
         void AppendAnonymousInclude(const char *content)
         {
-            ShaderLibraryShader *newInclude = new ShaderLibraryShader(nullptr);
+            auto newInclude = new ShaderLibraryShader(nullptr);
             newInclude->SetContent(content);
 
             this->includes.Append(newInclude);
@@ -121,8 +113,7 @@ namespace GTEngine
             this->includes.Clear();
             this->DeleteAnonymousIncludes();
 
-            GTCore::Strings::Delete(this->content);
-            this->content = nullptr;
+            this->content = "";
         }
 
 
@@ -136,10 +127,6 @@ namespace GTEngine
         */
         void ConstructContent()
         {
-            // For the sake of sanity, we'll deallocate any previous content.
-            GTCore::Strings::Delete(this->content);
-            this->content = nullptr;
-
             // We will use a string list for constructing the content string.
             GTCore::Strings::List<char> contentList;
             for (auto i = this->includes.root; i != nullptr; i = i->next)
@@ -157,7 +144,7 @@ namespace GTEngine
             }
 
             // If we've made it here it means the shader content was built successfully and we can set it.
-            this->content = GTCore::Strings::Create(contentList);
+            this->content = contentList.c_str();
         }
 
         /**
@@ -176,18 +163,18 @@ namespace GTEngine
     private:
 
         /// The ID of the shader. All shaders need an ID for loading/retrieval purposes.
-        char *id;
+        GTCore::String id;
 
         /// The list of includes making up this shader. This includes both named and anonymous includes.
-        GTCore::List<ShaderLibraryShader *> includes;
+        GTCore::List<ShaderLibraryShader*> includes;
 
         /// The list containing pointers to the anonymous includes. These includes are tied to this shader, and
         /// only this shader.
-        GTCore::List<ShaderLibraryShader *> anonIncludes;
+        GTCore::List<ShaderLibraryShader*> anonIncludes;
 
-        /// The content of the shader. This will start out as null, but will be given content when the
+        /// The content of the shader. This will start out as empty, but will be given content when the
         /// shader content is constructed with ConstructContent(), or SetContent() is called.
-        char *content;
+        GTCore::String content;
 
 
     private:    // No copying.
@@ -546,6 +533,8 @@ namespace GTEngine
             shaderInfo->vertexShaderID   = vertexShaderID;
             shaderInfo->fragmentShaderID = fragmentShaderID;
             shaderInfo->refCount         = 1;
+
+            AcquiredShaders.PushBack(shaderInfo);
         }
         else
         {
@@ -574,6 +563,8 @@ namespace GTEngine
             // Here we do a simple check to see if we should delete the objects, or just decrement the reference count.
             if (shaderInfo->refCount <= 1)
             {
+                AcquiredShaders.RemoveFirst(shaderInfo);
+
                 delete shaderInfo->shader;
                 delete shaderInfo;
             }
@@ -676,12 +667,16 @@ namespace GTEngine
     void ShaderLibrary::Shutdown()
     {
         delete GUIQuadShader;
+        delete GUIDrawShader;
         delete GUITextShader;
+        delete GUIShadowShader;
         delete FullscreenQuadShader;
         delete LineShader;
 
         GUIQuadShader        = nullptr;
+        GUIDrawShader        = nullptr;
         GUITextShader        = nullptr;
+        GUIShadowShader      = nullptr;
         FullscreenQuadShader = nullptr;
         LineShader           = nullptr;
 

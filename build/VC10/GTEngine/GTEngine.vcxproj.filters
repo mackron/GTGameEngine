@@ -60,9 +60,6 @@
     <Filter Include="data\shaders">
       <UniqueIdentifier>{5613d281-a6ab-4c35-b100-3c371ecf7bbc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="data\shaders\cg">
-      <UniqueIdentifier>{067998c9-e701-4d09-8da8-040171d45648}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\Physics">
       <UniqueIdentifier>{d950cabf-7e05-4241-b76d-78f95767283f}</UniqueIdentifier>
     </Filter>
@@ -656,21 +653,6 @@
     </None>
     <None Include="..\..\..\bin\data\engine\editor\scripts\menubar.lua">
       <Filter>data\editor\scripts</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\engine\shaders\cg\gui.shader">
-      <Filter>data\shaders\cg</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\engine\shaders\cg\core.shader">
-      <Filter>data\shaders\cg</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\engine\shaders\cg\defaultrenderer.shader">
-      <Filter>data\shaders\cg</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\engine\shaders\cg\lines.shader">
-      <Filter>data\shaders\cg</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\engine\shaders\cg\materials.shader">
-      <Filter>data\shaders\cg</Filter>
     </None>
     <None Include="..\..\..\bin\data\engine\shaders\glsl\core.shader">
       <Filter>data\shaders\glsl</Filter>
