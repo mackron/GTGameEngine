@@ -3,6 +3,7 @@
 #define __GTEngine_Material_hpp_
 
 #include <GTCore/String.hpp>
+#include <GTCore/Map.hpp>
 #include "ShaderParameterCache.hpp"
 
 namespace GTEngine
@@ -102,6 +103,25 @@ namespace GTEngine
         const GTCore::Dictionary<ShaderParameter*> & GetParameters() const { return this->parameters.GetParameters(); }
 
 
+        /// Sets the metadata pointer to use with the given key.
+        ///
+        /// @param key  [in] The key to use with the given pointer.
+        /// @param data [in] The pointer to associate with the given key.
+        ///
+        /// @remarks
+        ///     The pointer can be retrieved with GetMetadata().
+        ///     @par
+        ///     If a pointer already exists for the given key, it is overwritten.
+        void SetMetadata(size_t key, void* data);
+
+        /// Retrieves the metadata associated with the given key.
+        ///
+        /// @param key [in] The key of the metadata being retrieved.
+        ///
+        /// @return A pointer to the metadata associated with the key or null if there is no metadata for that key.
+        void* GetMetadata(size_t key);
+
+
     // Parameter setters.
     public:
 
@@ -124,6 +144,11 @@ namespace GTEngine
 
         /// The parameters being used by the material.
         ShaderParameterCache parameters;
+
+        /// Every material can have metadata associated with it. This is one way of doing things like associating a shader to a material or whatnot. The default
+        /// renderer will use this system. This is a map allowing something to associate a pointer to a key. The key is a size_t which will allow a pointer to
+        /// an object to be used if desired.
+        GTCore::Map<size_t, void*> metadata;
     };
 }
 

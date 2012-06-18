@@ -5,6 +5,11 @@
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4355)   // 'this' used in initialise list.
+#endif
+
 namespace GTEngine
 {
     DVR_RCBegin::DVR_RCBegin()
@@ -140,7 +145,8 @@ namespace GTEngine
 {
     DefaultViewportRenderer::DefaultViewportRenderer()
         : owner(nullptr), framebuffer(), Shaders(), RenderCommands(),
-          materialMetadata(),
+          materialLibraryEventHandler(*this),
+          materialMetadatas(),
           projection(), view(),
           screenSize(),
           framebufferNeedsResize(false)
@@ -158,6 +164,11 @@ namespace GTEngine
 
         RenderCommands.rcEnd[0].combinerShader = Shaders.combiner;
         RenderCommands.rcEnd[1].combinerShader = Shaders.combiner;
+
+
+        // We need catch the deletion of materials so we can delete any metadata this renderer may have created. To do this, we attach an event
+        // handler to the material library.
+        MaterialLibrary::AttachEventHandler(this->materialLibraryEventHandler);
     }
 
     DefaultViewportRenderer::~DefaultViewportRenderer()
@@ -177,11 +188,16 @@ namespace GTEngine
             delete shaders.buffer[i]->value;
         }
 
-        /// Each material's metadata needs to be deleted.
-        for (size_t i = 0; i < this->materialMetadata.count; ++i)
+        /// We need to make sure any existing material metadata is removed for tidyness.
+        while (this->materialMetadatas.root != nullptr)
         {
-            delete this->materialMetadata.buffer[i]->value;
+            delete this->materialMetadatas.root->value;
+            this->materialMetadatas.RemoveRoot();
         }
+
+
+        /// The event handler needs to be removed from the material library.
+        MaterialLibrary::RemoveEventHandler(this->materialLibraryEventHandler);
     }
 
     void DefaultViewportRenderer::SetOwnerViewport(SceneViewport* owner)
@@ -307,22 +323,29 @@ namespace GTEngine
 
     DefaultViewportRenderer::MaterialMetadata & DefaultViewportRenderer::GetMaterialMetadata(Material &material)
     {
-        auto iMetadata = this->materialMetadata.Find(&material);
-        if (iMetadata != nullptr)
+        // The key for the metadata will be 'this'.
+        auto metadata = static_cast<MaterialMetadata*>(material.GetMetadata(reinterpret_cast<size_t>(this)));
+        if (metadata == nullptr)
         {
-            // If we get here it means the metadata has already been created. We return that same object.
-            assert(iMetadata->value != nullptr);
-            return *iMetadata->value;
-        }
-        else
-        {
-            // If we get here it means the metadata has not yet been created. We need to create it.
-            auto metadata = new MaterialMetadata;
-            this->materialMetadata.Add(&material, metadata);
+            metadata = new MaterialMetadata;
+            material.SetMetadata(reinterpret_cast<size_t>(this), metadata);
 
-            return *metadata;
+            this->materialMetadatas.Append(metadata);
+        }
+
+        return *metadata;
+    }
+
+    void DefaultViewportRenderer::DeleteMaterialMetadata(Material &material)
+    {
+        auto metadata = static_cast<MaterialMetadata*>(material.GetMetadata(reinterpret_cast<size_t>(this)));
+        if (metadata == nullptr)
+        {
+            this->materialMetadatas.Remove(this->materialMetadatas.Find(metadata));
+            delete metadata;
         }
     }
+
 
 
     Shader* DefaultViewportRenderer::CreateMaterialPassShader(Material &material)
@@ -835,3 +858,9 @@ namespace GTEngine
         return false;
     }
 }
+
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif

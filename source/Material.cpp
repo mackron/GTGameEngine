@@ -317,7 +317,7 @@ namespace GTEngine
 namespace GTEngine
 {
     Material::Material(const MaterialDefinition &definition)
-        : definition(definition), parameters()
+        : definition(definition), parameters(), metadata()
     {
         for (size_t i = 0; i < definition.defaultParams.GetCount(); ++i)
         {
@@ -328,5 +328,21 @@ namespace GTEngine
     Material::~Material()
     {
         this->parameters.Clear();
+    }
+
+    void Material::SetMetadata(size_t key, void* data)
+    {
+        this->metadata.Add(key, data);
+    }
+
+    void* Material::GetMetadata(size_t key)
+    {
+        auto iData = this->metadata.Find(key);
+        if (iData != nullptr)
+        {
+            return iData->value;
+        }
+
+        return nullptr;
     }
 }

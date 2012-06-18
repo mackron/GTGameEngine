@@ -2,6 +2,7 @@
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/List.hpp>
+#include <GTCore/Vector.hpp>
 
 namespace GTEngine
 {
@@ -10,6 +11,30 @@ namespace GTEngine
 
     /// The list of loaded materials.
     static GTCore::List<Material*> LoadedMaterials;
+
+
+    /// The list of event handlers.
+    static GTCore::Vector<MaterialLibrary::EventHandler*> EventHandlers;
+
+    /// Helper function for calling the OnCreateMaterial() event.
+    void MaterialLibrary_OnCreateMaterial(Material &material)
+    {
+        for (size_t i = 0; i < EventHandlers.count; ++i)
+        {
+            EventHandlers[i]->OnCreateMaterial(material);
+        }
+    }
+
+    /// Helper function for calling the OnDeleteMaterial() event.
+    void MaterialLibrary_OnDeleteMaterial(Material &material)
+    {
+        for (size_t i = 0; i < EventHandlers.count; ++i)
+        {
+            EventHandlers[i]->OnDeleteMaterial(material);
+        }
+    }
+
+
 
 
     bool MaterialLibrary::Startup()
@@ -31,6 +56,19 @@ namespace GTEngine
         }
     }
 
+    
+    void MaterialLibrary::AttachEventHandler(EventHandler &eventHandler)
+    {
+        if (!EventHandlers.Exists(&eventHandler))
+        {
+            EventHandlers.PushBack(&eventHandler);
+        }
+    }
+
+    void MaterialLibrary::RemoveEventHandler(EventHandler &eventHandler)
+    {
+        EventHandlers.RemoveFirst(&eventHandler);
+    }
 
 
     Material* MaterialLibrary::Create(const char* fileName)
@@ -63,6 +101,8 @@ namespace GTEngine
             auto material = new Material(*definition);
             LoadedMaterials.Append(material);
 
+            MaterialLibrary_OnCreateMaterial(*material);
+
             return material;
         }
 
@@ -74,14 +114,21 @@ namespace GTEngine
         auto newMaterial = new Material(source.GetDefinition());
         LoadedMaterials.Append(newMaterial);
 
+        MaterialLibrary_OnCreateMaterial(*newMaterial);
+
         return newMaterial;
     }
 
 
     void MaterialLibrary::Delete(Material* material)
     {
-        LoadedMaterials.Remove(LoadedMaterials.Find(material));
+        if (material != nullptr)
+        {
+            MaterialLibrary_OnDeleteMaterial(*material);
 
-        delete material;
+            LoadedMaterials.Remove(LoadedMaterials.Find(material));
+
+            delete material;
+        }
     }
 }
