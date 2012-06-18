@@ -35,42 +35,46 @@ namespace GTEngine
 
     Material* MaterialLibrary::Create(const char* fileName)
     {
-        Material* newMaterial = nullptr;
-
-        auto iMaterialDef = MaterialDefinitions.Find(fileName);
-        if (iMaterialDef == nullptr)
+        // We create materials from material definitions. Thus, we'll need one first. If one already exists, we reuse that. Otherwise, we create a new one.
+        MaterialDefinition* definition = nullptr;
+        
+        auto iMaterialDefinition = MaterialDefinitions.Find(fileName);
+        if (iMaterialDefinition != nullptr)
         {
-            // If we get here, it means we need to load the material file and create a new material definition.
-            auto newMaterialDef = new MaterialDefinition;
-            if (newMaterialDef->LoadFromFile(fileName))
-            {
-                MaterialDefinitions.Add(fileName, newMaterialDef);
-                
-                newMaterial = new Material(*newMaterialDef);
-            }
-            else
-            {
-                // The material file could not be loaded. Return null in this case.
-                delete newMaterialDef;
-                return nullptr;
-            }
+            definition = iMaterialDefinition->value;
         }
         else
         {
-            // If we get here, it means the material definition already exists, and we just use it directly without having to load the material file.
-            assert(iMaterialDef->value);
-
-            newMaterial = new Material(*iMaterialDef->value);
+            definition = new MaterialDefinition;
+            if (definition->LoadFromFile(fileName))
+            {
+                MaterialDefinitions.Add(fileName, definition);
+            }
+            else
+            {
+                delete definition;
+                definition = nullptr;
+            }
         }
 
-        LoadedMaterials.Append(newMaterial);
+        // With the definition retrieved, we now need to move on to
+        if (definition != nullptr)
+        {
+            auto material = new Material(*definition);
+            LoadedMaterials.Append(material);
 
-        return newMaterial;
+            return material;
+        }
+
+        return nullptr;
     }
 
     Material* MaterialLibrary::CreateCopy(const Material &source)
     {
-        return new Material(source.GetDefinition());
+        auto newMaterial = new Material(source.GetDefinition());
+        LoadedMaterials.Append(newMaterial);
+
+        return newMaterial;
     }
 
 
