@@ -9,6 +9,7 @@
 #include "ShaderParameter.hpp"
 #include "Material.hpp"
 #include "MaterialShaderCache.hpp"
+#include "MaterialLibrary.hpp"
 #include "Mesh.hpp"
 #include "GarbageCollector.hpp"
 #include "Rendering/Framebuffer.hpp"
@@ -328,6 +329,7 @@ namespace GTEngine
         void EnableColourClears();
 
 
+
     // Private Structures.
     private:
 
@@ -351,6 +353,10 @@ namespace GTEngine
         /// Retrieves the metadata of a material. This should never return null. If the metadata hasn't yet been created,
         /// it will be created and then returned. Future calls will return that same object.
         MaterialMetadata & GetMaterialMetadata(Material &material);
+
+        /// Deletes the given material's metadata.
+        void DeleteMaterialMetadata(Material &material);
+
 
         /// Creates and returns the shader to use with the material for simple unlit rendering.
         Shader* CreateSimpleUnlitShader(Material &material);
@@ -447,8 +453,45 @@ namespace GTEngine
         }RenderCommands;
 
 
-        /// A map containing the metadata of every material.
-        GTCore::Map<Material*, MaterialMetadata*> materialMetadata;
+        /// The event handler to use with the material library.
+        class MaterialLibraryEventHandler : public MaterialLibrary::EventHandler
+        {
+        public:
+
+            /// Constructor.
+            MaterialLibraryEventHandler(DefaultViewportRenderer &renderer)
+                : renderer(renderer)
+            {
+            }
+
+            /// Destructor.
+            ~MaterialLibraryEventHandler()
+            {
+            }
+
+            
+            /// MaterialLibrary::EventHandler::OnDeleteMaterial().
+            void OnDeleteMaterial(Material &material)
+            {
+                this->renderer.DeleteMaterialMetadata(material);
+            }
+
+
+        private:
+
+            /// A reference to the DefaultViewportRenderer object that owns this event handler.
+            DefaultViewportRenderer &renderer;
+
+
+        private:    // No copying.
+            MaterialLibraryEventHandler(const MaterialLibraryEventHandler &);
+            MaterialLibraryEventHandler & operator=(const MaterialLibraryEventHandler &);
+
+        }materialLibraryEventHandler;
+
+
+        /// The list of metadata pointers that will need to be removed when the renderer is destructed. We only really keep these for clean destruction.
+        GTCore::List<MaterialMetadata*> materialMetadatas;
 
 
         /// The projection matrix. This is updated at the start of each render.
@@ -463,6 +506,9 @@ namespace GTEngine
         /// This keeps track of whether or not the framebuffer needs to be resized. When ResizeFramebuffer() is called, it's not actually
         /// performed straight away. Instead we do it synchronously between frames in order to avoid synchronization issues.
         bool framebufferNeedsResize;
+
+
+    friend class MaterialLibraryEventHandler;
     };
 }
 

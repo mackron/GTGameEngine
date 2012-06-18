@@ -20,11 +20,58 @@ namespace GTEngine
     public:
 
         /// Starts up the material library.
+        ///
         /// @return True if the material library was started up successfully.
         static bool Startup();
 
         /// Shuts down the environment.
         static void Shutdown();
+
+
+    // Event handlers.
+    public:
+
+        /// Class representing an event handler for the material library.
+        class EventHandler
+        {
+        public:
+
+            /// Constructor.
+            EventHandler()
+            {
+            }
+
+            /// Destructor.
+            virtual ~EventHandler()
+            {
+            }
+
+
+            /// Called just after a material is created.
+            ///
+            /// @param material [in] A reference to the material that was just created.
+            virtual void OnCreateMaterial(Material &) {}
+
+            /// Calld just before a material is deleted.
+            ///
+            /// @param material [in] A reference to the material that is about to be deleted.
+            virtual void OnDeleteMaterial(Material &) {}
+        };
+
+
+        /// Attaches an event handler to the material library.
+        ///
+        /// @param handler [in] A reference to the event handler to attach to the material library.
+        ///
+        /// @remarks
+        ///     Use event handlers to catch material creation and deletion. Really useful for doing shader cleanup.
+        static void AttachEventHandler(EventHandler &handler);
+
+        /// Removes the given event handler from the material library.
+        ///
+        /// @param handler [in] A reference to the event handler to remove from the material library.
+        static void RemoveEventHandler(EventHandler &handler);
+
 
 
     // Create/Delete.
