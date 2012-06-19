@@ -359,8 +359,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\OccluderComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\Physics\btEllipsoidShape.h">
-      <Filter>source\Physics</Filter>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\btEllipsoidShape.hpp">
+      <Filter>include\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

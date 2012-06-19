@@ -216,6 +216,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\NavigationMesh.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\btEllipsoidShape.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\Bullet.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionObject.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionWorld.hpp" />
@@ -258,7 +259,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\ViewportRenderer.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
-    <ClInclude Include="..\..\..\source\Physics\btEllipsoidShape.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Animation\Animation.cpp" />
