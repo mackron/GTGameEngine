@@ -218,7 +218,7 @@ namespace GTEngine
         return glm::unProject(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
     }
 
-    glm::mat4 SceneViewport::Get2DProjectionMatrix(bool yDown)
+    glm::mat4 SceneViewport::Get2DProjectionMatrix(bool yDown) const
     {
         if (!yDown)
         {
@@ -228,6 +228,20 @@ namespace GTEngine
         {
             return glm::ortho(0.0f, static_cast<float>(this->width), static_cast<float>(this->height), 0.0f);
         }
+    }
+
+    glm::mat4 SceneViewport::GetMVPMatrix() const
+    {
+        if (this->cameraNode != nullptr)
+        {
+            auto viewportCamera = this->cameraNode->GetComponent<GTEngine::CameraComponent>();
+            if (viewportCamera != nullptr)
+            {
+                return viewportCamera->GetProjectionMatrix() * viewportCamera->GetViewMatrix();
+            }
+        }
+        
+        return glm::mat4();
     }
 }
 

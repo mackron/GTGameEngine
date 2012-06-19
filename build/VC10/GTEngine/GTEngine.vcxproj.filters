@@ -359,6 +359,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\OccluderComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\Physics\btEllipsoidShape.h">
+      <Filter>source\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -603,6 +606,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Components\OccluderComponent.cpp">
       <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\btEllipsoidShape.cpp">
+      <Filter>source\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

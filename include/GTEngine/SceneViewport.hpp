@@ -163,8 +163,10 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This method does a full construction of the matrix. Do not assume it does a direct access.
-        glm::mat4 Get2DProjectionMatrix(bool yDown = false);
+        glm::mat4 Get2DProjectionMatrix(bool yDown = false) const;
 
+        /// Retrieves the model-view-projection matrix used by this viewport and it's current camera.
+        glm::mat4 GetMVPMatrix() const;
 
 
     private:

@@ -254,7 +254,7 @@ namespace GTEngine
         virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback) = 0;
 
         /// Performs a contact test against the proximity volume of the given scene node.
-        virtual void ContactTest(const SceneNode &node, ContactTestCallback &callback) = 0;
+        //virtual void ContactTest(const SceneNode &node, ContactTestCallback &callback) = 0;
 
 
 
