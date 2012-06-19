@@ -1,5 +1,5 @@
 
-#include "btEllipsoidShape.h"
+#include <GTEngine/Physics/btEllipsoidShape.hpp>
 
 btEllipsoidShape::btEllipsoidShape(const btVector3 &semiAxes)
     : btConvexInternalShape()

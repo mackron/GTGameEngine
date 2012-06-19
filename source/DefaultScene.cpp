@@ -232,13 +232,13 @@ namespace GTEngine
         // Before doing anything we're going to step the dynamics.
         if (!this->IsPaused())
         {
-            this->dynamicsWorld.stepSimulation(static_cast<btScalar>(deltaTimeInSeconds), 4);
+            this->dynamicsWorld.Step(static_cast<btScalar>(deltaTimeInSeconds), 4);
 
             // Here is where we're going to check for collisions with other rigid bodies.
-            int numManifolds = this->dynamicsWorld.getDispatcher()->getNumManifolds();
+            int numManifolds = this->dynamicsWorld.GetCollisionDispatcher().getNumManifolds();
 	        for (int i = 0; i < numManifolds; i++)
 	        {
-		        auto contactManifold = this->dynamicsWorld.getDispatcher()->getManifoldByIndexInternal(i);
+		        auto contactManifold = this->dynamicsWorld.GetCollisionDispatcher().getManifoldByIndexInternal(i);
 		        auto obA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
 		        auto obB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
 
@@ -410,8 +410,9 @@ namespace GTEngine
             callback.collisionGroup = proximity->GetCollisionGroup();
             callback.collisionMask  = proximity->GetCollisionMask();
 
+            // TODO: Implement a proper version of this function.
             DefaultSceneContactTestCallback bulletCallback(callback);
-            this->dynamicsWorld.contactTest(const_cast<GhostObject*>(&proximity->GetGhostObject()), bulletCallback);
+            this->dynamicsWorld.GetInternalDynamicsWorld().contactTest(const_cast<GhostObject*>(&proximity->GetGhostObject()), bulletCallback);
         }
     }
 
@@ -478,15 +479,15 @@ namespace GTEngine
 
                 for (size_t i = 0; i < 6; ++i)
                 {
-                    printf("Plane: %f %f %f, %f\n", planes_n[i].x(), planes_n[i].y(), planes_n[i].z(), planes_o[i]);
+                    //printf("Plane: %f %f %f, %f\n", planes_n[i].x(), planes_n[i].y(), planes_n[i].z(), planes_o[i]);
                 }
 
-                btDbvt::collideOCL(broadphase.m_sets[1].m_root, planes_n, planes_o, sortaxis, 5, dbvtPolicy);
-			    btDbvt::collideOCL(broadphase.m_sets[0].m_root, planes_n, planes_o, sortaxis, 5, dbvtPolicy);
+                //btDbvt::collideOCL(broadphase.m_sets[1].m_root, planes_n, planes_o, sortaxis, 5, dbvtPolicy);
+			    //btDbvt::collideOCL(broadphase.m_sets[0].m_root, planes_n, planes_o, sortaxis, 5, dbvtPolicy);
 
                 // Below is for only frustum culling.
-                //btDbvt::collideKDOP(broadphase.m_sets[1].m_root, planes_n, planes_o, 6, dbvtPolicy);
-			    //btDbvt::collideKDOP(broadphase.m_sets[0].m_root, planes_n, planes_o, 6, dbvtPolicy);
+                btDbvt::collideKDOP(broadphase.m_sets[1].m_root, planes_n, planes_o, 5, dbvtPolicy);
+			    btDbvt::collideKDOP(broadphase.m_sets[0].m_root, planes_n, planes_o, 5, dbvtPolicy);
 
 
 
@@ -517,15 +518,12 @@ namespace GTEngine
 
     void DefaultScene::SetGravity(float x, float y, float z)
     {
-        this->dynamicsWorld.setGravity(btVector3(x, y, z));
+        this->dynamicsWorld.SetGravity(x, y, z);
     }
 
     void DefaultScene::GetGravity(float &x, float &y, float &z) const
     {
-        btVector3 gravity = this->dynamicsWorld.getGravity();
-        x = gravity.x();
-        y = gravity.y();
-        z = gravity.z();
+        this->dynamicsWorld.GetGravity(x, y, z);
     }
 
 
@@ -872,7 +870,7 @@ namespace GTEngine
                 node.GetWorldTransform(transform);
 
                 ghostObject.setWorldTransform(transform);
-                world->updateSingleAabb(&ghostObject);
+                world->GetInternalDynamicsWorld().updateSingleAabb(&ghostObject);
             }
         }
 
