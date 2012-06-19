@@ -84,14 +84,14 @@ namespace GTEngine
         /// Default constructor.
         Mesh()
             : geometry(nullptr), material(nullptr),
-              collisionVA(nullptr), skinningData(nullptr)
+              /*collisionVA(nullptr),*/ skinningData(nullptr)
         {
         }
 
         /// Constructor.
         Mesh(VertexArray* geometry, Material* material)
             : geometry(geometry), material(material),
-              collisionVA(nullptr), skinningData(nullptr)
+              /*collisionVA(nullptr),*/ skinningData(nullptr)
         {
         }
 
@@ -101,7 +101,7 @@ namespace GTEngine
         ///     The destructor does not delete the geometry vertex array or material.
         ~Mesh()
         {
-            delete this->collisionVA;
+            /*delete this->collisionVA;*/
             delete this->skinningData;
         }
 
@@ -166,7 +166,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Deletes the returned shape with 'delete'.
-        btGImpactMeshShape* BuildCollisionShape(const glm::vec3 &scale = glm::vec3(1.0f, 1.0f, 1.0f));
+        //btGImpactMeshShape* BuildCollisionShape(const glm::vec3 &scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
         
         /// Fills the given vertex array will a skinned version of the base geometry using the current state of the mesh's bones.
@@ -193,7 +193,7 @@ namespace GTEngine
         Material* material;
 
         /// The vertex array for use with the collision shape.
-        btTriangleIndexVertexArray* collisionVA;
+        //btTriangleIndexVertexArray* collisionVA;
 
         /// A pointer to the skinning data of the mesh. This will be set to null if the mesh is not animated.
         MeshSkinningData* skinningData;

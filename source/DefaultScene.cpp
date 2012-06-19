@@ -11,6 +11,7 @@
 #include <GTEngine/SceneCullingDbvtPolicy.hpp>
 #include <GTEngine/CollisionGroups.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
+#include <GTEngine/Logging.hpp>
 #include <GTCore/Strings/Equal.hpp>
 
 
@@ -198,8 +199,8 @@ namespace GTEngine
           dynamicsWorld(), occlusionCollisionWorld(),
           navigationMesh(), navigationMeshNode(), navigationMeshModel()
     {
-        //this->AddSceneNode(this->navigationMeshNode);
-        //this->navigationMeshNode.Hide();
+        this->AddSceneNode(this->navigationMeshNode);
+        this->navigationMeshNode.Hide();
     }
 
     DefaultScene::~DefaultScene()
@@ -600,17 +601,12 @@ namespace GTEngine
                 auto &node = modelComponent.GetNode();
 
                 // We first need to ensure we have the objects allocated.
-                metadata->AllocateModelCollisionObject();
+                metadata->AllocateModelCollisionObject(*model, node.GetWorldScale());
 
                 metadata->modelCollisionObject->setCollisionShape(metadata->modelCollisionShape);
                 metadata->modelCollisionObject->setUserPointer(&node);
 
-                // With the objects allocated, we now fill them with the appropriate data.
-                for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
-                {
-                    metadata->modelCollisionShape->addChildShape(btTransform::getIdentity(), model->meshes[iMesh]->BuildCollisionShape(node.GetWorldScale()));
-                }
-
+                // At this point the collision objects will have been created and all we need to do is add them to the collision world.
                 btTransform transform;
                 node.GetWorldTransform(transform);
                 metadata->modelCollisionObject->setWorldTransform(transform);
@@ -726,8 +722,15 @@ namespace GTEngine
                 rigidBody.getMotionState()->getWorldTransform(transform);
                 rigidBody.setWorldTransform(transform);
             }
-            
-            this->dynamicsWorld.addRigidBody(&rigidBody, dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
+
+            if (dynamicsComponent->GetCollisionShape().getNumChildShapes() > 0)
+            {
+                this->dynamicsWorld.addRigidBody(&rigidBody, dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
+            }
+            else
+            {
+                Log("Warning: Attempting to add a dynamics component without collision shapes. The rigid body has not been added to the dynamics world.");
+            }
         }
 
         // Just like DynamicsComponent, if we have proximity component, we need to add that also.
@@ -884,6 +887,18 @@ namespace GTEngine
 
             if (metadata->modelCollisionObject != nullptr)
             {
+                auto modelComponent = node.GetComponent<ModelComponent>();
+                if (modelComponent != nullptr)
+                {
+                    // We need to scale the collision shapes of the models in the occlusion collision world. Unfortunately just setting the scale
+                    // with setLocalScaling() doesn't want to work. For now we will just remove and re-add the model culling objects.
+                    this->RemoveModelCullingObjects(*modelComponent);
+                    this->AddModelCullingObjects(*modelComponent);
+                }
+
+                //this->occlusionCollisionWorld.updateSingleAabb(metadata->modelCollisionObject);
+
+                /*
                 // We need to scale the collision shapes. Unfortunately the only way I could figure this out is to completely delete
                 // the children and recreate them. The loop below does just that.
                 // TODO: Have a look into this problem. If it's a bug, it needs to be reported.
@@ -903,6 +918,7 @@ namespace GTEngine
                 }
 
                 this->occlusionCollisionWorld.updateSingleAabb(metadata->modelCollisionObject);
+                */
             }
 
             // NOTE: We are not supporting light scaling at the moment. The light radius should be controlled via it's attenuation.

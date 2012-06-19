@@ -180,8 +180,11 @@ namespace GTEngine
             /// A pointer to the collision object for the model component. Can be null.
             CollisionObject* modelCollisionObject;
 
+            /// The vertex array to use as the source for the collision shape of the model.
+            btTriangleIndexVertexArray* modelCollisionShapeVA;
+
             /// The collision shape to use with the model. Can be null only if <modelCollisionObject> is also null.
-            btCompoundShape* modelCollisionShape;
+            btGImpactMeshShape* modelCollisionShape;
 
 
             /// A pointer to the collision object for the point light component. Can be null.
@@ -201,7 +204,7 @@ namespace GTEngine
 
 
             SceneNodeMetadata()
-                : modelCollisionObject(nullptr), modelCollisionShape(nullptr),
+                : modelCollisionObject(nullptr), modelCollisionShapeVA(nullptr), modelCollisionShape(nullptr),
                   pointLightCollisionObject(nullptr), pointLightCollisionShape(),
                   spotLightCollisionObject(nullptr), spotLightCollisionShape()
             {
@@ -215,17 +218,36 @@ namespace GTEngine
             }
 
             /// Allocates the model collision object and shape.
-            void AllocateModelCollisionObject()
+            void AllocateModelCollisionObject(Model &model, const glm::vec3 &scale)
             {
                 this->DeleteModelCollisionObject();
 
-                modelCollisionObject = new CollisionObject;
-                modelCollisionShape  = new btCompoundShape;
+                auto sourceVA = model.UpdateCollisionVertexArray();
+                if (sourceVA != nullptr)
+                {
+                    auto &vertexFormat = sourceVA->GetFormat();
+                    auto  indexData   = reinterpret_cast<int *>(sourceVA->MapIndexData());
+                    auto  vertexData  = sourceVA->MapVertexData();
+
+                    this->modelCollisionShapeVA = new btTriangleIndexVertexArray(
+                        static_cast<int>(sourceVA->GetIndexCount() / 3), indexData, 3 * sizeof(unsigned int),
+                        static_cast<int>(sourceVA->GetVertexCount()), vertexData + vertexFormat.GetAttributeOffset(VertexAttribs::Position),  static_cast<int>(vertexFormat.GetSizeInBytes()));
+
+                    this->modelCollisionShape  = new btGImpactMeshShape(this->modelCollisionShapeVA);
+                    this->modelCollisionShape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
+                    this->modelCollisionShape->updateBound();
+
+                    this->modelCollisionObject = new CollisionObject;
+
+                    sourceVA->UnmapIndexData();
+                    sourceVA->UnmapVertexData();
+                }
             }
 
             /// Deletes the model collision object and shape.
             void DeleteModelCollisionObject()
             {
+                /*
                 if (modelCollisionShape != nullptr)
                 {
                     while (this->modelCollisionShape->getNumChildShapes() > 0)
@@ -236,12 +258,15 @@ namespace GTEngine
                         delete child;
                     }
                 }
+                */
 
                 delete this->modelCollisionObject;
+                delete this->modelCollisionShapeVA;
                 delete this->modelCollisionShape;
 
-                this->modelCollisionObject = nullptr;
-                this->modelCollisionShape  = nullptr;
+                this->modelCollisionObject  = nullptr;
+                this->modelCollisionShapeVA = nullptr;
+                this->modelCollisionShape   = nullptr;
             }
 
 

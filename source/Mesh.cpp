@@ -49,7 +49,7 @@ namespace GTEngine
     }
 
 
-
+    /*
     // TOOD: Scaling works, but we need to check that we can reuse the same vertex array.
     btGImpactMeshShape* Mesh::BuildCollisionShape(const glm::vec3 &scale)
     {
@@ -78,6 +78,7 @@ namespace GTEngine
 
         return newCollisionShape;
     }
+    */
 
 
     void Mesh::ApplySkinning()

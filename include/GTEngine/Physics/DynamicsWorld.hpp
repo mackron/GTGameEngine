@@ -22,7 +22,7 @@ namespace GTEngine
     *       In order to inherit directly from btDiscreteDynamicsWorld, we need to use multiple inheritance. It doesn't make logical sense to do this,
     *       but I think it's best that our own world uses an 'is-a' relationship instead of a 'has-a' relationship with btDiscreteDynamicsWorld.
     */
-    class DynamicsWorld : public btDefaultCollisionConfiguration, public btCollisionDispatcher, public btDbvtBroadphase, public btSequentialImpulseConstraintSolver, public btDiscreteDynamicsWorld
+    ATTRIBUTE_ALIGNED16(class) DynamicsWorld : public btDefaultCollisionConfiguration, public btCollisionDispatcher, public btDbvtBroadphase, public btSequentialImpulseConstraintSolver, public btDiscreteDynamicsWorld
     {
     public:
 

@@ -1,6 +1,7 @@
 
 #include <GTEngine/Model.hpp>
 #include <GTEngine/VertexArrayFactory.hpp>
+#include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
 #include <GTEngine/Math.hpp>
 
@@ -9,7 +10,8 @@ namespace GTEngine
     Model::Model()
         : meshes(), bones(),
           animation(), animationChannelBones(), animationKeyCache(),
-          animationPlaybackSpeed(1.0)
+          animationPlaybackSpeed(1.0),
+          collisionVA(nullptr)
     {
     }
 
@@ -32,6 +34,8 @@ namespace GTEngine
         {
             delete this->animationKeyCache[i];
         }
+
+        delete this->collisionVA;
     }
 
 
@@ -163,11 +167,34 @@ namespace GTEngine
         }
     }
 
-
-    bool Model::IsAnimating() const
+    /*
+    btTriangleIndexVertexArray* Model::RebuildCollisionVertexArray()
     {
-        return this->animation.IsPlaying();
+        // The first thing we need to do is combine the meshes into a single data pool. All we care about is positions here.
+        VertexArray mainArray(VertexArrayUsage_Static, VertexFormat::P3);
+
     }
+    */
+
+    VertexArray* Model::UpdateCollisionVertexArray()
+    {
+        // TODO: For unchanged, non-animated models, just return an array from the model definition.
+        //
+        // For now we will re-create the entire array.
+        delete this->collisionVA;
+
+        // Here is where we combine the vertex arrays of every mesh and combine them to create the new data.
+        GTCore::Vector<VertexArray*> sourceArrays;
+        for (size_t i = 0; i < this->meshes.count; ++i)
+        {
+            sourceArrays.PushBack(this->meshes[i]->GetGeometry());
+        }
+
+        this->collisionVA = VertexArrayLibrary::CreateCombined(sourceArrays.buffer, sourceArrays.count, VertexFormat::P3);
+
+        return this->collisionVA;
+    }
+    
 
 
    
@@ -229,6 +256,11 @@ namespace GTEngine
         {
             this->animationChannelBones.buffer[i]->value->UpdateSkinningTransform();
         }
+    }
+
+    bool Model::IsAnimating() const
+    {
+        return this->animation.IsPlaying();
     }
 
     void Model::SetAnimationPlaybackSpeed(double speed)

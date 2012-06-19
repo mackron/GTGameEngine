@@ -8,7 +8,7 @@ namespace GTEngine
 {
     class DynamicsWorld;
 
-    class GhostObject : public btPairCachingGhostObject
+    ATTRIBUTE_ALIGNED16(class) GhostObject : public btPairCachingGhostObject
     {
     public:
 
