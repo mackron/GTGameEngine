@@ -25,7 +25,7 @@ namespace GTEngine
     *       methods. Sometimes it may not be possible. For example, rayTest() is virtual in btCollisionWorld, and it is also called recursively,
     *       meaning implementing our own version will cause an infinite loop.
     */
-    class CollisionWorld : public btDefaultCollisionConfiguration, public btCollisionDispatcher, public btDbvtBroadphase, public btCollisionWorld
+    ATTRIBUTE_ALIGNED16(class) CollisionWorld : public btDefaultCollisionConfiguration, public btCollisionDispatcher, public btDbvtBroadphase, public btCollisionWorld
     {
     public:
 

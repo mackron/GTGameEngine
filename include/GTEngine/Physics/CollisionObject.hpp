@@ -15,7 +15,7 @@ namespace GTEngine
     *   pointer to the scene the body is currently contained in. It is set by DynamicsScene when it is added. What this
     *   allows is for us to remove the body from the dynamics world when the body is deleted.
     */
-    class CollisionObject : public btCollisionObject
+    ATTRIBUTE_ALIGNED16(class) CollisionObject : public btCollisionObject
     {
     public:
 

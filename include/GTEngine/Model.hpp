@@ -49,6 +49,21 @@ namespace GTEngine
         void GenerateTangentsAndBitangents();
 
 
+        /// Rebuilds and returns a pointer to the vertex array that can be used as the source for a collision shape with this model.
+        ///
+        /// @remarks
+        ///     This will delete any previously build collision vertex array.
+        //btTriangleIndexVertexArray* RebuildCollisionVertexArray();
+
+        /// Updates the collision vertex array.
+        ///
+        /// @remarks
+        ///     This will return quickly for unchanged non-animated models. For animated models, the entire array will be updated with new data.
+        VertexArray* UpdateCollisionVertexArray();
+
+
+
+
     // Animation.
     public:
 
@@ -104,7 +119,14 @@ namespace GTEngine
 
         /// The playback speed of animations.
         double animationPlaybackSpeed;
-    };    
+
+
+        /// The model's vertex array for use by a collision object.
+        //btTriangleIndexVertexArray* collisionVA;
+
+        /// The main vertex array containing collision data of the model. We use a pointer here because we're going to dynamically re-create the array where needed.
+        VertexArray* collisionVA;
+    };
 }
 
 #endif

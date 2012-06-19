@@ -194,6 +194,10 @@ namespace GTEngine
         VertexArray* CreateCollisionShapeMesh(bool applyNodeTransform = false);
 
 
+        /// Retrieves a reference to the collision shape.
+        btCompoundShape & GetCollisionShape() { return *this->collisionShape; }
+
+
     private:
 
         /// Helper method for generically adding a collision shape.
@@ -207,7 +211,7 @@ namespace GTEngine
 
         /// The collision shape we're using. This starts life as an empty shape. When the first collision shape is added it is turned into
         /// a compound shape. We need to use a compound shape in order to get offsets working properly.
-        btCompoundShape collisionShape;
+        btCompoundShape* collisionShape;
 
         /// The motion state of the body. This will be different depending on whether or not the rigid body is kinematic.
         SceneNodeMotionState motionState;

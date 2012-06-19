@@ -8,9 +8,9 @@ namespace GTEngine
 
     DynamicsComponent::DynamicsComponent(SceneNode &node)
         : Component(node),
-          collisionShape(),
+          collisionShape(new btCompoundShape(true)),
           motionState(node),
-          rigidBody(new RigidBody(0.0f, collisionShape, &motionState)),
+          rigidBody(new RigidBody(0.0f, *collisionShape, &motionState)),
           mass(0.0f),
           isKinematic(false),
           useWithNavigationMesh(true),
@@ -29,16 +29,17 @@ namespace GTEngine
         }
 
         // Now we need to delete the collision shapes.
-        while (this->collisionShape.getNumChildShapes() > 0)
+        while (this->collisionShape->getNumChildShapes() > 0)
         {
-            auto child = this->collisionShape.getChildShape(0);
-            this->collisionShape.removeChildShapeByIndex(0);
+            auto child = this->collisionShape->getChildShape(0);
+            this->collisionShape->removeChildShapeByIndex(0);
 
             delete child;
         }
 
-        // We will delete the rigid body last.
+        // We will delete the physics objects last.
         delete this->rigidBody;
+        delete this->collisionShape;
     }
 
     void DynamicsComponent::AddBoxCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
@@ -103,10 +104,10 @@ namespace GTEngine
 
 
         // All children need to be removed from the shape.
-        while (this->collisionShape.getNumChildShapes() > 0)
+        while (this->collisionShape->getNumChildShapes() > 0)
         {
-            auto child = this->collisionShape.getChildShape(0);
-            this->collisionShape.removeChildShapeByIndex(0);
+            auto child = this->collisionShape->getChildShape(0);
+            this->collisionShape->removeChildShapeByIndex(0);
 
             delete child;
         }
@@ -249,7 +250,7 @@ namespace GTEngine
         }
 
         // Now we simply apply the scaling to the shape.
-        this->collisionShape.setLocalScaling(btVector3(x, y, z));
+        this->collisionShape->setLocalScaling(btVector3(x, y, z));
 
         // With a change in the geometry, we need to update the mass.
         this->UpdateMass();
@@ -363,7 +364,7 @@ namespace GTEngine
 
     VertexArray* DynamicsComponent::CreateCollisionShapeMesh(bool applyNodeTransform)
     {
-        int shapeCount = this->collisionShape.getNumChildShapes();
+        int shapeCount = this->collisionShape->getNumChildShapes();
 
         // The way we do things is we first build vertex arrays for each individual shape. We that combine them all into a single
         // vertex array to produce the final array.
@@ -371,13 +372,13 @@ namespace GTEngine
 
         for (int i = 0; i < shapeCount; ++i)
         {
-            auto shape = this->collisionShape.getChildShape(i);
+            auto shape = this->collisionShape->getChildShape(i);
             assert(shape != nullptr);
 
             auto va = VertexArrayLibrary::CreateFromShape(*shape);
             if (va != nullptr)
             {
-                va->ApplyTransform(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+                va->ApplyTransform(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
                 shapeGeometry.PushBack(va);
             }
         }
@@ -433,11 +434,11 @@ namespace GTEngine
 
 
         // All we need to do is add the new shape to the compound shape...
-        this->collisionShape.addChildShape(btTransform(btMatrix3x3::getIdentity(), btVector3(offsetX, offsetY, offsetZ)), shape);
+        this->collisionShape->addChildShape(btTransform(btMatrix3x3::getIdentity(), btVector3(offsetX, offsetY, offsetZ)), shape);
 
         // We need to make sure the shape is scaled correctly.
         glm::vec3 nodeScale = this->node.GetWorldScale();
-        this->collisionShape.setLocalScaling(btVector3(nodeScale.x, nodeScale.y, nodeScale.z));
+        this->collisionShape->setLocalScaling(btVector3(nodeScale.x, nodeScale.y, nodeScale.z));
 
 
         // With a change in the shape, we also need to update the mass.
@@ -461,13 +462,13 @@ namespace GTEngine
         // If we only have a single shape attached to the compound shape, we're going to calculate the local inertia based on that shape.
         btVector3 inertia;
 
-        if (this->collisionShape.getNumChildShapes() == 1)
+        if (this->collisionShape->getNumChildShapes() == 1)
         {
-            inertia = GTEngine::BulletUtils::CalculateLocalInertia(this->mass, *this->collisionShape.getChildShape(0));
+            inertia = GTEngine::BulletUtils::CalculateLocalInertia(this->mass, *this->collisionShape->getChildShape(0));
         }
         else
         {
-            inertia = GTEngine::BulletUtils::CalculateLocalInertia(this->mass, this->collisionShape);
+            inertia = GTEngine::BulletUtils::CalculateLocalInertia(this->mass, *this->collisionShape);
         }
 
         this->rigidBody->setMassProps(this->mass, inertia);
