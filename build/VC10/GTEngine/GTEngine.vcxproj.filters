@@ -329,9 +329,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Projectile.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Components\NavigationPointComponent.hpp">
-      <Filter>include\Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\NavigationMesh.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -358,6 +355,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKeyFrameQueue.hpp">
       <Filter>include\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\OccluderComponent.hpp">
+      <Filter>include\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -577,9 +577,6 @@
     <ClCompile Include="..\..\..\source\Projectile.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Components\NavigationPointComponent.cpp">
-      <Filter>source\Components</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\NavigationMesh.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -603,6 +600,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Animation\AnimationKeyFrameQueue.cpp">
       <Filter>source\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\OccluderComponent.cpp">
+      <Filter>source\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

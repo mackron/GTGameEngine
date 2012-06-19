@@ -195,7 +195,7 @@ namespace GTEngine
     DefaultScene::DefaultScene()
         : viewports(), nodes(),
           ambientLightComponents(), directionalLightComponents(),
-          navigationPointComponents(),
+          occluderComponents(),
           dynamicsWorld(), occlusionCollisionWorld(),
           navigationMesh(), navigationMeshNode(), navigationMeshModel()
     {
