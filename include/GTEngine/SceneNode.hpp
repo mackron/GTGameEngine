@@ -13,7 +13,7 @@
 #include "Components/SpriteComponent.hpp"
 #include "Components/DynamicsComponent.hpp"
 #include "Components/ProximityComponent.hpp"
-#include "Components/NavigationPointComponent.hpp"
+#include "Components/OccluderComponent.hpp"
 
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/List.hpp>

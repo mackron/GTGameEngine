@@ -182,7 +182,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\DynamicsComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\LightComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ModelComponent.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Components\NavigationPointComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\OccluderComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ProximityComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\SpriteComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader.hpp" />
@@ -278,7 +278,7 @@
     <ClCompile Include="..\..\..\source\Components\DynamicsComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\LightComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ModelComponent.cpp" />
-    <ClCompile Include="..\..\..\source\Components\NavigationPointComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Components\OccluderComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ProximityComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\SpriteComponent.cpp" />
     <ClCompile Include="..\..\..\source\CPUVertexShader.cpp" />

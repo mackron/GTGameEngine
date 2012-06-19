@@ -352,8 +352,8 @@ namespace GTEngine
         /// The list of directional light components.
         GTCore::List<DirectionalLightComponent*> directionalLightComponents;
 
-        /// The list of navigation point components. We'll use these in finding paths.
-        GTCore::List<NavigationPointComponent*> navigationPointComponents;
+        /// The list of occluder components.
+        GTCore::List<OccluderComponent*> occluderComponents;
 
 
         /// The dynamics world for everything involving physics and collision detection.
