@@ -4,7 +4,6 @@
     <emissive id='Material_NoEmissive' />
     
     <defaultproperties>
-        <float3    name='DiffuseColour' >1.0 1.0 1.0</float3>
-        <!-- <texture2D name='Texture'>engine/textures/test-texture.png</texture2D> -->
+        <float3 name='DiffuseColour' >1.0 1.0 1.0</float3>
     </defaultproperties>
 </material>
