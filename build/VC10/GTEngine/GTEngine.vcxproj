@@ -258,6 +258,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\ViewportRenderer.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
+    <ClInclude Include="..\..\..\source\Physics\btEllipsoidShape.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Animation\Animation.cpp" />
@@ -309,6 +310,7 @@
     <ClCompile Include="..\..\..\source\Model.cpp" />
     <ClCompile Include="..\..\..\source\ModelLibrary.cpp" />
     <ClCompile Include="..\..\..\source\NavigationMesh.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\btEllipsoidShape.cpp" />
     <ClCompile Include="..\..\..\source\Physics\CollisionObject.cpp" />
     <ClCompile Include="..\..\..\source\Physics\CollisionWorld.cpp" />
     <ClCompile Include="..\..\..\source\Physics\DynamicsWorld.cpp" />

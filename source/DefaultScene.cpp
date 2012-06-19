@@ -22,7 +22,7 @@ namespace GTEngine
     {
         /// Constructor.
         DefaultSceneCullingDbvtPolicy(SceneViewport &viewport)
-            : viewport(viewport)
+            : SceneCullingDbvtPolicy(viewport.GetMVPMatrix()), viewport(viewport)
         {
         }
 
@@ -49,6 +49,7 @@ namespace GTEngine
         {
             viewport.AddSpotLightComponent(spotLightComponent);
         }
+
 
 
         //////////////////////////////////////////////////////////////////
@@ -94,14 +95,14 @@ namespace GTEngine
             return false;
 		}
 
-        virtual	btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObject* colObj0, int, int, const btCollisionObject* colObj1, int, int)
+        virtual	btScalar addSingleResult(btManifoldPoint &cp, const btCollisionObjectWrapper* colObj0, int, int, const btCollisionObjectWrapper* colObj1, int, int)
         {
             assert(colObj0 != nullptr);
             assert(colObj1 != nullptr);
 
             // We assume the user pointer is the scene node.
-            auto sceneNodeA = static_cast<SceneNode*>(colObj0->getUserPointer());
-            auto sceneNodeB = static_cast<SceneNode*>(colObj1->getUserPointer());
+            auto sceneNodeA = static_cast<SceneNode*>(colObj0->getCollisionObject()->getUserPointer());
+            auto sceneNodeB = static_cast<SceneNode*>(colObj1->getCollisionObject()->getUserPointer());
 
             if (sceneNodeA != nullptr && sceneNodeB != nullptr)
             {
@@ -237,9 +238,9 @@ namespace GTEngine
             int numManifolds = this->dynamicsWorld.getDispatcher()->getNumManifolds();
 	        for (int i = 0; i < numManifolds; i++)
 	        {
-		        btPersistentManifold* contactManifold = this->dynamicsWorld.getDispatcher()->getManifoldByIndexInternal(i);
-		        btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
-		        btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
+		        auto contactManifold = this->dynamicsWorld.getDispatcher()->getManifoldByIndexInternal(i);
+		        auto obA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
+		        auto obB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
 
                 // We'll just use the first contact point for ours. Should probably experiment with looping over all points.
                 for (int iContact = 0; iContact < contactManifold->getNumContacts(); ++iContact)
@@ -399,6 +400,7 @@ namespace GTEngine
         return rayTestResult.closestSceneNode;
     }
 
+
     void DefaultScene::ContactTest(const SceneNode &node, ContactTestCallback &callback)
     {
         // We do the contact test against the nodes proximity component.
@@ -414,6 +416,7 @@ namespace GTEngine
     }
 
 
+
     void DefaultScene::AddVisibleComponents(SceneViewport &viewport)
     {
         // First we need to grab the veiwport's camera. If we don't have one, nothing will be visible...
@@ -427,30 +430,63 @@ namespace GTEngine
                 // We're using Bullet for this. Specifically, we're using the Dbvt broadphase of the collision world.
                 btDbvtBroadphase &broadphase = this->occlusionCollisionWorld;
 
-                glm::mat4 mvp = camera->GetProjectionMatrix() * camera->GetViewMatrix();
+                glm::mat4 projection = camera->GetProjectionMatrix();
+                glm::mat4 view       = camera->GetViewMatrix();
+
+                glm::mat4 mvp     = projection * view;
+
+                glm::vec3 cameraPosition = cameraNode->GetWorldPosition();
+                glm::vec3 forward        = cameraNode->GetWorldForwardVector();
 
                 btVector3 planes_n[6];
 		        btScalar  planes_o[6];
 
-			    planes_n[0]	= btVector3(mvp[0][3] - mvp[0][0], mvp[1][3] - mvp[1][0], mvp[2][3] - mvp[2][0]);     // Right
-			    planes_n[1]	= btVector3(mvp[0][3] + mvp[0][0], mvp[1][3] + mvp[1][0], mvp[2][3] + mvp[2][0]);     // Left
-			    planes_n[2]	= btVector3(mvp[0][3] - mvp[0][1], mvp[1][3] - mvp[1][1], mvp[2][3] - mvp[2][1]);     // Top
-			    planes_n[3]	= btVector3(mvp[0][3] + mvp[0][1], mvp[1][3] + mvp[1][1], mvp[2][3] + mvp[2][1]);     // Bottom
-			    planes_n[4]	= btVector3(mvp[0][3] - mvp[0][2], mvp[1][3] - mvp[1][2], mvp[2][3] - mvp[2][2]);     // Far
-                planes_n[5]	= btVector3(mvp[0][3] + mvp[0][2], mvp[1][3] + mvp[1][2], mvp[2][3] + mvp[2][2]);     // Near
-	
-			    planes_o[0] = mvp[3][3] - mvp[3][0];    // Right
-			    planes_o[1] = mvp[3][3] + mvp[3][0];    // Left
-			    planes_o[2] = mvp[3][3] - mvp[3][1];    // Top
-			    planes_o[3] = mvp[3][3] + mvp[3][1];    // Bottom
-			    planes_o[4] = mvp[3][3] - mvp[3][2];    // Far
-                planes_o[5] = mvp[3][3] + mvp[3][2];    // Near
+                planes_n[0] = btVector3(mvp[0][3] - mvp[0][0], mvp[1][3] - mvp[1][0], mvp[2][3] - mvp[2][0]);     // Right
+			    planes_n[1] = btVector3(mvp[0][3] + mvp[0][0], mvp[1][3] + mvp[1][0], mvp[2][3] + mvp[2][0]);     // Left
+			    planes_n[2] = btVector3(mvp[0][3] - mvp[0][1], mvp[1][3] - mvp[1][1], mvp[2][3] - mvp[2][1]);     // Top
+			    planes_n[3] = btVector3(mvp[0][3] + mvp[0][1], mvp[1][3] + mvp[1][1], mvp[2][3] + mvp[2][1]);     // Bottom
+                planes_n[4] = btVector3(mvp[0][3] - mvp[0][2], mvp[1][3] - mvp[1][2], mvp[2][3] - mvp[2][2]);     // Far
+                planes_n[5] = btVector3(mvp[0][3] + mvp[0][2], mvp[1][3] + mvp[1][2], mvp[2][3] + mvp[2][2]);     // Near
+
+                /*
+			    planes_o[0] = (mvp[3][3] - mvp[3][0]);    // Right
+			    planes_o[1] = (mvp[3][3] + mvp[3][0]);    // Left
+			    planes_o[2] = (mvp[3][3] - mvp[3][1]);    // Top
+			    planes_o[3] = (mvp[3][3] + mvp[3][1]);    // Bottom
+                planes_o[4] = (mvp[3][3] - mvp[3][2]);    // Far
+                planes_o[5] = (mvp[3][3] + mvp[3][2]);    // Near
+                */
+
+                planes_o[0] = (mvp[3][3] - mvp[3][0]) / planes_n[0].length();    // Right
+			    planes_o[1] = (mvp[3][3] + mvp[3][0]) / planes_n[1].length();    // Left
+			    planes_o[2] = (mvp[3][3] - mvp[3][1]) / planes_n[2].length();    // Top
+			    planes_o[3] = (mvp[3][3] + mvp[3][1]) / planes_n[3].length();    // Bottom
+                planes_o[4] = (mvp[3][3] - mvp[3][2]) / planes_n[4].length();    // Far
+                planes_o[5] = (mvp[3][3] + mvp[3][2]) / planes_n[5].length();    // Near
+
+                planes_n[0].normalize();
+                planes_n[1].normalize();
+                planes_n[2].normalize();
+                planes_n[3].normalize();
+                planes_n[4].normalize();
+                planes_n[5].normalize();
+
+                btVector3 sortaxis(forward.x, forward.y, forward.z);
 
 
                 DefaultSceneCullingDbvtPolicy dbvtPolicy(viewport);
 
-                btDbvt::collideKDOP(broadphase.m_sets[1].m_root, planes_n, planes_o, 6, dbvtPolicy);
-			    btDbvt::collideKDOP(broadphase.m_sets[0].m_root, planes_n, planes_o, 6, dbvtPolicy);
+                for (size_t i = 0; i < 6; ++i)
+                {
+                    printf("Plane: %f %f %f, %f\n", planes_n[i].x(), planes_n[i].y(), planes_n[i].z(), planes_o[i]);
+                }
+
+                btDbvt::collideOCL(broadphase.m_sets[1].m_root, planes_n, planes_o, sortaxis, 5, dbvtPolicy);
+			    btDbvt::collideOCL(broadphase.m_sets[0].m_root, planes_n, planes_o, sortaxis, 5, dbvtPolicy);
+
+                // Below is for only frustum culling.
+                //btDbvt::collideKDOP(broadphase.m_sets[1].m_root, planes_n, planes_o, 6, dbvtPolicy);
+			    //btDbvt::collideKDOP(broadphase.m_sets[0].m_root, planes_n, planes_o, 6, dbvtPolicy);
 
 
 
@@ -764,7 +800,7 @@ namespace GTEngine
         {
             this->AddModelCullingObjects(*modelComponent);
         }
-
+        
         // We also need to add culling objects for point lights...
         auto pointLightComponent = node.GetComponent<PointLightComponent>();
         if (pointLightComponent != nullptr)

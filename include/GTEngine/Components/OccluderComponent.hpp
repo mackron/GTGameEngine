@@ -44,7 +44,7 @@ namespace GTEngine
 
         /// The collision shape we're using. This starts life as an empty shape. When the first collision shape is added it is turned into
         /// a compound shape. We need to use a compound shape in order to get offsets working properly.
-        btCollisionShape* collisionShape;
+        btBoxShape* collisionShape;
 
 
     GTENGINE_DECL_COMPONENT_END()
