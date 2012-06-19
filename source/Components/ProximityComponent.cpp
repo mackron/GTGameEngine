@@ -138,7 +138,7 @@ namespace GTEngine
 
                     auto &pair = pairArray[this->i];
 
-                    auto collisionPair = world->getPairCache()->findPair(pair.m_pProxy0, pair.m_pProxy1);
+                    auto collisionPair = world->GetInternalDynamicsWorld().getPairCache()->findPair(pair.m_pProxy0, pair.m_pProxy1);
                     if (collisionPair != nullptr)
                     {
                         auto bodyA = static_cast<btCollisionObject*>(pair.m_pProxy0->m_clientObject);

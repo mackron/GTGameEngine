@@ -9,22 +9,22 @@
 namespace GTEngine
 {
     DynamicsWorld::DynamicsWorld()
-        : btDefaultCollisionConfiguration(),
-          btCollisionDispatcher(this),
-          btDbvtBroadphase(),
-          btSequentialImpulseConstraintSolver(),
-          btDiscreteDynamicsWorld(this, this, this, this),
+        : configuration(),
+          dispatcher(&configuration),
+          broadphase(),
+          solver(),
+          world(&dispatcher, &broadphase, &solver, &configuration),
           ghostPairCallback()
     {
-        this->getOverlappingPairCache()->setInternalGhostPairCallback(&this->ghostPairCallback);
+        this->broadphase.getOverlappingPairCache()->setInternalGhostPairCallback(&this->ghostPairCallback);
     }
 
     DynamicsWorld::~DynamicsWorld()
     {
         // Now we need to remove all of our rigid bodies. We go backwards here to avoid reshuffling of the internal buffer.
-        for (int i = this->getNumCollisionObjects() - 1; i >= 0; --i)
+        for (int i = this->world.getNumCollisionObjects() - 1; i >= 0; --i)
         {
-            auto obj  = this->getCollisionObjectArray()[i];
+            auto obj  = this->world.getCollisionObjectArray()[i];
             auto body = btRigidBody::upcast(obj);
 
             if (body != nullptr)
@@ -39,12 +39,33 @@ namespace GTEngine
 
         // We need to remove the ghost callback. Not doing this will result in a crash... Also, this must be done AFTER
         // removing all of the collision objects.
-        this->getOverlappingPairCache()->setInternalGhostPairCallback(nullptr);
+        this->broadphase.getOverlappingPairCache()->setInternalGhostPairCallback(nullptr);
     }
 
-    void DynamicsWorld::rayTest(const glm::vec3 &rayFromWorld, const glm::vec3 &rayToWorld, RayResultCallback &resultCallback) const
+    void DynamicsWorld::Step(double timeStep, int maxSubSteps, double fixedTimeStep)
     {
-        btDiscreteDynamicsWorld::rayTest(ToBulletVector3(rayFromWorld), ToBulletVector3(rayToWorld), resultCallback);
+        this->world.stepSimulation(static_cast<btScalar>(timeStep), maxSubSteps, static_cast<btScalar>(fixedTimeStep));
+    }
+
+
+    void DynamicsWorld::SetGravity(float x, float y, float z)
+    {
+        this->world.setGravity(btVector3(x, y, z));
+    }
+
+    void DynamicsWorld::GetGravity(float &x, float &y, float &z) const
+    {
+        btVector3 gravity = this->world.getGravity();
+        x = gravity.x();
+        y = gravity.y();
+        z = gravity.z();
+    }
+
+
+
+    void DynamicsWorld::rayTest(const glm::vec3 &rayFromWorld, const glm::vec3 &rayToWorld, btDynamicsWorld::RayResultCallback &resultCallback) const
+    {
+        this->world.rayTest(ToBulletVector3(rayFromWorld), ToBulletVector3(rayToWorld), resultCallback);
     }
 
 
@@ -57,7 +78,7 @@ namespace GTEngine
         }
 
         body->setWorld(this);
-        btDiscreteDynamicsWorld::addRigidBody(body);
+        this->world.addRigidBody(body);
     }
 
     void DynamicsWorld::addRigidBody(RigidBody *body, short group, short mask)
@@ -69,13 +90,13 @@ namespace GTEngine
         }
 
         body->setWorld(this);
-        btDiscreteDynamicsWorld::addRigidBody(body, group, mask);
+        this->world.addRigidBody(body, group, mask);
     }
 
     void DynamicsWorld::removeRigidBody(RigidBody* body)
     {
         body->setWorld(nullptr);
-        btDiscreteDynamicsWorld::removeRigidBody(body);
+        this->world.removeRigidBody(body);
     }
 
 
@@ -88,7 +109,7 @@ namespace GTEngine
         }
         else
         {
-            btDiscreteDynamicsWorld::addRigidBody(bodyIn);
+            this->world.addRigidBody(bodyIn);
         }
     }
 
@@ -101,7 +122,7 @@ namespace GTEngine
         }
         else
         {
-            btDiscreteDynamicsWorld::addRigidBody(bodyIn, group, mask);
+            this->world.addRigidBody(bodyIn, group, mask);
         }
     }
 
@@ -114,7 +135,7 @@ namespace GTEngine
         }
         else
         {
-            btDiscreteDynamicsWorld::removeRigidBody(bodyIn);
+            this->world.removeRigidBody(bodyIn);
         }
     }
 
@@ -128,7 +149,7 @@ namespace GTEngine
         }
 
         ghost->setWorld(this);
-        btDiscreteDynamicsWorld::addCollisionObject(ghost);
+        this->world.addCollisionObject(ghost);
     }
 
     void DynamicsWorld::addGhostObject(GhostObject *ghost, short group, short mask)
@@ -140,13 +161,13 @@ namespace GTEngine
         }
 
         ghost->setWorld(this);
-        btDiscreteDynamicsWorld::addCollisionObject(ghost, group, mask);
+        this->world.addCollisionObject(ghost, group, mask);
     }
 
     void DynamicsWorld::removeGhostObject(GhostObject* ghost)
     {
         ghost->setWorld(nullptr);
-        btDiscreteDynamicsWorld::removeCollisionObject(ghost);
+        this->world.removeCollisionObject(ghost);
     }
 
 
@@ -159,7 +180,7 @@ namespace GTEngine
         }
         else
         {
-            btDiscreteDynamicsWorld::removeCollisionObject(objIn);
+            this->world.removeCollisionObject(objIn);
         }
     }
 }

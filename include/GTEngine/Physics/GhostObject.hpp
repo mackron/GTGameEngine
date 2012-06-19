@@ -24,9 +24,9 @@ namespace GTEngine
         void setWorld(DynamicsWorld *world);
 
         /**
-        *   \brief  Retrieves a pointer to the world these body is part of.
+        *   \brief  Retrieves a pointer to the world this object is part of.
         */
-        DynamicsWorld * getWorld();
+        DynamicsWorld* getWorld();
 
 
     private:
