@@ -200,8 +200,8 @@ namespace GTEngine
           dynamicsWorld(), occlusionCollisionWorld(),
           navigationMesh(), navigationMeshNode(), navigationMeshModel()
     {
-        this->AddSceneNode(this->navigationMeshNode);
-        this->navigationMeshNode.Hide();
+        //this->AddSceneNode(this->navigationMeshNode);
+        //this->navigationMeshNode.Hide();
     }
 
     DefaultScene::~DefaultScene()
@@ -360,7 +360,7 @@ namespace GTEngine
 
         btVector3 tempMin;
         btVector3 tempMax;
-        this->occlusionCollisionWorld.getBroadphaseAabb(tempMin, tempMax);
+        this->occlusionCollisionWorld.getBroadphase()->getBroadphaseAabb(tempMin, tempMax);
 
         min = ToGLMVector3(tempMin);
         max = ToGLMVector3(tempMax);
@@ -433,12 +433,10 @@ namespace GTEngine
 
                 glm::mat4 projection = camera->GetProjectionMatrix();
                 glm::mat4 view       = camera->GetViewMatrix();
+                glm::mat4 mvp        = projection * view;
+                glm::vec3 forward    = cameraNode->GetWorldForwardVector();
 
-                glm::mat4 mvp     = projection * view;
-
-                glm::vec3 cameraPosition = cameraNode->GetWorldPosition();
-                glm::vec3 forward        = cameraNode->GetWorldForwardVector();
-
+                btVector3 sortaxis(forward.x, forward.y, forward.z);
                 btVector3 planes_n[6];
 		        btScalar  planes_o[6];
 
@@ -449,45 +447,23 @@ namespace GTEngine
                 planes_n[4] = btVector3(mvp[0][3] - mvp[0][2], mvp[1][3] - mvp[1][2], mvp[2][3] - mvp[2][2]);     // Far
                 planes_n[5] = btVector3(mvp[0][3] + mvp[0][2], mvp[1][3] + mvp[1][2], mvp[2][3] + mvp[2][2]);     // Near
 
-                /*
-			    planes_o[0] = (mvp[3][3] - mvp[3][0]);    // Right
-			    planes_o[1] = (mvp[3][3] + mvp[3][0]);    // Left
-			    planes_o[2] = (mvp[3][3] - mvp[3][1]);    // Top
-			    planes_o[3] = (mvp[3][3] + mvp[3][1]);    // Bottom
-                planes_o[4] = (mvp[3][3] - mvp[3][2]);    // Far
-                planes_o[5] = (mvp[3][3] + mvp[3][2]);    // Near
-                */
+                
+			    planes_o[0] = mvp[3][3] - mvp[3][0];    // Right
+			    planes_o[1] = mvp[3][3] + mvp[3][0];    // Left
+			    planes_o[2] = mvp[3][3] - mvp[3][1];    // Top
+			    planes_o[3] = mvp[3][3] + mvp[3][1];    // Bottom
+                planes_o[4] = mvp[3][3] - mvp[3][2];    // Far
+                planes_o[5] = mvp[3][3] + mvp[3][2];    // Near
 
-                planes_o[0] = (mvp[3][3] - mvp[3][0]) / planes_n[0].length();    // Right
-			    planes_o[1] = (mvp[3][3] + mvp[3][0]) / planes_n[1].length();    // Left
-			    planes_o[2] = (mvp[3][3] - mvp[3][1]) / planes_n[2].length();    // Top
-			    planes_o[3] = (mvp[3][3] + mvp[3][1]) / planes_n[3].length();    // Bottom
-                planes_o[4] = (mvp[3][3] - mvp[3][2]) / planes_n[4].length();    // Far
-                planes_o[5] = (mvp[3][3] + mvp[3][2]) / planes_n[5].length();    // Near
-
-                planes_n[0].normalize();
-                planes_n[1].normalize();
-                planes_n[2].normalize();
-                planes_n[3].normalize();
-                planes_n[4].normalize();
-                planes_n[5].normalize();
-
-                btVector3 sortaxis(forward.x, forward.y, forward.z);
-
-
+                
                 DefaultSceneCullingDbvtPolicy dbvtPolicy(viewport);
 
-                for (size_t i = 0; i < 6; ++i)
-                {
-                    //printf("Plane: %f %f %f, %f\n", planes_n[i].x(), planes_n[i].y(), planes_n[i].z(), planes_o[i]);
-                }
-
-                //btDbvt::collideOCL(broadphase.m_sets[1].m_root, planes_n, planes_o, sortaxis, 5, dbvtPolicy);
-			    //btDbvt::collideOCL(broadphase.m_sets[0].m_root, planes_n, planes_o, sortaxis, 5, dbvtPolicy);
+                btDbvt::collideOCL(broadphase.m_sets[1].m_root, planes_n, planes_o, sortaxis, 6, dbvtPolicy);
+			    btDbvt::collideOCL(broadphase.m_sets[0].m_root, planes_n, planes_o, sortaxis, 6, dbvtPolicy);
 
                 // Below is for only frustum culling.
-                btDbvt::collideKDOP(broadphase.m_sets[1].m_root, planes_n, planes_o, 5, dbvtPolicy);
-			    btDbvt::collideKDOP(broadphase.m_sets[0].m_root, planes_n, planes_o, 5, dbvtPolicy);
+                //btDbvt::collideKDOP(broadphase.m_sets[1].m_root, planes_n, planes_o, 5, dbvtPolicy);
+			    //btDbvt::collideKDOP(broadphase.m_sets[0].m_root, planes_n, planes_o, 5, dbvtPolicy);
 
 
 
@@ -771,8 +747,6 @@ namespace GTEngine
         auto proximityComponent = node.GetComponent<ProximityComponent>();
         if (proximityComponent != nullptr)
         {
-            proximityComponent->ApplyScaling(node.GetWorldScale());
-            
             // The very first thing we're going to do is ensure the scaling has been applied. We do this in OnSceneNodeScaled(), too.
             proximityComponent->ApplyScaling(node.GetWorldScale());
 
@@ -784,6 +758,20 @@ namespace GTEngine
             ghostObject.setWorldTransform(transform);
 
             this->dynamicsWorld.addGhostObject(&ghostObject, proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
+        }
+
+
+        // Occluders.
+        auto occluderComponent = node.GetComponent<OccluderComponent>();
+        if (occluderComponent != nullptr)
+        {
+            auto &collisionObject = occluderComponent->GetCollisionObject();
+
+            btTransform transform;
+            node.GetWorldTransform(transform);
+            collisionObject.setWorldTransform(transform);
+
+            this->occlusionCollisionWorld.addCollisionObject(&collisionObject, CollisionGroups::Occluder, CollisionGroups::All);
         }
 
 
@@ -846,6 +834,13 @@ namespace GTEngine
             this->dynamicsWorld.removeGhostObject(&proximityComponent->GetGhostObject());
         }
 
+        // Occluder.
+        auto occluderComponent = node.GetComponent<OccluderComponent>();
+        if (occluderComponent != nullptr)
+        {
+            this->occlusionCollisionWorld.removeCollisionObject(&occluderComponent->GetCollisionObject());
+        }
+
         // If we have metadata, it needs to be removed. this will delete any culling objects.
         auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
         delete metadata;
@@ -873,6 +868,25 @@ namespace GTEngine
                 world->GetInternalDynamicsWorld().updateSingleAabb(&ghostObject);
             }
         }
+
+        // Occluders.
+        auto occluderComponent = node.GetComponent<OccluderComponent>();
+        if (occluderComponent != nullptr)
+        {
+            auto &collisionObject = occluderComponent->GetCollisionObject();
+
+            auto world = collisionObject.getWorld();
+            if (world != nullptr)
+            {
+                btTransform transform;
+                node.GetWorldTransform(transform);
+
+                collisionObject.setWorldTransform(transform);
+                world->updateSingleAabb(&collisionObject);
+            }
+        }
+
+
 
         auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
         if (metadata != nullptr)    // Use an assert?
@@ -930,8 +944,6 @@ namespace GTEngine
                     this->AddModelCullingObjects(*modelComponent);
                 }
 
-                //this->occlusionCollisionWorld.updateSingleAabb(metadata->modelCollisionObject);
-
                 /*
                 // We need to scale the collision shapes. Unfortunately the only way I could figure this out is to completely delete
                 // the children and recreate them. The loop below does just that.
@@ -971,6 +983,13 @@ namespace GTEngine
         {
             proximity->ApplyScaling(node.GetWorldScale());
         }
+
+        // Occluders.
+        auto occluder = node.GetComponent<OccluderComponent>();
+        if (occluder != nullptr)
+        {
+            occluder->ApplyScaling(node.GetWorldScale());
+        }
     }
 
 
@@ -995,6 +1014,8 @@ namespace GTEngine
         {
             this->AddSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
         }
+
+        // TODO: Occluders.
     }
 
     void DefaultScene::OnSceneNodeComponentDetached(SceneNode&, Component& component)
@@ -1015,6 +1036,8 @@ namespace GTEngine
         {
             this->RemoveSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
         }
+
+        // TODO: Occluders.
     }
 
     void DefaultScene::OnSceneNodeComponentChanged(SceneNode&, Component &component)
@@ -1037,5 +1060,7 @@ namespace GTEngine
             this->RemoveSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
             this->AddSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
         }
+
+        // TODO: Proximity, occluders.
     }
 }
