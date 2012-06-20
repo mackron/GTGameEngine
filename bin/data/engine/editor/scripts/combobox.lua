@@ -21,7 +21,9 @@ function Server.Element:ComboBox()
 
     -- Appends an item to the combo box's list. If this is the first item, it will be set as the title element.
     function self:AppendItem(title)
-        local item = ComboBoxMenuItem(title, self.MenuElement, self);
+        local item = Server.New("<div parentid='" .. self.MenuElement:GetID() .. "' styleclass='combobox-menu-item'>" .. title .. "</div>");
+        item:ComboBoxMenuItem(title, self);
+
         self.ListItems[#self.ListItems + 1] = item;
 
         if #self.ListItems == 1 then
@@ -89,15 +91,13 @@ function Server.Element:ComboBox()
 end
 
 
-function ComboBoxMenuItem(title, parent, combobox)
-    local item = Server.New("<div parentid='" .. parent:GetID() .. "' styleclass='combobox-menu-item'>" .. title .. "</div>");
+function Server.Element:ComboBoxMenuItem(title, combobox)
+    self.title    = title;
+    self.combobox = combobox;
 
-    item.title    = title;
-    item.combobox = combobox;
+    self:OnPressed(function()
+        self.combobox:SelectItem(self);
+    end);
     
-    function item:OnPush()
-        item.combobox:SelectItem(self);
-    end
-    
-    return item;
+    return self;
 end

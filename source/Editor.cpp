@@ -25,23 +25,17 @@ namespace GTEngine
     {
         if (!this->isStarted)
         {
+            auto &script = guiServer.GetScriptServer().GetScript();
+
+            // We need to load the standard library first.
+            script.LoadAndExecute("Editor = {};");
+
+
             // We need to grab the main elements from the server.
             if (guiServer.LoadFromFile("engine/editor/main.xml"))
             {
                 this->GUI.EditorMain = guiServer.GetElementByID("EditorMain");
                 
-                // Here we setup the common editor FFI. We need to ensure there is a Game.Editor namespace.
-                auto &script = guiServer.GetScriptServer().GetScript();
-                
-                script.GetGlobal("Game");
-                if (script.IsTable(-1))
-                {
-                    script.Push("Editor");
-                    script.PushNewTable();
-                    script.SetTableValue(-3);
-                }
-                script.Pop(1);
-
 
                 // Here is where we startup our sub-editors.
                 this->modelEditor.Startup(guiServer);

@@ -8,8 +8,30 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <include url="combobox.xml" />
 <include url="file-explorer.xml" />
 
+<!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
 <script>
 <![CDATA[
+    -- The current mode. This is represented as the container of the main element containing the controls for that tool.
+    Editor.CurrentMode = nil;
+    
+    function Editor.SwitchMode(mode)
+        if Editor.CurrentMode ~= mode then
+            if Editor.CurrentMode ~= nil then
+                Editor.CurrentMode:Hide();
+            end;
+            
+            Editor.CurrentMode = mode;
+            Editor.CurrentMode:Show();
+        end;
+    end;
+
+    function Editor.SwitchToModelViewerMode()
+        Editor.SwitchMode(ModelEditor);
+    end;
+    
+    function Editor.SwitchToSandboxMode()
+        Editor.SwitchMode(Sandbox);
+    end;
 ]]>
 </script>
 
@@ -31,10 +53,19 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     MenuBar_ModelMode:AppendItem("Edit");
     MenuBar_ModelMode:AppendItem("View");
+    
 
     ModeSwitcher:ComboBox();
-    ModeSwitcher:AppendItem("Model Editor");
-    --ModeSwitcher:AppendItem("Material Editor");
+    ModeSwitcher:AppendItem("Model Viewer"):OnPressed(function()
+        Editor.SwitchToModelViewerMode();
+    end);
+    ModeSwitcher:AppendItem("Sandbox"):OnPressed(function()
+        Editor.SwitchToSandboxMode();
+    end);
+    
+    
+    -- This sets the default mode.
+    Editor.SwitchToModelViewerMode();
 ]]>
 </script>
 
@@ -207,12 +238,48 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         right-gripper-width:8px;
         
         border-right:   1px #222
+        
+        min-width: 16px
     }
 
     #ModelViewport
     {
         width:         100%
         height:        100%
+        
+        min-width: 16px
+    }
+    
+    
+    #Sandbox
+    {
+        width:            100%
+        height:           100%
+        flex-child-width: true
+        child-plane:      horizontal
+        
+        visible: false
+    }
+    
+    #SandboxLeftPanel
+    {
+        width:  350px
+        height: 100%
+        
+        allow-mouse-resize:true;
+        right-gripper-width:8px;
+        
+        border-right:   1px #222
+        
+        min-width: 16px
+    }
+    
+    #SandboxViewport
+    {
+        width:  100%
+        height: 100%
+        
+        min-width: 16px
     }
 </style>
 
@@ -304,10 +371,17 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     The center panel is where individual editting tools can use their own GUIs.
     -->
     <div id="EditorCenterPanel">
-        <div id="ModelEditor" style="text-color:#f00">
+        <div id="ModelEditor" style="text-color:#f00;">
             <div id="ModelEditorLeftPanel">
             </div>
             <div id="ModelViewport">
+            </div>
+        </div>
+        
+        <div id="Sandbox" style="visible:false">
+            <div id="SandboxLeftPanel">
+            </div>
+            <div id="SandboxViewport">
             </div>
         </div>
     </div>
