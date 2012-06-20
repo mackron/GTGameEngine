@@ -38,18 +38,23 @@ namespace GTEngine
 
         /// Retrieves the internal collision configuration.
         btDefaultCollisionConfiguration & GetCollisionConfiguration() { return this->configuration; }
+        const btDefaultCollisionConfiguration & GetCollisionConfiguration() const { return this->configuration; } 
 
         /// Retrieves a reference to the internal collision dispatcher.
         btCollisionDispatcher & GetCollisionDispatcher() { return this->dispatcher; }
+        const btCollisionDispatcher & GetCollisionDispatcher() const { return this->dispatcher; }
 
         /// Retrieves a reference to the internal broadphase.
         btDbvtBroadphase & GetBroadphase() { return this->broadphase; }
+        const btDbvtBroadphase & GetBroadphase() const { return this->broadphase; }
 
         /// Retrieves a reference to the internal constrain solver.
         btSequentialImpulseConstraintSolver & GetConstraintSolver() { return this->solver; }
+        const btSequentialImpulseConstraintSolver & GetConstraintSolver() const { return this->solver; }
 
         /// Retrieves a reference to the internal dynamics world.
         btDiscreteDynamicsWorld & GetInternalDynamicsWorld() { return this->world; }
+        const btDiscreteDynamicsWorld & GetInternalDynamicsWorld() const { return this->world; }
 
 
         /// Steps the dynamics simulation.
