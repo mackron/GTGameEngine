@@ -54,6 +54,13 @@ namespace GTEngine
 
         /// Retrieves a 1x1 black texture.
         static Texture2D* Get1x1BlackTexture();
+
+
+    /// Misc.
+    public:
+
+        /// Sets the default level of anisotropy to apply to newly acquired textures.
+        static void SetDefaultAnisotropy(unsigned int defaultAnisotropy);
     };
 }
 

@@ -45,7 +45,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::PostError("Error initializing editor: Failed to load editor/main.xml. Ensure the 'editor' directory exists.");
+                GTEngine::PostError("Error initializing editor: Failed to load editor/main.xml. Ensure the 'editor' directory exists. %s.", script.ToString(-1));
                 return false;
             }
         }

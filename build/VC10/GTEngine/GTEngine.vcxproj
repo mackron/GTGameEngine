@@ -200,6 +200,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\GameEventQueue.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameObject.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameObjectGC.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\GameScript.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameUpdateJob.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameWindowEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GarbageCollector.hpp" />
@@ -253,7 +254,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ThreadCache.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\UserConfig.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ViewportRenderer.hpp" />
@@ -295,6 +295,7 @@
     <ClCompile Include="..\..\..\source\GameEventQueue.cpp" />
     <ClCompile Include="..\..\..\source\GameObject.cpp" />
     <ClCompile Include="..\..\..\source\GameObjectGC.cpp" />
+    <ClCompile Include="..\..\..\source\GameScript.cpp" />
     <ClCompile Include="..\..\..\source\GameUpdateJob.cpp" />
     <ClCompile Include="..\..\..\source\GameWindowEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\GarbageCollector.cpp" />
@@ -339,7 +340,6 @@
     <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp" />
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ThreadCache.cpp" />
-    <ClCompile Include="..\..\..\source\UserConfig.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ViewportRenderer.cpp" />

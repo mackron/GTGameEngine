@@ -1,7 +1,6 @@
 
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
-#include <GTEngine/UserConfig.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Rendering.hpp>
 #include <GTEngine/Audio/AudioComposer.hpp>
@@ -47,6 +46,8 @@ namespace GTEngine
             GTCore::IO::SetCurrentDirectory(ApplicationConfig::Directories::Data());
         }
 
+
+        /*
         // Now that we're in the correct directory, we can startup the user configuration.
         if (UserConfig::Startup(clientDefaultConfig))
         {
@@ -56,10 +57,20 @@ namespace GTEngine
                 UserConfig::LoadFile(cmdLine_config[0]);
             }
         }
+        */
 
 
-        // We need to initialise our logging stuff before starting up any major sub-systems, such as the renderer.
-        Logging::Startup(UserConfig::GetString("LogFile"));
+        // We need to initialise our logging stuff before starting up any major sub-systems, such as the renderer. The log file will be specified
+        // as a command line option, else we will use the default value of 'var/logs/engine.html'
+        const char** cmdLine_logfile = cmdLine.GetArgument("logfile");
+        if (cmdLine_logfile != nullptr)
+        {
+            Logging::Startup(cmdLine_logfile[0]);
+        }
+        else
+        {
+            Logging::Startup("var/logs/engine.html");
+        }
 
         
         // Here we'll startup the thread cache. We will do this before starting the sub-systems so that they themselves can do some
@@ -131,7 +142,6 @@ namespace GTEngine
         AudioComposer::Shutdown();
 
         // Now we can shutdown the minor sub-systems, remembering to do logging last.
-        UserConfig::Shutdown();
         Logging::Shutdown();
 
         // Thread cache.

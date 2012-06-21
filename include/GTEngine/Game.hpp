@@ -4,7 +4,7 @@
 
 #include "GameEventQueue.hpp"
 #include "GameWindowEventHandler.hpp"
-#include "UserConfig.hpp"
+#include "GameScript.hpp"
 #include "Editor.hpp"
 #include "Rendering/RenderCommands/RCSetFramebuffer.hpp"
 #include <GTCore/Threading.hpp>
@@ -120,6 +120,12 @@ namespace GTEngine
         void SetMousePosition(int x, int y);
 
 
+        /// Retrieves the scripting environment of the game.
+              GameScript & GetScript()       { return this->script; }
+        const GameScript & GetScript() const { return this->script; }
+        
+
+
         /**
         *   \brief  Retrieves the time in seconds between the last two frames. Allows time based movement.
         */
@@ -164,12 +170,16 @@ namespace GTEngine
 
 
         /// Determines if a key is currently pressed.
+        ///
         /// @param key [in] The key code to check.
+        ///
         /// @return True if the key is currently held down.
         bool IsKeyDown(GTCore::Key key) const;
 
         /// Determines if a mouse button is currently pressed.
+        ///
         /// @param button [in] The mouse button code to check.
+        ///
         /// @return True if the mouse button is currently held down.
         bool IsMouseButtonDown(GTCore::MouseButton button) const;
 
@@ -216,6 +226,15 @@ namespace GTEngine
 
         /// Determines whether or now the debugging overlay is shown.
         bool IsDebuggingOpen() const;
+
+
+        /// Executes the given script on the central game script.
+        ///
+        /// @param script [in] The script string to execute. <b>This is not a file name</b>
+        ///
+        /// @return True if the script is executed successfully; false otherwise.
+        bool ExecuteScript(const char* script);
+
 
 
     // Operators.
@@ -441,6 +460,9 @@ namespace GTEngine
             static int Close(GTCore::Script &script);
             static int Pause(GTCore::Script &script);
             static int Resume(GTCore::Script &script);
+
+            static int ExecuteScript(GTCore::Script &script);
+            static int GetLastScriptError(GTCore::Script &script);
         };
 
 
@@ -463,6 +485,10 @@ namespace GTEngine
 
         /// The event handler for the main window.
         GameWindowEventHandler windowEventHandler;
+
+
+        /// The scripting environment for doing anything with scripts.
+        GameScript script;
 
 
         /// A pointer to the update thread. This will point to a member in the 'threads' array.

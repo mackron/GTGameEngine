@@ -149,9 +149,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\UserConfig.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -362,6 +359,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\btEllipsoidShape.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameScript.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -490,9 +490,6 @@
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\UserConfig.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -609,6 +606,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\btEllipsoidShape.cpp">
       <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameScript.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

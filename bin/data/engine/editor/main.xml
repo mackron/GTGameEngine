@@ -64,6 +64,23 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     end);
     
     
+    CommandTextBox:OnKeyDown(function(data)
+        if data.key == 13 then                  -- Enter key
+            if not Game.ExecuteScript(CommandTextBox:GetText()) then
+                CommandErrorBox:SetStyle("text-color", "#a66");
+                CommandErrorBox:SetText(Game.GetLastScriptError());
+            else
+                CommandErrorBox:SetStyle("text-color", "#999");
+                CommandErrorBox:SetText("No errors.");
+            end;
+            
+            CommandTextBox:SetText("");         -- Clear the box.
+        else
+            CommandErrorBox:SetText("");        -- Clears the output message.
+        end;
+    end);
+    
+    
     -- This sets the default mode.
     Editor.SwitchToModelViewerMode();
 ]]>
@@ -389,6 +406,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     <div id="EditorBottomPanel">
         <div style="width:auto; margin-left:4px; margin-right:8px; text-color:#888;">Command:</div>
         <div id="CommandTextBox" styleclass="textbox" style="height:22px; width:400px;" />
+        <div id="CommandErrorBox" style="height:100%; width:auto; margin-left:8px; vertical-align:center;" />
     </div>
   
     <!-- This section contains relative positioned controls. Usually dialog boxes. -->
