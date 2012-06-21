@@ -12,7 +12,7 @@ namespace GTEngine
 
     VertexArray* Mesh::GetSkinnedGeometry()
     {
-        if (this->skinningData != nullptr)
+        if (this->skinningData != nullptr && this->hasAnimated)
         {
             return this->skinningData->skinnedGeometry[Renderer::BackIndex];
         }
@@ -49,37 +49,6 @@ namespace GTEngine
     }
 
 
-    /*
-    // TOOD: Scaling works, but we need to check that we can reuse the same vertex array.
-    btGImpactMeshShape* Mesh::BuildCollisionShape(const glm::vec3 &scale)
-    {
-        delete this->collisionVA;
-
-        auto &vaFormat    = this->geometry->GetFormat();
-        auto  indexCount  = this->geometry->GetIndexCount();
-        auto  vertexCount = this->geometry->GetVertexCount();
-        auto  indexData   = reinterpret_cast<int *>(this->geometry->MapIndexData());
-        auto  vertexData  = this->geometry->MapVertexData();
-
-        auto  positionOffset = vaFormat.GetAttributeOffset(VertexAttribs::Position);
-
-        this->collisionVA = new btTriangleIndexVertexArray
-        (
-            static_cast<int>(indexCount / 3), indexData, 3 * sizeof(unsigned int),
-            static_cast<int>(vertexCount), vertexData + positionOffset, static_cast<int>(vaFormat.GetSizeInBytes())
-        );
-
-        auto newCollisionShape = new btGImpactMeshShape(this->collisionVA);
-        newCollisionShape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
-        newCollisionShape->updateBound();        // <-- must call this, otherwise the AABB will be incorrect.
-
-        this->geometry->UnmapIndexData();
-        this->geometry->UnmapVertexData();
-
-        return newCollisionShape;
-    }
-    */
-
 
     void Mesh::ApplySkinning()
     {
@@ -105,6 +74,8 @@ namespace GTEngine
 
             this->geometry->UnmapVertexData();
             dstVertexArray->UnmapVertexData();
+
+            this->hasAnimated = true;
         }
     }
 }

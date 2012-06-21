@@ -50,6 +50,22 @@ namespace GTEngine
         */
         float GetApproximateRadius() const;
 
+
+        /// Enables shadow casting.
+        ///
+        /// @remarks
+        ///     Shadow casting is enabled by default.
+        void EnableShadowCasting();
+
+        /// Disables shadow casting.
+        ///
+        /// @remarks
+        ///     Shadow casting is enabled by default.
+        void DisableShadowCasting();
+
+        /// Determines whether or not this model casts shadows.
+        bool IsShadowCastingEnabled() const { return this->castShadows; }
+
         
     public:
 
@@ -64,6 +80,9 @@ namespace GTEngine
         
         /// The quadratic attenuation.
         float quadraticAttenuation;
+
+        /// Keeps track of whether or not the light should cast shadows.
+        bool castShadows;
 
     GTENGINE_DECL_COMPONENT_END()
 }
@@ -130,6 +149,21 @@ namespace GTEngine
         float GetOuterAngle() const { return this->outerAngle; }
 
         
+        /// Enables shadow casting.
+        ///
+        /// @remarks
+        ///     Shadow casting is enabled by default.
+        void EnableShadowCasting();
+
+        /// Disables shadow casting.
+        ///
+        /// @remarks
+        ///     Shadow casting is enabled by default.
+        void DisableShadowCasting();
+
+        /// Determines whether or not this model casts shadows.
+        bool IsShadowCastingEnabled() const { return this->castShadows; }
+
 
         
     public:
@@ -151,6 +185,9 @@ namespace GTEngine
         
         /// The quadratic attenuation.
         float quadraticAttenuation;
+
+        /// Keeps track of whether or not the light casts shadows.
+        bool castShadows;
 
     GTENGINE_DECL_COMPONENT_END()
 }
@@ -180,11 +217,31 @@ namespace GTEngine
         */
         void SetColour(const glm::vec3 &colour) { this->colour = colour; }
 
+
+        /// Enables shadow casting.
+        ///
+        /// @remarks
+        ///     Shadow casting is enabled by default.
+        void EnableShadowCasting();
+
+        /// Disables shadow casting.
+        ///
+        /// @remarks
+        ///     Shadow casting is enabled by default.
+        void DisableShadowCasting();
+
+        /// Determines whether or not this model casts shadows.
+        bool IsShadowCastingEnabled() const { return this->castShadows; }
+
         
     public:
 
         /// The colour of the light. No alpha.
         glm::vec3 colour;
+
+        /// Keeps track of whether or not the light casts shadows.
+        bool castShadows;
+
 
     GTENGINE_DECL_COMPONENT_END()
 }

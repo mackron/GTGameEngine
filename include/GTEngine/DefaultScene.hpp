@@ -226,8 +226,8 @@ namespace GTEngine
                 if (sourceVA != nullptr)
                 {
                     auto &vertexFormat = sourceVA->GetFormat();
-                    auto  indexData   = reinterpret_cast<int *>(sourceVA->MapIndexData());
-                    auto  vertexData  = sourceVA->MapVertexData();
+                    auto  indexData    = reinterpret_cast<int *>(sourceVA->MapIndexData());
+                    auto  vertexData   = sourceVA->MapVertexData();
 
                     this->modelCollisionShapeVA = new btTriangleIndexVertexArray(
                         static_cast<int>(sourceVA->GetIndexCount() / 3), indexData, 3 * sizeof(unsigned int),

@@ -10,6 +10,7 @@ namespace GTEngine
     ModelComponent::ModelComponent(SceneNode &node)
         : Component(node), model(nullptr),
           cullFrontFaces(false), cullBackFaces(true),
+          castShadow(false),
           isOwner(false)
     {
     }
@@ -45,6 +46,18 @@ namespace GTEngine
         this->cullFrontFaces = cullFront;
         this->cullBackFaces  = cullBack;
     }
+
+
+    void ModelComponent::EnableShadowCasting()
+    {
+        this->castShadow = true;
+    }
+
+    void ModelComponent::DisableShadowCasting()
+    {
+        this->castShadow = false;
+    }
+
     
     void ModelComponent::MakeOwner()
     {
