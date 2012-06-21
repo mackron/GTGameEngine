@@ -1,7 +1,8 @@
 
 #include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/UserConfig.hpp>
 #include <GTCore/Dictionary.hpp>
+
+
 
 // Engine textures.
 namespace GTEngine
@@ -25,7 +26,10 @@ namespace GTEngine
 namespace GTEngine
 {
     /// The list of loaded textures, indexed by file name.
-    GTCore::Dictionary<Texture2D*> LoadedTextures;
+    static GTCore::Dictionary<Texture2D*> LoadedTextures;
+
+    /// The default level of anistropy to apply to all textures.
+    static unsigned int DefaultAnisotropy = 1;
 }
 
 namespace GTEngine
@@ -59,7 +63,7 @@ namespace GTEngine
         if (iTexture == nullptr)
         {
             auto newTexture = new Texture2D(fileName);
-                newTexture->SetAnisotropy(UserConfig::GetInteger("Display.Textures.Anisotropy"));
+                newTexture->SetAnisotropy(DefaultAnisotropy);
                 LoadedTextures.Add(fileName, newTexture);
             return newTexture;
         }
@@ -103,6 +107,15 @@ namespace GTEngine
         {
             --texture->refCount;
         }
+    }
+}
+
+
+namespace GTEngine
+{
+    void Texture2DLibrary::SetDefaultAnisotropy(unsigned int defaultAnisotropy)
+    {
+        DefaultAnisotropy = defaultAnisotropy;
     }
 }
 

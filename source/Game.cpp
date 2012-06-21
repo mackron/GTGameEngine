@@ -9,6 +9,9 @@
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTCore/System.hpp>
+#include <GTCore/Strings/Tokenizer.hpp>
+#include <GTCore/String.hpp>
+#include <GTCore/CommandLine.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -22,7 +25,10 @@ namespace GTEngine
     extern bool IsGameObjectCreated;
 
     Game::Game(int argc, char** argv)
-        : isInitialised(false), closing(false), eventQueue(), eventQueueLock(), window(nullptr), windowEventHandler(*this), updateThread(nullptr), updateJob(nullptr), 
+        : isInitialised(false), closing(false), eventQueue(), eventQueueLock(),
+          window(nullptr), windowEventHandler(*this),
+          script(*this),
+          updateThread(nullptr), updateJob(nullptr), 
           totalRunninTimeInSeconds(0.0), deltaTimeInSeconds(0.0), updateTimer(),
           fontServer(nullptr), defaultFont(nullptr),
           gui(nullptr), guiEventHandler(nullptr),
@@ -333,6 +339,12 @@ namespace GTEngine
     }
 
 
+    bool Game::ExecuteScript(const char* script)
+    {
+        return this->script.Execute(script);
+    }
+
+
 
     void Game::OnUpdate()
     {
@@ -440,8 +452,19 @@ namespace GTEngine
 
     bool Game::Initialise(int argc, char **argv)
     {
-        (void)argc;
-        (void)argv;
+        // We'll need to grab the command line because the first thing we're going to do is load any user scripts into the scripting environment.
+        GTCore::CommandLine cmdLine(argc, argv);
+
+        // This is where the user config scripts are loaded.
+        const char** cmdLine_config = cmdLine.GetArgument("config");
+        if (cmdLine_config != nullptr)
+        {
+            for (int i = 0; cmdLine_config[i] != nullptr; ++i)
+            {
+                this->script.ExecuteFile(cmdLine_config[i]);
+            }
+        }
+
 
         // First we need a window. Note that we don't show it straight away.
         this->window = Renderer::CreateGameWindow();
@@ -458,7 +481,7 @@ namespace GTEngine
             // We'll want to set a few window properties before showing it... We want to show the window relatively early to make
             // the game feel a little bit more speedy, even though it's not really.
             this->window->SetTitle("GTEngine Game");
-            this->window->SetSize(UserConfig::GetInteger("Display.Width"), UserConfig::GetInteger("Display.Height"));
+            this->window->SetSize(this->script.GetInteger("Display.Width"), this->script.GetInteger("Display.Height"));
 
             // Now we can set the window's event handler and show it.
             this->window->SetEventHandler(this->windowEventHandler);
@@ -546,6 +569,15 @@ namespace GTEngine
 
             script.Push("Resume");
             script.PushClosure(Game::GUIFFI::Resume, 0);
+            script.SetTableValue(-3);
+
+
+            script.Push("ExecuteScript");
+            script.PushClosure(Game::GUIFFI::ExecuteScript, 0);
+            script.SetTableValue(-3);
+
+            script.Push("GetLastScriptError");
+            script.PushClosure(Game::GUIFFI::GetLastScriptError, 0);
             script.SetTableValue(-3);
         script.Pop(1);  // Game
 
@@ -946,6 +978,23 @@ namespace GTEngine
 
         game.Resume();
         return 0;
+    }
+
+
+    int Game::GUIFFI::ExecuteScript(GTCore::Script &script)
+    {
+        auto& game = Game::GUIFFI::GetGameObject(script);
+
+        script.Push(game.ExecuteScript(script.ToString(1)));
+        return 1;
+    }
+
+    int Game::GUIFFI::GetLastScriptError(GTCore::Script &script)
+    {
+        auto& game = Game::GUIFFI::GetGameObject(script);
+
+        script.Push(game.GetScript().GetLastError());
+        return 1;
     }
 }
 
