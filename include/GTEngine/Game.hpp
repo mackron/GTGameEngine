@@ -106,6 +106,18 @@ namespace GTEngine
         */
         GTCore::Window * GetWindow() { return this->window; }
 
+
+        /// Enables fullscreen mode.
+        void EnableFullscreen();
+
+        /// Disables fullscreen mode.
+        void DisableFullscreen();
+
+        /// Determines whether or not the window is fullscreen.
+        bool IsFullscreen() const;
+
+
+
         /**
         *   \brief  Retrieves the current position of the mouse. This is relative to the main game window.
         */
