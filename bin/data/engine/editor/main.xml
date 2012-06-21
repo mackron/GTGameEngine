@@ -66,9 +66,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     CommandTextBox:OnKeyDown(function(data)
         if data.key == 13 then                  -- Enter key
-            if not Game.ExecuteScript(CommandTextBox:GetText()) then
+            if not Engine.ExecuteScript(CommandTextBox:GetText()) then
                 CommandErrorBox:SetStyle("text-color", "#a66");
-                CommandErrorBox:SetText(Game.GetLastScriptError());
+                CommandErrorBox:SetText(Engine.GetLastScriptError());
             else
                 CommandErrorBox:SetStyle("text-color", "#999");
                 CommandErrorBox:SetText("No errors.");

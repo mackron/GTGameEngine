@@ -362,6 +362,17 @@ namespace GTEngine
         */
         bool Initialise(int argc, char **argv);
 
+
+        /// Initialises the scripting environment.
+        bool InitialiseScripting();
+
+        /// Initialises the scripting foreign function interface.
+        bool InitialiseScriptingFFI();
+
+        /// Initialises the scripting standard library.
+        bool InitialiseScriptingSTDLibrary();
+
+
         /**
         *   \brief  Helper method for initialising the font cache.
         */
@@ -453,18 +464,11 @@ namespace GTEngine
 
     public:
 
-        /// The GUI FFI.
-        struct GUIFFI
+        /// FFI
+        struct FFI
         {
             /// A helper for retrieving the SG1Game instance from the script.
             static Game & GetGameObject(GTCore::Script &script);
-
-            static int Close(GTCore::Script &script);
-            static int Pause(GTCore::Script &script);
-            static int Resume(GTCore::Script &script);
-
-            static int ExecuteScript(GTCore::Script &script);
-            static int GetLastScriptError(GTCore::Script &script);
         };
 
 

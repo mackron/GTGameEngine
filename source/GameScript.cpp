@@ -1,5 +1,6 @@
 
 #include <GTEngine/GameScript.hpp>
+#include <GTEngine/Errors.hpp>
 
 namespace GTEngine
 {
@@ -43,6 +44,8 @@ namespace GTEngine
         if (!GTCore::Script::Execute())
         {
             this->lastError = this->ToString(-1);
+            PostError("Script Error: %s", this->lastError.c_str());
+
             return false;
         }
 
