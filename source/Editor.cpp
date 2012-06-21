@@ -27,10 +27,6 @@ namespace GTEngine
         {
             auto &script = guiServer.GetScriptServer().GetScript();
 
-            // We need to load the standard library first.
-            script.LoadAndExecute("Editor = {};");
-
-
             // We need to grab the main elements from the server.
             if (guiServer.LoadFromFile("engine/editor/main.xml"))
             {

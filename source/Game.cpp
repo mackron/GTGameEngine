@@ -5,6 +5,7 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/GarbageCollector.hpp>
 #include <GTEngine/ThreadCache.hpp>
+#include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTCore/System.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
@@ -490,6 +491,9 @@ namespace GTEngine
             }
         }
 
+        // Here we will set the default anistropy for textures via the texture library.
+        Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("Display.Textures.Anisotropy")));
+
 
         // We will initialise the scripting environment before setting up anything else. This will allow the scripting environment to be
         // accessed as early as possible.
@@ -554,12 +558,12 @@ namespace GTEngine
         result = result && this->script.Execute
         (
             "Game   = {};\n"
-            "Editor = {};\n"
             "Engine = {};\n"
-            "Engine.ModelEditor    = {};\n"
-            "Engine.MaterialEditor = {};\n"
-            "Engine.SceneEditor    = {};\n"
-            "Engine.Sandbox        = {};\n"
+            "Editor = {};\n"
+            "Editor.ModelEditor    = {};\n"
+            "Editor.MaterialEditor = {};\n"
+            "Editor.SceneEditor    = {};\n"
+            "Editor.Sandbox        = {};\n"
         );
 
         // Here is where we setup the foreign function interface. We do this before setting up the standard scripting library.
@@ -913,6 +917,7 @@ namespace GTEngine
             }
         }
 
+        this->DisableFullscreen();
         this->OnLoseFocus();
     }
 }
@@ -941,7 +946,7 @@ namespace GTEngine
 
 
     ////////////////////////////////////////////////////////////////
-    // Engine FFI
+    // Game FFI
 
     int FFI_Game_Close(GTCore::Script &script)
     {
@@ -1022,7 +1027,24 @@ namespace GTEngine
         return 0;
     }
 
-    int FFI_Engine_OpenEditor(GTCore::Script &script)
+
+    int FFI_Engine_EnableVSync(GTCore::Script &)
+    {
+        Renderer::SetSwapInterval(1);
+        return 0;
+    }
+
+    int FFI_Engine_DisableVSync(GTCore::Script &)
+    {
+        Renderer::SetSwapInterval(0);
+        return 0;
+    }
+
+
+    ////////////////////////////////////////////////////////////////
+    // Engine FFI
+
+    int FFI_Editor_Open(GTCore::Script &script)
     {
         auto &game = Game::FFI::GetGameObject(script);
 
@@ -1030,7 +1052,7 @@ namespace GTEngine
         return 0;
     }
 
-    int FFI_Engine_CloseEditor(GTCore::Script &script)
+    int FFI_Editor_Close(GTCore::Script &script)
     {
         auto &game = Game::FFI::GetGameObject(script);
 
@@ -1095,12 +1117,13 @@ namespace GTEngine
             this->script.PushClosure(FFI_Engine_HideDebug, 0);
             this->script.SetTableValue(-3);
 
-            this->script.Push("OpenEditor");
-            this->script.PushClosure(FFI_Engine_OpenEditor, 0);
+
+            this->script.Push("EnableVSync");
+            this->script.PushClosure(FFI_Engine_EnableVSync, 0);
             this->script.SetTableValue(-3);
 
-            this->script.Push("CloseEditor");
-            this->script.PushClosure(FFI_Engine_CloseEditor, 0);
+            this->script.Push("DisableVSync");
+            this->script.PushClosure(FFI_Engine_DisableVSync, 0);
             this->script.SetTableValue(-3);
         }
         this->script.Pop(1);    // Engine
@@ -1108,6 +1131,10 @@ namespace GTEngine
 
         this->script.GetGlobal("Editor");
         {
+            
+
+
+
             this->script.Push("ModelEditor");
             this->script.GetTableValue(-2);
             if (this->script.IsTable(-1))
@@ -1138,6 +1165,15 @@ namespace GTEngine
             {
             }
             this->script.Pop(1);
+
+
+            this->script.Push("Open");
+            this->script.PushClosure(FFI_Editor_Open, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("Close");
+            this->script.PushClosure(FFI_Editor_Close, 0);
+            this->script.SetTableValue(-3);
         }
         this->script.Pop(1);    // Editor
 
