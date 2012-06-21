@@ -222,6 +222,10 @@ namespace GTEngine
         bool IsPaused() const { return this->paused; }
 
 
+        /// Retrieves a reference to the editor object.
+              Editor & GetEditor()       { return this->editor; }
+        const Editor & GetEditor() const { return this->editor; }
+
         /// Opens the editor.
         void OpenEditor();
 

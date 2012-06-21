@@ -11,36 +11,15 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
 <script>
 <![CDATA[
-    -- The current mode. This is represented as the container of the main element containing the controls for that tool.
-    Editor.CurrentMode = nil;
-    
-    function Editor.SwitchMode(mode)
-        if Editor.CurrentMode ~= mode then
-            if Editor.CurrentMode ~= nil then
-                Editor.CurrentMode:Hide();
-            end;
-            
-            Editor.CurrentMode = mode;
-            Editor.CurrentMode:Show();
-        end;
-    end;
-
-    function Editor.SwitchToModelViewerMode()
-        Editor.SwitchMode(ModelEditor);
-    end;
-    
-    function Editor.SwitchToSandboxMode()
-        Editor.SwitchMode(Sandbox);
-    end;
 ]]>
 </script>
 
 <script>
 <![CDATA[
-    MenuBar_ModelMode:MenuBar();
-    file = MenuBar_ModelMode:AppendItem("File");
+    MenuBar_ModelEditor:MenuBar();
+    file = MenuBar_ModelEditor:AppendItem("File");
     file.menu:AppendItem("Open..."):OnPressed(function()
-        MenuBar_ModelMode:CollapseMenu();
+        MenuBar_ModelEditor:CollapseMenu();
         OpenModelDialog:Show();
     end);
     file.menu:AppendSeparator();
@@ -51,13 +30,22 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         Game.Close();
     end);
     
-    MenuBar_ModelMode:AppendItem("Edit");
-    MenuBar_ModelMode:AppendItem("View");
+    MenuBar_ModelEditor:AppendItem("Edit");
+    MenuBar_ModelEditor:AppendItem("View");
+    
+    
+    
+    MenuBar_Sandbox:MenuBar();
+    insert = MenuBar_Sandbox:AppendItem("Insert");
+    insert.menu:AppendItem("Ground Plane...");
+    insert.menu:AppendSeparator();
+    insert.menu:AppendItem("Dynamic Box...");
+    insert.menu:AppendItem("Dynamic Sphere...");
     
 
     ModeSwitcher:ComboBox();
-    ModeSwitcher:AppendItem("Model Viewer"):OnPressed(function()
-        Editor.SwitchToModelViewerMode();
+    ModeSwitcher:AppendItem("Model Editor"):OnPressed(function()
+        Editor.SwitchToModelEditorMode();
     end);
     ModeSwitcher:AppendItem("Sandbox"):OnPressed(function()
         Editor.SwitchToSandboxMode();
@@ -79,10 +67,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
             CommandErrorBox:SetText("");        -- Clears the output message.
         end;
     end);
-    
-    
-    -- This sets the default mode.
-    Editor.SwitchToModelViewerMode();
 ]]>
 </script>
 
@@ -376,7 +360,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         such as the mode switcher.
         -->
         <div id="EditorTopPanel_Left">
-            <div id="MenuBar_ModelMode" styleclass="menubar" />
+            <div id="MenuBar_ModelEditor" styleclass="menubar" style="visible:false;" />
+            <div id="MenuBar_Sandbox"     styleclass="menubar" style="visible:false;" />
         </div>
         
         <div id="EditorTopPanel_Right" style="horizontal-align:right; vertical-align:center; padding-right:0px;">
@@ -388,7 +373,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     The center panel is where individual editting tools can use their own GUIs.
     -->
     <div id="EditorCenterPanel">
-        <div id="ModelEditor" style="text-color:#f00;">
+        <div id="ModelEditor" style="visible:false">
             <div id="ModelEditorLeftPanel">
             </div>
             <div id="ModelViewport">

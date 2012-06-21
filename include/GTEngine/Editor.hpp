@@ -2,7 +2,8 @@
 #ifndef __GTEngine_Editor_hpp_
 #define __GTEngine_Editor_hpp_
 
-#include "Editor/ModelEditor.hpp"
+#include "Editor/EditorMode_ModelEditor.hpp"
+#include "Editor/EditorMode_Sandbox.hpp"
 
 namespace GTGUI
 {
@@ -35,6 +36,11 @@ namespace GTEngine
         bool IsStarted() const { return this->isStarted; }
 
 
+        /// Retrieves a reference to the game object that owns this editor.
+              Game & GetGame()       { return this->game; }
+        const Game & GetGame() const { return this->game; }
+
+
         /// Opens the editor.
         void Open();
 
@@ -45,11 +51,35 @@ namespace GTEngine
         bool IsOpen() const { return this->isOpen; }
 
 
+        /// Switches editor modes.
+        void SwitchToModelEditorMode();
+
+        /// Switches to the sandbox mode.
+        void SwitchToSandboxMode();
+
+        /// Switches to the previous mode.
+        void SwitchToPreviousMode();
+
+
+
+        //////////////////////////////////////////////////////////////////////////////
+        // Events.
+
         /// Updates the editor so that it can do rendering and whatnot.
         void Update(double deltaTimeInSeconds);
 
         /// Swaps the RC queues.
         void SwapRCQueues();
+
+
+
+    private:
+
+        /// Helper function for setting the editor mode.
+        ///
+        /// @param mode [in] A pointer to the new editor mode. Can be nullptr.
+        void SetEditorMode(EditorMode* mode);
+
 
 
     private:
@@ -70,15 +100,25 @@ namespace GTEngine
 
         }GUI;
 
+
         /// The model editor.
-        ModelEditor modelEditor;
+        EditorMode_ModelEditor modelEditor;
+
+        /// The sandbox mode.
+        EditorMode_Sandbox sandbox;
+
+        /// The current editor mode.
+        EditorMode* currentMode;
+
+        /// The previously current mode. Good for toggling.
+        EditorMode* previousMode;
+
 
         /// Whether or not the editor has be started up.
         bool isStarted;
 
         /// Whether or not the editor is open. Defaults to false.
         bool isOpen;
-
     };
 }
 

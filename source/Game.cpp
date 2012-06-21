@@ -1042,7 +1042,7 @@ namespace GTEngine
 
 
     ////////////////////////////////////////////////////////////////
-    // Engine FFI
+    // Editor FFI
 
     int FFI_Editor_Open(GTCore::Script &script)
     {
@@ -1057,6 +1057,22 @@ namespace GTEngine
         auto &game = Game::FFI::GetGameObject(script);
 
         game.CloseEditor();
+        return 0;
+    }
+
+    int FFI_Editor_SwitchToModelEditorMode(GTCore::Script &script)
+    {
+        auto &game = Game::FFI::GetGameObject(script);
+
+        game.GetEditor().SwitchToModelEditorMode();
+        return 0;
+    }
+
+    int FFI_Editor_SwitchToSandboxMode(GTCore::Script &script)
+    {
+        auto &game = Game::FFI::GetGameObject(script);
+
+        game.GetEditor().SwitchToSandboxMode();
         return 0;
     }
 
@@ -1131,7 +1147,21 @@ namespace GTEngine
 
         this->script.GetGlobal("Editor");
         {
-            
+            this->script.Push("Open");
+            this->script.PushClosure(FFI_Editor_Open, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("Close");
+            this->script.PushClosure(FFI_Editor_Close, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("SwitchToModelEditorMode");
+            this->script.PushClosure(FFI_Editor_SwitchToModelEditorMode, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("SwitchToSandboxMode");
+            this->script.PushClosure(FFI_Editor_SwitchToSandboxMode, 0);
+            this->script.SetTableValue(-3);
 
 
 
@@ -1165,15 +1195,6 @@ namespace GTEngine
             {
             }
             this->script.Pop(1);
-
-
-            this->script.Push("Open");
-            this->script.PushClosure(FFI_Editor_Open, 0);
-            this->script.SetTableValue(-3);
-
-            this->script.Push("Close");
-            this->script.PushClosure(FFI_Editor_Close, 0);
-            this->script.SetTableValue(-3);
         }
         this->script.Pop(1);    // Editor
 

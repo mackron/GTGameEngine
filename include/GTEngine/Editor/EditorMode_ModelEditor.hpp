@@ -1,0 +1,102 @@
+
+#ifndef __GTEngine_Editor_ModelEditor_hpp_
+#define __GTEngine_Editor_ModelEditor_hpp_
+
+#include "EditorMode.hpp"
+#include "Editor3DViewportEventHandler.hpp"
+#include "../DefaultScene.hpp"
+#include "../DefaultViewportRenderer.hpp"
+#include <GTGUI/Server.hpp>
+
+namespace GTEngine
+{
+    class Editor;
+
+    class EditorMode_ModelEditor : public EditorMode
+    {
+    public:
+
+        /// Constructor.
+        EditorMode_ModelEditor(Editor &editor);
+
+        /// Destructor.
+        ~EditorMode_ModelEditor();
+
+
+        /// Initialises the model editor.
+        bool Startup(GTGUI::Server &guiServer);
+
+
+        //////////////////////////////////////////////////////////////
+        // Events
+
+        /// EditorMode::OnActivate().
+        void OnActivate();
+
+        /// EditorMode::OnDeactivate().
+        void OnDeactivate();
+
+        /// EditorMode::OnUpdate().
+        void OnUpdate(double deltaTimeInSeconds);
+
+        /// EditorMode::OnSwapRCQueues().
+        void OnSwapRCQueues();
+
+
+    private:
+
+        /// The main editor object that owns this sub editor.
+        Editor &editor;
+
+
+        /// Structure containing the GUI elements.
+        struct _GUI
+        {
+            _GUI()
+                : Main(nullptr), MenuBar(nullptr), ModelViewport(nullptr)
+            {
+            }
+
+            /// The main container element.
+            GTGUI::Element* Main;
+
+            /// The menu bar for the model editor.
+            GTGUI::Element* MenuBar;
+
+            /// The model viewport
+            GTGUI::Element* ModelViewport;
+
+        }GUI;
+
+
+        /// The scene that will contain the model node.
+        DefaultScene scene;
+
+        /// The viewport we will be rendering from.
+        SceneViewport viewport;
+
+        /// The renderer we'll be using to draw the scene/model.
+        DefaultViewportRenderer renderer;
+
+        /// The camera node where rendering will be drawn from.
+        SceneNode cameraNode;
+
+        /// The model node containing the model that is being drawn.
+        SceneNode modelNode;
+
+
+        float cameraXRotation;      ///< The camera's current X rotation.
+        float cameraYRotation;      ///< The camera's current Y rotation.
+
+
+        /// The event handler for the viewport.
+        Editor3DViewportEventHandler viewportEventHandler;
+
+
+    private:    // No copying.
+        EditorMode_ModelEditor(const EditorMode_ModelEditor &);
+        EditorMode_ModelEditor & operator=(const EditorMode_ModelEditor &);
+    };
+}
+
+#endif
