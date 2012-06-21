@@ -84,14 +84,16 @@ namespace GTEngine
         /// Default constructor.
         Mesh()
             : geometry(nullptr), material(nullptr),
-              /*collisionVA(nullptr),*/ skinningData(nullptr)
+              skinningData(nullptr),
+              hasAnimated(false)
         {
         }
 
         /// Constructor.
         Mesh(VertexArray* geometry, Material* material)
             : geometry(geometry), material(material),
-              /*collisionVA(nullptr),*/ skinningData(nullptr)
+              skinningData(nullptr),
+              hasAnimated(false)
         {
         }
 
@@ -192,11 +194,13 @@ namespace GTEngine
         /// The material to use with this mesh.
         Material* material;
 
-        /// The vertex array for use with the collision shape.
-        //btTriangleIndexVertexArray* collisionVA;
-
         /// A pointer to the skinning data of the mesh. This will be set to null if the mesh is not animated.
         MeshSkinningData* skinningData;
+
+        /// Keeps track of whether or not the mesh has been animated. This is needed so we know whether or not to return the base
+        /// geometry or skinned geometry for an animated mesh. If the mesh has not yet been animated, the base geometry needs to
+        /// be used.
+        bool hasAnimated;
     };
 }
 

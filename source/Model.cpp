@@ -167,14 +167,7 @@ namespace GTEngine
         }
     }
 
-    /*
-    btTriangleIndexVertexArray* Model::RebuildCollisionVertexArray()
-    {
-        // The first thing we need to do is combine the meshes into a single data pool. All we care about is positions here.
-        VertexArray mainArray(VertexArrayUsage_Static, VertexFormat::P3);
 
-    }
-    */
 
     VertexArray* Model::UpdateCollisionVertexArray()
     {
@@ -187,7 +180,7 @@ namespace GTEngine
         GTCore::Vector<VertexArray*> sourceArrays;
         for (size_t i = 0; i < this->meshes.count; ++i)
         {
-            sourceArrays.PushBack(this->meshes[i]->GetGeometry());
+            sourceArrays.PushBack(this->meshes[i]->GetSkinnedGeometry());
         }
 
         this->collisionVA = VertexArrayLibrary::CreateCombined(sourceArrays.buffer, sourceArrays.count, VertexFormat::P3);

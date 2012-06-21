@@ -29,6 +29,20 @@ namespace GTEngine
         bool CullBackFaces() const { return this->cullBackFaces; }
 
         
+        /// Enables shadow casting.
+        ///
+        /// @remarks
+        ///     Shadow casting is enabled by default.
+        void EnableShadowCasting();
+
+        /// Disables shadow casting.
+        ///
+        /// @remarks
+        ///     Shadow casting is enabled by default.
+        void DisableShadowCasting();
+
+        /// Determines whether or not this model casts shadows.
+        bool IsShadowCastingEnabled() const { return this->castShadow; }
 
 
         /**
@@ -45,7 +59,7 @@ namespace GTEngine
         */
         void RemoveOwnership();
 
-        
+
     private:
 
         /// A pointer to the applicable model.
@@ -57,6 +71,10 @@ namespace GTEngine
         /// Keeps track of whether or not back faces should be drawn.
         bool cullBackFaces;
         
+
+        /// Keeps track of whether or not this model casts a shadow.
+        bool castShadow;
+
 
         /// Keeps track of whether or not the component owns the model. If this is 'true', the component will destruct
         /// the model when it is destructed.
