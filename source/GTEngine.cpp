@@ -26,7 +26,7 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    bool Startup(int argc, char** argv, const char* clientDefaultConfig)
+    bool Startup(int argc, char** argv)
     {
         // First this is to more into the applications directory. We get this from the command line.
         GTCore::CommandLine cmdLine(argc, argv);
@@ -45,19 +45,6 @@ namespace GTEngine
             // we'll move into it here.
             GTCore::IO::SetCurrentDirectory(ApplicationConfig::Directories::Data());
         }
-
-
-        /*
-        // Now that we're in the correct directory, we can startup the user configuration.
-        if (UserConfig::Startup(clientDefaultConfig))
-        {
-            const char** cmdLine_config = cmdLine.GetArgument("config");
-            if (cmdLine_config != nullptr)
-            {
-                UserConfig::LoadFile(cmdLine_config[0]);
-            }
-        }
-        */
 
 
         // We need to initialise our logging stuff before starting up any major sub-systems, such as the renderer. The log file will be specified
