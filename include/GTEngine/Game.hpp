@@ -6,6 +6,8 @@
 #include "GameWindowEventHandler.hpp"
 #include "GameScript.hpp"
 #include "Editor.hpp"
+#include "GUIEventHandler.hpp"
+#include "GameUpdateJob.hpp"
 #include "Rendering/RenderCommands/RCSetFramebuffer.hpp"
 #include <GTCore/Threading.hpp>
 #include <GTCore/Timing.hpp>
@@ -141,12 +143,12 @@ namespace GTEngine
         /**
         *   \brief  Retrieves a pointer to the games font cache.
         */
-        GTType::FontServer * GetFontServer() { return this->fontServer; }
+        GTType::FontServer & GetFontServer() { return this->fontServer; }
 
         /**
         *   \brief  Retrieves a pointer to the default font.
         */
-        GTType::Font * GetDefaultFont() { return this->defaultFont; }
+        GTType::Font* GetDefaultFont() { return this->defaultFont; }
 
         /**
         *   \brief  Captures the mouse.
@@ -495,7 +497,7 @@ namespace GTEngine
         GTCore::Thread* updateThread;
 
         /// The job that will do the game updates.
-        GTCore::Threading::Job* updateJob;
+        GameUpdateJob updateJob;
 
 
         /// The time between the last two frames. Use this for time-based operations.
@@ -508,19 +510,18 @@ namespace GTEngine
         /// The timer for timing updates. This is needed for retrieving the delta time.
         GTCore::Timer updateTimer;
 
-        /// The font cache to use with this game.
-        GTType::FontServer* fontServer;
+        /// The font server to use with this game.
+        GTType::FontServer fontServer;
 
         /// The generic font we'll use for basically everything.
         GTType::Font* defaultFont;
 
         /// The GUI of this game. There is only a single GUI for every game. A game should dynamically show and hide root elements
-        /// to show different GUI's for different game states. We use a pointer here because we need to pass it a font server to
-        /// it's constructor, which will not be constructed until Game::Initialise().
-        GTGUI::Server* gui;
+        /// to show different GUI's for different game states.
+        GTGUI::Server gui;
 
-        /// The event handler for the GUI. This is constructed at the same time as 'gui'.
-        GTGUI::ServerEventHandler* guiEventHandler;
+        /// The event handler for the GUI.
+        GUIEventHandler guiEventHandler;
 
         /// Whether or not the game is paused. A paused game will continue to render, but scene nodes and animations will not tick.
         bool paused;
