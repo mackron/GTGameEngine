@@ -104,6 +104,37 @@ namespace GTEngine
     }
 
 
+    void Game::EnableFullscreen()
+    {
+        if (this->window != nullptr)
+        {
+            // We use Display.Width and Display.Height in determining this.
+            int width  = this->script.GetInteger("Display.Width");
+            int height = this->script.GetInteger("Display.Height");
+
+            this->window->EnableFullscreen(static_cast<unsigned int>(width), static_cast<unsigned int>(height));
+        }
+    }
+
+    void Game::DisableFullscreen()
+    {
+        if (this->window != nullptr)
+        {
+            this->window->DisableFullscreen();
+        }
+    }
+
+    bool Game::IsFullscreen() const
+    {
+        if (this->window != nullptr)
+        {
+            return this->window->IsFullscreen();
+        }
+
+        return false;
+    }
+
+
     void Game::GetMousePosition(int &x, int &y)
     {
         if (this->window != nullptr)
@@ -569,40 +600,6 @@ namespace GTEngine
     bool Game::InitialiseGUI()
     {
         this->gui.SetEventHandler(this->guiEventHandler);
-
-        /*
-        // We want to register some FFI stuff so games don't need to do it themselves...
-        GTCore::Script &script = this->gui.GetScriptServer().GetScript();
-
-        script.Push(this);
-        script.SetGlobal("__GamePtr");
-
-        script.PushNewTable();
-        script.SetGlobal("Game");
-        script.GetGlobal("Game");
-            script.Push("Close");
-            script.PushClosure(Game::GUIFFI::Close, 0);
-            script.SetTableValue(-3);
-
-            script.Push("Pause");
-            script.PushClosure(Game::GUIFFI::Pause, 0);
-            script.SetTableValue(-3);
-
-            script.Push("Resume");
-            script.PushClosure(Game::GUIFFI::Resume, 0);
-            script.SetTableValue(-3);
-
-
-            script.Push("ExecuteScript");
-            script.PushClosure(Game::GUIFFI::ExecuteScript, 0);
-            script.SetTableValue(-3);
-
-            script.Push("GetLastScriptError");
-            script.PushClosure(Game::GUIFFI::GetLastScriptError, 0);
-            script.SetTableValue(-3);
-        script.Pop(1);  // Game
-        */
-
         return true;
     }
 
@@ -942,6 +939,10 @@ namespace GTEngine
     }
 
 
+
+    ////////////////////////////////////////////////////////////////
+    // Engine FFI
+
     int FFI_Game_Close(GTCore::Script &script)
     {
         auto &game = Game::FFI::GetGameObject(script);
@@ -963,6 +964,22 @@ namespace GTEngine
         auto& game = Game::FFI::GetGameObject(script);
 
         game.Resume();
+        return 0;
+    }
+
+    int FFI_Game_EnableFullscreen(GTCore::Script &script)
+    {
+        auto& game = Game::FFI::GetGameObject(script);
+
+        game.EnableFullscreen();
+        return 0;
+    }
+
+    int FFI_Game_DisableFullscreen(GTCore::Script &script)
+    {
+        auto& game = Game::FFI::GetGameObject(script);
+
+        game.DisableFullscreen();
         return 0;
     }
 
@@ -1045,6 +1062,15 @@ namespace GTEngine
 
             this->script.Push("Resume");
             this->script.PushClosure(FFI_Game_Resume, 0);
+            this->script.SetTableValue(-3);
+
+
+            this->script.Push("EnableFullscreen");
+            this->script.PushClosure(FFI_Game_EnableFullscreen, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("DisableFullscreen");
+            this->script.PushClosure(FFI_Game_DisableFullscreen, 0);
             this->script.SetTableValue(-3);
         }
         this->script.Pop(1);    // Game
