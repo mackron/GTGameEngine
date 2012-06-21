@@ -460,6 +460,15 @@ namespace GTEngine
         }
 
 
+        // We will initialise the scripting environment before setting up anything else. This will allow the scripting environment to be
+        // accessed as early as possible.
+        Log("Initializing Scripting Environment...");
+        if (!this->InitialiseScripting())
+        {
+            Log("Error initializing scripting environment.");
+        }
+
+
         // First we need a window. Note that we don't show it straight away.
         this->window = Renderer::CreateGameWindow();
         if (this->window != nullptr)
@@ -506,6 +515,31 @@ namespace GTEngine
         return false;
     }
 
+    bool Game::InitialiseScripting()
+    {
+        bool result = true;
+
+        // We first want to ensure we have the tables setup.
+        result = result && this->script.Execute
+        (
+            "Game   = {};\n"
+            "Editor = {};\n"
+            "Engine = {};\n"
+            "Engine.ModelEditor    = {};\n"
+            "Engine.MaterialEditor = {};\n"
+            "Engine.SceneEditor    = {};\n"
+            "Engine.Sandbox        = {};\n"
+        );
+
+        // Here is where we setup the foreign function interface. We do this before setting up the standard scripting library.
+        result = result && this->InitialiseScriptingFFI();
+
+        // Here we initialise the engine's standard scripting library for making scripting stuff a little easier.
+        result = result && this->InitialiseScriptingSTDLibrary();
+
+        return result;
+    }
+
     bool Game::InitialiseFonts()
     {
         // We're currently in the Data directory as definied by the application configuration. In this directory
@@ -536,7 +570,7 @@ namespace GTEngine
     {
         this->gui.SetEventHandler(this->guiEventHandler);
 
-        
+        /*
         // We want to register some FFI stuff so games don't need to do it themselves...
         GTCore::Script &script = this->gui.GetScriptServer().GetScript();
 
@@ -567,6 +601,7 @@ namespace GTEngine
             script.PushClosure(Game::GUIFFI::GetLastScriptError, 0);
             script.SetTableValue(-3);
         script.Pop(1);  // Game
+        */
 
         return true;
     }
@@ -886,10 +921,16 @@ namespace GTEngine
 }
 
 
-// GUI FFI
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+// Below is everyhing to do with setting up the scripting environment.
+
 namespace GTEngine
 {
-    Game & Game::GUIFFI::GetGameObject(GTCore::Script &script)
+    ///////////////////////////////////////////////////////////////
+    // FFI
+
+    Game & Game::FFI::GetGameObject(GTCore::Script &script)
     {
         script.GetGlobal("__GamePtr");
         auto game = static_cast<Game*>(script.ToPointer(-1));
@@ -901,45 +942,185 @@ namespace GTEngine
     }
 
 
-    int Game::GUIFFI::Close(GTCore::Script &script)
+    int FFI_Game_Close(GTCore::Script &script)
     {
-        auto &game = Game::GUIFFI::GetGameObject(script);
+        auto &game = Game::FFI::GetGameObject(script);
 
         game.Close();
         return 0;
     }
 
-    int Game::GUIFFI::Pause(GTCore::Script &script)
+    int FFI_Game_Pause(GTCore::Script &script)
     {
-        auto& game = Game::GUIFFI::GetGameObject(script);
+        auto& game = Game::FFI::GetGameObject(script);
 
         game.Pause();
         return 0;
     }
 
-    int Game::GUIFFI::Resume(GTCore::Script &script)
+    int FFI_Game_Resume(GTCore::Script &script)
     {
-        auto& game = Game::GUIFFI::GetGameObject(script);
+        auto& game = Game::FFI::GetGameObject(script);
 
         game.Resume();
         return 0;
     }
 
 
-    int Game::GUIFFI::ExecuteScript(GTCore::Script &script)
+    
+
+
+    ////////////////////////////////////////////////////////////////
+    // Engine FFI
+
+    int FFI_Engine_ExecuteScript(GTCore::Script &script)
     {
-        auto& game = Game::GUIFFI::GetGameObject(script);
+        auto& game = Game::FFI::GetGameObject(script);
 
         script.Push(game.ExecuteScript(script.ToString(1)));
         return 1;
     }
 
-    int Game::GUIFFI::GetLastScriptError(GTCore::Script &script)
+    int FFI_Engine_GetLastScriptError(GTCore::Script &script)
     {
-        auto& game = Game::GUIFFI::GetGameObject(script);
+        auto& game = Game::FFI::GetGameObject(script);
 
         script.Push(game.GetScript().GetLastError());
         return 1;
+    }
+
+    int FFI_Engine_ShowDebug(GTCore::Script &script)
+    {
+        auto &game = Game::FFI::GetGameObject(script);
+
+        game.ShowDebugging();
+        return 0;
+    }
+
+    int FFI_Engine_HideDebug(GTCore::Script &script)
+    {
+        auto &game = Game::FFI::GetGameObject(script);
+
+        game.HideDebugging();
+        return 0;
+    }
+
+    int FFI_Engine_OpenEditor(GTCore::Script &script)
+    {
+        auto &game = Game::FFI::GetGameObject(script);
+
+        game.OpenEditor();
+        return 0;
+    }
+
+    int FFI_Engine_CloseEditor(GTCore::Script &script)
+    {
+        auto &game = Game::FFI::GetGameObject(script);
+
+        game.CloseEditor();
+        return 0;
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////
+    // Initialisation.
+
+    bool Game::InitialiseScriptingFFI()
+    {
+        // We assert that the tables have already been created.
+
+        this->script.Push(this);
+        this->script.SetGlobal("__GamePtr");
+
+        this->script.GetGlobal("Game");
+        {
+            this->script.Push("Close");
+            this->script.PushClosure(FFI_Game_Close, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("Pause");
+            this->script.PushClosure(FFI_Game_Pause, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("Resume");
+            this->script.PushClosure(FFI_Game_Resume, 0);
+            this->script.SetTableValue(-3);
+        }
+        this->script.Pop(1);    // Game
+
+
+        this->script.GetGlobal("Engine");
+        {
+            this->script.Push("ExecuteScript");
+            this->script.PushClosure(FFI_Engine_ExecuteScript, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("GetLastScriptError");
+            this->script.PushClosure(FFI_Engine_GetLastScriptError, 0);
+            this->script.SetTableValue(-3);
+
+
+            this->script.Push("ShowDebug");
+            this->script.PushClosure(FFI_Engine_ShowDebug, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("HideDebug");
+            this->script.PushClosure(FFI_Engine_HideDebug, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("OpenEditor");
+            this->script.PushClosure(FFI_Engine_OpenEditor, 0);
+            this->script.SetTableValue(-3);
+
+            this->script.Push("CloseEditor");
+            this->script.PushClosure(FFI_Engine_CloseEditor, 0);
+            this->script.SetTableValue(-3);
+        }
+        this->script.Pop(1);    // Engine
+
+
+        this->script.GetGlobal("Editor");
+        {
+            this->script.Push("ModelEditor");
+            this->script.GetTableValue(-2);
+            if (this->script.IsTable(-1))
+            {
+            }
+            this->script.Pop(1);
+
+
+            this->script.Push("MaterialEditor");
+            this->script.GetTableValue(-2);
+            if (this->script.IsTable(-1))
+            {
+            }
+            this->script.Pop(1);
+
+
+            this->script.Push("SceneEditor");
+            this->script.GetTableValue(-2);
+            if (this->script.IsTable(-1))
+            {
+            }
+            this->script.Pop(1);
+
+
+            this->script.Push("Sandbox");
+            this->script.GetTableValue(-2);
+            if (this->script.IsTable(-1))
+            {
+            }
+            this->script.Pop(1);
+        }
+        this->script.Pop(1);    // Editor
+
+        return true;
+    }
+
+    bool Game::InitialiseScriptingSTDLibrary()
+    {
+        return true;
     }
 }
 
