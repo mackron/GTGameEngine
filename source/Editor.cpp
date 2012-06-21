@@ -13,7 +13,10 @@
 namespace GTEngine
 {
     Editor::Editor(Game &game)
-        : game(game), GUI(), modelEditor(game, *this), isStarted(false), isOpen(false)
+        : game(game), GUI(),
+          modelEditor(*this), sandbox(*this),
+          currentMode(nullptr), previousMode(nullptr),
+          isStarted(false), isOpen(false)
     {
     }
 
@@ -32,11 +35,13 @@ namespace GTEngine
             {
                 this->GUI.EditorMain = guiServer.GetElementByID("EditorMain");
                 
-
-                // Here is where we startup our sub-editors.
+                // Here is where we startup our editor modes.
                 this->modelEditor.Startup(guiServer);
+                this->sandbox.Startup(guiServer);
+                
 
-
+                // Here we enable the default mode.
+                this->SwitchToModelEditorMode();
                 this->isStarted = true;
             }
             else
@@ -71,20 +76,55 @@ namespace GTEngine
     }
 
 
+    void Editor::SwitchToModelEditorMode()
+    {
+        this->SetEditorMode(&this->modelEditor);
+    }
+
+    void Editor::SwitchToSandboxMode()
+    {
+        this->SetEditorMode(&this->sandbox);
+    }
+
+    void Editor::SwitchToPreviousMode()
+    {
+        this->SetEditorMode(this->previousMode);
+    }
+
+
     void Editor::Update(double deltaTimeInSeconds)
     {
-        if (this->isOpen)
+        if (this->currentMode != nullptr)
         {
-            this->modelEditor.Update(deltaTimeInSeconds);
+            this->currentMode->OnUpdate(deltaTimeInSeconds);
+        }
+    }
+
+    void Editor::SwapRCQueues()
+    {
+        if (this->currentMode != nullptr)
+        {
+            this->currentMode->OnSwapRCQueues();
         }
     }
 
 
-    void Editor::SwapRCQueues()
+
+    void Editor::SetEditorMode(EditorMode* newMode)
     {
-        if (this->isOpen)
+        if (this->currentMode != newMode)
         {
-            this->modelEditor.SwapRCQueues();
+            this->previousMode = this->currentMode;
+            if (this->previousMode != nullptr)
+            {
+                this->previousMode->OnDeactivate();
+            }
+
+            this->currentMode = newMode;
+            if (this->currentMode != nullptr)
+            {
+                this->currentMode->OnActivate();
+            }
         }
     }
 }
