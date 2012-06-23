@@ -49,6 +49,13 @@ namespace GTEngine
         void GenerateTangentsAndBitangents();
 
 
+        /// Retrieves the AABB of the base geometry.
+        ///
+        /// @param aabbMin [out] A reference to the variable that will receive the min corner.
+        /// @param aabbMax [out] A reference to the variable that will receive that max corner.
+        void GetBaseAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const;
+
+
         /// Rebuilds and returns a pointer to the vertex array that can be used as the source for a collision shape with this model.
         ///
         /// @remarks
@@ -106,6 +113,14 @@ namespace GTEngine
 
         /// The list of bones in the model.
         GTCore::Dictionary<Bone*> bones;
+
+
+        /// The base AABB of the model.
+        mutable glm::vec3 aabbMin;
+        mutable glm::vec3 aabbMax;
+
+        /// Keeps track of whether or not the AABB is valid.
+        mutable bool isAABBValid;
 
 
         /// The model's animation object.
