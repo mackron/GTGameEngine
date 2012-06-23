@@ -199,43 +199,44 @@ namespace GTEngine
 
     void SceneNode::DetachChild(SceneNode &child)
     {
-        assert(child.GetParent() == this);
-
-        auto childPrevSibling = child.GetPrevSibling();
-        auto childNextSibling = child.GetNextSibling();
-
-        if (childPrevSibling)
+        if (child.GetParent() == this)
         {
-            childPrevSibling->_SetNextSibling(childNextSibling);
-        }
-        else
-        {
-            // The child is the root.
-            this->firstChild = childNextSibling;
-        }
+            auto childPrevSibling = child.GetPrevSibling();
+            auto childNextSibling = child.GetNextSibling();
+
+            if (childPrevSibling)
+            {
+                childPrevSibling->_SetNextSibling(childNextSibling);
+            }
+            else
+            {
+                // The child is the root.
+                this->firstChild = childNextSibling;
+            }
             
-        if (childNextSibling)
-        {
-            childNextSibling->_SetPrevSibling(childPrevSibling);
+            if (childNextSibling)
+            {
+                childNextSibling->_SetPrevSibling(childPrevSibling);
+            }
+            else
+            {
+                // The child is the end.
+                this->lastChild = childPrevSibling;
+            }
+
+
+            // The child needs to be orphaned.
+            child._SetParent(nullptr);
+            child._SetPrevSibling(nullptr);
+            child._SetNextSibling(nullptr);
+
+            if (!this->EventsLocked())
+            {
+                this->OnDetach(child);
+            }
+
+            // It makes more sense to leave the scene as-is, so don't be tempted to set it to nullptr like we do the parent.
         }
-        else
-        {
-            // The child is the end.
-            this->lastChild = childPrevSibling;
-        }
-
-
-        // The child needs to be orphaned.
-        child._SetParent(nullptr);
-        child._SetPrevSibling(nullptr);
-        child._SetNextSibling(nullptr);
-
-        if (!this->EventsLocked())
-        {
-            this->OnDetach(child);
-        }
-
-        // It makes more sense to leave the scene as-is, so don't be tempted to set it to nullptr like we do the parent.
     }
 
     void SceneNode::DetachAllChildren()

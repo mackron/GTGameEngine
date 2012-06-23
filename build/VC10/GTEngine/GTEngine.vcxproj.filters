@@ -72,6 +72,9 @@
     <Filter Include="data\shaders\glsl">
       <UniqueIdentifier>{532d38ed-b907-4c85-a37d-450db5e593b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Math">
+      <UniqueIdentifier>{223a7c54-5a51-40a1-a85c-ae1184920c0d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -371,6 +374,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor3DViewportEventHandler.hpp">
       <Filter>include\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ShadowVolume.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Math\Plane.hpp">
+      <Filter>include\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -627,6 +636,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\Editor3DViewportEventHandler.cpp">
       <Filter>source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShadowVolume.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

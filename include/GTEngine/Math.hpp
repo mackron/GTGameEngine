@@ -18,6 +18,8 @@
     #pragma GCC diagnostic pop
 #endif
 
+#include "Math/Plane.hpp"
+
 namespace GTEngine
 {
     namespace Math
@@ -26,7 +28,6 @@ namespace GTEngine
         *   \brief  Calculates a view matrix from a position and orientation.
         */
         void CalculateViewMatrix(const glm::vec3 &position, const glm::quat &orientation, glm::mat4 &result);
-
 
 
         /// Math functions for trajectories.
@@ -103,5 +104,6 @@ namespace GTEngine
         }
 	}
 }
+
 
 #endif
