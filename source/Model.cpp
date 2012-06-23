@@ -4,11 +4,13 @@
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
 #include <GTEngine/Math.hpp>
+#include <cfloat>
 
 namespace GTEngine
 {
     Model::Model()
         : meshes(), bones(),
+          aabbMin(), aabbMax(), isAABBValid(false),
           animation(), animationChannelBones(), animationKeyCache(),
           animationPlaybackSpeed(1.0),
           collisionVA(nullptr)
@@ -165,6 +167,40 @@ namespace GTEngine
         {
             this->meshes[i]->GenerateTangentsAndBitangents();
         }
+    }
+
+    void Model::GetBaseAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const
+    {
+        // We may need to update the AABB.
+        if (!this->isAABBValid)
+        {
+            if (this->meshes.count > 0)
+            {
+                // We need to iterate over the positions of every vertex of every mesh and find the bounds.
+                this->aabbMin = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
+                this->aabbMax = glm::vec3(FLT_MIN, FLT_MIN, FLT_MIN);
+
+                for (size_t i = 0; i < this->meshes.count; ++i)
+                {
+                    glm::vec3 vaMin;
+                    glm::vec3 vaMax;
+                    this->meshes[i]->GetGeometry()->CalculateAABB(vaMin, vaMax);
+
+                    if (vaMin.x < this->aabbMin.x) this->aabbMin.x = vaMin.x;
+                    if (vaMin.y < this->aabbMin.y) this->aabbMin.y = vaMin.y;
+                    if (vaMin.z < this->aabbMin.z) this->aabbMin.z = vaMin.z;
+
+                    if (vaMax.x > this->aabbMax.x) this->aabbMax.x = vaMax.x;
+                    if (vaMax.y > this->aabbMax.y) this->aabbMax.y = vaMax.y;
+                    if (vaMax.z > this->aabbMax.z) this->aabbMax.z = vaMax.z;
+                }
+
+                this->isAABBValid = true;
+            }
+        }
+
+        aabbMin = this->aabbMin;
+        aabbMax = this->aabbMax;
     }
 
 

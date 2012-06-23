@@ -320,6 +320,12 @@ namespace GTEngine
     }
 
 
+    void DynamicsComponent::ApplyImpulse(float x, float y, float z, float relPosX, float relPosY, float relPosZ)
+    {
+        this->rigidBody->activate();
+        this->rigidBody->applyImpulse(btVector3(x, y, z), btVector3(relPosX, relPosY, relPosZ));
+    }
+
     void DynamicsComponent::ApplyCentralImpulse(float x, float y, float z)
     {
         this->rigidBody->activate();

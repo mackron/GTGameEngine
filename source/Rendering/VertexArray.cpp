@@ -272,4 +272,31 @@ namespace GTEngine
         }
         this->UnmapIndexData();
     }
+
+    void VertexArray::CalculateAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax)
+    {
+        aabbMin = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
+        aabbMax = glm::vec3(FLT_MIN, FLT_MIN, FLT_MIN);
+
+        auto positionOffset = this->format.GetAttributeOffset(VertexAttribs::Position);
+        assert(positionOffset != -1);
+
+        auto vertexData  = this->GetVertexDataPtr();
+        auto vertexCount = this->GetVertexCount();
+        auto vertexSize  = this->format.GetSize();
+
+        for (size_t i = 0; i < vertexCount; ++i)
+        {
+            auto position = vertexData + positionOffset;
+
+            if (position[0] < aabbMin.x) aabbMin.x = position[0];
+            if (position[0] > aabbMax.x) aabbMax.x = position[0];
+            if (position[1] < aabbMin.y) aabbMin.y = position[1];
+            if (position[1] > aabbMax.y) aabbMax.y = position[1];
+            if (position[2] < aabbMin.z) aabbMin.z = position[2];
+            if (position[2] > aabbMax.z) aabbMax.z = position[2];
+
+            vertexData += vertexSize;
+        }
+    }
 }

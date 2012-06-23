@@ -380,6 +380,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Math\Plane.hpp">
       <Filter>include\Math</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SimpleQuadtree.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">

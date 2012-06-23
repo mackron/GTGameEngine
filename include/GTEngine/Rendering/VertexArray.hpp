@@ -150,7 +150,7 @@ namespace GTEngine
 
     // Transforms.
     //
-    // TODO: Move this function. VertexArray should be relatively low level. Maybe create a MeshUtils static class?
+    // TODO: Move these functions. VertexArray should be relatively low level. Maybe create a MeshUtils static class?
     public:
 
         /// Generates tangents and bitanges if the format is suitable.
@@ -164,6 +164,9 @@ namespace GTEngine
 
         /// Swaps the triangle winding of the array. Assumes the array is made up of triangles. This only modifies the indices.
         void SwapTriangleWinding();
+
+        /// Calculates the AABB of the vertex array.
+        void CalculateAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax);
 
 
     private:

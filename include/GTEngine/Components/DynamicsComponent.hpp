@@ -156,6 +156,10 @@ namespace GTEngine
         void ApplyTorque(const glm::vec3 &torque) { this->ApplyTorque(torque.x, torque.y, torque.z); }
 
 
+        /// Applies an impulse to the body.
+        void ApplyImpulse(float x, float y, float z, float relPosX, float relPosY, float relPosZ);
+        void ApplyImpulse(const glm::vec3 &impulse, const glm::vec3 &relativePosition) { this->ApplyImpulse(impulse.x, impulse.y, impulse.z, relativePosition.x, relativePosition.y, relativePosition.z); }
+
         /// Applies a central impulse to the body.
         void ApplyCentralImpulse(float x, float y, float z);
         void ApplyCentralImpulse(const glm::vec3 &impulse) { this->ApplyCentralImpulse(impulse.x, impulse.y, impulse.z); }
