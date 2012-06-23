@@ -54,21 +54,25 @@ namespace GTEngine
         /// @param texture [in] The texture being marked for collection.
         /// @param counter [in] The counter to associate with the texture.
         static void MarkForCollection(Texture2D &texture, int counter = 1);
+        static void MarkForCollection(Texture2D* texture, int counter = 1) { if (texture != nullptr) MarkForCollection(*texture, counter); }
 
         /// Marks a shader for collection.
         /// @param shader  [in] The shader being marked for collection.
         /// @param counter [in] The counter to associate with the shader.
         static void MarkForCollection(Shader &shader, int counter = 1);
+        static void MarkForCollection(Shader* shader, int counter = 1) { if (shader != nullptr) MarkForCollection(*shader, counter); }
 
         /// Marks a framebuffer for collection.
         /// @param framebuffer [in] The framebuffer being marked for collection.
         /// @param counter     [in] The counter to associate with the shader.
         static void MarkForCollection(Framebuffer &framebuffer, int counter = 1);
+        static void MarkForCollection(Framebuffer* framebuffer, int counter = 1) { if (framebuffer != nullptr) MarkForCollection(*framebuffer, counter); }
 
         /// Marks a vertex array for collection.
         /// @param va      [in] The vertex array being marked for collection.
         /// @param counter [in] The counter to associate with the shader.
         static void MarkForCollection(VertexArray &va, int counter = 1);
+        static void MarkForCollection(VertexArray* va, int counter = 1) { if (va != nullptr) MarkForCollection(*va, counter); }
 
         
     // Collecting.

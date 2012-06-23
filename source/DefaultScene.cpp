@@ -200,8 +200,8 @@ namespace GTEngine
           dynamicsWorld(), occlusionCollisionWorld(),
           navigationMesh(), navigationMeshNode(), navigationMeshModel()
     {
-        //this->AddSceneNode(this->navigationMeshNode);
-        //this->navigationMeshNode.Hide();
+        this->AddSceneNode(this->navigationMeshNode);
+        this->navigationMeshNode.Hide();
     }
 
     DefaultScene::~DefaultScene()

@@ -7,6 +7,7 @@
 #include "Physics.hpp"
 #include "Math.hpp"
 #include "SkinningVertexAttribute.hpp"
+#include "GarbageCollector.hpp"
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -34,8 +35,10 @@ namespace GTEngine
         ~MeshSkinningData()
         {
             delete [] this->skinningVertexAttributes;
-            delete this->skinnedGeometry[0];
-            delete this->skinnedGeometry[1];
+
+            // Important to use the garbage collector here.
+            GarbageCollector::MarkForCollection(this->skinnedGeometry[0]);
+            GarbageCollector::MarkForCollection(this->skinnedGeometry[1]);
         }
 
         /// Allocates the vertex arrays for the animated geometry.
@@ -103,7 +106,6 @@ namespace GTEngine
         ///     The destructor does not delete the geometry vertex array or material.
         ~Mesh()
         {
-            /*delete this->collisionVA;*/
             delete this->skinningData;
         }
 

@@ -214,6 +214,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\MaterialLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\MaterialShaderCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Math.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Math\Plane.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Mesh.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\MeshBuilder.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Model.hpp" />
@@ -254,6 +255,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ShadowVolume.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ThreadCache.hpp" />
@@ -344,6 +346,7 @@
     <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameter.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp" />
+    <ClCompile Include="..\..\..\source\ShadowVolume.cpp" />
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ThreadCache.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp" />
