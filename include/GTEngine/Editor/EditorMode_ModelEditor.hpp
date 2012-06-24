@@ -45,6 +45,13 @@ namespace GTEngine
         bool SetMaterial(int index, const char* fileName);
 
 
+        /// Resets the camera to the default position.
+        void ResetCamera();
+
+        /// Sets the rotation of the camera.
+        void SetCameraRotation(float xRotation, float yRotation);
+
+
         //////////////////////////////////////////////////////////////
         // Events
 
@@ -59,6 +66,12 @@ namespace GTEngine
 
         /// EditorMode::OnSwapRCQueues().
         void OnSwapRCQueues();
+
+
+    private:
+
+        /// Applies the camera rotation.
+        void ApplyCameraRotation();
 
 
     private:

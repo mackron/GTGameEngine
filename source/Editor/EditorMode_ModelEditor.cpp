@@ -20,12 +20,12 @@ namespace GTEngine
         cameraNode.Add3DCameraComponent(90.0f, static_cast<float>(16.0f) / static_cast<float>(9.0f), 0.1f, 1000.0f);
         cameraNode.AddDirectionalLightComponent(0.5f, 0.5f, 0.5f);
         cameraNode.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
-        cameraNode.MoveForward(-10.0f);
 
+        // The model node will need a model component attached to it.
         this->modelNode.AddComponent<GTEngine::ModelComponent>();
-
-        //auto model = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/default.dae"))->GetModel();
-        //model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/default.material"));
+        
+        // Here we position the camera in it's default position.
+        this->ResetCamera();
 
 
         // Here we setup the viewport.
@@ -121,6 +121,20 @@ namespace GTEngine
     }
 
 
+    void EditorMode_ModelEditor::ResetCamera()
+    {
+        this->cameraNode.SetPosition(0.0f, 0.0f, 10.0f);
+        this->SetCameraRotation(0.0f, 0.0f);
+    }
+
+    void EditorMode_ModelEditor::SetCameraRotation(float xRotation, float yRotation)
+    {
+        this->cameraXRotation = xRotation;
+        this->cameraYRotation = yRotation;
+        this->ApplyCameraRotation();
+    }
+
+
     void EditorMode_ModelEditor::OnActivate()
     {
         if (this->GUI.Main != nullptr)
@@ -185,10 +199,7 @@ namespace GTEngine
                     }
                 }
 
-                // Doing the rotation this way allows us to keep the up axis constant.
-                this->cameraNode.SetOrientation(glm::quat());
-                this->cameraNode.RotateY(this->cameraYRotation);
-                this->cameraNode.RotateX(this->cameraXRotation);
+                this->ApplyCameraRotation();
             }
 
             this->scene.Update(deltaTimeInSeconds);
@@ -198,6 +209,20 @@ namespace GTEngine
     void EditorMode_ModelEditor::OnSwapRCQueues()
     {
         this->renderer.OnSwapRCQueues();
+    }
+
+
+
+
+
+    ////////////////////////////////////////////////////////////////////
+    // Private.
+
+    void EditorMode_ModelEditor::ApplyCameraRotation()
+    {
+        this->cameraNode.SetOrientation(glm::quat());
+        this->cameraNode.RotateY(this->cameraYRotation);
+        this->cameraNode.RotateX(this->cameraXRotation);
     }
 }
 
