@@ -351,6 +351,11 @@ namespace GTEngine
         this->rigidBody->setDeactivationTime(0.0f);
     }
 
+    void DynamicsComponent::Activate()
+    {
+        this->rigidBody->activate();
+    }
+
 
     void DynamicsComponent::DisableNavigationMeshGeneration()
     {
