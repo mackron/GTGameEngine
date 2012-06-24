@@ -175,6 +175,9 @@ namespace GTEngine
         /// Enables deactivation of the rigid body.
         void EnableDeactivation();
 
+        /// Activates a deactivated rigid body.
+        void Activate();
+
 
         /// Disables navigation mesh generation.
         void DisableNavigationMeshGeneration();
