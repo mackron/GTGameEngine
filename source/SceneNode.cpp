@@ -62,7 +62,8 @@ namespace GTEngine
 namespace GTEngine
 {
     SceneNode::SceneNode()
-        : name(),
+        : SceneObject(SceneObjectType_SceneNode),
+          name(),
           parent(nullptr),
           firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
           eventHandlers(), components(), dataPointers(),
@@ -70,7 +71,6 @@ namespace GTEngine
           scene(nullptr),
           isStatic(false), isVisible(true),
           inheritPosition(true), inheritOrientation(true), inheritScale(true),
-          position(), orientation(), scale(1.0f, 1.0f, 1.0f),
           eventLockCounter(0),
           typeID(0)
     {
@@ -356,11 +356,6 @@ namespace GTEngine
     }
 
 
-    const glm::vec3 & SceneNode::GetPosition() const
-    {
-        return this->position;
-    }
-
     void SceneNode::SetPosition(const glm::vec3 &position)
     {
         if (this->position.x != position.x || this->position.y != position.y || this->position.z != position.z)
@@ -413,10 +408,6 @@ namespace GTEngine
         }
     }
 
-    const glm::quat & SceneNode::GetOrientation() const
-    {
-        return this->orientation;
-    }
 
     void SceneNode::SetOrientation(const glm::quat &orientation)
     {
@@ -457,11 +448,6 @@ namespace GTEngine
         }
     }
 
-
-    const glm::vec3 & SceneNode::GetScale() const
-    {
-        return this->scale;
-    }
 
     void SceneNode::SetScale(const glm::vec3 &scale)
     {
@@ -526,22 +512,6 @@ namespace GTEngine
     }
 
 
-    glm::vec3 SceneNode::GetForwardVector() const
-    {
-        return this->orientation * glm::vec3(0.0f, 0.0f, -1.0f);
-    }
-
-    glm::vec3 SceneNode::GetRightVector() const
-    {
-        return this->orientation * glm::vec3(1.0f, 0.0f, 0.0f);
-    }
-
-    glm::vec3 SceneNode::GetUpVector() const
-    {
-        return this->orientation * glm::vec3(0.0f, 1.0f, 0.0f);
-    }
-
-
     glm::vec3 SceneNode::GetWorldForwardVector() const
     {
         return this->GetWorldOrientation() * glm::vec3(0.0f, 0.0f, -1.0f);
@@ -558,27 +528,96 @@ namespace GTEngine
     }
 
 
-    glm::mat4 SceneNode::GetTransformMatrix() const
+    void SceneNode::GetWorldTransformComponents(glm::vec3 &positionOut, glm::quat &orientationOut, glm::vec3 &scaleOut) const
     {
-        return glm::translate(this->position) * glm::mat4_cast(this->orientation) * glm::scale(this->scale);
+        if (this->parent != nullptr)
+        {
+            this->parent->GetWorldTransformComponents(positionOut, orientationOut, scaleOut);
+
+            glm::vec3 temp;
+            if (!this->inheritPosition)
+            {
+                positionOut = this->position;
+
+                if (!this->inheritScale)
+                {
+                    scaleOut = this->scale;
+                }
+                else
+                {
+                    scaleOut = scaleOut * this->scale;
+                }
+
+                if (!this->inheritOrientation)
+                {
+                    orientationOut = this->orientation;
+                }
+                else
+                {
+                    orientationOut = orientationOut * this->orientation;
+                }
+            }
+            else
+            {
+                glm::vec3 offset = this->position;
+                
+                if (!this->inheritScale)
+                {
+                    scaleOut = this->scale;
+                }
+                else
+                {
+                    offset   = scaleOut * offset;
+                    scaleOut = scaleOut * this->scale;
+                }
+
+                if (!this->inheritOrientation)
+                {
+                    orientationOut = this->orientation;
+                }
+                else
+                {
+                    offset         = orientationOut * offset;
+                    orientationOut = orientationOut * this->orientation;
+                }
+
+                positionOut += offset;
+            }
+        }
+        else
+        {
+            positionOut    = this->position;
+            orientationOut = this->orientation;
+            scaleOut       = this->scale;
+        }
     }
+
 
     glm::mat4 SceneNode::GetWorldTransform() const
     {
-        glm::vec3 position    = this->GetWorldPosition();
-        glm::quat orientation = this->GetWorldOrientation();
-        glm::vec3 scale       = this->GetWorldScale();
-        
-        return glm::translate(position) * glm::mat4_cast(orientation) * glm::scale(scale);
+        glm::vec3 position;
+        glm::quat orientation;
+        glm::vec3 scale;
+        this->GetWorldTransformComponents(position, orientation, scale);
+
+        glm::mat4 result;
+        Math::CalculateTransformMatrix(position, orientation, scale, result);
+
+        return result;
     }
 
     void SceneNode::GetWorldTransform(btTransform &worldTransform) const
     {
-        glm::vec3 position    = this->GetWorldPosition();
-        glm::quat orientation = this->GetWorldOrientation();
-
+        glm::vec3 position;
+        glm::quat orientation;
+        glm::vec3 devnull;
+        this->GetWorldTransformComponents(position, orientation, devnull);
+        
         worldTransform.setRotation(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w));
         worldTransform.setOrigin(btVector3(position.x, position.y, position.z));
+
+
+        (void)devnull;  // <-- warning silencer.
     }
 
     void SceneNode::SetWorldTransform(const btTransform &worldTransform)
@@ -594,35 +633,6 @@ namespace GTEngine
         // Now is where we post the transformation event.
         this->OnTransform();
     }
-
-
-    void SceneNode::Translate(const glm::vec3 &offset)
-    {
-        this->SetPosition(this->position + (this->orientation * offset));
-    }
-
-    void SceneNode::Rotate(float angle, const glm::vec3 &axis)
-    {
-        this->SetOrientation(this->orientation * glm::angleAxis(angle, axis));
-    }
-
-    void SceneNode::Scale(const glm::vec3 &scale)
-    {
-        this->SetScale(this->scale * scale);
-    }
-
-
-    void SceneNode::TranslateWorld(const glm::vec3 &offset)
-    {
-        this->SetPosition(this->position + offset);
-    }
-
-
-    void SceneNode::InterpolatePosition(const glm::vec3 &dest, float a)
-    {
-        this->SetPosition(glm::mix(this->position, dest, a));
-    }
-
 
 
     void SceneNode::SetLayer(unsigned int layer)

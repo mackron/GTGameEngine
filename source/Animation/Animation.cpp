@@ -22,8 +22,7 @@ namespace GTEngine
 
     size_t Animation::AppendKeyFrame(double time)
     {
-        auto item = this->keyFrames.Add(time, AnimationKeyFrame(time));
-        assert(item != nullptr);
+        this->keyFrames.Add(time, AnimationKeyFrame(time));
 
         for (size_t i = 0; i < this->keyFrames.count; ++i)
         {

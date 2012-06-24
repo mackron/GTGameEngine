@@ -3,7 +3,7 @@
 #ifndef __GTEngine_SceneNode_hpp_
 #define __GTEngine_SceneNode_hpp_
 
-#include "Math.hpp"
+#include "SceneObject.hpp"
 
 // Though not required for compilation of this file, we will include the components here to make using the SceneNode class a bit easier. They're
 // pretty light-weight, so they don't add too much time to compilation.
@@ -181,7 +181,7 @@ namespace GTEngine
     *   The node itself does not use any predefined keys, but if using classes/objects which also use a scene node, you must
     *   ensure your data pointer keys do not conflict.
     */
-    class SceneNode
+    class SceneNode : public SceneObject
     {
     public:
 
@@ -331,12 +331,6 @@ namespace GTEngine
         /// Determines whether or not the given scene node is related to this node (is an ancestor or descendant).
         bool IsRelated(const SceneNode &other) const { return this->IsAncestor(other) || this->IsDescendant(other); } 
 
-
-        /**
-        *   \brief  Retrieves the position of the node relative to the parent.
-        *   \return The position of the node relative to the parent.
-        */
-        const glm::vec3 & GetPosition() const;
         
         /**
         *   \brief                Sets the position of the node relative to the parent.
@@ -357,11 +351,6 @@ namespace GTEngine
         void SetWorldPosition(float x, float y, float z) { this->SetWorldPosition(glm::vec3(x, y, z)); }
         
         
-        /**
-        *   \brief  Retrieves the orientation of the node relative to the parent, as a quaternion.
-        *   \return A quaternion representing the orientation of the node relative to the parent.
-        */
-        const glm::quat & GetOrientation() const;
         
         /**
         *   \brief                   Sets the orientation of the node relative to the parent.
@@ -378,13 +367,7 @@ namespace GTEngine
         *   \brief  Sets the world/absolute orientation of the node.
         */
         void SetWorldOrientation(const glm::quat &worldOrientation);
-        
-        
-        /**
-        *   \brief  Retrieves the scale of the node relative to the parent.
-        *   \return The scale of the node relative to the parent.
-        */
-        const glm::vec3 & GetScale() const;
+
         
         /**
         *   \brief             Sets the scale of the node relative to the parent.
@@ -424,22 +407,6 @@ namespace GTEngine
         */
         void LookAt(const SceneNode &target, const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 0.0f));
 
-        
-        /**
-        *   \brief  Retrieves a normalised vector pointing in the forward direction of the node.
-        */
-        glm::vec3 GetForwardVector() const;
-        
-        /**
-        *   \brief  Retrieves a normalised vector pointing in the right direction of the node.
-        */
-        glm::vec3 GetRightVector() const;
-        
-        /**
-        *   \brief  Retrieves a normalised vector pointing in the up direction of the node.
-        */
-        glm::vec3 GetUpVector() const;
-
 
         /**
         *   \brief  Retrieves the normalised vector pointing in the forward direction of the node, in world coordinates.
@@ -457,12 +424,9 @@ namespace GTEngine
         glm::vec3 GetWorldUpVector() const;
 
 
+        /// Retrieves the position, orientation and scale components of the scene node in a single call.
+        void GetWorldTransformComponents(glm::vec3 &position, glm::quat &orientation, glm::vec3 &scale) const;
 
-    
-        /**
-        *   \brief  Calculates the transformation matrix for this object.
-        */
-        glm::mat4 GetTransformMatrix() const;
         
         /**
         *   \brief  Calculates a transformation matrix for this object, in world space.
@@ -482,71 +446,6 @@ namespace GTEngine
         */
         void SetWorldTransform(const btTransform &worldTransform);
         
-        
-        /**
-        *   \brief  Translates the node.
-        */
-        void Translate(const glm::vec3 &offset);
-        
-        /**
-        *   \brief  Rotates the node.
-        */
-        void Rotate(float angleDegrees, const glm::vec3 &axis);
-        
-        /**
-        *   \brief  Scales the node.
-        */
-        void Scale(const glm::vec3 &scale);
-
-
-        /**
-        *   \brief  Translates the node based along the world coordinates.
-        */
-        void TranslateWorld(const glm::vec3 &offset);
-
-
-        /**
-        *   \brief  Moves the entity in the direction of its forward vector.
-        *   \param  distance [in] The distance to move.
-        */
-        void MoveForward(float distance) { this->Translate(glm::vec3(0.0f, 0.0f, -distance)); }
-
-        /**
-        *   \brief  Moves the entity in the direction of its right vector.
-        *   \param  distance [in] The distance to move.
-        */
-        void MoveRight(float distance) { this->Translate(glm::vec3(distance, 0.0f, 0.0f)); }
-
-        /**
-        *   \brief  Moves the entity in the direction of its up vector.
-        *   \param  distance [in] The distance to move.
-        */
-        void MoveUp(float distance) { this->Translate(glm::vec3(0.0f, distance, 0.0f)); }
-        
-
-        /**
-        *   \brief  Rotates the entity around it's local x axis.
-        *   \param  angleDegress [in] The angle in degrees to rotate.
-        */
-        void RotateX(float angleDegrees) { this->Rotate(angleDegrees, glm::vec3(1.0f, 0.0f, 0.0f)); }
-
-        /**
-        *   \brief  Rotates the entity around it's local y axis.
-        *   \param  angleDegress [in] The angle in degrees to rotate.
-        */
-        void RotateY(float angleDegrees) { this->Rotate(angleDegrees, glm::vec3(0.0f, 1.0f, 0.0f)); }
-
-        /**
-        *   \brief  Rotates the entity around it's local z axis.
-        *   \param  angleDegress [in] The angle in degrees to rotate.
-        */
-        void RotateZ(float angleDegrees) { this->Rotate(angleDegrees, glm::vec3(0.0f, 0.0f, 1.0f)); }
-
-
-
-        /// Performs a linear interpolation of the node's position.
-        void InterpolatePosition(const glm::vec3 &dest, float a);
-
 
 
         /**
@@ -969,15 +868,6 @@ namespace GTEngine
         bool inheritScale;
 
 
-        /// The position of the node, relative to the parent node.
-        glm::vec3 position;
-
-        /// The rotation of the node.
-        glm::quat orientation;
-
-        /// The scale of the node, relative to the parent node.
-        glm::vec3 scale;
-
 
         /// The counter used for event locks. If it is > 0, the events are locked. Otherwise they are unlocked. Defaults to 0. LockEvents()
         /// will increment, whereas UnlockEvents() will decrement.
@@ -988,6 +878,30 @@ namespace GTEngine
         /// applications for identification purposes. It is controlled with SetTypeID() and GetTypeID(). Defaults to 0.
         unsigned int typeID;
 
+
+
+    // Upcaster.
+    public:
+
+        static SceneNode* Upcast(SceneObject* object)
+        {
+            if (object != nullptr && object->GetType() == SceneObjectType_SceneNode)
+            {
+                return static_cast<SceneNode*>(object);
+            }
+
+            return nullptr;
+        }
+
+        static const SceneNode* Upcast(const SceneObject* object)
+        {
+            if (object != nullptr && object->GetType() == SceneObjectType_SceneNode)
+            {
+                return static_cast<const SceneNode*>(object);
+            }
+
+            return nullptr;
+        }
 
     
     private:    // No copying.
