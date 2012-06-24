@@ -4,9 +4,13 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
 <style url="styles/theme.style" />
 
-<include url="menubar.xml" />
-<include url="combobox.xml" />
+<include url="common-controls.xml" />
+<include url="dialogs.xml"         />
+
+<include url="menubar.xml"       />
+<include url="combobox.xml"      />
 <include url="file-explorer.xml" />
+<include url="modeleditor.xml"   />
 
 <!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
 <script>
@@ -85,81 +89,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 ]]>
 </script>
 
-<script url="scripts/listbox.lua" />
-
 <style>
-    textbox
-    {
-        background-color:  #3a3a3a
-        border:            1px #666
-        padding:           2px 0px
-        height:            20px
-        width:             192px
-        
-        editable-text:     true
-        cursor:            beam
-        text-cursor-color: #999
-        text-color:        #999
-        vertical-align:    center
-    }
-    
-    button
-    {
-        background-color: #555
-        border:           1px #aaa
-        width:            auto
-        height:           auto
-        padding:          4px
-        horizontal-align: center
-        vertical-align:   center
-        font-style:       bold
-        text-color:       #aaa
-    }
-    
-    button:hovered
-    {
-        background-color: #666
-    }
-    
-    button:pushed
-    {
-        background-color: #777
-    }
-    
-    listbox
-    {
-        height:           auto;
-        background-color: #fff;
-        border:           1px #666;
-        child-plane:      vertical;
-    }
-    
-    listbox-item
-    {
-        width:            100%
-        height:           20px
-        background-color: #fff
-        vertical-align:   center
-        padding:          4px 0px
-    }
-    
-    listbox-item:hovered
-    {
-        background-color: #f4f4ff
-    }
-    
-    listbox-item-selected
-    {
-        background-color: #eef
-    }
-    
-    listbox-item-selected:hovered
-    {
-        background-color: #eef
-    }
-    
-    
-    
     #EditorMain
     {
         width:   100%
@@ -217,40 +147,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         child-plane: horizontal
     }
     
-    
-    
-    
-    #ModelEditor
-    {
-        width:  100%
-        height: 100%
-        
-        flex-child-width:true
-        
-        child-plane: horizontal
-    }
-    
-    #ModelEditorLeftPanel
-    {
-        width:  350px
-        height: 100%
-        
-        allow-mouse-resize:true;
-        right-gripper-width:8px;
-        
-        border-right:   1px #222
-        
-        min-width: 16px
-    }
 
-    #ModelViewport
-    {
-        width:         100%
-        height:        100%
-        
-        min-width: 16px
-    }
-    
     
     #Sandbox
     {
@@ -284,74 +181,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     }
 </style>
 
-<!-- Dialog styles -->
-<style>
-    dialog-container
-    {
-        positioning: absolute
-        width:       100%
-        height:      100%
-        
-        background-color: #000
-        opacity:          0.50
-        
-        visible: false
-        
-        z-index: 100
-    }
-    
-    dialog  // Elements using this will be children of elements using 'dialog-container'
-    {
-        positioning:      relative
-        left:             36px
-        top:              28px
-        width:            300px
-        height:           200px
-        padding:          8px
-        border:           1px #666
-        background-color: #444
-        
-        allow-mouse-drag: true
-        
-        allow-mouse-resize:   true
-        right-gripper-width:  8px
-        bottom-gripper-width: 8px
-        
-        compound-opacity: false
-        
-        enable-shadow:      true
-        shadow-extrusion-x: 8px
-        shadow-extrusion-y: 8px
-        shadow-blur-radius: 8px
-        shadow-opacity:     1.0
-    }
-
-    
-    dialog-title
-    {
-        padding-bottom: 4px
-        margin-bottom:  8px
-        font-style:     bold
-        border-bottom:  1px #999
-    }
-    
-    dialog-body
-    {
-        child-plane:    horizontal
-        vertical-align: center
-        width:          100%
-    }
-    
-    dialog-footer
-    {
-        width:            100%
-        horizontal-align: right
-        child-plane:      horizontal
-        margin-top:       8px
-        padding-top:      4px
-        border-top:       1px #ccc
-    }
-</style>
 
 <div id="EditorMain">
     <div id="EditorTopPanel">

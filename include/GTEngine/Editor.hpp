@@ -51,6 +51,15 @@ namespace GTEngine
         bool IsOpen() const { return this->isOpen; }
 
 
+        /// Retrieves a reference to the model sub-editor.
+              EditorMode_ModelEditor & GetModelEditor()       { return this->modelEditor; }
+        const EditorMode_ModelEditor & GetModelEditor() const { return this->modelEditor; }
+
+        /// Retrieves a reference to the sandbox sub-editor.s
+              EditorMode_Sandbox & GetSandbox()       { return this->sandbox; }
+        const EditorMode_Sandbox & GetSandbox() const { return this->sandbox; }
+
+
         /// Switches editor modes.
         void SwitchToModelEditorMode();
 

@@ -5,10 +5,96 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="gui">
+      <UniqueIdentifier>{a1129e8b-5f04-47e2-a7f2-90f75e718d42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\styles">
+      <UniqueIdentifier>{f62254a5-228a-4ab2-8768-fb5b99a949c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\scripts">
+      <UniqueIdentifier>{c895ff9e-50dc-41c9-8443-127f5a24f9aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\Editor-Main.cpp">
       <Filter>source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\bin\data\engine\editor\combobox.xml">
+      <Filter>gui</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\file-explorer.xml">
+      <Filter>gui</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\main.xml">
+      <Filter>gui</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\menu.xml">
+      <Filter>gui</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\menubar.xml">
+      <Filter>gui</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\combobox.lua">
+      <Filter>gui\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\dialogs.lua">
+      <Filter>gui\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\file-explorer.lua">
+      <Filter>gui\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\listbox.lua">
+      <Filter>gui\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\menu.lua">
+      <Filter>gui\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\menubar.lua">
+      <Filter>gui\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\combobox.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\file-explorer.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\menu.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\menubar.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\theme.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\modeleditor.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\modeleditor.xml">
+      <Filter>gui</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\modeleditor.lua">
+      <Filter>gui\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\common-controls.xml">
+      <Filter>gui</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\button.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\listbox.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\textbox.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\dialogs.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\dialogs.xml">
+      <Filter>gui</Filter>
+    </None>
   </ItemGroup>
 </Project>

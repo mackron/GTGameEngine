@@ -21,6 +21,33 @@
   <ItemGroup>
     <ClCompile Include="..\..\source\Editor-Main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\bin\data\engine\editor\combobox.xml" />
+    <None Include="..\..\..\bin\data\engine\editor\common-controls.xml" />
+    <None Include="..\..\..\bin\data\engine\editor\dialogs.xml" />
+    <None Include="..\..\..\bin\data\engine\editor\file-explorer.xml" />
+    <None Include="..\..\..\bin\data\engine\editor\main.xml" />
+    <None Include="..\..\..\bin\data\engine\editor\menu.xml" />
+    <None Include="..\..\..\bin\data\engine\editor\menubar.xml" />
+    <None Include="..\..\..\bin\data\engine\editor\modeleditor.xml" />
+    <None Include="..\..\..\bin\data\engine\editor\scripts\combobox.lua" />
+    <None Include="..\..\..\bin\data\engine\editor\scripts\dialogs.lua" />
+    <None Include="..\..\..\bin\data\engine\editor\scripts\file-explorer.lua" />
+    <None Include="..\..\..\bin\data\engine\editor\scripts\listbox.lua" />
+    <None Include="..\..\..\bin\data\engine\editor\scripts\menu.lua" />
+    <None Include="..\..\..\bin\data\engine\editor\scripts\menubar.lua" />
+    <None Include="..\..\..\bin\data\engine\editor\scripts\modeleditor.lua" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\button.style" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\combobox.style" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\dialogs.style" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\file-explorer.style" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\listbox.style" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\menu.style" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\menubar.style" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\modeleditor.style" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\textbox.style" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\theme.style" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A0C9E535-DBDA-4A37-B9D7-60100121462D}</ProjectGuid>
     <RootNamespace>GTEngine01_hello_world</RootNamespace>
