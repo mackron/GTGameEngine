@@ -24,10 +24,12 @@ namespace GTEngine
 {
     namespace Math
     {
-        /**
-        *   \brief  Calculates a view matrix from a position and orientation.
-        */
+        /// Calculates a view matrix from a position and orientation.
         void CalculateViewMatrix(const glm::vec3 &position, const glm::quat &orientation, glm::mat4 &result);
+
+        /// Calculates a transform matrix from a position, orientation and scale.
+        void CalculateTransformMatrix(const glm::vec3 &position, const glm::quat &orientation, const glm::vec3 &scale, glm::mat4 &result);
+
 
 
         /// Math functions for trajectories.
@@ -65,8 +67,8 @@ namespace GTEngine
     template <typename T>
     GLM_FUNC_QUALIFIER glm::detail::tquat<T> mix
 	(
-		glm::detail::tquat<T> const & x, 
-		glm::detail::tquat<T> const & y, 
+		glm::detail::tquat<T> const & x,
+		glm::detail::tquat<T> const & y,
 		T const & a
 	)
     {
