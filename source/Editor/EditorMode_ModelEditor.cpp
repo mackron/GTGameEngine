@@ -100,6 +100,26 @@ namespace GTEngine
         return false;
     }
 
+    bool EditorMode_ModelEditor::SetMaterial(int index, const char* fileName)
+    {
+        auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
+        if (model != nullptr)
+        {
+            if (index < static_cast<int>(model->meshes.count))
+            {
+                // We need to try loading the material before setting it.
+                auto material = GTEngine::MaterialLibrary::Create(fileName);
+                if (material != nullptr)
+                {
+                    model->meshes[index]->SetMaterial(material);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     void EditorMode_ModelEditor::OnActivate()
     {

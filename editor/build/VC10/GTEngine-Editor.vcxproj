@@ -30,6 +30,7 @@
     <None Include="..\..\..\bin\data\engine\editor\menu.xml" />
     <None Include="..\..\..\bin\data\engine\editor\menubar.xml" />
     <None Include="..\..\..\bin\data\engine\editor\modeleditor.xml" />
+    <None Include="..\..\..\bin\data\engine\editor\sandbox.xml" />
     <None Include="..\..\..\bin\data\engine\editor\scripts\combobox.lua" />
     <None Include="..\..\..\bin\data\engine\editor\scripts\dialogs.lua" />
     <None Include="..\..\..\bin\data\engine\editor\scripts\file-explorer.lua" />
@@ -37,6 +38,7 @@
     <None Include="..\..\..\bin\data\engine\editor\scripts\menu.lua" />
     <None Include="..\..\..\bin\data\engine\editor\scripts\menubar.lua" />
     <None Include="..\..\..\bin\data\engine\editor\scripts\modeleditor.lua" />
+    <None Include="..\..\..\bin\data\engine\editor\scripts\sandbox.lua" />
     <None Include="..\..\..\bin\data\engine\editor\styles\button.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\combobox.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\dialogs.style" />
@@ -45,6 +47,7 @@
     <None Include="..\..\..\bin\data\engine\editor\styles\menu.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\menubar.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\modeleditor.style" />
+    <None Include="..\..\..\bin\data\engine\editor\styles\sandbox.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\textbox.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\theme.style" />
   </ItemGroup>
