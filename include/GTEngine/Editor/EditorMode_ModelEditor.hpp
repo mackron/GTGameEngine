@@ -26,6 +26,16 @@ namespace GTEngine
         /// Initialises the model editor.
         bool Startup(GTGUI::Server &guiServer);
 
+        /// Loads a model.
+        ///
+        /// @param fileName [in] The file name of the model to load.
+        ///
+        /// @return True if the model is loaded successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     Meshes will have a default material applied by default.
+        bool LoadModel(const char* fileName);
+
 
         //////////////////////////////////////////////////////////////
         // Events

@@ -1,0 +1,14 @@
+textbox
+{
+    background-color:  #3a3a3a
+    border:            1px #666
+    padding:           2px 0px
+    height:            20px
+    width:             192px
+        
+    editable-text:     true
+    cursor:            beam
+    text-cursor-color: #999
+    text-color:        #999
+    vertical-align:    center
+}

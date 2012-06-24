@@ -438,7 +438,6 @@ namespace GTEngine
             world->removeRigidBody(this->rigidBody);
         }
 
-
         // All we need to do is add the new shape to the compound shape...
         this->collisionShape->addChildShape(btTransform(btMatrix3x3::getIdentity(), btVector3(offsetX, offsetY, offsetZ)), shape);
 

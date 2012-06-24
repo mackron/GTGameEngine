@@ -1,0 +1,22 @@
+button
+{
+    background-color: #555
+    border:           1px #aaa
+    width:            auto
+    height:           auto
+    padding:          4px
+    horizontal-align: center
+    vertical-align:   center
+    font-style:       bold
+    text-color:       #aaa
+}
+    
+button:hovered
+{
+    background-color: #666
+}
+    
+button:pushed
+{
+    background-color: #777
+}

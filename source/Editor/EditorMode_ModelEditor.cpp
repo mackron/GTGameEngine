@@ -22,8 +22,10 @@ namespace GTEngine
         cameraNode.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
         cameraNode.MoveForward(-10.0f);
 
-        auto model = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/default.dae"))->GetModel();
-        model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/default.material"));
+        this->modelNode.AddComponent<GTEngine::ModelComponent>();
+
+        //auto model = modelNode.AddModelComponent(ModelLibrary::LoadFromFile("engine/models/default.dae"))->GetModel();
+        //model->meshes[0]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/default.material"));
 
 
         // Here we setup the viewport.
@@ -42,8 +44,11 @@ namespace GTEngine
     EditorMode_ModelEditor::~EditorMode_ModelEditor()
     {
         auto model = modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
-        GTEngine::MaterialLibrary::Delete(model->meshes[0]->GetMaterial());
-        GTEngine::ModelLibrary::Delete(model);
+        if (model != nullptr)
+        {
+            GTEngine::MaterialLibrary::Delete(model->meshes[0]->GetMaterial());
+            GTEngine::ModelLibrary::Delete(model);
+        }
     }
 
     bool EditorMode_ModelEditor::Startup(GTGUI::Server &guiServer)
@@ -63,6 +68,38 @@ namespace GTEngine
 
         return true;
     }
+
+    bool EditorMode_ModelEditor::LoadModel(const char* fileName)
+    {
+        // We first try to load the new model. Only if it succeeds do we want to unload the previous model.
+        auto newModel = GTEngine::ModelLibrary::LoadFromFile(fileName);
+        if (newModel != nullptr)
+        {
+            // The previous model needs to be unloaded.
+            auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
+            if (model != nullptr)
+            {
+                GTEngine::ModelLibrary::Delete(model);
+            }
+
+
+            // Now we assign default materials. This will need to change for .gtmodel files, which will use their own local copy of the materials.
+            if (newModel != nullptr)
+            {
+                for (size_t i = 0; i < newModel->meshes.count; ++i)
+                {
+                    newModel->meshes[i]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
+                }
+            }
+
+            this->modelNode.GetComponent<GTEngine::ModelComponent>()->SetModel(newModel);
+
+            return true;
+        }
+
+        return false;
+    }
+
 
     void EditorMode_ModelEditor::OnActivate()
     {
