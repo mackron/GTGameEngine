@@ -1087,6 +1087,14 @@ namespace GTEngine
         return 0;
     }
 
+    int FFI_Editor_ModelEditor_SetMaterial(GTCore::Script &script)
+    {
+        auto &game = Game::FFI::GetGameObject(script);
+
+        game.GetEditor().GetModelEditor().SetMaterial(script.ToInteger(1), script.ToString(2));
+        return 0;
+    }
+
 
 
     ////////////////////////////////////////////////////////////////
@@ -1182,6 +1190,10 @@ namespace GTEngine
             {
                 this->script.Push("Load");
                 this->script.PushClosure(FFI_Editor_ModelEditor_Load, 0);
+                this->script.SetTableValue(-3);
+
+                this->script.Push("SetMaterial");
+                this->script.PushClosure(FFI_Editor_ModelEditor_SetMaterial, 0);
                 this->script.SetTableValue(-3);
             }
             this->script.Pop(1);

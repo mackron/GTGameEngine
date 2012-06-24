@@ -36,6 +36,14 @@ namespace GTEngine
         ///     Meshes will have a default material applied by default.
         bool LoadModel(const char* fileName);
 
+        /// Sets the material of the model.
+        ///
+        /// @param index    [in] The index of the material to set.
+        /// @param fileName [in] The file name of the new material.
+        ///
+        /// @return True if the material is set correctly; false otherwise.
+        bool SetMaterial(int index, const char* fileName);
+
 
         //////////////////////////////////////////////////////////////
         // Events

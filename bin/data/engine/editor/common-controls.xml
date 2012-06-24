@@ -3,4 +3,4 @@
 <style url="styles/button.style"  />
 <style url="styles/listbox.style" />
 
-<script url="styles/listbox.lua" />
+<script url="scripts/listbox.lua" />

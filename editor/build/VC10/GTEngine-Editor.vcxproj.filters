@@ -96,5 +96,14 @@
     <None Include="..\..\..\bin\data\engine\editor\dialogs.xml">
       <Filter>gui</Filter>
     </None>
+    <None Include="..\..\..\bin\data\engine\editor\sandbox.xml">
+      <Filter>gui</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\sandbox.style">
+      <Filter>gui\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\sandbox.lua">
+      <Filter>gui\scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>
