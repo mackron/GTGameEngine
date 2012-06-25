@@ -35,7 +35,7 @@ namespace GTEngine
         return 0;
     }
 
-    double Animation::GetKeyFrameTimeByIndex(size_t index)
+    double Animation::GetKeyFrameTimeByIndex(size_t index) const
     {
         assert(index < this->keyFrames.count);
 

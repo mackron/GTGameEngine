@@ -218,6 +218,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Mesh.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\MeshBuilder.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Model.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ModelDefinition.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\NavigationMesh.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics.hpp" />
@@ -320,6 +321,7 @@
     <ClCompile Include="..\..\..\source\Mesh.cpp" />
     <ClCompile Include="..\..\..\source\MeshBuilder.cpp" />
     <ClCompile Include="..\..\..\source\Model.cpp" />
+    <ClCompile Include="..\..\..\source\ModelDefinition.cpp" />
     <ClCompile Include="..\..\..\source\ModelLibrary.cpp" />
     <ClCompile Include="..\..\..\source\NavigationMesh.cpp" />
     <ClCompile Include="..\..\..\source\Physics\btEllipsoidShape.cpp" />

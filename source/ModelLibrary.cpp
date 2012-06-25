@@ -115,229 +115,89 @@ namespace GTEngine
 
         return FindNodeByName(scene, *scene.mRootNode, name);
     }
+
+
+    // Adds an empty bone based only on a node to the given definition. This will also add ancestors. If a bone of the same name already exists, this function will do nothing.
+    Bone* AddBone(const aiNode &node, ModelDefinition &definition)
+    {
+        auto iExistingBone = definition.bones.Find(node.mName.C_Str());
+        if (iExistingBone == nullptr)
+        {
+            auto newBone = CreateEmptyBone(node);
+            assert(newBone != nullptr);
+
+            definition.bones.Add(node.mName.C_Str(), newBone);
+
+            // Now we need to do ancestors.
+            if (node.mParent != nullptr)
+            {
+                auto parent = AddBone(*node.mParent, definition);
+                if (parent != nullptr)
+                {
+                    parent->AttachChild(*newBone);
+                }
+            }
+
+            return newBone;
+        }
+        else
+        {
+            return iExistingBone->value;
+        }
+    }
+
+
+    /// Adds a bone to the given definition, including it's ancestors.
+    Bone* AddBone(const aiScene &scene, const aiBone &bone, ModelDefinition &definition)
+    {
+        auto node = FindNodeByName(scene, bone.mName);
+        assert(node != nullptr);
+
+        auto iExistingBone = definition.bones.Find(bone.mName.C_Str());
+        if (iExistingBone == nullptr)
+        {
+            // We now have enough information to create a GTEngine bone object.
+            auto newBone = CreateBone(*node, bone);
+            assert(newBone != nullptr);
+
+            definition.bones.Add(bone.mName.C_Str(), newBone);
+
+            // Now we need to iterate over the ancestores and make sure we have bones for them.
+            if (node->mParent != nullptr)
+            {
+                auto parent = AddBone(*node->mParent, definition);
+                if (parent != nullptr)
+                {
+                    parent->AttachChild(*newBone);
+                }
+            }
+
+            return newBone;
+        }
+        else
+        {
+            // If it already exists, we need to ensure we have data.
+            auto newBone = iExistingBone->value;
+            assert(newBone != nullptr);
+
+            SetBoneData(*newBone, bone);
+
+            return newBone;
+        }
+    }
+
+    
 }
 
 
 // Globals.
 namespace GTEngine
 {
+    /// The map of model definitions mapping a definition to a file name.
+    static GTCore::Dictionary<ModelDefinition*> LoadedDefinitions;
+
     /// The list of loaded models. These will be deleted when the model library is shutdown.
     static GTCore::List<Model*> LoadedModels;
-
-
-
-    /// Structure containing information about a loaded model.
-    struct LoadedModelInfo
-    {
-        /// Constructor.
-        LoadedModelInfo()
-            : meshGeometries(), meshMaterials(), meshBones(),
-              bones(),
-              animation(), animationChannelBones(), animationKeyCache(),
-              haveCreatedModel(false)
-        {
-        }
-
-        /// Destructor.
-        ~LoadedModelInfo()
-        {
-            for (size_t i = 0; i < this->meshGeometries.count; ++i)
-            {
-                delete this->meshGeometries[i];
-            }
-
-            for (size_t i = 0; i < this->meshMaterials.count; ++i)
-            {
-                MaterialLibrary::Delete(this->meshMaterials[i]);
-            }
-
-            for (size_t i = 0; i < this->meshBones.count; ++i)
-            {
-                auto meshBone = this->meshBones[i];
-                if (meshBone != nullptr)
-                {
-                    for (size_t j = 0; j < meshBone->count; ++j)
-                    {
-                        delete meshBone->buffer[j];
-                    }
-                }
-
-                delete this->meshBones[i];
-            }
-
-            for (size_t i = 0; i < this->bones.count; ++i)
-            {
-                delete this->bones.buffer[i]->value;
-            }
-
-            for (size_t i = 0; i < this->animationKeyCache.count; ++i)
-            {
-                delete this->animationKeyCache[i];
-            }
-        }
-
-
-        /// Adds a bone, including it's ancestors.
-        Bone* AddBone(const aiScene &scene, const aiBone &bone)
-        {
-            auto node = FindNodeByName(scene, bone.mName);
-            assert(node != nullptr);
-
-            auto iExistingBone = this->bones.Find(bone.mName.C_Str());
-            if (iExistingBone == nullptr)
-            {
-                // We now have enough information to create a GTEngine bone object.
-                auto newBone = CreateBone(*node, bone);
-                assert(newBone != nullptr);
-
-                this->bones.Add(bone.mName.C_Str(), newBone);
-
-                // Now we need to iterate over the ancestores and make sure we have bones for them.
-                if (node->mParent != nullptr)
-                {
-                    auto parent = this->AddBone(*node->mParent);
-                    if (parent != nullptr)
-                    {
-                        parent->AttachChild(*newBone);
-                    }
-                }
-
-                return newBone;
-            }
-            else
-            {
-                // If it already exists, we need to ensure we have data.
-                auto newBone = iExistingBone->value;
-                assert(newBone != nullptr);
-
-                SetBoneData(*newBone, bone);
-
-                return newBone;
-            }
-        }
-
-        // Adds an empty bone based only on a node. This will also add ancestors. If a bone of the same name already exists, this function will do nothing.
-        Bone* AddBone(const aiNode &node)
-        {
-            auto iExistingBone = this->bones.Find(node.mName.C_Str());
-            if (iExistingBone == nullptr)
-            {
-                auto newBone = CreateEmptyBone(node);
-                assert(newBone != nullptr);
-
-                this->bones.Add(node.mName.C_Str(), newBone);
-
-                // Now we need to do ancestors.
-                if (node.mParent != nullptr)
-                {
-                    auto parent = this->AddBone(*node.mParent);
-                    if (parent != nullptr)
-                    {
-                        parent->AttachChild(*newBone);
-                    }
-                }
-
-                return newBone;
-            }
-            else
-            {
-                return iExistingBone->value;
-            }
-        }
-
-
-        /// Creates a Model object from this info.
-        Model* CreateModel()
-        {
-            auto model = new Model;
-            LoadedModels.Append(model);
-
-            // We need to create copies of the bones. It is important that this is done before adding the meshes.
-            model->CopyAndAttachBones(this->bones);
-
-            // Now the animation.
-            model->CopyAnimation(this->animation, this->animationChannelBones);
-
-
-            // Now we need to create the meshes. This must be done after adding the bones.
-            for (size_t i = 0; i < this->meshGeometries.count; ++i)
-            {
-                if (this->meshBones[i] != nullptr)
-                {
-                    model->AttachMesh(this->meshGeometries[i], this->meshMaterials[i], *this->meshBones[i]);
-                }
-                else
-                {
-                    model->AttachMesh(this->meshGeometries[i], this->meshMaterials[i]);
-                }
-            }
-
-            
-
-
-            // If this is the first model we've created we need to generate tangents and bitangents for the meshes.
-            if (!this->haveCreatedModel)
-            {
-                model->GenerateTangentsAndBitangents();
-
-                this->haveCreatedModel = true;
-            }
-
-            return model;
-        }
-
-
-        /// Creates an animation key for the given bone and returns it.
-        TransformAnimationKey* CreateAnimationKey(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale)
-        {
-            auto newKey = new TransformAnimationKey(position, rotation, scale);
-            this->animationKeyCache.PushBack(newKey);
-
-            return newKey;
-        }
-
-        /// Maps a bone to an animation channel.
-        void MapBoneToAnimationChannel(AnimationChannel &channel, Bone* bone)
-        {
-            this->animationChannelBones.Add(&channel, bone);
-        }
-
-
-
-        /// The list of vertex arrays containing the geometric data of each mesh.
-        GTCore::Vector<VertexArray*> meshGeometries;
-
-        /// The default materials. There will always be an equal number of materials as there are meshes. Each material in this list
-        /// has a one-to-one correspondance with a mesh in <meshes>. For example, the material at index 0 is the material to use with
-        /// the mesh at index 0.
-        GTCore::Vector<Material*> meshMaterials;
-
-        /// The list of bone weights for each mesh. If the mesh does not use any bones, the entry will be set to null.
-        GTCore::Vector<GTCore::Vector<BoneWeights*>*> meshBones;
-
-
-        /// A map of every bone of the model, indexed by it's name. We use a map here to make it easier for avoiding duplication and
-        /// also fast lookups.
-        GTCore::Dictionary<Bone*> bones;
-
-
-
-        /// The model's animation object.
-        Animation animation;
-
-        /// The map for mapping a bone to an animation channel. The key is the channel index.
-        GTCore::Map<AnimationChannel*, Bone*> animationChannelBones;
-
-        /// The cache of animation keys.
-        GTCore::Vector<TransformAnimationKey*> animationKeyCache;
-
-
-        /// This keeps track of whether or not we have previously created a model from this info.
-        bool haveCreatedModel;
-    };
-
-    /// The list of loaded models info structures..
-    static GTCore::Dictionary<LoadedModelInfo*> LoadedModelInfos;
 
 
     /// Creates a model from a primitive's vertex array.
@@ -365,10 +225,10 @@ namespace GTEngine
             LoadedModels.RemoveRoot();
         }
 
-        // We need to unload the loaded model information.
-        for (size_t i = 0; i < LoadedModelInfos.count; ++i)
+        // We unload the definitions after the models.
+        for (size_t i = 0; i < LoadedDefinitions.count; ++i)
         {
-            delete LoadedModelInfos.buffer[i]->value;
+            delete LoadedDefinitions.buffer[i]->value;
         }
     }
 }
@@ -391,7 +251,7 @@ namespace GTEngine
         aiComponent_CAMERAS;
 
 
-    void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, LoadedModelInfo &model)
+    void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, ModelDefinition &definition)
     {
         // First we need to grab the transformation to apply to the mesh.
         aiMatrix4x4 transform = accumulatedTransform * node.mTransformation;
@@ -483,8 +343,8 @@ namespace GTEngine
                 va->UnmapVertexData();
                 va->UnmapIndexData();
 
-                model.meshGeometries.PushBack(va);
-                model.meshMaterials.PushBack(nullptr);
+                definition.meshGeometries.PushBack(va);
+                definition.meshMaterials.PushBack(nullptr);
             }
 
 
@@ -498,7 +358,7 @@ namespace GTEngine
                     auto bone = mesh->mBones[iBone];
                     assert(bone != nullptr);
 
-                    auto newBone = model.AddBone(scene, *bone);
+                    auto newBone = AddBone(scene, *bone, definition);
                     if (newBone != nullptr)
                     {
                         // Here we create the VertexWeights object for this bone.
@@ -514,11 +374,11 @@ namespace GTEngine
                     }
                 }
 
-                model.meshBones.PushBack(localBones);
+                definition.meshBones.PushBack(localBones);
             }
             else
             {
-                model.meshBones.PushBack(nullptr);
+                definition.meshBones.PushBack(nullptr);
             }
         }
 
@@ -528,25 +388,29 @@ namespace GTEngine
             auto child = node.mChildren[iChild];
             assert(child != nullptr);
 
-            CopyNodesWithMeshes(scene, *child, transform, model);
+            CopyNodesWithMeshes(scene, *child, transform, definition);
         }
+
+
+        // With the meshes created, we can now generate the tangents+bitangents.
+        definition.GenerateTangentsAndBitangents();
     }
 
-    /// This function creates a new LoadedModelInfo structure from the given assimp scene.
+    /// This function creates a new model definition from the given assimp scene.
     ///
     /// @remarks
     ///     The returned structure is allocated with 'new'.
-    LoadedModelInfo* ModelLibrary_LoadFromAssimpScene(const aiScene &scene)
+    ModelDefinition* ModelLibrary_LoadFromAssimpScene(const aiScene &scene)
     {
         // We need to recursively read each scene node and attach the meshes where possible.
         auto root = scene.mRootNode;
         if (root != nullptr)
         {
-            auto modelInfo = new LoadedModelInfo;
+            auto definition = new ModelDefinition;
 
             // This is where we take the assimp meshes and create the GTEngine meshes.
             aiMatrix4x4 transform;
-            CopyNodesWithMeshes(scene, *root, transform, *modelInfo);
+            CopyNodesWithMeshes(scene, *root, transform, *definition);
 
 
             // Here is where we load up the animations. Assimp has multiple animations, but GTEngine uses only a single animation. To
@@ -559,7 +423,7 @@ namespace GTEngine
                 assert(animation != nullptr);
 
                 // The starting keyframe will be equal to the number of keyframes in the animation at this point.
-                size_t startKeyFrame = modelInfo->animation.GetKeyFrameCount();
+                size_t startKeyFrame = definition->animation.GetKeyFrameCount();
 
                 // Now we need to loop through and add the actual key frames to the animation. This is done a little strange, but the Animation class
                 // will make sure everything is clean. Basically, we loop through every channel and then add the keys for each channel. It's slow, but
@@ -574,13 +438,13 @@ namespace GTEngine
                     // not affecting the mesh itself.
                     Bone* bone = nullptr;
 
-                    auto iBone = modelInfo->bones.Find(channel->mNodeName.C_Str());
+                    auto iBone = definition->bones.Find(channel->mNodeName.C_Str());
                     if (iBone == nullptr)
                     {
                         auto newNode = FindNodeByName(scene, channel->mNodeName);
                         assert(newNode != nullptr);
 
-                        bone = modelInfo->AddBone(*newNode);
+                        bone = AddBone(*newNode, *definition);
                     }
                     else
                     {
@@ -595,8 +459,8 @@ namespace GTEngine
 
 
                     // Now we create the channel.
-                    auto &newChannel = modelInfo->animation.CreateChannel();
-                    modelInfo->MapBoneToAnimationChannel(newChannel, bone);
+                    auto &newChannel = definition->animation.CreateChannel();
+                    definition->MapBoneToAnimationChannel(newChannel, *bone);
 
                     // Here is where we add the key frames. Since we are looping over the channels, each key frame will probably be creating twice. This is OK because
                     // Animation will make sure there are no duplicate key frames.
@@ -606,19 +470,17 @@ namespace GTEngine
                         auto &rotationKey = channel->mRotationKeys[iKey];
                         auto &scaleKey    = channel->mScalingKeys[iKey];
 
-                        size_t keyFrameIndex = modelInfo->animation.AppendKeyFrame(segmentStartTime + positionKey.mTime);
+                        size_t keyFrameIndex = definition->animation.AppendKeyFrame(segmentStartTime + positionKey.mTime);
 
-                        auto key = modelInfo->CreateAnimationKey(AssimpToGLM(positionKey.mValue), AssimpToGLM(rotationKey.mValue), AssimpToGLM(scaleKey.mValue));
+                        auto key = definition->CreateAnimationKey(AssimpToGLM(positionKey.mValue), AssimpToGLM(rotationKey.mValue), AssimpToGLM(scaleKey.mValue));
                         newChannel.SetKey(keyFrameIndex, key);
                     }
                 }
                 
 
 
-                
-
                 // At this point we can now create the named segment.
-                modelInfo->animation.AddNamedSegment(animation->mName.C_Str(), startKeyFrame, modelInfo->animation.GetKeyFrameCount());
+                definition->animation.AddNamedSegment(animation->mName.C_Str(), startKeyFrame, definition->animation.GetKeyFrameCount());
 
                 // The start time of the next segment will be equal to the previous start time plus the duration of iAnimation.
                 if (animation->mTicksPerSecond > 0)
@@ -631,7 +493,7 @@ namespace GTEngine
                 }
             }
 
-            return modelInfo;
+            return definition;
         }
 
         return nullptr;
@@ -642,49 +504,56 @@ namespace GTEngine
 
     Model* ModelLibrary::LoadFromFile(const char* fileName)
     {
-        LoadedModelInfo* modelInfo = nullptr;
-
-        // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
-        auto iModelInfo = LoadedModelInfos.Find(fileName);
-        if (iModelInfo == nullptr)
+        // We first need to check if we're loading a .gtmodel. If so, we branch off and do that separate.
+        if (GTCore::Path::ExtensionEqual(fileName, "gtmodel"))
         {
-            Assimp::Importer importer;
-            importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
+            return ModelLibrary::LoadFromGTMODEL(fileName);
+        }
+        else
+        {
+            ModelDefinition* definition = nullptr;
 
-            auto scene = importer.ReadFile(fileName, AssimpReadFileFlags);
-            if (scene != nullptr)
+            // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
+            auto iDefinition = LoadedDefinitions.Find(fileName);
+            if (iDefinition == nullptr)
             {
-                modelInfo = ModelLibrary_LoadFromAssimpScene(*scene);
-                if (modelInfo != nullptr)
+                Assimp::Importer importer;
+                importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
+
+                auto scene = importer.ReadFile(fileName, AssimpReadFileFlags);
+                if (scene != nullptr)
                 {
-                    // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
-                    LoadedModelInfos.Add(fileName, modelInfo);
+                    definition = ModelLibrary_LoadFromAssimpScene(*scene);
+                    if (definition != nullptr)
+                    {
+                        // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
+                        LoadedDefinitions.Add(fileName, definition);
+                    }
+                    else
+                    {
+                        GTEngine::PostError("Error creating model info for %s: %s", fileName, importer.GetErrorString());
+                    }
                 }
                 else
                 {
-                    GTEngine::PostError("Error creating model info for %s: %s", fileName, importer.GetErrorString());
+                    GTEngine::PostError("Error importing %s: %s", fileName, importer.GetErrorString());
                 }
             }
             else
             {
-                GTEngine::PostError("Error importing %s: %s", fileName, importer.GetErrorString());
+                definition = iDefinition->value;
             }
-        }
-        else
-        {
-            modelInfo = iModelInfo->value;
-        }
 
         
-        // Now that we have information about the model, we can create a new Model object and return it.
-        if (modelInfo != nullptr)
-        {
-            // We create a model instantiation from the model info.
-            return modelInfo->CreateModel();
+            // Now that we have information about the model, we can create a new Model object and return it.
+            if (definition != nullptr)
+            {
+                return ModelLibrary::CreateFromDefinition(*definition);
+            }
+
+
+            return nullptr;
         }
-
-
-        return nullptr;
     }
 
     Model* ModelLibrary::LoadFromNFF(const char* content, const char* name)
@@ -692,11 +561,11 @@ namespace GTEngine
         GTCore::String nffFileName("__nff:");
         nffFileName.Append(name);
 
-        LoadedModelInfo* modelInfo = nullptr;
+        ModelDefinition* definition = nullptr;
 
         // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
-        auto iModelInfo = LoadedModelInfos.Find(nffFileName.c_str());
-        if (iModelInfo == nullptr)
+        auto iDefinition = LoadedDefinitions.Find(nffFileName.c_str());
+        if (iDefinition == nullptr)
         {
             Assimp::Importer importer;
             importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
@@ -704,11 +573,11 @@ namespace GTEngine
             auto scene = importer.ReadFileFromMemory(content, GTCore::Strings::SizeInBytes(content), AssimpReadFileFlags, "nff");
             if (scene != nullptr)
             {
-                modelInfo = ModelLibrary_LoadFromAssimpScene(*scene);
-                if (modelInfo != nullptr)
+                definition = ModelLibrary_LoadFromAssimpScene(*scene);
+                if (definition != nullptr)
                 {
                     // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
-                    LoadedModelInfos.Add(nffFileName.c_str(), modelInfo);
+                    LoadedDefinitions.Add(nffFileName.c_str(), definition);
                 }
                 else
                 {
@@ -722,21 +591,115 @@ namespace GTEngine
         }
         else
         {
-            modelInfo = iModelInfo->value;
+            definition = iDefinition->value;
         }
 
         
         // Now that we have information about the model, we can create a new Model object and return it.
-        if (modelInfo != nullptr)
+        if (definition != nullptr)
         {
-            // We create a model instantiation from the model info.
-            return modelInfo->CreateModel();
+            return ModelLibrary::CreateFromDefinition(*definition);
         }
 
 
         return nullptr;
     }
 
+    Model* ModelLibrary::LoadFromGTMODEL(const char* fileNameIn)
+    {
+        ModelDefinition* definition = nullptr;
+
+        auto iDefinition = LoadedDefinitions.Find(fileNameIn);
+        if (iDefinition == nullptr)
+        {
+            auto file = GTCore::IO::Open(fileNameIn, GTCore::IO::OpenMode::Read);
+            if (file != nullptr)
+            {
+                // We need to check the first 4 bytes to ensure they read "gtem".
+                char id[4];
+                GTCore::IO::Read(file, id, 4);
+
+                if (id[0] == 'g' && id[1] == 't' && id[2] == 'e' && id[3] == 'm')
+                {
+
+                }
+                else
+                {
+                    GTEngine::PostError("Can not load .gtmodel file: Invalid header ID.");
+                    return nullptr;
+                }
+            }
+            else
+            {
+                GTEngine::PostError("Can not open file: %s.", fileNameIn);
+                return nullptr;
+            }
+        }
+        else
+        {
+            definition = iDefinition->value;
+        }
+
+
+        if (definition != nullptr)
+        {
+            return ModelLibrary::CreateFromDefinition(*definition);
+        }
+
+        return nullptr;
+    }
+
+
+    bool ModelLibrary::WriteToFile(Model &model, const char* fileNameIn)
+    {
+        // We have a model, so now we need to check that we can open the file.
+        GTCore::String fileName(fileNameIn);
+        if (!GTCore::Path::ExtensionEqual(fileNameIn, "gtmodel"))
+        {
+            fileName += ".gtmodel";
+        }
+
+        auto file = GTCore::IO::Open(fileName.c_str(), GTCore::IO::OpenMode::Write);
+        if (file != nullptr)
+        {
+            // First we write four bytes: "gtem".
+            GTCore::IO::Write(file, "gtem", 4);
+
+            // First we save the base mesh data.
+            uint32_t meshCount = static_cast<uint32_t>(model.meshes.count);
+            GTCore::IO::Write(file, &meshCount, 4);
+
+            for (size_t i = 0; i < model.meshes.count; ++i)
+            {
+            }
+
+
+
+            // Can't forget to close the file.
+            GTCore::IO::Close(file);
+        }
+
+        return false;
+    }
+
+
+
+
+
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////
+    // Create functions.
+
+    Model* ModelLibrary::CreateFromDefinition(const ModelDefinition &definition)
+    {
+        auto model = new Model(definition);
+        LoadedModels.Append(model);
+
+        return model;
+    }
 
     Model* ModelLibrary::CreatePlaneXZ(float width, float height, VertexFormat &format)
     {
@@ -747,7 +710,7 @@ namespace GTEngine
         // We create the model from a primitive. To do this we need a non-const vertex array.
         VertexArray* va = nullptr;
 
-        bool exists = LoadedModelInfos.Find(name) != nullptr;
+        bool exists = LoadedDefinitions.Find(name) != nullptr;
         if (!exists)
         {
             va = VertexArrayFactory::CreatePlaneXZ(width, height, format);
@@ -766,7 +729,7 @@ namespace GTEngine
         // We create the model from a primitive. To do this we need a non-const vertex array.
         VertexArray* va = nullptr;
 
-        bool exists = LoadedModelInfos.Find(name) != nullptr;
+        bool exists = LoadedDefinitions.Find(name) != nullptr;
         if (!exists)
         {
             va = VertexArrayLibrary::CreateBox(halfWidth, halfHeight, halfDepth);
@@ -803,7 +766,7 @@ namespace GTEngine
 
         // We're going to check if we can find the model info before loading. This will allow us to determine whether or not we
         // need to apply the transformation.
-        bool applyTransform = LoadedModelInfos.Find((GTCore::String("__nff:") + name).c_str()) == nullptr;
+        bool applyTransform = LoadedDefinitions.Find((GTCore::String("__nff:") + name).c_str()) == nullptr;
 
         // For now the way we will do this is load an NFF file. We use a radius of 1, and then scale that with a transformation.
         auto model = ModelLibrary::LoadFromNFF(content, name);
@@ -830,29 +793,29 @@ namespace GTEngine
 {
     Model* ModelLibrary_CreateFromPrimitive(const char* name, VertexArray* va)
     {
-        LoadedModelInfo* modelInfo = nullptr;
+        ModelDefinition* definition = nullptr;
 
         // We first need to retrieve our model info.
-        auto iModelInfo = LoadedModelInfos.Find(name);
+        auto iModelInfo = LoadedDefinitions.Find(name);
         if (iModelInfo == nullptr)
         {
-            modelInfo = new LoadedModelInfo;
-            modelInfo->meshGeometries.PushBack(va);
-            modelInfo->meshMaterials.PushBack(nullptr);
-            modelInfo->meshBones.PushBack(nullptr);
+            definition = new ModelDefinition;
+            definition->meshGeometries.PushBack(va);
+            definition->meshMaterials.PushBack(nullptr);
+            definition->meshBones.PushBack(nullptr);
 
-            LoadedModelInfos.Add(name, modelInfo);
+            LoadedDefinitions.Add(name, definition);
         }
         else
         {
-            modelInfo = iModelInfo->value;
+            definition = iModelInfo->value;
         }
 
 
         // Now that we have the model information we can create a model from it.
-        if (modelInfo != nullptr)
+        if (definition != nullptr)
         {
-            return modelInfo->CreateModel();
+            return ModelLibrary::CreateFromDefinition(*definition);
         }
 
         return nullptr;
