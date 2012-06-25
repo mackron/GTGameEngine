@@ -4,11 +4,13 @@
 
 namespace GTEngine
 {
-    ModelDefinition::ModelDefinition()
-        : meshGeometries(), meshMaterials(), meshBones(),
+    ModelDefinition::ModelDefinition(const char* fileNameIn)
+        : fileName(fileNameIn),
+          meshGeometries(), meshMaterials(), meshBones(),
           bones(),
           animation(), animationChannelBones(), animationKeyCache()
     {
+        // TODO: Should ensure the file name is relative to the data directory and not an absolute path.
     }
 
     ModelDefinition::~ModelDefinition()
@@ -56,7 +58,6 @@ namespace GTEngine
         }
     }
 
-    /// Creates an animation key for the given bone and returns it.
     TransformAnimationKey* ModelDefinition::CreateAnimationKey(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale)
     {
         auto newKey = new TransformAnimationKey(position, rotation, scale);
@@ -65,7 +66,6 @@ namespace GTEngine
         return newKey;
     }
 
-    /// Maps a bone to an animation channel.
     void ModelDefinition::MapBoneToAnimationChannel(AnimationChannel &channel, Bone &bone)
     {
         this->animationChannelBones.Add(&channel, &bone);

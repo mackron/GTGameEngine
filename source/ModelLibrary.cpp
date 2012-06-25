@@ -344,7 +344,7 @@ namespace GTEngine
                 va->UnmapIndexData();
 
                 definition.meshGeometries.PushBack(va);
-                definition.meshMaterials.PushBack(nullptr);
+                definition.meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
             }
 
 
@@ -526,6 +526,9 @@ namespace GTEngine
                     definition = ModelLibrary_LoadFromAssimpScene(*scene);
                     if (definition != nullptr)
                     {
+                        // The definition was loaded from a file, so we need to mark it as so.
+                        definition->fileName = fileName;
+
                         // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
                         LoadedDefinitions.Add(fileName, definition);
                     }
@@ -621,10 +624,95 @@ namespace GTEngine
 
                 if (id[0] == 'g' && id[1] == 't' && id[2] == 'e' && id[3] == 'm')
                 {
+                    uint32_t version;
+                    GTCore::IO::Read(file, &version, 4);
 
+                    // We load differently depending on the version. Unknown version means return null.
+                    switch (version)
+                    {
+                    case 1:
+                        {
+                            definition = new ModelDefinition(fileNameIn);
+
+                            uint32_t meshCount;
+                            GTCore::IO::Read(file, &meshCount, 4);
+
+                            for (uint32_t i = 0; i < meshCount; ++i)
+                            {
+                                // Geometry.
+                                {
+                                    auto va = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3T3B3);
+
+                                    // Vertices.
+                                    uint32_t vertexCount;
+                                    GTCore::IO::Read(file, &vertexCount, 4);
+
+                                    va->SetVertexData(nullptr, static_cast<size_t>(vertexCount));
+                                    auto vertexData = va->MapVertexData();
+                                    {
+                                        GTCore::IO::Read(file, vertexData, vertexCount * VertexFormat::P3T2N3T3B3.GetSize() * sizeof(float));
+                                    }
+                                    va->UnmapVertexData();
+
+
+                                    // Indices.
+                                    uint32_t indexCount;
+                                    GTCore::IO::Read(file, &indexCount, 4);
+                                
+                                    va->SetIndexData(nullptr, static_cast<size_t>(indexCount));
+                                    auto indexData = va->MapIndexData();
+                                    {
+                                        GTCore::IO::Read(file, indexData, indexCount * sizeof(unsigned int));
+                                    }
+                                    va->UnmapIndexData();
+
+                                
+                                    definition->meshGeometries.PushBack(va);
+                                }
+
+                                // Materials
+                                {
+                                    uint32_t length;
+                                    GTCore::IO::Read(file, &length, 4);
+
+                                    if (length > 0)
+                                    {
+                                        auto materialFileName = static_cast<char*>(malloc(length + 1));                         // <-- +1 for null terminator. Not included in 'length'.
+                                        GTCore::IO::Read(file, materialFileName, length); materialFileName[length] = '\0';
+
+                                        definition->meshMaterials.PushBack(MaterialLibrary::Create(materialFileName));
+
+                                        free(materialFileName);
+                                    }
+                                    else
+                                    {
+                                        definition->meshMaterials.PushBack(nullptr);
+                                    }
+                                }
+
+                                // Bones
+                                {
+                                    definition->meshBones.PushBack(nullptr);
+                                }
+                            }
+
+                            GTCore::IO::Close(file);
+                            return ModelLibrary::CreateFromDefinition(*definition);
+                        }
+
+                    default:
+                        {
+                            GTCore::IO::Close(file);
+
+                            GTEngine::PostError("Can not load .gtmodel file: Unknown version.");
+                            return nullptr;
+                        }
+                    }
                 }
                 else
                 {
+                    GTCore::IO::Close(file);
+
                     GTEngine::PostError("Can not load .gtmodel file: Invalid header ID.");
                     return nullptr;
                 }
@@ -650,8 +738,10 @@ namespace GTEngine
     }
 
 
-    bool ModelLibrary::WriteToFile(Model &model, const char* fileNameIn)
+    bool ModelLibrary::WriteToFile(const Model &model, const char* fileNameIn)
     {
+        auto &definition = model.GetDefinition();
+
         // We have a model, so now we need to check that we can open the file.
         GTCore::String fileName(fileNameIn);
         if (!GTCore::Path::ExtensionEqual(fileNameIn, "gtmodel"))
@@ -665,12 +755,47 @@ namespace GTEngine
             // First we write four bytes: "gtem".
             GTCore::IO::Write(file, "gtem", 4);
 
-            // First we save the base mesh data.
-            uint32_t meshCount = static_cast<uint32_t>(model.meshes.count);
+            // Now the version.
+            uint32_t version = 1;
+            GTCore::IO::Write(file, &version, 4);
+
+
+            // First we save the base mesh data. We first need to save the mesh count.
+            uint32_t meshCount = static_cast<uint32_t>(definition.meshGeometries.count);
             GTCore::IO::Write(file, &meshCount, 4);
 
-            for (size_t i = 0; i < model.meshes.count; ++i)
+            // Now we iterate over each mesh and save the data. The vertex data is always saved as P3T2N3T3B3 format.
+            for (size_t i = 0; i < definition.meshGeometries.count; ++i)
             {
+                // Geometry
+                auto va = definition.meshGeometries[i];
+                assert(va != nullptr);
+
+                // First is the vertex data.
+                uint32_t vertexCount = static_cast<uint32_t>(va->GetVertexCount());
+                GTCore::IO::Write(file, &vertexCount, 4);
+                GTCore::IO::Write(file, va->GetVertexDataPtr(), sizeof(float) * va->GetFormat().GetSize() * vertexCount);
+
+                // Now the index data.
+                uint32_t indexCount = static_cast<uint32_t>(va->GetIndexCount());
+                GTCore::IO::Write(file, &indexCount, 4);
+                GTCore::IO::Write(file, va->GetIndexDataPtr(), sizeof(unsigned int) * indexCount);
+
+
+                // Material. Note the lack of null terminators. Materials are saved based on the input model, and not the definition. The reason is, is that the definition
+                // may not have up-to-date material information, as opposed to the mesh.
+                auto material = model.meshes[i]->GetMaterial();
+                if (material == nullptr)
+                {
+                    uint32_t length = 0;
+                    GTCore::IO::Write(file, &length, 4);
+                }
+                else
+                {
+                    uint32_t length = static_cast<uint32_t>(material->GetDefinition().fileName.GetLength());
+                    GTCore::IO::Write(file, &length, 4);
+                    GTCore::IO::Write(file, material->GetDefinition().fileName.c_str(), length);
+                }
             }
 
 

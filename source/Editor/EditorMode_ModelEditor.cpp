@@ -44,12 +44,7 @@ namespace GTEngine
 
     EditorMode_ModelEditor::~EditorMode_ModelEditor()
     {
-        auto model = modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
-        if (model != nullptr)
-        {
-            GTEngine::MaterialLibrary::Delete(model->meshes[0]->GetMaterial());
-            GTEngine::ModelLibrary::Delete(model);
-        }
+        GTEngine::ModelLibrary::Delete(this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel());
     }
 
     bool EditorMode_ModelEditor::Startup(GTGUI::Server &guiServer)
@@ -83,16 +78,6 @@ namespace GTEngine
                 GTEngine::ModelLibrary::Delete(model);
             }
 
-
-            // Now we assign default materials. This will need to change for .gtmodel files, which will use their own local copy of the materials.
-            if (newModel != nullptr)
-            {
-                for (size_t i = 0; i < newModel->meshes.count; ++i)
-                {
-                    newModel->meshes[i]->SetMaterial(GTEngine::MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
-                }
-            }
-
             this->modelNode.GetComponent<GTEngine::ModelComponent>()->SetModel(newModel);
 
             return true;
@@ -120,13 +105,7 @@ namespace GTEngine
         {
             if (index < static_cast<int>(model->meshes.count))
             {
-                // We need to try loading the material before setting it.
-                auto material = GTEngine::MaterialLibrary::Create(fileName);
-                if (material != nullptr)
-                {
-                    model->meshes[index]->SetMaterial(material);
-                    return true;
-                }
+                model->meshes[index]->SetMaterial(fileName);
             }
         }
 

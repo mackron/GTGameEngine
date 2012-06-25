@@ -20,7 +20,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        ModelDefinition();
+        ModelDefinition(const char* fileName = "");
 
         /// Destructor.
         ~ModelDefinition();
@@ -37,6 +37,10 @@ namespace GTEngine
 
 
     public:
+
+        /// The name of the file used to create the definition. This will be an empty string if it was not created from a file.
+        GTCore::String fileName;
+
 
         /// The vertex arrays containing the mesh data. This is always in P3T2N3T3B3 format.
         GTCore::Vector<GTEngine::VertexArray*> meshGeometries;

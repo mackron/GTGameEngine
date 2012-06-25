@@ -85,13 +85,9 @@ namespace GTEngine
     public:
 
         /// Default constructor.
-        Mesh()
-            : geometry(nullptr), material(nullptr),
-              skinningData(nullptr),
-              hasAnimated(false)
-        {
-        }
+        Mesh();
 
+        /*
         /// Constructor.
         Mesh(VertexArray* geometry, Material* material)
             : geometry(geometry), material(material),
@@ -99,15 +95,13 @@ namespace GTEngine
               hasAnimated(false)
         {
         }
+        */
 
         /// Destructor.
         ///
         /// @remarks
         ///     The destructor does not delete the geometry vertex array or material.
-        ~Mesh()
-        {
-            delete this->skinningData;
-        }
+        ~Mesh();
 
 
         /// Sets the geometry of the mesh.
@@ -119,7 +113,20 @@ namespace GTEngine
         void SetGeometry(VertexArray* newGeometry) { this->geometry = newGeometry; }
 
         /// Sets the material of the mesh.
-        void SetMaterial(Material* newMaterial) { this->material = newMaterial; }
+        ///
+        /// @param newMaterial [in] A pointer to the new material. Can be nullptr.
+        ///
+        /// @remarks
+        ///     When this method is used for setting the material, it is the responsibility of the caller to manage the deletion of the material.
+        void SetMaterial(Material* newMaterial);
+
+        /// Loads and sets the material of the mesh.
+        ///
+        /// @param materialFileName [in] The file name of the material to load and use as the material for this mesh.
+        ///
+        /// @remarks
+        ///     When this method is used for setting the material, the mesh wi
+        void SetMaterial(const char* materialFileName);
 
 
         /// Retrieves the geometry of the mesh.
@@ -203,6 +210,9 @@ namespace GTEngine
         /// geometry or skinned geometry for an animated mesh. If the mesh has not yet been animated, the base geometry needs to
         /// be used.
         bool hasAnimated;
+
+        /// Keeps track of whether or not the material should be deleted.
+        bool deleteMaterial;
     };
 }
 

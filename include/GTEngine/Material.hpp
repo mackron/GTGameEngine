@@ -38,6 +38,9 @@ namespace GTEngine
 
     public:
 
+        /// The name of the file used to create the definition. This will be an empty string if it was not created from a file.
+        GTCore::String fileName;
+
         /// The ID of the diffuse shader.
         GTCore::String diffuseShaderID;
 

@@ -72,7 +72,7 @@ namespace GTEngine
         ///     If <fileName> does not have the .gtmodel extension, it will be appended on.
         ///     @par
         ///     This function does not save the model as any format other than .gtmodel.
-        static bool WriteToFile(Model &model, const char* fileName);
+        static bool WriteToFile(const Model &model, const char* fileName);
 
 
     // Create functions.
