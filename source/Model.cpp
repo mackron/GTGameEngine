@@ -28,11 +28,11 @@ namespace GTEngine
         {
             if (definition.meshBones[i] != nullptr)
             {
-                this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i], *definition.meshBones[i]);
+                this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i]->GetDefinition().fileName.c_str(), *definition.meshBones[i]);
             }
             else
             {
-                this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i]);
+                this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i]->GetDefinition().fileName.c_str());
             }
         }
     }
@@ -61,18 +61,20 @@ namespace GTEngine
     }
 
 
-    Mesh* Model::AttachMesh(VertexArray* geometry, Material* material)
+    Mesh* Model::AttachMesh(VertexArray* geometry, const char* materialFileName)
     {
-        auto newMesh = new Mesh(geometry, material);
+        auto newMesh = new Mesh;
+        newMesh->SetGeometry(geometry);
+        newMesh->SetMaterial(materialFileName);
 
         this->meshes.PushBack(newMesh);
 
         return newMesh;
     }
 
-    Mesh* Model::AttachMesh(VertexArray* geometryIn, Material* materialIn, const GTCore::Vector<BoneWeights*> &bonesIn)
+    Mesh* Model::AttachMesh(VertexArray* geometryIn, const char* materialFileName, const GTCore::Vector<BoneWeights*> &bonesIn)
     {
-        auto newMesh = this->AttachMesh(geometryIn, materialIn);
+        auto newMesh = this->AttachMesh(geometryIn, materialFileName);
         if (newMesh != nullptr)
         {
             for (size_t i = 0; i < bonesIn.count; ++i)

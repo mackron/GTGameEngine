@@ -38,7 +38,9 @@ namespace GTEngine
 
 
     MaterialDefinition::MaterialDefinition()
-        : diffuseShaderID(), emissiveShaderID(), shininessShaderID(), defaultParams()
+        : fileName(),
+          diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(),
+          defaultParams()
     {
     }
 
@@ -249,6 +251,7 @@ namespace GTEngine
                 }
             }
 
+            this->fileName = "";
             return true;
         }
 
@@ -267,9 +270,9 @@ namespace GTEngine
         return result;
     }
 
-    bool MaterialDefinition::LoadFromFile(const char* fileName)
+    bool MaterialDefinition::LoadFromFile(const char* fileNameIn)
     {
-        FILE* file = GTCore::IO::Open(fileName, GTCore::IO::OpenMode::Binary | GTCore::IO::OpenMode::Read);
+        auto file = GTCore::IO::Open(fileNameIn, GTCore::IO::OpenMode::Binary | GTCore::IO::OpenMode::Read);
         if (file != nullptr)
         {
             size_t fileSize = static_cast<size_t>(GTCore::IO::Size(file));
@@ -286,6 +289,9 @@ namespace GTEngine
             // Finally, we clean up and return the result.
             free(data);
             GTCore::IO::Close(file);
+
+            // TODO: Should ensure the file name is relative to the data directory and not an absolute path.
+            this->fileName = fileNameIn;
 
             return result;
         }

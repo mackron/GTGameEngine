@@ -24,14 +24,22 @@ namespace GTEngine
         /// Destructor.
         ~Model();
 
+
+        /// Retrieves the definition of this model.
+        ///
+        /// @return
+        ///     A constant reference to the definition of this model.
+        const ModelDefinition & GetDefinition() const { return this->definition; }
+
+
         /// Attaches a mesh to the model.
         ///
         /// @return A pointer to the new mesh.
         ///
         /// @remarks
         ///     It's important that <bones> refers to a list of BoneWithWeights pointers since the vertex/weight information will be needed to set the skinning vertex attributes.
-        Mesh* AttachMesh(VertexArray* mesh, Material* material);
-        Mesh* AttachMesh(VertexArray* mesh, Material* material, const GTCore::Vector<BoneWeights*> &bones);
+        Mesh* AttachMesh(VertexArray* mesh, const char* materialFileName);
+        Mesh* AttachMesh(VertexArray* mesh, const char* materialFileName, const GTCore::Vector<BoneWeights*> &bones);
         
 
         /// Creates copies and attaches a list of bones.
