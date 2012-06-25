@@ -7,6 +7,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Math.hpp>
+#include <GTCore/Path.hpp>
 
 namespace GTEngine
 {
@@ -99,6 +100,18 @@ namespace GTEngine
 
         return false;
     }
+
+    bool EditorMode_ModelEditor::SaveModel(const char* fileNameIn)
+    {
+        auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
+        if (model != nullptr)
+        {
+            return ModelLibrary::WriteToFile(*model, fileNameIn);
+        }
+
+        return false;
+    }
+
 
     bool EditorMode_ModelEditor::SetMaterial(int index, const char* fileName)
     {

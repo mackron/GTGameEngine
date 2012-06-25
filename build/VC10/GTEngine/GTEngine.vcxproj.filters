@@ -389,6 +389,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneObjectTypes.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ModelDefinition.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -650,6 +653,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\SceneObject.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ModelDefinition.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

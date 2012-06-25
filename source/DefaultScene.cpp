@@ -198,10 +198,10 @@ namespace GTEngine
           ambientLightComponents(), directionalLightComponents(),
           occluderComponents(),
           dynamicsWorld(), occlusionCollisionWorld(),
-          navigationMesh(), navigationMeshNode(), navigationMeshModel()
+          navigationMesh()/*, navigationMeshNode(), navigationMeshModel()*/
     {
-        this->AddSceneNode(this->navigationMeshNode);
-        this->navigationMeshNode.Hide();
+        //this->AddSceneNode(this->navigationMeshNode);
+        //this->navigationMeshNode.Hide();
     }
 
     DefaultScene::~DefaultScene()
@@ -553,6 +553,7 @@ namespace GTEngine
 
     void DefaultScene::ShowNavigationMesh()
     {
+        /*
         if (!this->navigationMeshNode.IsVisible())
         {
             auto component = this->navigationMeshNode.GetComponent<GTEngine::ModelComponent>();
@@ -566,14 +567,17 @@ namespace GTEngine
 
             this->navigationMeshNode.Show();
         }
+        */
     }
 
     void DefaultScene::HideNavigationMesh()
     {
+        /*
         if (this->navigationMeshNode.IsVisible())
         {
             this->navigationMeshNode.Hide();
         }
+        */
     }
 
 

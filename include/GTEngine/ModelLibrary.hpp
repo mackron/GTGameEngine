@@ -26,7 +26,7 @@ namespace GTEngine
         static void Shutdown();
 
 
-    // Create functions.
+    // Load/Save
     public:
 
         /// Loads a model from a file.
@@ -50,6 +50,40 @@ namespace GTEngine
         /// @remarks
         ///     This will not reload the model if the same content has been used before.
         static Model* LoadFromNFF(const char* content, const char* name);
+
+        /// Loads a .gtmodel file.
+        ///
+        /// @param fileName [in] The name of the file to load.
+        ///
+        /// @return A pointer to the new model, or null if the model could not be created.
+        static Model* LoadFromGTMODEL(const char* fileName);
+
+
+        /// Saves the givem model as a .gtmodel.
+        ///
+        /// @param model    [in] A reference to the model to save.
+        /// @param fileName [in] the file name of the model.
+        ///
+        /// @return True if the model is saved successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This will overwrite any existing file without warning.
+        ///     @par
+        ///     If <fileName> does not have the .gtmodel extension, it will be appended on.
+        ///     @par
+        ///     This function does not save the model as any format other than .gtmodel.
+        static bool WriteToFile(Model &model, const char* fileName);
+
+
+    // Create functions.
+    public:
+
+        /// Creates a model from a definition.
+        ///
+        /// @param definition [in] A reference to the model defintinitin to create the model from.
+        ///
+        /// @return A pointer to the new model if successful; null otherwise.
+        static Model* CreateFromDefinition(const ModelDefinition &definition);
 
 
 

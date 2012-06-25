@@ -369,10 +369,10 @@ namespace GTEngine
         NavigationMesh navigationMesh;
 
         /// The scene node for the navigation mesh.
-        SceneNode navigationMeshNode;
+        //SceneNode navigationMeshNode;
 
         /// The model for drawing the navigation mesh.
-        Model navigationMeshModel;
+        //Model navigationMeshModel;
 
 
     private:    // No copying.

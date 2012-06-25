@@ -36,6 +36,17 @@ namespace GTEngine
         ///     Meshes will have a default material applied by default.
         bool LoadModel(const char* fileName);
 
+        /// Saves the current model as a .gtmodel.
+        ///
+        /// @param fileName [in] the file name of the model.
+        ///
+        /// @return True if the model is saved successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This will overwrite any existing file without warning.
+        bool SaveModel(const char* fileName);
+
+
         /// Sets the material of the model.
         ///
         /// @param index    [in] The index of the material to set.

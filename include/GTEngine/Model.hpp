@@ -2,6 +2,7 @@
 #ifndef __GTEngine_Model_hpp_
 #define __GTEngine_Model_hpp_
 
+#include "ModelDefinition.hpp"
 #include "Mesh.hpp"
 #include "Animation/Animation.hpp"
 #include <GTCore/Vector.hpp>
@@ -16,7 +17,9 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        Model();
+        ///
+        /// @param definition [in] A reference to the model definition to create the model from.
+        Model(const ModelDefinition &definition);
 
         /// Destructor.
         ~Model();
@@ -39,7 +42,7 @@ namespace GTEngine
 
 
         /// Copies the given animation.
-        void CopyAnimation(Animation &sourceAnimation, GTCore::Map<AnimationChannel*, Bone*> &sourceAnimationChannelBones);
+        void CopyAnimation(const Animation &sourceAnimation, const GTCore::Map<AnimationChannel*, Bone*> &sourceAnimationChannelBones);
 
 
         /// Applies a transformation to the model's geometric data.
@@ -107,6 +110,10 @@ namespace GTEngine
 
 
     public:
+
+        /// The model definition.
+        const ModelDefinition &definition;
+
 
         /// The list of meshes making up the model.
         GTCore::Vector<Mesh*> meshes;

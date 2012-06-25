@@ -45,7 +45,7 @@ namespace GTEngine
         /// @param index [in] The index of the key frame whose time is being retrieved.
         ///
         /// @return The time of the given key frame.
-        double GetKeyFrameTimeByIndex(size_t index);
+        double GetKeyFrameTimeByIndex(size_t index) const;
 
 
         /// Adds a channel to the animation.

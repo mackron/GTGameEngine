@@ -8,13 +8,33 @@
 
 namespace GTEngine
 {
-    Model::Model()
-        : meshes(), bones(),
+    Model::Model(const ModelDefinition &definitionIn)
+        : definition(definitionIn),
+          meshes(), bones(),
           aabbMin(), aabbMax(), isAABBValid(false),
           animation(), animationChannelBones(), animationKeyCache(),
           animationPlaybackSpeed(1.0),
           collisionVA(nullptr)
     {
+        // We need to create copies of the bones. It is important that this is done before adding the meshes.
+        this->CopyAndAttachBones(definition.bones);
+
+        // Now the animation.
+        this->CopyAnimation(definition.animation, definition.animationChannelBones);
+
+
+        // Now we need to create the meshes. This must be done after adding the bones.
+        for (size_t i = 0; i < definition.meshGeometries.count; ++i)
+        {
+            if (definition.meshBones[i] != nullptr)
+            {
+                this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i], *definition.meshBones[i]);
+            }
+            else
+            {
+                this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i]);
+            }
+        }
     }
 
     Model::~Model()
@@ -99,7 +119,7 @@ namespace GTEngine
         }
     }
 
-    void Model::CopyAnimation(Animation &sourceAnimation, GTCore::Map<AnimationChannel*, Bone*> &sourceAnimationChannelBones)
+    void Model::CopyAnimation(const Animation &sourceAnimation, const GTCore::Map<AnimationChannel*, Bone*> &sourceAnimationChannelBones)
     {
         // We first need to create all of the key frames.
         for (size_t iKeyFrame = 0; iKeyFrame < sourceAnimation.GetKeyFrameCount(); ++iKeyFrame)
