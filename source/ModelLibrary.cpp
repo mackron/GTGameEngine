@@ -414,6 +414,38 @@ namespace GTEngine
             CopyNodesWithMeshes(scene, *root, transform, *definition);
 
 
+            // Now what we do is iterate over the bones of each mesh and create the skinning vertex attributes. It's important that we do this after creating the local bones
+            // of the mesh so that we get the correct indices.
+            for (size_t i = 0; i < definition->meshGeometries.count; ++i)
+            {
+                auto localBones = definition->meshBones[i];
+                if (localBones != nullptr)
+                {
+                    auto skinningVertexAttributes = new SkinningVertexAttribute[definition->meshGeometries[i]->GetVertexCount()];
+
+                    for (size_t j = 0; j < localBones->count; ++j)
+                    {
+                        auto bone = localBones->buffer[j];
+                        assert(bone != nullptr);
+
+                        size_t boneIndex = definition->bones.Find(bone->name.c_str())->index;
+
+                        for (size_t k = 0; k < bone->weights.count; ++k)
+                        {
+                            skinningVertexAttributes[bone->weights[k].vertexID].AddBoneWeightPair(boneIndex, bone->weights[k].weight);
+                        }
+                    }
+
+                    definition->meshSkinningVertexAttributes.PushBack(skinningVertexAttributes);
+                }
+                else
+                {
+                    definition->meshSkinningVertexAttributes.PushBack(nullptr);
+                }
+            }
+
+
+
             // Here is where we load up the animations. Assimp has multiple animations, but GTEngine uses only a single animation. To
             // resolve, we simply copy over each animation into the main animation and create a named segment for that animation.
             double segmentStartTime = 0.0;
@@ -462,7 +494,6 @@ namespace GTEngine
                     // Now we create the channel.
                     auto &newChannel = definition->animation.CreateChannel();
                     definition->MapAnimationChannelToBone(*bone, newChannel);
-                    //definition->MapBoneToAnimationChannel(newChannel, *bone);
 
                     // Here is where we add the key frames. Since we are looping over the channels, each key frame will probably be creating twice. This is OK because
                     // Animation will make sure there are no duplicate key frames.

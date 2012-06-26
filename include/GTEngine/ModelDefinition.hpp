@@ -5,6 +5,7 @@
 #include "Rendering/VertexArray.hpp"
 #include "Material.hpp"
 #include "Bone.hpp"
+#include "Mesh.hpp"
 #include "Animation/Animation.hpp"
 #include <GTCore/Vector.hpp>
 
@@ -50,6 +51,10 @@ namespace GTEngine
 
         /// The list of bone weights for each mesh. If the mesh does not use any bones, the entry will be set to null.
         GTCore::Vector<GTCore::Vector<BoneWeights*>*> meshBones;
+
+        /// The list of skinning vertex attributes for each mesh. The value is a pointer to a buffer containing the skinning attributes
+        /// for each vertex in the mesh.
+        GTCore::Vector<SkinningVertexAttribute*> meshSkinningVertexAttributes;
 
 
         /// A map of every bone of the model, indexed by it's name. We use a map here to make it easier for avoiding duplication and

@@ -39,7 +39,7 @@ namespace GTEngine
         /// @remarks
         ///     It's important that <bones> refers to a list of BoneWithWeights pointers since the vertex/weight information will be needed to set the skinning vertex attributes.
         Mesh* AttachMesh(VertexArray* mesh, const char* materialFileName);
-        Mesh* AttachMesh(VertexArray* mesh, const char* materialFileName, const GTCore::Vector<BoneWeights*> &bones);
+        Mesh* AttachMesh(VertexArray* mesh, const char* materialFileName, const SkinningVertexAttribute* skinningVertexAttributes);
         
 
         /// Creates copies and attaches a list of bones.
@@ -113,7 +113,7 @@ namespace GTEngine
         ///
         /// @param mesh [in] A reference to the mesh whose having the bone information added.
         /// @param bone [in] A reference to the VertexWeights object containing the weights to use for each applicable vertex.
-        void AddBoneWeightsToMesh(Mesh &mesh, const BoneWeights &bone);
+        //void AddBoneWeightsToMesh(Mesh &mesh, const BoneWeights &bone);
 
         /// Finds a bone by name.
         ///

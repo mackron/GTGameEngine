@@ -27,9 +27,9 @@ namespace GTEngine
         // Now we need to create the meshes. This must be done after adding the bones.
         for (size_t i = 0; i < definition.meshGeometries.count; ++i)
         {
-            if (definition.meshBones[i] != nullptr)
+            if (definition.meshSkinningVertexAttributes[i] != nullptr)
             {
-                this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i]->GetDefinition().fileName.c_str(), *definition.meshBones[i]);
+                this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i]->GetDefinition().fileName.c_str(), definition.meshSkinningVertexAttributes[i]);
             }
             else
             {
@@ -73,11 +73,14 @@ namespace GTEngine
         return newMesh;
     }
 
-    Mesh* Model::AttachMesh(VertexArray* geometryIn, const char* materialFileName, const GTCore::Vector<BoneWeights*> &bonesIn)
+    Mesh* Model::AttachMesh(VertexArray* geometryIn, const char* materialFileName, const SkinningVertexAttribute* skinningVertexAttributes)
     {
         auto newMesh = this->AttachMesh(geometryIn, materialFileName);
         if (newMesh != nullptr)
         {
+            newMesh->SetSkinningData(this->bones.buffer, skinningVertexAttributes);
+
+            /*
             for (size_t i = 0; i < bonesIn.count; ++i)
             {
                 auto bone = bonesIn.buffer[i];
@@ -85,6 +88,7 @@ namespace GTEngine
 
                 this->AddBoneWeightsToMesh(*newMesh, *bone);
             }
+            */
         }
 
         return newMesh;
@@ -324,6 +328,7 @@ namespace GTEngine
 // Private
 namespace GTEngine
 {
+    /*
     void Model::AddBoneWeightsToMesh(Mesh &mesh, const BoneWeights &bone)
     {
         size_t boneIndex;
@@ -331,6 +336,7 @@ namespace GTEngine
 
         mesh.AttachBoneWeights(this->bones.buffer, static_cast<int>(boneIndex), bone.weights.count, bone.weights.buffer);
     }
+    */
 
     Bone* Model::GetBoneByName(const char* name, size_t* indexOut)
     {
