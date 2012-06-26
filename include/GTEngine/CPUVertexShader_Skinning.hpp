@@ -22,6 +22,11 @@ namespace GTEngine
         ~CPUVertexShader_Skinning();
 
 
+        /// Sets the buffer containing the bones to index into.
+        ///
+        /// @param bones [in] A buffer containing pointers to bones that the vertex will index into for blending.
+        void SetBoneBuffer(const Bone* const* bones);
+
         /// Sets the pointer to the buffer containing the skinning vertex attributes for each vertex.
         ///
         /// Note that this does not make a copy of the buffer; it simply sets the internal pointer.
@@ -35,6 +40,9 @@ namespace GTEngine
 
 
     private:
+
+        /// A pointer to the buffer containing the bones to index into.
+        const Bone* const* bones;
 
         /// A pointer to the buffer containing the skinning vertex attributes.
         const SkinningVertexAttribute* skinningVertexAttributes;

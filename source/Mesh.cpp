@@ -72,7 +72,7 @@ namespace GTEngine
     }
 
 
-    void Mesh::AttachBoneWeights(const Bone &localBone, size_t weightCount, const VertexWeightPair* weightBuffer)
+    void Mesh::AttachBoneWeights(const Bone* const* bones, int boneIndex, size_t weightCount, const VertexWeightPair* weightBuffer)
     {
         if (weightCount > 0 && weightBuffer != nullptr)
         {
@@ -81,13 +81,13 @@ namespace GTEngine
             // We first need to ensure we have a skinning data structure.
             if (this->skinningData == nullptr)
             {
-                this->skinningData = new MeshSkinningData(*this->geometry);
+                this->skinningData = new MeshSkinningData(bones, *this->geometry);
             }
 
             // At this point we can assert that we have skinning data and we can attach the bone weights to each vertex via the skinning vertex attributes.
             for (size_t i = 0; i < weightCount; ++i)
             {
-                this->skinningData->skinningVertexAttributes[weightBuffer[i].vertexID].AddBoneWeightPair(localBone, weightBuffer[i].weight);
+                this->skinningData->skinningVertexAttributes[weightBuffer[i].vertexID].AddBoneWeightPair(boneIndex, weightBuffer[i].weight);
             }
         }
     }
@@ -111,6 +111,7 @@ namespace GTEngine
             if (this->skinningData != nullptr)
             {
                 CPUVertexShader_Skinning shader;
+                shader.SetBoneBuffer(this->skinningData->bones);
                 shader.SetSkinningVertexAttributes(this->skinningData->skinningVertexAttributes);
 
                 shader.Execute(srcVertices, this->geometry->GetVertexCount(), this->geometry->GetFormat(), dstVertices);
