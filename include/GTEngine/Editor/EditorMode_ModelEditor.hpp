@@ -56,6 +56,14 @@ namespace GTEngine
         bool SetMaterial(int index, const char* fileName);
 
 
+        /// Plays the entire animation track of the model.
+        void PlayAnimation();
+
+        /// Pauses the animation.
+        void StopAnimation();
+
+
+
         /// Resets the camera to the default position.
         void ResetCamera();
 

@@ -4,6 +4,8 @@
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/CPUVertexShader_SimpleTransform.hpp>
 #include <GTEngine/Math.hpp>
+#include <GTEngine/Logging.hpp>
+#include <GTCore/Timing.hpp>
 #include <cfloat>
 
 namespace GTEngine
@@ -21,8 +23,7 @@ namespace GTEngine
 
         // Now the animation.
         this->CopyAnimation(definition.animation, definition.animationChannelBones);
-
-
+        
         // Now we need to create the meshes. This must be done after adding the bones.
         for (size_t i = 0; i < definition.meshGeometries.count; ++i)
         {

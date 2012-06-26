@@ -60,7 +60,7 @@ namespace GTEngine
         /// The model's animation object.
         Animation animation;
 
-        /// The map for mapping a bone to an animation channel. The key is the channel index.
+        /// The map for mapping a bone to an animation channel.
         GTCore::Map<AnimationChannel*, Bone*> animationChannelBones;
 
         /// The cache of animation keys.

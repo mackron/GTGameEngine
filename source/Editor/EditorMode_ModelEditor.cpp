@@ -7,6 +7,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Math.hpp>
+#include <GTEngine/Logging.hpp>
 #include <GTCore/Path.hpp>
 
 namespace GTEngine
@@ -68,7 +69,9 @@ namespace GTEngine
     bool EditorMode_ModelEditor::LoadModel(const char* fileName)
     {
         // We first try to load the new model. Only if it succeeds do we want to unload the previous model.
+        double startTime = GTCore::Timing::GetTimeInMilliseconds();
         auto newModel = GTEngine::ModelLibrary::LoadFromFile(fileName);
+        GTEngine::Log("--- Load Time: %fms ---", GTCore::Timing::GetTimeInMilliseconds() - startTime);
         if (newModel != nullptr)
         {
             // The previous model needs to be unloaded.
@@ -110,6 +113,28 @@ namespace GTEngine
         }
 
         return false;
+    }
+
+    
+    void EditorMode_ModelEditor::PlayAnimation()
+    {
+        auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
+        if (model != nullptr)
+        {
+            AnimationSequence sequence;
+            sequence.AddFrame(0, model->animation.GetKeyFrameCount() - 1, 0.0, true);
+
+            model->PlayAnimation(sequence);
+        }
+    }
+
+    void EditorMode_ModelEditor::StopAnimation()
+    {
+        auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
+        if (model != nullptr)
+        {
+            model->PauseAnimation();
+        }
     }
 
 
