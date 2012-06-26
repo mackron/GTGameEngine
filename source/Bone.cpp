@@ -139,7 +139,10 @@ namespace GTEngine
 
     glm::mat4 Bone::GetTransform() const
     {
-        return glm::translate(this->position) * glm::mat4_cast(this->rotation) * glm::scale(this->scale);
+        glm::mat4 result;
+        Math::CalculateTransformMatrix(this->position, this->rotation, this->scale, result);
+
+        return result;
     }
     
     glm::mat4 Bone::GetAbsoluteTransform() const
@@ -148,8 +151,11 @@ namespace GTEngine
         glm::quat rotation;
         glm::vec3 scale;
         this->GetAbsoluteTransformComponents(position, rotation, scale);
-        
-        return glm::translate(position) * glm::mat4_cast(rotation) * glm::scale(scale);
+
+        glm::mat4 result;
+        Math::CalculateTransformMatrix(position, rotation, scale, result);
+
+        return result;
     }
 
     void Bone::UpdateSkinningTransform()

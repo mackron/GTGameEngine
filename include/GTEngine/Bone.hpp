@@ -11,6 +11,12 @@ namespace GTEngine
     /// Structure reprsenting a vertex weight.
     struct VertexWeightPair
     {
+        /// Default constructor. Note the lack of initialisation!
+        VertexWeightPair()
+            : vertexID(), weight()
+        {
+        }
+
         VertexWeightPair(unsigned int vertexIDIn, float weightIn)
             : vertexID(vertexIDIn), weight(weightIn)
         {

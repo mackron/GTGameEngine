@@ -7,6 +7,7 @@
 #include <GTEngine/Logging.hpp>
 
 #include <GTCore/Path.hpp>
+#include <GTCore/Timing.hpp>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -634,6 +635,16 @@ namespace GTEngine
                         {
                             definition = new ModelDefinition(fileNameIn);
 
+                            // Bones.
+                            //
+                            // Bones are first because they are referenced by everything else. We store a bone count
+                            //uint32_t boneCount;
+
+
+
+                            // Meshes.
+                            //
+                            // Meshes reference bones, so we do these afterwards.
                             uint32_t meshCount;
                             GTCore::IO::Read(file, &meshCount, 4);
 
@@ -670,6 +681,7 @@ namespace GTEngine
                                     definition->meshGeometries.PushBack(va);
                                 }
 
+                                
                                 // Materials
                                 {
                                     uint32_t length;
@@ -686,18 +698,203 @@ namespace GTEngine
                                     }
                                     else
                                     {
-                                        definition->meshMaterials.PushBack(nullptr);
+                                        definition->meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
                                     }
                                 }
 
+
                                 // Bones
                                 {
-                                    definition->meshBones.PushBack(nullptr);
+                                    uint32_t boneCount;
+                                    GTCore::IO::Read(file, &boneCount, 4);
+
+                                    if (boneCount > 0)
+                                    {
+                                        auto boneWeightList = new GTCore::Vector<BoneWeights*>(boneCount);
+                                        for (uint32_t iBone = 0; iBone < boneCount; ++iBone)
+                                        {
+                                            // First is the name.
+                                            uint32_t nameLength;
+                                            GTCore::IO::Read(file, &nameLength, 4);
+
+                                            auto name = static_cast<char*>(malloc(nameLength + 1));                 // <-- +1 for null terminator.
+                                            GTCore::IO::Read(file, name, nameLength); name[nameLength] = '\0';
+
+                                            auto boneWeights = new BoneWeights(name);
+                                            free(name);
+
+
+                                            // Now we need to load the vertex/weight pairs. We do this in one go.
+                                            uint32_t weightCount;
+                                            GTCore::IO::Read(file, &weightCount, 4);
+
+                                            boneWeights->weights.Resize(weightCount);
+                                            GTCore::IO::Read(file, boneWeights->weights.buffer, weightCount * sizeof(VertexWeightPair));
+
+
+                                            boneWeightList->PushBack(boneWeights);
+                                        }
+
+                                        definition->meshBones.PushBack(boneWeightList);
+                                    }
+                                    else
+                                    {
+                                        definition->meshBones.PushBack(nullptr);
+                                    }
                                 }
                             }
 
+
+                            // Here is where we read the bone hierarchy. These will not be written in any set order, so we need to do a second pass which will
+                            // do the actual linking based on parent names. To do this, we need to map bone names with parent names. The key will be the bone
+                            // pointer, and the value will be the parent name.
+                            GTCore::Map<Bone*, GTCore::String> boneParentMap;
+
+                            // First is the bone count.
+                            uint32_t boneCount;
+                            GTCore::IO::Read(file, &boneCount, 4);
+
+                            // Each bone has a name, parent name, transformation and an offset matrix.
+                            for (uint32_t iBone = 0; iBone < boneCount; ++iBone)
+                            {
+                                // Name.
+                                uint32_t nameLength;
+                                GTCore::IO::Read(file, &nameLength, 4);
+
+                                auto name = static_cast<char*>(malloc(nameLength + 1));                 // <-- +1 for null terminator.
+                                GTCore::IO::Read(file, name, nameLength); name[nameLength] = '\0';
+
+
+                                // Parent name.
+                                uint32_t parentNameLength;
+                                GTCore::IO::Read(file, &parentNameLength, 4);
+
+                                char* parentName = nullptr;
+                                if (parentNameLength > 0)
+                                {
+                                    parentName = static_cast<char*>(malloc(parentNameLength + 1));                                  // <-- +1 for null terminator.
+                                    GTCore::IO::Read(file, parentName, parentNameLength); parentName[parentNameLength] = '\0';
+                                }
+
+
+
+                                // Relative transform and offset matrix.
+                                struct
+                                {
+                                    glm::vec3 position;
+                                    glm::quat rotation;
+                                    glm::vec3 scale;
+                                    glm::mat4 offsetMatrix;
+                                }transformOffset;
+
+                                GTCore::IO::Read(file, &transformOffset, sizeof(transformOffset));
+
+
+                                // Now we create the bone and add it to the list.
+                                auto bone = new Bone;
+                                bone->SetName(name);
+                                bone->SetPosition(transformOffset.position);
+                                bone->SetRotation(transformOffset.rotation);
+                                bone->SetScale(transformOffset.scale);
+                                bone->SetOffsetMatrix(transformOffset.offsetMatrix);
+                                definition->bones.Add(name, bone);
+
+
+                                // In order to do the parent linkage, we need to map a bone with a parent name.
+                                boneParentMap.Add(bone, GTCore::String(parentName));
+
+
+                                free(name);
+                                free(parentName);
+                            }
+
+                            // This is the second pass for bone loading where we link the bones with their parents. We also create the channels here. There are two maps
+                            // to concern ourselves with here. The first is the map in the model definition which maps a channel to a bone. The other is a local map where
+                            // we map a bone name to a channel. This local map is used below for loading key frame data.
+                            GTCore::Dictionary<AnimationChannel*> boneChannelMap;
+
+                            for (size_t iBone = 0; iBone < boneParentMap.count; ++iBone)
+                            {
+                                auto bone       = boneParentMap.buffer[iBone]->key;
+                                auto parentName = boneParentMap.buffer[iBone]->value;
+
+                                assert(bone != nullptr);
+
+
+                                auto parent = definition->bones.Find(parentName.c_str());
+                                if (parent != nullptr)
+                                {
+                                    parent->value->AttachChild(*bone);
+                                }
+
+
+                                // We need to create a channel for this bone. We then need to map that channel to a bone.
+                                auto &channel = definition->animation.CreateChannel();
+                                definition->animationChannelBones.Add(&channel, bone);
+
+                                boneChannelMap.Add(bone->GetName(), &channel);
+                            }
+
+
+                            // At this point all of the bones will be linked together. Now we need to load the key frame animation data.
+                            uint32_t keyFrameCount;
+                            GTCore::IO::Read(file, &keyFrameCount, 4);
+
+                            for (uint32_t iFrame = 0; iFrame < keyFrameCount; ++iFrame)
+                            {
+                                float time;
+                                GTCore::IO::Read(file, &time, 4);
+
+                                size_t keyFrameIndex = definition->animation.AppendKeyFrame(static_cast<double>(time));
+
+                                // With the key frame added, we now need to iterate over each channel in the key frame.
+                                uint32_t channelCount;
+                                GTCore::IO::Read(file, &channelCount, 4);
+
+                                for (uint32_t iChannel = 0; iChannel < channelCount; ++iChannel)
+                                {
+                                    // The first attribute is the bone name.
+                                    uint32_t boneNameLength;
+                                    GTCore::IO::Read(file, &boneNameLength, 4);
+
+                                    auto boneName = static_cast<char*>(malloc(boneNameLength + 1));                         // +1 for null terminator.
+                                    GTCore::IO::Read(file, boneName, boneNameLength); boneName[boneNameLength] = '\0';
+
+                                    auto channel = boneChannelMap.Find(boneName);
+                                    assert(channel != nullptr);
+
+
+                                    // Transformation.
+                                    struct
+                                    {
+                                        glm::vec3 position;
+                                        glm::quat rotation;
+                                        glm::vec3 scale;
+                                    }transform;
+
+                                    GTCore::IO::Read(file, &transform, sizeof(transform));
+
+
+                                    // All of the data has been read, so now we just create a TransformAnimationKey and add it to the cache and channel.
+                                    auto key = new TransformAnimationKey(transform.position, transform.rotation, transform.scale);
+                                    channel->value->SetKey(keyFrameIndex, key);
+
+                                    // We need to cache the key.
+                                    definition->animationKeyCache.PushBack(key);
+
+
+                                    free(boneName);
+                                }
+                            }
+
+
+                            // We can't forget to add the definition to the global list.
+                            definition->fileName = fileNameIn;
+                            LoadedDefinitions.Add(fileNameIn, definition);
+
+                            
                             GTCore::IO::Close(file);
-                            return ModelLibrary::CreateFromDefinition(*definition);
+                            break;
                         }
 
                     default:
@@ -794,7 +991,132 @@ namespace GTEngine
                 {
                     uint32_t length = static_cast<uint32_t>(material->GetDefinition().fileName.GetLength());
                     GTCore::IO::Write(file, &length, 4);
-                    GTCore::IO::Write(file, material->GetDefinition().fileName.c_str(), length);
+                    GTCore::IO::Write(file, material->GetDefinition().fileName.c_str(), static_cast<size_t>(length));
+                }
+
+
+                // Bones. Start with the count.
+                uint32_t boneCount = static_cast<uint32_t>(definition.meshBones[i]->count);
+                GTCore::IO::Write(file, &boneCount, 4);
+
+                // Now we iterate over each bone and save the name of the bone and the vertex/weight pairs.
+                for (uint32_t j = 0; j < boneCount; ++j)
+                {
+                    auto weights = definition.meshBones[i]->buffer[j];
+                    assert(weights != nullptr);
+
+                    uint32_t nameLength = static_cast<uint32_t>(weights->name.GetLength());
+                    GTCore::IO::Write(file, &nameLength, 4);
+                    GTCore::IO::Write(file, weights->name.c_str(), static_cast<size_t>(nameLength));
+
+                    // Here we write the vertex/weight pairs for this bone on this mesh.
+                    uint32_t weightCount = static_cast<uint32_t>(weights->weights.count);
+                    GTCore::IO::Write(file, &weightCount, 4);
+                    GTCore::IO::Write(file, weights->weights.buffer, static_cast<size_t>(weightCount) * sizeof(VertexWeightPair));
+                }
+            }
+
+
+            // Now we save the bone hierarchy. This is a simple system where we simple write the name of the bone, and the name of the parent bone, for each bone.
+            uint32_t boneCount = static_cast<uint32_t>(definition.bones.count);
+            GTCore::IO::Write(file, &boneCount, 4);
+
+            // Now we iterate over each bone. The transformation is relative to the parent.
+            for (uint32_t i = 0; i < boneCount; ++i)
+            {
+                auto bone = definition.bones.buffer[i]->value;
+                assert(bone != nullptr);
+
+                // Name.
+                uint32_t nameLength = GTCore::Strings::SizeInBytes(bone->GetName());
+                GTCore::IO::Write(file, &nameLength, 4);
+                GTCore::IO::Write(file, bone->GetName(), nameLength);
+
+                // Parent Name.
+                if (bone->GetParent() != nullptr)
+                {
+                    uint32_t parentNameLength = GTCore::Strings::SizeInBytes(bone->GetParent()->GetName());
+                    GTCore::IO::Write(file, &parentNameLength, 4);
+                    GTCore::IO::Write(file, bone->GetParent()->GetName(), parentNameLength);
+                }
+                else
+                {
+                    uint32_t tmp = 0;
+                    GTCore::IO::Write(file, &tmp, 4);
+                }
+
+
+                // Relative transformation.
+                glm::vec3 position = bone->GetPosition();
+                glm::quat rotation = bone->GetRotation();
+                glm::vec3 scale    = bone->GetScale();
+
+                GTCore::IO::Write(file, &position, sizeof(float) * 3);
+                GTCore::IO::Write(file, &rotation, sizeof(float) * 4);
+                GTCore::IO::Write(file, &scale,    sizeof(float) * 3);
+
+                
+                // 4x4 offset matrix.
+                const glm::mat4 &offsetMatrix = bone->GetOffsetMatrix();
+                GTCore::IO::Write(file, &offsetMatrix, sizeof(float) * 16);
+            }
+
+
+            // Now we need to write the animation keys. There a channel for every bone at every key frame. The data is the transformation of the bone.
+            // We loop over each key, and then save the bone transformation at every channel on that key.
+            uint32_t keyFrameCount = definition.animation.GetKeyFrameCount();
+            GTCore::IO::Write(file, &keyFrameCount, 4);
+
+            // Now we need to loop over each key frame and write all of the data for that frame.
+            for (uint32_t iKeyFrame = 0; iKeyFrame < keyFrameCount; ++iKeyFrame)
+            {
+                float time = static_cast<float>(definition.animation.GetKeyFrameTimeByIndex(iKeyFrame));
+                GTCore::IO::Write(file, &time, 4);
+
+                // Now we need to iterate over every channel and get the key data for this key frame.
+                uint32_t channelCount = definition.animationChannelBones.count;
+                GTCore::IO::Write(file, &channelCount, 4);
+
+                for (size_t j = 0; j < channelCount; ++j)
+                {
+                    auto jChannel = definition.animationChannelBones.buffer[j];
+                    assert(jChannel != nullptr);
+
+                    auto channel = jChannel->key;
+                    assert(channel != nullptr);
+
+                    auto bone = jChannel->value;
+                    assert(bone != nullptr);
+
+
+                    // We need to save the name of the bone that this channel is referring to.
+                    uint32_t boneNameLength = GTCore::Strings::SizeInBytes(bone->GetName());
+                    GTCore::IO::Write(file, &boneNameLength, 4);
+                    GTCore::IO::Write(file, bone->GetName(), boneNameLength);
+                    
+                    // Here we save the key. The key will always be a TransformAnimationKey.
+                    glm::vec3 position;
+                    glm::quat rotation;
+                    glm::vec3 scale;
+
+                    auto key = static_cast<TransformAnimationKey*>(channel->GetKey(iKeyFrame));
+                    if (key != nullptr)
+                    {
+                        position = key->position;
+                        rotation = key->rotation;
+                        scale    = key->scale;
+                    }
+                    else
+                    {
+                        // We should never actually get here, but for completeness we'll just write identities.
+                        position = bone->GetPosition();
+                        rotation = bone->GetRotation();
+                        scale    = bone->GetScale();
+                    }
+
+                    GTCore::IO::Write(file, &position, sizeof(float) * 3);
+                    GTCore::IO::Write(file, &rotation, sizeof(float) * 4);
+                    GTCore::IO::Write(file, &scale,    sizeof(float) * 3);
                 }
             }
 

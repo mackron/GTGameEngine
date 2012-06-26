@@ -1104,6 +1104,24 @@ namespace GTEngine
         return 0;
     }
 
+
+    int FFI_Editor_ModelEditor_PlayAnimation(GTCore::Script &script)
+    {
+        auto &game = Game::FFI::GetGameObject(script);
+
+        game.GetEditor().GetModelEditor().PlayAnimation();
+        return 0;
+    }
+
+    int FFI_Editor_ModelEditor_StopAnimation(GTCore::Script &script)
+    {
+        auto &game = Game::FFI::GetGameObject(script);
+
+        game.GetEditor().GetModelEditor().StopAnimation();
+        return 0;
+    }
+
+
     int FFI_Editor_ModelEditor_ResetCamera(GTCore::Script &script)
     {
         auto &game = Game::FFI::GetGameObject(script);
@@ -1213,9 +1231,20 @@ namespace GTEngine
                 this->script.PushClosure(FFI_Editor_ModelEditor_Save, 0);
                 this->script.SetTableValue(-3);
 
+
                 this->script.Push("SetMaterial");
                 this->script.PushClosure(FFI_Editor_ModelEditor_SetMaterial, 0);
                 this->script.SetTableValue(-3);
+
+
+                this->script.Push("PlayAnimation");
+                this->script.PushClosure(FFI_Editor_ModelEditor_PlayAnimation, 0);
+                this->script.SetTableValue(-3);
+
+                this->script.Push("StopAnimation");
+                this->script.PushClosure(FFI_Editor_ModelEditor_StopAnimation, 0);
+                this->script.SetTableValue(-3);
+
 
                 this->script.Push("ResetCamera");
                 this->script.PushClosure(FFI_Editor_ModelEditor_ResetCamera, 0);
