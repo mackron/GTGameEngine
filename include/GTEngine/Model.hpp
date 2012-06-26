@@ -115,6 +115,11 @@ namespace GTEngine
         /// @param bone [in] A reference to the VertexWeights object containing the weights to use for each applicable vertex.
         void AddBoneWeightsToMesh(Mesh &mesh, const BoneWeights &bone);
 
+        /// Finds a bone by name.
+        ///
+        /// @param name     [in] The name of the bone to retrieve.
+        /// @param indexOut [in] A pointer to the variable that will receive the index.
+        Bone* GetBoneByName(const char* name, size_t* indexOut = nullptr);
 
 
     public:
@@ -127,7 +132,10 @@ namespace GTEngine
         GTCore::Vector<Mesh*> meshes;
 
         /// The list of bones in the model.
-        GTCore::Dictionary<Bone*> bones;
+        GTCore::Vector<Bone*> bones;
+
+
+        
 
 
         /// The base AABB of the model.

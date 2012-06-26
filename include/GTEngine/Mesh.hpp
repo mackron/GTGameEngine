@@ -20,8 +20,9 @@ namespace GTEngine
     struct MeshSkinningData
     {
         /// Constructor.
-        MeshSkinningData(VertexArray &source)
-            : skinningVertexAttributes(nullptr),
+        MeshSkinningData(const Bone* const* bonesIn, VertexArray &source)
+            : bones(bonesIn),
+              skinningVertexAttributes(nullptr),
               skinnedGeometry()
         {
             skinningVertexAttributes = new SkinningVertexAttribute[source.GetVertexCount()];
@@ -54,6 +55,9 @@ namespace GTEngine
             this->skinnedGeometry[1]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
         }
 
+
+        /// A pointer to the buffer containing pointers to the bones each vertex will index into.
+        const Bone* const* bones;
 
         /// A pointer to the buffer containing the skinning vertex attributes for the CPU skinning shader.
         SkinningVertexAttribute* skinningVertexAttributes;
@@ -157,10 +161,11 @@ namespace GTEngine
 
         /// Attaches the bone weights using a local bone and a source bone.
         ///
-        /// @param localBone    [in] A reference to the bone the mesh will be directly referening when doing skinning.
+        /// @param bones        [in] A pointer to the buffer containing pointers to the bones to index into.
+        /// @param boneIndex    [in] The index of the bone that will be used when indexing into the bone buffer during vertex blending.
         /// @param weightCount  [in] The number of weights in the weight buffer.
         /// @param weightBuffer [in] A pointer to the buffer containing the vertex/weight pairs.
-        void AttachBoneWeights(const Bone &localBone, size_t weightCount, const VertexWeightPair* weightBuffer);
+        void AttachBoneWeights(const Bone* const* bones, int boneIndex, size_t weightCount, const VertexWeightPair* weightBuffer);
 
 
 

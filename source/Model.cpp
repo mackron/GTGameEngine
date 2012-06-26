@@ -49,7 +49,7 @@ namespace GTEngine
         // Bones
         for (size_t i = 0; i < this->bones.count; ++i)
         {
-            delete this->bones.buffer[i]->value;
+            delete this->bones.buffer[i];
         }
 
         // Animation keys.
@@ -99,8 +99,7 @@ namespace GTEngine
             auto bone = inputBones.buffer[i]->value;
             assert(bone != nullptr);
 
-            auto newBone = new Bone(*bone);
-            this->bones.Add(newBone->GetName(), newBone);
+            this->bones.PushBack(new Bone(*bone));
         }
 
         // This is the second pass. We need to link the bones together to form their hierarchy.
@@ -111,10 +110,10 @@ namespace GTEngine
 
             if (inputBone->GetParent() != nullptr)
             {
-                auto bone = this->bones.Find(inputBone->GetName())->value;
+                auto bone = this->GetBoneByName(inputBone->GetName());
                 assert(bone != nullptr);
 
-                auto parentBone = this->bones.Find(inputBone->GetParent()->GetName())->value;
+                auto parentBone = this->GetBoneByName(inputBone->GetParent()->GetName());
                 assert(parentBone != nullptr);
 
                 parentBone->AttachChild(*bone);
@@ -137,7 +136,7 @@ namespace GTEngine
             auto sourceChannel = sourceAnimationChannelBones.buffer[iChannel]->value;
             auto sourceBone    = sourceAnimationChannelBones.buffer[iChannel]->key;
 
-            auto bone = this->bones.Find(sourceBone->GetName())->value;
+            auto bone = this->GetBoneByName(sourceBone->GetName());
             assert(bone != nullptr);
 
             auto &newChannel = this->animation.CreateChannel();
@@ -327,13 +326,28 @@ namespace GTEngine
 {
     void Model::AddBoneWeightsToMesh(Mesh &mesh, const BoneWeights &bone)
     {
-        auto iLocalBone = this->bones.Find(bone.name.c_str());
-        assert(iLocalBone != nullptr);
+        size_t boneIndex;
+        this->GetBoneByName(bone.name.c_str(), &boneIndex);
 
-        auto localBone = iLocalBone->value;
-        assert(localBone != nullptr);
+        mesh.AttachBoneWeights(this->bones.buffer, static_cast<int>(boneIndex), bone.weights.count, bone.weights.buffer);
+    }
 
-        mesh.AttachBoneWeights(*localBone, bone.weights.count, bone.weights.buffer);
+    Bone* Model::GetBoneByName(const char* name, size_t* indexOut)
+    {
+        for (size_t i = 0; i < this->bones.count; ++i)
+        {
+            if (GTCore::Strings::Equal(name, this->bones[i]->GetName()))
+            {
+                if (indexOut != nullptr)
+                {
+                    *indexOut = i;
+                }
+
+                return this->bones[i];
+            }
+        }
+
+        return nullptr;
     }
 }
 

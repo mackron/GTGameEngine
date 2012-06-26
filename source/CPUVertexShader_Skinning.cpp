@@ -18,12 +18,18 @@ namespace GTEngine
 
     CPUVertexShader_Skinning::CPUVertexShader_Skinning()
         : CPUVertexShader(),
-          skinningVertexAttributes(nullptr)
+          bones(nullptr), skinningVertexAttributes(nullptr)
     {
     }
 
     CPUVertexShader_Skinning::~CPUVertexShader_Skinning()
     {
+    }
+
+
+    void CPUVertexShader_Skinning::SetBoneBuffer(const Bone* const* bonesIn)
+    {
+        this->bones = bonesIn;
     }
 
     void CPUVertexShader_Skinning::SetSkinningVertexAttributes(const SkinningVertexAttribute* attributes)
@@ -61,7 +67,7 @@ namespace GTEngine
         // For each bone...
         for (size_t i = 0; i < skinningData.bones.count; ++i)
         {
-            auto bone   = skinningData.bones[i].bone;
+            auto bone   = this->bones[skinningData.bones[i].boneIndex];
             auto weight = skinningData.bones[i].weight;
 
             assert(bone != nullptr);
