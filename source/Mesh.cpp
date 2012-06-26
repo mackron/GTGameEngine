@@ -72,6 +72,14 @@ namespace GTEngine
     }
 
 
+    void Mesh::SetSkinningData(const Bone* const* bones, const SkinningVertexAttribute* skinningVertexAttributes)
+    {
+        // Delete any previous data just in case. We should never actually have any, but we'll do it anyway just to be sure.
+        delete this->skinningData;
+        this->skinningData = new MeshSkinningData(bones, skinningVertexAttributes, *this->geometry);
+    }
+
+    /*
     void Mesh::AttachBoneWeights(const Bone* const* bones, int boneIndex, size_t weightCount, const VertexWeightPair* weightBuffer)
     {
         if (weightCount > 0 && weightBuffer != nullptr)
@@ -91,6 +99,7 @@ namespace GTEngine
             }
         }
     }
+    */
 
     bool Mesh::GenerateTangentsAndBitangents()
     {
