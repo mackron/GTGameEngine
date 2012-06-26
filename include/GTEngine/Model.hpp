@@ -50,7 +50,7 @@ namespace GTEngine
 
 
         /// Copies the given animation.
-        void CopyAnimation(const Animation &sourceAnimation, const GTCore::Map<AnimationChannel*, Bone*> &sourceAnimationChannelBones);
+        void CopyAnimation(const Animation &sourceAnimation, const GTCore::Map<Bone*, AnimationChannel*> &sourceAnimationChannelBones);
 
 
         /// Applies a transformation to the model's geometric data.
@@ -142,7 +142,7 @@ namespace GTEngine
         Animation animation;
 
         /// The bones associated with each channel in the animation.
-        GTCore::Map<AnimationChannel*, Bone*> animationChannelBones;
+        GTCore::Map<Bone*, AnimationChannel*> animationChannelBones;
 
         /// The cache of animation keys.
         GTCore::Vector<TransformAnimationKey*> animationKeyCache;

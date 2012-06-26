@@ -122,7 +122,7 @@ namespace GTEngine
         }
     }
 
-    void Model::CopyAnimation(const Animation &sourceAnimation, const GTCore::Map<AnimationChannel*, Bone*> &sourceAnimationChannelBones)
+    void Model::CopyAnimation(const Animation &sourceAnimation, const GTCore::Map<Bone*, AnimationChannel*> &sourceAnimationChannelBones)
     {
         // We first need to create all of the key frames.
         for (size_t iKeyFrame = 0; iKeyFrame < sourceAnimation.GetKeyFrameCount(); ++iKeyFrame)
@@ -134,14 +134,14 @@ namespace GTEngine
         // Here we add all of our channels to the animation. They will be empty to begin with, but filled below.
         for (size_t iChannel = 0; iChannel < sourceAnimationChannelBones.count; ++iChannel)
         {
-            auto sourceChannel = sourceAnimationChannelBones.buffer[iChannel]->key;
-            auto sourceBone    = sourceAnimationChannelBones.buffer[iChannel]->value;
+            auto sourceChannel = sourceAnimationChannelBones.buffer[iChannel]->value;
+            auto sourceBone    = sourceAnimationChannelBones.buffer[iChannel]->key;
 
             auto bone = this->bones.Find(sourceBone->GetName())->value;
             assert(bone != nullptr);
 
             auto &newChannel = this->animation.CreateChannel();
-            this->animationChannelBones.Add(&newChannel, bone);
+            this->animationChannelBones.Add(bone, &newChannel);
 
             // Now we loop through all the keys and add them.
             auto &sourceKeys = sourceChannel->GetKeys();
@@ -286,9 +286,9 @@ namespace GTEngine
         {
             auto iChannelBone = this->animationChannelBones.buffer[i];
 
-            auto firstKey = static_cast<TransformAnimationKey*>(iChannelBone->key->GetKey(startKeyFrame));
-            auto endKey   = static_cast<TransformAnimationKey*>(iChannelBone->key->GetKey(endKeyFrame));
-            auto bone     = iChannelBone->value;
+            auto firstKey = static_cast<TransformAnimationKey*>(iChannelBone->value->GetKey(startKeyFrame));
+            auto endKey   = static_cast<TransformAnimationKey*>(iChannelBone->value->GetKey(endKeyFrame));
+            auto bone     = iChannelBone->key;
 
             if (firstKey != nullptr && endKey != nullptr)
             {
@@ -306,7 +306,7 @@ namespace GTEngine
         // loop above to ensure all dependants have been updated beforehand.
         for (size_t i = 0; i < this->animationChannelBones.count; ++i)
         {
-            this->animationChannelBones.buffer[i]->value->UpdateSkinningTransform();
+            this->animationChannelBones.buffer[i]->key->UpdateSkinningTransform();
         }
     }
 

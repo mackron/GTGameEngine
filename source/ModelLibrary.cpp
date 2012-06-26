@@ -461,7 +461,8 @@ namespace GTEngine
 
                     // Now we create the channel.
                     auto &newChannel = definition->animation.CreateChannel();
-                    definition->MapBoneToAnimationChannel(newChannel, *bone);
+                    definition->MapAnimationChannelToBone(*bone, newChannel);
+                    //definition->MapBoneToAnimationChannel(newChannel, *bone);
 
                     // Here is where we add the key frames. Since we are looping over the channels, each key frame will probably be creating twice. This is OK because
                     // Animation will make sure there are no duplicate key frames.
@@ -640,9 +641,6 @@ namespace GTEngine
                         {
                             definition = new ModelDefinition(fileNameIn);
 
-                            GTCore::Dictionary<AnimationChannel*> boneChannelMap;
-
-
                             // The counts of the main objects. We batch these into a single call at the top of everything.
                             struct
                             {
@@ -692,9 +690,7 @@ namespace GTEngine
 
                                 // We need to create a channel for this bone. We then need to map that channel to a bone.
                                 auto &channel = definition->animation.CreateChannel();
-                                definition->animationChannelBones.Add(&channel, bone);
-
-                                boneChannelMap.Add(bone->GetName(), &channel);
+                                definition->animationChannelBones.Add(bone, &channel);
 
 
                                 free(name);
@@ -836,7 +832,7 @@ namespace GTEngine
 
                                     auto bone = definition->bones.buffer[boneIndex]->value;
 
-                                    auto channel = boneChannelMap.Find(bone->GetName());
+                                    auto channel = definition->animationChannelBones.Find(bone);
                                     assert(channel != nullptr);
 
 
@@ -1040,10 +1036,6 @@ namespace GTEngine
                     auto weights = definition.meshBones[iMesh]->buffer[j];
                     assert(weights != nullptr);
 
-                    //uint32_t nameLength = static_cast<uint32_t>(weights->name.GetLength());
-                    //GTCore::IO::Write(file, &nameLength, 4);
-                    //GTCore::IO::Write(file, weights->name.c_str(), static_cast<size_t>(nameLength));
-
                     // Here we write the index of the bone these weights are refering to.
                     auto iBone = definition.bones.Find(weights->name.c_str());
                     assert(iBone != nullptr);
@@ -1077,17 +1069,12 @@ namespace GTEngine
                     auto jChannel = definition.animationChannelBones.buffer[j];
                     assert(jChannel != nullptr);
 
-                    auto channel = jChannel->key;
+                    auto channel = jChannel->value;
                     assert(channel != nullptr);
 
-                    auto bone = jChannel->value;
+                    auto bone = jChannel->key;
                     assert(bone != nullptr);
 
-
-                    // We need to save the name of the bone that this channel is referring to.
-                    //uint32_t boneNameLength = GTCore::Strings::SizeInBytes(bone->GetName());
-                    //GTCore::IO::Write(file, &boneNameLength, 4);
-                    //GTCore::IO::Write(file, bone->GetName(), boneNameLength);
 
                     // We need to save the index of the bone that this channel is referring to.
                     auto iBone = definition.bones.Find(bone->GetName());

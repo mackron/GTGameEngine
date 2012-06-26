@@ -66,8 +66,8 @@ namespace GTEngine
         return newKey;
     }
 
-    void ModelDefinition::MapBoneToAnimationChannel(AnimationChannel &channel, Bone &bone)
+    void ModelDefinition::MapAnimationChannelToBone(Bone &bone, AnimationChannel &channel)
     {
-        this->animationChannelBones.Add(&channel, &bone);
+        this->animationChannelBones.Add(&bone, &channel);
     }
 }

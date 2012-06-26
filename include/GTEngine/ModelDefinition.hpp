@@ -32,8 +32,8 @@ namespace GTEngine
         /// Creates an animation key for the given bone and returns it.
         TransformAnimationKey* CreateAnimationKey(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale);
 
-        /// Maps a bone to an animation channel.
-        void MapBoneToAnimationChannel(AnimationChannel &channel, Bone &bone);
+        /// Maps an animation channel to a bone.
+        void MapAnimationChannelToBone(Bone &bone, AnimationChannel &channel);
 
 
     public:
@@ -61,7 +61,7 @@ namespace GTEngine
         Animation animation;
 
         /// The map for mapping a bone to an animation channel.
-        GTCore::Map<AnimationChannel*, Bone*> animationChannelBones;
+        GTCore::Map<Bone*, AnimationChannel*> animationChannelBones;
 
         /// The cache of animation keys.
         GTCore::Vector<TransformAnimationKey*> animationKeyCache;
