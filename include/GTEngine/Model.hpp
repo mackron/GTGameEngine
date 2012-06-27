@@ -109,12 +109,6 @@ namespace GTEngine
 
     private:
 
-        /// Priave method for attaching a bone to the given mesh.
-        ///
-        /// @param mesh [in] A reference to the mesh whose having the bone information added.
-        /// @param bone [in] A reference to the VertexWeights object containing the weights to use for each applicable vertex.
-        //void AddBoneWeightsToMesh(Mesh &mesh, const BoneWeights &bone);
-
         /// Finds a bone by name.
         ///
         /// @param name     [in] The name of the bone to retrieve.

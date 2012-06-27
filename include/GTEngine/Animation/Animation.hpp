@@ -78,6 +78,23 @@ namespace GTEngine
               AnimationSegment* GetNamedSegment(const char* name);
         const AnimationSegment* GetNamedSegment(const char* name) const;
 
+        /// Retrieves the number of named segments.
+        size_t GetNamedSegmentCount() const { return this->segments.count; }
+
+        /// Retrieves a named segment by it's index.
+        ///
+        /// @param index [in] The index of the segment to retrieve.
+        ///
+        /// @remarks
+        ///     Segments are sorted alphabetically by name, so the index of items will change as segments are added or removed.
+              AnimationSegment* GetNamedSegmentByIndex(size_t index);
+        const AnimationSegment* GetNamedSegmentByIndex(size_t index) const;
+
+        /// Retrieves the name of a named segment by it's index.
+        ///
+        /// @param index [in] The index of the segment whose name is being retrieved.
+        const char* GetNamedSegmentNameByIndex(size_t index) const;
+
 
         /////////////////////////////////////////////////////////////////////////
         // Playback

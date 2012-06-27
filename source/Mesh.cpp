@@ -13,12 +13,6 @@ namespace GTEngine
     {
     }
 
-    /*
-    Mesh::Mesh(VertexArray* geometry, Material* material)
-    {
-    }
-    */
-
     Mesh::~Mesh()
     {
         delete this->skinningData;
@@ -79,27 +73,6 @@ namespace GTEngine
         this->skinningData = new MeshSkinningData(bones, skinningVertexAttributes, *this->geometry);
     }
 
-    /*
-    void Mesh::AttachBoneWeights(const Bone* const* bones, int boneIndex, size_t weightCount, const VertexWeightPair* weightBuffer)
-    {
-        if (weightCount > 0 && weightBuffer != nullptr)
-        {
-            assert(this->geometry != nullptr);  // <-- the meshes geometry must be set beforehand.
-
-            // We first need to ensure we have a skinning data structure.
-            if (this->skinningData == nullptr)
-            {
-                this->skinningData = new MeshSkinningData(bones, *this->geometry);
-            }
-
-            // At this point we can assert that we have skinning data and we can attach the bone weights to each vertex via the skinning vertex attributes.
-            for (size_t i = 0; i < weightCount; ++i)
-            {
-                this->skinningData->skinningVertexAttributes[weightBuffer[i].vertexID].AddBoneWeightPair(boneIndex, weightBuffer[i].weight);
-            }
-        }
-    }
-    */
 
     bool Mesh::GenerateTangentsAndBitangents()
     {
