@@ -18,6 +18,9 @@ namespace GTEngine
           animationPlaybackSpeed(1.0),
           collisionVA(nullptr)
     {
+        double startTime = GTCore::Timing::GetTimeInMilliseconds();
+
+
         // We need to create copies of the bones. It is important that this is done before adding the meshes.
         this->CopyAndAttachBones(definition.bones);
 
@@ -36,6 +39,9 @@ namespace GTEngine
                 this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i]->GetDefinition().fileName.c_str());
             }
         }
+
+
+        GTEngine::Log("--- Instantiation Time: %fms ---", GTCore::Timing::GetTimeInMilliseconds() - startTime);
     }
 
     Model::~Model()
@@ -157,6 +163,19 @@ namespace GTEngine
 
                 newChannel.SetKey(sourceKeys.buffer[iKey]->key, newKey);
             }
+        }
+
+
+        // Here we add the named segments.
+        for (size_t iSegment = 0; iSegment < sourceAnimation.GetNamedSegmentCount(); ++iSegment)
+        {
+            auto name    = sourceAnimation.GetNamedSegmentNameByIndex(iSegment);
+            auto segment = sourceAnimation.GetNamedSegmentByIndex(iSegment);
+
+            assert(name    != nullptr);
+            assert(segment != nullptr);
+
+            this->animation.AddNamedSegment(name, segment->startKeyFrame, segment->endKeyFrame);
         }
     }
 
@@ -328,16 +347,6 @@ namespace GTEngine
 // Private
 namespace GTEngine
 {
-    /*
-    void Model::AddBoneWeightsToMesh(Mesh &mesh, const BoneWeights &bone)
-    {
-        size_t boneIndex;
-        this->GetBoneByName(bone.name.c_str(), &boneIndex);
-
-        mesh.AttachBoneWeights(this->bones.buffer, static_cast<int>(boneIndex), bone.weights.count, bone.weights.buffer);
-    }
-    */
-
     Bone* Model::GetBoneByName(const char* name, size_t* indexOut)
     {
         for (size_t i = 0; i < this->bones.count; ++i)

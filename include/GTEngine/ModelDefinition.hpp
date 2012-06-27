@@ -49,9 +49,6 @@ namespace GTEngine
         /// Pointers to the materials for each mesh.
         GTCore::Vector<GTEngine::Material*> meshMaterials;
 
-        /// The list of bone weights for each mesh. If the mesh does not use any bones, the entry will be set to null.
-        GTCore::Vector<GTCore::Vector<BoneWeights*>*> meshBones;
-
         /// The list of skinning vertex attributes for each mesh. The value is a pointer to a buffer containing the skinning attributes
         /// for each vertex in the mesh.
         GTCore::Vector<SkinningVertexAttribute*> meshSkinningVertexAttributes;

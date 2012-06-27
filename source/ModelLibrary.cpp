@@ -252,7 +252,7 @@ namespace GTEngine
         aiComponent_CAMERAS;
 
 
-    void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, ModelDefinition &definition)
+    void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, ModelDefinition &definition, GTCore::Vector<GTCore::Vector<BoneWeights*>*> &meshBones)
     {
         // First we need to grab the transformation to apply to the mesh.
         aiMatrix4x4 transform = accumulatedTransform * node.mTransformation;
@@ -375,11 +375,11 @@ namespace GTEngine
                     }
                 }
 
-                definition.meshBones.PushBack(localBones);
+                meshBones.PushBack(localBones);
             }
             else
             {
-                definition.meshBones.PushBack(nullptr);
+                meshBones.PushBack(nullptr);
             }
         }
 
@@ -389,7 +389,7 @@ namespace GTEngine
             auto child = node.mChildren[iChild];
             assert(child != nullptr);
 
-            CopyNodesWithMeshes(scene, *child, transform, definition);
+            CopyNodesWithMeshes(scene, *child, transform, definition, meshBones);
         }
 
 
@@ -408,17 +408,18 @@ namespace GTEngine
         if (root != nullptr)
         {
             auto definition = new ModelDefinition;
+            GTCore::Vector<GTCore::Vector<BoneWeights*>*> meshBones;
 
             // This is where we take the assimp meshes and create the GTEngine meshes.
             aiMatrix4x4 transform;
-            CopyNodesWithMeshes(scene, *root, transform, *definition);
+            CopyNodesWithMeshes(scene, *root, transform, *definition, meshBones);
 
 
             // Now what we do is iterate over the bones of each mesh and create the skinning vertex attributes. It's important that we do this after creating the local bones
             // of the mesh so that we get the correct indices.
             for (size_t i = 0; i < definition->meshGeometries.count; ++i)
             {
-                auto localBones = definition->meshBones[i];
+                auto localBones = meshBones[i];
                 if (localBones != nullptr)
                 {
                     auto skinningVertexAttributes = new SkinningVertexAttribute[definition->meshGeometries[i]->GetVertexCount()];
@@ -678,10 +679,11 @@ namespace GTEngine
                                 uint32_t boneCount;
                                 uint32_t meshCount;
                                 uint32_t keyFrameCount;
+                                uint32_t namedAnimationSegmentCount;
 
                             }counts;
 
-                            GTCore::IO::Read(file, &counts, 12);
+                            GTCore::IO::Read(file, &counts, 16);
 
 
                             // Bones.
@@ -802,45 +804,54 @@ namespace GTEngine
                                 }
 
 
-                                // Bones
+                                // Skinning vertex attributes.
                                 {
-                                    uint32_t boneCount;
-                                    GTCore::IO::Read(file, &boneCount, 4);
+                                    uint32_t skinningVertexAttributeCount;
+                                    GTCore::IO::Read(file, &skinningVertexAttributeCount, 4);
 
-                                    if (boneCount > 0)
+                                    if (skinningVertexAttributeCount > 0)
                                     {
-                                        auto boneWeightList = new GTCore::Vector<BoneWeights*>(boneCount);
-                                        for (uint32_t iBone = 0; iBone < boneCount; ++iBone)
+                                        auto skinningVertexAttributes = new SkinningVertexAttribute[skinningVertexAttributeCount];
+
+
+                                        auto counts = static_cast<uint16_t*>(malloc(skinningVertexAttributeCount * 2));
+                                        GTCore::IO::Read(file, counts, skinningVertexAttributeCount * 2);
+
+                                        uint32_t totalBoneWeights;
+                                        GTCore::IO::Read(file, &totalBoneWeights, 4);
+
+                                        auto boneWeights = static_cast<BoneWeightPair*>(malloc(totalBoneWeights * 8));
+                                        GTCore::IO::Read(file, boneWeights, totalBoneWeights * 8);
+
+
+                                        auto currentBoneWeight = boneWeights;
+                                        for (uint32_t iVertex = 0; iVertex < skinningVertexAttributeCount; ++iVertex)
                                         {
-                                            // First is the bone index.
-                                            uint32_t boneIndex;
-                                            GTCore::IO::Read(file, &boneIndex, 4);
+                                            auto count = counts[iVertex];
 
-                                            auto bone = definition->bones.buffer[boneIndex]->value;
+                                            // Here we allocate the buffer for the bones. We trick the vector here by modifying attributes directly.
+                                            skinningVertexAttributes[iVertex].bones.Reserve(count);
+                                            skinningVertexAttributes[iVertex].bones.count = count;
 
-                                            auto boneWeights = new BoneWeights(bone->GetName());
-
-
-                                            // Now we need to load the vertex/weight pairs. We do this in one go.
-                                            uint32_t weightCount;
-                                            GTCore::IO::Read(file, &weightCount, 4);
-
-                                            boneWeights->weights.Resize(weightCount);
-                                            GTCore::IO::Read(file, boneWeights->weights.buffer, weightCount * sizeof(VertexWeightPair));
-
-
-                                            boneWeightList->PushBack(boneWeights);
+                                            for (uint16_t iBone = 0; iBone < count; ++iBone)
+                                            {
+                                                skinningVertexAttributes[iVertex].bones[iBone] = *currentBoneWeight++;
+                                            }
                                         }
 
-                                        definition->meshBones.PushBack(boneWeightList);
+
+                                        definition->meshSkinningVertexAttributes.PushBack(skinningVertexAttributes);
+
+
+                                        free(counts);
+                                        free(boneWeights);
                                     }
                                     else
                                     {
-                                        definition->meshBones.PushBack(nullptr);
+                                        definition->meshSkinningVertexAttributes.PushBack(nullptr);
                                     }
                                 }
                             }
-
 
 
                             // Now we need to load the key frame animation data.
@@ -886,6 +897,33 @@ namespace GTEngine
                                     definition->animationKeyCache.PushBack(key);
                                 }
                             }
+
+
+                            // Named animation segments.
+                            for (uint32_t iSegment = 0; iSegment < counts.namedAnimationSegmentCount; ++iSegment)
+                            {
+                                uint32_t nameLength;
+                                GTCore::IO::Read(file, &nameLength, 4);
+
+                                auto name = static_cast<char*>(malloc(nameLength + 1));                     // <-- +1 for null terminator.
+                                GTCore::IO::Read(file, name, nameLength); name[nameLength] = '\0';
+
+                                struct
+                                {
+                                    uint32_t start;
+                                    uint32_t end;
+                                }frameIndices;
+
+                                GTCore::IO::Read(file, &frameIndices, 8);
+
+
+                                // The data has been read, so now we just add it to the animation.
+                                definition->animation.AddNamedSegment(name, frameIndices.start, frameIndices.end);
+
+
+                                free(name);
+                            }
+
 
                             GTEngine::Log("--- Load Time: %fms ---", GTCore::Timing::GetTimeInMilliseconds() - startTime);
 
@@ -962,12 +1000,14 @@ namespace GTEngine
 
 
             // Now we write the counts of everything.
-            uint32_t boneCount     = static_cast<uint32_t>(definition.bones.count);
-            uint32_t meshCount     = static_cast<uint32_t>(definition.meshGeometries.count);
-            uint32_t keyFrameCount = static_cast<uint32_t>(definition.animation.GetKeyFrameCount());
-            GTCore::IO::Write(file, &boneCount,     4);
-            GTCore::IO::Write(file, &meshCount,     4);
-            GTCore::IO::Write(file, &keyFrameCount, 4);
+            uint32_t boneCount                  = static_cast<uint32_t>(definition.bones.count);
+            uint32_t meshCount                  = static_cast<uint32_t>(definition.meshGeometries.count);
+            uint32_t keyFrameCount              = static_cast<uint32_t>(definition.animation.GetKeyFrameCount());
+            uint32_t namedAnimationSegmentCount = static_cast<uint32_t>(definition.animation.GetNamedSegmentCount());
+            GTCore::IO::Write(file, &boneCount,                  4);
+            GTCore::IO::Write(file, &meshCount,                  4);
+            GTCore::IO::Write(file, &keyFrameCount,              4);
+            GTCore::IO::Write(file, &namedAnimationSegmentCount, 4);
 
 
             // Bones.
@@ -1057,29 +1097,37 @@ namespace GTEngine
                 }
 
 
-                // Bones. Start with the count.
-                uint32_t boneCount = static_cast<uint32_t>(definition.meshBones[iMesh]->count);
-                GTCore::IO::Write(file, &boneCount, 4);
+                // Skinning vertex attributes. We save two chunks of data here. The first is a bone count and the second is the actual bone/weight pairs. We keep these
+                // separate to encourage batched loading.
+                uint32_t skinningVertexAttributeCount = (definition.meshSkinningVertexAttributes[iMesh] != nullptr) ? vertexCount : 0;
+                GTCore::IO::Write(file, &skinningVertexAttributeCount, 4);
 
-                // Now we iterate over each bone and save the name of the bone and the vertex/weight pairs.
-                for (uint32_t j = 0; j < boneCount; ++j)
+                uint32_t totalBoneWeights = 0;
+
+                // 1) Counts. Stored as 16-bit integers here.
+                for (uint32_t iVertex = 0; iVertex < skinningVertexAttributeCount; ++iVertex)
                 {
-                    auto weights = definition.meshBones[iMesh]->buffer[j];
-                    assert(weights != nullptr);
+                    uint16_t count = static_cast<uint16_t>(definition.meshSkinningVertexAttributes[iMesh][iVertex].bones.count);
+                    GTCore::IO::Write(file, &count, 2);
 
-                    // Here we write the index of the bone these weights are refering to.
-                    auto iBone = definition.bones.Find(weights->name.c_str());
-                    assert(iBone != nullptr);
+                    totalBoneWeights += count;
+                }
 
-                    uint32_t boneIndex = static_cast<uint32_t>(iBone->index);
-                    GTCore::IO::Write(file, &boneIndex, 4);
+                // 2) Bone/Weight pairs. We write a total count to make it easier to calculate buffers at load time.
+                GTCore::IO::Write(file, &totalBoneWeights, 4);
 
+                for (uint32_t iVertex = 0; iVertex < skinningVertexAttributeCount; ++iVertex)
+                {
+                    auto &bones = definition.meshSkinningVertexAttributes[iMesh][iVertex].bones;
 
+                    for (uint32_t iBone = 0; iBone < bones.count; ++iBone)
+                    {
+                        uint32_t boneIndex = static_cast<uint32_t>(bones[iBone].boneIndex);
+                        float    weight    = static_cast<float>(bones[iBone].weight);
 
-                    // Here we write the vertex/weight pairs for this bone on this mesh.
-                    uint32_t weightCount = static_cast<uint32_t>(weights->weights.count);
-                    GTCore::IO::Write(file, &weightCount, 4);
-                    GTCore::IO::Write(file, weights->weights.buffer, static_cast<size_t>(weightCount) * sizeof(VertexWeightPair));
+                        GTCore::IO::Write(file, &boneIndex, 4);
+                        GTCore::IO::Write(file, &weight,    4);
+                    }
                 }
             }
 
@@ -1139,6 +1187,26 @@ namespace GTEngine
                     GTCore::IO::Write(file, &rotation, sizeof(float) * 4);
                     GTCore::IO::Write(file, &scale,    sizeof(float) * 3);
                 }
+            }
+
+
+            // Named animation segments.
+            for (uint32_t iSegment = 0; iSegment < namedAnimationSegmentCount; ++iSegment)
+            {
+                auto name    = definition.animation.GetNamedSegmentNameByIndex(iSegment);
+                auto segment = definition.animation.GetNamedSegmentByIndex(iSegment);
+                
+                assert(name    != nullptr);
+                assert(segment != nullptr);
+
+                uint32_t nameLength = GTCore::Strings::SizeInBytes(name);
+                GTCore::IO::Write(file, &nameLength, 4);
+                GTCore::IO::Write(file, name, nameLength);
+
+                uint32_t start = static_cast<uint32_t>(segment->startKeyFrame);
+                uint32_t end   = static_cast<uint32_t>(segment->endKeyFrame);
+                GTCore::IO::Write(file, &start, 4);
+                GTCore::IO::Write(file, &end,   4);
             }
 
 
@@ -1270,7 +1338,7 @@ namespace GTEngine
             definition = new ModelDefinition;
             definition->meshGeometries.PushBack(va);
             definition->meshMaterials.PushBack(nullptr);
-            definition->meshBones.PushBack(nullptr);
+            definition->meshSkinningVertexAttributes.PushBack(nullptr);
 
             LoadedDefinitions.Add(name, definition);
         }

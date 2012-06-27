@@ -6,7 +6,7 @@ namespace GTEngine
 {
     ModelDefinition::ModelDefinition(const char* fileNameIn)
         : fileName(fileNameIn),
-          meshGeometries(), meshMaterials(), meshBones(), meshSkinningVertexAttributes(),
+          meshGeometries(), meshMaterials(), meshSkinningVertexAttributes(),
           bones(),
           animation(), animationChannelBones(), animationKeyCache()
     {
@@ -23,20 +23,6 @@ namespace GTEngine
         for (size_t i = 0; i < this->meshMaterials.count; ++i)
         {
             MaterialLibrary::Delete(this->meshMaterials[i]);
-        }
-
-        for (size_t i = 0; i < this->meshBones.count; ++i)
-        {
-            auto meshBone = this->meshBones[i];
-            if (meshBone != nullptr)
-            {
-                for (size_t j = 0; j < meshBone->count; ++j)
-                {
-                    delete meshBone->buffer[j];
-                }
-            }
-
-            delete this->meshBones[i];
         }
 
         for (size_t i = 0; i < this->meshSkinningVertexAttributes.count; ++i)

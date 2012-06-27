@@ -83,6 +83,19 @@ namespace GTEngine
         return nullptr;
     }
 
+    AnimationSegment* Animation::GetNamedSegmentByIndex(size_t index)
+    {
+        return &this->segments.buffer[index]->value;
+    }
+    const AnimationSegment* Animation::GetNamedSegmentByIndex(size_t index) const
+    {
+        return &this->segments.buffer[index]->value;
+    }
+
+    const char* Animation::GetNamedSegmentNameByIndex(size_t index) const
+    {
+        return this->segments.buffer[index]->key;
+    }
 
 
 

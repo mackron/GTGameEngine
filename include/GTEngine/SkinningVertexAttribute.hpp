@@ -11,7 +11,7 @@ namespace GTEngine
     struct BoneWeightPair
     {
         BoneWeightPair(int boneIndexIn, float weightIn)
-            : boneIndex(boneIndexIn), weight(weightIn)
+            : boneIndex(static_cast<uint32_t>(boneIndexIn)), weight(weightIn)
         {
         }
 
@@ -20,8 +20,17 @@ namespace GTEngine
         {
         }
 
-        int   boneIndex;
-        float weight;
+        BoneWeightPair & operator=(const BoneWeightPair &other)
+        {
+            this->boneIndex = other.boneIndex;
+            this->weight    = other.weight;
+
+            return *this;
+        }
+
+
+        uint32_t boneIndex;
+        float    weight;
     };
 
     /// Structure representing a vertex attribute used for the CPU skinning vertex shader.
