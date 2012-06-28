@@ -18,7 +18,7 @@ namespace GTEngine
           animationPlaybackSpeed(1.0),
           collisionVA(nullptr)
     {
-        double startTime = GTCore::Timing::GetTimeInMilliseconds();
+        //double startTime = GTCore::Timing::GetTimeInMilliseconds();
 
 
         // We need to create copies of the bones. It is important that this is done before adding the meshes.
@@ -41,7 +41,7 @@ namespace GTEngine
         }
 
 
-        GTEngine::Log("--- Instantiation Time: %fms ---", GTCore::Timing::GetTimeInMilliseconds() - startTime);
+        //GTEngine::Log("--- Instantiation Time: %fms ---", GTCore::Timing::GetTimeInMilliseconds() - startTime);
     }
 
     Model::~Model()

@@ -75,6 +75,18 @@
     <Filter Include="include\Math">
       <UniqueIdentifier>{223a7c54-5a51-40a1-a85c-ae1184920c0d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Random">
+      <UniqueIdentifier>{23c6acc0-ff80-4349-a924-99e96b51bac5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Random\Floor">
+      <UniqueIdentifier>{5290f14e-ff0a-40a9-95e0-a6a6748f0512}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Random">
+      <UniqueIdentifier>{9e26e8a7-41f4-4adb-a439-ff2a9d7d55ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Random\Floor">
+      <UniqueIdentifier>{3889c22e-2cf9-4642-a5a2-b57862a05b17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -392,6 +404,24 @@
     <ClInclude Include="..\..\..\include\GTEngine\ModelDefinition.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorDefinition.hpp">
+      <Filter>include\Random\Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorGenerator.hpp">
+      <Filter>include\Random\Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorTile.hpp">
+      <Filter>include\Random\Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorTileFlags.hpp">
+      <Filter>include\Random\Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorProperties.hpp">
+      <Filter>include\Random\Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorRoom.hpp">
+      <Filter>include\Random\Floor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -657,6 +687,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\ModelDefinition.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Random\Floor\FloorDefinition.cpp">
+      <Filter>source\Random\Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Random\Floor\FloorGenerator.cpp">
+      <Filter>source\Random\Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Random\Floor\FloorTile.cpp">
+      <Filter>source\Random\Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Random\Floor\FloorRoom.cpp">
+      <Filter>source\Random\Floor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

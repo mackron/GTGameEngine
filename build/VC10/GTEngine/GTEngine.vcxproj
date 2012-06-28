@@ -231,6 +231,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Projectile.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorDefinition.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorGenerator.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorProperties.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorRoom.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorTile.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorTileFlags.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
@@ -332,6 +338,10 @@
     <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp" />
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
     <ClCompile Include="..\..\..\source\Projectile.cpp" />
+    <ClCompile Include="..\..\..\source\Random\Floor\FloorDefinition.cpp" />
+    <ClCompile Include="..\..\..\source\Random\Floor\FloorGenerator.cpp" />
+    <ClCompile Include="..\..\..\source\Random\Floor\FloorRoom.cpp" />
+    <ClCompile Include="..\..\..\source\Random\Floor\FloorTile.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
