@@ -23,6 +23,13 @@ namespace GTEngine
         cameraNode.MoveForward(-10.0f);
 
 
+        this->GenerateFloor();
+        this->cameraNode.SetPosition(0.0f, 250.0f, 0.0f);
+        this->cameraNode.SetOrientation(glm::angleAxis(-90.0f, glm::vec3(1.0f, 0.0f, 0.0f)));
+        this->cameraXRotation = -90.0f;
+
+
+
         // Here we setup the viewport.
         this->renderer.SetClearColour(0.1f, 0.1f, 0.1f);
         this->renderer.EnableColourClears();
@@ -134,6 +141,54 @@ namespace GTEngine
     void EditorMode_Sandbox::OnSwapRCQueues()
     {
         this->renderer.OnSwapRCQueues();
+    }
+}
+
+
+
+#include <GTEngine/Random/Floor/FloorGenerator.hpp>
+
+namespace GTEngine
+{
+    void EditorMode_Sandbox::GenerateFloor()
+    {
+        FloorProperties properties;
+        properties.width  = 10;
+        properties.height = 10;
+        properties.minRoomHeight = 2;
+        properties.minRoomWidth  = 2;
+        properties.maxRoomWidth  = 4;
+        properties.maxRoomHeight = 4;
+        properties.sideRoomCount = 2;
+        properties.minSideRoomWidth  = 1;
+        properties.minSideRoomHeight = 1;
+        properties.maxSideRoomWidth  = 1;
+        properties.maxSideRoomHeight = 1;
+
+        FloorGenerator generator;
+        auto definition = generator.GenerateFloorDefinition(properties);
+
+
+        // We need to go through and build geometry from every tile.
+        GTCore::Vector<FloorTile*> tiles;
+        definition->GetQuadtree().QueryAll(tiles);
+
+
+        for (size_t i = 0; i < tiles.count; ++i)
+        {
+            auto sceneNode = new SceneNode;
+            sceneNode->SetPosition(tiles[i]->GetXPosition() * 8.0f, 0.0f, tiles[i]->GetYPosition() * 8.0f);
+
+            auto model = sceneNode->AddModelComponent(GTEngine::ModelLibrary::LoadFromFile("models/floor01.dae"))->GetModel();
+            model->meshes[0]->SetMaterial("materials/ceiling01.material");
+            model->meshes[1]->SetMaterial("materials/floor01.material");
+
+            this->scene.AddSceneNode(*sceneNode);
+        }
+
+
+
+        generator.DeleteFloorDefinition(definition);
     }
 }
 

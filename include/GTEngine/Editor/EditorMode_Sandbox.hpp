@@ -45,6 +45,14 @@ namespace GTEngine
 
     private:
 
+        // TEMP
+        //
+        // Loads a random level.
+        void GenerateFloor();
+
+
+    private:
+
         /// The main editor object that owns this sub editor.
         Editor &editor;
 

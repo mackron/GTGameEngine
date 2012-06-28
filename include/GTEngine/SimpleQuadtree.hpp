@@ -2,6 +2,9 @@
 #ifndef __GTEngine_SimpleQuadtree_hpp_
 #define __GTEngine_SimpleQuadtree_hpp_
 
+#include <GTCore/Vector.hpp>
+#include <cstdio>
+
 namespace GTEngine
 {
     /// A simple, generic quadtree.
@@ -12,9 +15,24 @@ namespace GTEngine
     ///
     /// The right and bottom bounds are non-inclusive, meaning a node with left = 0 and right = 1 has a width of 1, not 2. The "position" of a node is the
     /// left/top coordinates.
+    ///
+    /// The quadtree should have a width and height that is a power of 2.
     template <typename T>
     class SimpleQuadtree
     {
+    public:
+
+        /// Structure representing a rectangle.
+        struct Rect
+        {
+            int left;
+            int top;
+            int right;
+            int bottom;
+        };
+
+
+
     public:
 
         /// Constructor.
@@ -30,10 +48,7 @@ namespace GTEngine
         /// Destructor.
         ~SimpleQuadtree()
         {
-            delete northWest;
-            delete northEast;
-            delete southWest;
-            delete southEast;
+            this->Clear();
         }
 
         
@@ -122,7 +137,7 @@ namespace GTEngine
         /// @param otherRight  [in ] The right position of the box to query.
         /// @param otherBottom [in ] The bottom position of the box to query.
         /// @param output      [out] A reference to the list to store the items in.
-        void QueryRange(int otherLeft, int otherTop, int otherRight, int otherBottom, GTCore::Vector<T*> &output)
+        void QueryRange(int otherLeft, int otherTop, int otherRight, int otherBottom, GTCore::Vector<T*> &output) const
         {
             if (this->Intersects(otherLeft, otherTop, otherRight, otherBottom))
             {
@@ -142,7 +157,7 @@ namespace GTEngine
         /// Retrieves every data pointer that is contained within the bounds of this node.
         ///
         /// @param output [out] A reference to the list to store the results.
-        void QueryAll(GTCore::Vector<T*> &output)
+        void QueryAll(GTCore::Vector<T*> &output) const
         {
             this->QueryRange(this->left, this->top, this->right, this->bottom, output);
         }
@@ -153,7 +168,7 @@ namespace GTEngine
         /// @param y [in] The y coordinate.
         ///
         /// @return A pointer to the data at the given position, or null if there is no data.
-        T* QuerySingle(int x, int y)
+        T* QuerySingle(int x, int y) const
         {
             if (this->Contains(x, y))
             {
@@ -207,7 +222,7 @@ namespace GTEngine
 
 
         /// Determines whether or not the given bounds intersects with this node.
-        bool Intersects(int otherLeft, int otherTop, int otherRight, int otherBottom)
+        bool Intersects(int otherLeft, int otherTop, int otherRight, int otherBottom) const
         {
             if (this->left   >= otherRight)  return false;
             if (this->top    >= otherBottom) return false;
@@ -221,7 +236,7 @@ namespace GTEngine
         /// Determines whether or not the given rectangle is empty space (contains no data).
         ///
         /// @return True if there are no data pointers inside the given bounds; false otherwise.
-        bool IsEmptySpace(int otherLeft, int otherTop, int otherRight, int otherBottom)
+        bool IsEmptySpace(int otherLeft, int otherTop, int otherRight, int otherBottom) const
         {
             if (this->Intersects(otherLeft, otherTop, otherRight, otherBottom))
             {
@@ -245,7 +260,7 @@ namespace GTEngine
         /// @param y [in] The leaf node's y position.
         ///
         /// @return True if the leaf node at the given position is empty; false otherwise.
-        bool IsEmptySpace(int x, int y)
+        bool IsEmptySpace(int x, int y) const
         {
             return this->QuerySingle(x, y) == nullptr;
         }
@@ -257,7 +272,7 @@ namespace GTEngine
         /// @param y [in] The y position of the point.
         ///
         /// @return True if the point is contained on or inside the bounds of this node.
-        bool Contains(int x, int y)
+        bool Contains(int x, int y) const
         {
             return this->left <= x && this->right  > x &&
                    this->top  <= y && this->bottom > y;
@@ -279,10 +294,110 @@ namespace GTEngine
         ///     This method uses the size of the node in determining whether or not it is a leaf.
         bool IsLeafNode() const
         {
-            return this->right  == this->left + 1 &&
-                   this->bottom == this->top  + 1;
+            return (this->right  == this->left + 1 || this->right  == this->left) &&
+                   (this->bottom == this->top  + 1 || this->bottom == this->top);
         }
 
+
+        /// Clears the quadtree.
+        void Clear()
+        {
+            delete this->northWest;
+            delete this->northEast;
+            delete this->southWest;
+            delete this->southEast;
+
+            this->northWest = nullptr;
+            this->northEast = nullptr;
+            this->southWest = nullptr;
+            this->southEast = nullptr;
+        }
+
+
+        /// Scans for empty spacing across the X axis, left to right.
+        void ScanEmptySpacesX(int left, int top, int right, int bottom, int minWidth, GTCore::Vector<Rect> &output) const
+        {
+            assert(left < right);
+            assert(top  < bottom);
+
+            Rect currentRect;
+            currentRect.left   = 0;
+            currentRect.right  = 0;
+            currentRect.top    = top;
+            currentRect.bottom = bottom;
+
+
+
+            // We're doing to do a linear scan for now.
+            for (int x = left; x < right; )
+            {
+                // At this point we need to find the first empty space.
+                while (!this->IsEmptySpace(x, top, x + 1, bottom) && x < right)
+                {
+                    ++x;
+                }
+
+                // When we get here we will be at an empty space. We can now keep looping until we find a non-empty space, or the end of the rectangle.
+                if (x < right)
+                {
+                    currentRect.left = x;
+                    
+                    while (this->IsEmptySpace(x, top, x + 1, bottom) && x < right)
+                    {
+                        ++x;
+                        currentRect.right = x;
+                    }
+
+                    // At this point we will have an empty region which can now be added to the output list, but only if it's at least the size of <minWidth>.
+                    if (currentRect.right - currentRect.left >= minWidth)
+                    {
+                        output.PushBack(currentRect);
+                    }
+                }
+            }
+        }
+
+        /// Scans for empty spacing down the Y axis, top to bottom.
+        void ScanEmptySpacesY(int left, int top, int right, int bottom, int minHeight, GTCore::Vector<Rect> &output) const
+        {
+            assert(left < right);
+            assert(top  < bottom);
+
+            Rect currentRect;
+            currentRect.left   = left;
+            currentRect.right  = right;
+            currentRect.top    = 0;
+            currentRect.bottom = 0;
+
+
+            // We're doing to do a linear scan for now.
+            for (int y = top; y < bottom; )
+            {
+                // At this point we need to find the first empty space.
+                while (!this->IsEmptySpace(left, y, right, y + 1) && y < bottom)
+                {
+                    ++y;
+                }
+
+                // When we get here we will be at an empty space. We can now keep looping until we find a non-empty space, or the end of the rectangle.
+                if (y < bottom)
+                {
+                    currentRect.top = y;
+                    
+                    while (this->IsEmptySpace(left, y, right, y + 1) && y < bottom)
+                    {
+                        ++y;
+                        currentRect.bottom = y;
+                    }
+
+                    // At this point we will have an empty region which can now be added to the output list, but only if it's at least the size of <minWidth>.
+                    if (currentRect.bottom - currentRect.top >= minHeight)
+                    {
+                        output.PushBack(currentRect);
+                    }
+                }
+            }
+        }
 
 
     private:
