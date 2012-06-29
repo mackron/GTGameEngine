@@ -6,7 +6,9 @@ namespace GTEngine
 {
     // Make sure the members are initialised in the correct order here.
     Texture2D::Texture2D()
-        : GTImage::Image(), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat), framebuffers(), rendererData(nullptr), refCount(1), keepClientSideData(false),
+        : GTImage::Image(), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat),
+          framebuffers(), shaders(),
+          rendererData(nullptr), refCount(1), keepClientSideData(false),
           syncinfo()
     {
         if (Renderer::HasFlippedTextures())     // <-- Will return true with OpenGL, but not necessarily everything else - thus why we need it.
@@ -16,7 +18,9 @@ namespace GTEngine
     }
 
     Texture2D::Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data)
-        : GTImage::Image(), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat), framebuffers(), rendererData(nullptr), refCount(1), keepClientSideData(false),
+        : GTImage::Image(), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat),
+          framebuffers(), shaders(),
+          rendererData(nullptr), refCount(1), keepClientSideData(false),
           syncinfo()
     {
         if (Renderer::HasFlippedTextures())
@@ -28,7 +32,9 @@ namespace GTEngine
     }
 
     Texture2D::Texture2D(const char* filename)
-        : GTImage::Image(filename), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat), framebuffers(), rendererData(nullptr), refCount(1), keepClientSideData(false),
+        : GTImage::Image(filename), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat),
+          framebuffers(), shaders(),
+          rendererData(nullptr), refCount(1), keepClientSideData(false),
           syncinfo()
     {
         if (Renderer::HasFlippedTextures())

@@ -20,7 +20,7 @@ namespace GTEngine
               layout(FloorLayout_Random),
               minRoomWidth(1), maxRoomWidth(4), minRoomHeight(1), maxRoomHeight(4),
               sideRoomCount(2), minSideRoomWidth(1), maxSideRoomWidth(1), minSideRoomHeight(1), maxSideRoomHeight(1),
-              minLobbyWidth(3), maxLobbyWidth(5), minLobbyHeight(3), maxLobbyHeight(5),
+              minLobbyWidth(3), maxLobbyWidth(5), minLobbyHeight(3), maxLobbyHeight(5)
         {
         }
         

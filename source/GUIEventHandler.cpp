@@ -44,6 +44,7 @@ namespace GTEngine
         case GTGUI::Cursor_SizeNESW: game.GetWindow()->SetCursor(GTCore::SystemCursor_SizeNESW);    break;
         case GTGUI::Cursor_SizeNWSE: game.GetWindow()->SetCursor(GTCore::SystemCursor_SizeNWSE);    break;
 
+        case GTGUI::Cursor_None:
         default: break;
         }
     }

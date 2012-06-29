@@ -4,10 +4,10 @@
 namespace GTEngine
 {
     FloorDefinition::FloorDefinition(int quadtreeLeft, int quadtreeTop, int quadtreeRight, int quadtreeBottom)
-        : left(0), right(0), top(0), bottom(0),
-          outerLeft(0), outerRight(0), outerTop(0), outerBottom(0),
+        : left(0), top(0), right(0), bottom(0),
+          outerLeft(0), outerTop(0), outerRight(0), outerBottom(0),
           quadtree(quadtreeLeft, quadtreeTop, quadtreeRight, quadtreeBottom),
-          rooms(), sideRooms()
+          rooms(), sideRooms(), lobbies()
     {
     }
 

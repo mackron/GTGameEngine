@@ -486,10 +486,22 @@ namespace GTEngine
 
     struct ShaderInfo
     {
+        ShaderInfo()
+            : shader(nullptr),
+              vertexShaderID(), fragmentShaderID(),
+              refCount(0)
+        {
+        }
+        
         Shader*        shader;
         GTCore::String vertexShaderID;
         GTCore::String fragmentShaderID;
         int            refCount;
+        
+        
+    private:    // No copying.
+        ShaderInfo(const ShaderInfo &);
+        ShaderInfo & operator=(const ShaderInfo &);
     };
     GTCore::Vector<ShaderInfo*> AcquiredShaders;
 

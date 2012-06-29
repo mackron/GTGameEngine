@@ -28,7 +28,7 @@ namespace GTEngine
           window(nullptr), windowEventHandler(*this),
           script(*this),
           updateThread(nullptr), updateJob(*this), 
-          totalRunninTimeInSeconds(0.0), deltaTimeInSeconds(0.0), updateTimer(),
+          deltaTimeInSeconds(0.0), totalRunninTimeInSeconds(0.0), updateTimer(),
           fontServer("var/fonts.cache"), defaultFont(nullptr),
           gui(&script, &fontServer), guiEventHandler(*this),
           paused(false), focused(true),

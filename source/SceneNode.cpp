@@ -360,7 +360,6 @@ namespace GTEngine
     {
         if (this->position.x != position.x || this->position.y != position.y || this->position.z != position.z)
         {
-            glm::vec3 prevPosition = this->position;
             this->position = position;
             
             if (!this->EventsLocked())
@@ -416,7 +415,6 @@ namespace GTEngine
             this->orientation[2] != orientation[2] ||
             this->orientation[3] != orientation[3])
         {
-            glm::quat prevOrientation = this->orientation;
             this->orientation = orientation;
             
             if (!this->EventsLocked())
@@ -453,7 +451,6 @@ namespace GTEngine
     {
         if (this->scale.x != scale.x || this->scale.y != scale.y || this->scale.z != scale.z)
         {
-            glm::vec3 prevScale = this->scale;
             this->scale = scale;
 
             if (!this->EventsLocked())

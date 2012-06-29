@@ -4,7 +4,7 @@
 namespace GTEngine
 {
     CPUVertexShader_SimpleTransform::CPUVertexShader_SimpleTransform(const glm::mat4 &transform)
-        : CPUVertexShader(), transform()
+        : CPUVertexShader(), transform(), normalTransform()
     {
         this->SetTransform(transform);
     }

@@ -188,6 +188,10 @@ namespace GTEngine
 
         /// The skinning matrix to apply to vertices. This is computed in UpdateSkinningMatrix().
         glm::mat4 skinningMatrix;
+        
+        
+    private:    // No copying.
+        Bone & operator=(const Bone &);
     };
 }
 

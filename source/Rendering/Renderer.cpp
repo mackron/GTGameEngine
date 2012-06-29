@@ -303,6 +303,8 @@ namespace GTEngine
         case BlendEquation_ReverseSubtract: return GL_FUNC_REVERSE_SUBTRACT;
         case BlendEquation_Min:             return GL_MIN;
         case BlendEquation_Max:             return GL_MAX;
+        
+        default: break;
         }
 
         return GL_FUNC_ADD;
@@ -1484,6 +1486,8 @@ namespace GTEngine
         case DepthFunc_NotEqual: funcGL = GL_NOTEQUAL; break;
         case DepthFunc_GEqual:   funcGL = GL_GEQUAL;   break;
         case DepthFunc_Always:   funcGL = GL_ALWAYS;   break;
+        
+        default: break;
         }
 
         glDepthFunc(funcGL);

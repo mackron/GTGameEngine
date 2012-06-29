@@ -168,7 +168,7 @@ void GTGUI::RCDrawQuad::Execute()
     GTEngine::Renderer::SetShaderParameter("Color",   colour.r, colour.g, colour.b, this->opacity);
 
     // Need to check if blending should be enabled.
-    if (this->opacity > 0.0f && this->opacity < 1.0f || texture->GetFormat() == GTImage::ImageFormat_RGBA8)
+    if ((this->opacity > 0.0f && this->opacity < 1.0f) || texture->GetFormat() == GTImage::ImageFormat_RGBA8)
     {
         GTEngine::Renderer::EnableAlphaBlending();
     }

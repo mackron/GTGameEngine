@@ -22,6 +22,8 @@ namespace GTEngine
         case SoundFormat_Mono16:   return AL_FORMAT_MONO16;
         case SoundFormat_Stereo16: return AL_FORMAT_STEREO16;
 
+        case SoundFormat_Mono24:
+        case SoundFormat_Stereo24:
         default: break;
         }
 
@@ -66,14 +68,14 @@ namespace GTEngine
 
             // Before entering the loop below, we're going to fill the front buffer with data. Once this is done, we start playback.
             this->streamer.ReadChunk(chunkBuffer);
-            alBufferData(this->frontBuffer, ToOpenALFormat(this->streamer.GetFormat()), chunkBuffer, this->streamer.GetChunkSize(), this->streamer.GetSampleRate());
+            alBufferData(this->frontBuffer, ToOpenALFormat(this->streamer.GetFormat()), chunkBuffer, static_cast<ALsizei>(this->streamer.GetChunkSize()), static_cast<ALsizei>(this->streamer.GetSampleRate()));
             alSourceQueueBuffers(this->source, 1, &this->frontBuffer);
 
             alSourcePlay(this->source);
 
             // Before entering the loop, we're going to read in the first chunk of data for the back buffer.
             this->streamer.ReadChunk(chunkBuffer);
-            alBufferData(this->backBuffer, ToOpenALFormat(this->streamer.GetFormat()), chunkBuffer, this->streamer.GetChunkSize(), this->streamer.GetSampleRate());
+            alBufferData(this->backBuffer, ToOpenALFormat(this->streamer.GetFormat()), chunkBuffer, static_cast<ALsizei>(this->streamer.GetChunkSize()), static_cast<ALsizei>(this->streamer.GetSampleRate()));
             alSourceQueueBuffers(this->source, 1, &this->backBuffer);
 
             // Now we can start looping until we've finished playing the sound.
@@ -90,7 +92,7 @@ namespace GTEngine
                 }
 
                 // We just retrieved valid data, so we just update the buffer again.
-                alBufferData(this->backBuffer, ToOpenALFormat(this->streamer.GetFormat()), chunkBuffer, this->streamer.GetChunkSize(), this->streamer.GetSampleRate());
+                alBufferData(this->backBuffer, ToOpenALFormat(this->streamer.GetFormat()), chunkBuffer, static_cast<ALsizei>(this->streamer.GetChunkSize()), static_cast<ALsizei>(this->streamer.GetSampleRate()));
                 alSourceQueueBuffers(this->source, 1, &this->backBuffer);
             }
 

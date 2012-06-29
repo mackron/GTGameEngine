@@ -23,6 +23,11 @@ namespace GTEngine
 
         /// The framebuffer being set. Can be null.
         Framebuffer* framebuffer;
+        
+        
+    private:    // No copying.
+        RCSetFramebuffer(const RCSetFramebuffer &);
+        RCSetFramebuffer & operator=(const RCSetFramebuffer &);
     };
 }
 

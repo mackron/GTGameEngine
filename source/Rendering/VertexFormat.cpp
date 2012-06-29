@@ -80,11 +80,11 @@ namespace GTEngine
         {
             if (this->attributes[i] == index)
             {
-                componentCount = this->attributes[i + 1];
+                componentCount = static_cast<size_t>(this->attributes[i + 1]);
                 return true;
             }
             
-            offset += this->attributes[i + 1];
+            offset += static_cast<size_t>(this->attributes[i + 1]);
         }
 
 

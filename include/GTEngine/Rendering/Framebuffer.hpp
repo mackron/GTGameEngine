@@ -2,6 +2,8 @@
 #ifndef __GTEngine_Framebuffer_hpp_
 #define __GTEngine_Framebuffer_hpp_
 
+#include <cstdint>
+
 namespace GTEngine
 {
     class Texture2D;
