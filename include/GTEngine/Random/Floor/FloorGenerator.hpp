@@ -54,6 +54,12 @@ namespace GTEngine
         /// Generates the floor tiles.
         void GenerateFloorTiles(const FloorProperties &properties, FloorDefinition &definition);
 
+        /// Generates the walls along the outside of the main area.
+        void GenerateOutsideWalls(const FloorProperties &properties, FloorDefinition &definition);
+
+        /// Generates the rooms of the floor.
+        void GenerateRooms(const FloorProperties &properties, FloorDefinition &definition);
+
 
 
         /// Creates a tile at the given position.

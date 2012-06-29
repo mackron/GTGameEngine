@@ -422,6 +422,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorRoom.hpp">
       <Filter>include\Random\Floor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorLobby.hpp">
+      <Filter>include\Random\Floor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -698,6 +701,9 @@
       <Filter>source\Random\Floor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Random\Floor\FloorRoom.cpp">
+      <Filter>source\Random\Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Random\Floor\FloorLobby.cpp">
       <Filter>source\Random\Floor</Filter>
     </ClCompile>
   </ItemGroup>

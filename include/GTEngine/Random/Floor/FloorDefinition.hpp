@@ -4,6 +4,7 @@
 
 #include "FloorTile.hpp"
 #include "FloorRoom.hpp"
+#include "FloorLobby.hpp"
 #include "../../SimpleQuadtree.hpp"
 
 namespace GTEngine
@@ -102,6 +103,16 @@ namespace GTEngine
         FloorRoom* AddSideRoom(int left, int top, int right, int bottom);
 
 
+        /// Retrieves a pointer to the tile at the given position.
+        ///
+        /// @param x [in] The x position of the tile to retrieve.
+        /// @param y [in] The y position of the tile to retrieve.
+        ///
+        /// @return A pointer to the tile at the given position, or null if there is no tile at that position.
+              FloorTile* GetTileAt(int x, int y)       { return this->quadtree.QuerySingle(x, y); }
+        const FloorTile* GetTileAt(int x, int y) const { return this->quadtree.QuerySingle(x, y); }
+
+
     private:
 
         // There are two rectangles defining the size of the floor. The first is the main rectangle where the main content is located, not including the side rooms.
@@ -124,6 +135,9 @@ namespace GTEngine
 
         /// The list of side rooms.
         GTCore::Vector<FloorRoom*> sideRooms;
+
+        /// The lobbies. These are located just outside the side rooms.
+        GTCore::Vector<FloorLobby*> lobbies;
     };
 }
 

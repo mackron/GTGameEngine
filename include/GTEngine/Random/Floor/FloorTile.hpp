@@ -34,6 +34,40 @@ namespace GTEngine
         int GetYPosition() const { return this->yPos; }
 
 
+        /// Sets the flags for the left wall.
+        ///
+        /// @param newFlags [in] The new flags for the wall.
+        void SetLeftWallFlags(FloorTileWallFlag newFlags) { this->leftWallFlags = newFlags; }
+
+        /// Sets the flags for the top wall.
+        ///
+        /// @param newFlags [in] The new flags for the wall.
+        void SetTopWallFlags(FloorTileWallFlag newFlags) { this->topWallFlags = newFlags; }
+
+        /// Sets the flags for the right wall.
+        ///
+        /// @param newFlags [in] The new flags for the wall.
+        void SetRightWallFlags(FloorTileWallFlag newFlags) { this->rightWallFlags = newFlags; }
+
+        /// Sets the flags for the bottom wall.
+        ///
+        /// @param newFlags [in] The new flags for the wall.
+        void SetBottomWallFlags(FloorTileWallFlag newFlags) { this->bottomWallFlags = newFlags; }
+
+
+        /// Retrieves the flags for the left wall.
+        FloorTileWallFlag GetLeftWallFlags() const { return this->leftWallFlags; }
+
+        /// Retrieves the flags for the left wall.
+        FloorTileWallFlag GetTopWallFlags() const { return this->topWallFlags; }
+
+        /// Retrieves the flags for the left wall.
+        FloorTileWallFlag GetRightWallFlags() const { return this->rightWallFlags; }
+
+        /// Retrieves the flags for the left wall.
+        FloorTileWallFlag GetBottomWallFlags() const { return this->bottomWallFlags; }
+
+
 
     private:
 
@@ -42,6 +76,11 @@ namespace GTEngine
 
         int xPos;       ///< The x position of the tile.
         int yPos;       ///< The y position of the tile.
+
+        FloorTileWallFlag leftWallFlags;
+        FloorTileWallFlag topWallFlags;
+        FloorTileWallFlag rightWallFlags;
+        FloorTileWallFlag bottomWallFlags;
     };
 }
 
