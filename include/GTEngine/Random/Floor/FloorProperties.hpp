@@ -18,8 +18,9 @@ namespace GTEngine
         FloorProperties()
             : width(0), height(0),
               layout(FloorLayout_Random),
-              minRoomWidth(4), maxRoomWidth(4), minRoomHeight(4), maxRoomHeight(4),
-              sideRoomCount(2), minSideRoomWidth(1), maxSideRoomWidth(1), minSideRoomHeight(1), maxSideRoomHeight(1)
+              minRoomWidth(1), maxRoomWidth(4), minRoomHeight(1), maxRoomHeight(4),
+              sideRoomCount(2), minSideRoomWidth(1), maxSideRoomWidth(1), minSideRoomHeight(1), maxSideRoomHeight(1),
+              minLobbyWidth(3), maxLobbyWidth(5), minLobbyHeight(3), maxLobbyHeight(5),
         {
         }
         
@@ -50,6 +51,13 @@ namespace GTEngine
         unsigned int maxSideRoomWidth;
         unsigned int minSideRoomHeight;
         unsigned int maxSideRoomHeight;
+
+
+        // The min/max size of lobbies.
+        unsigned int minLobbyWidth;
+        unsigned int maxLobbyWidth;
+        unsigned int minLobbyHeight;
+        unsigned int maxLobbyHeight;
     };
 }
 

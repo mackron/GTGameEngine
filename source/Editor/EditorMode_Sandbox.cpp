@@ -183,6 +183,52 @@ namespace GTEngine
             model->meshes[0]->SetMaterial("materials/ceiling01.material");
             model->meshes[1]->SetMaterial("materials/floor01.material");
 
+            // Need to check walls.
+            if (tiles[i]->GetLeftWallFlags() & FloorTileWallFlag_Default)
+            {
+                auto wallNode = new SceneNode;
+                wallNode->SetOrientation(glm::angleAxis(270.0f, glm::vec3(0.0f, -1.0f, 0.0f)));
+                
+                model = wallNode->AddModelComponent(GTEngine::ModelLibrary::LoadFromFile("models/wall01-double-sided.dae"))->GetModel();
+                model->meshes[0]->SetMaterial("materials/wall01.material");
+
+                sceneNode->AttachChild(*wallNode);
+            }
+
+            if (tiles[i]->GetTopWallFlags() & FloorTileWallFlag_Default)
+            {
+                auto wallNode = new SceneNode;
+                wallNode->SetOrientation(glm::angleAxis(0.0f, glm::vec3(0.0f, -1.0f, 0.0f)));
+                
+                model = wallNode->AddModelComponent(GTEngine::ModelLibrary::LoadFromFile("models/wall01-double-sided.dae"))->GetModel();
+                model->meshes[0]->SetMaterial("materials/wall01.material");
+
+                sceneNode->AttachChild(*wallNode);
+            }
+
+            if (tiles[i]->GetRightWallFlags() & FloorTileWallFlag_Default)
+            {
+                auto wallNode = new SceneNode;
+                wallNode->SetOrientation(glm::angleAxis(90.0f, glm::vec3(0.0f, -1.0f, 0.0f)));
+                
+                model = wallNode->AddModelComponent(GTEngine::ModelLibrary::LoadFromFile("models/wall01-double-sided.dae"))->GetModel();
+                model->meshes[0]->SetMaterial("materials/wall01.material");
+
+                sceneNode->AttachChild(*wallNode);
+            }
+
+            if (tiles[i]->GetBottomWallFlags() & FloorTileWallFlag_Default)
+            {
+                auto wallNode = new SceneNode;
+                wallNode->SetOrientation(glm::angleAxis(180.0f, glm::vec3(0.0f, -1.0f, 0.0f)));
+                
+                model = wallNode->AddModelComponent(GTEngine::ModelLibrary::LoadFromFile("models/wall01-double-sided.dae"))->GetModel();
+                model->meshes[0]->SetMaterial("materials/wall01.material");
+
+                sceneNode->AttachChild(*wallNode);
+            }
+
+
             this->scene.AddSceneNode(*sceneNode);
         }
 

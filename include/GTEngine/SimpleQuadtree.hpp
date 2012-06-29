@@ -180,7 +180,7 @@ namespace GTEngine
 
                 T* temp = nullptr;
 
-                if (this->data != nullptr)
+                if (this->northWest != nullptr)
                 {
                     temp = this->northWest->QuerySingle(x, y);
                     if (temp != nullptr)
@@ -416,6 +416,11 @@ namespace GTEngine
 
         /// The data associated with this node. Should only be valid for leaf nodes.
         T* data;
+
+
+    private:    // No copying.
+        SimpleQuadtree(const SimpleQuadtree &);
+        SimpleQuadtree & operator=(const SimpleQuadtree &);
     };
 }
 

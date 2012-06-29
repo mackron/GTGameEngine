@@ -50,12 +50,19 @@ namespace GTEngine
         this->GenerateFloorTiles(properties, *definition);
 
         //
-        // Step 2: The side rooms.
+        // Step 2: The side rooms. This also creates the lobbies.
         //
         this->GenerateSideRooms(properties, *definition);
         
+        //
+        // Step 3: Generate the outside walls.
+        //
+        this->GenerateOutsideWalls(properties, *definition);
         
-
+        //
+        // Step 4: Generate rooms.
+        //
+        this->GenerateRooms(properties, *definition);
 
 
         return definition;
@@ -91,9 +98,129 @@ namespace GTEngine
                         assert(tile != nullptr);
 
                         tile->SetFlags(FloorTileFlag_SideRoom);
-
-                        printf("Testing: %d %d\n", x, y);
                     }
+                }
+
+
+                // We need to set the wall properties of the side room. We place walls on all sides except the side facing the
+                // main area.
+                if (right == definition.GetLeft() || left == definition.GetRight())
+                {
+                    // Top/Bottom
+                    for (int x = left; x < right; ++x)
+                    {
+                        auto tile = definition.GetTileAt(x, top);           // assert(tile != nullptr)
+                        tile->SetTopWallFlags(FloorTileWallFlag_Default);
+
+                        tile = definition.GetTileAt(x, bottom - 1);         // assert(tile != nullptr)
+                        tile->SetBottomWallFlags(FloorTileWallFlag_Default);
+                    }
+                    
+                    if (right == definition.GetLeft())
+                    {
+                        // Walled on left, open on right.
+                        for (int y = top; y < bottom; ++y)
+                        {
+                            auto tile = definition.GetTileAt(left, y);
+                            tile->SetLeftWallFlags(FloorTileWallFlag_Default);
+
+                            tile = definition.GetTileAt(right - 1, y);
+                            tile->SetRightWallFlags(FloorTileWallFlag_None);
+                        }
+                    }
+                    else
+                    {
+                        // Walls on right, open on left.
+                        for (int y = top; y < bottom; ++y)
+                        {
+                            auto tile = definition.GetTileAt(left, y);
+                            tile->SetLeftWallFlags(FloorTileWallFlag_None);
+
+                            tile = definition.GetTileAt(right - 1, y);
+                            tile->SetRightWallFlags(FloorTileWallFlag_Default);
+                        }
+                    }
+                }
+                else if (bottom == definition.GetTop() || top == definition.GetBottom())
+                {
+                    // Walls top/bottom
+                    for (int y = top; y < bottom; ++y)
+                    {
+                        auto tile = definition.GetTileAt(left, y);           // assert(tile != nullptr)
+                        tile->SetLeftWallFlags(FloorTileWallFlag_Default);
+
+                        tile = definition.GetTileAt(right - 1, y);           // assert(tile != nullptr)
+                        tile->SetRightWallFlags(FloorTileWallFlag_Default);
+                    }
+                    
+                    if (bottom == definition.GetTop())
+                    {
+                        // Walls on top, open on bottom.
+                        for (int x = left; x < right; ++x)
+                        {
+                            auto tile = definition.GetTileAt(x, top);
+                            tile->SetTopWallFlags(FloorTileWallFlag_Default);
+
+                            tile = definition.GetTileAt(x, bottom - 1);
+                            tile->SetBottomWallFlags(FloorTileWallFlag_None);
+                        }
+                    }
+                    else
+                    {
+                        // Walls on bottom, open on top.
+                        for (int x = left; x < right; ++x)
+                        {
+                            auto tile = definition.GetTileAt(x, top);
+                            tile->SetTopWallFlags(FloorTileWallFlag_None);
+
+                            tile = definition.GetTileAt(x, bottom - 1);
+                            tile->SetBottomWallFlags(FloorTileWallFlag_Default);
+                        }
+                    }
+                }
+
+
+                // Here is where we create the lobby for the side room. We first calculate a desired size, and then clamp where applicable. We will center
+                // the lobbies, but make sure they're not overflowing outside the main area.
+                int lobbyWidth  = this->random.Next(static_cast<int>(properties.minLobbyWidth),  static_cast<int>(properties.maxLobbyWidth));
+                int lobbyHeight = this->random.Next(static_cast<int>(properties.minLobbyHeight), static_cast<int>(properties.maxLobbyHeight));
+
+                int lobbyLeft;
+                int lobbyTop;
+                int lobbyRight;
+                int lobbyBottom;
+
+                if (right == definition.GetLeft() || left == definition.GetRight())
+                {
+                    if (right == definition.GetLeft())
+                    {
+                        // The side room is on the left, so we create the lobby on the left side.
+                        lobbyLeft  = definition.GetLeft();
+                        lobbyRight = lobbyLeft + lobbyWidth;
+
+                        lobbyTop    = top + ((bottom - top) / 2) - (lobbyHeight / 2);
+                        lobbyBottom = top + lobbyHeight;
+
+                        if (lobbyBottom > definition.GetBottom())
+                        {
+                            lobbyBottom = definition.GetBottom();
+                            lobbyTop    = lobbyBottom - lobbyHeight;
+                        }
+                        
+                        if (lobbyTop < definition.GetTop())
+                        {
+                            lobbyTop    = definition.GetTop();
+                            lobbyBottom = lobbyTop + lobbyHeight;
+                        }
+                    }
+                    else
+                    {
+                        // It's on the right side.
+                    }
+                }
+                else
+                {
+
                 }
             }
             else
@@ -124,6 +251,55 @@ namespace GTEngine
             }
         }
     }
+
+    void FloorGenerator::GenerateOutsideWalls(const FloorProperties &properties, FloorDefinition &definition)
+    {
+        (void)properties;
+
+        auto &quadtree = definition.GetQuadtree();
+
+        // We do this edge by edge. Start with left and right.
+        for (int y = definition.GetTop(); y < definition.GetBottom(); ++y)
+        {
+            // Left.
+            auto tile = definition.GetTileAt(definition.GetLeft(), y);
+            if (quadtree.IsEmptySpace(definition.GetLeft() - 1, y))
+            {
+                tile->SetLeftWallFlags(FloorTileWallFlag_Default);
+            }
+
+            // Right.
+            tile = definition.GetTileAt(definition.GetRight() - 1, y);
+            if (quadtree.IsEmptySpace(definition.GetRight(), y))
+            {
+                tile->SetRightWallFlags(FloorTileWallFlag_Default);
+            }
+        }
+
+        // Top/Bottom.
+        for (int x = definition.GetLeft(); x < definition.GetRight(); ++x)
+        {
+            // Top.
+            auto tile = definition.GetTileAt(x, definition.GetTop());
+            if (quadtree.IsEmptySpace(x, definition.GetTop() - 1))
+            {
+                tile->SetTopWallFlags(FloorTileWallFlag_Default);
+            }
+
+            // Bottom.
+            tile = definition.GetTileAt(x, definition.GetBottom() - 1);
+            if (quadtree.IsEmptySpace(x, definition.GetBottom()))
+            {
+                tile->SetBottomWallFlags(FloorTileWallFlag_Default);
+            }
+        }
+    }
+
+    void FloorGenerator::GenerateRooms(const FloorProperties &properties, FloorDefinition &definition)
+    {
+        // The way we generate rooms is by creating rows and colums of rooms inside the main area.
+    }
+
 
     FloorTile* FloorGenerator::CreateTile(int x, int y, FloorDefinition &definition)
     {
@@ -231,27 +407,5 @@ namespace GTEngine
         {
             return false;
         }
-
-
-        /*
-        // What we do here is find empty spaces along each side room edge and check if a minimum-sized side room can fit in any of those spaces.
-        GTCore::Vector<FloorTile*> leftTiles;
-        GTCore::Vector<FloorTile*> topTiles;
-        GTCore::Vector<FloorTile*> rightTiles;
-        GTCore::Vector<FloorTile*> bottomTiles;
-
-        quadtree.QueryRange(definition.GetLeft() - 1, definition.GetTop(),     definition.GetLeft(),      definition.GetBottom(),     leftTiles);
-        quadtree.QueryRange(definition.GetLeft(),     definition.GetTop() - 1, definition.GetRight(),     definition.GetTop(),        topTiles);
-        quadtree.QueryRange(definition.GetRight(),    definition.GetTop(),     definition.GetRight() + 1, definition.GetBottom(),     rightTiles);
-        quadtree.QueryRange(definition.GetLeft(),     definition.GetBottom(),  definition.GetRight(),     definition.GetBottom() + 1, bottomTiles);
-
-        // At this point we have all of the occupied tiles along each outside edge. We can now grab empty sections that are at least as big as the
-        // minimum size of a side room.
-        
-
-        GTCore::Vector<Section> emptyLeftSections;
-        */
-
-        //return false;
     }
 }
