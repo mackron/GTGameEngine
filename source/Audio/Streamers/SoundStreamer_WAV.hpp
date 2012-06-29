@@ -105,6 +105,11 @@ namespace GTEngine
 
         /// Determines if ReadChunk() had previously returned 0. We use this in determining whether or not the loop back to the start.
         bool readChunkReturnedZero;
+        
+        
+    private:    // No copying.
+        SoundStreamer_WAV(const SoundStreamer_WAV &);
+        SoundStreamer_WAV & operator=(const SoundStreamer_WAV &);
     };
 }
 

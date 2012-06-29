@@ -91,7 +91,7 @@ namespace GTEngine
         uint32_t chunk_size = this->GetChunkSize();
 
         // Grab the number of bytes from the current position to the end of the data.
-        uint32_t bytes_left = static_cast<uint32_t>(this->dataSize - (GTCore::IO::Tell(this->file) - this->dataStartPos));
+        uint32_t bytes_left = static_cast<uint32_t>(this->dataSize - (static_cast<uint64_t>(GTCore::IO::Tell(this->file)) - this->dataStartPos));
 
         // The number of bytes to read.
         uint32_t bytes_to_read = (chunk_size < bytes_left) ? chunk_size : bytes_left;
@@ -250,7 +250,7 @@ namespace GTEngine
 
     uint32_t SoundStreamer_WAV::GetBytesPerSecond() const
     {
-	    return ((this->bitsPerSample / 8) * this->numChannels) * this->sampleRate;
+	    return ((this->bitsPerSample / 8U) * this->numChannels) * this->sampleRate;
     }
 
     void SoundStreamer_WAV::CalculateFormat()

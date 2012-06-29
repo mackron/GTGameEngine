@@ -2,10 +2,22 @@
 #ifndef __GTEngine_NavigationMesh_hpp_
 #define __GTEngine_NavigationMesh_hpp_
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 #include <Recast.h>
 #include <DetourNavMesh.h>
 #include <DetourNavMeshBuilder.h>
 #include <DetourNavMeshQuery.h>
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
+
+
 #include <GTCore/Vector.hpp>
 #include "Math.hpp"
 #include "Rendering/VertexArray.hpp"
@@ -112,6 +124,11 @@ namespace GTEngine
 
         /// The vertex array containing geometric data for the visual representation.
         VertexArray visualVA;
+        
+        
+    private:
+        NavigationMesh(const NavigationMesh &);
+        NavigationMesh & operator=(const NavigationMesh&);
     };
 }
 

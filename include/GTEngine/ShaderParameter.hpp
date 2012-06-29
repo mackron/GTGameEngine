@@ -68,6 +68,10 @@
         GTENGINE_SHADERPARAMETER_DECL_COPYCTOR(typeName, typeID) \
         GTENGINE_SHADERPARAMETER_DECL_SETONCURRENTSHADER() \
         GTENGINE_SHADERPARAMETER_DECL_UPCAST(typeName, typeID) \
+        \
+    private: \
+        typeName(const typeName &); \
+        typeName & operator=(const typeName &); \
     }; \
 
 
@@ -178,30 +182,28 @@ namespace GTEngine
             }
 
 
-        /*
         case ShaderParameterType_Texture1D:
             {
-                newProp = new ShaderParameter_Texture1D(propToCopy);
+                //newProp = new ShaderParameter_Texture1D(propToCopy);
                 break;
             }
-        */
+            
         case ShaderParameterType_Texture2D:
             {
                 newProp = new ShaderParameter_Texture2D(propToCopy);
                 break;
             }
-        /*
+        
         case ShaderParameterType_Texture3D:
             {
-                newProp = new ShaderParameter_Texture3D(propToCopy);
+                //newProp = new ShaderParameter_Texture3D(propToCopy);
                 break;
             }
         case ShaderParameterType_TextureCube:
             {
-                newProp = new ShaderParameter_TextureCube(propToCopy);
+                //newProp = new ShaderParameter_TextureCube(propToCopy);
                 break;
             }
-        */
 
 
         default: break;

@@ -62,8 +62,7 @@ namespace GTEngine
         glm::simdVec4 newTangent(0.0f, 0.0f, 0.0f, 0.0f);
         glm::simdVec4 newBitangent(0.0f, 0.0f, 0.0f, 0.0f);
         
-        
-        
+
         // For each bone...
         for (size_t i = 0; i < skinningData.bones.count; ++i)
         {

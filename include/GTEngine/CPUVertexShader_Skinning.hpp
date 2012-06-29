@@ -46,6 +46,11 @@ namespace GTEngine
 
         /// A pointer to the buffer containing the skinning vertex attributes.
         const SkinningVertexAttribute* skinningVertexAttributes;
+        
+    
+    private:    // No copying.
+        CPUVertexShader_Skinning(const CPUVertexShader_Skinning &);
+        CPUVertexShader_Skinning & operator=(const CPUVertexShader_Skinning &);
     };
 }
 

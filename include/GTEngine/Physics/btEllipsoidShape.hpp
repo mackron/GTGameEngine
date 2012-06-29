@@ -2,8 +2,16 @@
 #ifndef BT_ELLIPSOID_SHAPE_H
 #define BT_ELLIPSOID_SHAPE_H
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 #include <BulletCollision/CollisionShapes/btConvexInternalShape.h>
 #include <BulletCollision/BroadphaseCollision/btBroadphaseProxy.h> // for the types
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
 class btEllipsoidShape : public btConvexInternalShape
 {

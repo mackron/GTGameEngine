@@ -133,8 +133,8 @@ namespace GTEngine
                     }
 
                     // We will clamp the start and end frames against the timeline so we don't crash.
-                    keyFrameStart = GTCore::Clamp(keyFrameStart, 0U, this->keyFrames.count - 1);
-                    keyFrameEnd   = GTCore::Clamp(keyFrameEnd,   0U, this->keyFrames.count - 1);
+                    keyFrameStart = GTCore::Clamp(keyFrameStart, static_cast<size_t>(0U), this->keyFrames.count - 1);
+                    keyFrameEnd   = GTCore::Clamp(keyFrameEnd,   static_cast<size_t>(0U), this->keyFrames.count - 1);
 
 
                     // Here we check if this frame is looping. If so, we need to set the index of the item in the key frame queue. The value will be the

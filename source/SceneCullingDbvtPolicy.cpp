@@ -183,7 +183,7 @@ namespace GTEngine
             5, 4, 0, 1
         };
 
-        for(int i = 0; i < (sizeof(d) / sizeof(d[0])); )
+        for(unsigned int i = 0; i < (sizeof(d) / sizeof(d[0])); )
         {
             btVector4 p[] = 
             {
@@ -230,7 +230,7 @@ namespace GTEngine
             5,4,0,1
         };
 
-        for (int i = 0; i < (sizeof(d) / sizeof(d[0])); )
+        for (unsigned int i = 0; i < (sizeof(d) / sizeof(d[0])); )
         {
             btVector4 p[] = 
             {

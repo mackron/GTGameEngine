@@ -935,7 +935,7 @@ namespace GTEngine
         auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
         if (metadata != nullptr)    // Use an assert?
         {
-            glm::vec3 scale = node.GetWorldScale();
+            //glm::vec3 scale = node.GetWorldScale();
 
             if (metadata->modelCollisionObject != nullptr)
             {

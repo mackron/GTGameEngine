@@ -83,25 +83,25 @@ namespace GTEngine
             
             if (componentCount == 3)
             {
-                data[0] = value.Data.m128_f32[0];
-                data[1] = value.Data.m128_f32[1];
-                data[2] = value.Data.m128_f32[2];
+                data[0] = value.x;
+                data[1] = value.y;
+                data[2] = value.z;
             }
             else if (componentCount == 2)
             {
-                data[0] = value.Data.m128_f32[0];
-                data[1] = value.Data.m128_f32[1];
+                data[0] = value.x;
+                data[1] = value.y;
             }
             else if (componentCount == 4)
             {
-                data[0] = value.Data.m128_f32[0];
-                data[1] = value.Data.m128_f32[1];
-                data[2] = value.Data.m128_f32[2];
-                data[3] = value.Data.m128_f32[3];
+                data[0] = value.x;
+                data[1] = value.y;
+                data[2] = value.z;
+                data[3] = value.w;
             }
             else if (componentCount == 1)
             {
-                data[0] = value.Data.m128_f32[0];
+                data[0] = value.x;
             }
             
         }
@@ -186,6 +186,11 @@ namespace GTEngine
 
         /// the index of the last vertex to work on.
         size_t lastVertexID;
+        
+        
+    private:    // No copying.
+        ProcessVertexShaderJob(const ProcessVertexShaderJob &);
+        ProcessVertexShaderJob & operator=(const ProcessVertexShaderJob &);
     };
 }
 
@@ -196,7 +201,13 @@ namespace GTEngine
     GTCore::Benchmarker benchmarker;
 
     CPUVertexShader::CPUVertexShader()
-        : input(nullptr), vertexCount(0), format(), vertexSizeInFloats(format.GetSize()), output(nullptr)
+        : input(nullptr), vertexCount(0), format(), vertexSizeInFloats(format.GetSize()), output(nullptr),
+          usingPosition(false), usingTexCoord(false), usingNormal(false), usingTangent(false), usingBitangent(false),
+          positionComponentCount(0), positionOffset(0),
+          texCoordComponentCount(0), texCoordOffset(0),
+          normalComponentCount(0), normalOffset(0),
+          tangentComponentCount(0), tangentOffset(0),
+          bitangentComponentCount(0), bitangentOffset(0)
     {
     }
 
@@ -353,7 +364,7 @@ namespace GTEngine
         }
 
         //return glm::vec4(value.x, value.y, value.z, value.w);
-        return glm::vec4(value.Data.m128_f32[0], value.Data.m128_f32[1], value.Data.m128_f32[2], value.Data.m128_f32[3]);
+        return glm::vec4(value.x, value.y, value.z, value.w);
     }
 
     void CPUVertexShader::Vertex::Set(int attribute, float value)

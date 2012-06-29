@@ -150,6 +150,10 @@ namespace GTEngine
         size_t bitangentOffset;
 
 
+    private:    // No copying.
+        CPUVertexShader(const CPUVertexShader &);
+        CPUVertexShader & operator=(const CPUVertexShader &);
+
     friend void ProcessVertexShader(CPUVertexShader &shader, size_t firstVertexID, size_t lastVertexID);
     };
 }
