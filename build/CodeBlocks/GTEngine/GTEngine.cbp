@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="debug-windows-gcc">
 				<Option platforms="Windows;" />
-				<Option output="..\..\..\lib\windows-gcc\GTEngine" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\..\lib\windows-gcc\GTEngine-debug-x64" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj\debug-windows-gcc\" />
 				<Option type="2" />
@@ -21,7 +21,7 @@
 			</Target>
 			<Target title="release-windows-gcc">
 				<Option platforms="Windows;" />
-				<Option output="..\..\..\lib\windows-gcc\GTEngine" prefix_auto="1" extension_auto="1" />
+				<Option output="..\..\..\lib\windows-gcc\GTEngine-x64" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj\release-windows-gcc\" />
 				<Option type="2" />

@@ -22,12 +22,12 @@ namespace GTEngine
         cameraNode.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
         cameraNode.MoveForward(-10.0f);
 
-
+        /*
         this->GenerateFloor();
         this->cameraNode.SetPosition(0.0f, 250.0f, 0.0f);
         this->cameraNode.SetOrientation(glm::angleAxis(-90.0f, glm::vec3(1.0f, 0.0f, 0.0f)));
         this->cameraXRotation = -90.0f;
-
+        */
 
 
         // Here we setup the viewport.

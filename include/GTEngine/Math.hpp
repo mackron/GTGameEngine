@@ -5,6 +5,7 @@
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wstrict-aliasing"
+    #pragma GCC diagnostic ignored "-Winline"
 #endif
 #define GLM_FORCE_ONLY_XYZW
 #define GLM_FORCE_SSE2

@@ -13,6 +13,8 @@
     #pragma GCC diagnostic ignored "-Wsign-conversion"
     #pragma GCC diagnostic ignored "-Wswitch-default"
     #pragma GCC diagnostic ignored "-Wunused-parameter"
+    #pragma GCC diagnostic ignored "-Winline"
+    #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
 #include <BulletCollision/Gimpact/btBoxCollision.h>                  // <-- for btAABB.
 #include <BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
