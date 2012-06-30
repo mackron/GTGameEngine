@@ -186,6 +186,10 @@ namespace GTEngine
                 : filterChanged(true), wrapModeChanged(true), dataChanged(true), changedMipmaps()
             {
             }
+            
+            ~_syncinfo()
+            {
+            }
 
             bool filterChanged;     ///< Whether or not a texture filter has changed.
             bool wrapModeChanged;   ///< Whether or not the wrapping mode has changed.
