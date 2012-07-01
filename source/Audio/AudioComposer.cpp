@@ -2,8 +2,8 @@
 #include <GTEngine/Audio/AudioComposer.hpp>
 #include "Streamers/SoundStreamer_WAV.hpp"
 #include "Streamers/SoundStreamer_OGG.hpp"
-#include <al/al.h>
-#include <al/alc.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 
 #include <GTEngine/Errors.hpp>
 

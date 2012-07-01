@@ -15,7 +15,7 @@
 #if defined(LICK_PLATFORM_WINDOWS)
 #include <windows.h>
 #else
-#include <GTCore/X11/X11.hpp>
+#include <GTCore/Windowing/X11/X11.hpp>
 #endif
 
 // OpenGL Utilities
@@ -303,7 +303,7 @@ namespace GTEngine
         case BlendEquation_ReverseSubtract: return GL_FUNC_REVERSE_SUBTRACT;
         case BlendEquation_Min:             return GL_MIN;
         case BlendEquation_Max:             return GL_MAX;
-        
+
         default: break;
         }
 
@@ -501,7 +501,7 @@ namespace GTEngine
         Renderer::CollectGarbage();
     }
 
-    
+
     void Renderer::SwapRCQueues()
     {
         // All we do is swap the pointers. Easy.
@@ -516,7 +516,7 @@ namespace GTEngine
         Renderer::BackIndex = !Renderer::BackIndex;
     }
 
-    
+
     void Renderer::SetSwapInterval(int interval)
     {
         // We don't actually change the swap interval immediately. Instead we delay it until the next call to SwapBuffer(). Doing
@@ -752,7 +752,7 @@ namespace GTEngine
     }
 
 
-    
+
 
     /**
     *   \brief  Retrieves the OpenGL framebuffer object from the given framebuffer.
@@ -814,7 +814,7 @@ namespace GTEngine
                 {
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->GetFilter() == TextureFilter_Linear ? GL_LINEAR : GL_NEAREST);
                 }
-                
+
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->GetFilter() == TextureFilter_Linear ? GL_LINEAR : GL_NEAREST);
 
                 // Anisotropy is considered part of the filter.
@@ -1001,7 +1001,7 @@ namespace GTEngine
 
                     Renderer_LogShaderInfoLog(rendererData->fragmentShader, source);
                 }
-                
+
 
                 // With the individual shaders created, we now create the main program.
                 rendererData->program = glCreateProgram();
@@ -1036,7 +1036,7 @@ namespace GTEngine
         {
             vertexArrayData = new VertexArray_GL20;
             vertexArray->SetRendererData(vertexArrayData);
-                
+
             glGenBuffers(1, &vertexArrayData->verticesObject);
             glGenBuffers(1, &vertexArrayData->indicesObject);
         }
@@ -1112,7 +1112,7 @@ namespace GTEngine
                 Log("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
                 Log("    EXT_texture_filter_anisotropic:     %s", GTGL_EXT_texture_filter_anisotropic     ? "yes" : "no");
                 Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
-                
+
                 /*
                 const char *extensions = (const char *)glGetString(GL_EXTENSIONS);
                 GTCore::Strings::ANSI::Replacer replacer(extensions);
@@ -1135,7 +1135,7 @@ namespace GTEngine
                 Log("    Max Draw Buffers:       %d", RendererCaps.MaxDrawBuffers);
                 Log("    Max Texture Units:      %d", RendererCaps.MaxTextureUnits);
 
-                
+
                 Renderer::BackRCQueue  = new RCQueue;
                 Renderer::FrontRCQueue = new RCQueue;
 
@@ -1486,7 +1486,7 @@ namespace GTEngine
         case DepthFunc_NotEqual: funcGL = GL_NOTEQUAL; break;
         case DepthFunc_GEqual:   funcGL = GL_GEQUAL;   break;
         case DepthFunc_Always:   funcGL = GL_ALWAYS;   break;
-        
+
         default: break;
         }
 

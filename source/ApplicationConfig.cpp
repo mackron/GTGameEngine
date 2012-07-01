@@ -4,10 +4,7 @@
 #include <GTCore/Script.hpp>
 #include <GTCore/Errors.hpp>
 #include <GTCore/String.hpp>
-
-
-#include <cstdlib>
-#include <crtdbg.h>
+#include <GTCore/stdlib.hpp>
 
 #include <cstring>
 
@@ -22,7 +19,7 @@ namespace GTEngine
 
     /// The Data directory.
     static GTCore::String DataDirectory;
-    
+
 
     bool ApplicationConfig::Open(const char* fileName)
     {
@@ -42,7 +39,7 @@ namespace GTEngine
                 ConfigScript = nullptr;
             }
         }
-        
+
         return ConfigScript != nullptr;
     }
 
@@ -51,7 +48,7 @@ namespace GTEngine
         delete ConfigScript;
         ConfigScript = nullptr;
     }
-    
+
 
     const char* ApplicationConfig::Directories::Data()
     {
@@ -62,7 +59,7 @@ namespace GTEngine
     const char* ApplicationConfig_GetDataDirectory()
     {
         const char* result = nullptr;
-        
+
         if (ConfigScript)
         {
             ConfigScript->GetGlobal("Directories");
@@ -78,7 +75,7 @@ namespace GTEngine
             }
             ConfigScript->Pop(1);
         }
-        
+
         return result;
     }
 }
