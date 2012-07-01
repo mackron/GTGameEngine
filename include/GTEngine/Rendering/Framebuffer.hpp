@@ -2,7 +2,7 @@
 #ifndef __GTEngine_Framebuffer_hpp_
 #define __GTEngine_Framebuffer_hpp_
 
-#include <cstdint>
+#include <cstddef>
 
 namespace GTEngine
 {
@@ -181,7 +181,7 @@ namespace GTEngine
             _syncinfo & operator=(const _syncinfo &);
 
         }syncinfo;
-        
+
 
     private:    // No copying.
         Framebuffer(const Framebuffer &);
