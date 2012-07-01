@@ -7,6 +7,7 @@
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/Audio.hpp>
 #include <GTCore/System.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
 #include <GTCore/String.hpp>
@@ -1041,6 +1042,13 @@ namespace GTEngine
     }
 
 
+    int FFI_Engine_PlaySound(GTCore::Script &script)
+    {
+        GTEngine::AudioComposer::Play(script.ToString(1));
+        return 0;
+    }
+
+
     ////////////////////////////////////////////////////////////////
     // Editor FFI
 
@@ -1194,6 +1202,11 @@ namespace GTEngine
 
             this->script.Push("DisableVSync");
             this->script.PushClosure(FFI_Engine_DisableVSync, 0);
+            this->script.SetTableValue(-3);
+
+
+            this->script.Push("PlaySound");
+            this->script.PushClosure(FFI_Engine_PlaySound, 0);
             this->script.SetTableValue(-3);
         }
         this->script.Pop(1);    // Engine

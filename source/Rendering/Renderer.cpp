@@ -12,7 +12,7 @@
 
 #include <gtgl/gtgl.h>
 
-#if defined(LICK_PLATFORM_WINDOWS)
+#if defined(GTCORE_PLATFORM_WINDOWS)
 #include <windows.h>
 #else
 #include <GTCore/Windowing/X11/X11.hpp>
@@ -1194,7 +1194,7 @@ namespace GTEngine
         }
 
         // When creating a window, we use GTCore to create the main window. Then we do platform specific stuff to get it working with the GTGL context.
-#ifdef LICK_PLATFORM_WINDOWS
+#ifdef GTCORE_PLATFORM_WINDOWS
         GTCore::Window *window = new GTCore::Window();
         const GTCore::InternalWindowObjects &iwo = window->GetInternalObjects();
 

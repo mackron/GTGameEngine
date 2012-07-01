@@ -102,9 +102,9 @@
 					<Add library="Detour" />
 					<Add library="DetourTileCache" />
 					<Add library="DetourCrowd" />
+					<Add library="openal" />
 					<Add library="X11" />
 					<Add library="GL" />
-					<Add library="openal" />
 				</Linker>
 			</Target>
 			<Target title="release-linux-gcc">
