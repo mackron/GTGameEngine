@@ -54,7 +54,7 @@ private:
 
 int main(int argc, char** argv)
 {
-#if defined(LICK_PLATFORM_LINUX)
+#if defined(GTCORE_PLATFORM_LINUX)
     XInitThreads();
 #endif
 
