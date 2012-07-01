@@ -195,7 +195,7 @@ namespace GTEngine
     {
         if (!this->mouseCaptured)
         {
-            GTCore::HideMouse();
+            this->HideCursor();
             this->mouseCaptured = true;
             this->GetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
 
@@ -213,7 +213,7 @@ namespace GTEngine
     {
         if (this->mouseCaptured)
         {
-            GTCore::ShowMouse();
+            this->ShowCursor();
             this->mouseCaptured = false;
 
             this->SetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
@@ -222,12 +222,12 @@ namespace GTEngine
 
     void Game::ShowCursor()
     {
-        GTCore::ShowMouse();
+        this->window->ShowCursor();
     }
 
     void Game::HideCursor()
     {
-        GTCore::HideMouse();
+        this->window->HideCursor();
     }
 
 
@@ -1229,7 +1229,6 @@ namespace GTEngine
             this->script.Push("SwitchToSandboxMode");
             this->script.PushClosure(FFI_Editor_SwitchToSandboxMode, 0);
             this->script.SetTableValue(-3);
-
 
 
             this->script.Push("ModelEditor");
