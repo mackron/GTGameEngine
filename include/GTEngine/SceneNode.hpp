@@ -1,5 +1,4 @@
 
-
 #ifndef __GTEngine_SceneNode_hpp_
 #define __GTEngine_SceneNode_hpp_
 
@@ -28,7 +27,7 @@ namespace GTEngine
     /**
     *   \brief  Base class for handling events on scene nodes.
     *
-    *   
+    *
     */
     class SceneNodeEventHandler
     {
@@ -40,7 +39,7 @@ namespace GTEngine
         *   \param  childNode [in] A pointer to the child node that was just attached as a child to 'node'.
         */
         virtual void OnAttach(SceneNode &node, SceneNode &childNode);
-        
+
         /**
         *   \brief                 Called after a child has been detached from the node.
         *   \param  node      [in] A pointer to the node whose child is being detached.
@@ -52,7 +51,7 @@ namespace GTEngine
         *       the parent.
         */
         virtual void OnDetach(SceneNode &node, SceneNode &childNode);
-        
+
         /**
         *   \brief  Called just before the node is destroyed.
         *
@@ -153,7 +152,7 @@ namespace GTEngine
 
 
     public:
-        
+
         /**
         *   \brief  Retrieves the default scene node event handler.
         */
@@ -201,8 +200,8 @@ namespace GTEngine
         *   handler or data pointers.
         */
         virtual ~SceneNode();
-        
-        
+
+
         /**
         *   \brief  Retrieves the name of the node.
         */
@@ -213,7 +212,7 @@ namespace GTEngine
         */
         void SetName(const char* name);
 
-        
+
         /**
         *   \brief  Retrieves the parent node, or null if the node does not have a parent.
         */
@@ -238,7 +237,7 @@ namespace GTEngine
         /// @remarks
         ///     Returns <this> if the node has not parents.
         SceneNode* GetTopAncestor();
-        
+
 
         /**
         *   \brief               Attaches an event handler to the node.
@@ -252,7 +251,7 @@ namespace GTEngine
         *       nodes, thus saving a bit of memory.
         */
         void AttachEventHandler(SceneNodeEventHandler &handler);
-        
+
         /**
         *   \brief               Detaches an event handler from the node.
         *   \param  handler [in] A reference to the event handler to detach.
@@ -261,7 +260,7 @@ namespace GTEngine
         *       Note that this function does not actually delete the event handler. Deletion must be managed by the caller.
         */
         void DetachEventHandler(SceneNodeEventHandler &handler);
-        
+
 
         /**
         *   \brief                 Attaches a child to this node.
@@ -283,7 +282,7 @@ namespace GTEngine
         *       This function is the same as Attach(), only the other way around. This is more intuitive in some cases.
         */
         void AttachTo(SceneNode &parent);
-        
+
         /**
         *   \brief                 Detaches/orphans a child from the node.
         *   \param  childNode [in] A pointer to the child node to detach.
@@ -292,17 +291,17 @@ namespace GTEngine
         *       This method does NOT delete the child.
         */
         void DetachChild(SceneNode& childNode);
-        
+
         /**
         *   \brief  Safely detaches/orphans all children.
         */
         void DetachAllChildren();
-        
+
         /**
         *   \brief  Helper function for detaching this node from it's parent.
         */
         void DetachFromParent();
-        
+
         /**
         *   \brief            Retrieves the first child who has the given name, or nullptr if a child is not found.
         *   \param  name [in] The name of the child to return.
@@ -329,66 +328,66 @@ namespace GTEngine
         bool IsDescendant(const SceneNode &other) const;
 
         /// Determines whether or not the given scene node is related to this node (is an ancestor or descendant).
-        bool IsRelated(const SceneNode &other) const { return this->IsAncestor(other) || this->IsDescendant(other); } 
+        bool IsRelated(const SceneNode &other) const { return this->IsAncestor(other) || this->IsDescendant(other); }
 
-        
+
         /**
         *   \brief                Sets the position of the node relative to the parent.
         *   \param  position [in] The new relative position of the node.
         */
         void SetPosition(const glm::vec3 &position);
         void SetPosition(float x, float y, float z) { this->SetPosition(glm::vec3(x, y, z)); }
-        
+
         /**
         *   \brief  Retrieves the world/absolute position of node.
         */
         glm::vec3 GetWorldPosition() const;
-        
+
         /**
         *   \brief  Sets the world/absolute position of the node.
         */
         void SetWorldPosition(const glm::vec3 &worldPosition);
         void SetWorldPosition(float x, float y, float z) { this->SetWorldPosition(glm::vec3(x, y, z)); }
-        
-        
-        
+
+
+
         /**
         *   \brief                   Sets the orientation of the node relative to the parent.
         *   \param  orientation [in] The new orientation of the node.
         */
         void SetOrientation(const glm::quat &orientation);
-        
+
         /**
         *   \brief  Retrieves the world/absolute orientation of the node.
         */
         glm::quat GetWorldOrientation() const;
-        
+
         /**
         *   \brief  Sets the world/absolute orientation of the node.
         */
         void SetWorldOrientation(const glm::quat &worldOrientation);
 
-        
+
         /**
         *   \brief             Sets the scale of the node relative to the parent.
         *   \param  scale [in] The new scale of the node relative to the parent.
         */
         void SetScale(const glm::vec3 &scale);
         void SetScale(float x, float y, float z) { this->SetScale(glm::vec3(x, y, z)); }
-        
+
         /**
         *   \brief  Retrieves the world/absolute scale of the node.
         *   \return The world/absolute scale of the node.
         */
         glm::vec3 GetWorldScale() const;
-        
+
         /**
         *   \brief                  Sets the world/absolute scale of the node.
         *   \param  worldScale [in] The new world/absolute scale of the node.
         */
         void SetWorldScale(const glm::vec3 &worldScale);
         void SetWorldScale(float x, float y, float z) { this->SetWorldScale(glm::vec3(x, y, z)); }
-        
+
 
         /**
         *   \brief              Looks at a point in the world.
@@ -427,7 +426,7 @@ namespace GTEngine
         /// Retrieves the position, orientation and scale components of the scene node in a single call.
         void GetWorldTransformComponents(glm::vec3 &position, glm::quat &orientation, glm::vec3 &scale) const;
 
-        
+
         /**
         *   \brief  Calculates a transformation matrix for this object, in world space.
         */
@@ -445,7 +444,7 @@ namespace GTEngine
         *   \param  offset         [in] Physics objects can be given a center of mass offset. This represents that offset.
         */
         void SetWorldTransform(const btTransform &worldTransform);
-        
+
 
 
         /**
@@ -464,7 +463,7 @@ namespace GTEngine
             return static_cast<const T*>(this->GetComponentByName(T::Name));
         }
 
-        
+
         /**
         *   \brief            Retrievse a component based on it's name.
         *   \param  name [in] The name of the component to retrieve.
@@ -486,7 +485,7 @@ namespace GTEngine
             return const_cast<SceneNode*>(this)->GetComponentByName(name);
         }
 
-        
+
         /**
         *   \brief  Adds a component of the type given by 'T'.
         *   \return A pointer to the new component.
@@ -509,7 +508,7 @@ namespace GTEngine
 
             return component;
         }
-        
+
         /**
         *   \brief  Removes the component of the type given by 'T'.
         */
@@ -526,7 +525,7 @@ namespace GTEngine
                 delete component;
             }
         }
-        
+
         /**
         *   \brief  Removes every component.
         */
@@ -534,7 +533,7 @@ namespace GTEngine
         {
             // The quickest way to do this would be to delete everything in one go. However, we need to fire events in a
             // consistent manner. The way it needs to be done if to first remove the event from the list, then call the
-            // event handler. Batching everything in one go won't allow this. Thus, we do it using a slightly slower, but 
+            // event handler. Batching everything in one go won't allow this. Thus, we do it using a slightly slower, but
             // consistent method.
             while (this->components.count > 0)
             {
@@ -562,7 +561,7 @@ namespace GTEngine
         {
             return this->HasComponent(T::Name);
         }
-        
+
 
         /**
         *   \brief  Retrieves the data pointer for the given key.
@@ -582,7 +581,7 @@ namespace GTEngine
 
             return nullptr;
         }
-        
+
         /**
         *   \brief  Sets the data pointer for the given key.
         */
@@ -590,7 +589,7 @@ namespace GTEngine
         {
             this->dataPointers.Add(key, data);
         }
-        
+
         /**
         *   \brief  Removes a data pointer from the scene node for the given key.
         *
@@ -756,7 +755,7 @@ namespace GTEngine
         PointLightComponent* AddPointLightComponent(float r, float g, float b);
         PointLightComponent* AddPointLightComponent(const glm::vec3 &colour);
 
-        
+
     // Events. Use these to make posting events a bit easier.
     public:
 
@@ -801,7 +800,7 @@ namespace GTEngine
 
         /// Determines whether or not events are locked.
         bool EventsLocked() const;
-        
+
 
 
     private:
@@ -903,7 +902,7 @@ namespace GTEngine
             return nullptr;
         }
 
-    
+
     private:    // No copying.
         SceneNode(const SceneNode &);
         SceneNode & operator=(const SceneNode &);

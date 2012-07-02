@@ -117,7 +117,7 @@ namespace GTEngine
         /// @param deltaTimeInSeconds [in] The time in seconds between frames for time-based operations.
         virtual void OnUpdate(double deltaTimeInSeconds);
 
-        
+
 
     protected:
 

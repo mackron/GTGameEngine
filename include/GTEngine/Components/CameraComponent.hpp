@@ -33,7 +33,7 @@ namespace GTEngine
         *   \brief  Calculates a view matrix based on the position and orientation of the node.
         */
         glm::mat4 GetViewMatrix() const;
-        
+
         /**
         *   \brief  Retrieves the projection matrix.
         */
@@ -68,7 +68,7 @@ namespace GTEngine
 
         float zNear;    /// The near clipping plane.
         float zFar;     /// The far clipping plane.
-        
+
     GTENGINE_DECL_COMPONENT_END()
 }
 

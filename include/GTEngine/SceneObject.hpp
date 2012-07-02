@@ -71,13 +71,13 @@ namespace GTEngine
         /// @remarks
         ///     This does a local transformation where the orientation of the object is taken into acount.
         void Translate(const glm::vec3 &offset);
-        
+
         /// Rotates the node.
         ///
         /// @param angleDegrees [in] The amount of degrees to rotate the object.
         /// @param axis         [in] The axis to rotate around.
         void Rotate(float angleDegrees, const glm::vec3 &axis);
-        
+
         /// Scales the node.
         ///
         /// @param scale [in] The amount to scale the object.
@@ -98,7 +98,7 @@ namespace GTEngine
         ///
         /// @param  distance [in] The distance to move.
         void MoveUp(float distance) { this->Translate(glm::vec3(0.0f, distance, 0.0f)); }
-        
+
 
         /// Rotates the object around it's local x axis.
         ///
@@ -138,10 +138,10 @@ namespace GTEngine
 
         /// Retrieves a normalised vector pointing in the forward direction of the object.
         glm::vec3 GetForwardVector() const;
-        
+
         /// Retrieves a normalised vector pointing in the right direction of the object.
         glm::vec3 GetRightVector() const;
-        
+
         /// Retrieves a normalised vector pointing in the up direction of the object.
         glm::vec3 GetUpVector() const;
 

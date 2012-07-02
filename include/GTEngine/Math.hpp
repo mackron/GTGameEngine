@@ -81,7 +81,7 @@ namespace GTEngine
         {
             return y;
         }
-        
+
 
         glm::detail::tquat<T> z;
 
