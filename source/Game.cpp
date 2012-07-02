@@ -28,7 +28,7 @@ namespace GTEngine
         : isInitialised(false), closing(false), eventQueue(), eventQueueLock(),
           window(nullptr), windowEventHandler(*this),
           script(*this),
-          updateThread(nullptr), updateJob(*this), 
+          updateThread(nullptr), updateJob(*this),
           deltaTimeInSeconds(0.0), totalRunninTimeInSeconds(0.0), updateTimer(),
           fontServer("var/fonts.cache"), defaultFont(nullptr),
           gui(&script, &fontServer), guiEventHandler(*this),
@@ -312,7 +312,7 @@ namespace GTEngine
             }
 
             this->editor.Open();
-            
+
             this->OnEditorOpen();
         }
     }
@@ -614,7 +614,7 @@ namespace GTEngine
         {
             this->fontServer.UnacquireFont(*this->defaultFont);
         }
-        
+
         delete this->window;
 
         ThreadCache::UnacquireThread(this->updateThread);
@@ -630,7 +630,7 @@ namespace GTEngine
 
             // We want our events to be handled synchronously on the main thread.
             this->HandleEvents();
-            
+
             // The GUI events can be handled here. If it turns out that they're best handled on the update thread, all we need
             // to do is remove this line - GTGUI::Server::Step() will also handle any pending events. I like to handle the GUI
             // events from here because it's nice to have GUI events handled at the same time as window events, since they're
@@ -652,7 +652,7 @@ namespace GTEngine
     {
         // The first thing we do is retrieve the delta time...
         this->deltaTimeInSeconds = GTCore::Min(this->updateTimer.Update(), 1.0);
-        
+
         // We also need to increment the total running time, but only if we're not paused.
         if (!this->IsPaused())
         {
@@ -990,7 +990,7 @@ namespace GTEngine
     }
 
 
-    
+
 
 
     ////////////////////////////////////////////////////////////////
