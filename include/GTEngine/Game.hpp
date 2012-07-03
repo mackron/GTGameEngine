@@ -549,6 +549,13 @@ namespace GTEngine
         /// Whether or not the game window has focus.
         bool focused;
 
+        /// Whether or not the cursor visibility state has changed.
+        bool cursorVisibleChanged;
+
+        /// Whether or not the cursor is visible.
+        bool isCursorVisible;
+
+
         /// A map of key states. This is modified as keys are pushed and released.
         GTCore::Map<char32_t, bool> keyDownMap;
 

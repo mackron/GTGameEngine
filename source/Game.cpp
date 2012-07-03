@@ -33,6 +33,7 @@ namespace GTEngine
           fontServer("var/fonts.cache"), defaultFont(nullptr),
           gui(&script, &fontServer), guiEventHandler(*this),
           paused(false), focused(true),
+          cursorVisibleChanged(false), isCursorVisible(true),
           keyDownMap(), mouseButtonDownMap(),
           editor(*this),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
@@ -222,12 +223,22 @@ namespace GTEngine
 
     void Game::ShowCursor()
     {
-        this->window->ShowCursor();
+        //this->window->ShowCursor();
+        if (!this->isCursorVisible)
+        {
+            this->cursorVisibleChanged = true;
+            this->isCursorVisible      = true;
+        }
     }
 
     void Game::HideCursor()
     {
-        this->window->HideCursor();
+        //this->window->HideCursor();
+        if (this->isCursorVisible)
+        {
+            this->cursorVisibleChanged = true;
+            this->isCursorVisible      = false;
+        }
     }
 
 
@@ -627,6 +638,22 @@ namespace GTEngine
         {
             // First we need to handle any pending window messages. We do not want to wait here (first argument).
             while (GTCore::PumpNextWindowEvent(false));
+
+            // Here we check if the cursor visibility state has changed.
+            if (this->cursorVisibleChanged)
+            {
+                this->cursorVisibleChanged = false;
+
+                if (this->isCursorVisible)
+                {
+                    this->window->ShowCursor();
+                }
+                else
+                {
+                    this->window->HideCursor();
+                }
+            }
+
 
             // We want our events to be handled synchronously on the main thread.
             this->HandleEvents();
