@@ -126,18 +126,22 @@
 					<Add library="GTImage-x64" />
 					<Add library="GTCore-x64" />
 					<Add library="GTGL-x64" />
-					<Add library="BulletDynamics-x64" />
-					<Add library="BulletCollision-x64" />
-					<Add library="LinearMath-x64" />
-					<Add library="OpenAL64" />
-					<Add library="Gdi32" />
-					<Add library="assimp-x64" />
-					<Add library="freetype-x64" />
-					<Add library="png-x64" />
-					<Add library="z-x64" />
-					<Add library="lua-x64" />
-					<Add library="pcre-x64" />
-					<Add library="RecastDetour-x64" />
+					<Add library="BulletDynamics" />
+					<Add library="BulletCollision" />
+					<Add library="LinearMath" />
+					<Add library="assimp" />
+					<Add library="freetype" />
+					<Add library="png" />
+					<Add library="z" />
+					<Add library="lua" />
+					<Add library="pcre" />
+					<Add library="Recast" />
+					<Add library="Detour" />
+					<Add library="DetourTileCache" />
+					<Add library="DetourCrowd" />
+					<Add library="openal" />
+					<Add library="X11" />
+					<Add library="GL" />
 				</Linker>
 			</Target>
 		</Build>
