@@ -43,20 +43,16 @@ namespace GTEngine
             /// Normalizes the plane.
             void Normalize()
             {
-//#if !defined(GT_NO_SIMD) && (GLM_ARCH & GLM_ARCH_SSE2)
-//#else
-                float length = glm::sqrt((a * a) + (b * b) + (c * c));
-                a /= length;
-                b /= length;
-                c /= length;
-                d /= length;
-//#endif
+                float invLength = glm::inversesqrt((a * a) + (b * b) + (c * c));
+                a *= invLength;
+                b *= invLength;
+                c *= invLength;
+                d *= invLength;
             }
 
 
 
-
-        private:
+        public:
 
             union
             {

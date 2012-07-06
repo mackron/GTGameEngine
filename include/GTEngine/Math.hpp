@@ -32,6 +32,22 @@ namespace GTEngine
         void CalculateTransformMatrix(const glm::vec3 &position, const glm::quat &orientation, const glm::vec3 &scale, glm::mat4 &result);
 
 
+        /// Retrieves the frustum planes of the given matrix.
+        ///
+        /// @param mvp       [in ] The model-view-projection matrix whose frustum planes are being retrieved.
+        /// @param planes    [out] The array that will receive the planes.
+        /// @param normalize [in ] Whether or not the planes should be normalized.
+        ///
+        /// @remarks
+        ///     The output planes are as follows:
+        ///         0 - Right
+        ///         1 - Left
+        ///         2 - Top
+        ///         3 - Bottom
+        ///         4 - Far
+        ///         5 - Near
+        void CalculateFrustumPlanes(const glm::mat4 &mvp, Plane planes[6], bool normalize = true);
+
 
         /// Math functions for trajectories.
         namespace Trajectory

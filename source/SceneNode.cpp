@@ -438,7 +438,7 @@ namespace GTEngine
     {
         if (this->parent != nullptr && this->inheritOrientation)
         {
-            this->SetOrientation(worldOrientation * glm::inverse(this->parent->GetWorldOrientation()));
+            this->SetOrientation(glm::inverse(this->parent->GetWorldOrientation()) * worldOrientation);
         }
         else
         {
