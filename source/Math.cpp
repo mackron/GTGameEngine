@@ -31,6 +31,26 @@ namespace GTEngine
             result[1] *= scale.y;
             result[2] *= scale.z;
         }
+
+        void CalculateFrustumPlanes(const glm::mat4 &mvp, Plane planes[6], bool normalize)
+        {
+            planes[0].a = mvp[0][3] - mvp[0][0]; planes[0].b = mvp[1][3] - mvp[1][0]; planes[0].c = mvp[2][3] - mvp[2][0]; planes[0].d = mvp[3][3] - mvp[3][0];
+            planes[1].a = mvp[0][3] + mvp[0][0]; planes[1].b = mvp[1][3] + mvp[1][0]; planes[1].c = mvp[2][3] + mvp[2][0]; planes[1].d = mvp[3][3] + mvp[3][0];
+            planes[2].a = mvp[0][3] - mvp[0][1]; planes[2].b = mvp[1][3] - mvp[1][1]; planes[2].c = mvp[2][3] - mvp[2][1]; planes[2].d = mvp[3][3] - mvp[3][1];
+            planes[3].a = mvp[0][3] + mvp[0][1]; planes[3].b = mvp[1][3] + mvp[1][1]; planes[3].c = mvp[2][3] + mvp[2][1]; planes[3].d = mvp[3][3] + mvp[3][1];
+            planes[4].a = mvp[0][3] - mvp[0][2]; planes[4].b = mvp[1][3] - mvp[1][2]; planes[4].c = mvp[2][3] - mvp[2][2]; planes[4].d = mvp[3][3] - mvp[3][2];
+            planes[5].a = mvp[0][3] + mvp[0][2]; planes[5].b = mvp[1][3] + mvp[1][2]; planes[5].c = mvp[2][3] + mvp[2][2]; planes[5].d = mvp[3][3] + mvp[3][2];
+
+            if (normalize)
+            {
+                planes[0].Normalize();
+                planes[1].Normalize();
+                planes[2].Normalize();
+                planes[3].Normalize();
+                planes[4].Normalize();
+                planes[5].Normalize();
+            }
+        }
     }
 }
 

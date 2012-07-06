@@ -436,24 +436,20 @@ namespace GTEngine
                 glm::mat4 mvp        = projection * view;
                 glm::vec3 forward    = cameraNode->GetWorldForwardVector();
 
+                Math::Plane planes[6];
+                Math::CalculateFrustumPlanes(mvp, planes, true);           // 'false' means to NOT normalize the planes (not needed).
+
+
                 btVector3 sortaxis(forward.x, forward.y, forward.z);
                 btVector3 planes_n[6];
 		        btScalar  planes_o[6];
 
-                planes_n[0] = btVector3(mvp[0][3] - mvp[0][0], mvp[1][3] - mvp[1][0], mvp[2][3] - mvp[2][0]);     // Right
-			    planes_n[1] = btVector3(mvp[0][3] + mvp[0][0], mvp[1][3] + mvp[1][0], mvp[2][3] + mvp[2][0]);     // Left
-			    planes_n[2] = btVector3(mvp[0][3] - mvp[0][1], mvp[1][3] - mvp[1][1], mvp[2][3] - mvp[2][1]);     // Top
-			    planes_n[3] = btVector3(mvp[0][3] + mvp[0][1], mvp[1][3] + mvp[1][1], mvp[2][3] + mvp[2][1]);     // Bottom
-                planes_n[4] = btVector3(mvp[0][3] - mvp[0][2], mvp[1][3] - mvp[1][2], mvp[2][3] - mvp[2][2]);     // Far
-                planes_n[5] = btVector3(mvp[0][3] + mvp[0][2], mvp[1][3] + mvp[1][2], mvp[2][3] + mvp[2][2]);     // Near
-
-                
-			    planes_o[0] = mvp[3][3] - mvp[3][0];    // Right
-			    planes_o[1] = mvp[3][3] + mvp[3][0];    // Left
-			    planes_o[2] = mvp[3][3] - mvp[3][1];    // Top
-			    planes_o[3] = mvp[3][3] + mvp[3][1];    // Bottom
-                planes_o[4] = mvp[3][3] - mvp[3][2];    // Far
-                planes_o[5] = mvp[3][3] + mvp[3][2];    // Near
+                planes_n[0] = btVector3(planes[0].a, planes[0].b, planes[0].c); planes_o[0] = planes[0].d;
+                planes_n[1] = btVector3(planes[1].a, planes[1].b, planes[1].c); planes_o[1] = planes[1].d;
+                planes_n[2] = btVector3(planes[2].a, planes[2].b, planes[2].c); planes_o[2] = planes[2].d;
+                planes_n[3] = btVector3(planes[3].a, planes[3].b, planes[3].c); planes_o[3] = planes[3].d;
+                planes_n[4] = btVector3(planes[4].a, planes[4].b, planes[4].c); planes_o[4] = planes[4].d;
+                planes_n[5] = btVector3(planes[5].a, planes[5].b, planes[5].c); planes_o[5] = planes[5].d;
 
                 
                 DefaultSceneCullingDbvtPolicy dbvtPolicy(viewport);
