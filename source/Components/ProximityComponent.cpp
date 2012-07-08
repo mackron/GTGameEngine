@@ -14,7 +14,7 @@ namespace GTEngine
 
     ProximityComponent::~ProximityComponent()
     {
-        auto world = this->ghostObject.getWorld();
+        auto world = this->ghostObject.GetWorld();
         if (world != nullptr)
         {
             world->RemoveGhostObject(this->ghostObject);
@@ -47,7 +47,7 @@ namespace GTEngine
             this->collisionMask  = mask;
 
             // The body needs to be removed and re-added to it's world for changes to take effect.
-            auto world = this->ghostObject.getWorld();
+            auto world = this->ghostObject.GetWorld();
             if (world != nullptr)
             {
                 world->RemoveGhostObject(this->ghostObject);
@@ -62,7 +62,7 @@ namespace GTEngine
         if (this->collisionShape != nullptr)
         {
             // The geometry is changing, thus we need to remove the body from the world and re-add it after the changes.
-            auto world = this->ghostObject.getWorld();
+            auto world = this->ghostObject.GetWorld();
             if (world != nullptr)
             {
                 world->RemoveGhostObject(this->ghostObject);
@@ -85,7 +85,7 @@ namespace GTEngine
         auto oldShape = this->collisionShape;
         this->collisionShape = newShape;
 
-        auto world = this->ghostObject.getWorld();
+        auto world = this->ghostObject.GetWorld();
         if (world != nullptr)
         {
             world->RemoveGhostObject(this->ghostObject);
@@ -125,7 +125,7 @@ namespace GTEngine
         {
             this->otherNode = nullptr;
 
-            auto world = this->component->ghostObject.getWorld();
+            auto world = this->component->ghostObject.GetWorld();
             if (world != nullptr)
             {
                 auto &pairArray = this->component->ghostObject.getOverlappingPairCache()->getOverlappingPairArray();

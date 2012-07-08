@@ -857,7 +857,7 @@ namespace GTEngine
         {
             auto &ghostObject = proximityComponent->GetGhostObject();
 
-            auto world = ghostObject.getWorld();
+            auto world = ghostObject.GetWorld();
             if (world != nullptr)
             {
                 btTransform transform;

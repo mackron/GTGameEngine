@@ -22,7 +22,7 @@ namespace GTEngine
     DynamicsComponent::~DynamicsComponent()
     {
         // We're first going to remove the rigid body from the dynamics world, if we have one.
-        auto world = this->rigidBody->getWorld();
+        auto world = this->rigidBody->GetWorld();
         if (world != nullptr)
         {
             world->RemoveRigidBody(*this->rigidBody);
@@ -96,7 +96,7 @@ namespace GTEngine
     void DynamicsComponent::RemoveAllCollisionShapes()
     {
         // Since the shapes are being changed we need to remove the rigid body from the world first.
-        auto world = this->rigidBody->getWorld();
+        auto world = this->rigidBody->GetWorld();
         if (world != nullptr)
         {
             world->RemoveRigidBody(*this->rigidBody);
@@ -146,7 +146,7 @@ namespace GTEngine
             this->isKinematic = kinematic;
 
             // When changing the kinematic state, the object must first be removed from the world. It will be readded at the end.
-            auto world = this->rigidBody->getWorld();
+            auto world = this->rigidBody->GetWorld();
             if (world != nullptr)
             {
                 world->RemoveRigidBody(*this->rigidBody);
@@ -230,7 +230,7 @@ namespace GTEngine
             this->collisionMask  = mask;
 
             // The body needs to be removed and re-added to it's world for changes to take effect.
-            auto world = this->rigidBody->getWorld();
+            auto world = this->rigidBody->GetWorld();
             if (world != nullptr)
             {
                 world->RemoveRigidBody(*this->rigidBody);
@@ -243,7 +243,7 @@ namespace GTEngine
     void DynamicsComponent::ApplyScaling(float x, float y, float z)
     {
         // The geometry is changing, thus we need to remove the body from the world and re-add it after the changes.
-        auto world = this->rigidBody->getWorld();
+        auto world = this->rigidBody->GetWorld();
         if (world != nullptr)
         {
             world->RemoveRigidBody(*this->rigidBody);
@@ -437,7 +437,7 @@ namespace GTEngine
     {
         // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
         // when we're finished with the modifications.
-        auto world = this->rigidBody->getWorld();
+        auto world = this->rigidBody->GetWorld();
         if (world != nullptr)
         {
             world->RemoveRigidBody(*this->rigidBody);
@@ -463,7 +463,7 @@ namespace GTEngine
 
     void DynamicsComponent::UpdateMass()
     {
-        auto world = this->rigidBody->getWorld();
+        auto world = this->rigidBody->GetWorld();
         if (world != nullptr)
         {
             world->RemoveRigidBody(*this->rigidBody);

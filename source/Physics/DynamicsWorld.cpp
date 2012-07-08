@@ -55,13 +55,13 @@ namespace GTEngine
 
     void DynamicsWorld::AddRigidBody(RigidBody &body, short group, short mask)
     {
-        auto prevWorld = body.getWorld();
+        auto prevWorld = body.GetWorld();
         if (prevWorld != nullptr)
         {
             prevWorld->RemoveRigidBody(body);
         }
 
-        body.setWorld(this);
+        body.SetWorld(this);
         this->world.addRigidBody(&body, group, mask);
     }
 
@@ -80,7 +80,7 @@ namespace GTEngine
 
     void DynamicsWorld::RemoveRigidBody(RigidBody &body)
     {
-        body.setWorld(nullptr);
+        body.SetWorld(nullptr);
         this->world.removeRigidBody(&body);
     }
 
@@ -100,13 +100,13 @@ namespace GTEngine
 
     void DynamicsWorld::AddGhostObject(GhostObject &ghost, short group, short mask)
     {
-        auto prevWorld = ghost.getWorld();
+        auto prevWorld = ghost.GetWorld();
         if (prevWorld != nullptr)
         {
             prevWorld->RemoveGhostObject(ghost);
         }
 
-        ghost.setWorld(this);
+        ghost.SetWorld(this);
         this->world.addCollisionObject(&ghost, group, mask);
     }
 
@@ -125,7 +125,7 @@ namespace GTEngine
 
     void DynamicsWorld::RemoveGhostObject(GhostObject &ghost)
     {
-        ghost.setWorld(nullptr);
+        ghost.SetWorld(nullptr);
         this->world.removeCollisionObject(&ghost);
     }
 
