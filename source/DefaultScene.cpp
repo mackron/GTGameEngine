@@ -874,7 +874,7 @@ namespace GTEngine
         {
             auto &collisionObject = occluderComponent->GetCollisionObject();
 
-            auto world = collisionObject.getWorld();
+            auto world = collisionObject.GetWorld();
             if (world != nullptr)
             {
                 btTransform transform;
@@ -895,7 +895,7 @@ namespace GTEngine
 
             if (metadata->modelCollisionObject != nullptr)
             {
-                auto world = metadata->modelCollisionObject->getWorld();
+                auto world = metadata->modelCollisionObject->GetWorld();
                 if (world != nullptr)
                 {
                     metadata->modelCollisionObject->setWorldTransform(transform);
@@ -905,7 +905,7 @@ namespace GTEngine
 
             if (metadata->pointLightCollisionObject != nullptr)
             {
-                auto world = metadata->pointLightCollisionObject->getWorld();
+                auto world = metadata->pointLightCollisionObject->GetWorld();
                 if (world != nullptr)
                 {
                     metadata->pointLightCollisionObject->setWorldTransform(transform);
@@ -915,7 +915,7 @@ namespace GTEngine
 
             if (metadata->spotLightCollisionObject != nullptr)
             {
-                auto world = metadata->spotLightCollisionObject->getWorld();
+                auto world = metadata->spotLightCollisionObject->GetWorld();
                 if (world != nullptr)
                 {
                     metadata->spotLightCollisionObject->setWorldTransform(transform);

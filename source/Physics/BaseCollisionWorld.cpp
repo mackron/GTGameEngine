@@ -35,13 +35,13 @@ namespace GTEngine
 
     void BaseCollisionWorld::AddCollisionObject(CollisionObject &collisionObject, short int collisionFilterGroup, short int collisionFilterMask)
     {
-        auto prevWorld = collisionObject.getWorld();
+        auto prevWorld = collisionObject.GetWorld();
         if (prevWorld != nullptr)
         {
             prevWorld->RemoveCollisionObject(collisionObject);
         }
 
-        collisionObject.setWorld(this);
+        collisionObject.SetWorld(this);
         this->GetInternalWorld().addCollisionObject(&collisionObject, collisionFilterGroup, collisionFilterMask);
     }
 
@@ -61,7 +61,7 @@ namespace GTEngine
 
     void BaseCollisionWorld::RemoveCollisionObject(CollisionObject &collisionObject)
     {
-        collisionObject.setWorld(nullptr);
+        collisionObject.SetWorld(nullptr);
         this->GetInternalWorld().removeCollisionObject(&collisionObject);
     }
 
@@ -92,7 +92,7 @@ namespace GTEngine
         const_cast<BaseCollisionWorld*>(this)->GetInternalWorld().contactPairTest(const_cast<btCollisionObject*>(&objectA), const_cast<btCollisionObject*>(&objectB), resultCallback);
     }
 
-    void BaseCollisionWorld::ConvexSweepTest(const btConvexShape &shape, const glm::mat4 &from, const glm::mat4 &to, btCollisionWorld::ConvexResultCallback &resultCallback, float allowedCCDPenetration = 0.0f)
+    void BaseCollisionWorld::ConvexSweepTest(const btConvexShape &shape, const glm::mat4 &from, const glm::mat4 &to, btCollisionWorld::ConvexResultCallback &resultCallback, float allowedCCDPenetration)
     {
         btTransform fromTransform = GTEngine::BulletUtils::CreateTransform(from);
         btTransform toTransform   = GTEngine::BulletUtils::CreateTransform(to);
@@ -100,7 +100,7 @@ namespace GTEngine
         this->ConvexSweepTest(shape, fromTransform, toTransform, resultCallback, allowedCCDPenetration);
     }
 
-    void BaseCollisionWorld::ConvexSweepTest(const btConvexShape &shape, const btTransform &from, const btTransform &to, btCollisionWorld::ConvexResultCallback &resultCallback, float allowedCCDPenetration = 0.0f)
+    void BaseCollisionWorld::ConvexSweepTest(const btConvexShape &shape, const btTransform &from, const btTransform &to, btCollisionWorld::ConvexResultCallback &resultCallback, float allowedCCDPenetration)
     {
         this->GetInternalWorld().convexSweepTest(&shape, from, to, resultCallback, allowedCCDPenetration);
     }

@@ -14,7 +14,7 @@ namespace GTEngine
 
     OccluderComponent::~OccluderComponent()
     {
-        auto world = this->collisionObject.getWorld();
+        auto world = this->collisionObject.GetWorld();
         if (world != nullptr)
         {
             world->RemoveCollisionObject(this->collisionObject);
@@ -28,7 +28,7 @@ namespace GTEngine
         auto oldShape = this->collisionShape;
         this->collisionShape = new btBoxShape(btVector3(halfX, halfY, halfZ));
 
-        auto world = this->collisionObject.getWorld();
+        auto world = this->collisionObject.GetWorld();
         if (world != nullptr)
         {
             world->RemoveCollisionObject(this->collisionObject);
@@ -50,7 +50,7 @@ namespace GTEngine
         if (this->collisionShape != nullptr)
         {
             // The geometry is changing, thus we need to remove the body from the world and re-add it after the changes.
-            auto world = this->collisionObject.getWorld();
+            auto world = this->collisionObject.GetWorld();
             if (world != nullptr)
             {
                 world->RemoveCollisionObject(this->collisionObject);
