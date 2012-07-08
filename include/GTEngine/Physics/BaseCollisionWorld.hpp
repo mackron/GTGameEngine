@@ -62,13 +62,34 @@ namespace GTEngine
         /// @param rayStart       [in     ] The start point of the ray.
         /// @param rayEnd         [in     ] The end point of the ray.
         /// @param resultCallback [in, out] A reference to the callback structure for handling the result.
-        ///
         void RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, btCollisionWorld::RayResultCallback &resultCallback) const;
 
+        /// Performs a contact test between an object and all other objects in the scene.
+        ///
+        /// @param object         [in     ] A reference to the object to test.
+        /// @param resultCallback [in, out] A reference to the callback structure for handling the result.
+        void ContactTest(const btCollisionObject &object, btCollisionWorld::ContactResultCallback &resultCallback) const;
+
+        /// Performs a contact test between two objects.
+        ///
+        /// @param objectA        [in     ] The first object to test.
+        /// @param objectB        [in     ] The second object to test.
+        /// @param resultCallback [in, out] A reference to the callback structure for handling the result.
+        void ContactTest(const btCollisionObject &objectA, const btCollisionObject &objectB, btCollisionWorld::ContactResultCallback &resultCallback) const;
+
+        /// Performs a swept test againts the given convex collision shape and every object in the scene.
+        ///
+        /// @param shape                 [in     ] A reference to the convex shape to test against.
+        /// @param from                  [in     ] The transformation of the start point.
+        /// @param end                   [in     ] The transformation of the end point.
+        /// @param resultCallback        [in, out] A reference to the callback structure for handling the result.
+        /// @param allowedCCDPenetration [in     ] Defaults to 0.0f.
+        void ConvexSweepTest(const btConvexShape &shape, const glm::mat4 &from,   const glm::mat4 &to,   btCollisionWorld::ConvexResultCallback &resultCallback, float allowedCCDPenetration = 0.0f);
+        void ConvexSweepTest(const btConvexShape &shape, const btTransform &from, const btTransform &to, btCollisionWorld::ConvexResultCallback &resultCallback, float allowedCCDPenetration = 0.0f);
 
 
         //////////////////////////////////////////////////////////////
-        // Virtual Methods.
+        // Virtual Methods.s
 
         /// Retrieves a reference to the internal dynamics world.
         virtual       btCollisionWorld & GetInternalWorld()       = 0;

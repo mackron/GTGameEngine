@@ -410,9 +410,8 @@ namespace GTEngine
             callback.collisionGroup = proximity->GetCollisionGroup();
             callback.collisionMask  = proximity->GetCollisionMask();
 
-            // TODO: Implement a proper version of this function.
             DefaultSceneContactTestCallback bulletCallback(callback);
-            this->dynamicsWorld.GetInternalDynamicsWorld().contactTest(const_cast<GhostObject*>(&proximity->GetGhostObject()), bulletCallback);
+            this->dynamicsWorld.ContactTest(proximity->GetGhostObject(), bulletCallback);
         }
     }
 

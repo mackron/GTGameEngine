@@ -81,6 +81,29 @@ namespace GTEngine
     {
         this->GetInternalWorld().rayTest(ToBulletVector3(rayStart), ToBulletVector3(rayEnd), resultCallback);
     }
+
+    void BaseCollisionWorld::ContactTest(const btCollisionObject &object, btCollisionWorld::ContactResultCallback &resultCallback) const
+    {
+        const_cast<BaseCollisionWorld*>(this)->GetInternalWorld().contactTest(const_cast<btCollisionObject*>(&object), resultCallback);
+    }
+
+    void BaseCollisionWorld::ContactTest(const btCollisionObject &objectA, const btCollisionObject &objectB, btCollisionWorld::ContactResultCallback &resultCallback) const
+    {
+        const_cast<BaseCollisionWorld*>(this)->GetInternalWorld().contactPairTest(const_cast<btCollisionObject*>(&objectA), const_cast<btCollisionObject*>(&objectB), resultCallback);
+    }
+
+    void BaseCollisionWorld::ConvexSweepTest(const btConvexShape &shape, const glm::mat4 &from, const glm::mat4 &to, btCollisionWorld::ConvexResultCallback &resultCallback, float allowedCCDPenetration = 0.0f)
+    {
+        btTransform fromTransform = GTEngine::BulletUtils::CreateTransform(from);
+        btTransform toTransform   = GTEngine::BulletUtils::CreateTransform(to);
+
+        this->ConvexSweepTest(shape, fromTransform, toTransform, resultCallback, allowedCCDPenetration);
+    }
+
+    void BaseCollisionWorld::ConvexSweepTest(const btConvexShape &shape, const btTransform &from, const btTransform &to, btCollisionWorld::ConvexResultCallback &resultCallback, float allowedCCDPenetration = 0.0f)
+    {
+        this->GetInternalWorld().convexSweepTest(&shape, from, to, resultCallback, allowedCCDPenetration);
+    }
 }
 
 #if defined(_MSC_VER)
