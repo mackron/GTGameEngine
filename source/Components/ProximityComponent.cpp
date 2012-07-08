@@ -17,7 +17,7 @@ namespace GTEngine
         auto world = this->ghostObject.getWorld();
         if (world != nullptr)
         {
-            world->removeGhostObject(&this->ghostObject);
+            world->RemoveGhostObject(this->ghostObject);
         }
 
         delete this->collisionShape;
@@ -50,8 +50,8 @@ namespace GTEngine
             auto world = this->ghostObject.getWorld();
             if (world != nullptr)
             {
-                world->removeGhostObject(&this->ghostObject);
-                world->addGhostObject(&this->ghostObject, this->collisionGroup, this->collisionMask);
+                world->RemoveGhostObject(this->ghostObject);
+                world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
             }
         }
     }
@@ -65,7 +65,7 @@ namespace GTEngine
             auto world = this->ghostObject.getWorld();
             if (world != nullptr)
             {
-                world->removeGhostObject(&this->ghostObject);
+                world->RemoveGhostObject(this->ghostObject);
             }
 
             // Now we simply apply the scaling to the shape.
@@ -74,7 +74,7 @@ namespace GTEngine
             // Now we need to re-add the body.
             if (world != nullptr)
             {
-                world->addGhostObject(&this->ghostObject, this->collisionGroup, this->collisionMask);
+                world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
             }
         }
     }
@@ -88,14 +88,14 @@ namespace GTEngine
         auto world = this->ghostObject.getWorld();
         if (world != nullptr)
         {
-            world->removeGhostObject(&this->ghostObject);
+            world->RemoveGhostObject(this->ghostObject);
         }
 
         this->ghostObject.setCollisionShape(newShape);
 
         if (world != nullptr)
         {
-            world->addGhostObject(&this->ghostObject, this->collisionGroup, this->collisionMask);
+            world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
         }
 
         delete oldShape;

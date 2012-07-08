@@ -17,7 +17,7 @@ namespace GTEngine
         auto world = this->collisionObject.getWorld();
         if (world != nullptr)
         {
-            world->removeCollisionObject(&this->collisionObject);
+            world->RemoveCollisionObject(this->collisionObject);
         }
 
         delete this->collisionShape;
@@ -31,14 +31,14 @@ namespace GTEngine
         auto world = this->collisionObject.getWorld();
         if (world != nullptr)
         {
-            world->removeCollisionObject(&this->collisionObject);
+            world->RemoveCollisionObject(this->collisionObject);
         }
 
         this->collisionObject.setCollisionShape(this->collisionShape);
 
         if (world != nullptr)
         {
-            world->addCollisionObject(&this->collisionObject);
+            world->AddCollisionObject(this->collisionObject);
         }
 
         delete oldShape;
@@ -53,7 +53,7 @@ namespace GTEngine
             auto world = this->collisionObject.getWorld();
             if (world != nullptr)
             {
-                world->removeCollisionObject(&this->collisionObject);
+                world->RemoveCollisionObject(this->collisionObject);
             }
 
             // Now we simply apply the scaling to the shape.
@@ -62,7 +62,7 @@ namespace GTEngine
             // Now we need to re-add the body.
             if (world != nullptr)
             {
-                world->addCollisionObject(&this->collisionObject);
+                world->AddCollisionObject(this->collisionObject);
             }
         }
     }

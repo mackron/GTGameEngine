@@ -22,7 +22,7 @@ namespace GTEngine
     {
         if (this->world != nullptr)
         {
-            this->world->removeRigidBody(this);
+            this->world->RemoveRigidBody(*this);
         }
     }
 

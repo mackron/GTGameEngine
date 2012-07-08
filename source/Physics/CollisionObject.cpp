@@ -1,6 +1,6 @@
 
 #include <GTEngine/Physics/CollisionObject.hpp>
-#include <GTEngine/Physics/CollisionWorld.hpp>
+#include <GTEngine/Physics/BaseCollisionWorld.hpp>
 
 namespace GTEngine
 {
@@ -13,16 +13,16 @@ namespace GTEngine
     {
         if (this->world != nullptr)
         {
-            this->world->removeCollisionObject(this);
+            this->world->RemoveCollisionObject(*this);
         }
     }
 
-    void CollisionObject::setWorld(CollisionWorld* world)
+    void CollisionObject::setWorld(BaseCollisionWorld* world)
     {
         this->world = world;
     }
 
-    CollisionWorld* CollisionObject::getWorld()
+    BaseCollisionWorld* CollisionObject::getWorld()
     {
         return this->world;
     }

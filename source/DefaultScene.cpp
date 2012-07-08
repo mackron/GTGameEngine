@@ -360,7 +360,7 @@ namespace GTEngine
 
         btVector3 tempMin;
         btVector3 tempMax;
-        this->occlusionCollisionWorld.getBroadphase()->getBroadphaseAabb(tempMin, tempMax);
+        this->occlusionCollisionWorld.GetBroadphase().getBroadphaseAabb(tempMin, tempMax);
 
         min = ToGLMVector3(tempMin);
         max = ToGLMVector3(tempMax);
@@ -376,7 +376,7 @@ namespace GTEngine
 
         // We use the occlusion world for picking. This will cause objects to be picked based on their mesh volumes. The scene node pointer
         // is stored as the user pointer on the collision object.
-        this->occlusionCollisionWorld.rayTest(rayStart, rayEnd, rayTestResult);
+        this->occlusionCollisionWorld.RayTest(rayStart, rayEnd, rayTestResult);
         if (rayTestResult.hasHit())
         {
             return static_cast<SceneNode*>(rayTestResult.m_collisionObject->getUserPointer());
@@ -395,7 +395,7 @@ namespace GTEngine
 
         // We need to use our own ray test callback for this.
         DefaultSceneBulletRayResultCallback rayTestResult(callback);
-        this->dynamicsWorld.rayTest(rayStart, rayEnd, rayTestResult);
+        this->dynamicsWorld.RayTest(rayStart, rayEnd, rayTestResult);
 
         return rayTestResult.closestSceneNode;
     }
@@ -429,7 +429,7 @@ namespace GTEngine
             if (camera != nullptr)
             {
                 // We're using Bullet for this. Specifically, we're using the Dbvt broadphase of the collision world.
-                btDbvtBroadphase &broadphase = this->occlusionCollisionWorld;
+                btDbvtBroadphase &broadphase = this->occlusionCollisionWorld.GetBroadphase();
 
                 glm::mat4 projection = camera->GetProjectionMatrix();
                 glm::mat4 view       = camera->GetViewMatrix();
@@ -621,7 +621,7 @@ namespace GTEngine
                 node.GetWorldTransform(transform);
                 metadata->modelCollisionObject->setWorldTransform(transform);
 
-                this->occlusionCollisionWorld.addCollisionObject(metadata->modelCollisionObject,
+                this->occlusionCollisionWorld.AddCollisionObject(*metadata->modelCollisionObject,
                     CollisionGroups::Picking | CollisionGroups::Model,          // The collision group
                     CollisionGroups::Picking | CollisionGroups::PointLight);    // The collision mask (what this object can collide with)
             }
@@ -652,7 +652,7 @@ namespace GTEngine
             light.GetNode().GetWorldTransform(transform);
             metadata->pointLightCollisionObject->setWorldTransform(transform);
 
-            this->occlusionCollisionWorld.addCollisionObject(metadata->pointLightCollisionObject,
+            this->occlusionCollisionWorld.AddCollisionObject(*metadata->pointLightCollisionObject,
                     CollisionGroups::PointLight,          // The collision group
                     CollisionGroups::Model);              // The collision mask (what this object can collide with)
         }
@@ -682,7 +682,7 @@ namespace GTEngine
             light.GetNode().GetWorldTransform(transform);
             metadata->spotLightCollisionObject->setWorldTransform(transform);
 
-            this->occlusionCollisionWorld.addCollisionObject(metadata->spotLightCollisionObject,
+            this->occlusionCollisionWorld.AddCollisionObject(*metadata->spotLightCollisionObject,
                     CollisionGroups::SpotLight,           // The collision group
                     CollisionGroups::Model);              // The collision mask (what this object can collide with)
         }
@@ -735,7 +735,7 @@ namespace GTEngine
 
             if (dynamicsComponent->GetCollisionShape().getNumChildShapes() > 0)
             {
-                this->dynamicsWorld.addRigidBody(&rigidBody, dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
+                this->dynamicsWorld.AddRigidBody(rigidBody, dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
             }
             else
             {
@@ -757,7 +757,7 @@ namespace GTEngine
             node.GetWorldTransform(transform);
             ghostObject.setWorldTransform(transform);
 
-            this->dynamicsWorld.addGhostObject(&ghostObject, proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
+            this->dynamicsWorld.AddGhostObject(ghostObject, proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
         }
 
 
@@ -771,7 +771,7 @@ namespace GTEngine
             node.GetWorldTransform(transform);
             collisionObject.setWorldTransform(transform);
 
-            this->occlusionCollisionWorld.addCollisionObject(&collisionObject, CollisionGroups::Occluder, CollisionGroups::All);
+            this->occlusionCollisionWorld.AddCollisionObject(collisionObject, CollisionGroups::Occluder, CollisionGroups::All);
         }
 
 
@@ -824,21 +824,21 @@ namespace GTEngine
         auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
         if (dynamicsComponent != nullptr)
         {
-            this->dynamicsWorld.removeRigidBody(&dynamicsComponent->GetRigidBody());
+            this->dynamicsWorld.RemoveRigidBody(dynamicsComponent->GetRigidBody());
         }
 
         // Same for the proximity component as the dynamics component.
         auto proximityComponent = node.GetComponent<ProximityComponent>();
         if (proximityComponent != nullptr)
         {
-            this->dynamicsWorld.removeGhostObject(&proximityComponent->GetGhostObject());
+            this->dynamicsWorld.RemoveGhostObject(proximityComponent->GetGhostObject());
         }
 
         // Occluder.
         auto occluderComponent = node.GetComponent<OccluderComponent>();
         if (occluderComponent != nullptr)
         {
-            this->occlusionCollisionWorld.removeCollisionObject(&occluderComponent->GetCollisionObject());
+            this->occlusionCollisionWorld.RemoveCollisionObject(occluderComponent->GetCollisionObject());
         }
 
         // If we have metadata, it needs to be removed. this will delete any culling objects.
@@ -882,7 +882,7 @@ namespace GTEngine
                 node.GetWorldTransform(transform);
 
                 collisionObject.setWorldTransform(transform);
-                world->updateSingleAabb(&collisionObject);
+                world->UpdateAABB(collisionObject);
             }
         }
 
@@ -900,7 +900,7 @@ namespace GTEngine
                 if (world != nullptr)
                 {
                     metadata->modelCollisionObject->setWorldTransform(transform);
-                    this->occlusionCollisionWorld.updateSingleAabb(metadata->modelCollisionObject);
+                    this->occlusionCollisionWorld.UpdateAABB(*metadata->modelCollisionObject);
                 }
             }
 
@@ -910,7 +910,7 @@ namespace GTEngine
                 if (world != nullptr)
                 {
                     metadata->pointLightCollisionObject->setWorldTransform(transform);
-                    this->occlusionCollisionWorld.updateSingleAabb(metadata->pointLightCollisionObject);
+                    this->occlusionCollisionWorld.UpdateAABB(*metadata->pointLightCollisionObject);
                 }
             }
 
@@ -920,7 +920,7 @@ namespace GTEngine
                 if (world != nullptr)
                 {
                     metadata->spotLightCollisionObject->setWorldTransform(transform);
-                    this->occlusionCollisionWorld.updateSingleAabb(metadata->spotLightCollisionObject);
+                    this->occlusionCollisionWorld.UpdateAABB(*metadata->spotLightCollisionObject);
                 }
             }
         }

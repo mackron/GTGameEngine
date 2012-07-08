@@ -6,7 +6,7 @@
 
 namespace GTEngine
 {
-    class CollisionWorld;
+    class BaseCollisionWorld;
 
     /**
     *   \brief  GTEngine rigid body class.
@@ -15,7 +15,7 @@ namespace GTEngine
     *   pointer to the scene the body is currently contained in. It is set by DynamicsScene when it is added. What this
     *   allows is for us to remove the body from the dynamics world when the body is deleted.
     */
-    ATTRIBUTE_ALIGNED16(class) CollisionObject : public btCollisionObject
+    class CollisionObject : public btCollisionObject
     {
     public:
 
@@ -33,18 +33,18 @@ namespace GTEngine
         /**
         *   \brief  Simple scene setter. Called by DynamicsWorld.
         */
-        void setWorld(CollisionWorld *world);
+        void setWorld(BaseCollisionWorld* world);
 
         /**
         *   \brief  Retrieves a pointer to the world these body is part of.
         */
-        CollisionWorld * getWorld();
+        BaseCollisionWorld* getWorld();
 
 
     private:
 
         /// A pointer to the world that owns this object.
-        CollisionWorld *world;
+        BaseCollisionWorld* world;
     };
 }
 
