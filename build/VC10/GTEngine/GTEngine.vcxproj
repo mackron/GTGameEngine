@@ -163,6 +163,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\GTEngine\AABB.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\Animation.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationChannel.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKey.hpp" />

@@ -20,6 +20,7 @@
 #endif
 
 #include "Math/Plane.hpp"
+#include "AABB.hpp"
 
 namespace GTEngine
 {
@@ -76,6 +77,27 @@ namespace GTEngine
             /// @param g  [in] The gravity. This should be 9.81 for Earth gravity.
             /// @param v  [in] The launch velocity.
             float HeightAtX(float x, float y0, float a, float g, float v);
+        }
+
+
+        /// Math functions for frustums.
+        namespace Frustum
+        {
+            /// Determines whether or not a point is inside the given frustum planes.
+            ///
+            /// @param frustumPlanes [in] The 6 frustum planes.
+            /// @param point         [in] The point to check.
+            ///
+            /// @return True if the point is inside the frustum planes.
+            bool ContainsPoint(const Plane frustumPlanes[6], const glm::vec3 &point);
+
+            /// Determines whether or not the given AABB is inside the given frustum planes.
+            ///
+            /// @param frustumPlanes [in] The 6 frustum planes.
+            /// @param aabb          [in] The AABB to check.
+            ///
+            /// @return True if the AABB is inside the frustum planes.
+            bool ContainsAABB(const Plane frustumPlanes[6], const AABB &aabb);
         }
     }
 
