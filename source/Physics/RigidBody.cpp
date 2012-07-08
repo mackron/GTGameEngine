@@ -26,12 +26,12 @@ namespace GTEngine
         }
     }
 
-    void RigidBody::setWorld(DynamicsWorld *world)
+    void RigidBody::SetWorld(DynamicsWorld *world)
     {
         this->world = world;
     }
 
-    DynamicsWorld * RigidBody::getWorld()
+    DynamicsWorld * RigidBody::GetWorld()
     {
         return this->world;
     }

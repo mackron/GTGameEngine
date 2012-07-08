@@ -21,12 +21,12 @@ namespace GTEngine
         *   \remarks
         *       This should only ever be used internally by DynamicsWorld. Do NOT use this to add the ghost object to the world. Use DynamicsWorld::addGhostObject().
         */
-        void setWorld(DynamicsWorld *world);
+        void SetWorld(DynamicsWorld *world);
 
         /**
         *   \brief  Retrieves a pointer to the world this object is part of.
         */
-        DynamicsWorld* getWorld();
+        DynamicsWorld* GetWorld();
 
 
     private:
