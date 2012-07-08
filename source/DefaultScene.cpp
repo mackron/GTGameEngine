@@ -994,7 +994,6 @@ namespace GTEngine
 
 
 
-
     void DefaultScene::OnSceneNodeComponentAttached(SceneNode&, Component& component)
     {
         if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
@@ -1055,7 +1054,7 @@ namespace GTEngine
         }
         if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
-            // The component is a point light. We'll need to update the culling information.
+            // The component is a spot light. We'll need to update the culling information.
             this->RemoveSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
             this->AddSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
         }

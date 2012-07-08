@@ -66,7 +66,10 @@ namespace GTEngine
             float LaunchAngle(const glm::vec3 &start, const glm::vec3 &target, float g, float v);
 
 
-            /// Retrieves the maximum distance of an object.
+            /// Retrieves the maximum distance of an object based on the given gravity and velocity.
+            ///
+            /// @param g [in] The gravity.
+            /// @param v [in] The velocity of the object.
             float MaxDistance(float g, float v);
 
             /// Retrieves the height of the object at range 'x'.
