@@ -8,37 +8,29 @@ namespace GTEngine
 {
     class BaseCollisionWorld;
 
-    /**
-    *   \brief  GTEngine rigid body class.
-    *
-    *   We make this class make it suit our own style more closely. The main thing we add here is a property containing a
-    *   pointer to the scene the body is currently contained in. It is set by DynamicsScene when it is added. What this
-    *   allows is for us to remove the body from the dynamics world when the body is deleted.
-    */
+    /// GTEngine collision object class.
+    ///
+    /// The main reason for the existence of this class is so we can keep track of the world it is part of and then remove
+    /// it from the world during destruction. This is our prefered way of doing things.
     class CollisionObject : public btCollisionObject
     {
     public:
 
-        /**
-        *   \brief  Constructor.
-        */
+        /// Constructor.
         CollisionObject();
 
-        /**
-        *   \brief  Destructor.
-        */
+        /// Destructor.
         virtual ~CollisionObject();
 
 
-        /**
-        *   \brief  Simple scene setter. Called by DynamicsWorld.
-        */
-        void setWorld(BaseCollisionWorld* world);
+        /// Simple world setter.
+        ///
+        /// @remarks
+        ///     This does not actually add the object to the world, but instead just sets the internal pointer.
+        void SetWorld(BaseCollisionWorld* world);
 
-        /**
-        *   \brief  Retrieves a pointer to the world these body is part of.
-        */
-        BaseCollisionWorld* getWorld();
+        /// Retrieves a pointer to the world these body is part of.
+        BaseCollisionWorld* GetWorld();
 
 
     private:

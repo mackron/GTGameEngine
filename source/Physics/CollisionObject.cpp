@@ -17,12 +17,12 @@ namespace GTEngine
         }
     }
 
-    void CollisionObject::setWorld(BaseCollisionWorld* world)
+    void CollisionObject::SetWorld(BaseCollisionWorld* world)
     {
         this->world = world;
     }
 
-    BaseCollisionWorld* CollisionObject::getWorld()
+    BaseCollisionWorld* CollisionObject::GetWorld()
     {
         return this->world;
     }

@@ -89,7 +89,7 @@ namespace GTEngine
 
 
         //////////////////////////////////////////////////////////////
-        // Virtual Methods.s
+        // Virtual Methods.
 
         /// Retrieves a reference to the internal dynamics world.
         virtual       btCollisionWorld & GetInternalWorld()       = 0;
