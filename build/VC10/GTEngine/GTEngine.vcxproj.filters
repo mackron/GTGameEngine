@@ -431,6 +431,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\AABB.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneUpdateManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneUpdateManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -714,6 +720,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\BaseCollisionWorld.cpp">
       <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneUpdateManager.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

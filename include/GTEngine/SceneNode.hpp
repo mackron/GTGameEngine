@@ -698,6 +698,21 @@ namespace GTEngine
         bool IsScaleInheritanceEnabled() const { return this->inheritScale; }
 
 
+        /// Sets the flags of the scene node.
+        ///
+        /// @remarks
+        ///     In order for flags to take effect, the scene node should be removed and then re-added to the scene.
+        ///     @par
+        ///     The accepted flags are those defined in SceneNode::Flags.
+        void SetFlags(unsigned int newFlags) { this->flags = newFlags; }
+
+        /// Retrieves the scene node's flags.
+        ///
+        /// @return The scene node's current flags.
+        unsigned int GetFlags() const { return this->flags; }
+
+
+
         /// Sets the application-defined type ID of this scene node.
         ///
         /// @param newTypeID [in] The new type ID.
@@ -867,6 +882,9 @@ namespace GTEngine
         bool inheritScale;
 
 
+        /// The scene node's flags. Defaults to 0. Changing a flags requires the node be removed and re-added to the scene in order to take effect.
+        unsigned int flags;
+
 
         /// The counter used for event locks. If it is > 0, the events are locked. Otherwise they are unlocked. Defaults to 0. LockEvents()
         /// will increment, whereas UnlockEvents() will decrement.
@@ -878,9 +896,12 @@ namespace GTEngine
         unsigned int typeID;
 
 
-
-    // Upcaster.
+        
+        
     public:
+
+        /////////////////////////////////////////////////////////
+        // Upcaster.
 
         static SceneNode* Upcast(SceneObject* object)
         {
@@ -901,6 +922,22 @@ namespace GTEngine
 
             return nullptr;
         }
+
+
+        /////////////////////////////////////////////////////////
+        // Flags.
+
+        enum Flags
+        {
+            Nothing                  = 0,
+
+            NoUpdate                 = (1 << 1),
+            Static                   = (1 << 2),
+            Visible                  = (1 << 3),
+            NoPositionInheritance    = (1 << 4),
+            NoOrientationInheritance = (1 << 5),
+            NoScaleInheritance       = (1 << 6),
+        };
 
 
     private:    // No copying.

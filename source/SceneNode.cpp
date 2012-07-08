@@ -71,6 +71,7 @@ namespace GTEngine
           scene(nullptr),
           isStatic(false), isVisible(true),
           inheritPosition(true), inheritOrientation(true), inheritScale(true),
+          flags(0),
           eventLockCounter(0),
           typeID(0)
     {
@@ -648,7 +649,7 @@ namespace GTEngine
 
     void SceneNode::SetScene(Scene *scene)
     {
-        Scene *prevScene = this->scene;
+        auto prevScene = this->scene;
         this->scene = scene;
 
         // The scene needs to be changed for the children, too.

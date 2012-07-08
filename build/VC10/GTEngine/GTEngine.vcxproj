@@ -88,6 +88,7 @@
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>_DEBUG;_CRTDBG_MAP_ALLOC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -107,6 +108,7 @@
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>_DEBUG;_CRTDBG_MAP_ALLOC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -190,6 +192,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_SimpleTransform.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_Skinning.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultScene.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneUpdateManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor3DViewportEventHandler.hpp" />
@@ -263,6 +266,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeFactory.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneObject.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneObjectTypes.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SceneUpdateManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp" />
@@ -304,6 +308,7 @@
     <ClCompile Include="..\..\..\source\CPUVertexShader_SimpleTransform.cpp" />
     <ClCompile Include="..\..\..\source\CPUVertexShader_Skinning.cpp" />
     <ClCompile Include="..\..\..\source\DefaultScene.cpp" />
+    <ClCompile Include="..\..\..\source\DefaultSceneUpdateManager.cpp" />
     <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Editor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor3DViewportEventHandler.cpp" />
