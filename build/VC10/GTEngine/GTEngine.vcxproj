@@ -222,6 +222,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\NavigationMesh.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\BaseCollisionWorld.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\btEllipsoidShape.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\Bullet.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionObject.hpp" />
@@ -331,6 +332,7 @@
     <ClCompile Include="..\..\..\source\ModelDefinition.cpp" />
     <ClCompile Include="..\..\..\source\ModelLibrary.cpp" />
     <ClCompile Include="..\..\..\source\NavigationMesh.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\BaseCollisionWorld.cpp" />
     <ClCompile Include="..\..\..\source\Physics\btEllipsoidShape.cpp" />
     <ClCompile Include="..\..\..\source\Physics\CollisionObject.cpp" />
     <ClCompile Include="..\..\..\source\Physics\CollisionWorld.cpp" />

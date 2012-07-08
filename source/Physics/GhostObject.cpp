@@ -13,7 +13,7 @@ namespace GTEngine
     {
         if (this->world != nullptr)
         {
-            this->world->removeGhostObject(this);
+            this->world->RemoveGhostObject(*this);
         }
     }
 

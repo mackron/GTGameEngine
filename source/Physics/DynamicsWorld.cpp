@@ -9,10 +9,7 @@
 namespace GTEngine
 {
     DynamicsWorld::DynamicsWorld()
-        : configuration(),
-          dispatcher(&configuration),
-          broadphase(),
-          solver(),
+        : solver(),
           world(&dispatcher, &broadphase, &solver, &configuration),
           ghostPairCallback()
     {
@@ -29,11 +26,11 @@ namespace GTEngine
 
             if (body != nullptr)
             {
-                this->removeRigidBody(body);
+                this->RemoveRigidBody(*body);
             }
-            else
+            else if (obj != nullptr)
             {
-                this->removeCollisionObject(obj);
+                this->RemoveCollisionObject(*obj);
             }
         }
 
@@ -41,6 +38,97 @@ namespace GTEngine
         // removing all of the collision objects.
         this->broadphase.getOverlappingPairCache()->setInternalGhostPairCallback(nullptr);
     }
+
+
+    void DynamicsWorld::AddRigidBody(btRigidBody &bodyIn, short group, short mask)
+    {
+        auto body = dynamic_cast<RigidBody*>(&bodyIn);
+        if (body != nullptr)
+        {
+            this->AddRigidBody(*body, group, mask);
+        }
+        else
+        {
+            this->world.addRigidBody(&bodyIn, group, mask);
+        }
+    }
+
+    void DynamicsWorld::AddRigidBody(RigidBody &body, short group, short mask)
+    {
+        auto prevWorld = body.getWorld();
+        if (prevWorld != nullptr)
+        {
+            prevWorld->RemoveRigidBody(body);
+        }
+
+        body.setWorld(this);
+        this->world.addRigidBody(&body, group, mask);
+    }
+
+    void DynamicsWorld::RemoveRigidBody(btRigidBody &bodyIn)
+    {
+        auto body = dynamic_cast<RigidBody*>(&bodyIn);
+        if (body != nullptr)
+        {
+            this->RemoveRigidBody(*body);
+        }
+        else
+        {
+            this->world.removeRigidBody(&bodyIn);
+        }
+    }
+
+    void DynamicsWorld::RemoveRigidBody(RigidBody &body)
+    {
+        body.setWorld(nullptr);
+        this->world.removeRigidBody(&body);
+    }
+
+
+    void DynamicsWorld::AddGhostObject(btGhostObject &ghostIn, short group, short mask)
+    {
+        auto ghost = dynamic_cast<GhostObject*>(&ghostIn);
+        if (ghost != nullptr)
+        {
+            this->AddGhostObject(*ghost, group, mask);
+        }
+        else
+        {
+            this->world.addCollisionObject(&ghostIn, group, mask);
+        }
+    }
+
+    void DynamicsWorld::AddGhostObject(GhostObject &ghost, short group, short mask)
+    {
+        auto prevWorld = ghost.getWorld();
+        if (prevWorld != nullptr)
+        {
+            prevWorld->RemoveGhostObject(ghost);
+        }
+
+        ghost.setWorld(this);
+        this->world.addCollisionObject(&ghost, group, mask);
+    }
+
+    void DynamicsWorld::RemoveGhostObject(btGhostObject &ghostIn)
+    {
+        auto ghost = dynamic_cast<GhostObject*>(&ghostIn);
+        if (ghost != nullptr)
+        {
+            this->RemoveGhostObject(*ghost);
+        }
+        else
+        {
+            this->world.removeCollisionObject(&ghostIn);
+        }
+    }
+
+    void DynamicsWorld::RemoveGhostObject(GhostObject &ghost)
+    {
+        ghost.setWorld(nullptr);
+        this->world.removeCollisionObject(&ghost);
+    }
+
 
     void DynamicsWorld::Step(double timeStep, int maxSubSteps, double fixedTimeStep)
     {
@@ -59,129 +147,6 @@ namespace GTEngine
         x = gravity.x();
         y = gravity.y();
         z = gravity.z();
-    }
-
-
-
-    void DynamicsWorld::rayTest(const glm::vec3 &rayFromWorld, const glm::vec3 &rayToWorld, btDynamicsWorld::RayResultCallback &resultCallback) const
-    {
-        this->world.rayTest(ToBulletVector3(rayFromWorld), ToBulletVector3(rayToWorld), resultCallback);
-    }
-
-
-    void DynamicsWorld::addRigidBody(RigidBody *body)
-    {
-        auto prevWorld = body->getWorld();
-        if (prevWorld != nullptr)
-        {
-            prevWorld->removeRigidBody(body);
-        }
-
-        body->setWorld(this);
-        this->world.addRigidBody(body);
-    }
-
-    void DynamicsWorld::addRigidBody(RigidBody *body, short group, short mask)
-    {
-        auto prevWorld = body->getWorld();
-        if (prevWorld != nullptr)
-        {
-            prevWorld->removeRigidBody(body);
-        }
-
-        body->setWorld(this);
-        this->world.addRigidBody(body, group, mask);
-    }
-
-    void DynamicsWorld::removeRigidBody(RigidBody* body)
-    {
-        body->setWorld(nullptr);
-        this->world.removeRigidBody(body);
-    }
-
-
-    void DynamicsWorld::addRigidBody(btRigidBody *bodyIn)
-    {
-        auto body = static_cast<RigidBody*>(bodyIn);
-        if (body != nullptr)
-        {
-            this->addRigidBody(body);
-        }
-        else
-        {
-            this->world.addRigidBody(bodyIn);
-        }
-    }
-
-    void DynamicsWorld::addRigidBody(btRigidBody *bodyIn, short group, short mask)
-    {
-        auto body = static_cast<RigidBody*>(bodyIn);
-        if (body != nullptr)
-        {
-            this->addRigidBody(body, group, mask);
-        }
-        else
-        {
-            this->world.addRigidBody(bodyIn, group, mask);
-        }
-    }
-
-    void DynamicsWorld::removeRigidBody(btRigidBody* bodyIn)
-    {
-        auto body = static_cast<RigidBody*>(bodyIn);
-        if (body != nullptr)
-        {
-            this->removeRigidBody(body);
-        }
-        else
-        {
-            this->world.removeRigidBody(bodyIn);
-        }
-    }
-
-
-    void DynamicsWorld::addGhostObject(GhostObject *ghost)
-    {
-        auto prevWorld = ghost->getWorld();
-        if (prevWorld != nullptr)
-        {
-            prevWorld->removeGhostObject(ghost);
-        }
-
-        ghost->setWorld(this);
-        this->world.addCollisionObject(ghost);
-    }
-
-    void DynamicsWorld::addGhostObject(GhostObject *ghost, short group, short mask)
-    {
-        auto prevWorld = ghost->getWorld();
-        if (prevWorld != nullptr)
-        {
-            prevWorld->removeGhostObject(ghost);
-        }
-
-        ghost->setWorld(this);
-        this->world.addCollisionObject(ghost, group, mask);
-    }
-
-    void DynamicsWorld::removeGhostObject(GhostObject* ghost)
-    {
-        ghost->setWorld(nullptr);
-        this->world.removeCollisionObject(ghost);
-    }
-
-
-    void DynamicsWorld::removeCollisionObject(btCollisionObject* objIn)
-    {
-        auto ghost = dynamic_cast<GhostObject *>(objIn);
-        if (ghost != nullptr)
-        {
-            this->removeGhostObject(ghost);
-        }
-        else
-        {
-            this->world.removeCollisionObject(objIn);
-        }
     }
 }
 

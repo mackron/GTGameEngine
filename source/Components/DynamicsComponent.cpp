@@ -25,7 +25,7 @@ namespace GTEngine
         auto world = this->rigidBody->getWorld();
         if (world != nullptr)
         {
-            world->removeRigidBody(this->rigidBody);
+            world->RemoveRigidBody(*this->rigidBody);
         }
 
         // Now we need to delete the collision shapes.
@@ -99,7 +99,7 @@ namespace GTEngine
         auto world = this->rigidBody->getWorld();
         if (world != nullptr)
         {
-            world->removeRigidBody(this->rigidBody);
+            world->RemoveRigidBody(*this->rigidBody);
         }
 
 
@@ -119,7 +119,7 @@ namespace GTEngine
         // Now the rigid body needs to be re-added.
         if (world != nullptr)
         {
-            world->addRigidBody(this->rigidBody, this->collisionGroup, this->collisionMask);
+            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
     }
 
@@ -149,7 +149,7 @@ namespace GTEngine
             auto world = this->rigidBody->getWorld();
             if (world != nullptr)
             {
-                world->removeRigidBody(this->rigidBody);
+                world->RemoveRigidBody(*this->rigidBody);
             }
 
             if (kinematic)
@@ -169,7 +169,7 @@ namespace GTEngine
             // The rigid body needs to be readded to the world where applicable.
             if (world != nullptr)
             {
-                world->addRigidBody(this->rigidBody, this->collisionGroup, this->collisionMask);
+                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
             }
         }
     }
@@ -233,8 +233,8 @@ namespace GTEngine
             auto world = this->rigidBody->getWorld();
             if (world != nullptr)
             {
-                world->removeRigidBody(this->rigidBody);
-                world->addRigidBody(this->rigidBody, this->collisionGroup, this->collisionMask);
+                world->RemoveRigidBody(*this->rigidBody);
+                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
             }
         }
     }
@@ -246,7 +246,7 @@ namespace GTEngine
         auto world = this->rigidBody->getWorld();
         if (world != nullptr)
         {
-            world->removeRigidBody(this->rigidBody);
+            world->RemoveRigidBody(*this->rigidBody);
         }
 
         // Now we simply apply the scaling to the shape.
@@ -258,7 +258,7 @@ namespace GTEngine
         // Now we need to re-add the body.
         if (world != nullptr)
         {
-            world->addRigidBody(this->rigidBody, this->collisionGroup, this->collisionMask);
+            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
     }
 
@@ -440,7 +440,7 @@ namespace GTEngine
         auto world = this->rigidBody->getWorld();
         if (world != nullptr)
         {
-            world->removeRigidBody(this->rigidBody);
+            world->RemoveRigidBody(*this->rigidBody);
         }
 
         // All we need to do is add the new shape to the compound shape...
@@ -457,7 +457,7 @@ namespace GTEngine
         // Now we need to re-add the rigid body to the world, if it has one.
         if (world != nullptr)
         {
-            world->addRigidBody(this->rigidBody, this->collisionGroup, this->collisionMask);
+            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
     }
 
@@ -466,7 +466,7 @@ namespace GTEngine
         auto world = this->rigidBody->getWorld();
         if (world != nullptr)
         {
-            world->removeRigidBody(this->rigidBody);
+            world->RemoveRigidBody(*this->rigidBody);
         }
 
         // If we only have a single shape attached to the compound shape, we're going to calculate the local inertia based on that shape.
@@ -486,7 +486,7 @@ namespace GTEngine
 
         if (world != nullptr)
         {
-            world->addRigidBody(this->rigidBody, this->collisionGroup, this->collisionMask);
+            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
     }
 }

@@ -2,10 +2,9 @@
 #ifndef __GTEngine_Physics_DynamicsWorld_hpp_
 #define __GTEngine_Physics_DynamicsWorld_hpp_
 
-#include "Bullet.hpp"
+#include "BaseCollisionWorld.hpp"
 #include "RigidBody.hpp"
 #include "GhostObject.hpp"
-#include "../Math.hpp"
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -14,47 +13,56 @@
 
 namespace GTEngine
 {
-    /**
-    *   \brief  An simplified dynamics world for physics.
-    *
-    *   \remarks
-    *       In order to inherit directly from btDiscreteDynamicsWorld, we need to use multiple inheritance. It doesn't make logical sense to do this,
-    *       but I think it's best that our own world uses an 'is-a' relationship instead of a 'has-a' relationship with btDiscreteDynamicsWorld.
-    */
-    class DynamicsWorld
+    /// A dynamics world for doing physics.
+    class DynamicsWorld : public BaseCollisionWorld
     {
     public:
 
-        /**
-        *   \brief  Constructor.
-        */
+        /// Constructor.
         DynamicsWorld();
 
-        /**
-        *   \brief  Destructor.
-        */
+        /// Destructor.
         virtual ~DynamicsWorld();
 
 
-        /// Retrieves the internal collision configuration.
-        btDefaultCollisionConfiguration & GetCollisionConfiguration() { return this->configuration; }
-        const btDefaultCollisionConfiguration & GetCollisionConfiguration() const { return this->configuration; } 
-
-        /// Retrieves a reference to the internal collision dispatcher.
-        btCollisionDispatcher & GetCollisionDispatcher() { return this->dispatcher; }
-        const btCollisionDispatcher & GetCollisionDispatcher() const { return this->dispatcher; }
-
-        /// Retrieves a reference to the internal broadphase.
-        btDbvtBroadphase & GetBroadphase() { return this->broadphase; }
-        const btDbvtBroadphase & GetBroadphase() const { return this->broadphase; }
-
-        /// Retrieves a reference to the internal constrain solver.
-        btSequentialImpulseConstraintSolver & GetConstraintSolver() { return this->solver; }
-        const btSequentialImpulseConstraintSolver & GetConstraintSolver() const { return this->solver; }
+        /// Retrieves a reference to the internal dynamics world.
+              btCollisionWorld & GetInternalWorld()       { return this->world; }
+        const btCollisionWorld & GetInternalWorld() const { return this->world; }
 
         /// Retrieves a reference to the internal dynamics world.
-        btDiscreteDynamicsWorld & GetInternalDynamicsWorld() { return this->world; }
+              btDiscreteDynamicsWorld & GetInternalDynamicsWorld()       { return this->world; }
         const btDiscreteDynamicsWorld & GetInternalDynamicsWorld() const { return this->world; }
+
+        /// Retrieves a reference to the internal constrain solver.
+              btSequentialImpulseConstraintSolver & GetConstraintSolver()       { return this->solver; }
+        const btSequentialImpulseConstraintSolver & GetConstraintSolver() const { return this->solver; }
+
+
+        /// Adds a rigid body to the world.
+        ///
+        /// @param body [in] A reference to the body to add to the world.
+        void AddRigidBody(btRigidBody &body, short group = 1, short mask = -1);
+        void AddRigidBody(  RigidBody &body, short group = 1, short mask = -1);
+
+        /// Removes a rigid body from the world.
+        ///
+        /// @param body [in] A reference to the body to remove from the world.
+        void RemoveRigidBody(btRigidBody &body);
+        void RemoveRigidBody(  RigidBody &body);
+
+
+        /// Adds a ghost object to the world.
+        ///
+        /// @param ghost [in] A reference to the ghost object to add to the world.
+        void AddGhostObject(btGhostObject &ghost, short group = 1, short mask = -1);
+        void AddGhostObject(  GhostObject &ghost, short group = 1, short mask = -1);
+
+        /// Removes a ghost object from the world.
+        ///
+        /// @param ghost [in] A reference to the body to remove from the world.
+        void RemoveGhostObject(btGhostObject &ghost);
+        void RemoveGhostObject(  GhostObject &ghost);
+
 
 
         /// Steps the dynamics simulation.
@@ -67,6 +75,8 @@ namespace GTEngine
 
         /// Retrieves the gravity.
         void GetGravity(float &x, float &y, float &z) const;
+        void GetGravity(glm::vec3 &gravity) const { this->GetGravity(gravity.x, gravity.y, gravity.z); }
+
         glm::vec3 GetGravity() const
         {
             glm::vec3 gravity;
@@ -77,37 +87,7 @@ namespace GTEngine
 
 
 
-
-    // Custom functions for simplifying some stuff.
-    public:
-
-        /// Wrapper around rayTest() for use with glm::vec3.
-        virtual void rayTest(const glm::vec3 &rayFromWorld, const glm::vec3 &rayToWorld, btDynamicsWorld::RayResultCallback &resultCallback) const;
-
-        virtual void addRigidBody(RigidBody* body);
-	    virtual void addRigidBody(RigidBody* body, short group, short mask);
-        virtual void removeRigidBody(RigidBody* body);
-
-        virtual void addRigidBody(btRigidBody* body);
-        virtual void addRigidBody(btRigidBody* body, short group, short mask);
-        virtual void removeRigidBody(btRigidBody* body);
-
-        virtual void addGhostObject(GhostObject* ghost);
-        virtual void addGhostObject(GhostObject* ghost, short group, short mask);
-        virtual void removeGhostObject(GhostObject* ghost);
-
-        virtual void removeCollisionObject(btCollisionObject* obj);
-
     private:
-
-        /// Collision configuration.
-        btDefaultCollisionConfiguration configuration;
-
-        /// Collision dispatcher.
-        btCollisionDispatcher dispatcher;
-
-        /// The broadphase.
-        btDbvtBroadphase broadphase;
 
         /// The constraint solver.
         btSequentialImpulseConstraintSolver solver;
