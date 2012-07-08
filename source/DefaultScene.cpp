@@ -195,6 +195,7 @@ namespace GTEngine
 {
     DefaultScene::DefaultScene()
         : viewports(), nodes(),
+          updateManager(),
           ambientLightComponents(), directionalLightComponents(),
           occluderComponents(),
           dynamicsWorld(), occlusionCollisionWorld(),
@@ -259,20 +260,13 @@ namespace GTEngine
             }
         }
 
-        
-        // We need to update before rendering.
-        for (auto iNode = this->nodes.root; iNode != nullptr; iNode = iNode->next)
-        {
-            if (iNode->value != nullptr)
-            {
-                auto &node = *iNode->value;
 
-                if (!this->IsPaused())
-                {
-                    this->UpdateNode(node, deltaTimeInSeconds);
-                }
-            }
+        // Now we need to update via the update manager.
+        if (!this->IsPaused())
+        {
+            this->updateManager.Step(deltaTimeInSeconds);
         }
+
         
 
         // Now we need to draw everything on every attached viewport.
@@ -701,6 +695,15 @@ namespace GTEngine
     {
         this->nodes.Append(&node);
 
+        // We need to add the node to the update manager.
+        if ((node.GetFlags() & SceneNode::NoUpdate) == 0)
+        {
+            if (this->updateManager.NeedsUpdate(node))
+            {
+                this->updateManager.AddObject(node);
+            }
+        }
+
         
         // Here we'll check the lighting components.
         auto ambientLightComponent = node.GetComponent<AmbientLightComponent>();
@@ -804,6 +807,11 @@ namespace GTEngine
     void DefaultScene::OnSceneNodeRemoved(SceneNode& node)
     {
         this->nodes.Remove(this->nodes.Find(&node));
+
+        // The node must be removed from the update manager.
+        this->updateManager.RemoveObject(node);
+
+
 
         // The lighting components needs to be removed if applicable.
         auto ambientLightComponent = node.GetComponent<AmbientLightComponent>();

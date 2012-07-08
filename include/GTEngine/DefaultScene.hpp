@@ -3,6 +3,7 @@
 #define __GTEngine_DefaultScene_hpp_
 
 #include "Scene.hpp"
+#include "DefaultSceneUpdateManager.hpp"
 #include "Physics.hpp"
 #include "NavigationMesh.hpp"
 #include <GTCore/List.hpp>
@@ -342,8 +343,12 @@ namespace GTEngine
         /// The list of viewports currently attached to this scene.
         GTCore::List<SceneViewport*> viewports;
 
-        /// The list of nodes in the viewport. This is a flat list for now, but will be optimized later.
+        /// The list of nodes in the scene. This is a flat list for now, but will be optimized later.
         GTCore::List<SceneNode*> nodes;
+
+
+        /// The update manager.
+        DefaultSceneUpdateManager updateManager;
 
 
         /// The list of ambient light components.
