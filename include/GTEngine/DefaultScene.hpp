@@ -4,6 +4,7 @@
 
 #include "Scene.hpp"
 #include "DefaultSceneUpdateManager.hpp"
+#include "DefaultScenePhysicsManager.hpp"
 #include "Physics.hpp"
 #include "NavigationMesh.hpp"
 #include <GTCore/List.hpp>
@@ -144,8 +145,6 @@ namespace GTEngine
 
 
     private:
-
-        void UpdateNode(SceneNode &node, double deltaTimeInSeconds);
 
         /// Does a pre-update clean of dead nodes, caches, etc. This is the very first function called in Update().
         void DoPreUpdateClean();
@@ -350,6 +349,9 @@ namespace GTEngine
         /// The update manager.
         DefaultSceneUpdateManager updateManager;
 
+        /// The physics manager.
+        DefaultScenePhysicsManager physicsManager;
+
 
         /// The list of ambient light components.
         GTCore::List<AmbientLightComponent*> ambientLightComponents;
@@ -362,7 +364,7 @@ namespace GTEngine
 
 
         /// The dynamics world for everything involving physics and collision detection.
-        mutable DynamicsWorld dynamicsWorld; 
+        //mutable DynamicsWorld dynamicsWorld; 
 
         /// The collision world that will do occlusion culling and other collision detection functionality. We also use this
         /// world for picking. This world contains objects for each relevant component of an entity. The scene distringuishes

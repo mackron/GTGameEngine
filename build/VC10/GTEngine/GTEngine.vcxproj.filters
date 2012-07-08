@@ -437,6 +437,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneUpdateManager.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ScenePhysicsManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultScenePhysicsManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -722,6 +728,9 @@
       <Filter>source\Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultSceneUpdateManager.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultScenePhysicsManager.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

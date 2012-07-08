@@ -195,10 +195,10 @@ namespace GTEngine
 {
     DefaultScene::DefaultScene()
         : viewports(), nodes(),
-          updateManager(),
+          updateManager(), physicsManager(),
           ambientLightComponents(), directionalLightComponents(),
           occluderComponents(),
-          dynamicsWorld(), occlusionCollisionWorld(),
+          /*dynamicsWorld(),*/ occlusionCollisionWorld(),
           navigationMesh()/*, navigationMeshNode(), navigationMeshModel()*/
     {
         //this->AddSceneNode(this->navigationMeshNode);
@@ -233,6 +233,9 @@ namespace GTEngine
         // Before doing anything we're going to step the dynamics.
         if (!this->IsPaused())
         {
+            this->physicsManager.Step(deltaTimeInSeconds);
+
+            /*
             this->dynamicsWorld.Step(static_cast<btScalar>(deltaTimeInSeconds), 4);
 
             // Here is where we're going to check for collisions with other rigid bodies.
@@ -258,6 +261,7 @@ namespace GTEngine
                     }
                 }
             }
+            */
         }
 
 
@@ -389,7 +393,7 @@ namespace GTEngine
 
         // We need to use our own ray test callback for this.
         DefaultSceneBulletRayResultCallback rayTestResult(callback);
-        this->dynamicsWorld.RayTest(rayStart, rayEnd, rayTestResult);
+        this->physicsManager.RayTest(rayStart, rayEnd, rayTestResult);
 
         return rayTestResult.closestSceneNode;
     }
@@ -405,7 +409,7 @@ namespace GTEngine
             callback.collisionMask  = proximity->GetCollisionMask();
 
             DefaultSceneContactTestCallback bulletCallback(callback);
-            this->dynamicsWorld.ContactTest(proximity->GetGhostObject(), bulletCallback);
+            this->physicsManager.ContactTest(proximity->GetGhostObject(), bulletCallback);
         }
     }
 
@@ -483,12 +487,12 @@ namespace GTEngine
 
     void DefaultScene::SetGravity(float x, float y, float z)
     {
-        this->dynamicsWorld.SetGravity(x, y, z);
+        this->physicsManager.SetGravity(x, y, z);
     }
 
     void DefaultScene::GetGravity(float &x, float &y, float &z) const
     {
-        this->dynamicsWorld.GetGravity(x, y, z);
+        this->physicsManager.GetGravity(x, y, z);
     }
 
 
@@ -569,24 +573,6 @@ namespace GTEngine
         */
     }
 
-
-
-    void DefaultScene::UpdateNode(SceneNode &node, double deltaTimeInSeconds)
-    {
-        // If the node has a model, and that model is animating, we should step the animation.
-        auto modelComponent = node.GetComponent<ModelComponent>();
-        if (modelComponent != nullptr)
-        {
-            auto model = modelComponent->GetModel();
-            if (model != nullptr && model->IsAnimating())
-            {
-                model->StepAnimation(deltaTimeInSeconds);
-            }
-        }
-
-        // The node needs to know that it's being updated.
-        node.OnUpdate(deltaTimeInSeconds);
-    }
 
     void DefaultScene::DoPreUpdateClean()
     {
@@ -737,7 +723,7 @@ namespace GTEngine
 
             if (dynamicsComponent->GetCollisionShape().getNumChildShapes() > 0)
             {
-                this->dynamicsWorld.AddRigidBody(rigidBody, dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
+                this->physicsManager.AddRigidBody(rigidBody, dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
             }
             else
             {
@@ -759,7 +745,7 @@ namespace GTEngine
             node.GetWorldTransform(transform);
             ghostObject.setWorldTransform(transform);
 
-            this->dynamicsWorld.AddGhostObject(ghostObject, proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
+            this->physicsManager.AddGhostObject(ghostObject, proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
         }
 
 
@@ -831,14 +817,16 @@ namespace GTEngine
         auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
         if (dynamicsComponent != nullptr)
         {
-            this->dynamicsWorld.RemoveRigidBody(dynamicsComponent->GetRigidBody());
+            this->physicsManager.RemoveRigidBody(dynamicsComponent->GetRigidBody());
+            //this->dynamicsWorld.RemoveRigidBody(dynamicsComponent->GetRigidBody());
         }
 
         // Same for the proximity component as the dynamics component.
         auto proximityComponent = node.GetComponent<ProximityComponent>();
         if (proximityComponent != nullptr)
         {
-            this->dynamicsWorld.RemoveGhostObject(proximityComponent->GetGhostObject());
+            this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
+            //this->dynamicsWorld.RemoveGhostObject(proximityComponent->GetGhostObject());
         }
 
         // Occluder.
@@ -872,7 +860,7 @@ namespace GTEngine
                 node.GetWorldTransform(transform);
 
                 ghostObject.setWorldTransform(transform);
-                world->GetInternalDynamicsWorld().updateSingleAabb(&ghostObject);
+                world->UpdateAABB(ghostObject);
             }
         }
 
