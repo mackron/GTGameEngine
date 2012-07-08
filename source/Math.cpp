@@ -103,3 +103,40 @@ namespace GTEngine
         }
     }
 }
+
+
+/// Frustum
+namespace GTEngine
+{
+    namespace Math
+    {
+        namespace Frustum
+        {
+            bool ContainsPoint(const Plane planes[6], const glm::vec3 &point)
+            {
+                for (size_t i = 0; i < 6; ++i)
+                {
+                    if (planes[i].DistanceTo(point) < 0)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            bool ContainsAABB(const Plane planes[6], const AABB &aabb)
+            {
+                for (size_t i = 0; i < 6; ++i)
+                {
+                    if (aabb.plane_classify(btVector4(planes[i].a, planes[i].b, planes[i].c, planes[i].d)) == 0)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+    }
+}

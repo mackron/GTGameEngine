@@ -24,6 +24,11 @@ namespace GTEngine
             {
             }
 
+            Plane(const Plane &other)
+                : a(other.a), b(other.b), c(other.c), d(other.d)
+            {
+            }
+
             Plane(float aIn, float bIn, float cIn, float dIn)
                 : a(aIn), b(bIn), c(cIn), d(dIn)
             {
@@ -41,15 +46,53 @@ namespace GTEngine
 
 
             /// Normalizes the plane.
-            void Normalize()
+            Plane & Normalize()
             {
                 float invLength = glm::inversesqrt((a * a) + (b * b) + (c * c));
                 a *= invLength;
                 b *= invLength;
                 c *= invLength;
                 d *= invLength;
+
+                return *this;
             }
 
+            /// Retrieves a normalized copy of the plane.
+            Plane Normalized() const
+            {
+                Plane result(*this);
+                result.Normalize();
+
+                return result;
+            }
+
+
+            /// Retrieves the distance between the given point and the plane. Assumes the plane is normalized.
+            ///
+            /// @param point [in] The point to check.
+            ///
+            /// @remarks
+            ///     If this returns < 0, it means the point is behind the plane.
+            ///     @par
+            ///     This method assumes the plane is normalized first.
+            float DistanceTo(const glm::vec3 &point) const
+            {
+                return glm::dot(glm::vec3(a, b, c), point) + d;
+            }
+
+
+            //////////////////////////////////////////////////////
+            // Operators.
+
+            Plane & operator=(const Plane &other)
+            {
+                this->a = other.a;
+                this->b = other.b;
+                this->c = other.c;
+                this->d = other.d;
+
+                return *this;
+            }
 
 
         public:
