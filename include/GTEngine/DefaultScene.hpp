@@ -5,6 +5,7 @@
 #include "Scene.hpp"
 #include "DefaultSceneUpdateManager.hpp"
 #include "DefaultScenePhysicsManager.hpp"
+#include "DefaultSceneCullingManager.hpp"
 #include "Physics.hpp"
 #include "NavigationMesh.hpp"
 #include <GTCore/List.hpp>
@@ -68,13 +69,7 @@ namespace GTEngine
         void GetAABB(glm::vec3 &min, glm::vec3 &max) const;
 
 
-        
-        /// Scene::PickSceneNode()
-        SceneNode* PickSceneNode(const glm::vec3 &rayStart, const glm::vec3 &rayEnd);
-
         /// Scene::RayTest()
-        //SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd);
-        //SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestResult &result);
         SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback);
 
         /// Scene::ContactTest()
@@ -150,192 +145,6 @@ namespace GTEngine
         void DoPreUpdateClean();
 
 
-        /// Adds culling objects for the given model.
-        void AddModelCullingObjects(ModelComponent &modelComponent);
-
-        /// Removes culling objects for the given model.
-        void RemoveModelCullingObjects(ModelComponent &modelComponent);
-
-        /// Adds culling objects for the given point light.
-        void AddPointLightCullingObjects(PointLightComponent &light);
-
-        /// Removes culling objects for the given point light.
-        void RemovePointLightCullingObjects(PointLightComponent &light);
-
-        /// Adds culling objects for the given spot light.
-        void AddSpotLightCullingObjects(SpotLightComponent &light);
-
-        /// Removes culling objects for the given spot light.
-        void RemoveSpotLightCullingObjects(SpotLightComponent &light);
-        
-
-        
-
-
-    private:
-
-        /// Structure containing metadata about a scene node.
-        struct SceneNodeMetadata
-        {
-            /// A pointer to the collision object for the model component. Can be null.
-            CollisionObject* modelCollisionObject;
-
-            /// The vertex array to use as the source for the collision shape of the model.
-            btTriangleIndexVertexArray* modelCollisionShapeVA;
-
-            /// The collision shape to use with the model. Can be null only if <modelCollisionObject> is also null.
-            btGImpactMeshShape* modelCollisionShape;
-
-
-            /// A pointer to the collision object for the point light component. Can be null.
-            CollisionObject* pointLightCollisionObject;
-
-            /// The collision shape to use with the point light collision object. Can be null only if <pointLightCollisionObject> is also null.
-            btSphereShape* pointLightCollisionShape;
-
-
-            /// A pointer to the collision object for the spot light component. Can be null.
-            CollisionObject* spotLightCollisionObject;
-
-            /// The collision shape to use with the spot light collision object. Can be null only if <spotLightCollisionObject> is also null. We
-            /// need to use a compound shape here because the cone will need to be offset by half it's height.
-            btCompoundShape* spotLightCollisionShape;
-
-
-
-            SceneNodeMetadata()
-                : modelCollisionObject(nullptr), modelCollisionShapeVA(nullptr), modelCollisionShape(nullptr),
-                  pointLightCollisionObject(nullptr), pointLightCollisionShape(),
-                  spotLightCollisionObject(nullptr), spotLightCollisionShape()
-            {
-            }
-
-            ~SceneNodeMetadata()
-            {
-                this->DeleteModelCollisionObject();
-                this->DeletePointLightCollisionObject();
-                this->DeleteSpotLightCollisionObject();
-            }
-
-            /// Allocates the model collision object and shape.
-            void AllocateModelCollisionObject(Model &model, const glm::vec3 &scale)
-            {
-                this->DeleteModelCollisionObject();
-
-                auto sourceVA = model.UpdateCollisionVertexArray();
-                if (sourceVA != nullptr)
-                {
-                    auto &vertexFormat = sourceVA->GetFormat();
-                    auto  indexData    = reinterpret_cast<int *>(sourceVA->MapIndexData());
-                    auto  vertexData   = sourceVA->MapVertexData();
-
-                    this->modelCollisionShapeVA = new btTriangleIndexVertexArray(
-                        static_cast<int>(sourceVA->GetIndexCount() / 3), indexData, 3 * sizeof(unsigned int),
-                        static_cast<int>(sourceVA->GetVertexCount()), vertexData + vertexFormat.GetAttributeOffset(VertexAttribs::Position),  static_cast<int>(vertexFormat.GetSizeInBytes()));
-
-                    this->modelCollisionShape  = new btGImpactMeshShape(this->modelCollisionShapeVA);
-                    this->modelCollisionShape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
-                    this->modelCollisionShape->updateBound();
-
-                    this->modelCollisionObject = new CollisionObject;
-
-                    sourceVA->UnmapIndexData();
-                    sourceVA->UnmapVertexData();
-                }
-            }
-
-            /// Deletes the model collision object and shape.
-            void DeleteModelCollisionObject()
-            {
-                /*
-                if (modelCollisionShape != nullptr)
-                {
-                    while (this->modelCollisionShape->getNumChildShapes() > 0)
-                    {
-                        auto child = this->modelCollisionShape->getChildShape(0);
-                        this->modelCollisionShape->removeChildShapeByIndex(0);
-
-                        delete child;
-                    }
-                }
-                */
-
-                delete this->modelCollisionObject;
-                delete this->modelCollisionShapeVA;
-                delete this->modelCollisionShape;
-
-                this->modelCollisionObject  = nullptr;
-                this->modelCollisionShapeVA = nullptr;
-                this->modelCollisionShape   = nullptr;
-            }
-
-
-
-            /// Allocates the point light culling object and shape.
-            void AllocatePointLightCollisionObject(float radius)
-            {
-                this->DeletePointLightCollisionObject();
-
-                pointLightCollisionObject = new CollisionObject;
-                pointLightCollisionShape  = new btSphereShape(radius);
-            }
-
-            /// Deletes the point light culling object and shape.
-            void DeletePointLightCollisionObject()
-            {
-                delete this->pointLightCollisionObject;
-                delete this->pointLightCollisionShape;
-
-                this->pointLightCollisionObject = nullptr;
-                this->pointLightCollisionShape  = nullptr;
-            }
-
-
-            
-            /// Allocates the spot light culling object and shape.
-            void AllocateSpotLightCollisionObject(float outerAngle, float height)
-            {
-                this->DeleteSpotLightCollisionObject();
-
-                spotLightCollisionObject = new CollisionObject;
-                spotLightCollisionShape  = new btCompoundShape;
-
-                // Here we create the cone shape. We need to offset by half the height because Bullet creates it's cones centered.
-                btTransform coneTransform;
-                coneTransform.setIdentity();
-                coneTransform.setOrigin(btVector3(0.0f, 0.0f, -height * 0.5f));
-                spotLightCollisionShape->addChildShape(coneTransform, new btConeShapeZ(glm::sin(glm::radians(outerAngle)) * height, height));
-            }
-
-            /// Deletes a spot light culling object and shape.
-            void DeleteSpotLightCollisionObject()
-            {
-                if (spotLightCollisionShape != nullptr)
-                {
-                    while (this->spotLightCollisionShape->getNumChildShapes() > 0)
-                    {
-                        auto child = this->spotLightCollisionShape->getChildShape(0);
-                        this->spotLightCollisionShape->removeChildShapeByIndex(0);
-
-                        delete child;
-                    }
-                }
-
-                delete this->spotLightCollisionObject;
-                delete this->spotLightCollisionShape;
-
-                this->spotLightCollisionObject = nullptr;
-                this->spotLightCollisionShape  = nullptr;
-            }
-
-
-
-
-        private:    // No copying.
-            SceneNodeMetadata(const SceneNodeMetadata &);
-            SceneNodeMetadata & operator=(const SceneNodeMetadata &);
-        };
-
 
     private:
 
@@ -352,24 +161,15 @@ namespace GTEngine
         /// The physics manager.
         DefaultScenePhysicsManager physicsManager;
 
+        /// The culling manager.
+        DefaultSceneCullingManager cullingManager;
+
 
         /// The list of ambient light components.
         GTCore::List<AmbientLightComponent*> ambientLightComponents;
 
         /// The list of directional light components.
         GTCore::List<DirectionalLightComponent*> directionalLightComponents;
-
-        /// The list of occluder components.
-        GTCore::List<OccluderComponent*> occluderComponents;
-
-
-        /// The dynamics world for everything involving physics and collision detection.
-        //mutable DynamicsWorld dynamicsWorld; 
-
-        /// The collision world that will do occlusion culling and other collision detection functionality. We also use this
-        /// world for picking. This world contains objects for each relevant component of an entity. The scene distringuishes
-        /// between components types by looking at the collision group.
-        CollisionWorld occlusionCollisionWorld;
 
 
         /// The navigation mesh for doing navigation paths.
