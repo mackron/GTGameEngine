@@ -912,7 +912,6 @@ namespace GTEngine
 
             return nullptr;
         }
-
         static const SceneNode* Upcast(const SceneObject* object)
         {
             if (object != nullptr && object->GetType() == SceneObjectType_SceneNode)

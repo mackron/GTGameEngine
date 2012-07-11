@@ -141,7 +141,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The picking is performed based on the collision volumes of the visual representation of the scene node.
-        SceneNode* PickSceneNode(int x, int y);
+        //SceneNode* PickSceneNode(int x, int y);
 
 
     // Misc stuff.

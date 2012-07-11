@@ -187,6 +187,7 @@ namespace GTEngine
         rayFar  = glm::unProject(winCoords, view, projection, viewportCoords);
     }
 
+    /*
     SceneNode* SceneViewport::PickSceneNode(int x, int y)
     {
         glm::vec3 rayNear, rayFar;
@@ -199,6 +200,7 @@ namespace GTEngine
 
         return nullptr;
     }
+    */
 
 
     /*** Misc Stuff ***/

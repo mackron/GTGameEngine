@@ -245,7 +245,7 @@ namespace GTEngine
         /// Picks the closest scene node based on the given ray.
         /// @param rayStart [in] The start of the ray.
         /// @param rayEnd   [in] The end of the ray.
-        virtual SceneNode* PickSceneNode(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
+        //virtual SceneNode* PickSceneNode(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
 
 
         /// Performs a ray test on the scene nodes against their dynamics components.

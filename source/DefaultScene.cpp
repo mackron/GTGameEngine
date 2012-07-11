@@ -66,6 +66,77 @@ namespace GTEngine
 }
 
 
+// Culling callbacks.
+namespace GTEngine
+{
+    /// Callback structure for doing occlusion culling against a viewport.
+    struct DefaultSceneViewportCullingCallback : SceneCullingManager::VisibleCallback
+    {
+        /// Constructor
+        DefaultSceneViewportCullingCallback(SceneViewport &viewport)
+            : viewport(viewport)
+        {
+        }
+
+        /// Destructor.
+        ~DefaultSceneViewportCullingCallback()
+        {
+        }
+
+
+        /// VisibleCallback::ProcessObjectModel().
+        virtual void ProcessObjectModel(SceneObject &object)
+        {
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::ModelComponent>();
+                if (component != nullptr)
+                {
+                    this->viewport.AddModelComponent(*component);
+                }
+            }
+        }
+
+        /// VisibleCallback::ProcessObjectPointLight().
+        virtual void ProcessObjectPointLight(SceneObject &object)
+        {
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::PointLightComponent>();
+                if (component != nullptr)
+                {
+                    this->viewport.AddPointLightComponent(*component);
+                }
+            }
+        }
+
+        /// VisibleCallback::ProcessObjectSpotLight().
+        virtual void ProcessObjectSpotLight(SceneObject &object)
+        {
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::SpotLightComponent>();
+                if (component != nullptr)
+                {
+                    this->viewport.AddSpotLightComponent(*component);
+                }
+            }
+        }
+
+
+    private:
+
+        /// The viewport.
+        SceneViewport &viewport;
+
+
+    private:    // No copying.
+        DefaultSceneViewportCullingCallback(const DefaultSceneViewportCullingCallback &);
+        DefaultSceneViewportCullingCallback & operator=(const DefaultSceneViewportCullingCallback &);
+    };
+}
+
+
 // Bullet collision test callbacks.
 namespace GTEngine
 {
@@ -197,8 +268,6 @@ namespace GTEngine
         : viewports(), nodes(),
           updateManager(), physicsManager(),
           ambientLightComponents(), directionalLightComponents(),
-          occluderComponents(),
-          /*dynamicsWorld(),*/ occlusionCollisionWorld(),
           navigationMesh()/*, navigationMeshNode(), navigationMeshModel()*/
     {
         //this->AddSceneNode(this->navigationMeshNode);
@@ -351,36 +420,10 @@ namespace GTEngine
     }
 
 
-    void DefaultScene::GetAABB(glm::vec3 &min, glm::vec3 &max) const
+    void DefaultScene::GetAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const
     {
-        // TODO: For some reason using the dynamics world will given too-large a bounding box. Using the occlusion collision world
-        //       gives good results. Not sure why dynamicsWorld is not working properly...
-
-        btVector3 tempMin;
-        btVector3 tempMax;
-        this->occlusionCollisionWorld.GetBroadphase().getBroadphaseAabb(tempMin, tempMax);
-
-        min = ToGLMVector3(tempMin);
-        max = ToGLMVector3(tempMax);
-    }
-
-
-    SceneNode* DefaultScene::PickSceneNode(const glm::vec3 &rayStart, const glm::vec3 &rayEnd)
-    {
-        // This will store the result of our ray-test query.
-        btCollisionWorld::ClosestRayResultCallback rayTestResult(GTEngine::ToBulletVector3(rayStart), GTEngine::ToBulletVector3(rayEnd));
-        rayTestResult.m_collisionFilterGroup = CollisionGroups::Picking;
-        rayTestResult.m_collisionFilterMask  = CollisionGroups::Picking;      // We only want collisions with model picking objects.
-
-        // We use the occlusion world for picking. This will cause objects to be picked based on their mesh volumes. The scene node pointer
-        // is stored as the user pointer on the collision object.
-        this->occlusionCollisionWorld.RayTest(rayStart, rayEnd, rayTestResult);
-        if (rayTestResult.hasHit())
-        {
-            return static_cast<SceneNode*>(rayTestResult.m_collisionObject->getUserPointer());
-        }
-
-        return nullptr;
+        // We'll retrieve the global AABB from the culling manager. Might need to move this over to physics manager, perhaps.
+        this->cullingManager.GetGlobalAABB(aabbMin, aabbMax);
     }
 
 
@@ -425,41 +468,14 @@ namespace GTEngine
             auto camera = cameraNode->GetComponent<CameraComponent>();
             if (camera != nullptr)
             {
-                // We're using Bullet for this. Specifically, we're using the Dbvt broadphase of the collision world.
-                btDbvtBroadphase &broadphase = this->occlusionCollisionWorld.GetBroadphase();
-
                 glm::mat4 projection = camera->GetProjectionMatrix();
                 glm::mat4 view       = camera->GetViewMatrix();
                 glm::mat4 mvp        = projection * view;
-                glm::vec3 forward    = cameraNode->GetWorldForwardVector();
 
-                Math::Plane planes[6];
-                Math::CalculateFrustumPlanes(mvp, planes, true);           // 'false' means to NOT normalize the planes (not needed).
-
-
-                btVector3 sortaxis(forward.x, forward.y, forward.z);
-                btVector3 planes_n[6];
-		        btScalar  planes_o[6];
-
-                planes_n[0] = btVector3(planes[0].a, planes[0].b, planes[0].c); planes_o[0] = planes[0].d;
-                planes_n[1] = btVector3(planes[1].a, planes[1].b, planes[1].c); planes_o[1] = planes[1].d;
-                planes_n[2] = btVector3(planes[2].a, planes[2].b, planes[2].c); planes_o[2] = planes[2].d;
-                planes_n[3] = btVector3(planes[3].a, planes[3].b, planes[3].c); planes_o[3] = planes[3].d;
-                planes_n[4] = btVector3(planes[4].a, planes[4].b, planes[4].c); planes_o[4] = planes[4].d;
-                planes_n[5] = btVector3(planes[5].a, planes[5].b, planes[5].c); planes_o[5] = planes[5].d;
+                DefaultSceneViewportCullingCallback callback(viewport);
+                this->cullingManager.ProcessVisibleObjects(mvp, callback);
 
                 
-                DefaultSceneCullingDbvtPolicy dbvtPolicy(viewport);
-
-                btDbvt::collideOCL(broadphase.m_sets[1].m_root, planes_n, planes_o, sortaxis, 6, dbvtPolicy);
-			    btDbvt::collideOCL(broadphase.m_sets[0].m_root, planes_n, planes_o, sortaxis, 6, dbvtPolicy);
-
-                // Below is for only frustum culling.
-                //btDbvt::collideKDOP(broadphase.m_sets[1].m_root, planes_n, planes_o, 5, dbvtPolicy);
-			    //btDbvt::collideKDOP(broadphase.m_sets[0].m_root, planes_n, planes_o, 5, dbvtPolicy);
-
-
-
                 // Here is where we manually add visible components. Ambient and Directional lights are always visible, so they are added.
                 
                 // Ambient.
@@ -578,105 +594,7 @@ namespace GTEngine
     {
     }
 
-
-    void DefaultScene::AddModelCullingObjects(ModelComponent &modelComponent)
-    {
-        auto metadata = modelComponent.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-        if (metadata != nullptr)
-        {
-            auto model = modelComponent.GetModel();
-            if (model != nullptr)
-            {
-                auto &node = modelComponent.GetNode();
-
-                // We first need to ensure we have the objects allocated.
-                metadata->AllocateModelCollisionObject(*model, node.GetWorldScale());
-
-                metadata->modelCollisionObject->setCollisionShape(metadata->modelCollisionShape);
-                metadata->modelCollisionObject->setUserPointer(&node);
-
-                // At this point the collision objects will have been created and all we need to do is add them to the collision world.
-                btTransform transform;
-                node.GetWorldTransform(transform);
-                metadata->modelCollisionObject->setWorldTransform(transform);
-
-                this->occlusionCollisionWorld.AddCollisionObject(*metadata->modelCollisionObject,
-                    CollisionGroups::Picking | CollisionGroups::Model,          // The collision group
-                    CollisionGroups::Picking | CollisionGroups::PointLight);    // The collision mask (what this object can collide with)
-            }
-        }
-    }
-
-    void DefaultScene::RemoveModelCullingObjects(ModelComponent &modelComponent)
-    {
-        auto metadata = modelComponent.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-        if (metadata != nullptr)
-        {
-            metadata->DeleteModelCollisionObject();
-        }
-    }
-
-    void DefaultScene::AddPointLightCullingObjects(PointLightComponent &light)
-    {
-        auto metadata = light.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-        if (metadata != nullptr)
-        {
-            metadata->AllocatePointLightCollisionObject(light.GetApproximateRadius());
-
-            metadata->pointLightCollisionObject->setCollisionShape(metadata->pointLightCollisionShape);
-            metadata->pointLightCollisionObject->setUserPointer(&light.GetNode());
-
-
-            btTransform transform;
-            light.GetNode().GetWorldTransform(transform);
-            metadata->pointLightCollisionObject->setWorldTransform(transform);
-
-            this->occlusionCollisionWorld.AddCollisionObject(*metadata->pointLightCollisionObject,
-                    CollisionGroups::PointLight,          // The collision group
-                    CollisionGroups::Model);              // The collision mask (what this object can collide with)
-        }
-    }
-
-    void DefaultScene::RemovePointLightCullingObjects(PointLightComponent &light)
-    {
-        auto metadata = light.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-        if (metadata != nullptr)
-        {
-            metadata->DeletePointLightCollisionObject();
-        }
-    }
-
-    void DefaultScene::AddSpotLightCullingObjects(SpotLightComponent &light)
-    {
-        auto metadata = light.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-        if (metadata != nullptr)
-        {
-            metadata->AllocateSpotLightCollisionObject(light.GetOuterAngle(), light.GetApproximateLength());
-
-            metadata->spotLightCollisionObject->setCollisionShape(metadata->spotLightCollisionShape);
-            metadata->spotLightCollisionObject->setUserPointer(&light.GetNode());
-
-
-            btTransform transform;
-            light.GetNode().GetWorldTransform(transform);
-            metadata->spotLightCollisionObject->setWorldTransform(transform);
-
-            this->occlusionCollisionWorld.AddCollisionObject(*metadata->spotLightCollisionObject,
-                    CollisionGroups::SpotLight,           // The collision group
-                    CollisionGroups::Model);              // The collision mask (what this object can collide with)
-        }
-    }
-
-    void DefaultScene::RemoveSpotLightCullingObjects(SpotLightComponent &light)
-    {
-        auto metadata = light.GetNode().GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-        if (metadata != nullptr)
-        {
-            metadata->DeleteSpotLightCollisionObject();
-        }
-    }
-
-
+    
     void DefaultScene::OnSceneNodeAdded(SceneNode &node)
     {
         this->nodes.Append(&node);
@@ -749,45 +667,7 @@ namespace GTEngine
         }
 
 
-        // Occluders.
-        auto occluderComponent = node.GetComponent<OccluderComponent>();
-        if (occluderComponent != nullptr)
-        {
-            auto &collisionObject = occluderComponent->GetCollisionObject();
-
-            btTransform transform;
-            node.GetWorldTransform(transform);
-            collisionObject.setWorldTransform(transform);
-
-            this->occlusionCollisionWorld.AddCollisionObject(collisionObject, CollisionGroups::Occluder, CollisionGroups::All);
-        }
-
-
-        // The node needs to have some metadata associated with it. It's important that we set the data pointer straight away so that helper functions
-        // can gain access to it easily.
-        auto metadata = new SceneNodeMetadata;
-        node.SetDataPointer(reinterpret_cast<size_t>(this), metadata);
-
-        // If the node has a model component, we need to create a collision object for the picking/occlusion world.
-        auto modelComponent = node.GetComponent<ModelComponent>();
-        if (modelComponent != nullptr)
-        {
-            this->AddModelCullingObjects(*modelComponent);
-        }
-        
-        // We also need to add culling objects for point lights...
-        auto pointLightComponent = node.GetComponent<PointLightComponent>();
-        if (pointLightComponent != nullptr)
-        {
-            this->AddPointLightCullingObjects(*pointLightComponent);
-        }
-
-        // ... and spot lights.
-        auto spotLightComponent = node.GetComponent<SpotLightComponent>();
-        if (spotLightComponent != nullptr)
-        {
-            this->AddSpotLightCullingObjects(*spotLightComponent);
-        }
+        this->cullingManager.AddObject(node);
     }
 
     void DefaultScene::OnSceneNodeRemoved(SceneNode& node)
@@ -818,7 +698,6 @@ namespace GTEngine
         if (dynamicsComponent != nullptr)
         {
             this->physicsManager.RemoveRigidBody(dynamicsComponent->GetRigidBody());
-            //this->dynamicsWorld.RemoveRigidBody(dynamicsComponent->GetRigidBody());
         }
 
         // Same for the proximity component as the dynamics component.
@@ -826,21 +705,10 @@ namespace GTEngine
         if (proximityComponent != nullptr)
         {
             this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
-            //this->dynamicsWorld.RemoveGhostObject(proximityComponent->GetGhostObject());
         }
 
-        // Occluder.
-        auto occluderComponent = node.GetComponent<OccluderComponent>();
-        if (occluderComponent != nullptr)
-        {
-            this->occlusionCollisionWorld.RemoveCollisionObject(occluderComponent->GetCollisionObject());
-        }
 
-        // If we have metadata, it needs to be removed. this will delete any culling objects.
-        auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-        delete metadata;
-
-        node.RemoveDataPointer(reinterpret_cast<size_t>(this));
+        this->cullingManager.RemoveObject(node);
     }
 
 
@@ -864,106 +732,14 @@ namespace GTEngine
             }
         }
 
-        // Occluders.
-        auto occluderComponent = node.GetComponent<OccluderComponent>();
-        if (occluderComponent != nullptr)
-        {
-            auto &collisionObject = occluderComponent->GetCollisionObject();
-
-            auto world = collisionObject.GetWorld();
-            if (world != nullptr)
-            {
-                btTransform transform;
-                node.GetWorldTransform(transform);
-
-                collisionObject.setWorldTransform(transform);
-                world->UpdateAABB(collisionObject);
-            }
-        }
-
-
-
-        auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-        if (metadata != nullptr)    // Use an assert?
-        {
-            btTransform transform;
-            node.GetWorldTransform(transform);
-
-            if (metadata->modelCollisionObject != nullptr)
-            {
-                auto world = metadata->modelCollisionObject->GetWorld();
-                if (world != nullptr)
-                {
-                    metadata->modelCollisionObject->setWorldTransform(transform);
-                    this->occlusionCollisionWorld.UpdateAABB(*metadata->modelCollisionObject);
-                }
-            }
-
-            if (metadata->pointLightCollisionObject != nullptr)
-            {
-                auto world = metadata->pointLightCollisionObject->GetWorld();
-                if (world != nullptr)
-                {
-                    metadata->pointLightCollisionObject->setWorldTransform(transform);
-                    this->occlusionCollisionWorld.UpdateAABB(*metadata->pointLightCollisionObject);
-                }
-            }
-
-            if (metadata->spotLightCollisionObject != nullptr)
-            {
-                auto world = metadata->spotLightCollisionObject->GetWorld();
-                if (world != nullptr)
-                {
-                    metadata->spotLightCollisionObject->setWorldTransform(transform);
-                    this->occlusionCollisionWorld.UpdateAABB(*metadata->spotLightCollisionObject);
-                }
-            }
-        }
+        this->cullingManager.UpdateTransform(node);
     }
 
     void DefaultScene::OnSceneNodeScale(SceneNode &node)
     {
-        auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-        if (metadata != nullptr)    // Use an assert?
-        {
-            //glm::vec3 scale = node.GetWorldScale();
+        // Culling information needs to be updated.
+        this->cullingManager.UpdateScale(node);
 
-            if (metadata->modelCollisionObject != nullptr)
-            {
-                auto modelComponent = node.GetComponent<ModelComponent>();
-                if (modelComponent != nullptr)
-                {
-                    // We need to scale the collision shapes of the models in the occlusion collision world. Unfortunately just setting the scale
-                    // with setLocalScaling() doesn't want to work. For now we will just remove and re-add the model culling objects.
-                    this->RemoveModelCullingObjects(*modelComponent);
-                    this->AddModelCullingObjects(*modelComponent);
-                }
-
-                /*
-                // We need to scale the collision shapes. Unfortunately the only way I could figure this out is to completely delete
-                // the children and recreate them. The loop below does just that.
-                // TODO: Have a look into this problem. If it's a bug, it needs to be reported.
-                int meshCount = metadata->modelCollisionShape->getNumChildShapes();
-                for (int i = 0; i < meshCount; ++i)
-                {
-                    auto oldChild = static_cast<btGImpactMeshShape*>(metadata->modelCollisionShape->getChildShape(0));
-                    metadata->modelCollisionShape->removeChildShapeByIndex(0);
-
-                    auto newChild = new btGImpactMeshShape(oldChild->getMeshInterface());
-                    newChild->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
-                    newChild->updateBound();
-
-                    metadata->modelCollisionShape->addChildShape(btTransform::getIdentity(), newChild);
-
-                    delete oldChild;
-                }
-
-                this->occlusionCollisionWorld.updateSingleAabb(metadata->modelCollisionObject);
-                */
-            }
-
-            // NOTE: We are not supporting light scaling at the moment. The light radius should be controlled via it's attenuation.
-        }
 
         // The dynamics component needs to have scaling applied.
         auto dynamics = node.GetComponent<DynamicsComponent>();
@@ -977,13 +753,6 @@ namespace GTEngine
         if (proximity != nullptr)
         {
             proximity->ApplyScaling(node.GetWorldScale());
-        }
-
-        // Occluders.
-        auto occluder = node.GetComponent<OccluderComponent>();
-        if (occluder != nullptr)
-        {
-            occluder->ApplyScaling(node.GetWorldScale());
         }
     }
 
@@ -1000,16 +769,6 @@ namespace GTEngine
         {
             this->directionalLightComponents.Append(static_cast<DirectionalLightComponent*>(&component));
         }
-        else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
-        {
-            this->AddPointLightCullingObjects(static_cast<PointLightComponent&>(component));
-        }
-        else if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
-        {
-            this->AddSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
-        }
-
-        // TODO: Occluders.
     }
 
     void DefaultScene::OnSceneNodeComponentDetached(SceneNode&, Component& component)
@@ -1022,37 +781,15 @@ namespace GTEngine
         {
             this->directionalLightComponents.Remove(this->directionalLightComponents.Find(static_cast<DirectionalLightComponent*>(&component)));
         }
-        else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
-        {
-            this->RemovePointLightCullingObjects(static_cast<PointLightComponent&>(component));
-        }
-        else if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
-        {
-            this->RemoveSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
-        }
-
-        // TODO: Occluders.
     }
 
-    void DefaultScene::OnSceneNodeComponentChanged(SceneNode&, Component &component)
+    void DefaultScene::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
     {
-        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name)      ||
+            GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
+            GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
-            // The component is a model. We'll need to update the culling information.
-            this->RemoveModelCullingObjects(static_cast<ModelComponent&>(component));
-            this->AddModelCullingObjects(static_cast<ModelComponent&>(component));
-        }
-        if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
-        {
-            // The component is a point light. We'll need to update the culling information.
-            this->RemovePointLightCullingObjects(static_cast<PointLightComponent&>(component));
-            this->AddPointLightCullingObjects(static_cast<PointLightComponent&>(component));
-        }
-        if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
-        {
-            // The component is a spot light. We'll need to update the culling information.
-            this->RemoveSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
-            this->AddSpotLightCullingObjects(static_cast<SpotLightComponent&>(component));
+            this->cullingManager.UpdateObject(node);
         }
 
         // TODO: Proximity, occluders.
