@@ -40,14 +40,6 @@ namespace GTEngine
     {
     }
 
-    void SceneNodeEventHandler::OnComponentAttached(SceneNode &, Component &)
-    {
-    }
-
-    void SceneNodeEventHandler::OnComponentDetached(SceneNode &, Component &)
-    {
-    }
-
     void SceneNodeEventHandler::OnUpdate(SceneNode &, double)
     {
     }
@@ -967,32 +959,6 @@ namespace GTEngine
         if (this->scene != nullptr)
         {
             this->scene->OnSceneNodeVisibleChanged(*this);
-        }
-    }
-
-    void SceneNode::OnComponentAttached(Component& component)
-    {
-        for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
-        {
-            i->value->OnComponentAttached(*this, component);
-        }
-
-        if (this->scene != nullptr)
-        {
-            this->scene->OnSceneNodeComponentAttached(*this, component);
-        }
-    }
-
-    void SceneNode::OnComponentDetached(Component& component)
-    {
-        for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
-        {
-            i->value->OnComponentDetached(*this, component);
-        }
-
-        if (this->scene != nullptr)
-        {
-            this->scene->OnSceneNodeComponentDetached(*this, component);
         }
     }
 

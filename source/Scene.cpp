@@ -56,6 +56,7 @@ namespace GTEngine
     {
     }
 
+    /*
     void Scene::OnSceneNodeComponentAttached(SceneNode &, Component &)
     {
     }
@@ -63,6 +64,7 @@ namespace GTEngine
     void Scene::OnSceneNodeComponentDetached(SceneNode &, Component &)
     {
     }
+    */
 
     void Scene::OnSceneNodeComponentChanged(SceneNode &, Component &)
     {
