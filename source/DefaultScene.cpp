@@ -757,33 +757,6 @@ namespace GTEngine
     }
 
 
-
-    /*
-    void DefaultScene::OnSceneNodeComponentAttached(SceneNode&, Component& component)
-    {
-        if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
-        {
-            this->ambientLightComponents.Append(static_cast<AmbientLightComponent*>(&component));
-        }
-        else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
-        {
-            this->directionalLightComponents.Append(static_cast<DirectionalLightComponent*>(&component));
-        }
-    }
-
-    void DefaultScene::OnSceneNodeComponentDetached(SceneNode&, Component& component)
-    {
-        if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
-        {
-            this->ambientLightComponents.Remove(this->ambientLightComponents.Find(static_cast<AmbientLightComponent*>(&component)));
-        }
-        else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
-        {
-            this->directionalLightComponents.Remove(this->directionalLightComponents.Find(static_cast<DirectionalLightComponent*>(&component)));
-        }
-    }
-    */
-
     void DefaultScene::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
     {
         if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name)      ||

@@ -56,16 +56,6 @@ namespace GTEngine
     {
     }
 
-    /*
-    void Scene::OnSceneNodeComponentAttached(SceneNode &, Component &)
-    {
-    }
-
-    void Scene::OnSceneNodeComponentDetached(SceneNode &, Component &)
-    {
-    }
-    */
-
     void Scene::OnSceneNodeComponentChanged(SceneNode &, Component &)
     {
     }
