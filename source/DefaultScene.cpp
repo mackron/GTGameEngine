@@ -758,7 +758,7 @@ namespace GTEngine
 
 
 
-
+    /*
     void DefaultScene::OnSceneNodeComponentAttached(SceneNode&, Component& component)
     {
         if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
@@ -782,6 +782,7 @@ namespace GTEngine
             this->directionalLightComponents.Remove(this->directionalLightComponents.Find(static_cast<DirectionalLightComponent*>(&component)));
         }
     }
+    */
 
     void DefaultScene::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
     {

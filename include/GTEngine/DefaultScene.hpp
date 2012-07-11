@@ -127,8 +127,8 @@ namespace GTEngine
         void OnSceneNodeTransform(SceneNode &node);
         void OnSceneNodeScale(SceneNode &node);
 
-        void OnSceneNodeComponentAttached(SceneNode& node, Component& component);
-        void OnSceneNodeComponentDetached(SceneNode& node, Component& component);
+        //void OnSceneNodeComponentAttached(SceneNode& node, Component& component);
+        //void OnSceneNodeComponentDetached(SceneNode& node, Component& component);
         void OnSceneNodeComponentChanged(SceneNode& node, Component& component);
 
 

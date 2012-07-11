@@ -104,21 +104,6 @@ namespace GTEngine
         virtual void OnVisibleChanged(SceneNode &node);
 
         /**
-        *   \brief                 Called after a component is attached to the scene node.
-        *   \param  node      [in] A pointer to the node that has had a component attached.
-        *   \param  component [in] A pointer to the component that was just attached.
-        */
-        virtual void OnComponentAttached(SceneNode &node, Component &component);
-
-        /**
-        *   \brief                 Called after a component is detached from the scene node.
-        *   \param  node      [in] A pointer to the node that has had a component detached.
-        *   \param  component [in] A pointer to the component that was just detached.
-        */
-        virtual void OnComponentDetached(SceneNode &node, Component &component);
-
-
-        /**
         *   \brief                          Called when the scene node is being updated.
         *   \param  node               [in] A pointer to the node that is being updated.
         *   \param  deltaTimeInSeconds [in] The since the last update, in seconds.
@@ -502,8 +487,6 @@ namespace GTEngine
             {
                 component = new T(*this);
                 this->components.Add(T::Name, component);
-
-                this->OnComponentAttached(*component);
             }
 
             return component;
@@ -520,7 +503,6 @@ namespace GTEngine
             {
                 // The OnComponentDetached() event needs to be called before destruction, but after it's been removed.
                 this->components.Remove(T::Name);
-                this->OnComponentDetached(*component);
 
                 delete component;
             }
@@ -541,7 +523,6 @@ namespace GTEngine
                 assert(component != nullptr);
 
                 this->components.RemoveByIndex(0);
-                this->OnComponentDetached(*component);
 
                 delete component;
             }
@@ -783,8 +764,8 @@ namespace GTEngine
         void OnSceneChanged(Scene *prevScene);
         void OnStaticChanged();
         void OnVisibleChanged();
-        void OnComponentAttached(Component& component);
-        void OnComponentDetached(Component& component);
+        //void OnComponentAttached(Component& component);
+        //void OnComponentDetached(Component& component);
         void OnUpdate(double deltaTimeInSeconds);
         void OnContact(SceneNode &other, const btManifoldPoint &pt);
 
