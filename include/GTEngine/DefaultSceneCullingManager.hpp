@@ -40,16 +40,6 @@ namespace GTEngine
         virtual void UpdateObject(SceneObject &object);
 
 
-        /// SceneCullingManager::UpdateObjectModel().
-        //virtual void UpdateObjectModel(SceneObject &object);
-
-        /// SceneCullingManager::UpdateObjectPointLight().
-        //virtual void UpdateObjectPointLight(SceneObject &object);
-
-        /// SceneCullingManager::UpdateObjectSpotLight().
-        //virtual void UpdateObjectSpotLight(SceneObject &object);
-
-
         /// SceneCullingManager::GetGlobalAABB().
         virtual void GetGlobalAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const;
 
