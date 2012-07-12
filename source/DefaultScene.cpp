@@ -274,6 +274,15 @@ namespace GTEngine
         //this->navigationMeshNode.Hide();
     }
 
+    DefaultScene::DefaultScene(SceneUpdateManager &updateManager, ScenePhysicsManager &physicsManager, SceneCullingManager &cullingManager)
+        : Scene(updateManager, physicsManager, cullingManager),
+          viewports(), nodes(),
+          ambientLightComponents(), directionalLightComponents(),
+          navigationMesh()
+    {
+    }
+
+
     DefaultScene::~DefaultScene()
     {
         while (this->nodes.root != nullptr)
