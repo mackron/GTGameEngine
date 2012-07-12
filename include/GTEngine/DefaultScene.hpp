@@ -24,6 +24,7 @@ namespace GTEngine
         *   \brief  Constructor.
         */
         DefaultScene();
+        DefaultScene(SceneUpdateManager &updateManager, ScenePhysicsManager &physicsManager, SceneCullingManager &cullingManager);
 
         /**
         *   \brief  Destructor.
@@ -150,16 +151,6 @@ namespace GTEngine
 
         /// The list of nodes in the scene. This is a flat list for now, but will be optimized later.
         GTCore::List<SceneNode*> nodes;
-
-
-        /// The update manager.
-        //DefaultSceneUpdateManager updateManager;
-
-        /// The physics manager.
-        //DefaultScenePhysicsManager physicsManager;
-
-        /// The culling manager.
-        //DefaultSceneCullingManager cullingManager;
 
 
         /// The list of ambient light components.
