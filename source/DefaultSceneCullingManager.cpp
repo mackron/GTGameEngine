@@ -177,6 +177,7 @@ namespace GTEngine
             auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
             if (metadata != nullptr)                        // <-- Important that we don't use an assert here! Must handle cases where 'object' was not added with AddObject().
             {
+                /*
                 auto modelComponent = node.GetComponent<GTEngine::ModelComponent>();
                 if (modelComponent != nullptr)
                 {
@@ -186,6 +187,7 @@ namespace GTEngine
                         metadata->RefreshModelCollisionObject(*model);        // <-- Does not update transformation or scale.
                     }
                 }
+                */
 
                 auto pointLightComponent = node.GetComponent<GTEngine::PointLightComponent>();
                 if (pointLightComponent != nullptr)

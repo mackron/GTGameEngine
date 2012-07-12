@@ -5,6 +5,9 @@
 #include "SceneNode.hpp"
 #include "SceneViewport.hpp"
 #include "Physics.hpp"
+#include "SceneUpdateManager.hpp"
+#include "ScenePhysicsManager.hpp"
+#include "SceneCullingManager.hpp"
 
 
 /// Contact test callbacks.
@@ -172,15 +175,24 @@ namespace GTEngine
     public:
 
         Scene();
+        Scene(SceneUpdateManager &updateManager, ScenePhysicsManager &physicsManager, SceneCullingManager &cullingManager);
 
-        /**
-        *   \brief  Destructor.
-        *
-        *   \remarks
-        *       The destructor of derived classes should NOT delete attached scene nodes. Instead, they should simply be removed
-        *       from the scene.
-        */
+        /// Destructor.
+        ///
+        /// @remarks
+        ///     The destructor of derived classes will <b>not</b> delete attached objects.
         virtual ~Scene();
+
+
+        /// Adds the given object to the scene.
+        ///
+        /// @param object [in] The object to add to the scene.
+        virtual void AddObject(SceneObject &object);
+
+        /// Removes the given object from the scene.
+        ///
+        /// @param object [in] A reference to the object to remove from the scene.
+        virtual void RemoveObject(SceneObject &object);
 
 
         /**
@@ -200,6 +212,16 @@ namespace GTEngine
         *       The scene node will be orphaned. You must re-set the parent if required.
         */
         virtual void RemoveSceneNode(SceneNode &node) = 0;
+
+
+        /// Refreshes the given scene object.
+        ///
+        /// @param object [in] A reference to the object to refresh.
+        ///
+        /// @remarks
+        ///     Internally, refreshing an object will simply remove and re-add the object from/to the scene, which will then force updates to
+        ///     the internal structures (update manager, physics manager, etc).
+        virtual void RefreshObject(SceneObject &object);
 
         
         /**
@@ -404,6 +426,24 @@ namespace GTEngine
 
 
     protected:
+
+        /// A reference to the update manager.
+        SceneUpdateManager &updateManager;
+
+        /// A reference to the physics manager.
+        ScenePhysicsManager &physicsManager;
+
+        /// A reference to the culling manager.
+        SceneCullingManager &cullingManager;
+
+        /// Keeps track of whether or not the update manager needs to be deleted by the destructor.
+        bool deleteUpdateManager;
+
+        /// Keeps track of whether or not the physics manager needs to be deleted by the destructor.
+        bool deletePhysicsManager;
+
+        /// Keeps track of whether or not the culling manager needs to be deleted by the destructor.
+        bool deleteCullingManager;
 
         /// Whether or not the scene is paused.
         bool paused;
