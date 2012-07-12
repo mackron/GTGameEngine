@@ -16,7 +16,7 @@ namespace GTEngine
 
     Scene::Scene(SceneUpdateManager &updateManagerIn, ScenePhysicsManager &physicsManagerIn, SceneCullingManager &cullingManagerIn)
         : updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
-          deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
+          deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
           paused(false)
     {
     }
