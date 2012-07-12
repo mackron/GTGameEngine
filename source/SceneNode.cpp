@@ -676,6 +676,15 @@ namespace GTEngine
         this->SetScene(nullptr);
     }
 
+    void SceneNode::Refresh()
+    {
+        if (this->scene != nullptr)
+        {
+            this->scene->RefreshObject(*this);
+        }
+    }
+
+
     void SceneNode::SetStatic(bool isStatic)
     {
         if (this->isStatic != isStatic)

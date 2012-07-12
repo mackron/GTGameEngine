@@ -153,13 +153,13 @@ namespace GTEngine
 
 
         /// The update manager.
-        DefaultSceneUpdateManager updateManager;
+        //DefaultSceneUpdateManager updateManager;
 
         /// The physics manager.
-        DefaultScenePhysicsManager physicsManager;
+        //DefaultScenePhysicsManager physicsManager;
 
         /// The culling manager.
-        DefaultSceneCullingManager cullingManager;
+        //DefaultSceneCullingManager cullingManager;
 
 
         /// The list of ambient light components.

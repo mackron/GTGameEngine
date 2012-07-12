@@ -80,6 +80,7 @@ namespace GTEngine
             }
 
             this->modelNode.GetComponent<GTEngine::ModelComponent>()->SetModel(newModel);
+            this->modelNode.GetScene()->RefreshObject(this->modelNode);
 
             return true;
         }

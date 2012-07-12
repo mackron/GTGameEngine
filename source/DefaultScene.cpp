@@ -266,7 +266,7 @@ namespace GTEngine
 {
     DefaultScene::DefaultScene()
         : viewports(), nodes(),
-          updateManager(), physicsManager(),
+          /*updateManager(), physicsManager(),*/
           ambientLightComponents(), directionalLightComponents(),
           navigationMesh()/*, navigationMeshNode(), navigationMeshModel()*/
     {
@@ -759,7 +759,7 @@ namespace GTEngine
 
     void DefaultScene::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
     {
-        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name)      ||
+        if (/*GTCore::Strings::Equal(component.GetName(), ModelComponent::Name)      ||*/
             GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
             GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
