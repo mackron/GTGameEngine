@@ -71,10 +71,10 @@ namespace GTEngine
 
 
         /// Scene::RayTest()
-        SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback);
+        //SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback);
 
         /// Scene::ContactTest()
-        void ContactTest(const SceneNode &node, ContactTestCallback &callback);
+        //void ContactTest(const SceneNode &node, ContactTestCallback &callback);
 
 
 

@@ -137,6 +137,7 @@ namespace GTEngine
 }
 
 
+#if 0
 // Bullet collision test callbacks.
 namespace GTEngine
 {
@@ -260,6 +261,7 @@ namespace GTEngine
         DefaultSceneBulletRayResultCallback & operator=(const DefaultSceneBulletRayResultCallback &);
     };
 }
+#endif
 
 
 namespace GTEngine
@@ -436,6 +438,7 @@ namespace GTEngine
     }
 
 
+    /*
     SceneNode* DefaultScene::RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback)
     {
         // Before creating the Bullet ray test callback object, we first need to set the rayStart and rayEnd attributes of the input callback structure. We do this
@@ -464,7 +467,7 @@ namespace GTEngine
             this->physicsManager.ContactTest(proximity->GetGhostObject(), bulletCallback);
         }
     }
-
+    */
 
 
     void DefaultScene::AddVisibleComponents(SceneViewport &viewport)
