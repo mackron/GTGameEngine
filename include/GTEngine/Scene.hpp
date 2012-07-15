@@ -261,22 +261,23 @@ namespace GTEngine
         virtual void GetAABB(glm::vec3 &min, glm::vec3 &max) const = 0;
 
 
-    // Picking.
+    // Collision Tests.
     public:
 
-        /// Picks the closest scene node based on the given ray.
-        /// @param rayStart [in] The start of the ray.
-        /// @param rayEnd   [in] The end of the ray.
-        //virtual SceneNode* PickSceneNode(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
-
-
         /// Performs a ray test on the scene nodes against their dynamics components.
-        //virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd) = 0;
-        //virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestResult &result) = 0;
-        virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback) = 0;
+        ///
+        /// @param rayStart [in     ] The start position of the ray.
+        /// @param rayEnd   [in     ] The end position of the ray.
+        /// @param callback [in, out] A reference to the callback structure that will receive the results of the ray test.
+        ///
+        /// @return A pointer to the closest scene node to 'rayStart', or null if there were no contacts.
+        virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback);
 
         /// Performs a contact test against the proximity volume of the given scene node.
-        //virtual void ContactTest(const SceneNode &node, ContactTestCallback &callback) = 0;
+        ///
+        /// @param node     [in]      The node to perform the contact test against.
+        /// @param callback [in, out] A reference to the callback structure that will receive the results of the contact test.
+        virtual void ContactTest(const SceneNode &node, ContactTestCallback &callback);
 
 
 
