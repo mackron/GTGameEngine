@@ -95,9 +95,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Component.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\DefaultScene.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Errors.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -509,9 +506,6 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Component.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\DefaultScene.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp">

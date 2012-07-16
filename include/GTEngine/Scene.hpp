@@ -8,6 +8,7 @@
 #include "SceneUpdateManager.hpp"
 #include "ScenePhysicsManager.hpp"
 #include "SceneCullingManager.hpp"
+#include "NavigationMesh.hpp"
 
 
 /// Contact test callbacks.
@@ -165,16 +166,39 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    /**
-    *   \brief  Base class for scenes.
-    *
-    *   A scene is made up of a bunch of scene nodes organised in a particular way, depending on the implementation.
-    */
+    /// A class representing a scene.
+    ///
+    /// A Scene object is actually mostly just a container around managers. The managers are what perform most of the real functionality of the scene.
+    ///
+    /// Managers can only be set via the constructor and can not be changed afterwards. Below is a brief description of the roles of each manager.
+    ///
+    /// \section Update Manager
+    /// The update manager is responsible for handling the updating/stepping of scene objects each frame.
+    /// \endsection
+    ///
+    /// \section Physics Manager
+    /// The physics manager is responsible for handling the physics of a scene.
+    /// \endsection
+    ///
+    /// \section Culling Manager
+    /// The culling manager is responsible for handling any culling required by the scene. This includes occlusion and frustum culling, and also things
+    /// like culling objects that are outside the bounds of a light.
+    /// \endsection
     class Scene
     {
     public:
 
+        /// Default constructor.
+        ///
+        /// @remarks
+        ///     This constructor will use default managers.
         Scene();
+
+        /// Constructor.
+        ///
+        /// @param updateManager  [in] A reference to the update manager that will manage the updating of scene objects.
+        /// @param physicsManager [in] A reference to the physics manager that will manage the physics of the scene.
+        /// @param cullingManager [in] A reference to the culling manager that will manage the culling of objects in the scene.
         Scene(SceneUpdateManager &updateManager, ScenePhysicsManager &physicsManager, SceneCullingManager &cullingManager);
 
         /// Destructor.
@@ -187,31 +211,23 @@ namespace GTEngine
         /// Adds the given object to the scene.
         ///
         /// @param object [in] The object to add to the scene.
-        virtual void AddObject(SceneObject &object);
+        void AddObject(SceneObject &object);
 
         /// Removes the given object from the scene.
         ///
         /// @param object [in] A reference to the object to remove from the scene.
-        virtual void RemoveObject(SceneObject &object);
+        void RemoveObject(SceneObject &object);
 
 
-        /**
-        *   \brief  Adds a scene node to the scene. See remarks.
-        *
-        *   \remarks
-        *       The scene node will not be attached to a logical parent. Some scenes may use a root node as the parent of all nodes, in which
-        *       case it will be made a child of the root node.
-        */
-        virtual void AddSceneNode(SceneNode &node) = 0;
+        /// Adds a scene node to the scene.
+        ///
+        /// @param node [in] A reference to the scene node to add to the scene.
+        void AddSceneNode(SceneNode &node);
         
-        /**
-        *   \brief            Removes a scene node from the scene. See remarks.
-        *   \param  node [in] The scene node to remove.
-        *
-        *   \remarks
-        *       The scene node will be orphaned. You must re-set the parent if required.
-        */
-        virtual void RemoveSceneNode(SceneNode &node) = 0;
+        /// Removes a scene node from the scene.
+        ///
+        /// @param node [in] A reference to the node to remove.
+        void RemoveSceneNode(SceneNode &node);
 
 
         /// Refreshes the given scene object.
@@ -223,26 +239,36 @@ namespace GTEngine
         ///     the internal structures (update manager, physics manager, etc).
         virtual void RefreshObject(SceneObject &object);
 
+
+        /// Pauses the scene.
+        ///
+        /// @remarks
+        ///     Calling Update() while the scene is paused will still draw each scene node, but it will not step scene nodes or animations.
+        virtual void Pause();
+
+        /// Resumes the scene.
+        virtual void Resume();
+
+        /// Determines whether or not the scene is paused.
+        ///
+        /// @return True if the scene is paused; false otherwise.
+        virtual bool IsPaused() const { return this->paused; }
+
         
-        /**
-        *   \brief              Updates the scene.
-        *   \param  camera [in] A pointer to the node that the scene will be drawn from. Must have a camera component attached.
-        *   \param  dt     [in] The delta time in seconds. The time since the last frame update. Used for time-based movement.
-        */
-        virtual void Update(double deltaTimeInSeconds) = 0;
+        /// Steps the scene.
+        ///
+        /// @param deltaTimeInSeconds [in] The time in seconds to step the scene by. This will usually be the time between frames, but it can be adjusted to speed up/slow down time.
+        virtual void Update(double deltaTimeInSeconds);
 
-        /**
-        *   \brief  Retrieves a pointer to the first occurance of the scene node with the given name. Returns nullptr if none exist.
-        */
-        virtual SceneNode * FindFirstNode(const char *name) = 0;
 
-        /**
-        *   \brief  Retrieves a pointer to the first occurance of the scene node with the given component. Returns nullptr is none exist.
-        */
-        virtual SceneNode * FindFirstNodeWithComponent(const char *componentName) = 0;
+        /// Retrieves a pointer to the first occurance of the scene node with the given name. Returns nullptr if none exist.
+        virtual SceneNode* FindFirstNode(const char *name);
+
+        /// Retrieves a pointer to the first occurance of the scene node with the given component. Returns nullptr is none exist.
+        virtual SceneNode* FindFirstNodeWithComponent(const char *componentName);
 
         template <typename T>
-        SceneNode * FindFirstNodeWithComponent()
+        SceneNode* FindFirstNodeWithComponent()
         {
             return this->FindFirstNodeWithComponent(T::Name);
         }
@@ -250,15 +276,15 @@ namespace GTEngine
 
         /// Adds a viewport to the scene.
         /// @param viewport [in] A reference to the viewport to add to the scene.
-        virtual void AddViewport(SceneViewport &viewport) = 0;
+        virtual void AddViewport(SceneViewport &viewport);
 
         /// Removes a viewport from the scene.
         /// @param viewport [in] A reference to the viewport to remove from the scene.
-        virtual void RemoveViewport(SceneViewport &viewport) = 0;
+        virtual void RemoveViewport(SceneViewport &viewport);
 
 
         /// Retrieves the AABB of the scene.
-        virtual void GetAABB(glm::vec3 &min, glm::vec3 &max) const = 0;
+        virtual void GetAABB(glm::vec3 &min, glm::vec3 &max) const;
 
 
     // Collision Tests.
@@ -290,7 +316,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     You should not need to call this method directly. It is intended to be used internally by SceneViewport.
-        virtual void AddVisibleComponents(SceneViewport &viewport) = 0;
+        virtual void AddVisibleComponents(SceneViewport &viewport);     // TODO: Rename this. Waaaay to confusing..
 
 
 
@@ -298,12 +324,11 @@ namespace GTEngine
     public:
 
         /// Sets the scene's gravity.
-        ///
-        virtual void SetGravity(float x, float y, float z) = 0;
+        virtual void SetGravity(float x, float y, float z);
                 void SetGravity(const glm::vec3 &gravity) { this->SetGravity(gravity.x, gravity.y, gravity.z); }
 
         /// Retrieves the scene's gravity.
-        virtual void GetGravity(float &x, float &y, float &z) const = 0;
+        virtual void GetGravity(float &x, float &y, float &z) const;
 
         glm::vec3 GetGravity() const
         {
@@ -326,73 +351,64 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Default value is 2.0 (2 meters).
-        virtual void SetWalkableHeight(float height) = 0;
+        virtual void SetWalkableHeight(float height);
 
         /// Sets the walkable radius of actors for navigation.
         ///
         /// @remarks
         ///     Default value is 0.5 (0.5 meters).
-        virtual void SetWalkableRadius(float radius) = 0;
+        virtual void SetWalkableRadius(float radius);
 
         /// Sets the walkable slope angle.
         ///
         /// @remarks
         ///     Default value is 10.0 degrees.
-        virtual void SetWalkableSlopeAngle(float angle) = 0;
+        virtual void SetWalkableSlopeAngle(float angle);
 
         /// Sets the walkable climb height (for stepping).
         ///
         /// @remarks
         ///     Default value is 0.25.
-        virtual void SetWalkableClimbHeight(float height) = 0;
+        virtual void SetWalkableClimbHeight(float height);
 
 
         /// Retrieves the walkable height of actors for navigation.
         ///
         /// @remarks
         ///     Default value is 2.0 (2 meters).
-        virtual float GetWalkableHeight() const = 0;
+        virtual float GetWalkableHeight() const;
 
         /// Retrieves the walkable radius of actors for navigation.
         ///
         /// @remarks
         ///     Default value is 0.5 (0.5 meters).
-        virtual float GetWalkableRadius() const = 0;
+        virtual float GetWalkableRadius() const;
 
         /// Retrieves the walkable slope angle.
         ///
         /// @remarks
         ///     Default value is 10.0 degrees.
-        virtual float GetWalkableSlopeAngle() const = 0;
+        virtual float GetWalkableSlopeAngle() const;
 
         /// Retrieves the walkable climb height (for stepping).
         ///
         /// @remarks
         ///     Default value is 0.25.
-        virtual float GetWalkableClimbHeight() const = 0;
+        virtual float GetWalkableClimbHeight() const;
 
 
+        /// Rebuilds the navigation mesh that will be used for doing navigation paths.
+        void BuildNavigationMesh();
 
-    // Non-virtual functions.
-    public:
+        /// Retrieves the points on a navigation path between the given start and end positions.
+        ///
+        /// @param start  [in ] The start position.
+        /// @param end    [in ] The end position.
+        /// @param output [out] A reference to the vector that will receive the navigation points.
+        void FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output);
 
-        /**
-        *   \brief  Pauses the scene.
-        *
-        *   \remarks
-        *       Calling Update() while the scene is paused will still draw each scene node, but it will not step scene nodes or animations.
-        */
-        void Pause();
-
-        /**
-        *   \brief  Resumes the scene.
-        */
-        void Resume();
-
-        /**
-        *   \brief  Determines whether or not the scene is paused.
-        */
-        bool IsPaused() const { return this->paused; }
+        /// A hacky temp method for retrieving a reference to the internal list of scene nodes. (Used with NavigationMesh. Will be replaced later.)
+        const GTCore::List<SceneNode*> & GetSceneNodes() const { return this->nodes; }
 
 
     public: // Events.
@@ -448,6 +464,24 @@ namespace GTEngine
 
         /// Whether or not the scene is paused.
         bool paused;
+
+
+        /// The list of viewports currently attached to this scene.
+        GTCore::List<SceneViewport*> viewports;
+
+        /// The list of nodes in the scene. This is a flat list for now, but will be optimized later.
+        GTCore::List<SceneNode*> nodes;
+
+
+        /// The list of ambient light components.
+        GTCore::List<AmbientLightComponent*> ambientLightComponents;
+
+        /// The list of directional light components.
+        GTCore::List<DirectionalLightComponent*> directionalLightComponents;
+
+
+        /// The navigation mesh for doing navigation paths.
+        NavigationMesh navigationMesh;
 
 
     private:    // No copying.

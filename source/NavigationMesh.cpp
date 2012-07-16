@@ -1,6 +1,6 @@
 
 #include <GTEngine/NavigationMesh.hpp>
-#include <GTEngine/DefaultScene.hpp>
+#include <GTEngine/Scene.hpp>
 #include <GTEngine/Errors.hpp>
 
 namespace GTEngine
@@ -33,7 +33,7 @@ namespace GTEngine
     }
 
 
-    bool NavigationMesh::Build(const DefaultScene &scene)
+    bool NavigationMesh::Build(const Scene &scene)
     {
         bool successful = false;
 
