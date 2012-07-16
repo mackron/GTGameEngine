@@ -8,6 +8,8 @@
 
 #include <GTCore/Path.hpp>
 #include <GTCore/Timing.hpp>
+#include <GTCore/List.hpp>
+#include <GTCore/IO.hpp>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -545,49 +547,58 @@ namespace GTEngine
         }
         else
         {
-            ModelDefinition* definition = nullptr;
-
-            // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
-            auto iDefinition = LoadedDefinitions.Find(fileName);
-            if (iDefinition == nullptr)
+            // What we're going to do here is find the absolute path of the given file. We will then work from that. The reason for this is because
+            // assimp will do it's own file loading, but we still need to allow for multiple data directories.
+            GTCore::String absoluteFileName;
+            if (GTCore::IO::FindAbsolutePath(fileName, absoluteFileName))
             {
-                Assimp::Importer importer;
-                importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
+                ModelDefinition* definition = nullptr;
 
-                auto scene = importer.ReadFile(fileName, AssimpReadFileFlags);
-                if (scene != nullptr)
+                // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
+                auto iDefinition = LoadedDefinitions.Find(absoluteFileName.c_str());
+                if (iDefinition == nullptr)
                 {
-                    definition = ModelLibrary_LoadFromAssimpScene(*scene);
-                    if (definition != nullptr)
-                    {
-                        // The definition was loaded from a file, so we need to mark it as so.
-                        definition->fileName = fileName;
+                    Assimp::Importer importer;
+                    importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
 
-                        // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
-                        LoadedDefinitions.Add(fileName, definition);
+                    auto scene = importer.ReadFile(absoluteFileName.c_str(), AssimpReadFileFlags);
+                    if (scene != nullptr)
+                    {
+                        definition = ModelLibrary_LoadFromAssimpScene(*scene);
+                        if (definition != nullptr)
+                        {
+                            // The definition was loaded from a file, so we need to mark it as so.
+                            definition->fileName = absoluteFileName.c_str();
+
+                            // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
+                            LoadedDefinitions.Add(absoluteFileName.c_str(), definition);
+                        }
+                        else
+                        {
+                            GTEngine::PostError("Error creating model info for %s: %s", fileName, importer.GetErrorString());
+                        }
                     }
                     else
                     {
-                        GTEngine::PostError("Error creating model info for %s: %s", fileName, importer.GetErrorString());
+                        GTEngine::PostError("Error importing %s: %s", fileName, importer.GetErrorString());
                     }
                 }
                 else
                 {
-                    GTEngine::PostError("Error importing %s: %s", fileName, importer.GetErrorString());
+                    definition = iDefinition->value;
+                }
+
+
+                // Now that we have information about the model, we can create a new Model object and return it.
+                if (definition != nullptr)
+                {
+                    return ModelLibrary::CreateFromDefinition(*definition);
                 }
             }
             else
             {
-                definition = iDefinition->value;
+                GTEngine::PostError("Could not find file: %s", fileName);
             }
-
-        
-            // Now that we have information about the model, we can create a new Model object and return it.
-            if (definition != nullptr)
-            {
-                return ModelLibrary::CreateFromDefinition(*definition);
-            }
-
 
             return nullptr;
         }

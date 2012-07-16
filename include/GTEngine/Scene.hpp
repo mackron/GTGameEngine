@@ -5,9 +5,9 @@
 #include "SceneNode.hpp"
 #include "SceneViewport.hpp"
 #include "Physics.hpp"
-#include "SceneUpdateManager.hpp"
-#include "ScenePhysicsManager.hpp"
-#include "SceneCullingManager.hpp"
+#include "DefaultSceneUpdateManager.hpp"
+#include "DefaultScenePhysicsManager.hpp"
+#include "DefaultSceneCullingManager.hpp"
 #include "NavigationMesh.hpp"
 
 

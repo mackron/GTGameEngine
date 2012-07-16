@@ -40,10 +40,26 @@ namespace GTEngine
         // the game will use defaults.
         if (ApplicationConfig::Open("config.lua"))
         {
+            // The application config will define the data directories where all of the game's data and assets are located. We will
+            // move into the directory of the first defined data directory.
+            auto &directories = ApplicationConfig::GetDataDirectories();
+            if (directories.count > 0)
+            {
+                GTCore::IO::SetCurrentDirectory(directories[0].c_str());
+
+                // Here we are going to set additional search directories which will make GTCore search these directories if it can not
+                // open a file from the current directory. We intentionally don't include the first directory.
+                for (size_t i = 1; i < directories.count; ++i)
+                {
+                    GTCore::IO::AddAdditionalSearchPath(directories[i].c_str());
+                }
+            }
+
+
             // The application config will define the Data directory. This is the directory where all of the game's data is
             // located - textures, sounds, levels, user configs, etc. Since everything is now relative to the Data directory,
             // we'll move into it here.
-            GTCore::IO::SetCurrentDirectory(ApplicationConfig::Directories::Data());
+            //GTCore::IO::SetCurrentDirectory(ApplicationConfig::Directories::Data());
         }
 
 

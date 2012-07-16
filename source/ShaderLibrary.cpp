@@ -1,6 +1,7 @@
 
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/ApplicationConfig.hpp>
 #include <GTCore/IO.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Dictionary.hpp>
@@ -268,36 +269,56 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    bool ShaderLibrary::LoadFromDirectory(const char *directory, bool recursive)
+    bool ShaderLibrary::LoadFromDirectory(const char* directory, bool recursive)
     {
-        // First we need the files in the directory.
-        GTCore::Path searchQuery(directory);
-        searchQuery.Append(".*");                   // <-- This means to iterate over every file in the directory.
+        // We need to do this for every data directory, including the current directory.
+        GTCore::Vector<const char*> baseDirectories;
+        baseDirectories.PushBack(GTCore::IO::GetCurrentDirectory());
 
-        GTCore::IO::FileIterator i(searchQuery.c_str());
-        while (i)
+        if (!GTCore::Path::IsAbsolute(directory))
         {
-            if (i.isDirectory)
+            ApplicationConfig::GetDataDirectories(baseDirectories);
+        }
+
+
+        for (size_t iBaseDirectory = 0; iBaseDirectory < baseDirectories.count; ++iBaseDirectory)
+        {
+            // Here we save and then set the current directory.
+            GTCore::IO::PushCurrentDirectory();
+            GTCore::IO::SetCurrentDirectory(baseDirectories[iBaseDirectory]);
+
+            // First we need the files in the directory.
+            GTCore::Path searchQuery(directory);
+            searchQuery.Append(".*");                   // <-- This means to iterate over every file in the directory.
+
+            GTCore::IO::FileIterator i(searchQuery.c_str());
+            while (i)
             {
-                if (recursive)
+                if (i.isDirectory)
                 {
-                    ShaderLibrary::LoadFromDirectory(i.name, true);
+                    if (recursive)
+                    {
+                        ShaderLibrary::LoadFromDirectory(i.name, true);
+                    }
                 }
-            }
-            else
-            {
-                ShaderLibrary::LoadFromFile(i.name);
+                else
+                {
+                    ShaderLibrary::LoadFromFile(i.name);
+                }
+
+                ++i;
             }
 
-            ++i;
+            // Can't forget to restore the previous directory.
+            GTCore::IO::PopCurrentDirectory();
         }
         
         return true;
     }
 
-    bool ShaderLibrary::LoadFromFile(const char *fileName)
+    bool ShaderLibrary::LoadFromFile(const char* fileName)
     {
-        FILE *file = GTCore::IO::Open(fileName, GTCore::IO::OpenMode::Read);
+        auto file = GTCore::IO::Open(fileName, GTCore::IO::OpenMode::Read);
         if (file)
         {
             // We need to read the content of the file and then load it as XML. We cast the size to a size_t to

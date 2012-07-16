@@ -4,6 +4,7 @@
 #include <GTCore/Script.hpp>
 #include <GTCore/Errors.hpp>
 #include <GTCore/String.hpp>
+#include <GTCore/Path.hpp>
 #include <GTCore/stdlib.hpp>
 
 #include <cstring>
@@ -11,14 +12,14 @@
 namespace GTEngine
 {
     /// Helper function for retrieving the 'Data' directory from the config script.
-    const char* ApplicationConfig_GetDataDirectory();
+    void ApplicationConfig_ReadDataDirectories();
+
 
     /// The script for the config file. If this is null, we know the configuration is not yet loaded.
     static GTCore::Script* ConfigScript = nullptr;
 
-
-    /// The Data directory.
-    static GTCore::String DataDirectory;
+    /// The list of data directories.
+    static GTCore::Vector<GTCore::String> DataDirectories;
 
 
     bool ApplicationConfig::Open(const char* fileName)
@@ -26,9 +27,17 @@ namespace GTEngine
         if (!ConfigScript)
         {
             ConfigScript = new GTCore::Script;
+            ConfigScript->LoadAndExecute
+            (
+                "Directories = \n"
+                "{\n"
+                "    Data = {};\n"
+                "}\n"
+            );
+
             if (ConfigScript->LoadFile(fileName) && ConfigScript->Execute())
             {
-                DataDirectory = ApplicationConfig_GetDataDirectory();
+                ApplicationConfig_ReadDataDirectories();
             }
             else
             {
@@ -49,17 +58,21 @@ namespace GTEngine
         ConfigScript = nullptr;
     }
 
-
-    const char* ApplicationConfig::Directories::Data()
+    const GTCore::Vector<GTCore::String> & ApplicationConfig::GetDataDirectories()
     {
-        return DataDirectory.c_str();
+        return DataDirectories;
     }
 
-
-    const char* ApplicationConfig_GetDataDirectory()
+    void ApplicationConfig::GetDataDirectories(GTCore::Vector<const char*> &directories)
     {
-        const char* result = nullptr;
+        for (size_t i = 0; i < DataDirectories.count; ++i)
+        {
+            directories.PushBack(DataDirectories[i].c_str());
+        }
+    }
 
+    void ApplicationConfig_ReadDataDirectories()
+    {
         if (ConfigScript)
         {
             ConfigScript->GetGlobal("Directories");
@@ -69,13 +82,28 @@ namespace GTEngine
                 ConfigScript->GetTableValue(-2);
                 if (ConfigScript->IsString(-1))
                 {
-                    result = ConfigScript->ToString(-1);
+                    GTCore::Path absPath(ConfigScript->ToString(-1));
+                    absPath.MakeAbsolute();
+
+                    DataDirectories.PushBack(absPath.c_str());
+                }
+                else if (ConfigScript->IsTable(-1))
+                {
+                    // We have a list of directories. We need to iterate over each one.
+                    for (ConfigScript->PushNil(); ConfigScript->Next(-2); ConfigScript->Pop(1))
+                    {
+                        if (ConfigScript->IsString(-1))
+                        {
+                            GTCore::Path absPath(ConfigScript->ToString(-1));
+                            absPath.MakeAbsolute();
+
+                            DataDirectories.PushBack(absPath.c_str());
+                        }
+                    }
                 }
                 ConfigScript->Pop(1);
             }
             ConfigScript->Pop(1);
         }
-
-        return result;
     }
 }
