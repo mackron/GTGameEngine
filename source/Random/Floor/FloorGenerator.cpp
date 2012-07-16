@@ -187,7 +187,7 @@ namespace GTEngine
 
                 int lobbyLeft;
                 int lobbyTop;
-                int lobbyRight;
+                int lobbyRight; (void)lobbyRight;
                 int lobbyBottom;
 
                 if (right == definition.GetLeft() || left == definition.GetRight())
@@ -297,6 +297,9 @@ namespace GTEngine
 
     void FloorGenerator::GenerateRooms(const FloorProperties &properties, FloorDefinition &definition)
     {
+        (void)properties;
+        (void)definition;
+        
         // The way we generate rooms is by creating rows and colums of rooms inside the main area.
     }
 
