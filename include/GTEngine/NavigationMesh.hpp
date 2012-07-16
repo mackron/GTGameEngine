@@ -24,7 +24,7 @@
 
 namespace GTEngine
 {
-    class DefaultScene;
+    class Scene;
 
     /// Class representing a navigation mesh.
     ///
@@ -51,7 +51,7 @@ namespace GTEngine
         ///     This is build from the static dynamic objects.
         ///     @par
         ///     This will need to be called when the navigation mesh needs to be updated.
-        bool Build(const DefaultScene &scene);
+        bool Build(const Scene &scene);
 
 
         /// Sets the cell size that will be used when building the navigation mesh.

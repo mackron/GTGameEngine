@@ -4,7 +4,7 @@
 
 #include "EditorMode.hpp"
 #include "Editor3DViewportEventHandler.hpp"
-#include "../DefaultScene.hpp"
+#include "../Scene.hpp"
 #include "../DefaultViewportRenderer.hpp"
 #include <GTGUI/Server.hpp>
 
@@ -120,7 +120,7 @@ namespace GTEngine
 
 
         /// The scene that will contain the model node.
-        DefaultScene scene;
+        Scene scene;
 
         /// The viewport we will be rendering from.
         SceneViewport viewport;
