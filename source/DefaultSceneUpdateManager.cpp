@@ -59,6 +59,7 @@ namespace GTEngine
                 }
 
 
+            case SceneObjectType_Custom:
             case SceneObjectType_Unknown:
             case SceneObjectType_None:
             case SceneObjectType_PhysicsObject:
