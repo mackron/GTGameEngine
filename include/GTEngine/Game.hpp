@@ -117,6 +117,13 @@ namespace GTEngine
         bool IsFullscreen() const;
 
 
+        /// Refreshes the display settings such as the window size and fullscreen mode.
+        ///
+        /// @remarks
+        ///     This refreshes based on the current script settings.
+        void RefreshDisplay();
+
+
 
         /**
         *   \brief  Retrieves the current position of the mouse. This is relative to the main game window.
