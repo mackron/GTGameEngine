@@ -4,7 +4,7 @@
 #include <GTType/Font.hpp>
 #include <GTCore/Map.hpp>
 
-// TODO: (Priority) This needs synchronization! Use the garbage collector.
+// TODO: This needs synchronization! Use the garbage collector.
 
 namespace GTEngine
 {
@@ -24,7 +24,7 @@ namespace GTEngine
         }
     }
 
-    Texture2D * FontManager::GetTexture(const GTType::Font &font)
+    Texture2D* FontManager::GetTexture(const GTType::Font &font)
     {
         auto item = FontTextureMap.Find(&font);
         assert(item != nullptr);                        // <-- with everything factored correctly, this should never be null.
@@ -49,10 +49,11 @@ namespace GTEngine
     void FontManager::OnDeleteFont(GTType::FontServer &, GTType::Font &font)
     {
         auto item = FontTextureMap.Find(&font);
-        assert(item != nullptr);                        // <-- with everything factored correctly, this should never be null.
-
-        delete item->value;
-        FontTextureMap.Remove(&font);
+        if (item != nullptr)
+        {
+            delete item->value;
+            FontTextureMap.Remove(&font);
+        }
     }
 }
 
