@@ -137,6 +137,21 @@ namespace GTEngine
         return false;
     }
 
+    
+    void Game::RefreshDisplay()
+    {
+        this->GetWindow()->SetSize(this->GetScript().GetInteger("Display.Width"), this->GetScript().GetInteger("Display.Height"));
+
+        if (this->GetScript().GetBoolean("Display.Fullscreen"))
+        {
+            this->EnableFullscreen();
+        }
+        else
+        {
+            this->DisableFullscreen();
+        }
+    }
+
 
     void Game::GetMousePosition(int &x, int &y)
     {
@@ -629,7 +644,6 @@ namespace GTEngine
         delete this->window;
 
         ThreadCache::UnacquireThread(this->updateThread);
-        //delete this->updateJob;
     }
 
     void Game::Loop()

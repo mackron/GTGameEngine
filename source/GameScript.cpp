@@ -11,9 +11,10 @@ namespace GTEngine
         const char* defaultScript = 
             "Display =\n"
             "{\n"
-            "    Width  = 1280;\n"
-            "    Height = 720;\n"
-            "    FOV    = 90;\n"
+            "    Width      = 1280;\n"
+            "    Height     = 720;\n"
+            "    FOV        = 90;\n"
+            "    Fullscreen = false;\n"
             "    \n"
             "    Textures =\n"
             "    {\n"
