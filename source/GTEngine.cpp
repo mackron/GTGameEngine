@@ -54,12 +54,6 @@ namespace GTEngine
                     GTCore::IO::AddAdditionalSearchPath(directories[i].c_str());
                 }
             }
-
-
-            // The application config will define the Data directory. This is the directory where all of the game's data is
-            // located - textures, sounds, levels, user configs, etc. Since everything is now relative to the Data directory,
-            // we'll move into it here.
-            //GTCore::IO::SetCurrentDirectory(ApplicationConfig::Directories::Data());
         }
 
 
