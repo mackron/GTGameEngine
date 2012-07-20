@@ -90,6 +90,7 @@ namespace GTEngine
         /// Creates a flat plane on the XZ axis, facing the +Y axis.
         static Model* CreatePlaneXZ(float width, float height, VertexFormat &format = VertexFormat::P3T2N3);
 
+
         /// Creates a box.
         ///
         /// @remarks

@@ -1348,7 +1348,7 @@ namespace GTEngine
         {
             definition = new ModelDefinition;
             definition->meshGeometries.PushBack(va);
-            definition->meshMaterials.PushBack(nullptr);
+            definition->meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
             definition->meshSkinningVertexAttributes.PushBack(nullptr);
 
             LoadedDefinitions.Add(name, definition);
