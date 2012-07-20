@@ -1,5 +1,6 @@
 
 #include <GTEngine/Texture2DLibrary.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTCore/Dictionary.hpp>
 
 
@@ -63,9 +64,20 @@ namespace GTEngine
         if (iTexture == nullptr)
         {
             auto newTexture = new Texture2D(fileName);
+            if (newTexture->IsLinkedToFile())
+            {
                 newTexture->SetAnisotropy(DefaultAnisotropy);
                 LoadedTextures.Add(fileName, newTexture);
-            return newTexture;
+
+                return newTexture;
+            }
+            else
+            {
+                GTEngine::PostError("Can not find file: %s", fileName);
+
+                delete newTexture;
+                return nullptr;
+            }
         }
         else
         {

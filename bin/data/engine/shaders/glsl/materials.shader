@@ -98,11 +98,11 @@
     }
 </shader>
 
-<shader id="Material_TexturedEmissive">   <!-- Use this one for standard normal mapping using a texture. -->
-    uniform sampler2D EmissiveMap;
+<shader id="Material_TexturedEmissive">
+    uniform sampler2D EmissiveTexture;
     
     vec3 Emissive()
     {
-        return texture2D(EmissiveMap, VertexOutput_TexCoord).rgb;
+        return texture2D(EmissiveTexture, VertexOutput_TexCoord).rgb;
     }
 </shader>
