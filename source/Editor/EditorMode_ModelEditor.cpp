@@ -69,7 +69,11 @@ namespace GTEngine
     bool EditorMode_ModelEditor::LoadModel(const char* fileName)
     {
         // We first try to load the new model. Only if it succeeds do we want to unload the previous model.
+        GTCore::Timer timer;
         auto newModel = GTEngine::ModelLibrary::LoadFromFile(fileName);
+
+        printf("Load Time: %f\n", timer.GetTimeSinceLastUpdate());
+
         if (newModel != nullptr)
         {
             // The previous model needs to be unloaded.

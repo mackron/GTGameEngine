@@ -93,6 +93,12 @@ namespace GTEngine
     }
 
 
+    void DynamicsComponent::AddConvexHullShape(const float* points, size_t pointCount, size_t stride)
+    {
+        this->AddCollisionShape(new btConvexHullShape(static_cast<const btScalar*>(points), pointCount, stride), 0.0f, 0.0f, 0.0f);
+    }
+
+
     void DynamicsComponent::RemoveAllCollisionShapes()
     {
         // Since the shapes are being changed we need to remove the rigid body from the world first.

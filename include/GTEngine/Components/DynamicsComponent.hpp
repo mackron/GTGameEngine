@@ -45,6 +45,14 @@ namespace GTEngine
         void AddStaticPlaneShape(float a, float b, float c, float d);
         
 
+        /// Adds a convex hull shape.
+        ///
+        /// @param points     [in] A pointer to the buffer containing the points to build the hull from.
+        /// @param pointCount [in] The number of points in the buffer.
+        /// @param stride     [in] The vertex stride.
+        void AddConvexHullShape(const float* points, size_t pointCount, size_t stride);
+
+
         /// Removes every collision shape.
         void RemoveAllCollisionShapes();
 
