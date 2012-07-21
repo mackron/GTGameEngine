@@ -663,8 +663,6 @@ namespace GTEngine
             auto file = GTCore::IO::Open(fileNameIn, GTCore::IO::OpenMode::Read);
             if (file != nullptr)
             {
-                double startTime = GTCore::Timing::GetTimeInMilliseconds();
-
                 // The first thing we load is the header, which is 8 bytes. The first 4 bytes should equal "gtem".
                 struct
                 {
@@ -770,24 +768,30 @@ namespace GTEngine
                                     uint32_t vertexCount;
                                     GTCore::IO::Read(file, &vertexCount, 4);
 
-                                    va->SetVertexData(nullptr, static_cast<size_t>(vertexCount));
-                                    auto vertexData = va->MapVertexData();
+                                    if (vertexCount > 0)
                                     {
-                                        GTCore::IO::Read(file, vertexData, vertexCount * VertexFormat::P3T2N3T3B3.GetSize() * sizeof(float));
+                                        va->SetVertexData(nullptr, static_cast<size_t>(vertexCount));
+                                        auto vertexData = va->MapVertexData();
+                                        {
+                                            GTCore::IO::Read(file, vertexData, vertexCount * VertexFormat::P3T2N3T3B3.GetSize() * sizeof(float));
+                                        }
+                                        va->UnmapVertexData();
                                     }
-                                    va->UnmapVertexData();
 
 
                                     // Indices.
                                     uint32_t indexCount;
                                     GTCore::IO::Read(file, &indexCount, 4);
                                 
-                                    va->SetIndexData(nullptr, static_cast<size_t>(indexCount));
-                                    auto indexData = va->MapIndexData();
+                                    if (indexCount > 0)
                                     {
-                                        GTCore::IO::Read(file, indexData, indexCount * sizeof(unsigned int));
+                                        va->SetIndexData(nullptr, static_cast<size_t>(indexCount));
+                                        auto indexData = va->MapIndexData();
+                                        {
+                                            GTCore::IO::Read(file, indexData, indexCount * sizeof(unsigned int));
+                                        }
+                                        va->UnmapIndexData();
                                     }
-                                    va->UnmapIndexData();
 
                                 
                                     definition->meshGeometries.PushBack(va);
@@ -935,10 +939,6 @@ namespace GTEngine
                                 free(name);
                             }
 
-
-                            GTEngine::Log("--- Load Time: %fms ---", GTCore::Timing::GetTimeInMilliseconds() - startTime);
-
-
                             // We can't forget to add the definition to the global list.
                             definition->fileName = fileNameIn;
                             LoadedDefinitions.Add(fileNameIn, definition);
@@ -1080,16 +1080,17 @@ namespace GTEngine
                 // Geometry
                 auto va = definition.meshGeometries[iMesh];
                 assert(va != nullptr);
+                assert(va->GetFormat().GetSize() == VertexFormat::P3T2N3T3B3.GetSize());
 
                 // First is the vertex data.
                 uint32_t vertexCount = static_cast<uint32_t>(va->GetVertexCount());
                 GTCore::IO::Write(file, &vertexCount, 4);
-                GTCore::IO::Write(file, va->GetVertexDataPtr(), sizeof(float) * va->GetFormat().GetSize() * vertexCount);
+                if (vertexCount > 0) GTCore::IO::Write(file, va->GetVertexDataPtr(), sizeof(float) * va->GetFormat().GetSize() * vertexCount);
 
                 // Now the index data.
                 uint32_t indexCount = static_cast<uint32_t>(va->GetIndexCount());
                 GTCore::IO::Write(file, &indexCount, 4);
-                GTCore::IO::Write(file, va->GetIndexDataPtr(), sizeof(unsigned int) * indexCount);
+                if (indexCount > 0) GTCore::IO::Write(file, va->GetIndexDataPtr(), sizeof(unsigned int) * indexCount);
 
 
                 // Material. Note the lack of null terminators. Materials are saved based on the input model, and not the definition. The reason is, is that the definition
@@ -1113,31 +1114,34 @@ namespace GTEngine
                 uint32_t skinningVertexAttributeCount = (definition.meshSkinningVertexAttributes[iMesh] != nullptr) ? vertexCount : 0;
                 GTCore::IO::Write(file, &skinningVertexAttributeCount, 4);
 
-                uint32_t totalBoneWeights = 0;
-
-                // 1) Counts. Stored as 16-bit integers here.
-                for (uint32_t iVertex = 0; iVertex < skinningVertexAttributeCount; ++iVertex)
+                if (skinningVertexAttributeCount > 0)
                 {
-                    uint16_t count = static_cast<uint16_t>(definition.meshSkinningVertexAttributes[iMesh][iVertex].bones.count);
-                    GTCore::IO::Write(file, &count, 2);
+                    uint32_t totalBoneWeights = 0;
 
-                    totalBoneWeights += count;
-                }
-
-                // 2) Bone/Weight pairs. We write a total count to make it easier to calculate buffers at load time.
-                GTCore::IO::Write(file, &totalBoneWeights, 4);
-
-                for (uint32_t iVertex = 0; iVertex < skinningVertexAttributeCount; ++iVertex)
-                {
-                    auto &bones = definition.meshSkinningVertexAttributes[iMesh][iVertex].bones;
-
-                    for (uint32_t iBone = 0; iBone < bones.count; ++iBone)
+                    // 1) Counts. Stored as 16-bit integers here.
+                    for (uint32_t iVertex = 0; iVertex < skinningVertexAttributeCount; ++iVertex)
                     {
-                        uint32_t boneIndex = static_cast<uint32_t>(bones[iBone].boneIndex);
-                        float    weight    = static_cast<float>(bones[iBone].weight);
+                        uint16_t count = static_cast<uint16_t>(definition.meshSkinningVertexAttributes[iMesh][iVertex].bones.count);
+                        GTCore::IO::Write(file, &count, 2);
 
-                        GTCore::IO::Write(file, &boneIndex, 4);
-                        GTCore::IO::Write(file, &weight,    4);
+                        totalBoneWeights += count;
+                    }
+
+                    // 2) Bone/Weight pairs. We write a total count to make it easier to calculate buffers at load time.
+                    GTCore::IO::Write(file, &totalBoneWeights, 4);
+
+                    for (uint32_t iVertex = 0; iVertex < skinningVertexAttributeCount; ++iVertex)
+                    {
+                        auto &bones = definition.meshSkinningVertexAttributes[iMesh][iVertex].bones;
+
+                        for (uint32_t iBone = 0; iBone < bones.count; ++iBone)
+                        {
+                            uint32_t boneIndex = static_cast<uint32_t>(bones[iBone].boneIndex);
+                            float    weight    = static_cast<float>(bones[iBone].weight);
+
+                            GTCore::IO::Write(file, &boneIndex, 4);
+                            GTCore::IO::Write(file, &weight,    4);
+                        }
                     }
                 }
             }
