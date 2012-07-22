@@ -48,6 +48,23 @@ namespace GTEngine
         const char* GetLastError() { return this->lastError.c_str(); }
 
 
+
+        /////////////////////////////////////////////
+        // Public FFI functions.
+
+        struct FFI
+        {
+            /// A helper for retrieving the Game instance from the script.
+            static Game & GetGameObject(GTCore::Script &script);
+        };
+
+
+    private:
+
+        /// Private function for registering the foreign-function interface.
+        bool RegisterFFI();
+
+
     private:
 
         /// A reference to the game that owns this environment.

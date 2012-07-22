@@ -386,16 +386,6 @@ namespace GTEngine
         bool Initialise(int argc, char **argv);
 
 
-        /// Initialises the scripting environment.
-        bool InitialiseScripting();
-
-        /// Initialises the scripting foreign function interface.
-        bool InitialiseScriptingFFI();
-
-        /// Initialises the scripting standard library.
-        bool InitialiseScriptingSTDLibrary();
-
-
         /**
         *   \brief  Helper method for initialising the font cache.
         */
@@ -484,15 +474,6 @@ namespace GTEngine
         void HandleEvent_OnReceiveFocus(GameEvent &e);
         void HandleEvent_OnLoseFocus(GameEvent &e);
 
-
-    public:
-
-        /// FFI
-        struct FFI
-        {
-            /// A helper for retrieving the SG1Game instance from the script.
-            static Game & GetGameObject(GTCore::Script &script);
-        };
 
 
     private:
