@@ -28,7 +28,8 @@ GTGameEngine depends on the following libraries:
 * Bullet (http://bulletphysics.org/wordpress)
 * assimp (http://assimp.sourceforge.net)
 * Recast+Detour (http://code.google.com/p/recastnavigation)
-* RapidXML
+* RapidXML (http://rapidxml.sourceforge.net)
+* HACD (http://sourceforge.net/projects/hacd)
 
 
 

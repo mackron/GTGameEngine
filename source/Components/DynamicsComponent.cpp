@@ -1,6 +1,15 @@
 
+// HACD headers need to be first.
+#include <hacdCircularList.h>
+#include <hacdVector.h>
+#include <hacdICHull.h>
+#include <hacdGraph.h>
+#include <hacdHACD.h>
+
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Physics.hpp>
+
+
 
 namespace GTEngine
 {
@@ -96,6 +105,103 @@ namespace GTEngine
     void DynamicsComponent::AddConvexHullShape(const float* points, size_t pointCount, size_t stride)
     {
         this->AddCollisionShape(new btConvexHullShape(static_cast<const btScalar*>(points), pointCount, stride), 0.0f, 0.0f, 0.0f);
+    }
+
+
+    void DynamicsComponent::AddDecomposedTriangleMeshShape(const Model &model)
+    {
+        // All we do here is iterate over each mesh and add it's vertex array.
+        for (size_t i = 0; i < model.meshes.count; ++i)
+        {
+            auto mesh = model.meshes[i];
+            assert(mesh != nullptr);
+            
+            if (mesh->GetGeometry() != nullptr)
+            {
+                this->AddDecomposedTriangleMeshShape(*mesh->GetGeometry());
+            }
+        }
+    }
+
+    void DynamicsComponent::AddDecomposedTriangleMeshShape(const VertexArray &va)
+    {
+        auto vertexData = va.GetVertexDataPtr();
+        auto indexData  = va.GetIndexDataPtr();
+
+        auto vertexCount = va.GetVertexCount();
+        auto indexCount  = va.GetIndexCount();
+        
+        if (vertexData != nullptr && indexData != nullptr)
+        {
+            auto vertexSize     = va.GetFormat().GetSize();
+            auto positionOffset = va.GetFormat().GetAttributeOffset(VertexAttribs::Position);
+
+            HACD::HACD* hacd = HACD::CreateHACD(nullptr);    // heh.
+            if (hacd != nullptr)
+            {
+                GTCore::Vector<HACD::Vec3<HACD::Real>> points(vertexCount);
+                GTCore::Vector<HACD::Vec3<long>>  triangles(indexCount / 3);
+
+                for (size_t i = 0; i < vertexCount; ++i)
+                {
+                    auto position = vertexData + (i * vertexSize) + positionOffset;
+                    points.PushBack(HACD::Vec3<HACD::Real>(position[0], position[1], position[2]));
+                }
+
+                for (size_t i = 0; i < indexCount; i += 3)
+                {
+                    triangles.PushBack(HACD::Vec3<long>(indexData[i + 0], indexData[i + 1], indexData[i + 2]));
+                }
+
+                hacd->SetPoints(&points[0]);
+                hacd->SetNPoints(points.count);
+                hacd->SetTriangles(&triangles[0]);
+                hacd->SetNTriangles(triangles.count);
+
+                hacd->SetCompacityWeight(0.1);
+                hacd->SetVolumeWeight(0.0);
+                hacd->SetNClusters(1);              // Minimum number of clusters to generate.
+                hacd->SetNVerticesPerCH(100);       // CH = Convex-Hull.
+                hacd->SetConcavity(0.001);
+                hacd->SetSmallClusterThreshold(0.001f);
+                hacd->SetAddExtraDistPoints(false);
+                hacd->SetAddFacesPoints(false);
+
+                if (hacd->Compute())
+                {
+                    auto clusterCount = hacd->GetNClusters();
+
+                    for (size_t iCluster = 0U; iCluster < clusterCount; ++iCluster)
+                    {
+                        size_t pointCount    = hacd->GetNPointsCH(iCluster);
+                        size_t triangleCount = hacd->GetNTrianglesCH(iCluster);
+
+                        auto pointsCH    = new HACD::Vec3<HACD::Real>[pointCount];
+				        auto trianglesCH = new HACD::Vec3<long>[triangleCount];
+				        hacd->GetCH(iCluster, pointsCH, trianglesCH);
+
+                        // TODO: Consider shrinking the hull to account for margins.
+
+                        auto points = new float[pointCount * 3];
+                        for (size_t iPoint = 0; iPoint < pointCount; ++iPoint)
+                        {
+                            points[iPoint * 3 + 0] = static_cast<float>(pointsCH[iPoint].X());
+                            points[iPoint * 3 + 1] = static_cast<float>(pointsCH[iPoint].Y());
+                            points[iPoint * 3 + 2] = static_cast<float>(pointsCH[iPoint].Z());
+                        }
+
+                        this->AddConvexHullShape(points, pointCount, sizeof(float) * 3);
+
+
+                        delete [] pointsCH;
+                        delete [] trianglesCH;
+                        delete [] points;
+                    }
+                }
+
+                HACD::DestroyHACD(hacd);
+            }
+        }
     }
 
 

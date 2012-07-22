@@ -41,7 +41,7 @@ namespace GTEngine
                 
 
                 // Here we enable the default mode.
-                this->SwitchToSandboxMode();
+                this->SwitchToModelEditorMode();
                 this->isStarted = true;
             }
             else
