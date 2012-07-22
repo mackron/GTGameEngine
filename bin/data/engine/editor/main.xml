@@ -91,7 +91,23 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     
     checkModelEditor_ShowConvexDecomposition:CheckBox("Show in Viewport");
+    
+    checkModelEditor_ShowConvexDecomposition:OnChecked(function()
+        Editor.ModelEditor.ShowConvexDecomposition();
+    end);
+    
+    checkModelEditor_ShowConvexDecomposition:OnUnchecked(function()
+        Editor.ModelEditor.HideConvexDecomposition();
+    end);
+    
+    
     btnModelEditor_ConvexDecomposition_Build:Button("Build");
+    
+    btnModelEditor_ConvexDecomposition_Build:OnPressed(function()
+        btnModelEditor_ConvexDecomposition_Build:Disable();
+            Editor.ModelEditor.BuildConvexDecomposition();
+        btnModelEditor_ConvexDecomposition_Build:Enable();
+    end);
 ]]>
 </script>
 
