@@ -801,5 +801,41 @@
     <None Include="..\..\..\bin\data\engine\shaders\glsl\materials.shader">
       <Filter>data\shaders\glsl</Filter>
     </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\button.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\dialogs.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\listbox.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\modeleditor.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\sandbox.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\styles\textbox.style">
+      <Filter>data\editor\styles</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\common-controls.xml">
+      <Filter>data\editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\dialogs.xml">
+      <Filter>data\editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\modeleditor.xml">
+      <Filter>data\editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\sandbox.xml">
+      <Filter>data\editor</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\modeleditor.lua">
+      <Filter>data\editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\bin\data\engine\editor\scripts\sandbox.lua">
+      <Filter>data\editor\scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 
 -- Takes the given element and turns it into a menu.
-function Server.Element:Menu()
+function GTGUI.Element:Menu()
 
     -- The list of items. This includes separators.
     self.items = {}
@@ -8,7 +8,7 @@ function Server.Element:Menu()
 
     -- Appends a menu item.
     function self:AppendItem(title)
-        local item = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menu-item'>" .. title .. "</div>");
+        local item = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menu-item'>" .. title .. "</div>");
         item:MenuItem();
 
         self.items[#self.items + 1] = item;
@@ -18,7 +18,7 @@ function Server.Element:Menu()
 
     -- Appends a separator.
     function self:AppendSeparator()
-        local item = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menu-separator-outer'><div styleclass='menu-separator-inner' /></div>");
+        local item = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menu-separator-outer'><div styleclass='menu-separator-inner' /></div>");
 
         self.items[#self.items + 1] = item;
 
@@ -35,9 +35,9 @@ end
 
 
 -- Takes the given element and turns it into a menu item.
-function Server.Element:MenuItem(title, parent)
+function GTGUI.Element:MenuItem(title, parent)
 end
 
 -- Takes the given element and turns it into a meun separator.
-function Server.Element:MenuSeparator(parent)
+function GTGUI.Element:MenuSeparator(parent)
 end

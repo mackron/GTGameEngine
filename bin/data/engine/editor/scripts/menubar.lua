@@ -1,7 +1,7 @@
 
 -- Takes the given element and turns it into a menu bar. Note this is only the bar itself and it's buttons and not the actual sub-menus. Instead you attach
 -- menus to the menu bar items.
-function Server.Element:MenuBar()
+function GTGUI.Element:MenuBar()
     
     -- The list of menu bar items.
     self.items = {};
@@ -12,7 +12,7 @@ function Server.Element:MenuBar()
 
     -- Attaches a new menu bar item.
     function self:AppendItem(title)
-        local item = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menubar-item' />");
+        local item = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menubar-item' />");
         item:MenuBarItem(title, self);
 
         self.items[#self.items + 1] = item;
@@ -67,17 +67,17 @@ end
 
 
 -- Takes the given element and turns it into a menu bar item.
-function Server.Element:MenuBarItem(title, parent)
+function GTGUI.Element:MenuBarItem(title, parent)
 
     -- The title element.
-    self.title = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menubar-item-title'>" .. title .. "</div>");
+    self.title = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menubar-item-title'>" .. title .. "</div>");
 
     -- The menu associated with the item. Do not set this directly. Instead, use SetMenu().
-    self.menu = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menu' style='visible:false; position-origin:outer; top:100%; left:0px;' />");
+    self.menu = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menu' style='visible:false; position-origin:outer; top:100%; left:0px;' />");
     self.menu:Menu();
 
     -- This sneaky little element is going to mask out a section of the border created by the menu element.
-    self.borderMask = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menubar-item-border-mask' />");
+    self.borderMask = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menubar-item-border-mask' />");
 
     -- Handles cases when the mouse is clicked on the item.
     function self:OnPush()
