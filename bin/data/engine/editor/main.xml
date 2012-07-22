@@ -92,29 +92,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     checkModelEditor_ShowConvexDecomposition:CheckBox("Show in Viewport");
     btnModelEditor_ConvexDecomposition_Build:Button("Build");
-    
-    
-    function temp()
-        print("OnChecked1");
-    end;
-    
-    --checkModelEditor_ShowConvexDecomposition:OnChecked(function()
-    --    print("OnChecked1");
-    --end);
-    
-    checkModelEditor_ShowConvexDecomposition:OnChecked(temp);
-    --checkModelEditor_ShowConvexDecomposition.callbacks:Unbind('OnChecked', temp);
-    
-    checkModelEditor_ShowConvexDecomposition:OnChecked(function()
-        print("OnChecked2");
-    end);
-    
-    checkModelEditor_ShowConvexDecomposition.callbacks:Unbind('OnChecked', temp);
-    
-    
-    checkModelEditor_ShowConvexDecomposition:OnUnchecked(function()
-        print("OnUnchecked");
-    end);
 ]]>
 </script>
 
