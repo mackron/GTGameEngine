@@ -1,15 +1,15 @@
 
 -- Takes the given element and turns it into a combo box.
-function Server.Element:ComboBox()
+function GTGUI.Element:ComboBox()
    
     -- The title element.
-    self.TitleElement = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='combobox-title' />");
+    self.TitleElement = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='combobox-title' />");
 
     -- The element containing the arrow graphic.
-    self.ArrowElement = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='combobox-arrow' />");
+    self.ArrowElement = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='combobox-arrow' />");
 
     -- The container for the item list.
-    self.MenuElement = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='combobox-menu' />");
+    self.MenuElement = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='combobox-menu' />");
 
 
     -- The selected element.
@@ -21,7 +21,7 @@ function Server.Element:ComboBox()
 
     -- Appends an item to the combo box's list. If this is the first item, it will be set as the title element.
     function self:AppendItem(title)
-        local item = Server.New("<div parentid='" .. self.MenuElement:GetID() .. "' styleclass='combobox-menu-item'>" .. title .. "</div>");
+        local item = GTGUI.Server.New("<div parentid='" .. self.MenuElement:GetID() .. "' styleclass='combobox-menu-item'>" .. title .. "</div>");
         item:ComboBoxMenuItem(title, self);
 
         self.ListItems[#self.ListItems + 1] = item;
@@ -91,7 +91,7 @@ function Server.Element:ComboBox()
 end
 
 
-function Server.Element:ComboBoxMenuItem(title, combobox)
+function GTGUI.Element:ComboBoxMenuItem(title, combobox)
     self.title    = title;
     self.combobox = combobox;
 

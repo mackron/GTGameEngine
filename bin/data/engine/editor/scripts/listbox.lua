@@ -2,7 +2,7 @@
 -- ListBox() function, which will take the element that is being turned into a list box.
 
 -- Takes the given element and turns it into a list box.
-function Server.Element:ListBox()
+function GTGUI.Element:ListBox()
     
     -- First we'll create some attributes...
     
@@ -70,7 +70,7 @@ end
 
 
 function ListBoxItem(title, parent)
-    local item = Server.New("<div parentid='" .. parent:GetID() .. "' styleclass='listbox-item'>" .. title .. "</div>");
+    local item = GTGUI.Server.New("<div parentid='" .. parent:GetID() .. "' styleclass='listbox-item'>" .. title .. "</div>");
     item.title = title;
     
     function item:OnPush()

@@ -87,6 +87,34 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     btnOpenModelDialog_Close:OnPressed(function()
         OpenModelDialog:Hide();
     end);
+    
+    
+    
+    checkModelEditor_ShowConvexDecomposition:CheckBox("Show in Viewport");
+    btnModelEditor_ConvexDecomposition_Build:Button("Build");
+    
+    
+    function temp()
+        print("OnChecked1");
+    end;
+    
+    --checkModelEditor_ShowConvexDecomposition:OnChecked(function()
+    --    print("OnChecked1");
+    --end);
+    
+    checkModelEditor_ShowConvexDecomposition:OnChecked(temp);
+    --checkModelEditor_ShowConvexDecomposition.callbacks:Unbind('OnChecked', temp);
+    
+    checkModelEditor_ShowConvexDecomposition:OnChecked(function()
+        print("OnChecked2");
+    end);
+    
+    checkModelEditor_ShowConvexDecomposition.callbacks:Unbind('OnChecked', temp);
+    
+    
+    checkModelEditor_ShowConvexDecomposition:OnUnchecked(function()
+        print("OnUnchecked");
+    end);
 ]]>
 </script>
 
@@ -171,7 +199,13 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     -->
     <div id="EditorCenterPanel">
         <div id="ModelEditor" style="visible:false">
-            <div id="ModelEditorLeftPanel">
+            <div id="ModelEditorLeftPanel" style="padding:4px; padding-top:8px;">
+                <div id="ModelEditorPanel_ConvextDecomposition" style="padding:4px; padding-top:12px; border:1px #444; horizontal-align:left;">
+                    <div style="positioning:relative; position-origin:inner-border; background-color:#333; width:auto; padding:4px 0px; text-color:#ccc; left:8px; top:-8px;">Convex Decomposition</div>
+                    
+                    <div id="checkModelEditor_ShowConvexDecomposition" styleclass="checkbox" style="margin-bottom:8px;" />
+                    <div id="btnModelEditor_ConvexDecomposition_Build" styleclass="button" style="width:100%;" />
+                </div>
             </div>
             <div id="ModelViewport">
             </div>

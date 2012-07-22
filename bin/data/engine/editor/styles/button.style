@@ -1,7 +1,7 @@
 button
 {
-    background-color: #555
-    border:           1px #aaa
+    background-color: #444
+    border:           1px #777
     width:            auto
     height:           auto
     padding:          4px
@@ -13,10 +13,10 @@ button
     
 button:hovered
 {
-    background-color: #666
+    background-color: #555
 }
     
 button:pushed
 {
-    background-color: #777
+    background-color: #666
 }

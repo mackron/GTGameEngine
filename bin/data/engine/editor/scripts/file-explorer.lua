@@ -1,13 +1,13 @@
 
 -- Takes the given element and turns it into a file explorer.
-function Server.Element:FileExplorer()
+function GTGUI.Element:FileExplorer()
     
     -- The address bar.
-    self.addressBar = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='file-explorer-address-bar' />");
+    self.addressBar = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='file-explorer-address-bar' />");
     self.addressBar:FileExplorerAddressBar(self);
 
     -- The main file view.
-    self.mainView = Server.New("<div parentid='" .. self:GetID() .. "' styleclass='file-explorer-main-view' />");
+    self.mainView = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='file-explorer-main-view' />");
 
 
 end
@@ -17,6 +17,6 @@ end
 
 
 -- !!! Address Bar !!! --
-function Server.Element:FileExplorerAddressBar(parent)
+function GTGUI.Element:FileExplorerAddressBar(parent)
     
 end
