@@ -40,6 +40,12 @@ namespace GTEngine
         {
             delete this->animationKeyCache[i];
         }
+
+
+        for (size_t i = 0; i < this->convexHulls.count; ++i)
+        {
+            delete this->convexHulls[i];
+        }
     }
 
     void ModelDefinition::GenerateTangentsAndBitangents()
@@ -61,5 +67,26 @@ namespace GTEngine
     void ModelDefinition::MapAnimationChannelToBone(Bone &bone, AnimationChannel &channel)
     {
         this->animationChannelBones.Add(&bone, &channel);
+    }
+
+    void ModelDefinition::BuildConvexDecomposition(ConvexHullBuildSettings &settings)
+    {
+        for (size_t i = 0; i < this->meshGeometries.count; ++i)
+        {
+            auto va = this->meshGeometries[i];
+            if (va != nullptr)
+            {
+                ConvexHull* convexHulls;
+                size_t      count;
+                ConvexHull::BuildConvexHulls(*va, convexHulls, count, settings);
+
+                for (size_t iHull = 0; iHull < count; ++iHull)
+                {
+                    this->convexHulls.PushBack(new ConvexHull(convexHulls[iHull]));
+                }
+
+                ConvexHull::DeleteConvexHulls(convexHulls);
+            }
+        }
     }
 }

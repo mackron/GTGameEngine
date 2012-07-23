@@ -277,6 +277,33 @@ namespace GTEngine
     }
 
 
+    int FFI_Editor_ModelEditor_ShowConvexDecomposition(GTCore::Script &script)
+    {
+        auto &game = GameScript::FFI::GetGameObject(script);
+
+        game.GetEditor().GetModelEditor().ShowConvexDecomposition();
+        return 0;
+    }
+
+    int FFI_Editor_ModelEditor_HideConvexDecomposition(GTCore::Script &script)
+    {
+        auto &game = GameScript::FFI::GetGameObject(script);
+
+        game.GetEditor().GetModelEditor().HideConvexDecomposition();
+        return 0;
+    }
+
+    int FFI_Editor_ModelEditor_BuildConvexDecomposition(GTCore::Script &script)
+    {
+        auto &game = GameScript::FFI::GetGameObject(script);
+
+        ConvexHullBuildSettings settings;
+
+        game.GetEditor().GetModelEditor().BuildConvexDecomposition(settings);
+        return 0;
+    }
+
+
     //////////////////////////////////////////////////////
     // RegisterFFI()
 
@@ -397,6 +424,19 @@ namespace GTEngine
 
                 this->Push("ResetCamera");
                 this->PushClosure(FFI_Editor_ModelEditor_ResetCamera, 0);
+                this->SetTableValue(-3);
+
+
+                this->Push("ShowConvexDecomposition");
+                this->PushClosure(FFI_Editor_ModelEditor_ShowConvexDecomposition, 0);
+                this->SetTableValue(-3);
+
+                this->Push("HideConvexDecomposition");
+                this->PushClosure(FFI_Editor_ModelEditor_HideConvexDecomposition, 0);
+                this->SetTableValue(-3);
+
+                this->Push("BuildConvexDecomposition");
+                this->PushClosure(FFI_Editor_ModelEditor_BuildConvexDecomposition, 0);
                 this->SetTableValue(-3);
             }
             this->Pop(1);

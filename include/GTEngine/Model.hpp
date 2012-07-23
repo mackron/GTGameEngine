@@ -80,6 +80,8 @@ namespace GTEngine
         VertexArray* UpdateCollisionVertexArray();
 
 
+        /// Retrieves the internal list of convex hulls of this model.
+        const GTCore::Vector<ConvexHull*> & GetConvexHulls() const { return this->definition.GetConvexHulls(); }
 
 
     // Animation.

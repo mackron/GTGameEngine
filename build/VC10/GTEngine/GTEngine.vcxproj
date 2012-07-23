@@ -188,6 +188,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\OccluderComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ProximityComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\SpriteComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ConvexHull.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ConvexHullBuildSettings.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_SimpleTransform.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_Skinning.hpp" />
@@ -307,6 +309,7 @@
     <ClCompile Include="..\..\..\source\Components\OccluderComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ProximityComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\SpriteComponent.cpp" />
+    <ClCompile Include="..\..\..\source\ConvexHull.cpp" />
     <ClCompile Include="..\..\..\source\CPUVertexShader.cpp" />
     <ClCompile Include="..\..\..\source\CPUVertexShader_SimpleTransform.cpp" />
     <ClCompile Include="..\..\..\source\CPUVertexShader_Skinning.cpp" />

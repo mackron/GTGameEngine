@@ -108,6 +108,13 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
             Editor.ModelEditor.BuildConvexDecomposition();
         btnModelEditor_ConvexDecomposition_Build:Enable();
     end);
+    
+    
+    checkModelEditor_AddExtraDistPoints:CheckBox("Add Extra Distance Points");
+    checkModelEditor_AddFacePoints:CheckBox("Add Face Points");
+    
+    
+    TestSpinner:LabeledSpinner("Test Spinner", 0, 999, 10, 123);
 ]]>
 </script>
 
@@ -192,11 +199,61 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     -->
     <div id="EditorCenterPanel">
         <div id="ModelEditor" style="visible:false">
-            <div id="ModelEditorLeftPanel" style="padding:4px; padding-top:8px;">
+            <div id="ModelEditorLeftPanel" style="padding:4px; padding-top:12px;">
                 <div id="ModelEditorPanel_ConvextDecomposition" style="padding:4px; padding-top:12px; border:1px #444; horizontal-align:left;">
-                    <div style="positioning:relative; position-origin:inner-border; background-color:#333; width:auto; padding:4px 0px; text-color:#ccc; left:8px; top:-8px;">Convex Decomposition</div>
+                    <div style="positioning:relative; position-origin:inner-border; background-color:#333; width:auto; padding:4px 0px; text-color:#aaa; left:8px; top:-8px; font-style:bold;">Convex Decomposition</div>
                     
-                    <div id="checkModelEditor_ShowConvexDecomposition" styleclass="checkbox" style="margin-bottom:8px;" />
+                    <div id="checkModelEditor_ShowConvexDecomposition" styleclass="checkbox" style="" />
+                    
+                    <div style="width:100%; height:1px; margin:0px 8px; background-color:#444;" />
+                    
+                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
+                        <div style="width:50%; text-color:std-text-color">Min Clusters</div>
+                        <div id="editModelEditor_ConvexDecomposition_MinClusters" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
+                    </div>
+                    
+                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
+                        <div style="width:50%; text-color:std-text-color">Vertices per CH</div>
+                        <div id="editModelEditor_ConvexDecomposition_VerticesPerCH" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
+                    </div>
+                    
+                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
+                        <div style="width:50%; text-color:std-text-color">Concavity</div>
+                        <div id="editModelEditor_ConvexDecomposition_Concavity" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
+                    </div>
+                    
+                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
+                        <div style="width:50%; text-color:std-text-color">Small Cluster Threshold</div>
+                        <div id="editModelEditor_ConvexDecomposition_SmallThreshold" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
+                    </div>
+                    
+                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
+                        <div style="width:50%; text-color:std-text-color">Connected Distance</div>
+                        <div id="editModelEditor_ConvexDecomposition_ConnectedDistance" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
+                    </div>
+                    
+                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
+                        <div style="width:50%; text-color:std-text-color">Simplified Triangle Count</div>
+                        <div id="editModelEditor_ConvexDecomposition_SimplifiedTriangleCount" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
+                    </div>
+                    
+                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
+                        <div style="width:50%; text-color:std-text-color">Compacity Weight</div>
+                        <div id="editModelEditor_ConvexDecomposition_CompacityWeight" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
+                    </div>
+                    
+                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
+                        <div style="width:50%; text-color:std-text-color">Volume Weight</div>
+                        <div id="editModelEditor_ConvexDecomposition_VolumeWeight" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
+                    </div>
+                    
+                    <div id="checkModelEditor_AddExtraDistPoints" styleclass="checkbox" style="margin-bottom:4px; margin-top:4px;" />
+                    <div id="checkModelEditor_AddFacePoints"      styleclass="checkbox" style="" />
+                    
+                    <div id="TestSpinner" styleclass="labeled-spinner" />
+                    
+                    <div style="width:100%; height:1px; margin:0px 8px; background-color:#444;" />
+                    
                     <div id="btnModelEditor_ConvexDecomposition_Build" styleclass="button" style="width:100%;" />
                 </div>
             </div>

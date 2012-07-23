@@ -176,6 +176,51 @@ namespace GTEngine
     }
 
 
+    ////////////////////////////////////////////////////////////////
+    // Convex Hulls
+
+    VertexArray* VertexArrayLibrary::CreateFromConvexHull(const ConvexHull &convexHull)
+    {
+        // We use a mesh builder for this.
+        MeshBuilderP3T2N3 builder;
+
+        auto vertices   = convexHull.GetVertices();
+        auto indices    = convexHull.GetIndices();
+        auto indexCount = convexHull.GetIndexCount();
+
+        // We need to use flat shading here, so we go triangle-by-triangle.
+        for (size_t iTriangle = 0; iTriangle < indexCount / 3; ++iTriangle)
+        {
+            auto index0 = indices[iTriangle * 3 + 0];
+            auto index1 = indices[iTriangle * 3 + 1];
+            auto index2 = indices[iTriangle * 3 + 2];
+
+            auto vertex0 = vertices + (index0 * 3);
+            auto vertex1 = vertices + (index1 * 3);
+            auto vertex2 = vertices + (index2 * 3);
+
+            glm::vec3 v0(vertex0[0], vertex0[1], vertex0[2]);
+            glm::vec3 v1(vertex1[0], vertex1[1], vertex1[2]);
+            glm::vec3 v2(vertex2[0], vertex2[1], vertex2[2]);
+
+            glm::vec3 u = v1 - v0;
+            glm::vec3 v = v2 - v0;
+
+            glm::vec3 normal((u.y * v.z) - (u.z * v.y),
+                             (u.z * v.x) - (u.x * v.z),
+                             (u.x * v.y) - (u.y * v.x));
+
+            glm::vec2 texCoord(0.0f, 0.0f);
+
+            builder.EmitVertex(v0, texCoord, normal);
+            builder.EmitVertex(v1, texCoord, normal);
+            builder.EmitVertex(v2, texCoord, normal);
+        }
+
+        return VertexArrayLibrary::CreateFromBuilder(builder);
+    }
+
+
 
     ////////////////////////////////////////////////////////////////
     // Mesh Builders

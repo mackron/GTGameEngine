@@ -5,6 +5,7 @@
 #include "Rendering/VertexArray.hpp"
 #include "Physics.hpp"
 #include "MeshBuilder.hpp"
+#include "ConvexHull.hpp"
 
 namespace GTEngine
 {
@@ -45,6 +46,17 @@ namespace GTEngine
         static VertexArray* CreateBox(const glm::vec3 &halfExtents) { return CreateBox(halfExtents.x, halfExtents.y, halfExtents.z); }
         static VertexArray* CreateBox(const btVector3 &halfExtents) { return CreateBox(halfExtents.x(), halfExtents.y(), halfExtents.z()); }
 
+
+        ////////////////////////////////////////////////////////////////
+        // Convex Hulls
+
+        /// Creates a vertex array from a convex hull.
+        ///
+        /// @param convexHull [in] A reference to the convex hull object.
+        ///
+        /// @remarks
+        ///     The returned vertex array will be in P3T2N3T3B3, with flat shaded faces.
+        static VertexArray* CreateFromConvexHull(const ConvexHull &convexHull);
 
 
         ////////////////////////////////////////////////////////////////

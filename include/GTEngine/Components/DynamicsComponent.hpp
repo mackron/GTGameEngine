@@ -5,6 +5,7 @@
 #include "../Component.hpp"
 #include "../Physics.hpp"
 #include "../VertexArrayLibrary.hpp"
+#include "../ConvexHull.hpp"
 #include <GTCore/Vector.hpp>
 
 namespace GTEngine
@@ -51,6 +52,7 @@ namespace GTEngine
         /// @param pointCount [in] The number of points in the buffer.
         /// @param stride     [in] The vertex stride.
         void AddConvexHullShape(const float* points, size_t pointCount, size_t stride);
+        void AddconvexHullShape(const ConvexHull &convexHull);
 
         /// Adds a decomposed version of the given model.
         ///

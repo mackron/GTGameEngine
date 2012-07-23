@@ -47,7 +47,7 @@ combobox-arrow
 {
     height:                  16px
     width:                   16px
-    background-image:        url(../images/arrow-down-small.png)
+    background-image:        std-arrow-down;
     transparent-mouse-input: true
 }
 

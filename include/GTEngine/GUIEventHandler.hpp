@@ -2,7 +2,7 @@
 #ifndef __GTEngine_GUIEventHandler_hpp_
 #define __GTEngine_GUIEventHandler_hpp_
 
-#include <GTGUI/Server/ServerEventHandler.hpp>
+#include <GTGUI/ServerEventHandler.hpp>
 
 namespace GTEngine
 {
