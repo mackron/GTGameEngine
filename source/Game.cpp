@@ -520,15 +520,6 @@ namespace GTEngine
         Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("Display.Textures.Anisotropy")));
 
 
-        // We will initialise the scripting environment before setting up anything else. This will allow the scripting environment to be
-        // accessed as early as possible.
-        Log("Initializing Scripting Environment...");
-        if (!this->InitialiseScripting())
-        {
-            Log("Error initializing scripting environment.");
-        }
-
-
         // First we need a window. Note that we don't show it straight away.
         this->window = Renderer::CreateGameWindow();
         if (this->window != nullptr)

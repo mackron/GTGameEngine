@@ -109,6 +109,11 @@ namespace GTEngine
         static Model* CreateCylinder(float radius, float length);
 
 
+        /// Creates a model from a convex-hull.
+        ///
+        /// @param convexHull [in] A reference to the convexHull
+        static Model* CreateFromConvexHull(const ConvexHull &convexHull);
+
 
     // Delete functions.
     public:

@@ -6,6 +6,8 @@
 #include "Editor3DViewportEventHandler.hpp"
 #include "../Scene.hpp"
 #include "../DefaultViewportRenderer.hpp"
+#include "../ConvexHullBuildSettings.hpp"
+#include <GTCore/Random.hpp>
 #include <GTGUI/Server.hpp>
 
 namespace GTEngine
@@ -69,6 +71,17 @@ namespace GTEngine
 
         /// Sets the rotation of the camera.
         void SetCameraRotation(float xRotation, float yRotation);
+
+
+        /// Shows the current model's convex decomposition.
+        void ShowConvexDecomposition();
+
+        /// Hides the current model's convex decomposition.
+        void HideConvexDecomposition();
+
+        /// Builds the convex decomposition of the current model.
+        void BuildConvexDecomposition(ConvexHullBuildSettings &settings);
+
 
 
         //////////////////////////////////////////////////////////////
@@ -135,12 +148,22 @@ namespace GTEngine
         SceneNode modelNode;
 
 
+        /// The parent node for convex hulls. Hidden by default.
+        GTEngine::SceneNode convexHullParentNode;
+
+        /// The list of scene nodes containing the models for the visual representation of the convex hulls.
+        GTCore::Vector<GTEngine::SceneNode*> convexHullNodes;
+
+
         float cameraXRotation;      ///< The camera's current X rotation.
         float cameraYRotation;      ///< The camera's current Y rotation.
 
 
         /// The event handler for the viewport.
         Editor3DViewportEventHandler viewportEventHandler;
+
+        /// The random number generator for convex hull colours, and whatever else we may need.
+        GTCore::Random random;
 
 
     private:    // No copying.

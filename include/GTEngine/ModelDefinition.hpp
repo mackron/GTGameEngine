@@ -6,6 +6,7 @@
 #include "Material.hpp"
 #include "Bone.hpp"
 #include "Mesh.hpp"
+#include "ConvexHull.hpp"
 #include "Animation/Animation.hpp"
 #include <GTCore/Vector.hpp>
 
@@ -35,6 +36,17 @@ namespace GTEngine
 
         /// Maps an animation channel to a bone.
         void MapAnimationChannelToBone(Bone &bone, AnimationChannel &channel);
+
+
+        /// Builds the convex decomposition of the model.
+        ///
+        /// @remarks
+        ///     This builds the composition based off the static mesh data. Thus, this should only be used for non-animated models.
+        void BuildConvexDecomposition(ConvexHullBuildSettings &settings);
+        void BuildConvexHulls(ConvexHullBuildSettings &settings) { this->BuildConvexDecomposition(settings); }
+
+        /// Retrieves a constant reference to the internal list of convex hulls for this model.
+        const GTCore::Vector<ConvexHull*> & GetConvexHulls() const { return this->convexHulls; }
 
 
     public:
@@ -67,6 +79,11 @@ namespace GTEngine
 
         /// The cache of animation keys.
         GTCore::Vector<TransformAnimationKey*> animationKeyCache;
+
+
+        /// The list of the convex hulls making up the convex decomposition of this model. This is either loaded from the model's file or
+        /// generated with BuildConvexDecomposition().
+        GTCore::Vector<ConvexHull*> convexHulls;
     };
 }
 

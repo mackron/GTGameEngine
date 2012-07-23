@@ -1237,10 +1237,6 @@ namespace GTEngine
 
 
 
-
-
-
-
     ////////////////////////////////////////////////////////////////////////
     // Create functions.
 
@@ -1327,6 +1323,24 @@ namespace GTEngine
         }
 
         return model;
+    }
+
+    Model* ModelLibrary::CreateFromConvexHull(const ConvexHull &convexHull)
+    {
+        // We need a unique identifier for this mesh. We will base it on the size of the box.
+        char name[128];
+        GTCore::IO::snprintf(name, 128, "convexhull(%d)", static_cast<unsigned int>(LoadedModels.Count()));
+
+        // We create the model from a primitive. To do this we need a non-const vertex array.
+        VertexArray* va = nullptr;
+
+        bool exists = LoadedDefinitions.Find(name) != nullptr;
+        if (!exists)
+        {
+            va = VertexArrayLibrary::CreateFromConvexHull(convexHull);
+        }
+
+        return ModelLibrary_CreateFromPrimitive(name, va);
     }
 
 
