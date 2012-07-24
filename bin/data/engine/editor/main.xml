@@ -113,8 +113,22 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     checkModelEditor_AddExtraDistPoints:CheckBox("Add Extra Distance Points");
     checkModelEditor_AddFacePoints:CheckBox("Add Face Points");
     
-    
+    --[[
     TestSpinner:LabeledSpinner("Test Spinner", 0, 999, 10, 123);
+    TestSpinner:OnValueChanged(function()
+        print(tostring(TestSpinner:GetValue()));
+    end);
+    ]]
+    
+    
+    spinModelEditor_CD_MinClusters:LabeledSpinner(            "Min Clusters",              1, 1000000, 1,   1);
+    spinModelEditor_CD_VerticesPerCH:LabeledSpinner(          "Vertices Per CH",           0, 1000000, 10,  100);
+    spinModelEditor_CD_Concavity:LabeledSpinner(              "Concavity",                 0, 1000000, 1,   1000);
+    spinModelEditor_CD_SmallThreshold:LabeledSpinner(         "Small Threshold",           0, 1000000, 1,   10);
+    spinModelEditor_CD_ConnectedDistance:LabeledSpinner(      "Connected Distance",        1, 1000000, 30,  1);
+    spinModelEditor_CD_SimplifiedTriangleCount:LabeledSpinner("Simplified Triangle Count", 0, 1000000, 100, 0);
+    spinModelEditor_CD_CompacityWeight:LabeledSpinner(        "Compacity Weight",          0, 1000000, 1,   0.1);
+    spinModelEditor_CD_VolumeWeight:LabeledSpinner(           "Volume Weight",             0, 1000000, 1,   0);
 ]]>
 </script>
 
@@ -207,50 +221,19 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
                     
                     <div style="width:100%; height:1px; margin:0px 8px; background-color:#444;" />
                     
-                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
-                        <div style="width:50%; text-color:std-text-color">Min Clusters</div>
-                        <div id="editModelEditor_ConvexDecomposition_MinClusters" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
-                    </div>
                     
-                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
-                        <div style="width:50%; text-color:std-text-color">Vertices per CH</div>
-                        <div id="editModelEditor_ConvexDecomposition_VerticesPerCH" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
-                    </div>
+                    <div id="spinModelEditor_CD_MinClusters"             styleclass="labeled-spinner" style="margin:0px 1px;" />
+                    <div id="spinModelEditor_CD_VerticesPerCH"           styleclass="labeled-spinner" style="margin:0px 1px;" />
+                    <div id="spinModelEditor_CD_Concavity"               styleclass="labeled-spinner" style="margin:0px 1px;" />
+                    <div id="spinModelEditor_CD_SmallThreshold"          styleclass="labeled-spinner" style="margin:0px 1px;" />
+                    <div id="spinModelEditor_CD_ConnectedDistance"       styleclass="labeled-spinner" style="margin:0px 1px;" />
+                    <div id="spinModelEditor_CD_SimplifiedTriangleCount" styleclass="labeled-spinner" style="margin:0px 1px;" />
+                    <div id="spinModelEditor_CD_CompacityWeight"         styleclass="labeled-spinner" style="margin:0px 1px;" />
+                    <div id="spinModelEditor_CD_VolumeWeight"            styleclass="labeled-spinner" style="margin:0px 1px;" />
                     
-                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
-                        <div style="width:50%; text-color:std-text-color">Concavity</div>
-                        <div id="editModelEditor_ConvexDecomposition_Concavity" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
-                    </div>
-                    
-                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
-                        <div style="width:50%; text-color:std-text-color">Small Cluster Threshold</div>
-                        <div id="editModelEditor_ConvexDecomposition_SmallThreshold" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
-                    </div>
-                    
-                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
-                        <div style="width:50%; text-color:std-text-color">Connected Distance</div>
-                        <div id="editModelEditor_ConvexDecomposition_ConnectedDistance" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
-                    </div>
-                    
-                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
-                        <div style="width:50%; text-color:std-text-color">Simplified Triangle Count</div>
-                        <div id="editModelEditor_ConvexDecomposition_SimplifiedTriangleCount" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
-                    </div>
-                    
-                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
-                        <div style="width:50%; text-color:std-text-color">Compacity Weight</div>
-                        <div id="editModelEditor_ConvexDecomposition_CompacityWeight" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
-                    </div>
-                    
-                    <div style="child-plane:horizontal; vertical-align:center; margin-bottom:2px;">
-                        <div style="width:50%; text-color:std-text-color">Volume Weight</div>
-                        <div id="editModelEditor_ConvexDecomposition_VolumeWeight" styleclass="textbox" style="width:50%; height:20px; horizontal-align:center;" />
-                    </div>
                     
                     <div id="checkModelEditor_AddExtraDistPoints" styleclass="checkbox" style="margin-bottom:4px; margin-top:4px;" />
                     <div id="checkModelEditor_AddFacePoints"      styleclass="checkbox" style="" />
-                    
-                    <div id="TestSpinner" styleclass="labeled-spinner" />
                     
                     <div style="width:100%; height:1px; margin:0px 8px; background-color:#444;" />
                     
