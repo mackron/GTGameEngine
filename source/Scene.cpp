@@ -608,7 +608,7 @@ namespace GTEngine
                 rigidBody.setWorldTransform(transform);
             }
 
-            if (dynamicsComponent->GetCollisionShape().getNumChildShapes() > 0)
+            if (node.IsVisible() && dynamicsComponent->GetCollisionShape().getNumChildShapes() > 0)
             {
                 this->physicsManager.AddRigidBody(rigidBody, dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
             }
@@ -632,11 +632,17 @@ namespace GTEngine
             node.GetWorldTransform(transform);
             ghostObject.setWorldTransform(transform);
 
-            this->physicsManager.AddGhostObject(ghostObject, proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
+            if (node.IsVisible())
+            {
+                this->physicsManager.AddGhostObject(ghostObject, proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
+            }
         }
 
 
-        this->cullingManager.AddObject(node);
+        if (node.IsVisible())
+        {
+            this->cullingManager.AddObject(node);
+        }
     }
 
     void Scene::OnSceneNodeRemoved(SceneNode &node)
@@ -727,8 +733,45 @@ namespace GTEngine
     {
     }
 
-    void Scene::OnSceneNodeVisibleChanged(SceneNode &)
+    void Scene::OnSceneNodeVisibleChanged(SceneNode &node)
     {
+        if (node.IsVisible())
+        {
+            // If the node has a dynamics component, the rigid body needs to be removed.
+            auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
+            if (dynamicsComponent != nullptr)
+            {
+                this->physicsManager.AddRigidBody(dynamicsComponent->GetRigidBody(), dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
+            }
+
+            // Same for the proximity component as the dynamics component.
+            auto proximityComponent = node.GetComponent<ProximityComponent>();
+            if (proximityComponent != nullptr)
+            {
+                this->physicsManager.AddGhostObject(proximityComponent->GetGhostObject(), proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
+            }
+
+            this->cullingManager.AddObject(node);
+        }
+        else
+        {
+            // TODO: Need to handle cases where we may be in the middle of a simulation...
+            // If the node has a dynamics component, the rigid body needs to be removed.
+            auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
+            if (dynamicsComponent != nullptr)
+            {
+                this->physicsManager.RemoveRigidBody(dynamicsComponent->GetRigidBody());
+            }
+
+            // Same for the proximity component as the dynamics component.
+            auto proximityComponent = node.GetComponent<ProximityComponent>();
+            if (proximityComponent != nullptr)
+            {
+                this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
+            }
+
+            this->cullingManager.RemoveObject(node);
+        }
     }
 
     void Scene::OnSceneNodeComponentChanged(SceneNode &node, Component &component)

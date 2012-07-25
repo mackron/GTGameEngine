@@ -690,7 +690,6 @@ namespace GTEngine
                                 uint32_t keyFrameCount;
                                 uint32_t namedAnimationSegmentCount;
                                 uint32_t convexHullCount;
-
                             }counts;
 
                             GTCore::IO::Read(file, &counts, 20);
