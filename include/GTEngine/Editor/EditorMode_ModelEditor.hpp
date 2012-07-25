@@ -108,6 +108,9 @@ namespace GTEngine
         /// Deletes the convex hulls for the currently loaded model.
         void DeleteConvexHulls();
 
+        /// Updates the convex decomposition build settings.
+        void UpdateConvexDecompositionBuildSettings(const ConvexHullBuildSettings &settings);
+
 
     private:
 
