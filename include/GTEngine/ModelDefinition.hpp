@@ -84,6 +84,9 @@ namespace GTEngine
         /// The list of the convex hulls making up the convex decomposition of this model. This is either loaded from the model's file or
         /// generated with BuildConvexDecomposition().
         GTCore::Vector<ConvexHull*> convexHulls;
+
+        /// The settings that were used to build the convex hulls.
+        ConvexHullBuildSettings convexHullBuildSettings;
     };
 }
 

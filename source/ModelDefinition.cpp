@@ -97,5 +97,8 @@ namespace GTEngine
                 ConvexHull::DeleteConvexHulls(convexHulls);
             }
         }
+
+        // We're going to store the settings that were used to build the convex hulls. These will be stored as metadata in the .gtmodel file.
+        this->convexHullBuildSettings = settings;
     }
 }
