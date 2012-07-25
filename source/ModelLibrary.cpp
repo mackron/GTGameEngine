@@ -988,16 +988,19 @@ namespace GTEngine
                                 char chbs[4];
                                 GTCore::IO::Read(file, chbs, 4);
 
-                                uint32_t sizeInBytes;
-                                GTCore::IO::Read(file, &sizeInBytes, 4);
+                                if (chbs[0] == 'c' && chbs[1] == 'h' && chbs[2] == 'b' && chbs[3] == 's')
+                                {
+                                    uint32_t sizeInBytes;
+                                    GTCore::IO::Read(file, &sizeInBytes, 4);
 
-                                if (sizeInBytes == sizeof(definition->convexHullBuildSettings))
-                                {
-                                    GTCore::IO::Read(file, &definition->convexHullBuildSettings, sizeInBytes);
-                                }
-                                else
-                                {
-                                    Log("Warning loading .gtmodel: sizeof(chbs) != sizeof(ConvexHullBuildSettings). Skipping.");
+                                    if (sizeInBytes == sizeof(definition->convexHullBuildSettings))
+                                    {
+                                        GTCore::IO::Read(file, &definition->convexHullBuildSettings, sizeInBytes);
+                                    }
+                                    else
+                                    {
+                                        Log("Warning loading .gtmodel: sizeof(chbs) != sizeof(ConvexHullBuildSettings). Skipping.");
+                                    }
                                 }
                             }
 
@@ -1347,8 +1350,7 @@ namespace GTEngine
 
             uint32_t chbsSize = sizeof(definition.convexHullBuildSettings);
             GTCore::IO::Write(file, &chbsSize, 4);
-
-            GTCore::IO::Write(file, &definition.convexHullBuildSettings, sizeof(chbsSize));
+            GTCore::IO::Write(file, &definition.convexHullBuildSettings, chbsSize);
 
 
 

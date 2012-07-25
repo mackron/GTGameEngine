@@ -47,10 +47,6 @@ namespace GTEngine
 
         this->convexHullParentNode.Hide();
         this->scene.AddSceneNode(this->convexHullParentNode);
-
-
-
-        this->LoadModel("engine/models/default.dae");
     }
 
     EditorMode_ModelEditor::~EditorMode_ModelEditor()
@@ -67,6 +63,8 @@ namespace GTEngine
         if (this->GUI.ModelViewport != nullptr)
         {
             this->GUI.ModelViewport->AttachEventHandler(this->viewportEventHandler);
+
+            this->LoadModel("engine/models/default.dae");
         }
         else
         {
@@ -96,6 +94,9 @@ namespace GTEngine
 
             this->modelNode.GetComponent<GTEngine::ModelComponent>()->SetModel(newModel);
             this->modelNode.GetScene()->RefreshObject(this->modelNode);
+
+            // Here we need to update the build settings GUI.
+            this->UpdateConvexDecompositionBuildSettings(newModel->definition.convexHullBuildSettings);
 
             return true;
         }
@@ -329,6 +330,39 @@ namespace GTEngine
             delete this->convexHullNodes[i];
         }
         this->convexHullNodes.Clear();
+    }
+
+    void EditorMode_ModelEditor::UpdateConvexDecompositionBuildSettings(const ConvexHullBuildSettings &settings)
+    {
+        auto &game = this->GetGame();
+
+        GTCore::String scriptString;
+        scriptString.AssignFormatted
+        (
+            "spinModelEditor_CD_CompacityWeight:GetValue(%f);"
+            "spinModelEditor_CD_VolumeWeight:SetValue(%f);"
+            "spinModelEditor_CD_MinClusters:SetValue(%d);"
+            "spinModelEditor_CD_VerticesPerCH:SetValue(%d);"
+            "spinModelEditor_CD_Concavity:SetValue(%f);"
+            "spinModelEditor_CD_SmallThreshold:SetValue(%f);"
+            "spinModelEditor_CD_ConnectedDistance:SetValue(%f);"
+            "spinModelEditor_CD_SimplifiedTriangleCount:SetValue(%d);"
+            "checkModelEditor_CD_AddExtraDistPoints:SetChecked(%s);"
+            "checkModelEditor_CD_AddFacePoints:SetChecked(%s);",
+
+            settings.compacityWeight,
+            settings.volumeWeight,
+            settings.minClusters,
+            settings.verticesPerCH,
+            settings.concavity,
+            settings.smallClusterThreshold,
+            settings.connectedComponentsDist,
+            settings.simplifiedTriangleCountTarget,
+            settings.addExtraDistPoints ? "true" : "false",
+            settings.addFacesPoints     ? "true" : "false"
+        );
+
+        game.ExecuteScript(scriptString.c_str());
     }
 }
 
