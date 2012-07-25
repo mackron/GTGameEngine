@@ -101,34 +101,48 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     end);
     
     
-    btnModelEditor_ConvexDecomposition_Build:Button("Build");
-    
-    btnModelEditor_ConvexDecomposition_Build:OnPressed(function()
-        btnModelEditor_ConvexDecomposition_Build:Disable();
-            Editor.ModelEditor.BuildConvexDecomposition();
-        btnModelEditor_ConvexDecomposition_Build:Enable();
-    end);
-    
-    
-    checkModelEditor_AddExtraDistPoints:CheckBox("Add Extra Distance Points");
-    checkModelEditor_AddFacePoints:CheckBox("Add Face Points");
-    
-    --[[
-    TestSpinner:LabeledSpinner("Test Spinner", 0, 999, 10, 123);
-    TestSpinner:OnValueChanged(function()
-        print(tostring(TestSpinner:GetValue()));
-    end);
-    ]]
-    
-    
+    spinModelEditor_CD_CompacityWeight:LabeledSpinner(        "Compacity Weight",          0, 1000000, 1,   0.001);
+    spinModelEditor_CD_VolumeWeight:LabeledSpinner(           "Volume Weight",             0, 1000000, 1,   500);
     spinModelEditor_CD_MinClusters:LabeledSpinner(            "Min Clusters",              1, 1000000, 1,   1);
     spinModelEditor_CD_VerticesPerCH:LabeledSpinner(          "Vertices Per CH",           0, 1000000, 10,  100);
-    spinModelEditor_CD_Concavity:LabeledSpinner(              "Concavity",                 0, 1000000, 1,   1000);
-    spinModelEditor_CD_SmallThreshold:LabeledSpinner(         "Small Threshold",           0, 1000000, 1,   10);
-    spinModelEditor_CD_ConnectedDistance:LabeledSpinner(      "Connected Distance",        1, 1000000, 30,  1);
+    spinModelEditor_CD_Concavity:LabeledSpinner(              "Concavity",                 0, 1000000, 1,   0.001);
+    spinModelEditor_CD_SmallThreshold:LabeledSpinner(         "Small Threshold",           0, 1000000, 1,   0.001);
+    spinModelEditor_CD_ConnectedDistance:LabeledSpinner(      "Connected Distance",        0, 1000000, 1 ,  0.001);
     spinModelEditor_CD_SimplifiedTriangleCount:LabeledSpinner("Simplified Triangle Count", 0, 1000000, 100, 0);
-    spinModelEditor_CD_CompacityWeight:LabeledSpinner(        "Compacity Weight",          0, 1000000, 1,   0.1);
-    spinModelEditor_CD_VolumeWeight:LabeledSpinner(           "Volume Weight",             0, 1000000, 1,   0);
+    
+    
+    checkModelEditor_CD_AddExtraDistPoints:CheckBox("Add Extra Distance Points");
+    checkModelEditor_CD_AddFacePoints:CheckBox("Add Face Points");
+    
+    
+    btnModelEditor_ConvexDecomposition_Build:Button("Build"):OnPressed(function()
+        btnModelEditor_ConvexDecomposition_Build:Disable();
+            local compacityWeight         = spinModelEditor_CD_CompacityWeight:GetValue();
+            local volumeWeight            = spinModelEditor_CD_VolumeWeight:GetValue();
+            local minClusters             = spinModelEditor_CD_MinClusters:GetValue();
+            local verticesPerCH           = spinModelEditor_CD_VerticesPerCH:GetValue();
+            local concavity               = spinModelEditor_CD_Concavity:GetValue();
+            local smallThreshold          = spinModelEditor_CD_SmallThreshold:GetValue();
+            local connectedDistance       = spinModelEditor_CD_ConnectedDistance:GetValue();
+            local simplifiedTriangleCount = spinModelEditor_CD_SimplifiedTriangleCount:GetValue();
+            local addExtraDistPoints      = checkModelEditor_CD_AddExtraDistPoints:IsChecked();
+            local addFacePoints           = checkModelEditor_CD_AddFacePoints:IsChecked();
+            
+            Editor.ModelEditor.BuildConvexDecomposition
+            (
+                compacityWeight,
+                volumeWeight,
+                minClusters,
+                verticesPerCH,
+                concavity,
+                smallThreshold,
+                connectedDistance,
+                simplifiedTriangleCount,
+                addExtraDistPoints,
+                addFacePoints
+            );
+        btnModelEditor_ConvexDecomposition_Build:Enable();
+    end);
 ]]>
 </script>
 
@@ -222,18 +236,19 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
                     <div style="width:100%; height:1px; margin:0px 8px; background-color:#444;" />
                     
                     
+                    <div id="spinModelEditor_CD_CompacityWeight"         styleclass="labeled-spinner" style="margin:0px 1px;" />
+                    <div id="spinModelEditor_CD_VolumeWeight"            styleclass="labeled-spinner" style="margin:0px 1px;" />
                     <div id="spinModelEditor_CD_MinClusters"             styleclass="labeled-spinner" style="margin:0px 1px;" />
                     <div id="spinModelEditor_CD_VerticesPerCH"           styleclass="labeled-spinner" style="margin:0px 1px;" />
                     <div id="spinModelEditor_CD_Concavity"               styleclass="labeled-spinner" style="margin:0px 1px;" />
                     <div id="spinModelEditor_CD_SmallThreshold"          styleclass="labeled-spinner" style="margin:0px 1px;" />
                     <div id="spinModelEditor_CD_ConnectedDistance"       styleclass="labeled-spinner" style="margin:0px 1px;" />
                     <div id="spinModelEditor_CD_SimplifiedTriangleCount" styleclass="labeled-spinner" style="margin:0px 1px;" />
-                    <div id="spinModelEditor_CD_CompacityWeight"         styleclass="labeled-spinner" style="margin:0px 1px;" />
-                    <div id="spinModelEditor_CD_VolumeWeight"            styleclass="labeled-spinner" style="margin:0px 1px;" />
                     
                     
-                    <div id="checkModelEditor_AddExtraDistPoints" styleclass="checkbox" style="margin-bottom:4px; margin-top:4px;" />
-                    <div id="checkModelEditor_AddFacePoints"      styleclass="checkbox" style="" />
+                    
+                    <div id="checkModelEditor_CD_AddExtraDistPoints" styleclass="checkbox" style="margin-bottom:4px; margin-top:4px;" />
+                    <div id="checkModelEditor_CD_AddFacePoints"      styleclass="checkbox" style="" />
                     
                     <div style="width:100%; height:1px; margin:0px 8px; background-color:#444;" />
                     

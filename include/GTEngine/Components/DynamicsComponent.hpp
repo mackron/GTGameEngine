@@ -52,7 +52,12 @@ namespace GTEngine
         /// @param pointCount [in] The number of points in the buffer.
         /// @param stride     [in] The vertex stride.
         void AddConvexHullShape(const float* points, size_t pointCount, size_t stride);
-        void AddconvexHullShape(const ConvexHull &convexHull);
+        void AddConvexHullShape(const ConvexHull &convexHull);
+
+        /// Adds the convex hulls from the given model.
+        ///
+        /// @param model [in] A reference to the model whose convex hulls are being added.
+        void AddConvexHullShapesFromModel(const Model &model);
 
         /// Adds a decomposed version of the given model.
         ///
@@ -60,8 +65,8 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This method performs a convex decomposition of the model data.
-        void AddDecomposedTriangleMeshShape(const Model &model);
-        void AddDecomposedTriangleMeshShape(const VertexArray &va);
+        //void AddDecomposedTriangleMeshShape(const Model &model);
+        //void AddDecomposedTriangleMeshShape(const VertexArray &va);
 
 
         /// Removes every collision shape.

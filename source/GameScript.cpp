@@ -298,6 +298,16 @@ namespace GTEngine
         auto &game = GameScript::FFI::GetGameObject(script);
 
         ConvexHullBuildSettings settings;
+        settings.compacityWeight               = script.ToFloat(1);
+        settings.volumeWeight                  = script.ToFloat(2);
+        settings.minClusters                   = static_cast<unsigned int>(script.ToInteger(3));
+        settings.verticesPerCH                 = static_cast<unsigned int>(script.ToInteger(4));
+        settings.concavity                     = script.ToFloat(5);
+        settings.smallClusterThreshold         = script.ToFloat(6);
+        settings.connectedComponentsDist       = script.ToFloat(7);
+        settings.simplifiedTriangleCountTarget = static_cast<unsigned int>(script.ToInteger(8));
+        settings.addExtraDistPoints            = script.ToBoolean(9);
+        settings.addFacesPoints                = script.ToBoolean(10);
 
         game.GetEditor().GetModelEditor().BuildConvexDecomposition(settings);
         return 0;

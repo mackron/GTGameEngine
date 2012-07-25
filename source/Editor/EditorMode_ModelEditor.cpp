@@ -50,7 +50,7 @@ namespace GTEngine
 
 
 
-        //this->LoadModel("engine/models/default.dae");
+        this->LoadModel("engine/models/default.dae");
     }
 
     EditorMode_ModelEditor::~EditorMode_ModelEditor()
@@ -90,6 +90,7 @@ namespace GTEngine
             auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
             if (model != nullptr)
             {
+                this->DeleteConvexHulls();
                 GTEngine::ModelLibrary::Delete(model);
             }
 
@@ -207,15 +208,8 @@ namespace GTEngine
 
     void EditorMode_ModelEditor::BuildConvexDecomposition(ConvexHullBuildSettings &settings)
     {
-        // We need to delete any existing convex hull nodes so that they are re-built to account for changes.
-        for (size_t i = 0; i < this->convexHullNodes.count; ++i)
-        {
-            // We need to delete the model we created for this node.
-
-            delete this->convexHullNodes[i];
-        }
-        this->convexHullNodes.Clear();
-
+        // The old convex hulls need to be deleted.
+        this->DeleteConvexHulls();
 
         // We build the convex decomposition on the definition directly.
         auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
@@ -224,6 +218,13 @@ namespace GTEngine
             // We're going to be naughty here and do a const_cast so we can build the convex hulls.
             auto &definition = const_cast<ModelDefinition &>(model->GetDefinition());
             definition.BuildConvexDecomposition(settings);
+        }
+
+        
+
+        if (this->convexHullParentNode.IsVisible())
+        {
+            this->ShowConvexDecomposition();
         }
     }
 
@@ -317,6 +318,17 @@ namespace GTEngine
         this->cameraNode.SetOrientation(glm::quat());
         this->cameraNode.RotateY(this->cameraYRotation);
         this->cameraNode.RotateX(this->cameraXRotation);
+    }
+
+    void EditorMode_ModelEditor::DeleteConvexHulls()
+    {
+        // We need to delete any existing convex hull nodes so that they are re-built to account for changes.
+        for (size_t i = 0; i < this->convexHullNodes.count; ++i)
+        {
+            // TODO: We need to delete the model we created for this node.
+            delete this->convexHullNodes[i];
+        }
+        this->convexHullNodes.Clear();
     }
 }
 

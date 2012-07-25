@@ -107,12 +107,26 @@ namespace GTEngine
         this->AddCollisionShape(new btConvexHullShape(static_cast<const btScalar*>(points), pointCount, stride), 0.0f, 0.0f, 0.0f);
     }
 
-    void DynamicsComponent::AddconvexHullShape(const ConvexHull &convexHull)
+    void DynamicsComponent::AddConvexHullShape(const ConvexHull &convexHull)
     {
         this->AddConvexHullShape(convexHull.GetVertices(), convexHull.GetVertexCount(), sizeof(glm::vec3));
     }
 
 
+    void DynamicsComponent::AddConvexHullShapesFromModel(const Model &model)
+    {
+        auto &definition = model.GetDefinition();
+
+        for (size_t i = 0; i < definition.convexHulls.count; ++i)
+        {
+            assert(definition.convexHulls[i] != nullptr);
+            this->AddConvexHullShape(*definition.convexHulls[i]);
+        }
+    }
+
+
+
+    /*
     void DynamicsComponent::AddDecomposedTriangleMeshShape(const Model &model)
     {
         // All we do here is iterate over each mesh and add it's vertex array.
@@ -208,6 +222,7 @@ namespace GTEngine
             }
         }
     }
+    */
 
 
     void DynamicsComponent::RemoveAllCollisionShapes()
