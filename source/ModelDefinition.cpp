@@ -71,6 +71,15 @@ namespace GTEngine
 
     void ModelDefinition::BuildConvexDecomposition(ConvexHullBuildSettings &settings)
     {
+        // We need to delete the old convex hulls.
+        for (size_t i = 0; i < this->convexHulls.count; ++i)
+        {
+            delete this->convexHulls[i];
+        }
+        this->convexHulls.Clear();
+
+
+        // After deleting the old convex hulls we can build the new ones.
         for (size_t i = 0; i < this->meshGeometries.count; ++i)
         {
             auto va = this->meshGeometries[i];

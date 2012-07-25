@@ -689,10 +689,11 @@ namespace GTEngine
                                 uint32_t meshCount;
                                 uint32_t keyFrameCount;
                                 uint32_t namedAnimationSegmentCount;
+                                uint32_t convexHullCount;
 
                             }counts;
 
-                            GTCore::IO::Read(file, &counts, 16);
+                            GTCore::IO::Read(file, &counts, 20);
 
 
                             // Bones.
@@ -939,6 +940,49 @@ namespace GTEngine
                                 free(name);
                             }
 
+
+                            // Here is where we load the convex hull information. This stuff is all batched so it may seem a little unintuitive.
+                            uint32_t* vertexCounts = new uint32_t[counts.convexHullCount];
+                            uint32_t* indexCounts  = new uint32_t[counts.convexHullCount];
+
+                            GTCore::IO::Read(file, vertexCounts, counts.convexHullCount * 4);
+                            GTCore::IO::Read(file, indexCounts,  counts.convexHullCount * 4);
+
+                            struct
+                            {
+                                uint32_t totalVertexCount;
+                                uint32_t totalIndexCount;
+                            }vertexIndexCounts;
+                            GTCore::IO::Read(file, &vertexIndexCounts, 8);
+
+                            float* vertices = new float[vertexIndexCounts.totalVertexCount];
+                            GTCore::IO::Read(file, vertices, vertexIndexCounts.totalVertexCount * 4);
+
+                            uint32_t* indices = new uint32_t[vertexIndexCounts.totalIndexCount];
+                            GTCore::IO::Read(file, indices, vertexIndexCounts.totalIndexCount * 4);
+
+
+                            auto currentVertices = vertices;
+                            auto currentIndices  = indices;
+
+                            for (uint32_t iHull = 0; iHull < counts.convexHullCount; ++iHull)
+                            {
+                                size_t vertexCount = static_cast<size_t>(vertexCounts[iHull]);
+                                size_t indexCount  = static_cast<size_t>(indexCounts[iHull]);
+
+                                definition->convexHulls.PushBack(new ConvexHull(currentVertices, vertexCount, currentIndices, indexCount));
+
+                                // Now we need to move our pointers forward.
+                                currentVertices += vertexCount * 3;
+                                currentIndices  += indexCount;
+                            }
+
+                            delete [] vertexCounts;
+                            delete [] indexCounts;
+                            delete [] vertices;
+                            delete [] indices;
+
+
                             // We can't forget to add the definition to the global list.
                             definition->fileName = fileNameIn;
                             LoadedDefinitions.Add(fileNameIn, definition);
@@ -1015,10 +1059,12 @@ namespace GTEngine
             uint32_t meshCount                  = static_cast<uint32_t>(definition.meshGeometries.count);
             uint32_t keyFrameCount              = static_cast<uint32_t>(definition.animation.GetKeyFrameCount());
             uint32_t namedAnimationSegmentCount = static_cast<uint32_t>(definition.animation.GetNamedSegmentCount());
+            uint32_t convexHullCount            = static_cast<uint32_t>(definition.convexHulls.count);
             GTCore::IO::Write(file, &boneCount,                  4);
             GTCore::IO::Write(file, &meshCount,                  4);
             GTCore::IO::Write(file, &keyFrameCount,              4);
             GTCore::IO::Write(file, &namedAnimationSegmentCount, 4);
+            GTCore::IO::Write(file, &convexHullCount,            4);
 
 
             // Bones.
@@ -1224,6 +1270,53 @@ namespace GTEngine
                 GTCore::IO::Write(file, &end,   4);
             }
 
+
+            // Here is where we save the convex hull data. A model can actually have a lot of convex hulls, so we're going to batch the data
+            // so we can load with as little IO::Read() calls as possible.
+            GTCore::Vector<uint32_t> vertexCounts(convexHullCount);
+            GTCore::Vector<uint32_t> indexCounts(convexHullCount);
+            GTCore::Vector<float>    vertices;
+            GTCore::Vector<uint32_t> indices;
+
+            for (uint32_t iHull = 0; iHull < convexHullCount; ++iHull)
+            {
+                auto hull = definition.convexHulls[iHull];
+                assert(hull != nullptr);
+
+                uint32_t vertexCount = static_cast<uint32_t>(hull->GetVertexCount());
+                uint32_t indexCount  = static_cast<uint32_t>(hull->GetIndexCount());
+
+                vertexCounts.PushBack(vertexCount);
+                indexCounts.PushBack( indexCount);
+
+                for (uint32_t iVertex = 0; iVertex < vertexCount; ++iVertex)
+                {
+                    vertices.PushBack(hull->GetVertices()[iVertex * 3 + 0]);
+                    vertices.PushBack(hull->GetVertices()[iVertex * 3 + 1]);
+                    vertices.PushBack(hull->GetVertices()[iVertex * 3 + 2]);
+                }
+
+                for (uint32_t iIndex = 0; iIndex < indexCount; ++iIndex)
+                {
+                    indices.PushBack(hull->GetIndices()[iIndex]);
+                }
+            }
+
+            if (convexHullCount > 0)
+            {
+                GTCore::IO::Write(file, &vertexCounts[0], vertexCounts.count * 4);
+                GTCore::IO::Write(file, &indexCounts[0],  indexCounts.count  * 4);
+                
+
+                uint32_t totalVertices = static_cast<uint32_t>(vertices.count);
+                uint32_t totalIndices  = static_cast<uint32_t>(indices.count);
+
+                GTCore::IO::Write(file, &totalVertices, 4);
+                GTCore::IO::Write(file, &totalIndices,  4);
+
+                GTCore::IO::Write(file, &vertices[0],     vertices.count * 4);
+                GTCore::IO::Write(file, &indices[0],      indices.count  * 4);
+            }
 
 
             // Can't forget to close the file.

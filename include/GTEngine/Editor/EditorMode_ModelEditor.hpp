@@ -105,6 +105,9 @@ namespace GTEngine
         /// Applies the camera rotation.
         void ApplyCameraRotation();
 
+        /// Deletes the convex hulls for the currently loaded model.
+        void DeleteConvexHulls();
+
 
     private:
 
