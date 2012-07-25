@@ -10,7 +10,7 @@ namespace GTEngine
         ConvexHullBuildSettings()
             : compacityWeight(0.1f),
               volumeWeight(0.0f),
-              minClusters(100),
+              minClusters(1),
               verticesPerCH(100),
               concavity(1000.0f),
               smallClusterThreshold(0.1f),
