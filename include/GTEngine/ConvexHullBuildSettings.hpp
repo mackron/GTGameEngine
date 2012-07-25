@@ -16,8 +16,9 @@ namespace GTEngine
               smallClusterThreshold(0.1f),
               connectedComponentsDist(30.0f),
               simplifiedTriangleCountTarget(0),
-              addExtraDistPoints(true),
-              addFacesPoints(true)
+              addExtraDistPoints(false),
+              addFacesPoints(false),
+              padding0(false), padding1(false)
         {
         }
 
@@ -32,6 +33,10 @@ namespace GTEngine
         unsigned int simplifiedTriangleCountTarget;
         bool         addExtraDistPoints;
         bool         addFacesPoints;
+
+        // Just some padding for easy file reading and writing.
+        bool padding0;
+        bool padding1;
     };
 }
 

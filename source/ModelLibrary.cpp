@@ -982,6 +982,26 @@ namespace GTEngine
                             delete [] indices;
 
 
+                            // Here is where we load some metadata. We need to constantly check that we're not at the end of the file.
+                            if (!GTCore::IO::AtEnd(file))
+                            {
+                                char chbs[4];
+                                GTCore::IO::Read(file, chbs, 4);
+
+                                uint32_t sizeInBytes;
+                                GTCore::IO::Read(file, &sizeInBytes, 4);
+
+                                if (sizeInBytes == sizeof(definition->convexHullBuildSettings))
+                                {
+                                    GTCore::IO::Read(file, &definition->convexHullBuildSettings, sizeInBytes);
+                                }
+                                else
+                                {
+                                    Log("Warning loading .gtmodel: sizeof(chbs) != sizeof(ConvexHullBuildSettings). Skipping.");
+                                }
+                            }
+
+
                             // We can't forget to add the definition to the global list.
                             definition->fileName = fileNameIn;
                             LoadedDefinitions.Add(fileNameIn, definition);
@@ -1316,6 +1336,20 @@ namespace GTEngine
                 GTCore::IO::Write(file, &vertices[0],     vertices.count * 4);
                 GTCore::IO::Write(file, &indices[0],      indices.count  * 4);
             }
+
+
+            // Here is where we allow for some metadata. Metadata is stored in chunks, with the size of each chunk stored so it can
+            // be skipped over when needed. The first 4 bytes of the metadata is an identifier. The next 4 bytes is the size of the
+            // data. The size can be used to skip over the data if it's not needed.
+            
+            // Convex-Hull Build Settings (CHBS)
+            GTCore::IO::Write(file, "chbs", 4);
+
+            uint32_t chbsSize = sizeof(definition.convexHullBuildSettings);
+            GTCore::IO::Write(file, &chbsSize, 4);
+
+            GTCore::IO::Write(file, &definition.convexHullBuildSettings, sizeof(chbsSize));
+
 
 
             // Can't forget to close the file.
