@@ -969,6 +969,12 @@ namespace GTEngine
         {
             this->scene->OnSceneNodeVisibleChanged(*this);
         }
+
+        // When the visibility of a node changes, there is a chance the visibility of the child has also changed. We are going to call the OnVisibleChange is also changing.
+        for (auto i = this->firstChild; i != nullptr; i = i->nextSibling)
+        {
+            i->OnVisibleChanged();
+        }
     }
 
     void SceneNode::OnUpdate(double deltaTimeInSeconds)

@@ -117,10 +117,43 @@ namespace GTEngine
     {
         auto &definition = model.GetDefinition();
 
+        // Unintuitively, we're not actually going to use AddConvexHullShape() here. Instead, we're going to go a little lower-level here
+        // to avoid some unnecessary calculations.
+
+        auto world = this->rigidBody->GetWorld();
+        if (world != nullptr)
+        {
+            world->RemoveRigidBody(*this->rigidBody);
+        }
+
+
         for (size_t i = 0; i < definition.convexHulls.count; ++i)
         {
-            assert(definition.convexHulls[i] != nullptr);
-            this->AddConvexHullShape(*definition.convexHulls[i]);
+            auto hull = definition.convexHulls[i];
+            assert(hull != nullptr);
+
+            // All we need to do is add the new shape to the compound shape...
+            this->collisionShape->addChildShape(
+                btTransform(btMatrix3x3::getIdentity(), btVector3(0.0f, 0.0f, 0.0f)),
+                new btConvexHullShape(static_cast<const btScalar*>(hull->GetVertices()), hull->GetVertexCount(), 12));
+            
+            //this->AddConvexHullShape(*definition.convexHulls[i]);
+        }
+
+
+        
+
+        // We need to make sure the shape is scaled correctly.
+        glm::vec3 nodeScale = this->node.GetWorldScale();
+        this->collisionShape->setLocalScaling(btVector3(nodeScale.x, nodeScale.y, nodeScale.z));
+
+        // We should also update the mass, not that it would matter. We will do it for correctness.
+        this->UpdateMass();
+
+        // Now the rigid body needs to be re-added.
+        if (world != nullptr)
+        {
+            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
     }
 
