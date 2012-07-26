@@ -1,6 +1,6 @@
 
 #include <GTEngine/DefaultViewportRenderer.hpp>
-#include <GTEngine/SceneNode.hpp>
+#include <GTEngine/Scene.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
@@ -13,21 +13,14 @@
 namespace GTEngine
 {
     DVR_RCBegin::DVR_RCBegin()
-        : framebuffer(nullptr), depthStencil(nullptr), finalOutput(nullptr), materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr),
-          viewportWidth(0), viewportHeight(0),
-          clearColour(0.5f, 0.5f, 0.5f), colourClearingEnabled(false)
+        : framebuffer(nullptr),
+          viewportWidth(0), viewportHeight(0)
     {
     }
 
     void DVR_RCBegin::Init(DVRFramebuffer &framebuffer)
     {
-        this->framebuffer     = &framebuffer;
-        this->depthStencil    = framebuffer.depthStencil;
-        this->finalOutput     = framebuffer.finalOutput;
-        this->materialBuffer0 = framebuffer.materialBuffer0;
-        this->materialBuffer1 = framebuffer.materialBuffer1;
-        this->materialBuffer2 = framebuffer.materialBuffer2;
-
+        this->framebuffer    = &framebuffer;
         this->viewportWidth  = framebuffer.width;
         this->viewportHeight = framebuffer.height;
     }
@@ -37,27 +30,116 @@ namespace GTEngine
         if (this->framebuffer != nullptr)
         {
             Renderer::SetFramebuffer(this->framebuffer);
-
-            int drawBuffers[] = {1, 2, 3};      // Material Buffers 0/1/2
-            Renderer::SetDrawBuffers(3, drawBuffers);
-
             Renderer::SetViewport(0, 0, this->viewportWidth, this->viewportHeight);
-
-            unsigned int clearbuffers = GTEngine::DepthBuffer;
-            if (this->colourClearingEnabled)
-            {
-                clearbuffers |= GTEngine::ColourBuffer;
-                Renderer::ClearColour(this->clearColour.x, this->clearColour.y, this->clearColour.z, 0.0f);     // Important that alpha colour is 0.0f.
-            }
-
-            Renderer::ClearDepth(1.0f);
-            Renderer::Clear(clearbuffers);
-
-            Renderer::EnableDepthTest();
-            Renderer::SetDepthFunc(RendererFunction_LEqual);
-            Renderer::EnableDepthWrites();
         }
     }
+
+
+    DVR_RCEnd::DVR_RCEnd()
+        : drawBackground(false), backgroundColour(0.5f, 0.5f, 0.5f)
+    {
+    }
+
+    void DVR_RCEnd::Execute()
+    {
+        // If we are drawing a background colour, we will draw a solid colour full screen quad. We should be in a good rendering state
+        // here with depth testing and writing disable and stencil testing enabled.
+        if (this->drawBackground)
+        {
+            Renderer::SetStencilFunc(RendererFunction_Equal, 0, 255);
+            Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Keep);
+
+            Renderer::SetShader(ShaderLibrary::GetColouredBGQuadShader());
+            Renderer::SetShaderParameter("Colour", this->backgroundColour);
+
+            Renderer::Draw(VertexArrayLibrary::GetFullscreenQuadVA());
+        }
+
+        // We best disable stencil testing here.
+        Renderer::DisableStencilTest();
+    }
+
+
+
+    DVR_RCBeginLayer::DVR_RCBeginLayer()
+        : isFirstLayer(true)
+    {
+    }
+
+    void DVR_RCBeginLayer::Execute()
+    {
+        int drawBuffers[] = {1, 2, 3};      // Material Buffers 0/1/2
+        Renderer::SetDrawBuffers(3, drawBuffers);
+
+        // The first thing we need to do is clear the depth and stencil buffer, and also the colour buffer if applicable.
+        unsigned int clearbuffers = GTEngine::DepthBuffer;
+        if (this->isFirstLayer)
+        {
+            clearbuffers |= GTEngine::StencilBuffer;
+        }
+
+        Renderer::EnableDepthTest();
+        Renderer::SetDepthFunc(RendererFunction_LEqual);
+        Renderer::EnableDepthWrites();
+        
+        Renderer::EnableStencilTest();
+        Renderer::SetStencilFunc(RendererFunction_GEqual, 1, 255);
+        Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Replace);
+
+        Renderer::ClearDepth(1.0f);
+        Renderer::ClearStencil(0);
+        Renderer::Clear(clearbuffers);
+    }
+
+
+
+    DVR_RCEndLayer::DVR_RCEndLayer()
+        : framebuffer(nullptr), combinerShader(nullptr),
+          finalOutputBuffer(nullptr),
+          lightingBuffer0(nullptr), lightingBuffer1(nullptr),
+          materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr)
+    {
+    }
+
+    void DVR_RCEndLayer::Init(DVRFramebuffer &framebuffer, Shader* combinerShader)
+    {
+        this->framebuffer       = &framebuffer;
+        this->finalOutputBuffer = framebuffer.finalOutput;
+        this->lightingBuffer0   = framebuffer.lightingBuffer0;
+        this->lightingBuffer1   = framebuffer.lightingBuffer1;
+        this->materialBuffer0   = framebuffer.materialBuffer0;
+        this->materialBuffer1   = framebuffer.materialBuffer1;
+        this->materialBuffer2   = framebuffer.materialBuffer2;
+
+        this->combinerShader = combinerShader;
+    }
+
+    void DVR_RCEndLayer::Execute()
+    {
+        assert(this->framebuffer != nullptr);
+
+
+        int drawBuffers[] = {0};        // Final output buffer.
+        Renderer::SetDrawBuffers(1, drawBuffers);
+
+        Renderer::SetShader(this->combinerShader);
+        Renderer::SetShaderParameter("LightingBuffer0", this->lightingBuffer0);
+        Renderer::SetShaderParameter("LightingBuffer1", this->lightingBuffer1);
+        Renderer::SetShaderParameter("MaterialBuffer0", this->materialBuffer0);
+        Renderer::SetShaderParameter("MaterialBuffer1", this->materialBuffer1);
+
+        Renderer::DisableDepthTest();
+        Renderer::DisableBlending();
+        Renderer::SetFaceCulling(false, true);
+
+        Renderer::EnableStencilTest();
+        Renderer::SetStencilFunc(RendererFunction_Equal, 1, 255);
+        Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Increment);
+        
+        Renderer::Draw(VertexArrayLibrary::GetFullscreenQuadVA());
+    }
+
+
 
 
 
@@ -73,17 +155,21 @@ namespace GTEngine
         Renderer::SetDrawBuffers(2, drawBuffers);
 
         // Clearing to black is important here.
-        Renderer::ClearColour(0.0f, 0.0f, 0.0f, 0.0f);      // Important that we set the alpha to 0.0f. This will be used for removing discarding pixels for layer support.
+        Renderer::ClearColour(0.0f, 0.0f, 0.0f, 1.0f);
         Renderer::Clear(GTEngine::ColourBuffer);
 
         Renderer::SetDepthFunc(RendererFunction_Equal);
         Renderer::DisableDepthWrites();
+
+        //Renderer::SetStencilFunc(RendererFunction_Equal, 1, 255);
+        //Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Keep);
 
         // We combine lighting passes using standard blending.
         Renderer::EnableBlending();
         Renderer::SetBlendEquation(BlendEquation_Add);
         Renderer::SetBlendFunc(BlendFunc_One, BlendFunc_One);
     }
+
 
 
 
@@ -100,45 +186,6 @@ namespace GTEngine
         Renderer::SetShaderParameter("Lighting_Normals", this->materialBuffer2);
         Renderer::SetShaderParameter("ScreenSize",       this->screenSize);
     }
-    
-
-
-    DVR_RCEnd::DVR_RCEnd()
-        : framebuffer(nullptr), combinerShader(nullptr)
-    {
-    }
-
-    void DVR_RCEnd::Init(DVRFramebuffer &framebuffer)
-    {
-        this->framebuffer       = &framebuffer;
-        this->finalOutputBuffer = framebuffer.finalOutput;
-        this->lightingBuffer0   = framebuffer.lightingBuffer0;
-        this->lightingBuffer1   = framebuffer.lightingBuffer1;
-        this->materialBuffer0   = framebuffer.materialBuffer0;
-        this->materialBuffer1   = framebuffer.materialBuffer1;
-        this->materialBuffer2   = framebuffer.materialBuffer2;
-    }
-
-    void DVR_RCEnd::Execute()
-    {
-        if (this->framebuffer != nullptr)
-        {
-            int drawBuffers[] = {0};        // Final output buffer.
-            Renderer::SetDrawBuffers(1, drawBuffers);
-
-            Renderer::SetShader(this->combinerShader);
-            Renderer::SetShaderParameter("LightingBuffer0", this->lightingBuffer0);
-            Renderer::SetShaderParameter("LightingBuffer1", this->lightingBuffer1);
-            Renderer::SetShaderParameter("MaterialBuffer0", this->materialBuffer0);
-            Renderer::SetShaderParameter("MaterialBuffer1", this->materialBuffer1);
-
-            Renderer::DisableDepthTest();
-            Renderer::DisableBlending();
-            Renderer::SetFaceCulling(false, true);
-
-            Renderer::Draw(VertexArrayLibrary::GetFullscreenQuadVA());
-        }
-    }
 }
 
 namespace GTEngine
@@ -147,13 +194,11 @@ namespace GTEngine
         : owner(nullptr), framebuffer(), Shaders(), RenderCommands(),
           materialLibraryEventHandler(*this),
           materialMetadatas(),
+          clearColourBuffer(false), clearColour(0.5f, 0.5f, 0.5f),
           projection(), view(),
           screenSize(),
           framebufferNeedsResize(false)
     {
-        RenderCommands.rcBegin[0].framebuffer = &this->framebuffer;
-        RenderCommands.rcBegin[1].framebuffer = &this->framebuffer;
-
         Shaders.lightingD1   = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_D1");
         Shaders.lightingA1   = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_A1");
         Shaders.lightingP1   = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_P1");
@@ -162,8 +207,11 @@ namespace GTEngine
         Shaders.lightingA1P1 = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_A1P1");
         Shaders.combiner     = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_LightingMaterialCombiner");
 
-        RenderCommands.rcEnd[0].combinerShader = Shaders.combiner;
-        RenderCommands.rcEnd[1].combinerShader = Shaders.combiner;
+        RenderCommands.rcBegin[0].framebuffer = &this->framebuffer;
+        RenderCommands.rcBegin[1].framebuffer = &this->framebuffer;
+
+        //RenderCommands.rcEnd[0].combinerShader = Shaders.combiner;
+        //RenderCommands.rcEnd[1].combinerShader = Shaders.combiner;
 
 
         // We need catch the deletion of materials so we can delete any metadata this renderer may have created. To do this, we attach an event
@@ -228,49 +276,76 @@ namespace GTEngine
     {
         if (this->owner != nullptr)
         {
-            // We need to retrieve a few properties to begin with. These will be used later on in the pipeline.
-            auto cameraNode = this->owner->GetCameraNode();
-            if (cameraNode != nullptr)
-            {
-                auto camera = cameraNode->GetComponent<CameraComponent>();
-                assert(camera != nullptr);
-
-                this->projection = camera->GetProjectionMatrix();
-                this->view       = camera->GetViewMatrix();
-            }
-            else
-            {
-                this->projection = glm::mat4();
-                this->view       = glm::mat4();
-            }
-
-
-            // We need to iterate over the renderable scene nodes and draw them.
-            auto &modelComponents            = this->owner->GetModelComponents();
-            auto &ambientLightComponents     = this->owner->GetAmbientLightComponents();
-            auto &directionalLightComponents = this->owner->GetDirectionalLightComponents();
-            auto &pointLightComponents       = this->owner->GetPointLightComponents();
-            auto &spotLightComponents        = this->owner->GetSpotLightComponents();
-
-
-            // First we'll grab the render command objects we'll be adding to the back buffer.
-            auto &rcBegin = this->RenderCommands.rcBegin[Renderer::BackIndex];
-            auto &rcEnd   = this->RenderCommands.rcEnd[Renderer::BackIndex];
-            
-            
-
             // Step 1: Begin the frame.
+            auto &rcBegin = this->RenderCommands.rcBegin[Renderer::BackIndex];
             rcBegin.Init(this->framebuffer);
             Renderer::BackRCQueue->Append(rcBegin);
 
-            // Step 2: Material pass. This will also fill the depth buffer. No lighting is done here.
-            this->DoMaterialPass(modelComponents);
 
-            // Step 3: The lighting pass.
-            this->DoLightingPass(modelComponents, ambientLightComponents, directionalLightComponents, pointLightComponents, spotLightComponents);
+            // We need to render layer-by-layer. We start from the layer with the lowest index and move upwards. At the beginning of
+            // every layer we need to ensure the depth and stencil buffer is cleared.
+            auto &layerCameras = this->owner->GetLayerCameraMap();
+            if (layerCameras.count > 0)
+            {
+                for (size_t i = layerCameras.count; i > 0; --i)
+                {
+                    auto cameraNode = layerCameras.buffer[i - 1]->value;
+                    if (cameraNode != nullptr)
+                    {
+                        auto camera = cameraNode->GetComponent<CameraComponent>();
+                        assert(camera != nullptr);
 
-            // Step 4: End the frame.
-            rcEnd.Init(this->framebuffer);
+                        this->projection = camera->GetProjectionMatrix();
+                        this->view       = camera->GetViewMatrix();
+                    }
+                    else
+                    {
+                        this->projection = glm::mat4();
+                        this->view       = glm::mat4();
+                    }
+
+
+                    // Here we retrieve the visible components.
+                    this->modelComponents.count            = 0;
+                    this->ambientLightComponents.count     = 0;
+                    this->directionalLightComponents.count = 0;
+                    this->pointLightComponents.count       = 0;
+                    this->spotLightComponents.count        = 0;
+
+                    this->owner->GetScene()->GetVisibleComponents(this->projection * this->view,
+                        this->modelComponents,
+                        this->ambientLightComponents,
+                        this->directionalLightComponents,
+                        this->pointLightComponents,
+                        this->spotLightComponents);
+
+
+
+                    // Step 2a: Begin the layer.
+                    auto &rcBeginLayer = this->RenderCommands.rcBeginLayer[Renderer::BackIndex].Acquire();
+                    rcBeginLayer.isFirstLayer      = (i == layerCameras.count);
+                    Renderer::BackRCQueue->Append(rcBeginLayer);
+
+
+                    // Step 2b: Material pass. This will fill the depth and stencil buffers.
+                    this->DoMaterialPass(this->modelComponents);
+
+                    // Step 2c: Lighting pass.
+                    this->DoLightingPass(this->modelComponents, this->ambientLightComponents, this->directionalLightComponents, this->pointLightComponents, this->spotLightComponents);
+
+
+                    // Step 2d: End the layer.
+                    auto &rcEndLayer = this->RenderCommands.rcEndLayer[Renderer::BackIndex].Acquire();
+                    rcEndLayer.Init(this->framebuffer, this->Shaders.combiner);
+                    Renderer::BackRCQueue->Append(rcEndLayer);
+                }
+            }
+
+
+            // Step 3: End the frame.
+            auto &rcEnd   = this->RenderCommands.rcEnd[Renderer::BackIndex];
+            rcEnd.drawBackground   = this->clearColourBuffer;
+            rcEnd.backgroundColour = this->clearColour;
             Renderer::BackRCQueue->Append(rcEnd);
         }
     }
@@ -302,21 +377,17 @@ namespace GTEngine
 
     void DefaultViewportRenderer::SetClearColour(float r, float g, float b)
     {
-        // Probably should set this like this, but it won't crash.
-        this->RenderCommands.rcBegin[0].clearColour = glm::vec3(r, g, b);
-        this->RenderCommands.rcBegin[1].clearColour = glm::vec3(r, g, b);
+        this->clearColour = glm::vec3(r, g, b);
     }
 
     void DefaultViewportRenderer::DisableColourClears()
     {
-        this->RenderCommands.rcBegin[0].colourClearingEnabled = false;
-        this->RenderCommands.rcBegin[1].colourClearingEnabled = false;
+        this->clearColourBuffer = false;
     }
 
     void DefaultViewportRenderer::EnableColourClears()
     {
-        this->RenderCommands.rcBegin[0].colourClearingEnabled = true;
-        this->RenderCommands.rcBegin[1].colourClearingEnabled = true;
+        this->clearColourBuffer = true;
     }
 
 

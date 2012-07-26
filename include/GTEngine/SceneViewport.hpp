@@ -132,6 +132,11 @@ namespace GTEngine
         Texture2D* GetDepthStencilOutputBuffer();
 
 
+        /// Retrieves a direct reference to the internal map of layer cameras.
+              GTCore::Map<int, GTEngine::SceneNode*> & GetLayerCameraMap()       { return this->cameraNodes; }
+        const GTCore::Map<int, GTEngine::SceneNode*> & GetLayerCameraMap() const { return this->cameraNodes; }
+
+
     // Picking.
     public:
 
@@ -147,10 +152,12 @@ namespace GTEngine
     public:
 
         /// Projects a 3D point to window coordinates based on the viewport.
+        ///
         /// @param position [in] The point in 3D space being projected.
         glm::vec3 Project(const glm::vec3 &position, int layer = 0);
 
         /// Unprojects a 2D point into 3D space.
+        ///
         /// @param position [in] The point in 2D space being unprojected.
         glm::vec3 Unproject(const glm::vec3 &position, int layer = 0);
 
@@ -171,10 +178,10 @@ namespace GTEngine
     private:
 
         /// Updates the internal rendering data in preparation for rendering.
-        void UpdateRenderingData();
+        //void UpdateRenderingData();
 
         /// Clears the internal rendering data.
-        void ClearRenderingData();
+        //void ClearRenderingData();
 
 
     private:

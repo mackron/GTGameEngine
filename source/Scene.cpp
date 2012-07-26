@@ -73,6 +73,77 @@ namespace GTEngine
         SceneViewportCullingCallback(const SceneViewportCullingCallback &);
         SceneViewportCullingCallback & operator=(const SceneViewportCullingCallback &);
     };
+
+
+
+
+    // TODO: Should rename this since it's independant of viewports now. This is temp anyway.
+    /// Callback structure for doing occlusion culling against a viewport.
+    struct SceneViewportCullingCallback2 : SceneCullingManager::VisibleCallback
+    {
+        /// Constructor
+        SceneViewportCullingCallback2(GTCore::Vector<ModelComponent*> &modelComponentsOut, GTCore::Vector<PointLightComponent*> &pointLightComponentsOut, GTCore::Vector<SpotLightComponent*> &spotLightComponentsOut)
+            : modelComponents(modelComponentsOut), pointLightComponents(pointLightComponentsOut), spotLightComponents(spotLightComponentsOut)
+        {
+        }
+
+        /// Destructor.
+        ~SceneViewportCullingCallback2()
+        {
+        }
+
+
+        /// VisibleCallback::ProcessObjectModel().
+        virtual void ProcessObjectModel(SceneObject &object)
+        {
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::ModelComponent>();
+                if (component != nullptr)
+                {
+                    this->modelComponents.PushBack(component);
+                }
+            }
+        }
+
+        /// VisibleCallback::ProcessObjectPointLight().
+        virtual void ProcessObjectPointLight(SceneObject &object)
+        {
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::PointLightComponent>();
+                if (component != nullptr)
+                {
+                    this->pointLightComponents.PushBack(component);
+                }
+            }
+        }
+
+        /// VisibleCallback::ProcessObjectSpotLight().
+        virtual void ProcessObjectSpotLight(SceneObject &object)
+        {
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::SpotLightComponent>();
+                if (component != nullptr)
+                {
+                    this->spotLightComponents.PushBack(component);
+                }
+            }
+        }
+
+
+    private:
+
+        GTCore::Vector<ModelComponent*>      &modelComponents;
+        GTCore::Vector<PointLightComponent*> &pointLightComponents;
+        GTCore::Vector<SpotLightComponent*>  &spotLightComponents;
+
+
+    private:    // No copying.
+        SceneViewportCullingCallback2(const SceneViewportCullingCallback2 &);
+        SceneViewportCullingCallback2 & operator=(const SceneViewportCullingCallback2 &);
+    };
 }
 
 // Contact Callbacks
@@ -502,6 +573,43 @@ namespace GTEngine
                         viewport.AddDirectionalLightComponent(*light);
                     }
                 }
+            }
+        }
+    }
+
+    void Scene::GetVisibleComponents(const glm::mat4 &mvp,
+            GTCore::Vector<ModelComponent*>            &modelComponentsOut,
+            GTCore::Vector<AmbientLightComponent*>     &ambientLightComponentsOut,
+            GTCore::Vector<DirectionalLightComponent*> &directionalLightComponentsOut,
+            GTCore::Vector<PointLightComponent*>       &pointLightComponentsOut,
+            GTCore::Vector<SpotLightComponent*>        &spotLightComponentsOut)
+    {
+        SceneViewportCullingCallback2 callback
+        (
+            modelComponentsOut,
+            pointLightComponentsOut,
+            spotLightComponentsOut
+        );
+        this->cullingManager.ProcessVisibleObjects(mvp, callback);
+
+
+        // Ambient.
+        for (auto i = this->ambientLightComponents.root; i != nullptr; i = i->next)
+        {
+            auto light = i->value;
+            if (light != nullptr && light->GetNode().IsVisible())
+            {
+                ambientLightComponentsOut.PushBack(light);
+            }
+        }
+
+        // Directional.
+        for (auto i = this->directionalLightComponents.root; i != nullptr; i = i->next)
+        {
+            auto light = i->value;
+            if (light != nullptr && light->GetNode().IsVisible())
+            {
+                directionalLightComponentsOut.PushBack(light);
             }
         }
     }

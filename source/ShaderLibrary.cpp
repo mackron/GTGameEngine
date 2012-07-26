@@ -630,6 +630,7 @@ namespace GTEngine
     static Shader* GUITextShader        = nullptr;
     static Shader* GUIShadowShader      = nullptr;
     static Shader* FullscreenQuadShader = nullptr;
+    static Shader* ColouredBGQuadShader = nullptr;
     static Shader* LineShader           = nullptr;
 
     Shader* ShaderLibrary::GetGUIQuadShader()
@@ -680,6 +681,16 @@ namespace GTEngine
         }
 
         return FullscreenQuadShader;
+    }
+
+    Shader* ShaderLibrary::GetColouredBGQuadShader()
+    {
+        if (ColouredBGQuadShader == nullptr)
+        {
+            ColouredBGQuadShader = new Shader(ShaderLibrary::GetShaderString("Engine_ColouredBGQuad_VS"), ShaderLibrary::GetShaderString("Engine_ColouredBGQuad_FS"));
+        }
+
+        return ColouredBGQuadShader;
     }
 
     Shader* ShaderLibrary::GetLineShader()

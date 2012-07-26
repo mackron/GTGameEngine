@@ -1352,6 +1352,10 @@ namespace GTEngine
     {
         glClearDepth(depth);
     }
+    void Renderer::ClearStencil(int stencil)
+    {
+        glClearStencil(static_cast<GLint>(stencil));
+    }
 
 
     void Renderer_EnableVertexFormat(const VertexFormat &format, const float *vertices)

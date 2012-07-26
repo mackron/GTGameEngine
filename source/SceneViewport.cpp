@@ -141,7 +141,7 @@ namespace GTEngine
         {
             // We first need to update the rendering data. This will retrieve all of the components that are required for drawing the scene from
             // this viewport's perspective.
-            this->UpdateRenderingData();
+            //this->UpdateRenderingData();
 
             // Now that we have the rendered components cached, we can render the viewport.
             this->renderer->Render();
@@ -268,6 +268,7 @@ namespace GTEngine
 // Private
 namespace GTEngine
 {
+    /*
     void SceneViewport::UpdateRenderingData()
     {
         this->ClearRenderingData();
@@ -286,4 +287,5 @@ namespace GTEngine
         this->pointLightComponents.Clear();
         this->spotLightComponents.Clear();
     }
+    */
 }

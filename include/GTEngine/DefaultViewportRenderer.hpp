@@ -188,19 +188,88 @@ namespace GTEngine
         /// The framebuffer to make current.
         DVRFramebuffer* framebuffer;
 
-        Texture2D* depthStencil;
-        Texture2D* finalOutput;
+        unsigned int viewportWidth;
+        unsigned int viewportHeight;
+    };
+
+
+    // RCEnd
+    class DVR_RCEnd : public RenderCommand
+    {
+    public:
+        
+        /// Constructor.
+        DVR_RCEnd();
+
+        /// RenderCommand::Execute().
+        void Execute();
+
+
+    public:
+
+        /// Whether or not to draw the background.
+        bool drawBackground;
+
+        /// The colour of the background.
+        glm::vec3 backgroundColour;
+    };
+
+
+
+    // RCBeginLayer.
+    class DVR_RCBeginLayer : public RenderCommand
+    {
+    public:
+
+        /// Constructor.
+        DVR_RCBeginLayer();
+
+        /// RenderCommand::Execute().
+        void Execute();
+
+
+    public:
+
+        /// Whether or not this is being called for the first layer.
+        bool isFirstLayer;
+    };
+
+
+    // RCEndLighting
+    class DVR_RCEndLayer : public RenderCommand
+    {
+    public:
+
+        /// Constructor.
+        DVR_RCEndLayer();
+
+        /// Initialises the command from the given framebuffer.
+        void Init(DVRFramebuffer &framebuffer, Shader* combinerShader);
+
+        /// RenderCommand::Execute().
+        void Execute();
+
+
+    public:
+
+        /// The framebuffer to make current.
+        DVRFramebuffer* framebuffer;
+
+        /// The combiner shader.
+        Shader* combinerShader;
+
+        /// The buffer that will eventually contain the final output.
+        Texture2D* finalOutputBuffer;
+
+        /// Input textures for the combiner.
+        Texture2D* lightingBuffer0;
+        Texture2D* lightingBuffer1;
         Texture2D* materialBuffer0;
         Texture2D* materialBuffer1;
         Texture2D* materialBuffer2;
-
-        unsigned int viewportWidth;
-        unsigned int viewportHeight;
-
-        glm::vec3 clearColour;
-
-        bool colourClearingEnabled;
     };
+
+
 
 
     // RCBeginLighting
@@ -261,38 +330,6 @@ namespace GTEngine
         Shader* shader;
 
         glm::vec2 screenSize;
-    };
-
-    
-    // RCEnd
-    class DVR_RCEnd : public RenderCommand
-    {
-    public:
-        
-        DVR_RCEnd();
-
-        void Init(DVRFramebuffer &framebuffer);
-
-        void Execute();
-
-
-    public:
-
-        /// The framebuffer to make current.
-        DVRFramebuffer* framebuffer;
-
-        /// The combiner shader.
-        Shader* combinerShader;
-
-        /// The buffer that will eventually contain the final output.
-        Texture2D* finalOutputBuffer;
-
-        /// Input textures for the combiner.
-        Texture2D* lightingBuffer0;
-        Texture2D* lightingBuffer1;
-        Texture2D* materialBuffer0;
-        Texture2D* materialBuffer1;
-        Texture2D* materialBuffer2;
     };
 }
 
@@ -433,6 +470,8 @@ namespace GTEngine
 
             Shader* combiner;
 
+
+
             /// A cache of shaders used by materials in the material pass.
             MaterialShaderCache materialPassShaders;
 
@@ -446,6 +485,8 @@ namespace GTEngine
             DVR_RCBeginLighting rcBeginLighting[2];
             DVR_RCEnd           rcEnd[2];
 
+            RCCache<DVR_RCBeginLayer>            rcBeginLayer[2];
+            RCCache<DVR_RCEndLayer>              rcEndLayer[2];
             RCCache<DVR_RCBeginLightingPass, 32> rcBeginLightingPass[2];
             RCCache<RCDrawVA>                    rcDrawVA[2];
             RCCache<RCSetFaceCulling>            rcSetFaceCulling[2];
@@ -493,6 +534,12 @@ namespace GTEngine
         /// The list of metadata pointers that will need to be removed when the renderer is destructed. We only really keep these for clean destruction.
         GTCore::List<MaterialMetadata*> materialMetadatas;
 
+        /// Keeps track of whether or not the colour buffer should be cleared.
+        bool clearColourBuffer;
+
+        /// The colour to clear the colour buffer with.
+        glm::vec3 clearColour;
+
 
         /// The projection matrix. This is updated at the start of each render.
         glm::mat4 projection;
@@ -506,6 +553,22 @@ namespace GTEngine
         /// This keeps track of whether or not the framebuffer needs to be resized. When ResizeFramebuffer() is called, it's not actually
         /// performed straight away. Instead we do it synchronously between frames in order to avoid synchronization issues.
         bool framebufferNeedsResize;
+
+
+        /// The cache of model components.
+        GTCore::Vector<ModelComponent*> modelComponents;
+
+        /// The cache of ambient light components.
+        GTCore::Vector<AmbientLightComponent*> ambientLightComponents;
+
+        /// The cache of directional light components.
+        GTCore::Vector<DirectionalLightComponent*> directionalLightComponents;
+
+        /// The cache of point light components.
+        GTCore::Vector<PointLightComponent*> pointLightComponents;
+
+        /// The cache of spot light components.
+        GTCore::Vector<SpotLightComponent*> spotLightComponents;
 
 
     friend class MaterialLibraryEventHandler;
