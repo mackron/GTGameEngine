@@ -327,6 +327,24 @@ namespace GTEngine
 
         return GL_ALWAYS;
     }
+
+    GLenum ToOpenGLStencilOp(StencilOp op)
+    {
+        switch (op)
+        {
+        case StencilOp_Keep:          return GL_KEEP;
+        case StencilOp_Zero:          return GL_ZERO;
+        case StencilOp_Replace:       return GL_REPLACE;
+        case StencilOp_Increment:     return GL_INCR;
+        case StencilOp_IncrementWrap: return GL_INCR_WRAP;
+        case StencilOp_Decrement:     return GL_DECR;
+        case StencilOp_DecrementWrap: return GL_DECR_WRAP;
+        case StencilOp_Invert:        return GL_INVERT;
+        default: break;
+        }
+
+        return GL_KEEP;
+    }
 }
 
 // Renderer Globals. Needs to be before the renderer support utils.
@@ -360,7 +378,8 @@ namespace GTEngine
             : CurrentShader(nullptr),
               ViewportX(0), ViewportY(0), ViewportWidth(0), ViewportHeight(0),
               ScissorX(0), ScissorY(0), ScissorWidth(0), ScissorHeight(0), IsScissorEnabled(false),
-              IsDepthTestEnabled(false), IsDepthWritesEnabled(true), CurrentDepthFunc(RendererFunction_Less), 
+              IsDepthTestEnabled(false), IsDepthWritesEnabled(true), CurrentDepthFunc(RendererFunction_Less),
+              IsStencilTestEnabled(false),
               IsBlendingEnabled(false), CurrentBlendSourceFactor(BlendFunc_One), CurrentBlendDestFactor(BlendFunc_Zero), CurrentBlendEquation(BlendEquation_Add),
               IsAlphaTestEnabled(false), CurrentAlphaTestFunc(RendererFunction_Always), CurrentAlphaTestRef(0.0f),
               SwapInterval(1), SwapIntervalChanged(false)
@@ -387,6 +406,10 @@ namespace GTEngine
         bool IsDepthTestEnabled;
         bool IsDepthWritesEnabled;
         RendererFunction CurrentDepthFunc;
+
+        /// The current stencil testing state.
+        bool IsStencilTestEnabled;
+
 
         /// The current blending state.
         bool IsBlendingEnabled;
@@ -1546,6 +1569,108 @@ namespace GTEngine
             RendererState.CurrentDepthFunc = func;
         }
     }
+
+
+    void Renderer::EnableStencilTest()
+    {
+        if (!RendererState.IsStencilTestEnabled)
+        {
+            glEnable(GL_STENCIL_TEST);
+            RendererState.IsStencilTestEnabled = true;
+        }
+    }
+
+    void Renderer::DisableStencilTest()
+    {
+        if (RendererState.IsStencilTestEnabled)
+        {
+            glDisable(GL_STENCIL_TEST);
+            RendererState.IsStencilTestEnabled = false;
+        }
+    }
+
+    void Renderer::SetStencilMask(unsigned int mask)
+    {
+        glStencilMask(static_cast<GLuint>(mask));
+    }
+
+    void Renderer::SetStencilFunc(RendererFunction func, int ref, unsigned int mask)
+    {
+        glStencilFunc(ToOpenGLFunc(func), ref, mask);
+    }
+
+    void Renderer::SetStencilOp(StencilOp stencilFail, StencilOp depthFail, StencilOp pass)
+    {
+        glStencilOp(ToOpenGLStencilOp(stencilFail), ToOpenGLStencilOp(depthFail), ToOpenGLStencilOp(pass));
+    }
+
+    void Renderer::SetStencilMaskSeparate(bool frontFace, bool backFace, unsigned mask)
+    {
+        GLenum face;
+        if (frontFace && backFace)
+        {
+            face = GL_FRONT_AND_BACK;
+        }
+        else
+        {
+            if (frontFace)
+            {
+                face = GL_FRONT;
+            }
+            else
+            {
+                face = GL_BACK;
+            }
+        }
+
+        glStencilMaskSeparate(face, static_cast<GLuint>(mask));
+    }
+
+    void Renderer::SetStencilFuncSeparate(bool frontFace, bool backFace, RendererFunction func, int ref, unsigned int mask)
+    {
+        GLenum face;
+        if (frontFace && backFace)
+        {
+            face = GL_FRONT_AND_BACK;
+        }
+        else
+        {
+            if (frontFace)
+            {
+                face = GL_FRONT;
+            }
+            else
+            {
+                face = GL_BACK;
+            }
+        }
+
+        glStencilFuncSeparate(face, ToOpenGLFunc(func), static_cast<GLint>(ref), static_cast<GLuint>(mask));
+    }
+
+    void Renderer::SetStencilOpSeparate(bool frontFace, bool backFace, StencilOp stencilFail, StencilOp depthFail, StencilOp pass)
+    {
+        GLenum face;
+        if (frontFace && backFace)
+        {
+            face = GL_FRONT_AND_BACK;
+        }
+        else
+        {
+            if (frontFace)
+            {
+                face = GL_FRONT;
+            }
+            else
+            {
+                face = GL_BACK;
+            }
+        }
+
+        glStencilOpSeparate(face, ToOpenGLStencilOp(stencilFail), ToOpenGLStencilOp(depthFail), ToOpenGLStencilOp(pass));
+    }
+
+
 
     void Renderer::SetFaceCulling(bool cullFront, bool cullBack)
     {

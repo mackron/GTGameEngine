@@ -67,6 +67,18 @@ namespace GTEngine
         BlendEquation_Max
     };
 
+    enum StencilOp
+    {
+        StencilOp_Keep,
+        StencilOp_Zero,
+        StencilOp_Replace,
+        StencilOp_Increment,
+        StencilOp_IncrementWrap,
+        StencilOp_Decrement,
+        StencilOp_DecrementWrap,
+        StencilOp_Invert
+    };
+
 
     /**
     *   \brief  Class representing a renderer.
@@ -278,13 +290,70 @@ namespace GTEngine
         /// Disable depth testing.
         static void DisableDepthTest();
 
+        /// Enables depth writes.
         static void EnableDepthWrites();
+
+        /// Disables depth writes.
         static void DisableDepthWrites();
 
         /// Sets the function to use with depth testing.
         ///
         /// @param func [in] The new depth function.
         static void SetDepthFunc(RendererFunction func);
+
+
+
+        /// Enables stencil testing.
+        static void EnableStencilTest();
+
+        /// Disables stencil testing.
+        static void DisableStencilTest();
+
+        /// Sets the stencil mask.
+        ///
+        /// @param mask [in] The bit mask to enable and disable writing of individual bits in the stencil planes.
+        static void SetStencilMask(unsigned int mask);
+
+        /// Sets the stencil function and reference value for stencil testing.
+        ///
+        /// @param func [in] The function to use with stencil testing.
+        /// @param ref  [in] The reference value.
+        /// @param mask [in] Specifies a mask that is ANDed with both the reference value and the stored stencil value when the test is done.
+        static void SetStencilFunc(RendererFunction func, int ref, unsigned int mask);
+
+        /// Sets the action to take during stencil testing.
+        ///
+        /// @param stencilFail [in] The action to take when the stencil test fails.
+        /// @param depthFail   [in] The action to take when the depth test fails.
+        /// @param pass        [in] The action to take when both the depth and stenil tests pass.
+        static void SetStencilOp(StencilOp stencilFail, StencilOp depthFail, StencilOp pass);
+
+        /// Sets the stencil mask for the given faces.
+        ///
+        /// @param frontFace [in] Whether or not the write mask for the front face is updated.
+        /// @param backFace  [in] Whether or not the write mask for the back face is updated.
+        /// @param mask      [in] The new write mask.
+        static void SetStencilMaskSeparate(bool frontFace, bool backFace, unsigned mask);
+
+        /// Sets the stencil function and reference value to use with stencil testing for the given faces.
+        ///
+        /// @param frontFace [in] Whether or not the function for the front face is updated.
+        /// @param backFace  [in] Whether or not the function for the back face is updated.
+        /// @param func      [in] The function to use with stencil testing.
+        /// @param ref       [in] The reference value.
+        /// @param mask      [in] Specifies a mask that is ANDed with both the reference value and the stored stencil value when the test is done.
+        static void SetStencilFuncSeparate(bool frontFace, bool backFace, RendererFunction func, int ref, unsigned int mask);
+
+        /// Sets the action to take during stencil testing for the given faces.
+        ///
+        /// @param frontFace   [in] Whether or not the action for the front face is updated.
+        /// @param backFace    [in] Whether or not the action for the back face is updated.
+        /// @param stencilFail [in] The action to take when the stencil test fails.
+        /// @param depthFail   [in] The action to take when the depth test fails.
+        /// @param pass        [in] The action to take when both the depth and stenil tests pass.
+        static void SetStencilOpSeparate(bool frontFace, bool backFace, StencilOp stencilFail, StencilOp depthFail, StencilOp pass);
+
+
 
         /// Sets the face culling mode.
         ///
