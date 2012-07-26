@@ -23,16 +23,16 @@ namespace GTEngine
     static const unsigned int DepthBuffer   = 0x02;
     static const unsigned int StencilBuffer = 0x04;
 
-    enum DepthFunc
+    enum RendererFunction
     {
-        DepthFunc_Never,
-        DepthFunc_Less,
-        DepthFunc_Equal,
-        DepthFunc_LEqual,
-        DepthFunc_Greater,
-        DepthFunc_NotEqual,
-        DepthFunc_GEqual,
-        DepthFunc_Always,
+        RendererFunction_Never,
+        RendererFunction_Less,
+        RendererFunction_Equal,
+        RendererFunction_LEqual,
+        RendererFunction_Greater,
+        RendererFunction_NotEqual,
+        RendererFunction_GEqual,
+        RendererFunction_Always,
     };
 
     enum BlendFunc
@@ -67,17 +67,6 @@ namespace GTEngine
         BlendEquation_Max
     };
 
-    enum AlphaTestFunc
-    {
-        AlphaTestFunc_Never,
-        AlphaTestFunc_Less,
-        AlphaTestFunc_Equal,
-        AlphaTestFunc_LEqual,
-        AlphaTestFunc_Greater,
-        AlphaTestFunc_NotEqual,
-        AlphaTestFunc_GEqual,
-        AlphaTestFunc_Always,
-    };
 
     /**
     *   \brief  Class representing a renderer.
@@ -278,7 +267,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The default value is AlphaTestFunc_Always.
-        static void SetAlphaTestFunc(AlphaTestFunc func, float ref);
+        static void SetAlphaTestFunc(RendererFunction func, float ref);
 
 
 
@@ -292,7 +281,10 @@ namespace GTEngine
         static void EnableDepthWrites();
         static void DisableDepthWrites();
 
-        static void SetDepthFunc(DepthFunc func);
+        /// Sets the function to use with depth testing.
+        ///
+        /// @param func [in] The new depth function.
+        static void SetDepthFunc(RendererFunction func);
 
         /// Sets the face culling mode.
         ///

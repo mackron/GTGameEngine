@@ -54,7 +54,7 @@ namespace GTEngine
             Renderer::Clear(clearbuffers);
 
             Renderer::EnableDepthTest();
-            Renderer::SetDepthFunc(DepthFunc_LEqual);
+            Renderer::SetDepthFunc(RendererFunction_LEqual);
             Renderer::EnableDepthWrites();
         }
     }
@@ -76,7 +76,7 @@ namespace GTEngine
         Renderer::ClearColour(0.0f, 0.0f, 0.0f, 0.0f);      // Important that we set the alpha to 0.0f. This will be used for removing discarding pixels for layer support.
         Renderer::Clear(GTEngine::ColourBuffer);
 
-        Renderer::SetDepthFunc(DepthFunc_Equal);
+        Renderer::SetDepthFunc(RendererFunction_Equal);
         Renderer::DisableDepthWrites();
 
         // We combine lighting passes using standard blending.
