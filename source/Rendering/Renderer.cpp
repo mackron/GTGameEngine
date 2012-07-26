@@ -309,6 +309,24 @@ namespace GTEngine
 
         return GL_FUNC_ADD;
     }
+
+    GLenum ToOpenGLAlphaTestFunc(AlphaTestFunc func)
+    {
+        switch (func)
+        {
+        case AlphaTestFunc_Never:    return GL_NEVER;
+        case AlphaTestFunc_Less:     return GL_LESS;
+        case AlphaTestFunc_Equal:    return GL_EQUAL;
+        case AlphaTestFunc_LEqual:   return GL_LEQUAL;
+        case AlphaTestFunc_Greater:  return GL_GREATER;
+        case AlphaTestFunc_NotEqual: return GL_NOTEQUAL;
+        case AlphaTestFunc_GEqual:   return GL_GEQUAL;
+        case AlphaTestFunc_Always:   return GL_ALWAYS;
+        default: break;
+        }
+
+        return GL_ALWAYS;
+    }
 }
 
 // Renderer Globals. Needs to be before the renderer support utils.
@@ -317,10 +335,10 @@ namespace GTEngine
     /// The main OpenGL context.
     GTGLcontext OpenGLContext = nullptr;
 
-    bool IsRendererInitialised = false;
-    bool IsCgInitialised       = false;
-    bool IsDepthTestingEnabled = false;     // <-- Always ensure this is initialised to false.
-    bool IsSRGBEnabled         = false;
+    bool IsRendererInitialised  = false;
+    bool IsDepthTestingEnabled  = false;     // <-- Always ensure this is initialised to false.
+    bool IsAlphaTestFuncEnabled = false;
+    bool IsSRGBEnabled          = false;
 
 
     // This is a bitfield containing bits representing which vertex attributes are currently enabled on the OpenGL side.
@@ -345,6 +363,7 @@ namespace GTEngine
               ViewportX(0), ViewportY(0), ViewportWidth(0), ViewportHeight(0),
               ScissorX(0), ScissorY(0), ScissorWidth(0), ScissorHeight(0), IsScissorEnabled(false),
               IsBlendingEnabled(false), CurrentBlendSourceFactor(BlendFunc_One), CurrentBlendDestFactor(BlendFunc_Zero), CurrentBlendEquation(BlendEquation_Add),
+              IsAlphaTestEnabled(false), CurrentAlphaTestFunc(AlphaTestFunc_Always), CurrentAlphaTestRef(0.0f),
               SwapInterval(1), SwapIntervalChanged(false)
         {
         }
@@ -370,6 +389,11 @@ namespace GTEngine
         BlendFunc     CurrentBlendSourceFactor;
         BlendFunc     CurrentBlendDestFactor;
         BlendEquation CurrentBlendEquation;
+
+        /// The current alpha testing state.
+        bool IsAlphaTestEnabled;
+        AlphaTestFunc CurrentAlphaTestFunc;
+        float         CurrentAlphaTestRef;
 
         /// Swap interval.
         int  SwapInterval;
@@ -1443,6 +1467,33 @@ namespace GTEngine
     {
         Renderer::EnableBlending();
         Renderer::SetBlendFunc(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
+    }
+
+
+    void Renderer::EnableAlphaTest()
+    {
+        if (!RendererState.IsAlphaTestEnabled)
+        {
+            glEnable(GL_ALPHA_TEST);
+            RendererState.IsAlphaTestEnabled = true;
+        }
+    }
+
+    void Renderer::DisableAlphaTest()
+    {
+        if (RendererState.IsAlphaTestEnabled)
+        {
+            glDisable(GL_ALPHA_TEST);
+            RendererState.IsAlphaTestEnabled = false;
+        }
+    }
+
+    void Renderer::SetAlphaTestFunc(AlphaTestFunc func, float ref)
+    {
+        if (RendererState.CurrentAlphaTestFunc != func)
+        {
+            glAlphaFunc(ToOpenGLAlphaTestFunc(func), static_cast<GLclampf>(ref));
+        }
     }
 
 

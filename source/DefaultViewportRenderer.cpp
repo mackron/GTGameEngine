@@ -47,7 +47,7 @@ namespace GTEngine
             if (this->colourClearingEnabled)
             {
                 clearbuffers |= GTEngine::ColourBuffer;
-                Renderer::ClearColour(this->clearColour.x, this->clearColour.y, this->clearColour.z, 1.0f);
+                Renderer::ClearColour(this->clearColour.x, this->clearColour.y, this->clearColour.z, 0.0f);     // Important that alpha colour is 0.0f.
             }
 
             Renderer::ClearDepth(1.0f);
@@ -73,7 +73,7 @@ namespace GTEngine
         Renderer::SetDrawBuffers(2, drawBuffers);
 
         // Clearing to black is important here.
-        Renderer::ClearColour(0.0f, 0.0f, 0.0f, 1.0f);
+        Renderer::ClearColour(0.0f, 0.0f, 0.0f, 0.0f);      // Important that we set the alpha to 0.0f. This will be used for removing discarding pixels for layer support.
         Renderer::Clear(GTEngine::ColourBuffer);
 
         Renderer::SetDepthFunc(DepthFunc_Equal);

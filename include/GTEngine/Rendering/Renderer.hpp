@@ -67,6 +67,18 @@ namespace GTEngine
         BlendEquation_Max
     };
 
+    enum AlphaTestFunc
+    {
+        AlphaTestFunc_Never,
+        AlphaTestFunc_Less,
+        AlphaTestFunc_Equal,
+        AlphaTestFunc_LEqual,
+        AlphaTestFunc_Greater,
+        AlphaTestFunc_NotEqual,
+        AlphaTestFunc_GEqual,
+        AlphaTestFunc_Always,
+    };
+
     /**
     *   \brief  Class representing a renderer.
     *
@@ -251,6 +263,25 @@ namespace GTEngine
 
         /// Helper for enabling alpha blending.
         static void EnableAlphaBlending();
+
+
+        /// Enables alpha testing.
+        static void EnableAlphaTest();
+
+        /// Disables alpha testing.
+        static void DisableAlphaTest();
+
+        /// Sets the alpha testing function.
+        ///
+        /// @param func [in] The new alpha test function.
+        /// @param ref  [in] The reference value that incoming alpha values are compared to
+        ///
+        /// @remarks
+        ///     The default value is AlphaTestFunc_Always.
+        static void SetAlphaTestFunc(AlphaTestFunc func, float ref);
+
+
+
 
         /// Enables depth testing.
         static void EnableDepthTest();
