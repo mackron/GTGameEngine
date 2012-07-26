@@ -1526,7 +1526,7 @@ namespace GTEngine
         if (!RendererState.IsDepthWritesEnabled)
         {
             glDepthMask(GL_TRUE);
-            RendererState.IsDepthWritesEnabled = false;
+            RendererState.IsDepthWritesEnabled = true;
         }
     }
     void Renderer::DisableDepthWrites()
@@ -1534,7 +1534,7 @@ namespace GTEngine
         if (RendererState.IsDepthWritesEnabled)
         {
             glDepthMask(GL_FALSE);
-            RendererState.IsDepthWritesEnabled = true;
+            RendererState.IsDepthWritesEnabled = false;
         }
     }
 
