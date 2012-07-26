@@ -6,7 +6,8 @@
 namespace GTEngine
 {
     SceneViewport::SceneViewport(unsigned int width, unsigned int height)
-        : scene(nullptr), cameraNode(nullptr), renderer(nullptr), width(width), height(height),
+        : scene(nullptr), cameraNodes(),
+          renderer(nullptr), width(width), height(height),
           modelComponents(), ambientLightComponents(), directionalLightComponents(), pointLightComponents(), spotLightComponents()
     {
     }
@@ -27,18 +28,37 @@ namespace GTEngine
     }
 
 
-    void SceneViewport::SetCameraNode(SceneNode* cameraNode)
+    void SceneViewport::SetCameraNode(SceneNode* cameraNode, int layer)
     {
-        this->cameraNode = cameraNode;
+        if (cameraNode != nullptr)
+        {
+            this->cameraNodes.Add(layer, cameraNode);
+        }
+        else
+        {
+            this->cameraNodes.Remove(layer);
+        }
     }
 
-    SceneNode* SceneViewport::GetCameraNode()
+    SceneNode* SceneViewport::GetCameraNode(int layer)
     {
-        return this->cameraNode;
+        auto iCamera = this->cameraNodes.Find(layer);
+        if (iCamera != nullptr)
+        {
+            return iCamera->value;
+        }
+
+        return nullptr;
     }
-    const SceneNode* SceneViewport::GetCameraNode() const
+    const SceneNode* SceneViewport::GetCameraNode(int layer) const
     {
-        return this->cameraNode;
+        auto iCamera = this->cameraNodes.Find(layer);
+        if (iCamera != nullptr)
+        {
+            return iCamera->value;
+        }
+
+        return nullptr;
     }
 
 
@@ -125,12 +145,6 @@ namespace GTEngine
 
             // Now that we have the rendered components cached, we can render the viewport.
             this->renderer->Render();
-
-
-            // TESTING
-            //printf("Spot Light Count: %d\n", this->spotLightComponents.count);
-            //printf("Point Light Count: %d\n", this->pointLightComponents.count);
-            //printf("Model Count: %d\n", this->modelComponents.count);
         }
     }
 
@@ -166,58 +180,61 @@ namespace GTEngine
 
 
     /*** Picking ***/
-    void SceneViewport::CalculatePickingRay(int x, int y, glm::vec3 &rayNear, glm::vec3 &rayFar)
+    void SceneViewport::CalculatePickingRay(int x, int y, glm::vec3 &rayNear, glm::vec3 &rayFar, int layer)
     {
-        auto viewportCamera = this->cameraNode->GetComponent<GTEngine::CameraComponent>();
-        assert(viewportCamera != nullptr);
-
-        const glm::mat4 &projection = viewportCamera->GetProjectionMatrix();
-              glm::mat4 view        = viewportCamera->GetViewMatrix();
-
-        glm::vec3 winCoords;
-        winCoords.x = static_cast<float>(x);
-        winCoords.y = static_cast<float>(this->height) - static_cast<float>(y);
-
-        glm::uvec4 viewportCoords(0, 0, this->width, this->height);
-
-        winCoords.z = 0.0f;
-        rayNear = glm::unProject(winCoords, view, projection, viewportCoords);
-
-        winCoords.z = 1.0f;
-        rayFar  = glm::unProject(winCoords, view, projection, viewportCoords);
-    }
-
-    /*
-    SceneNode* SceneViewport::PickSceneNode(int x, int y)
-    {
-        glm::vec3 rayNear, rayFar;
-        this->CalculatePickingRay(x, y, rayNear, rayFar);
-
-        if (this->scene != nullptr)
+        auto cameraNode = this->GetCameraNode(layer);
+        if (cameraNode != nullptr)
         {
-            return this->scene->PickSceneNode(rayNear, rayFar);
-        }
+            auto viewportCamera = cameraNode->GetComponent<GTEngine::CameraComponent>();
+            assert(viewportCamera != nullptr);
 
-        return nullptr;
+            const glm::mat4 &projection = viewportCamera->GetProjectionMatrix();
+                  glm::mat4 view        = viewportCamera->GetViewMatrix();
+
+            glm::vec3 winCoords;
+            winCoords.x = static_cast<float>(x);
+            winCoords.y = static_cast<float>(this->height) - static_cast<float>(y);
+
+            glm::uvec4 viewportCoords(0, 0, this->width, this->height);
+
+            winCoords.z = 0.0f;
+            rayNear = glm::unProject(winCoords, view, projection, viewportCoords);
+
+            winCoords.z = 1.0f;
+            rayFar  = glm::unProject(winCoords, view, projection, viewportCoords);
+        }
     }
-    */
+
+    
 
 
     /*** Misc Stuff ***/
-    glm::vec3 SceneViewport::Project(const glm::vec3 &position)
+    glm::vec3 SceneViewport::Project(const glm::vec3 &position, int layer)
     {
-        auto viewportCamera = this->cameraNode->GetComponent<GTEngine::CameraComponent>();
-        assert(viewportCamera != nullptr);
+        auto cameraNode = this->GetCameraNode(layer);
+        if (cameraNode != nullptr)
+        {
+            auto viewportCamera = cameraNode->GetComponent<GTEngine::CameraComponent>();
+            assert(viewportCamera != nullptr);
 
-        return glm::project(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
+            return glm::project(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
+        }
+
+        return position;
     }
 
-    glm::vec3 SceneViewport::Unproject(const glm::vec3 &position)
+    glm::vec3 SceneViewport::Unproject(const glm::vec3 &position, int layer)
     {
-        auto viewportCamera = this->cameraNode->GetComponent<GTEngine::CameraComponent>();
-        assert(viewportCamera != nullptr);
+        auto cameraNode = this->GetCameraNode(layer);
+        if (cameraNode != nullptr)
+        {
+            auto viewportCamera = cameraNode->GetComponent<GTEngine::CameraComponent>();
+            assert(viewportCamera != nullptr);
 
-        return glm::unProject(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
+            return glm::unProject(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
+        }
+
+        return position;
     }
 
     glm::mat4 SceneViewport::Get2DProjectionMatrix(bool yDown) const
@@ -232,11 +249,12 @@ namespace GTEngine
         }
     }
 
-    glm::mat4 SceneViewport::GetMVPMatrix() const
+    glm::mat4 SceneViewport::GetMVPMatrix(int layer) const
     {
-        if (this->cameraNode != nullptr)
+        auto cameraNode = this->GetCameraNode(layer);
+        if (cameraNode != nullptr)
         {
-            auto viewportCamera = this->cameraNode->GetComponent<GTEngine::CameraComponent>();
+            auto viewportCamera = cameraNode->GetComponent<GTEngine::CameraComponent>();
             if (viewportCamera != nullptr)
             {
                 return viewportCamera->GetProjectionMatrix() * viewportCamera->GetViewMatrix();

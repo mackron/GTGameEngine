@@ -38,6 +38,7 @@ namespace GTEngine
     public:
 
         /// Sets the scene this viewport is attached to. Do not use this publically. Instead, use Scene::AttachViewport()/Scene::DetachViewport().
+        ///
         /// @param scene [in] A pointer to the new scene. Can be null, it which case the viewport is not attached to any scene.
         void SetScene(Scene *scene);
 
@@ -46,12 +47,19 @@ namespace GTEngine
 
 
         /// Sets the scene node to act as the camera.
+        ///
         /// @param cameraNode [in] A pointer to the camera node. Can be null, in which case nothing is rendered.
-        void SetCameraNode(SceneNode* cameraNode);
+        /// @param layer      [in] The index of the layer to attach this camera to.
+        ///
+        /// @remarks
+        ///     Remove the camera of a layer by setting <cameraNode> to nullptr.
+        void SetCameraNode(SceneNode* cameraNode, int layer = 0);
 
         /// Retrieves a pointer to the camera node. Can return null if a camera hasn't been set, or SetCameraNode() was set with an argument of null.
-              SceneNode* GetCameraNode();
-        const SceneNode* GetCameraNode() const;
+        ///
+        /// @param layer [in] The index of the layer whose camera is being retrieved.
+              SceneNode* GetCameraNode(int layer = 0);
+        const SceneNode* GetCameraNode(int layer = 0) const;
 
         
         /// Sets the renderer.
@@ -132,16 +140,7 @@ namespace GTEngine
         /// @param  y       [in]  The y position on the viewport the ray should start at.
         /// @param  rayNear [out] The end of the ray that is closest to the viewer.
         /// @param  rayFar  [out] The end of the ray that is farthest from the viewport.
-        void CalculatePickingRay(int x, int y, glm::vec3 &rayNear, glm::vec3 &rayFar);
-
-        /// Picks a scene node using the given coordinates on the viewport.
-        /// @param  x [in] The x position on the viewport the picking ray should start at.
-        /// @param  y [in] The y position on the viewport the picking ray should start at.
-        /// @return A pointer to the scene node that was picked, or null if nothing was picked.
-        ///
-        /// @remarks
-        ///     The picking is performed based on the collision volumes of the visual representation of the scene node.
-        //SceneNode* PickSceneNode(int x, int y);
+        void CalculatePickingRay(int x, int y, glm::vec3 &rayNear, glm::vec3 &rayFar, int layer = 0);
 
 
     // Misc stuff.
@@ -149,11 +148,11 @@ namespace GTEngine
 
         /// Projects a 3D point to window coordinates based on the viewport.
         /// @param position [in] The point in 3D space being projected.
-        glm::vec3 Project(const glm::vec3 &position);
+        glm::vec3 Project(const glm::vec3 &position, int layer = 0);
 
         /// Unprojects a 2D point into 3D space.
         /// @param position [in] The point in 2D space being unprojected.
-        glm::vec3 Unproject(const glm::vec3 &position);
+        glm::vec3 Unproject(const glm::vec3 &position, int layer = 0);
 
         /// Retrieves a 2D projection matrix for this viewport.
         ///
@@ -166,7 +165,7 @@ namespace GTEngine
         glm::mat4 Get2DProjectionMatrix(bool yDown = false) const;
 
         /// Retrieves the model-view-projection matrix used by this viewport and it's current camera.
-        glm::mat4 GetMVPMatrix() const;
+        glm::mat4 GetMVPMatrix(int layer = 0) const;
 
 
     private:
@@ -183,8 +182,9 @@ namespace GTEngine
         /// The scene this viewport is attached to.
         Scene* scene;
 
-        /// A pointer to the scene node acting as the camera. Must have a CameraComponent attached.
-        SceneNode* cameraNode;
+        /// The map for mapping a layer to a camera.
+        GTCore::Map<int, SceneNode*> cameraNodes;
+
 
         /// The renderer to use when drawing this viewport.
         ViewportRenderer* renderer;
