@@ -310,18 +310,18 @@ namespace GTEngine
         return GL_FUNC_ADD;
     }
 
-    GLenum ToOpenGLAlphaTestFunc(AlphaTestFunc func)
+    GLenum ToOpenGLFunc(RendererFunction func)
     {
         switch (func)
         {
-        case AlphaTestFunc_Never:    return GL_NEVER;
-        case AlphaTestFunc_Less:     return GL_LESS;
-        case AlphaTestFunc_Equal:    return GL_EQUAL;
-        case AlphaTestFunc_LEqual:   return GL_LEQUAL;
-        case AlphaTestFunc_Greater:  return GL_GREATER;
-        case AlphaTestFunc_NotEqual: return GL_NOTEQUAL;
-        case AlphaTestFunc_GEqual:   return GL_GEQUAL;
-        case AlphaTestFunc_Always:   return GL_ALWAYS;
+        case RendererFunction_Never:    return GL_NEVER;
+        case RendererFunction_Less:     return GL_LESS;
+        case RendererFunction_Equal:    return GL_EQUAL;
+        case RendererFunction_LEqual:   return GL_LEQUAL;
+        case RendererFunction_Greater:  return GL_GREATER;
+        case RendererFunction_NotEqual: return GL_NOTEQUAL;
+        case RendererFunction_GEqual:   return GL_GEQUAL;
+        case RendererFunction_Always:   return GL_ALWAYS;
         default: break;
         }
 
@@ -335,10 +335,8 @@ namespace GTEngine
     /// The main OpenGL context.
     GTGLcontext OpenGLContext = nullptr;
 
-    bool IsRendererInitialised  = false;
-    bool IsDepthTestingEnabled  = false;     // <-- Always ensure this is initialised to false.
-    bool IsAlphaTestFuncEnabled = false;
-    bool IsSRGBEnabled          = false;
+    bool IsRendererInitialised = false;
+    bool IsSRGBEnabled         = false;
 
 
     // This is a bitfield containing bits representing which vertex attributes are currently enabled on the OpenGL side.
@@ -362,8 +360,9 @@ namespace GTEngine
             : CurrentShader(nullptr),
               ViewportX(0), ViewportY(0), ViewportWidth(0), ViewportHeight(0),
               ScissorX(0), ScissorY(0), ScissorWidth(0), ScissorHeight(0), IsScissorEnabled(false),
+              IsDepthTestEnabled(false), IsDepthWritesEnabled(true), CurrentDepthFunc(RendererFunction_Less), 
               IsBlendingEnabled(false), CurrentBlendSourceFactor(BlendFunc_One), CurrentBlendDestFactor(BlendFunc_Zero), CurrentBlendEquation(BlendEquation_Add),
-              IsAlphaTestEnabled(false), CurrentAlphaTestFunc(AlphaTestFunc_Always), CurrentAlphaTestRef(0.0f),
+              IsAlphaTestEnabled(false), CurrentAlphaTestFunc(RendererFunction_Always), CurrentAlphaTestRef(0.0f),
               SwapInterval(1), SwapIntervalChanged(false)
         {
         }
@@ -384,6 +383,11 @@ namespace GTEngine
         unsigned int ScissorHeight;
         bool IsScissorEnabled;
 
+        /// The current depth testing state.
+        bool IsDepthTestEnabled;
+        bool IsDepthWritesEnabled;
+        RendererFunction CurrentDepthFunc;
+
         /// The current blending state.
         bool IsBlendingEnabled;
         BlendFunc     CurrentBlendSourceFactor;
@@ -392,8 +396,8 @@ namespace GTEngine
 
         /// The current alpha testing state.
         bool IsAlphaTestEnabled;
-        AlphaTestFunc CurrentAlphaTestFunc;
-        float         CurrentAlphaTestRef;
+        RendererFunction CurrentAlphaTestFunc;
+        float            CurrentAlphaTestRef;
 
         /// Swap interval.
         int  SwapInterval;
@@ -1488,60 +1492,59 @@ namespace GTEngine
         }
     }
 
-    void Renderer::SetAlphaTestFunc(AlphaTestFunc func, float ref)
+    void Renderer::SetAlphaTestFunc(RendererFunction func, float ref)
     {
         if (RendererState.CurrentAlphaTestFunc != func)
         {
-            glAlphaFunc(ToOpenGLAlphaTestFunc(func), static_cast<GLclampf>(ref));
+            glAlphaFunc(ToOpenGLFunc(func), static_cast<GLclampf>(ref));
+
+            RendererState.CurrentAlphaTestFunc = func;
+            RendererState.CurrentAlphaTestRef  = ref;
         }
     }
 
 
     void Renderer::EnableDepthTest()
     {
-        if (!IsDepthTestingEnabled)
+        if (!RendererState.IsDepthTestEnabled)
         {
             glEnable(GL_DEPTH_TEST);
-            IsDepthTestingEnabled = true;
+            RendererState.IsDepthTestEnabled = true;
         }
     }
     void Renderer::DisableDepthTest()
     {
-        if (IsDepthTestingEnabled)
+        if (RendererState.IsDepthTestEnabled)
         {
             glDisable(GL_DEPTH_TEST);
-            IsDepthTestingEnabled = false;
+            RendererState.IsDepthTestEnabled = false;
         }
     }
 
     void Renderer::EnableDepthWrites()
     {
-        glDepthMask(GL_TRUE);
+        if (!RendererState.IsDepthWritesEnabled)
+        {
+            glDepthMask(GL_TRUE);
+            RendererState.IsDepthWritesEnabled = false;
+        }
     }
     void Renderer::DisableDepthWrites()
     {
-        glDepthMask(GL_FALSE);
+        if (RendererState.IsDepthWritesEnabled)
+        {
+            glDepthMask(GL_FALSE);
+            RendererState.IsDepthWritesEnabled = true;
+        }
     }
 
-    void Renderer::SetDepthFunc(DepthFunc func)
+    void Renderer::SetDepthFunc(RendererFunction func)
     {
-        GLenum funcGL = GL_LESS;
-
-        switch (func)
+        if (RendererState.CurrentDepthFunc != func)
         {
-        case DepthFunc_Never:    funcGL = GL_NEVER;    break;
-        case DepthFunc_Less:     funcGL = GL_LESS;     break;
-        case DepthFunc_Equal:    funcGL = GL_EQUAL;    break;
-        case DepthFunc_LEqual:   funcGL = GL_LEQUAL;   break;
-        case DepthFunc_Greater:  funcGL = GL_GREATER;  break;
-        case DepthFunc_NotEqual: funcGL = GL_NOTEQUAL; break;
-        case DepthFunc_GEqual:   funcGL = GL_GEQUAL;   break;
-        case DepthFunc_Always:   funcGL = GL_ALWAYS;   break;
-
-        default: break;
+            glDepthFunc(ToOpenGLFunc(func));
+            RendererState.CurrentDepthFunc = func;
         }
-
-        glDepthFunc(funcGL);
     }
 
     void Renderer::SetFaceCulling(bool cullFront, bool cullBack)
