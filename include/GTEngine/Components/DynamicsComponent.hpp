@@ -44,29 +44,22 @@ namespace GTEngine
 
         /// Adds a static plane shape. This does not move with the node.
         void AddStaticPlaneShape(float a, float b, float c, float d);
-        
+
 
         /// Adds a convex hull shape.
         ///
         /// @param points     [in] A pointer to the buffer containing the points to build the hull from.
         /// @param pointCount [in] The number of points in the buffer.
         /// @param stride     [in] The vertex stride.
-        void AddConvexHullShape(const float* points, size_t pointCount, size_t stride);
-        void AddConvexHullShape(const ConvexHull &convexHull);
+        void AddConvexHullShape(const float* points, size_t pointCount, size_t stride, float margin = 0.0);
+        void AddConvexHullShape(const ConvexHull &convexHull, float margin = 0.0);
 
         /// Adds the convex hulls from the given model.
         ///
-        /// @param model [in] A reference to the model whose convex hulls are being added.
-        void AddConvexHullShapesFromModel(const Model &model);
+        /// @param model  [in] A reference to the model whose convex hulls are being added.
+        /// @param margin [in] The margin to apply. This default to 0.0, but it may change later if we have issues.
+        void AddConvexHullShapesFromModel(const Model &model, float margin = 0.0f);
 
-        /// Adds a decomposed version of the given model.
-        ///
-        /// @param model [in] The model whose geometric data is being used to create the convex hull shapes.
-        ///
-        /// @remarks
-        ///     This method performs a convex decomposition of the model data.
-        //void AddDecomposedTriangleMeshShape(const Model &model);
-        //void AddDecomposedTriangleMeshShape(const VertexArray &va);
 
 
         /// Removes every collision shape.
