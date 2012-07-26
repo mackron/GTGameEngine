@@ -81,8 +81,8 @@ namespace GTEngine
         /**
         *   \brief  Retrieves a pointer to the internal renderer data.
         */
-              void * GetRendererData()       { return this->rendererData; }
-        const void * GetRendererData() const { return this->rendererData; }
+              void* GetRendererData()       { return this->rendererData; }
+        const void* GetRendererData() const { return this->rendererData; }
 
         /**
         *   \brief  Sets the pointer to the internal renderer data.

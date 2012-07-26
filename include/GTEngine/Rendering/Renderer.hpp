@@ -234,11 +234,16 @@ namespace GTEngine
         /// Clears the specified buffers.
         static void Clear(unsigned int bufferMask);
 
+
         /// Sets the colour to use for the colour buffer when it's cleared.
         static void ClearColour(float r, float g, float b, float a);
 
-        /// Set the value to use for the depth buffer after it's cleared.
+        /// Sets the value to use for the depth buffer after it's cleared.
         static void ClearDepth(float depth);
+
+        /// Sets the value to use for the stencil buffer after it's cleared.
+        static void ClearStencil(int stencil);
+
 
         /// Draws a vertex array.
         static void Draw(const VertexArray* vertexArray, DrawMode mode = DrawMode_Triangles);

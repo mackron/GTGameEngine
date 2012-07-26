@@ -33,7 +33,7 @@ namespace GTEngine
 
 
         // Here we setup the viewport.
-        this->renderer.SetClearColour(0.1f, 0.1f, 0.1f);
+        this->renderer.SetClearColour(0.5f, 0.5f, 0.5f);
         this->renderer.EnableColourClears();
 
         this->viewport.SetRenderer(&this->renderer);

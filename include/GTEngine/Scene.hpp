@@ -319,6 +319,16 @@ namespace GTEngine
         virtual void AddVisibleComponents(SceneViewport &viewport);     // TODO: Rename this. Waaaay to confusing..
 
 
+        // TODO: Perhaps use a nicer callback system for renderers that don't necessarilly want to use the same system...
+        /// A hacky temp function for retrieving the SceneNode components of visible objects.
+        virtual void GetVisibleComponents(const glm::mat4 &mvp,
+            GTCore::Vector<ModelComponent*>            &modelComponents,
+            GTCore::Vector<AmbientLightComponent*>     &ambientLightComponents,
+            GTCore::Vector<DirectionalLightComponent*> &directionalLightComponents,
+            GTCore::Vector<PointLightComponent*>       &pointLightComponents,
+            GTCore::Vector<SpotLightComponent*>        &spotLightComponents);
+
+
 
     // Physics.
     public:

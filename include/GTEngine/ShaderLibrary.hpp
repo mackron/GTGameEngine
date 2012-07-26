@@ -141,6 +141,9 @@ namespace GTEngine
         */
         static Shader* GetFullscreenQuadShader();
 
+        /// Retrieves the shader that is used to draw a solid colour background quad.
+        static Shader* GetColouredBGQuadShader();
+
         /**
         *   \brief  Retrieves the shader that is used to draw wireframes.
         */

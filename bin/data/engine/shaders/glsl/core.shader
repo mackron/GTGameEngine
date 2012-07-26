@@ -24,6 +24,26 @@
 
 
 
+<shader id="Engine_ColouredBGQuad_VS">
+    attribute vec2 VertexInput_Position;
+
+	void main()
+	{
+        gl_Position = vec4(VertexInput_Position, 0.0, 1.0);
+	}
+</shader>
+
+<shader id="Engine_ColouredBGQuad_FS">
+    uniform vec3 Colour;
+
+	void main()
+	{
+		gl_FragData[0] = vec4(Colour, 1.0);
+	}
+</shader>
+
+
+
 <shader id="Engine_DefaultVS">
     attribute vec3 VertexInput_Position;
     attribute vec2 VertexInput_TexCoord;
