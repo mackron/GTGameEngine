@@ -10,8 +10,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <include url="menubar.xml"       />
 <include url="combobox.xml"      />
 <include url="file-explorer.xml" />
-<include url="modeleditor.xml"   />
-<include url="sandbox.xml"       />
+<!--<include url="modeleditor.xml"   />-->
+<!--<include url="sandbox.xml"       />-->
 
 <!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
 <script>
@@ -21,6 +21,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
 <script>
 <![CDATA[
+--[[
     MenuBar_ModelEditor:MenuBar();
     file = MenuBar_ModelEditor:AppendItem("File");
     file.menu:AppendItem("Open..."):OnPressed(function()
@@ -55,6 +56,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     ModeSwitcher:AppendItem("Sandbox"):OnPressed(function()
         Editor.SwitchToSandboxMode();
     end);
+    --]]
     
     
     CommandTextBox:OnKeyDown(function(data)
@@ -89,7 +91,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     end);
     
     
-    
+    --[[
     checkModelEditor_ShowConvexDecomposition:CheckBox("Show in Viewport");
     
     checkModelEditor_ShowConvexDecomposition:OnChecked(function()
@@ -143,6 +145,69 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
             );
         btnModelEditor_ConvexDecomposition_Build:Enable();
     end);
+    ]]
+    
+    
+    
+    EditorExplorerSearchBox.HasContent = false;
+    EditorExplorerSearchBox:SetStyle("font-style", "italic");
+    
+    EditorExplorerSearchBox:OnFocus(function()
+        if not EditorExplorerSearchBox.HasContent then
+            EditorExplorerSearchBox:SetText("");
+        end
+        
+        EditorExplorerSearchBox:SetStyle("font-style", "none");
+        EditorExplorerSearchBoxIcon:SetStyle("background-image-color", "#aaa");
+    end);
+    
+    EditorExplorerSearchBox:OnBlur(function()
+        if not EditorExplorerSearchBox:GetText() then
+            EditorExplorerSearchBox.HasContent = false;
+            EditorExplorerSearchBox:SetStyle("font-style", "italic");
+            EditorExplorerSearchBox:SetText("Search...");
+        else
+            EditorExplorerSearchBox.HasContent = true;
+        end;
+        
+        EditorExplorerSearchBoxIcon:SetStyle("background-image-color", "#888");
+    end);
+    
+    
+    TestTreeView:TreeView();
+    
+    local directories = {};
+    local files       = {};
+    GTCore.GetDirectoryContents('', directories, files);
+    
+    for i,value in ipairs(directories) do
+        TestTreeView:AddItem(value);
+    end;
+    
+    for i,value in ipairs(files) do
+        TestTreeView:AddItem(value);
+    end;
+    
+    
+    --[[
+    local item = TestTreeView:AddItem("Parent");
+    TestTreeView:AddItem("Testing 1...", item);
+    TestTreeView:AddItem("Testing 2...", item);
+    TestTreeView:AddItem("Testing 3...", item);
+    
+    for i=1,40 do
+        TestTreeView:AddItem("Test", item);
+    end;
+    
+    local last = TestTreeView:AddItem("Last", item);
+    TestTreeView:AddItem("testing", last);
+    
+    TestTreeView:OnItemPicked(function(data)
+    end);
+    ]]
+    
+    --TestScrollbar:VerticalScrollbar(100, 50);
+    --TestScrollbar2:HorizontalScrollbar(100, 50);
 ]]>
 </script>
 
@@ -199,9 +264,67 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     #EditorCenterPanel
     {
-        height:      100%
-        width:       100%
-        child-plane: horizontal
+        height:           100%
+        width:            100%
+        child-plane:      horizontal
+        flex-child-width: true;
+    }
+    
+    #EditorLeftPanel
+    {
+        width:               275px
+        height:              100%
+        allow-mouse-resize:  true
+        right-gripper-width: 8px
+        border-right:        2px #222
+        min-width:           16px
+        flex-child-height:   true
+    }
+    
+    #EditorRightPanel
+    {
+        visible: false      // Invisislbe for now. Will make this visible later on when we use it.
+    
+        width:              275px
+        height:             100%
+        allow-mouse-resize: true
+        left-gripper-width: 8px
+        border-left:        1px #222
+        min-width:          16px
+    }
+    
+    #EditorCenterCenterPanel
+    {
+        width:             100%
+        height:            100%
+        flex-child-height: true
+    }
+    
+    #EditorTabPanel
+    {
+        width:         100%
+        height:        22px
+        border-bottom: 1px #2b2b2b
+    }
+    
+    #EditorBody
+    {
+        height: 100%
+    }
+    
+    #EditorExplorerSearchBox
+    {
+        text-color:       #888
+        background-color: inherit
+        border:           none
+        padding-left:     4px
+    }
+    
+    #EditorExplorerSearchBox : focused
+    {
+        font-style:       none
+        text-color:       #aaa
+        background-color: inherit
     }
 </style>
 
@@ -213,19 +336,50 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         such as the mode switcher.
         -->
         <div id="EditorTopPanel_Left">
+            <!--
             <div id="MenuBar_ModelEditor" styleclass="menubar" style="visible:false;" />
             <div id="MenuBar_Sandbox"     styleclass="menubar" style="visible:false;" />
+            -->
         </div>
         
+        <!--
         <div id="EditorTopPanel_Right" style="horizontal-align:right; vertical-align:center; padding-right:0px;">
             <div id="ModeSwitcher" styleclass="combobox" style="height:100%; margin-right:0px;" />
         </div>
+        -->
     </div>
+    
+    
 
     <!--
     The center panel is where individual editting tools can use their own GUIs.
     -->
     <div id="EditorCenterPanel">
+        <div id="EditorLeftPanel">
+            <!--<div style="height:22px; padding:8px 0px; vertical-align:center; border-bottom:1px #2b2b2b; text-color:#999; font-style:bold; background-color:std-control-bg-color-mid;">Explorer</div>-->
+            
+            <div style="child-plane:horizontal; flex-child-width:true; vertical-align:center;border-bottom:1px #2b2b2b; background-color: #555">
+                <div id="EditorExplorerSearchBox"     styleclass="textbox" style="width:100%; height:22px;">Search...</div>
+                <div id="EditorExplorerSearchBoxIcon" style="background-image:std-search-16x16; background-image-color:#777; width:22px; height:22px;" />
+            </div>
+            <div id="TestTreeView" styleclass="treeview" style="height:100%; border:none; transparent-mouse-input:true;" />
+        </div>
+        
+        <div id="EditorCenterCenterPanel">
+            <div id="EditorTabPanel">
+            </div>
+            <div id="EditorBody">
+                <!--
+                <div id="TestScrollbar2" styleclass="horizontal-scrollbar" />
+                <div id="TestScrollbar"  styleclass="vertical-scrollbar" />
+                -->
+            </div>
+        </div>
+        
+        <div id="EditorRightPanel">
+        </div>
+        
+        <!--
         <div id="ModelEditor" style="visible:false">
             <div id="ModelEditorLeftPanel" style="padding:4px; padding-top:12px;">
                 <div id="ModelEditorPanel_ConvextDecomposition" style="padding:4px; padding-top:12px; border:1px #444; horizontal-align:left;">
@@ -254,6 +408,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
                     
                     <div id="btnModelEditor_ConvexDecomposition_Build" styleclass="button" style="width:100%;" />
                 </div>
+                
+                <div id="TestTreeView" styleclass="treeview" style="height:200px; margin-top:16px;" />
             </div>
             <div id="ModelViewport">
             </div>
@@ -265,6 +421,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
             <div id="SandboxViewport">
             </div>
         </div>
+        -->
     </div>
 
     <div id="EditorBottomPanel">

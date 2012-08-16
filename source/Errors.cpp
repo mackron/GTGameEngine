@@ -23,7 +23,7 @@ namespace GTEngine
         va_end(argList2);
 
         // Errors are always logged...
-        GTEngine::Log(formattedStr);
+        GTEngine::LogString(formattedStr);
 
 
         // We're finished with the formatted string, so it needs to be deleted.

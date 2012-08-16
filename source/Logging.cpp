@@ -23,6 +23,19 @@ namespace GTEngine
     }
 
 
+    void LogString(const char* value)
+    {
+        // Obviously, we write the value to the log object. We don't use an assert here because it's possible this may be called during
+        // initialisation, before the logging sub-system has been initialised.
+        if (Logging::EngineLog != nullptr)
+        {
+            Logging::EngineLog->WriteString(value);
+        }
+
+        // We'll also write the message to stdout.
+        printf("%s\n", value);
+    }
+
     void Log(const char* format, ...)
     {
         char* formattedStr = nullptr;

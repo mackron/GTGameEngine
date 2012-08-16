@@ -1,5 +1,3 @@
 
-<style url="styles/textbox.style" />
 <style url="styles/listbox.style" />
-
 <script url="scripts/listbox.lua" />

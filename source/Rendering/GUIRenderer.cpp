@@ -133,7 +133,7 @@ namespace GTEngine
 void GTGUI::RCSetScissorRect::Execute()
 {
     // GTGUI is top-down, but the renderer uses bottom-up. We need to convert appropriately.
-    unsigned int width  = rect.right - rect.left;
+    unsigned int width  = rect.right  - rect.left;
     unsigned int height = rect.bottom - rect.top;
     int x = rect.left;
     int y = GTEngine::GUIViewportHeight - rect.bottom;

@@ -751,7 +751,7 @@ namespace GTEngine
 
 
             // Finally we reattach the shaders, link the program and check for errors.
-            if (rendererData->vertexShader != 0)   glAttachShader(rendererData->program, rendererData->vertexShader);
+            if (rendererData->vertexShader   != 0) glAttachShader(rendererData->program, rendererData->vertexShader);
             if (rendererData->fragmentShader != 0) glAttachShader(rendererData->program, rendererData->fragmentShader);
 
             glLinkProgram(rendererData->program);
@@ -1132,7 +1132,6 @@ namespace GTEngine
     {
         if (!IsRendererInitialised)
         {
-            // NOTE: We can't use a forward-compatible context because it will break Cg.
             size_t contextAttribs[] =
             {
                 GTGL_CONTEXT_MAJOR_VERSION, 2,
