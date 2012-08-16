@@ -26,6 +26,11 @@ namespace GTEngine
         /// Destructor.
         ~GameScript();
 
+        /// Starts up the game script.
+        ///
+        /// @return True if the script is started up properly.
+        bool Startup();
+
 
         /// GTCore::Script::Load().
         ///

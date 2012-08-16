@@ -177,7 +177,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     TestTreeView:TreeView();
     
     for i,value in ipairs(Directories.Data) do
-       TestTreeView:AddItem(GTCore.MakePathRelative(value, GTEngine.GetExecutableDirectory())); 
+        --local item = TestTreeView:AddItem(Editor.DirectoryAliases
+        TestTreeView:AddItem(GTCore.MakePathRelative(value, GTEngine.GetExecutableDirectory())); 
     end
     
     

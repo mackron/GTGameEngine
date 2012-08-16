@@ -99,25 +99,26 @@ namespace GTEngine
 
     void Texture2DLibrary::Unacquire(const Texture2D* texture)
     {
-        assert(texture != nullptr);
-
-        // If the texture is not referenced elsewhere, it needs to be deleted.
-        if (texture->refCount == 1)
+        if (texture != nullptr)
         {
-            for (size_t i = 0; i < LoadedTextures.count; ++i)
+            // If the texture is not referenced elsewhere, it needs to be deleted.
+            if (texture->refCount == 1)
             {
-                if (LoadedTextures.buffer[i]->value == texture)
+                for (size_t i = 0; i < LoadedTextures.count; ++i)
                 {
-                    LoadedTextures.RemoveByIndex(i);
-                    break;
+                    if (LoadedTextures.buffer[i]->value == texture)
+                    {
+                        LoadedTextures.RemoveByIndex(i);
+                        break;
+                    }
                 }
-            }
 
-            delete texture;
-        }
-        else
-        {
-            --texture->refCount;
+                delete texture;
+            }
+            else
+            {
+                --texture->refCount;
+            }
         }
     }
 }

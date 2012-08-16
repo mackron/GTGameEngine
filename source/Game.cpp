@@ -22,9 +22,7 @@
 
 namespace GTEngine
 {
-    extern bool IsGameObjectCreated;
-
-    Game::Game(int argc, char** argv)
+    Game::Game()
         : isInitialised(false), closing(false), eventQueue(), eventQueueLock(),
           window(nullptr), windowEventHandler(*this),
           script(*this),
@@ -40,41 +38,19 @@ namespace GTEngine
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0)
     {
-        if (!IsGameObjectCreated)
-        {
-            this->isInitialised = this->Initialise(argc, argv);
-            if (this->isInitialised)
-            {
-                IsGameObjectCreated = true;
-            }
-        }
-        else
-        {
-            PostError("A Game object has already been created. Only a single Game object can be created for each application.");
-        }
     }
 
     Game::~Game()
     {
-        this->Uninitialise();
-        IsGameObjectCreated = false;
     }
 
     int Game::Run()
     {
-        // If the game is not initialised, we can't continue.
-        if (this->IsInitialised())
-        {
-            // All we do now is enter the game loop... Once this returns, we're finished with the game and we
-            // can clean up.
-            this->Loop();
+        // All we do now is enter the game loop... Once this returns, we're finished with the game and we can clean up.
+        this->Loop();
 
-            // If we made it here, it means the game was run and closed normally.
-            return 0;
-        }
-
-        // If we made it here, there was an error initialising.
-        return 1;
+        // If we made it here, it means the game was run and closed normally.
+        return 0;
     }
 
     void Game::Close()
@@ -397,6 +373,19 @@ namespace GTEngine
 
 
 
+    void Game::OnLoadConfigs()
+    {
+    }
+
+    bool Game::OnStartup(int, char**)
+    {
+        return true;
+    }
+
+    void Game::OnShutdown()
+    {
+    }
+
     void Game::OnUpdate()
     {
     }
@@ -501,66 +490,79 @@ namespace GTEngine
     }
 
 
-    bool Game::Initialise(int argc, char **argv)
+    bool Game::Startup(int argc, char **argv)
     {
         // We'll need to grab the command line because the first thing we're going to do is load any user scripts into the scripting environment.
         GTCore::CommandLine cmdLine(argc, argv);
 
-        // This is where the user config scripts are loaded.
-        const char** cmdLine_config = cmdLine.GetArgument("config");
-        if (cmdLine_config != nullptr)
+        // The first thing we do is load up the scripting environment. We do this first because it will contain configuration properties
+        // for things later on.
+        if (this->script.Startup())
         {
-            for (int i = 0; cmdLine_config[i] != nullptr; ++i)
+            // We give the game an opportunity to load configs before processing --config arguments.
+            this->OnLoadConfigs();
+
+            // This is where the user config scripts are loaded.
+            const char** cmdLine_config = cmdLine.GetArgument("config");
+            if (cmdLine_config != nullptr)
             {
-                this->script.ExecuteFile(cmdLine_config[i]);
-            }
-        }
-
-        // Here we will set the default anistropy for textures via the texture library.
-        Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("Display.Textures.Anisotropy")));
-
-
-        // First we need a window. Note that we don't show it straight away.
-        this->window = Renderer::CreateGameWindow();
-        if (this->window != nullptr)
-        {
-            // We'll need to grab the update thread object. We grab this from the thread cache which will have been initialised
-            // in GTEngine::Startup(). It's important that we have a thread here, so we need to force it (first argument = true).
-            this->updateThread = ThreadCache::AcquireThread(true);
-
-
-            // We'll want to set a few window properties before showing it... We want to show the window relatively early to make
-            // the game feel a little bit more speedy, even though it's not really.
-            this->window->SetTitle("GTEngine Game");
-            this->window->SetSize(this->script.GetInteger("Display.Width"), this->script.GetInteger("Display.Height"));
-
-            // Now we can set the window's event handler and show it.
-            this->window->SetEventHandler(this->windowEventHandler);
-            this->window->Show();
-
-
-            // Here we'll initialise the font cache. We purposly do it after moving into the Data directory.
-            Log("Loading Fonts...");
-            if (!this->InitialiseFonts())
-            {
-                Log("Error loading fonts.");
+                for (int i = 0; cmdLine_config[i] != nullptr; ++i)
+                {
+                    this->script.ExecuteFile(cmdLine_config[i]);
+                }
             }
 
+            // Here we will set the default anistropy for textures via the texture library.
+            Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("Display.Textures.Anisotropy")));
 
-            // Here we initialise the GUI. We need a font server for this, so it needs to be done after initialising fonts.
-            Log("Loading GUI...");
-            if (!this->InitialiseGUI())
+
+            // First we need a window. Note that we don't show it straight away.
+            this->window = Renderer::CreateGameWindow();
+            if (this->window != nullptr)
             {
-                Log("Error loading GUI.");
+                // We'll need to grab the update thread object. We grab this from the thread cache which will have been initialised
+                // in GTEngine::Startup(). It's important that we have a thread here, so we need to force it (first argument = true).
+                this->updateThread = ThreadCache::AcquireThread(true);
+
+
+                // We'll want to set a few window properties before showing it... We want to show the window relatively early to make
+                // the game feel a little bit more speedy, even though it's not really.
+                this->window->SetTitle("GTEngine Game");
+                this->window->SetSize(this->script.GetInteger("Display.Width"), this->script.GetInteger("Display.Height"));
+
+                // Now we can set the window's event handler and show it.
+                this->window->SetEventHandler(this->windowEventHandler);
+                this->window->Show();
+
+
+                // Here we'll initialise the font cache. We purposly do it after moving into the Data directory.
+                Log("Loading Fonts...");
+                if (!this->InitialiseFonts())
+                {
+                    Log("Error loading fonts.");
+                }
+
+
+                // Here we initialise the GUI. We need a font server for this, so it needs to be done after initialising fonts.
+                Log("Loading GUI...");
+                if (!this->InitialiseGUI())
+                {
+                    Log("Error loading GUI.");
+                }
+
+
+                // Here is where we let the game object do some startup stuff.
+                return this->OnStartup(argc, argv);
             }
-
-
-            return true;
+            else
+            {
+                // We couldn't create a window, which means the renderer is not usable...
+                GTEngine::PostError("Error initialising renderer.");
+            }
         }
         else
         {
-            // We couldn't create a window, which means the renderer is not usable...
-            GTEngine::PostError("Error initialising renderer.");
+            GTEngine::PostError("Error initialising scripting environment.");
         }
 
         return false;
@@ -599,8 +601,11 @@ namespace GTEngine
         return true;
     }
 
-    void Game::Uninitialise()
+    void Game::Shutdown()
     {
+        // We first let the game know that we are shutting down. It's important that we do this before killing anything.
+        this->OnShutdown();
+
         if (this->defaultFont != nullptr)
         {
             this->fontServer.UnacquireFont(*this->defaultFont);
