@@ -22,6 +22,9 @@ namespace GTEngine
     /// Renderer. The use of these static classes may be reassessed later, but for now we will restrict each application to a
     /// single Game object, which shouldn't be much of a problem at all...
     bool IsGameObjectCreated = false;
+
+    /// Keeps track of the executable directory.
+    static GTCore::String ExecutableDirectory;
 }
 
 namespace GTEngine
@@ -31,6 +34,9 @@ namespace GTEngine
         // First this is to more into the applications directory. We get this from the command line.
         GTCore::CommandLine cmdLine(argc, argv);
         GTCore::IO::SetCurrentDirectory(cmdLine.GetApplicationDirectory());
+
+        // We need to keep hold of the executable directory for GetExecutableDirectory().
+        ExecutableDirectory = cmdLine.GetApplicationDirectory();
 
         // After moving into the application directory, we need to load up the config file and move into the data directory. From
         // there we can read the user configs and setup the log file.
@@ -69,7 +75,7 @@ namespace GTEngine
             Logging::Startup("var/logs/engine.html");
         }
 
-        
+
         // Here we'll startup the thread cache. We will do this before starting the sub-systems so that they themselves can do some
         // multithreaded initialisation if needed.
         ThreadCache::Startup();
@@ -146,5 +152,11 @@ namespace GTEngine
 
         // Application config.
         ApplicationConfig::Close();
+    }
+
+
+    const char* GetExecutableDirectory()
+    {
+        return ExecutableDirectory.c_str();
     }
 }

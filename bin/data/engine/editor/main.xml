@@ -61,9 +61,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     CommandTextBox:OnKeyDown(function(data)
         if data.key == 13 then                  -- Enter key
-            if not Engine.ExecuteScript(CommandTextBox:GetText()) then
+            if not Game.ExecuteScript(CommandTextBox:GetText()) then
                 CommandErrorBox:SetStyle("text-color", "#a66");
-                CommandErrorBox:SetText(Engine.GetLastScriptError());
+                CommandErrorBox:SetText(Game.GetLastScriptError());
             else
                 CommandErrorBox:SetStyle("text-color", "#999");
                 CommandErrorBox:SetText("No errors.");
@@ -176,6 +176,11 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     TestTreeView:TreeView();
     
+    for i,value in ipairs(Directories.Data) do
+       TestTreeView:AddItem(GTCore.MakePathRelative(value, GTEngine.GetExecutableDirectory())); 
+    end
+    
+    
     local directories = {};
     local files       = {};
     GTCore.GetDirectoryContents('', directories, files);
@@ -187,6 +192,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     for i,value in ipairs(files) do
         TestTreeView:AddItem(value);
     end;
+    
     
     
     --[[

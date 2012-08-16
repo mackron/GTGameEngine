@@ -1,19 +1,22 @@
 
-#include <GTEngine/GameScript.hpp>
+#include <GTEngine/Scripting.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Audio.hpp>
+#include <GTEngine/ApplicationConfig.hpp>
 
 namespace GTEngine
 {
     GameScript::GameScript(Game &game)
         : game(game), lastError()
     {
+        // First we load the GTEngine scripting stuff.
+        Scripting::LoadGTEngineScriptLibrary(*this);
+
         // The first thing we want to do is load some defaults.
         this->Execute
         (
             "Game   = {};"
-            "Engine = {};"
             "Editor = {};"
             "Editor.ModelEditor    = {};"
             "Editor.MaterialEditor = {};"
@@ -32,7 +35,31 @@ namespace GTEngine
             "        Anisotropy = 16;"
             "    };"
             "};"
+            ""
+            "Directories ="
+            "{"
+            "    Data = {};"
+            "}"
         );
+
+        // Here we load the data directories from the application config. We need to do this so that the editor has access to them. Might also come
+        // in handy for game code, too. Who knows.
+        this->GetGlobal("Directories");
+        if (this->IsTable(-1))
+        {
+            this->Push("Data");
+            this->GetTableValue(-2);
+            if (this->IsTable(-1))
+            {
+                auto &dataDirectories = ApplicationConfig::GetDataDirectories();
+                for (size_t iDirectory = 0; iDirectory < dataDirectories.count; ++iDirectory)
+                {
+                    this->SetTableValue(-1, iDirectory + 1, dataDirectories[iDirectory].c_str());
+                }
+            }
+            this->Pop(1);
+        }
+        this->Pop(1);
 
         // Here is where we register the foreign function interface.
         this->RegisterFFI();
@@ -127,14 +154,7 @@ namespace GTEngine
         return 0;
     }
 
-
-
-
-
-    ////////////////////////////////////////////////////////////////
-    // Engine FFI
-
-    int FFI_Engine_ExecuteScript(GTCore::Script &script)
+    int FFI_Game_ExecuteScript(GTCore::Script &script)
     {
         auto& game = GameScript::FFI::GetGameObject(script);
 
@@ -142,7 +162,7 @@ namespace GTEngine
         return 1;
     }
 
-    int FFI_Engine_GetLastScriptError(GTCore::Script &script)
+    int FFI_Game_GetLastScriptError(GTCore::Script &script)
     {
         auto& game = GameScript::FFI::GetGameObject(script);
 
@@ -150,7 +170,7 @@ namespace GTEngine
         return 1;
     }
 
-    int FFI_Engine_ShowDebug(GTCore::Script &script)
+    int FFI_Game_ShowDebug(GTCore::Script &script)
     {
         auto &game = GameScript::FFI::GetGameObject(script);
 
@@ -158,7 +178,7 @@ namespace GTEngine
         return 0;
     }
 
-    int FFI_Engine_HideDebug(GTCore::Script &script)
+    int FFI_Game_HideDebug(GTCore::Script &script)
     {
         auto &game = GameScript::FFI::GetGameObject(script);
 
@@ -166,25 +186,6 @@ namespace GTEngine
         return 0;
     }
 
-
-    int FFI_Engine_EnableVSync(GTCore::Script &)
-    {
-        Renderer::SetSwapInterval(1);
-        return 0;
-    }
-
-    int FFI_Engine_DisableVSync(GTCore::Script &)
-    {
-        Renderer::SetSwapInterval(0);
-        return 0;
-    }
-
-
-    int FFI_Engine_PlaySound(GTCore::Script &script)
-    {
-        GTEngine::AudioComposer::Play(script.ToString(1));
-        return 0;
-    }
 
 
     ////////////////////////////////////////////////////////////////
@@ -221,6 +222,8 @@ namespace GTEngine
         game.GetEditor().SwitchToSandboxMode();
         return 0;
     }
+
+
 
     ////////////////////////////////////////////////////////////////
     // Editor.ModelEditor FFI
@@ -325,129 +328,52 @@ namespace GTEngine
         this->SetGlobal("__GamePtr");
 
         this->GetGlobal("Game");
+        if (this->IsTable(-1))
         {
-            this->Push("Close");
-            this->PushClosure(FFI_Game_Close, 0);
-            this->SetTableValue(-3);
+            this->SetTableFunction(-1, "Close",              FFI_Game_Close);
 
-            this->Push("Pause");
-            this->PushClosure(FFI_Game_Pause, 0);
-            this->SetTableValue(-3);
+            this->SetTableFunction(-1, "Pause",              FFI_Game_Pause);
+            this->SetTableFunction(-1, "Resume",             FFI_Game_Resume);
 
-            this->Push("Resume");
-            this->PushClosure(FFI_Game_Resume, 0);
-            this->SetTableValue(-3);
+            this->SetTableFunction(-1, "EnableFullscreen",   FFI_Game_EnableFullscreen);
+            this->SetTableFunction(-1, "DisableFullscreen",  FFI_Game_DisableFullscreen);
 
+            this->SetTableFunction(-1, "ExecuteScript",      FFI_Game_ExecuteScript);
+            this->SetTableFunction(-1, "GetLastScriptError", FFI_Game_GetLastScriptError);
 
-            this->Push("EnableFullscreen");
-            this->PushClosure(FFI_Game_EnableFullscreen, 0);
-            this->SetTableValue(-3);
-
-            this->Push("DisableFullscreen");
-            this->PushClosure(FFI_Game_DisableFullscreen, 0);
-            this->SetTableValue(-3);
+            this->SetTableFunction(-1, "ShowDebug",          FFI_Game_ShowDebug);
+            this->SetTableFunction(-1, "HideDebug",          FFI_Game_HideDebug);
         }
         this->Pop(1);    // Game
 
 
-        this->GetGlobal("Engine");
-        {
-            this->Push("ExecuteScript");
-            this->PushClosure(FFI_Engine_ExecuteScript, 0);
-            this->SetTableValue(-3);
-
-            this->Push("GetLastScriptError");
-            this->PushClosure(FFI_Engine_GetLastScriptError, 0);
-            this->SetTableValue(-3);
-
-
-            this->Push("ShowDebug");
-            this->PushClosure(FFI_Engine_ShowDebug, 0);
-            this->SetTableValue(-3);
-
-            this->Push("HideDebug");
-            this->PushClosure(FFI_Engine_HideDebug, 0);
-            this->SetTableValue(-3);
-
-
-            this->Push("EnableVSync");
-            this->PushClosure(FFI_Engine_EnableVSync, 0);
-            this->SetTableValue(-3);
-
-            this->Push("DisableVSync");
-            this->PushClosure(FFI_Engine_DisableVSync, 0);
-            this->SetTableValue(-3);
-
-
-            this->Push("PlaySound");
-            this->PushClosure(FFI_Engine_PlaySound, 0);
-            this->SetTableValue(-3);
-        }
-        this->Pop(1);    // Engine
-
-
         this->GetGlobal("Editor");
+        if (this->IsTable(-1))
         {
-            this->Push("Open");
-            this->PushClosure(FFI_Editor_Open, 0);
-            this->SetTableValue(-3);
+            this->SetTableFunction(-1, "Open",                    FFI_Editor_Open);
+            this->SetTableFunction(-1, "Close",                   FFI_Editor_Close);
 
-            this->Push("Close");
-            this->PushClosure(FFI_Editor_Close, 0);
-            this->SetTableValue(-3);
-
-            this->Push("SwitchToModelEditorMode");
-            this->PushClosure(FFI_Editor_SwitchToModelEditorMode, 0);
-            this->SetTableValue(-3);
-
-            this->Push("SwitchToSandboxMode");
-            this->PushClosure(FFI_Editor_SwitchToSandboxMode, 0);
-            this->SetTableValue(-3);
+            this->SetTableFunction(-1, "SwitchToModelEditorMode", FFI_Editor_SwitchToModelEditorMode);
+            this->SetTableFunction(-1, "SwitchToSandboxMode",     FFI_Editor_SwitchToSandboxMode);
 
 
             this->Push("ModelEditor");
             this->GetTableValue(-2);
             if (this->IsTable(-1))
             {
-                this->Push("Load");
-                this->PushClosure(FFI_Editor_ModelEditor_Load, 0);
-                this->SetTableValue(-3);
+                this->SetTableFunction(-1, "Load",                     FFI_Editor_ModelEditor_Load);
+                this->SetTableFunction(-1, "Save",                     FFI_Editor_ModelEditor_Save);
 
-                this->Push("Save");
-                this->PushClosure(FFI_Editor_ModelEditor_Save, 0);
-                this->SetTableValue(-3);
+                this->SetTableFunction(-1, "SetMaterial",              FFI_Editor_ModelEditor_SetMaterial);
 
+                this->SetTableFunction(-1, "PlayAnimation",            FFI_Editor_ModelEditor_PlayAnimation);
+                this->SetTableFunction(-1, "StopAnimation",            FFI_Editor_ModelEditor_StopAnimation);
 
-                this->Push("SetMaterial");
-                this->PushClosure(FFI_Editor_ModelEditor_SetMaterial, 0);
-                this->SetTableValue(-3);
+                this->SetTableFunction(-1, "ResetCamera",              FFI_Editor_ModelEditor_ResetCamera);
 
-
-                this->Push("PlayAnimation");
-                this->PushClosure(FFI_Editor_ModelEditor_PlayAnimation, 0);
-                this->SetTableValue(-3);
-
-                this->Push("StopAnimation");
-                this->PushClosure(FFI_Editor_ModelEditor_StopAnimation, 0);
-                this->SetTableValue(-3);
-
-
-                this->Push("ResetCamera");
-                this->PushClosure(FFI_Editor_ModelEditor_ResetCamera, 0);
-                this->SetTableValue(-3);
-
-
-                this->Push("ShowConvexDecomposition");
-                this->PushClosure(FFI_Editor_ModelEditor_ShowConvexDecomposition, 0);
-                this->SetTableValue(-3);
-
-                this->Push("HideConvexDecomposition");
-                this->PushClosure(FFI_Editor_ModelEditor_HideConvexDecomposition, 0);
-                this->SetTableValue(-3);
-
-                this->Push("BuildConvexDecomposition");
-                this->PushClosure(FFI_Editor_ModelEditor_BuildConvexDecomposition, 0);
-                this->SetTableValue(-3);
+                this->SetTableFunction(-1, "ShowConvexDecomposition",  FFI_Editor_ModelEditor_ShowConvexDecomposition);
+                this->SetTableFunction(-1, "HideConvexDecomposition",  FFI_Editor_ModelEditor_HideConvexDecomposition);
+                this->SetTableFunction(-1, "BuildConvexDecomposition", FFI_Editor_ModelEditor_BuildConvexDecomposition);
             }
             this->Pop(1);
 

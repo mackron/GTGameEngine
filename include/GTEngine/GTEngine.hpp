@@ -15,7 +15,12 @@ namespace GTEngine
 
     /// Shuts down the engine.
     void Shutdown();
-}
 
+
+    /// Retrieves the directory containing the executable.
+    ///
+    /// @return The directory containing the executable.
+    const char* GetExecutableDirectory();
+}
 
 #endif
