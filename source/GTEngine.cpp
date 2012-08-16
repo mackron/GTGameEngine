@@ -1,5 +1,6 @@
 
 #include <GTEngine/GTEngine.hpp>
+#include <GTEngine/Game.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Rendering.hpp>
@@ -17,11 +18,8 @@
 // Basic globals.
 namespace GTEngine
 {
-    /// Keeps track of whether or not a Game object has been created. Currently, only a single game object can be instantiated
-    /// for each application. The reason is due to how the Game class uses global/static classes such as GarbageCollector and
-    /// Renderer. The use of these static classes may be reassessed later, but for now we will restrict each application to a
-    /// single Game object, which shouldn't be much of a problem at all...
-    bool IsGameObjectCreated = false;
+    /// A pointer to the global game object.
+    Game* GlobalGame = nullptr;
 
     /// Keeps track of the executable directory.
     static GTCore::String ExecutableDirectory;
@@ -29,7 +27,7 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    bool Startup(int argc, char** argv)
+    bool _PreStartup(int argc, char** argv)
     {
         // First this is to more into the applications directory. We get this from the command line.
         GTCore::CommandLine cmdLine(argc, argv);
@@ -127,8 +125,19 @@ namespace GTEngine
         return true;
     }
 
-    void Shutdown()
+    void Shutdown(Game* game)
     {
+        if (game != nullptr)
+        {
+            assert(game == GlobalGame);
+
+            game->Shutdown();
+            delete game;
+
+            GlobalGame = nullptr;
+        }
+
+
         // Font manager.
         FontManager::Shutdown();
 

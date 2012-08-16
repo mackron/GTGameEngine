@@ -46,7 +46,7 @@ namespace GTEngine
         *       \par
         *       If initialisation was not successful, Run() will return immediately. Use Run() to start running the game.
         */
-        Game(int argc, char **argv);
+        Game();
 
         /**
         *   \brief  Destructor.
@@ -55,6 +55,22 @@ namespace GTEngine
         *       This is where everything will be uninitialised.
         */
         virtual ~Game();
+
+
+        /// Starts up the game.
+        ///
+        /// @remarks
+        ///     This will call OnLoadConfigs() and OnStartup().
+        ///     @par
+        ///     Client application should not call this method directly. It will instead be called internally by GTEngine::Startup().
+        bool Startup(int argc, char **argv);
+
+        /// Shuts down the game.
+        ///
+        /// @remark
+        ///     Client applications should not call this method directly. It will instead be called internally by GTEngine::Shutdown().
+        void Shutdown();
+
 
         /**
         *   \brief  Runs the game.
@@ -279,6 +295,30 @@ namespace GTEngine
         
     protected:  // Event handlers.
 
+
+        /// Called when the config scripts are being loaded.
+        ///
+        /// @remarks
+        ///     This is called right at the start of initialisation just before the --config arguments are processed. This is the
+        ///     first event to be called, before OnStartup() and before anything else is initialised.
+        ///     @par
+        ///     This is the best place to load configs. However, since this function is called before everything is initialised,
+        ///     the configs should only use simple script-side stuff. Complex scripts should be run in OnStartup().
+        virtual void OnLoadConfigs();
+
+
+        /// Called when the game is just finishing up starting up.
+        ///
+        /// @remarks
+        ///     This is called after the window has been created and shown.
+        ///     @par
+        ///     The return value is true if the startup is successful; false otherwise.
+        virtual bool OnStartup(int argc, char** argv);
+
+        /// Called when the game is shutting down.
+        virtual void OnShutdown();
+
+
         /**
         *   \brief  Called when the game is updating. This is called from the update thread, just before the scene is updated.
         */
@@ -375,16 +415,6 @@ namespace GTEngine
 
     private:
 
-        /**
-        *   \brief  Initialises the game.
-        *
-        *   \remarks
-        *       This method will call the OnInitialise() method when game-specific stuff needs to be initialised. It is up to the child class
-        *       to ensure OnInitialise() is implemented correctly. By default, OnInitialise() is just an empty method that returns true. If
-        *       OnInitialise() returns false, this method will also return false. 'argc' and 'argv' will be parsed to OnInitialise() unmodified.
-        */
-        bool Initialise(int argc, char **argv);
-
 
         /**
         *   \brief  Helper method for initialising the font cache.
@@ -399,14 +429,7 @@ namespace GTEngine
         */
         bool InitialiseGUI();
 
-        /**
-        *   \brief  Uninitialise.
-        *
-        *   \remarks
-        *       This will call the OnUninitialise() event.
-        */
-        void Uninitialise();
-
+        
         /**
         *   \brief  Performs the main game loop.
         *

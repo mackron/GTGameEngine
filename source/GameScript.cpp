@@ -10,11 +10,19 @@ namespace GTEngine
     GameScript::GameScript(Game &game)
         : game(game), lastError()
     {
+    }
+
+    GameScript::~GameScript()
+    {
+    }
+
+    bool GameScript::Startup()
+    {
         // First we load the GTEngine scripting stuff.
-        Scripting::LoadGTEngineScriptLibrary(*this);
+        bool success = Scripting::LoadGTEngineScriptLibrary(*this);
 
         // The first thing we want to do is load some defaults.
-        this->Execute
+        success = success && this->Execute
         (
             "Game   = {};"
             "Editor = {};"
@@ -62,11 +70,9 @@ namespace GTEngine
         this->Pop(1);
 
         // Here is where we register the foreign function interface.
-        this->RegisterFFI();
-    }
+        success = success && this->RegisterFFI();
 
-    GameScript::~GameScript()
-    {
+        return success;
     }
 
     bool GameScript::Load(const char* script)
