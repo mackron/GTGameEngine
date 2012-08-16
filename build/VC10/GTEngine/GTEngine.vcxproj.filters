@@ -810,9 +810,6 @@
     <None Include="..\..\..\bin\data\engine\shaders\glsl\materials.shader">
       <Filter>data\shaders\glsl</Filter>
     </None>
-    <None Include="..\..\..\bin\data\engine\editor\styles\button.style">
-      <Filter>data\editor\styles</Filter>
-    </None>
     <None Include="..\..\..\bin\data\engine\editor\styles\dialogs.style">
       <Filter>data\editor\styles</Filter>
     </None>
@@ -823,9 +820,6 @@
       <Filter>data\editor\styles</Filter>
     </None>
     <None Include="..\..\..\bin\data\engine\editor\styles\sandbox.style">
-      <Filter>data\editor\styles</Filter>
-    </None>
-    <None Include="..\..\..\bin\data\engine\editor\styles\textbox.style">
       <Filter>data\editor\styles</Filter>
     </None>
     <None Include="..\..\..\bin\data\engine\editor\common-controls.xml">

@@ -406,7 +406,6 @@
     <None Include="..\..\..\bin\data\engine\editor\scripts\menubar.lua" />
     <None Include="..\..\..\bin\data\engine\editor\scripts\modeleditor.lua" />
     <None Include="..\..\..\bin\data\engine\editor\scripts\sandbox.lua" />
-    <None Include="..\..\..\bin\data\engine\editor\styles\button.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\combobox.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\dialogs.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\file-explorer.style" />
@@ -415,7 +414,6 @@
     <None Include="..\..\..\bin\data\engine\editor\styles\menubar.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\modeleditor.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\sandbox.style" />
-    <None Include="..\..\..\bin\data\engine\editor\styles\textbox.style" />
     <None Include="..\..\..\bin\data\engine\editor\styles\theme.style" />
     <None Include="..\..\..\bin\data\engine\shaders\glsl\core.shader" />
     <None Include="..\..\..\bin\data\engine\shaders\glsl\defaultrenderer.shader" />

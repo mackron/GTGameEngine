@@ -17,6 +17,7 @@ namespace GTEngine
     }
 
     /// Logs a message.
+    void LogString(const char* value);
     void Log(const char* format, ...);
 }
 
