@@ -850,28 +850,55 @@ namespace GTEngine
             glBindTexture(GL_TEXTURE_2D, textureData->object);
 
 
-            // If anything is out of sync, it needs to be re-synced.
-            if (texture->syncinfo.filterChanged)
+            if (texture->syncinfo.minFilterChanged)
             {
                 // The minification filter is different depending on whether or not we are using mipmapping.
                 size_t baseMipLevel, maxMipLevel;
                 texture->GetValidMipmapRange(baseMipLevel, maxMipLevel);
 
-                if (maxMipLevel > baseMipLevel)
+                GLint filterGL = ToOpenGLTextureFilter(texture->GetMinificationFilter());
+
+                if (maxMipLevel == baseMipLevel)
                 {
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->GetFilter() == TextureFilter_Linear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST);
-                }
-                else
-                {
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->GetFilter() == TextureFilter_Linear ? GL_LINEAR : GL_NEAREST);
+                    // If we get here, it means we only have a single mip level. In this case, we don't want to be using a mipmap filter.
+                    if (filterGL == GL_LINEAR_MIPMAP_LINEAR || filterGL == GL_LINEAR_MIPMAP_NEAREST)
+                    {
+                        filterGL = GL_LINEAR;
+                    }
+                    else if (filterGL == GL_NEAREST_MIPMAP_LINEAR || filterGL == GL_NEAREST_MIPMAP_NEAREST)
+                    {
+                        filterGL = GL_NEAREST;
+                    }
                 }
 
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->GetFilter() == TextureFilter_Linear ? GL_LINEAR : GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterGL);
 
-                // Anisotropy is considered part of the filter.
+                texture->syncinfo.minFilterChanged = false;
+            }
+
+            if (texture->syncinfo.magFilterChanged)
+            {
+                // The texture filter for magnification can only be GL_LINEAR or GL_NEAREST. Best to do a sanity check here.
+                GLint filterGL = ToOpenGLTextureFilter(texture->GetMagnificationFilter());
+                if (filterGL == GL_LINEAR_MIPMAP_LINEAR || filterGL == GL_LINEAR_MIPMAP_NEAREST)
+                {
+                    filterGL = GL_LINEAR;
+                }
+                else if (filterGL == GL_NEAREST_MIPMAP_LINEAR || filterGL == GL_NEAREST_MIPMAP_NEAREST)
+                {
+                    filterGL = GL_NEAREST;
+                }
+
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterGL);
+
+                texture->syncinfo.magFilterChanged = false;
+            }
+
+            if (texture->syncinfo.anisotropyChanged)
+            {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, texture->GetAnisotropy());
 
-                texture->syncinfo.filterChanged = false;
+                texture->syncinfo.anisotropyChanged = false;
             }
 
             if (texture->syncinfo.wrapModeChanged)

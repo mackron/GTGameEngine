@@ -72,8 +72,8 @@ namespace GTEngine
             auto newTexture = new Texture2D(fileName);
             if (newTexture->IsLinkedToFile())
             {
+                newTexture->SetFilter(DefaultMinFilter, DefaultMagFilter);
                 newTexture->SetAnisotropy(DefaultAnisotropy);
-                newTexture->SetFilter(DefaultMagFilter);
 
                 LoadedTextures.Add(fileName, newTexture);
 

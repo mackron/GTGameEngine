@@ -161,9 +161,6 @@ namespace GTEngine
         Renderer::SetDepthFunc(RendererFunction_Equal);
         Renderer::DisableDepthWrites();
 
-        //Renderer::SetStencilFunc(RendererFunction_Equal, 1, 255);
-        //Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Keep);
-
         // We combine lighting passes using standard blending.
         Renderer::EnableBlending();
         Renderer::SetBlendEquation(BlendEquation_Add);
@@ -228,10 +225,6 @@ namespace GTEngine
         RenderCommands.rcBegin[0].framebuffer = &this->framebuffer;
         RenderCommands.rcBegin[1].framebuffer = &this->framebuffer;
 
-        //RenderCommands.rcEnd[0].combinerShader = Shaders.combiner;
-        //RenderCommands.rcEnd[1].combinerShader = Shaders.combiner;
-
-
         // We need catch the deletion of materials so we can delete any metadata this renderer may have created. To do this, we attach an event
         // handler to the material library.
         MaterialLibrary::AttachEventHandler(this->materialLibraryEventHandler);
@@ -283,7 +276,7 @@ namespace GTEngine
 
     void DefaultViewportRenderer::ResizeFramebuffer(unsigned int newWidth, unsigned int newHeight)
     {
-        // We don't do the actual resize yet. Instead we delay it for OnSwapRCQueues().
+        // We don't do the actual resize yet. Instead we delay it until the next call to Render().
         this->framebufferNeedsResize = true;
 
         this->screenSize.x = static_cast<float>(newWidth);
