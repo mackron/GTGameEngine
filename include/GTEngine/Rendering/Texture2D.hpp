@@ -61,15 +61,34 @@ namespace GTEngine
         */
         ~Texture2D();
 
-        /**
-        *   \brief  Sets the filter.
-        */
-        void SetFilter(TextureFilter filter);
 
-        /**
-        *   \brief  Retrieves the filter.
-        */
-        TextureFilter GetFilter() const;
+        /// Sets the minification filter.
+        ///
+        /// @param newFilter [in] The new minification filter.
+        void SetMinificationFilter(TextureFilter newFilter);
+
+        /// Sets the magnification filter.
+        ///
+        /// @param newFilter [in] The new magnification filter.
+        void SetMagnificationFilter(TextureFilter newFilter);
+
+        /// Retrieves the minification filter.
+        TextureFilter GetMinificationFilter() const;
+
+        /// Retrieves the magnification filter.
+        TextureFilter GetMagnificationFilter() const;
+
+
+        /// Helper method for setting both the minification and magnification filter.
+        ///
+        /// @param newMinFilter [in] The new minification filter.
+        /// @param newMagFilter [in] The new magnification filter.
+        void SetFilter(TextureFilter newMinFilter, TextureFilter newMagFilter)
+        {
+            this->SetMinificationFilter(newMinFilter);
+            this->SetMagnificationFilter(newMagFilter);
+        }
+
 
 
         /// Sets the level of anisotropic filtering to use with this texture.
@@ -146,8 +165,11 @@ namespace GTEngine
 
     private:
 
-        /// The filtering mode.
-        TextureFilter filter;
+        /// The current minification filter.
+        TextureFilter minFilter;
+
+        /// The current magnification filter.
+        TextureFilter magFilter;
 
         /// The level of aniostropic filtering to use with the image. Defaults to 1.
         unsigned int anisotropy;
@@ -183,7 +205,8 @@ namespace GTEngine
         struct _syncinfo
         {
             _syncinfo()
-                : filterChanged(true), wrapModeChanged(true), dataChanged(true), changedMipmaps()
+                : minFilterChanged(true), magFilterChanged(true), anisotropyChanged(true),
+                  wrapModeChanged(true), dataChanged(true), changedMipmaps()
             {
             }
             
@@ -191,7 +214,9 @@ namespace GTEngine
             {
             }
 
-            bool filterChanged;     ///< Whether or not a texture filter has changed.
+            bool minFilterChanged;  ///< Whether or not the minification filter has changed.
+            bool magFilterChanged;  ///< Whether or not the magnification filter has changed.
+            bool anisotropyChanged; ///< Whether or not the anisotropy has changed.
             bool wrapModeChanged;   ///< Whether or not the wrapping mode has changed.
             bool dataChanged;       ///< Whether or not the texture data has been updated.
 

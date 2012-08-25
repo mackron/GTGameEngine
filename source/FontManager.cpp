@@ -40,7 +40,7 @@ namespace GTEngine
         const GTImage::Mipmap &fontBitmap = font.GetBitmap().GetMipmap(0);
 
         fontTexture->Load(fontBitmap.width, fontBitmap.height, GTImage::ImageFormat_RGBA8, fontBitmap.data);
-        fontTexture->SetFilter(TextureFilter_Nearest);
+        fontTexture->SetFilter(TextureFilter_Nearest, TextureFilter_Nearest);
 
         // And now we map the texture to the font.
         FontTextureMap.Add(&font, fontTexture);

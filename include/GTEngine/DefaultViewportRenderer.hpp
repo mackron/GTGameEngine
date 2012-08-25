@@ -83,12 +83,12 @@ namespace GTEngine
                 this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
             }
 
-            this->finalOutput->SetFilter(GTEngine::TextureFilter_Nearest);
-            this->lightingBuffer0->SetFilter(GTEngine::TextureFilter_Nearest);
-            this->lightingBuffer1->SetFilter(GTEngine::TextureFilter_Nearest);
-            this->materialBuffer0->SetFilter(GTEngine::TextureFilter_Nearest);
-            this->materialBuffer1->SetFilter(GTEngine::TextureFilter_Nearest);
-            this->materialBuffer2->SetFilter(GTEngine::TextureFilter_Nearest);
+            this->finalOutput->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+            this->lightingBuffer0->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+            this->lightingBuffer1->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+            this->materialBuffer0->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+            this->materialBuffer1->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+            this->materialBuffer2->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
 
             this->finalOutput->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
 

@@ -6,7 +6,9 @@ namespace GTEngine
 {
     // Make sure the members are initialised in the correct order here.
     Texture2D::Texture2D()
-        : GTImage::Image(), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat),
+        : GTImage::Image(),
+          minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
+          anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
           rendererData(nullptr), refCount(1), keepClientSideData(false),
           syncinfo()
@@ -18,7 +20,9 @@ namespace GTEngine
     }
 
     Texture2D::Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data)
-        : GTImage::Image(), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat),
+        : GTImage::Image(),
+          minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
+          anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
           rendererData(nullptr), refCount(1), keepClientSideData(false),
           syncinfo()
@@ -32,7 +36,9 @@ namespace GTEngine
     }
 
     Texture2D::Texture2D(const char* filename)
-        : GTImage::Image(filename), filter(TextureFilter_Linear), anisotropy(1), wrapMode(TextureWrapMode_Repeat),
+        : GTImage::Image(filename),
+          minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
+          anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
           rendererData(nullptr), refCount(1), keepClientSideData(false),
           syncinfo()
@@ -67,25 +73,43 @@ namespace GTEngine
         Renderer::MarkForCollection(this);
     }
 
-    void Texture2D::SetFilter(TextureFilter filter)
-    {
-        this->filter = filter;
 
-        // The texture is out of sync...
-        this->syncinfo.filterChanged = true;
+    void Texture2D::SetMinificationFilter(TextureFilter newFilter)
+    {
+        if (this->minFilter != newFilter)
+        {
+            this->minFilter = newFilter;
+            this->syncinfo.minFilterChanged = true;
+        }
     }
 
-    TextureFilter Texture2D::GetFilter() const
+    void Texture2D::SetMagnificationFilter(TextureFilter newFilter)
     {
-        return this->filter;
+        if (this->magFilter != newFilter)
+        {
+            this->magFilter = newFilter;
+            this->syncinfo.magFilterChanged = true;
+        }
     }
+
+    TextureFilter Texture2D::GetMinificationFilter() const
+    {
+        return this->minFilter;
+    }
+
+    TextureFilter Texture2D::GetMagnificationFilter() const
+    {
+        return this->magFilter;
+    }
+
 
     void Texture2D::SetAnisotropy(unsigned int newAnisotropy)
     {
-        this->anisotropy = newAnisotropy;
-        
-        // The texture is out of sync.
-        this->syncinfo.filterChanged = true;
+        if (this->anisotropy != newAnisotropy)
+        {
+            this->anisotropy = newAnisotropy;
+            this->syncinfo.anisotropyChanged = true;
+        }
     }
 
     unsigned int Texture2D::GetAnisotropy() const
