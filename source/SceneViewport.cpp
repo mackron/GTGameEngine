@@ -5,6 +5,13 @@
 
 namespace GTEngine
 {
+    SceneViewport::SceneViewport()
+        : scene(nullptr), cameraNodes(),
+          renderer(nullptr), width(0), height(0),
+          modelComponents(), ambientLightComponents(), directionalLightComponents(), pointLightComponents(), spotLightComponents()
+    {
+    }
+
     SceneViewport::SceneViewport(unsigned int width, unsigned int height)
         : scene(nullptr), cameraNodes(),
           renderer(nullptr), width(width), height(height),

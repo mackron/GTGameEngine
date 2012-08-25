@@ -455,6 +455,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Scripting.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DataFilesWatcher.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -749,6 +752,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Scripting.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DataFilesWatcher.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

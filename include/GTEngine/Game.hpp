@@ -8,6 +8,7 @@
 #include "Editor.hpp"
 #include "GUIEventHandler.hpp"
 #include "GameUpdateJob.hpp"
+#include "DataFilesWatcher.hpp"
 #include "Rendering/RenderCommands/RCSetFramebuffer.hpp"
 #include <GTCore/Threading.hpp>
 #include <GTCore/Timing.hpp>
@@ -63,7 +64,7 @@ namespace GTEngine
         ///     This will call OnLoadConfigs() and OnStartup().
         ///     @par
         ///     Client application should not call this method directly. It will instead be called internally by GTEngine::Startup().
-        bool Startup(int argc, char **argv);
+        bool Startup(int argc, char** argv);
 
         /// Shuts down the game.
         ///
@@ -120,7 +121,7 @@ namespace GTEngine
         /**
         *   \brief  Retrieves a pointer to the main game window.
         */
-        GTCore::Window * GetWindow() { return this->window; }
+        GTCore::Window* GetWindow() { return this->window; }
 
 
         /// Enables fullscreen mode.
@@ -278,13 +279,30 @@ namespace GTEngine
 
 
 
-    // Operators.
-    public:
+        /// Retrieves a reference to the data files watcher.
+        DataFilesWatcher & GetDataFilesWatcher() { return this->dataFilesWatcher; }
 
-        /**
-        *   \brief  Will return true if the game is initialised and valid. False otherwise.
-        */
-        operator bool() const { return this->IsInitialised(); }
+        /// Enables watching of the data files.
+        void EnableDataFilesWatching() { this->isDataFilesWatchingEnabled = true; }
+
+        /// Disables watching of the data files.
+        void DisableDataFilesWatching() { this->isDataFilesWatchingEnabled = false; }
+
+        /// Determines whether or not the data files are being watched.
+        bool IsDataFilesWatchingEnabled() const { return this->isDataFilesWatchingEnabled; }
+
+        /// Retrieves the interval for checking for changes to the data files.
+        float GetDataFilesWatchInterval() const
+        {
+            float interval = this->script.GetFloat("Game.DataFilesWatchInterval");
+            if (interval == 0.0f)
+            {
+                interval = 2.0f;
+            }
+
+            return interval;
+        }
+
 
 
     protected:
@@ -521,7 +539,7 @@ namespace GTEngine
 
 
         /// The scripting environment for doing anything with scripts.
-        GameScript script;
+        mutable GameScript script;
 
 
         /// A pointer to the update thread. This will point to a member in the 'threads' array.
@@ -682,6 +700,16 @@ namespace GTEngine
         int mousePosXBuffer[MouseBufferSize];
         int mousePosYBuffer[MouseBufferSize];
         size_t mousePosBufferIndex;
+
+
+        /// Object use for watching changes to the data directories. Mainly used for the editor.
+        DataFilesWatcher dataFilesWatcher;
+
+        /// The last time the data files where checked.
+        float lastDataFilesWatchTime;
+
+        /// Controls whether or not the data directories should be dynamically watched. This should only really need to be enabled when running tools like the editor.
+        bool isDataFilesWatchingEnabled;
 
 
     private:    // No copying.

@@ -177,11 +177,22 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     TestTreeView:TreeView();
     
     for i,value in ipairs(Directories.Data) do
-        --local item = TestTreeView:AddItem(Editor.DirectoryAliases
-        TestTreeView:AddItem(GTCore.MakePathRelative(value, GTEngine.GetExecutableDirectory())); 
+        local text = "(";
+        if Editor.DirectoryAliases and Editor.DirectoryAliases.Data[i] then
+            text = text .. Editor.DirectoryAliases.Data[i];
+        else
+            text = text .. GTCore.MakePathRelative(value, GTEngine.GetExecutableDirectory());
+        end
+        text = text .. ")";
+        
+        local item = TestTreeView:AddItem(text);
+        item.isDirectory = true;
+        item.path        = value;
+        item.text:SetStyle('text-color', '#bbb');
     end
     
     
+    --[[
     local directories = {};
     local files       = {};
     GTCore.GetDirectoryContents('', directories, files);
@@ -193,6 +204,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     for i,value in ipairs(files) do
         TestTreeView:AddItem(value);
     end;
+    ]]
     
     
     

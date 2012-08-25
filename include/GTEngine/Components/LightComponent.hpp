@@ -22,9 +22,9 @@ namespace GTEngine
         /**
         *   \brief  Sets the colour of the light.
         */
+        void SetColour(const glm::vec3 &colour)   { this->colour = colour; }
         void SetColour(float r, float g, float b) { this->SetColour(glm::vec3(r, g, b)); }
-        void SetColour(const glm::vec3 &colour) { this->colour = colour; }
-        
+
         /**
         *   \brief  Retrieves the constant attenuation.
         */
@@ -104,7 +104,8 @@ namespace GTEngine
         /**
         *   \brief  Sets the colour of the light.
         */
-        void SetColour(const glm::vec3 &colour) { this->colour = colour; }
+        void SetColour(const glm::vec3 &colour)   { this->colour = colour; }
+        void SetColour(float x, float y, float z) { this->SetColour(glm::vec3(x, y, z)); }
         
         /**
         *   \brief  Retrieves the constant attenuation.
@@ -215,7 +216,8 @@ namespace GTEngine
         /**
         *   \brief  Sets the colour of the light.
         */
-        void SetColour(const glm::vec3 &colour) { this->colour = colour; }
+        void SetColour(const glm::vec3 &colour)   { this->colour = colour; }
+        void SetColour(float x, float y, float z) { this->SetColour(glm::vec3(x, y, z)); }
 
 
         /// Enables shadow casting.
@@ -269,7 +271,8 @@ namespace GTEngine
         /**
         *   \brief  Sets the colour of the light.
         */
-        void SetColour(const glm::vec3 &colour) { this->colour = colour; }
+        void SetColour(const glm::vec3 &colour)   { this->colour = colour; }
+        void SetColour(float x, float y, float z) { this->SetColour(glm::vec3(x, y, z)); }
 
         
     public:

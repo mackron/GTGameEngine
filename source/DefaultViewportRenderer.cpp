@@ -274,6 +274,18 @@ namespace GTEngine
 
     void DefaultViewportRenderer::Render()
     {
+        // The new back RC caches need to be reset in preparation for the next frame.
+        this->RenderCommands.rcBeginLightingPass[Renderer::BackIndex].Reset();
+        this->RenderCommands.rcDrawVA[Renderer::BackIndex].Reset();
+
+        // If the framebuffer needs to be resized, we best do that now. Resizing the framebuffer leaves 
+        if (this->framebufferNeedsResize)
+        {
+            this->framebuffer.Resize(static_cast<unsigned int>(this->screenSize.x), static_cast<unsigned int>(this->screenSize.y));
+            this->framebufferNeedsResize = false;
+        }
+
+
         if (this->owner != nullptr)
         {
             // Step 1: Begin the frame.
@@ -352,6 +364,9 @@ namespace GTEngine
 
     void DefaultViewportRenderer::OnSwapRCQueues()
     {
+        // TODO: Consider removing this. Not needed if we can move it to the start of Render().
+
+        /*
         // The new back RC caches need to be reset in preparation for the next frame.
         this->RenderCommands.rcBeginLightingPass[Renderer::BackIndex].Reset();
         this->RenderCommands.rcDrawVA[Renderer::BackIndex].Reset();
@@ -362,6 +377,7 @@ namespace GTEngine
             this->framebuffer.Resize(static_cast<unsigned int>(this->screenSize.x), static_cast<unsigned int>(this->screenSize.y));
             this->framebufferNeedsResize = false;
         }
+        */
     }
 
     Texture2D* DefaultViewportRenderer::GetFinalColourOutputBuffer()

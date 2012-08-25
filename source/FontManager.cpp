@@ -32,7 +32,7 @@ namespace GTEngine
         return item->value;
     }
 
-    void FontManager::OnCreateFont(GTType::FontServer &, GTType::Font &font)
+    void FontManager::OnCreateFont(GTType::Font &font)
     {
         // We need a texture to associate with the font.
         Texture2D* fontTexture = new Texture2D;
@@ -46,7 +46,7 @@ namespace GTEngine
         FontTextureMap.Add(&font, fontTexture);
     }
 
-    void FontManager::OnDeleteFont(GTType::FontServer &, GTType::Font &font)
+    void FontManager::OnDeleteFont(GTType::Font &font)
     {
         auto item = FontTextureMap.Find(&font);
         if (item != nullptr)
@@ -54,28 +54,5 @@ namespace GTEngine
             delete item->value;
             FontTextureMap.Remove(&font);
         }
-    }
-}
-
-namespace GTEngine
-{
-    FontEventHandler GlobalFontEventHandler;
-
-    FontEventHandler::FontEventHandler()
-    {
-    }
-
-    FontEventHandler::~FontEventHandler()
-    {
-    }
-
-    void FontEventHandler::OnCreateFont(GTType::FontServer &server, GTType::Font &font)
-    {
-        FontManager::OnCreateFont(server, font);
-    }
-
-    void FontEventHandler::OnDeleteFont(GTType::FontServer &server, GTType::Font &font)
-    {
-        FontManager::OnDeleteFont(server, font);
     }
 }
