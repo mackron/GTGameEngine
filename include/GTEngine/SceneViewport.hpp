@@ -27,6 +27,12 @@ namespace GTEngine
     {
     public:
 
+        /// Default constructor.
+        ///
+        /// @remarks
+        ///     The viewport will default to 0,0.
+        SceneViewport();
+
         /// Constructor.
         SceneViewport(unsigned int width, unsigned int height);
 
@@ -54,6 +60,7 @@ namespace GTEngine
         /// @remarks
         ///     Remove the camera of a layer by setting <cameraNode> to nullptr.
         void SetCameraNode(SceneNode* cameraNode, int layer = 0);
+        void SetCameraNode(SceneNode &cameraNode, int layer = 0) { this->SetCameraNode(&cameraNode, layer); }
 
         /// Retrieves a pointer to the camera node. Can return null if a camera hasn't been set, or SetCameraNode() was set with an argument of null.
         ///
@@ -64,6 +71,7 @@ namespace GTEngine
         
         /// Sets the renderer.
         void SetRenderer(ViewportRenderer* renderer);
+        void SetRenderer(ViewportRenderer &renderer) { this->SetRenderer(&renderer); }
 
         /// Retrieves a pointer to the renderer.
         ViewportRenderer* GetRenderer();
@@ -174,14 +182,6 @@ namespace GTEngine
         /// Retrieves the model-view-projection matrix used by this viewport and it's current camera.
         glm::mat4 GetMVPMatrix(int layer = 0) const;
 
-
-    private:
-
-        /// Updates the internal rendering data in preparation for rendering.
-        //void UpdateRenderingData();
-
-        /// Clears the internal rendering data.
-        //void ClearRenderingData();
 
 
     private:

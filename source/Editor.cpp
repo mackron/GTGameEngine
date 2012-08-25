@@ -61,6 +61,9 @@ namespace GTEngine
             this->game.ShowCursor();
             this->GUI.EditorMain->Show();
 
+            // We want to watch the data files.
+            this->game.EnableDataFilesWatching();
+
             this->isOpen = true;
         }
     }
@@ -70,6 +73,9 @@ namespace GTEngine
         if (this->isOpen)
         {
             this->GUI.EditorMain->Hide();
+
+            // We don't want to be watching data files anymore.
+            this->game.DisableDataFilesWatching();
 
             this->isOpen = false;
         }

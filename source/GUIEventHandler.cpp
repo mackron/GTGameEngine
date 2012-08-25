@@ -3,6 +3,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
+#include <GTEngine/FontManager.hpp>
 
 namespace GTEngine
 {
@@ -47,5 +48,15 @@ namespace GTEngine
         case GTGUI::Cursor_None:
         default: break;
         }
+    }
+
+    void GUIEventHandler::OnLoadFont(GTType::Font &font)
+    {
+        FontManager::OnCreateFont(font);
+    }
+
+    void GUIEventHandler::OnUnloadFont(GTType::Font &font)
+    {
+        FontManager::OnDeleteFont(font);
     }
 }

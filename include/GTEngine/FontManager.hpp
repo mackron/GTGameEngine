@@ -31,37 +31,14 @@ namespace GTEngine
         static Texture2D* GetTexture(const GTType::Font &font);
 
 
-        /// Called by GTEngine::FontEventHandler.
-        static void OnCreateFont(GTType::FontServer &server, GTType::Font &font);
+        /// Called when a font needs to be loaded.
+        static void OnCreateFont(GTType::Font &font);
 
-        /// Called by GTEngine::FontEventHandler.
-        static void OnDeleteFont(GTType::FontServer &server, GTType::Font &font);
+        /// Called when a font needs to be unloaded.
+        static void OnDeleteFont(GTType::Font &font);
     };
 
     
-}
-
-namespace GTEngine
-{
-    class FontEventHandler : public GTType::FontEventHandler
-    {
-    public:
-
-        /// Constructor.
-        FontEventHandler();
-
-        /// Destructor.
-        ~FontEventHandler();
-
-        /// OnCreateFont.
-        void OnCreateFont(GTType::FontServer &server, GTType::Font &font);
-
-        /// OnDeleteFont.
-        void OnDeleteFont(GTType::FontServer &server, GTType::Font &font);
-    };
-
-    /// The global font manager object. This is declared in FontManager.cpp.
-    extern FontEventHandler GlobalFontEventHandler;
 }
 
 #endif

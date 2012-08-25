@@ -36,7 +36,8 @@ namespace GTEngine
           editor(*this),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
-          mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0)
+          mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
+          dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false)
     {
     }
 
@@ -583,9 +584,6 @@ namespace GTEngine
             }
         }
 
-        // We need to attach an event handler.
-        this->fontServer.AttachEventHandler(&GlobalFontEventHandler);
-
 
         GTType::FontInfo fi;
         fi.family         = "Liberation Sans";
@@ -635,6 +633,24 @@ namespace GTEngine
                 else
                 {
                     this->window->HideCursor();
+                }
+            }
+
+
+            // If we're watching the data directories, we want to check for changes now.
+            if (this->IsDataFilesWatchingEnabled())
+            {
+                float checkInterval = this->GetDataFilesWatchInterval();
+
+                if (GTCore::Timing::GetTimeInSeconds() - this->lastDataFilesWatchTime >= checkInterval)
+                {
+                    if (this->dataFilesWatcher.EventsReady())
+                    {
+                        this->dataFilesWatcher.DispatchEvents(false);       // <-- 'false' means to not wait.
+                        this->dataFilesWatcher.CheckForChanges(true);       // <-- 'true' means to go asynchronous.
+                    }
+
+                    this->lastDataFilesWatchTime = static_cast<float>(GTCore::Timing::GetTimeInSeconds());
                 }
             }
 
