@@ -31,6 +31,12 @@ namespace GTEngine
 
     /// The default level of anistropy to apply to all textures.
     static unsigned int DefaultAnisotropy = 1;
+
+    /// The default minification filter to apply to textures.
+    static TextureFilter DefaultMinFilter = TextureFilter_LinearLinear;
+
+    /// The default magnification filter to apply to textures.
+    static TextureFilter DefaultMagFilter = TextureFilter_Linear;
 }
 
 namespace GTEngine
@@ -67,6 +73,8 @@ namespace GTEngine
             if (newTexture->IsLinkedToFile())
             {
                 newTexture->SetAnisotropy(DefaultAnisotropy);
+                newTexture->SetFilter(DefaultMagFilter);
+
                 LoadedTextures.Add(fileName, newTexture);
 
                 return newTexture;
@@ -129,6 +137,16 @@ namespace GTEngine
     void Texture2DLibrary::SetDefaultAnisotropy(unsigned int defaultAnisotropy)
     {
         DefaultAnisotropy = defaultAnisotropy;
+    }
+
+    void Texture2DLibrary::SetDefaultMinFilter(TextureFilter filter)
+    {
+        DefaultMinFilter = filter;
+    }
+
+    void Texture2DLibrary::SetDefaultMagFilter(TextureFilter filter)
+    {
+        DefaultMagFilter = filter;
     }
 }
 

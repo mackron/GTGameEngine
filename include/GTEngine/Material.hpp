@@ -57,6 +57,10 @@ namespace GTEngine
         ShaderParameterCache defaultParams;
 
 
+        /// Keeps track of whether or not the material should have transparency enabled.
+        bool enableTransparency;
+
+
     private:
 
         /// Parses a list of floats.
@@ -104,6 +108,10 @@ namespace GTEngine
 
         /// Retrieves a reference to the list of parameters for this material.
         const GTCore::Dictionary<ShaderParameter*> & GetParameters() const { return this->parameters.GetParameters(); }
+
+
+        /// Determines whether or not transparency should be enabled for this material.
+        bool IsTransparencyEnabled() const { return this->definition.enableTransparency; }
 
 
         /// Sets the metadata pointer to use with the given key.

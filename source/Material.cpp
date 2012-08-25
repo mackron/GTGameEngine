@@ -40,7 +40,8 @@ namespace GTEngine
     MaterialDefinition::MaterialDefinition()
         : fileName(),
           diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(),
-          defaultParams()
+          defaultParams(),
+          enableTransparency()
     {
     }
 
@@ -249,6 +250,12 @@ namespace GTEngine
 
                     child = child->next_sibling();
                 }
+            }
+
+            auto enabletransparencyNode = materialNode->first_node("enable_transparency");
+            if (enabletransparencyNode != nullptr)
+            {
+                this->enableTransparency = GTCore::Strings::Equal<false>(enabletransparencyNode->value(), "true");
             }
 
             this->fileName = "";

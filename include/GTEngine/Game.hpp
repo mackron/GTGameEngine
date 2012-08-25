@@ -389,6 +389,7 @@ namespace GTEngine
         virtual void OnLoseFocus();
 
 
+        // TODO: Check if this is still needed.
         /**
         *   \brief  Called when any rendering RC queues need to be swapped.
         */

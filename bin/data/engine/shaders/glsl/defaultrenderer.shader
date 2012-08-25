@@ -342,20 +342,20 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentInput" />
     
     <include>
-        vec3  Diffuse();
+        vec4  Diffuse();
         vec3  Emissive();
         float Shininess();
         vec3  Normal();
         
         void main()
         {
-            vec3  materialDiffuse   = Diffuse();
+            vec4  materialDiffuse   = Diffuse();
             vec3  materialEmissive  = Emissive();
             float materialShininess = Shininess();
             vec3  materialNormal    = Normal();
             
-            gl_FragData[0].rgb = materialDiffuse;
-            gl_FragData[0].a   = 1.0;
+
+            gl_FragData[0].rgba = materialDiffuse;
             
             gl_FragData[1].rgb = materialEmissive;
             gl_FragData[1].a   = materialShininess;
@@ -393,9 +393,9 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         
         gl_FragData[0].rgb = (materialDiffuse * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
-        gl_FragData[0].a   = 1.0;
+        gl_FragData[0].a   = materialTransparency;
         
-        gl_FragData[0].rgb = pow(gl_FragData[0].rgb, vec3(1.0 / 2.2));   // sRGB (approx.)
+        //gl_FragData[0].rgb = pow(gl_FragData[0].rgb, vec3(1.0 / 2.2));   // sRGB (approx.)
         
         
         //gl_FragData[0] = vec4(materialDiffuse, 1.0);

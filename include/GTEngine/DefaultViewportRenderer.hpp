@@ -299,6 +299,50 @@ namespace GTEngine
     };
 
 
+    /// RCControlBlending
+    class DVR_RCControlBlending : public RenderCommand
+    {
+    public:
+
+        /// Constructor.
+        DVR_RCControlBlending();
+
+        // Enables blending.
+        void Enable(BlendFunc sourceFactor, BlendFunc destFactor)
+        {
+            this->enable = true;
+            this->sourceFactor = sourceFactor;
+            this->destFactor   = destFactor;
+        }
+
+        /// Sets up for alpha blending.
+        void EnableAlphaBlending()
+        {
+            this->Enable(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
+        }
+
+        // Disables blending.
+        void Disable()
+        {
+            this->enable = false;
+        }
+        
+
+
+        void Execute();
+
+
+    private:
+
+        /// Controls whether or not the blending should be enabled.
+        bool enable;
+
+        /// Controls the source and dest factors.
+        BlendFunc sourceFactor;
+        BlendFunc destFactor;
+    };
+
+
     // TODO: Look into removing this. All it does it set shader variables. We can update these manually only when needed.
     // RCBeginLightingPass
     class DVR_RCBeginLightingPass : public RenderCommand
@@ -488,9 +532,10 @@ namespace GTEngine
             RCCache<DVR_RCBeginLayer>            rcBeginLayer[2];
             RCCache<DVR_RCEndLayer>              rcEndLayer[2];
             RCCache<DVR_RCBeginLightingPass, 32> rcBeginLightingPass[2];
+            RCCache<DVR_RCControlBlending>       rcControlBlending[2];
             RCCache<RCDrawVA>                    rcDrawVA[2];
             RCCache<RCSetFaceCulling>            rcSetFaceCulling[2];
-
+            
         }RenderCommands;
 
 
@@ -569,6 +614,14 @@ namespace GTEngine
 
         /// The cache of spot light components.
         GTCore::Vector<SpotLightComponent*> spotLightComponents;
+
+
+
+        /// A vector containing the rcSetFaceCulling render commands for transparent meshes.
+        GTCore::Vector<RCSetFaceCulling*> rcSetFaceCulling_Transparent;
+        
+        /// A vector containing the rcDrawVA render commands for transparent meshes.
+        GTCore::Vector<RCDrawVA*> rcDrawVA_Transparent;
 
 
     friend class MaterialLibraryEventHandler;
