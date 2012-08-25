@@ -455,10 +455,6 @@ namespace GTEngine
     {
     }
 
-    void Game::OnSwapRCQueues()
-    {
-    }
-
     void Game::OnHandleEvent(GameEvent &)
     {
     }
@@ -762,9 +758,6 @@ namespace GTEngine
         {
             this->editor.SwapRCQueues();
         }
-
-        // Now we call the event and allow the game to do it's own buffer swaps if it so wishes.
-        this->OnSwapRCQueues();
     }
 
     void Game::HandleEvents()
