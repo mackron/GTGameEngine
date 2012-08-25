@@ -31,6 +31,7 @@ namespace GTEngine
         *       This is a single-sided plane.
         */
         static VertexArray* CreatePlaneXZ(float width, float height, VertexFormat &format = VertexFormat::P3T2N3);
+        static VertexArray* CreatePlaneXY(float width, float height, VertexFormat &format = VertexFormat::P3T2N3);
 
 
     // Deleting.

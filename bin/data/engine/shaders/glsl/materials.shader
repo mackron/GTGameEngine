@@ -2,9 +2,9 @@
 
 <!-- Default material shaders. These shaders will be used when the applicable shader is omitted in a material definition. -->
 <shader id="Material_DefaultDiffuse">
-    vec3 Diffuse()
+    vec4 Diffuse()
     {
-        return vec3(1.0, 1.0, 1.0);
+        return vec3(1.0, 1.0, 1.0, 1.0f);
     }
 </shader>
 
@@ -31,9 +31,9 @@
 
 
 <shader id="Material_NoDiffuse">
-    vec3 Diffuse()
+    vec4 Diffuse()
     {
-        return vec3(0.0, 0.0, 0.0);
+        return vec3(0.0, 0.0, 0.0, 1.0f);
     }
 </shader>
 
@@ -55,9 +55,9 @@
 <shader id="Material_SimpleDiffuse">
     uniform vec3 DiffuseColour;
     
-    vec3 Diffuse()
+    vec4 Diffuse()
     {
-        return DiffuseColour;
+        return vec4(DiffuseColour, 1.0f);
     }
 </shader>
 
@@ -83,9 +83,9 @@
 <shader id="Material_TexturedDiffuse">
     uniform sampler2D DiffuseTexture;
     
-    vec3 Diffuse()
+    vec4 Diffuse()
     {
-        return texture2D(DiffuseTexture, VertexOutput_TexCoord).rgb;
+        return texture2D(DiffuseTexture, VertexOutput_TexCoord);
     }
 </shader>
 

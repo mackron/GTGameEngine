@@ -171,6 +171,24 @@ namespace GTEngine
     }
 
 
+    DVR_RCControlBlending::DVR_RCControlBlending()
+        : enable(false), sourceFactor(BlendFunc_One), destFactor(BlendFunc_Zero)
+    {
+    }
+
+    void DVR_RCControlBlending::Execute()
+    {
+        if (this->enable)
+        {
+            Renderer::EnableBlending();
+            Renderer::SetBlendFunc(this->sourceFactor, this->destFactor);
+        }
+        else
+        {
+            Renderer::DisableBlending();
+        }
+    }
+
 
 
     DVR_RCBeginLightingPass::DVR_RCBeginLightingPass()
@@ -548,13 +566,42 @@ namespace GTEngine
                         }
 
 
-                        // Now we simply append the render command...
-                        Renderer::BackRCQueue->Append(*rcSetFaceCulling);
-                        Renderer::BackRCQueue->Append(*rcDrawVA);
+                        // Here we need to append the render command. If we have transparency enabled, we don't want to append it to the back RC queue straight away. Instead
+                        // we want to hold on to it and append it later.
+                        if (material->IsTransparencyEnabled())
+                        {
+                            this->rcSetFaceCulling_Transparent.PushBack(rcSetFaceCulling);
+                            this->rcDrawVA_Transparent.PushBack(rcDrawVA);
+                        }
+                        else
+                        {
+                            Renderer::BackRCQueue->Append(*rcSetFaceCulling);
+                            Renderer::BackRCQueue->Append(*rcDrawVA);
+                        }
                     }
                 }
             }
         }
+
+        // Now we need to append all of the commands from transparent materials. We need to enable transparency here.
+        auto &rcControlBlending_Enable = this->RenderCommands.rcControlBlending[Renderer::BackIndex].Acquire();
+        rcControlBlending_Enable.EnableAlphaBlending();
+        Renderer::BackRCQueue->Append(rcControlBlending_Enable);
+
+        // At this point blending will be enabled. Now we just want to render like normal.
+        for (size_t i = 0; i < rcDrawVA_Transparent.count; ++i)
+        {
+            Renderer::BackRCQueue->Append(*this->rcSetFaceCulling_Transparent[i]);
+            Renderer::BackRCQueue->Append(*this->rcDrawVA_Transparent[i]);
+        }
+
+        this->rcSetFaceCulling_Transparent.Clear();
+        this->rcDrawVA_Transparent.Clear();
+
+        // Now we want to disable blending.
+        auto &rcControlBlending_Disable = this->RenderCommands.rcControlBlending[Renderer::BackIndex].Acquire();
+        rcControlBlending_Disable.Disable();
+        Renderer::BackRCQueue->Append(rcControlBlending_Disable);
     }
 
     void DefaultViewportRenderer::DoLightingPass(const GTCore::Vector<ModelComponent*> &modelNodes,

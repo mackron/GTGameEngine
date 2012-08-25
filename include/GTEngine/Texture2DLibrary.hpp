@@ -61,6 +61,12 @@ namespace GTEngine
 
         /// Sets the default level of anisotropy to apply to newly acquired textures.
         static void SetDefaultAnisotropy(unsigned int defaultAnisotropy);
+
+        /// Sets the default minification filter.
+        static void SetDefaultMinFilter(TextureFilter filter);
+
+        /// Sets the default magnification filter.
+        static void SetDefaultMagFilter(TextureFilter filter);
     };
 }
 
