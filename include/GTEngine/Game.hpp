@@ -389,13 +389,6 @@ namespace GTEngine
         virtual void OnLoseFocus();
 
 
-        // TODO: Check if this is still needed.
-        /**
-        *   \brief  Called when any rendering RC queues need to be swapped.
-        */
-        virtual void OnSwapRCQueues();
-
-
         /**
         *   \brief         Called when an event with an event code unknown to GTEngine is handled.
         *   \param  e [in] A reference to the event that needs to be handled.

@@ -212,6 +212,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\GameObject.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameObjectGC.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameScript.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\GameState.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameUpdateJob.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameWindowEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GarbageCollector.hpp" />
@@ -332,6 +333,7 @@
     <ClCompile Include="..\..\..\source\GameObject.cpp" />
     <ClCompile Include="..\..\..\source\GameObjectGC.cpp" />
     <ClCompile Include="..\..\..\source\GameScript.cpp" />
+    <ClCompile Include="..\..\..\source\GameState.cpp" />
     <ClCompile Include="..\..\..\source\GameUpdateJob.cpp" />
     <ClCompile Include="..\..\..\source\GameWindowEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\GarbageCollector.cpp" />
