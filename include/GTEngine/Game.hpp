@@ -337,10 +337,10 @@ namespace GTEngine
         virtual void OnShutdown();
 
 
-        /**
-        *   \brief  Called when the game is updating. This is called from the update thread, just before the scene is updated.
-        */
-        virtual void OnUpdate();
+        /// Called when the game is updated. This is called from the update thread.
+        ///
+        /// @param deltaTimeInSeconds [in] The time since the last frame, in seconds.
+        virtual void OnUpdate(double deltaTimeInSeconds);
 
         /**
         *   \brief  Called on the rendering thread just before the main scene is drawn.

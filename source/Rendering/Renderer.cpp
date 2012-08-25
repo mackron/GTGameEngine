@@ -1044,7 +1044,7 @@ namespace GTEngine
     }
 
     /**
-    *   \brief  Synchronizes a Shader object with it's Cg/OpenGL counterpart.
+    *   \brief  Synchronizes a Shader object with it's OpenGL counterpart.
     */
     bool Renderer_SyncShader(Shader *shader)
     {

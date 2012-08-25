@@ -387,7 +387,7 @@ namespace GTEngine
     {
     }
 
-    void Game::OnUpdate()
+    void Game::OnUpdate(double)
     {
     }
 
@@ -731,7 +731,7 @@ namespace GTEngine
         }
 
         // The game needs to know that we're updating.
-        this->OnUpdate();
+        this->OnUpdate(this->GetDeltaTimeInSeconds());
     }
 
     void Game::Draw() //[Main Thread]

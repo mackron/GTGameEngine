@@ -316,7 +316,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     You should not need to call this method directly. It is intended to be used internally by SceneViewport.
-        virtual void AddVisibleComponents(SceneViewport &viewport);     // TODO: Rename this. Waaaay to confusing..
+        //virtual void AddVisibleComponents(SceneViewport &viewport);     // TODO: Rename this. Waaaay to confusing..
 
 
         // TODO: Perhaps use a nicer callback system for renderers that don't necessarilly want to use the same system...
