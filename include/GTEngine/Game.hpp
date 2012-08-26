@@ -9,6 +9,7 @@
 #include "GUIEventHandler.hpp"
 #include "GameUpdateJob.hpp"
 #include "DataFilesWatcher.hpp"
+#include "GameState.hpp"
 #include "Rendering/RenderCommands/RCSetFramebuffer.hpp"
 #include <GTCore/Threading.hpp>
 #include <GTCore/Timing.hpp>
@@ -304,6 +305,22 @@ namespace GTEngine
         }
 
 
+        
+        /// Generically activates the given game state.
+        ///
+        /// @param newGameState [in] A reference to the game state to activate.
+        void ActivateGameState(GameState &newGameState);
+
+        /// Activates the previous game state.
+        void ActivatePreviousGameState();
+
+        /// Deactivates the current game state.
+        ///
+        /// @remarks
+        ///     This will leave the game without a current game state, but will set the previous state. This is good for enabling the editor.
+        void DeactivateCurrentGameState();
+
+
 
     protected:
 
@@ -440,6 +457,11 @@ namespace GTEngine
         *       This should be called after InitialiseFonts() because the GUI depends on the font server.
         */
         bool InitialiseGUI();
+
+        /// Helper method for starting up the data files watcher.
+        ///
+        /// @return True if the data files watcher was initialised successfully.
+        bool InitialiseDataFilesWatcher();
 
         
         /**
@@ -704,6 +726,13 @@ namespace GTEngine
 
         /// Controls whether or not the data directories should be dynamically watched. This should only really need to be enabled when running tools like the editor.
         bool isDataFilesWatchingEnabled;
+
+
+        /// The current game state.
+        GameState* currentGameState;
+
+        /// The previous game state (for toggling).
+        GameState* previousGameState;
 
 
     private:    // No copying.

@@ -8,6 +8,7 @@
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Audio.hpp>
+#include <GTEngine/ApplicationConfig.hpp>
 #include <GTCore/System.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
 #include <GTCore/String.hpp>
@@ -37,7 +38,8 @@ namespace GTEngine
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
-          dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false)
+          dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false),
+          currentGameState(nullptr), previousGameState(nullptr)
     {
     }
 
@@ -288,6 +290,11 @@ namespace GTEngine
         {
             this->paused = true;
             this->OnPause();
+
+            if (this->currentGameState != nullptr)
+            {
+                this->currentGameState->OnPause();
+            }
         }
     }
 
@@ -297,6 +304,11 @@ namespace GTEngine
         {
             this->paused = false;
             this->OnResume();
+
+            if (this->currentGameState != nullptr)
+            {
+                this->currentGameState->OnResume();
+            }
         }
     }
 
@@ -370,6 +382,41 @@ namespace GTEngine
     bool Game::ExecuteScript(const char* script)
     {
         return this->script.Execute(script);
+    }
+
+
+    void Game::ActivateGameState(GameState &newGameState)
+    {
+        if (this->currentGameState != &newGameState)
+        {
+            this->DeactivateCurrentGameState();
+
+            this->currentGameState = &newGameState;
+            this->currentGameState->Activate();
+        }
+    }
+
+    void Game::ActivatePreviousGameState()
+    {
+        if (this->previousGameState != nullptr)
+        {
+            this->ActivateGameState(*this->previousGameState);
+        }
+        else
+        {
+            this->DeactivateCurrentGameState();
+        }
+    }
+
+    void Game::DeactivateCurrentGameState()
+    {
+        this->previousGameState = this->currentGameState;
+        if (this->previousGameState != nullptr)
+        {
+            this->previousGameState->Deactivate();
+        }
+
+        this->currentGameState = nullptr;
     }
 
 
@@ -548,6 +595,14 @@ namespace GTEngine
                 }
 
 
+                // Now we initialise the object that will watch the data directory.
+                Log("Loading Files Watcher...");
+                if (!this->InitialiseDataFilesWatcher())
+                {
+                    Log("Error starting up files watcher.");
+                }
+
+
                 // Here is where we let the game object do some startup stuff.
                 return this->OnStartup(argc, argv);
             }
@@ -594,6 +649,21 @@ namespace GTEngine
         this->gui.SetEventHandler(this->guiEventHandler);
         return true;
     }
+
+    bool Game::InitialiseDataFilesWatcher()
+    {
+        auto &directories = ApplicationConfig::GetDataDirectories();
+        if (directories.count > 0)
+        {
+            for (size_t i = 0; i < directories.count; ++i)
+            {
+                this->dataFilesWatcher.AddRootDirectory(directories[i].c_str());
+            }
+        }
+
+        return true;
+    }
+
 
     void Game::Shutdown()
     {
@@ -714,10 +784,12 @@ namespace GTEngine
 
     void Game::Update() //[Update Thread]
     {
+        double deltaTimeInSeconds = this->GetDeltaTimeInSeconds();
+
         // If the editor is open it also needs to be updated.
         if (this->editor.IsOpen())
         {
-            this->editor.Update(this->GetDeltaTimeInSeconds());
+            this->editor.Update(deltaTimeInSeconds);
         }
 
         // If the debugging overlay is open, we need to show the debugging information.
@@ -726,8 +798,17 @@ namespace GTEngine
             this->DebuggingGUI.Step();
         }
 
-        // The game needs to know that we're updating.
-        this->OnUpdate(this->GetDeltaTimeInSeconds());
+        // The game needs to know that we're updating...
+        this->OnUpdate(deltaTimeInSeconds);
+
+        // ... and the game state.
+        if (this->currentGameState != nullptr)
+        {
+            this->currentGameState->OnUpdate(deltaTimeInSeconds);
+        }
+
+        // We will step the GUI after updating the game.
+        this->StepGUI(deltaTimeInSeconds);
     }
 
     void Game::Draw() //[Main Thread]
@@ -751,13 +832,6 @@ namespace GTEngine
 
         // Now the GUI...
         this->gui.SwapRCQueues();
-
-
-        // And the editor...
-        if (this->editor.IsOpen())
-        {
-            this->editor.SwapRCQueues();
-        }
     }
 
     void Game::HandleEvents()
@@ -811,6 +885,11 @@ namespace GTEngine
         {
             this->gui.OnMouseMove(e.mousemove.x, e.mousemove.y);
             this->OnMouseMove(e.mousemove.x, e.mousemove.y);
+
+            if (this->currentGameState != nullptr)
+            {
+                this->currentGameState->OnMouseMove(e.mousemove.x, e.mousemove.y);
+            }
         }
     }
 
@@ -818,6 +897,11 @@ namespace GTEngine
     {
         this->gui.OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
         this->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+
+        if (this->currentGameState != nullptr)
+        {
+            this->currentGameState->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+        }
     }
 
     void Game::HandleEvent_OnMouseButtonDown(GameEvent &e)
@@ -838,6 +922,11 @@ namespace GTEngine
         }
 
         this->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
+
+        if (this->currentGameState != nullptr)
+        {
+            this->currentGameState->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
+        }
     }
 
     void Game::HandleEvent_OnMouseButtonUp(GameEvent &e)
@@ -862,6 +951,11 @@ namespace GTEngine
         }
 
         this->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
+
+        if (this->currentGameState != nullptr)
+        {
+            this->currentGameState->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
+        }
     }
 
     void Game::HandleEvent_OnMouseButtonDoubleClick(GameEvent &e)
@@ -880,6 +974,11 @@ namespace GTEngine
         }
 
         this->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
+
+        if (this->currentGameState != nullptr)
+        {
+            this->currentGameState->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
+        }
     }
 
     void Game::HandleEvent_OnKeyPressed(GameEvent &e)
@@ -887,6 +986,11 @@ namespace GTEngine
         this->keyDownMap.Add(e.keypressed.key, true);
 
         this->OnKeyPressed(e.keypressed.key);
+
+        if (this->currentGameState != nullptr)
+        {
+            this->currentGameState->OnKeyPressed(e.keypressed.key);
+        }
     }
 
     void Game::HandleEvent_OnKeyReleased(GameEvent &e)
@@ -898,6 +1002,11 @@ namespace GTEngine
         }
 
         this->OnKeyReleased(e.keyreleased.key);
+
+        if (this->currentGameState != nullptr)
+        {
+            this->currentGameState->OnKeyReleased(e.keyreleased.key);
+        }
     }
 
     void Game::HandleEvent_OnKeyDown(GameEvent &e)

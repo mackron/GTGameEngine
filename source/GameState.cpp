@@ -23,7 +23,7 @@ namespace GTEngine
         this->OnActivate();
     }
 
-    void GameState::Deaactivate()
+    void GameState::Deactivate()
     {
         this->OnDeactivate();
     }
@@ -66,7 +66,7 @@ namespace GTEngine
     {
     }
 
-    void GameState::OnMouseButtonDoubleClicked(GTCore::MouseButton, int, int)
+    void GameState::OnMouseButtonDoubleClick(GTCore::MouseButton, int, int)
     {
     }
 

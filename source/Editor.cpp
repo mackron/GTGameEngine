@@ -16,7 +16,8 @@ namespace GTEngine
         : game(game), GUI(),
           modelEditor(*this), sandbox(*this),
           currentMode(nullptr), previousMode(nullptr),
-          isStarted(false), isOpen(false)
+          isStarted(false), isOpen(false),
+          dataFilesWatcherEventHandler(*this)
     {
     }
 
@@ -34,11 +35,13 @@ namespace GTEngine
             if (guiServer.LoadFromFile("engine/editor/main.xml"))
             {
                 this->GUI.EditorMain = guiServer.GetElementByID("EditorMain");
+
+                // Here we need to attach our files watcher event handler.
+                this->game.GetDataFilesWatcher().AddEventHandler(this->dataFilesWatcherEventHandler);
                 
                 // Here is where we startup our editor modes.
                 this->modelEditor.Startup(guiServer);
                 this->sandbox.Startup(guiServer);
-                
 
                 // Here we enable the default mode.
                 this->SwitchToModelEditorMode();
@@ -106,13 +109,23 @@ namespace GTEngine
         }
     }
 
-    void Editor::SwapRCQueues()
+
+    void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
     {
-        if (this->currentMode != nullptr)
-        {
-            this->currentMode->OnSwapRCQueues();
-        }
+        printf("File Insert: %s\n", item.info.path.c_str());
     }
+
+    void Editor::OnFileRemove(const DataFilesWatcher::Item &item)
+    {
+        printf("File Remove: %s\n", item.info.path.c_str());
+    }
+
+    void Editor::OnFileUpdate(const DataFilesWatcher::Item &item)
+    {
+        printf("File Update: %s\n", item.info.path.c_str());
+    }
+
+
 
 
 

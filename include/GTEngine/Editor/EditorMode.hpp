@@ -40,9 +40,6 @@ namespace GTEngine
         /// Called when the editor needs to be updated.
         virtual void OnUpdate(double dtSeconds);
 
-        /// Swaps the RC buffers.
-        virtual void OnSwapRCQueues();
-
 
     protected:
 

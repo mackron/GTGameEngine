@@ -29,7 +29,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will call OnDeactivate().
-        void Deaactivate();
+        void Deactivate();
 
 
         ///////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ namespace GTEngine
         /// @param button [in] The button that was double-clicked.
         /// @param x      [in] The x position of the mouse.
         /// @param y      [in] The y position of the mouse.
-        virtual void OnMouseButtonDoubleClicked(GTCore::MouseButton button, int x, int y);
+        virtual void OnMouseButtonDoubleClick(GTCore::MouseButton button, int x, int y);
 
         /// Called when a key is pressed.
         ///

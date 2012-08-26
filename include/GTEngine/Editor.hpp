@@ -4,6 +4,7 @@
 
 #include "Editor/EditorMode_ModelEditor.hpp"
 #include "Editor/EditorMode_Sandbox.hpp"
+#include "DataFilesWatcher.hpp"
 
 namespace GTGUI
 {
@@ -71,14 +72,27 @@ namespace GTEngine
 
 
 
-        //////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////
         // Events.
 
         /// Updates the editor so that it can do rendering and whatnot.
         void Update(double deltaTimeInSeconds);
 
-        /// Swaps the RC queues.
-        void SwapRCQueues();
+
+
+        ///////////////////////////////////////////////
+        // Events from Files Watcher.
+
+        /// Called when a files is added.
+        void OnFileInsert(const DataFilesWatcher::Item &item);
+
+        /// Called when a file is removed.
+        void OnFileRemove(const DataFilesWatcher::Item &item);
+
+        /// Called when a file is updated.
+        void OnFileUpdate(const DataFilesWatcher::Item &item);
+
+        
 
 
 
@@ -128,6 +142,35 @@ namespace GTEngine
 
         /// Whether or not the editor is open. Defaults to false.
         bool isOpen;
+
+
+
+        /// The event handler for the data files watcher. This will just dispatch the events to the main Editor object.
+        class DataFilesWatcherEventHandler : public DataFilesWatcher::EventHandler
+        {
+        public:
+
+            /// Constructor.
+            DataFilesWatcherEventHandler(Editor &editor)
+                : editor(editor)
+            {
+            }
+
+
+            void OnInsert(const DataFilesWatcher::Item &item) { this->editor.OnFileInsert(item); }
+            void OnRemove(const DataFilesWatcher::Item &item) { this->editor.OnFileRemove(item); }
+            void OnUpdate(const DataFilesWatcher::Item &item) { this->editor.OnFileUpdate(item); }
+
+        private:
+
+            /// The editor object that owns this event handler.
+            Editor &editor;
+
+        private:    // No copying.
+            DataFilesWatcherEventHandler(const DataFilesWatcherEventHandler &);
+            DataFilesWatcherEventHandler & operator=(const DataFilesWatcherEventHandler &);
+
+        }dataFilesWatcherEventHandler;
     };
 }
 
