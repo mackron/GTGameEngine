@@ -67,6 +67,10 @@ namespace GTEngine
             // We want to watch the data files.
             this->game.EnableDataFilesWatching();
 
+            // We also want to get an update on the data files immediately.
+            this->game.GetDataFilesWatcher().CheckForChanges(false);
+            this->game.GetDataFilesWatcher().DispatchEvents();
+
             this->isOpen = true;
         }
     }
