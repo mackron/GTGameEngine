@@ -36,8 +36,4 @@ namespace GTEngine
     {
         (void)dtSeconds;
     }
-
-    void EditorMode::OnSwapRCQueues()
-    {
-    }
 }

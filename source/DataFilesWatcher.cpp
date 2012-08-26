@@ -102,6 +102,12 @@ namespace GTEngine
                 }
             }
 
+            // If the item in the event is a removal, the item need to be deleted.
+            if (e.type == 1)
+            {
+                delete e.item;
+            }
+
             this->events.RemoveRoot();
         }
 
@@ -134,22 +140,105 @@ namespace GTEngine
         if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
         {
             Event e;
-            e.type = 2;
+            e.type = 2;                 // <-- Update
             e.item = &root;
-
             this->events.Append(e);
         }
 
-
         
         // Now we need to check the children for modifications. We're going to build a new map of children and then
-        // compare that to the old one.
+        // compare that to the old one. We will do something special for the root item where we won't actually check
+        // the file system, but instead trick it into thinking it has done so.
 
-        /*
-        GTCore::List<GTCore::String> newChildren;
+        GTCore::List<GTCore::String> currentChildren;
 
-        for (size_t i = 0; i < this
-        */
+        if (&this->root != &root)
+        {
+            if (newInfo.isDirectory)
+            {
+                GTCore::IO::FileIterator i((root.info.absolutePath + "/.*").c_str());
+                while (i)
+                {
+                    currentChildren.Append(i.name);
+                    ++i;
+                }
+            }
+        }
+        else
+        {
+            for (size_t i = 0; i < root.children.count; ++i)
+            {
+                currentChildren.Append(root.children.buffer[i]->value->info.absolutePath);
+            }
+        }
+
+
+        // We now have our list of children. We need to cross reference the new list of children against the list
+        // currently in memory and post the appropriate events. We'll start with the children that have been removed.
+        GTCore::List<Item*> removedChildren;
+        for (size_t i = 0; i < root.children.count; ++i)
+        {
+            auto  iItem = root.children.buffer[i]->value;
+            auto &iPath = iItem->info.absolutePath;
+
+            if (currentChildren.Find(iPath) == nullptr)
+            {
+                removedChildren.Append(iItem);
+
+                Event e;
+                e.type = 1;                 // <-- Remove
+                e.item = iItem;
+                this->events.Append(e);
+            }
+        }
+
+        // Now we find the new files.
+        GTCore::List<Item*> addedChildren;
+        for (auto iChild = currentChildren.root; iChild != nullptr; iChild = iChild->next)
+        {
+            GTCore::IO::FileInfo info;
+            GTCore::IO::GetFileInfo(iChild->value.c_str(), info);
+
+            if (root.children.Find(info.absolutePath.c_str()) == nullptr)
+            {
+                auto newItem = new Item(info, &root);
+                addedChildren.Append(newItem);
+
+                Event e;
+                e.type = 0;                 // <-- Insert
+                e.item = newItem;
+                this->events.Append(e);
+            }
+        }
+
+
+
+
+        // The root info needs to be updated if it's actually changed.
+        if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
+        {
+            root.info = newInfo;
+        }
+        
+        // We need to actually remove the children from root's children list.
+        for (auto iChild = removedChildren.root; iChild != nullptr; iChild = iChild->next)
+        {
+            root.children.Remove(iChild->value->info.absolutePath.c_str());
+        }
+
+        // And now the new children.
+        for (auto iChild = addedChildren.root; iChild != nullptr; iChild = iChild->next)
+        {
+            root.children.Add(iChild->value->info.absolutePath.c_str(), iChild->value);
+        }
+
+
+
+        // Now we need to check the children.
+        for (size_t i = 0; i < root.children.count; ++i)
+        {
+            this->__CheckForChangesOnCallingThread(*root.children.buffer[i]->value);
+        }
     }
 }
 

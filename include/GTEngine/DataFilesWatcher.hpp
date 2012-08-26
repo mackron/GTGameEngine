@@ -41,7 +41,7 @@ namespace GTEngine
             {
                 for (size_t i = 0; i < this->children.count; ++i)
                 {
-                    delete this->children.buffer[i];
+                    delete this->children.buffer[i]->value;
                 }
             }
 
@@ -203,9 +203,6 @@ namespace GTEngine
         /// The thread that will perform the asynchronous file checks.
         GTCore::Thread thread;
 
-        /// The mutex for synchronization.
-        //GTCore::Mutex lock;
-
 
         /// The list of event handlers currently attached.
         GTCore::List<EventHandler*> eventHandlers;
@@ -215,7 +212,7 @@ namespace GTEngine
         struct Event
         {
             int type;           // 0 = Insert, 1 = Remove, 2 = Update.
-            const Item* item;
+            Item* item;
         };
 
         /// The list of events waiting to be dispatched.
