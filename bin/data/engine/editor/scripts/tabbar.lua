@@ -51,13 +51,19 @@ function GTGUI.Element:TabBar()
     end
     
     function self:RemoveTab(tab)
+        local newActiveTab = nil;
         if tab == self.activeTab then
+            newActiveTab = self.activeTab:GetNextSibling();
             self:DeactivateActiveTab();
         end
         
         self:OnTabRemoved({tab = tab});
         
         GTGUI.Server.DeleteElement(tab);
+        
+        if newActiveTab ~= nil then
+            self:ActivateTab(newActiveTab);
+        end
     end
     
     

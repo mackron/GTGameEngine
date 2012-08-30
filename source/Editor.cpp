@@ -126,19 +126,16 @@ namespace GTEngine
 
     void Editor::OnModelActivated(const char* fileName)
     {
-        printf("OnModelActivated: %s\n", fileName);
         (void)fileName;
     }
 
     void Editor::OnImageActivated(const char* fileName)
     {
-        printf("OnImageActivated: %s\n", fileName);
         this->imageEditor.LoadImage(fileName);
     }
 
     void Editor::OnSoundActivated(const char* fileName)
     {
-        printf("OnSoundActivated: %s\n", fileName);
         (void)fileName;
     }
 
