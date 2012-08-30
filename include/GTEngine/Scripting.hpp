@@ -25,6 +25,16 @@ namespace GTEngine
             /// Retrieves the executable directory.
             int GetExecutableDirectory(GTCore::Script &script);
 
+            /// Determines if the given file path is a model file, based on it's extension.
+            int IsModelFile(GTCore::Script &script);
+
+            /// Determines if the given file path is an image file, based on it's extension.
+            int IsImageFile(GTCore::Script &script);
+
+            /// Determines if the given file path is a sound file, based on it's extension.
+            int IsSoundFile(GTCore::Script &script);
+
+
 
             namespace RendererFFI
             {

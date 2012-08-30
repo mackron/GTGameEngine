@@ -15,7 +15,8 @@ namespace GTEngine
 
     DataFilesWatcher::DataFilesWatcher()
         : root(), thread(),
-          eventHandlers(), events()
+          eventHandlers(), events(),
+          isActive(true)
     {
     }
 
@@ -133,112 +134,120 @@ namespace GTEngine
 
     void DataFilesWatcher::__CheckForChangesOnCallingThread(Item &root)
     {
-        // We first check ourselves for changes. 'root' will be the old info.
-        GTCore::IO::FileInfo newInfo;
-        GTCore::IO::GetFileInfo(root.info.absolutePath.c_str(), newInfo);
-
-        if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
+        if (this->isActive)
         {
-            Event e;
-            e.type = 2;                 // <-- Update
-            e.item = &root;
-            this->events.Append(e);
-        }
+            // We first check ourselves for changes. 'root' will be the old info.
+            GTCore::IO::FileInfo newInfo;
+            GTCore::IO::GetFileInfo(root.info.absolutePath.c_str(), newInfo);
+
+            if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
+            {
+                Event e;
+                e.type = 2;                 // <-- Update
+                e.item = &root;
+                this->events.Append(e);
+            }
 
         
-        // Now we need to check the children for modifications. We're going to build a new map of children and then
-        // compare that to the old one. We will do something special for the root item where we won't actually check
-        // the file system, but instead trick it into thinking it has done so.
+            // Now we need to check the children for modifications. We're going to build a new map of children and then
+            // compare that to the old one. We will do something special for the root item where we won't actually check
+            // the file system, but instead trick it into thinking it has done so.
 
-        GTCore::List<GTCore::String> currentChildren;
+            GTCore::List<GTCore::String> currentChildren;
 
-        if (&this->root != &root)
-        {
-            if (newInfo.isDirectory)
+            if (&this->root != &root)
             {
-                GTCore::IO::FileIterator i((root.info.absolutePath + "/.*").c_str());
-                while (i)
+                if (newInfo.isDirectory)
                 {
-                    currentChildren.Append(i.name);
-                    ++i;
+                    GTCore::IO::FileIterator i((root.info.absolutePath + "/.*").c_str());
+                    while (i)
+                    {
+                        currentChildren.Append(i.name);
+                        ++i;
+                    }
                 }
             }
-        }
-        else
-        {
+            else
+            {
+                for (size_t i = 0; i < root.children.count; ++i)
+                {
+                    currentChildren.Append(root.children.buffer[i]->value->info.absolutePath);
+                }
+            }
+
+
+            // We now have our list of children. We need to cross reference the new list of children against the list
+            // currently in memory and post the appropriate events. We'll start with the children that have been removed.
+            GTCore::List<Item*> removedChildren;
             for (size_t i = 0; i < root.children.count; ++i)
             {
-                currentChildren.Append(root.children.buffer[i]->value->info.absolutePath);
+                auto  iItem = root.children.buffer[i]->value;
+                auto &iPath = iItem->info.absolutePath;
+
+                if (currentChildren.Find(iPath) == nullptr)
+                {
+                    removedChildren.Append(iItem);
+
+                    Event e;
+                    e.type = 1;                 // <-- Remove
+                    e.item = iItem;
+                    this->events.Append(e);
+                }
             }
-        }
 
-
-        // We now have our list of children. We need to cross reference the new list of children against the list
-        // currently in memory and post the appropriate events. We'll start with the children that have been removed.
-        GTCore::List<Item*> removedChildren;
-        for (size_t i = 0; i < root.children.count; ++i)
-        {
-            auto  iItem = root.children.buffer[i]->value;
-            auto &iPath = iItem->info.absolutePath;
-
-            if (currentChildren.Find(iPath) == nullptr)
+            // Now we find the new files.
+            GTCore::List<Item*> addedChildren;
+            for (auto iChild = currentChildren.root; iChild != nullptr; iChild = iChild->next)
             {
-                removedChildren.Append(iItem);
+                GTCore::IO::FileInfo info;
+                GTCore::IO::GetFileInfo(iChild->value.c_str(), info);
 
-                Event e;
-                e.type = 1;                 // <-- Remove
-                e.item = iItem;
-                this->events.Append(e);
+                if (root.children.Find(info.absolutePath.c_str()) == nullptr)
+                {
+                    auto newItem = new Item(info, &root);
+                    addedChildren.Append(newItem);
+
+                    Event e;
+                    e.type = 0;                 // <-- Insert
+                    e.item = newItem;
+                    this->events.Append(e);
+                }
             }
-        }
 
-        // Now we find the new files.
-        GTCore::List<Item*> addedChildren;
-        for (auto iChild = currentChildren.root; iChild != nullptr; iChild = iChild->next)
-        {
-            GTCore::IO::FileInfo info;
-            GTCore::IO::GetFileInfo(iChild->value.c_str(), info);
 
-            if (root.children.Find(info.absolutePath.c_str()) == nullptr)
+
+
+            // The root info needs to be updated if it's actually changed.
+            if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
             {
-                auto newItem = new Item(info, &root);
-                addedChildren.Append(newItem);
-
-                Event e;
-                e.type = 0;                 // <-- Insert
-                e.item = newItem;
-                this->events.Append(e);
+                root.info = newInfo;
             }
-        }
-
-
-
-
-        // The root info needs to be updated if it's actually changed.
-        if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
-        {
-            root.info = newInfo;
-        }
         
-        // We need to actually remove the children from root's children list.
-        for (auto iChild = removedChildren.root; iChild != nullptr; iChild = iChild->next)
-        {
-            root.children.Remove(iChild->value->info.absolutePath.c_str());
+            // We need to actually remove the children from root's children list.
+            for (auto iChild = removedChildren.root; iChild != nullptr; iChild = iChild->next)
+            {
+                root.children.Remove(iChild->value->info.absolutePath.c_str());
+            }
+
+            // And now the new children.
+            for (auto iChild = addedChildren.root; iChild != nullptr; iChild = iChild->next)
+            {
+                root.children.Add(iChild->value->info.absolutePath.c_str(), iChild->value);
+            }
+
+
+
+            // Now we need to check the children.
+            for (size_t i = 0; i < root.children.count; ++i)
+            {
+                this->__CheckForChangesOnCallingThread(*root.children.buffer[i]->value);
+            }
         }
+    }
 
-        // And now the new children.
-        for (auto iChild = addedChildren.root; iChild != nullptr; iChild = iChild->next)
-        {
-            root.children.Add(iChild->value->info.absolutePath.c_str(), iChild->value);
-        }
-
-
-
-        // Now we need to check the children.
-        for (size_t i = 0; i < root.children.count; ++i)
-        {
-            this->__CheckForChangesOnCallingThread(*root.children.buffer[i]->value);
-        }
+    void DataFilesWatcher::__Deactivate()
+    {
+        this->isActive = false;
     }
 }
 

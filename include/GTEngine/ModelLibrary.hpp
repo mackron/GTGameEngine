@@ -121,6 +121,17 @@ namespace GTEngine
 
         /// Deletes a model that was created with the model library.
         static void Delete(Model* model);
+
+
+
+    // Misc functions.
+    public:
+
+        /// Determines whether or not the given file extension is supported.
+        ///
+        /// @remarks
+        ///     If this function returns true, it does not necessarily mean it can load every file of that extension.
+        static bool IsExtensionSupported(const char* extension);
     };
 }
 

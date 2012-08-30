@@ -396,15 +396,13 @@ namespace GTEngine
                     }
                     else if (proxy->m_collisionFilterGroup & CollisionGroups::PointLight)
                     {
-                        auto pointLightComponent = sceneNode->GetComponent<PointLightComponent>();
-                        assert(pointLightComponent != nullptr);
+                        assert(sceneNode->GetComponent<PointLightComponent>() != nullptr);
 
                         this->cullingManager.ProcessVisibleObjectPointLight(*sceneNode, this->callback);
                     }
                     else if (proxy->m_collisionFilterGroup & CollisionGroups::SpotLight)
                     {
-                        auto spotLightComponent = sceneNode->GetComponent<SpotLightComponent>();
-                        assert(spotLightComponent != nullptr);
+                        assert(sceneNode->GetComponent<SpotLightComponent>() != nullptr);
 
                         this->cullingManager.ProcessVisibleObjectSpotLight(*sceneNode, this->callback);
                     }

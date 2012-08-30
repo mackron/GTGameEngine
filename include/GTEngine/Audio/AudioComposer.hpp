@@ -61,6 +61,15 @@ namespace GTEngine
         /// Deletes the given streamer.
         static void DeleteStreamer(SoundStreamer* streamer);
 
+
+
+    // Misc.
+    public:
+
+        /// Determines whether or not the given extension is supported by the composer.
+        ///
+        /// @param extension [in] The extension to check. For example: "wav", "ogg"
+        static bool IsExtensionSupported(const char* extension);
     };
 }
 

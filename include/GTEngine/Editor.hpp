@@ -4,6 +4,9 @@
 
 #include "Editor/EditorMode_ModelEditor.hpp"
 #include "Editor/EditorMode_Sandbox.hpp"
+//#include "Editor/Editor_ModelEditor.hpp"
+#include "Editor/Editor_ImageEditor.hpp"
+//#include "Editor/Editor_SoundEditor.hpp"
 #include "DataFilesWatcher.hpp"
 
 namespace GTGUI
@@ -79,6 +82,22 @@ namespace GTEngine
         void Update(double deltaTimeInSeconds);
 
 
+        /// Called when the tab for a model is activated.
+        ///
+        /// @param fileName [in] The full, absolute path of the model being shown.
+        void OnModelActivated(const char* fileName);
+
+        /// Called when the tab for an image is activated.
+        ///
+        /// @param fileName [in] The full, absolute path of the image being shown.
+        void OnImageActivated(const char* fileName);
+
+        /// Called when the tab for a sound is activated.
+        ///
+        /// @param fileName [in] The full, absolute path of the sound being shown.
+        void OnSoundActivated(const char* fileName);
+
+
 
         ///////////////////////////////////////////////
         // Events from Files Watcher.
@@ -97,6 +116,10 @@ namespace GTEngine
 
 
     private:
+
+        /// Starts up the scripting environment for the editor.
+        void StartupScripting();
+
 
         /// Helper function for setting the editor mode.
         ///
@@ -137,6 +160,10 @@ namespace GTEngine
         EditorMode* previousMode;
 
 
+        /// The image editor.
+        Editor_ImageEditor imageEditor;
+
+
         /// Whether or not the editor has be started up.
         bool isStarted;
 
@@ -171,6 +198,22 @@ namespace GTEngine
             DataFilesWatcherEventHandler & operator=(const DataFilesWatcherEventHandler &);
 
         }dataFilesWatcherEventHandler;
+
+
+
+
+        /// The scripting FFI.
+        struct FFI
+        {
+            static Editor & GetEditor(GTCore::Script &script);
+
+            static int Open(GTCore::Script &script);
+            static int Close(GTCore::Script &script);
+
+            static int OnModelActivated(GTCore::Script &script);
+            static int OnImageActivated(GTCore::Script &script);
+            static int OnSoundActivated(GTCore::Script &script);
+        };
     };
 }
 
