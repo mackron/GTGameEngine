@@ -66,7 +66,7 @@ namespace GTEngine
             float quadTop    = (viewportHeight * 0.5f) - (imageHeight * 0.5f * zoom) + viewportRect.top;
             float quadBottom = (viewportHeight * 0.5f) + (imageHeight * 0.5f * zoom) + viewportRect.top;
 
-            // All we do is draw a quad over the viewport area.
+
             float quadVertices[] =
             {
                 quadLeft,  quadBottom,
