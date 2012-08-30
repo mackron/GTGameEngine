@@ -4,12 +4,25 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
 <style url="styles/theme.style" />
 
+<script url="scripts/datafileswatcher.lua" />
+
+
 <include url="common-controls.xml" />
 <include url="dialogs.xml"         />
 
 <include url="menubar.xml"       />
 <include url="combobox.xml"      />
 <include url="file-explorer.xml" />
+
+<style  url="styles/searchbox.style" />
+<script url="scripts/searchbox.lua"  />
+
+<style  url="styles/data-explorer.style" />
+<script url="scripts/data-explorer.lua"  />
+
+<style  url="styles/tabbar.style" />
+<script url="scripts/tabbar.lua"  />
+
 <!--<include url="modeleditor.xml"   />-->
 <!--<include url="sandbox.xml"       />-->
 
@@ -91,6 +104,47 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     end);
     
     
+    -- This will keep track of the currently opened sub-editor.
+    OpenedSubEditor = nil;
+    
+    
+    Editor_DataExplorer:DataExplorer();
+    Editor_TabBar:TabBar();
+    Editor_TabBar.OpenTabs = {};       -- Just contains the currently opened tabs, mapped to their file path.
+    
+    Editor_TabBar:OnTabAdded(function(data)
+    end)
+    
+    Editor_TabBar:OnTabRemoved(function(data)
+        if data.tab.path then
+            Editor_TabBar.OpenTabs[data.tab.path] = nil;
+        end
+    end)
+    
+    Editor_TabBar:OnTabActivated(function(data)
+        -- We need to show the appropriate sub-editor. We determine this from the path.
+        local filename = data.tab.path;
+        if GTEngine.IsModelFile(filename) then
+            OpenedSubEditor = Editor_ModelEditor;
+            Editor.OnModelActivated(filename);
+        elseif GTEngine.IsImageFile(filename) then
+            OpenedSubEditor = Editor_ImageEditor;
+            Editor.OnImageActivated(filename);
+        end
+        
+        if OpenedSubEditor ~= nil then
+            OpenedSubEditor:Show();
+        end
+    end)
+    
+    Editor_TabBar:OnTabDeactivated(function(data)
+        if OpenedSubEditor ~= nil then
+            OpenedSubEditor:Hide();
+            OpenedSubEditor = nil;
+        end
+    end)
+    
+    
     --[[
     checkModelEditor_ShowConvexDecomposition:CheckBox("Show in Viewport");
     
@@ -146,87 +200,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         btnModelEditor_ConvexDecomposition_Build:Enable();
     end);
     ]]
-    
-    
-    
-    EditorExplorerSearchBox.HasContent = false;
-    EditorExplorerSearchBox:SetStyle("font-style", "italic");
-    
-    EditorExplorerSearchBox:OnFocus(function()
-        if not EditorExplorerSearchBox.HasContent then
-            EditorExplorerSearchBox:SetText("");
-        end
-        
-        EditorExplorerSearchBox:SetStyle("font-style", "none");
-        EditorExplorerSearchBoxIcon:SetStyle("background-image-color", "#aaa");
-    end);
-    
-    EditorExplorerSearchBox:OnBlur(function()
-        if not EditorExplorerSearchBox:GetText() then
-            EditorExplorerSearchBox.HasContent = false;
-            EditorExplorerSearchBox:SetStyle("font-style", "italic");
-            EditorExplorerSearchBox:SetText("Search...");
-        else
-            EditorExplorerSearchBox.HasContent = true;
-        end;
-        
-        EditorExplorerSearchBoxIcon:SetStyle("background-image-color", "#888");
-    end);
-    
-    
-    TestTreeView:TreeView();
-    
-    for i,value in ipairs(Directories.Data) do
-        local text = "(";
-        if Editor.DirectoryAliases and Editor.DirectoryAliases.Data[i] then
-            text = text .. Editor.DirectoryAliases.Data[i];
-        else
-            text = text .. GTCore.MakePathRelative(value, GTEngine.GetExecutableDirectory());
-        end
-        text = text .. ")";
-        
-        local item = TestTreeView:AddItem(text);
-        item.isDirectory = true;
-        item.path        = value;
-        item.text:SetStyle('text-color', '#bbb');
-    end
-    
-    
-    --[[
-    local directories = {};
-    local files       = {};
-    GTCore.GetDirectoryContents('', directories, files);
-    
-    for i,value in ipairs(directories) do
-        TestTreeView:AddItem(value);
-    end;
-    
-    for i,value in ipairs(files) do
-        TestTreeView:AddItem(value);
-    end;
-    ]]
-    
-    
-    
-    --[[
-    local item = TestTreeView:AddItem("Parent");
-    TestTreeView:AddItem("Testing 1...", item);
-    TestTreeView:AddItem("Testing 2...", item);
-    TestTreeView:AddItem("Testing 3...", item);
-    
-    for i=1,40 do
-        TestTreeView:AddItem("Test", item);
-    end;
-    
-    local last = TestTreeView:AddItem("Last", item);
-    TestTreeView:AddItem("testing", last);
-    
-    TestTreeView:OnItemPicked(function(data)
-    end);
-    ]]
-    
-    --TestScrollbar:VerticalScrollbar(100, 50);
-    --TestScrollbar2:HorizontalScrollbar(100, 50);
 ]]>
 </script>
 
@@ -321,29 +294,43 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     #EditorTabPanel
     {
-        width:         100%
-        height:        22px
-        border-bottom: 1px #2b2b2b
+        width:            100%
+        height:           22px
+        background-color: #303030
     }
     
     #EditorBody
     {
-        height: 100%
+        height:           100%
+        background-color: #3c3c3c
+        border:           1px #555
+        
+        padding:          4px
+    }
+</style>
+
+    
+<!--
+The styles below are for sub-editors (model editor, image editor, etc). These are all located in the main body and are
+hidden by default.
+-->
+<style>
+    sub-editor
+    {
+        visible: false
+    
+        width:   100%
+        height:  100%
     }
     
-    #EditorExplorerSearchBox
+    #Editor_ModelEditor
     {
-        text-color:       #888
-        background-color: inherit
-        border:           none
-        padding-left:     4px
+        border: 1px #999
     }
     
-    #EditorExplorerSearchBox : focused
+    #Editor_ImageEditor
     {
-        font-style:       none
-        text-color:       #aaa
-        background-color: inherit
+        border: 1px #222
     }
 </style>
 
@@ -375,23 +362,23 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     -->
     <div id="EditorCenterPanel">
         <div id="EditorLeftPanel">
-            <!--<div style="height:22px; padding:8px 0px; vertical-align:center; border-bottom:1px #2b2b2b; text-color:#999; font-style:bold; background-color:std-control-bg-color-mid;">Explorer</div>-->
-            
-            <div style="child-plane:horizontal; flex-child-width:true; vertical-align:center;border-bottom:1px #2b2b2b; background-color: #555">
-                <div id="EditorExplorerSearchBox"     styleclass="textbox" style="width:100%; height:22px;">Search...</div>
-                <div id="EditorExplorerSearchBoxIcon" style="background-image:std-search-16x16; background-image-color:#777; width:22px; height:22px;" />
-            </div>
-            <div id="TestTreeView" styleclass="treeview" style="height:100%; border:none; transparent-mouse-input:true;" />
+            <div id='Editor_DataExplorer' styleclass='data-explorer' />
         </div>
         
         <div id="EditorCenterCenterPanel">
             <div id="EditorTabPanel">
+                <div id='Editor_TabBar' styleclass='tabbar' style='height:100%;' />
             </div>
             <div id="EditorBody">
-                <!--
-                <div id="TestScrollbar2" styleclass="horizontal-scrollbar" />
-                <div id="TestScrollbar"  styleclass="vertical-scrollbar" />
-                -->
+                <!-- Model Editor -->
+                <div id="Editor_ModelEditor" styleclass='sub-editor'>
+                </div>
+                
+                
+                <!-- Image Editor -->
+                <div id="Editor_ImageEditor" styleclass='sub-editor'>
+                    <div id="Editor_ImageEditor_Viewport" style='width:100%; height:100%' />
+                </div>
             </div>
         </div>
         

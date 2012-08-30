@@ -320,3 +320,13 @@ namespace GTEngine
         delete streamer;
     }
 }
+
+
+// Misc.
+namespace GTEngine
+{
+    bool AudioComposer::IsExtensionSupported(const char* extension)
+    {
+        return GTCore::Strings::Equal<false>(extension, "wav");
+    }
+}

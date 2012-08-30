@@ -461,6 +461,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\GameState.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_ImageEditor.hpp">
+      <Filter>include\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -762,6 +765,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\GameState.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Editor_ImageEditor.cpp">
+      <Filter>source\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -191,6 +191,12 @@ namespace GTEngine
         void __CheckForChangesOnCallingThread(Item &root);
 
 
+        /// Deactives the watcher for faster termination at shutdown.
+        ///
+        /// @remarks
+        ///     This method should only be used internally.
+        void __Deactivate();
+
 
         ///////////////////////////////////////////////
         // Attributes
@@ -217,6 +223,10 @@ namespace GTEngine
 
         /// The list of events waiting to be dispatched.
         GTCore::List<Event> events;
+
+
+        /// This keeps track of whether or not the data files watcher is still active.
+        bool isActive;
     };
 }
 

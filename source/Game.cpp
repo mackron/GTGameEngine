@@ -667,6 +667,11 @@ namespace GTEngine
 
     void Game::Shutdown()
     {
+        // The data files watcher might be running. We better wait for it to finish.
+        this->dataFilesWatcher.__Deactivate();          // <-- This will cause the background thread to die quicker if it happens to be running.
+        this->dataFilesWatcher.WaitForEvents();         // <-- This will make sure the background thread has finished.
+
+
         // We first let the game know that we are shutting down. It's important that we do this before killing anything.
         this->OnShutdown();
 

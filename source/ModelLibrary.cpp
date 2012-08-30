@@ -1495,6 +1495,16 @@ namespace GTEngine
         LoadedModels.Remove(LoadedModels.Find(model));
         delete model;
     }
+
+
+    bool ModelLibrary::IsExtensionSupported(const char* extension)
+    {
+        GTCore::String assimpExt(".");
+        assimpExt += extension;
+
+        Assimp::Importer importer;
+        return importer.IsExtensionSupported(assimpExt.c_str());
+    }
 }
 
 

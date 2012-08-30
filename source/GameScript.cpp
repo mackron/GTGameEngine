@@ -197,6 +197,7 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////////
     // Editor FFI
 
+    /*
     int FFI_Editor_Open(GTCore::Script &script)
     {
         auto &game = GameScript::FFI::GetGameObject(script);
@@ -212,6 +213,7 @@ namespace GTEngine
         game.CloseEditor();
         return 0;
     }
+    */
 
     int FFI_Editor_SwitchToModelEditorMode(GTCore::Script &script)
     {
@@ -353,11 +355,12 @@ namespace GTEngine
         this->Pop(1);    // Game
 
 
+        // TODO: Should move this to Editor, where it belongs.
         this->GetGlobal("Editor");
         if (this->IsTable(-1))
         {
-            this->SetTableFunction(-1, "Open",                    FFI_Editor_Open);
-            this->SetTableFunction(-1, "Close",                   FFI_Editor_Close);
+            //this->SetTableFunction(-1, "Open",                    FFI_Editor_Open);
+            //this->SetTableFunction(-1, "Close",                   FFI_Editor_Close);
 
             this->SetTableFunction(-1, "SwitchToModelEditorMode", FFI_Editor_SwitchToModelEditorMode);
             this->SetTableFunction(-1, "SwitchToSandboxMode",     FFI_Editor_SwitchToSandboxMode);
