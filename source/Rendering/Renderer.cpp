@@ -565,6 +565,10 @@ namespace GTEngine
 
         // Here we swap the back index.
         Renderer::BackIndex = !Renderer::BackIndex;
+
+
+        // We should let everything know about the queue swaps.
+        Renderer::OnSwapRCQueues();
     }
 
 
@@ -663,6 +667,46 @@ namespace GTEngine
                 RendererGC.NeedsCollection = false;
             RendererGC.Lock.Unlock();
         }
+    }
+
+
+    //////////////////////////////////////////
+    // Event Handling.
+
+    static GTCore::Vector<RendererEventHandler*> RendererEventHandlers;
+    static GTCore::Mutex                         RendererEventHandlerLock;
+
+    void Renderer::AttachEventHandler(RendererEventHandler &eventHandler)
+    {
+        RendererEventHandlerLock.Lock();
+        {
+            if (!RendererEventHandlers.Exists(&eventHandler))
+            {
+                RendererEventHandlers.PushBack(&eventHandler);
+            }
+        }
+        RendererEventHandlerLock.Unlock();
+    }
+
+    void Renderer::DetachEventHandler(RendererEventHandler &eventHandler)
+    {
+        RendererEventHandlerLock.Lock();
+        {
+            RendererEventHandlers.RemoveFirst(&eventHandler);
+        }
+        RendererEventHandlerLock.Unlock();
+    }
+
+    void Renderer::OnSwapRCQueues()
+    {
+        RendererEventHandlerLock.Lock();
+        {
+            for (size_t i = 0; i < RendererEventHandlers.count; ++i)
+            {
+                RendererEventHandlers[i]->OnSwapRCQueues();
+            }
+        }
+        RendererEventHandlerLock.Unlock();
     }
 }
 

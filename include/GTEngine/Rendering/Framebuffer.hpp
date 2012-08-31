@@ -49,14 +49,14 @@ namespace GTEngine
         *       only be detected after the framebuffer has been made current on the renderer. Do not rely on the return value in
         *       determining whether or not the framebuffer is valid.
         */
-        bool AttachColourBuffer(Texture2D *buffer, size_t index);
+        bool AttachColourBuffer(Texture2D* buffer, size_t index);
 
         /**
         *   \brief              Attaches a depth/stencil buffer to the framebuffer.
         *   \param  buffer [in] The depth/stencil buffer to attach to the framebuffer. The buffer is always a texture.
         *   \return             Always returns true. We return a boolean to keep it consistent with AttachColourBuffer(), which requires a boolean return value.
         */
-        bool AttachDepthStencilBuffer(Texture2D *buffer);
+        bool AttachDepthStencilBuffer(Texture2D* buffer);
 
         /**
         *   \brief             Detaches the colour buffer at the given index.
@@ -88,12 +88,12 @@ namespace GTEngine
         *   \brief             Retrieves a colour buffer attachment.
         *   \param  index [in] The index of the colour buffer to attach.
         */
-        Texture2D * GetColourBuffer(size_t index);
+        Texture2D* GetColourBuffer(size_t index);
 
         /**
         *   \brief  Retrieves the depth/stencil attachment.
         */
-        Texture2D * GetDepthStencilBuffer();
+        Texture2D* GetDepthStencilBuffer();
 
 
         /**
@@ -118,8 +118,8 @@ namespace GTEngine
         /**
         *   \brief  Retrieves a pointer to the internal renderer data.
         */
-        const void * GetRendererData() const { return this->rendererData; }
-              void * GetRendererData()       { return this->rendererData; }
+        const void* GetRendererData() const { return this->rendererData; }
+              void* GetRendererData()       { return this->rendererData; }
 
         /**
         *   \brief  Sets the pointer to the internal renderer data. This should only be called by the renderer and it's support functions.
@@ -147,7 +147,7 @@ namespace GTEngine
         bool isValid;
 
         /// A pointer to renderer-specific data.
-        void *rendererData;
+        void* rendererData;
 
 
     public:

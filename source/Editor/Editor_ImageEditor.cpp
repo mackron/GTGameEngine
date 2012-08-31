@@ -1,6 +1,5 @@
 
 #include <GTEngine/Editor.hpp>
-#include <GTEngine/Editor/Editor_ImageEditor.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 

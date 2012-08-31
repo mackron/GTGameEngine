@@ -4,7 +4,7 @@
 
 #include "Editor/EditorMode_ModelEditor.hpp"
 #include "Editor/EditorMode_Sandbox.hpp"
-//#include "Editor/Editor_ModelEditor.hpp"
+#include "Editor/Editor_ModelEditor.hpp"
 #include "Editor/Editor_ImageEditor.hpp"
 //#include "Editor/Editor_SoundEditor.hpp"
 #include "DataFilesWatcher.hpp"
@@ -56,8 +56,8 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the model sub-editor.
-              EditorMode_ModelEditor & GetModelEditor()       { return this->modelEditor; }
-        const EditorMode_ModelEditor & GetModelEditor() const { return this->modelEditor; }
+              EditorMode_ModelEditor & GetModelEditor()       { return this->modelEditorMode; }
+        const EditorMode_ModelEditor & GetModelEditor() const { return this->modelEditorMode; }
 
         /// Retrieves a reference to the sandbox sub-editor.s
               EditorMode_Sandbox & GetSandbox()       { return this->sandbox; }
@@ -148,7 +148,7 @@ namespace GTEngine
 
 
         /// The model editor.
-        EditorMode_ModelEditor modelEditor;
+        EditorMode_ModelEditor modelEditorMode;
 
         /// The sandbox mode.
         EditorMode_Sandbox sandbox;
@@ -159,6 +159,9 @@ namespace GTEngine
         /// The previously current mode. Good for toggling.
         EditorMode* previousMode;
 
+
+        /// The model editor.
+        Editor_ModelEditor modelEditor;
 
         /// The image editor.
         Editor_ImageEditor imageEditor;

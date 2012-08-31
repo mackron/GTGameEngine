@@ -80,6 +80,19 @@ namespace GTEngine
     };
 
 
+    /// Base class for event handlers that can be attached to the renderer to respond to certain events by the renderer.
+    class RendererEventHandler
+    {
+    public:
+
+        /// Called when the RC queues are swapped on the renderer.
+        ///
+        /// @remarks
+        ///     This is a good place to do operations requiring thread safety such as framebuffer resizes.
+        virtual void OnSwapRCQueues() {}
+    };
+
+
     /**
     *   \brief  Class representing a renderer.
     *
@@ -189,6 +202,24 @@ namespace GTEngine
         *       the internal objects representing those resources.
         */
         static void CollectGarbage();
+
+
+        /////////////////////////////////////////////
+        // Event Handling.
+
+        /// Attaches an event handler to the renderer.
+        ///
+        /// @param eventHandler [in] A reference to the event handler to attach.
+        static void AttachEventHandler(RendererEventHandler &eventHandler);
+
+        /// Detaches an event handler from the renderer.
+        ///
+        /// @param eventHandler [in] A reference to the event handler to detach.
+        static void DetachEventHandler(RendererEventHandler &eventHandler);
+
+
+        /// Called the OnSwapRCQueues event on every attached event handler.
+        static void OnSwapRCQueues();
 
 
     public:

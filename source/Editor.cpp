@@ -15,9 +15,9 @@ namespace GTEngine
 {
     Editor::Editor(Game &game)
         : game(game), GUI(),
-          modelEditor(*this), sandbox(*this),
+          modelEditorMode(*this), sandbox(*this),
           currentMode(nullptr), previousMode(nullptr),
-          imageEditor(*this),
+          modelEditor(*this), imageEditor(*this),
           isStarted(false), isOpen(false),
           dataFilesWatcherEventHandler(*this)
     {
@@ -41,7 +41,7 @@ namespace GTEngine
                 this->GUI.EditorMain = guiServer.GetElementByID("EditorMain");
 
                 // Here we startup our sub-editors.
-                //this->modelEditor.Startup();
+                this->modelEditor.Startup();
                 this->imageEditor.Startup();
                 //this->soundEditor.Startup();
 
@@ -50,7 +50,7 @@ namespace GTEngine
                 this->game.GetDataFilesWatcher().AddEventHandler(this->dataFilesWatcherEventHandler);
                 
                 // Here is where we startup our editor modes.
-                this->modelEditor.Startup(guiServer);
+                this->modelEditorMode.Startup(guiServer);
                 this->sandbox.Startup(guiServer);
 
                 // Here we enable the default mode.
@@ -101,7 +101,7 @@ namespace GTEngine
 
     void Editor::SwitchToModelEditorMode()
     {
-        this->SetEditorMode(&this->modelEditor);
+        this->SetEditorMode(&this->modelEditorMode);
     }
 
     void Editor::SwitchToSandboxMode()
@@ -121,12 +121,14 @@ namespace GTEngine
         {
             this->currentMode->OnUpdate(deltaTimeInSeconds);
         }
+
+        this->modelEditor.Update(deltaTimeInSeconds);
     }
 
 
     void Editor::OnModelActivated(const char* fileName)
     {
-        (void)fileName;
+        this->modelEditor.LoadModel(fileName);
     }
 
     void Editor::OnImageActivated(const char* fileName)
