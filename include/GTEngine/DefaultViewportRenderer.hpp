@@ -21,9 +21,38 @@
 #include <GTCore/Map.hpp>
 #include <GTCore/String.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4355)   // 'this' used in initialise list.
+#endif
 
 namespace GTEngine
 {
+    class DVRFramebuffer;
+    class DVRFramebuffer_RendererEventHandler : public RendererEventHandler
+    {
+    public:
+
+        /// Constructor.
+        DVRFramebuffer_RendererEventHandler(DVRFramebuffer &framebuffer)
+            : framebuffer(framebuffer)
+        {
+        }
+
+        /// RendererEventHandler::OnSwapRCQueues.
+        void OnSwapRCQueues();
+
+
+        /// The framebuffer we need to resize.
+        DVRFramebuffer &framebuffer;
+
+
+    private:    // No copying.
+        DVRFramebuffer_RendererEventHandler(const DVRFramebuffer_RendererEventHandler &);
+        DVRFramebuffer_RendererEventHandler & operator=(const DVRFramebuffer_RendererEventHandler &);
+    };
+
+
     class DVRFramebuffer : public Framebuffer
     {
     public:
@@ -34,9 +63,12 @@ namespace GTEngine
               depthStencil(nullptr),
               finalOutput(nullptr),
               lightingBuffer0(nullptr), lightingBuffer1(nullptr),
-              materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr)
+              materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr),
+              rendererEventHandler(*this),
+              needsResize(false)
         {
             this->CreateAttachments(1, 1);
+            Renderer::AttachEventHandler(this->rendererEventHandler);
         }
 
         ~DVRFramebuffer()
@@ -45,12 +77,38 @@ namespace GTEngine
         }
 
 
+        /// Marks the framebuffer as needing to be resized.
+        ///
+        /// @param newWidth  [in] The new width of the framebuffer.
+        /// @param newHeight [in] The new height of the framebuffer.
+        ///
+        /// @remarks
+        ///     Note that this is not instantaneous - it will be delayed until the next buffer swap where the actual resize can be done in a thread safe environment.
         void Resize(unsigned int newWidth, unsigned int newHeight)
+        {
+            this->needsResize = true;
+            this->width  = newWidth;
+            this->height = newHeight;
+        }
+
+
+
+    // The methods below should only be used internally.
+    public:
+
+        /// Determines whether or not the framebuffer needs to be resized. Should only be used internally by the event handler.
+        bool __NeedsResize() const { return this->needsResize; }
+
+
+        /// Performs the actual resize. Do not call this directly. This should only be called by the event handler.
+        void __DoResize()
         {
             // We need to create a new set of attachments. We don't delete the old attachments straight away. Instead we mark them as dead
             // and let CleanDeadAttachments() do the proper cleanup. This is required because of multithreading.
             this->MarkAttachmentsAsDead();
-            this->CreateAttachments(newWidth, newHeight);
+            this->CreateAttachments(this->width, this->height);
+
+            this->needsResize = false;
         }
 
 
@@ -165,6 +223,13 @@ namespace GTEngine
         Texture2D* materialBuffer0;     // RGB = Diffuse.  A = Shininess.
         Texture2D* materialBuffer1;     // RGB = Emissive. A = Transparency.
         Texture2D* materialBuffer2;     // RGB = Normals for normal mapping. A = nothing.
+
+        
+        /// The event handler we'll attach to the renderer so we can handle the OnSwapRCQueues event and do a resize when required.
+        DVRFramebuffer_RendererEventHandler rendererEventHandler;
+
+        /// Keeps track of whether or not the framebuffer needs to be resized.
+        bool needsResize;
     };
 }
 
@@ -627,5 +692,9 @@ namespace GTEngine
     friend class MaterialLibraryEventHandler;
     };
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 #endif

@@ -1,6 +1,6 @@
 
-#ifndef __GTEngine_Editor_ModelEditor_hpp_
-#define __GTEngine_Editor_ModelEditor_hpp_
+#ifndef __GTEngine_EditorMode_ModelEditor_hpp_
+#define __GTEngine_EditorMode_ModelEditor_hpp_
 
 #include "EditorMode.hpp"
 #include "Editor3DViewportEventHandler.hpp"
