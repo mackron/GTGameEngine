@@ -58,26 +58,48 @@ function GTGUI.Element:DataExplorer()
     end
     
     
-    
-    for i,value in ipairs(Directories.Data) do
-        local text = "(";
-        if Editor.DirectoryAliases and Editor.DirectoryAliases.Data[i] then
-            text = text .. Editor.DirectoryAliases.Data[i];
-        else
-            text = text .. GTCore.MakePathRelative(value, GTEngine.GetExecutableDirectory());
-        end
-        text = text .. ")";
+    function self:IsFileIgnored(fileInfo)
+        -- Here we'll check the extensions.
+        local filename  = GTCore.IO.GetFileNameFromPath(fileInfo.absolutePath);
+        local extension = GTCore.IO.GetExtension(fileInfo.absolutePath);
         
-        local fileInfo = GTCore.IO.FileInfo:New(value);
-        self:InsertItemFromFileInfo(fileInfo, text);
+        -- Blender will create backup .blend files named as .blend1, .blend2, etc. We want to ignore these.
+        if string.sub(extension, 1, 5) == "blend" and string.len(extension) > 5 then
+            return true;
+        end
+        
+        if extension == "html" or extension == "HTML" then
+            return true;
+        end
+        
+        
+        -- There are a few other files that we want to ignore such as fonts.cache.
+        if filename == "fonts.cache" then
+            return true;
+        end
+        
+
+        -- If we've made it here, the file is not ignored and will show up.
+        return false;
     end
-    
-    -- Here we will register the explorer with the data files watcher.
-    Editor.DataFilesWatcher.RegisterExplorer(self);
     
     
     function self:OnFileInsert(fileInfo)
-        self:InsertItemFromFileInfo(fileInfo);
+        -- Some files should be ignored by the explorer. We're going to filter them
+        if not self:IsFileIgnored(fileInfo) then
+            -- If the file is a .gtmodel file, we actually want to handle this a little differently. Basically, we don't want to show them. However, there
+            -- is a case where the original source file may not be present, in which case we still want to see an item for the file. What we do is remove
+            -- the .gtmodel extension, leaving only the base name. Then, we check if a file of that new name already exists. If so, we just ignore everything,
+            -- otherwise we add a file with that base name.
+            if GTCore.IO.GetExtension(fileInfo.absolutePath) == "gtmodel" then
+                fileInfo.absolutePath = GTCore.IO.RemoveExtension(fileInfo.absolutePath);
+                if GTCore.IO.FileExists(fileInfo.absolutePath) then
+                    return;
+                end
+            end
+        
+            self:InsertItemFromFileInfo(fileInfo);
+        end
     end
     
     function self:OnFileRemove(fileInfo)
@@ -85,7 +107,7 @@ function GTGUI.Element:DataExplorer()
     end
     
     function self:OnFileUpdate(fileInfo)
-        print("Update: " .. fileInfo.absolutePath);
+        --print("Update: " .. fileInfo.absolutePath);
     end
     
     
@@ -104,4 +126,23 @@ function GTGUI.Element:DataExplorer()
             Editor_TabBar:ActivateTab(tab);
         end
     end)
+    
+    
+    
+    
+    for i,value in ipairs(Directories.Data) do
+        local text = "(";
+        if Editor.DirectoryAliases and Editor.DirectoryAliases.Data[i] then
+            text = text .. Editor.DirectoryAliases.Data[i];
+        else
+            text = text .. GTCore.MakePathRelative(value, GTEngine.GetExecutableDirectory());
+        end
+        text = text .. ")";
+        
+        local fileInfo = GTCore.IO.FileInfo:New(value);
+        self:InsertItemFromFileInfo(fileInfo, text);
+    end
+    
+    -- Here we will register the explorer with the data files watcher.
+    Editor.DataFilesWatcher.RegisterExplorer(self);
 end
