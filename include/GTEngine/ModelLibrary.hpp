@@ -3,6 +3,7 @@
 #define __GTEngine_ModelLibrary_hpp_
 
 #include "Model.hpp"
+#include <GTCore/IO.hpp>
 
 namespace GTEngine
 {
@@ -132,6 +133,44 @@ namespace GTEngine
         /// @remarks
         ///     If this function returns true, it does not necessarily mean it can load every file of that extension.
         static bool IsExtensionSupported(const char* extension);
+
+
+
+    /////////////////////////////////////////////////////
+    // Private Functions.
+    private:
+
+        /// A helper function for importing a file via Assimp and saving the corresponding .gtmodel file.
+        ///
+        /// @param sourceInfo  [in] The file info of the source file.
+        /// @param gtmodelInfo [in] The file info of the gtmodel file.
+        static Model* LoadFromAssimp(const GTCore::IO::FileInfo &sourceInfo, const GTCore::IO::FileInfo &gtmodelInfo);
+
+
+        /// A helper function for only loading the engine-specific metadata of the given .gtmodel file.
+        ///
+        /// @param file       [in] The file to load the metadata from.
+        /// @param definition [in] The definition to read the data into.
+        ///
+        /// @remarks
+        ///     This function asserts that 'file' is located at the start of the metadata.
+        static bool LoadGTMODELMetadata(FILE* file, ModelDefinition &definition);
+
+        /// A helper function for writing the engine-specific metadata to the given .gtmodel file.
+        ///
+        /// @param file       [in] The file to write the metadata to.
+        /// @param definition [in] The definition to write the data from.
+        ///
+        /// @remarks
+        ///     This function asserts that 'file' is located at the start of the metadata. This function will write
+        ///     the 'metadata' ID.
+        static bool WriteGTMODELMetadata(FILE* file, const ModelDefinition &definition);
+
+        /// A helper function for only loading the engine-specific metadata of the given .gtmodel file.
+        ///
+        /// @param file       [in] The file to load the metadata from.
+        /// @param definition [in] The definition to read the data into.
+        static bool LoadGTMODELMetadata(const char* file, ModelDefinition &definition);
     };
 }
 

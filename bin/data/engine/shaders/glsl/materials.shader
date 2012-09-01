@@ -4,7 +4,7 @@
 <shader id="Material_DefaultDiffuse">
     vec4 Diffuse()
     {
-        return vec3(1.0, 1.0, 1.0, 1.0f);
+        return vec4(1.0, 1.0, 1.0, 1.0f);
     }
 </shader>
 
@@ -33,7 +33,7 @@
 <shader id="Material_NoDiffuse">
     vec4 Diffuse()
     {
-        return vec3(0.0, 0.0, 0.0, 1.0f);
+        return vec4(0.0, 0.0, 0.0, 1.0f);
     }
 </shader>
 
