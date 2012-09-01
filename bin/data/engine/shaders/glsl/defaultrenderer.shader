@@ -395,7 +395,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         gl_FragData[0].rgb = (materialDiffuse * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
         gl_FragData[0].a   = materialTransparency;
         
-        //gl_FragData[0].rgb = pow(gl_FragData[0].rgb, vec3(1.0 / 2.2));   // sRGB (approx.)
+        gl_FragData[0].rgb = pow(gl_FragData[0].rgb, vec3(1.0 / 2.2));   // sRGB (approx.)
         
         
         //gl_FragData[0] = vec4(materialDiffuse, 1.0);
