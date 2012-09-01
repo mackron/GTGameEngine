@@ -171,6 +171,11 @@ namespace GTEngine
         /// @param file       [in] The file to load the metadata from.
         /// @param definition [in] The definition to read the data into.
         static bool LoadGTMODELMetadata(const char* file, ModelDefinition &definition);
+
+        /// A helper function for loading the default metadata.
+        ///
+        /// @param definition [in] The definition whose having it's default metadata set.
+        static bool LoadDefaultMetadata(ModelDefinition &definition);
     };
 }
 

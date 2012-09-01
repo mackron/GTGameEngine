@@ -586,135 +586,9 @@ namespace GTEngine
             }
 
             return nullptr;
-
-
-            /*
-            // What we're going to do here is find the absolute path of the given file. We will then work from that. The reason for this is because
-            // assimp will do it's own file loading, but we still need to allow for multiple data directories.
-            GTCore::String absoluteFileName;
-            if (GTCore::IO::FindAbsolutePath(fileName, absoluteFileName))
-            {
-                ModelDefinition* definition = nullptr;
-
-                // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
-                auto iDefinition = LoadedDefinitions.Find(absoluteFileName.c_str());
-                if (iDefinition == nullptr)
-                {
-                    Assimp::Importer importer;
-                    importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
-
-                    auto scene = importer.ReadFile(absoluteFileName.c_str(), AssimpReadFileFlags);
-                    if (scene != nullptr)
-                    {
-                        definition = ModelLibrary_LoadFromAssimpScene(*scene);
-                        if (definition != nullptr)
-                        {
-                            // The definition was loaded from a file, so we need to mark it as so.
-                            definition->fileName = absoluteFileName.c_str();
-
-                            // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
-                            LoadedDefinitions.Add(absoluteFileName.c_str(), definition);
-                        }
-                        else
-                        {
-                            GTEngine::PostError("Error creating model info for %s: %s", fileName, importer.GetErrorString());
-                        }
-                    }
-                    else
-                    {
-                        GTEngine::PostError("Error importing %s: %s", fileName, importer.GetErrorString());
-                    }
-                }
-                else
-                {
-                    definition = iDefinition->value;
-                }
-
-
-                // Now that we have information about the model, we can create a new Model object and return it.
-                if (definition != nullptr)
-                {
-                    return ModelLibrary::CreateFromDefinition(*definition);
-                }
-            }
-            else
-            {
-                GTEngine::PostError("Could not find file: %s", fileName);
-            }
-
-            return nullptr;
-            */
         }
     }
 
-    // TODO: Move down below.
-    Model* ModelLibrary::LoadFromAssimp(const GTCore::IO::FileInfo &sourceInfo, const GTCore::IO::FileInfo &gtmodelInfo)
-    {
-        ModelDefinition* definition = nullptr;
-
-        // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
-        auto iDefinition = LoadedDefinitions.Find(sourceInfo.absolutePath.c_str());
-        if (iDefinition == nullptr)
-        {
-            Assimp::Importer importer;
-            importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
-
-            auto scene = importer.ReadFile(sourceInfo.absolutePath.c_str(), AssimpReadFileFlags);
-            if (scene != nullptr)
-            {
-                definition = ModelLibrary_LoadFromAssimpScene(*scene);
-                if (definition != nullptr)
-                {
-                    // The definition was loaded from a file, so we need to mark it as so.
-                    definition->fileName = sourceInfo.absolutePath.c_str();
-
-                    // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
-                    LoadedDefinitions.Add(sourceInfo.absolutePath.c_str(), definition);
-                }
-                else
-                {
-                    GTEngine::PostError("Error creating model info for %s: %s", sourceInfo.absolutePath.c_str(), importer.GetErrorString());
-                }
-            }
-            else
-            {
-                GTEngine::PostError("Error importing %s: %s", sourceInfo.absolutePath.c_str(), importer.GetErrorString());
-            }
-        }
-        else
-        {
-            definition = iDefinition->value;
-        }
-
-
-        // Now that we have information about the model, we can create a new Model object and return it.
-        if (definition != nullptr)
-        {
-            auto model = ModelLibrary::CreateFromDefinition(*definition);
-            if (model != nullptr)
-            {
-                // Here is where we save the corresponding .gtmodel file. Note here how we use the aboslute path in 'sourceInfo' instead
-                // of 'gtmodelInfo'. This is because it's possible that the gtmodel file does not exists and may have an incorrect
-                // absolute path as a result.
-                GTCore::String gtmodelFileName(sourceInfo.absolutePath);
-                gtmodelFileName += ".gtmodel";
-
-                // If the gtmodel file exists, we need to read in it's meta data so we can re-save that info in the new file. The way we
-                // do this, is we actually load the gtmodel meta data into the definition.
-                if (gtmodelInfo.exists)
-                {
-                    ModelLibrary::LoadGTMODELMetadata(gtmodelInfo.absolutePath.c_str(), *definition);
-                }
-
-                // Now we just save the .gtmodel like normal.
-                ModelLibrary::WriteToFile(*model, gtmodelInfo.absolutePath.c_str());
-            }
-
-            return model;
-        }
-        
-        return nullptr;
-    }
 
     Model* ModelLibrary::LoadFromNFF(const char* content, const char* name)
     {
@@ -907,27 +781,6 @@ namespace GTEngine
                                     definition->meshGeometries.PushBack(va);
                                 }
 
-                                
-                                // Materials
-                                {
-                                    uint32_t length;
-                                    GTCore::IO::Read(file, &length, 4);
-
-                                    if (length > 0)
-                                    {
-                                        auto materialFileName = static_cast<char*>(malloc(length + 1));                         // <-- +1 for null terminator. Not included in 'length'.
-                                        GTCore::IO::Read(file, materialFileName, length); materialFileName[length] = '\0';
-
-                                        definition->meshMaterials.PushBack(MaterialLibrary::Create(materialFileName));
-
-                                        free(materialFileName);
-                                    }
-                                    else
-                                    {
-                                        definition->meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
-                                    }
-                                }
-
 
                                 // Skinning vertex attributes.
                                 {
@@ -1078,365 +931,6 @@ namespace GTEngine
     }
 
 
-    // TODO: Move these functions to the Private section down the bottom.
-    bool ModelLibrary::LoadGTMODELMetadata(FILE* file, ModelDefinition &definition)
-    {
-        assert(file != nullptr);
-
-        // The next 8 bytes should read 'metadata'.
-        uint8_t header[8];
-        GTCore::IO::Read(file, header, 8);
-
-        if (header[0] == 'm' && header[1] == 'e' && header[2] == 't' && header[3] == 'a' && header[4] == 'd' && header[5] == 'a' && header[6] == 't' && header[7] == 'a')
-        {
-            // We're at the metadata. Below we will have chunks of metadata for different things. Each chunk has a header or 8 bytes, with the
-            // first 4 bytes being an ID, and the other 4 bytes being the size of the metadata. We need to store the size so we can skip over
-            // it if it's unused.
-            //
-            // We keep skipping over until we hit the end of the file.
-            while (!GTCore::IO::AtEnd(file))
-            {
-                struct
-                {
-                    uint8_t  id[4];
-                    uint32_t sizeInBytes;
-
-                }metadataHeader;
-                GTCore::IO::Read(file, &metadataHeader, 8);
-
-
-                
-                if (metadataHeader.id[0] == 'm' && metadataHeader.id[1] == 't' && metadataHeader.id[2] == 'l' && metadataHeader.id[3] == 's')           // <-- Materials: 'mtls'
-                {
-                    uint32_t materialCount;
-                    GTCore::IO::Read(file, &materialCount, 4);
-
-                    if (definition.meshMaterials.count == 0)
-                    {
-                        for (uint32_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
-                        {
-                            definition.meshMaterials.PushBack(nullptr);
-                        }
-                    }
-
-                    for (uint32_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
-                    {
-                        uint32_t meshIndex;
-                        GTCore::IO::Read(file, &meshIndex, 4);
-
-                        uint32_t fileNameLength;
-                        GTCore::IO::Read(file, &fileNameLength, 4);
-
-                        GTCore::String fileName;
-
-                        if (length > 0)
-                        {
-                            auto tempFileName = static_cast<char*>(malloc(fileNameLength + 1));                         // <-- +1 for null terminator. Not included in 'fileNameLength'.
-                            GTCore::IO::Read(file, tempFileName, fileNameLength); tempFileName[fileNameLength] = '\0';
-
-                            fileName = tempFileName;
-
-                            free(tempFileName);
-                        }
-                        else
-                        {
-                            fileName = "engine/materials/simple-diffuse.material";
-                        }
-
-                        if (meshIndex < definition.meshMaterials.count)
-                        {
-                            definition.meshMaterials[meshIndex] = MaterialLibrary::Create(fileName.c_str());
-                        }
-                    }
-                }
-                else if (metadataHeader.id[0] == 'n' && metadataHeader.id[1] == 'a' && metadataHeader.id[2] == 's' && metadataHeader.id[3] == ' ')      // <-- Named animation segments: 'nas '.
-                {
-                    uint32_t segmentCount;
-                    GTCore::IO::Read(file, &segmentCount, 4);
-
-                    for (uint32_t iSegment = 0; iSegment < segmentCount; ++iSegment)
-                    {
-                        uint32_t nameLength;
-                        GTCore::IO::Read(file, &nameLength, 4);
-
-                        auto name = static_cast<char*>(malloc(nameLength + 1));                     // <-- +1 for null terminator.
-                        GTCore::IO::Read(file, name, nameLength); name[nameLength] = '\0';
-
-                        struct
-                        {
-                            uint32_t start;
-                            uint32_t end;
-                        }frameIndices;
-
-                        GTCore::IO::Read(file, &frameIndices, 8);
-
-                        // The data has been read, so now we just add it to the animation.
-                        definition.animation.AddNamedSegment(name, frameIndices.start, frameIndices.end);
-
-                        free(name);
-                    }
-                }
-                else if (metadataHeader.id[0] == 'c' && metadataHeader.id[1] == 'x' && metadataHeader.id[2] == 'h' && metadataHeader.id[3] == 'l')      // <-- Convex Hulls: 'cxhl'
-                {
-                    uint32_t hullCount;
-                    GTCore::IO::Read(file, &hullCount, 4);
-
-                    if (hullCount > 0)
-                    {
-                        // Here is where we load the convex hull information. This stuff is all batched so it may seem a little unintuitive.
-                        uint32_t* vertexCounts = new uint32_t[hullCount];
-                        uint32_t* indexCounts  = new uint32_t[hullCount];
-
-                        GTCore::IO::Read(file, vertexCounts, hullCount * 4);
-                        GTCore::IO::Read(file, indexCounts,  hullCount * 4);
-
-                        struct
-                        {
-                            uint32_t totalVertexCount;
-                            uint32_t totalIndexCount;
-                        }vertexIndexCounts;
-                        GTCore::IO::Read(file, &vertexIndexCounts, 8);
-
-                        float* vertices = new float[vertexIndexCounts.totalVertexCount];
-                        GTCore::IO::Read(file, vertices, vertexIndexCounts.totalVertexCount * 4);
-
-                        uint32_t* indices = new uint32_t[vertexIndexCounts.totalIndexCount];
-                        GTCore::IO::Read(file, indices, vertexIndexCounts.totalIndexCount * 4);
-
-
-                        auto currentVertices = vertices;
-                        auto currentIndices  = indices;
-
-                        for (uint32_t iHull = 0; iHull < hullCount; ++iHull)
-                        {
-                            size_t vertexCount = static_cast<size_t>(vertexCounts[iHull]);
-                            size_t indexCount  = static_cast<size_t>(indexCounts[iHull]);
-
-                            definition.convexHulls.PushBack(new ConvexHull(currentVertices, vertexCount, currentIndices, indexCount));
-
-                            // Now we need to move our pointers forward.
-                            currentVertices += vertexCount * 3;
-                            currentIndices  += indexCount;
-                        }
-
-                        delete [] vertexCounts;
-                        delete [] indexCounts;
-                        delete [] vertices;
-                        delete [] indices;
-                    }
-
-
-                    // These are the build settings used to build the convex hull.
-                    uint32_t settingsSizeInBytes;
-                    GTCore::IO::Read(file, &settingsSizeInBytes, 4);
-
-                    if (settingsSizeInBytes == sizeof(definition.convexHullBuildSettings))
-                    {
-                        GTCore::IO::Read(file, &definition.convexHullBuildSettings, settingsSizeInBytes);
-                    }
-                    else
-                    {
-                        Log("Warning loading .gtmodel: sizeof(chbs) != sizeof(ConvexHullBuildSettings). Skipping.");
-                        GTCore::IO::Seek(file, settingsSizeInBytes, GTCore::IO::SeekOrigin::Current);
-                    }
-
-                }
-                else
-                {
-                    // We don't recognize this chunk. We'll skip over it. What we should probably look into is the ability to allow custom metadata
-                    // and use some kind of callback.
-                    GTCore::IO::Seek(file, metadataHeader.sizeInBytes, GTCore::IO::SeekOrigin::Current);
-                }
-            }
-
-
-            // We need to do some validation here.
-            //
-            // The first thing to validate is the materials. If we have any unset materials, we need to give it the default material.
-            if (definition.meshMaterials.count == 0)
-            {
-                for (size_t i = 0; i < definition.meshGeometries.count; ++i)
-                {
-                    definition.meshMaterials.PushBack(nullptr);
-                }
-            }
-
-            for (size_t iMaterial = 0; iMaterial < definition.meshMaterials.count; ++iMaterial)
-            {
-                if (definition.meshMaterials[iMaterial] == nullptr)
-                {
-                    definition.meshMaterials[iMaterial] = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
-                }
-            }
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    bool ModelLibrary::LoadGTMODELMetadata(const char* fileNameIn, ModelDefinition &definition)
-    {
-        auto file = GTCore::IO::Open(fileNameIn, GTCore::IO::OpenMode::Read);
-        if (file != nullptr)
-        {
-            // The first thing we load is the header, which is 8 bytes. The first 4 bytes should equal "gtem".
-            struct
-            {
-                char     id[4];
-                uint32_t version;
-            }header;
-            GTCore::IO::Read(file, &header, 8);
-
-            // We need to check the first 4 bytes to ensure they read "gtem".
-            if (header.id[0] == 'g' && header.id[1] == 't' && header.id[2] == 'e' && header.id[3] == 'm')
-            {
-                // We load differently depending on the version. Unknown version means return null.
-                switch (header.version)
-                {
-                case 1:
-                    {
-                        // The counts of the main objects. We batch these into a single call at the top of everything.
-                        struct
-                        {
-                            uint32_t boneCount;
-                            uint32_t meshCount;
-                            uint32_t keyFrameCount;
-                        }counts;
-                        GTCore::IO::Read(file, &counts, 12);
-
-
-                        // Bones.
-                        //
-                        // Bones are first because they are referenced by everything else.
-                        for (uint32_t iBone = 0; iBone < counts.boneCount; ++iBone)
-                        {
-                            // Name.
-                            uint32_t nameLength;
-                            GTCore::IO::Read(file, &nameLength, 4);
-                            GTCore::IO::Seek(file, nameLength, GTCore::IO::SeekOrigin::Current);
-
-
-                            // Relative transform and offset matrix.
-                            GTCore::IO::Seek(file, 4 * 3,     GTCore::IO::SeekOrigin::Current);        // Position
-                            GTCore::IO::Seek(file, 4 * 4,     GTCore::IO::SeekOrigin::Current);        // Rotation
-                            GTCore::IO::Seek(file, 4 * 3,     GTCore::IO::SeekOrigin::Current);        // Scale
-                            GTCore::IO::Seek(file, 4 * 4 * 4, GTCore::IO::SeekOrigin::Current);        // Offset Matrix
-                        }
-
-                        // Bone parents.
-                        GTCore::IO::Seek(file, counts.boneCount * 4, GTCore::IO::SeekOrigin::Current);
-
-
-                        // Meshes.
-                        for (uint32_t i = 0; i < counts.meshCount; ++i)
-                        {
-                            // Geometry.
-                            {
-                                // Vertices.
-                                uint32_t vertexCount;
-                                GTCore::IO::Read(file, &vertexCount, 4);
-
-                                if (vertexCount > 0)
-                                {
-                                    GTCore::IO::Seek(file, vertexCount * VertexFormat::P3T2N3T3B3.GetSize() * sizeof(float), GTCore::IO::SeekOrigin::Current);
-                                }
-
-
-                                // Indices.
-                                uint32_t indexCount;
-                                GTCore::IO::Read(file, &indexCount, 4);
-                                
-                                if (indexCount > 0)
-                                {
-                                    GTCore::IO::Seek(file, indexCount * sizeof(unsigned int), GTCore::IO::SeekOrigin::Current);
-                                }
-                            }
-
-                                
-                            // Materials
-                            {
-                                uint32_t length;
-                                GTCore::IO::Read(file, &length, 4);
-                                GTCore::IO::Seek(file, length, GTCore::IO::SeekOrigin::Current);
-                            }
-
-
-                            // Skinning vertex attributes.
-                            {
-                                uint32_t skinningVertexAttributeCount;
-                                GTCore::IO::Read(file, &skinningVertexAttributeCount, 4);
-
-                                if (skinningVertexAttributeCount > 0)
-                                {
-                                    GTCore::IO::Seek(file, skinningVertexAttributeCount * 2, GTCore::IO::SeekOrigin::Current);
-
-                                    uint32_t totalBoneWeights;
-                                    GTCore::IO::Read(file, &totalBoneWeights, 4);
-                                    GTCore::IO::Seek(file, totalBoneWeights * 8, GTCore::IO::SeekOrigin::Current);
-                                }
-                            }
-                        }
-
-
-                        // Now we need to load the key frame animation data.
-                        for (uint32_t iFrame = 0; iFrame < counts.keyFrameCount; ++iFrame)
-                        {
-                            float time;
-                            GTCore::IO::Read(file, &time, 4);
-
-                            // With the key frame added, we now need to iterate over each channel in the key frame.
-                            uint32_t channelCount;
-                            GTCore::IO::Read(file, &channelCount, 4);
-
-                            for (uint32_t iChannel = 0; iChannel < channelCount; ++iChannel)
-                            {
-                                // Bone Index
-                                GTCore::IO::Seek(file, 4, GTCore::IO::SeekOrigin::Current);
-
-                                // Transformation.
-                                GTCore::IO::Seek(file, 4 * 3, GTCore::IO::SeekOrigin::Current);    // Position
-                                GTCore::IO::Seek(file, 4 * 4, GTCore::IO::SeekOrigin::Current);    // Rotation
-                                GTCore::IO::Seek(file, 4 * 3, GTCore::IO::SeekOrigin::Current);    // Scale
-                            }
-                        }
-
-
-                        // Here is the engine-specific metadata.
-                        ModelLibrary::LoadGTMODELMetadata(file, definition);
-                            
-
-                        // Can't forget to close the file.
-                        GTCore::IO::Close(file);
-
-
-                        break;
-                    }
-
-                default:
-                    {
-                        GTCore::IO::Close(file);
-
-                        GTEngine::PostError("Can not load .gtmodel file: Unknown version.");
-                        return nullptr;
-                    }
-                }
-            }
-            else
-            {
-                GTCore::IO::Close(file);
-
-                GTEngine::PostError("Can not load .gtmodel file: Invalid header ID.");
-                return nullptr;
-            }
-        }
-
-        return true;
-    }
-
-
     bool ModelLibrary::WriteToFile(const Model &model, const char* fileNameIn)
     {
         auto &definition = model.GetDefinition();
@@ -1538,22 +1032,6 @@ namespace GTEngine
                 uint32_t indexCount = static_cast<uint32_t>(va->GetIndexCount());
                 GTCore::IO::Write(file, &indexCount, 4);
                 if (indexCount > 0) GTCore::IO::Write(file, va->GetIndexDataPtr(), sizeof(unsigned int) * indexCount);
-
-
-                // Material. Note the lack of null terminators. Materials are saved based on the input model, and not the definition. The reason is, is that the definition
-                // may not have up-to-date material information, as opposed to the mesh.
-                auto material = model.meshes[iMesh]->GetMaterial();
-                if (material == nullptr)
-                {
-                    uint32_t length = 0;
-                    GTCore::IO::Write(file, &length, 4);
-                }
-                else
-                {
-                    uint32_t length = static_cast<uint32_t>(material->GetDefinition().fileName.GetLength());
-                    GTCore::IO::Write(file, &length, 4);
-                    GTCore::IO::Write(file, material->GetDefinition().fileName.c_str(), static_cast<size_t>(length));
-                }
 
 
                 // Skinning vertex attributes. We save two chunks of data here. The first is a bone count and the second is the actual bone/weight pairs. We keep these
@@ -1995,7 +1473,465 @@ namespace GTEngine
         Assimp::Importer importer;
         return importer.IsExtensionSupported(assimpExt.c_str());
     }
+
+
+
+    ////////////////////////////////////////////////////////
+    // Private
+
+    Model* ModelLibrary::LoadFromAssimp(const GTCore::IO::FileInfo &sourceInfo, const GTCore::IO::FileInfo &gtmodelInfo)
+    {
+        ModelDefinition* definition = nullptr;
+
+        // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
+        auto iDefinition = LoadedDefinitions.Find(sourceInfo.absolutePath.c_str());
+        if (iDefinition == nullptr)
+        {
+            Assimp::Importer importer;
+            importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
+
+            auto scene = importer.ReadFile(sourceInfo.absolutePath.c_str(), AssimpReadFileFlags);
+            if (scene != nullptr)
+            {
+                definition = ModelLibrary_LoadFromAssimpScene(*scene);
+                if (definition != nullptr)
+                {
+                    // The definition was loaded from a file, so we need to mark it as so.
+                    definition->fileName = sourceInfo.absolutePath.c_str();
+
+                    // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
+                    LoadedDefinitions.Add(sourceInfo.absolutePath.c_str(), definition);
+                }
+                else
+                {
+                    GTEngine::PostError("Error creating model info for %s: %s", sourceInfo.absolutePath.c_str(), importer.GetErrorString());
+                }
+            }
+            else
+            {
+                GTEngine::PostError("Error importing %s: %s", sourceInfo.absolutePath.c_str(), importer.GetErrorString());
+            }
+        }
+        else
+        {
+            definition = iDefinition->value;
+        }
+
+
+        // Now that we have information about the model, we can create a new Model object and return it.
+        if (definition != nullptr)
+        {
+            auto model = ModelLibrary::CreateFromDefinition(*definition);
+            if (model != nullptr)
+            {
+                // Here is where we save the corresponding .gtmodel file. Note here how we use the aboslute path in 'sourceInfo' instead
+                // of 'gtmodelInfo'. This is because it's possible that the gtmodel file does not exists and may have an incorrect
+                // absolute path as a result.
+                GTCore::String gtmodelFileName(sourceInfo.absolutePath);
+                gtmodelFileName += ".gtmodel";
+
+                // If the gtmodel file exists, we need to read in it's meta data so we can re-save that info in the new file. The way we
+                // do this, is we actually load the gtmodel meta data into the definition.
+                if (gtmodelInfo.exists)
+                {
+                    ModelLibrary::LoadGTMODELMetadata(gtmodelInfo.absolutePath.c_str(), *definition);
+                }
+                else
+                {
+                    ModelLibrary::LoadDefaultMetadata(*definition);
+                }
+
+                // Now we just save the .gtmodel like normal.
+                ModelLibrary::WriteToFile(*model, gtmodelInfo.absolutePath.c_str());
+            }
+
+            return model;
+        }
+        
+        return nullptr;
+    }
+
+    bool ModelLibrary::LoadGTMODELMetadata(FILE* file, ModelDefinition &definition)
+    {
+        assert(file != nullptr);
+
+        // The next 8 bytes should read 'metadata'.
+        uint8_t header[8];
+        GTCore::IO::Read(file, header, 8);
+
+        if (header[0] == 'm' && header[1] == 'e' && header[2] == 't' && header[3] == 'a' && header[4] == 'd' && header[5] == 'a' && header[6] == 't' && header[7] == 'a')
+        {
+            // We're at the metadata. Below we will have chunks of metadata for different things. Each chunk has a header or 8 bytes, with the
+            // first 4 bytes being an ID, and the other 4 bytes being the size of the metadata. We need to store the size so we can skip over
+            // it if it's unused.
+            //
+            // We keep skipping over until we hit the end of the file.
+            while (!GTCore::IO::AtEnd(file))
+            {
+                struct
+                {
+                    uint8_t  id[4];
+                    uint32_t sizeInBytes;
+
+                }metadataHeader;
+                GTCore::IO::Read(file, &metadataHeader, 8);
+
+
+                
+                if (metadataHeader.id[0] == 'm' && metadataHeader.id[1] == 't' && metadataHeader.id[2] == 'l' && metadataHeader.id[3] == 's')           // <-- Materials: 'mtls'
+                {
+                    uint32_t materialCount;
+                    GTCore::IO::Read(file, &materialCount, 4);
+
+                    if (definition.meshMaterials.count == 0)
+                    {
+                        for (uint32_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
+                        {
+                            definition.meshMaterials.PushBack(nullptr);
+                        }
+                    }
+
+                    for (uint32_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
+                    {
+                        uint32_t meshIndex;
+                        GTCore::IO::Read(file, &meshIndex, 4);
+
+                        uint32_t fileNameLength;
+                        GTCore::IO::Read(file, &fileNameLength, 4);
+
+                        GTCore::String fileName;
+
+                        if (length > 0)
+                        {
+                            auto tempFileName = static_cast<char*>(malloc(fileNameLength + 1));                         // <-- +1 for null terminator. Not included in 'fileNameLength'.
+                            GTCore::IO::Read(file, tempFileName, fileNameLength); tempFileName[fileNameLength] = '\0';
+
+                            fileName = tempFileName;
+
+                            free(tempFileName);
+                        }
+                        else
+                        {
+                            fileName = "engine/materials/simple-diffuse.material";
+                        }
+
+                        if (meshIndex < definition.meshMaterials.count)
+                        {
+                            definition.meshMaterials[meshIndex] = MaterialLibrary::Create(fileName.c_str());
+                        }
+                    }
+                }
+                else if (metadataHeader.id[0] == 'n' && metadataHeader.id[1] == 'a' && metadataHeader.id[2] == 's' && metadataHeader.id[3] == ' ')      // <-- Named animation segments: 'nas '.
+                {
+                    uint32_t segmentCount;
+                    GTCore::IO::Read(file, &segmentCount, 4);
+
+                    for (uint32_t iSegment = 0; iSegment < segmentCount; ++iSegment)
+                    {
+                        uint32_t nameLength;
+                        GTCore::IO::Read(file, &nameLength, 4);
+
+                        auto name = static_cast<char*>(malloc(nameLength + 1));                     // <-- +1 for null terminator.
+                        GTCore::IO::Read(file, name, nameLength); name[nameLength] = '\0';
+
+                        struct
+                        {
+                            uint32_t start;
+                            uint32_t end;
+                        }frameIndices;
+
+                        GTCore::IO::Read(file, &frameIndices, 8);
+
+                        // The data has been read, so now we just add it to the animation.
+                        definition.animation.AddNamedSegment(name, frameIndices.start, frameIndices.end);
+
+                        free(name);
+                    }
+                }
+                else if (metadataHeader.id[0] == 'c' && metadataHeader.id[1] == 'x' && metadataHeader.id[2] == 'h' && metadataHeader.id[3] == 'l')      // <-- Convex Hulls: 'cxhl'
+                {
+                    uint32_t hullCount;
+                    GTCore::IO::Read(file, &hullCount, 4);
+
+                    if (hullCount > 0)
+                    {
+                        // Here is where we load the convex hull information. This stuff is all batched so it may seem a little unintuitive.
+                        uint32_t* vertexCounts = new uint32_t[hullCount];
+                        uint32_t* indexCounts  = new uint32_t[hullCount];
+
+                        GTCore::IO::Read(file, vertexCounts, hullCount * 4);
+                        GTCore::IO::Read(file, indexCounts,  hullCount * 4);
+
+                        struct
+                        {
+                            uint32_t totalVertexCount;
+                            uint32_t totalIndexCount;
+                        }vertexIndexCounts;
+                        GTCore::IO::Read(file, &vertexIndexCounts, 8);
+
+                        float* vertices = new float[vertexIndexCounts.totalVertexCount];
+                        GTCore::IO::Read(file, vertices, vertexIndexCounts.totalVertexCount * 4);
+
+                        uint32_t* indices = new uint32_t[vertexIndexCounts.totalIndexCount];
+                        GTCore::IO::Read(file, indices, vertexIndexCounts.totalIndexCount * 4);
+
+
+                        auto currentVertices = vertices;
+                        auto currentIndices  = indices;
+
+                        for (uint32_t iHull = 0; iHull < hullCount; ++iHull)
+                        {
+                            size_t vertexCount = static_cast<size_t>(vertexCounts[iHull]);
+                            size_t indexCount  = static_cast<size_t>(indexCounts[iHull]);
+
+                            definition.convexHulls.PushBack(new ConvexHull(currentVertices, vertexCount, currentIndices, indexCount));
+
+                            // Now we need to move our pointers forward.
+                            currentVertices += vertexCount * 3;
+                            currentIndices  += indexCount;
+                        }
+
+                        delete [] vertexCounts;
+                        delete [] indexCounts;
+                        delete [] vertices;
+                        delete [] indices;
+                    }
+
+
+                    // These are the build settings used to build the convex hull.
+                    uint32_t settingsSizeInBytes;
+                    GTCore::IO::Read(file, &settingsSizeInBytes, 4);
+
+                    if (settingsSizeInBytes == sizeof(definition.convexHullBuildSettings))
+                    {
+                        GTCore::IO::Read(file, &definition.convexHullBuildSettings, settingsSizeInBytes);
+                    }
+                    else
+                    {
+                        Log("Warning loading .gtmodel: sizeof(chbs) != sizeof(ConvexHullBuildSettings). Skipping.");
+                        GTCore::IO::Seek(file, settingsSizeInBytes, GTCore::IO::SeekOrigin::Current);
+                    }
+
+                }
+                else
+                {
+                    // We don't recognize this chunk. We'll skip over it. What we should probably look into is the ability to allow custom metadata
+                    // and use some kind of callback.
+                    GTCore::IO::Seek(file, metadataHeader.sizeInBytes, GTCore::IO::SeekOrigin::Current);
+                }
+            }
+
+
+            // We need to do some validation here.
+            //
+            // The first thing to validate is the materials. If we have any unset materials, we need to give it the default material.
+            if (definition.meshMaterials.count == 0)
+            {
+                for (size_t i = 0; i < definition.meshGeometries.count; ++i)
+                {
+                    definition.meshMaterials.PushBack(nullptr);
+                }
+            }
+
+            for (size_t iMaterial = 0; iMaterial < definition.meshMaterials.count; ++iMaterial)
+            {
+                if (definition.meshMaterials[iMaterial] == nullptr)
+                {
+                    definition.meshMaterials[iMaterial] = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool ModelLibrary::LoadGTMODELMetadata(const char* fileNameIn, ModelDefinition &definition)
+    {
+        auto file = GTCore::IO::Open(fileNameIn, GTCore::IO::OpenMode::Read);
+        if (file != nullptr)
+        {
+            // The first thing we load is the header, which is 8 bytes. The first 4 bytes should equal "gtem".
+            struct
+            {
+                char     id[4];
+                uint32_t version;
+            }header;
+            GTCore::IO::Read(file, &header, 8);
+
+            // We need to check the first 4 bytes to ensure they read "gtem".
+            if (header.id[0] == 'g' && header.id[1] == 't' && header.id[2] == 'e' && header.id[3] == 'm')
+            {
+                // We load differently depending on the version. Unknown version means return null.
+                switch (header.version)
+                {
+                case 1:
+                    {
+                        // The counts of the main objects. We batch these into a single call at the top of everything.
+                        struct
+                        {
+                            uint32_t boneCount;
+                            uint32_t meshCount;
+                            uint32_t keyFrameCount;
+                        }counts;
+                        GTCore::IO::Read(file, &counts, 12);
+
+
+                        // Bones.
+                        //
+                        // Bones are first because they are referenced by everything else.
+                        for (uint32_t iBone = 0; iBone < counts.boneCount; ++iBone)
+                        {
+                            // Name.
+                            uint32_t nameLength;
+                            GTCore::IO::Read(file, &nameLength, 4);
+                            GTCore::IO::Seek(file, nameLength, GTCore::IO::SeekOrigin::Current);
+
+
+                            // Relative transform and offset matrix.
+                            GTCore::IO::Seek(file, 4 * 3,     GTCore::IO::SeekOrigin::Current);        // Position
+                            GTCore::IO::Seek(file, 4 * 4,     GTCore::IO::SeekOrigin::Current);        // Rotation
+                            GTCore::IO::Seek(file, 4 * 3,     GTCore::IO::SeekOrigin::Current);        // Scale
+                            GTCore::IO::Seek(file, 4 * 4 * 4, GTCore::IO::SeekOrigin::Current);        // Offset Matrix
+                        }
+
+                        // Bone parents.
+                        GTCore::IO::Seek(file, counts.boneCount * 4, GTCore::IO::SeekOrigin::Current);
+
+
+                        // Meshes.
+                        for (uint32_t i = 0; i < counts.meshCount; ++i)
+                        {
+                            // Geometry.
+                            {
+                                // Vertices.
+                                uint32_t vertexCount;
+                                GTCore::IO::Read(file, &vertexCount, 4);
+
+                                if (vertexCount > 0)
+                                {
+                                    GTCore::IO::Seek(file, vertexCount * VertexFormat::P3T2N3T3B3.GetSize() * sizeof(float), GTCore::IO::SeekOrigin::Current);
+                                }
+
+
+                                // Indices.
+                                uint32_t indexCount;
+                                GTCore::IO::Read(file, &indexCount, 4);
+                                
+                                if (indexCount > 0)
+                                {
+                                    GTCore::IO::Seek(file, indexCount * sizeof(unsigned int), GTCore::IO::SeekOrigin::Current);
+                                }
+                            }
+
+                                
+                            // Materials
+                            {
+                                uint32_t length;
+                                GTCore::IO::Read(file, &length, 4);
+                                GTCore::IO::Seek(file, length, GTCore::IO::SeekOrigin::Current);
+                            }
+
+
+                            // Skinning vertex attributes.
+                            {
+                                uint32_t skinningVertexAttributeCount;
+                                GTCore::IO::Read(file, &skinningVertexAttributeCount, 4);
+
+                                if (skinningVertexAttributeCount > 0)
+                                {
+                                    GTCore::IO::Seek(file, skinningVertexAttributeCount * 2, GTCore::IO::SeekOrigin::Current);
+
+                                    uint32_t totalBoneWeights;
+                                    GTCore::IO::Read(file, &totalBoneWeights, 4);
+                                    GTCore::IO::Seek(file, totalBoneWeights * 8, GTCore::IO::SeekOrigin::Current);
+                                }
+                            }
+                        }
+
+
+                        // Now we need to load the key frame animation data.
+                        for (uint32_t iFrame = 0; iFrame < counts.keyFrameCount; ++iFrame)
+                        {
+                            float time;
+                            GTCore::IO::Read(file, &time, 4);
+
+                            // With the key frame added, we now need to iterate over each channel in the key frame.
+                            uint32_t channelCount;
+                            GTCore::IO::Read(file, &channelCount, 4);
+
+                            for (uint32_t iChannel = 0; iChannel < channelCount; ++iChannel)
+                            {
+                                // Bone Index
+                                GTCore::IO::Seek(file, 4, GTCore::IO::SeekOrigin::Current);
+
+                                // Transformation.
+                                GTCore::IO::Seek(file, 4 * 3, GTCore::IO::SeekOrigin::Current);    // Position
+                                GTCore::IO::Seek(file, 4 * 4, GTCore::IO::SeekOrigin::Current);    // Rotation
+                                GTCore::IO::Seek(file, 4 * 3, GTCore::IO::SeekOrigin::Current);    // Scale
+                            }
+                        }
+
+
+                        // Here is the engine-specific metadata.
+                        ModelLibrary::LoadGTMODELMetadata(file, definition);
+                            
+
+                        // Can't forget to close the file.
+                        GTCore::IO::Close(file);
+
+
+                        break;
+                    }
+
+                default:
+                    {
+                        GTCore::IO::Close(file);
+
+                        GTEngine::PostError("Can not load .gtmodel file: Unknown version.");
+                        return nullptr;
+                    }
+                }
+            }
+            else
+            {
+                GTCore::IO::Close(file);
+
+                GTEngine::PostError("Can not load .gtmodel file: Invalid header ID.");
+                return nullptr;
+            }
+        }
+
+        return true;
+    }
+
+    bool ModelLibrary::LoadDefaultMetadata(ModelDefinition &definition)
+    {
+        // The first thing is the materials.
+        if (definition.meshMaterials.count == 0)
+        {
+            for (size_t i = 0; i < definition.meshGeometries.count; ++i)
+            {
+                definition.meshMaterials.PushBack(nullptr);
+            }
+        }
+
+        for (size_t iMaterial = 0; iMaterial < definition.meshMaterials.count; ++iMaterial)
+        {
+            if (definition.meshMaterials[iMaterial] == nullptr)
+            {
+                definition.meshMaterials[iMaterial] = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
+            }
+        }
+
+        return true;
+    }
 }
+
+
 
 
 
