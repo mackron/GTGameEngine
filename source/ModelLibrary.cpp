@@ -547,6 +547,48 @@ namespace GTEngine
         }
         else
         {
+            // What we're going to do is load two file info's. The first will be the original source file. The other will be the .gtmodel file. If
+            // the .gtmodel file does not exist, we create it from the source model.
+            GTCore::IO::FileInfo sourceInfo;
+            GTCore::IO::GetFileInfo(fileName, sourceInfo);
+
+            GTCore::IO::FileInfo gtmodelInfo;
+            if (sourceInfo.exists)
+            {
+                GTCore::String gtmodelFileName(sourceInfo.absolutePath);
+                gtmodelFileName += ".gtmodel";
+
+                GTCore::IO::GetFileInfo(gtmodelFileName.c_str(), gtmodelInfo);
+            }
+            else
+            {
+                GTCore::String gtmodelFileName(fileName);
+                gtmodelFileName += ".gtmodel";
+
+                GTCore::IO::GetFileInfo(gtmodelFileName.c_str(), gtmodelInfo);
+            }
+
+
+            if ((sourceInfo.exists && sourceInfo.lastModifiedTime > gtmodelInfo.lastModifiedTime) || !gtmodelInfo.exists)
+            {
+                return ModelLibrary::LoadFromAssimp(sourceInfo, gtmodelInfo);
+            }
+            else
+            {
+                if ((!sourceInfo.exists && gtmodelInfo.exists) || gtmodelInfo.lastModifiedTime > sourceInfo.lastModifiedTime)
+                {
+                    return ModelLibrary::LoadFromGTMODEL(gtmodelInfo.absolutePath.c_str());
+                }
+                else
+                {
+                    GTEngine::PostError("Could not find file: %s", fileName);
+                }
+            }
+
+            return nullptr;
+
+
+            /*
             // What we're going to do here is find the absolute path of the given file. We will then work from that. The reason for this is because
             // assimp will do it's own file loading, but we still need to allow for multiple data directories.
             GTCore::String absoluteFileName;
@@ -601,7 +643,77 @@ namespace GTEngine
             }
 
             return nullptr;
+            */
         }
+    }
+
+    // TODO: Move down below.
+    Model* ModelLibrary::LoadFromAssimp(const GTCore::IO::FileInfo &sourceInfo, const GTCore::IO::FileInfo &gtmodelInfo)
+    {
+        ModelDefinition* definition = nullptr;
+
+        // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
+        auto iDefinition = LoadedDefinitions.Find(sourceInfo.absolutePath.c_str());
+        if (iDefinition == nullptr)
+        {
+            Assimp::Importer importer;
+            importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
+
+            auto scene = importer.ReadFile(sourceInfo.absolutePath.c_str(), AssimpReadFileFlags);
+            if (scene != nullptr)
+            {
+                definition = ModelLibrary_LoadFromAssimpScene(*scene);
+                if (definition != nullptr)
+                {
+                    // The definition was loaded from a file, so we need to mark it as so.
+                    definition->fileName = sourceInfo.absolutePath.c_str();
+
+                    // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
+                    LoadedDefinitions.Add(sourceInfo.absolutePath.c_str(), definition);
+                }
+                else
+                {
+                    GTEngine::PostError("Error creating model info for %s: %s", sourceInfo.absolutePath.c_str(), importer.GetErrorString());
+                }
+            }
+            else
+            {
+                GTEngine::PostError("Error importing %s: %s", sourceInfo.absolutePath.c_str(), importer.GetErrorString());
+            }
+        }
+        else
+        {
+            definition = iDefinition->value;
+        }
+
+
+        // Now that we have information about the model, we can create a new Model object and return it.
+        if (definition != nullptr)
+        {
+            auto model = ModelLibrary::CreateFromDefinition(*definition);
+            if (model != nullptr)
+            {
+                // Here is where we save the corresponding .gtmodel file. Note here how we use the aboslute path in 'sourceInfo' instead
+                // of 'gtmodelInfo'. This is because it's possible that the gtmodel file does not exists and may have an incorrect
+                // absolute path as a result.
+                GTCore::String gtmodelFileName(sourceInfo.absolutePath);
+                gtmodelFileName += ".gtmodel";
+
+                // If the gtmodel file exists, we need to read in it's meta data so we can re-save that info in the new file. The way we
+                // do this, is we actually load the gtmodel meta data into the definition.
+                if (gtmodelInfo.exists)
+                {
+                    ModelLibrary::LoadGTMODELMetadata(gtmodelInfo.absolutePath.c_str(), *definition);
+                }
+
+                // Now we just save the .gtmodel like normal.
+                ModelLibrary::WriteToFile(*model, gtmodelInfo.absolutePath.c_str());
+            }
+
+            return model;
+        }
+        
+        return nullptr;
     }
 
     Model* ModelLibrary::LoadFromNFF(const char* content, const char* name)
@@ -688,11 +800,9 @@ namespace GTEngine
                                 uint32_t boneCount;
                                 uint32_t meshCount;
                                 uint32_t keyFrameCount;
-                                uint32_t namedAnimationSegmentCount;
-                                uint32_t convexHullCount;
                             }counts;
 
-                            GTCore::IO::Read(file, &counts, 20);
+                            GTCore::IO::Read(file, &counts, 12);
 
 
                             // Bones.
@@ -914,95 +1024,9 @@ namespace GTEngine
                             }
 
 
-                            // Named animation segments.
-                            for (uint32_t iSegment = 0; iSegment < counts.namedAnimationSegmentCount; ++iSegment)
-                            {
-                                uint32_t nameLength;
-                                GTCore::IO::Read(file, &nameLength, 4);
-
-                                auto name = static_cast<char*>(malloc(nameLength + 1));                     // <-- +1 for null terminator.
-                                GTCore::IO::Read(file, name, nameLength); name[nameLength] = '\0';
-
-                                struct
-                                {
-                                    uint32_t start;
-                                    uint32_t end;
-                                }frameIndices;
-
-                                GTCore::IO::Read(file, &frameIndices, 8);
-
-
-                                // The data has been read, so now we just add it to the animation.
-                                definition->animation.AddNamedSegment(name, frameIndices.start, frameIndices.end);
-
-
-                                free(name);
-                            }
-
-
-                            // Here is where we load the convex hull information. This stuff is all batched so it may seem a little unintuitive.
-                            uint32_t* vertexCounts = new uint32_t[counts.convexHullCount];
-                            uint32_t* indexCounts  = new uint32_t[counts.convexHullCount];
-
-                            GTCore::IO::Read(file, vertexCounts, counts.convexHullCount * 4);
-                            GTCore::IO::Read(file, indexCounts,  counts.convexHullCount * 4);
-
-                            struct
-                            {
-                                uint32_t totalVertexCount;
-                                uint32_t totalIndexCount;
-                            }vertexIndexCounts;
-                            GTCore::IO::Read(file, &vertexIndexCounts, 8);
-
-                            float* vertices = new float[vertexIndexCounts.totalVertexCount];
-                            GTCore::IO::Read(file, vertices, vertexIndexCounts.totalVertexCount * 4);
-
-                            uint32_t* indices = new uint32_t[vertexIndexCounts.totalIndexCount];
-                            GTCore::IO::Read(file, indices, vertexIndexCounts.totalIndexCount * 4);
-
-
-                            auto currentVertices = vertices;
-                            auto currentIndices  = indices;
-
-                            for (uint32_t iHull = 0; iHull < counts.convexHullCount; ++iHull)
-                            {
-                                size_t vertexCount = static_cast<size_t>(vertexCounts[iHull]);
-                                size_t indexCount  = static_cast<size_t>(indexCounts[iHull]);
-
-                                definition->convexHulls.PushBack(new ConvexHull(currentVertices, vertexCount, currentIndices, indexCount));
-
-                                // Now we need to move our pointers forward.
-                                currentVertices += vertexCount * 3;
-                                currentIndices  += indexCount;
-                            }
-
-                            delete [] vertexCounts;
-                            delete [] indexCounts;
-                            delete [] vertices;
-                            delete [] indices;
-
-
-                            // Here is where we load some metadata. We need to constantly check that we're not at the end of the file.
-                            if (!GTCore::IO::AtEnd(file))
-                            {
-                                char chbs[4];
-                                GTCore::IO::Read(file, chbs, 4);
-
-                                if (chbs[0] == 'c' && chbs[1] == 'h' && chbs[2] == 'b' && chbs[3] == 's')
-                                {
-                                    uint32_t sizeInBytes;
-                                    GTCore::IO::Read(file, &sizeInBytes, 4);
-
-                                    if (sizeInBytes == sizeof(definition->convexHullBuildSettings))
-                                    {
-                                        GTCore::IO::Read(file, &definition->convexHullBuildSettings, sizeInBytes);
-                                    }
-                                    else
-                                    {
-                                        Log("Warning loading .gtmodel: sizeof(chbs) != sizeof(ConvexHullBuildSettings). Skipping.");
-                                    }
-                                }
-                            }
+                            // Here is the engine-specific metadata.
+                            ModelLibrary::LoadGTMODELMetadata(file, *definition);
+                            
 
 
                             // We can't forget to add the definition to the global list.
@@ -1054,6 +1078,302 @@ namespace GTEngine
     }
 
 
+    // TODO: Move these functions to the Private section down the bottom.
+    bool ModelLibrary::LoadGTMODELMetadata(FILE* file, ModelDefinition &definition)
+    {
+        assert(file != nullptr);
+
+        // The next 8 bytes should read 'metadata'.
+        uint8_t header[8];
+        GTCore::IO::Read(file, header, 8);
+
+        if (header[0] == 'm' && header[1] == 'e' && header[2] == 't' && header[3] == 'a' && header[4] == 'd' && header[5] == 'a' && header[6] == 't' && header[7] == 'a')
+        {
+            // We're at the metadata. Below we will have chunks of metadata for different things. Each chunk has a header or 8 bytes, with the
+            // first 4 bytes being an ID, and the other 4 bytes being the size of the metadata. We need to store the size so we can skip over
+            // it if it's unused.
+            //
+            // We keep skipping over until we hit the end of the file.
+            while (!GTCore::IO::AtEnd(file))
+            {
+                struct
+                {
+                    uint8_t  id[4];
+                    uint32_t sizeInBytes;
+
+                }metadataHeader;
+                GTCore::IO::Read(file, &metadataHeader, 8);
+
+
+                
+                if (metadataHeader.id[0] == 'n' && metadataHeader.id[1] == 'a' && metadataHeader.id[2] == 's' && metadataHeader.id[3] == ' ')           // <-- Named animation segments: 'nas '.
+                {
+                    uint32_t segmentCount;
+                    GTCore::IO::Read(file, &segmentCount, 4);
+
+                    for (uint32_t iSegment = 0; iSegment < segmentCount; ++iSegment)
+                    {
+                        uint32_t nameLength;
+                        GTCore::IO::Read(file, &nameLength, 4);
+
+                        auto name = static_cast<char*>(malloc(nameLength + 1));                     // <-- +1 for null terminator.
+                        GTCore::IO::Read(file, name, nameLength); name[nameLength] = '\0';
+
+                        struct
+                        {
+                            uint32_t start;
+                            uint32_t end;
+                        }frameIndices;
+
+                        GTCore::IO::Read(file, &frameIndices, 8);
+
+                        // The data has been read, so now we just add it to the animation.
+                        definition.animation.AddNamedSegment(name, frameIndices.start, frameIndices.end);
+
+                        free(name);
+                    }
+                }
+                else if (metadataHeader.id[0] == 'c' && metadataHeader.id[1] == 'x' && metadataHeader.id[2] == 'h' && metadataHeader.id[3] == 'l')      // <-- Convex Hulls: 'cxhl'
+                {
+                    uint32_t hullCount;
+                    GTCore::IO::Read(file, &hullCount, 4);
+
+                    if (hullCount > 0)
+                    {
+                        // Here is where we load the convex hull information. This stuff is all batched so it may seem a little unintuitive.
+                        uint32_t* vertexCounts = new uint32_t[hullCount];
+                        uint32_t* indexCounts  = new uint32_t[hullCount];
+
+                        GTCore::IO::Read(file, vertexCounts, hullCount * 4);
+                        GTCore::IO::Read(file, indexCounts,  hullCount * 4);
+
+                        struct
+                        {
+                            uint32_t totalVertexCount;
+                            uint32_t totalIndexCount;
+                        }vertexIndexCounts;
+                        GTCore::IO::Read(file, &vertexIndexCounts, 8);
+
+                        float* vertices = new float[vertexIndexCounts.totalVertexCount];
+                        GTCore::IO::Read(file, vertices, vertexIndexCounts.totalVertexCount * 4);
+
+                        uint32_t* indices = new uint32_t[vertexIndexCounts.totalIndexCount];
+                        GTCore::IO::Read(file, indices, vertexIndexCounts.totalIndexCount * 4);
+
+
+                        auto currentVertices = vertices;
+                        auto currentIndices  = indices;
+
+                        for (uint32_t iHull = 0; iHull < hullCount; ++iHull)
+                        {
+                            size_t vertexCount = static_cast<size_t>(vertexCounts[iHull]);
+                            size_t indexCount  = static_cast<size_t>(indexCounts[iHull]);
+
+                            definition.convexHulls.PushBack(new ConvexHull(currentVertices, vertexCount, currentIndices, indexCount));
+
+                            // Now we need to move our pointers forward.
+                            currentVertices += vertexCount * 3;
+                            currentIndices  += indexCount;
+                        }
+
+                        delete [] vertexCounts;
+                        delete [] indexCounts;
+                        delete [] vertices;
+                        delete [] indices;
+                    }
+
+
+                    // These are the build settings used to build the convex hull.
+                    uint32_t settingsSizeInBytes;
+                    GTCore::IO::Read(file, &settingsSizeInBytes, 4);
+
+                    if (settingsSizeInBytes == sizeof(definition.convexHullBuildSettings))
+                    {
+                        GTCore::IO::Read(file, &definition.convexHullBuildSettings, settingsSizeInBytes);
+                    }
+                    else
+                    {
+                        Log("Warning loading .gtmodel: sizeof(chbs) != sizeof(ConvexHullBuildSettings). Skipping.");
+                        GTCore::IO::Seek(file, settingsSizeInBytes, GTCore::IO::SeekOrigin::Current);
+                    }
+
+                }
+                else
+                {
+                    // We don't recognize this chunk. We'll skip over it. What we should probably look into is the ability to allow custom metadata
+                    // and use some kind of callback.
+                    GTCore::IO::Seek(file, metadataHeader.sizeInBytes, GTCore::IO::SeekOrigin::Current);
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool ModelLibrary::LoadGTMODELMetadata(const char* fileNameIn, ModelDefinition &definition)
+    {
+        auto file = GTCore::IO::Open(fileNameIn, GTCore::IO::OpenMode::Read);
+        if (file != nullptr)
+        {
+            // The first thing we load is the header, which is 8 bytes. The first 4 bytes should equal "gtem".
+            struct
+            {
+                char     id[4];
+                uint32_t version;
+            }header;
+            GTCore::IO::Read(file, &header, 8);
+
+            // We need to check the first 4 bytes to ensure they read "gtem".
+            if (header.id[0] == 'g' && header.id[1] == 't' && header.id[2] == 'e' && header.id[3] == 'm')
+            {
+                // We load differently depending on the version. Unknown version means return null.
+                switch (header.version)
+                {
+                case 1:
+                    {
+                        // The counts of the main objects. We batch these into a single call at the top of everything.
+                        struct
+                        {
+                            uint32_t boneCount;
+                            uint32_t meshCount;
+                            uint32_t keyFrameCount;
+                        }counts;
+                        GTCore::IO::Read(file, &counts, 12);
+
+
+                        // Bones.
+                        //
+                        // Bones are first because they are referenced by everything else.
+                        for (uint32_t iBone = 0; iBone < counts.boneCount; ++iBone)
+                        {
+                            // Name.
+                            uint32_t nameLength;
+                            GTCore::IO::Read(file, &nameLength, 4);
+                            GTCore::IO::Seek(file, nameLength, GTCore::IO::SeekOrigin::Current);
+
+
+                            // Relative transform and offset matrix.
+                            GTCore::IO::Seek(file, 4 * 3,     GTCore::IO::SeekOrigin::Current);        // Position
+                            GTCore::IO::Seek(file, 4 * 4,     GTCore::IO::SeekOrigin::Current);        // Rotation
+                            GTCore::IO::Seek(file, 4 * 3,     GTCore::IO::SeekOrigin::Current);        // Scale
+                            GTCore::IO::Seek(file, 4 * 4 * 4, GTCore::IO::SeekOrigin::Current);        // Offset Matrix
+                        }
+
+                        // Bone parents.
+                        GTCore::IO::Seek(file, counts.boneCount * 4, GTCore::IO::SeekOrigin::Current);
+
+
+                        // Meshes.
+                        for (uint32_t i = 0; i < counts.meshCount; ++i)
+                        {
+                            // Geometry.
+                            {
+                                // Vertices.
+                                uint32_t vertexCount;
+                                GTCore::IO::Read(file, &vertexCount, 4);
+
+                                if (vertexCount > 0)
+                                {
+                                    GTCore::IO::Seek(file, vertexCount * VertexFormat::P3T2N3T3B3.GetSize() * sizeof(float), GTCore::IO::SeekOrigin::Current);
+                                }
+
+
+                                // Indices.
+                                uint32_t indexCount;
+                                GTCore::IO::Read(file, &indexCount, 4);
+                                
+                                if (indexCount > 0)
+                                {
+                                    GTCore::IO::Seek(file, indexCount * sizeof(unsigned int), GTCore::IO::SeekOrigin::Current);
+                                }
+                            }
+
+                                
+                            // Materials
+                            {
+                                uint32_t length;
+                                GTCore::IO::Read(file, &length, 4);
+                                GTCore::IO::Seek(file, length, GTCore::IO::SeekOrigin::Current);
+                            }
+
+
+                            // Skinning vertex attributes.
+                            {
+                                uint32_t skinningVertexAttributeCount;
+                                GTCore::IO::Read(file, &skinningVertexAttributeCount, 4);
+
+                                if (skinningVertexAttributeCount > 0)
+                                {
+                                    GTCore::IO::Seek(file, skinningVertexAttributeCount * 2, GTCore::IO::SeekOrigin::Current);
+
+                                    uint32_t totalBoneWeights;
+                                    GTCore::IO::Read(file, &totalBoneWeights, 4);
+                                    GTCore::IO::Seek(file, totalBoneWeights * 8, GTCore::IO::SeekOrigin::Current);
+                                }
+                            }
+                        }
+
+
+                        // Now we need to load the key frame animation data.
+                        for (uint32_t iFrame = 0; iFrame < counts.keyFrameCount; ++iFrame)
+                        {
+                            float time;
+                            GTCore::IO::Read(file, &time, 4);
+
+                            // With the key frame added, we now need to iterate over each channel in the key frame.
+                            uint32_t channelCount;
+                            GTCore::IO::Read(file, &channelCount, 4);
+
+                            for (uint32_t iChannel = 0; iChannel < channelCount; ++iChannel)
+                            {
+                                // Bone Index
+                                GTCore::IO::Seek(file, 4, GTCore::IO::SeekOrigin::Current);
+
+                                // Transformation.
+                                GTCore::IO::Seek(file, 4 * 3, GTCore::IO::SeekOrigin::Current);    // Position
+                                GTCore::IO::Seek(file, 4 * 4, GTCore::IO::SeekOrigin::Current);    // Rotation
+                                GTCore::IO::Seek(file, 4 * 3, GTCore::IO::SeekOrigin::Current);    // Scale
+                            }
+                        }
+
+
+                        // Here is the engine-specific metadata.
+                        ModelLibrary::LoadGTMODELMetadata(file, definition);
+                            
+
+                        // Can't forget to close the file.
+                        GTCore::IO::Close(file);
+
+
+                        break;
+                    }
+
+                default:
+                    {
+                        GTCore::IO::Close(file);
+
+                        GTEngine::PostError("Can not load .gtmodel file: Unknown version.");
+                        return nullptr;
+                    }
+                }
+            }
+            else
+            {
+                GTCore::IO::Close(file);
+
+                GTEngine::PostError("Can not load .gtmodel file: Invalid header ID.");
+                return nullptr;
+            }
+        }
+
+        return true;
+    }
+
+
     bool ModelLibrary::WriteToFile(const Model &model, const char* fileNameIn)
     {
         auto &definition = model.GetDefinition();
@@ -1077,16 +1397,12 @@ namespace GTEngine
 
 
             // Now we write the counts of everything.
-            uint32_t boneCount                  = static_cast<uint32_t>(definition.bones.count);
-            uint32_t meshCount                  = static_cast<uint32_t>(definition.meshGeometries.count);
-            uint32_t keyFrameCount              = static_cast<uint32_t>(definition.animation.GetKeyFrameCount());
-            uint32_t namedAnimationSegmentCount = static_cast<uint32_t>(definition.animation.GetNamedSegmentCount());
-            uint32_t convexHullCount            = static_cast<uint32_t>(definition.convexHulls.count);
-            GTCore::IO::Write(file, &boneCount,                  4);
-            GTCore::IO::Write(file, &meshCount,                  4);
-            GTCore::IO::Write(file, &keyFrameCount,              4);
-            GTCore::IO::Write(file, &namedAnimationSegmentCount, 4);
-            GTCore::IO::Write(file, &convexHullCount,            4);
+            uint32_t boneCount     = static_cast<uint32_t>(definition.bones.count);
+            uint32_t meshCount     = static_cast<uint32_t>(definition.meshGeometries.count);
+            uint32_t keyFrameCount = static_cast<uint32_t>(definition.animation.GetKeyFrameCount());
+            GTCore::IO::Write(file, &boneCount,     4);
+            GTCore::IO::Write(file, &meshCount,     4);
+            GTCore::IO::Write(file, &keyFrameCount, 4);
 
 
             // Bones.
@@ -1273,12 +1589,56 @@ namespace GTEngine
             }
 
 
-            // Named animation segments.
-            for (uint32_t iSegment = 0; iSegment < namedAnimationSegmentCount; ++iSegment)
+            // Here is where we write the engine-specific metadata.
+            ModelLibrary::WriteGTMODELMetadata(file, definition);
+
+            
+            // Can't forget to close the file.
+            GTCore::IO::Close(file);
+        }
+
+        return false;
+    }
+
+    
+    // TODO: Move this to the Private section down below.
+    bool ModelLibrary::WriteGTMODELMetadata(FILE* file, const ModelDefinition &definition)
+    {
+        assert(file != nullptr);
+
+        GTCore::IO::Write(file, "metadata", 8);
+
+        // Named Animation Segments.
+        {
+            uint32_t segmentCount = static_cast<uint32_t>(definition.animation.GetNamedSegmentCount());
+
+            // We first need to determine the size of the metadata.
+            uint32_t nasSizeInBytes = 0;
+            nasSizeInBytes += 4;                                        // <-- Variable for storing the number of segments.
+
+            for (uint32_t iSegment = 0; iSegment < segmentCount; ++iSegment)
             {
                 auto name    = definition.animation.GetNamedSegmentNameByIndex(iSegment);
                 auto segment = definition.animation.GetNamedSegmentByIndex(iSegment);
-                
+                assert(name    != nullptr);
+                assert(segment != nullptr);
+
+                nasSizeInBytes += 4;                                    // <-- Variable for storing the name length.
+                nasSizeInBytes += GTCore::Strings::SizeInBytes(name);   // <-- The actual name length.
+                nasSizeInBytes += 4;                                    // <-- Variable for storing the start key frame.
+                nasSizeInBytes += 4;                                    // <-- Variable for storing the end key frame.
+            }
+
+
+            GTCore::IO::Write(file, "nas ", 4);             // <-- Note the space at the end of 'nas '.
+            GTCore::IO::Write(file, &nasSizeInBytes, 4);
+
+            GTCore::IO::Write(file, &segmentCount, 4);
+
+            for (uint32_t iSegment = 0; iSegment < segmentCount; ++iSegment)
+            {
+                auto name    = definition.animation.GetNamedSegmentNameByIndex(iSegment);
+                auto segment = definition.animation.GetNamedSegmentByIndex(iSegment);
                 assert(name    != nullptr);
                 assert(segment != nullptr);
 
@@ -1291,45 +1651,81 @@ namespace GTEngine
                 GTCore::IO::Write(file, &start, 4);
                 GTCore::IO::Write(file, &end,   4);
             }
+        }
 
 
-            // Here is where we save the convex hull data. A model can actually have a lot of convex hulls, so we're going to batch the data
-            // so we can load with as little IO::Read() calls as possible.
-            GTCore::Vector<uint32_t> vertexCounts(convexHullCount);
-            GTCore::Vector<uint32_t> indexCounts(convexHullCount);
-            GTCore::Vector<float>    vertices;
-            GTCore::Vector<uint32_t> indices;
+        // Convex Hull.
+        {
+            // We first need to determine the size of the metadata.
+            uint32_t cxhlSizeInBytes = 0;
+            cxhlSizeInBytes += 4;                                       // <-- Variable for storing the convex hull count.
 
-            for (uint32_t iHull = 0; iHull < convexHullCount; ++iHull)
+            if (definition.convexHulls.count > 0)
             {
-                auto hull = definition.convexHulls[iHull];
-                assert(hull != nullptr);
+                cxhlSizeInBytes += definition.convexHulls.count * 4;        // <-- Variable for storing the counts of vertices.
+                cxhlSizeInBytes += definition.convexHulls.count * 4;        // <-- Variable for storing the counds of indices.
 
-                uint32_t vertexCount = static_cast<uint32_t>(hull->GetVertexCount());
-                uint32_t indexCount  = static_cast<uint32_t>(hull->GetIndexCount());
-
-                vertexCounts.PushBack(vertexCount);
-                indexCounts.PushBack( indexCount);
-
-                for (uint32_t iVertex = 0; iVertex < vertexCount; ++iVertex)
+                for (size_t iHull = 0; iHull < definition.convexHulls.count; ++iHull)
                 {
-                    vertices.PushBack(hull->GetVertices()[iVertex * 3 + 0]);
-                    vertices.PushBack(hull->GetVertices()[iVertex * 3 + 1]);
-                    vertices.PushBack(hull->GetVertices()[iVertex * 3 + 2]);
-                }
+                    auto hull = definition.convexHulls[iHull];
+                    assert(hull != nullptr);
 
-                for (uint32_t iIndex = 0; iIndex < indexCount; ++iIndex)
-                {
-                    indices.PushBack(hull->GetIndices()[iIndex]);
+                    cxhlSizeInBytes += 4;                                   // <-- Variable for storing the vertex count.
+                    cxhlSizeInBytes += 4;                                   // <-- Variable for storing the index count.
+
+                    cxhlSizeInBytes += hull->GetVertexCount() * 4 * 3;      // <-- Each vertex, 3x floats each.
+                    cxhlSizeInBytes += hull->GetIndexCount()  * 4;          // <-- Each index, 1x uint32 each.
                 }
             }
 
-            if (convexHullCount > 0)
+            cxhlSizeInBytes += sizeof(ConvexHullBuildSettings);             // <-- The size of the build settings.
+
+
+
+
+            // Now we can actually write the data.
+            GTCore::IO::Write(file, "cxhl",           4);
+            GTCore::IO::Write(file, &cxhlSizeInBytes, 4);
+
+            GTCore::IO::Write(file, &definition.convexHulls.count, 4);
+
+            if (definition.convexHulls.count > 0)
             {
+                // Here we pack up our data.
+                GTCore::Vector<uint32_t> vertexCounts(definition.convexHulls.count);
+                GTCore::Vector<uint32_t> indexCounts(definition.convexHulls.count);
+                GTCore::Vector<float>    vertices;
+                GTCore::Vector<uint32_t> indices;
+
+                for (uint32_t iHull = 0; iHull < definition.convexHulls.count; ++iHull)
+                {
+                    auto hull = definition.convexHulls[iHull];
+                    assert(hull != nullptr);
+
+                    uint32_t vertexCount = static_cast<uint32_t>(hull->GetVertexCount());
+                    uint32_t indexCount  = static_cast<uint32_t>(hull->GetIndexCount());
+
+                    vertexCounts.PushBack(vertexCount);
+                    indexCounts.PushBack( indexCount);
+
+                    for (uint32_t iVertex = 0; iVertex < vertexCount; ++iVertex)
+                    {
+                        vertices.PushBack(hull->GetVertices()[iVertex * 3 + 0]);
+                        vertices.PushBack(hull->GetVertices()[iVertex * 3 + 1]);
+                        vertices.PushBack(hull->GetVertices()[iVertex * 3 + 2]);
+                    }
+
+                    for (uint32_t iIndex = 0; iIndex < indexCount; ++iIndex)
+                    {
+                        indices.PushBack(hull->GetIndices()[iIndex]);
+                    }
+                }
+
+
+                // Now we write the data.
                 GTCore::IO::Write(file, &vertexCounts[0], vertexCounts.count * 4);
                 GTCore::IO::Write(file, &indexCounts[0],  indexCounts.count  * 4);
                 
-
                 uint32_t totalVertices = static_cast<uint32_t>(vertices.count);
                 uint32_t totalIndices  = static_cast<uint32_t>(indices.count);
 
@@ -1340,27 +1736,14 @@ namespace GTEngine
                 GTCore::IO::Write(file, &indices[0],      indices.count  * 4);
             }
 
-
-            // Here is where we allow for some metadata. Metadata is stored in chunks, with the size of each chunk stored so it can
-            // be skipped over when needed. The first 4 bytes of the metadata is an identifier. The next 4 bytes is the size of the
-            // data. The size can be used to skip over the data if it's not needed.
-            
-            // Convex-Hull Build Settings (CHBS)
-            GTCore::IO::Write(file, "chbs", 4);
-
+            // We need to write the build settings.
             uint32_t chbsSize = sizeof(definition.convexHullBuildSettings);
             GTCore::IO::Write(file, &chbsSize, 4);
             GTCore::IO::Write(file, &definition.convexHullBuildSettings, chbsSize);
-
-
-
-            // Can't forget to close the file.
-            GTCore::IO::Close(file);
         }
 
-        return false;
+        return true;
     }
-
 
 
 
