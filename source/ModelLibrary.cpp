@@ -1106,7 +1106,50 @@ namespace GTEngine
 
 
                 
-                if (metadataHeader.id[0] == 'n' && metadataHeader.id[1] == 'a' && metadataHeader.id[2] == 's' && metadataHeader.id[3] == ' ')           // <-- Named animation segments: 'nas '.
+                if (metadataHeader.id[0] == 'm' && metadataHeader.id[1] == 't' && metadataHeader.id[2] == 'l' && metadataHeader.id[3] == 's')           // <-- Materials: 'mtls'
+                {
+                    uint32_t materialCount;
+                    GTCore::IO::Read(file, &materialCount, 4);
+
+                    if (definition.meshMaterials.count == 0)
+                    {
+                        for (uint32_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
+                        {
+                            definition.meshMaterials.PushBack(nullptr);
+                        }
+                    }
+
+                    for (uint32_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
+                    {
+                        uint32_t meshIndex;
+                        GTCore::IO::Read(file, &meshIndex, 4);
+
+                        uint32_t fileNameLength;
+                        GTCore::IO::Read(file, &fileNameLength, 4);
+
+                        GTCore::String fileName;
+
+                        if (length > 0)
+                        {
+                            auto tempFileName = static_cast<char*>(malloc(fileNameLength + 1));                         // <-- +1 for null terminator. Not included in 'fileNameLength'.
+                            GTCore::IO::Read(file, tempFileName, fileNameLength); tempFileName[fileNameLength] = '\0';
+
+                            fileName = tempFileName;
+
+                            free(tempFileName);
+                        }
+                        else
+                        {
+                            fileName = "engine/materials/simple-diffuse.material";
+                        }
+
+                        if (meshIndex < definition.meshMaterials.count)
+                        {
+                            definition.meshMaterials[meshIndex] = MaterialLibrary::Create(fileName.c_str());
+                        }
+                    }
+                }
+                else if (metadataHeader.id[0] == 'n' && metadataHeader.id[1] == 'a' && metadataHeader.id[2] == 's' && metadataHeader.id[3] == ' ')      // <-- Named animation segments: 'nas '.
                 {
                     uint32_t segmentCount;
                     GTCore::IO::Read(file, &segmentCount, 4);
@@ -1203,6 +1246,26 @@ namespace GTEngine
                     // We don't recognize this chunk. We'll skip over it. What we should probably look into is the ability to allow custom metadata
                     // and use some kind of callback.
                     GTCore::IO::Seek(file, metadataHeader.sizeInBytes, GTCore::IO::SeekOrigin::Current);
+                }
+            }
+
+
+            // We need to do some validation here.
+            //
+            // The first thing to validate is the materials. If we have any unset materials, we need to give it the default material.
+            if (definition.meshMaterials.count == 0)
+            {
+                for (size_t i = 0; i < definition.meshGeometries.count; ++i)
+                {
+                    definition.meshMaterials.PushBack(nullptr);
+                }
+            }
+
+            for (size_t iMaterial = 0; iMaterial < definition.meshMaterials.count; ++iMaterial)
+            {
+                if (definition.meshMaterials[iMaterial] == nullptr)
+                {
+                    definition.meshMaterials[iMaterial] = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
                 }
             }
 
@@ -1607,6 +1670,50 @@ namespace GTEngine
         assert(file != nullptr);
 
         GTCore::IO::Write(file, "metadata", 8);
+
+
+        // Materials.
+        {
+            uint32_t materialCount = static_cast<uint32_t>(definition.meshMaterials.count);
+
+            // We first need to determine the size of the chunk.
+            uint32_t mtlsSizeInBytes = 0;
+            mtlsSizeInBytes += 4;                                       // <-- Variable for storing the material count.
+
+            for (uint32_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
+            {
+                mtlsSizeInBytes += 4;                                   // <-- Variable for storing the index of the mesh this material is applied to.
+                mtlsSizeInBytes += 4;                                   // <-- Variable for storing the size of the 
+                mtlsSizeInBytes += definition.meshMaterials[iMaterial]->GetDefinition().fileName.GetLengthInTs();
+            }
+
+
+            // Now we write the actual data.
+            GTCore::IO::Write(file, "mtls", 4);             // <-- Note the space at the end of 'nas '.
+            GTCore::IO::Write(file, &mtlsSizeInBytes, 4);
+
+            GTCore::IO::Write(file, &materialCount, 4);
+
+            for (uint32_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
+            {
+                auto material = definition.meshMaterials[iMaterial];
+
+                GTCore::IO::Write(file, &iMaterial, 4);
+                
+                if (material == nullptr)
+                {
+                    uint32_t length = 0;
+                    GTCore::IO::Write(file, &length, 4);
+                }
+                else
+                {
+                    uint32_t length = static_cast<uint32_t>(material->GetDefinition().fileName.GetLength());
+                    GTCore::IO::Write(file, &length, 4);
+                    GTCore::IO::Write(file, material->GetDefinition().fileName.c_str(), static_cast<size_t>(length));
+                }
+            }
+        }
+
 
         // Named Animation Segments.
         {
