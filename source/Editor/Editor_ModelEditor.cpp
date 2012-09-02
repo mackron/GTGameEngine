@@ -8,7 +8,7 @@ namespace GTEngine
     Editor_ModelEditor::Editor_ModelEditor(Editor &editor)
         : editor(editor),
           scene(), viewport(), camera(), renderer(),
-          modelNode(),
+          modelNode(), convexHullParentNode(), convexHullNodes(),
           GUI(), viewportEventHandler(editor.GetGame(), viewport),
           cameraXRotation(), cameraYRotation(),
           currentState(nullptr), loadedStates()
@@ -56,6 +56,11 @@ namespace GTEngine
         // Now we add the scene nodes to the scene.
         this->scene.AddSceneNode(this->camera);
         this->scene.AddSceneNode(this->modelNode);
+
+
+        // Convex hull.
+        this->convexHullParentNode.Hide();
+        this->scene.AddSceneNode(this->convexHullParentNode);
     }
 
     bool Editor_ModelEditor::LoadModel(const char* fileName)
@@ -67,6 +72,7 @@ namespace GTEngine
             auto oldModel = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
             if (oldModel != nullptr)
             {
+                this->DeleteConvexHulls();
                 ModelLibrary::Delete(oldModel);
             }
 
@@ -149,6 +155,68 @@ namespace GTEngine
         this->cameraXRotation = xRotation;
         this->cameraYRotation = yRotation;
         this->ApplyCameraRotation();
+    }
+
+
+    void Editor_ModelEditor::ShowConvexDecomposition()
+    {
+        // If we have content in our convex hull scene node list, it means we don't have to create anything.
+        if (this->convexHullNodes.count == 0)
+        {
+            auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
+            if (model != nullptr)
+            {
+                auto &convexHulls = model->GetConvexHulls();
+                for (size_t i = 0; i < convexHulls.count; ++i)
+                {
+                    auto hull = convexHulls[i];
+                    if (hull != nullptr)
+                    {
+                        auto hullModel = ModelLibrary::CreateFromConvexHull(*hull);
+                        hullModel->meshes[0]->GetMaterial()->SetParameter("DiffuseColour", random.Next<float>(0.0f, 1.0f), random.Next<float>(0.0f, 1.0f), random.Next<float>(0.0f, 1.0f));
+
+                        auto node = new SceneNode;
+                        node->AddModelComponent(hullModel);
+
+                        this->convexHullNodes.PushBack(node);
+
+                        this->convexHullParentNode.AttachChild(*node);
+                    }
+                }
+            }
+        }
+
+        // Now we just show the main scene node.
+        this->convexHullParentNode.Show();
+        this->modelNode.Hide();
+    }
+
+    void Editor_ModelEditor::HideConvexDecomposition()
+    {
+        this->convexHullParentNode.Hide();
+        this->modelNode.Show();
+    }
+
+    void Editor_ModelEditor::BuildConvexDecomposition(ConvexHullBuildSettings &settings)
+    {
+        // The old convex hulls need to be deleted.
+        this->DeleteConvexHulls();
+
+        // We build the convex decomposition on the definition directly.
+        auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
+        if (model != nullptr)
+        {
+            // We're going to be naughty here and do a const_cast so we can build the convex hulls.
+            auto &definition = const_cast<ModelDefinition &>(model->GetDefinition());
+            definition.BuildConvexDecomposition(settings);
+        }
+
+        
+
+        if (this->convexHullParentNode.IsVisible())
+        {
+            this->ShowConvexDecomposition();
+        }
     }
 
 
@@ -311,5 +379,16 @@ namespace GTEngine
     Model* Editor_ModelEditor::GetCurrentModel()
     {
         return this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
+    }
+
+    void Editor_ModelEditor::DeleteConvexHulls()
+    {
+        // We need to delete any existing convex hull nodes so that they are re-built to account for changes.
+        for (size_t i = 0; i < this->convexHullNodes.count; ++i)
+        {
+            // TODO: We need to delete the model we created for this node.
+            delete this->convexHullNodes[i];
+        }
+        this->convexHullNodes.Clear();
     }
 }

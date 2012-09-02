@@ -8,13 +8,13 @@ namespace GTEngine
     struct ConvexHullBuildSettings
     {
         ConvexHullBuildSettings()
-            : compacityWeight(0.1f),
-              volumeWeight(0.0f),
+            : compacityWeight(0.001f),
+              volumeWeight(500.0f),
               minClusters(1),
               verticesPerCH(100),
-              concavity(1000.0f),
-              smallClusterThreshold(0.1f),
-              connectedComponentsDist(30.0f),
+              concavity(0.001f),
+              smallClusterThreshold(0.001f),
+              connectedComponentsDist(0.001f),
               simplifiedTriangleCountTarget(0),
               addExtraDistPoints(false),
               addFacesPoints(false),

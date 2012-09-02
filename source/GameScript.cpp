@@ -278,28 +278,25 @@ namespace GTEngine
     }
 
 
+    /*
     int FFI_Editor_ModelEditor_ShowConvexDecomposition(GTCore::Script &script)
     {
-        (void)script;
-        //auto &game = GameScript::FFI::GetGameObject(script);
+        auto &game = GameScript::FFI::GetGameObject(script);
 
-        //game.GetEditor().GetModelEditor().ShowConvexDecomposition();
+        game.GetEditor().GetModelEditor().ShowConvexDecomposition();
         return 0;
     }
 
     int FFI_Editor_ModelEditor_HideConvexDecomposition(GTCore::Script &script)
     {
-        (void)script;
-        //auto &game = GameScript::FFI::GetGameObject(script);
+        auto &game = GameScript::FFI::GetGameObject(script);
 
-        //game.GetEditor().GetModelEditor().HideConvexDecomposition();
+        game.GetEditor().GetModelEditor().HideConvexDecomposition();
         return 0;
     }
 
     int FFI_Editor_ModelEditor_BuildConvexDecomposition(GTCore::Script &script)
     {
-        (void)script;
-        /*
         auto &game = GameScript::FFI::GetGameObject(script);
 
         ConvexHullBuildSettings settings;
@@ -315,9 +312,9 @@ namespace GTEngine
         settings.addFacesPoints                = script.ToBoolean(10);
 
         game.GetEditor().GetModelEditor().BuildConvexDecomposition(settings);
-        */
         return 0;
     }
+    */
 
 
     //////////////////////////////////////////////////////
@@ -375,33 +372,9 @@ namespace GTEngine
 
                 this->SetTableFunction(-1, "ResetCamera",              FFI_Editor_ModelEditor_ResetCamera);
 
-                this->SetTableFunction(-1, "ShowConvexDecomposition",  FFI_Editor_ModelEditor_ShowConvexDecomposition);
-                this->SetTableFunction(-1, "HideConvexDecomposition",  FFI_Editor_ModelEditor_HideConvexDecomposition);
-                this->SetTableFunction(-1, "BuildConvexDecomposition", FFI_Editor_ModelEditor_BuildConvexDecomposition);
-            }
-            this->Pop(1);
-
-
-            this->Push("MaterialEditor");
-            this->GetTableValue(-2);
-            if (this->IsTable(-1))
-            {
-            }
-            this->Pop(1);
-
-
-            this->Push("SceneEditor");
-            this->GetTableValue(-2);
-            if (this->IsTable(-1))
-            {
-            }
-            this->Pop(1);
-
-
-            this->Push("Sandbox");
-            this->GetTableValue(-2);
-            if (this->IsTable(-1))
-            {
+                //this->SetTableFunction(-1, "ShowConvexDecomposition",  FFI_Editor_ModelEditor_ShowConvexDecomposition);
+                //this->SetTableFunction(-1, "HideConvexDecomposition",  FFI_Editor_ModelEditor_HideConvexDecomposition);
+                //this->SetTableFunction(-1, "BuildConvexDecomposition", FFI_Editor_ModelEditor_BuildConvexDecomposition);
             }
             this->Pop(1);
         }
