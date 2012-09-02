@@ -6,6 +6,7 @@
 #include "../ConvexHullBuildSettings.hpp"
 #include "Editor3DViewportEventHandler.hpp"
 #include <GTGUI/Element.hpp>
+#include <GTCore/Random.hpp>
 
 namespace GTEngine
 {
@@ -51,6 +52,16 @@ namespace GTEngine
         /// Sets the rotation of the camera.
         void SetCameraRotation(float xRotation, float yRotation);
 
+
+        /// Shows the current model's convex decomposition.
+        void ShowConvexDecomposition();
+
+        /// Hides the current model's convex decomposition.
+        void HideConvexDecomposition();
+
+        /// Builds the convex decomposition of the current model.
+        void BuildConvexDecomposition(ConvexHullBuildSettings &settings);
+
         
         ///////////////////////////////////////////////////
         // Events.
@@ -72,6 +83,9 @@ namespace GTEngine
 
         /// Retrieves a pointer to the currently loaded model.
         Model* GetCurrentModel();
+
+        /// Deletes the convex hulls for the currently loaded model.
+        void DeleteConvexHulls();
 
 
     private:
@@ -96,6 +110,11 @@ namespace GTEngine
         /// The scene node containing the model.
         SceneNode modelNode;
 
+        /// The parent node for convex hulls. Hidden by default.
+        GTEngine::SceneNode convexHullParentNode;
+
+        /// The list of scene nodes containing the models for the visual representation of the convex hulls.
+        GTCore::Vector<GTEngine::SceneNode*> convexHullNodes;
 
 
         /// Structure containing the relevant GUI elements.
@@ -150,6 +169,9 @@ namespace GTEngine
 
         /// A map of State objects, mapped to the path of the appropriate model.
         GTCore::Dictionary<State*> loadedStates;
+
+        /// The random number generator for convex hull colours, and whatever else we may need.
+        GTCore::Random random;
     };
 }
 

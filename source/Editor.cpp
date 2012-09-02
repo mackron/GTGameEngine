@@ -237,6 +237,10 @@ namespace GTEngine
             if (script.IsTable(-1))
             {
                 script.SetTableFunction(-1, "SetMaterial", FFI::ModelEditorFFI::SetMaterial);
+
+                script.SetTableFunction(-1, "ShowConvexDecomposition",  FFI::ModelEditorFFI::ShowConvexDecomposition);
+                script.SetTableFunction(-1, "HideConvexDecomposition",  FFI::ModelEditorFFI::HideConvexDecomposition);
+                script.SetTableFunction(-1, "BuildConvexDecomposition", FFI::ModelEditorFFI::BuildConvexDecomposition);
             }
             script.Pop(1);
         }
@@ -310,6 +314,42 @@ namespace GTEngine
     {
         script.Push(FFI::GetEditor(script).GetModelEditor().SetMaterial(script.ToInteger(1) - 1, script.ToString(2)));  // -1 because we will have passed a 1-based index from Lua.
         return 1;
+    }
+
+    int Editor::FFI::ModelEditorFFI::ShowConvexDecomposition(GTCore::Script &script)
+    {
+        auto &game = GameScript::FFI::GetGameObject(script);
+
+        game.GetEditor().GetModelEditor().ShowConvexDecomposition();
+        return 0;
+    }
+
+    int Editor::FFI::ModelEditorFFI::HideConvexDecomposition(GTCore::Script &script)
+    {
+        auto &game = GameScript::FFI::GetGameObject(script);
+
+        game.GetEditor().GetModelEditor().HideConvexDecomposition();
+        return 0;
+    }
+
+    int Editor::FFI::ModelEditorFFI::BuildConvexDecomposition(GTCore::Script &script)
+    {
+        auto &game = GameScript::FFI::GetGameObject(script);
+
+        ConvexHullBuildSettings settings;
+        settings.compacityWeight               = script.ToFloat(1);
+        settings.volumeWeight                  = script.ToFloat(2);
+        settings.minClusters                   = static_cast<unsigned int>(script.ToInteger(3));
+        settings.verticesPerCH                 = static_cast<unsigned int>(script.ToInteger(4));
+        settings.concavity                     = script.ToFloat(5);
+        settings.smallClusterThreshold         = script.ToFloat(6);
+        settings.connectedComponentsDist       = script.ToFloat(7);
+        settings.simplifiedTriangleCountTarget = static_cast<unsigned int>(script.ToInteger(8));
+        settings.addExtraDistPoints            = script.ToBoolean(9);
+        settings.addFacesPoints                = script.ToBoolean(10);
+
+        game.GetEditor().GetModelEditor().BuildConvexDecomposition(settings);
+        return 0;
     }
 }
 
