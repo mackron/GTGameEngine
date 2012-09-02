@@ -990,6 +990,7 @@ namespace GTEngine
     {
         this->keyDownMap.Add(e.keypressed.key, true);
 
+        this->gui.OnKeyPressed(e.keypressed.key);
         this->OnKeyPressed(e.keypressed.key);
 
         if (this->currentGameState != nullptr)

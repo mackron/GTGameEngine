@@ -347,7 +347,6 @@ namespace GTEngine
         }
 
         
-
         // Now we need to draw everything on every attached viewport.
         for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
         {

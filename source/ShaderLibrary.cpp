@@ -715,6 +715,7 @@ namespace GTEngine
         delete GUITextShader;
         delete GUIShadowShader;
         delete FullscreenQuadShader;
+        delete ColouredBGQuadShader;
         delete LineShader;
 
         GUIQuadShader        = nullptr;
@@ -722,6 +723,7 @@ namespace GTEngine
         GUITextShader        = nullptr;
         GUIShadowShader      = nullptr;
         FullscreenQuadShader = nullptr;
+        ColouredBGQuadShader = nullptr;
         LineShader           = nullptr;
 
         ShaderLibraryShaders::Clear();

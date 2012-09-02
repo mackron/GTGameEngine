@@ -304,7 +304,6 @@ namespace GTEngine
 
     void EditorMode_ModelEditor::OnSwapRCQueues()
     {
-        this->renderer.OnSwapRCQueues();
     }
 
 

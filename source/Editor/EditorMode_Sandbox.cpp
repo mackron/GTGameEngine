@@ -141,7 +141,6 @@ namespace GTEngine
 
     void EditorMode_Sandbox::OnSwapRCQueues()
     {
-        this->renderer.OnSwapRCQueues();
     }
 }
 

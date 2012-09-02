@@ -33,6 +33,18 @@ namespace GTEngine
         bool LoadModel(const char* fileName);
 
 
+        /// Sets the materials of the current model.
+        ///
+        /// @param index    [in] The index of the material being changed.
+        /// @param fileName [in] The file name of the material to load.
+        ///
+        /// @return True if the material is set successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This does not update the material of every loaded mesh of the same definition. This will be done once the model is saved and the editor is closed or reopened.
+        bool SetMaterial(int index, const char* fileName);
+
+
         /// Resets the camera to the default position.
         void ResetCamera();
 
@@ -58,6 +70,8 @@ namespace GTEngine
         /// Restores the state defined by 'currentState'.
         void RestoreState();
 
+        /// Retrieves a pointer to the currently loaded model.
+        Model* GetCurrentModel();
 
 
     private:
@@ -113,7 +127,8 @@ namespace GTEngine
             State()
                 : cameraPosition(), cameraOrientation(),
                   cameraXRotation(0.0f), cameraYRotation(0.0f),
-                  showConvexDecomposition(false), convexDecompositionSettings()
+                  showConvexDecomposition(false), convexDecompositionSettings(),
+                  materials()
             {
             }
 
@@ -126,6 +141,8 @@ namespace GTEngine
             bool showConvexDecomposition;
 
             ConvexHullBuildSettings convexDecompositionSettings;
+
+            GTCore::Vector<GTCore::String> materials;
         };
 
         /// A pointer to the State object for the currently open model.

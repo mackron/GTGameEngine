@@ -1,0 +1,47 @@
+panel-groupbox
+{
+    padding:                 4px
+    horizontal-align:        left
+    transparent-mouse-input: true
+}
+
+panel-groupbox-title
+{
+    child-plane:    horizontal
+    vertical-align: center
+}
+
+panel-groupbox-title-arrow
+{
+    background-image:        std-arrow-down
+    background-image-color:  #999
+    
+    width:                   8px
+    height:                  8px
+    
+    margin-right:            4px
+    
+    transparent-mouse-input: true
+}
+
+panel-groupbox-title-text
+{
+    text-color:              #999
+    font-style:              bold
+    
+    transparent-mouse-input: true
+}
+
+panel-groupbox-body
+{
+    margin-top:  8px
+}
+
+panel-groupbox-separator
+{
+    width:         100%
+    border-top:    1px #2a2a2a
+    border-bottom: 1px #494949
+    
+    margin-bottom: 0px
+}

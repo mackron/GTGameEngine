@@ -15,8 +15,8 @@ namespace GTEngine
 {
     Editor::Editor(Game &game)
         : game(game), GUI(),
-          modelEditorMode(*this), sandbox(*this),
-          currentMode(nullptr), previousMode(nullptr),
+          //modelEditorMode(*this), sandbox(*this),
+          //currentMode(nullptr), previousMode(nullptr),
           modelEditor(*this), imageEditor(*this),
           isStarted(false), isOpen(false),
           dataFilesWatcherEventHandler(*this)
@@ -50,11 +50,11 @@ namespace GTEngine
                 this->game.GetDataFilesWatcher().AddEventHandler(this->dataFilesWatcherEventHandler);
                 
                 // Here is where we startup our editor modes.
-                this->modelEditorMode.Startup(guiServer);
-                this->sandbox.Startup(guiServer);
+                //this->modelEditorMode.Startup(guiServer);
+                //this->sandbox.Startup(guiServer);
 
                 // Here we enable the default mode.
-                this->SwitchToModelEditorMode();
+                //this->SwitchToModelEditorMode();
                 this->isStarted = true;
             }
             else
@@ -99,6 +99,7 @@ namespace GTEngine
     }
 
 
+    /*
     void Editor::SwitchToModelEditorMode()
     {
         this->SetEditorMode(&this->modelEditorMode);
@@ -113,14 +114,17 @@ namespace GTEngine
     {
         this->SetEditorMode(this->previousMode);
     }
+    */
 
 
     void Editor::Update(double deltaTimeInSeconds)
     {
+        /*
         if (this->currentMode != nullptr)
         {
             this->currentMode->OnUpdate(deltaTimeInSeconds);
         }
+        */
 
         this->modelEditor.Update(deltaTimeInSeconds);
     }
@@ -226,10 +230,20 @@ namespace GTEngine
             script.SetTableFunction(-1, "OnModelActivated", FFI::OnModelActivated);
             script.SetTableFunction(-1, "OnImageActivated", FFI::OnImageActivated);
             script.SetTableFunction(-1, "OnSoundActivated", FFI::OnSoundActivated);
+
+
+            script.Push("ModelEditor");
+            script.GetTableValue(-2);
+            if (script.IsTable(-1))
+            {
+                script.SetTableFunction(-1, "SetMaterial", FFI::ModelEditorFFI::SetMaterial);
+            }
+            script.Pop(1);
         }
         script.Pop(1);
     }
 
+    /*
     void Editor::SetEditorMode(EditorMode* newMode)
     {
         if (this->currentMode != newMode)
@@ -247,7 +261,7 @@ namespace GTEngine
             }
         }
     }
-
+    */
 
 
 
@@ -288,6 +302,14 @@ namespace GTEngine
     {
         FFI::GetEditor(script).OnSoundActivated(script.ToString(1));
         return 0;
+    }
+
+
+    // ModelEditor
+    int Editor::FFI::ModelEditorFFI::SetMaterial(GTCore::Script &script)
+    {
+        script.Push(FFI::GetEditor(script).GetModelEditor().SetMaterial(script.ToInteger(1) - 1, script.ToString(2)));  // -1 because we will have passed a 1-based index from Lua.
+        return 1;
     }
 }
 

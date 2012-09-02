@@ -197,37 +197,21 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////////
     // Editor FFI
 
-    /*
-    int FFI_Editor_Open(GTCore::Script &script)
-    {
-        auto &game = GameScript::FFI::GetGameObject(script);
-
-        game.OpenEditor();
-        return 0;
-    }
-
-    int FFI_Editor_Close(GTCore::Script &script)
-    {
-        auto &game = GameScript::FFI::GetGameObject(script);
-
-        game.CloseEditor();
-        return 0;
-    }
-    */
-
     int FFI_Editor_SwitchToModelEditorMode(GTCore::Script &script)
     {
-        auto &game = GameScript::FFI::GetGameObject(script);
+        (void)script;
+        //auto &game = GameScript::FFI::GetGameObject(script);
 
-        game.GetEditor().SwitchToModelEditorMode();
+        //game.GetEditor().SwitchToModelEditorMode();
         return 0;
     }
 
     int FFI_Editor_SwitchToSandboxMode(GTCore::Script &script)
     {
-        auto &game = GameScript::FFI::GetGameObject(script);
+        (void)script;
+        //auto &game = GameScript::FFI::GetGameObject(script);
 
-        game.GetEditor().SwitchToSandboxMode();
+        //game.GetEditor().SwitchToSandboxMode();
         return 0;
     }
 
@@ -238,21 +222,23 @@ namespace GTEngine
 
     int FFI_Editor_ModelEditor_Load(GTCore::Script &script)
     {
-        auto &game = GameScript::FFI::GetGameObject(script);
+        (void)script;
+        //auto &game = GameScript::FFI::GetGameObject(script);
 
-        game.GetEditor().GetModelEditor().LoadModel(script.ToString(1));
+        //game.GetEditor().GetModelEditor().LoadModel(script.ToString(1));
         return 0;
     }
 
     int FFI_Editor_ModelEditor_Save(GTCore::Script &script)
     {
-        auto &game = GameScript::FFI::GetGameObject(script);
+        (void)script;
+        //auto &game = GameScript::FFI::GetGameObject(script);
 
-        game.GetEditor().GetModelEditor().SaveModel(script.ToString(1));
+        //game.GetEditor().GetModelEditor().SaveModel(script.ToString(1));
         return 0;
     }
 
-
+    /*
     int FFI_Editor_ModelEditor_SetMaterial(GTCore::Script &script)
     {
         auto &game = GameScript::FFI::GetGameObject(script);
@@ -260,52 +246,60 @@ namespace GTEngine
         game.GetEditor().GetModelEditor().SetMaterial(script.ToInteger(1), script.ToString(2));
         return 0;
     }
+    */
 
 
     int FFI_Editor_ModelEditor_PlayAnimation(GTCore::Script &script)
     {
-        auto &game = GameScript::FFI::GetGameObject(script);
+        (void)script;
+        //auto &game = GameScript::FFI::GetGameObject(script);
 
-        game.GetEditor().GetModelEditor().PlayAnimation();
+        //game.GetEditor().GetModelEditor().PlayAnimation();
         return 0;
     }
 
     int FFI_Editor_ModelEditor_StopAnimation(GTCore::Script &script)
     {
-        auto &game = GameScript::FFI::GetGameObject(script);
+        (void)script;
+        //auto &game = GameScript::FFI::GetGameObject(script);
 
-        game.GetEditor().GetModelEditor().StopAnimation();
+        //game.GetEditor().GetModelEditor().StopAnimation();
         return 0;
     }
 
 
     int FFI_Editor_ModelEditor_ResetCamera(GTCore::Script &script)
     {
-        auto &game = GameScript::FFI::GetGameObject(script);
+        (void)script;
+        //auto &game = GameScript::FFI::GetGameObject(script);
 
-        game.GetEditor().GetModelEditor().ResetCamera();
+        //game.GetEditor().GetModelEditor().ResetCamera();
         return 0;
     }
 
 
     int FFI_Editor_ModelEditor_ShowConvexDecomposition(GTCore::Script &script)
     {
-        auto &game = GameScript::FFI::GetGameObject(script);
+        (void)script;
+        //auto &game = GameScript::FFI::GetGameObject(script);
 
-        game.GetEditor().GetModelEditor().ShowConvexDecomposition();
+        //game.GetEditor().GetModelEditor().ShowConvexDecomposition();
         return 0;
     }
 
     int FFI_Editor_ModelEditor_HideConvexDecomposition(GTCore::Script &script)
     {
-        auto &game = GameScript::FFI::GetGameObject(script);
+        (void)script;
+        //auto &game = GameScript::FFI::GetGameObject(script);
 
-        game.GetEditor().GetModelEditor().HideConvexDecomposition();
+        //game.GetEditor().GetModelEditor().HideConvexDecomposition();
         return 0;
     }
 
     int FFI_Editor_ModelEditor_BuildConvexDecomposition(GTCore::Script &script)
     {
+        (void)script;
+        /*
         auto &game = GameScript::FFI::GetGameObject(script);
 
         ConvexHullBuildSettings settings;
@@ -321,6 +315,7 @@ namespace GTEngine
         settings.addFacesPoints                = script.ToBoolean(10);
 
         game.GetEditor().GetModelEditor().BuildConvexDecomposition(settings);
+        */
         return 0;
     }
 
@@ -373,7 +368,7 @@ namespace GTEngine
                 this->SetTableFunction(-1, "Load",                     FFI_Editor_ModelEditor_Load);
                 this->SetTableFunction(-1, "Save",                     FFI_Editor_ModelEditor_Save);
 
-                this->SetTableFunction(-1, "SetMaterial",              FFI_Editor_ModelEditor_SetMaterial);
+                //this->SetTableFunction(-1, "SetMaterial",              FFI_Editor_ModelEditor_SetMaterial);
 
                 this->SetTableFunction(-1, "PlayAnimation",            FFI_Editor_ModelEditor_PlayAnimation);
                 this->SetTableFunction(-1, "StopAnimation",            FFI_Editor_ModelEditor_StopAnimation);
