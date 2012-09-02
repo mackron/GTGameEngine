@@ -23,6 +23,8 @@ namespace GTEngine
         this->renderer.SetClearColour(0.5f, 0.5f, 0.5f);
         this->renderer.EnableColourClears();
 
+        // We need to ensure the model node has a model component.
+        this->modelNode.AddComponent<GTEngine::ModelComponent>();
 
         this->ResetCamera();
     }
@@ -34,6 +36,8 @@ namespace GTEngine
         {
             delete this->loadedStates.buffer[i]->value;
         }
+
+        ModelLibrary::Delete(this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel());
     }
 
     void Editor_ModelEditor::Startup()
@@ -43,14 +47,10 @@ namespace GTEngine
         this->GUI.Viewport = gui.GetElementByID("Editor_ModelEditor_Viewport");
         this->GUI.Viewport->AttachEventHandler(this->viewportEventHandler);
 
-
         // We use the camera for our lights.
         this->camera.AddComponent<GTEngine::CameraComponent>();
         this->camera.AddDirectionalLightComponent(0.5f, 0.5f, 0.5f);
         this->camera.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
-
-        // We need to ensure the model node has a model component.
-        this->modelNode.AddComponent<GTEngine::ModelComponent>();
 
 
         // Now we add the scene nodes to the scene.
@@ -92,6 +92,18 @@ namespace GTEngine
                 this->currentState = new State;
                 this->loadedStates.Add(fileName, this->currentState);
 
+                // Here we will initialise the state based on the model's definition.
+                auto &modelDefinition = newModel->GetDefinition();
+
+                // Materials.
+                for (size_t iMaterial = 0; iMaterial < modelDefinition.meshMaterials.count; ++iMaterial)
+                {
+                    this->currentState->materials.PushBack(modelDefinition.meshMaterials[iMaterial]->GetDefinition().fileName.c_str());
+                }
+
+                // Convex decomposition.
+                this->currentState->convexDecompositionSettings = modelDefinition.convexHullBuildSettings;
+
                 // TODO: Do some kind of automatic positioning based on the size of the bounding box.
                 this->currentState->cameraPosition.z = 10.0f;
             }
@@ -105,6 +117,25 @@ namespace GTEngine
         return false;
     }
 
+    bool Editor_ModelEditor::SetMaterial(int index, const char* fileName)
+    {
+        auto model = this->GetCurrentModel();
+        if (model != nullptr)
+        {
+            if (model->meshes[index]->SetMaterial(fileName))
+            {
+                // This is painful, but we're going to cheat here and do a const_cast so we can modify the model's definition to hold the new base material.
+                auto &definition = const_cast<ModelDefinition &>(model->GetDefinition());
+
+                MaterialLibrary::Delete(definition.meshMaterials[index]);
+                definition.meshMaterials[index] = MaterialLibrary::CreateCopy(*model->meshes[index]->GetMaterial());
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 
     void Editor_ModelEditor::ResetCamera()
@@ -196,18 +227,29 @@ namespace GTEngine
             this->currentState->cameraXRotation   = this->cameraXRotation;
             this->currentState->cameraYRotation   = this->cameraYRotation;
 
-            this->currentState->showConvexDecomposition = script.GetBoolean("Editor_ModelEditor_ShowConvexDecomposition:IsChecked()");
 
-            this->currentState->convexDecompositionSettings.compacityWeight               = script.GetFloat("Editor_ModelEditor_CD_CompacityWeight:GetValue()");
-            this->currentState->convexDecompositionSettings.volumeWeight                  = script.GetFloat("Editor_ModelEditor_CD_VolumeWeight:GetValue()");
-            this->currentState->convexDecompositionSettings.minClusters                   = static_cast<unsigned int>(script.GetInteger("Editor_ModelEditor_CD_MinClusters:GetValue()"));
-            this->currentState->convexDecompositionSettings.verticesPerCH                 = static_cast<unsigned int>(script.GetInteger("Editor_ModelEditor_CD_VerticesPerCH:GetValue()"));
-            this->currentState->convexDecompositionSettings.concavity                     = script.GetFloat("Editor_ModelEditor_CD_Concavity:GetValue()");
-            this->currentState->convexDecompositionSettings.smallClusterThreshold         = script.GetFloat("Editor_ModelEditor_CD_SmallThreshold:GetValue()");
-            this->currentState->convexDecompositionSettings.connectedComponentsDist       = script.GetFloat("Editor_ModelEditor_CD_ConnectedDistance:GetValue()");
-            this->currentState->convexDecompositionSettings.simplifiedTriangleCountTarget = static_cast<unsigned int>(script.GetInteger("Editor_ModelEditor_CD_SimplifiedTriangleCount:GetValue()"));
-            this->currentState->convexDecompositionSettings.addExtraDistPoints            = script.GetBoolean("Editor_ModelEditor_CD_AddExtraDistPoints:IsChecked()");
-            this->currentState->convexDecompositionSettings.addFacesPoints                = script.GetBoolean("Editor_ModelEditor_CD_AddFacePoints:IsChecked()");
+            for (int i = 0; i < static_cast<int>(this->currentState->materials.count); ++i)
+            {
+                GTCore::String scriptString;
+                scriptString.AssignFormatted("Editor_ModelEditor_Panel_Materials:GetMaterial(%d)", i + 1);      // <-- +1 because Lua is 1 based.
+
+                this->currentState->materials[i] = script.GetString(scriptString.c_str());
+            }
+
+
+
+            this->currentState->showConvexDecomposition = script.GetBoolean("Editor_ModelEditor_Panel_CD.ShowConvexDecomposition:IsChecked()");
+
+            this->currentState->convexDecompositionSettings.compacityWeight               = script.GetFloat("Editor_ModelEditor_Panel_CD.CompacityWeight:GetValue()");
+            this->currentState->convexDecompositionSettings.volumeWeight                  = script.GetFloat("Editor_ModelEditor_Panel_CD.VolumeWeight:GetValue()");
+            this->currentState->convexDecompositionSettings.minClusters                   = static_cast<unsigned int>(script.GetInteger("Editor_ModelEditor_Panel_CD.MinClusters:GetValue()"));
+            this->currentState->convexDecompositionSettings.verticesPerCH                 = static_cast<unsigned int>(script.GetInteger("Editor_ModelEditor_Panel_CD.VerticesPerCH:GetValue()"));
+            this->currentState->convexDecompositionSettings.concavity                     = script.GetFloat("Editor_ModelEditor_Panel_CD.Concavity:GetValue()");
+            this->currentState->convexDecompositionSettings.smallClusterThreshold         = script.GetFloat("Editor_ModelEditor_Panel_CD.SmallThreshold:GetValue()");
+            this->currentState->convexDecompositionSettings.connectedComponentsDist       = script.GetFloat("Editor_ModelEditor_Panel_CD.ConnectedDistance:GetValue()");
+            this->currentState->convexDecompositionSettings.simplifiedTriangleCountTarget = static_cast<unsigned int>(script.GetInteger("Editor_ModelEditor_Panel_CD.SimplifiedTriangleCount:GetValue()"));
+            this->currentState->convexDecompositionSettings.addExtraDistPoints            = script.GetBoolean("Editor_ModelEditor_Panel_CD.AddExtraDistPoints:IsChecked()");
+            this->currentState->convexDecompositionSettings.addFacesPoints                = script.GetBoolean("Editor_ModelEditor_Panel_CD.AddFacePoints:IsChecked()");
         }
     }
 
@@ -222,22 +264,34 @@ namespace GTEngine
             this->cameraXRotation = this->currentState->cameraXRotation;
             this->cameraYRotation = this->currentState->cameraYRotation;
 
+
+            // Materials.
+            script.Execute("Editor_ModelEditor_Panel_Materials:RemoveMaterials()");
+            for (size_t i = 0; i < this->currentState->materials.count; ++i)
+            {
+                GTCore::String scriptString;
+                scriptString.AssignFormatted("Editor_ModelEditor_Panel_Materials:AddMaterial('%s')", this->currentState->materials[i].c_str());
+                
+                script.Execute(scriptString.c_str());
+            }
+
+
             GTCore::String scriptString;
-            scriptString.AssignFormatted("Editor_ModelEditor_ShowConvexDecomposition:SetChecked(%s);", this->currentState->showConvexDecomposition ? "true" : "false");
+            scriptString.AssignFormatted("Editor_ModelEditor_Panel_CD.ShowConvexDecomposition:SetChecked(%s);", this->currentState->showConvexDecomposition ? "true" : "false");
             script.Execute(scriptString.c_str());
             
             scriptString.AssignFormatted
             (
-                "Editor_ModelEditor_CD_CompacityWeight:SetValue(%f);"
-                "Editor_ModelEditor_CD_VolumeWeight:SetValue(%f);"
-                "Editor_ModelEditor_CD_MinClusters:SetValue(%d);"
-                "Editor_ModelEditor_CD_VerticesPerCH:SetValue(%d);"
-                "Editor_ModelEditor_CD_Concavity:SetValue(%f);"
-                "Editor_ModelEditor_CD_SmallThreshold:SetValue(%f);"
-                "Editor_ModelEditor_CD_ConnectedDistance:SetValue(%f);"
-                "Editor_ModelEditor_CD_SimplifiedTriangleCount:SetValue(%d);"
-                "Editor_ModelEditor_CD_AddExtraDistPoints:SetChecked(%s);"
-                "Editor_ModelEditor_CD_AddFacePoints:SetChecked(%s);",
+                "Editor_ModelEditor_Panel_CD.CompacityWeight:SetValue(%f);"
+                "Editor_ModelEditor_Panel_CD.VolumeWeight:SetValue(%f);"
+                "Editor_ModelEditor_Panel_CD.MinClusters:SetValue(%d);"
+                "Editor_ModelEditor_Panel_CD.VerticesPerCH:SetValue(%d);"
+                "Editor_ModelEditor_Panel_CD.Concavity:SetValue(%f);"
+                "Editor_ModelEditor_Panel_CD.SmallThreshold:SetValue(%f);"
+                "Editor_ModelEditor_Panel_CD.ConnectedDistance:SetValue(%f);"
+                "Editor_ModelEditor_Panel_CD.SimplifiedTriangleCount:SetValue(%d);"
+                "Editor_ModelEditor_Panel_CD.AddExtraDistPoints:SetChecked(%s);"
+                "Editor_ModelEditor_Panel_CD.AddFacePoints:SetChecked(%s);",
 
                 this->currentState->convexDecompositionSettings.compacityWeight,
                 this->currentState->convexDecompositionSettings.volumeWeight,
@@ -252,5 +306,10 @@ namespace GTEngine
             );
             script.Execute(scriptString.c_str());
         }
+    }
+
+    Model* Editor_ModelEditor::GetCurrentModel()
+    {
+        return this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
     }
 }

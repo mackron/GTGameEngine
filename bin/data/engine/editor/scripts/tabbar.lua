@@ -91,6 +91,11 @@ function GTGUI.Element:TabBar()
     end
     
     
+    function self:GetActiveTab()
+        return self.activeTab;
+    end
+    
+    
     function self:OnTabAdded(arg1)
         if type(arg1) == 'function' then
             self:BindEvent('OnTabAdded', arg1);

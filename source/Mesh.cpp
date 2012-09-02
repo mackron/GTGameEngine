@@ -36,15 +36,23 @@ namespace GTEngine
         this->deleteMaterial = false;
     }
 
-    void Mesh::SetMaterial(const char* materialFileName)
+    bool Mesh::SetMaterial(const char* materialFileName)
     {
         if (this->deleteMaterial)
         {
             GTEngine::MaterialLibrary::Delete(this->material);
         }
 
-        this->material       = GTEngine::MaterialLibrary::Create(materialFileName);
-        this->deleteMaterial = false;
+        auto newMaterial = GTEngine::MaterialLibrary::Create(materialFileName);
+        if (newMaterial != nullptr)
+        {
+            this->material       = newMaterial;
+            this->deleteMaterial = false;
+
+            return true;
+        }
+
+        return false;
     }
 
 

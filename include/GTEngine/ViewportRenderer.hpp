@@ -56,13 +56,6 @@ namespace GTEngine
         ///     direct rendering operations.
         virtual void Render() = 0;
 
-        /// Called when the main renderer's RC buffers have been swapped. This occurs once every frame. Renderer's need to know
-        /// about this because they may need to manage their rendering command objects.
-        ///
-        /// This function is called synchronously between frames, so it's a good time to do any rendering object modifications if
-        /// required. In particular, doing the actual framebuffer resize might be best done here.
-        virtual void OnSwapRCQueues() = 0;
-
 
         /// Retrieves the buffer containing the final colour output.
         virtual Texture2D* GetFinalColourOutputBuffer() = 0;

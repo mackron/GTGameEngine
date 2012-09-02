@@ -458,7 +458,6 @@ namespace GTEngine
         void ResizeFramebuffer(unsigned int newWidth, unsigned int newHeight);
 
         void Render();
-        void OnSwapRCQueues();
 
 
         Texture2D* GetFinalColourOutputBuffer();

@@ -56,22 +56,22 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the model sub-editor.
-              EditorMode_ModelEditor & GetModelEditor()       { return this->modelEditorMode; }
-        const EditorMode_ModelEditor & GetModelEditor() const { return this->modelEditorMode; }
+              Editor_ModelEditor & GetModelEditor()       { return this->modelEditor; }
+        const Editor_ModelEditor & GetModelEditor() const { return this->modelEditor; }
 
         /// Retrieves a reference to the sandbox sub-editor.s
-              EditorMode_Sandbox & GetSandbox()       { return this->sandbox; }
-        const EditorMode_Sandbox & GetSandbox() const { return this->sandbox; }
+        //      EditorMode_Sandbox & GetSandbox()       { return this->sandbox; }
+        //const EditorMode_Sandbox & GetSandbox() const { return this->sandbox; }
 
 
         /// Switches editor modes.
-        void SwitchToModelEditorMode();
+        //void SwitchToModelEditorMode();
 
         /// Switches to the sandbox mode.
-        void SwitchToSandboxMode();
+        //void SwitchToSandboxMode();
 
         /// Switches to the previous mode.
-        void SwitchToPreviousMode();
+        //void SwitchToPreviousMode();
 
 
 
@@ -124,7 +124,7 @@ namespace GTEngine
         /// Helper function for setting the editor mode.
         ///
         /// @param mode [in] A pointer to the new editor mode. Can be nullptr.
-        void SetEditorMode(EditorMode* mode);
+        //void SetEditorMode(EditorMode* mode);
 
 
 
@@ -148,16 +148,16 @@ namespace GTEngine
 
 
         /// The model editor.
-        EditorMode_ModelEditor modelEditorMode;
+        //EditorMode_ModelEditor modelEditorMode;
 
         /// The sandbox mode.
-        EditorMode_Sandbox sandbox;
+        //EditorMode_Sandbox sandbox;
 
         /// The current editor mode.
-        EditorMode* currentMode;
+        //EditorMode* currentMode;
 
         /// The previously current mode. Good for toggling.
-        EditorMode* previousMode;
+        //EditorMode* previousMode;
 
 
         /// The model editor.
@@ -216,6 +216,11 @@ namespace GTEngine
             static int OnModelActivated(GTCore::Script &script);
             static int OnImageActivated(GTCore::Script &script);
             static int OnSoundActivated(GTCore::Script &script);
+
+            struct ModelEditorFFI
+            {
+                static int SetMaterial(GTCore::Script &script);
+            };
         };
     };
 }

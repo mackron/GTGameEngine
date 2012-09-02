@@ -114,9 +114,13 @@ namespace GTEngine
         ///
         /// @param materialFileName [in] The file name of the material to load and use as the material for this mesh.
         ///
+        /// @return True if the material is set properly; false otherwise.
+        ///
         /// @remarks
-        ///     When this method is used for setting the material, the mesh wi
-        void SetMaterial(const char* materialFileName);
+        ///     When this method is used for setting the material, the mesh will memory manage the material itself.
+        ///     @par
+        ///     If the material does not exist, it will remain unchanged.
+        bool SetMaterial(const char* materialFileName);
 
 
         /// Retrieves the base geometry of the mesh.

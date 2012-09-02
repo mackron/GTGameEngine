@@ -85,16 +85,6 @@ namespace GTEngine
         if (newMesh != nullptr)
         {
             newMesh->SetSkinningData(this->bones.buffer, skinningVertexAttributes);
-
-            /*
-            for (size_t i = 0; i < bonesIn.count; ++i)
-            {
-                auto bone = bonesIn.buffer[i];
-                assert(bone != nullptr);
-
-                this->AddBoneWeightsToMesh(*newMesh, *bone);
-            }
-            */
         }
 
         return newMesh;
