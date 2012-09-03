@@ -91,6 +91,9 @@ namespace GTEngine
         {
             this->GUI.EditorMain->Hide();
 
+            // We need to make sure everything is saved. We'll do this via the scripting environment.
+            this->game.GetScript().Execute("Editor.SaveAllItems()");
+
             // We don't want to be watching data files anymore.
             this->game.DisableDataFilesWatching();
 
