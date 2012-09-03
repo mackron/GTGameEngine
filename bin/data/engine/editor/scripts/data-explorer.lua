@@ -30,6 +30,34 @@ function GTGUI.Element:DataExplorer()
             item:ShowIcon('file-icon');
             item.icon:SetStyle('background-image-color', '#aaa');
         end
+        
+        item.titleContainer:OnTear(function()
+            if not item:GetParent().isRoot then
+                -- We need to create an element that we'll use as the drag-and-drop element.
+                local dragAndDropElement = GTGUI.Server.New("<div style='visible:false; positioning:absolute; z-index:100; opacity:50%; width:auto; padding:4px 2px; text-color:#ccc; font-style:bold; background-color:#666; vertical-align:center;' />");
+                dragAndDropElement:SetText(item:GetText());
+                dragAndDropElement:OnSize(function()
+                    GTGUI.Server.AttachElementToMouse(dragAndDropElement, -(dragAndDropElement:GetWidth() / 2), -(dragAndDropElement:GetHeight() / 2));
+                    dragAndDropElement:Show();
+                end)
+                dragAndDropElement:WatchLMBUp(function()
+                    GTGUI.Server.DeleteElement(dragAndDropElement);
+                end)
+                
+                dragAndDropElement.isAsset = true;
+                dragAndDropElement.path    = item:GetShortPath();
+            end
+        end)
+        
+        
+        function item:GetShortPath()
+            local parent = item:GetParent();
+            if parent and not parent:GetParent().isRoot then
+                return parent:GetShortPath() .. "/" .. item:GetText();
+            else
+                return item:GetText();
+            end
+        end
     end
     
     function self:RemoveItemByPath(path)
