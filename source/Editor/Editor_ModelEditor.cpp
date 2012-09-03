@@ -123,6 +123,11 @@ namespace GTEngine
         return false;
     }
 
+    bool Editor_ModelEditor::SaveModel(const char* fileName)
+    {
+        return ModelLibrary::WriteToFile(fileName);
+    }
+
     bool Editor_ModelEditor::SetMaterial(int index, const char* fileName)
     {
         auto model = this->GetCurrentModel();

@@ -109,7 +109,8 @@ namespace GTEngine
         auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
         if (model != nullptr)
         {
-            return ModelLibrary::WriteToFile(*model, fileNameIn);
+            return false;
+            //return ModelLibrary::WriteToFile(*model, fileNameIn);
         }
 
         return false;

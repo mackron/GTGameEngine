@@ -236,6 +236,8 @@ namespace GTEngine
             script.GetTableValue(-2);
             if (script.IsTable(-1))
             {
+                script.SetTableFunction(-1, "SaveModel", FFI::ModelEditorFFI::SaveModel);
+
                 script.SetTableFunction(-1, "SetMaterial", FFI::ModelEditorFFI::SetMaterial);
 
                 script.SetTableFunction(-1, "ShowConvexDecomposition",  FFI::ModelEditorFFI::ShowConvexDecomposition);
@@ -310,6 +312,12 @@ namespace GTEngine
 
 
     // ModelEditor
+    int Editor::FFI::ModelEditorFFI::SaveModel(GTCore::Script &script)
+    {
+        script.Push(FFI::GetEditor(script).GetModelEditor().SaveModel(script.ToString(1)));
+        return 1;
+    }
+
     int Editor::FFI::ModelEditorFFI::SetMaterial(GTCore::Script &script)
     {
         script.Push(FFI::GetEditor(script).GetModelEditor().SetMaterial(script.ToInteger(1) - 1, script.ToString(2)));  // -1 because we will have passed a 1-based index from Lua.

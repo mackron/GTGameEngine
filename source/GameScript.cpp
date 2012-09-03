@@ -220,23 +220,23 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////////
     // Editor.ModelEditor FFI
 
+    /*
     int FFI_Editor_ModelEditor_Load(GTCore::Script &script)
     {
-        (void)script;
-        //auto &game = GameScript::FFI::GetGameObject(script);
+        auto &game = GameScript::FFI::GetGameObject(script);
 
-        //game.GetEditor().GetModelEditor().LoadModel(script.ToString(1));
+        game.GetEditor().GetModelEditor().LoadModel(script.ToString(1));
         return 0;
     }
 
     int FFI_Editor_ModelEditor_Save(GTCore::Script &script)
     {
-        (void)script;
-        //auto &game = GameScript::FFI::GetGameObject(script);
+        auto &game = GameScript::FFI::GetGameObject(script);
 
-        //game.GetEditor().GetModelEditor().SaveModel(script.ToString(1));
+        game.GetEditor().GetModelEditor().SaveModel(script.ToString(1));
         return 0;
     }
+    */
 
     /*
     int FFI_Editor_ModelEditor_SetMaterial(GTCore::Script &script)
@@ -362,8 +362,8 @@ namespace GTEngine
             this->GetTableValue(-2);
             if (this->IsTable(-1))
             {
-                this->SetTableFunction(-1, "Load",                     FFI_Editor_ModelEditor_Load);
-                this->SetTableFunction(-1, "Save",                     FFI_Editor_ModelEditor_Save);
+                //this->SetTableFunction(-1, "Load",                     FFI_Editor_ModelEditor_Load);
+                //this->SetTableFunction(-1, "Save",                     FFI_Editor_ModelEditor_Save);
 
                 //this->SetTableFunction(-1, "SetMaterial",              FFI_Editor_ModelEditor_SetMaterial);
 
