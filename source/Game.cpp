@@ -58,6 +58,13 @@ namespace GTEngine
 
     void Game::Close()
     {
+        // If the editor is open, we want to close it. We do not use this->IsEditorOpen()/this->CloseEditor() because that will
+        // cause a call this this->Resume() which will then modify the position of the mouse cursor.
+        if (this->editor.IsOpen())
+        {
+            this->editor.Close();
+        }
+
         // There's no need to cache this event...
         this->closing = true;
     }
