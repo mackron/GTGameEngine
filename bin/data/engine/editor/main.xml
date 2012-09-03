@@ -291,11 +291,12 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     #EditorBottomPanel
     {
-        width:       100%
-        height:      sidePanelSize
-        child-plane: horizontal
+        width:            100%
+        height:           sidePanelSize
+        child-plane:      horizontal
+        background-color: #2a2a2a
         
-        border-top: 1px #2b2b2b
+        //border-top: 1px #2b2b2b
         
         vertical-align: center
     }
@@ -314,7 +315,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         height:              100%
         allow-mouse-resize:  true
         right-gripper-width: 8px
-        border-right:        2px #222
+        border-right:        2px #2a2a2a
         min-width:           32px
         flex-child-height:   true
     }
@@ -411,7 +412,7 @@ hidden by default.
     -->
     <div id="EditorCenterPanel">
         <div id="EditorLeftPanel">
-            <div id='Editor_DataExplorer' styleclass='data-explorer' />
+            <div id='Editor_DataExplorer' styleclass='data-explorer' style='border-bottom:1px #555;' />
         </div>
         
         <div id="EditorCenterCenterPanel">
@@ -492,13 +493,4 @@ hidden by default.
     </div>
   
     <!-- This section contains relative positioned controls. Usually dialog boxes. -->
-    <div id="OpenModelDialog" styleclass="dialog-container">
-        <div styleclass="dialog" style="horizontal-align:right; padding-top:20px; flex-child-height:true">
-            <div id="OpenModelDialog_FileExplorer" styleclass="file-explorer" style="border-bottom:1px #999; padding-bottom:8px;" />
-            <div style="width:auto; height:auto; margin-top:8px; child-plane:horizontal; transparent-mouse-input:true;">
-                <div id="btnOpenModelDialog_Open"  styleclass="button" style="margin-right:4px; width:100px">Open</div>
-                <div id="btnOpenModelDialog_Close" styleclass="button" style="                  width:100px">Close</div>
-            </div>
-        </div>
-    </div>
 </div>
