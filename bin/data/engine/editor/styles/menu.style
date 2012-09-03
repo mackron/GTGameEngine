@@ -37,7 +37,7 @@ menu-item
         
     text-color:     #aaa
         
-    padding:        8px 0px
+    padding:        8px 1px
 }
 
 menu-item:hovered
@@ -46,6 +46,7 @@ menu-item:hovered
     border:           1px #666
     border-left:      none
     border-right:     none
+    padding:          8px 0px
         
     text-color:       #bbb
         
@@ -60,6 +61,11 @@ menu-item:pushed
     border-right:     none
         
     text-color:     #ccc
+}
+
+menu-item:disabled
+{
+    text-color: #666
 }
 
 menu-separator-outer
