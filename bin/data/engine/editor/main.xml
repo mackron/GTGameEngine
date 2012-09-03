@@ -129,6 +129,17 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     end
     
     
+    -- Closes the current item.
+    function Editor.CloseActiveItem()
+        Editor_TabBar:RemoveActiveTab();
+    end
+    
+    -- Closes all currently opened items.
+    function Editor.CloseAllItems()
+        Editor_TabBar:RemoveAllTabs();
+    end
+    
+    
     -- This will keep track of the currently opened sub-editor.
     OpenedSubEditor = nil;
     
@@ -156,6 +167,15 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         Editor_MenuBar:CollapseMenu();
     end);
     Editor_MenuBar.File.menu:AppendSeparator();
+    Editor_MenuBar.File.Close = Editor_MenuBar.File.menu:AppendItem("Close"):OnPressed(function()
+        Editor.CloseActiveItem();
+        Editor_MenuBar:CollapseMenu();
+    end);
+    Editor_MenuBar.File.CloseAll = Editor_MenuBar.File.menu:AppendItem("Close All"):OnPressed(function()
+        Editor.CloseAllItems();
+        Editor_MenuBar:CollapseMenu();
+    end);
+    Editor_MenuBar.File.menu:AppendSeparator();
     Editor_MenuBar.File.menu:AppendItem("Return to Game"):OnPressed(function()
         Editor_MenuBar:CollapseMenu();
         Editor.Close();
@@ -167,6 +187,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     Editor_MenuBar.File.Save:Disable();
     Editor_MenuBar.File.SaveAll:Disable();
+    Editor_MenuBar.File.Close:Disable();
+    Editor_MenuBar.File.CloseAll:Disable();
     
     --Editor_MenuBar:AppendItem("Edit");
     --Editor_MenuBar:AppendItem("View");
