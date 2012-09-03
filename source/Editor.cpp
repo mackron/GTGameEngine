@@ -102,33 +102,8 @@ namespace GTEngine
     }
 
 
-    /*
-    void Editor::SwitchToModelEditorMode()
-    {
-        this->SetEditorMode(&this->modelEditorMode);
-    }
-
-    void Editor::SwitchToSandboxMode()
-    {
-        this->SetEditorMode(&this->sandbox);
-    }
-
-    void Editor::SwitchToPreviousMode()
-    {
-        this->SetEditorMode(this->previousMode);
-    }
-    */
-
-
     void Editor::Update(double deltaTimeInSeconds)
     {
-        /*
-        if (this->currentMode != nullptr)
-        {
-            this->currentMode->OnUpdate(deltaTimeInSeconds);
-        }
-        */
-
         this->modelEditor.Update(deltaTimeInSeconds);
     }
 
@@ -251,26 +226,6 @@ namespace GTEngine
         }
         script.Pop(1);
     }
-
-    /*
-    void Editor::SetEditorMode(EditorMode* newMode)
-    {
-        if (this->currentMode != newMode)
-        {
-            this->previousMode = this->currentMode;
-            if (this->previousMode != nullptr)
-            {
-                this->previousMode->OnDeactivate();
-            }
-
-            this->currentMode = newMode;
-            if (this->currentMode != nullptr)
-            {
-                this->currentMode->OnActivate();
-            }
-        }
-    }
-    */
 
 
 
