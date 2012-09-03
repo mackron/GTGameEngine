@@ -80,12 +80,15 @@ function GTGUI.Element:TabBar()
         
         -- The center must be visible. It will be made invisible when there is not tabs open.
         EditorCenterCenterPanel:Show();
+        Editor_MenuBar.File.Close:Enable();
+        Editor_MenuBar.File.CloseAll:Enable();
         
+
         return tab:TabBarTab(text);
     end
     
     function self:RemoveTab(tab)
-        local newActiveTab = nil;
+        local newActiveTab = self.activeTab;
         if tab == self.activeTab then
             newActiveTab = self.activeTab:GetNextSibling() or self.activeTab:GetPrevSibling();
             self:DeactivateActiveTab();
@@ -94,17 +97,36 @@ function GTGUI.Element:TabBar()
         self:OnTabRemoved({tab = tab});
         
         GTGUI.Server.DeleteElement(tab);
-        
+
         if newActiveTab ~= nil then
             self:ActivateTab(newActiveTab);
         else
             EditorCenterCenterPanel:Hide();
+            Editor_MenuBar.File.Close:Disable();
+            Editor_MenuBar.File.CloseAll:Disable();
+        end
+    end
+    
+    function self:RemoveActiveTab()
+        if self.activeTab then
+            self:RemoveTab(self.activeTab);
+        end
+    end
+    
+    function self:RemoveAllTabs()
+        local tempTable = {};
+        for key,value in pairs(self.Children) do
+            tempTable[#tempTable + 1] = value;
+        end
+
+        for i,value in ipairs(tempTable) do
+            self:RemoveTab(value);
         end
     end
     
     
     function self:ActivateTab(tab)
-        if tab then tab:Activate() end;
+        if tab then tab:Activate(); end
     end
     
     function self:__ActivateTab(tab)
