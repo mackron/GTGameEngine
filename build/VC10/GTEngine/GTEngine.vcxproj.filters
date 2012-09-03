@@ -371,15 +371,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\GameScript.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorMode.hpp">
-      <Filter>include\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorMode_ModelEditor.hpp">
-      <Filter>include\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorMode_Sandbox.hpp">
-      <Filter>include\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor3DViewportEventHandler.hpp">
       <Filter>include\Editor</Filter>
     </ClInclude>
@@ -708,15 +699,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\GameScript.cpp">
       <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\EditorMode.cpp">
-      <Filter>source\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\EditorMode_ModelEditor.cpp">
-      <Filter>source\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\EditorMode_Sandbox.cpp">
-      <Filter>source\Editor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\Editor3DViewportEventHandler.cpp">
       <Filter>source\Editor</Filter>

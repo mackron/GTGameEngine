@@ -29,7 +29,6 @@ namespace GTEngine
             "Editor.ModelEditor    = {};"
             "Editor.MaterialEditor = {};"
             "Editor.SceneEditor    = {};"
-            "Editor.Sandbox        = {};"
             ""
             "Display ="
             "{"
@@ -197,58 +196,6 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////////
     // Editor FFI
 
-    int FFI_Editor_SwitchToModelEditorMode(GTCore::Script &script)
-    {
-        (void)script;
-        //auto &game = GameScript::FFI::GetGameObject(script);
-
-        //game.GetEditor().SwitchToModelEditorMode();
-        return 0;
-    }
-
-    int FFI_Editor_SwitchToSandboxMode(GTCore::Script &script)
-    {
-        (void)script;
-        //auto &game = GameScript::FFI::GetGameObject(script);
-
-        //game.GetEditor().SwitchToSandboxMode();
-        return 0;
-    }
-
-
-
-    ////////////////////////////////////////////////////////////////
-    // Editor.ModelEditor FFI
-
-    /*
-    int FFI_Editor_ModelEditor_Load(GTCore::Script &script)
-    {
-        auto &game = GameScript::FFI::GetGameObject(script);
-
-        game.GetEditor().GetModelEditor().LoadModel(script.ToString(1));
-        return 0;
-    }
-
-    int FFI_Editor_ModelEditor_Save(GTCore::Script &script)
-    {
-        auto &game = GameScript::FFI::GetGameObject(script);
-
-        game.GetEditor().GetModelEditor().SaveModel(script.ToString(1));
-        return 0;
-    }
-    */
-
-    /*
-    int FFI_Editor_ModelEditor_SetMaterial(GTCore::Script &script)
-    {
-        auto &game = GameScript::FFI::GetGameObject(script);
-
-        game.GetEditor().GetModelEditor().SetMaterial(script.ToInteger(1), script.ToString(2));
-        return 0;
-    }
-    */
-
-
     int FFI_Editor_ModelEditor_PlayAnimation(GTCore::Script &script)
     {
         (void)script;
@@ -277,44 +224,6 @@ namespace GTEngine
         return 0;
     }
 
-
-    /*
-    int FFI_Editor_ModelEditor_ShowConvexDecomposition(GTCore::Script &script)
-    {
-        auto &game = GameScript::FFI::GetGameObject(script);
-
-        game.GetEditor().GetModelEditor().ShowConvexDecomposition();
-        return 0;
-    }
-
-    int FFI_Editor_ModelEditor_HideConvexDecomposition(GTCore::Script &script)
-    {
-        auto &game = GameScript::FFI::GetGameObject(script);
-
-        game.GetEditor().GetModelEditor().HideConvexDecomposition();
-        return 0;
-    }
-
-    int FFI_Editor_ModelEditor_BuildConvexDecomposition(GTCore::Script &script)
-    {
-        auto &game = GameScript::FFI::GetGameObject(script);
-
-        ConvexHullBuildSettings settings;
-        settings.compacityWeight               = script.ToFloat(1);
-        settings.volumeWeight                  = script.ToFloat(2);
-        settings.minClusters                   = static_cast<unsigned int>(script.ToInteger(3));
-        settings.verticesPerCH                 = static_cast<unsigned int>(script.ToInteger(4));
-        settings.concavity                     = script.ToFloat(5);
-        settings.smallClusterThreshold         = script.ToFloat(6);
-        settings.connectedComponentsDist       = script.ToFloat(7);
-        settings.simplifiedTriangleCountTarget = static_cast<unsigned int>(script.ToInteger(8));
-        settings.addExtraDistPoints            = script.ToBoolean(9);
-        settings.addFacesPoints                = script.ToBoolean(10);
-
-        game.GetEditor().GetModelEditor().BuildConvexDecomposition(settings);
-        return 0;
-    }
-    */
 
 
     //////////////////////////////////////////////////////
@@ -347,34 +256,19 @@ namespace GTEngine
         this->Pop(1);    // Game
 
 
+
         // TODO: Should move this to Editor, where it belongs.
         this->GetGlobal("Editor");
         if (this->IsTable(-1))
         {
-            //this->SetTableFunction(-1, "Open",                    FFI_Editor_Open);
-            //this->SetTableFunction(-1, "Close",                   FFI_Editor_Close);
-
-            this->SetTableFunction(-1, "SwitchToModelEditorMode", FFI_Editor_SwitchToModelEditorMode);
-            this->SetTableFunction(-1, "SwitchToSandboxMode",     FFI_Editor_SwitchToSandboxMode);
-
-
             this->Push("ModelEditor");
             this->GetTableValue(-2);
             if (this->IsTable(-1))
             {
-                //this->SetTableFunction(-1, "Load",                     FFI_Editor_ModelEditor_Load);
-                //this->SetTableFunction(-1, "Save",                     FFI_Editor_ModelEditor_Save);
+                this->SetTableFunction(-1, "PlayAnimation", FFI_Editor_ModelEditor_PlayAnimation);
+                this->SetTableFunction(-1, "StopAnimation", FFI_Editor_ModelEditor_StopAnimation);
 
-                //this->SetTableFunction(-1, "SetMaterial",              FFI_Editor_ModelEditor_SetMaterial);
-
-                this->SetTableFunction(-1, "PlayAnimation",            FFI_Editor_ModelEditor_PlayAnimation);
-                this->SetTableFunction(-1, "StopAnimation",            FFI_Editor_ModelEditor_StopAnimation);
-
-                this->SetTableFunction(-1, "ResetCamera",              FFI_Editor_ModelEditor_ResetCamera);
-
-                //this->SetTableFunction(-1, "ShowConvexDecomposition",  FFI_Editor_ModelEditor_ShowConvexDecomposition);
-                //this->SetTableFunction(-1, "HideConvexDecomposition",  FFI_Editor_ModelEditor_HideConvexDecomposition);
-                //this->SetTableFunction(-1, "BuildConvexDecomposition", FFI_Editor_ModelEditor_BuildConvexDecomposition);
+                this->SetTableFunction(-1, "ResetCamera",   FFI_Editor_ModelEditor_ResetCamera);
             }
             this->Pop(1);
         }

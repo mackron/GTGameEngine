@@ -2,8 +2,6 @@
 #ifndef __GTEngine_Editor_hpp_
 #define __GTEngine_Editor_hpp_
 
-#include "Editor/EditorMode_ModelEditor.hpp"
-#include "Editor/EditorMode_Sandbox.hpp"
 #include "Editor/Editor_ModelEditor.hpp"
 #include "Editor/Editor_ImageEditor.hpp"
 //#include "Editor/Editor_SoundEditor.hpp"
@@ -59,20 +57,6 @@ namespace GTEngine
               Editor_ModelEditor & GetModelEditor()       { return this->modelEditor; }
         const Editor_ModelEditor & GetModelEditor() const { return this->modelEditor; }
 
-        /// Retrieves a reference to the sandbox sub-editor.s
-        //      EditorMode_Sandbox & GetSandbox()       { return this->sandbox; }
-        //const EditorMode_Sandbox & GetSandbox() const { return this->sandbox; }
-
-
-        /// Switches editor modes.
-        //void SwitchToModelEditorMode();
-
-        /// Switches to the sandbox mode.
-        //void SwitchToSandboxMode();
-
-        /// Switches to the previous mode.
-        //void SwitchToPreviousMode();
-
 
 
         ///////////////////////////////////////////////
@@ -121,13 +105,6 @@ namespace GTEngine
         void StartupScripting();
 
 
-        /// Helper function for setting the editor mode.
-        ///
-        /// @param mode [in] A pointer to the new editor mode. Can be nullptr.
-        //void SetEditorMode(EditorMode* mode);
-
-
-
     private:
 
         /// The game that owns this editor object.
@@ -145,19 +122,6 @@ namespace GTEngine
             GTGUI::Element* EditorMain;
 
         }GUI;
-
-
-        /// The model editor.
-        //EditorMode_ModelEditor modelEditorMode;
-
-        /// The sandbox mode.
-        //EditorMode_Sandbox sandbox;
-
-        /// The current editor mode.
-        //EditorMode* currentMode;
-
-        /// The previously current mode. Good for toggling.
-        //EditorMode* previousMode;
 
 
         /// The model editor.

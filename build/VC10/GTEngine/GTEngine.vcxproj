@@ -196,9 +196,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor3DViewportEventHandler.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorMode.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorMode_ModelEditor.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorMode_Sandbox.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_ImageEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_ModelEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Errors.hpp" />
@@ -321,9 +318,6 @@
     <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Editor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor3DViewportEventHandler.cpp" />
-    <ClCompile Include="..\..\..\source\Editor\EditorMode.cpp" />
-    <ClCompile Include="..\..\..\source\Editor\EditorMode_ModelEditor.cpp" />
-    <ClCompile Include="..\..\..\source\Editor\EditorMode_Sandbox.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor_ImageEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor_ModelEditor.cpp" />
     <ClCompile Include="..\..\..\source\Errors.cpp" />

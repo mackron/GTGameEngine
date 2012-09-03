@@ -4,6 +4,7 @@
 
 #include "../Scene.hpp"
 #include "../ConvexHullBuildSettings.hpp"
+#include "../DefaultViewportRenderer.hpp"
 #include "Editor3DViewportEventHandler.hpp"
 #include <GTGUI/Element.hpp>
 #include <GTCore/Random.hpp>
