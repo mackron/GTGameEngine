@@ -33,6 +33,14 @@ namespace GTEngine
         /// @return True if the model is loaded successfully; false otherwise.
         bool LoadModel(const char* fileName);
 
+        /// Saves the model definition of the given file name.
+        ///
+        /// @param fileName [in] The file name of the model to save.
+        ///
+        /// @remarks
+        ///     What this function does is takes the current state of the model definition of the given file name in-memory and resaves it to disk.
+        bool SaveModel(const char* fileName);
+
 
         /// Sets the materials of the current model.
         ///

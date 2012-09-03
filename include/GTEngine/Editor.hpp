@@ -219,6 +219,8 @@ namespace GTEngine
 
             struct ModelEditorFFI
             {
+                static int SaveModel(GTCore::Script &script);
+
                 static int SetMaterial(GTCore::Script &script);
 
                 static int ShowConvexDecomposition(GTCore::Script &script);

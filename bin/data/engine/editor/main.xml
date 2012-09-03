@@ -103,7 +103,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     -- Saves an item based on it's file name.
     function Editor.SaveItem(path)
         if GTEngine.IsModelFile(path) then
-            print("Saving Model: " .. path);
+            if not Editor.ModelEditor.SaveModel(path) then
+                CommandErrorBox:SetText("Failed to save '" .. path .. "'");
+            end
         end
     end
     
