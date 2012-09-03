@@ -144,6 +144,32 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     
     
+    -- The menu bar.
+    Editor_MenuBar:MenuBar();
+    Editor_MenuBar.File = Editor_MenuBar:AppendItem("File");
+    Editor_MenuBar.File.Save = Editor_MenuBar.File.menu:AppendItem("Save"):OnPressed(function()
+        Editor.SaveActiveItem();
+        Editor_MenuBar:CollapseMenu();
+    end);
+    Editor_MenuBar.File.SaveAll = Editor_MenuBar.File.menu:AppendItem("Save All"):OnPressed(function()
+        Editor.SaveAllItems();
+        Editor_MenuBar:CollapseMenu();
+    end);
+    Editor_MenuBar.File.menu:AppendSeparator();
+    Editor_MenuBar.File.menu:AppendItem("Return to Game"):OnPressed(function()
+        Editor_MenuBar:CollapseMenu();
+        Editor.Close();
+    end);
+    Editor_MenuBar.File.menu:AppendSeparator();
+    Editor_MenuBar.File.menu:AppendItem("Exit"):OnPressed(function()
+        Game.Close();
+    end);
+    
+    Editor_MenuBar.File.Save:Disable();
+    Editor_MenuBar.File.SaveAll:Disable();
+    
+    --Editor_MenuBar:AppendItem("Edit");
+    --Editor_MenuBar:AppendItem("View");
     
     
     
@@ -189,68 +215,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     Editor_ModelEditor_Panel_Materials:ModelEditor_MaterialPanel();
     Editor_ModelEditor_Panel_CD:ModelEditor_CDPanel();
-    
-    Editor_ModelEditor_Panel_Materials:AddMaterial("engine/test.material");
-    Editor_ModelEditor_Panel_Materials:AddMaterial("engine/test2.material");
-    
-    
-    
-    
-    --[[
-    checkModelEditor_ShowConvexDecomposition:CheckBox("Show in Viewport");
-    
-    checkModelEditor_ShowConvexDecomposition:OnChecked(function()
-        Editor.ModelEditor.ShowConvexDecomposition();
-    end);
-    
-    checkModelEditor_ShowConvexDecomposition:OnUnchecked(function()
-        Editor.ModelEditor.HideConvexDecomposition();
-    end);
-    
-    
-    spinModelEditor_CD_CompacityWeight:LabeledSpinner(        "Compacity Weight",          0, 1000000, 1,   0.001);
-    spinModelEditor_CD_VolumeWeight:LabeledSpinner(           "Volume Weight",             0, 1000000, 1,   500);
-    spinModelEditor_CD_MinClusters:LabeledSpinner(            "Min Clusters",              1, 1000000, 1,   1);
-    spinModelEditor_CD_VerticesPerCH:LabeledSpinner(          "Vertices Per CH",           0, 1000000, 10,  100);
-    spinModelEditor_CD_Concavity:LabeledSpinner(              "Concavity",                 0, 1000000, 1,   0.001);
-    spinModelEditor_CD_SmallThreshold:LabeledSpinner(         "Small Threshold",           0, 1000000, 1,   0.001);
-    spinModelEditor_CD_ConnectedDistance:LabeledSpinner(      "Connected Distance",        0, 1000000, 1 ,  0.001);
-    spinModelEditor_CD_SimplifiedTriangleCount:LabeledSpinner("Simplified Triangle Count", 0, 1000000, 100, 0);
-    
-    
-    checkModelEditor_CD_AddExtraDistPoints:CheckBox("Add Extra Distance Points");
-    checkModelEditor_CD_AddFacePoints:CheckBox("Add Face Points");
-    
-    
-    btnModelEditor_ConvexDecomposition_Build:Button("Build"):OnPressed(function()
-        btnModelEditor_ConvexDecomposition_Build:Disable();
-            local compacityWeight         = spinModelEditor_CD_CompacityWeight:GetValue();
-            local volumeWeight            = spinModelEditor_CD_VolumeWeight:GetValue();
-            local minClusters             = spinModelEditor_CD_MinClusters:GetValue();
-            local verticesPerCH           = spinModelEditor_CD_VerticesPerCH:GetValue();
-            local concavity               = spinModelEditor_CD_Concavity:GetValue();
-            local smallThreshold          = spinModelEditor_CD_SmallThreshold:GetValue();
-            local connectedDistance       = spinModelEditor_CD_ConnectedDistance:GetValue();
-            local simplifiedTriangleCount = spinModelEditor_CD_SimplifiedTriangleCount:GetValue();
-            local addExtraDistPoints      = checkModelEditor_CD_AddExtraDistPoints:IsChecked();
-            local addFacePoints           = checkModelEditor_CD_AddFacePoints:IsChecked();
-            
-            Editor.ModelEditor.BuildConvexDecomposition
-            (
-                compacityWeight,
-                volumeWeight,
-                minClusters,
-                verticesPerCH,
-                concavity,
-                smallThreshold,
-                connectedDistance,
-                simplifiedTriangleCount,
-                addExtraDistPoints,
-                addFacePoints
-            );
-        btnModelEditor_ConvexDecomposition_Build:Enable();
-    end);
-    ]]
 ]]>
 </script>
 
@@ -338,6 +302,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     #EditorCenterCenterPanel
     {
+        visible:           false
+    
         width:             100%
         height:            100%
         flex-child-height: true
@@ -392,6 +358,8 @@ hidden by default.
         such as the mode switcher.
         -->
         <div id="EditorTopPanel_Left">
+            <div id="Editor_MenuBar" styleclass="menubar" />
+        
             <!--
             <div id="MenuBar_ModelEditor" styleclass="menubar" style="visible:false;" />
             <div id="MenuBar_Sandbox"     styleclass="menubar" style="visible:false;" />

@@ -32,6 +32,10 @@ function GTGUI.Element:TabBarTab(text)
         if not self.isModified then
             self.isModified = true;
             self.text:SetText(self.text:GetText() .. "*");
+            
+            -- Menu items need to be enabled.
+            Editor_MenuBar.File.Save:Enable();
+            Editor_MenuBar.File.SaveAll:Enable();
         end
     end
     
@@ -39,6 +43,13 @@ function GTGUI.Element:TabBarTab(text)
         if self.isModified then
             self.isModified = false;
             self.text:SetText(string.sub(self.text:GetText(), 0, -2));
+            
+            -- Here we keep our menu items up-to-date.
+            Editor_MenuBar.File.Save:Disable();
+            
+            if not Editor_TabBar:HasModifiedItem() then
+                Editor_MenuBar.File.SaveAll:Disable();
+            end
         end
     end
     
@@ -67,6 +78,9 @@ function GTGUI.Element:TabBar()
         
         self:OnTabAdded({tab = tab});
         
+        -- The center must be visible. It will be made invisible when there is not tabs open.
+        EditorCenterCenterPanel:Show();
+        
         return tab:TabBarTab(text);
     end
     
@@ -83,6 +97,8 @@ function GTGUI.Element:TabBar()
         
         if newActiveTab ~= nil then
             self:ActivateTab(newActiveTab);
+        else
+            EditorCenterCenterPanel:Hide();
         end
     end
     
@@ -97,6 +113,18 @@ function GTGUI.Element:TabBar()
             self.activeTab = tab;
             
             self:OnTabActivated({tab = tab});
+            
+            if self.activeTab:IsModified() then
+                Editor_MenuBar.File.Save:Enable();
+            else
+                Editor_MenuBar.File.Save:Disable();
+            end
+            
+            if Editor_TabBar:HasModifiedItem() then
+                Editor_MenuBar.File.SaveAll:Enable();
+            else
+                Editor_MenuBar.File.SaveAll:Disable();
+            end
         end
     end
     
@@ -116,9 +144,19 @@ function GTGUI.Element:TabBar()
     end
     
     
+    function self:HasModifiedItem()
+        for key,value in pairs(self.Children) do
+            if value.isModified then
+                return true;
+            end
+        end
+        return false;
+    end
+    
+    
     function self:OnTabAdded(arg1)
         if type(arg1) == 'function' then
-            self:BindEvent('OnTabAdded', arg1);
+            return self:BindEvent('OnTabAdded', arg1);
         else
             self:CallEvent('OnTabAdded', arg1);
         end
@@ -126,7 +164,7 @@ function GTGUI.Element:TabBar()
     
     function self:OnTabRemoved(arg1)
         if type(arg1) == 'function' then
-            self:BindEvent('OnTabRemoved', arg1);
+            return self:BindEvent('OnTabRemoved', arg1);
         else
             self:CallEvent('OnTabRemoved', arg1);
         end
@@ -134,7 +172,7 @@ function GTGUI.Element:TabBar()
     
     function self:OnTabActivated(arg1)
         if type(arg1) == 'function' then
-            self:BindEvent('OnTabActivated', arg1);
+            return self:BindEvent('OnTabActivated', arg1);
         else
             self:CallEvent('OnTabActivated', arg1);
         end
@@ -142,7 +180,7 @@ function GTGUI.Element:TabBar()
     
     function self:OnTabDeactivated(arg1)
         if type(arg1) == 'function' then
-            self:BindEvent('OnTabDeactivated', arg1);
+            return self:BindEvent('OnTabDeactivated', arg1);
         else
             self:CallEvent('OnTabDeactivated', arg1);
         end
