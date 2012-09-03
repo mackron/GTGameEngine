@@ -141,7 +141,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     
     -- This will keep track of the currently opened sub-editor.
-    OpenedSubEditor = nil;
+    OpenedSubEditor   = nil;
+    PreviousSubEditor = nil;
     
     
     -- Here we're going to watch for some keyboard shortcuts.
@@ -209,6 +210,10 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         end
     end)
     
+    
+    -- The way we do tab switching is to only hide/show the sub editor if the new one is different to the old. The reason for this is that
+    -- hiding a 3D viewport will cause a resize which will in turn cause a new framebuffer to be generated. Due to the multithreaded environment,
+    -- this will cause a slight flicker.
     Editor_TabBar:OnTabActivated(function(data)
         -- We need to show the appropriate sub-editor. We determine this from the path.
         local filename = data.tab.path;
@@ -220,6 +225,10 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
             Editor.OnImageActivated(filename);
         end
         
+        if OpenedSubEditor ~= PreviousSubEditor and PreviousSubEditor ~= nil then
+            PreviousSubEditor:Hide();
+        end
+        
         if OpenedSubEditor ~= nil then
             OpenedSubEditor:Show();
         end
@@ -227,8 +236,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     Editor_TabBar:OnTabDeactivated(function(data)
         if OpenedSubEditor ~= nil then
-            OpenedSubEditor:Hide();
-            OpenedSubEditor = nil;
+            PreviousSubEditor = OpenedSubEditor;
+            OpenedSubEditor   = nil;
         end
     end)
     

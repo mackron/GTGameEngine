@@ -31,6 +31,8 @@ function GTGUI.Element:DataExplorer()
             item.icon:SetStyle('background-image-color', '#aaa');
         end
         
+        
+        -- Called when the item is torn for drag-and-drop.
         item.titleContainer:OnTear(function()
             if not item:GetParent().isRoot then
                 -- We need to create an element that we'll use as the drag-and-drop element.
