@@ -15,6 +15,8 @@ function GTGUI.Element:ModelEditor_MaterialPanel()
                 else
                     new:SetStyle("border-color", "#cc6a6a");
                 end
+                
+                Editor_TabBar:GetActiveTab():MarkAsModified();
             end
         end)
         

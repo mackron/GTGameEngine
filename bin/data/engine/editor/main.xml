@@ -112,8 +112,19 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     -- Saves the current item.
     function Editor.SaveActiveItem()
         local activeTab = Editor_TabBar:GetActiveTab();
-        if activeTab ~= nil then
+        if activeTab ~= nil and activeTab:IsModified() then
             Editor.SaveItem(activeTab.path);
+            activeTab:UnmarkAsModified();
+        end
+    end
+    
+    -- Saves all open items.
+    function Editor.SaveAllItems()
+        for key,value in pairs(Editor_TabBar.Children) do
+            if value:IsModified() then
+                Editor.SaveItem(value.path);
+                value:UnmarkAsModified();
+            end
         end
     end
     

@@ -37,6 +37,8 @@ namespace GTEngine
             delete this->loadedStates.buffer[i]->value;
         }
 
+        this->DeleteConvexHulls();
+
         ModelLibrary::Delete(this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel());
     }
 

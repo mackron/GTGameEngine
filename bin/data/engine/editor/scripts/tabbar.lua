@@ -3,7 +3,8 @@ function GTGUI.Element:TabBarTab(text)
     self.text        = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='tabbar-tab-text'        />");
     self.borderHider = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='tabbar-tab-borderhider' />");
     
-    self.isActive = false;
+    self.isActive   = false;
+    self.isModified = false;
     
     function self:Activate()
         if not self.isActive then
@@ -19,6 +20,25 @@ function GTGUI.Element:TabBarTab(text)
             self.isActive = false;
             self:DetachStyleClass('tabbar-tab-active');
             self.borderHider:Hide();
+        end
+    end
+    
+    
+    function self:IsModified()
+        return self.isModified;
+    end
+    
+    function self:MarkAsModified()
+        if not self.isModified then
+            self.isModified = true;
+            self.text:SetText(self.text:GetText() .. "*");
+        end
+    end
+    
+    function self:UnmarkAsModified()
+        if self.isModified then
+            self.isModified = false;
+            self.text:SetText(string.sub(self.text:GetText(), 0, -2));
         end
     end
     

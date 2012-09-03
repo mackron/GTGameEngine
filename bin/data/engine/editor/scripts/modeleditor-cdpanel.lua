@@ -77,5 +77,6 @@ function GTGUI.Element:ModelEditor_CDPanel()
                 addFacePoints
             );
         self.BuildButton:Enable();
+        Editor_TabBar:GetActiveItem():MarkAsModified();
     end);
 end
