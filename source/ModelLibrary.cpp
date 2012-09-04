@@ -400,38 +400,34 @@ namespace GTEngine
     }
 
     /// This function creates a new model definition from the given assimp scene.
-    ///
-    /// @remarks
-    ///     The returned structure is allocated with 'new'.
-    ModelDefinition* ModelLibrary_LoadFromAssimpScene(const aiScene &scene)
+    bool ModelLibrary_LoadFromAssimpScene(const aiScene &scene, ModelDefinition &definition)
     {
         // We need to recursively read each scene node and attach the meshes where possible.
         auto root = scene.mRootNode;
         if (root != nullptr)
         {
-            auto definition = new ModelDefinition;
             GTCore::Vector<GTCore::Vector<BoneWeights*>*> meshBones;
 
             // This is where we take the assimp meshes and create the GTEngine meshes.
             aiMatrix4x4 transform;
-            CopyNodesWithMeshes(scene, *root, transform, *definition, meshBones);
+            CopyNodesWithMeshes(scene, *root, transform, definition, meshBones);
 
 
             // Now what we do is iterate over the bones of each mesh and create the skinning vertex attributes. It's important that we do this after creating the local bones
             // of the mesh so that we get the correct indices.
-            for (size_t i = 0; i < definition->meshGeometries.count; ++i)
+            for (size_t i = 0; i < definition.meshGeometries.count; ++i)
             {
                 auto localBones = meshBones[i];
                 if (localBones != nullptr)
                 {
-                    auto skinningVertexAttributes = new SkinningVertexAttribute[definition->meshGeometries[i]->GetVertexCount()];
+                    auto skinningVertexAttributes = new SkinningVertexAttribute[definition.meshGeometries[i]->GetVertexCount()];
 
                     for (size_t j = 0; j < localBones->count; ++j)
                     {
                         auto bone = localBones->buffer[j];
                         assert(bone != nullptr);
 
-                        size_t boneIndex = definition->bones.Find(bone->name.c_str())->index;
+                        size_t boneIndex = definition.bones.Find(bone->name.c_str())->index;
 
                         for (size_t k = 0; k < bone->weights.count; ++k)
                         {
@@ -439,11 +435,11 @@ namespace GTEngine
                         }
                     }
 
-                    definition->meshSkinningVertexAttributes.PushBack(skinningVertexAttributes);
+                    definition.meshSkinningVertexAttributes.PushBack(skinningVertexAttributes);
                 }
                 else
                 {
-                    definition->meshSkinningVertexAttributes.PushBack(nullptr);
+                    definition.meshSkinningVertexAttributes.PushBack(nullptr);
                 }
             }
 
@@ -459,7 +455,7 @@ namespace GTEngine
                 assert(animation != nullptr);
 
                 // The starting keyframe will be equal to the number of keyframes in the animation at this point.
-                size_t startKeyFrame = definition->animation.GetKeyFrameCount();
+                size_t startKeyFrame = definition.animation.GetKeyFrameCount();
 
                 // Now we need to loop through and add the actual key frames to the animation. This is done a little strange, but the Animation class
                 // will make sure everything is clean. Basically, we loop through every channel and then add the keys for each channel. It's slow, but
@@ -474,13 +470,13 @@ namespace GTEngine
                     // not affecting the mesh itself.
                     Bone* bone = nullptr;
 
-                    auto iBone = definition->bones.Find(channel->mNodeName.C_Str());
+                    auto iBone = definition.bones.Find(channel->mNodeName.C_Str());
                     if (iBone == nullptr)
                     {
                         auto newNode = FindNodeByName(scene, channel->mNodeName);
                         assert(newNode != nullptr);
 
-                        bone = AddBone(*newNode, *definition);
+                        bone = AddBone(*newNode, definition);
                     }
                     else
                     {
@@ -495,8 +491,8 @@ namespace GTEngine
 
 
                     // Now we create the channel.
-                    auto &newChannel = definition->animation.CreateChannel();
-                    definition->MapAnimationChannelToBone(*bone, newChannel);
+                    auto &newChannel = definition.animation.CreateChannel();
+                    definition.MapAnimationChannelToBone(*bone, newChannel);
 
                     // Here is where we add the key frames. Since we are looping over the channels, each key frame will probably be creating twice. This is OK because
                     // Animation will make sure there are no duplicate key frames.
@@ -506,9 +502,9 @@ namespace GTEngine
                         auto &rotationKey = channel->mRotationKeys[iKey];
                         auto &scaleKey    = channel->mScalingKeys[iKey];
 
-                        size_t keyFrameIndex = definition->animation.AppendKeyFrame(segmentStartTime + positionKey.mTime);
+                        size_t keyFrameIndex = definition.animation.AppendKeyFrame(segmentStartTime + positionKey.mTime);
 
-                        auto key = definition->CreateAnimationKey(AssimpToGLM(positionKey.mValue), AssimpToGLM(rotationKey.mValue), AssimpToGLM(scaleKey.mValue));
+                        auto key = definition.CreateAnimationKey(AssimpToGLM(positionKey.mValue), AssimpToGLM(rotationKey.mValue), AssimpToGLM(scaleKey.mValue));
                         newChannel.SetKey(keyFrameIndex, key);
                     }
                 }
@@ -516,7 +512,7 @@ namespace GTEngine
 
 
                 // At this point we can now create the named segment.
-                definition->animation.AddNamedSegment(animation->mName.C_Str(), startKeyFrame, definition->animation.GetKeyFrameCount());
+                definition.animation.AddNamedSegment(animation->mName.C_Str(), startKeyFrame, definition.animation.GetKeyFrameCount());
 
                 // The start time of the next segment will be equal to the previous start time plus the duration of iAnimation.
                 if (animation->mTicksPerSecond > 0)
@@ -529,7 +525,7 @@ namespace GTEngine
                 }
             }
 
-            return definition;
+            return true;
         }
 
         return nullptr;
@@ -540,51 +536,35 @@ namespace GTEngine
 
     Model* ModelLibrary::LoadFromFile(const char* fileName)
     {
-        // We first need to check if we're loading a .gtmodel. If so, we branch off and do that separate.
-        if (GTCore::Path::ExtensionEqual(fileName, "gtmodel"))
+        // We will first find an existing model definition. If we don't find it, we create one and the load into it.
+        auto definition = ModelLibrary::FindDefinition(fileName);
+        if (definition == nullptr)
         {
-            return ModelLibrary::LoadFromGTMODEL(fileName);
-        }
-        else
-        {
-            // What we're going to do is load two file info's. The first will be the original source file. The other will be the .gtmodel file. If
-            // the .gtmodel file does not exist, we create it from the source model.
-            GTCore::IO::FileInfo sourceInfo;
-            GTCore::IO::GetFileInfo(fileName, sourceInfo);
-
-            GTCore::IO::FileInfo gtmodelInfo;
-            if (sourceInfo.exists)
+            GTCore::String absolutePath;
+            if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
             {
-                GTCore::String gtmodelFileName(sourceInfo.absolutePath);
-                gtmodelFileName += ".gtmodel";
-
-                GTCore::IO::GetFileInfo(gtmodelFileName.c_str(), gtmodelInfo);
-            }
-            else
-            {
-                GTCore::String gtmodelFileName(fileName);
-                gtmodelFileName += ".gtmodel";
-
-                GTCore::IO::GetFileInfo(gtmodelFileName.c_str(), gtmodelInfo);
-            }
-
-
-            if ((sourceInfo.exists && sourceInfo.lastModifiedTime > gtmodelInfo.lastModifiedTime) || !gtmodelInfo.exists)
-            {
-                return ModelLibrary::LoadFromAssimp(sourceInfo, gtmodelInfo);
-            }
-            else
-            {
-                if ((!sourceInfo.exists && gtmodelInfo.exists) || gtmodelInfo.lastModifiedTime > sourceInfo.lastModifiedTime)
+                definition = new ModelDefinition(fileName);
+                
+                // We need to load the model.
+                if (ModelLibrary::Load(fileName, *definition))
                 {
-                    return ModelLibrary::LoadFromGTMODEL(gtmodelInfo.absolutePath.c_str());
+                    LoadedDefinitions.Add(absolutePath.c_str(), definition);
                 }
                 else
                 {
-                    GTEngine::PostError("Could not find file: %s", fileName);
+                    delete definition;
+                    definition = nullptr;
                 }
             }
+        }
 
+        // Now all we do is 
+        if (definition != nullptr)
+        {
+            return ModelLibrary::CreateFromDefinition(*definition);
+        }
+        else
+        {
             return nullptr;
         }
     }
@@ -607,14 +587,17 @@ namespace GTEngine
             auto scene = importer.ReadFileFromMemory(content, GTCore::Strings::SizeInBytes(content), AssimpReadFileFlags, "nff");
             if (scene != nullptr)
             {
-                definition = ModelLibrary_LoadFromAssimpScene(*scene);
-                if (definition != nullptr)
+                definition = new ModelDefinition;
+                if (ModelLibrary_LoadFromAssimpScene(*scene, *definition))
                 {
                     // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
                     LoadedDefinitions.Add(nffFileName.c_str(), definition);
                 }
                 else
                 {
+                    delete definition;
+                    definition = nullptr;
+
                     GTEngine::PostError("Error creating model info for %s", content);
                 }
             }
@@ -639,295 +622,23 @@ namespace GTEngine
         return nullptr;
     }
 
-    Model* ModelLibrary::LoadFromGTMODEL(const char* fileNameIn)
+
+    bool ModelLibrary::ReloadModel(const char* fileName)
     {
-        ModelDefinition* definition = nullptr;
-
-        auto iDefinition = LoadedDefinitions.Find(fileNameIn);
-        if (iDefinition == nullptr)
-        {
-            auto file = GTCore::IO::Open(fileNameIn, GTCore::IO::OpenMode::Read);
-            if (file != nullptr)
-            {
-                // The first thing we load is the header, which is 8 bytes. The first 4 bytes should equal "gtem".
-                struct
-                {
-                    char     id[4];
-                    uint32_t version;
-                }header;
-
-                GTCore::IO::Read(file, &header, 8);
-
-                // We need to check the first 4 bytes to ensure they read "gtem".
-                if (header.id[0] == 'g' && header.id[1] == 't' && header.id[2] == 'e' && header.id[3] == 'm')
-                {
-                    // We load differently depending on the version. Unknown version means return null.
-                    switch (header.version)
-                    {
-                    case 1:
-                        {
-                            definition = new ModelDefinition(fileNameIn);
-
-                            // The counts of the main objects. We batch these into a single call at the top of everything.
-                            struct
-                            {
-                                uint32_t boneCount;
-                                uint32_t meshCount;
-                                uint32_t keyFrameCount;
-                            }counts;
-
-                            GTCore::IO::Read(file, &counts, 12);
-
-
-                            // Bones.
-                            //
-                            // Bones are first because they are referenced by everything else.
-                            for (uint32_t iBone = 0; iBone < counts.boneCount; ++iBone)
-                            {
-                                // Name.
-                                uint32_t nameLength;
-                                GTCore::IO::Read(file, &nameLength, 4);
-
-                                auto name = static_cast<char*>(malloc(nameLength + 1));                 // <-- +1 for null terminator.
-                                GTCore::IO::Read(file, name, nameLength); name[nameLength] = '\0';
-
-
-                                // Relative transform and offset matrix.
-                                struct
-                                {
-                                    glm::vec3 position;
-                                    glm::quat rotation;
-                                    glm::vec3 scale;
-                                    glm::mat4 offsetMatrix;
-                                }transformOffset;
-
-                                GTCore::IO::Read(file, &transformOffset, sizeof(transformOffset));
-
-
-                                // Now we create the bone and add it to the list.
-                                auto bone = new Bone;
-                                bone->SetName(name);
-                                bone->SetPosition(transformOffset.position);
-                                bone->SetRotation(transformOffset.rotation);
-                                bone->SetScale(transformOffset.scale);
-                                bone->SetOffsetMatrix(transformOffset.offsetMatrix);
-                                definition->bones.Add(name, bone);
-
-
-                                // We need to create a channel for this bone. We then need to map that channel to a bone.
-                                auto &channel = definition->animation.CreateChannel();
-                                definition->animationChannelBones.Add(bone, &channel);
-
-
-                                free(name);
-                            }
-
-                            // Bone parents.
-                            auto boneParentIndices = static_cast<uint32_t*>(malloc(counts.boneCount * 4));
-                            GTCore::IO::Read(file, boneParentIndices, counts.boneCount * 4);
-
-                            for (uint32_t iBone = 0; iBone < counts.boneCount; ++iBone)
-                            {
-                                uint32_t parentIndex = boneParentIndices[iBone];
-
-                                if (parentIndex != static_cast<uint32_t>(-1))
-                                {
-                                    definition->bones.buffer[parentIndex]->value->AttachChild(*definition->bones.buffer[iBone]->value);
-                                }
-                            }
-
-                            free(boneParentIndices);
-
-
-                            // Meshes.
-                            //
-                            // Meshes reference bones, so we do these afterwards.
-                            for (uint32_t i = 0; i < counts.meshCount; ++i)
-                            {
-                                // Geometry.
-                                {
-                                    auto va = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3T3B3);
-
-                                    // Vertices.
-                                    uint32_t vertexCount;
-                                    GTCore::IO::Read(file, &vertexCount, 4);
-
-                                    if (vertexCount > 0)
-                                    {
-                                        va->SetVertexData(nullptr, static_cast<size_t>(vertexCount));
-                                        auto vertexData = va->MapVertexData();
-                                        {
-                                            GTCore::IO::Read(file, vertexData, vertexCount * VertexFormat::P3T2N3T3B3.GetSize() * sizeof(float));
-                                        }
-                                        va->UnmapVertexData();
-                                    }
-
-
-                                    // Indices.
-                                    uint32_t indexCount;
-                                    GTCore::IO::Read(file, &indexCount, 4);
-                                
-                                    if (indexCount > 0)
-                                    {
-                                        va->SetIndexData(nullptr, static_cast<size_t>(indexCount));
-                                        auto indexData = va->MapIndexData();
-                                        {
-                                            GTCore::IO::Read(file, indexData, indexCount * sizeof(unsigned int));
-                                        }
-                                        va->UnmapIndexData();
-                                    }
-
-                                
-                                    definition->meshGeometries.PushBack(va);
-                                }
-
-
-                                // Skinning vertex attributes.
-                                {
-                                    uint32_t skinningVertexAttributeCount;
-                                    GTCore::IO::Read(file, &skinningVertexAttributeCount, 4);
-
-                                    if (skinningVertexAttributeCount > 0)
-                                    {
-                                        auto skinningVertexAttributes = new SkinningVertexAttribute[skinningVertexAttributeCount];
-
-
-                                        auto counts = static_cast<uint16_t*>(malloc(skinningVertexAttributeCount * 2));
-                                        GTCore::IO::Read(file, counts, skinningVertexAttributeCount * 2);
-
-                                        uint32_t totalBoneWeights;
-                                        GTCore::IO::Read(file, &totalBoneWeights, 4);
-
-                                        auto boneWeights = static_cast<BoneWeightPair*>(malloc(totalBoneWeights * 8));
-                                        GTCore::IO::Read(file, boneWeights, totalBoneWeights * 8);
-
-
-                                        auto currentBoneWeight = boneWeights;
-                                        for (uint32_t iVertex = 0; iVertex < skinningVertexAttributeCount; ++iVertex)
-                                        {
-                                            auto count = counts[iVertex];
-
-                                            // Here we allocate the buffer for the bones. We trick the vector here by modifying attributes directly.
-                                            skinningVertexAttributes[iVertex].bones.Reserve(count);
-                                            skinningVertexAttributes[iVertex].bones.count = count;
-
-                                            for (uint16_t iBone = 0; iBone < count; ++iBone)
-                                            {
-                                                skinningVertexAttributes[iVertex].bones[iBone] = *currentBoneWeight++;
-                                            }
-                                        }
-
-
-                                        definition->meshSkinningVertexAttributes.PushBack(skinningVertexAttributes);
-
-
-                                        free(counts);
-                                        free(boneWeights);
-                                    }
-                                    else
-                                    {
-                                        definition->meshSkinningVertexAttributes.PushBack(nullptr);
-                                    }
-                                }
-                            }
-
-
-                            // Now we need to load the key frame animation data.
-                            for (uint32_t iFrame = 0; iFrame < counts.keyFrameCount; ++iFrame)
-                            {
-                                float time;
-                                GTCore::IO::Read(file, &time, 4);
-
-                                size_t keyFrameIndex = definition->animation.AppendKeyFrame(static_cast<double>(time));
-
-                                // With the key frame added, we now need to iterate over each channel in the key frame.
-                                uint32_t channelCount;
-                                GTCore::IO::Read(file, &channelCount, 4);
-
-                                for (uint32_t iChannel = 0; iChannel < channelCount; ++iChannel)
-                                {
-                                    // The first attribute is the bone index.
-                                    uint32_t boneIndex;
-                                    GTCore::IO::Read(file, &boneIndex, 4);
-
-                                    auto bone = definition->bones.buffer[boneIndex]->value;
-
-                                    auto channel = definition->animationChannelBones.Find(bone);
-                                    assert(channel != nullptr);
-
-
-                                    // Transformation.
-                                    struct
-                                    {
-                                        glm::vec3 position;
-                                        glm::quat rotation;
-                                        glm::vec3 scale;
-                                    }transform;
-
-                                    GTCore::IO::Read(file, &transform, sizeof(transform));
-
-
-                                    // All of the data has been read, so now we just create a TransformAnimationKey and add it to the cache and channel.
-                                    auto key = new TransformAnimationKey(transform.position, transform.rotation, transform.scale);
-                                    channel->value->SetKey(keyFrameIndex, key);
-
-                                    // We need to cache the key.
-                                    definition->animationKeyCache.PushBack(key);
-                                }
-                            }
-
-
-                            // Here is the engine-specific metadata.
-                            ModelLibrary::LoadGTMODELMetadata(file, *definition);
-                            
-
-
-                            // We can't forget to add the definition to the global list.
-                            definition->fileName = fileNameIn;
-                            LoadedDefinitions.Add(fileNameIn, definition);
-
-                            
-                            GTCore::IO::Close(file);
-
-
-                            break;
-                        }
-
-                    default:
-                        {
-                            GTCore::IO::Close(file);
-
-                            GTEngine::PostError("Can not load .gtmodel file: Unknown version.");
-                            return nullptr;
-                        }
-                    }
-                }
-                else
-                {
-                    GTCore::IO::Close(file);
-
-                    GTEngine::PostError("Can not load .gtmodel file: Invalid header ID.");
-                    return nullptr;
-                }
-            }
-            else
-            {
-                GTEngine::PostError("Can not open file: %s.", fileNameIn);
-                return nullptr;
-            }
-        }
-        else
-        {
-            definition = iDefinition->value;
-        }
-
-
+        (void)fileName;
+        return false;
+
+        /*
+        // We need to find the definition that we're updating.
+        auto definition = ModelLibrary::FindDefinition(fileName);
         if (definition != nullptr)
         {
-            return ModelLibrary::CreateFromDefinition(*definition);
+            ModelLibrary::Load(fileName, *definition);
+            return true;
         }
 
-        return nullptr;
+        return false;
+        */
     }
 
 
@@ -1309,76 +1020,369 @@ namespace GTEngine
     ////////////////////////////////////////////////////////
     // Private
 
-    Model* ModelLibrary::LoadFromAssimp(const GTCore::IO::FileInfo &sourceInfo, const GTCore::IO::FileInfo &gtmodelInfo)
+    bool ModelLibrary::Load(const char* fileName, ModelDefinition &definition)
     {
-        ModelDefinition* definition = nullptr;
-
-        // If the file is already loaded, we don't want to reload. Instead we create a new instance of the model using the existing information.
-        auto iDefinition = LoadedDefinitions.Find(sourceInfo.absolutePath.c_str());
-        if (iDefinition == nullptr)
+        if (GTCore::Path::ExtensionEqual(fileName, "gtmodel"))
         {
-            Assimp::Importer importer;
-            importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
+            return ModelLibrary::LoadFromGTMODEL(fileName, definition);
+        }
+        else
+        {
+            return ModelLibrary::LoadFromAssimp(fileName, definition);
+        }
+    }
 
-            auto scene = importer.ReadFile(sourceInfo.absolutePath.c_str(), AssimpReadFileFlags);
-            if (scene != nullptr)
+    bool ModelLibrary::LoadFromAssimp(const char* fileName, ModelDefinition &definition)
+    {
+        // What we're going to do is load two file info's. The first will be the original source file. The other will be the .gtmodel file. If
+        // the .gtmodel file does not exist, we create it from the source model.
+        GTCore::IO::FileInfo sourceInfo;
+        GTCore::IO::GetFileInfo(fileName, sourceInfo);
+
+        GTCore::IO::FileInfo gtmodelInfo;
+        if (sourceInfo.exists)
+        {
+            GTCore::String gtmodelFileName(sourceInfo.absolutePath);
+            gtmodelFileName += ".gtmodel";
+
+            GTCore::IO::GetFileInfo(gtmodelFileName.c_str(), gtmodelInfo);
+        }
+        else
+        {
+            GTCore::String gtmodelFileName(fileName);
+            gtmodelFileName += ".gtmodel";
+
+            GTCore::IO::GetFileInfo(gtmodelFileName.c_str(), gtmodelInfo);
+        }
+
+
+        if ((sourceInfo.exists && sourceInfo.lastModifiedTime > gtmodelInfo.lastModifiedTime) || !gtmodelInfo.exists)
+        {
+            return ModelLibrary::LoadFromAssimp(sourceInfo, gtmodelInfo, definition);
+        }
+        else
+        {
+            if ((!sourceInfo.exists && gtmodelInfo.exists) || gtmodelInfo.lastModifiedTime > sourceInfo.lastModifiedTime)
             {
-                definition = ModelLibrary_LoadFromAssimpScene(*scene);
-                if (definition != nullptr)
-                {
-                    // The definition was loaded from a file, so we need to mark it as so.
-                    definition->fileName = sourceInfo.absolutePath.c_str();
+                return ModelLibrary::LoadFromGTMODEL(gtmodelInfo.absolutePath.c_str(), definition);
+            }
+            else
+            {
+                GTEngine::PostError("Could not find file: %s", fileName);
+            }
+        }
 
-                    // When we get here we will have a LoadedModelInfo object which needs to be added to the global list.
-                    LoadedDefinitions.Add(sourceInfo.absolutePath.c_str(), definition);
-                }
-                else
+        return false;
+    }
+
+    bool ModelLibrary::LoadFromGTMODEL(const char* fileName, ModelDefinition &definition)
+    {
+        auto file = GTCore::IO::Open(fileName, GTCore::IO::OpenMode::Read);
+        if (file != nullptr)
+        {
+            // The first thing we load is the header, which is 8 bytes. The first 4 bytes should equal "gtem".
+            struct
+            {
+                char     id[4];
+                uint32_t version;
+            }header;
+
+            GTCore::IO::Read(file, &header, 8);
+
+            // We need to check the first 4 bytes to ensure they read "gtem".
+            if (header.id[0] == 'g' && header.id[1] == 't' && header.id[2] == 'e' && header.id[3] == 'm')
+            {
+                // We load differently depending on the version. Unknown version means return null.
+                switch (header.version)
                 {
-                    GTEngine::PostError("Error creating model info for %s: %s", sourceInfo.absolutePath.c_str(), importer.GetErrorString());
+                case 1:
+                    {
+                        // The counts of the main objects. We batch these into a single call at the top of everything.
+                        struct
+                        {
+                            uint32_t boneCount;
+                            uint32_t meshCount;
+                            uint32_t keyFrameCount;
+                        }counts;
+
+                        GTCore::IO::Read(file, &counts, 12);
+
+
+                        // Bones.
+                        //
+                        // Bones are first because they are referenced by everything else.
+                        for (uint32_t iBone = 0; iBone < counts.boneCount; ++iBone)
+                        {
+                            // Name.
+                            uint32_t nameLength;
+                            GTCore::IO::Read(file, &nameLength, 4);
+
+                            auto name = static_cast<char*>(malloc(nameLength + 1));                 // <-- +1 for null terminator.
+                            GTCore::IO::Read(file, name, nameLength); name[nameLength] = '\0';
+
+
+                            // Relative transform and offset matrix.
+                            struct
+                            {
+                                glm::vec3 position;
+                                glm::quat rotation;
+                                glm::vec3 scale;
+                                glm::mat4 offsetMatrix;
+                            }transformOffset;
+
+                            GTCore::IO::Read(file, &transformOffset, sizeof(transformOffset));
+
+
+                            // Now we create the bone and add it to the list.
+                            auto bone = new Bone;
+                            bone->SetName(name);
+                            bone->SetPosition(transformOffset.position);
+                            bone->SetRotation(transformOffset.rotation);
+                            bone->SetScale(transformOffset.scale);
+                            bone->SetOffsetMatrix(transformOffset.offsetMatrix);
+                            definition.bones.Add(name, bone);
+
+
+                            // We need to create a channel for this bone. We then need to map that channel to a bone.
+                            auto &channel = definition.animation.CreateChannel();
+                            definition.animationChannelBones.Add(bone, &channel);
+
+
+                            free(name);
+                        }
+
+                        // Bone parents.
+                        auto boneParentIndices = static_cast<uint32_t*>(malloc(counts.boneCount * 4));
+                        GTCore::IO::Read(file, boneParentIndices, counts.boneCount * 4);
+
+                        for (uint32_t iBone = 0; iBone < counts.boneCount; ++iBone)
+                        {
+                            uint32_t parentIndex = boneParentIndices[iBone];
+
+                            if (parentIndex != static_cast<uint32_t>(-1))
+                            {
+                                definition.bones.buffer[parentIndex]->value->AttachChild(*definition.bones.buffer[iBone]->value);
+                            }
+                        }
+
+                        free(boneParentIndices);
+
+
+                        // Meshes.
+                        //
+                        // Meshes reference bones, so we do these afterwards.
+                        for (uint32_t i = 0; i < counts.meshCount; ++i)
+                        {
+                            // Geometry.
+                            {
+                                auto va = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3T3B3);
+
+                                // Vertices.
+                                uint32_t vertexCount;
+                                GTCore::IO::Read(file, &vertexCount, 4);
+
+                                if (vertexCount > 0)
+                                {
+                                    va->SetVertexData(nullptr, static_cast<size_t>(vertexCount));
+                                    auto vertexData = va->MapVertexData();
+                                    {
+                                        GTCore::IO::Read(file, vertexData, vertexCount * VertexFormat::P3T2N3T3B3.GetSize() * sizeof(float));
+                                    }
+                                    va->UnmapVertexData();
+                                }
+
+
+                                // Indices.
+                                uint32_t indexCount;
+                                GTCore::IO::Read(file, &indexCount, 4);
+                                
+                                if (indexCount > 0)
+                                {
+                                    va->SetIndexData(nullptr, static_cast<size_t>(indexCount));
+                                    auto indexData = va->MapIndexData();
+                                    {
+                                        GTCore::IO::Read(file, indexData, indexCount * sizeof(unsigned int));
+                                    }
+                                    va->UnmapIndexData();
+                                }
+
+                                
+                                definition.meshGeometries.PushBack(va);
+                            }
+
+
+                            // Skinning vertex attributes.
+                            {
+                                uint32_t skinningVertexAttributeCount;
+                                GTCore::IO::Read(file, &skinningVertexAttributeCount, 4);
+
+                                if (skinningVertexAttributeCount > 0)
+                                {
+                                    auto skinningVertexAttributes = new SkinningVertexAttribute[skinningVertexAttributeCount];
+
+
+                                    auto counts = static_cast<uint16_t*>(malloc(skinningVertexAttributeCount * 2));
+                                    GTCore::IO::Read(file, counts, skinningVertexAttributeCount * 2);
+
+                                    uint32_t totalBoneWeights;
+                                    GTCore::IO::Read(file, &totalBoneWeights, 4);
+
+                                    auto boneWeights = static_cast<BoneWeightPair*>(malloc(totalBoneWeights * 8));
+                                    GTCore::IO::Read(file, boneWeights, totalBoneWeights * 8);
+
+
+                                    auto currentBoneWeight = boneWeights;
+                                    for (uint32_t iVertex = 0; iVertex < skinningVertexAttributeCount; ++iVertex)
+                                    {
+                                        auto count = counts[iVertex];
+
+                                        // Here we allocate the buffer for the bones. We trick the vector here by modifying attributes directly.
+                                        skinningVertexAttributes[iVertex].bones.Reserve(count);
+                                        skinningVertexAttributes[iVertex].bones.count = count;
+
+                                        for (uint16_t iBone = 0; iBone < count; ++iBone)
+                                        {
+                                            skinningVertexAttributes[iVertex].bones[iBone] = *currentBoneWeight++;
+                                        }
+                                    }
+
+
+                                    definition.meshSkinningVertexAttributes.PushBack(skinningVertexAttributes);
+
+
+                                    free(counts);
+                                    free(boneWeights);
+                                }
+                                else
+                                {
+                                    definition.meshSkinningVertexAttributes.PushBack(nullptr);
+                                }
+                            }
+                        }
+
+
+                        // Now we need to load the key frame animation data.
+                        for (uint32_t iFrame = 0; iFrame < counts.keyFrameCount; ++iFrame)
+                        {
+                            float time;
+                            GTCore::IO::Read(file, &time, 4);
+
+                            size_t keyFrameIndex = definition.animation.AppendKeyFrame(static_cast<double>(time));
+
+                            // With the key frame added, we now need to iterate over each channel in the key frame.
+                            uint32_t channelCount;
+                            GTCore::IO::Read(file, &channelCount, 4);
+
+                            for (uint32_t iChannel = 0; iChannel < channelCount; ++iChannel)
+                            {
+                                // The first attribute is the bone index.
+                                uint32_t boneIndex;
+                                GTCore::IO::Read(file, &boneIndex, 4);
+
+                                auto bone = definition.bones.buffer[boneIndex]->value;
+
+                                auto channel = definition.animationChannelBones.Find(bone);
+                                assert(channel != nullptr);
+
+
+                                // Transformation.
+                                struct
+                                {
+                                    glm::vec3 position;
+                                    glm::quat rotation;
+                                    glm::vec3 scale;
+                                }transform;
+
+                                GTCore::IO::Read(file, &transform, sizeof(transform));
+
+
+                                // All of the data has been read, so now we just create a TransformAnimationKey and add it to the cache and channel.
+                                auto key = new TransformAnimationKey(transform.position, transform.rotation, transform.scale);
+                                channel->value->SetKey(keyFrameIndex, key);
+
+                                // We need to cache the key.
+                                definition.animationKeyCache.PushBack(key);
+                            }
+                        }
+
+
+                        // Here is the engine-specific metadata.
+                        ModelLibrary::LoadGTMODELMetadata(file, definition);
+                            
+
+                        // Can't forget to close the file.
+                        GTCore::IO::Close(file);
+
+                        return true;
+                    }
+
+                default:
+                    {
+                        GTCore::IO::Close(file);
+
+                        GTEngine::PostError("Can not load .gtmodel file: Unknown version.");
+                        return false;
+                    }
                 }
             }
             else
             {
-                GTEngine::PostError("Error importing %s: %s", sourceInfo.absolutePath.c_str(), importer.GetErrorString());
+                GTCore::IO::Close(file);
+
+                GTEngine::PostError("Can not load .gtmodel file: Invalid header ID.");
+                return false;
             }
         }
         else
         {
-            definition = iDefinition->value;
+            GTEngine::PostError("Can not open file: %s.", fileName);
+            return false;
         }
+    }
 
 
-        // Now that we have information about the model, we can create a new Model object and return it.
-        if (definition != nullptr)
+    bool ModelLibrary::LoadFromAssimp(const GTCore::IO::FileInfo &sourceInfo, const GTCore::IO::FileInfo &gtmodelInfo, ModelDefinition &definition)
+    {
+        Assimp::Importer importer;
+        importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);
+
+        auto scene = importer.ReadFile(sourceInfo.absolutePath.c_str(), AssimpReadFileFlags);
+        if (scene != nullptr)
         {
-            auto model = ModelLibrary::CreateFromDefinition(*definition);
-            if (model != nullptr)
+            if (!ModelLibrary_LoadFromAssimpScene(*scene, definition))
             {
-                // Here is where we save the corresponding .gtmodel file. Note here how we use the aboslute path in 'sourceInfo' instead
-                // of 'gtmodelInfo'. This is because it's possible that the gtmodel file does not exists and may have an incorrect
-                // absolute path as a result.
-                GTCore::String gtmodelFileName(sourceInfo.absolutePath);
-                gtmodelFileName += ".gtmodel";
-
-                // If the gtmodel file exists, we need to read in it's meta data so we can re-save that info in the new file. The way we
-                // do this, is we actually load the gtmodel meta data into the definition.
-                if (gtmodelInfo.exists)
-                {
-                    ModelLibrary::LoadGTMODELMetadata(gtmodelInfo.absolutePath.c_str(), *definition);
-                }
-                else
-                {
-                    ModelLibrary::LoadDefaultMetadata(*definition);
-                }
-
-                // Now we just save the .gtmodel like normal.
-                ModelLibrary::WriteToFile(*definition, gtmodelInfo.absolutePath.c_str());
+                GTEngine::PostError("Error creating model info for %s: %s", sourceInfo.absolutePath.c_str(), importer.GetErrorString());
+                return false;
             }
-
-            return model;
         }
-        
-        return nullptr;
+        else
+        {
+            GTEngine::PostError("Error importing %s: %s", sourceInfo.absolutePath.c_str(), importer.GetErrorString());
+            return false;
+        }
+
+
+        // Here is where we save the corresponding .gtmodel file. Note here how we use the aboslute path in 'sourceInfo' instead
+        // of 'gtmodelInfo'. This is because it's possible that the gtmodel file does not exists and may have an incorrect
+        // absolute path as a result.
+        GTCore::String gtmodelFileName(sourceInfo.absolutePath);
+        gtmodelFileName += ".gtmodel";
+
+        // If the gtmodel file exists, we need to read in it's meta data so we can re-save that info in the new file. The way we
+        // do this, is we actually load the gtmodel meta data into the definition.
+        if (gtmodelInfo.exists)
+        {
+            ModelLibrary::LoadGTMODELMetadata(gtmodelInfo.absolutePath.c_str(), definition);
+        }
+        else
+        {
+            ModelLibrary::LoadDefaultMetadata(definition);
+        }
+
+        // Now we just save the .gtmodel like normal.
+        ModelLibrary::WriteToFile(definition, gtmodelInfo.absolutePath.c_str());
+
+        return true;
     }
 
     bool ModelLibrary::LoadGTMODELMetadata(FILE* file, ModelDefinition &definition)
@@ -1944,6 +1948,37 @@ namespace GTEngine
         }
 
         return true;
+    }
+
+
+    ModelDefinition* ModelLibrary::FindDefinition(const char* name)
+    {
+        // If we don't find the definition from the original file and the extension is 'gtmodel', we'll strip the extension
+        // and try again.
+
+        auto iDefinition = LoadedDefinitions.Find(name);
+        if (iDefinition == nullptr)
+        {
+            if (GTCore::Path::ExtensionEqual(name, "gtmodel"))
+            {
+                GTCore::String gtmodelName = GTCore::IO::RemoveExtension(name);
+                iDefinition = LoadedDefinitions.Find(gtmodelName.c_str());
+            }
+            else
+            {
+                GTCore::String baseName(name);
+                baseName += ".gtmodel";
+
+                iDefinition = LoadedDefinitions.Find(baseName.c_str());
+            }
+        }
+
+        if (iDefinition != nullptr)
+        {
+            return iDefinition->value;
+        }
+
+        return nullptr;
     }
 }
 

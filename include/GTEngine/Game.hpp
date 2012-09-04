@@ -322,6 +322,20 @@ namespace GTEngine
 
 
 
+        ///////////////////////////////////////////////
+        // Events from Files Watcher.
+
+        /// Called when a file is added.
+        void OnFileInsert(const DataFilesWatcher::Item &item);
+
+        /// Called when a file is removed.
+        void OnFileRemove(const DataFilesWatcher::Item &item);
+
+        /// Called when a file is updated.
+        void OnFileUpdate(const DataFilesWatcher::Item &item);
+
+
+
     protected:
 
         void CacheMousePosition();
@@ -733,6 +747,34 @@ namespace GTEngine
 
         /// The previous game state (for toggling).
         GameState* previousGameState;
+
+
+        /// The event handler for the data files watcher. This will just dispatch the events to the main Game object.
+        class DataFilesWatcherEventHandler : public DataFilesWatcher::EventHandler
+        {
+        public:
+
+            /// Constructor.
+            DataFilesWatcherEventHandler(Game &game)
+                : game(game)
+            {
+            }
+
+
+            void OnInsert(const DataFilesWatcher::Item &item) { this->game.OnFileInsert(item); }
+            void OnRemove(const DataFilesWatcher::Item &item) { this->game.OnFileRemove(item); }
+            void OnUpdate(const DataFilesWatcher::Item &item) { this->game.OnFileUpdate(item); }
+
+        private:
+
+            /// The editor object that owns this event handler.
+            Game &game;
+
+        private:    // No copying.
+            DataFilesWatcherEventHandler(const DataFilesWatcherEventHandler &);
+            DataFilesWatcherEventHandler & operator=(const DataFilesWatcherEventHandler &);
+
+        }dataFilesWatcherEventHandler;
 
 
     private:    // No copying.

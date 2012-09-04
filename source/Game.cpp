@@ -9,10 +9,13 @@
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Audio.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
+#include <GTEngine/ModelLibrary.hpp>
+#include <GTEngine/Texture2DLibrary.hpp>
 #include <GTCore/System.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
 #include <GTCore/String.hpp>
 #include <GTCore/CommandLine.hpp>
+#include <GTCore/Path.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -39,7 +42,8 @@ namespace GTEngine
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
           dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false),
-          currentGameState(nullptr), previousGameState(nullptr)
+          currentGameState(nullptr), previousGameState(nullptr),
+          dataFilesWatcherEventHandler(*this)
     {
     }
 
@@ -427,6 +431,33 @@ namespace GTEngine
     }
 
 
+    void Game::OnFileInsert(const DataFilesWatcher::Item &item)
+    {
+        (void)item;
+    }
+
+    void Game::OnFileRemove(const DataFilesWatcher::Item &item)
+    {
+        (void)item;
+    }
+
+    void Game::OnFileUpdate(const DataFilesWatcher::Item &item)
+    {
+        // If the file is an asset, we need to update everything that is using it. We do this via the asset libraries.
+        printf("OnFileUpdate: %s\n", item.info.absolutePath);
+
+        auto extension = GTCore::Path::Extension(item.info.path.c_str());
+
+        if (ModelLibrary::IsExtensionSupported(extension))
+        {
+            ModelLibrary::ReloadModel(item.info.path.c_str());
+        }
+        else if (Texture2DLibrary::IsExtensionSupported(extension))
+        {
+        }
+    }
+
+
 
     void Game::OnLoadConfigs()
     {
@@ -667,6 +698,8 @@ namespace GTEngine
                 this->dataFilesWatcher.AddRootDirectory(directories[i].c_str());
             }
         }
+
+        this->dataFilesWatcher.AddEventHandler(this->dataFilesWatcherEventHandler);
 
         return true;
     }

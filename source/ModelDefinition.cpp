@@ -10,7 +10,6 @@ namespace GTEngine
           bones(),
           animation(), animationChannelBones(), animationKeyCache()
     {
-        // TODO: Should ensure the file name is relative to the data directory and not an absolute path.
     }
 
     ModelDefinition::~ModelDefinition()
