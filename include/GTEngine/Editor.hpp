@@ -97,6 +97,9 @@ namespace GTEngine
 
         
 
+        /// Called when the definition of a model has changed.
+        void OnModelDefinitionChanged(const char* absolutePath) { this->modelEditor.OnModelDefinitionChanged(absolutePath); }
+
 
 
     private:

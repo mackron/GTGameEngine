@@ -143,6 +143,14 @@ namespace GTEngine
         static bool IsExtensionSupported(const char* extension);
 
 
+        /// Retrieves the model definition of the given file name.
+        ///
+        /// @param fileName [in] The name of the file whose definition is being retrieved.
+        ///
+        /// @return A pointer to the definition, or null if does not exist.
+        static ModelDefinition* FindDefinition(const char* fileName);
+
+
 
     /////////////////////////////////////////////////////
     // Private Functions.
@@ -216,14 +224,6 @@ namespace GTEngine
         ///
         /// @param definition [in] The definition whose having it's default metadata set.
         static bool LoadDefaultMetadata(ModelDefinition &definition);
-
-
-        /// Retrieves the model definition of the given file name.
-        ///
-        /// @param fileName [in] The name of the file whose definition is being retrieved.
-        ///
-        /// @return A pointer to the definition, or null if does not exist.
-        static ModelDefinition* FindDefinition(const char* fileName);
     };
 }
 

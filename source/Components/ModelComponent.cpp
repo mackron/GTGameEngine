@@ -25,6 +25,11 @@ namespace GTEngine
 
     void ModelComponent::SetModel(Model* model, bool takeOwnership)
     {
+        if (this->isOwner)
+        {
+            ModelLibrary::Delete(this->model);
+        }
+
         this->model   = model;
         this->isOwner = takeOwnership;
 
@@ -34,6 +39,12 @@ namespace GTEngine
         {
             scene->OnSceneNodeComponentChanged(this->GetNode(), *this);
         }
+    }
+
+    Model* ModelComponent::SetModel(const char* fileName)
+    {
+        this->SetModel(ModelLibrary::LoadFromFile(fileName), true);
+        return this->model;
     }
 
     Model* ModelComponent::GetModel()
@@ -56,17 +67,6 @@ namespace GTEngine
     void ModelComponent::DisableShadowCasting()
     {
         this->castShadow = false;
-    }
-
-    
-    void ModelComponent::MakeOwner()
-    {
-        this->isOwner = true;
-    }
-
-    void ModelComponent::RemoveOwnership()
-    {
-        this->isOwner = false;
     }
 }
 

@@ -1100,6 +1100,48 @@ namespace GTEngine
         }
     }
 
+    ModelDefinition* ModelLibrary::FindDefinition(const char* name)
+    {
+        // If we don't find the definition from the original file and the extension is 'gtmodel', we'll strip the extension
+        // and try again.
+
+        GTCore::String absolutePath;
+        if (GTCore::IO::FindAbsolutePath(name, absolutePath))
+        {
+            auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
+            if (iDefinition == nullptr)
+            {
+                if (GTCore::Path::ExtensionEqual(absolutePath.c_str(), "gtmodel"))
+                {
+                    GTCore::String gtmodelName = GTCore::IO::RemoveExtension(absolutePath.c_str());
+                    iDefinition = LoadedDefinitions.Find(gtmodelName.c_str());
+                }
+                else
+                {
+                    GTCore::String baseName(absolutePath.c_str());
+                    baseName += ".gtmodel";
+
+                    iDefinition = LoadedDefinitions.Find(baseName.c_str());
+                }
+            }
+
+            if (iDefinition != nullptr)
+            {
+                return iDefinition->value;
+            }
+        }
+        else
+        {
+            auto iDefinition = LoadedDefinitions.Find(name);
+            if (iDefinition != nullptr)
+            {
+                return iDefinition->value;
+            }
+        }
+
+        return nullptr;
+    }
+
 
 
     ////////////////////////////////////////////////////////
@@ -1653,7 +1695,8 @@ namespace GTEngine
 
             // We need to do some validation here.
             //
-            // The first thing to validate is the materials. If we have any unset materials, we need to give it the default material.
+            // The first thing to validate is the materials. If we have any unset materials, we need to give it the default material. Also, it the
+            // material count is different to the mesh count, that needs to be validated.
             if (definition.meshMaterials.count == 0)
             {
                 for (size_t i = 0; i < definition.meshGeometries.count; ++i)
@@ -1661,6 +1704,8 @@ namespace GTEngine
                     definition.meshMaterials.PushBack(nullptr);
                 }
             }
+
+            definition.meshMaterials.Resize(definition.meshGeometries.count);
 
             for (size_t iMaterial = 0; iMaterial < definition.meshMaterials.count; ++iMaterial)
             {
@@ -2038,37 +2083,6 @@ namespace GTEngine
         }
 
         return true;
-    }
-
-
-    ModelDefinition* ModelLibrary::FindDefinition(const char* name)
-    {
-        // If we don't find the definition from the original file and the extension is 'gtmodel', we'll strip the extension
-        // and try again.
-
-        auto iDefinition = LoadedDefinitions.Find(name);
-        if (iDefinition == nullptr)
-        {
-            if (GTCore::Path::ExtensionEqual(name, "gtmodel"))
-            {
-                GTCore::String gtmodelName = GTCore::IO::RemoveExtension(name);
-                iDefinition = LoadedDefinitions.Find(gtmodelName.c_str());
-            }
-            else
-            {
-                GTCore::String baseName(name);
-                baseName += ".gtmodel";
-
-                iDefinition = LoadedDefinitions.Find(baseName.c_str());
-            }
-        }
-
-        if (iDefinition != nullptr)
-        {
-            return iDefinition->value;
-        }
-
-        return nullptr;
     }
 }
 

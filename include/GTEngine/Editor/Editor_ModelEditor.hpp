@@ -79,6 +79,11 @@ namespace GTEngine
         void Update(double deltaTimeInSeconds);
 
 
+
+        /// Called when the definition of a model has changed.
+        void OnModelDefinitionChanged(const char* absolutePath);
+
+
     private:
 
         /// Applies the camera rotation to the camera node.

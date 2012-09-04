@@ -1230,6 +1230,7 @@ namespace GTEngine
                 Log("    ARB_ES2_compatibility:              %s", GTGL_ARB_ES2_compatibility              ? "yes" : "no");
                 Log("    ARB_texture_float:                  %s", GTGL_ARB_texture_float                  ? "yes" : "no");
                 Log("    EXT_framebuffer_object:             %s", GTGL_EXT_framebuffer_object             ? "yes" : "no");
+                Log("    EXT_framebuffer_blit:               %s", GTGL_EXT_framebuffer_blit               ? "yes" : "no");
                 Log("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
                 Log("    EXT_texture_filter_anisotropic:     %s", GTGL_EXT_texture_filter_anisotropic     ? "yes" : "no");
                 Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
@@ -2047,10 +2048,28 @@ namespace GTEngine
     }
 
 
+    void Renderer::FramebufferBlit(Framebuffer* sourceFramebuffer, unsigned int sourceWidth, unsigned int sourceHeight,
+                                   Framebuffer* destFramebuffer,   unsigned int destWidth,   unsigned int destHeight)
+    {
+        auto sourceGL = sourceFramebuffer != nullptr ? static_cast<Framebuffer_GL20*>(sourceFramebuffer->GetRendererData()) : nullptr;
+        auto destGL   = destFramebuffer   != nullptr ? static_cast<Framebuffer_GL20*>(  destFramebuffer->GetRendererData()) : nullptr;
+
+        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, sourceGL ? sourceGL->object : 0);
+        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, destGL   ?   destGL->object : 0);
+
+        glBlitFramebufferEXT(0, 0, static_cast<GLint>(sourceWidth), static_cast<GLint>(sourceHeight), 0, 0, static_cast<GLint>(destWidth), static_cast<GLint>(destHeight), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    }
+
+
     // Support.
     bool Renderer::SupportFloatTextures()
     {
         return GTGL_ARB_texture_float != 0;
+    }
+
+    bool Renderer::SupportFramebufferBlit()
+    {
+        return GTGL_EXT_framebuffer_blit != 0;
     }
 
     size_t Renderer::GetMaxColourAttachments()

@@ -12,8 +12,25 @@ namespace GTEngine
 
         ModelComponent(SceneNode &node);
         ~ModelComponent();
-        void SetModel(Model *model, bool takeOwnership = false);
-        Model * GetModel();
+
+
+        /// Sets the model.
+        void SetModel(Model* model, bool takeOwnership = false);
+
+        /// Sets the model from a file.
+        ///
+        /// @param fileName [in] The name of the model file to load.
+        ///
+        /// @return A pointer to the model that was loaded by the component.
+        ///
+        /// @remarks
+        ///     This will load the model via the model library and will take ownership, which means it will be deleted whenever the
+        ///     component no longer uses it (either when it's change, or when the component is destructed).
+        Model* SetModel(const char* fileName);
+
+
+        /// Retrieves the model currently associated with this component.
+        Model* GetModel();
 
 
         /// Sets the back/front face culling mode. By default, back faces are culled.
@@ -44,20 +61,6 @@ namespace GTEngine
         /// Determines whether or not this model casts shadows.
         bool IsShadowCastingEnabled() const { return this->castShadow; }
 
-
-        /**
-        *   \brief  Marks this component as the owner of the model.
-        *
-        *   \remarks
-        *       This will cause the destructor of this component to delete the model. Only use this if this component
-        *       is the only thing using the model.
-        */
-        void MakeOwner();
-
-        /**
-        *   \brief  Removes ownership of the model.
-        */
-        void RemoveOwnership();
 
 
     private:

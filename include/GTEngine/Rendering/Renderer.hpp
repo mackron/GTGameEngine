@@ -418,7 +418,7 @@ namespace GTEngine
         /**
         *   \brief  Retrieves the current shader.
         */
-        static Shader * GetCurrentShader();
+        static Shader* GetCurrentShader();
 
         /**
         *   \brief              Sets the current shader.
@@ -489,6 +489,13 @@ namespace GTEngine
         static void DrawGUI(const GTGUI::Server &gui);
 
 
+        /// Performs a framebuffer blit.
+        ///
+        /// @remarks
+        ///     This will blit the whose framebuffers.
+        static void FramebufferBlit(Framebuffer* sourceFramebuffer, unsigned int sourceWidth, unsigned int sourceHeight, Framebuffer* destFramebuffer, unsigned int destWidth, unsigned int destHeight);
+
+
 
     // Features support. These are set at initialisation time and can be called on any thread without syncs.
     public:
@@ -496,11 +503,16 @@ namespace GTEngine
         /// Determines whether or not floating-point textures are supported. Needed for floating-point buffers for HDR, etc.
         static bool SupportFloatTextures();
 
+        /// Determines whether or not framebuffer blitting is supported.
+        static bool SupportFramebufferBlit();
+
+
         /// Retrieves the maximum number of colour attachments for framebuffers.
         static size_t GetMaxColourAttachments();
 
         /// Retrieves the maximum number of draw buffers for MRT.
         static size_t GetMaxDrawBuffers();
+
 
 
     public:
