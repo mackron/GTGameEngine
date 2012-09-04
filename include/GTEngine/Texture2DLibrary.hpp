@@ -67,6 +67,10 @@ namespace GTEngine
 
         /// Sets the default magnification filter.
         static void SetDefaultMagFilter(TextureFilter filter);
+
+
+        /// Determines whether or not the given extension is a supported image extension.
+        static bool IsExtensionSupported(const char* extension);
     };
 }
 

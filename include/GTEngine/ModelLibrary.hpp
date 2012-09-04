@@ -52,12 +52,14 @@ namespace GTEngine
         ///     This will not reload the model if the same content has been used before.
         static Model* LoadFromNFF(const char* content, const char* name);
 
-        /// Loads a .gtmodel file.
+        /// Reloads the given model. If the model has not yet been loaded, it will NOT be loaded.
         ///
-        /// @param fileName [in] The name of the file to load.
+        /// @param fileName [in] The name of the file to reload.
         ///
-        /// @return A pointer to the new model, or null if the model could not be created.
-        static Model* LoadFromGTMODEL(const char* fileName);
+        /// @remarks
+        ///     This will update every model using the given file.
+        static bool ReloadModel(const char* fileName);
+
 
 
         /// Saves the givem model as a .gtmodel.
@@ -75,6 +77,7 @@ namespace GTEngine
         ///     This function does not save the model as any format other than .gtmodel.
         static bool WriteToFile(const ModelDefinition &definition, const char* fileName);
         static bool WriteToFile(const char* fileName);
+
 
 
     // Create functions.
@@ -141,11 +144,43 @@ namespace GTEngine
     // Private Functions.
     private:
 
+        /// Loads a file into the given model definition.
+        ///
+        /// @param fileName   [in]  The ABSOLUTE path of the file to load.
+        /// @param definition [out] The definition to load the file into.
+        ///
+        /// @remarks
+        ///     Any model using the given definition will be updated with the new data.
+        ///     @par
+        ///     It is asserted that the file name is absolute.
+        static bool Load(const char* fileName, ModelDefinition &definition);
+
+        /// Loads a file using assimp.
+        ///
+        /// @param fileName   [in]  The ABSOULTE file path.
+        /// @param definition [out] The definition to load the file into.
+        ///
+        /// @remarks
+        ///     The file name must be absolute.
+        static bool LoadFromAssimp(const char* fileName, ModelDefinition &definition);
+
+        /// Loads a .gtmodel file.
+        ///
+        /// @param fileName   [in]  The ABSOLUTE file path.
+        /// @param definition [out] The definition to load the file into.
+        ///
+        /// @remarks
+        ///     This function asserts that the file name is absolute and a gtmodel file.
+        static bool LoadFromGTMODEL(const char* fileName, ModelDefinition &definition);
+
+
+
         /// A helper function for importing a file via Assimp and saving the corresponding .gtmodel file.
         ///
-        /// @param sourceInfo  [in] The file info of the source file.
-        /// @param gtmodelInfo [in] The file info of the gtmodel file.
-        static Model* LoadFromAssimp(const GTCore::IO::FileInfo &sourceInfo, const GTCore::IO::FileInfo &gtmodelInfo);
+        /// @param sourceInfo  [in]  The file info of the source file.
+        /// @param gtmodelInfo [in]  The file info of the gtmodel file.
+        /// @param definition  [out] The definition to load the file into.
+        static bool LoadFromAssimp(const GTCore::IO::FileInfo &sourceInfo, const GTCore::IO::FileInfo &gtmodelInfo, ModelDefinition &definition);
 
 
         /// A helper function for only loading the engine-specific metadata of the given .gtmodel file.
@@ -177,6 +212,14 @@ namespace GTEngine
         ///
         /// @param definition [in] The definition whose having it's default metadata set.
         static bool LoadDefaultMetadata(ModelDefinition &definition);
+
+
+        /// Retrieves the model definition of the given file name.
+        ///
+        /// @param fileName [in] The name of the file whose definition is being retrieved.
+        ///
+        /// @return A pointer to the definition, or null if does not exist.
+        static ModelDefinition* FindDefinition(const char* fileName);
     };
 }
 

@@ -148,5 +148,11 @@ namespace GTEngine
     {
         DefaultMagFilter = filter;
     }
+
+
+    bool Texture2DLibrary::IsExtensionSupported(const char* extension)
+    {
+        return GTImage::Loader::IsExtensionSupported(extension);
+    }
 }
 

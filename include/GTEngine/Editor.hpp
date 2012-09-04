@@ -86,7 +86,7 @@ namespace GTEngine
         ///////////////////////////////////////////////
         // Events from Files Watcher.
 
-        /// Called when a files is added.
+        /// Called when a file is added.
         void OnFileInsert(const DataFilesWatcher::Item &item);
 
         /// Called when a file is removed.
