@@ -154,6 +154,16 @@ namespace GTEngine
         bool IsPlaying() const { return this->isPlaying; }
 
 
+
+        /// Clears the animation.
+        ///
+        /// @param clearNamedSegments [in] Whether or not named segments should be cleared.
+        void Clear(bool clearNamedSegments = true);
+
+        /// Clears only the named animation segments.
+        void ClearNamedSegments();
+
+
     private:
 
         /// The map of key frames, sorted by time.

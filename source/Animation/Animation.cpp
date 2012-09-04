@@ -225,4 +225,28 @@ namespace GTEngine
     {
         return this->GetKeyFramesAtTime(this->GetPlaybackTime(), startKeyFrame, endKeyFrame);
     }
+
+
+    void Animation::Clear(bool clearNamedSegments)
+    {
+        this->keyFrames.Clear();
+
+
+        for (size_t i = 0; i < this->channels.count; ++i)
+        {
+            delete this->channels[i];
+        }
+        this->channels.Clear();
+
+
+        if (clearNamedSegments)
+        {
+            this->segments.Clear();
+        }
+    }
+
+    void Animation::ClearNamedSegments()
+    {
+        this->segments.Clear();
+    }
 }

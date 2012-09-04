@@ -121,6 +121,7 @@ namespace GTEngine
         static Model* CreateFromConvexHull(const ConvexHull &convexHull);
 
 
+
     // Delete functions.
     public:
 
@@ -129,6 +130,7 @@ namespace GTEngine
 
         /// Deletes an unreferenced definitions.
         static void DeleteUnreferenceDefinitions();
+
 
 
     // Misc functions.

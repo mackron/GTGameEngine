@@ -353,7 +353,6 @@ namespace GTEngine
                 va->UnmapIndexData();
 
                 definition.meshGeometries.PushBack(va);
-                definition.meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
             }
 
 
@@ -414,9 +413,18 @@ namespace GTEngine
         {
             GTCore::Vector<GTCore::Vector<BoneWeights*>*> meshBones;
 
+
+            // At this point we're going to be re-creating the skinning and animation data. These need clearing.
+            definition.ClearMeshGeometries();
+            definition.ClearBones();
+            definition.ClearMeshSkinningVertexAttributes();
+            definition.ClearAnimations();
+
+
             // This is where we take the assimp meshes and create the GTEngine meshes.
             aiMatrix4x4 transform;
             CopyNodesWithMeshes(scene, *root, transform, definition, meshBones);
+
 
 
             // Now what we do is iterate over the bones of each mesh and create the skinning vertex attributes. It's important that we do this after creating the local bones
@@ -632,20 +640,30 @@ namespace GTEngine
 
     bool ModelLibrary::ReloadModel(const char* fileName)
     {
-        (void)fileName;
-        return false;
-
-        /*
         // We need to find the definition that we're updating.
         auto definition = ModelLibrary::FindDefinition(fileName);
         if (definition != nullptr)
         {
             ModelLibrary::Load(fileName, *definition);
+
+            // Every model with this definition needs to know that it has changed.
+            auto iDefinitionModels = LoadedModels.Find(definition);
+            assert(iDefinitionModels        != nullptr);
+            assert(iDefinitionModels->value != nullptr);
+
+            auto modelList = iDefinitionModels->value;
+            for (size_t iModel = 0; iModel < modelList->count; ++iModel)
+            {
+                auto model = modelList->buffer[iModel];
+                assert(model != nullptr);
+
+                model->OnDefinitionChanged();
+            }
+
             return true;
         }
 
         return false;
-        */
     }
 
 
@@ -1070,11 +1088,18 @@ namespace GTEngine
 
     bool ModelLibrary::IsExtensionSupported(const char* extension)
     {
-        GTCore::String assimpExt(".");
-        assimpExt += extension;
+        if (GTCore::Strings::Equal<false>(extension, "gtmodel"))
+        {
+            return true;
+        }
+        else
+        {
+            GTCore::String assimpExt(".");
+            assimpExt += extension;
 
-        Assimp::Importer importer;
-        return importer.IsExtensionSupported(assimpExt.c_str());
+            Assimp::Importer importer;
+            return importer.IsExtensionSupported(assimpExt.c_str());
+        }
     }
 
 
@@ -1173,6 +1198,7 @@ namespace GTEngine
                         // Bones.
                         //
                         // Bones are first because they are referenced by everything else.
+                        definition.ClearBones();
                         for (uint32_t iBone = 0; iBone < counts.boneCount; ++iBone)
                         {
                             // Name.
@@ -1233,6 +1259,8 @@ namespace GTEngine
                         // Meshes.
                         //
                         // Meshes reference bones, so we do these afterwards.
+                        definition.ClearMeshGeometries();
+                        definition.ClearMeshSkinningVertexAttributes();
                         for (uint32_t i = 0; i < counts.meshCount; ++i)
                         {
                             // Geometry.
@@ -1324,6 +1352,7 @@ namespace GTEngine
 
 
                         // Now we need to load the key frame animation data.
+                        definition.ClearAnimations();
                         for (uint32_t iFrame = 0; iFrame < counts.keyFrameCount; ++iFrame)
                         {
                             float time;
@@ -1473,6 +1502,9 @@ namespace GTEngine
             {
                 if (metadataHeader.id[0] == 'm' && metadataHeader.id[1] == 't' && metadataHeader.id[2] == 'l' && metadataHeader.id[3] == 's')           // <-- Materials: 'mtls'
                 {
+                    definition.ClearMaterials();
+
+
                     uint32_t materialCount;
                     GTCore::IO::Read(file, &materialCount, 4);
 
@@ -1516,6 +1548,9 @@ namespace GTEngine
                 }
                 else if (metadataHeader.id[0] == 'n' && metadataHeader.id[1] == 'a' && metadataHeader.id[2] == 's' && metadataHeader.id[3] == ' ')      // <-- Named animation segments: 'nas '.
                 {
+                    definition.ClearNamedAnimationSegments();
+
+
                     uint32_t segmentCount;
                     GTCore::IO::Read(file, &segmentCount, 4);
 
@@ -1543,6 +1578,9 @@ namespace GTEngine
                 }
                 else if (metadataHeader.id[0] == 'c' && metadataHeader.id[1] == 'x' && metadataHeader.id[2] == 'h' && metadataHeader.id[3] == 'l')      // <-- Convex Hulls: 'cxhl'
                 {
+                    definition.ClearConvexHulls();
+
+
                     uint32_t hullCount;
                     GTCore::IO::Read(file, &hullCount, 4);
 
@@ -1907,14 +1945,6 @@ namespace GTEngine
                                 {
                                     GTCore::IO::Seek(file, indexCount * sizeof(unsigned int), GTCore::IO::SeekOrigin::Current);
                                 }
-                            }
-
-                                
-                            // Materials
-                            {
-                                uint32_t length;
-                                GTCore::IO::Read(file, &length, 4);
-                                GTCore::IO::Seek(file, length, GTCore::IO::SeekOrigin::Current);
                             }
 
 

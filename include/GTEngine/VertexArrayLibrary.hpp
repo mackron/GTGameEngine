@@ -85,11 +85,28 @@ namespace GTEngine
         static VertexArray* CreateCombined(const VertexArray* const* vertexArrays, size_t count, const VertexFormat &format);
 
 
+
+        ////////////////////////////////////////////////
+        // Deleting
+
+        /// Immediate deletes a vertex array.
+        ///
+        /// @param va [in] The vertex array to deleted.
+        ///
+        /// @remarks
+        ///     Use MarkForCollection() to use the garbage collector, which will do everything thread-safely.
+        static void Delete(VertexArray* va);
+
+
+
     public:
 
         /// Retrieves a P2 vertex array that can used for fullscreen quads.
         static VertexArray* GetFullscreenQuadVA();
 
+
+
+        
     };
 }
 
