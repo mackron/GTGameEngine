@@ -200,7 +200,12 @@ namespace GTEngine
     static GTCore::Dictionary<ModelDefinition*> LoadedDefinitions;
 
     /// The list of loaded models. These will be deleted when the model library is shutdown.
-    static GTCore::List<Model*> LoadedModels;
+    //static GTCore::List<Model*> LoadedModels;
+
+
+    /// We need to keep track of the models that are using each definition. What we do here is keep a map with the key being a pointer
+    /// to each loaded definition, and the value being a list of every loaded model that is using that definition.
+    static GTCore::Map<ModelDefinition*, GTCore::Vector<Model*>*> LoadedModels;
 
 
     /// Creates a model from a primitive's vertex array.
@@ -222,16 +227,38 @@ namespace GTEngine
     void ModelLibrary::Shutdown()
     {
         // We need to unload all models.
+        /*
         while (LoadedModels.root != nullptr)
         {
             delete LoadedModels.root->value;
             LoadedModels.RemoveRoot();
         }
-
+        */
+        /*
         // We unload the definitions after the models.
         for (size_t i = 0; i < LoadedDefinitions.count; ++i)
         {
             delete LoadedDefinitions.buffer[i]->value;
+        }
+        */
+
+
+        // All models and definitions need to be deleted.
+        for (size_t iDefinition = 0; iDefinition < LoadedModels.count; ++iDefinition)
+        {
+            auto definition = LoadedModels.buffer[iDefinition]->key;
+            auto models     = LoadedModels.buffer[iDefinition]->value;
+
+            if (models != nullptr)
+            {
+                for (size_t iModel = 0; iModel < models->count; ++iModel)
+                {
+                    delete models->buffer[iModel];
+                }
+            }
+
+            delete models;
+            delete definition;
         }
     }
 }
@@ -549,6 +576,7 @@ namespace GTEngine
                 if (ModelLibrary::Load(fileName, *definition))
                 {
                     LoadedDefinitions.Add(absolutePath.c_str(), definition);
+                    LoadedModels.Add(definition, new GTCore::Vector<Model*>);
                 }
                 else
                 {
@@ -880,7 +908,12 @@ namespace GTEngine
     Model* ModelLibrary::CreateFromDefinition(const ModelDefinition &definition)
     {
         auto model = new Model(definition);
-        LoadedModels.Append(model);
+
+        auto iDefinitionModels = LoadedModels.Find(const_cast<ModelDefinition*>(&definition));        // <-- Naughty const_cast is OK here.
+        assert(iDefinitionModels        != nullptr);
+        assert(iDefinitionModels->value != nullptr);
+
+        iDefinitionModels->value->PushBack(model);
 
         return model;
     }
@@ -980,11 +1013,12 @@ namespace GTEngine
         return model;
     }
 
+    static int ConvexHullCount = 0;
     Model* ModelLibrary::CreateFromConvexHull(const ConvexHull &convexHull)
     {
         // We need a unique identifier for this mesh. We will base it on the size of the box.
         char name[128];
-        GTCore::IO::snprintf(name, 128, "convexhull(%d)", static_cast<unsigned int>(LoadedModels.Count()));
+        GTCore::IO::snprintf(name, 128, "convexhull(%d)", ConvexHullCount++);
 
         // We create the model from a primitive. To do this we need a non-const vertex array.
         VertexArray* va = nullptr;
@@ -1001,8 +1035,16 @@ namespace GTEngine
 
     void ModelLibrary::Delete(Model* model)
     {
-        LoadedModels.Remove(LoadedModels.Find(model));
-        delete model;
+        if (model != nullptr)
+        {
+            // We need to find the list this model is part of and remove it.
+            auto iDefinitionModels = LoadedModels.Find(const_cast<ModelDefinition*>(&model->GetDefinition()));      // <-- const_cast is safe here.
+            assert(iDefinitionModels        != nullptr);
+            assert(iDefinitionModels->value != nullptr);
+
+            iDefinitionModels->value->RemoveFirst(model);;
+            delete model;
+        }
     }
 
 
@@ -2003,6 +2045,7 @@ namespace GTEngine
             definition->meshSkinningVertexAttributes.PushBack(nullptr);
 
             LoadedDefinitions.Add(name, definition);
+            LoadedModels.Add(definition, new GTCore::Vector<Model*>);
         }
         else
         {
