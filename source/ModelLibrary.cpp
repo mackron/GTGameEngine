@@ -551,16 +551,16 @@ namespace GTEngine
     Model* ModelLibrary::LoadFromFile(const char* fileName)
     {
         // We will first find an existing model definition. If we don't find it, we create one and the load into it.
-        auto definition = ModelLibrary::FindDefinition(fileName);
-        if (definition == nullptr)
+        GTCore::String absolutePath;
+        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
         {
-            GTCore::String absolutePath;
-            if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+            auto definition = ModelLibrary::FindDefinition(absolutePath.c_str());
+            if (definition == nullptr)
             {
                 definition = new ModelDefinition(fileName);
                 
                 // We need to load the model.
-                if (ModelLibrary::Load(fileName, *definition))
+                if (ModelLibrary::Load(absolutePath.c_str(), *definition))
                 {
                     LoadedDefinitions.Add(absolutePath.c_str(), definition);
                     LoadedModels.Add(definition, new GTCore::Vector<Model*>);
@@ -571,17 +571,15 @@ namespace GTEngine
                     definition = nullptr;
                 }
             }
+
+            // Now all we do is 
+            if (definition != nullptr)
+            {
+                return ModelLibrary::CreateFromDefinition(*definition);
+            }
         }
 
-        // Now all we do is 
-        if (definition != nullptr)
-        {
-            return ModelLibrary::CreateFromDefinition(*definition);
-        }
-        else
-        {
-            return nullptr;
-        }
+        return nullptr;
     }
 
 
