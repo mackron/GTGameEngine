@@ -277,6 +277,35 @@ namespace GTEngine
 
 
 
+    void Editor_ModelEditor::OnModelDefinitionChanged(const char* absolutePath)
+    {
+        auto iState = this->loadedStates.Find(absolutePath);
+        if (iState != nullptr)
+        {
+            auto state = iState->value;
+            assert(state != nullptr);
+
+            auto definition = ModelLibrary::FindDefinition(absolutePath);
+            if (definition != nullptr)
+            {
+                state->materials.Clear();
+                for (size_t i = 0; i < definition->meshMaterials.count; ++i)
+                {
+                    state->materials.PushBack(definition->meshMaterials[i]->GetDefinition().fileName.c_str());
+                }
+
+                state->convexDecompositionSettings = definition->convexHullBuildSettings;
+            }
+
+
+            if (state == this->currentState)
+            {
+                this->RestoreState();
+            }
+        }
+    }
+
+
 
 
 
