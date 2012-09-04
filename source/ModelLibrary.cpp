@@ -199,10 +199,6 @@ namespace GTEngine
     /// The map of model definitions mapping a definition to a file name.
     static GTCore::Dictionary<ModelDefinition*> LoadedDefinitions;
 
-    /// The list of loaded models. These will be deleted when the model library is shutdown.
-    //static GTCore::List<Model*> LoadedModels;
-
-
     /// We need to keep track of the models that are using each definition. What we do here is keep a map with the key being a pointer
     /// to each loaded definition, and the value being a list of every loaded model that is using that definition.
     static GTCore::Map<ModelDefinition*, GTCore::Vector<Model*>*> LoadedModels;
@@ -226,23 +222,6 @@ namespace GTEngine
 
     void ModelLibrary::Shutdown()
     {
-        // We need to unload all models.
-        /*
-        while (LoadedModels.root != nullptr)
-        {
-            delete LoadedModels.root->value;
-            LoadedModels.RemoveRoot();
-        }
-        */
-        /*
-        // We unload the definitions after the models.
-        for (size_t i = 0; i < LoadedDefinitions.count; ++i)
-        {
-            delete LoadedDefinitions.buffer[i]->value;
-        }
-        */
-
-
         // All models and definitions need to be deleted.
         for (size_t iDefinition = 0; iDefinition < LoadedModels.count; ++iDefinition)
         {
@@ -1044,6 +1023,47 @@ namespace GTEngine
 
             iDefinitionModels->value->RemoveFirst(model);;
             delete model;
+        }
+    }
+
+    void ModelLibrary::DeleteUnreferenceDefinitions()
+    {
+        GTCore::List<ModelDefinition*> definitionsToDelete;
+
+        for (size_t i = 0; i < LoadedModels.count; ++i)
+        {
+            auto iDefinitionModels = LoadedModels.buffer[i];
+            assert(iDefinitionModels        != nullptr);
+            assert(iDefinitionModels->value != nullptr);
+
+            if (iDefinitionModels->value->count == 0)
+            {
+                auto definition = iDefinitionModels->key;
+                auto modelsList = iDefinitionModels->value;
+
+                definitionsToDelete.Append(definition);
+                
+                delete definition;
+                delete modelsList;
+            }
+        }
+
+
+        // Now all we do is remove the old pointers.
+        while (definitionsToDelete.root != nullptr)
+        {
+            auto definition = definitionsToDelete.root->value;
+
+            for (size_t i = 0; i < LoadedDefinitions.count; ++i)
+            {
+                if (LoadedDefinitions.buffer[i]->value == definition)
+                {
+                    LoadedDefinitions.RemoveByIndex(i);
+                    break;
+                }
+            }
+            
+            LoadedModels.Remove(definition);
         }
     }
 

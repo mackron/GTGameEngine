@@ -127,6 +127,8 @@ namespace GTEngine
         /// Deletes a model that was created with the model library.
         static void Delete(Model* model);
 
+        /// Deletes an unreferenced definitions.
+        static void DeleteUnreferenceDefinitions();
 
 
     // Misc functions.
