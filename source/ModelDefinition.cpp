@@ -1,6 +1,7 @@
 
 #include <GTEngine/ModelDefinition.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
+#include <GTEngine/GarbageCollector.hpp>
 
 namespace GTEngine
 {
@@ -14,37 +15,12 @@ namespace GTEngine
 
     ModelDefinition::~ModelDefinition()
     {
-        for (size_t i = 0; i < this->meshGeometries.count; ++i)
-        {
-            delete this->meshGeometries[i];
-        }
-
-        for (size_t i = 0; i < this->meshMaterials.count; ++i)
-        {
-            MaterialLibrary::Delete(this->meshMaterials[i]);
-        }
-
-        for (size_t i = 0; i < this->meshSkinningVertexAttributes.count; ++i)
-        {
-            delete [] this->meshSkinningVertexAttributes[i];
-        }
-
-
-        for (size_t i = 0; i < this->bones.count; ++i)
-        {
-            delete this->bones.buffer[i]->value;
-        }
-
-        for (size_t i = 0; i < this->animationKeyCache.count; ++i)
-        {
-            delete this->animationKeyCache[i];
-        }
-
-
-        for (size_t i = 0; i < this->convexHulls.count; ++i)
-        {
-            delete this->convexHulls[i];
-        }
+        this->ClearMeshGeometries();
+        this->ClearMeshSkinningVertexAttributes();
+        this->ClearBones();
+        this->ClearAnimations();
+        this->ClearMaterials();
+        this->ClearConvexHulls();
     }
 
     void ModelDefinition::GenerateTangentsAndBitangents()
@@ -99,5 +75,68 @@ namespace GTEngine
 
         // We're going to store the settings that were used to build the convex hulls. These will be stored as metadata in the .gtmodel file.
         this->convexHullBuildSettings = settings;
+    }
+
+
+    void ModelDefinition::ClearMeshGeometries()
+    {
+        for (size_t i = 0; i < this->meshGeometries.count; ++i)
+        {
+            // It's important that we garbage collect here.
+            GarbageCollector::MarkForCollection(this->meshGeometries[i]);
+        }
+        this->meshGeometries.Clear();
+    }
+
+    void ModelDefinition::ClearMeshSkinningVertexAttributes()
+    {
+        for (size_t i = 0; i < this->meshSkinningVertexAttributes.count; ++i)
+        {
+            delete [] this->meshSkinningVertexAttributes[i];
+        }
+        this->meshSkinningVertexAttributes.Clear();
+    }
+
+    void ModelDefinition::ClearBones()
+    {
+        for (size_t i = 0; i < this->bones.count; ++i)
+        {
+            delete this->bones.buffer[i]->value;
+        }
+        this->bones.Clear();
+    }
+
+    void ModelDefinition::ClearAnimations(bool clearNamedSegments)
+    {
+        this->animation.Clear(clearNamedSegments);
+
+        for (size_t i = 0; i < this->animationKeyCache.count; ++i)
+        {
+            delete this->animationKeyCache[i];
+        }
+        this->animationKeyCache.Clear();
+    }
+
+    void ModelDefinition::ClearNamedAnimationSegments()
+    {
+        this->animation.ClearNamedSegments();
+    }
+
+    void ModelDefinition::ClearMaterials()
+    {
+        for (size_t i = 0; i < this->meshMaterials.count; ++i)
+        {
+            MaterialLibrary::Delete(this->meshMaterials[i]);
+        }
+        this->meshMaterials.Clear();
+    }
+
+    void ModelDefinition::ClearConvexHulls()
+    {
+        for (size_t i = 0; i < this->convexHulls.count; ++i)
+        {
+            delete this->convexHulls[i];
+        }
+        this->convexHulls.Clear();
     }
 }

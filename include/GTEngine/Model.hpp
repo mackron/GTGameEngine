@@ -84,6 +84,15 @@ namespace GTEngine
         const GTCore::Vector<ConvexHull*> & GetConvexHulls() const { return this->definition.GetConvexHulls(); }
 
 
+
+        /// Called when the definition of the model has been modified.
+        ///
+        /// @remarks
+        ///     When this is called, the model will have it's information updated based on the definition.
+        void OnDefinitionChanged();
+
+
+
     // Animation.
     public:
 
@@ -116,6 +125,10 @@ namespace GTEngine
         /// @param name     [in] The name of the bone to retrieve.
         /// @param indexOut [in] A pointer to the variable that will receive the index.
         Bone* GetBoneByName(const char* name, size_t* indexOut = nullptr);
+
+        /// Clears meshes, bones, etc.
+        void Clear();
+
 
 
     public:

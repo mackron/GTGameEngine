@@ -18,53 +18,13 @@ namespace GTEngine
           animationPlaybackSpeed(1.0),
           collisionVA(nullptr)
     {
-        //double startTime = GTCore::Timing::GetTimeInMilliseconds();
-
-
-        // We need to create copies of the bones. It is important that this is done before adding the meshes.
-        this->CopyAndAttachBones(definition.bones);
-
-        // Now the animation.
-        this->CopyAnimation(definition.animation, definition.animationChannelBones);
-        
-        // Now we need to create the meshes. This must be done after adding the bones.
-        for (size_t i = 0; i < definition.meshGeometries.count; ++i)
-        {
-            if (definition.meshSkinningVertexAttributes[i] != nullptr)
-            {
-                this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i]->GetDefinition().fileName.c_str(), definition.meshSkinningVertexAttributes[i]);
-            }
-            else
-            {
-                this->AttachMesh(definition.meshGeometries[i], definition.meshMaterials[i]->GetDefinition().fileName.c_str());
-            }
-        }
-
-
-        //GTEngine::Log("--- Instantiation Time: %fms ---", GTCore::Timing::GetTimeInMilliseconds() - startTime);
+        // This will get the model into the correct state.
+        this->OnDefinitionChanged();
     }
 
     Model::~Model()
     {
-        // Meshes.
-        for (size_t i = 0; i < this->meshes.count; ++i)
-        {
-            delete this->meshes[i];
-        }
-
-        // Bones
-        for (size_t i = 0; i < this->bones.count; ++i)
-        {
-            delete this->bones.buffer[i];
-        }
-
-        // Animation keys.
-        for (size_t i = 0; i < this->animationKeyCache.count; ++i)
-        {
-            delete this->animationKeyCache[i];
-        }
-
-        delete this->collisionVA;
+        this->Clear();
     }
 
 
@@ -260,6 +220,36 @@ namespace GTEngine
     }
     
 
+    void Model::OnDefinitionChanged()
+    {
+        //double startTime = GTCore::Timing::GetTimeInMilliseconds();
+
+        this->Clear();
+
+
+        // We need to create copies of the bones. It is important that this is done before adding the meshes.
+        this->CopyAndAttachBones(this->definition.bones);
+
+        // Now the animation.
+        this->CopyAnimation(this->definition.animation, this->definition.animationChannelBones);
+        
+        // Now we need to create the meshes. This must be done after adding the bones.
+        for (size_t i = 0; i < this->definition.meshGeometries.count; ++i)
+        {
+            if (this->definition.meshSkinningVertexAttributes[i] != nullptr)
+            {
+                this->AttachMesh(this->definition.meshGeometries[i], this->definition.meshMaterials[i]->GetDefinition().fileName.c_str(), this->definition.meshSkinningVertexAttributes[i]);
+            }
+            else
+            {
+                this->AttachMesh(this->definition.meshGeometries[i], this->definition.meshMaterials[i]->GetDefinition().fileName.c_str());
+            }
+        }
+
+
+        //GTEngine::Log("--- Instantiation Time: %fms ---", GTCore::Timing::GetTimeInMilliseconds() - startTime);
+    }
+
 
    
     ///////////////////////////////////////////////////////////////////
@@ -353,6 +343,35 @@ namespace GTEngine
         }
 
         return nullptr;
+    }
+
+
+    void Model::Clear()
+    {
+        // Meshes.
+        for (size_t i = 0; i < this->meshes.count; ++i)
+        {
+            delete this->meshes[i];
+        }
+        this->meshes.Clear();
+
+        // Bones
+        for (size_t i = 0; i < this->bones.count; ++i)
+        {
+            delete this->bones.buffer[i];
+        }
+        this->meshes.Clear();
+
+        // Animation keys.
+        for (size_t i = 0; i < this->animationKeyCache.count; ++i)
+        {
+            delete this->animationKeyCache[i];
+        }
+        this->meshes.Clear();
+
+
+        delete this->collisionVA;
+        this->collisionVA = nullptr;
     }
 }
 

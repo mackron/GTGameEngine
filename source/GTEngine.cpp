@@ -78,6 +78,9 @@ namespace GTEngine
         // multithreaded initialisation if needed.
         ThreadCache::Startup();
 
+        /// The garbage collector should be started up as soon as possible.s
+        GarbageCollector::Startup();
+
 
         // With the log file created, we can startup all of our other sub-systems.
         Log("Starting Rendering Sub-System...");
@@ -148,6 +151,10 @@ namespace GTEngine
         ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();
         
+
+        // It's important that the garbage collector is done after the libraries in case they use the garbage collector itself for cleanup.
+        GarbageCollector::Shutdown();
+
 
         // We shutdown major sub-systems before logging. This allows us to log shutdown info.
         Renderer::Shutdown();

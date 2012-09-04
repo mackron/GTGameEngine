@@ -49,6 +49,35 @@ namespace GTEngine
         const GTCore::Vector<ConvexHull*> & GetConvexHulls() const { return this->convexHulls; }
 
 
+
+        /// Clears the mesh geometry.
+        void ClearMeshGeometries();
+
+        /// Clears the meshes skinning vertex attributes.
+        void ClearMeshSkinningVertexAttributes();
+
+        /// Clears the bones.
+        void ClearBones();
+
+        /// Clears the animations of the definition.
+        void ClearAnimations(bool clearNamedSegments = false);
+
+        /// Clears the named animation segments.
+        void ClearNamedAnimationSegments();
+
+        /// Clears the materials.
+        void ClearMaterials();
+
+        /// Clears the convex hulls.
+        void ClearConvexHulls();
+
+
+        
+        /// Determines whether or not the definition has convex hulls.
+        bool HasConvexHulls() const { return this->convexHulls.count > 0; }
+
+
+
     public:
 
         /// The name of the file used to create the definition. This will be an empty string if it was not created from a file.

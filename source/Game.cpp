@@ -444,16 +444,19 @@ namespace GTEngine
     void Game::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
         // If the file is an asset, we need to update everything that is using it. We do this via the asset libraries.
-        printf("OnFileUpdate: %s\n", item.info.absolutePath);
-
-        auto extension = GTCore::Path::Extension(item.info.path.c_str());
-
-        if (ModelLibrary::IsExtensionSupported(extension))
+        if (!item.info.isDirectory)
         {
-            ModelLibrary::ReloadModel(item.info.path.c_str());
-        }
-        else if (Texture2DLibrary::IsExtensionSupported(extension))
-        {
+            printf("OnFileUpdate: %s\n", item.info.absolutePath);
+
+            auto extension = GTCore::Path::Extension(item.info.path.c_str());
+
+            if (ModelLibrary::IsExtensionSupported(extension))
+            {
+                ModelLibrary::ReloadModel(item.info.path.c_str());
+            }
+            else if (Texture2DLibrary::IsExtensionSupported(extension))
+            {
+            }
         }
     }
 

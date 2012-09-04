@@ -336,4 +336,10 @@ namespace GTEngine
 
         return nullptr;
     }
+
+
+    void VertexArrayLibrary::Delete(VertexArray* va)
+    {
+        delete va;
+    }
 }

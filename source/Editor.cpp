@@ -94,6 +94,10 @@ namespace GTEngine
             // We need to make sure everything is saved. We'll do this via the scripting environment.
             this->game.GetScript().Execute("Editor.SaveAllItems()");
 
+            // We want to update the data files so we can see them in-game.
+            this->game.GetDataFilesWatcher().CheckForChanges(false);
+            this->game.GetDataFilesWatcher().DispatchEvents();
+
             // We don't want to be watching data files anymore.
             this->game.DisableDataFilesWatching();
 

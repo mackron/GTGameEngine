@@ -1149,11 +1149,11 @@ namespace GTEngine
         return false;
     }
 
-    bool Renderer_SyncVertexArray(const VertexArray *vertexArray)
+    bool Renderer_SyncVertexArray(const VertexArray* vertexArray)
     {
         assert(vertexArray != nullptr);
 
-        auto vertexArrayData = (VertexArray_GL20 *)vertexArray->GetRendererData();
+        auto vertexArrayData = (VertexArray_GL20*)vertexArray->GetRendererData();
         if (vertexArrayData == nullptr)
         {
             vertexArrayData = new VertexArray_GL20;
