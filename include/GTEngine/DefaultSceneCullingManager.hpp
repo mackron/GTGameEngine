@@ -50,7 +50,7 @@ namespace GTEngine
 
         /// Processes the model of the given object.
         ///
-        /// @param object [in]
+        /// @param object [in] The object being processed.
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
@@ -58,7 +58,7 @@ namespace GTEngine
 
         /// Processes the point light of the given object.
         ///
-        /// @param object [in]
+        /// @param object [in] The object being processed.
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
@@ -66,11 +66,18 @@ namespace GTEngine
 
         /// Processes the spot light of the given object.
         ///
-        /// @param object [in]
+        /// @param object [in] The object being processed.
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
         virtual void ProcessVisibleObjectSpotLight(SceneObject &object, VisibleCallback &callback);
+
+
+        /// Helper method for processing a visible object.
+        ///
+        /// @param object [in] The object being processed.
+        virtual void ProcessVisibleObject(SceneObject &object, VisibleCallback &callback);
+
 
 
     protected:
@@ -78,17 +85,14 @@ namespace GTEngine
         /// The collision world containing collision objects for everything needing culling.
         CollisionWorld world;
 
-        /// Controls whether or not occlusion culling should be performed. Defaults to true.
-        bool doOcclusionCulling;
-
 
         /// Structure containing metadata for each scene node object.
         struct SceneNodeMetadata
         {
             SceneNodeMetadata()
-                : modelCollisionObject(nullptr), modelCollisionShape(nullptr),
+                : modelCollisionObject(nullptr),      modelCollisionShape(nullptr),
                   pointLightCollisionObject(nullptr), pointLightCollisionShape(nullptr),
-                  spotLightCollisionObject(nullptr), spotLightCollisionShape(nullptr)
+                  spotLightCollisionObject(nullptr),  spotLightCollisionShape(nullptr)
             {
             }
 

@@ -45,6 +45,12 @@ namespace GTEngine
 
     public:
 
+        /// Constructor.
+        SceneCullingManager()
+            : flags(0)
+        {
+        }
+
         /// Destructor.
         virtual ~SceneCullingManager() {}
 
@@ -123,6 +129,33 @@ namespace GTEngine
         /// @param mvp      [in] The model-view-projection matrix to cull against.
         /// @param callback [in] The callback to use when processing each visible object.
         virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibleCallback &callback) = 0;
+
+
+
+        /////////////////////////////////////////
+        // Flags
+
+        /// The different flags that can be set on the manager.
+        enum Flags
+        {
+            None               = 0,
+            NoOcclusionCulling = (1 << 1),
+            NoFrustumCulling   = (1 << 2),
+        };
+
+        /// Retrieves the flags of the culling manager.
+        unsigned int GetFlags() const { return this->flags; }
+
+        /// Sets the flags of the culling manager.
+        ///
+        /// @param newFlags [in] The new flags to use with the manager.
+        void SetFlags(unsigned int newFlags) { this->flags = newFlags; }
+
+
+    private:
+
+        /// The culling manager's flags.
+        unsigned int flags;
     };
 }
 

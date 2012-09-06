@@ -287,6 +287,20 @@ namespace GTEngine
         virtual void GetAABB(glm::vec3 &min, glm::vec3 &max) const;
 
 
+        /// Retrieves a reference to the update manager.
+              SceneUpdateManager & GetUpdateManager()       { return this->updateManager; }
+        const SceneUpdateManager & GetUpdateManager() const { return this->updateManager; }
+
+        /// Retrieves a reference to the physics manager.
+              ScenePhysicsManager & GetPhysicsManager()       { return this->physicsManager; }
+        const ScenePhysicsManager & GetPhysicsManager() const { return this->physicsManager; }
+
+        /// Retrieves a reference to the culling manager.
+              SceneCullingManager & GetCullingManager()       { return this->cullingManager; }
+        const SceneCullingManager & GetCullingManager() const { return this->cullingManager; }
+
+
+
     // Collision Tests.
     public:
 

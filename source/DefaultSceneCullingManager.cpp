@@ -11,7 +11,7 @@
 namespace GTEngine
 {
     DefaultSceneCullingManager::DefaultSceneCullingManager()
-        : world(), doOcclusionCulling(true)
+        : world()
     {
     }
 
@@ -242,37 +242,56 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::ProcessVisibleObjects(const glm::mat4 &mvp, VisibleCallback &callback)
     {
-        // The first thing we're going to do is convert our planes to a format Bullet will like.
-        Math::Plane planes[6];
-        Math::CalculateFrustumPlanes(mvp, planes, false);       // <-- last arguments means "don't normalize" (not needed by Bullet).
-
-        btVector3 planes_n[6];
-	    btScalar  planes_o[6];
-
-        planes_n[0] = btVector3(planes[0].a, planes[0].b, planes[0].c); planes_o[0] = planes[0].d;
-        planes_n[1] = btVector3(planes[1].a, planes[1].b, planes[1].c); planes_o[1] = planes[1].d;
-        planes_n[2] = btVector3(planes[2].a, planes[2].b, planes[2].c); planes_o[2] = planes[2].d;
-        planes_n[3] = btVector3(planes[3].a, planes[3].b, planes[3].c); planes_o[3] = planes[3].d;
-        planes_n[4] = btVector3(planes[4].a, planes[4].b, planes[4].c); planes_o[4] = planes[4].d;
-        planes_n[5] = btVector3(planes[5].a, planes[5].b, planes[5].c); planes_o[5] = planes[5].d;
-
-        // Here we grab the sort direction. We will retrieve this based on the normal of the near clipping plane (index 5).
-        btVector3 sortDirection(planes_n[5]);
-        sortDirection.normalize();
-
-
-        // Now we just create our Dbvt policy and call our occlusion functions.
-        DbvtPolicy dbvtPolicy(*this, callback, mvp);
-
-        if (this->doOcclusionCulling)
+        auto flags = this->GetFlags();
+        if ((flags & SceneCullingManager::NoFrustumCulling) && (flags & SceneCullingManager::NoOcclusionCulling))
         {
-            btDbvt::collideOCL(this->world.GetBroadphase().m_sets[1].m_root, planes_n, planes_o, sortDirection, 6, dbvtPolicy);
-		    btDbvt::collideOCL(this->world.GetBroadphase().m_sets[0].m_root, planes_n, planes_o, sortDirection, 6, dbvtPolicy);
+            auto collisionObjects = this->world.GetInternalWorld().getCollisionObjectArray();
+            for (int i = 0; i < collisionObjects.size(); ++i)
+            {
+                auto collisionObject = collisionObjects[i];
+                assert(collisionObject != nullptr);
+
+                auto sceneObject = static_cast<SceneObject*>(collisionObject->getUserPointer());
+                if (sceneObject != nullptr)
+                {
+                    this->ProcessVisibleObject(*sceneObject, callback);
+                }
+            }
         }
         else
         {
-            btDbvt::collideKDOP(this->world.GetBroadphase().m_sets[1].m_root, planes_n, planes_o, 6, dbvtPolicy);
-			btDbvt::collideKDOP(this->world.GetBroadphase().m_sets[0].m_root, planes_n, planes_o, 6, dbvtPolicy);
+            // The first thing we're going to do is convert our planes to a format Bullet will like.
+            Math::Plane planes[6];
+            Math::CalculateFrustumPlanes(mvp, planes, false);       // <-- last arguments means "don't normalize" (not needed by Bullet).
+
+            btVector3 planes_n[6];
+	        btScalar  planes_o[6];
+
+            planes_n[0] = btVector3(planes[0].a, planes[0].b, planes[0].c); planes_o[0] = planes[0].d;
+            planes_n[1] = btVector3(planes[1].a, planes[1].b, planes[1].c); planes_o[1] = planes[1].d;
+            planes_n[2] = btVector3(planes[2].a, planes[2].b, planes[2].c); planes_o[2] = planes[2].d;
+            planes_n[3] = btVector3(planes[3].a, planes[3].b, planes[3].c); planes_o[3] = planes[3].d;
+            planes_n[4] = btVector3(planes[4].a, planes[4].b, planes[4].c); planes_o[4] = planes[4].d;
+            planes_n[5] = btVector3(planes[5].a, planes[5].b, planes[5].c); planes_o[5] = planes[5].d;
+
+            // Here we grab the sort direction. We will retrieve this based on the normal of the near clipping plane (index 5).
+            btVector3 sortDirection(planes_n[5]);
+            sortDirection.normalize();
+
+
+            // Now we just create our Dbvt policy and call our occlusion functions.
+            DbvtPolicy dbvtPolicy(*this, callback, mvp);
+
+            if (!(flags & SceneCullingManager::NoOcclusionCulling))
+            {
+                btDbvt::collideOCL(this->world.GetBroadphase().m_sets[1].m_root, planes_n, planes_o, sortDirection, 6, dbvtPolicy);
+		        btDbvt::collideOCL(this->world.GetBroadphase().m_sets[0].m_root, planes_n, planes_o, sortDirection, 6, dbvtPolicy);
+            }
+            else
+            {
+                btDbvt::collideKDOP(this->world.GetBroadphase().m_sets[1].m_root, planes_n, planes_o, 6, dbvtPolicy);
+			    btDbvt::collideKDOP(this->world.GetBroadphase().m_sets[0].m_root, planes_n, planes_o, 6, dbvtPolicy);
+            }
         }
     }
 
@@ -289,6 +308,37 @@ namespace GTEngine
     void DefaultSceneCullingManager::ProcessVisibleObjectSpotLight(SceneObject &object, VisibleCallback &callback)
     {
         callback.ProcessObjectSpotLight(object);
+    }
+
+
+    void DefaultSceneCullingManager::ProcessVisibleObject(SceneObject &object, VisibleCallback &callback)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            if (sceneNode.IsVisible())
+            {
+                auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+                if (modelComponent != nullptr)
+                {
+                    if (modelComponent->GetModel() != nullptr)
+                    {
+                        this->ProcessVisibleObjectModel(sceneNode, callback);
+                    }
+                }
+                
+                if (sceneNode.GetComponent<PointLightComponent>() != nullptr)
+                {
+                    this->ProcessVisibleObjectPointLight(sceneNode, callback);
+                }
+
+                if (sceneNode.GetComponent<SpotLightComponent>() != nullptr)
+                {
+                    this->ProcessVisibleObjectSpotLight(sceneNode, callback);
+                }
+            }
+        }
     }
 
 

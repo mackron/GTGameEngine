@@ -65,7 +65,8 @@ namespace GTEngine
           inheritPosition(true), inheritOrientation(true), inheritScale(true),
           flags(0),
           eventLockCounter(0),
-          typeID(0)
+          typeID(0),
+          modelComponent(nullptr), pointLightComponent(nullptr), spotLightComponent(nullptr)
     {
     }
 
