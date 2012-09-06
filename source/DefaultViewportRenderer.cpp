@@ -302,8 +302,13 @@ namespace GTEngine
     void DefaultViewportRenderer::Render()
     {
         // The new back RC caches need to be reset in preparation for the next frame.
+        this->RenderCommands.rcBeginLayer[Renderer::BackIndex].Reset();
+        this->RenderCommands.rcEndLayer[Renderer::BackIndex].Reset();
         this->RenderCommands.rcBeginLightingPass[Renderer::BackIndex].Reset();
+        this->RenderCommands.rcControlBlending[Renderer::BackIndex].Reset();
         this->RenderCommands.rcDrawVA[Renderer::BackIndex].Reset();
+        this->RenderCommands.rcSetFaceCulling[Renderer::BackIndex].Reset();
+
 
         // If the framebuffer needs to be resized, we best do that now. Resizing the framebuffer leaves 
         if (this->framebufferNeedsResize)
