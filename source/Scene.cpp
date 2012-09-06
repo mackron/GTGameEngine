@@ -478,7 +478,6 @@ namespace GTEngine
         );
         this->cullingManager.ProcessVisibleObjects(mvp, callback);
 
-
         // Ambient.
         for (auto i = this->ambientLightComponents.root; i != nullptr; i = i->next)
         {
