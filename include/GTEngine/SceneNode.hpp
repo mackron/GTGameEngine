@@ -456,6 +456,22 @@ namespace GTEngine
         */
         Component* GetComponentByName(const char *name)
         {
+            if (GTCore::Strings::Equal(name, ModelComponent::Name))
+            {
+                return this->modelComponent;
+            }
+
+            if (GTCore::Strings::Equal(name, PointLightComponent::Name))
+            {
+                return this->pointLightComponent;
+            }
+
+            if (GTCore::Strings::Equal(name, SpotLightComponent::Name))
+            {
+                return this->pointLightComponent;
+            }
+
+
             auto item = this->components.Find(name);
             if (item != nullptr)
             {
@@ -526,6 +542,13 @@ namespace GTEngine
 
                 delete component;
             }
+
+
+            delete this->modelComponent;
+            this->modelComponent = nullptr;
+
+            delete this->pointLightComponent;
+            this->pointLightComponent = nullptr;
         }
 
         /**
@@ -759,6 +782,8 @@ namespace GTEngine
         PointLightComponent* AddPointLightComponent(const glm::vec3 &colour);
 
 
+
+
     // Events. Use these to make posting events a bit easier.
     public:
 
@@ -884,6 +909,16 @@ namespace GTEngine
         unsigned int typeID;
 
 
+        // The component pointers below are used for doing fast retrievals of common components.
+
+        /// A pointer to the model component.
+        ModelComponent* modelComponent;
+
+        /// A pointer to the point light component.
+        PointLightComponent* pointLightComponent;
+
+        /// A pointer to the spot light component.
+        SpotLightComponent* spotLightComponent;
         
         
     public:
@@ -931,6 +966,87 @@ namespace GTEngine
         SceneNode(const SceneNode &);
         SceneNode & operator=(const SceneNode &);
     };
+
+
+
+    // ModelComponent Specialisation.
+    template <> inline       ModelComponent* SceneNode::GetComponent<ModelComponent>()       { return this->modelComponent; }
+    template <> inline const ModelComponent* SceneNode::GetComponent<ModelComponent>() const { return this->modelComponent; }
+
+    template <> inline ModelComponent* SceneNode::AddComponent<ModelComponent>()
+    {
+        if (this->modelComponent == nullptr)
+        {
+            this->modelComponent = new ModelComponent(*this);
+        }
+
+        return this->modelComponent;
+    }
+
+    template <> inline void SceneNode::RemoveComponent<ModelComponent>()
+    {
+        delete this->modelComponent;
+        this->modelComponent = nullptr;
+    }
+
+    template <> inline bool SceneNode::HasComponent<ModelComponent>()
+    {
+        return this->modelComponent != nullptr;
+    }
+
+
+
+    // PointLightComponent Specialisation.
+    template <> inline       PointLightComponent* SceneNode::GetComponent<PointLightComponent>()       { return this->pointLightComponent; }
+    template <> inline const PointLightComponent* SceneNode::GetComponent<PointLightComponent>() const { return this->pointLightComponent; }
+
+    template <> inline PointLightComponent* SceneNode::AddComponent<PointLightComponent>()
+    {
+        if (this->pointLightComponent == nullptr)
+        {
+            this->pointLightComponent = new PointLightComponent(*this);
+        }
+
+        return this->pointLightComponent;
+    }
+
+    template <> inline void SceneNode::RemoveComponent<PointLightComponent>()
+    {
+        delete this->pointLightComponent;
+        this->pointLightComponent = nullptr;
+    }
+
+    template <> inline bool SceneNode::HasComponent<PointLightComponent>()
+    {
+        return this->pointLightComponent != nullptr;
+    }
+
+
+
+    // PointLightComponent Specialisation.
+    template <> inline       SpotLightComponent* SceneNode::GetComponent<SpotLightComponent>()       { return this->spotLightComponent; }
+    template <> inline const SpotLightComponent* SceneNode::GetComponent<SpotLightComponent>() const { return this->spotLightComponent; }
+
+    template <> inline SpotLightComponent* SceneNode::AddComponent<SpotLightComponent>()
+    {
+        if (this->spotLightComponent == nullptr)
+        {
+            this->spotLightComponent = new SpotLightComponent(*this);
+        }
+
+        return this->spotLightComponent;
+    }
+
+    template <> inline void SceneNode::RemoveComponent<SpotLightComponent>()
+    {
+        delete this->spotLightComponent;
+        this->spotLightComponent = nullptr;
+    }
+
+    template <> inline bool SceneNode::HasComponent<SpotLightComponent>()
+    {
+        return this->spotLightComponent != nullptr;
+    }
 }
 
 #endif
