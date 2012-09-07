@@ -85,6 +85,12 @@ namespace GTEngine
         /// The collision world containing collision objects for everything needing culling.
         CollisionWorld world;
 
+        /// The ambient light objects.
+        GTCore::Vector<GTEngine::SceneObject*> ambientLights;
+
+        /// The directional light objects.
+        GTCore::Vector<GTEngine::SceneObject*> directionalLights;
+
 
         /// Structure containing metadata for each scene node object.
         struct SceneNodeMetadata

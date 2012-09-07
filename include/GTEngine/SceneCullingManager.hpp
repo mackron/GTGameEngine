@@ -40,6 +40,17 @@ namespace GTEngine
             ///
             /// @param object [in] The object being processed.
             virtual void ProcessObjectSpotLight(SceneObject &object) = 0;
+
+
+            /// Called when the ambient light of the given object is processed by ProcessVisibleObjects().
+            ///
+            /// @param object [in] The object being processed.
+            virtual void ProcessObjectAmbientLight(SceneObject &object) = 0;
+
+            /// Called when the directional light of the given object is processed by ProcessVisibleObjects().
+            ///
+            /// @param object [in] The object being processed.
+            virtual void ProcessObjectDirectionalLight(SceneObject &object) = 0;
         };
 
 

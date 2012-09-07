@@ -324,6 +324,14 @@ namespace GTEngine
     // Occlusion
     public:
 
+        /// Queries the visible objects based on the given projection matrix.
+        ///
+        /// @param mvp      [in] The projection matrix whose visible objects are being retrieved.
+        /// @param callback [in] The callback that will receive the visible objects.
+        virtual void QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibleCallback &callback);
+
+
+
         /// Adds the applicable visible components using the given viewport's Add*Component() API.
         ///
         /// @param viewport [in] A reference to the viewport whose having visible components added.

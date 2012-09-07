@@ -11,7 +11,7 @@
 namespace GTEngine
 {
     DefaultSceneCullingManager::DefaultSceneCullingManager()
-        : world()
+        : world(), ambientLights(), directionalLights()
     {
     }
 
@@ -72,6 +72,21 @@ namespace GTEngine
                 }
 
 
+                // We're going to do ambient and directional lights here. Currently, these do not have any bounding volumes so we will handle these
+                // outside of the collision world.
+                auto ambientLightComponent = node.GetComponent<GTEngine::AmbientLightComponent>();
+                if (ambientLightComponent != nullptr)
+                {
+                    this->ambientLights.PushBack(&node);
+                }
+
+                auto directionalLightComponent = node.GetComponent<GTEngine::DirectionalLightComponent>();
+                if (directionalLightComponent != nullptr)
+                {
+                    this->directionalLights.PushBack(&node);
+                }
+
+
                 // Occluder.
                 auto occluder = node.GetComponent<GTEngine::OccluderComponent>();
                 if (occluder != nullptr)
@@ -100,6 +115,21 @@ namespace GTEngine
             {
                 this->world.RemoveCollisionObject(occluderComponent->GetCollisionObject());
             }
+
+
+            // Ambient/Directional lights.
+            auto ambientComponent = node.GetComponent<AmbientLightComponent>();
+            if (ambientComponent != nullptr)
+            {
+                this->ambientLights.RemoveFirst(&node);
+            }
+
+            auto directionalComponent = node.GetComponent<DirectionalLightComponent>();
+            if (directionalComponent != nullptr)
+            {
+                this->directionalLights.RemoveFirst(&node);
+            }
+
 
             // All we need to do here is remove the metadata. This will remove the objects from the collision world.
             auto metadata = node.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
@@ -292,6 +322,17 @@ namespace GTEngine
                 btDbvt::collideKDOP(this->world.GetBroadphase().m_sets[1].m_root, planes_n, planes_o, 6, dbvtPolicy);
 			    btDbvt::collideKDOP(this->world.GetBroadphase().m_sets[0].m_root, planes_n, planes_o, 6, dbvtPolicy);
             }
+        }
+
+
+        for (size_t i = 0; i < this->ambientLights.count; ++i)
+        {
+            callback.ProcessObjectAmbientLight(*this->ambientLights[i]);
+        }
+
+        for (size_t i = 0; i < this->directionalLights.count; ++i)
+        {
+            callback.ProcessObjectDirectionalLight(*this->directionalLights[i]);
         }
     }
 

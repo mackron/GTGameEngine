@@ -192,6 +192,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\DataFilesWatcher.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneCullingManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultScenePhysicsManager.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneUpdateManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp" />
@@ -268,6 +269,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneObject.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneObjectTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ScenePhysicsManager.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SceneRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneUpdateManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting.hpp" />
@@ -314,6 +316,7 @@
     <ClCompile Include="..\..\..\source\DataFilesWatcher.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneCullingManager.cpp" />
     <ClCompile Include="..\..\..\source\DefaultScenePhysicsManager.cpp" />
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneUpdateManager.cpp" />
     <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Editor.cpp" />
@@ -374,6 +377,7 @@
     <ClCompile Include="..\..\..\source\SceneNode.cpp" />
     <ClCompile Include="..\..\..\source\SceneNodeFactory.cpp" />
     <ClCompile Include="..\..\..\source\SceneObject.cpp" />
+    <ClCompile Include="..\..\..\source\SceneRenderer.cpp" />
     <ClCompile Include="..\..\..\source\SceneViewport.cpp" />
     <ClCompile Include="..\..\..\source\Scripting.cpp" />
     <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />
