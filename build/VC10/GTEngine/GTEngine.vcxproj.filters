@@ -458,6 +458,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_ModelEditor.hpp">
       <Filter>include\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneRenderer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -756,6 +762,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\Editor_ModelEditor.cpp">
       <Filter>source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneRenderer.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
