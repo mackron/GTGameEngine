@@ -103,10 +103,16 @@ namespace GTEngine
         /// Performs the actual resize. Do not call this directly. This should only be called by the event handler.
         void __DoResize()
         {
-            // We need to create a new set of attachments. We don't delete the old attachments straight away. Instead we mark them as dead
-            // and let CleanDeadAttachments() do the proper cleanup. This is required because of multithreading.
-            this->MarkAttachmentsAsDead();
-            this->CreateAttachments(this->width, this->height);
+            // All we need to do is resize the attachments.
+            this->finalOutput->Resize( this->width, this->height);
+            this->depthStencil->Resize(this->width, this->height);
+
+            this->lightingBuffer0->Resize(this->width, this->height);
+            this->lightingBuffer1->Resize(this->width, this->height);
+
+            this->materialBuffer0->Resize(this->width, this->height);
+            this->materialBuffer1->Resize(this->width, this->height);
+            this->materialBuffer2->Resize(this->width, this->height);
 
             this->needsResize = false;
         }
@@ -182,28 +188,7 @@ namespace GTEngine
             this->materialBuffer2 = nullptr;
         }
 
-        /// Marks all of the currently attachment buffers as dead. Also detaches them.
-        void MarkAttachmentsAsDead()
-        {
-            this->DetachAllBuffers();
-
-            if (this->depthStencil    != nullptr) GarbageCollector::MarkForCollection(*this->depthStencil);
-            if (this->finalOutput     != nullptr) GarbageCollector::MarkForCollection(*this->finalOutput);
-            if (this->lightingBuffer0 != nullptr) GarbageCollector::MarkForCollection(*this->lightingBuffer0);
-            if (this->lightingBuffer1 != nullptr) GarbageCollector::MarkForCollection(*this->lightingBuffer1);
-            if (this->materialBuffer0 != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer0);
-            if (this->materialBuffer1 != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer1);
-            if (this->materialBuffer2 != nullptr) GarbageCollector::MarkForCollection(*this->materialBuffer2);
-
-            this->depthStencil    = nullptr;
-            this->finalOutput     = nullptr;
-            this->lightingBuffer0 = nullptr;
-            this->lightingBuffer1 = nullptr;
-            this->materialBuffer0 = nullptr;
-            this->materialBuffer1 = nullptr;
-            this->materialBuffer2 = nullptr;
-        }
-
+        
 
     public:
 

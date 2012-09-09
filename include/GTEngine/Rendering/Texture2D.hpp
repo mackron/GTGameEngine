@@ -69,6 +69,15 @@ namespace GTEngine
         ///     If 'data' is null, the storage will be allocated, but will remain undefined. Very useful for framebuffer targets.
         void SetData(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data = nullptr);
 
+        /// Resizes the texture.
+        ///
+        /// @param newWidth  [in] The new width of the texture.
+        /// @param newHeight [in] The new height of the texture.
+        ///
+        /// @remarks
+        ///     Any existing data will be deleted and made undefined. This should only really be used for things like framebuffer attachments. Consider SetData(), also.
+        void Resize(unsigned int width, unsigned int height);
+
 
         /// Sets the minification filter.
         ///
@@ -142,6 +151,9 @@ namespace GTEngine
         /// Determines whether or not client-side data should be kept after syncing with the renderer.
         bool KeepClientSideData() const { return this->keepClientSideData; }
 
+
+        /// Determines whether or not the texture is attached to a framebuffer.
+        bool IsAttachedToFramebuffer() const { return this->framebuffers.root != nullptr; }
 
 
     private:    // GTImage Image events.

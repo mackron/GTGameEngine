@@ -30,8 +30,10 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnDraw(GTGUI::Element &element)
     {
+        auto colourBuffer = this->viewport.GetColourOutputBuffer();
+
         GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIQuadShader());
-        GTEngine::Renderer::SetShaderParameter("Texture", this->viewport.GetColourOutputBuffer());
+        GTEngine::Renderer::SetShaderParameter("Texture", colourBuffer);
         GTEngine::Renderer::SetShaderParameter("Color",   1.0f, 1.0f, 1.0f, 1.0f);
 
         GTGUI::Rect viewportRect;

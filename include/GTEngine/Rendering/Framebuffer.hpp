@@ -107,6 +107,12 @@ namespace GTEngine
         bool IsValid() const { return this->isValid; }
 
 
+        /// Marks an attachment as invalid, forcing it to be re-synced.
+        ///
+        /// @param attachment [in] The attachment that has changed.
+        void MarkAttachmentAsInvalid(Texture2D &attachment);
+
+
     // The methods below should only be called by the renderer and it's support functions.
     public:
 

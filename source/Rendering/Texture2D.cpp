@@ -80,6 +80,17 @@ namespace GTEngine
 
         // We are going to manually mark the data as invalid to ensure everything is updated correctly.
         this->syncinfo.dataChanged = true;
+
+        for (auto iFramebuffer = this->framebuffers.root; iFramebuffer != nullptr; iFramebuffer = iFramebuffer->next)
+        {
+            auto framebuffer = iFramebuffer->value;
+            framebuffer->MarkAttachmentAsInvalid(*this);
+        }
+    }
+
+    void Texture2D::Resize(unsigned int newWidth, unsigned int newHeight)
+    {
+        this->SetData(newWidth, newHeight, this->GetFormat(), nullptr);
     }
 
 
