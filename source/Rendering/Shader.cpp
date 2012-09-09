@@ -8,12 +8,9 @@ namespace GTEngine
         : vertexSource(vertexSource), fragmentSource(fragmentSource),
           pendingParameters(),
           rendererData(nullptr),
-          currentTexture2Ds(),
-          vertexAttributeLocations(),
-          needsRelink(false)
+          currentTexture2Ds()
     {
-        // TODO: Should control this with a pre-processor macro for when we do non-GLSL shaders.
-        this->SetStandardGLSLVertexAttributeLocations();
+        Renderer::OnShaderCreated(*this);
     }
 
     Shader::~Shader()
@@ -32,26 +29,10 @@ namespace GTEngine
             }
         }
 
-        Renderer::MarkForCollection(this);
+        Renderer::OnShaderDeleted(*this);
     }
 
-    void Shader::SetVertexAttributeLocation(const char* name, unsigned int location)
-    {
-        this->needsRelink = true;
-        this->vertexAttributeLocations.Add(name, location);
-    }
-
-    void Shader::SetStandardGLSLVertexAttributeLocations()
-    {
-        this->SetVertexAttributeLocation("VertexInput_Position",  0);
-        this->SetVertexAttributeLocation("VertexInput_TexCoord",  1);
-        this->SetVertexAttributeLocation("VertexInput_Normal",    2);
-        this->SetVertexAttributeLocation("VertexInput_Tangent",   3);
-        this->SetVertexAttributeLocation("VertexInput_Bitangent", 4);
-        this->SetVertexAttributeLocation("VertexInput_Colour",    5);
-    }
-
-
+    
 
     void Shader::ClearPendingParameters()
     {
@@ -97,10 +78,5 @@ namespace GTEngine
                 oldTexture->OnDetachFromShader(this);
             }
         }
-    }
-
-    void Shader::OnLink()
-    {
-        this->needsRelink = false;
     }
 }

@@ -44,7 +44,7 @@ namespace GTEngine
         GLuint object;
 
         Texture2D** colourAttachments;
-        Texture2D * depthStencilAttachment;
+        Texture2D*  depthStencilAttachment;
 
     private:    // No copying.
         Framebuffer_GL20(const Framebuffer_GL20 &);
