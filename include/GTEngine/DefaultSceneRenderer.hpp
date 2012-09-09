@@ -72,10 +72,14 @@ namespace GTEngine
         public:
 
             /// Constructor.
-            Framebuffer();
+            Framebuffer()
+            {
+            }
 
             /// Destructor
-            ~Framebuffer();
+            ~Framebuffer()
+            {
+            }
 
 
             /// Marks the framebuffer for resizing.
@@ -95,6 +99,13 @@ namespace GTEngine
 
             /// The height of the framebuffer.
             unsigned int height;
+
+
+            /// The depth/stencil attachment.
+            Texture2D* depthStencil;
+
+            /// The 
+
 
             /// Keeps track of whether or not the framebuffer needs a resize.
             bool needsResize;

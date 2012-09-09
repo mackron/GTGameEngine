@@ -442,12 +442,15 @@ namespace GTEngine
 
     void Scene::AddViewport(SceneViewport &viewport)
     {
+        assert(this->renderer != nullptr);
+
         // The viewport needs to be removed from the previous scene if it has one.
         if (viewport.GetScene() != nullptr)
         {
             viewport.GetScene()->RemoveViewport(viewport);
         }
 
+        this->renderer->AddViewport(viewport);
         this->viewports.Append(&viewport);
 
         viewport.SetScene(this);
@@ -455,8 +458,11 @@ namespace GTEngine
 
     void Scene::RemoveViewport(SceneViewport &viewport)
     {
+        assert(this->renderer != nullptr);
+
         if (viewport.GetScene() == this)
         {
+            this->renderer->RemoveViewport(viewport);
             this->viewports.Remove(this->viewports.Find(&viewport));
 
             viewport.SetScene(nullptr);

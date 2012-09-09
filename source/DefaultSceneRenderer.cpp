@@ -183,4 +183,16 @@ namespace GTEngine
 
         return iFramebuffer->value;
     }
+
+
+
+
+
+
+    ///////////////////////////////////////////////
+    // Render Commands
+
+    void DefaultSceneRenderer::RCBegin::Execute()
+    {
+    }
 }

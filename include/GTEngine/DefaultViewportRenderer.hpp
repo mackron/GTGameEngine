@@ -127,9 +127,9 @@ namespace GTEngine
                 this->finalOutput     = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
                 this->lightingBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
                 this->lightingBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->materialBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->materialBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                this->materialBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->materialBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_R10G10B10A2);
             }
             else
             {
