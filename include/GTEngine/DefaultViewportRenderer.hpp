@@ -28,104 +28,18 @@
 
 namespace GTEngine
 {
-    class DVRFramebuffer;
-    class DVRFramebuffer_RendererEventHandler : public RendererEventHandler
-    {
-    public:
-
-        /// Constructor.
-        DVRFramebuffer_RendererEventHandler(DVRFramebuffer &framebuffer)
-            : framebuffer(framebuffer)
-        {
-        }
-
-        /// RendererEventHandler::OnSwapRCQueues.
-        void OnSwapRCQueues();
-
-
-        /// The framebuffer we need to resize.
-        DVRFramebuffer &framebuffer;
-
-
-    private:    // No copying.
-        DVRFramebuffer_RendererEventHandler(const DVRFramebuffer_RendererEventHandler &);
-        DVRFramebuffer_RendererEventHandler & operator=(const DVRFramebuffer_RendererEventHandler &);
-    };
-
-
     class DVRFramebuffer : public Framebuffer
     {
     public:
 
         DVRFramebuffer()
             : Framebuffer(),
-              width(0), height(0),
+              width(1), height(1),      // <-- All textures must be at least 1x1.
               depthStencil(nullptr),
               finalOutput(nullptr),
               lightingBuffer0(nullptr), lightingBuffer1(nullptr),
-              materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr),
-              rendererEventHandler(*this),
-              needsResize(false)
+              materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr)
         {
-            this->CreateAttachments(1, 1);
-            Renderer::AttachEventHandler(this->rendererEventHandler);
-        }
-
-        ~DVRFramebuffer()
-        {
-            this->DeleteAll();
-        }
-
-
-        /// Marks the framebuffer as needing to be resized.
-        ///
-        /// @param newWidth  [in] The new width of the framebuffer.
-        /// @param newHeight [in] The new height of the framebuffer.
-        ///
-        /// @remarks
-        ///     Note that this is not instantaneous - it will be delayed until the next buffer swap where the actual resize can be done in a thread safe environment.
-        void Resize(unsigned int newWidth, unsigned int newHeight)
-        {
-            this->needsResize = true;
-            this->width  = newWidth;
-            this->height = newHeight;
-
-            this->finalOutput->Resize( this->width, this->height);
-            this->depthStencil->Resize(this->width, this->height);
-
-            this->lightingBuffer0->Resize(this->width, this->height);
-            this->lightingBuffer1->Resize(this->width, this->height);
-
-            this->materialBuffer0->Resize(this->width, this->height);
-            this->materialBuffer1->Resize(this->width, this->height);
-            this->materialBuffer2->Resize(this->width, this->height);
-        }
-
-
-
-    // The methods below should only be used internally.
-    public:
-
-        /// Determines whether or not the framebuffer needs to be resized. Should only be used internally by the event handler.
-        bool __NeedsResize() const { return this->needsResize; }
-
-
-        /// Performs the actual resize. Do not call this directly. This should only be called by the event handler.
-        void __DoResize()
-        {
-            // All we need to do is resize the attachments.
-            this->needsResize = false;
-        }
-
-
-    private:
-
-        /// Creates the attachment points using the given width and height. This does not do any actual attachments, only creates the buffers.
-        void CreateAttachments(unsigned int width, unsigned int height)
-        {
-            this->width  = width;
-            this->height = height;
-
             this->depthStencil = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_Depth24_Stencil8);
 
             if (Renderer::SupportFloatTextures())
@@ -166,11 +80,8 @@ namespace GTEngine
             this->AttachColourBuffer(this->lightingBuffer1, 5);
         }
 
-        /// Deletes the attachments.
-        void DeleteAll()
+        ~DVRFramebuffer()
         {
-            this->DetachAllBuffers();
-
             delete this->depthStencil;
             delete this->finalOutput;
             delete this->lightingBuffer0;
@@ -188,7 +99,30 @@ namespace GTEngine
             this->materialBuffer2 = nullptr;
         }
 
-        
+
+        /// Marks the framebuffer as needing to be resized.
+        ///
+        /// @param newWidth  [in] The new width of the framebuffer.
+        /// @param newHeight [in] The new height of the framebuffer.
+        ///
+        /// @remarks
+        ///     Note that this is not instantaneous - it will be delayed until the next buffer swap where the actual resize can be done in a thread safe environment.
+        void Resize(unsigned int newWidth, unsigned int newHeight)
+        {
+            this->width  = newWidth;
+            this->height = newHeight;
+
+            this->finalOutput->Resize( this->width, this->height);
+            this->depthStencil->Resize(this->width, this->height);
+
+            this->lightingBuffer0->Resize(this->width, this->height);
+            this->lightingBuffer1->Resize(this->width, this->height);
+
+            this->materialBuffer0->Resize(this->width, this->height);
+            this->materialBuffer1->Resize(this->width, this->height);
+            this->materialBuffer2->Resize(this->width, this->height);
+        }
+
 
     public:
 
@@ -208,13 +142,6 @@ namespace GTEngine
         Texture2D* materialBuffer0;     // RGB = Diffuse.  A = Shininess.
         Texture2D* materialBuffer1;     // RGB = Emissive. A = Transparency.
         Texture2D* materialBuffer2;     // RGB = Normals for normal mapping. A = nothing.
-
-        
-        /// The event handler we'll attach to the renderer so we can handle the OnSwapRCQueues event and do a resize when required.
-        DVRFramebuffer_RendererEventHandler rendererEventHandler;
-
-        /// Keeps track of whether or not the framebuffer needs to be resized.
-        bool needsResize;
     };
 }
 

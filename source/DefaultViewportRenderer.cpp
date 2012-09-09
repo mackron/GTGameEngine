@@ -15,6 +15,7 @@ namespace GTEngine
     //////////////////////////////////////////////////////
     // DVRFramebuffer
 
+    /*
     void DVRFramebuffer_RendererEventHandler::OnSwapRCQueues()
     {
         if (this->framebuffer.__NeedsResize())
@@ -22,6 +23,7 @@ namespace GTEngine
             this->framebuffer.__DoResize();
         }
     }
+    */
 
 
 
