@@ -600,7 +600,7 @@ namespace GTEngine
         return RendererState.SwapInterval;
     }
 
-
+    /*
     void Renderer::MarkForCollection(Texture2D *texture)
     {
         assert(texture != nullptr);
@@ -610,6 +610,7 @@ namespace GTEngine
             RendererGC.NeedsCollection = true;
         RendererGC.Lock.Unlock();
     }
+    */
     void Renderer::MarkForCollection(Framebuffer *framebuffer)
     {
         assert(framebuffer != nullptr);
@@ -645,12 +646,14 @@ namespace GTEngine
         {
             RendererGC.Lock.Lock();
                 // Textures.
+                /*
                 while (RendererGC.Texture2Ds.root != nullptr)
                 {
                     Renderer::DeleteTexture2DData(RendererGC.Texture2Ds.root->value);
 
                     RendererGC.Texture2Ds.RemoveRoot();
                 }
+                */
 
                 // Framebuffers.
                 while (RendererGC.Framebuffers.root != nullptr)
@@ -1306,10 +1309,19 @@ namespace GTEngine
     {
         if (IsRendererInitialised)
         {
+            // We'll shutdown the GUI renderer first since it will need to delete texture objects and whatnot.
+            GUIRenderer::Uninitialise();
+
+            // There may be a bunch of resource commands that will be deleting resource objects. We need to make sure these are executed. To do this, we just
+            // do a fake buffer swap and then execute the front buffer.
+            Renderer::BackIndex = !Renderer::BackIndex;
+            Renderer::ExecuteFrontResourceRCQueue();
+
+
             delete Renderer::BackRCQueue;
             delete Renderer::FrontRCQueue;
 
-            GUIRenderer::Uninitialise();
+            
 
             Renderer::CollectGarbage();
 
@@ -2020,6 +2032,7 @@ namespace GTEngine
     }
 
 
+    /*
     void Renderer::DeleteTexture2DData(void* rendererDataIn)
     {
         auto rendererData = static_cast<Texture2D_GL20*>(rendererDataIn);
@@ -2030,6 +2043,7 @@ namespace GTEngine
             delete rendererData;
         }
     }
+    */
 
     void Renderer::DeleteFramebufferData(void* rendererDataIn)
     {

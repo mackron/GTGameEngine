@@ -772,7 +772,7 @@
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL20\Renderer_ResourceEvents.cpp">
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL20\Renderer_Resources.cpp">
       <Filter>source\Rendering\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>

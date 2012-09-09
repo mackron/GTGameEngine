@@ -75,7 +75,8 @@ namespace GTEngine
             this->shaders.RemoveRoot();
         }
 
-        Renderer::MarkForCollection(this);
+        Renderer::OnTexture2DDeleted(*this);
+        //Renderer::MarkForCollection(this);
     }
 
 
