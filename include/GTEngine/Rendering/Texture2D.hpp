@@ -215,40 +215,6 @@ namespace GTEngine
         bool keepClientSideData;
 
 
-    public:
-
-        // When the renderer uses the texture, it needs to ensure it's own texture data is synchronized with the Texture2D
-        // object. To help with this, we use a 'sync' object for storing synchronization information. This will be modified
-        // by both Texture2D and the renderer. The variables in this structure are just booleans indicating which attribute
-        // have been modified. A renderer will always set the variables to false. Texture2D will always set the variables to
-        // true.
-        struct _syncinfo
-        {
-            _syncinfo()
-                : minFilterChanged(true), magFilterChanged(true), anisotropyChanged(true),
-                  wrapModeChanged(true), dataChanged(true), changedMipmaps()
-            {
-            }
-            
-            ~_syncinfo()
-            {
-            }
-
-            bool minFilterChanged;  ///< Whether or not the minification filter has changed.
-            bool magFilterChanged;  ///< Whether or not the magnification filter has changed.
-            bool anisotropyChanged; ///< Whether or not the anisotropy has changed.
-            bool wrapModeChanged;   ///< Whether or not the wrapping mode has changed.
-            bool dataChanged;       ///< Whether or not the texture data has been updated.
-
-            GTCore::Vector<unsigned int> changedMipmaps;
-
-        private:    // No copying.
-            _syncinfo(const _syncinfo &);
-            _syncinfo & operator=(const _syncinfo &);
-
-        }syncinfo;
-
-
     private:    // No copying.
         Texture2D(const Texture2D &);
         Texture2D & operator=(const Texture2D &);
