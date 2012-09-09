@@ -188,8 +188,8 @@ namespace GTEngine
         *       call Delete*Data() where it can then be deleted.
         */
         //static void MarkForCollection(Texture2D* texture);
-        static void MarkForCollection(Framebuffer* framebuffer);
-        static void MarkForCollection(Shader* shader);
+        //static void MarkForCollection(Framebuffer* framebuffer);
+        //static void MarkForCollection(Shader* shader);
         //static void MarkForCollection(VertexArray* vertexArray);
 
         /**
@@ -478,8 +478,8 @@ namespace GTEngine
         *   \param  rendererData [in] The rendererData pointer of the old Texture2D object.
         */
         //static void DeleteTexture2DData(void *rendererData);
-        static void DeleteFramebufferData(void *rendererData);
-        static void DeleteShaderData(void *rendererData);
+        //static void DeleteFramebufferData(void *rendererData);
+        //static void DeleteShaderData(void *rendererData);
         //static void DeleteVertexArrayData(void *rendererData);
 
 
@@ -571,6 +571,38 @@ namespace GTEngine
         ///
         /// @param vertexArray [in] The vertex array whose index data has been modified.
         static void OnVertexArrayIndexDataChanged(VertexArray &vertexArray);
+
+
+
+        /////////////////////////////////////////////
+        // Shaders.
+
+        /// Called when a shader is created.
+        ///
+        /// @param shader [in] The shader that was just created.
+        static void OnShaderCreated(Shader &shader);
+
+        /// Called when a shader is deleted.
+        ///
+        /// @param shader [in] The shader that is being deleted.
+        static void OnShaderDeleted(Shader &shader);
+
+
+
+        /////////////////////////////////////////////
+        // Framebuffers.
+
+        /// Called when a framebuffer is created.
+        ///
+        /// @param framebuffer [in] The framebuffer that was just created.
+        static void OnFramebufferCreated(Framebuffer &framebuffer);
+
+        /// Called when a framebuffer is deleted.
+        ///
+        /// @param framebuffer [in] The framebuffer that is being deleted.
+        static void OnFramebufferDeleted(Framebuffer &framebuffer);
+
+
 
 
         /// Executes the front resources RC queues.

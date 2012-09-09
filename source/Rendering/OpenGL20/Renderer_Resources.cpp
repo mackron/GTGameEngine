@@ -11,6 +11,8 @@
 #include "../OpenGL/TypeConversion.hpp"
 #include "../OpenGL/Resources.hpp"
 
+#include <GTCore/String.hpp>
+
 
 // Render commands.
 namespace GTEngine
@@ -231,6 +233,191 @@ namespace GTEngine
 
         GLsizei    indexCount;
     };
+
+
+
+    /////////////////////////////////////////////////////////////
+    // Shader
+
+    bool ShaderGL20_LinkShader(GLuint vertexObject, GLuint fragmentObject, GLuint &programOut)
+    {
+        // First we detach everything.
+        if (programOut != 0)
+        {
+            GLuint attachedShaders[2];
+            GLsizei count;
+            glGetAttachedShaders(programOut, 2, &count, attachedShaders);
+
+            for (GLsizei i = 0; i < count; ++i)
+            {
+                glDetachShader(programOut, attachedShaders[i]);
+            }
+        }
+
+
+        // We need to have concretely defined vertex attributes for OpenGL 2.0 GLSL since we don't really have much control of vertex attributes
+        // from inside the shader code. Thus, we're going to have to use hard coded attributes names. Later on we might make this configurable
+        // via the shader library or a config file.
+        glBindAttribLocation(programOut, 0, "VertexInput_Position");
+        glBindAttribLocation(programOut, 1, "VertexInput_TexCoord");
+        glBindAttribLocation(programOut, 2, "VertexInput_Normal");
+        glBindAttribLocation(programOut, 3, "VertexInput_Tangent");
+        glBindAttribLocation(programOut, 4, "VertexInput_Bitangent");
+        glBindAttribLocation(programOut, 5, "VertexInput_Colour");
+
+
+        // Finally we reattach the shaders, link the program and check for errors.
+        if (vertexObject   != 0) glAttachShader(programOut, vertexObject);
+        if (fragmentObject != 0) glAttachShader(programOut, fragmentObject);
+
+        glLinkProgram(programOut);
+
+
+        // Check for link errors.
+        GLint linkStatus;
+        glGetProgramiv(programOut, GL_LINK_STATUS, &linkStatus);
+
+        if (linkStatus == GL_FALSE)
+        {
+            GLint logLength;
+            glGetProgramiv(programOut, GL_INFO_LOG_LENGTH, &logLength);
+
+            auto log = new char[logLength];
+            glGetProgramInfoLog(programOut, logLength, nullptr, log);
+
+            Log("--- Program Link Status ---\n%s", log);
+
+            delete [] log;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    GLuint ShaderGL20_LinkShader(GLuint vertexObject, GLuint fragmentObject)
+    {
+        GLuint program = glCreateProgram();
+        if (!ShaderGL20_LinkShader(vertexObject, fragmentObject, program))
+        {
+            glDeleteProgram(program);
+            program = 0;
+        }
+
+        return program;
+    }
+
+
+
+    struct RCOnShaderCreated : public GTEngine::RenderCommand
+    {
+        GLuint CreateShader(GLenum shaderType, const GTCore::String &sourceIn)
+        {
+            auto source       = sourceIn.c_str();
+            auto sourceLength = static_cast<GLint>(GTCore::Strings::SizeInBytes(source));
+
+            auto shaderObject = glCreateShader(shaderType);
+            glShaderSource(shaderObject, 1, &source, &sourceLength);
+            glCompileShader(shaderObject);
+
+
+            // Here we need to log any details.
+            GLint compileStatus;
+            glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &compileStatus);
+
+            if (compileStatus == GL_FALSE)
+            {
+                GLint shaderType;
+                glGetShaderiv(shaderObject, GL_SHADER_TYPE, &shaderType);
+
+                GLint logLength;
+                glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &logLength);
+
+                auto log = new char[logLength];
+                glGetShaderInfoLog(shaderObject, logLength, nullptr, log);
+
+                Log("--- %s ---\n%s\n%s", (shaderType == GL_VERTEX_SHADER) ? "Vertex Shader Info Log" : "Fragment Shader Info Log", log, source);
+
+
+                glDeleteShader(shaderObject);
+                shaderObject = 0;
+
+                delete [] log;
+            }
+
+
+            return shaderObject;
+        }
+
+        void Execute()
+        {
+            assert(shader != nullptr);
+
+            if (!vertexSource.IsEmpty())
+            {
+                this->shader->vertexShader = this->CreateShader(GL_VERTEX_SHADER, this->vertexSource);
+            }
+
+            if (!fragmentSource.IsEmpty())
+            {
+                this->shader->fragmentShader = this->CreateShader(GL_FRAGMENT_SHADER, this->fragmentSource);
+            }
+
+            this->shader->program = ShaderGL20_LinkShader(this->shader->vertexShader, this->shader->fragmentShader);
+        }
+
+        Shader_GL20* shader;
+
+        GTCore::String vertexSource;
+        GTCore::String fragmentSource;
+    };
+
+    struct RCOnShaderDeleted : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(shader != nullptr);
+
+            glDeleteShader(shader->vertexShader);
+            glDeleteShader(shader->fragmentShader);
+            glDeleteProgram(shader->program);
+
+            delete this->shader;
+        }
+
+        Shader_GL20* shader;
+    };
+
+
+
+    /////////////////////////////////////////////////////////////
+    // Framebuffer
+
+    struct RCOnFramebufferCreated : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->framebuffer != nullptr);
+        }
+
+        Framebuffer_GL20* framebuffer;
+    };
+
+    struct RCOnFramebufferDeleted : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            /*
+            assert(this->framebuffer != nullptr);
+
+            glDeleteFramebuffersEXT(1, &framebuffer->object);
+
+            delete this->framebuffer;
+            */
+        }
+
+        Framebuffer_GL20* framebuffer;
+    };
 }
 
 
@@ -251,6 +438,12 @@ namespace GTEngine
     static RCCache<RCOnVertexArrayDeleted>                  RCCache_OnVertexArrayDeleted[2];
     static RCCache<RCOnVertexArrayVertexDataChanged>        RCCache_OnVertexArrayVertexDataChanged[2];
     static RCCache<RCOnVertexArrayIndexDataChanged>         RCCache_OnVertexArrayIndexDataChanged[2];
+
+    static RCCache<RCOnShaderCreated>                       RCCache_OnShaderCreated[2];
+    static RCCache<RCOnShaderDeleted>                       RCCache_OnShaderDeleted[2];
+
+    static RCCache<RCOnFramebufferCreated>                  RCCache_OnFramebufferCreated[2];
+    static RCCache<RCOnFramebufferDeleted>                  RCCache_OnFramebufferDeleted[2];
     
 
 
@@ -446,6 +639,48 @@ namespace GTEngine
 
 
 
+    void Renderer::OnShaderCreated(Shader &shader)
+    {
+        auto rendererData = new Shader_GL20;
+        shader.SetRendererData(rendererData);
+
+        auto &rc = RCCache_OnShaderCreated[Renderer::BackIndex].Acquire();
+        rc.shader         = rendererData;
+        rc.vertexSource   = shader.GetVertexSource();
+        rc.fragmentSource = shader.GetFragmentSource();
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnShaderDeleted(Shader &shader)
+    {
+        auto &rc = RCCache_OnShaderDeleted[Renderer::BackIndex].Acquire();
+        rc.shader = static_cast<Shader_GL20*>(shader.GetRendererData());
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+
+
+
+
+    void Renderer::OnFramebufferCreated(Framebuffer &framebuffer)
+    {
+        (void)framebuffer;
+    }
+
+    void Renderer::OnFramebufferDeleted(Framebuffer &framebuffer)
+    {
+        auto &rc = RCCache_OnFramebufferDeleted[Renderer::BackIndex].Acquire();
+        rc.framebuffer = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+
+
+
+
     void Renderer::ExecuteFrontResourceRCQueue()
     {
         ResourceRCQueues[!Renderer::BackIndex].Execute();
@@ -463,5 +698,11 @@ namespace GTEngine
         RCCache_OnVertexArrayDeleted[!Renderer::BackIndex].Reset();
         RCCache_OnVertexArrayVertexDataChanged[!Renderer::BackIndex].Reset();
         RCCache_OnVertexArrayIndexDataChanged[!Renderer::BackIndex].Reset();
+
+        RCCache_OnShaderCreated[!Renderer::BackIndex].Reset();
+        RCCache_OnShaderDeleted[!Renderer::BackIndex].Reset();
+
+        RCCache_OnFramebufferCreated[!Renderer::BackIndex].Reset();
+        RCCache_OnFramebufferDeleted[!Renderer::BackIndex].Reset();
     }
 }

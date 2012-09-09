@@ -19,6 +19,9 @@ namespace GTEngine
         {
             this->colourAttachments[i] = nullptr;
         }
+
+
+        Renderer::OnFramebufferCreated(*this);
     }
 
     Framebuffer::~Framebuffer()
@@ -34,8 +37,9 @@ namespace GTEngine
         // This just deallocates the array. It won't delete any textures.
         delete [] this->colourAttachments;
 
-        // Only after the attachments have been detached should be collect.
-        Renderer::MarkForCollection(this);
+        // Only after the attachments have been detached should we collect.
+        Renderer::OnFramebufferDeleted(*this);
+        //Renderer::MarkForCollection(this);
     }
 
     bool Framebuffer::AttachColourBuffer(Texture2D *buffer, size_t index)

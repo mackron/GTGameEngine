@@ -253,6 +253,7 @@ namespace GTEngine
         RendererGC.Lock.Unlock();
     }
     */
+    /*
     void Renderer::MarkForCollection(Framebuffer *framebuffer)
     {
         assert(framebuffer != nullptr);
@@ -262,6 +263,8 @@ namespace GTEngine
             RendererGC.NeedsCollection = true;
         RendererGC.Lock.Unlock();
     }
+    */
+    /*
     void Renderer::MarkForCollection(Shader *shader)
     {
         assert(shader != nullptr);
@@ -271,6 +274,7 @@ namespace GTEngine
             RendererGC.NeedsCollection = true;
         RendererGC.Lock.Unlock();
     }
+    */
     /*
     void Renderer::MarkForCollection(VertexArray *vertexArray)
     {
@@ -300,20 +304,24 @@ namespace GTEngine
                 */
 
                 // Framebuffers.
+                /*
                 while (RendererGC.Framebuffers.root != nullptr)
                 {
                     Renderer::DeleteFramebufferData(RendererGC.Framebuffers.root->value);
 
                     RendererGC.Framebuffers.RemoveRoot();
                 }
+                */
 
                 // Shaders.
+                /*
                 while (RendererGC.Shaders.root != nullptr)
                 {
                     Renderer::DeleteShaderData(RendererGC.Shaders.root->value);
 
                     RendererGC.Shaders.RemoveRoot();
                 }
+                */
 
                 // Vertex Arrays.
                 /*
@@ -424,91 +432,6 @@ namespace GTEngine
         return false;
     }
 
-    // Helper for linking the given shader.
-    void Renderer_LinkShader(Shader* shader)
-    {
-        auto rendererData = static_cast<const Shader_GL20*>(shader->GetRendererData());
-        if (rendererData != nullptr)
-        {
-            // First we detach everything.
-            if (rendererData->program != 0)
-            {
-                GLuint attachedShaders[2];
-                GLsizei count;
-                glGetAttachedShaders(rendererData->program, 2, &count, attachedShaders);
-
-                for (GLsizei i = 0; i < count; ++i)
-                {
-                    glDetachShader(rendererData->program, attachedShaders[i]);
-                }
-            }
-
-
-            // Now we need to set the vertex attribute locations from the shader.
-            auto &attribs = shader->GetVertexAttributeLocations();
-            for (size_t i = 0; i < attribs.count; ++i)
-            {
-                auto iAttrib = attribs.buffer[i];
-                assert(iAttrib != nullptr);
-
-                glBindAttribLocation(rendererData->program, iAttrib->value, iAttrib->key);
-            }
-
-
-            // Finally we reattach the shaders, link the program and check for errors.
-            if (rendererData->vertexShader   != 0) glAttachShader(rendererData->program, rendererData->vertexShader);
-            if (rendererData->fragmentShader != 0) glAttachShader(rendererData->program, rendererData->fragmentShader);
-
-            glLinkProgram(rendererData->program);
-
-
-            // Check for link errors.
-            GLint linkStatus;
-            glGetProgramiv(rendererData->program, GL_LINK_STATUS, &linkStatus);
-
-            if (linkStatus == GL_FALSE)
-            {
-                GLint logLength;
-                glGetProgramiv(rendererData->program, GL_INFO_LOG_LENGTH, &logLength);
-
-                auto log = new char[logLength];
-                glGetProgramInfoLog(rendererData->program, logLength, nullptr, log);
-
-                Log("--- Program Link Status ---\n%s", log);
-
-                delete [] log;
-            }
-
-            // Shader needs to know that it was linked.
-            shader->OnLink();
-        }
-    }
-
-
-    void Renderer_LogShaderInfoLog(GLuint shader, const char* source)
-    {
-        GLint compileStatus;
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
-
-        if (compileStatus == GL_FALSE)
-        {
-            GLint shaderType;
-            glGetShaderiv(shader, GL_SHADER_TYPE, &shaderType);
-
-            GLint logLength;
-            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
-
-            auto log = new char[logLength];
-            glGetShaderInfoLog(shader, logLength, nullptr, log);
-
-            Log("--- %s ---\n%s\n%s", (shaderType == GL_VERTEX_SHADER) ? "Vertex Shader Info Log" : "Fragment Shader Info Log", log, source);
-
-            delete [] log;
-        }
-    }
-
-
-
 
     /**
     *   \brief  Retrieves the OpenGL framebuffer object from the given framebuffer.
@@ -527,28 +450,7 @@ namespace GTEngine
         return 0;
     }
 
-    /**
-    *   \brief  Synchronizes a Texture2D object with it's OpenGL counterpart.
-    */
-    /*
-    bool Renderer_SyncTexture2D(Texture2D* texture)
-    {
-        if (texture != nullptr)
-        {
-            auto textureData = static_cast<Texture2D_GL20*>(texture->GetRendererData());
-
-            // Synching binds...
-            glBindTexture(GL_TEXTURE_2D, textureData->object);
-
-
-            return true;
-        }
-
-        Log("Warning: Attempting to synchronize null texture.");
-        return false;
-    }
-    */
-
+    
 
     /// Binds the given texture.
     void Renderer_BindTexture2D(Texture2D &texture)
@@ -661,68 +563,6 @@ namespace GTEngine
                     return false;
                 }
             }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-    *   \brief  Synchronizes a Shader object with it's OpenGL counterpart.
-    */
-    bool Renderer_SyncShader(Shader *shader)
-    {
-        if (shader != nullptr)
-        {
-            auto rendererData = (Shader_GL20 *)shader->GetRendererData();
-            if (rendererData == nullptr)
-            {
-                rendererData = new Shader_GL20;
-                shader->SetRendererData(rendererData);
-
-                if (shader->GetVertexSource() != nullptr)
-                {
-                    auto source       = shader->GetVertexSource();
-                    auto sourceLength = static_cast<GLint>(GTCore::Strings::SizeInBytes(source));
-
-                    rendererData->vertexShader = glCreateShader(GL_VERTEX_SHADER);
-                    glShaderSource(rendererData->vertexShader, 1, &source, &sourceLength);
-                    glCompileShader(rendererData->vertexShader);
-
-                    Renderer_LogShaderInfoLog(rendererData->vertexShader, source);
-                }
-
-                if (shader->GetFragmentSource() != nullptr)
-                {
-                    auto source = shader->GetFragmentSource();
-                    auto sourceLength = static_cast<GLint>(GTCore::Strings::SizeInBytes(source));
-
-                    rendererData->fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-                    glShaderSource(rendererData->fragmentShader, 1, &source, &sourceLength);
-                    glCompileShader(rendererData->fragmentShader);
-
-                    Renderer_LogShaderInfoLog(rendererData->fragmentShader, source);
-                }
-
-
-                // With the individual shaders created, we now create the main program.
-                rendererData->program = glCreateProgram();
-
-                // Now we just link.
-                Renderer_LinkShader(shader);
-            }
-            else
-            {
-                // Here we will check if anything needs to be updated. If vertex attribute locations has changed, the program needs to be relinked.
-                if (shader->NeedsRelink())
-                {
-                    Renderer_LinkShader(shader);
-                }
-            }
-
-            // Syncing binds, so we need to "use" the shader.
-            glUseProgram(rendererData->program);
 
             return true;
         }
@@ -1376,8 +1216,9 @@ namespace GTEngine
 
     void Renderer::SetShader(Shader *shader)
     {
-        if (shader != nullptr && Renderer_SyncShader(shader))
+        if (shader != nullptr)
         {
+            glUseProgram(static_cast<Shader_GL20*>(shader->GetRendererData())->program);
             RendererState.CurrentShader = shader;
 
             Renderer::BindCurrentShaderTextures();
@@ -1434,7 +1275,7 @@ namespace GTEngine
     void Renderer::SetShaderParameter(const char *paramName, Texture2D *value)
     {
         auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
-        if (rendererData != nullptr)
+        if (rendererData != nullptr && rendererData->program != 0)
         {
             auto iTexture = RendererState.CurrentShader->currentTexture2Ds.Find(paramName);
             if (iTexture != nullptr)
@@ -1480,7 +1321,7 @@ namespace GTEngine
     void Renderer::SetShaderParameter(const char *paramName, float x)
     {
         auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
-        if (rendererData != nullptr)
+        if (rendererData != nullptr && rendererData->program != 0)
         {
             GLuint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform1f(location, x);
@@ -1489,7 +1330,7 @@ namespace GTEngine
     void Renderer::SetShaderParameter(const char *paramName, float x, float y)
     {
         auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
-        if (rendererData != nullptr)
+        if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform2f(location, x, y);
@@ -1498,7 +1339,7 @@ namespace GTEngine
     void Renderer::SetShaderParameter(const char *paramName, float x, float y, float z)
     {
         auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
-        if (rendererData != nullptr)
+        if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform3f(location, x, y, z);
@@ -1507,7 +1348,7 @@ namespace GTEngine
     void Renderer::SetShaderParameter(const char *paramName, float x, float y, float z, float w)
     {
         auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
-        if (rendererData != nullptr)
+        if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform4f(location, x, y, z, w);
@@ -1518,7 +1359,7 @@ namespace GTEngine
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat2 &value)
     {
         auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
-        if (rendererData != nullptr)
+        if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniformMatrix2fv(location, 1, false, &value[0][0]);
@@ -1527,7 +1368,7 @@ namespace GTEngine
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat3 &value)
     {
         auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
-        if (rendererData != nullptr)
+        if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniformMatrix3fv(location, 1, false, &value[0][0]);
@@ -1536,7 +1377,7 @@ namespace GTEngine
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat4 &value)
     {
         auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
-        if (rendererData != nullptr)
+        if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniformMatrix4fv(location, 1, false, &value[0][0]);
@@ -1562,6 +1403,7 @@ namespace GTEngine
     }
     */
 
+    /*
     void Renderer::DeleteFramebufferData(void* rendererDataIn)
     {
         auto rendererData = static_cast<Framebuffer_GL20*>(rendererDataIn);
@@ -1572,7 +1414,9 @@ namespace GTEngine
             delete rendererData;
         }
     }
+    */
 
+    /*
     void Renderer::DeleteShaderData(void* rendererDataIn)
     {
         auto rendererData = static_cast<Shader_GL20*>(rendererDataIn);
@@ -1585,6 +1429,7 @@ namespace GTEngine
             delete rendererData;
         }
     }
+    */
 
     /*
     void Renderer::DeleteVertexArrayData(void* rendererDataIn)
