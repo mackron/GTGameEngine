@@ -3,7 +3,11 @@
 #define __GTEngine_DefaultSceneRenderer_hpp_
 
 #include "SceneRenderer.hpp"
+#include "SceneObject.hpp"
 #include "Rendering/Framebuffer.hpp"
+#include "Rendering/RenderCommand.hpp"
+#include "Rendering/RCCache.hpp"
+#include <GTCore/Map.hpp>
 
 class Scene;
 
@@ -29,30 +33,37 @@ namespace GTEngine
 
 
         /// SceneRenderer::BeginViewport().
-        virtual void BeginViewport(Scene &scene, SceneViewport &viewport);
-
-        /// SceneRenderer::EndViewport().
-        virtual void EndViewport(Scene &scene, SceneViewport &viewport);
+        virtual void RenderViewport(Scene &scene, SceneViewport &viewport);
 
 
+        /// SceneRenderer::AddViewport().
+        virtual void AddViewport(SceneViewport &viewport);
 
-        /// SceneRenderer::Geometry().
-        virtual void Geometry(const VertexArray &vertexArray, const Material &material, const glm::vec3 &transform);
+        /// SceneRenderer::RemoveViewport().
+        virtual void RemoveViewport(SceneViewport &viewport);
 
-        /// SceneRenderer::AmbientLight().
-        virtual void AmbientLight(const glm::vec3 &colour);
-
-        /// SceneRenderer::DirectionalLight().
-        virtual void DirectionalLight(const glm::vec3 &colour, const glm::vec3 direction);
-
-        /// SceneRenderer::PointLight().
-        virtual void PointLight(const glm::vec3 &colour, const glm::vec3 &position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation);
-
-        /// SceneRenderer::SpotLight().
-        virtual void SpotLight(const glm::vec3 &colour, const glm::vec3 &position, const glm::vec3 &direction, float innerRadius, float outerRadius, float constantAttenuation, float linearAttenuation, float quadraticAttenuation);
+        /// SceneRenderer::OnViewportResized().
+        virtual void OnViewportResized(SceneViewport &viewport);
 
 
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        // Methods below should only be called internally, but need to be public for a few things.
 
+        /// Called for an ambient light that's visible in the currently rendering viewport.
+        void __AmbientLight(const SceneObject &object);
+
+        /// Called for a directional light that's visible in the currently rendering viewport.
+        void __DirectionalLight(const SceneObject &object);
+
+        /// Called for a point light that's visible in the currently rendering viewport.
+        void __PointLight(const SceneObject &object);
+
+        /// Called for a spot light that's visible in the currently rendering viewport.
+        void __SpotLight(const SceneObject &object);
+
+
+
+    // Below are data structures for use by this renderer.
     private:
 
         /// Class representing a framebuffer for use by this renderer. There will usually be a framebuffer for every viewport.
@@ -60,13 +71,96 @@ namespace GTEngine
         {
         public:
 
+            /// Constructor.
+            Framebuffer();
 
+            /// Destructor
+            ~Framebuffer();
+
+
+            /// Marks the framebuffer for resizing.
+            void Resize(unsigned int newWidth, unsigned int newHeight)
+            {
+                this->width  = newWidth;
+                this->height = newHeight;
+
+                this->needsResize = true;
+            }
 
 
         private:
 
+            /// The width of the framebuffer.
+            unsigned int width;
 
+            /// The height of the framebuffer.
+            unsigned int height;
+
+            /// Keeps track of whether or not the framebuffer needs a resize.
+            bool needsResize;
         };
+
+
+
+        /// Render command for beginning the frame.
+        struct RCBegin : public RenderCommand
+        {
+            /// RenderCommand::Execute().
+            void Execute();
+
+
+            /// The framebuffer to render to.
+            Framebuffer* framebuffer;
+        };
+
+        /// Render command for ending the frame.
+        struct RCEnd : public RenderCommand
+        {
+            /// RenderCommand::Execute().
+            void Execute();
+
+
+            /// Whether or not the draw the background.
+            bool drawBackground;
+
+            /// The background colour.
+            glm::vec3 backgroundColour;
+        };
+
+
+
+    private:
+
+        /// Retrieves the framebuffer of the given viewport.
+        DefaultSceneRenderer::Framebuffer* GetViewportFramebuffer(SceneViewport &viewport);
+
+
+
+
+    private:
+
+        /// The list of visible ambient lights for the currently rendering viewport.
+        GTCore::Vector<const SceneObject*> ambientLights;
+
+        /// The list of visible directional lights for the currently rendering viewport.
+        GTCore::Vector<const SceneObject*> directionalLights;
+
+        /// The list of visible point lights for the currently rendering viewport.
+        GTCore::Vector<const SceneObject*> pointLights;
+
+        /// The list of visible spot lights for the currently rendering viewport.
+        GTCore::Vector<const SceneObject*> spotLights;
+
+
+        /// A container for mapping a viewport to it's framebuffer.
+        GTCore::Map<SceneViewport*, DefaultSceneRenderer::Framebuffer*> viewportFramebuffers;
+
+
+        // Below are caches for render commands. There are always 2 caches - one for the front RC queue, and another for the back.
+        RCCache<RCBegin, 8> rcBegin[2];
+
+
+        
     };
 }
 

@@ -234,7 +234,8 @@ namespace GTEngine
 namespace GTEngine
 {
     Scene::Scene()
-        : updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
+        : renderer(new DefaultSceneRenderer), deleteRenderer(true),
+          updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
           paused(false),
           viewports(), nodes(),
@@ -244,7 +245,8 @@ namespace GTEngine
     }
 
     Scene::Scene(SceneUpdateManager &updateManagerIn, ScenePhysicsManager &physicsManagerIn, SceneCullingManager &cullingManagerIn)
-        : updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
+        : renderer(new DefaultSceneRenderer), deleteRenderer(true),
+          updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
           paused(false),
           viewports(), nodes(),
@@ -258,6 +260,12 @@ namespace GTEngine
         while (this->nodes.root != nullptr)
         {
             this->RemoveSceneNode(*this->nodes.root->value);
+        }
+
+
+        if (deleteRenderer)
+        {
+            delete this->renderer;
         }
 
 
@@ -461,6 +469,38 @@ namespace GTEngine
         // We'll retrieve the global AABB from the culling manager. Might need to move this over to physics manager, perhaps.
         this->cullingManager.GetGlobalAABB(aabbMin, aabbMax);
     }
+
+
+
+    void Scene::SetRenderer(SceneRenderer &newRenderer)
+    {
+        assert(this->renderer != nullptr);
+
+        // We need to remove all of the viewports from teh renderer.
+        for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
+        {
+            assert(iViewport->value != nullptr);
+            this->renderer->RemoveViewport(*iViewport->value);
+        }
+
+        if (this->deleteRenderer)
+        {
+            delete this->renderer;
+        }
+
+
+        this->renderer       = &newRenderer;
+        this->deleteRenderer = false;
+
+
+        // With the new renderer set, we now need to let it know about our existing viewports.
+        for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
+        {
+            assert(iViewport->value != nullptr);
+            this->renderer->AddViewport(*iViewport->value);
+        }
+    }
+
 
 
     SceneNode* Scene::RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback)
