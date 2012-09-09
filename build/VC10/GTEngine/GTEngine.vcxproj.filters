@@ -87,6 +87,9 @@
     <Filter Include="include\Random\Floor">
       <UniqueIdentifier>{3889c22e-2cf9-4642-a5a2-b57862a05b17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Rendering\OpenGL">
+      <UniqueIdentifier>{fa3c59a3-8244-499a-925d-28f040214321}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -768,6 +771,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL20\Renderer_ResourceEvents.cpp">
+      <Filter>source\Rendering\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

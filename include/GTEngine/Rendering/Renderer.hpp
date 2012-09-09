@@ -492,8 +492,38 @@ namespace GTEngine
         /// Performs a framebuffer blit.
         ///
         /// @remarks
-        ///     This will blit the whose framebuffers.
+        ///     This will blit the whole framebuffers.
         static void FramebufferBlit(Framebuffer* sourceFramebuffer, unsigned int sourceWidth, unsigned int sourceHeight, Framebuffer* destFramebuffer, unsigned int destWidth, unsigned int destHeight);
+
+
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Resource Events.
+        //
+        // Because resources can be manipulated on a different thread to the renderer, we need to provide ways of letting the renderer
+        // know when a resource needs to be updated on the rendering thread. The way we do this at the public level is via events, which
+        // are declared below.
+        //
+        // The events below will add a special render command that will be executed before the normal render commands at the beginning
+        // of each frame.
+
+        /////////////////////////////////////////////
+        // Texture2Ds.
+
+        /// Called when a texture has been created.
+        ///
+        /// @param texture [in] The texture that was just created.
+        static void OnTexture2DCreated(Texture2D &texture);
+
+        /// Called when a texture has been deleted.
+        ///
+        /// @param texture [in] The texture that is being deleted.
+        static void OnTexture2DDeleted(Texture2D &texture);
+
+
+        /// Executes the front resources RC queues.
+        static void ExecuteFrontResourceRCQueue();
 
 
 
