@@ -41,6 +41,19 @@ namespace GTEngine
         Texture2D_GL20* texture;
     };
 
+    struct RCOnTexture2DDeleted : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(texture != nullptr);
+            glDeleteTextures(1, &texture->object);
+
+            delete texture;
+        }
+
+        Texture2D_GL20* texture;
+    };
+
 }
 
 
@@ -50,14 +63,14 @@ namespace GTEngine
     static RCQueue ResourceRCQueues[2];
 
     static RCCache<RCOnTexture2DCreated> RCCache_OnTexture2DCreated[2];
-
+    static RCCache<RCOnTexture2DDeleted> RCCache_OnTexture2DDeleted[2];
 
 
     void Renderer::OnTexture2DCreated(Texture2D &texture)
     {
         if (!(texture.IsFloatingPointFormat() && !Renderer::SupportFloatTextures()))
         {
-            auto rendererData = new Texture2D_GL20;
+            auto rendererData = new Texture2D_GL20;     // This is deleted in RCOnTexture2DDeleted::Execute(), after the OpenGL object has been deleted.
             texture.SetRendererData(rendererData);
 
             auto &rc = RCCache_OnTexture2DCreated[Renderer::BackIndex].Acquire();
@@ -73,7 +86,10 @@ namespace GTEngine
 
     void Renderer::OnTexture2DDeleted(Texture2D &texture)
     {
-        (void)texture;
+        auto &rc = RCCache_OnTexture2DDeleted[Renderer::BackIndex].Acquire();
+        rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
 
 
@@ -85,5 +101,6 @@ namespace GTEngine
         ResourceRCQueues[!Renderer::BackIndex].Clear();
 
         RCCache_OnTexture2DCreated[!Renderer::BackIndex].Reset();
+        RCCache_OnTexture2DDeleted[!Renderer::BackIndex].Reset();
     }
 }

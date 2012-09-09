@@ -187,7 +187,7 @@ namespace GTEngine
         *       Internally, this function will take the 'rendererData' pointer of the resource and cache it. Then it will
         *       call Delete*Data() where it can then be deleted.
         */
-        static void MarkForCollection(Texture2D* texture);
+        //static void MarkForCollection(Texture2D* texture);
         static void MarkForCollection(Framebuffer* framebuffer);
         static void MarkForCollection(Shader* shader);
         static void MarkForCollection(VertexArray* vertexArray);
@@ -477,7 +477,7 @@ namespace GTEngine
         *   \brief                    Deletes the data that was previously associated with a Texture2D.
         *   \param  rendererData [in] The rendererData pointer of the old Texture2D object.
         */
-        static void DeleteTexture2DData(void *rendererData);
+        //static void DeleteTexture2DData(void *rendererData);
         static void DeleteFramebufferData(void *rendererData);
         static void DeleteShaderData(void *rendererData);
         static void DeleteVertexArrayData(void *rendererData);
