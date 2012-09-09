@@ -85,13 +85,15 @@ namespace GTEngine
         GTImage::Image::Load(width, height, format, data);
 
         // We are going to manually mark the data as invalid to ensure everything is updated correctly.
-        this->syncinfo.dataChanged = true;
+        //this->syncinfo.dataChanged = true;
 
+        /*
         for (auto iFramebuffer = this->framebuffers.root; iFramebuffer != nullptr; iFramebuffer = iFramebuffer->next)
         {
             auto framebuffer = iFramebuffer->value;
             framebuffer->MarkAttachmentAsInvalid(*this);
         }
+        */
     }
 
     void Texture2D::Resize(unsigned int newWidth, unsigned int newHeight)
@@ -105,7 +107,8 @@ namespace GTEngine
         if (this->minFilter != newFilter)
         {
             this->minFilter = newFilter;
-            this->syncinfo.minFilterChanged = true;
+            Renderer::OnTexture2DMinificationFilterChanged(*this);
+            //this->syncinfo.minFilterChanged = true;
         }
     }
 
@@ -114,7 +117,8 @@ namespace GTEngine
         if (this->magFilter != newFilter)
         {
             this->magFilter = newFilter;
-            this->syncinfo.magFilterChanged = true;
+            Renderer::OnTexture2DMagnificationFilterChanged(*this);
+            //this->syncinfo.magFilterChanged = true;
         }
     }
 
@@ -134,7 +138,8 @@ namespace GTEngine
         if (this->anisotropy != newAnisotropy)
         {
             this->anisotropy = newAnisotropy;
-            this->syncinfo.anisotropyChanged = true;
+            Renderer::OnTexture2DAnisotropyChanged(*this);
+            //this->syncinfo.anisotropyChanged = true;
         }
     }
 
@@ -146,29 +151,38 @@ namespace GTEngine
     void Texture2D::SetWrapMode(TextureWrapMode wrapMode)
     {
         this->wrapMode = wrapMode;
+        Renderer::OnTexture2DWrapModeChanged(*this);
 
         // We're now out of sync...
-        this->syncinfo.wrapModeChanged = true;
+        //this->syncinfo.wrapModeChanged = true;
     }
 
-    void Texture2D::OnMipmapCreated(unsigned int)
+    void Texture2D::OnMipmapCreated(unsigned int mipmapIndex)
     {
-        this->syncinfo.dataChanged = true;
+        //this->syncinfo.dataChanged = true;
+        Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
     }
 
-    void Texture2D::OnMipmapDeleted(unsigned int)
+    void Texture2D::OnMipmapDeleted(unsigned int mipmapIndex)
     {
-        this->syncinfo.dataChanged = true;
+        (void)mipmapIndex;
+
+        //this->syncinfo.dataChanged = true;
+        //Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
     }
 
     void Texture2D::OnMipmapChanged(unsigned int mipmapIndex)
     {
+        /*
         this->syncinfo.dataChanged = true;
 
         if (!this->syncinfo.changedMipmaps.Exists(mipmapIndex))
         {
             this->syncinfo.changedMipmaps.PushBack(mipmapIndex);
         }
+        */
+
+        Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
     }
 
 

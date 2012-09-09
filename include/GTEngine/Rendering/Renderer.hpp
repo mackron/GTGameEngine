@@ -521,6 +521,32 @@ namespace GTEngine
         /// @param texture [in] The texture that is being deleted.
         static void OnTexture2DDeleted(Texture2D &texture);
 
+        /// Called when the data of a texture has changed.
+        ///
+        /// @param texture [in] The texture whose data has changed.
+        /// @parma mipmap  [in] The index of the mipmap that has changed.
+        static void OnTexture2DMipmapChanged(Texture2D &texture, size_t mipmap);
+
+        /// Called when the minification filter of a texture has changed.
+        ///
+        /// @param texture [in] The texture whose minification fitler has changed.
+        static void OnTexture2DMinificationFilterChanged(Texture2D &texture);
+
+        /// Called when the magnification filter of a texture has changed.
+        ///
+        /// @param texture [in] The texture whose magnification filter has changed.
+        static void OnTexture2DMagnificationFilterChanged(Texture2D &texture);
+
+        /// Called when the anisotropy of a texture has changed.
+        ///
+        /// @param texture [in] The texture whose anisotopy has changed.
+        static void OnTexture2DAnisotropyChanged(Texture2D &texture);
+
+        /// Called when the wrapping mode of a texture has changed.
+        ///
+        /// @param texture [in] The texture whose wrapping mode has changed.
+        static void OnTexture2DWrapModeChanged(Texture2D &texture);
+
 
         /// Executes the front resources RC queues.
         static void ExecuteFrontResourceRCQueue();
