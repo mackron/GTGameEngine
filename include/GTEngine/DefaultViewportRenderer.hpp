@@ -89,6 +89,16 @@ namespace GTEngine
             this->needsResize = true;
             this->width  = newWidth;
             this->height = newHeight;
+
+            this->finalOutput->Resize( this->width, this->height);
+            this->depthStencil->Resize(this->width, this->height);
+
+            this->lightingBuffer0->Resize(this->width, this->height);
+            this->lightingBuffer1->Resize(this->width, this->height);
+
+            this->materialBuffer0->Resize(this->width, this->height);
+            this->materialBuffer1->Resize(this->width, this->height);
+            this->materialBuffer2->Resize(this->width, this->height);
         }
 
 
@@ -104,16 +114,6 @@ namespace GTEngine
         void __DoResize()
         {
             // All we need to do is resize the attachments.
-            this->finalOutput->Resize( this->width, this->height);
-            this->depthStencil->Resize(this->width, this->height);
-
-            this->lightingBuffer0->Resize(this->width, this->height);
-            this->lightingBuffer1->Resize(this->width, this->height);
-
-            this->materialBuffer0->Resize(this->width, this->height);
-            this->materialBuffer1->Resize(this->width, this->height);
-            this->materialBuffer2->Resize(this->width, this->height);
-
             this->needsResize = false;
         }
 
