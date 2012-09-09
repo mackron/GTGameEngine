@@ -19,6 +19,8 @@
 #endif
 
 #include "OpenGL/TypeConversion.hpp"
+#include "OpenGL/Resources.hpp"
+
 
 // OpenGL Utilities
 namespace GTEngine
@@ -155,80 +157,6 @@ namespace GTEngine
         _RendererState & operator=(const _RendererState &);
 
     }RendererState;
-
-
-
-    struct Texture2D_GL20
-    {
-        Texture2D_GL20()
-            : object(0)
-        {
-        }
-
-        Texture2D_GL20(GLuint object)
-            : object(object)
-        {
-        }
-
-        GLuint object;
-    };
-
-    struct Framebuffer_GL20
-    {
-        Framebuffer_GL20()
-            : object(0), colourAttachments(nullptr), depthStencilAttachment(nullptr)
-        {
-            size_t colourCount = Renderer::GetMaxColourAttachments();
-
-            this->colourAttachments = new Texture2D*[colourCount];
-            for (size_t i = 0; i < colourCount; ++i)
-            {
-                this->colourAttachments[i] = nullptr;
-            }
-        }
-
-        ~Framebuffer_GL20()
-        {
-            delete [] this->colourAttachments;
-        }
-
-        GLuint object;
-
-        Texture2D** colourAttachments;
-        Texture2D * depthStencilAttachment;
-
-    private:    // No copying.
-        Framebuffer_GL20(const Framebuffer_GL20 &);
-        Framebuffer_GL20 & operator=(const Framebuffer_GL20 &);
-    };
-
-    struct Shader_GL20
-    {
-        Shader_GL20()
-            : program(0), vertexShader(0), fragmentShader(0)
-        {
-        }
-
-        /// The main program object.
-        GLuint program;
-
-        /// The vertex shader object. We keep hold of this so we can relink when vertex atribute positions are changed.
-        GLuint vertexShader;
-
-        /// The fragment shader object. We keep hold of this so we can relink when vertex attribute positions are changed.
-        GLuint fragmentShader;
-    };
-
-    struct VertexArray_GL20
-    {
-        VertexArray_GL20()
-            : verticesObject(0), indicesObject(0)
-        {
-        }
-
-        GLuint verticesObject;
-        GLuint indicesObject;
-    };
 }
 
 // Renderer globals.
@@ -343,6 +271,7 @@ namespace GTEngine
             RendererGC.NeedsCollection = true;
         RendererGC.Lock.Unlock();
     }
+    /*
     void Renderer::MarkForCollection(VertexArray *vertexArray)
     {
         assert(vertexArray != nullptr);
@@ -352,6 +281,7 @@ namespace GTEngine
             RendererGC.NeedsCollection = true;
         RendererGC.Lock.Unlock();
     }
+    */
 
 
     void Renderer::CollectGarbage() //[Renderer Thread]
@@ -386,12 +316,14 @@ namespace GTEngine
                 }
 
                 // Vertex Arrays.
+                /*
                 while (RendererGC.VertexArrays.root != nullptr)
                 {
                     Renderer::DeleteVertexArrayData(RendererGC.VertexArrays.root->value);
 
                     RendererGC.VertexArrays.RemoveRoot();
                 }
+                */
 
                 RendererGC.NeedsCollection = false;
             RendererGC.Lock.Unlock();
@@ -598,6 +530,7 @@ namespace GTEngine
     /**
     *   \brief  Synchronizes a Texture2D object with it's OpenGL counterpart.
     */
+    /*
     bool Renderer_SyncTexture2D(Texture2D* texture)
     {
         if (texture != nullptr)
@@ -614,6 +547,32 @@ namespace GTEngine
         Log("Warning: Attempting to synchronize null texture.");
         return false;
     }
+    */
+
+
+    /// Binds the given texture.
+    void Renderer_BindTexture2D(Texture2D &texture)
+    {
+        auto textureData = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        assert(textureData != nullptr);
+
+        glBindTexture(GL_TEXTURE_2D, textureData->object);
+    }
+
+    void Renderer_BindTexture2D(Texture2D* texture)
+    {
+        if (texture != nullptr)
+        {
+            Renderer_BindTexture2D(*texture);
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+    }
+
+    
+
 
     bool Renderer_SyncFramebuffer(Framebuffer *framebuffer)
     {
@@ -643,7 +602,6 @@ namespace GTEngine
                     Texture2D* colourBuffer = framebuffer->GetColourBuffer(i);
                     if (colourBuffer != nullptr)
                     {
-                        Renderer_SyncTexture2D(colourBuffer);
                         glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, ((Texture2D_GL20 *)colourBuffer->GetRendererData())->object, 0);
                     }
                     else
@@ -665,8 +623,6 @@ namespace GTEngine
                 Texture2D *depthStencilBuffer = framebuffer->GetDepthStencilBuffer();
                 if (depthStencilBuffer != nullptr)
                 {
-                    Renderer_SyncTexture2D(depthStencilBuffer);
-
                     glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, ((Texture2D_GL20 *)depthStencilBuffer->GetRendererData())->object, 0);
                     if (depthStencilBuffer->GetFormat() == GTImage::ImageFormat_Depth24_Stencil8)
                     {
@@ -772,45 +728,6 @@ namespace GTEngine
         }
 
         return false;
-    }
-
-    bool Renderer_SyncVertexArray(const VertexArray* vertexArray)
-    {
-        assert(vertexArray != nullptr);
-
-        auto vertexArrayData = (VertexArray_GL20*)vertexArray->GetRendererData();
-        if (vertexArrayData == nullptr)
-        {
-            vertexArrayData = new VertexArray_GL20;
-            vertexArray->SetRendererData(vertexArrayData);
-
-            glGenBuffers(1, &vertexArrayData->verticesObject);
-            glGenBuffers(1, &vertexArrayData->indicesObject);
-        }
-
-        // Syncing binds...
-        glBindBuffer(GL_ARRAY_BUFFER,         vertexArrayData->verticesObject);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexArrayData->indicesObject);
-
-        if (vertexArray->syncinfo.verticesChanged)
-        {
-            auto size = static_cast<GLsizeiptr>(vertexArray->GetVertexCount() * vertexArray->GetFormat().GetSize() * sizeof(float));
-
-            glBufferData(GL_ARRAY_BUFFER, size, vertexArray->GetVertexDataPtr(), ToOpenGLBufferUsage(vertexArray->GetUsage()));
-
-            vertexArray->syncinfo.verticesChanged = false;
-        }
-
-        if (vertexArray->syncinfo.indicesChanged)
-        {
-            auto size = static_cast<GLsizeiptr>(vertexArray->GetIndexCount() * sizeof(unsigned int));
-
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, vertexArray->GetIndexDataPtr(), ToOpenGLBufferUsage(vertexArray->GetUsage()));
-
-            vertexArray->syncinfo.indicesChanged = false;
-        }
-
-        return true;
     }
 
 
@@ -1069,7 +986,7 @@ namespace GTEngine
         // attributes in the vertex array's format and set the pointers and enable. Then, we disable any previously enabled
         // attributes that we no longer want enabled.
         uint32_t  newVertexAttribEnableBits = 0x0;
-        uint32_t& oldVertexAttribEnableBits = VertexAttribEnableBits;
+        uint32_t &oldVertexAttribEnableBits = VertexAttribEnableBits;
         size_t    formatArraySize           = format.GetAttributeCount();
 
         GLsizei formatSizeInBytes = static_cast<GLsizei>(format.GetSizeInBytes());
@@ -1120,15 +1037,18 @@ namespace GTEngine
     {
         assert(vertexArray != nullptr);
 
-        // Syncing the vertex array will also bind the applicable OpenGL objects.
-        if (Renderer_SyncVertexArray(vertexArray))
-        {
-            // First we enable the vertex format. We pass null to this one to indicate that we're using a VBO.
-            Renderer_EnableVertexFormat(vertexArray->GetFormat(), nullptr);
+        auto rendererData = static_cast<const VertexArray_GL20*>(vertexArray->GetRendererData());
+        assert(rendererData != nullptr);
 
-            // Now that everything has been enabled/disabled, we draw the elements.
-            glDrawElements(ToOpenGLDrawMode(mode), static_cast<GLsizei>(vertexArray->GetIndexCount()), GL_UNSIGNED_INT, 0);
-        }
+        glBindBuffer(GL_ARRAY_BUFFER,         rendererData->verticesObject);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererData->indicesObject);
+
+
+        // First we enable the vertex format. We pass null to this one to indicate that we're using a VBO.
+        Renderer_EnableVertexFormat(vertexArray->GetFormat(), nullptr);
+
+        // Now that everything has been enabled/disabled, we draw the elements.
+        glDrawElements(ToOpenGLDrawMode(mode), rendererData->indexCount, GL_UNSIGNED_INT, 0);
     }
 
     void Renderer::Draw(const float *vertices, const unsigned int *indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
@@ -1505,17 +1425,7 @@ namespace GTEngine
 
                 glActiveTexture(GL_TEXTURE0 + i);
                 glEnable(GL_TEXTURE_2D);
-
-                // If the texture is attached to a framebuffer, we want to let the framebuffer be the one to do a full sync. In this case, we will just
-                // do a simple bind.
-                if (!texture->IsAttachedToFramebuffer() || texture->GetRendererData() == nullptr)
-                {
-                    Renderer_SyncTexture2D(texture);        // <-- syncing binds.
-                }
-                else
-                {
-                    glBindTexture(GL_TEXTURE_2D, ((Texture2D_GL20*)texture->GetRendererData())->object);
-                }
+                Renderer_BindTexture2D(texture);
             }
         }
     }
@@ -1538,7 +1448,7 @@ namespace GTEngine
 
                     // All we need to do is change the binding for the texture.
                     glActiveTexture(GL_TEXTURE0 + iTexture->index);
-                    Renderer_SyncTexture2D(iTexture->value);            // <-- syncing binds.
+                    Renderer_BindTexture2D(iTexture->value);
 
                     // Now we need to let the shader know about the old texture.
                     RendererState.CurrentShader->OnTextureParameterChanged(oldTexture);
@@ -1676,6 +1586,7 @@ namespace GTEngine
         }
     }
 
+    /*
     void Renderer::DeleteVertexArrayData(void* rendererDataIn)
     {
         auto rendererData = static_cast<VertexArray_GL20*>(rendererDataIn);
@@ -1687,6 +1598,7 @@ namespace GTEngine
             delete rendererData;
         }
     }
+    */
 
 
     void Renderer::DrawGUI(const GTGUI::Server &gui)

@@ -473,6 +473,9 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp">
       <Filter>source\Rendering\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\Resources.hpp">
+      <Filter>source\Rendering\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
