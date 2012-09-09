@@ -140,4 +140,23 @@ namespace GTEngine
     {
         return this->depthStencilAttachment;
     }
+
+
+    void Framebuffer::MarkAttachmentAsInvalid(Texture2D &attachment)
+    {
+        if (this->depthStencilAttachment == &attachment)
+        {
+            this->syncinfo.depthStencilChanged = true;
+        }
+        else
+        {
+            for (size_t i = 0; i < this->maxColourAttachments; ++i)
+            {
+                if (this->colourAttachments[i] == &attachment)
+                {
+                    this->syncinfo.colourChanged[i] = true;
+                }
+            }
+        }
+    }
 }

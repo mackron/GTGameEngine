@@ -878,7 +878,7 @@ namespace GTEngine
     /**
     *   \brief  Synchronizes a Texture2D object with it's OpenGL counterpart.
     */
-    bool Renderer_SyncTexture2D(Texture2D *texture)
+    bool Renderer_SyncTexture2D(Texture2D* texture)
     {
         if (texture != nullptr)
         {
@@ -1024,7 +1024,7 @@ namespace GTEngine
             {
                 if (framebuffer->syncinfo.colourChanged[i])
                 {
-                    Texture2D *colourBuffer = framebuffer->GetColourBuffer(i);
+                    Texture2D* colourBuffer = framebuffer->GetColourBuffer(i);
                     if (colourBuffer != nullptr)
                     {
                         Renderer_SyncTexture2D(colourBuffer);
@@ -1876,10 +1876,21 @@ namespace GTEngine
             for (size_t i = 0; i < RendererState.CurrentShader->currentTexture2Ds.count; ++i)
             {
                 auto iTexture = RendererState.CurrentShader->currentTexture2Ds.buffer[i];
+                auto texture  = iTexture->value;
 
                 glActiveTexture(GL_TEXTURE0 + i);
                 glEnable(GL_TEXTURE_2D);
-                Renderer_SyncTexture2D(iTexture->value);        // <-- syncing binds.
+
+                // If the texture is attached to a framebuffer, we want to let the framebuffer be the one to do a full sync. In this case, we will just
+                // do a simple bind.
+                if (!texture->IsAttachedToFramebuffer() || texture->GetRendererData() == nullptr)
+                {
+                    Renderer_SyncTexture2D(texture);        // <-- syncing binds.
+                }
+                else
+                {
+                    glBindTexture(GL_TEXTURE_2D, ((Texture2D_GL20*)texture->GetRendererData())->object);
+                }
             }
         }
     }
