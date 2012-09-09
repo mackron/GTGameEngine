@@ -107,6 +107,8 @@ namespace GTEngine
         case GTImage::ImageFormat_Depth32:          return GL_DEPTH_COMPONENT32;
         case GTImage::ImageFormat_Depth24_Stencil8: return GL_DEPTH24_STENCIL8;
 
+        case GTImage::ImageFormat_R10G10B10A2:      return GL_RGB10_A2;
+
         case GTImage::ImageFormat_Auto:
         default: break;
         }
@@ -144,6 +146,7 @@ namespace GTEngine
         case GTImage::ImageFormat_RGBA32:
         case GTImage::ImageFormat_RGBA16F:
         case GTImage::ImageFormat_RGBA32F:
+        case GTImage::ImageFormat_R10G10B10A2:
             {
                 return GL_RGBA;
             }
@@ -212,6 +215,12 @@ namespace GTEngine
         case GTImage::ImageFormat_Depth24_Stencil8:
             {
                 return GL_UNSIGNED_INT_24_8;
+            }
+
+
+        case GTImage::ImageFormat_R10G10B10A2:
+            {
+                return GL_UNSIGNED_INT_10_10_10_2;
             }
 
 

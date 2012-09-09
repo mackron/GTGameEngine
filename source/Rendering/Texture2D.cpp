@@ -77,6 +77,9 @@ namespace GTEngine
     void Texture2D::SetData(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data)
     {
         GTImage::Image::Load(width, height, format, data);
+
+        // We are going to manually mark the data as invalid to ensure everything is updated correctly.
+        this->syncinfo.dataChanged = true;
     }
 
 
