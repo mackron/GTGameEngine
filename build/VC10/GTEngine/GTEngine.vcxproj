@@ -363,6 +363,7 @@
     <ClCompile Include="..\..\..\source\Random\Floor\FloorTile.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL20\Renderer_ResourceEvents.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCSetFaceCulling.cpp" />

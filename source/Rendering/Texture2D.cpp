@@ -13,6 +13,8 @@ namespace GTEngine
           rendererData(nullptr), refCount(1), keepClientSideData(false),
           syncinfo()
     {
+        Renderer::OnTexture2DCreated(*this);
+
         if (Renderer::HasFlippedTextures())     // <-- Will return true with OpenGL, but not necessarily everything else - thus why we need it.
         {
             this->FlipVertically();
@@ -27,6 +29,8 @@ namespace GTEngine
           rendererData(nullptr), refCount(1), keepClientSideData(false),
           syncinfo()
     {
+        Renderer::OnTexture2DCreated(*this);
+
         if (Renderer::HasFlippedTextures())
         {
             this->FlipVertically();
@@ -43,16 +47,17 @@ namespace GTEngine
           rendererData(nullptr), refCount(1), keepClientSideData(false),
           syncinfo()
     {
+        Renderer::OnTexture2DCreated(*this);
+
         if (Renderer::HasFlippedTextures())
         {
             this->FlipVertically();
         }
 
+
         // This pulls every mipmap from the image file.
         this->PullAllMipmaps();
         this->GenerateMipmaps();
-
-        //this->LoadMipmapFromFile(0);
     }
 
     Texture2D::~Texture2D()

@@ -133,8 +133,8 @@ namespace GTEngine
         *   \remarks
         *       This should only be used by the renderer.
         */
-        const void* GetRendererData() const { return this->rendererData; }
               void* GetRendererData()       { return this->rendererData; }
+        const void* GetRendererData() const { return this->rendererData; }
 
         /**
         *   \brief  Sets the pointer to the internal renderer data.
