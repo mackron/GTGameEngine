@@ -286,6 +286,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\ViewportRenderer.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Animation\Animation.cpp" />

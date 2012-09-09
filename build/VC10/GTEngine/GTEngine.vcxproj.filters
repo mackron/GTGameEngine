@@ -87,8 +87,11 @@
     <Filter Include="include\Random\Floor">
       <UniqueIdentifier>{3889c22e-2cf9-4642-a5a2-b57862a05b17}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Rendering\OpenGL">
+    <Filter Include="source\Rendering\OpenGL20">
       <UniqueIdentifier>{fa3c59a3-8244-499a-925d-28f040214321}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Rendering\OpenGL">
+      <UniqueIdentifier>{28feea9a-3965-4cae-bd4c-b1d4f0b98ac9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -467,6 +470,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp">
+      <Filter>source\Rendering\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -773,7 +779,7 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL20\Renderer_Resources.cpp">
-      <Filter>source\Rendering\OpenGL</Filter>
+      <Filter>source\Rendering\OpenGL20</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
