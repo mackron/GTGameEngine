@@ -9,6 +9,7 @@
 #include <gtgl/gtgl.h>
 
 #include "../OpenGL/TypeConversion.hpp"
+#include "../OpenGL/Resources.hpp"
 
 
 // Render commands.
@@ -16,21 +17,6 @@ namespace GTEngine
 {
     /////////////////////////////////////////////////////////////
     // Texture2Ds
-
-    struct Texture2D_GL20
-    {
-        Texture2D_GL20()
-            : object(0)
-        {
-        }
-
-        Texture2D_GL20(GLuint object)
-            : object(object)
-        {
-        }
-
-        GLuint object;
-    };
 
     struct RCOnTexture2DCreated : public GTEngine::RenderCommand
     {
@@ -166,6 +152,85 @@ namespace GTEngine
         Texture2D_GL20* texture;
         GLint wrapMode;
     };
+
+
+
+    /////////////////////////////////////////////////////////////
+    // VertexArrays
+
+    struct RCOnVertexArrayCreated : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->vertexArray != nullptr);
+
+            glGenBuffers(1, &this->vertexArray->verticesObject);
+            glGenBuffers(1, &this->vertexArray->indicesObject);
+        }
+
+        VertexArray_GL20* vertexArray;
+    };
+
+    struct RCOnVertexArrayDeleted : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->vertexArray != nullptr);
+
+            glDeleteBuffers(1, &this->vertexArray->verticesObject);
+            glDeleteBuffers(1, &this->vertexArray->indicesObject);
+
+            delete this->vertexArray;
+        }
+
+        VertexArray_GL20* vertexArray;
+    };
+
+    struct RCOnVertexArrayVertexDataChanged : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->vertexArray != nullptr);
+
+            glBindBuffer(GL_ARRAY_BUFFER, this->vertexArray->verticesObject);
+            glBufferData(GL_ARRAY_BUFFER, this->dataSize, this->data, this->usage);
+
+            this->vertexArray->vertexCount = this->vertexCount;
+
+            free(this->data);
+        }
+
+        VertexArray_GL20* vertexArray;
+
+        GLsizeiptr dataSize;
+        void*      data;
+        GLenum     usage;
+
+        GLsizei    vertexCount;
+    };
+
+    struct RCOnVertexArrayIndexDataChanged : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->vertexArray != nullptr);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->vertexArray->indicesObject);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->dataSize, this->data, this->usage);
+
+            this->vertexArray->indexCount = this->indexCount;
+
+            free(this->data);
+        }
+
+        VertexArray_GL20* vertexArray;
+
+        GLsizeiptr dataSize;
+        void*      data;
+        GLenum     usage;
+
+        GLsizei    indexCount;
+    };
 }
 
 
@@ -181,6 +246,12 @@ namespace GTEngine
     static RCCache<RCOnTexture2DMagnificationFilterChanged> RCCache_OnTexture2DMagnificationFilterChanged[2];
     static RCCache<RCOnTexture2DAnisotropyChanged>          RCCache_OnTexture2DAnisotropyChanged[2];
     static RCCache<RCOnTexture2DWrapModeChanged>            RCCache_OnTexture2DWrapModeChanged[2];
+
+    static RCCache<RCOnVertexArrayCreated>                  RCCache_OnVertexArrayCreated[2];
+    static RCCache<RCOnVertexArrayDeleted>                  RCCache_OnVertexArrayDeleted[2];
+    static RCCache<RCOnVertexArrayVertexDataChanged>        RCCache_OnVertexArrayVertexDataChanged[2];
+    static RCCache<RCOnVertexArrayIndexDataChanged>         RCCache_OnVertexArrayIndexDataChanged[2];
+    
 
 
     void Renderer::OnTexture2DCreated(Texture2D &texture)
@@ -303,6 +374,78 @@ namespace GTEngine
 
 
 
+    void Renderer::OnVertexArrayCreated(VertexArray &vertexArray)
+    {
+        auto rendererData = new VertexArray_GL20;     // This is deleted in RCOnVertexArray2DDeleted::Execute(), after the OpenGL object has been deleted.
+        vertexArray.SetRendererData(rendererData);
+
+        auto &rc = RCCache_OnVertexArrayCreated[Renderer::BackIndex].Acquire();
+        rc.vertexArray = rendererData;
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnVertexArrayDeleted(VertexArray &vertexArray)
+    {
+        auto &rc = RCCache_OnVertexArrayDeleted[Renderer::BackIndex].Acquire();
+        rc.vertexArray = static_cast<VertexArray_GL20*>(vertexArray.GetRendererData());
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnVertexArrayVertexDataChanged(VertexArray &vertexArray)
+    {
+        auto &rc = RCCache_OnVertexArrayVertexDataChanged[Renderer::BackIndex].Acquire();
+        rc.vertexArray = static_cast<VertexArray_GL20*>(vertexArray.GetRendererData());
+
+        rc.dataSize = static_cast<GLsizeiptr>(vertexArray.GetVertexCount() * vertexArray.GetFormat().GetSize() * sizeof(float));
+        
+        if (vertexArray.GetVertexDataPtr() != nullptr)
+        {
+            rc.data = malloc(rc.dataSize);
+            memcpy(rc.data, vertexArray.GetVertexDataPtr(), rc.dataSize);
+        }
+        else
+        {
+            rc.data = nullptr;
+        }
+
+        rc.usage       = ToOpenGLBufferUsage(vertexArray.GetUsage());
+        rc.vertexCount = vertexArray.GetVertexCount();
+
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnVertexArrayIndexDataChanged(VertexArray &vertexArray)
+    {
+        auto &rc = RCCache_OnVertexArrayIndexDataChanged[Renderer::BackIndex].Acquire();
+        rc.vertexArray = static_cast<VertexArray_GL20*>(vertexArray.GetRendererData());
+
+
+        rc.dataSize = static_cast<GLsizeiptr>(vertexArray.GetIndexCount() * sizeof(unsigned int));
+        
+        if (vertexArray.GetIndexDataPtr() != nullptr)
+        {
+            rc.data = malloc(rc.dataSize);
+            memcpy(rc.data, vertexArray.GetIndexDataPtr(), rc.dataSize);
+        }
+        else
+        {
+            rc.data = nullptr;
+        }
+
+        rc.usage      = ToOpenGLBufferUsage(vertexArray.GetUsage());
+        rc.indexCount = vertexArray.GetIndexCount();
+
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+
+
+
+
     void Renderer::ExecuteFrontResourceRCQueue()
     {
         ResourceRCQueues[!Renderer::BackIndex].Execute();
@@ -315,5 +458,10 @@ namespace GTEngine
         RCCache_OnTexture2DMagnificationFilterChanged[!Renderer::BackIndex].Reset();
         RCCache_OnTexture2DAnisotropyChanged[!Renderer::BackIndex].Reset();
         RCCache_OnTexture2DWrapModeChanged[!Renderer::BackIndex].Reset();
+
+        RCCache_OnVertexArrayCreated[!Renderer::BackIndex].Reset();
+        RCCache_OnVertexArrayDeleted[!Renderer::BackIndex].Reset();
+        RCCache_OnVertexArrayVertexDataChanged[!Renderer::BackIndex].Reset();
+        RCCache_OnVertexArrayIndexDataChanged[!Renderer::BackIndex].Reset();
     }
 }

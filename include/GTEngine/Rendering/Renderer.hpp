@@ -190,7 +190,7 @@ namespace GTEngine
         //static void MarkForCollection(Texture2D* texture);
         static void MarkForCollection(Framebuffer* framebuffer);
         static void MarkForCollection(Shader* shader);
-        static void MarkForCollection(VertexArray* vertexArray);
+        //static void MarkForCollection(VertexArray* vertexArray);
 
         /**
         *   \brief  Collects any garbage-collected resources.
@@ -480,7 +480,7 @@ namespace GTEngine
         //static void DeleteTexture2DData(void *rendererData);
         static void DeleteFramebufferData(void *rendererData);
         static void DeleteShaderData(void *rendererData);
-        static void DeleteVertexArrayData(void *rendererData);
+        //static void DeleteVertexArrayData(void *rendererData);
 
 
         /**
@@ -546,6 +546,31 @@ namespace GTEngine
         ///
         /// @param texture [in] The texture whose wrapping mode has changed.
         static void OnTexture2DWrapModeChanged(Texture2D &texture);
+
+
+
+        /////////////////////////////////////////////
+        // VertexArrays.
+
+        /// Called when a vertex array is created.
+        ///
+        /// @param vertexArray [in] The vertex array that was just created.
+        static void OnVertexArrayCreated(VertexArray &vertexArray);
+
+        /// Called when a vertex array is deleted.
+        ///
+        /// @param vertexArray [in] The vertex array that is being deleted.
+        static void OnVertexArrayDeleted(VertexArray &vertexArray);
+
+        /// Called when the vertex data of a vertex array is modified.
+        ///
+        /// @param vertexArray [in] The vertex array whose vertex data has been modified.
+        static void OnVertexArrayVertexDataChanged(VertexArray &vertexArray);
+
+        /// Called when the index data of a vertex array is modified.
+        ///
+        /// @param vertexArray [in] The vertex array whose index data has been modified.
+        static void OnVertexArrayIndexDataChanged(VertexArray &vertexArray);
 
 
         /// Executes the front resources RC queues.
