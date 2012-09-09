@@ -37,52 +37,26 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will be called once for every viewport.
-        virtual void BeginViewport(Scene &scene, SceneViewport &viewport) = 0;
+        virtual void RenderViewport(Scene &scene, SceneViewport &viewport) = 0;
 
-        /// Called when rendering has ended for the given viewport
+
+        /// Called when a viewport needs to be added to the renderer.
         ///
-        /// @param viewport [in] The viewport that has finished rendering.
-        virtual void EndViewport(Scene &scene, SceneViewport &viewport) = 0;
+        /// @param viewport [in] A reference to the viewport this renderer will need to manage.
+        virtual void AddViewport(SceneViewport &viewport) = 0;
 
-
-        /// Called when a chunk of geometry needs to be drawn.
+        /// Called when a viewport needs to be removed from the renderer.
         ///
-        /// @param geometry  [in] The vertex array containing the geometry to draw.
-        /// @param material  [in] The material to draw the geometry with.
-        /// @param transform [in] The transform to apply to the geometry.
-        virtual void Geometry(const VertexArray &vertexArray, const Material &material, const glm::vec3 &transform) = 0;
+        /// @param viewport [in] A reference to the viewport this renderer will stop managing.
+        virtual void RemoveViewport(SceneViewport &viewport) = 0;
 
-        /// Notifies the renderer that an ambient light needs to be used in the scene.
+        /// Called after a viewport has been resized.
         ///
-        /// @param colour [in] The colour of the ambient light.
-        virtual void AmbientLight(const glm::vec3 &colour) = 0;
-
-        /// Notifies the renderer that a directional light needs to be used in the scene.
+        /// @param viewport [in] The viewport being resized.
         ///
-        /// @param colour    [in] The colour of the light.
-        /// @param direction [in] The direction of the light.
-        virtual void DirectionalLight(const glm::vec3 &colour, const glm::vec3 direction) = 0;
-
-        /// Notifies the renderer than a point light needs to be used in the scene.
-        ///
-        /// @param colour               [in] The colour of the light.
-        /// @param position             [in] The position of the light.
-        /// @param constantAttenuation  [in] The constant attenuation of the light.
-        /// @param linearAttenuation    [in] The linear attenuation of the light.
-        /// @param quadraticAttenuation [in] The quadratic attenuation of the light.
-        virtual void PointLight(const glm::vec3 &colour, const glm::vec3 &position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation) = 0;
-
-        /// Notifies the renderer that a spot light needs to be used in the scene.
-        ///
-        /// @param colour               [in] The colour of the light.
-        /// @param position             [in] The position of the light.
-        /// @param direction            [in] The direction of the light.
-        /// @param innerRadius          [in] The inner radius of the light.
-        /// @param outerRadius          [in] The outer radius of the light.
-        /// @param constantAttenuation  [in] The constant attenuation of the light.
-        /// @param linearAttenuation    [in] The linear attenuation of the light.
-        /// @param quadraticAttenuation [in] The quadratic attenuation of the light.
-        virtual void SpotLight(const glm::vec3 &colour, const glm::vec3 &position, const glm::vec3 &direction, float innerRadius, float outerRadius, float constantAttenuation, float linearAttenuation, float quadraticAttenuation) = 0;
+        /// @remarks
+        ///     This function is needed so that the renderer can resize the internal framebuffers and whatnot.
+        virtual void OnViewportResized(SceneViewport &viewport) = 0;
     };
 }
 

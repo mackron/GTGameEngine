@@ -8,6 +8,7 @@
 #include "DefaultSceneUpdateManager.hpp"
 #include "DefaultScenePhysicsManager.hpp"
 #include "DefaultSceneCullingManager.hpp"
+#include "DefaultSceneRenderer.hpp"
 #include "NavigationMesh.hpp"
 
 
@@ -287,6 +288,16 @@ namespace GTEngine
         virtual void GetAABB(glm::vec3 &min, glm::vec3 &max) const;
 
 
+        /// Retrieves a reference to the renderer.
+              SceneRenderer & GetRenderer()       { assert(this->renderer != nullptr); return *this->renderer; }
+        const SceneRenderer & GetRenderer() const { assert(this->renderer != nullptr); return *this->renderer; }
+
+        /// Sets the renderer.
+        void SetRenderer(SceneRenderer &newRenderer);
+
+
+
+
         /// Retrieves a reference to the update manager.
               SceneUpdateManager & GetUpdateManager()       { return this->updateManager; }
         const SceneUpdateManager & GetUpdateManager() const { return this->updateManager; }
@@ -459,6 +470,7 @@ namespace GTEngine
         virtual void OnSceneNodeRemoved(SceneNode& node);
 
         /// Called when a scene node is moved, rotated or both. This is not called for scaling. Use OnSceneNodeScale() that.
+        ///
         /// @param node [in] A reference to the node that has been transformed.
         virtual void OnSceneNodeTransform(SceneNode &node);
 
@@ -474,7 +486,11 @@ namespace GTEngine
         virtual void OnResume();
 
 
-    protected:
+    private:
+
+        /// A pointer to the scene's renderer. This will never actually be null, but it can be changed dynamically. Thus, it needs to be a pointer instead
+        /// of a reference. This will default to a heap-allocated DefaultSceneRenderer.
+        SceneRenderer* renderer;
 
         /// A reference to the update manager.
         SceneUpdateManager &updateManager;
@@ -484,6 +500,10 @@ namespace GTEngine
 
         /// A reference to the culling manager.
         SceneCullingManager &cullingManager;
+
+
+        /// Keeps track of whether or not the renderer needs to be deleted when it changes or the scene is destructed.
+        bool deleteRenderer;
 
         /// Keeps track of whether or not the update manager needs to be deleted by the destructor.
         bool deleteUpdateManager;

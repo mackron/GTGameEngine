@@ -49,17 +49,25 @@ namespace GTEngine
     {
     public:
 
-        /**
-        *   \brief  Constructor.
-        */
+        /// Constructor.
         Texture2D();
         Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data = nullptr);
-        Texture2D(const char *filename);
+        Texture2D(const char* filename);
 
-        /**
-        *   \brief  Destructor.
-        */
+        /// Destructor.
         ~Texture2D();
+
+
+        /// Sets the base data of the texture.
+        ///
+        /// @param width  [in] The new width of the image.
+        /// @param height [in] The new height of the image.
+        /// @param format [in] The new format of the image data.
+        /// @param data   [in] The image data.
+        ///
+        /// @remarks
+        ///     If 'data' is null, the storage will be allocated, but will remain undefined. Very useful for framebuffer targets.
+        void SetData(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data = nullptr);
 
 
         /// Sets the minification filter.
@@ -116,8 +124,8 @@ namespace GTEngine
         *   \remarks
         *       This should only be used by the renderer.
         */
-        const void * GetRendererData() const { return this->rendererData; }
-              void * GetRendererData()       { return this->rendererData; }
+        const void* GetRendererData() const { return this->rendererData; }
+              void* GetRendererData()       { return this->rendererData; }
 
         /**
         *   \brief  Sets the pointer to the internal renderer data.
@@ -186,7 +194,7 @@ namespace GTEngine
 
         /// The renderer will need to store it's own properties about the texture. This pointer can be used by the renderer
         /// to hold a pointer to some renderer-specific data.
-        void *rendererData;
+        void* rendererData;
 
         /// We store a reference count which will be used by the Texture2DLibrary. Initializes to 1.
         mutable int refCount;
