@@ -8,7 +8,7 @@ namespace GTEngine
         : usage(usage), format(format),
           vertices(nullptr), vertexCount(0), indices(nullptr), indexCount(0),
           verticesMapped(false), indicesMapped(false),
-          rendererData(nullptr), syncinfo()
+          rendererData(nullptr)
     {
         Renderer::OnVertexArrayCreated(*this);
     }
@@ -32,7 +32,6 @@ namespace GTEngine
         assert(vertexCount > 0);
         assert(!this->verticesMapped);
 
-        this->syncinfo.verticesChanged = true;
         this->vertexCount = vertexCount;
 
         delete [] this->vertices;
@@ -57,7 +56,6 @@ namespace GTEngine
         assert(indexCount > 0);
         assert(!this->indicesMapped);
 
-        this->syncinfo.indicesChanged  = true;
         this->indexCount = indexCount;
 
         delete [] this->indices;
@@ -92,7 +90,6 @@ namespace GTEngine
         if (this->verticesMapped)
         {
             this->verticesMapped = false;
-            this->syncinfo.verticesChanged = true;
 
             Renderer::OnVertexArrayVertexDataChanged(*this);
         }
@@ -115,7 +112,6 @@ namespace GTEngine
         if (this->indicesMapped)
         {
             this->indicesMapped = false;
-            this->syncinfo.indicesChanged = true;
 
             Renderer::OnVertexArrayIndexDataChanged(*this);
         }

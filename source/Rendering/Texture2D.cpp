@@ -10,8 +10,7 @@ namespace GTEngine
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
-          rendererData(nullptr), refCount(1), keepClientSideData(false),
-          syncinfo()
+          rendererData(nullptr), refCount(1), keepClientSideData(false)
     {
         Renderer::OnTexture2DCreated(*this);
 
@@ -26,8 +25,7 @@ namespace GTEngine
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
-          rendererData(nullptr), refCount(1), keepClientSideData(false),
-          syncinfo()
+          rendererData(nullptr), refCount(1), keepClientSideData(false)
     {
         Renderer::OnTexture2DCreated(*this);
 
@@ -44,8 +42,7 @@ namespace GTEngine
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
-          rendererData(nullptr), refCount(1), keepClientSideData(false),
-          syncinfo()
+          rendererData(nullptr), refCount(1), keepClientSideData(false)
     {
         Renderer::OnTexture2DCreated(*this);
 
@@ -148,7 +145,6 @@ namespace GTEngine
     {
         (void)mipmapIndex;
 
-        //this->syncinfo.dataChanged = true;
         //Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
     }
 

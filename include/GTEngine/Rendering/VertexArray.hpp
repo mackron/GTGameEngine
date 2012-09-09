@@ -92,7 +92,7 @@ namespace GTEngine
         *       \par
         *       An application can first allocate the memory using SetVertexData() with a null pointer. Then it can use MapVertexData() if appropriate.
         */
-        float * MapVertexData();
+        float* MapVertexData();
 
         /**
         *   \brief  Unmaps the vertex data.
@@ -107,7 +107,7 @@ namespace GTEngine
         *       \par
         *       An application can first allocate the memory using SetIndexData() with a null pointer. Then it can use MapIndexData() if appropriate.
         */
-        unsigned int * MapIndexData();
+        unsigned int* MapIndexData();
 
         /**
         *   \brief  Unmaps the vertex data.
@@ -178,14 +178,14 @@ namespace GTEngine
         VertexFormat format;
 
         /// A pointer to the the vertex information. The format of the data in this array is determined by 'format'.
-        float *vertices;
+        float* vertices;
 
         /// The number of vertices. This is NOT the number of float's in 'vertices', but rather the number of vertices that the data
         /// in 'vertices' defines.
         size_t vertexCount;
 
         /// A pointer to the indices that determine the vertices that make up each polygon in the array.
-        unsigned int *indices;
+        unsigned int* indices;
 
         /// The number of indices making up the vertex array.
         size_t indexCount;
@@ -198,29 +198,8 @@ namespace GTEngine
 
         /// The renderer will need to store it's own properties about the vertex array. This pointer can be used by the renderer
         /// to hold a pointer to some renderer-specific data.
-        mutable void *rendererData;
+        mutable void* rendererData;
 
-
-    public:
-
-        struct _syncinfo
-        {
-            _syncinfo()
-                : verticesChanged(true), indicesChanged(true)
-            {
-            }
-            ~_syncinfo()
-            {
-            }
-
-            bool verticesChanged;       //< Whether or not the vertex data has changed.
-            bool indicesChanged;        //< Whether or not the texture data has been updated.
-
-        private:    // No copying.
-            _syncinfo(const _syncinfo &);
-            _syncinfo & operator=(const _syncinfo &);
-
-        }mutable syncinfo;
 
 
     private:    // No copying.
