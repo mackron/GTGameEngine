@@ -7,7 +7,9 @@ namespace GTEngine
 {
     SceneViewport::SceneViewport()
         : scene(nullptr), cameraNodes(),
-          renderer(nullptr), width(0), height(0), colourBuffer(nullptr),
+          renderer(nullptr),
+          width(1), height(1),
+          colourBuffer(nullptr),
           modelComponents(), ambientLightComponents(), directionalLightComponents(), pointLightComponents(), spotLightComponents()
     {
     }

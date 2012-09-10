@@ -476,6 +476,9 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\Resources.hpp">
       <Filter>source\Rendering\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureCube.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -783,6 +786,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL20\Renderer_Resources.cpp">
       <Filter>source\Rendering\OpenGL20</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\TextureCube.cpp">
+      <Filter>source\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

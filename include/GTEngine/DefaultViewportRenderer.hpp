@@ -121,6 +121,8 @@ namespace GTEngine
             this->materialBuffer0->Resize(this->width, this->height);
             this->materialBuffer1->Resize(this->width, this->height);
             this->materialBuffer2->Resize(this->width, this->height);
+
+            this->CheckStatus();
         }
 
 
@@ -492,7 +494,7 @@ namespace GTEngine
 
 
 
-            /// A cache of shaders used by materials in the material pass.
+            /// A cache of shaders used by materials in the material pass. There is one shader for every material definition.
             MaterialShaderCache materialPassShaders;
 
         }Shaders;

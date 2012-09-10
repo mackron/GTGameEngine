@@ -26,20 +26,38 @@ namespace GTEngine
         void Execute()
         {
             assert(texture != nullptr);
-            glGenTextures(1, &this->texture->object);
-            glBindTexture(GL_TEXTURE_2D, texture->object);
+
+            GLenum targetGL = ToOpenGLTexture2DTarget(this->target);
+            
+            // If we're a face on a cube map we don't actually want to create any texture objects. Instead, we can assert that the currently bound texture
+            // is the cube map object.
+            if (target == Texture2DTarget_Default)
+            {
+                glGenTextures(1, &this->texture->object);
+                glBindTexture(GL_TEXTURE_2D, texture->object);
+            }
+            else
+            {
+                // The target is a face on a cube map. We're goint to set the OpenGL object to the main cube map object, which will be bound.
+                GLint cubeMapObject;
+                glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &cubeMapObject);
+
+                this->texture->object = static_cast<GLuint>(cubeMapObject);
+            }
+
 
             // Filter.
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,         this->minFilter);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,         this->magFilter);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+            glTexParameteri(targetGL, GL_TEXTURE_MIN_FILTER,         this->minFilter);
+            glTexParameteri(targetGL, GL_TEXTURE_MIN_FILTER,         this->magFilter);
+            glTexParameteri(targetGL, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
 
             // Wrap Mode.
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrapMode);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrapMode);
+            glTexParameteri(targetGL, GL_TEXTURE_WRAP_S, this->wrapMode);
+            glTexParameteri(targetGL, GL_TEXTURE_WRAP_T, this->wrapMode);
         }
 
         Texture2D_GL20* texture;
+        Texture2DTarget target;
 
         GLint minFilter;
         GLint magFilter;
@@ -53,12 +71,18 @@ namespace GTEngine
         void Execute()
         {
             assert(texture != nullptr);
-            glDeleteTextures(1, &this->texture->object);
+
+            // We don't delete any objects if we're a cube map face.
+            if (this->target == Texture2DTarget_Default)
+            {
+                glDeleteTextures(1, &this->texture->object);
+            }
 
             delete texture;
         }
 
         Texture2D_GL20* texture;
+        Texture2DTarget target;
     };
 
     struct RCOnTexture2DMipmapChanged : public GTEngine::RenderCommand
@@ -67,23 +91,35 @@ namespace GTEngine
         {
             assert(this->texture != nullptr);
 
-            glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            if (this->target == Texture2DTarget_Default)
+            {
+                glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            }
+            else
+            {
+                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+            }
+
+
+            GLenum targetGL = ToOpenGLTexture2DTarget(this->target);
 
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             {
-                glTexImage2D(GL_TEXTURE_2D, this->mipmap, this->internalFormat, this->width, this->height, 0, this->format, this->type, this->data);
+                glTexImage2D(targetGL, this->mipmap, this->internalFormat, this->width, this->height, 0, this->format, this->type, this->data);
             }
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, static_cast<GLint>(this->baseMipLevel));
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL,  static_cast<GLint>(this->maxMipLevel));
+            glTexParameteri(targetGL, GL_TEXTURE_BASE_LEVEL, static_cast<GLint>(this->baseMipLevel));
+            glTexParameteri(targetGL, GL_TEXTURE_MAX_LEVEL,  static_cast<GLint>(this->maxMipLevel));
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->minFilter);
+            glTexParameteri(targetGL, GL_TEXTURE_MIN_FILTER, this->minFilter);
+
 
             free(this->data);
         }
 
         Texture2D_GL20* texture;
+        Texture2DTarget target;
 
         GLint mipmap;
 
@@ -108,11 +144,21 @@ namespace GTEngine
         {
             assert(this->texture != nullptr);
 
-            glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            if (this->target == Texture2DTarget_Default)
+            {
+                glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            }
+            else
+            {
+                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+            }
+
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filter);
         }
 
         Texture2D_GL20* texture;
+        Texture2DTarget target;
+
         GLint filter;
     };
 
@@ -122,11 +168,21 @@ namespace GTEngine
         {
             assert(this->texture != nullptr);
 
-            glBindTexture(GL_TEXTURE_2D, this->texture->object);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filter);
+            if (this->target == Texture2DTarget_Default)
+            {
+                glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            }
+            else
+            {
+                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+            }
+
+            glTexParameteri(ToOpenGLTexture2DTarget(this->target), GL_TEXTURE_MIN_FILTER, this->filter);
         }
 
         Texture2D_GL20* texture;
+        Texture2DTarget target;
+
         GLint filter;
     };
 
@@ -134,11 +190,23 @@ namespace GTEngine
     {
         void Execute()
         {
-            glBindTexture(GL_TEXTURE_2D, this->texture->object);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+            assert(this->texture != nullptr);
+
+            if (this->target == Texture2DTarget_Default)
+            {
+                glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            }
+            else
+            {
+                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+            }
+
+            glTexParameteri(ToOpenGLTexture2DTarget(this->target), GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
         }
 
         Texture2D_GL20* texture;
+        Texture2DTarget target;
+
         GLint anisotropy;
     };
 
@@ -146,14 +214,55 @@ namespace GTEngine
     {
         void Execute()
         {
-            glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            assert(this->texture != nullptr);
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrapMode);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrapMode);
+            if (this->target == Texture2DTarget_Default)
+            {
+                glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            }
+            else
+            {
+                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+            }
+
+            glTexParameteri(ToOpenGLTexture2DTarget(this->target), GL_TEXTURE_WRAP_S, this->wrapMode);
+            glTexParameteri(ToOpenGLTexture2DTarget(this->target), GL_TEXTURE_WRAP_T, this->wrapMode);
         }
 
         Texture2D_GL20* texture;
+        Texture2DTarget target;
+
         GLint wrapMode;
+    };
+
+
+
+    /////////////////////////////////////////////////////////////
+    // TextureCubes
+
+    struct RCOnTextureCubeCreated : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(texture != nullptr);
+            glGenTextures(1, &this->texture->object);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, texture->object);
+        }
+
+        TextureCube_GL20* texture;
+    };
+
+    struct RCOnTextureCubeDeleted : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(texture != nullptr);
+            glDeleteTextures(1, &this->texture->object);
+
+            delete texture;
+        }
+
+        TextureCube_GL20* texture;
     };
 
 
@@ -497,6 +606,9 @@ namespace GTEngine
     static RCCache<RCOnTexture2DAnisotropyChanged>          RCCache_OnTexture2DAnisotropyChanged[2];
     static RCCache<RCOnTexture2DWrapModeChanged>            RCCache_OnTexture2DWrapModeChanged[2];
 
+    static RCCache<RCOnTextureCubeCreated>                  RCCache_OnTextureCubeCreated[2];
+    static RCCache<RCOnTextureCubeDeleted>                  RCCache_OnTextureCubeDeleted[2];
+
     static RCCache<RCOnVertexArrayCreated>                  RCCache_OnVertexArrayCreated[2];
     static RCCache<RCOnVertexArrayDeleted>                  RCCache_OnVertexArrayDeleted[2];
     static RCCache<RCOnVertexArrayVertexDataChanged>        RCCache_OnVertexArrayVertexDataChanged[2];
@@ -522,6 +634,7 @@ namespace GTEngine
 
             auto &rc = RCCache_OnTexture2DCreated[Renderer::BackIndex].Acquire();
             rc.texture = rendererData;
+            rc.target  = texture.GetTarget();
 
 
             size_t baseMipLevel, maxMipLevel;
@@ -555,6 +668,8 @@ namespace GTEngine
 
         auto &rc = RCCache_OnTexture2DMipmapChanged[Renderer::BackIndex].Acquire();
         rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        rc.target  = texture.GetTarget();
+
         rc.mipmap  = static_cast<GLint>(mipmapIndex);
 
         rc.width   = static_cast<GLsizei>(mipmap.width);
@@ -588,6 +703,7 @@ namespace GTEngine
     {
         auto &rc = RCCache_OnTexture2DMinificationFilterChanged[Renderer::BackIndex].Acquire();
         rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        rc.target  = texture.GetTarget();
 
         size_t baseMipLevel, maxMipLevel;
         texture.GetValidMipmapRange(baseMipLevel, maxMipLevel);
@@ -602,6 +718,7 @@ namespace GTEngine
     {
         auto &rc = RCCache_OnTexture2DMagnificationFilterChanged[Renderer::BackIndex].Acquire();
         rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        rc.target  = texture.GetTarget();
 
         size_t baseMipLevel, maxMipLevel;
         texture.GetValidMipmapRange(baseMipLevel, maxMipLevel);
@@ -616,6 +733,7 @@ namespace GTEngine
     {
         auto &rc = RCCache_OnTexture2DAnisotropyChanged[Renderer::BackIndex].Acquire();
         rc.texture    = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        rc.target     = texture.GetTarget();
         rc.anisotropy = static_cast<GLint>(texture.GetAnisotropy());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
@@ -625,10 +743,34 @@ namespace GTEngine
     {
         auto &rc = RCCache_OnTexture2DWrapModeChanged[Renderer::BackIndex].Acquire();
         rc.texture  = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        rc.target   = texture.GetTarget();
         rc.wrapMode = ToOpenGLWrapMode(texture.GetWrapMode());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
+
+
+
+
+    void Renderer::OnTextureCubeCreated(TextureCube &texture)
+    {
+        auto rendererData = new TextureCube_GL20;
+        texture.SetRendererData(rendererData);
+
+        auto &rc = RCCache_OnTextureCubeCreated[Renderer::BackIndex].Acquire();
+        rc.texture = rendererData;
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnTextureCubeDeleted(TextureCube &texture)
+    {
+        auto &rc = RCCache_OnTextureCubeDeleted[Renderer::BackIndex].Acquire();
+        rc.texture = static_cast<TextureCube_GL20*>(texture.GetRendererData());
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
 
 
 

@@ -30,7 +30,8 @@ namespace GTEngine
 
 
         /// Retrieves the model currently associated with this component.
-        Model* GetModel();
+              Model* GetModel()       { return this->model; }
+        const Model* GetModel() const { return this->model; }
 
 
         /// Sets the back/front face culling mode. By default, back faces are culled.

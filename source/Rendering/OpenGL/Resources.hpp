@@ -17,6 +17,16 @@ namespace GTEngine
         GLuint object;
     };
 
+    struct TextureCube_GL20
+    {
+        TextureCube_GL20()
+            : object(0)
+        {
+        }
+
+        GLuint object;
+    };
+
     struct Framebuffer_GL20
     {
         Framebuffer_GL20()

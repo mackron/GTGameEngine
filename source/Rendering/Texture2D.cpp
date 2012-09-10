@@ -4,9 +4,9 @@
 
 namespace GTEngine
 {
-    // Make sure the members are initialised in the correct order here.
-    Texture2D::Texture2D()
+    Texture2D::Texture2D(Texture2DTarget target)
         : GTImage::Image(),
+          target(target),
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
@@ -14,7 +14,7 @@ namespace GTEngine
     {
         Renderer::OnTexture2DCreated(*this);
 
-        if (Renderer::HasFlippedTextures())     // <-- Will return true with OpenGL, but not necessarily everything else - thus why we need it.
+        if (Renderer::HasFlippedTextures())
         {
             this->FlipVertically();
         }
@@ -22,6 +22,7 @@ namespace GTEngine
 
     Texture2D::Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data)
         : GTImage::Image(),
+          target(Texture2DTarget_Default),
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
@@ -39,6 +40,7 @@ namespace GTEngine
 
     Texture2D::Texture2D(const char* filename)
         : GTImage::Image(filename),
+          target(Texture2DTarget_Default),
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
@@ -56,6 +58,7 @@ namespace GTEngine
         this->PullAllMipmaps();
         this->GenerateMipmaps();
     }
+
 
     Texture2D::~Texture2D()
     {

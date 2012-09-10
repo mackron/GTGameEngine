@@ -30,6 +30,18 @@ namespace GTEngine
         TextureWrapMode_ClampToEdge,
     };
 
+    enum Texture2DTarget
+    {
+        Texture2DTarget_Default,                ///< Normal 2D texture.
+
+        Texture2DTarget_Cube_PositiveX,         ///< Positive X cube map face.
+        Texture2DTarget_Cube_NegativeX,         ///< Negative X cube map face.
+        Texture2DTarget_Cube_PositiveY,         ///< Positive Y cube map face.
+        Texture2DTarget_Cube_NegativeY,         ///< Negative Y cube map face.
+        Texture2DTarget_Cube_PositiveZ,         ///< Positive Z cube map face.
+        Texture2DTarget_Cube_NegativeZ,         ///< Negative Z cube map face.
+    };
+
     /**
     *   \brief  Class representing a 2D texture.
     *
@@ -50,7 +62,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        Texture2D();
+        Texture2D(Texture2DTarget target = Texture2DTarget_Default);
         Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data = nullptr);
         Texture2D(const char* filename);
 
@@ -77,6 +89,13 @@ namespace GTEngine
         /// @remarks
         ///     Any existing data will be deleted and made undefined. This should only really be used for things like framebuffer attachments. Consider SetData(), also.
         void Resize(unsigned int width, unsigned int height);
+
+
+        /// Retrieves the target.
+        ///
+        /// @remarks
+        ///     The texture target basically defines the usage of the texture.
+        Texture2DTarget GetTarget() const { return this->target; }
 
 
         /// Sets the minification filter.
@@ -116,32 +135,24 @@ namespace GTEngine
         unsigned int GetAnisotropy() const;
 
 
-        /**
-        *   \brief  Sets the wrapping mode (repeat, clamp, etc).
-        */
+        /// Sets the wrapping mode (repeat, clamp, etc).
         void SetWrapMode(TextureWrapMode wrapMode);
 
-        /**
-        *   \brief  Retrieves the wrapping mode.
-        */
+        /// Retrieves the wrapping mode.
         TextureWrapMode GetWrapMode() const { return this->wrapMode; }
 
 
-        /**
-        *   \brief  Retrieves a pointer to the internal renderer data.
-        *
-        *   \remarks
-        *       This should only be used by the renderer.
-        */
+        /// Retrieves a pointer to the internal renderer data.
+        ///
+        /// @remarks
+        ///     This should only be used by the renderer.
               void* GetRendererData()       { return this->rendererData; }
         const void* GetRendererData() const { return this->rendererData; }
 
-        /**
-        *   \brief  Sets the pointer to the internal renderer data.
-        *
-        *   \remarks
-        *       This does not deallocate the previous renderer data. That is the responsibility of the renderer itself.
-        */
+        /// Sets the pointer to the internal renderer data.
+        ///
+        /// @remarks
+        ///     This does not deallocate the previous renderer data. That is the responsibility of the renderer itself.
         void SetRendererData(void *rendererData) { this->rendererData = rendererData; }
 
 
@@ -165,14 +176,10 @@ namespace GTEngine
 
     private:    // Called internally by GTEngine
 
-        /**
-        *   \brief  Called when the texture is attached to a framebuffer.
-        */
+        /// Called when the texture is attached to a framebuffer.
         void OnAttachToFramebuffer(Framebuffer* framebuffer);
 
-        /**
-        *   \brief  Called when the texture is detached from a framebuffer.
-        */
+        /// Called when the texture is detached from a framebuffer.
         void OnDetachFromFramebuffer(Framebuffer* framebuffer);
 
 
@@ -185,6 +192,10 @@ namespace GTEngine
 
     private:
 
+        /// The target. Basically, this just specifies the usage of the texture 2D, such as whether or not it's being used in a cube map or whatnot.
+        Texture2DTarget target;
+
+
         /// The current minification filter.
         TextureFilter minFilter;
 
@@ -196,6 +207,7 @@ namespace GTEngine
 
         /// The wrapping mode.
         TextureWrapMode wrapMode;
+
 
         /// The list of framebuffers that this texture is attached to.
         GTCore::List<Framebuffer*> framebuffers;
