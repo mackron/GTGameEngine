@@ -13,21 +13,6 @@
 namespace GTEngine
 {
     //////////////////////////////////////////////////////
-    // DVRFramebuffer
-
-    /*
-    void DVRFramebuffer_RendererEventHandler::OnSwapRCQueues()
-    {
-        if (this->framebuffer.__NeedsResize())
-        {
-            this->framebuffer.__DoResize();
-        }
-    }
-    */
-
-
-
-    //////////////////////////////////////////////////////
     // DVR_RCBegin
 
     DVR_RCBegin::DVR_RCBegin()

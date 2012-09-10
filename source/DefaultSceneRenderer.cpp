@@ -81,6 +81,11 @@ namespace GTEngine
 
     DefaultSceneRenderer::~DefaultSceneRenderer()
     {
+        // We need to remove all of the framebuffers.
+        for (size_t i = 0; i < this->viewportFramebuffers.count; ++i)
+        {
+            delete this->viewportFramebuffers.buffer[i]->value;
+        }
     }
 
 
@@ -108,9 +113,11 @@ namespace GTEngine
         auto &layers = viewport.GetLayerCameraMap();
         if (layers.count > 0)
         {
+            auto framebuffer = this->GetViewportFramebuffer(viewport);
+
             // The first thing we do is set the framebuffer to the current viewport. This also where the framebuffer will be resized if required.
             auto &rcBegin = this->rcBegin[Renderer::BackIndex].Acquire();
-            //rcBegin.framebuffer = 
+            rcBegin.framebuffer = framebuffer;
             Renderer::BackRCQueue->Append(rcBegin);
 
 
@@ -133,12 +140,20 @@ namespace GTEngine
 
     void DefaultSceneRenderer::AddViewport(SceneViewport &viewport)
     {
-        this->viewportFramebuffers.Add(&viewport, new DefaultSceneRenderer::Framebuffer);
+        auto framebuffer = new DefaultSceneRenderer::Framebuffer;
+        viewport.__SetColourBuffer(framebuffer->GetFinalOutputColourBuffer());
+
+        this->viewportFramebuffers.Add(&viewport, framebuffer);
     }
 
     void DefaultSceneRenderer::RemoveViewport(SceneViewport &viewport)
     {
+        auto framebuffer = this->GetViewportFramebuffer(viewport);
+
+        viewport.__SetColourBuffer(nullptr);
         this->viewportFramebuffers.Remove(&viewport);
+
+        delete framebuffer;
     }
 
     void DefaultSceneRenderer::OnViewportResized(SceneViewport &viewport)

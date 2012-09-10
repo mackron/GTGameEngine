@@ -469,6 +469,19 @@ namespace GTEngine
         }
     }
 
+    void Scene::RemoveAllViewports()
+    {
+        assert(this->renderer != nullptr);
+
+        for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
+        {
+            this->renderer->RemoveViewport(*iViewport->value);
+            iViewport->value->SetScene(nullptr);
+        }
+
+        this->viewports.Clear();
+    }
+
 
     void Scene::GetAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const
     {

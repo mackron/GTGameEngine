@@ -33,9 +33,6 @@ namespace GTEngine
         ///     The viewport will default to 0,0.
         SceneViewport();
 
-        /// Constructor.
-        SceneViewport(unsigned int width, unsigned int height);
-
         /// Destructor.
         virtual ~SceneViewport();
 
@@ -87,6 +84,10 @@ namespace GTEngine
 
         /// Resizes the viewport.
         void Resize(unsigned int newWidth, unsigned int newHeight);
+
+
+        /// Retrieves the colour buffer of the viewport.
+        Texture2D* GetColourBuffer() { return this->colourBuffer; }
 
 
 
@@ -184,6 +185,15 @@ namespace GTEngine
 
 
 
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Methods below should only be used internally by GTEngine.
+    public:
+
+        /// Sets the colour buffer.
+        void __SetColourBuffer(Texture2D* colourBuffer) { this->colourBuffer = colourBuffer; }
+
+
+
     private:
 
         /// The scene this viewport is attached to.
@@ -201,6 +211,10 @@ namespace GTEngine
 
         /// The height of the viewport.
         unsigned int height;
+
+
+        /// The texture that will hold the colour data of the viewport. Retrieve this with GetColourBuffer().
+        Texture2D* colourBuffer;
 
 
         /// The cache of model components.
