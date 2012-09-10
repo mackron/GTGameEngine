@@ -5,6 +5,7 @@
 #include <GTEngine/Rendering/RenderCommand.hpp>
 #include <GTEngine/Rendering/RCCache.hpp>
 #include <GTEngine/Logging.hpp>
+#include <GTEngine/Errors.hpp>
 
 #include <gtgl/gtgl.h>
 
@@ -398,6 +399,8 @@ namespace GTEngine
         void Execute()
         {
             assert(this->framebuffer != nullptr);
+
+            glGenFramebuffersEXT(1, &this->framebuffer->object);
         }
 
         Framebuffer_GL20* framebuffer;
@@ -407,13 +410,66 @@ namespace GTEngine
     {
         void Execute()
         {
-            /*
             assert(this->framebuffer != nullptr);
 
             glDeleteFramebuffersEXT(1, &framebuffer->object);
 
             delete this->framebuffer;
-            */
+        }
+
+        Framebuffer_GL20* framebuffer;
+    };
+
+    struct RCOnColourBufferChanged : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->framebuffer != nullptr);
+
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, this->framebuffer->object);
+            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, this->attachment, GL_TEXTURE_2D, (this->texture != nullptr) ? this->texture->object : 0, 0);
+        }
+
+        Framebuffer_GL20* framebuffer;
+        Texture2D_GL20*   texture;
+        GLenum            attachment;
+    };
+
+
+    struct RCOnDepthStencilBufferChanged : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->framebuffer != nullptr);
+
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, this->framebuffer->object);
+
+            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, (this->texture != nullptr) ? this->texture->object : 0, 0);
+            if (this->changeStencil)
+            {
+                glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, (this->texture != nullptr) ? this->texture->object : 0, 0);
+            }
+        }
+
+        Framebuffer_GL20* framebuffer;
+        Texture2D_GL20*   texture;
+        bool              changeStencil;
+    };
+
+
+    struct RCCheckFramebuffer : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->framebuffer != nullptr);
+
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, this->framebuffer->object);
+
+            GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+            if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
+            {
+                GTEngine::PostError("Renderer: Framebuffer is invalid. OpenGL status code: %s", gtglGetFramebufferStatusString(status));
+            }
         }
 
         Framebuffer_GL20* framebuffer;
@@ -444,6 +500,9 @@ namespace GTEngine
 
     static RCCache<RCOnFramebufferCreated>                  RCCache_OnFramebufferCreated[2];
     static RCCache<RCOnFramebufferDeleted>                  RCCache_OnFramebufferDeleted[2];
+    static RCCache<RCOnColourBufferChanged>                 RCCache_OnColourBufferChanged[2];
+    static RCCache<RCOnDepthStencilBufferChanged>           RCCache_OnDepthStencilBufferChanged[2];
+    static RCCache<RCCheckFramebuffer>                      RCCache_OnCheckFramebuffer[2];
     
 
 
@@ -666,7 +725,13 @@ namespace GTEngine
 
     void Renderer::OnFramebufferCreated(Framebuffer &framebuffer)
     {
-        (void)framebuffer;
+        auto rendererData = new Framebuffer_GL20;
+        framebuffer.SetRendererData(rendererData);
+
+        auto &rc = RCCache_OnFramebufferCreated[Renderer::BackIndex].Acquire();
+        rc.framebuffer = rendererData;
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
 
     void Renderer::OnFramebufferDeleted(Framebuffer &framebuffer)
@@ -677,6 +742,53 @@ namespace GTEngine
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
 
+    void Renderer::OnColourBufferAttached(Framebuffer &framebuffer, size_t index)
+    {
+        auto &rc = RCCache_OnColourBufferChanged[Renderer::BackIndex].Acquire();
+        rc.framebuffer = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+        rc.texture     = static_cast<Texture2D_GL20*>(framebuffer.GetColourBuffer(index)->GetRendererData());
+        rc.attachment  = GL_COLOR_ATTACHMENT0_EXT + index;
+        
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnColourBufferDetached(Framebuffer &framebuffer, size_t index)
+    {
+        auto &rc = RCCache_OnColourBufferChanged[Renderer::BackIndex].Acquire();
+        rc.framebuffer = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+        rc.texture     = nullptr;
+        rc.attachment  = GL_COLOR_ATTACHMENT0_EXT + index;
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnDepthStencilBufferAttached(Framebuffer &framebuffer)
+    {
+        auto &rc = RCCache_OnDepthStencilBufferChanged[Renderer::BackIndex].Acquire();
+        rc.framebuffer   = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+        rc.texture       = static_cast<Texture2D_GL20*>(framebuffer.GetDepthStencilBuffer()->GetRendererData());
+        rc.changeStencil = framebuffer.GetDepthStencilBuffer()->GetFormat() == GTImage::ImageFormat_Depth24_Stencil8;
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnDepthStencilBufferDetached(Framebuffer &framebuffer)
+    {
+        auto &rc = RCCache_OnDepthStencilBufferChanged[Renderer::BackIndex].Acquire();
+        rc.framebuffer   = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+        rc.texture       = nullptr;
+        rc.changeStencil = true;
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnCheckFramebuffer(Framebuffer &framebuffer)
+    {
+        auto &rc = RCCache_OnCheckFramebuffer[Renderer::BackIndex].Acquire();
+        rc.framebuffer = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
 
 
 
@@ -704,5 +816,8 @@ namespace GTEngine
 
         RCCache_OnFramebufferCreated[!Renderer::BackIndex].Reset();
         RCCache_OnFramebufferDeleted[!Renderer::BackIndex].Reset();
+        RCCache_OnColourBufferChanged[!Renderer::BackIndex].Reset();
+        RCCache_OnDepthStencilBufferChanged[!Renderer::BackIndex].Reset();
+        RCCache_OnCheckFramebuffer[!Renderer::BackIndex].Reset();
     }
 }

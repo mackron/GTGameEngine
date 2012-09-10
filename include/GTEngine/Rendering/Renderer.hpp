@@ -602,6 +602,32 @@ namespace GTEngine
         /// @param framebuffer [in] The framebuffer that is being deleted.
         static void OnFramebufferDeleted(Framebuffer &framebuffer);
 
+        /// Called when a colour buffer is attached to a framebuffer.
+        ///
+        /// @param framebuffer [in] The framebuffer that has just had a colour buffer attached.
+        /// @param index       [in] The index of the colour buffer that was just attached.
+        static void OnColourBufferAttached(Framebuffer &framebuffer, size_t index);
+
+        /// Called when a colour buffer is detached from a framebuffer.
+        ///
+        /// @param framebuffer [in] The framebuffer that has just had a colour buffer detached.
+        /// @param index       [in] The index of the colour buffer that was just detached.
+        static void OnColourBufferDetached(Framebuffer &framebuffer, size_t index);
+
+        /// Called when the depth/stencil buffer is attached to a framebuffer.
+        ///
+        /// @param framebuffer [in] The framebuffer that has just had a depth/stencil buffer attached.
+        static void OnDepthStencilBufferAttached(Framebuffer &framebuffer);
+
+        /// Called when the depth/stencil buffer is detached from a framebuffer.
+        ///
+        /// @param framebuffer [in] The framebuffer that has just had a depth/stencil buffer detached.
+        static void OnDepthStencilBufferDetached(Framebuffer &framebuffer);
+
+        /// Called when a framebuffer needs to be checked.
+        ///
+        /// @param framebuffer [in] The framebuffer that is being checked.
+        static void OnCheckFramebuffer(Framebuffer &framebuffer);
 
 
 
