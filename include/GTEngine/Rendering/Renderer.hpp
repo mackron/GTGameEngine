@@ -4,6 +4,7 @@
 
 #include "RCQueue.hpp"
 #include "Texture2D.hpp"
+#include "TextureCube.hpp"
 #include "Framebuffer.hpp"
 #include "Shader.hpp"
 #include "VertexArray.hpp"
@@ -471,11 +472,17 @@ namespace GTEngine
         /// Called when a texture has been created.
         ///
         /// @param texture [in] The texture that was just created.
+        ///
+        /// @remarks
+        ///     If the given texture is a face on a cube map, this will always be called straight after a call to OnTextureCubeCreated().
         static void OnTexture2DCreated(Texture2D &texture);
 
         /// Called when a texture has been deleted.
         ///
         /// @param texture [in] The texture that is being deleted.
+        ///
+        /// @remarks
+        ///     If the given texture is a face on a cube map, this will be called before OnTextureCubeDeleted().
         static void OnTexture2DDeleted(Texture2D &texture);
 
         /// Called when the data of a texture has changed.
@@ -503,6 +510,21 @@ namespace GTEngine
         ///
         /// @param texture [in] The texture whose wrapping mode has changed.
         static void OnTexture2DWrapModeChanged(Texture2D &texture);
+
+
+
+        /////////////////////////////////////////////
+        // TextureCubes.
+
+        /// Called when a cube texture has been created.
+        ///
+        /// @param texture [in] The texture that was just created.
+        static void OnTextureCubeCreated(TextureCube &texture);
+
+        /// Called when a cube texture has been deleted.
+        ///
+        /// @param texture [in] The texture that is being deleted.
+        static void OnTextureCubeDeleted(TextureCube &texture);
 
 
 

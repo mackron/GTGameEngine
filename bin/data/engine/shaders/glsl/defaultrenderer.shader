@@ -367,6 +367,35 @@ uses 1 or each light, it will use the following: A1D1P1.
 </shader>
 
 
+<!-- *** Compositing Shaders *** -->
+<shader id="Engine_Compositor_DiffuseOnly">
+    varying vec2 VertexOutput_TexCoord;
+    
+    uniform sampler2D LightingBuffer0;      // rgb = diffuse;  a = nothing
+    uniform sampler2D LightingBuffer1;      // rgb = specular; a = nothing
+    uniform sampler2D MaterialBuffer0;      // rgb = diffuse;  a = transparancy
+    uniform sampler2D MaterialBuffer1;      // rgb = emissive; a = shininess
+    
+    void main()
+    {
+        vec4 lightingTexel0 = texture2D(LightingBuffer0, VertexOutput_TexCoord);
+        vec4 lightingTexel1 = texture2D(LightingBuffer1, VertexOutput_TexCoord);
+        vec4 materialTexel0 = texture2D(MaterialBuffer0, VertexOutput_TexCoord);
+        vec4 materialTexel1 = texture2D(MaterialBuffer1, VertexOutput_TexCoord);
+        
+        vec3 lightDiffuse  = lightingTexel0.rgb;
+        vec3 lightSpecular = lightingTexel1.rgb;
+        
+        vec3  materialDiffuse      = materialTexel0.rgb;
+        float materialTransparency = materialTexel0.a;
+        vec3  materialEmissive     = materialTexel1.rgb;
+        float materialShininess    = materialTexel1.a;
+        
+        gl_FragData[0] = vec4(materialDiffuse, materialTransparency);
+    }
+</shader>
+
+
 <!-- *** Combiner Shader *** -->
 <shader id="Engine_LightingMaterialCombiner">
     varying vec2 VertexOutput_TexCoord;

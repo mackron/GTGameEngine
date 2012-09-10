@@ -8,6 +8,9 @@
 #include "Rendering/RenderCommand.hpp"
 #include "Rendering/RCCache.hpp"
 #include "Rendering/Renderer.hpp"
+#include "Rendering/RenderCommands/RCDrawVA.hpp"
+#include "Rendering/RenderCommands/RCSetFaceCulling.hpp"
+#include "MaterialShaderCache.hpp"
 #include <GTCore/Map.hpp>
 
 class Scene;
@@ -49,6 +52,9 @@ namespace GTEngine
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // Methods below should only be called internally, but need to be public for a few things.
+
+        /// Called for a model that's visible in the currently rendering viewport.
+        void __MaterialPass_Model(const SceneObject &object);
 
         /// Called for an ambient light that's visible in the currently rendering viewport.
         void __AmbientLight(const SceneObject &object);
@@ -159,11 +165,18 @@ namespace GTEngine
             }
 
 
+            /// Retrieves the width of framebuffer.
+            unsigned int GetWidth() const { return this->width; }
+
+            /// Retrieves the height of the framebuffer.
+            unsigned int GetHeight() const { return this->height; }
+
+
             /// Retrieves a pointer to the final output colour buffer.
             Texture2D* GetFinalOutputColourBuffer() { return this->finalOutput; }
 
 
-        private:
+        public:
 
             /// The width of the framebuffer.
             unsigned int width;
@@ -215,6 +228,25 @@ namespace GTEngine
             glm::vec3 backgroundColour;
         };
 
+        // Render command for beginning a layer.
+        struct RCBeginLayer : public RenderCommand
+        {
+            void Execute();
+
+            bool isFirstLayer;
+        };
+
+        // Render command for ending a layer.
+        struct RCEndLayer : public RenderCommand
+        {
+            void Execute();
+
+            DefaultSceneRenderer::Framebuffer* framebuffer;
+            Shader* compositingShader;
+        };
+
+
+
 
 
     private:
@@ -223,6 +255,50 @@ namespace GTEngine
         DefaultSceneRenderer::Framebuffer* GetViewportFramebuffer(SceneViewport &viewport);
 
 
+        /// Performs the material pass. This is always the first pass.
+        void MaterialPass(Scene &scene);
+
+        /// Renders a mesh on the material pass.
+        void MaterialPass_Mesh(const Mesh &mesh, Material &material, const glm::mat4 &transform);
+
+        /// Changes the face culling on the material pass.
+        void MaterialPass_FaceCulling(bool cullFrontFaces, bool cullBackFaces);
+
+
+
+        /// Structure containing metadata for materials. There should be one of these for each material.
+        struct MaterialMetadata
+        {
+            MaterialMetadata()
+                : materialPassShader(nullptr)
+            {
+            }
+
+            Shader* materialPassShader;  ///< The shader for the material pass.
+        };
+
+        /// Retrieves the metadata of a material. This should never return null. If the metadata hasn't yet been created,
+        /// it will be created and then returned. Future calls will return that same object.
+        MaterialMetadata & GetMaterialMetadata(Material &material);
+
+        /// Deletes the given material's metadata.
+        void DeleteMaterialMetadata(Material &material);
+
+
+
+        /// Creates and returns the shader for use in the material pass.
+        Shader* CreateMaterialPassShader(Material &material);
+
+
+
+        /// Retrieves the vertex array to use with the given mesh.
+        ///
+        /// @param mesh      [in] A reference to the mesh whose vertex array is being retrieved.
+        /// @param animating [in] Whether or not the mesh is being animated. This is used to determine whether or not to retrieve the skinned geometry, or the base geometry.
+        ///
+        /// @remarks
+        ///     Don't use this in the material pass.
+        VertexArray* GetMeshGeometry(Mesh &mesh, bool animating);
 
 
     private:
@@ -244,11 +320,42 @@ namespace GTEngine
         GTCore::Map<SceneViewport*, DefaultSceneRenderer::Framebuffer*> viewportFramebuffers;
 
 
-        // Below are caches for render commands. There are always 2 caches - one for the front RC queue, and another for the back.
-        RCCache<RCBegin, 8> rcBegin[2];
+        /// Keeps track of whether or not the colour buffer should be cleared.
+        bool clearColourBuffer;
 
+        /// The colour to clear the colour buffer with.
+        glm::vec3 clearColour;
+
+
+        /// The projection matrix. This is updated at the start of each render.
+        glm::mat4 projection;
+        
+        /// The view matrix. This is updated at the start of each render.
+        glm::mat4 view;
+
+
+        // Below are caches for render commands. There are always 2 caches - one for the front RC queue, and another for the back.
+        RCCache<RCBegin,      8>  rcBegin[2];
+        RCCache<RCEnd,        8>  rcEnd[2];
+        RCCache<RCBeginLayer, 8>  rcBeginLayer[2];
+        RCCache<RCEndLayer,   8>  rcEndLayer[2];
+        RCCache<RCDrawVA>         rcDrawVA[2];
+        RCCache<RCSetFaceCulling> rcSetFaceCulling[2];
 
         
+        // Below are various shaders for use by the renderer.
+        struct
+        {
+            Shader* Compositor_DiffuseOnly;
+
+            /// A cache of shaders used by materials in the material pass.
+            MaterialShaderCache materialPassShaders;
+
+        }Shaders;
+
+
+        /// The list of metadata pointers that will need to be removed when the renderer is destructed. We only really keep these for clean destruction.
+        GTCore::List<MaterialMetadata*> materialMetadatas;
     };
 }
 

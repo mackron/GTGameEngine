@@ -281,9 +281,11 @@ namespace GTEngine
     {
         // We don't do the actual resize yet. Instead we delay it until the next call to Render().
         this->framebufferNeedsResize = true;
-
+        
         this->screenSize.x = static_cast<float>(newWidth);
         this->screenSize.y = static_cast<float>(newHeight);
+
+        //this->framebuffer.Resize(static_cast<unsigned int>(this->screenSize.x), static_cast<unsigned int>(this->screenSize.y));
     }
 
     void DefaultViewportRenderer::Render()
@@ -296,13 +298,14 @@ namespace GTEngine
         this->RenderCommands.rcDrawVA[Renderer::BackIndex].Reset();
         this->RenderCommands.rcSetFaceCulling[Renderer::BackIndex].Reset();
 
-
+        
         // If the framebuffer needs to be resized, we best do that now. Resizing the framebuffer leaves 
         if (this->framebufferNeedsResize)
         {
             this->framebuffer.Resize(static_cast<unsigned int>(this->screenSize.x), static_cast<unsigned int>(this->screenSize.y));
             this->framebufferNeedsResize = false;
         }
+        
 
 
         if (this->owner != nullptr)
@@ -333,6 +336,7 @@ namespace GTEngine
                         this->projection = glm::mat4();
                         this->view       = glm::mat4();
                     }
+
 
 
                     // Here we retrieve the visible components.

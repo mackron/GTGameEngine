@@ -258,6 +258,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\ShaderStages.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Texture2D.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureCube.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexArray.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexAttributes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexFormat.hpp" />
@@ -373,6 +374,7 @@
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Shader.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Texture2D.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\TextureCube.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\VertexArray.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\VertexFormat.cpp" />
     <ClCompile Include="..\..\..\source\Scene.cpp" />

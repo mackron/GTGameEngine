@@ -47,10 +47,6 @@ namespace GTEngine
         return this->model;
     }
 
-    Model* ModelComponent::GetModel()
-    {
-        return this->model;
-    }
 
     void ModelComponent::SetFaceCulling(bool cullFront, bool cullBack)
     {

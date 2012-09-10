@@ -384,7 +384,22 @@ namespace GTEngine
             this->updateManager.Step(deltaTimeInSeconds);
         }
 
+
+        // Now we need to render.
+        this->renderer->Begin(*this);
+        {
+            for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
+            {
+                auto viewport = iViewport->value;
+                assert(viewport != nullptr);
+
+                this->renderer->RenderViewport(*this, *viewport);
+            }
+        }
+        this->renderer->End(*this);
+
         
+        /*
         // Now we need to draw everything on every attached viewport.
         for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
         {
@@ -393,6 +408,8 @@ namespace GTEngine
 
             viewport->Render();
         }
+        */
+
     }
 
 
@@ -407,7 +424,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::SceneNode *temp = i->value->FindFirstChild(name, true);
+                auto temp = i->value->FindFirstChild(name, true);
                 if (temp != nullptr)
                 {
                     return temp;
@@ -428,7 +445,7 @@ namespace GTEngine
             }
             else
             {
-                GTEngine::SceneNode *temp = i->value->FindFirstChildWithComponent(componentName, true);
+                auto temp = i->value->FindFirstChildWithComponent(componentName, true);
                 if (temp != nullptr)
                 {
                     return temp;

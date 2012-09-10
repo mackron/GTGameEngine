@@ -44,15 +44,13 @@ namespace GTEngine
         {
         }
 
-        /**
-        *   \brief Retrieves the name of this component.
-        */
+
+        /// Retrieves the name of this component.
         virtual const char* GetName() const = 0;
         
-        /**
-        *   \brief  Retrieves a pointer to the node that this component is attached to.
-        */
-        SceneNode & GetNode() { return this->node; }
+        /// Retrieves a pointer to the node that this component is attached to.
+              SceneNode & GetNode()       { return this->node; }
+        const SceneNode & GetNode() const { return this->node; }
 
 
     protected:
