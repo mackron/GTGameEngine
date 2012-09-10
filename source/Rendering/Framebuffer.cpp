@@ -7,9 +7,7 @@ namespace GTEngine
     Framebuffer::Framebuffer()
         : colourAttachments(nullptr), depthStencilAttachment(nullptr),
           maxColourAttachments(Renderer::GetMaxColourAttachments()),
-          isValid(false),
-          rendererData(nullptr),
-          syncinfo(Renderer::GetMaxColourAttachments())
+          rendererData(nullptr)
     {
         // We need to allocate the array of colour attachments. These need to be initialised to null.
         this->colourAttachments = new Texture2D*[this->maxColourAttachments];
@@ -39,7 +37,6 @@ namespace GTEngine
 
         // Only after the attachments have been detached should we collect.
         Renderer::OnFramebufferDeleted(*this);
-        //Renderer::MarkForCollection(this);
     }
 
     bool Framebuffer::AttachColourBuffer(Texture2D *buffer, size_t index)
@@ -51,10 +48,10 @@ namespace GTEngine
                 // The old attachment needs to be detached.
                 this->DetachColourBuffer(index);
 
-                this->colourAttachments[index]      = buffer;
-                this->syncinfo.colourChanged[index] = true;
-
+                this->colourAttachments[index] = buffer;
                 this->colourAttachments[index]->OnAttachToFramebuffer(this);
+
+                Renderer::OnColourBufferAttached(*this, index);
             }
 
             return true;
@@ -70,10 +67,10 @@ namespace GTEngine
             // The old attachment needs to be detached.
             this->DetachDepthStencilBuffer();
 
-            this->depthStencilAttachment       = buffer;
-            this->syncinfo.depthStencilChanged = true;
-
+            this->depthStencilAttachment = buffer;
             this->depthStencilAttachment->OnAttachToFramebuffer(this);
+
+            Renderer::OnDepthStencilBufferAttached(*this);
         }
 
         return true;
@@ -86,9 +83,9 @@ namespace GTEngine
             if (this->colourAttachments[index] != nullptr)
             {
                 this->colourAttachments[index]->OnDetachFromFramebuffer(this);
+                this->colourAttachments[index] = nullptr;
 
-                this->colourAttachments[index]      = nullptr;
-                this->syncinfo.colourChanged[index] = true;
+                Renderer::OnColourBufferDetached(*this, index);
             }
         }
     }
@@ -98,9 +95,9 @@ namespace GTEngine
         if (this->depthStencilAttachment != nullptr)
         {
             this->depthStencilAttachment->OnDetachFromFramebuffer(this);
+            this->depthStencilAttachment = nullptr;
 
-            this->depthStencilAttachment       = nullptr;
-            this->syncinfo.depthStencilChanged = true;
+            Renderer::OnDepthStencilBufferDetached(*this);
         }
     }
 
@@ -146,21 +143,8 @@ namespace GTEngine
     }
 
 
-    void Framebuffer::MarkAttachmentAsInvalid(Texture2D &attachment)
+    void Framebuffer::CheckStatus()
     {
-        if (this->depthStencilAttachment == &attachment)
-        {
-            this->syncinfo.depthStencilChanged = true;
-        }
-        else
-        {
-            for (size_t i = 0; i < this->maxColourAttachments; ++i)
-            {
-                if (this->colourAttachments[i] == &attachment)
-                {
-                    this->syncinfo.colourChanged[i] = true;
-                }
-            }
-        }
+        Renderer::OnCheckFramebuffer(*this);
     }
 }

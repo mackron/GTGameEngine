@@ -14,41 +14,17 @@ namespace GTEngine
         {
         }
 
-        Texture2D_GL20(GLuint object)
-            : object(object)
-        {
-        }
-
         GLuint object;
     };
 
     struct Framebuffer_GL20
     {
         Framebuffer_GL20()
-            : object(0), colourAttachments(nullptr), depthStencilAttachment(nullptr)
+            : object(0)
         {
-            size_t colourCount = Renderer::GetMaxColourAttachments();
-
-            this->colourAttachments = new Texture2D*[colourCount];
-            for (size_t i = 0; i < colourCount; ++i)
-            {
-                this->colourAttachments[i] = nullptr;
-            }
-        }
-
-        ~Framebuffer_GL20()
-        {
-            delete [] this->colourAttachments;
         }
 
         GLuint object;
-
-        Texture2D** colourAttachments;
-        Texture2D*  depthStencilAttachment;
-
-    private:    // No copying.
-        Framebuffer_GL20(const Framebuffer_GL20 &);
-        Framebuffer_GL20 & operator=(const Framebuffer_GL20 &);
     };
 
     struct Shader_GL20

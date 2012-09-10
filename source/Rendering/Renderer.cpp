@@ -473,103 +473,6 @@ namespace GTEngine
         }
     }
 
-    
-
-
-    bool Renderer_SyncFramebuffer(Framebuffer *framebuffer)
-    {
-        if (framebuffer != nullptr)
-        {
-            // This boolean is going to keep track of whether or not we need to check the framebuffer for completeness after
-            // everything has been synced. This will occur whenever an attachment is added or removed.
-            bool needToValidate = false;
-
-            auto framebufferData = (Framebuffer_GL20 *)framebuffer->GetRendererData();
-            if (framebufferData == nullptr)
-            {
-                framebufferData = new Framebuffer_GL20;
-                glGenFramebuffersEXT(1, &framebufferData->object);
-
-                framebuffer->SetRendererData(framebufferData);
-            }
-
-            // Syncing binds...
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferData->object);
-
-            // First we need to make sure all colour buffers are synced.
-            for (GLint i = 0; i < RendererCaps.MaxColourAttachments; ++i)
-            {
-                if (framebuffer->syncinfo.colourChanged[i])
-                {
-                    Texture2D* colourBuffer = framebuffer->GetColourBuffer(i);
-                    if (colourBuffer != nullptr)
-                    {
-                        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, ((Texture2D_GL20 *)colourBuffer->GetRendererData())->object, 0);
-                    }
-                    else
-                    {
-                        // We want to remove the attachment.
-                        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, 0, 0);
-                    }
-
-                    framebufferData->colourAttachments[i]  = colourBuffer;
-                    framebuffer->syncinfo.colourChanged[i] = false;
-
-                    needToValidate = true;
-                }
-            }
-
-            // And now the depth/stencil buffer needs to be synced.
-            if (framebuffer->syncinfo.depthStencilChanged)
-            {
-                Texture2D *depthStencilBuffer = framebuffer->GetDepthStencilBuffer();
-                if (depthStencilBuffer != nullptr)
-                {
-                    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, ((Texture2D_GL20 *)depthStencilBuffer->GetRendererData())->object, 0);
-                    if (depthStencilBuffer->GetFormat() == GTImage::ImageFormat_Depth24_Stencil8)
-                    {
-                        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, ((Texture2D_GL20 *)depthStencilBuffer->GetRendererData())->object, 0);
-                    }
-                }
-                else
-                {
-                    // We want to remove the attachment.
-                    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0);
-                    if (framebufferData->depthStencilAttachment->GetFormat() == GTImage::ImageFormat_Depth24_Stencil8)
-                    {
-                        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, 0, 0);
-                    }
-                }
-
-                framebufferData->depthStencilAttachment   = depthStencilBuffer;
-                framebuffer->syncinfo.depthStencilChanged = false;
-
-                needToValidate = true;
-            }
-
-            // If we need to validate, we should do that now.
-            if (needToValidate)
-            {
-                GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-                if (status == GL_FRAMEBUFFER_COMPLETE_EXT)
-                {
-                    framebuffer->IsValid(true);
-                }
-                else
-                {
-                    framebuffer->IsValid(false);
-                    GTEngine::PostError("Renderer: Framebuffer is invalid. OpenGL status code: %s", gtglGetFramebufferStatusString(status));
-
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
 
     void OpenGLDebugMessageHandler(const char* message)
     {
@@ -1192,12 +1095,13 @@ namespace GTEngine
         {
             if (framebuffer != nullptr)
             {
-                // We need to synchronize the framebuffer before attempting to use it. This will bind the framebuffer.
-                Renderer_SyncFramebuffer(framebuffer);
+                auto framebufferData = static_cast<Framebuffer_GL20*>(framebuffer->GetRendererData());
+                assert(framebufferData != nullptr);
+
+                glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferData->object);
             }
             else
             {
-                // 'framebuffer' is null, so we just use the default framebuffer.
                 glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
             }
         }

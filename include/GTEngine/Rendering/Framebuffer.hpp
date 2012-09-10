@@ -96,30 +96,18 @@ namespace GTEngine
         Texture2D* GetDepthStencilBuffer();
 
 
-        /**
-        *   \brief  Determines whether or not the framebuffer is valid.
-        *
-        *   \remarks
-        *       All framebuffers start out invalid. Only after the framebuffer is used for the first time can you know whether or
-        *       not the framebuffer is valid. It is done this way because only the renderer can determine whether or not the framebuffer
-        *       is valid.
-        */
-        bool IsValid() const { return this->isValid; }
-
-
-        /// Marks an attachment as invalid, forcing it to be re-synced.
+        /// Checks whether or not the framebuffer is valid.
         ///
-        /// @param attachment [in] The attachment that has changed.
-        void MarkAttachmentAsInvalid(Texture2D &attachment);
+        /// @remarks
+        ///     This is run on the GPU side, so the actual check will only occur at the start of the next render-command queue swap.
+        ///     @par
+        ///     An error will be logged if the framebuffer is invalid. This method is designed for debugging, mostly.
+        void CheckStatus();
+
 
 
     // The methods below should only be called by the renderer and it's support functions.
     public:
-
-        /**
-        *   \brief  Sets whether or not the framebuffer is valid. This should only be called by the renderer and it's support functions.
-        */
-        void IsValid(bool valid) { this->isValid = valid; }
 
         /**
         *   \brief  Retrieves a pointer to the internal renderer data.
@@ -133,7 +121,7 @@ namespace GTEngine
         *   \remarks
         *       This does not delete the previous renderer data. That is the responsibility of the caller.
         */
-        void SetRendererData(void *rendererData) { this->rendererData = rendererData; }
+        void SetRendererData(void* rendererData) { this->rendererData = rendererData; }
 
 
     private:
@@ -148,45 +136,8 @@ namespace GTEngine
         /// Keeps track of the maximum number of colour attachments supported by the renderer.
         size_t maxColourAttachments;
 
-        /// Keeps track of whether or not the framebuffer is valid. All framebuffers start life as invalid. When the framebuffer
-        /// is used for the first time, the renderer will set this attribute.
-        bool isValid;
-
         /// A pointer to renderer-specific data.
         void* rendererData;
-
-
-    public:
-
-        /// This is used to keep a framebuffer in sync between client and server.
-        struct _syncinfo
-        {
-            _syncinfo(size_t colourCount)
-                : colourCount(colourCount), colourChanged(nullptr), depthStencilChanged(true)
-            {
-                this->colourChanged = new bool[colourCount];
-                for (size_t i = 0; i < colourCount; ++i)
-                {
-                    this->colourChanged[i] = true;
-                }
-            }
-
-            ~_syncinfo()
-            {
-                delete [] this->colourChanged;
-            }
-
-            size_t colourCount;
-
-            bool* colourChanged;
-            bool  depthStencilChanged;
-
-
-        private:    // No copying.
-            _syncinfo(const _syncinfo &);
-            _syncinfo & operator=(const _syncinfo &);
-
-        }syncinfo;
 
 
     private:    // No copying.
