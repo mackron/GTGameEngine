@@ -30,18 +30,11 @@ namespace GTEngine
     struct Shader_GL20
     {
         Shader_GL20()
-            : program(0), vertexShader(0), fragmentShader(0)
+            : program(0)
         {
         }
 
-        /// The main program object.
         GLuint program;
-
-        /// The vertex shader object. We keep hold of this so we can relink when vertex atribute positions are changed.
-        GLuint vertexShader;
-
-        /// The fragment shader object. We keep hold of this so we can relink when vertex attribute positions are changed.
-        GLuint fragmentShader;
     };
 
     struct VertexArray_GL20
