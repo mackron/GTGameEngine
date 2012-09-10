@@ -159,34 +159,15 @@ namespace GTEngine
     }RendererState;
 }
 
-// Renderer globals.
+
 namespace GTEngine
 {
     RCQueue* Renderer::BackRCQueue  = nullptr;
     RCQueue* Renderer::FrontRCQueue = nullptr;
     size_t   Renderer::BackIndex    = 0;
 
-    struct _RendererGC
-    {
-        _RendererGC()
-            : Texture2Ds(), Framebuffers(), Shaders(), VertexArrays(), Lock(), NeedsCollection(false)
-        {
-        }
 
-        GTCore::List<void*> Texture2Ds;
-        GTCore::List<void*> Framebuffers;
-        GTCore::List<void*> Shaders;
-        GTCore::List<void*> VertexArrays;
 
-        GTCore::Mutex Lock;
-
-        bool NeedsCollection;
-    };
-    _RendererGC RendererGC;
-}
-
-namespace GTEngine
-{
     void Renderer::AppendToBackBuffer(RenderCommand &cmd)
     {
         Renderer::BackRCQueue->Append(cmd);
@@ -201,9 +182,7 @@ namespace GTEngine
     {
         // We execute the resources render commands before everything else.
         Renderer::ExecuteFrontResourceRCQueue();
-
         Renderer::FrontRCQueue->Execute();
-        Renderer::CollectGarbage();
     }
 
 
@@ -242,102 +221,7 @@ namespace GTEngine
         return RendererState.SwapInterval;
     }
 
-    /*
-    void Renderer::MarkForCollection(Texture2D *texture)
-    {
-        assert(texture != nullptr);
-
-        RendererGC.Lock.Lock();
-            RendererGC.Texture2Ds.Append(texture->GetRendererData());
-            RendererGC.NeedsCollection = true;
-        RendererGC.Lock.Unlock();
-    }
-    */
-    /*
-    void Renderer::MarkForCollection(Framebuffer *framebuffer)
-    {
-        assert(framebuffer != nullptr);
-
-        RendererGC.Lock.Lock();
-            RendererGC.Framebuffers.Append(framebuffer->GetRendererData());
-            RendererGC.NeedsCollection = true;
-        RendererGC.Lock.Unlock();
-    }
-    */
-    /*
-    void Renderer::MarkForCollection(Shader *shader)
-    {
-        assert(shader != nullptr);
-
-        RendererGC.Lock.Lock();
-            RendererGC.Shaders.Append(shader->GetRendererData());
-            RendererGC.NeedsCollection = true;
-        RendererGC.Lock.Unlock();
-    }
-    */
-    /*
-    void Renderer::MarkForCollection(VertexArray *vertexArray)
-    {
-        assert(vertexArray != nullptr);
-
-        RendererGC.Lock.Lock();
-            RendererGC.VertexArrays.Append(vertexArray->GetRendererData());
-            RendererGC.NeedsCollection = true;
-        RendererGC.Lock.Unlock();
-    }
-    */
-
-
-    void Renderer::CollectGarbage() //[Renderer Thread]
-    {
-        if (RendererGC.NeedsCollection)
-        {
-            RendererGC.Lock.Lock();
-                // Textures.
-                /*
-                while (RendererGC.Texture2Ds.root != nullptr)
-                {
-                    Renderer::DeleteTexture2DData(RendererGC.Texture2Ds.root->value);
-
-                    RendererGC.Texture2Ds.RemoveRoot();
-                }
-                */
-
-                // Framebuffers.
-                /*
-                while (RendererGC.Framebuffers.root != nullptr)
-                {
-                    Renderer::DeleteFramebufferData(RendererGC.Framebuffers.root->value);
-
-                    RendererGC.Framebuffers.RemoveRoot();
-                }
-                */
-
-                // Shaders.
-                /*
-                while (RendererGC.Shaders.root != nullptr)
-                {
-                    Renderer::DeleteShaderData(RendererGC.Shaders.root->value);
-
-                    RendererGC.Shaders.RemoveRoot();
-                }
-                */
-
-                // Vertex Arrays.
-                /*
-                while (RendererGC.VertexArrays.root != nullptr)
-                {
-                    Renderer::DeleteVertexArrayData(RendererGC.VertexArrays.root->value);
-
-                    RendererGC.VertexArrays.RemoveRoot();
-                }
-                */
-
-                RendererGC.NeedsCollection = false;
-            RendererGC.Lock.Unlock();
-        }
-    }
-
+    
 
     //////////////////////////////////////////
     // Event Handling.
@@ -519,9 +403,6 @@ namespace GTEngine
             delete Renderer::FrontRCQueue;
 
             
-
-            Renderer::CollectGarbage();
-
             gtglShutdown();
             OpenGLContext = nullptr;
 
@@ -1222,62 +1103,6 @@ namespace GTEngine
     {
         glDrawBuffers((GLsizei)count, ToOpenGLDrawBuffers(count, buffers));
     }
-
-
-    /*
-    void Renderer::DeleteTexture2DData(void* rendererDataIn)
-    {
-        auto rendererData = static_cast<Texture2D_GL20*>(rendererDataIn);
-        if (rendererData != nullptr)
-        {
-            glDeleteTextures(1, &rendererData->object);
-
-            delete rendererData;
-        }
-    }
-    */
-
-    /*
-    void Renderer::DeleteFramebufferData(void* rendererDataIn)
-    {
-        auto rendererData = static_cast<Framebuffer_GL20*>(rendererDataIn);
-        if (rendererData != nullptr)
-        {
-            glDeleteFramebuffersEXT(1, &rendererData->object);
-
-            delete rendererData;
-        }
-    }
-    */
-
-    /*
-    void Renderer::DeleteShaderData(void* rendererDataIn)
-    {
-        auto rendererData = static_cast<Shader_GL20*>(rendererDataIn);
-        if (rendererData != nullptr)
-        {
-            glDeleteShader(rendererData->vertexShader);
-            glDeleteShader(rendererData->fragmentShader);
-            glDeleteProgram(rendererData->program);
-
-            delete rendererData;
-        }
-    }
-    */
-
-    /*
-    void Renderer::DeleteVertexArrayData(void* rendererDataIn)
-    {
-        auto rendererData = static_cast<VertexArray_GL20*>(rendererDataIn);
-        if (rendererData != nullptr)
-        {
-            glDeleteBuffers(1, &rendererData->verticesObject);
-            glDeleteBuffers(1, &rendererData->indicesObject);
-
-            delete rendererData;
-        }
-    }
-    */
 
 
     void Renderer::DrawGUI(const GTGUI::Server &gui)

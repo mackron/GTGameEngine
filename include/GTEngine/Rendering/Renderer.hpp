@@ -169,41 +169,7 @@ namespace GTEngine
         static int GetSwapInterval();
 
 
-        /*************************
-        * Garbage Collection
-        **************************/
-        /**
-        *   \brief                   Marks a resource for garbage collection. See remarks.
-        *   \param  texture     [in] The texture that is being deleted and needs collecting.
-        *   \param  framebuffer [in] The framebuffer that is being deleted and needs collecting.
-        *   \param  shader      [in] The shader that is being deleted and needs collecting.
-        *
-        *   \remarks
-        *       MarkForCollection() will be called in the destructors of the objects that are being deleted. Therefore, you
-        *       must not assume the objects are still alive after returning from this function.
-        *       \par
-        *       This function must be thread-safe. It won't necessarily be called on the rendering thread.
-        *       \par
-        *       Internally, this function will take the 'rendererData' pointer of the resource and cache it. Then it will
-        *       call Delete*Data() where it can then be deleted.
-        */
-        //static void MarkForCollection(Texture2D* texture);
-        //static void MarkForCollection(Framebuffer* framebuffer);
-        //static void MarkForCollection(Shader* shader);
-        //static void MarkForCollection(VertexArray* vertexArray);
-
-        /**
-        *   \brief  Collects any garbage-collected resources.
-        *
-        *   \remarks
-        *       This function must be run from the rendering thread.
-        *       \par
-        *       This function will call DeleteTexture2DData(), DeleteFramebufferData(), etc. These allow the renderer to delete
-        *       the internal objects representing those resources.
-        */
-        static void CollectGarbage();
-
-
+       
         /////////////////////////////////////////////
         // Event Handling.
 
@@ -470,17 +436,8 @@ namespace GTEngine
         /**
         *   \brief  Sets the indices of the colour attachments to use as the render targets for future drawing operations.
         */
-        static void SetDrawBuffers(size_t count, int *buffers);
+        static void SetDrawBuffers(size_t count, int* buffers);
 
-
-        /**
-        *   \brief                    Deletes the data that was previously associated with a Texture2D.
-        *   \param  rendererData [in] The rendererData pointer of the old Texture2D object.
-        */
-        //static void DeleteTexture2DData(void *rendererData);
-        //static void DeleteFramebufferData(void *rendererData);
-        //static void DeleteShaderData(void *rendererData);
-        //static void DeleteVertexArrayData(void *rendererData);
 
 
         /**
