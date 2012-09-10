@@ -354,17 +354,26 @@ namespace GTEngine
         {
             assert(shader != nullptr);
 
+
+            GLuint vertexShader = 0;
             if (!vertexSource.IsEmpty())
             {
-                this->shader->vertexShader = this->CreateShader(GL_VERTEX_SHADER, this->vertexSource);
+                vertexShader = this->CreateShader(GL_VERTEX_SHADER, this->vertexSource);
             }
 
+
+            GLuint fragmentShader = 0;
             if (!fragmentSource.IsEmpty())
             {
-                this->shader->fragmentShader = this->CreateShader(GL_FRAGMENT_SHADER, this->fragmentSource);
+                fragmentShader = this->CreateShader(GL_FRAGMENT_SHADER, this->fragmentSource);
             }
 
-            this->shader->program = ShaderGL20_LinkShader(this->shader->vertexShader, this->shader->fragmentShader);
+
+            this->shader->program = ShaderGL20_LinkShader(vertexShader, fragmentShader);
+
+
+            if (vertexShader   != 0) glDeleteShader(vertexShader);
+            if (fragmentShader != 0) glDeleteShader(fragmentShader);
         }
 
         Shader_GL20* shader;
@@ -379,8 +388,6 @@ namespace GTEngine
         {
             assert(shader != nullptr);
 
-            glDeleteShader(shader->vertexShader);
-            glDeleteShader(shader->fragmentShader);
             glDeleteProgram(shader->program);
 
             delete this->shader;
