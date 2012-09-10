@@ -276,12 +276,17 @@ namespace GTEngine
 
 
         /// Adds a viewport to the scene.
+        ///
         /// @param viewport [in] A reference to the viewport to add to the scene.
         virtual void AddViewport(SceneViewport &viewport);
 
         /// Removes a viewport from the scene.
+        ///
         /// @param viewport [in] A reference to the viewport to remove from the scene.
         virtual void RemoveViewport(SceneViewport &viewport);
+
+        /// Removes every viewport.
+        virtual void RemoveAllViewports();
 
 
         /// Retrieves the AABB of the scene.

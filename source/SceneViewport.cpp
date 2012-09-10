@@ -7,14 +7,7 @@ namespace GTEngine
 {
     SceneViewport::SceneViewport()
         : scene(nullptr), cameraNodes(),
-          renderer(nullptr), width(0), height(0),
-          modelComponents(), ambientLightComponents(), directionalLightComponents(), pointLightComponents(), spotLightComponents()
-    {
-    }
-
-    SceneViewport::SceneViewport(unsigned int width, unsigned int height)
-        : scene(nullptr), cameraNodes(),
-          renderer(nullptr), width(width), height(height),
+          renderer(nullptr), width(0), height(0), colourBuffer(nullptr),
           modelComponents(), ambientLightComponents(), directionalLightComponents(), pointLightComponents(), spotLightComponents()
     {
     }
@@ -108,6 +101,7 @@ namespace GTEngine
         this->width  = GTCore::Max(newWidth,  1U);
         this->height = GTCore::Max(newHeight, 1U);
 
+
         // If the viewport is attached to a scene, we will let it's renderer know that the viewport needs a resize.
         if (this->scene != nullptr)
         {
@@ -119,7 +113,6 @@ namespace GTEngine
             this->renderer->ResizeFramebuffer(this->width, this->height);
         }
     }
-
 
 
     void SceneViewport::AddModelComponent(ModelComponent &component)

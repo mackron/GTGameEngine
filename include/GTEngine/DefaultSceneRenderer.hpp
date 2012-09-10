@@ -7,6 +7,7 @@
 #include "Rendering/Framebuffer.hpp"
 #include "Rendering/RenderCommand.hpp"
 #include "Rendering/RCCache.hpp"
+#include "Rendering/Renderer.hpp"
 #include <GTCore/Map.hpp>
 
 class Scene;
@@ -73,12 +74,70 @@ namespace GTEngine
 
             /// Constructor.
             Framebuffer()
+                : width(1), height(1),
+                  finalOutput(nullptr),
+                  depthStencil(nullptr),
+                  lightingBuffer0(nullptr), lightingBuffer1(nullptr),
+                  materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr)
             {
+                this->depthStencil = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_Depth24_Stencil8);
+
+                if (Renderer::SupportFloatTextures())
+                {
+                    this->finalOutput     = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                    this->lightingBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                    this->lightingBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                    this->materialBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->materialBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_R10G10B10A2);
+                }
+                else
+                {
+                    this->finalOutput     = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->lightingBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->lightingBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->materialBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->materialBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                }
+
+                this->finalOutput->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+                this->lightingBuffer0->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+                this->lightingBuffer1->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+                this->materialBuffer0->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+                this->materialBuffer1->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+                this->materialBuffer2->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+
+                this->finalOutput->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
+
+
+                this->AttachDepthStencilBuffer(this->depthStencil);
+                this->AttachColourBuffer(this->finalOutput,     0);
+                this->AttachColourBuffer(this->materialBuffer0, 1);
+                this->AttachColourBuffer(this->materialBuffer1, 2);
+                this->AttachColourBuffer(this->materialBuffer2, 3);
+                this->AttachColourBuffer(this->lightingBuffer0, 4);
+                this->AttachColourBuffer(this->lightingBuffer1, 5);
             }
 
             /// Destructor
             ~Framebuffer()
             {
+                delete this->finalOutput;
+                delete this->depthStencil;
+                delete this->lightingBuffer0;
+                delete this->lightingBuffer1;
+                delete this->materialBuffer0;
+                delete this->materialBuffer1;
+                delete this->materialBuffer2;
+            
+                this->finalOutput     = nullptr;
+                this->depthStencil    = nullptr;
+                this->lightingBuffer0 = nullptr;
+                this->lightingBuffer1 = nullptr;
+                this->materialBuffer0 = nullptr;
+                this->materialBuffer1 = nullptr;
+                this->materialBuffer2 = nullptr;
             }
 
 
@@ -88,8 +147,20 @@ namespace GTEngine
                 this->width  = newWidth;
                 this->height = newHeight;
 
-                this->needsResize = true;
+                this->finalOutput->Resize( this->width, this->height);
+                this->depthStencil->Resize(this->width, this->height);
+
+                this->lightingBuffer0->Resize(this->width, this->height);
+                this->lightingBuffer1->Resize(this->width, this->height);
+
+                this->materialBuffer0->Resize(this->width, this->height);
+                this->materialBuffer1->Resize(this->width, this->height);
+                this->materialBuffer2->Resize(this->width, this->height);
             }
+
+
+            /// Retrieves a pointer to the final output colour buffer.
+            Texture2D* GetFinalOutputColourBuffer() { return this->finalOutput; }
 
 
         private:
@@ -101,14 +172,20 @@ namespace GTEngine
             unsigned int height;
 
 
+            /// The final output colour buffer.
+            Texture2D* finalOutput;
+
             /// The depth/stencil attachment.
             Texture2D* depthStencil;
 
-            /// The 
+            // The lighting buffers.
+            Texture2D* lightingBuffer0;     // RGB = Diffuse.  A = nothing.
+            Texture2D* lightingBuffer1;     // RGB = Specular. A = nothing.
 
-
-            /// Keeps track of whether or not the framebuffer needs a resize.
-            bool needsResize;
+            // The material buffers.
+            Texture2D* materialBuffer0;     // RGB = Diffuse.  A = Shininess.
+            Texture2D* materialBuffer1;     // RGB = Emissive. A = Transparency.
+            Texture2D* materialBuffer2;     // RGB = Normals for normal mapping. A = nothing.
         };
 
 
