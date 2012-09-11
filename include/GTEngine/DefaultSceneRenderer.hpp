@@ -12,6 +12,7 @@
 #include "Rendering/RenderCommands/RCSetFaceCulling.hpp"
 #include "MaterialShaderCache.hpp"
 #include <GTCore/Map.hpp>
+#include <GTCore/BinarySearchTree.hpp>
 
 class Scene;
 
@@ -245,7 +246,72 @@ namespace GTEngine
             Shader* compositingShader;
         };
 
+        // Render command for beginning the lighting pass.
+        struct RCBeginLighting : public RenderCommand
+        {
+            void Execute();
 
+            DefaultSceneRenderer::Framebuffer* framebuffer;
+        };
+
+        // Render command for controlling blending.
+        struct RCControlBlending : public RenderCommand
+        {
+            void Execute();
+
+            /// Controls whether or not the blending should be enabled.
+            bool enable;
+
+            /// Controls the source and dest factors.
+            BlendFunc sourceFactor;
+            BlendFunc destFactor;
+        };
+
+
+        // Sets a shader.
+        struct RCLighting_SetShader : public RenderCommand
+        {
+            void Execute();
+
+            /// Sets a shader parameter that will be set on the shader in Execute(). It's important that parameters are not set
+            /// while Execute() is running.
+            template <typename T>
+            void SetParameter(const char* name, const T &value)
+            {
+                this->parameters.Set(name, value);
+            }
+
+
+            Shader* shader;
+            ShaderParameterCache parameters;
+
+            Texture2D* materialBuffer2;
+            glm::vec2  screenSize;
+        };
+
+        // A general function for drawing a vertex array during a lighting pass.
+        //
+        // This class will use the current shader.
+        struct RCLighting_DrawGeometry : public RenderCommand
+        {
+            void Execute();
+
+
+            /// The vertex array to draw.
+            VertexArray* va;
+
+            /// The MVP matrix to apply to the geometry.
+            glm::mat4 mvpMatrix;
+            glm::mat3 normalMatrix;
+            glm::mat4 modelViewMatrix;
+
+            /// Whether or not the face culling should change.
+            bool changeFaceCulling;
+            bool cullFrontFace;
+            bool cullBackFace;
+        };
+
+        
 
 
 
@@ -258,11 +324,11 @@ namespace GTEngine
         /// Performs the material pass. This is always the first pass.
         void MaterialPass(Scene &scene);
 
-        /// Renders a mesh on the material pass.
-        void MaterialPass_Mesh(const Mesh &mesh, Material &material, const glm::mat4 &transform);
-
-        /// Changes the face culling on the material pass.
-        void MaterialPass_FaceCulling(bool cullFrontFaces, bool cullBackFaces);
+        /// Performs the lighting pass. This always comes after the material pass.
+        void LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
+        void LightingPass_A1(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
+        void LightingPass_D1(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
+        void LightingPass_P1(Scene &sceme, DefaultSceneRenderer::Framebuffer &framebuffer);
 
 
 
@@ -274,7 +340,8 @@ namespace GTEngine
             {
             }
 
-            Shader* materialPassShader;  ///< The shader for the material pass.
+            Shader* materialPassShader;         ///< The shader for the material pass.
+            RCQueue materialPassRCs;            ///< The render commands for meshes using this material in the material pass.
         };
 
         /// Retrieves the metadata of a material. This should never return null. If the metadata hasn't yet been created,
@@ -282,7 +349,7 @@ namespace GTEngine
         MaterialMetadata & GetMaterialMetadata(Material &material);
 
         /// Deletes the given material's metadata.
-        void DeleteMaterialMetadata(Material &material);
+        //void DeleteMaterialMetadata(Material &material);
 
 
 
@@ -316,6 +383,16 @@ namespace GTEngine
         GTCore::Vector<const SceneObject*> spotLights;
 
 
+        /// The list of directional lights that are not casting shadows.
+        GTCore::Vector<const SceneObject*> directionalLights_NoShadows;
+
+        /// The list of point lights that are not casting shadows.
+        GTCore::Vector<const SceneObject*> pointLights_NoShadows;
+
+        /// The list of spot lights that are not casting shadows.
+        GTCore::Vector<const SceneObject*> spotLights_NoShadows;
+
+
         /// A container for mapping a viewport to it's framebuffer.
         GTCore::Map<SceneViewport*, DefaultSceneRenderer::Framebuffer*> viewportFramebuffers;
 
@@ -335,18 +412,29 @@ namespace GTEngine
 
 
         // Below are caches for render commands. There are always 2 caches - one for the front RC queue, and another for the back.
-        RCCache<RCBegin,      8>  rcBegin[2];
-        RCCache<RCEnd,        8>  rcEnd[2];
-        RCCache<RCBeginLayer, 8>  rcBeginLayer[2];
-        RCCache<RCEndLayer,   8>  rcEndLayer[2];
-        RCCache<RCDrawVA>         rcDrawVA[2];
-        RCCache<RCSetFaceCulling> rcSetFaceCulling[2];
+        RCCache<RCBegin,      8>         rcBegin[2];
+        RCCache<RCEnd,        8>         rcEnd[2];
+        RCCache<RCBeginLayer, 8>         rcBeginLayer[2];
+        RCCache<RCEndLayer,   8>         rcEndLayer[2];
+        RCCache<RCDrawVA>                rcDrawVA[2];
+        RCCache<RCSetFaceCulling>        rcSetFaceCulling[2];
+        RCCache<RCBeginLighting>         rcBeginLighting[2];
+        RCCache<RCControlBlending>       rcControlBlending[2];
+        RCCache<RCLighting_SetShader>    rcSetShader[2];
+        RCCache<RCLighting_DrawGeometry> rcLighting_DrawGeometry[2];
 
         
         // Below are various shaders for use by the renderer.
         struct
         {
+            Shader* Lighting_NoShadow_A1;
+            Shader* Lighting_NoShadow_D1;
+            Shader* Lighting_NoShadow_P1;
+            Shader* Lighting_NoShadow_S1;
+
             Shader* Compositor_DiffuseOnly;
+            Shader* Compositor_DiffuseLightingOnly;
+            Shader* Compositor_FinalOutput;
 
             /// A cache of shaders used by materials in the material pass.
             MaterialShaderCache materialPassShaders;
@@ -356,6 +444,24 @@ namespace GTEngine
 
         /// The list of metadata pointers that will need to be removed when the renderer is destructed. We only really keep these for clean destruction.
         GTCore::List<MaterialMetadata*> materialMetadatas;
+
+
+        /// The cube map to use for point lights.
+        TextureCube pointLightShadowMap;
+
+
+        /// The framebuffer to use for shadow maps.
+        Framebuffer shadowMapFramebuffer;
+
+
+        /// The metadata of the material definitions being used in the current frame. This is cleared at the beginning of every frame.
+        GTCore::BinarySearchTree<MaterialMetadata*> usedMaterials;
+
+
+        /// Every piece of visible geometry will need to be re-rendered for every light. This needs to be efficient. To do this, we cache a draw call that
+        /// will draw the geometry in each lighting pass, and then append that to the renderer's back RC cache in one go every time it's needed. It will
+        /// be cleared at the beginning of every frame.
+        RCQueue lightingDrawRCs;
     };
 }
 

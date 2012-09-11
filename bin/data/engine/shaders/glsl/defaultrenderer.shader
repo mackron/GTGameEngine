@@ -177,7 +177,7 @@ uses 1 or each light, it will use the following: A1D1P1.
 
 
 <!-- *** Lighting Pass Shaders *** -->
-<shader id="Engine_LightingPass_A1">
+<shader id="Engine_LightingPass_NoShadow_A1">
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
@@ -198,7 +198,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     </include>
 </shader>
 
-<shader id="Engine_LightingPass_D1">
+<shader id="Engine_LightingPass_NoShadow_D1">
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
@@ -219,7 +219,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     </include>
 </shader>
 
-<shader id="Engine_LightingPass_P1">
+<shader id="Engine_LightingPass_NoShadow_P1">
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
@@ -240,7 +240,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     </include>
 </shader>
 
-<shader id="Engine_LightingPass_S1">
+<shader id="Engine_LightingPass_NoShadow_S1">
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
@@ -262,7 +262,7 @@ uses 1 or each light, it will use the following: A1D1P1.
 </shader>
 
 
-<shader id="Engine_LightingPass_A1D1">
+<shader id="Engine_LightingPass_NoShadow_A1D1">
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
@@ -285,7 +285,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     </include>
 </shader>
 
-<shader id="Engine_LightingPass_A1P1">
+<shader id="Engine_LightingPass_NoShadow_A1P1">
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
@@ -395,9 +395,36 @@ uses 1 or each light, it will use the following: A1D1P1.
     }
 </shader>
 
+<shader id="Engine_Compositor_DiffuseLightingOnly">
+    varying vec2 VertexOutput_TexCoord;
+    
+    uniform sampler2D LightingBuffer0;      // rgb = diffuse;  a = nothing
+    uniform sampler2D LightingBuffer1;      // rgb = specular; a = nothing
+    uniform sampler2D MaterialBuffer0;      // rgb = diffuse;  a = transparancy
+    uniform sampler2D MaterialBuffer1;      // rgb = emissive; a = shininess
+    
+    void main()
+    {
+        vec4 lightingTexel0 = texture2D(LightingBuffer0, VertexOutput_TexCoord);
+        vec4 lightingTexel1 = texture2D(LightingBuffer1, VertexOutput_TexCoord);
+        vec4 materialTexel0 = texture2D(MaterialBuffer0, VertexOutput_TexCoord);
+        vec4 materialTexel1 = texture2D(MaterialBuffer1, VertexOutput_TexCoord);
+        
+        vec3 lightDiffuse  = lightingTexel0.rgb;
+        vec3 lightSpecular = lightingTexel1.rgb;
+        
+        vec3  materialDiffuse      = materialTexel0.rgb;
+        float materialTransparency = materialTexel0.a;
+        vec3  materialEmissive     = materialTexel1.rgb;
+        float materialShininess    = materialTexel1.a;
+        
+        gl_FragData[0] = vec4(lightDiffuse, 1.0);
+    }
+</shader>
+
 
 <!-- *** Combiner Shader *** -->
-<shader id="Engine_LightingMaterialCombiner">
+<shader id="Engine_Compositor_FinalOutput">
     varying vec2 VertexOutput_TexCoord;
     
     uniform sampler2D LightingBuffer0;      // rgb = diffuse;  a = nothing
@@ -424,10 +451,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         gl_FragData[0].rgb = (materialDiffuse * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
         gl_FragData[0].a   = materialTransparency;
         
-        gl_FragData[0].rgb = pow(gl_FragData[0].rgb, vec3(1.0 / 2.2));   // sRGB (approx.)
-        
-        
-        //gl_FragData[0] = vec4(materialDiffuse, 1.0);
+        //gl_FragData[0].rgb = pow(gl_FragData[0].rgb, vec3(1.0 / 2.2));   // sRGB (approx.)
     }
 </shader>
 

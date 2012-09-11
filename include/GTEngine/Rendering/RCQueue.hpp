@@ -20,7 +20,20 @@ namespace GTEngine
         RCQueue();
 
         /// Appends a single draw call to the end of the cache.
+        ///
+        /// @param cmd [in] The command to append to the queue.
         void Append(RenderCommand &cmd);
+
+        /// Appends another RCQueue.
+        ///
+        /// @param other [in] The other RC queue to append to this one.
+        ///
+        /// @remarks
+        ///     This will not clear 'other'.
+        ///     @par
+        ///     This is more efficient than appending each item idividually.
+        void Append(const RCQueue &other);
+
 
         /// Executes all of the commands in the buffer, but does not clear it.
         ///
