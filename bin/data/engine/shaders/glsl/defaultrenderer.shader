@@ -309,6 +309,21 @@ uses 1 or each light, it will use the following: A1D1P1.
 </shader>
 
 
+
+<!-- *** Shadow Map Shaders *** -->
+<shader id="Engine_ShadowMap">
+    <include url="#Engine_FragmentInput" />
+    
+    <include>
+        void main()
+        {
+            gl_FragData[0] = dot(VertexOutput_Position.xyz, VertexOutput_Position.xyz);
+        }
+    </include>
+</shader>
+
+
+
 <!-- *** Material Pass Shaders *** -->
 <shader id="Engine_MaterialPass_VS">
     attribute vec3 VertexInput_Position;
@@ -422,8 +437,6 @@ uses 1 or each light, it will use the following: A1D1P1.
     }
 </shader>
 
-
-<!-- *** Combiner Shader *** -->
 <shader id="Engine_Compositor_FinalOutput">
     varying vec2 VertexOutput_TexCoord;
     

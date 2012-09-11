@@ -1026,6 +1026,7 @@ namespace GTEngine
                 auto texture  = iTexture->value;
 
                 glActiveTexture(GL_TEXTURE0 + i);
+                glEnable(GL_TEXTURE_CUBE_MAP);
                 glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<TextureCube_GL20*>(texture->GetRendererData())->object);
             }
         }

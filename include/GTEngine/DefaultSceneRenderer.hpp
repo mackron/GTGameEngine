@@ -312,6 +312,7 @@ namespace GTEngine
         };
 
         
+        // 
 
 
 
@@ -325,11 +326,13 @@ namespace GTEngine
         void MaterialPass(Scene &scene);
 
         /// Performs the lighting pass. This always comes after the material pass.
-        void LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
-        void LightingPass_A1(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
-        void LightingPass_D1(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
-        void LightingPass_P1(Scene &sceme, DefaultSceneRenderer::Framebuffer &framebuffer);
+        void LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, const SceneNode &camera);
+        //void LightingPass_A1(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
+        //void LightingPass_D1(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
+        //void LightingPass_P1(Scene &sceme, DefaultSceneRenderer::Framebuffer &framebuffer);
 
+        // Builds the shadow map of the given point light.
+        void LightingPass_BuildPointLightShadowMap(Scene &scene, const GTEngine::SceneNode &camera, const glm::vec3 &position, float radius);
 
 
         /// Structure containing metadata for materials. There should be one of these for each material.
@@ -432,6 +435,8 @@ namespace GTEngine
             Shader* Lighting_NoShadow_P1;
             Shader* Lighting_NoShadow_S1;
 
+            Shader* Lighting_ShadowMap;
+
             Shader* Compositor_DiffuseOnly;
             Shader* Compositor_DiffuseLightingOnly;
             Shader* Compositor_FinalOutput;
@@ -449,9 +454,11 @@ namespace GTEngine
         /// The cube map to use for point lights.
         TextureCube pointLightShadowMap;
 
+        /// The depth buffer for the point light shadow map framebuffer.
+        Texture2D* pointLightShadowMapDepthBuffer;
 
-        /// The framebuffer to use for shadow maps.
-        Framebuffer shadowMapFramebuffer;
+        /// The framebuffer to use for point light shadow maps.
+        Framebuffer pointLightShadowMapFramebuffer;
 
 
         /// The metadata of the material definitions being used in the current frame. This is cleared at the beginning of every frame.
