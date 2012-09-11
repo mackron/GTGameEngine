@@ -224,6 +224,14 @@ namespace GTEngine
             assert(texture != nullptr);
             glGenTextures(1, &this->texture->object);
             glBindTexture(GL_TEXTURE_CUBE_MAP, texture->object);
+
+            // Filter.
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+            // Wrap Mode.
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP);
         }
 
         TextureCube_GL20* texture;
@@ -520,7 +528,7 @@ namespace GTEngine
             assert(this->framebuffer != nullptr);
 
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, this->framebuffer->object);
-            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, this->attachment, GL_TEXTURE_2D, (this->texture != nullptr) ? this->texture->object : 0, 0);
+            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, this->attachment, ToOpenGLTexture2DTarget(this->textureTarget), (this->texture != nullptr) ? this->texture->object : 0, 0);
         }
 
         Framebuffer_GL20* framebuffer;

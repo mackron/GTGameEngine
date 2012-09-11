@@ -84,12 +84,13 @@ namespace GTEngine
           rcBegin(),
           Shaders(),
           materialMetadatas(),
-          pointLightShadowMap(), shadowMapFramebuffer()
+          pointLightShadowMap(), pointLightShadowMapDepthBuffer(), pointLightShadowMapFramebuffer()
     {
         this->Shaders.Lighting_NoShadow_A1           = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_NoShadow_A1");
         this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_NoShadow_D1");
         this->Shaders.Lighting_NoShadow_P1           = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_NoShadow_P1");
         this->Shaders.Lighting_NoShadow_S1           = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_NoShadow_S1");
+        this->Shaders.Lighting_ShadowMap             = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_ShadowMap");
         this->Shaders.Compositor_DiffuseOnly         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_DiffuseOnly");
         this->Shaders.Compositor_DiffuseLightingOnly = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_DiffuseLightingOnly");
         this->Shaders.Compositor_FinalOutput         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_FinalOutput");
@@ -101,6 +102,16 @@ namespace GTEngine
         pointLightShadowMap.NegativeY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F);
         pointLightShadowMap.PositiveZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F);
         pointLightShadowMap.NegativeZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F);
+        pointLightShadowMapDepthBuffer = new Texture2D(shadowMapSize, shadowMapSize, GTImage::ImageFormat_Depth24_Stencil8);
+
+        this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.PositiveX, 0);
+        this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.NegativeX, 1);
+        this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.PositiveY, 2);
+        this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.NegativeY, 3);
+        this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.PositiveZ, 4);
+        this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.NegativeZ, 5);
+        this->pointLightShadowMapFramebuffer.AttachDepthStencilBuffer(pointLightShadowMapDepthBuffer);
+        this->pointLightShadowMapFramebuffer.CheckStatus();
     }
 
     DefaultSceneRenderer::~DefaultSceneRenderer()
@@ -110,6 +121,8 @@ namespace GTEngine
         {
             delete this->viewportFramebuffers.buffer[i]->value;
         }
+
+        delete this->pointLightShadowMapDepthBuffer;
     }
 
 
@@ -189,11 +202,11 @@ namespace GTEngine
                 Renderer::BackRCQueue->Append(rcBeginLayer);
 
 
-                // We're going to start with the material pass. This pass will acquire the ambient lights that we'll use for the ambient sub-pass for lighting.
+                // We're going to start with the material pass. This pass will acquire the ambient lights that we'll use for the lighting pass.
                 this->MaterialPass(scene);
 
                 // The lighting pass must come after the material pass, since it depends on things like normals. Also, the material pass will retrieve the visible light objects.
-                this->LightingPass(scene, *framebuffer);
+                this->LightingPass(scene, *framebuffer, *cameraNode);
 
 
                 // Now we end the layer.
@@ -394,7 +407,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer::LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer)
+    void DefaultSceneRenderer::LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, const SceneNode &camera)
     {
         // We begin with the lights that are not casting shadows. We can do an optimized pass here where we can group lights into a single pass.
         auto &rcBeginLighting = this->rcBeginLighting[Renderer::BackIndex].Acquire();
@@ -478,7 +491,6 @@ namespace GTEngine
             this->pointLights_NoShadows.PopBack();
         }
 
-
         while (this->spotLights_NoShadows.count > 0)
         {
             auto &light = *this->spotLights_NoShadows.GetBack();
@@ -509,6 +521,84 @@ namespace GTEngine
 
             this->spotLights_NoShadows.PopBack();
         }
+
+
+
+        // With the shadowless lights done, we can now do the lights with shadow.
+        while (this->pointLights.count > 0)
+        {
+            auto &light = *this->pointLights.GetBack();
+
+            auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
+            rcSetShader.shader          = this->Shaders.Lighting_NoShadow_P1;
+            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+
+
+            if (light.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<const SceneNode &>(light).GetComponent<GTEngine::PointLightComponent>();
+
+
+                // This will build the light's shadow map.
+                this->LightingPass_BuildPointLightShadowMap(scene, camera, component->GetNode().GetWorldPosition(), component->GetApproximateRadius());
+
+                
+
+                rcSetShader.SetParameter("PLights0.Position",             glm::vec3(this->view * glm::vec4(component->GetNode().GetWorldPosition(), 1.0f)));
+                rcSetShader.SetParameter("PLights0.Colour",               component->GetColour());
+                rcSetShader.SetParameter("PLights0.ConstantAttenuation",  component->GetConstantAttenuation());
+                rcSetShader.SetParameter("PLights0.LinearAttenuation",    component->GetLinearAttenuation());
+                rcSetShader.SetParameter("PLights0.QuadraticAttenuation", component->GetQuadraticAttenuation());
+            }
+
+
+            Renderer::BackRCQueue->Append(rcSetShader);
+            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
+
+
+            this->pointLights.PopBack();
+        }
+    }
+
+    void DefaultSceneRenderer::LightingPass_BuildPointLightShadowMap(Scene &scene, const SceneNode &camera, const glm::vec3 &position, float radius)
+    {
+        glm::quat forward = camera.GetWorldOrientation();
+        
+        glm::quat positiveXOrientation = glm::rotate(forward, -90.0f,  glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::quat negativeXOrientation = glm::rotate(forward, +90.0f,  glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::quat positiveYOrientation = glm::rotate(forward, -90.0f,  glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::quat negativeYOrientation = glm::rotate(forward, +90.0f,  glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::quat positiveZOrientation = glm::rotate(forward, +180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::quat negativeZOrientation = forward;
+
+
+        glm::mat4 positiveXTransform;
+        GTEngine::Math::CalculateViewMatrix(position, positiveXOrientation, positiveXTransform);
+        positiveXTransform = glm::perspective(90.0f, 1.0f, 0.1f, radius);
+
+        glm::mat4 negativeXTransform;
+        GTEngine::Math::CalculateViewMatrix(position, negativeXOrientation, negativeXTransform);
+        negativeXTransform = glm::perspective(90.0f, 1.0f, 0.1f, radius);
+
+        glm::mat4 positiveYTransform;
+        GTEngine::Math::CalculateViewMatrix(position, positiveYOrientation, positiveYTransform);
+        positiveYTransform = glm::perspective(90.0f, 1.0f, 0.1f, radius);
+
+        glm::mat4 negativeYTransform;
+        GTEngine::Math::CalculateViewMatrix(position, negativeYOrientation, negativeYTransform);
+        negativeYTransform = glm::perspective(90.0f, 1.0f, 0.1f, radius);
+
+        glm::mat4 positiveZTransform;
+        GTEngine::Math::CalculateViewMatrix(position, positiveZOrientation, positiveZTransform);
+        positiveZTransform = glm::perspective(90.0f, 1.0f, 0.1f, radius);
+
+        glm::mat4 negativeZTransform;
+        GTEngine::Math::CalculateViewMatrix(position, negativeZOrientation, negativeZTransform);
+        negativeZTransform = glm::perspective(90.0f, 1.0f, 0.1f, radius);
+
+
+
     }
 
 
@@ -714,12 +804,21 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RCLighting_SetShader::Execute()
     {
+        for (size_t i = 0; i < this->parameters.GetCount(); ++i)
+        {
+            auto iParamName  = this->parameters.GetNameByIndex(i);
+            auto iParamValue = this->parameters.GetByIndex(i);
+
+            this->shader->SetParameter(iParamName, iParamValue);
+        }
+
         Renderer::SetShader(this->shader);
 
         Renderer::SetShaderParameter("Lighting_Normals", this->materialBuffer2);
         Renderer::SetShaderParameter("ScreenSize",       this->screenSize);
 
 
+        /*
         // TODO: Test that this still works...
         for (size_t i = 0; i < this->parameters.GetCount(); ++i)
         {
@@ -728,6 +827,7 @@ namespace GTEngine
 
             iParamValue->SetOnCurrentShader(iParamName);
         }
+        */
     }
 
     void DefaultSceneRenderer::RCLighting_DrawGeometry::Execute()
