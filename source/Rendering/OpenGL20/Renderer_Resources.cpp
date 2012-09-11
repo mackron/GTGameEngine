@@ -548,6 +548,7 @@ namespace GTEngine
 
         Framebuffer_GL20* framebuffer;
         Texture2D_GL20*   texture;
+        Texture2DTarget   textureTarget;
         GLenum            attachment;
     };
 
@@ -691,6 +692,7 @@ namespace GTEngine
 
 
         texture.GetValidMipmapRange(rc.baseMipLevel, rc.maxMipLevel);
+
 
         // With a change in mipmaps, the minification filter may have changed.
         rc.minFilter = ToOpenGLTextureMinificationFilter(texture.GetMinificationFilter(), rc.baseMipLevel != rc.maxMipLevel);
@@ -893,10 +895,13 @@ namespace GTEngine
 
     void Renderer::OnColourBufferAttached(Framebuffer &framebuffer, size_t index)
     {
+        auto texture = framebuffer.GetColourBuffer(index);
+
         auto &rc = RCCache_OnColourBufferChanged[Renderer::BackIndex].Acquire();
-        rc.framebuffer = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
-        rc.texture     = static_cast<Texture2D_GL20*>(framebuffer.GetColourBuffer(index)->GetRendererData());
-        rc.attachment  = GL_COLOR_ATTACHMENT0_EXT + index;
+        rc.framebuffer   = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+        rc.texture       = static_cast<Texture2D_GL20*>(texture->GetRendererData());
+        rc.textureTarget = texture->GetTarget();
+        rc.attachment    = GL_COLOR_ATTACHMENT0_EXT + index;
         
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
