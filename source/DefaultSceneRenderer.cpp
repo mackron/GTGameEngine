@@ -6,6 +6,9 @@
 
 // In this file, DSR = DefaultSceneRenderer.
 
+// TODO: Make this a config variable.
+#define SHADOW_MAP_SIZE     512
+
 namespace GTEngine
 {
     /// The callback used during the material pass.
@@ -75,13 +78,29 @@ namespace GTEngine
 {
     DefaultSceneRenderer::DefaultSceneRenderer()
         : ambientLights(), directionalLights(), pointLights(), spotLights(),
+          directionalLights_NoShadows(), pointLights_NoShadows(), spotLights_NoShadows(),
           viewportFramebuffers(),
           clearColourBuffer(true), clearColour(0.25f, 0.25f, 0.25f),
           rcBegin(),
           Shaders(),
-          materialMetadatas()
+          materialMetadatas(),
+          pointLightShadowMap(), shadowMapFramebuffer()
     {
-        this->Shaders.Compositor_DiffuseOnly = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_DiffuseOnly");
+        this->Shaders.Lighting_NoShadow_A1           = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_NoShadow_A1");
+        this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_NoShadow_D1");
+        this->Shaders.Lighting_NoShadow_P1           = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_NoShadow_P1");
+        this->Shaders.Lighting_NoShadow_S1           = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_NoShadow_S1");
+        this->Shaders.Compositor_DiffuseOnly         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_DiffuseOnly");
+        this->Shaders.Compositor_DiffuseLightingOnly = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_DiffuseLightingOnly");
+        this->Shaders.Compositor_FinalOutput         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_FinalOutput");
+
+        unsigned int shadowMapSize = SHADOW_MAP_SIZE;
+        pointLightShadowMap.PositiveX->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F);
+        pointLightShadowMap.NegativeX->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F);
+        pointLightShadowMap.PositiveY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F);
+        pointLightShadowMap.NegativeY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F);
+        pointLightShadowMap.PositiveZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F);
+        pointLightShadowMap.NegativeZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F);
     }
 
     DefaultSceneRenderer::~DefaultSceneRenderer()
@@ -104,6 +123,10 @@ namespace GTEngine
         this->rcEndLayer[Renderer::BackIndex].Reset();
         this->rcDrawVA[Renderer::BackIndex].Reset();
         this->rcSetFaceCulling[Renderer::BackIndex].Reset();
+        this->rcBeginLighting[Renderer::BackIndex].Reset();
+        this->rcControlBlending[Renderer::BackIndex].Reset();
+        this->rcSetShader[Renderer::BackIndex].Reset();
+        this->rcLighting_DrawGeometry[Renderer::BackIndex].Reset();
     }
 
     void DefaultSceneRenderer::End(Scene &scene)
@@ -114,11 +137,20 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderViewport(Scene &scene, SceneViewport &viewport)
     {
+        // TODO: Should be able remove these calls once lighting is done properly.
         this->ambientLights.Clear();
         this->directionalLights.Clear();
         this->pointLights.Clear();
         this->spotLights.Clear();
 
+        this->directionalLights_NoShadows.Clear();
+        this->pointLights_NoShadows.Clear();
+        this->spotLights_NoShadows.Clear();
+
+
+
+        this->usedMaterials.Clear();
+        this->lightingDrawRCs.Clear();
 
 
         // We render layer-by-layer, starting at the top and working our way down.
@@ -160,15 +192,14 @@ namespace GTEngine
                 // We're going to start with the material pass. This pass will acquire the ambient lights that we'll use for the ambient sub-pass for lighting.
                 this->MaterialPass(scene);
 
-
-                // With the material pass done, we now need to do lighting. The first part of the lighting is any lights that do not cast shadows.
-
+                // The lighting pass must come after the material pass, since it depends on things like normals. Also, the material pass will retrieve the visible light objects.
+                this->LightingPass(scene, *framebuffer);
 
 
                 // Now we end the layer.
                 auto &rcEndLayer = this->rcEndLayer[Renderer::BackIndex].Acquire();
                 rcEndLayer.framebuffer       = framebuffer;
-                rcEndLayer.compositingShader = this->Shaders.Compositor_DiffuseOnly;
+                rcEndLayer.compositingShader = this->Shaders.Compositor_FinalOutput;
                 Renderer::BackRCQueue->Append(rcEndLayer);
             }
 
@@ -231,10 +262,10 @@ namespace GTEngine
                     auto material = mesh->GetMaterial();
                     if (material != nullptr)
                     {
-                        // TODO: Sort by material definition.
+                        auto meshVA = this->GetMeshGeometry(*mesh, model->IsAnimating());
 
                         auto &rcDrawVA = this->rcDrawVA[Renderer::BackIndex].Acquire();
-                        rcDrawVA.SetVertexArray(this->GetMeshGeometry(*mesh, model->IsAnimating()));
+                        rcDrawVA.SetVertexArray(meshVA);
                         rcDrawVA.SetParameter("MVPMatrix",    MVPMatrix);
                         rcDrawVA.SetParameter("NormalMatrix", NormalMatrix);
 
@@ -268,6 +299,8 @@ namespace GTEngine
                             materialMetadata.materialPassShader = this->CreateMaterialPassShader(*material);
                         }
 
+                        this->usedMaterials.Insert(&materialMetadata);
+
 
                         // Now that we have the shader, we can set some properties and set it on the render command.
                         rcDrawVA.SetShader(materialMetadata.materialPassShader);
@@ -283,22 +316,27 @@ namespace GTEngine
                             rcDrawVA.SetParameter(iParam->key, iParam->value);
                         }
 
+                        auto &rcSetFaceCulling = this->rcSetFaceCulling[Renderer::BackIndex].Acquire();
+                        rcSetFaceCulling.SetCullingMode(modelComponent->CullFrontFaces(), modelComponent->CullBackFaces());
 
-                        // Here we need to append the render command. If we have transparency enabled, we don't want to append it to the back RC queue straight away. Instead
-                        // we want to hold on to it and append it later.
-                        if (material->IsTransparencyEnabled())
-                        {
-                            //this->rcSetFaceCulling_Transparent.PushBack(rcSetFaceCulling);
-                            //this->rcDrawVA_Transparent.PushBack(rcDrawVA);
-                        }
-                        else
-                        {
-                            auto &rcSetFaceCulling = this->rcSetFaceCulling[Renderer::BackIndex].Acquire();
-                            rcSetFaceCulling.SetCullingMode(modelComponent->CullFrontFaces(), modelComponent->CullBackFaces());
+                        // Here is where we determine where the render commands are added. We don't append the commands straight onto the renderer directly. Instead, we just
+                        // append to local RC queues which will be mapped to a material definition. At the end, we just append those local queues to the main one. This is
+                        // how we group commands by material.
+                        
+                        materialMetadata.materialPassRCs.Append(rcSetFaceCulling);
+                        materialMetadata.materialPassRCs.Append(rcDrawVA);
 
-                            Renderer::BackRCQueue->Append(rcSetFaceCulling);
-                            Renderer::BackRCQueue->Append(rcDrawVA);
-                        }
+
+                        // Here we need to create the render command that will draw the geometry of the mesh in each of the lighting passes.
+                        auto &rcLighting_DrawGeometry = this->rcLighting_DrawGeometry[Renderer::BackIndex].Acquire();
+                        rcLighting_DrawGeometry.va                = meshVA;
+                        rcLighting_DrawGeometry.mvpMatrix         = MVPMatrix;
+                        rcLighting_DrawGeometry.normalMatrix      = NormalMatrix;
+                        rcLighting_DrawGeometry.modelViewMatrix   = ModelViewMatrix;
+                        rcLighting_DrawGeometry.changeFaceCulling = !(modelComponent->CullBackFaces() == true && modelComponent->CullFrontFaces() == false);
+                        rcLighting_DrawGeometry.cullBackFace      = modelComponent->CullBackFaces();
+                        rcLighting_DrawGeometry.cullFrontFace     = modelComponent->CullFrontFaces();
+                        this->lightingDrawRCs.Append(rcLighting_DrawGeometry);
                     }
                 }
             }
@@ -312,17 +350,17 @@ namespace GTEngine
 
     void DefaultSceneRenderer::__DirectionalLight(const SceneObject &object)
     {
-        this->directionalLights.PushBack(&object);
+        this->directionalLights_NoShadows.PushBack(&object);
     }
 
     void DefaultSceneRenderer::__PointLight(const SceneObject &object)
     {
-        this->pointLights.PushBack(&object);
+        this->pointLights_NoShadows.PushBack(&object);
     }
 
     void DefaultSceneRenderer::__SpotLight(const SceneObject &object)
     {
-        this->spotLights.PushBack(&object);
+        this->spotLights_NoShadows.PushBack(&object);
     }
 
 
@@ -343,18 +381,148 @@ namespace GTEngine
     {
         DefaultSceneRenderer_MaterialPassCallback materialPassCallback(*this);
         scene.QueryVisibleObjects(this->projection * this->view, materialPassCallback);
+
+        // We will have render commands waiting to be added to the main RC queue. This is where we should do this.
+        while (this->usedMaterials.root != nullptr)
+        {
+            auto &queue = this->usedMaterials.root->value->materialPassRCs;
+
+            Renderer::BackRCQueue->Append(queue);
+            queue.Clear();
+
+            this->usedMaterials.RemoveRoot();
+        }
+    }
+
+    void DefaultSceneRenderer::LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer)
+    {
+        // We begin with the lights that are not casting shadows. We can do an optimized pass here where we can group lights into a single pass.
+        auto &rcBeginLighting = this->rcBeginLighting[Renderer::BackIndex].Acquire();
+        rcBeginLighting.framebuffer = &framebuffer;
+        Renderer::BackRCQueue->Append(rcBeginLighting);
+
+
+
+        while (this->ambientLights.count > 0)
+        {
+            auto &light = *this->ambientLights.GetBack();
+
+            auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
+            rcSetShader.shader          = this->Shaders.Lighting_NoShadow_A1;
+            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+
+            if (light.GetType() == SceneObjectType_SceneNode)
+            {
+                rcSetShader.SetParameter("ALights0.Colour", static_cast<const SceneNode &>(light).GetComponent<GTEngine::AmbientLightComponent>()->GetColour());
+            }
+
+
+            Renderer::BackRCQueue->Append(rcSetShader);
+            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
+
+
+            this->ambientLights.PopBack();
+        }
+
+        while (this->directionalLights_NoShadows.count > 0)
+        {
+            auto &light = *this->directionalLights_NoShadows.GetBack();
+
+            auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
+            rcSetShader.shader          = this->Shaders.Lighting_NoShadow_D1;
+            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+
+            if (light.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<const SceneNode &>(light).GetComponent<GTEngine::DirectionalLightComponent>();
+
+                rcSetShader.SetParameter("DLights0.Colour",    component->GetColour());
+                rcSetShader.SetParameter("DLights0.Direction", glm::normalize(glm::mat3(this->view) * component->GetNode().GetWorldForwardVector()));
+            }
+
+
+            Renderer::BackRCQueue->Append(rcSetShader);
+            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
+
+
+            this->directionalLights_NoShadows.PopBack();
+        }
+
+        while (this->pointLights_NoShadows.count > 0)
+        {
+            auto &light = *this->pointLights_NoShadows.GetBack();
+
+            auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
+            rcSetShader.shader          = this->Shaders.Lighting_NoShadow_P1;
+            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+
+            if (light.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<const SceneNode &>(light).GetComponent<GTEngine::PointLightComponent>();
+
+                rcSetShader.SetParameter("PLights0.Position",             glm::vec3(this->view * glm::vec4(component->GetNode().GetWorldPosition(), 1.0f)));
+                rcSetShader.SetParameter("PLights0.Colour",               component->GetColour());
+                rcSetShader.SetParameter("PLights0.ConstantAttenuation",  component->GetConstantAttenuation());
+                rcSetShader.SetParameter("PLights0.LinearAttenuation",    component->GetLinearAttenuation());
+                rcSetShader.SetParameter("PLights0.QuadraticAttenuation", component->GetQuadraticAttenuation());
+            }
+
+
+            Renderer::BackRCQueue->Append(rcSetShader);
+            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
+
+
+            this->pointLights_NoShadows.PopBack();
+        }
+
+
+        while (this->spotLights_NoShadows.count > 0)
+        {
+            auto &light = *this->spotLights_NoShadows.GetBack();
+
+            auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
+            rcSetShader.shader          = this->Shaders.Lighting_NoShadow_S1;
+            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+
+            if (light.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<const SceneNode &>(light).GetComponent<GTEngine::SpotLightComponent>();
+
+                rcSetShader.SetParameter("SLights0.Position",             glm::vec3(this->view * glm::vec4(component->GetNode().GetWorldPosition(), 1.0f)));
+                rcSetShader.SetParameter("SLights0.Direction",            glm::normalize(glm::mat3(this->view) * component->GetNode().GetWorldForwardVector()));
+                rcSetShader.SetParameter("SLights0.CosAngleInner",        glm::cos(glm::radians(component->GetInnerAngle())));
+                rcSetShader.SetParameter("SLights0.CosAngleOuter",        glm::cos(glm::radians(component->GetOuterAngle())));
+                rcSetShader.SetParameter("SLights0.Colour",               component->GetColour());
+                rcSetShader.SetParameter("SLights0.ConstantAttenuation",  component->GetConstantAttenuation());
+                rcSetShader.SetParameter("SLights0.LinearAttenuation",    component->GetLinearAttenuation());
+                rcSetShader.SetParameter("SLights0.QuadraticAttenuation", component->GetQuadraticAttenuation());
+            }
+
+
+            Renderer::BackRCQueue->Append(rcSetShader);
+            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
+
+
+            this->spotLights_NoShadows.PopBack();
+        }
     }
 
 
 
     DefaultSceneRenderer::MaterialMetadata & DefaultSceneRenderer::GetMaterialMetadata(Material &material)
     {
+        auto &definition = const_cast<MaterialDefinition &>(material.GetDefinition());
+
         // The key for the metadata will be 'this'.
-        auto metadata = static_cast<MaterialMetadata*>(material.GetMetadata(reinterpret_cast<size_t>(this)));
+        auto metadata = static_cast<MaterialMetadata*>(definition.GetMetadata(reinterpret_cast<size_t>(this)));
         if (metadata == nullptr)
         {
             metadata = new MaterialMetadata;
-            material.SetMetadata(reinterpret_cast<size_t>(this), metadata);
+            definition.SetMetadata(reinterpret_cast<size_t>(this), metadata);
 
             this->materialMetadatas.Append(metadata);
         }
@@ -362,15 +530,19 @@ namespace GTEngine
         return *metadata;
     }
 
+    /*
     void DefaultSceneRenderer::DeleteMaterialMetadata(Material &material)
     {
-        auto metadata = static_cast<MaterialMetadata*>(material.GetMetadata(reinterpret_cast<size_t>(this)));
+        auto &definition = const_cast<MaterialDefinition &>(material.GetDefinition());
+
+        auto metadata = static_cast<MaterialMetadata*>(definition.GetMetadata(reinterpret_cast<size_t>(this)));
         if (metadata == nullptr)
         {
             this->materialMetadatas.Remove(this->materialMetadatas.Find(metadata));
             delete metadata;
         }
     }
+    */
 
 
 
@@ -505,5 +677,76 @@ namespace GTEngine
         Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Increment);
         
         Renderer::Draw(VertexArrayLibrary::GetFullscreenQuadVA());
+    }
+
+    void DefaultSceneRenderer::RCBeginLighting::Execute()
+    {
+        assert(this->framebuffer != nullptr);
+
+        int drawBuffers[] = {4, 5};     // Lighting Buffers 0/1
+        Renderer::SetDrawBuffers(2, drawBuffers);
+
+        // Clearing to black is important here.
+        Renderer::ClearColour(0.0f, 0.0f, 0.0f, 1.0f);
+        Renderer::Clear(GTEngine::ColourBuffer);
+
+        Renderer::SetDepthFunc(RendererFunction_Equal);
+        Renderer::DisableDepthWrites();
+
+        // We combine lighting passes using standard blending.
+        Renderer::EnableBlending();
+        Renderer::SetBlendEquation(BlendEquation_Add);
+        Renderer::SetBlendFunc(BlendFunc_One, BlendFunc_One);
+    }
+
+    void DefaultSceneRenderer::RCControlBlending::Execute()
+    {
+        if (this->enable)
+        {
+            Renderer::EnableBlending();
+            Renderer::SetBlendFunc(this->sourceFactor, this->destFactor);
+        }
+        else
+        {
+            Renderer::DisableBlending();
+        }
+    }
+
+    void DefaultSceneRenderer::RCLighting_SetShader::Execute()
+    {
+        Renderer::SetShader(this->shader);
+
+        Renderer::SetShaderParameter("Lighting_Normals", this->materialBuffer2);
+        Renderer::SetShaderParameter("ScreenSize",       this->screenSize);
+
+
+        // TODO: Test that this still works...
+        for (size_t i = 0; i < this->parameters.GetCount(); ++i)
+        {
+            auto iParamName  = this->parameters.GetNameByIndex(i);
+            auto iParamValue = this->parameters.GetByIndex(i);
+
+            iParamValue->SetOnCurrentShader(iParamName);
+        }
+    }
+
+    void DefaultSceneRenderer::RCLighting_DrawGeometry::Execute()
+    {
+        if (this->changeFaceCulling)
+        {
+            Renderer::SetFaceCulling(this->cullFrontFace, this->cullBackFace);
+        }
+
+        Renderer::SetShaderParameter("MVPMatrix",       this->mvpMatrix);
+        Renderer::SetShaderParameter("NormalMatrix",    this->normalMatrix);
+        Renderer::SetShaderParameter("ModelViewMatrix", this->modelViewMatrix);
+        Renderer::Draw(this->va);
+
+
+        // Default back to back-face culling.
+        if (this->changeFaceCulling)
+        {
+            Renderer::SetFaceCulling(false, true);
+        }
     }
 }

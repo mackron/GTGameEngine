@@ -27,14 +27,21 @@ namespace GTEngine
         {
             assert(texture != nullptr);
 
-            GLenum targetGL = ToOpenGLTexture2DTarget(this->target);
-            
             // If we're a face on a cube map we don't actually want to create any texture objects. Instead, we can assert that the currently bound texture
             // is the cube map object.
             if (target == Texture2DTarget_Default)
             {
                 glGenTextures(1, &this->texture->object);
                 glBindTexture(GL_TEXTURE_2D, texture->object);
+
+                // Filter.
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,         this->minFilter);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,         this->magFilter);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+
+                // Wrap Mode.
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrapMode);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrapMode);
             }
             else
             {
@@ -43,17 +50,7 @@ namespace GTEngine
                 glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &cubeMapObject);
 
                 this->texture->object = static_cast<GLuint>(cubeMapObject);
-            }
-
-
-            // Filter.
-            glTexParameteri(targetGL, GL_TEXTURE_MIN_FILTER,         this->minFilter);
-            glTexParameteri(targetGL, GL_TEXTURE_MIN_FILTER,         this->magFilter);
-            glTexParameteri(targetGL, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
-
-            // Wrap Mode.
-            glTexParameteri(targetGL, GL_TEXTURE_WRAP_S, this->wrapMode);
-            glTexParameteri(targetGL, GL_TEXTURE_WRAP_T, this->wrapMode);
+            }            
         }
 
         Texture2D_GL20* texture;
@@ -94,6 +91,11 @@ namespace GTEngine
             if (this->target == Texture2DTarget_Default)
             {
                 glBindTexture(GL_TEXTURE_2D, this->texture->object);
+
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, static_cast<GLint>(this->baseMipLevel));
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL,  static_cast<GLint>(this->maxMipLevel));
+
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->minFilter);
             }
             else
             {
@@ -101,20 +103,15 @@ namespace GTEngine
             }
 
 
-            GLenum targetGL = ToOpenGLTexture2DTarget(this->target);
 
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             {
-                glTexImage2D(targetGL, this->mipmap, this->internalFormat, this->width, this->height, 0, this->format, this->type, this->data);
+                glTexImage2D(ToOpenGLTexture2DTarget(this->target), this->mipmap, this->internalFormat, this->width, this->height, 0, this->format, this->type, this->data);
             }
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-            glTexParameteri(targetGL, GL_TEXTURE_BASE_LEVEL, static_cast<GLint>(this->baseMipLevel));
-            glTexParameteri(targetGL, GL_TEXTURE_MAX_LEVEL,  static_cast<GLint>(this->maxMipLevel));
 
-            glTexParameteri(targetGL, GL_TEXTURE_MIN_FILTER, this->minFilter);
-
-
+            
             free(this->data);
         }
 
@@ -147,13 +144,8 @@ namespace GTEngine
             if (this->target == Texture2DTarget_Default)
             {
                 glBindTexture(GL_TEXTURE_2D, this->texture->object);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filter);
             }
-            else
-            {
-                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
-            }
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filter);
         }
 
         Texture2D_GL20* texture;
@@ -171,13 +163,8 @@ namespace GTEngine
             if (this->target == Texture2DTarget_Default)
             {
                 glBindTexture(GL_TEXTURE_2D, this->texture->object);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filter);
             }
-            else
-            {
-                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
-            }
-
-            glTexParameteri(ToOpenGLTexture2DTarget(this->target), GL_TEXTURE_MIN_FILTER, this->filter);
         }
 
         Texture2D_GL20* texture;
@@ -195,13 +182,8 @@ namespace GTEngine
             if (this->target == Texture2DTarget_Default)
             {
                 glBindTexture(GL_TEXTURE_2D, this->texture->object);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
             }
-            else
-            {
-                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
-            }
-
-            glTexParameteri(ToOpenGLTexture2DTarget(this->target), GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
         }
 
         Texture2D_GL20* texture;
@@ -219,14 +201,9 @@ namespace GTEngine
             if (this->target == Texture2DTarget_Default)
             {
                 glBindTexture(GL_TEXTURE_2D, this->texture->object);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrapMode);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrapMode);
             }
-            else
-            {
-                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
-            }
-
-            glTexParameteri(ToOpenGLTexture2DTarget(this->target), GL_TEXTURE_WRAP_S, this->wrapMode);
-            glTexParameteri(ToOpenGLTexture2DTarget(this->target), GL_TEXTURE_WRAP_T, this->wrapMode);
         }
 
         Texture2D_GL20* texture;

@@ -14,6 +14,17 @@ namespace GTEngine
         this->commands.PushBack(&cmd);
     }
 
+    void RCQueue::Append(const RCQueue &other)
+    {
+        if (this->commands.bufferSize <= this->commands.count + other.commands.count)
+        {
+            this->commands.Reserve(this->commands.count + other.commands.count);
+        }
+
+        memcpy(this->commands.buffer + this->commands.count, other.commands.buffer, other.commands.count * sizeof(RenderCommand*));
+        this->commands.count += other.commands.count;
+    }
+
     void RCQueue::Execute()
     {
         for (size_t i = 0; i < this->commands.count; ++i)

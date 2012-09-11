@@ -325,6 +325,23 @@ namespace GTEngine
             --count;
         }
     }
+
+
+    void MaterialDefinition::SetMetadata(size_t key, void* data)
+    {
+        this->metadata.Add(key, data);
+    }
+
+    void* MaterialDefinition::GetMetadata(size_t key)
+    {
+        auto iData = this->metadata.Find(key);
+        if (iData != nullptr)
+        {
+            return iData->value;
+        }
+
+        return nullptr;
+    }
 }
 
 namespace GTEngine

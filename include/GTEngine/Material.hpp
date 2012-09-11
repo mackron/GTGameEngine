@@ -34,6 +34,25 @@ namespace GTEngine
         /// Helper method for loading the material definition from a file.
         bool LoadFromFile(const char* fileName);
 
+
+
+        /// Sets the metadata pointer to use with the given key.
+        ///
+        /// @param key  [in] The key to use with the given pointer.
+        /// @param data [in] The pointer to associate with the given key.
+        ///
+        /// @remarks
+        ///     The pointer can be retrieved with GetMetadata().
+        ///     @par
+        ///     If a pointer already exists for the given key, it is overwritten.
+        void SetMetadata(size_t key, void* data);
+
+        /// Retrieves the metadata associated with the given key.
+        ///
+        /// @param key [in] The key of the metadata being retrieved.
+        ///
+        /// @return A pointer to the metadata associated with the key or null if there is no metadata for that key.
+        void* GetMetadata(size_t key);
         
 
     public:
@@ -59,6 +78,12 @@ namespace GTEngine
 
         /// Keeps track of whether or not the material should have transparency enabled.
         bool enableTransparency;
+
+
+        /// Every material can have metadata associated with it. This is one way of doing things like associating a shader to a material or whatnot. The default
+        /// renderer will use this system. This is a map allowing something to associate a pointer to a key. The key is a size_t which will allow a pointer to
+        /// an object to be used if desired.
+        GTCore::Map<size_t, void*> metadata;
 
 
     private:
