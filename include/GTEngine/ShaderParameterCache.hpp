@@ -9,6 +9,7 @@
 namespace GTEngine
 {
     class Texture2D;
+    class TextureCube;
 
     /// Class representing a cache of shader parameters.
     class ShaderParameterCache
@@ -35,18 +36,21 @@ namespace GTEngine
         void Set(const char* name, const glm::mat3 &v);
         void Set(const char* name, const glm::mat4 &v);
 
-        void Set(const char* name, Texture2D* texture);
+        void Set(const char* name, Texture2D*   texture);
+        void Set(const char* name, TextureCube* texture);
 
         /// This overload makes a local copy of the input parameter.
         void Set(const char* name, const ShaderParameter* parameter);
 
 
         /// Retrieves a parameter by its name.
+        ///
         /// @param name [in] The name of the parameter to retrieve.
         ShaderParameter* Get(const char* name) const;
         ShaderParameter* Get(const char* name);
 
         /// Retrieves a parameter by its index.
+        ///
         /// @param index [in] The index of the parameter to retrieve. This is a O(1) direct accessor.
         ///
         /// @remarks
@@ -57,6 +61,7 @@ namespace GTEngine
         ShaderParameter* GetByIndex(size_t index);
 
         /// Retrieves the name of a parameter by it's index.
+        ///
         /// @param index [in] The index of the parameter whose name is being retrieved. This is an O(1) direct accessor.
         const char* GetNameByIndex(size_t index) const;
 

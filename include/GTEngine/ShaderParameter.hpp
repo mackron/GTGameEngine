@@ -78,6 +78,7 @@
 namespace GTEngine
 {
     class Texture2D;
+    class TextureCube;
 
     /// Enumerator for the different types of material properties.
     enum ShaderParameterType
@@ -130,7 +131,7 @@ namespace GTEngine
     //GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_Texture1D,   ShaderParameterType_Texture1D,   Texture1D);
     GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_Texture2D,   ShaderParameterType_Texture2D,   Texture2D);
     //GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_Texture3D,   ShaderParameterType_Texture3D,   Texture3D);
-    //GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_TextureCube, ShaderParameterType_TextureCube, TextureCube);
+    GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_TextureCube, ShaderParameterType_TextureCube, TextureCube);
 
 
 
@@ -199,9 +200,10 @@ namespace GTEngine
                 //newProp = new ShaderParameter_Texture3D(propToCopy);
                 break;
             }
+
         case ShaderParameterType_TextureCube:
             {
-                //newProp = new ShaderParameter_TextureCube(propToCopy);
+                newProp = new ShaderParameter_TextureCube(propToCopy);
                 break;
             }
 

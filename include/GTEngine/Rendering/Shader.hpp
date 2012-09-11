@@ -9,6 +9,7 @@
 namespace GTEngine
 {
     class Texture2D;
+    class TextureCube;
 
     /// Class representing a shader.
     ///
@@ -60,18 +61,14 @@ namespace GTEngine
     // The methods below should only be called by the renderer and it's support functions.
     public:
 
-        /**
-        *   \brief  Retrieves a pointer to the internal renderer data.
-        */
+        /// Retrieves a pointer to the internal renderer data.
               void* GetRendererData()       { return this->rendererData; }
         const void* GetRendererData() const { return this->rendererData; }
 
-        /**
-        *   \brief  Sets the pointer to the internal renderer data.
-        *
-        *   \remarks
-        *       This does not deallocate the previous renderer data. That is the responsibility of the caller.
-        */
+        /// Sets the pointer to the internal renderer data.
+        ///
+        /// @remarks
+        ///     This does not deallocate the previous renderer data. That is the responsibility of the caller.
         void SetRendererData(void* rendererData) { this->rendererData = rendererData; }
 
         /// Retrieves the internal list of pending parameters.
@@ -82,12 +79,15 @@ namespace GTEngine
         void ClearPendingParameters();
 
 
+
         /// Called when a texture is destructed and thus no longer part of the shader.
-        void OnTextureDeleted(Texture2D* texture);
+        void OnTextureDeleted(Texture2D*   texture);
+        void OnTextureDeleted(TextureCube* texture);
 
         /// Called when a texture parameter is being changed. We use this to check whether or not we need to let the texture
         /// know that it's no longer being used by the shader.
-        void OnTextureParameterChanged(Texture2D* oldTexture);
+        void OnTextureParameterChanged(Texture2D*   oldTexture);
+        void OnTextureParameterChanged(TextureCube* oldTexture);
 
 
 
@@ -107,6 +107,10 @@ namespace GTEngine
         /// We keep an array of texture 2Ds being used by the shader. As the shader parameters of a shader change, they are updated here. These
         /// are index by parameter name. This is NOT updated by SetParameter(), but is instead used internally by the renderer.
         GTCore::Dictionary<Texture2D*> currentTexture2Ds;
+
+        /// Same as above, only for cube maps this time.
+        GTCore::Dictionary<TextureCube*> currentTextureCubes;
+
 
 
     private:    // No copying.

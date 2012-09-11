@@ -53,6 +53,11 @@ namespace GTEngine
     {
         this->SetGeneric<ShaderParameter_Texture2D>(name, value);
     }
+    void ShaderParameterCache::Set(const char* name, TextureCube* value)
+    {
+        this->SetGeneric<ShaderParameter_TextureCube>(name, value);
+    }
+
 
     void ShaderParameterCache::Set(const char* name, const ShaderParameter* parameter)
     {

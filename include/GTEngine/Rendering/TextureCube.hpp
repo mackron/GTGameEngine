@@ -48,11 +48,21 @@ namespace GTEngine
         void SetRendererData(void* rendererData) { this->rendererData = rendererData; }
 
 
+        /// Called when the texture is attached to a shader.
+        void OnAttachToShader(Shader &shader);
+
+        /// Called when the texture is detached from a shader.
+        void OnDetachFromShader(Shader &shader);
+
+
     private:
 
         /// The renderer will need to store it's own properties about the texture. This pointer can be used by the renderer
         /// to hold a pointer to some renderer-specific data.
         void* rendererData;
+
+        /// The list of shaders that this texture is attached to.
+        GTCore::List<Shader*> shaders;
     };
 }
 
