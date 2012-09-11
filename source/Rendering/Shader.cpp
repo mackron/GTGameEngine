@@ -8,7 +8,7 @@ namespace GTEngine
         : vertexSource(vertexSource), fragmentSource(fragmentSource),
           pendingParameters(),
           rendererData(nullptr),
-          currentTexture2Ds()
+          currentTexture2Ds(), currentTextureCubes()
     {
         Renderer::OnShaderCreated(*this);
     }
@@ -57,6 +57,25 @@ namespace GTEngine
         }
     }
 
+    void Shader::OnTextureDeleted(TextureCube* texture)
+    {
+        // We need to look for the shader in our current shaders and clear to null. We're also going to set the parameter to null so that
+        // it will be updated on the renderer in the next binding.
+        for (size_t i = 0; i < currentTextureCubes.count; ++i)
+        {
+            auto iTexture = currentTextureCubes.buffer[i];
+            assert(iTexture != nullptr);
+
+            if (iTexture->value == texture)
+            {
+                iTexture->value = nullptr;
+                this->SetParameter(iTexture->key, static_cast<TextureCube*>(nullptr));
+            }
+        }
+    }
+
+
+
     void Shader::OnTextureParameterChanged(Texture2D* oldTexture)
     {
         if (oldTexture != nullptr)
@@ -76,6 +95,29 @@ namespace GTEngine
             if (!referenced)
             {
                 oldTexture->OnDetachFromShader(this);
+            }
+        }
+    }
+
+    void Shader::OnTextureParameterChanged(TextureCube* oldTexture)
+    {
+        if (oldTexture != nullptr)
+        {
+            bool referenced = false;
+
+            // We check if the old texture is being used by anything. If not, we let it know that it's no longer being used.
+            for (size_t i = 0; i < currentTextureCubes.count; ++i)
+            {
+                if (currentTextureCubes.buffer[i]->value == oldTexture)
+                {
+                    referenced = true;
+                }
+            }
+
+            // If the texture is no longer referenced, we let it know that it is detached from the shader.
+            if (!referenced)
+            {
+                oldTexture->OnDetachFromShader(*this);
             }
         }
     }

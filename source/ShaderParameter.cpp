@@ -21,5 +21,5 @@ namespace GTEngine
     //GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Texture1D);
     GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Texture2D);
     //GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Texture3D);
-    //GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_TextureCube);
+    GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_TextureCube);
 }

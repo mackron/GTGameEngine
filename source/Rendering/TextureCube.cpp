@@ -7,7 +7,8 @@ namespace GTEngine
     TextureCube::TextureCube()
         : PositiveX(), NegativeX(),
           PositiveY(), NegativeY(),
-          PositiveZ(), NegativeZ()
+          PositiveZ(), NegativeZ(),
+          rendererData(nullptr), shaders()
     {
         Renderer::OnTextureCubeCreated(*this);
 
@@ -29,5 +30,19 @@ namespace GTEngine
         delete this->NegativeZ;
 
         Renderer::OnTextureCubeDeleted(*this);
+    }
+
+
+    void TextureCube::OnAttachToShader(Shader &shader)
+    {
+        if (this->shaders.Find(&shader) == nullptr)
+        {
+            this->shaders.Append(&shader);
+        }
+    }
+
+    void TextureCube::OnDetachFromShader(Shader &shader)
+    {
+        this->shaders.Remove(this->shaders.Find(&shader));
     }
 }

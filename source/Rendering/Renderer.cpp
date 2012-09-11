@@ -272,7 +272,14 @@ namespace GTEngine
         auto textureData = static_cast<Texture2D_GL20*>(texture.GetRendererData());
         assert(textureData != nullptr);
 
-        glBindTexture(GL_TEXTURE_2D, textureData->object);
+        if (texture.GetTarget() == Texture2DTarget_Default)
+        {
+            glBindTexture(GL_TEXTURE_2D, textureData->object);
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_CUBE_MAP, textureData->object);
+        }
     }
 
     void Renderer_BindTexture2D(Texture2D* texture)
@@ -284,6 +291,27 @@ namespace GTEngine
         else
         {
             glBindTexture(GL_TEXTURE_2D, 0);
+        }
+    }
+
+
+    void Renderer_BindTextureCube(TextureCube &texture)
+    {
+        auto textureData = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        assert(textureData != nullptr);
+
+        glBindTexture(GL_TEXTURE_CUBE_MAP, textureData->object);
+    }
+
+    void Renderer_BindTextureCube(TextureCube* texture)
+    {
+        if (texture != nullptr)
+        {
+            Renderer_BindTextureCube(*texture);
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
         }
     }
 
@@ -980,14 +1008,31 @@ namespace GTEngine
                 auto texture  = iTexture->value;
 
                 glActiveTexture(GL_TEXTURE0 + i);
-                glEnable(GL_TEXTURE_2D);
-                Renderer_BindTexture2D(texture);
+
+                if (texture->GetTarget() == Texture2DTarget_Default)
+                {
+                    glEnable(GL_TEXTURE_2D);
+                    glBindTexture(GL_TEXTURE_2D, static_cast<Texture2D_GL20*>(texture->GetRendererData())->object);
+                }
+                else
+                {
+                    // We can't bind a cube-map face as a Texture2D.
+                }
+            }
+
+            for (size_t i = 0; i < RendererState.CurrentShader->currentTextureCubes.count; ++i)
+            {
+                auto iTexture = RendererState.CurrentShader->currentTextureCubes.buffer[i];
+                auto texture  = iTexture->value;
+
+                glActiveTexture(GL_TEXTURE0 + i);
+                glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<TextureCube_GL20*>(texture->GetRendererData())->object);
             }
         }
     }
 
 
-    void Renderer::SetShaderParameter(const char *paramName, Texture2D *value)
+    void Renderer::SetShaderParameter(const char* paramName, Texture2D* value)
     {
         auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
@@ -1032,6 +1077,54 @@ namespace GTEngine
             }
         }
     }
+
+    void Renderer::SetShaderParameter(const char* paramName, TextureCube* value)
+    {
+        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        if (rendererData != nullptr && rendererData->program != 0)
+        {
+            auto iTexture = RendererState.CurrentShader->currentTextureCubes.Find(paramName);
+            if (iTexture != nullptr)
+            {
+                // If the texture is the same, fall through.
+                if (iTexture->value != value)
+                {
+                    // We need to keep track of the old texture so we can check if the shader is using it elsewhere and then call Texture2D->OnShaderDetached() if appropriate.
+                    auto oldTexture = iTexture->value;
+                    iTexture->value = value;
+
+                    // All we need to do is change the binding for the texture.
+                    glActiveTexture(GL_TEXTURE0 + iTexture->index);
+                    Renderer_BindTextureCube(iTexture->value);
+
+                    // Now we need to let the shader know about the old texture.
+                    RendererState.CurrentShader->OnTextureParameterChanged(oldTexture);
+                }
+            }
+            else
+            {
+                // The texture doesn't exist. We need to add it and then reset the uniform for every texture. We do this because we use a map to store the
+                // texture units, which will be rearranged as an entry is added.
+                RendererState.CurrentShader->currentTextureCubes.Add(paramName, value);
+                Renderer::BindCurrentShaderTextures();
+
+                for (size_t i = 0; i < RendererState.CurrentShader->currentTextureCubes.count; ++i)
+                {
+                    GLint location = glGetUniformLocation(rendererData->program, RendererState.CurrentShader->currentTextureCubes.buffer[i]->key);
+                    glUniform1i(location, static_cast<GLint>(i));
+                }
+            }
+
+
+            // The new texture needs to be aware that it is attached to a shader.
+            if (value != nullptr)
+            {
+                value->OnAttachToShader(*RendererState.CurrentShader);
+            }
+        }
+    }
+
+
 
     void Renderer::SetShaderParameter(const char *paramName, float x)
     {

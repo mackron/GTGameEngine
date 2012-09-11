@@ -409,7 +409,8 @@ namespace GTEngine
         static void BindCurrentShaderTextures();
 
         
-        static void SetShaderParameter(const char *paramName, Texture2D *texture);
+        static void SetShaderParameter(const char *paramName, Texture2D*   texture);
+        static void SetShaderParameter(const char* paramName, TextureCube* texture);
         static void SetShaderParameter(const char *paramName, float x);
         static void SetShaderParameter(const char *paramName, float x, float y);
         static void SetShaderParameter(const char *paramName, float x, float y, float z);
