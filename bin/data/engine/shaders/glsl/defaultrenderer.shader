@@ -167,17 +167,14 @@ uses 1 or each light, it will use the following: A1D1P1.
         float attenuation = AttenuationFactor(light.ConstantAttenuation, light.LinearAttenuation, light.QuadraticAttenuation, length(L));
         
         
+        // This is the shadow calculation. This is messed up at the moment because we have a strange shadow map texture coordinate vector. This
+        // is probably due to incorrect cube map generation which I'll look into later.
         vec3 lightToPixel = VertexOutput_PositionWS.xyz - PLight0_PositionWS;
-        //vec3 lightToPixel = PLight0_PositionWS - VertexOutput_PositionWS.xyz;
-        
+
         float pixelDepth  = length(lightToPixel) - 0.05;
         float shadowDepth = textureCube(ShadowMap, vec3(lightToPixel.x, -lightToPixel.y, -lightToPixel.z)).r;
         float shadow      = (pixelDepth < shadowDepth) ? 1.0 : 0.0;
-        //float shadow = shadowDepth;
 
-        //diffuseOut = vec3(InverseView * vec4(lightToPixel, 1.0));
-        //diffuseOut.r = pixelDepth  / 10.0;
-        //diffuseOut = PLight0_PositionWS;
         diffuseOut  += light.Colour * diffuse  * attenuation * shadow;
         specularOut += light.Colour * specular * attenuation * shadow;
     }
