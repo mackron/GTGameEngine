@@ -290,7 +290,6 @@ namespace GTEngine
             ShaderParameterCache parameters;
 
             Texture2D* materialBuffer2;
-            glm::vec2  screenSize;
         };
 
         // A general function for drawing a vertex array during a lighting pass.

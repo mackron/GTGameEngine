@@ -57,6 +57,7 @@
     varying vec3 VertexOutput_Bitangent;
     varying vec4 VertexOutput_Position;
     varying vec4 VertexOutput_PositionWS;
+    varying vec3 VertexOutput_PositionNDC;
 		
     uniform mat4 ModelMatrix;
     uniform mat4 ModelViewMatrix;
@@ -67,12 +68,13 @@
 	{
         gl_Position = MVPMatrix * vec4(VertexInput_Position, 1.0);
         
-		VertexOutput_TexCoord   = VertexInput_TexCoord;
-		VertexOutput_Normal     = normalize(NormalMatrix * VertexInput_Normal);
-        VertexOutput_Tangent    = normalize(NormalMatrix * VertexInput_Tangent);
-        VertexOutput_Bitangent  = normalize(NormalMatrix * VertexInput_Bitangent);
-        VertexOutput_Position   = ModelViewMatrix * vec4(VertexInput_Position, 1.0);
-        VertexOutput_PositionWS = ModelMatrix     * vec4(VertexInput_Position, 1.0);
+		VertexOutput_TexCoord    = VertexInput_TexCoord;
+		VertexOutput_Normal      = normalize(NormalMatrix * VertexInput_Normal);
+        VertexOutput_Tangent     = normalize(NormalMatrix * VertexInput_Tangent);
+        VertexOutput_Bitangent   = normalize(NormalMatrix * VertexInput_Bitangent);
+        VertexOutput_Position    = ModelViewMatrix * vec4(VertexInput_Position, 1.0);
+        VertexOutput_PositionWS  = ModelMatrix     * vec4(VertexInput_Position, 1.0);
+        VertexOutput_PositionNDC = gl_Position.xyz / gl_Position.w;
 	}
 </shader>
 
