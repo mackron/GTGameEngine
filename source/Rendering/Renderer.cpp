@@ -85,6 +85,9 @@ namespace GTEngine
     // This is a bitfield containing bits representing which vertex attributes are currently enabled on the OpenGL side.
     uint32_t VertexAttribEnableBits = 0x0;
 
+    // A pointer to the vertex array that was last drawn.
+    const VertexArray* LastDrawnVertexArray = nullptr;
+
 
     // Hardware capabilities.
     struct _RendererCaps
@@ -612,37 +615,46 @@ namespace GTEngine
         VertexAttribEnableBits = newVertexAttribEnableBits;
     }
 
-    void Renderer::Draw(const VertexArray *vertexArray, DrawMode mode)
+    void Renderer::Draw(const VertexArray* vertexArray, DrawMode mode)
     {
-        // TODO: Perhaps keep track of the last used vertex array so we can determine whether or not it needs to be re-enabled.
-
         assert(vertexArray != nullptr);
 
         auto rendererData = static_cast<const VertexArray_GL20*>(vertexArray->GetRendererData());
         assert(rendererData != nullptr);
 
-        glBindBuffer(GL_ARRAY_BUFFER,         rendererData->verticesObject);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererData->indicesObject);
+        if (LastDrawnVertexArray != vertexArray)
+        {
+            glBindBuffer(GL_ARRAY_BUFFER,         rendererData->verticesObject);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererData->indicesObject);
 
 
-        // First we enable the vertex format. We pass null to this one to indicate that we're using a VBO.
-        Renderer_EnableVertexFormat(vertexArray->GetFormat(), nullptr);
+            // First we enable the vertex format. We pass null to this one to indicate that we're using a VBO.
+            Renderer_EnableVertexFormat(vertexArray->GetFormat(), nullptr);
+
+            LastDrawnVertexArray = vertexArray;
+        }
 
         // Now that everything has been enabled/disabled, we draw the elements.
         glDrawElements(ToOpenGLDrawMode(mode), rendererData->indexCount, GL_UNSIGNED_INT, 0);
     }
 
-    void Renderer::Draw(const float *vertices, const unsigned int *indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
+    void Renderer::Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
     {
         // Any previously bound vertex buffer needs to be unbound.
-        glBindBuffer(GL_ARRAY_BUFFER,         0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        if (LastDrawnVertexArray != nullptr)
+        {
+            glBindBuffer(GL_ARRAY_BUFFER,         0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        }
 
         // First we enable the vertex format...
         Renderer_EnableVertexFormat(format, vertices);
 
         // ... then we just draw the elements.
         glDrawElements(ToOpenGLDrawMode(mode), static_cast<GLsizei>(indexCount), GL_UNSIGNED_INT, indices);
+
+
+        LastDrawnVertexArray = nullptr;
     }
 
     void Renderer::EnableScissorTest()
