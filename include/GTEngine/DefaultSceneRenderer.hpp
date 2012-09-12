@@ -504,7 +504,7 @@ namespace GTEngine
         TextureCube pointLightShadowMap;
 
         /// The depth buffer for the point light shadow map framebuffer.
-        Texture2D* pointLightShadowMapDepthBuffer;
+        Texture2D pointLightShadowMapDepthBuffer;
 
         /// The framebuffer to use for point light shadow maps.
         Framebuffer pointLightShadowMapFramebuffer;
