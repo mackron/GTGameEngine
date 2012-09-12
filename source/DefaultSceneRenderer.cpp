@@ -188,6 +188,32 @@ namespace GTEngine
             delete this->viewportFramebuffers.buffer[i]->value;
         }
 
+        // Shaders need to be unacquired
+        ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_A1);
+        ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_D1);
+        ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_P1);
+        ShaderLibrary::Unacquire(Shaders.Lighting_P1);
+        ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_S1);
+        ShaderLibrary::Unacquire(Shaders.Lighting_ShadowMap);
+        ShaderLibrary::Unacquire(Shaders.Compositor_DiffuseOnly);
+        ShaderLibrary::Unacquire(Shaders.Compositor_DiffuseLightingOnly);
+        ShaderLibrary::Unacquire(Shaders.Compositor_FinalOutput);
+
+        /// The material shaders need to be deleted.
+        auto &shaders = this->Shaders.materialPassShaders.GetShaders();
+        for (size_t i = 0; i < shaders.count; ++i)
+        {
+            delete shaders.buffer[i]->value;
+        }
+
+        /// We need to make sure any existing material metadata is removed for tidyness.
+        while (this->materialMetadatas.root != nullptr)
+        {
+            delete this->materialMetadatas.root->value;
+            this->materialMetadatas.RemoveRoot();
+        }
+
+
         delete this->pointLightShadowMapDepthBuffer;
     }
 
