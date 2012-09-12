@@ -155,7 +155,6 @@ namespace GTEngine
         pointLightShadowMap.NegativeY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
         pointLightShadowMap.PositiveZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
         pointLightShadowMap.NegativeZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
-
         pointLightShadowMapDepthBuffer = new Texture2D(shadowMapSize, shadowMapSize, GTImage::ImageFormat_Depth24_Stencil8);
 
         this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.PositiveX, 0);
@@ -193,10 +192,8 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer::Begin(Scene &scene)
+    void DefaultSceneRenderer::Begin(Scene &)
     {
-        (void)scene;
-
         this->rcBegin[Renderer::BackIndex].Reset();
         this->rcEnd[Renderer::BackIndex].Reset();
         this->rcBeginLayer[Renderer::BackIndex].Reset();
@@ -213,9 +210,8 @@ namespace GTEngine
         this->rcLighting_DrawShadowPassGeometry[Renderer::BackIndex].Reset();
     }
 
-    void DefaultSceneRenderer::End(Scene &scene)
+    void DefaultSceneRenderer::End(Scene &)
     {
-        (void)scene;
     }
 
 
@@ -959,24 +955,9 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RCLighting_SetShader::Execute()
     {
-        /*
-        for (size_t i = 0; i < this->parameters.GetCount(); ++i)
-        {
-            auto iParamName  = this->parameters.GetNameByIndex(i);
-            auto iParamValue = this->parameters.GetByIndex(i);
-
-            this->shader->SetParameter(iParamName, iParamValue);
-        }
-        */
-
         Renderer::SetShader(this->shader);
-
         Renderer::SetShaderParameter("Lighting_Normals", this->materialBuffer2);
-        //Renderer::SetShaderParameter("ScreenSize",       this->screenSize);
 
-
-        
-        // TODO: Test that this still works...
         for (size_t i = 0; i < this->parameters.GetCount(); ++i)
         {
             auto iParamName  = this->parameters.GetNameByIndex(i);
@@ -984,7 +965,6 @@ namespace GTEngine
 
             iParamValue->SetOnCurrentShader(iParamName);
         }
-        
     }
 
     void DefaultSceneRenderer::RCLighting_DrawGeometry::Execute()

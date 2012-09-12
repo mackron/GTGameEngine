@@ -8,6 +8,7 @@ namespace GTEngine
         : PositiveX(), NegativeX(),
           PositiveY(), NegativeY(),
           PositiveZ(), NegativeZ(),
+          minFilter(TextureFilter_Nearest), magFilter(TextureFilter_Nearest), anisotropy(0),
           rendererData(nullptr), shaders()
     {
         Renderer::OnTextureCubeCreated(*this);
@@ -38,6 +39,52 @@ namespace GTEngine
 
         Renderer::OnTextureCubeDeleted(*this);
     }
+
+
+
+    void TextureCube::SetMinificationFilter(TextureFilter newFilter)
+    {
+        if (this->minFilter != newFilter)
+        {
+            this->minFilter = newFilter;
+            Renderer::OnTextureCubeMinificationFilterChanged(*this);
+        }
+    }
+
+    void TextureCube::SetMagnificationFilter(TextureFilter newFilter)
+    {
+        if (this->magFilter != newFilter)
+        {
+            this->magFilter = newFilter;
+            Renderer::OnTextureCubeMagnificationFilterChanged(*this);
+        }
+    }
+
+    TextureFilter TextureCube::GetMinificationFilter() const
+    {
+        return this->minFilter;
+    }
+
+    TextureFilter TextureCube::GetMagnificationFilter() const
+    {
+        return this->magFilter;
+    }
+
+
+    void TextureCube::SetAnisotropy(unsigned int newAnisotropy)
+    {
+        if (this->anisotropy != newAnisotropy)
+        {
+            this->anisotropy = newAnisotropy;
+            Renderer::OnTextureCubeAnisotropyChanged(*this);
+        }
+    }
+
+    unsigned int TextureCube::GetAnisotropy() const
+    {
+        return this->anisotropy;
+    }
+
 
 
     void TextureCube::OnAttachToShader(Shader &shader)

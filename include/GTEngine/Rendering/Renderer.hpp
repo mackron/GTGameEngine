@@ -527,6 +527,21 @@ namespace GTEngine
         /// @param texture [in] The texture that is being deleted.
         static void OnTextureCubeDeleted(TextureCube &texture);
 
+        /// Called when the minification filter of a texture has changed.
+        ///
+        /// @param texture [in] The texture whose minification fitler has changed.
+        static void OnTextureCubeMinificationFilterChanged(TextureCube &texture);
+
+        /// Called when the magnification filter of a texture has changed.
+        ///
+        /// @param texture [in] The texture whose magnification filter has changed.
+        static void OnTextureCubeMagnificationFilterChanged(TextureCube &texture);
+
+        /// Called when the anisotropy of a texture has changed.
+        ///
+        /// @param texture [in] The texture whose anisotopy has changed.
+        static void OnTextureCubeAnisotropyChanged(TextureCube &texture);
+
 
 
         /////////////////////////////////////////////
