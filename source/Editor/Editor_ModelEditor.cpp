@@ -2,26 +2,26 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/ModelLibrary.hpp>
+#include <GTEngine/MaterialLibrary.hpp>
+
 
 namespace GTEngine
 {
     Editor_ModelEditor::Editor_ModelEditor(Editor &editor)
         : editor(editor),
-          scene(), viewport(), camera(), renderer(),
+          scene(), viewport(), camera(),
           modelNode(), convexHullParentNode(), convexHullNodes(),
           GUI(), viewportEventHandler(editor.GetGame(), viewport),
           cameraXRotation(), cameraYRotation(),
           currentState(nullptr), loadedStates()
     {
-        this->viewport.SetRenderer(this->renderer);
         this->viewport.SetCameraNode(this->camera);
-
         this->scene.AddViewport(this->viewport);
 
 
-        // The viewport should clear the background.
-        this->renderer.SetClearColour(0.5f, 0.5f, 0.5f);
-        this->renderer.EnableColourClears();
+        // TODO: Change clear colour to 0.5.
+        
+
 
         // We need to ensure the model node has a model component.
         this->modelNode.AddComponent<GTEngine::ModelComponent>();

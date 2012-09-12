@@ -12,7 +12,6 @@ namespace GTEngine
 {
     class Scene;
     class SceneNode;
-    class ViewportRenderer;
     class Framebuffer;
     class Texture2D;
 
@@ -65,14 +64,6 @@ namespace GTEngine
               SceneNode* GetCameraNode(int layer = 0);
         const SceneNode* GetCameraNode(int layer = 0) const;
 
-        
-        /// Sets the renderer.
-        void SetRenderer(ViewportRenderer* renderer);
-        void SetRenderer(ViewportRenderer &renderer) { this->SetRenderer(&renderer); }
-
-        /// Retrieves a pointer to the renderer.
-        ViewportRenderer* GetRenderer();
-
 
         /// Retrieves the width of the viewport.
         /// @return The width of the viewport.
@@ -89,56 +80,6 @@ namespace GTEngine
         /// Retrieves the colour buffer of the viewport.
         Texture2D* GetColourBuffer() { return this->colourBuffer; }
 
-
-
-        /// Retrieves a reference to the cache of model components.
-        GTCore::Vector<ModelComponent*> & GetModelComponents() { return this->modelComponents; }
-
-        /// Retrieves a reference to the cache of ambient light components.
-        GTCore::Vector<AmbientLightComponent*> & GetAmbientLightComponents() { return this->ambientLightComponents; }
-
-        /// Retrieves a reference to the cache of directional light components.
-        GTCore::Vector<DirectionalLightComponent*> & GetDirectionalLightComponents() { return this->directionalLightComponents; }
-
-        /// Retrieves a reference to the cache of point light components.
-        GTCore::Vector<PointLightComponent*> & GetPointLightComponents() { return this->pointLightComponents; }
-
-        /// Retrieves a reference to the cache of spot light components.
-        GTCore::Vector<SpotLightComponent*> & GetSpotLightComponents() { return this->spotLightComponents; }
-
-        
-
-
-        /// Adds a model component.
-        void AddModelComponent(ModelComponent &component);
-
-        /// Adds an ambient light component.
-        void AddAmbientLightComponent(AmbientLightComponent &component);
-
-        /// Adds a directional light component.
-        void AddDirectionalLightComponent(DirectionalLightComponent &component);
-
-        /// Adds a point light component.
-        void AddPointLightComponent(PointLightComponent &component);
-
-        /// Adds a spot light component.
-        void AddSpotLightComponent(SpotLightComponent &component);
-
-
-
-        /// Draws the content of the viewport using the attached renderer. If no renderer is attached, this will do nothing.
-        void Render();
-
-        /// Retrieves the framebuffer that the renderer is drawing to. An application will need to retrieve this in order to
-        /// show the rendering result. This will return null if there is no renderer.
-        Framebuffer* GetFramebuffer();
-
-
-        /// Retrieves the final colour output buffer. Can return null if there is no renderer.
-        Texture2D* GetColourOutputBuffer();
-
-        /// Retrieves the final depth/stencil output buffer. Can return null if there is no renderer.
-        Texture2D* GetDepthStencilOutputBuffer();
 
 
         /// Retrieves a direct reference to the internal map of layer cameras.
@@ -203,9 +144,6 @@ namespace GTEngine
         GTCore::Map<int, SceneNode*> cameraNodes;
 
 
-        /// The renderer to use when drawing this viewport.
-        ViewportRenderer* renderer;
-
         /// The width of the viewport.
         unsigned int width;
 
@@ -215,23 +153,6 @@ namespace GTEngine
 
         /// The texture that will hold the colour data of the viewport. Retrieve this with GetColourBuffer().
         Texture2D* colourBuffer;
-
-
-        /// The cache of model components.
-        GTCore::Vector<ModelComponent*> modelComponents;
-
-        /// The cache of ambient light components.
-        GTCore::Vector<AmbientLightComponent*> ambientLightComponents;
-
-        /// The cache of directional light components.
-        GTCore::Vector<DirectionalLightComponent*> directionalLightComponents;
-
-        /// The cache of point light components.
-        GTCore::Vector<PointLightComponent*> pointLightComponents;
-
-        /// The cache of spot light components.
-        GTCore::Vector<SpotLightComponent*> spotLightComponents;
-
 
 
     private: // No copying.

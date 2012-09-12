@@ -233,16 +233,10 @@
     <ClInclude Include="..\..\..\include\GTEngine\GTEngine.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\ViewportRenderer.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Components\DynamicsComponent.hpp">
@@ -541,9 +535,6 @@
     <ClCompile Include="..\..\..\source\Component.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Errors.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -608,9 +599,6 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\VertexArrayLibrary.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\ViewportRenderer.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\MaterialShaderCache.cpp">

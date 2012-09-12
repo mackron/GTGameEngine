@@ -194,7 +194,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultScenePhysicsManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneUpdateManager.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\DefaultViewportRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor3DViewportEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_ImageEditor.hpp" />
@@ -284,7 +283,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\ThreadCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\ViewportRenderer.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\Resources.hpp" />
@@ -321,7 +319,6 @@
     <ClCompile Include="..\..\..\source\DefaultScenePhysicsManager.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneUpdateManager.cpp" />
-    <ClCompile Include="..\..\..\source\DefaultViewportRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Editor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor3DViewportEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor_ImageEditor.cpp" />
@@ -393,7 +390,6 @@
     <ClCompile Include="..\..\..\source\ThreadCache.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayLibrary.cpp" />
-    <ClCompile Include="..\..\..\source\ViewportRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\engine\editor\combobox.xml" />
