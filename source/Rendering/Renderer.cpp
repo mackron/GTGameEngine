@@ -614,6 +614,8 @@ namespace GTEngine
 
     void Renderer::Draw(const VertexArray *vertexArray, DrawMode mode)
     {
+        // TODO: Perhaps keep track of the last used vertex array so we can determine whether or not it needs to be re-enabled.
+
         assert(vertexArray != nullptr);
 
         auto rendererData = static_cast<const VertexArray_GL20*>(vertexArray->GetRendererData());
@@ -645,13 +647,19 @@ namespace GTEngine
 
     void Renderer::EnableScissorTest()
     {
-        glEnable(GL_SCISSOR_TEST);
-        RendererState.IsScissorEnabled = true;
+        if (!RendererState.IsScissorEnabled)
+        {
+            glEnable(GL_SCISSOR_TEST);
+            RendererState.IsScissorEnabled = true;
+        }
     }
     void Renderer::DisableScissorTest()
     {
-        glDisable(GL_SCISSOR_TEST);
-        RendererState.IsScissorEnabled = false;
+        if (RendererState.IsScissorEnabled)
+        {
+            glDisable(GL_SCISSOR_TEST);
+            RendererState.IsScissorEnabled = false;
+        }
     }
 
 
