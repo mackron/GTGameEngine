@@ -1,16 +1,13 @@
 
 #include <GTEngine/SceneViewport.hpp>
-#include <GTEngine/ViewportRenderer.hpp>
 #include <GTEngine/Scene.hpp>
 
 namespace GTEngine
 {
     SceneViewport::SceneViewport()
         : scene(nullptr), cameraNodes(),
-          renderer(nullptr),
           width(1), height(1),
-          colourBuffer(nullptr),
-          modelComponents(), ambientLightComponents(), directionalLightComponents(), pointLightComponents(), spotLightComponents()
+          colourBuffer(nullptr)
     {
     }
 
@@ -64,30 +61,6 @@ namespace GTEngine
     }
 
 
-    void SceneViewport::SetRenderer(ViewportRenderer* renderer)
-    {
-        // First we need to detach the old renderer...
-        if (this->renderer != nullptr)
-        {
-            this->renderer->SetOwnerViewport(nullptr);
-        }
-
-        // And now we set the new renderer. The new renderer needs to be resized correctly.
-        this->renderer = renderer;
-
-        if (this->renderer != nullptr)
-        {
-            this->renderer->SetOwnerViewport(this);
-            this->renderer->ResizeFramebuffer(this->width, this->height);
-        }
-    }
-
-    ViewportRenderer* SceneViewport::GetRenderer()
-    {
-        return this->renderer;
-    }
-
-
     unsigned int SceneViewport::GetWidth() const
     {
         return this->width;
@@ -109,82 +82,8 @@ namespace GTEngine
         {
             this->scene->GetRenderer().OnViewportResized(*this);
         }
-
-        if (this->renderer != nullptr)
-        {
-            this->renderer->ResizeFramebuffer(this->width, this->height);
-        }
     }
 
-
-    void SceneViewport::AddModelComponent(ModelComponent &component)
-    {
-        this->modelComponents.PushBack(&component);
-    }
-
-    void SceneViewport::AddAmbientLightComponent(AmbientLightComponent &component)
-    {
-        this->ambientLightComponents.PushBack(&component);
-    }
-
-    void SceneViewport::AddDirectionalLightComponent(DirectionalLightComponent &component)
-    {
-        this->directionalLightComponents.PushBack(&component);
-    }
-
-    void SceneViewport::AddPointLightComponent(PointLightComponent &component)
-    {
-        this->pointLightComponents.PushBack(&component);
-    }
-
-    void SceneViewport::AddSpotLightComponent(SpotLightComponent &component)
-    {
-        this->spotLightComponents.PushBack(&component);
-    }
-
-
-    void SceneViewport::Render()
-    {
-        if (this->renderer != nullptr)
-        {
-            // We first need to update the rendering data. This will retrieve all of the components that are required for drawing the scene from
-            // this viewport's perspective.
-            //this->UpdateRenderingData();
-
-            // Now that we have the rendered components cached, we can render the viewport.
-            this->renderer->Render();
-        }
-    }
-
-    Framebuffer* SceneViewport::GetFramebuffer()
-    {
-        if (this->renderer != nullptr)
-        {
-            return &this->renderer->GetFramebuffer();
-        }
-
-        return nullptr;
-    }
-
-    Texture2D* SceneViewport::GetColourOutputBuffer()
-    {
-        if (this->renderer != nullptr)
-        {
-            return this->renderer->GetFinalColourOutputBuffer();
-        }
-
-        return nullptr;
-    }
-
-    Texture2D* SceneViewport::GetDepthStencilOutputBuffer()
-    {
-        if (this->renderer != nullptr)
-        {
-            return this->renderer->GetFinalDepthStencilOutputBuffer();
-        }
-
-        return nullptr;
-    }
 
 
     /*** Picking ***/
@@ -271,29 +170,4 @@ namespace GTEngine
         
         return glm::mat4();
     }
-}
-
-// Private
-namespace GTEngine
-{
-    /*
-    void SceneViewport::UpdateRenderingData()
-    {
-        this->ClearRenderingData();
-        
-        if (this->scene != nullptr)
-        {
-            this->scene->AddVisibleComponents(*this);
-        }
-    }
-
-    void SceneViewport::ClearRenderingData()
-    {
-        this->modelComponents.Clear();
-        this->ambientLightComponents.Clear();
-        this->directionalLightComponents.Clear();
-        this->pointLightComponents.Clear();
-        this->spotLightComponents.Clear();
-    }
-    */
 }

@@ -4,7 +4,6 @@
 
 #include "../Scene.hpp"
 #include "../ConvexHullBuildSettings.hpp"
-#include "../DefaultViewportRenderer.hpp"
 #include "Editor3DViewportEventHandler.hpp"
 #include <GTGUI/Element.hpp>
 #include <GTCore/Random.hpp>
@@ -116,9 +115,6 @@ namespace GTEngine
 
         /// The scene node acting as the camera for the viewport.
         SceneNode camera;
-
-        /// The renderer to use with the viewport.
-        DefaultViewportRenderer renderer;
 
 
         /// The scene node containing the model.
