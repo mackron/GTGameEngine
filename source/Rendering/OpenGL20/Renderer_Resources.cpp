@@ -142,16 +142,11 @@ namespace GTEngine
         {
             assert(this->texture != nullptr);
 
-            if (this->target == Texture2DTarget_Default)
-            {
-                glBindTexture(GL_TEXTURE_2D, this->texture->object);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filter);
-            }
+            glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filter);
         }
 
         Texture2D_GL20* texture;
-        Texture2DTarget target;
-
         GLint filter;
     };
 
@@ -161,16 +156,11 @@ namespace GTEngine
         {
             assert(this->texture != nullptr);
 
-            if (this->target == Texture2DTarget_Default)
-            {
-                glBindTexture(GL_TEXTURE_2D, this->texture->object);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, this->filter);
-            }
+            glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, this->filter);
         }
 
         Texture2D_GL20* texture;
-        Texture2DTarget target;
-
         GLint filter;
     };
 
@@ -180,16 +170,11 @@ namespace GTEngine
         {
             assert(this->texture != nullptr);
 
-            if (this->target == Texture2DTarget_Default)
-            {
-                glBindTexture(GL_TEXTURE_2D, this->texture->object);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
-            }
+            glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
         }
 
         Texture2D_GL20* texture;
-        Texture2DTarget target;
-
         GLint anisotropy;
     };
 
@@ -199,17 +184,12 @@ namespace GTEngine
         {
             assert(this->texture != nullptr);
 
-            if (this->target == Texture2DTarget_Default)
-            {
-                glBindTexture(GL_TEXTURE_2D, this->texture->object);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrapMode);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrapMode);
-            }
+            glBindTexture(GL_TEXTURE_2D, this->texture->object);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrapMode);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrapMode);
         }
 
         Texture2D_GL20* texture;
-        Texture2DTarget target;
-
         GLint wrapMode;
     };
 
@@ -230,8 +210,9 @@ namespace GTEngine
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL,  0);
 
             // Filter.
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,         this->minFilter);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER,         this->magFilter);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
 
             // Wrap Mode.
             //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -240,6 +221,10 @@ namespace GTEngine
         }
 
         TextureCube_GL20* texture;
+
+        GLint minFilter;
+        GLint magFilter;
+        GLint anisotropy;
     };
 
     struct RCOnTextureCubeDeleted : public GTEngine::RenderCommand
@@ -253,6 +238,48 @@ namespace GTEngine
         }
 
         TextureCube_GL20* texture;
+    };
+
+    struct RCOnTextureCubeMinificationFilterChanged : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->texture != nullptr);
+
+            glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, this->filter);
+        }
+
+        TextureCube_GL20* texture;
+        GLint filter;
+    };
+
+    struct RCOnTextureCubeMagnificationFilterChanged : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->texture != nullptr);
+
+            glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, this->filter);
+        }
+
+        TextureCube_GL20* texture;
+        GLint filter;
+    };
+
+    struct RCOnTextureCubeAnisotropyChanged : public GTEngine::RenderCommand
+    {
+        void Execute()
+        {
+            assert(this->texture != nullptr);
+
+            glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+        }
+
+        TextureCube_GL20* texture;
+        GLint anisotropy;
     };
 
 
@@ -589,30 +616,33 @@ namespace GTEngine
     /// The RC queues for resource events.
     static RCQueue ResourceRCQueues[2];
 
-    static RCCache<RCOnTexture2DCreated>                    RCCache_OnTexture2DCreated[2];
-    static RCCache<RCOnTexture2DDeleted>                    RCCache_OnTexture2DDeleted[2];
-    static RCCache<RCOnTexture2DMipmapChanged>              RCCache_OnTexture2DMipmapChanged[2];
-    static RCCache<RCOnTexture2DMinificationFilterChanged>  RCCache_OnTexture2DMinificationFilterChanged[2];
-    static RCCache<RCOnTexture2DMagnificationFilterChanged> RCCache_OnTexture2DMagnificationFilterChanged[2];
-    static RCCache<RCOnTexture2DAnisotropyChanged>          RCCache_OnTexture2DAnisotropyChanged[2];
-    static RCCache<RCOnTexture2DWrapModeChanged>            RCCache_OnTexture2DWrapModeChanged[2];
+    static RCCache<RCOnTexture2DCreated>                      RCCache_OnTexture2DCreated[2];
+    static RCCache<RCOnTexture2DDeleted>                      RCCache_OnTexture2DDeleted[2];
+    static RCCache<RCOnTexture2DMipmapChanged>                RCCache_OnTexture2DMipmapChanged[2];
+    static RCCache<RCOnTexture2DMinificationFilterChanged>    RCCache_OnTexture2DMinificationFilterChanged[2];
+    static RCCache<RCOnTexture2DMagnificationFilterChanged>   RCCache_OnTexture2DMagnificationFilterChanged[2];
+    static RCCache<RCOnTexture2DAnisotropyChanged>            RCCache_OnTexture2DAnisotropyChanged[2];
+    static RCCache<RCOnTexture2DWrapModeChanged>              RCCache_OnTexture2DWrapModeChanged[2];
 
-    static RCCache<RCOnTextureCubeCreated>                  RCCache_OnTextureCubeCreated[2];
-    static RCCache<RCOnTextureCubeDeleted>                  RCCache_OnTextureCubeDeleted[2];
+    static RCCache<RCOnTextureCubeCreated>                    RCCache_OnTextureCubeCreated[2];
+    static RCCache<RCOnTextureCubeDeleted>                    RCCache_OnTextureCubeDeleted[2];
+    static RCCache<RCOnTextureCubeMinificationFilterChanged>  RCCache_OnTextureCubeMinificationFilterChanged[2];
+    static RCCache<RCOnTextureCubeMagnificationFilterChanged> RCCache_OnTextureCubeMagnificationFilterChanged[2];
+    static RCCache<RCOnTextureCubeAnisotropyChanged>          RCCache_OnTextureCubeAnisotropyChanged[2];
 
-    static RCCache<RCOnVertexArrayCreated>                  RCCache_OnVertexArrayCreated[2];
-    static RCCache<RCOnVertexArrayDeleted>                  RCCache_OnVertexArrayDeleted[2];
-    static RCCache<RCOnVertexArrayVertexDataChanged>        RCCache_OnVertexArrayVertexDataChanged[2];
-    static RCCache<RCOnVertexArrayIndexDataChanged>         RCCache_OnVertexArrayIndexDataChanged[2];
+    static RCCache<RCOnVertexArrayCreated>                    RCCache_OnVertexArrayCreated[2];
+    static RCCache<RCOnVertexArrayDeleted>                    RCCache_OnVertexArrayDeleted[2];
+    static RCCache<RCOnVertexArrayVertexDataChanged>          RCCache_OnVertexArrayVertexDataChanged[2];
+    static RCCache<RCOnVertexArrayIndexDataChanged>           RCCache_OnVertexArrayIndexDataChanged[2];
 
-    static RCCache<RCOnShaderCreated>                       RCCache_OnShaderCreated[2];
-    static RCCache<RCOnShaderDeleted>                       RCCache_OnShaderDeleted[2];
+    static RCCache<RCOnShaderCreated>                         RCCache_OnShaderCreated[2];
+    static RCCache<RCOnShaderDeleted>                         RCCache_OnShaderDeleted[2];
 
-    static RCCache<RCOnFramebufferCreated>                  RCCache_OnFramebufferCreated[2];
-    static RCCache<RCOnFramebufferDeleted>                  RCCache_OnFramebufferDeleted[2];
-    static RCCache<RCOnColourBufferChanged>                 RCCache_OnColourBufferChanged[2];
-    static RCCache<RCOnDepthStencilBufferChanged>           RCCache_OnDepthStencilBufferChanged[2];
-    static RCCache<RCCheckFramebuffer>                      RCCache_OnCheckFramebuffer[2];
+    static RCCache<RCOnFramebufferCreated>                    RCCache_OnFramebufferCreated[2];
+    static RCCache<RCOnFramebufferDeleted>                    RCCache_OnFramebufferDeleted[2];
+    static RCCache<RCOnColourBufferChanged>                   RCCache_OnColourBufferChanged[2];
+    static RCCache<RCOnDepthStencilBufferChanged>             RCCache_OnDepthStencilBufferChanged[2];
+    static RCCache<RCCheckFramebuffer>                        RCCache_OnCheckFramebuffer[2];
     
 
 
@@ -693,52 +723,55 @@ namespace GTEngine
 
     void Renderer::OnTexture2DMinificationFilterChanged(Texture2D &texture)
     {
-        auto &rc = RCCache_OnTexture2DMinificationFilterChanged[Renderer::BackIndex].Acquire();
-        rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
-        rc.target  = texture.GetTarget();
+        if (texture.GetTarget() == Texture2DTarget_Default)
+        {
+            auto &rc = RCCache_OnTexture2DMinificationFilterChanged[Renderer::BackIndex].Acquire();
+            rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
 
-        size_t baseMipLevel, maxMipLevel;
-        texture.GetValidMipmapRange(baseMipLevel, maxMipLevel);
+            size_t baseMipLevel, maxMipLevel;
+            texture.GetValidMipmapRange(baseMipLevel, maxMipLevel);
 
-        rc.filter = ToOpenGLTextureMinificationFilter(texture.GetMinificationFilter(), baseMipLevel != maxMipLevel);
+            rc.filter = ToOpenGLTextureMinificationFilter(texture.GetMinificationFilter(), baseMipLevel != maxMipLevel);
 
 
-        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+            ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        }
     }
 
     void Renderer::OnTexture2DMagnificationFilterChanged(Texture2D &texture)
     {
-        auto &rc = RCCache_OnTexture2DMagnificationFilterChanged[Renderer::BackIndex].Acquire();
-        rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
-        rc.target  = texture.GetTarget();
+        if (texture.GetTarget() == Texture2DTarget_Default)
+        {
+            auto &rc = RCCache_OnTexture2DMagnificationFilterChanged[Renderer::BackIndex].Acquire();
+            rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+            rc.filter  = ToOpenGLTextureMinificationFilter(texture.GetMagnificationFilter());
 
-        size_t baseMipLevel, maxMipLevel;
-        texture.GetValidMipmapRange(baseMipLevel, maxMipLevel);
-
-        rc.filter = ToOpenGLTextureMinificationFilter(texture.GetMagnificationFilter());
-
-
-        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+            ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        }
     }
 
     void Renderer::OnTexture2DAnisotropyChanged(Texture2D &texture)
     {
-        auto &rc = RCCache_OnTexture2DAnisotropyChanged[Renderer::BackIndex].Acquire();
-        rc.texture    = static_cast<Texture2D_GL20*>(texture.GetRendererData());
-        rc.target     = texture.GetTarget();
-        rc.anisotropy = static_cast<GLint>(texture.GetAnisotropy());
+        if (texture.GetTarget() == Texture2DTarget_Default)
+        {
+            auto &rc = RCCache_OnTexture2DAnisotropyChanged[Renderer::BackIndex].Acquire();
+            rc.texture    = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+            rc.anisotropy = static_cast<GLint>(texture.GetAnisotropy());
 
-        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+            ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        }
     }
 
     void Renderer::OnTexture2DWrapModeChanged(Texture2D &texture)
     {
-        auto &rc = RCCache_OnTexture2DWrapModeChanged[Renderer::BackIndex].Acquire();
-        rc.texture  = static_cast<Texture2D_GL20*>(texture.GetRendererData());
-        rc.target   = texture.GetTarget();
-        rc.wrapMode = ToOpenGLWrapMode(texture.GetWrapMode());
+        if (texture.GetTarget() == Texture2DTarget_Default)
+        {
+            auto &rc = RCCache_OnTexture2DWrapModeChanged[Renderer::BackIndex].Acquire();
+            rc.texture  = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+            rc.wrapMode = ToOpenGLWrapMode(texture.GetWrapMode());
 
-        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+            ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        }
     }
 
 
@@ -752,6 +785,10 @@ namespace GTEngine
         auto &rc = RCCache_OnTextureCubeCreated[Renderer::BackIndex].Acquire();
         rc.texture = rendererData;
 
+        rc.minFilter  = ToOpenGLTextureMinificationFilter(texture.GetMinificationFilter());
+        rc.magFilter  = ToOpenGLTextureMagnificationFilter(texture.GetMagnificationFilter());
+        rc.anisotropy = static_cast<GLint>(texture.GetAnisotropy());
+
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
 
@@ -763,6 +800,32 @@ namespace GTEngine
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
 
+    void Renderer::OnTextureCubeMinificationFilterChanged(TextureCube &texture)
+    {
+        auto &rc = RCCache_OnTextureCubeMinificationFilterChanged[Renderer::BackIndex].Acquire();
+        rc.texture = static_cast<TextureCube_GL20*>(texture.GetRendererData());
+        rc.filter  = ToOpenGLTextureMinificationFilter(texture.GetMinificationFilter());
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnTextureCubeMagnificationFilterChanged(TextureCube &texture)
+    {
+        auto &rc = RCCache_OnTextureCubeMagnificationFilterChanged[Renderer::BackIndex].Acquire();
+        rc.texture = static_cast<TextureCube_GL20*>(texture.GetRendererData());
+        rc.filter  = ToOpenGLTextureMinificationFilter(texture.GetMagnificationFilter());
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
+
+    void Renderer::OnTextureCubeAnisotropyChanged(TextureCube &texture)
+    {
+        auto &rc = RCCache_OnTextureCubeAnisotropyChanged[Renderer::BackIndex].Acquire();
+        rc.texture    = static_cast<TextureCube_GL20*>(texture.GetRendererData());
+        rc.anisotropy = static_cast<GLint>(texture.GetAnisotropy());
+
+        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+    }
 
 
 
