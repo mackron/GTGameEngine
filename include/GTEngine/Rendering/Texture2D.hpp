@@ -184,10 +184,10 @@ namespace GTEngine
 
 
         /// Called when the texture is attached to a shader.
-        void OnAttachToShader(Shader* shader);
+        void OnAttachToShader(Shader &shader);
 
         /// Called when the texture is detached from a shader.
-        void OnDetachFromShader(Shader* shader);
+        void OnDetachFromShader(Shader &shader);
 
 
     private:

@@ -171,16 +171,16 @@ namespace GTEngine
     }
 
 
-    void Texture2D::OnAttachToShader(Shader* shader)
+    void Texture2D::OnAttachToShader(Shader &shader)
     {
-        if (this->shaders.Find(shader) == nullptr)
+        if (this->shaders.Find(&shader) == nullptr)
         {
-            this->shaders.Append(shader);
+            this->shaders.Append(&shader);
         }
     }
 
-    void Texture2D::OnDetachFromShader(Shader* shader)
+    void Texture2D::OnDetachFromShader(Shader &shader)
     {
-        this->shaders.Remove(this->shaders.Find(shader));
+        this->shaders.Remove(this->shaders.Find(&shader));
     }
 }

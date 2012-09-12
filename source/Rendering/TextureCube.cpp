@@ -22,6 +22,13 @@ namespace GTEngine
 
     TextureCube::~TextureCube()
     {
+        // This will detach this texture from any shaders that it's currently attached to.
+        while (this->shaders.root != nullptr)
+        {
+            this->shaders.root->value->OnTextureDeleted(this);
+            this->shaders.RemoveRoot();
+        }
+
         delete this->PositiveX;
         delete this->NegativeX;
         delete this->PositiveY;

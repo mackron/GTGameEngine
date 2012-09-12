@@ -27,6 +27,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     varying vec3 VertexOutput_Tangent;
     varying vec3 VertexOutput_Bitangent;
     varying vec4 VertexOutput_Position;
+    varying vec4 VertexOutput_PositionWS;
 </shader>
 
 <shader id="Engine_FragmentLightingOutput">
@@ -104,7 +105,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     }
 </shader>
 
-<shader id="Engine_PointLight">
+<shader id="Engine_PointLight_NoShadow">
     struct PointLight
     {
         vec3 Colour;
@@ -134,6 +135,55 @@ uses 1 or each light, it will use the following: A1D1P1.
         specularOut += light.Colour * specular * attenuation;
     }
 </shader>
+
+<shader id="Engine_PointLight">
+<![CDATA[
+    struct PointLight
+    {
+        vec3 Colour;
+        vec3 Position;
+        
+        float ConstantAttenuation;
+        float LinearAttenuation;
+        float QuadraticAttenuation;
+    };
+    
+    uniform samplerCube ShadowMap;
+    uniform vec3        PLight0_PositionWS;
+
+    void CalculatePointLighting(PointLight light, inout vec3 diffuseOut, inout vec3 specularOut)
+    {
+        // N - Input normal
+        // L - Light vector from the light to the vertex
+        
+        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
+        
+        vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
+        vec3 L = light.Position - VertexOutput_Position.xyz;
+        vec3 H = normalize(normalize(L) - normalize(VertexOutput_Position.xyz));
+
+        float diffuse     = DiffuseFactor(N, normalize(L));
+        float specular    = SpecularFactor(N, H, 64.0);
+        float attenuation = AttenuationFactor(light.ConstantAttenuation, light.LinearAttenuation, light.QuadraticAttenuation, length(L));
+        
+        
+        vec3 lightToPixel = VertexOutput_PositionWS.xyz - PLight0_PositionWS;
+        //vec3 lightToPixel = PLight0_PositionWS - VertexOutput_PositionWS.xyz;
+        
+        float pixelDepth  = length(lightToPixel) - 0.05;
+        float shadowDepth = textureCube(ShadowMap, vec3(lightToPixel.x, -lightToPixel.y, -lightToPixel.z)).r;
+        float shadow      = (pixelDepth < shadowDepth) ? 1.0 : 0.0;
+        //float shadow = shadowDepth;
+
+        //diffuseOut = vec3(InverseView * vec4(lightToPixel, 1.0));
+        //diffuseOut.r = pixelDepth  / 10.0;
+        //diffuseOut = PLight0_PositionWS;
+        diffuseOut  += light.Colour * diffuse  * attenuation * shadow;
+        specularOut += light.Colour * specular * attenuation * shadow;
+    }
+]]>
+</shader>
+
 
 <shader id="Engine_SpotLight">
     struct SpotLight
@@ -219,12 +269,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     </include>
 </shader>
 
+
 <shader id="Engine_LightingPass_NoShadow_P1">
     <include url="#Engine_FragmentInput" />
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
     <include url="#Engine_LightingUtils" />
-    <include url="#Engine_PointLight" />
+    <include url="#Engine_PointLight_NoShadow" />
     
     <include>
         uniform PointLight PLights0;
@@ -239,6 +290,28 @@ uses 1 or each light, it will use the following: A1D1P1.
 	    }
     </include>
 </shader>
+
+<shader id="Engine_LightingPass_P1">
+    <include url="#Engine_FragmentInput" />
+    <include url="#Engine_FragmentLightingOutput" />
+    <include url="#Engine_FragmentLightingUniforms" />
+    <include url="#Engine_LightingUtils" />
+    <include url="#Engine_PointLight" />
+    
+    <include>
+        uniform PointLight  PLights0;
+        
+	    void main()
+	    {
+            vec3 diffuse  = vec3(0.0, 0.0, 0.0);
+            vec3 specular = vec3(0.0, 0.0, 0.0);
+            CalculatePointLighting(PLights0, diffuse, specular);
+            
+		    DoFinalLightingOutput(diffuse, specular);
+	    }
+    </include>
+</shader>
+
 
 <shader id="Engine_LightingPass_NoShadow_S1">
     <include url="#Engine_FragmentInput" />
@@ -291,7 +364,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentLightingUniforms" />
     <include url="#Engine_LightingUtils" />
     <include url="#Engine_AmbientLight" />
-    <include url="#Engine_PointLight" />
+    <include url="#Engine_PointLight_NoShadow" />
     
     <include>
         uniform AmbientLight ALights0;
@@ -311,13 +384,17 @@ uses 1 or each light, it will use the following: A1D1P1.
 
 
 <!-- *** Shadow Map Shaders *** -->
-<shader id="Engine_ShadowMap">
+<shader id="Engine_LightingPass_ShadowMap">
     <include url="#Engine_FragmentInput" />
     
     <include>
         void main()
         {
-            gl_FragData[0] = dot(VertexOutput_Position.xyz, VertexOutput_Position.xyz);
+            //gl_FragData[0].r = length(VertexOutput_Position.xyz) / 25.0;
+            gl_FragData[0].r = length(VertexOutput_Position.xyz);
+            
+            //gl_FragData[0].r = dot(VertexOutput_Position.xyz, VertexOutput_Position.xyz);
+            //gl_FragData[0].r = vec4(1000.0);
         }
     </include>
 </shader>

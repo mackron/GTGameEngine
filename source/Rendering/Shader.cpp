@@ -8,7 +8,8 @@ namespace GTEngine
         : vertexSource(vertexSource), fragmentSource(fragmentSource),
           pendingParameters(),
           rendererData(nullptr),
-          currentTexture2Ds(), currentTextureCubes()
+          currentTextures()
+          //currentTexture2Ds(), currentTextureCubes()
     {
         Renderer::OnShaderCreated(*this);
     }
@@ -18,14 +19,24 @@ namespace GTEngine
         this->ClearPendingParameters();
 
         // We need to let any textures know that they are no longer attached to this shader.
-        for (size_t i = 0; i < this->currentTexture2Ds.count; ++i)
+        for (size_t i = 0; i < this->currentTextures.count; ++i)
         {
-            auto iTexture = this->currentTexture2Ds.buffer[i];
+            auto iTexture = this->currentTextures.buffer[i];
             assert(iTexture != nullptr);
 
-            if (iTexture->value != nullptr)
+            auto &attachment = iTexture->value;
+
+            if (attachment.texture != nullptr)
             {
-                iTexture->value->OnDetachFromShader(this);
+                switch (attachment.type)
+                {
+                //case ShaderParameterType_Texture1D:   static_cast<Texture1D* >(attachment.texture)->OnDetachFromShader(*this); break;
+                case ShaderParameterType_Texture2D:   static_cast<Texture2D*  >(attachment.texture)->OnDetachFromShader(*this);  break;
+                //case ShaderParameterType_Texture3D:   static_cast<Texture3D* >(attachment.texture)->OnDetachFromShader(*this); break;
+                case ShaderParameterType_TextureCube: static_cast<TextureCube*>(attachment.texture)->OnDetachFromShader(*this); break;
+
+                default: break;
+                }
             }
         }
 
@@ -44,14 +55,16 @@ namespace GTEngine
     {
         // We need to look for the shader in our current shaders and clear to null. We're also going to set the parameter to null so that
         // it will be updated on the renderer in the next binding.
-        for (size_t i = 0; i < currentTexture2Ds.count; ++i)
+        for (size_t i = 0; i < currentTextures.count; ++i)
         {
-            auto iTexture = currentTexture2Ds.buffer[i];
+            auto iTexture = currentTextures.buffer[i];
             assert(iTexture != nullptr);
 
-            if (iTexture->value == texture)
+            auto &attachment = iTexture->value;
+
+            if (attachment.texture == texture)
             {
-                iTexture->value = nullptr;
+                attachment.texture = nullptr;
                 this->SetParameter(iTexture->key, static_cast<Texture2D*>(nullptr));
             }
         }
@@ -61,14 +74,16 @@ namespace GTEngine
     {
         // We need to look for the shader in our current shaders and clear to null. We're also going to set the parameter to null so that
         // it will be updated on the renderer in the next binding.
-        for (size_t i = 0; i < currentTextureCubes.count; ++i)
+        for (size_t i = 0; i < currentTextures.count; ++i)
         {
-            auto iTexture = currentTextureCubes.buffer[i];
+            auto iTexture = currentTextures.buffer[i];
             assert(iTexture != nullptr);
 
-            if (iTexture->value == texture)
+            auto &attachment = iTexture->value;
+
+            if (attachment.texture == texture)
             {
-                iTexture->value = nullptr;
+                attachment.texture = nullptr;
                 this->SetParameter(iTexture->key, static_cast<TextureCube*>(nullptr));
             }
         }
@@ -83,9 +98,9 @@ namespace GTEngine
             bool referenced = false;
 
             // We check if the old texture is being used by anything. If not, we let it know that it's no longer being used.
-            for (size_t i = 0; i < currentTexture2Ds.count; ++i)
+            for (size_t i = 0; i < currentTextures.count; ++i)
             {
-                if (currentTexture2Ds.buffer[i]->value == oldTexture)
+                if (currentTextures.buffer[i]->value.texture == oldTexture)
                 {
                     referenced = true;
                 }
@@ -94,7 +109,7 @@ namespace GTEngine
             // If the texture is no longer referenced, we let it know that it is detached from the shader.
             if (!referenced)
             {
-                oldTexture->OnDetachFromShader(this);
+                oldTexture->OnDetachFromShader(*this);
             }
         }
     }
@@ -106,9 +121,9 @@ namespace GTEngine
             bool referenced = false;
 
             // We check if the old texture is being used by anything. If not, we let it know that it's no longer being used.
-            for (size_t i = 0; i < currentTextureCubes.count; ++i)
+            for (size_t i = 0; i < currentTextures.count; ++i)
             {
-                if (currentTextureCubes.buffer[i]->value == oldTexture)
+                if (currentTextures.buffer[i]->value.texture == oldTexture)
                 {
                     referenced = true;
                 }

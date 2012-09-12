@@ -36,7 +36,7 @@ namespace GTEngine
 
                 // Filter.
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,         this->minFilter);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,         this->magFilter);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,         this->magFilter);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
 
                 // Wrap Mode.
@@ -99,7 +99,15 @@ namespace GTEngine
             }
             else
             {
-                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+                // TODO: Delete this testing code and replace with just the bind.
+                GLint cubeMapObject;
+                glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &cubeMapObject);
+
+                if (static_cast<GLuint>(cubeMapObject) != this->texture->object)
+                {
+                    glEnable(GL_TEXTURE_CUBE_MAP);
+                    glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+                }
             }
 
 
@@ -163,7 +171,7 @@ namespace GTEngine
             if (this->target == Texture2DTarget_Default)
             {
                 glBindTexture(GL_TEXTURE_2D, this->texture->object);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filter);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, this->filter);
             }
         }
 
@@ -223,15 +231,19 @@ namespace GTEngine
         {
             assert(texture != nullptr);
             glGenTextures(1, &this->texture->object);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, texture->object);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
+
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL,  0);
 
             // Filter.
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
             // Wrap Mode.
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP);
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP);
+            //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         }
 
         TextureCube_GL20* texture;
