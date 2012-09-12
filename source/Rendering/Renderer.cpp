@@ -562,7 +562,7 @@ namespace GTEngine
     }
 
 
-    void Renderer_EnableVertexFormat(const VertexFormat &format, const float *vertices)
+    void Renderer_EnableVertexFormat(const VertexFormat &format, const float* vertices)
     {
         // We need to enable all of the relevant vertex attributes and set their pointers. What we do is we loop over the
         // attributes in the vertex array's format and set the pointers and enable. Then, we disable any previously enabled
@@ -627,9 +627,7 @@ namespace GTEngine
             glBindBuffer(GL_ARRAY_BUFFER,         rendererData->verticesObject);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererData->indicesObject);
 
-
-            // First we enable the vertex format. We pass null to this one to indicate that we're using a VBO.
-            Renderer_EnableVertexFormat(vertexArray->GetFormat(), nullptr);
+            Renderer_EnableVertexFormat(vertexArray->GetFormat(), nullptr);             // <-- 'nullptr' is the vertex pointer, which is unused for vertex arrays.
 
             LastDrawnVertexArray = vertexArray;
         }
