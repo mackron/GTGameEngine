@@ -99,15 +99,8 @@ namespace GTEngine
             }
             else
             {
-                // TODO: Delete this testing code and replace with just the bind.
-                GLint cubeMapObject;
-                glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &cubeMapObject);
-
-                if (static_cast<GLuint>(cubeMapObject) != this->texture->object)
-                {
-                    glEnable(GL_TEXTURE_CUBE_MAP);
-                    glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
-                }
+                glEnable(GL_TEXTURE_CUBE_MAP);
+                glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture->object);
             }
 
 

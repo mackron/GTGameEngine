@@ -148,40 +148,13 @@ namespace GTEngine
           materialMetadatas(),
           pointLightShadowMap(), pointLightShadowMapDepthBuffer(), pointLightShadowMapFramebuffer()
     {
-        /*
-        float* tempData = new float[SHADOW_MAP_SIZE * SHADOW_MAP_SIZE];
-        for (size_t i = 0; i < SHADOW_MAP_SIZE * SHADOW_MAP_SIZE; ++i)
-        {
-            tempData[i] = 1.0f;
-        }
-        */
-        
-        float* tempData = nullptr;
-
         unsigned int shadowMapSize = SHADOW_MAP_SIZE;
-        pointLightShadowMap.PositiveX->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, tempData);
-        pointLightShadowMap.NegativeX->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, tempData);
-        pointLightShadowMap.PositiveY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, tempData);
-        pointLightShadowMap.NegativeY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, tempData);
-        pointLightShadowMap.PositiveZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, tempData);
-        pointLightShadowMap.NegativeZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, tempData);
-
-
-        /*
-        unsigned char* tempData = new unsigned char[SHADOW_MAP_SIZE * SHADOW_MAP_SIZE * 4];
-        for (size_t i = 0; i < SHADOW_MAP_SIZE * SHADOW_MAP_SIZE * 4; ++i)
-        {
-            tempData[i] = 255;
-        }
-
-        unsigned int shadowMapSize = SHADOW_MAP_SIZE;
-        pointLightShadowMap.PositiveX->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_RGBA8, tempData);
-        pointLightShadowMap.NegativeX->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_RGBA8, tempData);
-        pointLightShadowMap.PositiveY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_RGBA8, tempData);
-        pointLightShadowMap.NegativeY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_RGBA8, tempData);
-        pointLightShadowMap.PositiveZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_RGBA8, tempData);
-        pointLightShadowMap.NegativeZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_RGBA8, tempData);
-        */
+        pointLightShadowMap.PositiveX->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
+        pointLightShadowMap.NegativeX->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
+        pointLightShadowMap.PositiveY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
+        pointLightShadowMap.NegativeY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
+        pointLightShadowMap.PositiveZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
+        pointLightShadowMap.NegativeZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
 
         pointLightShadowMapDepthBuffer = new Texture2D(shadowMapSize, shadowMapSize, GTImage::ImageFormat_Depth24_Stencil8);
 
@@ -205,7 +178,7 @@ namespace GTEngine
         this->Shaders.Compositor_DiffuseLightingOnly = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_DiffuseLightingOnly");
         this->Shaders.Compositor_FinalOutput         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_FinalOutput");
 
-        //this->Shaders.Lighting_P1->SetParameter("ShadowMap", &this->pointLightShadowMap);
+        this->Shaders.Lighting_P1->SetParameter("ShadowMap", &this->pointLightShadowMap);
     }
 
     DefaultSceneRenderer::~DefaultSceneRenderer()
@@ -566,7 +539,6 @@ namespace GTEngine
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_A1;
             rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -588,7 +560,6 @@ namespace GTEngine
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_D1;
             rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -613,7 +584,6 @@ namespace GTEngine
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_P1;
             rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -641,7 +611,6 @@ namespace GTEngine
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_S1;
             rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -675,9 +644,6 @@ namespace GTEngine
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_P1;
             rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
-            rcSetShader.SetParameter("ShadowMap", &this->pointLightShadowMap);
-
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -689,11 +655,11 @@ namespace GTEngine
 
 
 
-                rcSetShader.SetParameter("PLights0.Position",             glm::vec3(this->view * glm::vec4(component->GetNode().GetWorldPosition(), 1.0f)));
-                rcSetShader.SetParameter("PLights0.Colour",               component->GetColour());
-                rcSetShader.SetParameter("PLights0.ConstantAttenuation",  component->GetConstantAttenuation());
-                rcSetShader.SetParameter("PLights0.LinearAttenuation",    component->GetLinearAttenuation());
-                rcSetShader.SetParameter("PLights0.QuadraticAttenuation", component->GetQuadraticAttenuation());
+                rcSetShader.SetParameter("PLight0.Position",             glm::vec3(this->view * glm::vec4(component->GetNode().GetWorldPosition(), 1.0f)));
+                rcSetShader.SetParameter("PLight0.Colour",               component->GetColour());
+                rcSetShader.SetParameter("PLight0.ConstantAttenuation",  component->GetConstantAttenuation());
+                rcSetShader.SetParameter("PLight0.LinearAttenuation",    component->GetLinearAttenuation());
+                rcSetShader.SetParameter("PLight0.QuadraticAttenuation", component->GetQuadraticAttenuation());
 
                 rcSetShader.SetParameter("PLight0_PositionWS",           component->GetNode().GetWorldPosition());
             }
@@ -1006,7 +972,7 @@ namespace GTEngine
         Renderer::SetShader(this->shader);
 
         Renderer::SetShaderParameter("Lighting_Normals", this->materialBuffer2);
-        Renderer::SetShaderParameter("ScreenSize",       this->screenSize);
+        //Renderer::SetShaderParameter("ScreenSize",       this->screenSize);
 
 
         

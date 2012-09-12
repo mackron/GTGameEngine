@@ -28,6 +28,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     varying vec3 VertexOutput_Bitangent;
     varying vec4 VertexOutput_Position;
     varying vec4 VertexOutput_PositionWS;
+    varying vec3 VertexOutput_PositionNDC;
 </shader>
 
 <shader id="Engine_FragmentLightingOutput">
@@ -91,7 +92,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     
     void CalculateDirectionalLighting(DirectionalLight light, inout vec3 diffuseOut, inout vec3 specularOut)
     {
-        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
+        vec2 fragCoord = VertexOutput_PositionNDC.xy * 0.5 + 0.5;
     
         vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
         vec3 L = -light.Direction;
@@ -121,7 +122,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         // N - Input normal
         // L - Light vector from the light to the vertex
         
-        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
+        vec2 fragCoord = VertexOutput_PositionNDC.xy * 0.5 + 0.5;
         
         vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
         vec3 L = light.Position - VertexOutput_Position.xyz;
@@ -156,7 +157,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         // N - Input normal
         // L - Light vector from the light to the vertex
         
-        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
+        vec2 fragCoord = VertexOutput_PositionNDC.xy * 0.5 + 0.5;
         
         vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
         vec3 L = light.Position - VertexOutput_Position.xyz;
@@ -201,7 +202,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         // N - Input normal
         // L - Non-normalized light vector from the light to the vertex
         
-        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
+        vec2 fragCoord = VertexOutput_PositionNDC.xy * 0.5 + 0.5;
         
         vec3 N     = texture2D(Lighting_Normals, fragCoord).rgb;
         vec3 L     = light.Position - VertexOutput_Position.xyz;
@@ -296,13 +297,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_PointLight" />
     
     <include>
-        uniform PointLight  PLights0;
+        uniform PointLight PLight0;
         
 	    void main()
 	    {
             vec3 diffuse  = vec3(0.0, 0.0, 0.0);
             vec3 specular = vec3(0.0, 0.0, 0.0);
-            CalculatePointLighting(PLights0, diffuse, specular);
+            CalculatePointLighting(PLight0, diffuse, specular);
             
 		    DoFinalLightingOutput(diffuse, specular);
 	    }
