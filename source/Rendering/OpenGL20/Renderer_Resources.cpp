@@ -1013,6 +1013,12 @@ namespace GTEngine
         RCCache_OnTexture2DAnisotropyChanged[!Renderer::BackIndex].Reset();
         RCCache_OnTexture2DWrapModeChanged[!Renderer::BackIndex].Reset();
 
+        RCCache_OnTextureCubeCreated[!Renderer::BackIndex].Reset();
+        RCCache_OnTextureCubeDeleted[!Renderer::BackIndex].Reset();
+        RCCache_OnTextureCubeMinificationFilterChanged[!Renderer::BackIndex].Reset();
+        RCCache_OnTextureCubeMagnificationFilterChanged[!Renderer::BackIndex].Reset();
+        RCCache_OnTextureCubeAnisotropyChanged[Renderer::BackIndex].Reset();
+
         RCCache_OnVertexArrayCreated[!Renderer::BackIndex].Reset();
         RCCache_OnVertexArrayDeleted[!Renderer::BackIndex].Reset();
         RCCache_OnVertexArrayVertexDataChanged[!Renderer::BackIndex].Reset();
