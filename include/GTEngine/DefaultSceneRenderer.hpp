@@ -57,6 +57,10 @@ namespace GTEngine
         /// Called for a model that's visible in the currently rendering viewport.
         void __MaterialPass_Model(const SceneObject &object);
 
+        /// Called for a model that's visible in a shadow pass.
+        void __ShadowPass_Model(const SceneObject &object, const glm::mat4 &projection, const glm::mat4 &view);
+
+
         /// Called for an ambient light that's visible in the currently rendering viewport.
         void __AmbientLight(const SceneObject &object);
 
@@ -304,6 +308,7 @@ namespace GTEngine
             glm::mat4 mvpMatrix;
             glm::mat3 normalMatrix;
             glm::mat4 modelViewMatrix;
+            glm::mat4 modelMatrix;
 
             /// Whether or not the face culling should change.
             bool changeFaceCulling;
@@ -312,7 +317,47 @@ namespace GTEngine
         };
 
         
-        // 
+        // Begins the generation of a point light shadow map.
+        struct RCLighting_BeginPointShadowMap : public RenderCommand
+        {
+            void Execute();
+
+            /// The shader to use with geometry for the light.
+            Shader* shader;
+
+            /// The shadow map framebuffer.
+            Framebuffer* framebuffer;
+        };
+
+        // Begins the generation of an individual face on a point light shadow map.
+        struct RCLighting_BeginPointShadowMapFace : public RenderCommand
+        {
+            void Execute();
+
+            /// The index of the colour buffer to use as the render target.
+            int colourBufferIndex;
+        };
+
+        // Ends the shadow map pass.
+        struct RCLighting_EndShadowMap : public RenderCommand
+        {
+            void Execute();
+
+            /// The new framebuffer.
+            Framebuffer* newFramebuffer;
+        };
+
+        // Draws some geometry on the shadow pass.
+        struct RCLighting_DrawShadowPassGeometry : public RenderCommand
+        {
+            void Execute();
+
+            /// The vertex array to draw.
+            VertexArray* va;
+
+            glm::mat4 mvpMatrix;
+            glm::mat4 modelViewMatrix;
+        };
 
 
 
@@ -332,7 +377,7 @@ namespace GTEngine
         //void LightingPass_P1(Scene &sceme, DefaultSceneRenderer::Framebuffer &framebuffer);
 
         // Builds the shadow map of the given point light.
-        void LightingPass_BuildPointLightShadowMap(Scene &scene, const GTEngine::SceneNode &camera, const glm::vec3 &position, float radius);
+        void LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const GTEngine::SceneNode &camera, const glm::vec3 &position, float radius);
 
 
         /// Structure containing metadata for materials. There should be one of these for each material.
@@ -415,16 +460,20 @@ namespace GTEngine
 
 
         // Below are caches for render commands. There are always 2 caches - one for the front RC queue, and another for the back.
-        RCCache<RCBegin,      8>         rcBegin[2];
-        RCCache<RCEnd,        8>         rcEnd[2];
-        RCCache<RCBeginLayer, 8>         rcBeginLayer[2];
-        RCCache<RCEndLayer,   8>         rcEndLayer[2];
-        RCCache<RCDrawVA>                rcDrawVA[2];
-        RCCache<RCSetFaceCulling>        rcSetFaceCulling[2];
-        RCCache<RCBeginLighting>         rcBeginLighting[2];
-        RCCache<RCControlBlending>       rcControlBlending[2];
-        RCCache<RCLighting_SetShader>    rcSetShader[2];
-        RCCache<RCLighting_DrawGeometry> rcLighting_DrawGeometry[2];
+        RCCache<RCBegin,      8>                    rcBegin[2];
+        RCCache<RCEnd,        8>                    rcEnd[2];
+        RCCache<RCBeginLayer, 8>                    rcBeginLayer[2];
+        RCCache<RCEndLayer,   8>                    rcEndLayer[2];
+        RCCache<RCDrawVA>                           rcDrawVA[2];
+        RCCache<RCSetFaceCulling>                   rcSetFaceCulling[2];
+        RCCache<RCBeginLighting>                    rcBeginLighting[2];
+        RCCache<RCControlBlending>                  rcControlBlending[2];
+        RCCache<RCLighting_SetShader>               rcLighting_SetShader[2];
+        RCCache<RCLighting_DrawGeometry>            rcLighting_DrawGeometry[2];
+        RCCache<RCLighting_BeginPointShadowMap>     rcLighting_BeginPointShadowMap[2];
+        RCCache<RCLighting_BeginPointShadowMapFace> rcLighting_BeginPointShadowMapFace[2];
+        RCCache<RCLighting_EndShadowMap>            rcLighting_EndShadowMap[2];
+        RCCache<RCLighting_DrawShadowPassGeometry>  rcLighting_DrawShadowPassGeometry[2];
 
         
         // Below are various shaders for use by the renderer.
@@ -433,6 +482,7 @@ namespace GTEngine
             Shader* Lighting_NoShadow_A1;
             Shader* Lighting_NoShadow_D1;
             Shader* Lighting_NoShadow_P1;
+            Shader* Lighting_P1;
             Shader* Lighting_NoShadow_S1;
 
             Shader* Lighting_ShadowMap;

@@ -104,12 +104,23 @@ namespace GTEngine
         void* rendererData;
 
 
-        /// We keep an array of texture 2Ds being used by the shader. As the shader parameters of a shader change, they are updated here. These
-        /// are index by parameter name. This is NOT updated by SetParameter(), but is instead used internally by the renderer.
-        GTCore::Dictionary<Texture2D*> currentTexture2Ds;
 
-        /// Same as above, only for cube maps this time.
-        GTCore::Dictionary<TextureCube*> currentTextureCubes;
+
+        // We need to keep track of the textures that are being used by the shader so we can bind the appropriately.
+        struct AttachedTexture
+        {
+            AttachedTexture(ShaderParameterType typeIn, void* textureIn)
+                : type(typeIn), texture(textureIn)
+            {
+            }
+
+            ShaderParameterType type;
+            void*               texture;        // The texture, cast based on 'type'.
+        };
+
+        /// The textures currently being used by the renderer.
+        GTCore::Dictionary<AttachedTexture> currentTextures;
+
 
 
 
