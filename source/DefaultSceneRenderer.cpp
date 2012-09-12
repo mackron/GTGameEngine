@@ -155,7 +155,7 @@ namespace GTEngine
         pointLightShadowMap.NegativeY->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
         pointLightShadowMap.PositiveZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
         pointLightShadowMap.NegativeZ->SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
-        pointLightShadowMapDepthBuffer = new Texture2D(shadowMapSize, shadowMapSize, GTImage::ImageFormat_Depth24_Stencil8);
+        pointLightShadowMapDepthBuffer.SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_Depth24_Stencil8);
 
         this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.PositiveX, 0);
         this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.NegativeX, 1);
@@ -163,7 +163,7 @@ namespace GTEngine
         this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.NegativeY, 3);
         this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.PositiveZ, 4);
         this->pointLightShadowMapFramebuffer.AttachColourBuffer(pointLightShadowMap.NegativeZ, 5);
-        this->pointLightShadowMapFramebuffer.AttachDepthStencilBuffer(pointLightShadowMapDepthBuffer);
+        this->pointLightShadowMapFramebuffer.AttachDepthStencilBuffer(&pointLightShadowMapDepthBuffer);
         this->pointLightShadowMapFramebuffer.CheckStatus();
 
 
@@ -212,9 +212,6 @@ namespace GTEngine
             delete this->materialMetadatas.root->value;
             this->materialMetadatas.RemoveRoot();
         }
-
-
-        delete this->pointLightShadowMapDepthBuffer;
     }
 
 
