@@ -10,7 +10,7 @@ namespace GTEngine
     ModelComponent::ModelComponent(SceneNode &node)
         : Component(node), model(nullptr),
           cullFrontFaces(false), cullBackFaces(true),
-          castShadow(false),
+          castShadow(true),
           isOwner(false)
     {
     }

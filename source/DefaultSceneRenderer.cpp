@@ -465,22 +465,25 @@ namespace GTEngine
             auto modelComponent = static_cast<const SceneNode &>(object).GetComponent<GTEngine::ModelComponent>();
             assert(modelComponent != nullptr);
 
-            auto model = modelComponent->GetModel();
-            if (model != nullptr)
+            if (modelComponent->IsShadowCastingEnabled())
             {
-                glm::mat4 ModelViewMatrix = view       * modelComponent->GetNode().GetWorldTransform();
-                glm::mat4 MVPMatrix       = projection * ModelViewMatrix;
-
-                for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
+                auto model = modelComponent->GetModel();
+                if (model != nullptr)
                 {
-                    auto mesh = model->meshes[iMesh];
-                    assert(mesh != nullptr);
+                    glm::mat4 ModelViewMatrix = view       * modelComponent->GetNode().GetWorldTransform();
+                    glm::mat4 MVPMatrix       = projection * ModelViewMatrix;
 
-                    auto &rcDrawGeometry = this->rcLighting_DrawShadowPassGeometry[Renderer::BackIndex].Acquire();
-                    rcDrawGeometry.va              = this->GetMeshGeometry(*mesh, model->IsAnimating());
-                    rcDrawGeometry.mvpMatrix       = MVPMatrix;
-                    rcDrawGeometry.modelViewMatrix = ModelViewMatrix;
-                    Renderer::BackRCQueue->Append(rcDrawGeometry);
+                    for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
+                    {
+                        auto mesh = model->meshes[iMesh];
+                        assert(mesh != nullptr);
+
+                        auto &rcDrawGeometry = this->rcLighting_DrawShadowPassGeometry[Renderer::BackIndex].Acquire();
+                        rcDrawGeometry.va              = this->GetMeshGeometry(*mesh, model->IsAnimating());
+                        rcDrawGeometry.mvpMatrix       = MVPMatrix;
+                        rcDrawGeometry.modelViewMatrix = ModelViewMatrix;
+                        Renderer::BackRCQueue->Append(rcDrawGeometry);
+                    }
                 }
             }
         }
@@ -498,7 +501,17 @@ namespace GTEngine
 
     void DefaultSceneRenderer::__PointLight(const SceneObject &object)
     {
-        this->pointLights.PushBack(&object);
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            if (static_cast<const SceneNode &>(object).GetComponent<PointLightComponent>()->IsShadowCastingEnabled())
+            {
+                this->pointLights.PushBack(&object);
+            }
+            else
+            {
+                this->pointLights_NoShadows.PushBack(&object);
+            }
+        }
     }
 
     void DefaultSceneRenderer::__SpotLight(const SceneObject &object)
@@ -696,38 +709,13 @@ namespace GTEngine
 
     void DefaultSceneRenderer::LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const SceneNode &camera, const glm::vec3 &position, float radius)
     {
-        //glm::quat forward = camera.GetWorldOrientation();
+        glm::mat4 positiveXViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);;
+        glm::mat4 negativeXViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(+90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);;
+        glm::mat4 positiveYViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f, glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-position);;
+        glm::mat4 negativeYViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(+90.0f, glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-position);;
+        glm::mat4 positiveZViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(  0.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);;
+        glm::mat4 negativeZViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(180.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);;
         
-        /*
-        glm::quat positiveXOrientation = glm::rotate(forward, -90.0f,  glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::quat negativeXOrientation = glm::rotate(forward, +90.0f,  glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::quat positiveYOrientation = glm::rotate(forward, -90.0f,  glm::vec3(1.0f, 0.0f, 0.0f));
-        glm::quat negativeYOrientation = glm::rotate(forward, +90.0f,  glm::vec3(1.0f, 0.0f, 0.0f));
-        glm::quat positiveZOrientation = glm::rotate(forward, +180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::quat negativeZOrientation = forward;
-        */
-
-        
-        glm::mat4 positiveXViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f,  glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);;
-        glm::mat4 negativeXViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(+90.0f,  glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);;
-        glm::mat4 positiveYViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f,  glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-position);;
-        glm::mat4 negativeYViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(+90.0f,  glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-position);;
-        glm::mat4 positiveZViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(0.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);;
-        glm::mat4 negativeZViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(180.0f,   glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);;
-        
-
-        /*
-        glm::mat4 positiveXViewMatrix = glm::lookAt(position, position + glm::vec3(+1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 negativeXViewMatrix = glm::lookAt(position, position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-        glm::mat4 positiveYViewMatrix = glm::lookAt(position, position + glm::vec3(0.0f, +1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        glm::mat4 negativeYViewMatrix = glm::lookAt(position, position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-        glm::mat4 positiveZViewMatrix = glm::lookAt(position, position + glm::vec3(0.0f, 0.0f, +1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 negativeZViewMatrix = glm::lookAt(position, position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        */
-        
-
         glm::mat4 projectionMatrix = glm::perspective(90.0f, 1.0f, 0.1f, radius);
 
 
