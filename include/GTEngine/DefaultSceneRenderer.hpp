@@ -107,7 +107,7 @@ namespace GTEngine
                     this->lightingBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
                     this->materialBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                     this->materialBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                    this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_R10G10B10A2);
+                    this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);       // <-- Look into using R10G10B10A2. Need to handle sign.
                 }
                 else
                 {
@@ -297,6 +297,7 @@ namespace GTEngine
             ShaderParameterCache parameters;
 
             Texture2D* materialBuffer2;
+            glm::vec2  screenSize;
         };
 
         // A general function for drawing a vertex array during a lighting pass.
@@ -488,6 +489,7 @@ namespace GTEngine
             Shader* Lighting_ShadowMap;
 
             Shader* Compositor_DiffuseOnly;
+            Shader* Compositor_NormalsOnly;
             Shader* Compositor_DiffuseLightingOnly;
             Shader* Compositor_FinalOutput;
 

@@ -8,7 +8,7 @@ namespace GTEngine
         : PositiveX(), NegativeX(),
           PositiveY(), NegativeY(),
           PositiveZ(), NegativeZ(),
-          minFilter(TextureFilter_Nearest), magFilter(TextureFilter_Nearest), anisotropy(1),
+          minFilter(TextureFilter_Linear), magFilter(TextureFilter_Linear), anisotropy(1),
           rendererData(nullptr), shaders()
     {
         Renderer::OnTextureCubeCreated(*this);

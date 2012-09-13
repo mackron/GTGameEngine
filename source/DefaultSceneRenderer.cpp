@@ -7,7 +7,7 @@
 // In this file, DSR = DefaultSceneRenderer.
 
 // TODO: Make this a config variable.
-#define SHADOW_MAP_SIZE     512
+#define SHADOW_MAP_SIZE     1024
 
 namespace GTEngine
 {
@@ -174,6 +174,7 @@ namespace GTEngine
         this->Shaders.Lighting_NoShadow_S1           = ShaderLibrary::Acquire("Engine_DefaultVS",         "Engine_LightingPass_NoShadow_S1");
         this->Shaders.Lighting_ShadowMap             = ShaderLibrary::Acquire("Engine_ShadowVS",          "Engine_LightingPass_ShadowMap");
         this->Shaders.Compositor_DiffuseOnly         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_DiffuseOnly");
+        this->Shaders.Compositor_NormalsOnly         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_NormalsOnly");
         this->Shaders.Compositor_DiffuseLightingOnly = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_DiffuseLightingOnly");
         this->Shaders.Compositor_FinalOutput         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS", "Engine_Compositor_FinalOutput");
 
@@ -196,6 +197,7 @@ namespace GTEngine
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_S1);
         ShaderLibrary::Unacquire(Shaders.Lighting_ShadowMap);
         ShaderLibrary::Unacquire(Shaders.Compositor_DiffuseOnly);
+        ShaderLibrary::Unacquire(Shaders.Compositor_NormalsOnly);
         ShaderLibrary::Unacquire(Shaders.Compositor_DiffuseLightingOnly);
         ShaderLibrary::Unacquire(Shaders.Compositor_FinalOutput);
 
@@ -570,6 +572,7 @@ namespace GTEngine
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_A1;
             rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -591,6 +594,7 @@ namespace GTEngine
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_D1;
             rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -615,6 +619,7 @@ namespace GTEngine
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_P1;
             rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -642,6 +647,7 @@ namespace GTEngine
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_S1;
             rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -675,6 +681,7 @@ namespace GTEngine
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_P1;
             rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -943,6 +950,7 @@ namespace GTEngine
         Renderer::SetShaderParameter("LightingBuffer1", this->framebuffer->lightingBuffer1);
         Renderer::SetShaderParameter("MaterialBuffer0", this->framebuffer->materialBuffer0);
         Renderer::SetShaderParameter("MaterialBuffer1", this->framebuffer->materialBuffer1);
+        Renderer::SetShaderParameter("MaterialBuffer2", this->framebuffer->materialBuffer2);
 
         Renderer::DisableDepthTest();
         Renderer::DisableBlending();
@@ -992,6 +1000,7 @@ namespace GTEngine
     {
         Renderer::SetShader(this->shader);
         Renderer::SetShaderParameter("Lighting_Normals", this->materialBuffer2);
+        Renderer::SetShaderParameter("ScreenSize",       this->screenSize);
 
         for (size_t i = 0; i < this->parameters.GetCount(); ++i)
         {
