@@ -377,11 +377,11 @@ namespace GTEngine
         void MaterialPass(Scene &scene);
 
         /// Performs the lighting pass. This always comes after the material pass.
-        void LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, const SceneNode &camera);
+        void LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
 
 
         // Builds the shadow map of the given point light.
-        void LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const GTEngine::SceneNode &camera, const glm::vec3 &position, float radius);
+        void LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::vec3 &position, float radius);
 
 
         /// Structure containing metadata for materials. There should be one of these for each material.
