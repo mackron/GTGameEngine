@@ -1224,6 +1224,13 @@ namespace GTEngine
                 {
                 case 1:
                     {
+                        // We'll need to clear some stuff in the definition.
+                        definition.ClearMeshGeometries();
+                        definition.ClearMeshSkinningVertexAttributes();
+                        definition.ClearBones();
+                        definition.ClearAnimations();
+
+
                         // The counts of the main objects. We batch these into a single call at the top of everything.
                         struct
                         {
@@ -1238,7 +1245,6 @@ namespace GTEngine
                         // Bones.
                         //
                         // Bones are first because they are referenced by everything else.
-                        definition.ClearBones();
                         for (uint32_t iBone = 0; iBone < counts.boneCount; ++iBone)
                         {
                             // Name.
@@ -1299,8 +1305,6 @@ namespace GTEngine
                         // Meshes.
                         //
                         // Meshes reference bones, so we do these afterwards.
-                        definition.ClearMeshGeometries();
-                        definition.ClearMeshSkinningVertexAttributes();
                         for (uint32_t i = 0; i < counts.meshCount; ++i)
                         {
                             // Geometry.
@@ -1392,7 +1396,6 @@ namespace GTEngine
 
 
                         // Now we need to load the key frame animation data.
-                        definition.ClearAnimations();
                         for (uint32_t iFrame = 0; iFrame < counts.keyFrameCount; ++iFrame)
                         {
                             float time;
@@ -1743,7 +1746,7 @@ namespace GTEngine
             {
                 mtlsSizeInBytes += 4;                                   // <-- Variable for storing the index of the mesh this material is applied to.
                 mtlsSizeInBytes += 4;                                   // <-- Variable for storing the size of the 
-                mtlsSizeInBytes += definition.meshMaterials[iMaterial]->GetDefinition().fileName.GetLengthInTs();
+                mtlsSizeInBytes += definition.meshMaterials[iMaterial] != nullptr ? definition.meshMaterials[iMaterial]->GetDefinition().fileName.GetLengthInTs() : 0;
             }
 
 

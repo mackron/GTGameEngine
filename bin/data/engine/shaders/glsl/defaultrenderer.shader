@@ -92,7 +92,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     
     void CalculateDirectionalLighting(DirectionalLight light, inout vec3 diffuseOut, inout vec3 specularOut)
     {
-        vec2 fragCoord = VertexOutput_PositionNDC.xy * 0.5 + 0.5;
+        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
     
         vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
         vec3 L = -light.Direction;
@@ -122,7 +122,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         // N - Input normal
         // L - Light vector from the light to the vertex
         
-        vec2 fragCoord = VertexOutput_PositionNDC.xy * 0.5 + 0.5;
+        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
         
         vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
         vec3 L = light.Position - VertexOutput_Position.xyz;
@@ -157,7 +157,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         // N - Input normal
         // L - Light vector from the light to the vertex
         
-        vec2 fragCoord = VertexOutput_PositionNDC.xy * 0.5 + 0.5;
+        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
         
         vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
         vec3 L = light.Position - VertexOutput_Position.xyz;
@@ -172,10 +172,29 @@ uses 1 or each light, it will use the following: A1D1P1.
         // is probably due to incorrect cube map generation which I'll look into later.
         vec3 lightToPixel = VertexOutput_PositionWS.xyz - PLight0_PositionWS;
 
-        float pixelDepth  = length(lightToPixel) - 0.05;
-        float shadowDepth = textureCube(ShadowMap, vec3(lightToPixel.x, -lightToPixel.y, -lightToPixel.z)).r;
-        float shadow      = (pixelDepth < shadowDepth) ? 1.0 : 0.0;
 
+        float pixelDepth = length(lightToPixel);
+        pixelDepth -= (0.025 + pixelDepth * 0.01);
+         
+        vec3 filter[8];
+        filter[0] = vec3( 0.00065,  0.00065,  0.00065) * pixelDepth;
+        filter[1] = vec3( 0.00065, -0.00065,  0.00065) * pixelDepth;
+        filter[2] = vec3(-0.00065,  0.00065, -0.00065) * pixelDepth;
+        filter[3] = vec3(-0.00065, -0.00065, -0.00065) * pixelDepth;
+        
+        filter[4] = vec3( 0.0003,  0.0003,  0.0003) * pixelDepth;
+        filter[5] = vec3( 0.0003, -0.0003,  0.0003) * pixelDepth;
+        filter[6] = vec3(-0.0003,  0.0003, -0.0003) * pixelDepth;
+        filter[7] = vec3(-0.0003, -0.0003, -0.0003) * pixelDepth;
+        
+
+        float shadow = 0.0;
+        for (int i = 0; i < 8; ++i)
+        {
+            float shadowDepth  = textureCube(ShadowMap, vec3(lightToPixel.x, -lightToPixel.y, -lightToPixel.z) + filter[i]).r;
+            shadow            += (pixelDepth < shadowDepth) ? 0.125 : 0.0;
+        }
+        
         diffuseOut  += light.Colour * diffuse  * attenuation * shadow;
         specularOut += light.Colour * specular * attenuation * shadow;
     }
@@ -202,11 +221,11 @@ uses 1 or each light, it will use the following: A1D1P1.
         // N - Input normal
         // L - Non-normalized light vector from the light to the vertex
         
-        vec2 fragCoord = VertexOutput_PositionNDC.xy * 0.5 + 0.5;
+        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
         
-        vec3 N     = texture2D(Lighting_Normals, fragCoord).rgb;
-        vec3 L     = light.Position - VertexOutput_Position.xyz;
-        vec3 H     = normalize(normalize(L) - normalize(VertexOutput_Position.xyz));
+        vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
+        vec3 L = light.Position - VertexOutput_Position.xyz;
+        vec3 H = normalize(normalize(L) - normalize(VertexOutput_Position.xyz));
         
         float diffuse     = DiffuseFactor(N, normalize(L));
         float specular    = SpecularFactor(N, H, 64.0);
@@ -512,6 +531,19 @@ uses 1 or each light, it will use the following: A1D1P1.
     }
 </shader>
 
+<shader id="Engine_Compositor_NormalsOnly">
+    varying vec2 VertexOutput_TexCoord;
+    
+    uniform sampler2D MaterialBuffer2;      // rgb = normal; a = nothing
+    
+    void main()
+    {
+        vec4 materialTexel2 = texture2D(MaterialBuffer2, VertexOutput_TexCoord);
+        
+        gl_FragData[0] = vec4(materialTexel2.rgb, 1.0);
+    }
+</shader>
+
 <shader id="Engine_Compositor_FinalOutput">
     varying vec2 VertexOutput_TexCoord;
     
@@ -539,7 +571,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         gl_FragData[0].rgb = (materialDiffuse * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
         gl_FragData[0].a   = materialTransparency;
         
-        //gl_FragData[0].rgb = pow(gl_FragData[0].rgb, vec3(1.0 / 2.2));   // sRGB (approx.)
+        gl_FragData[0].rgb = pow(gl_FragData[0].rgb, vec3(1.0 / 2.2));   // sRGB (approx.)
     }
 </shader>
 

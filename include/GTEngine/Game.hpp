@@ -320,6 +320,9 @@ namespace GTEngine
         ///     This will leave the game without a current game state, but will set the previous state. This is good for enabling the editor.
         void DeactivateCurrentGameState();
 
+        /// Retrieves the currentnly active game state.
+        GameState* GetCurrentGameState() { return this->currentGameState; }
+
 
 
         ///////////////////////////////////////////////
