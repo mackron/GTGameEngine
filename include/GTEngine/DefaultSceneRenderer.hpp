@@ -13,6 +13,7 @@
 #include "MaterialShaderCache.hpp"
 #include <GTCore/Map.hpp>
 #include <GTCore/BinarySearchTree.hpp>
+#include <GTImage/Utils.hpp>
 
 class Scene;
 
