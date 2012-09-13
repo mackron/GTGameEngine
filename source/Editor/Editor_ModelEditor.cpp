@@ -17,14 +17,12 @@ namespace GTEngine
     {
         this->viewport.SetCameraNode(this->camera);
         this->scene.AddViewport(this->viewport);
-
-
-        // TODO: Change clear colour to 0.5.
-        
+        this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
 
 
         // We need to ensure the model node has a model component.
         this->modelNode.AddComponent<GTEngine::ModelComponent>();
+
 
         this->ResetCamera();
     }

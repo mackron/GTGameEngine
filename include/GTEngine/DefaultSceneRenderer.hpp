@@ -51,6 +51,13 @@ namespace GTEngine
         virtual void OnViewportResized(SceneViewport &viewport);
 
 
+        /// SceneRenderer::EnableBackgroundColourClearing().
+        virtual void EnableBackgroundColourClearing(float r, float g, float b);
+
+        /// SceneRenderer::DisableBackgroundColourClearing().
+        virtual void DisableBackgroundColourClearing();
+
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // Methods below should only be called internally, but need to be public for a few things.
 
@@ -371,9 +378,7 @@ namespace GTEngine
 
         /// Performs the lighting pass. This always comes after the material pass.
         void LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, const SceneNode &camera);
-        //void LightingPass_A1(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
-        //void LightingPass_D1(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
-        //void LightingPass_P1(Scene &sceme, DefaultSceneRenderer::Framebuffer &framebuffer);
+
 
         // Builds the shadow map of the given point light.
         void LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const GTEngine::SceneNode &camera, const glm::vec3 &position, float radius);
@@ -394,10 +399,6 @@ namespace GTEngine
         /// Retrieves the metadata of a material. This should never return null. If the metadata hasn't yet been created,
         /// it will be created and then returned. Future calls will return that same object.
         MaterialMetadata & GetMaterialMetadata(Material &material);
-
-        /// Deletes the given material's metadata.
-        //void DeleteMaterialMetadata(Material &material);
-
 
 
         /// Creates and returns the shader for use in the material pass.

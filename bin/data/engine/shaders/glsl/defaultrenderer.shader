@@ -276,13 +276,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_PointLight_NoShadow" />
     
     <include>
-        uniform PointLight PLights0;
+        uniform PointLight PLight0;
         
 	    void main()
 	    {
             vec3 diffuse  = vec3(0.0, 0.0, 0.0);
             vec3 specular = vec3(0.0, 0.0, 0.0);
-            CalculatePointLighting(PLights0, diffuse, specular);
+            CalculatePointLighting(PLight0, diffuse, specular);
             
 		    DoFinalLightingOutput(diffuse, specular);
 	    }
@@ -319,13 +319,13 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_SpotLight" />
     
     <include>
-        uniform SpotLight SLights0;
+        uniform SpotLight SLight0;
         
 	    void main()
 	    {
             vec3 diffuse  = vec3(0.0, 0.0, 0.0);
             vec3 specular = vec3(0.0, 0.0, 0.0);
-            CalculateSpotLighting(SLights0, diffuse, specular);
+            CalculateSpotLighting(SLight0, diffuse, specular);
             
 		    DoFinalLightingOutput(diffuse, specular);
 	    }
