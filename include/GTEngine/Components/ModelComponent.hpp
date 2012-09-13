@@ -28,6 +28,9 @@ namespace GTEngine
         ///     component no longer uses it (either when it's change, or when the component is destructed).
         Model* SetModel(const char* fileName);
 
+        /// Unsets the current model.
+        void UnsetModel();
+
 
         /// Retrieves the model currently associated with this component.
               Model* GetModel()       { return this->model; }

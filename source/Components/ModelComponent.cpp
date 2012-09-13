@@ -47,6 +47,11 @@ namespace GTEngine
         return this->model;
     }
 
+    void ModelComponent::UnsetModel()
+    {
+        this->SetModel(static_cast<Model*>(nullptr));
+    }
+
 
     void ModelComponent::SetFaceCulling(bool cullFront, bool cullBack)
     {

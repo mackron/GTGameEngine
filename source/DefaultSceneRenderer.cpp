@@ -296,7 +296,7 @@ namespace GTEngine
                 this->MaterialPass(scene);
 
                 // The lighting pass must come after the material pass, since it depends on things like normals. Also, the material pass will retrieve the visible light objects.
-                this->LightingPass(scene, *framebuffer, *cameraNode);
+                this->LightingPass(scene, *framebuffer);
 
 
                 // Now we end the layer.
@@ -554,7 +554,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer::LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, const SceneNode &camera)
+    void DefaultSceneRenderer::LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer)
     {
         // We begin with the lights that are not casting shadows. We can do an optimized pass here where we can group lights into a single pass.
         auto &rcBeginLighting = this->rcBeginLighting[Renderer::BackIndex].Acquire();
@@ -682,7 +682,7 @@ namespace GTEngine
 
 
                 // This will build the light's shadow map.
-                this->LightingPass_BuildPointLightShadowMap(scene, framebuffer, camera, component->GetNode().GetWorldPosition(), component->GetApproximateRadius());
+                this->LightingPass_BuildPointLightShadowMap(scene, framebuffer, component->GetNode().GetWorldPosition(), component->GetApproximateRadius());
 
 
 
@@ -704,7 +704,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer::LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const SceneNode &camera, const glm::vec3 &position, float radius)
+    void DefaultSceneRenderer::LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::vec3 &position, float radius)
     {
         glm::mat4 positiveXViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);;
         glm::mat4 negativeXViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(+90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);;
