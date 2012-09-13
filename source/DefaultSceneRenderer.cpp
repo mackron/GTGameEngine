@@ -7,7 +7,7 @@
 // In this file, DSR = DefaultSceneRenderer.
 
 // TODO: Make this a config variable.
-#define SHADOW_MAP_SIZE     1024
+#define SHADOW_MAP_SIZE     512
 
 namespace GTEngine
 {
