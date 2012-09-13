@@ -174,19 +174,19 @@ uses 1 or each light, it will use the following: A1D1P1.
 
 
         float pixelDepth = length(lightToPixel);
-        pixelDepth -= (0.025 + pixelDepth * 0.01);
+        pixelDepth -= (0.02 + pixelDepth * 0.005);
          
         vec3 filter[8];
-        filter[0] = vec3( 0.00065,  0.00065,  0.00065) * pixelDepth;
-        filter[1] = vec3( 0.00065, -0.00065,  0.00065) * pixelDepth;
-        filter[2] = vec3(-0.00065,  0.00065, -0.00065) * pixelDepth;
-        filter[3] = vec3(-0.00065, -0.00065, -0.00065) * pixelDepth;
+        filter[0] = vec3( 0.0006,  0.0006,  0.0006) * pixelDepth;
+        filter[1] = vec3( 0.0006, -0.0006,  0.0006) * pixelDepth;
+        filter[2] = vec3(-0.0006,  0.0006, -0.0006) * pixelDepth;
+        filter[3] = vec3(-0.0006, -0.0006, -0.0006) * pixelDepth;
         
         filter[4] = vec3( 0.0003,  0.0003,  0.0003) * pixelDepth;
         filter[5] = vec3( 0.0003, -0.0003,  0.0003) * pixelDepth;
         filter[6] = vec3(-0.0003,  0.0003, -0.0003) * pixelDepth;
         filter[7] = vec3(-0.0003, -0.0003, -0.0003) * pixelDepth;
-        
+
 
         float shadow = 0.0;
         for (int i = 0; i < 8; ++i)
