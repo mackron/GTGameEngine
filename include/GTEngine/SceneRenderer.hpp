@@ -57,6 +57,17 @@ namespace GTEngine
         /// @remarks
         ///     This function is needed so that the renderer can resize the internal framebuffers and whatnot.
         virtual void OnViewportResized(SceneViewport &viewport) = 0;
+
+
+        /// Enables background colour clearing.
+        ///
+        /// @param r [in] The red component of the clear colour.
+        /// @param g [in] The green component of the clear colour.
+        /// @param b [in] The blue component of the clear colour.
+        virtual void EnableBackgroundColourClearing(float r, float g, float b) = 0;
+
+        /// Disables background colour clearing.
+        virtual void DisableBackgroundColourClearing() = 0;
     };
 }
 

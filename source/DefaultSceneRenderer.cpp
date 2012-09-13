@@ -343,6 +343,18 @@ namespace GTEngine
     }
 
 
+    void DefaultSceneRenderer::EnableBackgroundColourClearing(float r, float g, float b)
+    {
+        this->clearColourBuffer = true;
+        this->clearColour       = glm::vec3(r, g, b);
+    }
+
+    void DefaultSceneRenderer::DisableBackgroundColourClearing()
+    {
+        this->clearColourBuffer = false;
+    }
+
+
     void DefaultSceneRenderer::__MaterialPass_Model(const SceneObject &object)
     {
         if (object.GetType() == SceneObjectType_SceneNode)
@@ -608,11 +620,11 @@ namespace GTEngine
             {
                 auto component = static_cast<const SceneNode &>(light).GetComponent<GTEngine::PointLightComponent>();
 
-                rcSetShader.SetParameter("PLights0.Position",             glm::vec3(this->view * glm::vec4(component->GetNode().GetWorldPosition(), 1.0f)));
-                rcSetShader.SetParameter("PLights0.Colour",               component->GetColour());
-                rcSetShader.SetParameter("PLights0.ConstantAttenuation",  component->GetConstantAttenuation());
-                rcSetShader.SetParameter("PLights0.LinearAttenuation",    component->GetLinearAttenuation());
-                rcSetShader.SetParameter("PLights0.QuadraticAttenuation", component->GetQuadraticAttenuation());
+                rcSetShader.SetParameter("PLight0.Position",             glm::vec3(this->view * glm::vec4(component->GetNode().GetWorldPosition(), 1.0f)));
+                rcSetShader.SetParameter("PLight0.Colour",               component->GetColour());
+                rcSetShader.SetParameter("PLight0.ConstantAttenuation",  component->GetConstantAttenuation());
+                rcSetShader.SetParameter("PLight0.LinearAttenuation",    component->GetLinearAttenuation());
+                rcSetShader.SetParameter("PLight0.QuadraticAttenuation", component->GetQuadraticAttenuation());
             }
 
 
@@ -635,14 +647,14 @@ namespace GTEngine
             {
                 auto component = static_cast<const SceneNode &>(light).GetComponent<GTEngine::SpotLightComponent>();
 
-                rcSetShader.SetParameter("SLights0.Position",             glm::vec3(this->view * glm::vec4(component->GetNode().GetWorldPosition(), 1.0f)));
-                rcSetShader.SetParameter("SLights0.Direction",            glm::normalize(glm::mat3(this->view) * component->GetNode().GetWorldForwardVector()));
-                rcSetShader.SetParameter("SLights0.CosAngleInner",        glm::cos(glm::radians(component->GetInnerAngle())));
-                rcSetShader.SetParameter("SLights0.CosAngleOuter",        glm::cos(glm::radians(component->GetOuterAngle())));
-                rcSetShader.SetParameter("SLights0.Colour",               component->GetColour());
-                rcSetShader.SetParameter("SLights0.ConstantAttenuation",  component->GetConstantAttenuation());
-                rcSetShader.SetParameter("SLights0.LinearAttenuation",    component->GetLinearAttenuation());
-                rcSetShader.SetParameter("SLights0.QuadraticAttenuation", component->GetQuadraticAttenuation());
+                rcSetShader.SetParameter("SLight0.Position",             glm::vec3(this->view * glm::vec4(component->GetNode().GetWorldPosition(), 1.0f)));
+                rcSetShader.SetParameter("SLight0.Direction",            glm::normalize(glm::mat3(this->view) * component->GetNode().GetWorldForwardVector()));
+                rcSetShader.SetParameter("SLight0.CosAngleInner",        glm::cos(glm::radians(component->GetInnerAngle())));
+                rcSetShader.SetParameter("SLight0.CosAngleOuter",        glm::cos(glm::radians(component->GetOuterAngle())));
+                rcSetShader.SetParameter("SLight0.Colour",               component->GetColour());
+                rcSetShader.SetParameter("SLight0.ConstantAttenuation",  component->GetConstantAttenuation());
+                rcSetShader.SetParameter("SLight0.LinearAttenuation",    component->GetLinearAttenuation());
+                rcSetShader.SetParameter("SLight0.QuadraticAttenuation", component->GetQuadraticAttenuation());
             }
 
 

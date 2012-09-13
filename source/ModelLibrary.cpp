@@ -1785,9 +1785,7 @@ namespace GTEngine
             for (uint32_t iSegment = 0; iSegment < segmentCount; ++iSegment)
             {
                 auto name    = definition.animation.GetNamedSegmentNameByIndex(iSegment);
-                auto segment = definition.animation.GetNamedSegmentByIndex(iSegment);
                 assert(name    != nullptr);
-                assert(segment != nullptr);
 
                 nasSizeInBytes += 4;                                    // <-- Variable for storing the name length.
                 nasSizeInBytes += GTCore::Strings::SizeInBytes(name);   // <-- The actual name length.
