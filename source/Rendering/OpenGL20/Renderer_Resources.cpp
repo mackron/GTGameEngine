@@ -323,6 +323,7 @@ namespace GTEngine
 
             glBindBuffer(GL_ARRAY_BUFFER, this->vertexArray->verticesObject);
             glBufferData(GL_ARRAY_BUFFER, this->dataSize, this->data, this->usage);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
 
             this->vertexArray->vertexCount = this->vertexCount;
 
@@ -346,6 +347,7 @@ namespace GTEngine
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->vertexArray->indicesObject);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->dataSize, this->data, this->usage);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
             this->vertexArray->indexCount = this->indexCount;
 
@@ -702,8 +704,9 @@ namespace GTEngine
 
         if (mipmap.data != nullptr)
         {
-            rc.data = malloc(mipmap.GetDataSizeInBytes());
-            memcpy(rc.data, mipmap.data, mipmap.GetDataSizeInBytes());
+            size_t dataSize = mipmap.GetDataSizeInBytes();
+            rc.data = malloc(dataSize);
+            memcpy(rc.data, mipmap.data, dataSize);
         }
         else
         {

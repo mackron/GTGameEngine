@@ -205,6 +205,10 @@ namespace GTEngine
         case GTImage::ImageFormat_RG16F:
         case GTImage::ImageFormat_RGB16F:
         case GTImage::ImageFormat_RGBA16F:
+            {
+                return GL_HALF_FLOAT;
+            }
+
         case GTImage::ImageFormat_R32F:
         case GTImage::ImageFormat_RG32F:
         case GTImage::ImageFormat_RGB32F:

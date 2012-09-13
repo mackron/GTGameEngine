@@ -615,6 +615,11 @@ namespace GTEngine
         VertexAttribEnableBits = newVertexAttribEnableBits;
     }
 
+
+    // TODO: There is a annoying bug here. The LastDrawnVertexArray variable will block unnecessary binding of vertex arrays. However, the binding can change
+    //       in OnVertexArrayVertexDataChanged(), etc, which will NOT update LastDrawnVertexArray. We may need to do an OpenGL helper class for doing annoying
+    //       management stuff like this. For now, OnVertexArrayVertexDataChanged(), etc will just rebind to 0, which is actually still erroneous. 
+
     void Renderer::Draw(const VertexArray* vertexArray, DrawMode mode)
     {
         assert(vertexArray != nullptr);
@@ -622,7 +627,7 @@ namespace GTEngine
         auto rendererData = static_cast<const VertexArray_GL20*>(vertexArray->GetRendererData());
         assert(rendererData != nullptr);
 
-        if (LastDrawnVertexArray != vertexArray)
+        //if (LastDrawnVertexArray != vertexArray)
         {
             glBindBuffer(GL_ARRAY_BUFFER,         rendererData->verticesObject);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererData->indicesObject);
@@ -639,7 +644,7 @@ namespace GTEngine
     void Renderer::Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
     {
         // Any previously bound vertex buffer needs to be unbound.
-        if (LastDrawnVertexArray != nullptr)
+        //if (LastDrawnVertexArray != nullptr)
         {
             glBindBuffer(GL_ARRAY_BUFFER,         0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
