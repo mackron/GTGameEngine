@@ -98,6 +98,9 @@ namespace GTEngine
         class EventHandler
         {
         public:
+            
+            /// Explicit virtual destructor for silencing a GCC warning.
+            virtual ~EventHandler() {};
 
             /// Called when a file is added/inserted.
             ///

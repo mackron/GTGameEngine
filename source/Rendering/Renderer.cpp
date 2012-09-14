@@ -269,53 +269,6 @@ namespace GTEngine
 // Renderer support functions.
 namespace GTEngine
 {
-    /*
-    /// Binds the given texture.
-    void Renderer_BindTexture2D(Texture2D &texture)
-    {
-        auto textureData = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
-        assert(textureData != nullptr);
-
-        if (texture.GetTarget() == Texture2DTarget_Default)
-        {
-            glBindTexture(GL_TEXTURE_2D, textureData->object);
-        }
-    }
-
-    void Renderer_BindTexture2D(Texture2D* texture)
-    {
-        if (texture != nullptr)
-        {
-            Renderer_BindTexture2D(*texture);
-        }
-        else
-        {
-            glBindTexture(GL_TEXTURE_2D, 0);
-        }
-    }
-
-
-    void Renderer_BindTextureCube(TextureCube &texture)
-    {
-        auto textureData = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
-        assert(textureData != nullptr);
-
-        glBindTexture(GL_TEXTURE_CUBE_MAP, textureData->object);
-    }
-
-    void Renderer_BindTextureCube(TextureCube* texture)
-    {
-        if (texture != nullptr)
-        {
-            Renderer_BindTextureCube(*texture);
-        }
-        else
-        {
-            glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-        }
-    }
-    */
-
     void OpenGLDebugMessageHandler(const char* message)
     {
         GTEngine::Log("%s", message);

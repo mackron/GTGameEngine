@@ -50,6 +50,10 @@ namespace GTEngine
 
 
 
+
+        ///////////////////////////////////////////////////////////////////////////////
+        // Resource Objects.
+
         struct Texture2D
         {
             Texture2D()

@@ -114,6 +114,12 @@ namespace GTEngine
 
         /// The list of shaders that this texture is attached to.
         GTCore::List<Shader*> shaders;
+        
+        
+        
+    private:    // No copying.
+        TextureCube(const TextureCube &);
+        TextureCube & operator=(const TextureCube &);
     };
 }
 

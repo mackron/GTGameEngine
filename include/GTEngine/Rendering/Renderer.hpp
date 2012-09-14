@@ -81,10 +81,13 @@ namespace GTEngine
     };
 
 
+    // TODO: Consider removing this. No longer needed, I think.
     /// Base class for event handlers that can be attached to the renderer to respond to certain events by the renderer.
     class RendererEventHandler
     {
     public:
+        
+        virtual ~RendererEventHandler();
 
         /// Called when the RC queues are swapped on the renderer.
         ///
