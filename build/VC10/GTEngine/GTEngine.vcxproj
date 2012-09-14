@@ -247,6 +247,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\OpenGL\OpenGL20.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCQueue.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommand.hpp" />
@@ -285,7 +286,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\Resources.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -363,7 +363,8 @@
     <ClCompile Include="..\..\..\source\Random\Floor\FloorTile.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL20\Renderer_Resources.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\OpenGL20.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\Renderer_Resources.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCSetFaceCulling.cpp" />

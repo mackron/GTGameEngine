@@ -1,16 +1,17 @@
 
 // This file contains everything relating to resource management for the renderer.
 
+
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Rendering/RenderCommand.hpp>
+#include <GTEngine/Rendering/OpenGL/OpenGL20.hpp>
 #include <GTEngine/Rendering/RCCache.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
 
 #include <gtgl/gtgl.h>
 
-#include "../OpenGL/TypeConversion.hpp"
-#include "../OpenGL/Resources.hpp"
+#include "../TypeConversion.hpp"
 
 #include <GTCore/String.hpp>
 
@@ -53,7 +54,7 @@ namespace GTEngine
             }            
         }
 
-        Texture2D_GL20* texture;
+        OpenGL20::Texture2D* texture;
         Texture2DTarget target;
 
         GLint minFilter;
@@ -78,7 +79,7 @@ namespace GTEngine
             delete texture;
         }
 
-        Texture2D_GL20* texture;
+        OpenGL20::Texture2D* texture;
         Texture2DTarget target;
     };
 
@@ -116,7 +117,7 @@ namespace GTEngine
             free(this->data);
         }
 
-        Texture2D_GL20* texture;
+        OpenGL20::Texture2D* texture;
         Texture2DTarget target;
 
         GLint mipmap;
@@ -146,7 +147,7 @@ namespace GTEngine
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filter);
         }
 
-        Texture2D_GL20* texture;
+        OpenGL20::Texture2D* texture;
         GLint filter;
     };
 
@@ -160,7 +161,7 @@ namespace GTEngine
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, this->filter);
         }
 
-        Texture2D_GL20* texture;
+        OpenGL20::Texture2D* texture;
         GLint filter;
     };
 
@@ -174,7 +175,7 @@ namespace GTEngine
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
         }
 
-        Texture2D_GL20* texture;
+        OpenGL20::Texture2D* texture;
         GLint anisotropy;
     };
 
@@ -189,7 +190,7 @@ namespace GTEngine
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, this->wrapMode);
         }
 
-        Texture2D_GL20* texture;
+        OpenGL20::Texture2D* texture;
         GLint wrapMode;
     };
 
@@ -220,7 +221,7 @@ namespace GTEngine
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         }
 
-        TextureCube_GL20* texture;
+        OpenGL20::TextureCube* texture;
 
         GLint minFilter;
         GLint magFilter;
@@ -237,7 +238,7 @@ namespace GTEngine
             delete texture;
         }
 
-        TextureCube_GL20* texture;
+        OpenGL20::TextureCube* texture;
     };
 
     struct RCOnTextureCubeMinificationFilterChanged : public GTEngine::RenderCommand
@@ -250,7 +251,7 @@ namespace GTEngine
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, this->filter);
         }
 
-        TextureCube_GL20* texture;
+        OpenGL20::TextureCube* texture;
         GLint filter;
     };
 
@@ -264,7 +265,7 @@ namespace GTEngine
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, this->filter);
         }
 
-        TextureCube_GL20* texture;
+        OpenGL20::TextureCube* texture;
         GLint filter;
     };
 
@@ -278,7 +279,7 @@ namespace GTEngine
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
         }
 
-        TextureCube_GL20* texture;
+        OpenGL20::TextureCube* texture;
         GLint anisotropy;
     };
 
@@ -297,7 +298,7 @@ namespace GTEngine
             glGenBuffers(1, &this->vertexArray->indicesObject);
         }
 
-        VertexArray_GL20* vertexArray;
+        OpenGL20::VertexArray* vertexArray;
     };
 
     struct RCOnVertexArrayDeleted : public GTEngine::RenderCommand
@@ -312,7 +313,7 @@ namespace GTEngine
             delete this->vertexArray;
         }
 
-        VertexArray_GL20* vertexArray;
+        OpenGL20::VertexArray* vertexArray;
     };
 
     struct RCOnVertexArrayVertexDataChanged : public GTEngine::RenderCommand
@@ -323,14 +324,18 @@ namespace GTEngine
 
             glBindBuffer(GL_ARRAY_BUFFER, this->vertexArray->verticesObject);
             glBufferData(GL_ARRAY_BUFFER, this->dataSize, this->data, this->usage);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+            // The previous binding needs to be restored.
+            glBindBuffer(GL_ARRAY_BUFFER, OpenGL20::GetCurrentOpenGLVertexBufferObject());
+
 
             this->vertexArray->vertexCount = this->vertexCount;
 
             free(this->data);
         }
 
-        VertexArray_GL20* vertexArray;
+        OpenGL20::VertexArray* vertexArray;
 
         GLsizeiptr dataSize;
         void*      data;
@@ -347,14 +352,18 @@ namespace GTEngine
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->vertexArray->indicesObject);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->dataSize, this->data, this->usage);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+            // The previous binding needs to be restored.
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OpenGL20::GetCurrentOpenGLIndexBufferObject());
+
 
             this->vertexArray->indexCount = this->indexCount;
 
             free(this->data);
         }
 
-        VertexArray_GL20* vertexArray;
+        OpenGL20::VertexArray* vertexArray;
 
         GLsizeiptr dataSize;
         void*      data;
@@ -504,7 +513,7 @@ namespace GTEngine
             if (fragmentShader != 0) glDeleteShader(fragmentShader);
         }
 
-        Shader_GL20* shader;
+        OpenGL20::Shader* shader;
 
         GTCore::String vertexSource;
         GTCore::String fragmentSource;
@@ -521,7 +530,7 @@ namespace GTEngine
             delete this->shader;
         }
 
-        Shader_GL20* shader;
+        OpenGL20::Shader* shader;
     };
 
 
@@ -538,7 +547,7 @@ namespace GTEngine
             glGenFramebuffersEXT(1, &this->framebuffer->object);
         }
 
-        Framebuffer_GL20* framebuffer;
+        OpenGL20::Framebuffer* framebuffer;
     };
 
     struct RCOnFramebufferDeleted : public GTEngine::RenderCommand
@@ -552,7 +561,7 @@ namespace GTEngine
             delete this->framebuffer;
         }
 
-        Framebuffer_GL20* framebuffer;
+        OpenGL20::Framebuffer* framebuffer;
     };
 
     struct RCOnColourBufferChanged : public GTEngine::RenderCommand
@@ -565,10 +574,10 @@ namespace GTEngine
             glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, this->attachment, ToOpenGLTexture2DTarget(this->textureTarget), (this->texture != nullptr) ? this->texture->object : 0, 0);
         }
 
-        Framebuffer_GL20* framebuffer;
-        Texture2D_GL20*   texture;
-        Texture2DTarget   textureTarget;
-        GLenum            attachment;
+        OpenGL20::Framebuffer* framebuffer;
+        OpenGL20::Texture2D*   texture;
+        Texture2DTarget        textureTarget;
+        GLenum                 attachment;
     };
 
 
@@ -587,9 +596,9 @@ namespace GTEngine
             }
         }
 
-        Framebuffer_GL20* framebuffer;
-        Texture2D_GL20*   texture;
-        bool              changeStencil;
+        OpenGL20::Framebuffer* framebuffer;
+        OpenGL20::Texture2D*   texture;
+        bool                   changeStencil;
     };
 
 
@@ -608,7 +617,7 @@ namespace GTEngine
             }
         }
 
-        Framebuffer_GL20* framebuffer;
+        OpenGL20::Framebuffer* framebuffer;
     };
 }
 
@@ -652,7 +661,7 @@ namespace GTEngine
     {
         if (!(texture.IsFloatingPointFormat() && !Renderer::SupportFloatTextures()))
         {
-            auto rendererData = new Texture2D_GL20;     // This is deleted in RCOnTexture2DDeleted::Execute(), after the OpenGL object has been deleted.
+            auto rendererData = new OpenGL20::Texture2D;     // This is deleted in RCOnTexture2DDeleted::Execute(), after the OpenGL object has been deleted.
             texture.SetRendererData(rendererData);
 
             auto &rc = RCCache_OnTexture2DCreated[Renderer::BackIndex].Acquire();
@@ -680,7 +689,7 @@ namespace GTEngine
     void Renderer::OnTexture2DDeleted(Texture2D &texture)
     {
         auto &rc = RCCache_OnTexture2DDeleted[Renderer::BackIndex].Acquire();
-        rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        rc.texture = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
@@ -690,7 +699,7 @@ namespace GTEngine
         auto &mipmap = texture.GetMipmap(static_cast<unsigned int>(mipmapIndex));
 
         auto &rc = RCCache_OnTexture2DMipmapChanged[Renderer::BackIndex].Acquire();
-        rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        rc.texture = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
         rc.target  = texture.GetTarget();
 
         rc.mipmap  = static_cast<GLint>(mipmapIndex);
@@ -729,7 +738,7 @@ namespace GTEngine
         if (texture.GetTarget() == Texture2DTarget_Default)
         {
             auto &rc = RCCache_OnTexture2DMinificationFilterChanged[Renderer::BackIndex].Acquire();
-            rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+            rc.texture = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
 
             size_t baseMipLevel, maxMipLevel;
             texture.GetValidMipmapRange(baseMipLevel, maxMipLevel);
@@ -746,7 +755,7 @@ namespace GTEngine
         if (texture.GetTarget() == Texture2DTarget_Default)
         {
             auto &rc = RCCache_OnTexture2DMagnificationFilterChanged[Renderer::BackIndex].Acquire();
-            rc.texture = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+            rc.texture = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
             rc.filter  = ToOpenGLTextureMinificationFilter(texture.GetMagnificationFilter());
 
             ResourceRCQueues[Renderer::BackIndex].Append(rc);
@@ -758,7 +767,7 @@ namespace GTEngine
         if (texture.GetTarget() == Texture2DTarget_Default)
         {
             auto &rc = RCCache_OnTexture2DAnisotropyChanged[Renderer::BackIndex].Acquire();
-            rc.texture    = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+            rc.texture    = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
             rc.anisotropy = static_cast<GLint>(texture.GetAnisotropy());
 
             ResourceRCQueues[Renderer::BackIndex].Append(rc);
@@ -770,7 +779,7 @@ namespace GTEngine
         if (texture.GetTarget() == Texture2DTarget_Default)
         {
             auto &rc = RCCache_OnTexture2DWrapModeChanged[Renderer::BackIndex].Acquire();
-            rc.texture  = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+            rc.texture  = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
             rc.wrapMode = ToOpenGLWrapMode(texture.GetWrapMode());
 
             ResourceRCQueues[Renderer::BackIndex].Append(rc);
@@ -782,7 +791,7 @@ namespace GTEngine
 
     void Renderer::OnTextureCubeCreated(TextureCube &texture)
     {
-        auto rendererData = new TextureCube_GL20;
+        auto rendererData = new OpenGL20::TextureCube;
         texture.SetRendererData(rendererData);
 
         auto &rc = RCCache_OnTextureCubeCreated[Renderer::BackIndex].Acquire();
@@ -798,7 +807,7 @@ namespace GTEngine
     void Renderer::OnTextureCubeDeleted(TextureCube &texture)
     {
         auto &rc = RCCache_OnTextureCubeDeleted[Renderer::BackIndex].Acquire();
-        rc.texture = static_cast<TextureCube_GL20*>(texture.GetRendererData());
+        rc.texture = static_cast<OpenGL20::TextureCube*>(texture.GetRendererData());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
@@ -806,7 +815,7 @@ namespace GTEngine
     void Renderer::OnTextureCubeMinificationFilterChanged(TextureCube &texture)
     {
         auto &rc = RCCache_OnTextureCubeMinificationFilterChanged[Renderer::BackIndex].Acquire();
-        rc.texture = static_cast<TextureCube_GL20*>(texture.GetRendererData());
+        rc.texture = static_cast<OpenGL20::TextureCube*>(texture.GetRendererData());
         rc.filter  = ToOpenGLTextureMinificationFilter(texture.GetMinificationFilter());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
@@ -815,7 +824,7 @@ namespace GTEngine
     void Renderer::OnTextureCubeMagnificationFilterChanged(TextureCube &texture)
     {
         auto &rc = RCCache_OnTextureCubeMagnificationFilterChanged[Renderer::BackIndex].Acquire();
-        rc.texture = static_cast<TextureCube_GL20*>(texture.GetRendererData());
+        rc.texture = static_cast<OpenGL20::TextureCube*>(texture.GetRendererData());
         rc.filter  = ToOpenGLTextureMinificationFilter(texture.GetMagnificationFilter());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
@@ -824,7 +833,7 @@ namespace GTEngine
     void Renderer::OnTextureCubeAnisotropyChanged(TextureCube &texture)
     {
         auto &rc = RCCache_OnTextureCubeAnisotropyChanged[Renderer::BackIndex].Acquire();
-        rc.texture    = static_cast<TextureCube_GL20*>(texture.GetRendererData());
+        rc.texture    = static_cast<OpenGL20::TextureCube*>(texture.GetRendererData());
         rc.anisotropy = static_cast<GLint>(texture.GetAnisotropy());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
@@ -835,7 +844,7 @@ namespace GTEngine
 
     void Renderer::OnVertexArrayCreated(VertexArray &vertexArray)
     {
-        auto rendererData = new VertexArray_GL20;     // This is deleted in RCOnVertexArray2DDeleted::Execute(), after the OpenGL object has been deleted.
+        auto rendererData = new OpenGL20::VertexArray;     // This is deleted in RCOnVertexArray2DDeleted::Execute(), after the OpenGL object has been deleted.
         vertexArray.SetRendererData(rendererData);
 
         auto &rc = RCCache_OnVertexArrayCreated[Renderer::BackIndex].Acquire();
@@ -847,7 +856,7 @@ namespace GTEngine
     void Renderer::OnVertexArrayDeleted(VertexArray &vertexArray)
     {
         auto &rc = RCCache_OnVertexArrayDeleted[Renderer::BackIndex].Acquire();
-        rc.vertexArray = static_cast<VertexArray_GL20*>(vertexArray.GetRendererData());
+        rc.vertexArray = static_cast<OpenGL20::VertexArray*>(vertexArray.GetRendererData());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
@@ -855,7 +864,7 @@ namespace GTEngine
     void Renderer::OnVertexArrayVertexDataChanged(VertexArray &vertexArray)
     {
         auto &rc = RCCache_OnVertexArrayVertexDataChanged[Renderer::BackIndex].Acquire();
-        rc.vertexArray = static_cast<VertexArray_GL20*>(vertexArray.GetRendererData());
+        rc.vertexArray = static_cast<OpenGL20::VertexArray*>(vertexArray.GetRendererData());
 
         rc.dataSize = static_cast<GLsizeiptr>(vertexArray.GetVertexCount() * vertexArray.GetFormat().GetSize() * sizeof(float));
         
@@ -879,7 +888,7 @@ namespace GTEngine
     void Renderer::OnVertexArrayIndexDataChanged(VertexArray &vertexArray)
     {
         auto &rc = RCCache_OnVertexArrayIndexDataChanged[Renderer::BackIndex].Acquire();
-        rc.vertexArray = static_cast<VertexArray_GL20*>(vertexArray.GetRendererData());
+        rc.vertexArray = static_cast<OpenGL20::VertexArray*>(vertexArray.GetRendererData());
 
 
         rc.dataSize = static_cast<GLsizeiptr>(vertexArray.GetIndexCount() * sizeof(unsigned int));
@@ -907,7 +916,7 @@ namespace GTEngine
 
     void Renderer::OnShaderCreated(Shader &shader)
     {
-        auto rendererData = new Shader_GL20;
+        auto rendererData = new OpenGL20::Shader;
         shader.SetRendererData(rendererData);
 
         auto &rc = RCCache_OnShaderCreated[Renderer::BackIndex].Acquire();
@@ -921,7 +930,7 @@ namespace GTEngine
     void Renderer::OnShaderDeleted(Shader &shader)
     {
         auto &rc = RCCache_OnShaderDeleted[Renderer::BackIndex].Acquire();
-        rc.shader = static_cast<Shader_GL20*>(shader.GetRendererData());
+        rc.shader = static_cast<OpenGL20::Shader*>(shader.GetRendererData());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
@@ -932,7 +941,7 @@ namespace GTEngine
 
     void Renderer::OnFramebufferCreated(Framebuffer &framebuffer)
     {
-        auto rendererData = new Framebuffer_GL20;
+        auto rendererData = new OpenGL20::Framebuffer;
         framebuffer.SetRendererData(rendererData);
 
         auto &rc = RCCache_OnFramebufferCreated[Renderer::BackIndex].Acquire();
@@ -944,7 +953,7 @@ namespace GTEngine
     void Renderer::OnFramebufferDeleted(Framebuffer &framebuffer)
     {
         auto &rc = RCCache_OnFramebufferDeleted[Renderer::BackIndex].Acquire();
-        rc.framebuffer = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+        rc.framebuffer = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
@@ -954,8 +963,8 @@ namespace GTEngine
         auto texture = framebuffer.GetColourBuffer(index);
 
         auto &rc = RCCache_OnColourBufferChanged[Renderer::BackIndex].Acquire();
-        rc.framebuffer   = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
-        rc.texture       = static_cast<Texture2D_GL20*>(texture->GetRendererData());
+        rc.framebuffer   = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
+        rc.texture       = static_cast<OpenGL20::Texture2D*>(texture->GetRendererData());
         rc.textureTarget = texture->GetTarget();
         rc.attachment    = GL_COLOR_ATTACHMENT0_EXT + index;
         
@@ -965,7 +974,7 @@ namespace GTEngine
     void Renderer::OnColourBufferDetached(Framebuffer &framebuffer, size_t index)
     {
         auto &rc = RCCache_OnColourBufferChanged[Renderer::BackIndex].Acquire();
-        rc.framebuffer = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+        rc.framebuffer = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
         rc.texture     = nullptr;
         rc.attachment  = GL_COLOR_ATTACHMENT0_EXT + index;
 
@@ -975,8 +984,8 @@ namespace GTEngine
     void Renderer::OnDepthStencilBufferAttached(Framebuffer &framebuffer)
     {
         auto &rc = RCCache_OnDepthStencilBufferChanged[Renderer::BackIndex].Acquire();
-        rc.framebuffer   = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
-        rc.texture       = static_cast<Texture2D_GL20*>(framebuffer.GetDepthStencilBuffer()->GetRendererData());
+        rc.framebuffer   = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
+        rc.texture       = static_cast<OpenGL20::Texture2D*>(framebuffer.GetDepthStencilBuffer()->GetRendererData());
         rc.changeStencil = framebuffer.GetDepthStencilBuffer()->GetFormat() == GTImage::ImageFormat_Depth24_Stencil8;
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
@@ -985,7 +994,7 @@ namespace GTEngine
     void Renderer::OnDepthStencilBufferDetached(Framebuffer &framebuffer)
     {
         auto &rc = RCCache_OnDepthStencilBufferChanged[Renderer::BackIndex].Acquire();
-        rc.framebuffer   = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+        rc.framebuffer   = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
         rc.texture       = nullptr;
         rc.changeStencil = true;
 
@@ -995,7 +1004,7 @@ namespace GTEngine
     void Renderer::OnCheckFramebuffer(Framebuffer &framebuffer)
     {
         auto &rc = RCCache_OnCheckFramebuffer[Renderer::BackIndex].Acquire();
-        rc.framebuffer = static_cast<Framebuffer_GL20*>(framebuffer.GetRendererData());
+        rc.framebuffer = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
 
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
