@@ -140,6 +140,9 @@ namespace GTEngine
         /// Whether or not the editor is open. Defaults to false.
         bool isOpen;
 
+        /// Whether or not file watching should be disabled when the editor is closed.
+        bool disableFileWatchingAfterClose;
+
 
 
         /// The event handler for the data files watcher. This will just dispatch the events to the main Editor object.

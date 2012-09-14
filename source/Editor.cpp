@@ -15,10 +15,8 @@ namespace GTEngine
 {
     Editor::Editor(Game &game)
         : game(game), GUI(),
-          //modelEditorMode(*this), sandbox(*this),
-          //currentMode(nullptr), previousMode(nullptr),
           modelEditor(*this), imageEditor(*this),
-          isStarted(false), isOpen(false),
+          isStarted(false), isOpen(false), disableFileWatchingAfterClose(true),
           dataFilesWatcherEventHandler(*this)
     {
     }
@@ -49,12 +47,7 @@ namespace GTEngine
                 // Here we need to attach our files watcher event handler.
                 this->game.GetDataFilesWatcher().AddEventHandler(this->dataFilesWatcherEventHandler);
                 
-                // Here is where we startup our editor modes.
-                //this->modelEditorMode.Startup(guiServer);
-                //this->sandbox.Startup(guiServer);
 
-                // Here we enable the default mode.
-                //this->SwitchToModelEditorMode();
                 this->isStarted = true;
             }
             else
@@ -74,7 +67,9 @@ namespace GTEngine
             this->game.ShowCursor();
             this->GUI.EditorMain->Show();
 
-            // We want to watch the data files.
+            // We always want to watch the data files while in the editor, but the game may or may not want to have watching enabled after the editor is closed. We will need
+            // keep track of whether or not we should disable watching when the editor is closed.
+            this->disableFileWatchingAfterClose = !this->game.IsDataFilesWatchingEnabled();
             this->game.EnableDataFilesWatching();
 
             // We also want to get an update on the data files immediately.
@@ -98,8 +93,11 @@ namespace GTEngine
             this->game.GetDataFilesWatcher().CheckForChanges(false);
             this->game.GetDataFilesWatcher().DispatchEvents();
 
-            // We don't want to be watching data files anymore.
-            this->game.DisableDataFilesWatching();
+            // We may want to disable file watching.
+            if (this->disableFileWatchingAfterClose)
+            {
+                this->game.DisableDataFilesWatching();
+            }
 
             this->isOpen = false;
         }
