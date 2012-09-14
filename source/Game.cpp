@@ -457,10 +457,8 @@ namespace GTEngine
             }
             else if (Texture2DLibrary::IsExtensionSupported(extension))
             {
+                Texture2DLibrary::Reload(item.info.path.c_str());
             }
-
-
-
         }
     }
 

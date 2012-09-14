@@ -66,34 +66,40 @@ namespace GTEngine
 {
     Texture2D* Texture2DLibrary::Acquire(const char* fileName)
     {
-        auto iTexture = LoadedTextures.Find(fileName);
-        if (iTexture == nullptr)
+        GTCore::String absFileName;
+        if (GTCore::IO::FindAbsolutePath(fileName, absFileName))
         {
-            auto newTexture = new Texture2D(fileName);
-            if (newTexture->IsLinkedToFile())
+            auto iTexture = LoadedTextures.Find(absFileName.c_str());
+            if (iTexture == nullptr)
             {
-                newTexture->SetFilter(DefaultMinFilter, DefaultMagFilter);
-                newTexture->SetAnisotropy(DefaultAnisotropy);
+                auto newTexture = new Texture2D(absFileName.c_str());
+                if (newTexture->IsLinkedToFile())
+                {
+                    newTexture->SetFilter(DefaultMinFilter, DefaultMagFilter);
+                    newTexture->SetAnisotropy(DefaultAnisotropy);
 
-                LoadedTextures.Add(fileName, newTexture);
+                    LoadedTextures.Add(absFileName.c_str(), newTexture);
 
-                return newTexture;
+                    return newTexture;
+                }
+                else
+                {
+                    GTEngine::PostError("Can not find file: %s", fileName);
+
+                    delete newTexture;
+                    return nullptr;
+                }
             }
             else
             {
-                GTEngine::PostError("Can not find file: %s", fileName);
+                assert(iTexture->value != nullptr);
+                ++iTexture->value->refCount;
 
-                delete newTexture;
-                return nullptr;
+                return iTexture->value;
             }
         }
-        else
-        {
-            assert(iTexture->value != nullptr);
-            ++iTexture->value->refCount;
 
-            return iTexture->value;
-        }
+        return nullptr;
     }
 
     Texture2D* Texture2DLibrary::Acquire(Texture2D* texture)
@@ -128,6 +134,25 @@ namespace GTEngine
                 --texture->refCount;
             }
         }
+    }
+
+    bool Texture2DLibrary::Reload(const char* fileName)
+    {
+        GTCore::String absFileName;
+        if (GTCore::IO::FindAbsolutePath(fileName, absFileName))
+        {
+            auto iTexture = LoadedTextures.Find(absFileName.c_str());
+            if (iTexture != nullptr)
+            {
+                auto texture = iTexture->value;
+                assert(texture != nullptr);
+
+                texture->LinkToFile(absFileName.c_str());
+                texture->PullAllMipmaps();
+            }
+        }
+
+        return false;
     }
 }
 

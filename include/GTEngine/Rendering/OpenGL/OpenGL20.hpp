@@ -2,6 +2,8 @@
 #ifndef __GTEngine_Rendering_OpenGL20_hpp_
 #define __GTEngine_Rendering_OpenGL20_hpp_
 
+#include <GTEngine/Rendering/Texture2D.hpp>
+#include <GTEngine/Rendering/TextureCube.hpp>
 #include <GTEngine/Rendering/VertexArray.hpp>
 #include <gtgl/gtgl.h>
 
@@ -11,6 +13,20 @@ namespace GTEngine
     class OpenGL20
     {
     public:
+
+        /// Binds the given 2D texture.
+        ///
+        /// @param texture [in] The texture to bind.
+        static void BindTexture(Texture2D &texture);
+        static void BindTexture(Texture2D* texture);
+
+        /// Binds the given cube map.
+        ///
+        /// @param texture [in] The texture to bind.
+        static void BindTexture(TextureCube &texture);
+        static void BindTexture(TextureCube* texture);
+
+
 
         /// Binds the given vertex array.
         ///
@@ -30,6 +46,7 @@ namespace GTEngine
 
         /// Retrieves the OpenGL object of the current index buffer.
         static GLuint GetCurrentOpenGLIndexBufferObject();
+
 
 
 
