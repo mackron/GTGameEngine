@@ -1076,6 +1076,13 @@ namespace GTEngine
     {
         this->focused = true;
 
+        // If we're watching data files, we're going to check and update right now. This is useful for toggling between the editor and the other application.
+        if (this->IsDataFilesWatchingEnabled())
+        {
+            this->dataFilesWatcher.CheckForChanges(false);
+            this->dataFilesWatcher.DispatchEvents();
+        }
+
         this->OnReceiveFocus();
     }
 
