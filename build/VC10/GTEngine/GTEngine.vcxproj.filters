@@ -87,11 +87,14 @@
     <Filter Include="include\Random\Floor">
       <UniqueIdentifier>{3889c22e-2cf9-4642-a5a2-b57862a05b17}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Rendering\OpenGL20">
-      <UniqueIdentifier>{fa3c59a3-8244-499a-925d-28f040214321}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\Rendering\OpenGL">
       <UniqueIdentifier>{28feea9a-3965-4cae-bd4c-b1d4f0b98ac9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Rendering\OpenGL\OpenGL20">
+      <UniqueIdentifier>{441786e8-8733-44d5-a21a-3b08b5f088c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Rendering\OpenGL">
+      <UniqueIdentifier>{8f41a52c-bdaa-43e6-8cad-5cdfe9d57b14}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -467,11 +470,11 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp">
       <Filter>source\Rendering\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\Resources.hpp">
-      <Filter>source\Rendering\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureCube.hpp">
       <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\OpenGL\OpenGL20.hpp">
+      <Filter>include\Rendering\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -772,11 +775,14 @@
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL20\Renderer_Resources.cpp">
-      <Filter>source\Rendering\OpenGL20</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\TextureCube.cpp">
       <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\Renderer_Resources.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL20</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\OpenGL20.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL20</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

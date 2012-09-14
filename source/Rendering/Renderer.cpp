@@ -2,6 +2,7 @@
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Rendering/GUIRenderer.hpp>
 #include <GTEngine/Rendering/VertexAttributes.hpp>
+#include <GTEngine/Rendering/OpenGL/OpenGL20.hpp>
 #include <GTEngine/ShaderParameter.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
@@ -19,7 +20,6 @@
 #endif
 
 #include "OpenGL/TypeConversion.hpp"
-#include "OpenGL/Resources.hpp"
 
 
 // OpenGL Utilities
@@ -272,7 +272,7 @@ namespace GTEngine
     /// Binds the given texture.
     void Renderer_BindTexture2D(Texture2D &texture)
     {
-        auto textureData = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        auto textureData = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
         assert(textureData != nullptr);
 
         if (texture.GetTarget() == Texture2DTarget_Default)
@@ -296,7 +296,7 @@ namespace GTEngine
 
     void Renderer_BindTextureCube(TextureCube &texture)
     {
-        auto textureData = static_cast<Texture2D_GL20*>(texture.GetRendererData());
+        auto textureData = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
         assert(textureData != nullptr);
 
         glBindTexture(GL_TEXTURE_CUBE_MAP, textureData->object);
@@ -355,6 +355,7 @@ namespace GTEngine
                 Log("OpenGL Extensions:");
                 Log("    ARB_ES2_compatibility:              %s", GTGL_ARB_ES2_compatibility              ? "yes" : "no");
                 Log("    ARB_texture_float:                  %s", GTGL_ARB_texture_float                  ? "yes" : "no");
+                Log("    ARB_half_float_pixel:               %s", GTGL_ARB_half_float_pixel               ? "yes" : "no");
                 Log("    EXT_framebuffer_object:             %s", GTGL_EXT_framebuffer_object             ? "yes" : "no");
                 Log("    EXT_framebuffer_blit:               %s", GTGL_EXT_framebuffer_blit               ? "yes" : "no");
                 Log("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
@@ -562,102 +563,26 @@ namespace GTEngine
     }
 
 
-    void Renderer_EnableVertexFormat(const VertexFormat &format, const float* vertices)
-    {
-        // We need to enable all of the relevant vertex attributes and set their pointers. What we do is we loop over the
-        // attributes in the vertex array's format and set the pointers and enable. Then, we disable any previously enabled
-        // attributes that we no longer want enabled.
-        uint32_t  newVertexAttribEnableBits = 0x0;
-        uint32_t &oldVertexAttribEnableBits = VertexAttribEnableBits;
-        size_t    formatArraySize           = format.GetAttributeCount();
-
-        GLsizei formatSizeInBytes = static_cast<GLsizei>(format.GetSizeInBytes());
-        int offset = 0;
-
-        for (size_t i = 0; i < formatArraySize; i += 2)
-        {
-            GLuint   attribIndex = static_cast<GLuint>(format[i]);
-            GLint    attribSize  = static_cast<GLint>(format[i + 1]);
-            uint32_t bit         = static_cast<uint32_t>(1 << attribIndex);
-
-            newVertexAttribEnableBits |= bit;
-
-            if (!(oldVertexAttribEnableBits & bit))
-            {
-                glEnableVertexAttribArray(attribIndex);
-            }
-            else
-            {
-                // We clear the bit from the old bitfield because after this loop we're going to check if any bits are remaining. If so,
-                // those attributes need to be disabled. By clearing, we can just check if the bitfield is 0, in which case nothing else
-                // needs disabling.
-                oldVertexAttribEnableBits &= ~bit;
-            }
-
-            glVertexAttribPointer(attribIndex, attribSize, GL_FLOAT, GL_FALSE, formatSizeInBytes, (vertices +  offset));
-
-            // The offset must be set AFTER glVertexAttribPointer().
-            offset += attribSize;
-        }
-
-        // If any attributes need to be disable, we need to do that now. This is where our enabled bitfields come in handy.
-        while (oldVertexAttribEnableBits != 0)
-        {
-            GLuint attribIndex  = static_cast<GLuint>(GTCore::NextBitIndex(oldVertexAttribEnableBits));
-
-            glDisableVertexAttribArray(attribIndex);
-
-            // The bit needs to be cleared in preperation for the next iteration.
-            oldVertexAttribEnableBits &= ~(1 << attribIndex);
-        }
-
-        // Now we need to set the renderer's enabled bits to our new bits.
-        VertexAttribEnableBits = newVertexAttribEnableBits;
-    }
-
-
-    // TODO: There is a annoying bug here. The LastDrawnVertexArray variable will block unnecessary binding of vertex arrays. However, the binding can change
-    //       in OnVertexArrayVertexDataChanged(), etc, which will NOT update LastDrawnVertexArray. We may need to do an OpenGL helper class for doing annoying
-    //       management stuff like this. For now, OnVertexArrayVertexDataChanged(), etc will just rebind to 0, which is actually still erroneous. 
-
+    
     void Renderer::Draw(const VertexArray* vertexArray, DrawMode mode)
     {
         assert(vertexArray != nullptr);
 
-        auto rendererData = static_cast<const VertexArray_GL20*>(vertexArray->GetRendererData());
-        assert(rendererData != nullptr);
-
-        //if (LastDrawnVertexArray != vertexArray)
-        {
-            glBindBuffer(GL_ARRAY_BUFFER,         rendererData->verticesObject);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererData->indicesObject);
-
-            Renderer_EnableVertexFormat(vertexArray->GetFormat(), nullptr);             // <-- 'nullptr' is the vertex pointer, which is unused for vertex arrays.
-
-            LastDrawnVertexArray = vertexArray;
-        }
+        OpenGL20::BindVertexArray(vertexArray);
+        OpenGL20::EnableVertexFormat(vertexArray->GetFormat(), nullptr);
 
         // Now that everything has been enabled/disabled, we draw the elements.
-        glDrawElements(ToOpenGLDrawMode(mode), rendererData->indexCount, GL_UNSIGNED_INT, 0);
+        glDrawElements(ToOpenGLDrawMode(mode), static_cast<const OpenGL20::VertexArray*>(vertexArray->GetRendererData())->indexCount, GL_UNSIGNED_INT, 0);
     }
 
     void Renderer::Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
     {
-        // Any previously bound vertex buffer needs to be unbound.
-        //if (LastDrawnVertexArray != nullptr)
-        {
-            glBindBuffer(GL_ARRAY_BUFFER,         0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        }
-
-        // First we enable the vertex format...
-        Renderer_EnableVertexFormat(format, vertices);
+        // We need to disable any vertex buffer object binding.
+        OpenGL20::BindVertexArray(nullptr);
+        OpenGL20::EnableVertexFormat(format, vertices);
 
         // ... then we just draw the elements.
         glDrawElements(ToOpenGLDrawMode(mode), static_cast<GLsizei>(indexCount), GL_UNSIGNED_INT, indices);
-
-
-        LastDrawnVertexArray = nullptr;
     }
 
     void Renderer::EnableScissorTest()
@@ -954,7 +879,7 @@ namespace GTEngine
         {
             if (framebuffer != nullptr)
             {
-                auto framebufferData = static_cast<Framebuffer_GL20*>(framebuffer->GetRendererData());
+                auto framebufferData = static_cast<OpenGL20::Framebuffer*>(framebuffer->GetRendererData());
                 assert(framebufferData != nullptr);
 
                 glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferData->object);
@@ -981,7 +906,7 @@ namespace GTEngine
     {
         if (shader != nullptr)
         {
-            glUseProgram(static_cast<Shader_GL20*>(shader->GetRendererData())->program);
+            glUseProgram(static_cast<OpenGL20::Shader*>(shader->GetRendererData())->program);
             RendererState.CurrentShader = shader;
 
             Renderer::BindCurrentShaderTextures();
@@ -1019,7 +944,7 @@ namespace GTEngine
 
     void Renderer::BindCurrentShaderTextures()
     {
-        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr)
         {
             // Different texture types need to be bound to different texture units to be usable in the shader. We use an offset to do this.
@@ -1037,7 +962,7 @@ namespace GTEngine
                     if (texture2D->GetTarget() == Texture2DTarget_Default)
                     {
                         glEnable(GL_TEXTURE_2D);
-                        glBindTexture(GL_TEXTURE_2D, static_cast<Texture2D_GL20*>(texture2D->GetRendererData())->object);
+                        glBindTexture(GL_TEXTURE_2D, static_cast<OpenGL20::Texture2D*>(texture2D->GetRendererData())->object);
                     }
                     else
                     {
@@ -1049,7 +974,7 @@ namespace GTEngine
                     auto textureCube = static_cast<TextureCube*>(attachment.texture);
 
                     glEnable(GL_TEXTURE_CUBE_MAP);
-                    glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<TextureCube_GL20*>(textureCube->GetRendererData())->object);
+                    glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<OpenGL20::TextureCube*>(textureCube->GetRendererData())->object);
                 }
             }
         }
@@ -1058,7 +983,7 @@ namespace GTEngine
 
     void Renderer::SetShaderParameter(const char* paramName, Texture2D* value)
     {
-        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             auto iTexture = RendererState.CurrentShader->currentTextures.Find(paramName);
@@ -1106,7 +1031,7 @@ namespace GTEngine
 
     void Renderer::SetShaderParameter(const char* paramName, TextureCube* value)
     {
-        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             auto iTexture = RendererState.CurrentShader->currentTextures.Find(paramName);
@@ -1158,7 +1083,7 @@ namespace GTEngine
 
     void Renderer::SetShaderParameter(const char *paramName, float x)
     {
-        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLuint location = glGetUniformLocation(rendererData->program, paramName);
@@ -1167,7 +1092,7 @@ namespace GTEngine
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y)
     {
-        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
@@ -1176,7 +1101,7 @@ namespace GTEngine
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y, float z)
     {
-        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
@@ -1185,7 +1110,7 @@ namespace GTEngine
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y, float z, float w)
     {
-        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
@@ -1196,7 +1121,7 @@ namespace GTEngine
     // Column-major for matrices.
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat2 &value)
     {
-        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
@@ -1205,7 +1130,7 @@ namespace GTEngine
     }
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat3 &value)
     {
-        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
@@ -1214,7 +1139,7 @@ namespace GTEngine
     }
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat4 &value)
     {
-        auto rendererData = static_cast<Shader_GL20*>(RendererState.CurrentShader->GetRendererData());
+        auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
@@ -1237,8 +1162,8 @@ namespace GTEngine
     void Renderer::FramebufferBlit(Framebuffer* sourceFramebuffer, unsigned int sourceWidth, unsigned int sourceHeight,
                                    Framebuffer* destFramebuffer,   unsigned int destWidth,   unsigned int destHeight)
     {
-        auto sourceGL = sourceFramebuffer != nullptr ? static_cast<Framebuffer_GL20*>(sourceFramebuffer->GetRendererData()) : nullptr;
-        auto destGL   = destFramebuffer   != nullptr ? static_cast<Framebuffer_GL20*>(  destFramebuffer->GetRendererData()) : nullptr;
+        auto sourceGL = sourceFramebuffer != nullptr ? static_cast<OpenGL20::Framebuffer*>(sourceFramebuffer->GetRendererData()) : nullptr;
+        auto destGL   = destFramebuffer   != nullptr ? static_cast<OpenGL20::Framebuffer*>(  destFramebuffer->GetRendererData()) : nullptr;
 
         glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, sourceGL ? sourceGL->object : 0);
         glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, destGL   ?   destGL->object : 0);
