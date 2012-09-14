@@ -6,10 +6,58 @@
 
 namespace GTEngine
 {
-    static const VertexArray* BoundVertexArray = nullptr;              ///< The currently bound vertex array.
+    void OpenGL20::BindTexture(GTEngine::Texture2D &texture)
+    {
+        auto textureData = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
+        assert(textureData != nullptr);
 
-    GLuint CurrentGLVertexBufferObject = 0;
-    GLuint CurrentGLIndexBufferObject  = 0;
+        if (texture.GetTarget() == Texture2DTarget_Default)
+        {
+            glBindTexture(GL_TEXTURE_2D, textureData->object);
+        }
+    }
+
+    void OpenGL20::BindTexture(GTEngine::Texture2D* texture)
+    {
+        if (texture != nullptr)
+        {
+            OpenGL20::BindTexture(*texture);
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+    }
+
+    void OpenGL20::BindTexture(GTEngine::TextureCube &texture)
+    {
+        auto textureData = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
+        assert(textureData != nullptr);
+
+        glBindTexture(GL_TEXTURE_CUBE_MAP, textureData->object);
+    }
+
+    void OpenGL20::BindTexture(GTEngine::TextureCube* texture)
+    {
+        if (texture != nullptr)
+        {
+            OpenGL20::BindTexture(*texture);
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        }
+    }
+
+
+
+
+
+
+    static const VertexArray* BoundVertexArray = nullptr;              ///< The currently bound vertex array.
+    static GLuint CurrentGLVertexBufferObject = 0;
+    static GLuint CurrentGLIndexBufferObject  = 0;
+
 
     void OpenGL20::BindVertexArray(const GTEngine::VertexArray* vertexArray)
     {

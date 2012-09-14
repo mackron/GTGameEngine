@@ -28,7 +28,9 @@ namespace GTEngine
     public:
 
         /// Acquires a texture object by it's name, relative to the data directory. See remarks.
+        ///
         /// @param fileName [in] The file name of the texture being loaded, relative to the data directory.
+        ///
         /// @return A pointer to the texture object, or null if the texture does not exist.
         ///
         /// @remarks
@@ -39,14 +41,29 @@ namespace GTEngine
         static Texture2D* Acquire(const char* fileName);
 
         /// Acquires an already-acquired texture object. This simply increments the internal reference count.
+        ///
         /// @param texture [in] The texture being reacquired.
+        ///
         /// @return <texture>. Done for consistency with Acquire(const char*).
         static Texture2D* Acquire(Texture2D* texture);
 
 
         /// Unacquires a texture.
+        ///
         /// @param texture [in] A pointer to the texture to unacquire.
         static void Unacquire(const Texture2D* texture);
+
+
+        /// Reloads the texture of the given file.
+        ///
+        /// @param file [in] The file name of the texture being reloaded.
+        ///
+        /// @return True if the image was reloaded successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This will NOT load the texture if the texture has not already been loaded.
+        static bool Reload(const char* fileName);
+
 
 
     /// System/Engine textures.

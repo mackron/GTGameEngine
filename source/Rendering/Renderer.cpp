@@ -269,6 +269,7 @@ namespace GTEngine
 // Renderer support functions.
 namespace GTEngine
 {
+    /*
     /// Binds the given texture.
     void Renderer_BindTexture2D(Texture2D &texture)
     {
@@ -313,7 +314,7 @@ namespace GTEngine
             glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
         }
     }
-
+    */
 
     void OpenGLDebugMessageHandler(const char* message)
     {
@@ -1000,7 +1001,7 @@ namespace GTEngine
 
                     // All we need to do is change the binding for the texture.
                     glActiveTexture(GL_TEXTURE0 + iTexture->index);
-                    Renderer_BindTexture2D(value);
+                    OpenGL20::BindTexture(value);
 
                     // Now we need to let the shader know about the old texture.
                     RendererState.CurrentShader->OnTextureParameterChanged(oldTexture);
@@ -1048,7 +1049,7 @@ namespace GTEngine
 
                     // All we need to do is change the binding for the texture.
                     glActiveTexture(GL_TEXTURE0 + iTexture->index);
-                    Renderer_BindTextureCube(value);
+                    OpenGL20::BindTexture(value);
 
                     // Now we need to let the shader know about the old texture.
                     RendererState.CurrentShader->OnTextureParameterChanged(oldTexture);
