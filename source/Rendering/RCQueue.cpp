@@ -1,6 +1,7 @@
 
 #include <GTEngine/Rendering/RCQueue.hpp>
 #include <GTEngine/Rendering/RenderCommand.hpp>
+#include <cstring>      // For memcpy().
 
 namespace GTEngine
 {
