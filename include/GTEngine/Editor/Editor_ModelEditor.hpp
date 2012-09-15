@@ -70,6 +70,13 @@ namespace GTEngine
         /// Builds the convex decomposition of the current model.
         void BuildConvexDecomposition(ConvexHullBuildSettings &settings);
 
+
+        /// Plays the current model's animation.
+        void PlayAnimation();
+
+        /// Stops the current models' animation.
+        void StopAnimation();
+
         
         ///////////////////////////////////////////////////
         // Events.
