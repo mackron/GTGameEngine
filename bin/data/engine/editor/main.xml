@@ -29,55 +29,10 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script url="scripts/modeleditor-materialpanel.lua" />
 <script url="scripts/modeleditor-cdpanel.lua" />
 
-<!--<include url="modeleditor.xml"   />-->
-<!--<include url="sandbox.xml"       />-->
 
 <!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
 <script>
 <![CDATA[
-]]>
-</script>
-
-<script>
-<![CDATA[
---[[
-    MenuBar_ModelEditor:MenuBar();
-    file = MenuBar_ModelEditor:AppendItem("File");
-    file.menu:AppendItem("Open..."):OnPressed(function()
-        MenuBar_ModelEditor:CollapseMenu();
-        OpenModelDialog:Show();
-    end);
-    file.menu:AppendSeparator();
-    file.menu:AppendItem("Save");
-    file.menu:AppendItem("Save As...");
-    file.menu:AppendSeparator();
-    file.menu:AppendItem("Exit"):OnPressed(function()
-        Game.Close();
-    end);
-    
-    MenuBar_ModelEditor:AppendItem("Edit");
-    MenuBar_ModelEditor:AppendItem("View");
-    
-    
-    
-    MenuBar_Sandbox:MenuBar();
-    insert = MenuBar_Sandbox:AppendItem("Insert");
-    insert.menu:AppendItem("Ground Plane...");
-    insert.menu:AppendSeparator();
-    insert.menu:AppendItem("Dynamic Box...");
-    insert.menu:AppendItem("Dynamic Sphere...");
-    
-
-    ModeSwitcher:ComboBox();
-    ModeSwitcher:AppendItem("Model Editor"):OnPressed(function()
-        Editor.SwitchToModelEditorMode();
-    end);
-    ModeSwitcher:AppendItem("Sandbox"):OnPressed(function()
-        Editor.SwitchToSandboxMode();
-    end);
-    --]]
-    
-    
     CommandTextBox:OnKeyDown(function(data)
         if data.key == 13 then                  -- Enter key
             if not Game.ExecuteScript(CommandTextBox:GetText()) then
@@ -320,18 +275,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         flex-child-height:   true
     }
     
-    #EditorRightPanel
-    {
-        visible: false      // Invisislbe for now. Will make this visible later on when we use it.
-    
-        width:              275px
-        height:             100%
-        allow-mouse-resize: true
-        left-gripper-width: 8px
-        border-left:        1px #222
-        min-width:          16px
-    }
-    
     #EditorCenterCenterPanel
     {
         visible:           false
@@ -391,11 +334,6 @@ hidden by default.
         -->
         <div id="EditorTopPanel_Left">
             <div id="Editor_MenuBar" styleclass="menubar" />
-        
-            <!--
-            <div id="MenuBar_ModelEditor" styleclass="menubar" style="visible:false;" />
-            <div id="MenuBar_Sandbox"     styleclass="menubar" style="visible:false;" />
-            -->
         </div>
         
         <!--
@@ -437,53 +375,6 @@ hidden by default.
                 </div>
             </div>
         </div>
-        
-        <div id="EditorRightPanel">
-        </div>
-        
-        <!--
-        <div id="ModelEditor" style="visible:false">
-            <div id="ModelEditorLeftPanel" style="padding:4px; padding-top:12px;">
-                <div id="ModelEditorPanel_ConvextDecomposition" style="padding:4px; padding-top:12px; border:1px #444; horizontal-align:left;">
-                    <div style="positioning:relative; position-origin:inner-border; background-color:#333; width:auto; padding:4px 0px; text-color:#aaa; left:8px; top:-8px; font-style:bold;">Convex Decomposition</div>
-                    
-                    <div id="checkModelEditor_ShowConvexDecomposition" styleclass="checkbox" style="" />
-                    
-                    <div style="width:100%; height:1px; margin:0px 8px; background-color:#444;" />
-                    
-                    
-                    <div id="spinModelEditor_CD_CompacityWeight"         styleclass="labeled-spinner" style="margin:0px 1px;" />
-                    <div id="spinModelEditor_CD_VolumeWeight"            styleclass="labeled-spinner" style="margin:0px 1px;" />
-                    <div id="spinModelEditor_CD_MinClusters"             styleclass="labeled-spinner" style="margin:0px 1px;" />
-                    <div id="spinModelEditor_CD_VerticesPerCH"           styleclass="labeled-spinner" style="margin:0px 1px;" />
-                    <div id="spinModelEditor_CD_Concavity"               styleclass="labeled-spinner" style="margin:0px 1px;" />
-                    <div id="spinModelEditor_CD_SmallThreshold"          styleclass="labeled-spinner" style="margin:0px 1px;" />
-                    <div id="spinModelEditor_CD_ConnectedDistance"       styleclass="labeled-spinner" style="margin:0px 1px;" />
-                    <div id="spinModelEditor_CD_SimplifiedTriangleCount" styleclass="labeled-spinner" style="margin:0px 1px;" />
-                    
-                    
-                    
-                    <div id="checkModelEditor_CD_AddExtraDistPoints" styleclass="checkbox" style="margin-bottom:4px; margin-top:4px;" />
-                    <div id="checkModelEditor_CD_AddFacePoints"      styleclass="checkbox" style="" />
-                    
-                    <div style="width:100%; height:1px; margin:0px 8px; background-color:#444;" />
-                    
-                    <div id="btnModelEditor_ConvexDecomposition_Build" styleclass="button" style="width:100%;" />
-                </div>
-                
-                <div id="TestTreeView" styleclass="treeview" style="height:200px; margin-top:16px;" />
-            </div>
-            <div id="ModelViewport">
-            </div>
-        </div>
-        
-        <div id="Sandbox" style="visible:false">
-            <div id="SandboxLeftPanel">
-            </div>
-            <div id="SandboxViewport">
-            </div>
-        </div>
-        -->
     </div>
 
     <div id="EditorBottomPanel">
