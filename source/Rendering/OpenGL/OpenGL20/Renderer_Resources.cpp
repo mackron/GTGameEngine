@@ -36,9 +36,14 @@ namespace GTEngine
                 glBindTexture(GL_TEXTURE_2D, texture->object);
 
                 // Filter.
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,         this->minFilter);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,         this->magFilter);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->minFilter);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, this->magFilter);
+
+                if (GTGL_EXT_texture_filter_anisotropic)
+                {
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+                }
+
 
                 // Wrap Mode.
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, this->wrapMode);
@@ -51,7 +56,7 @@ namespace GTEngine
                 glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &cubeMapObject);
 
                 this->texture->object = static_cast<GLuint>(cubeMapObject);
-            }            
+            }
         }
 
         OpenGL20::Texture2D* texture;
@@ -113,7 +118,7 @@ namespace GTEngine
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
 
-            
+
             free(this->data);
         }
 
@@ -171,8 +176,11 @@ namespace GTEngine
         {
             assert(this->texture != nullptr);
 
-            glBindTexture(GL_TEXTURE_2D, this->texture->object);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+            if (GTGL_EXT_texture_filter_anisotropic)
+            {
+                glBindTexture(GL_TEXTURE_2D, this->texture->object);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+            }
         }
 
         OpenGL20::Texture2D* texture;
@@ -211,9 +219,13 @@ namespace GTEngine
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL,  0);
 
             // Filter.
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER,         this->minFilter);
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER,         this->magFilter);
-            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, this->minFilter);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, this->magFilter);
+
+            if (GTGL_EXT_texture_filter_anisotropic)
+            {
+                glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+            }
 
             // Wrap Mode.
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -654,7 +666,7 @@ namespace GTEngine
     static RCCache<RCOnColourBufferChanged>                   RCCache_OnColourBufferChanged[2];
     static RCCache<RCOnDepthStencilBufferChanged>             RCCache_OnDepthStencilBufferChanged[2];
     static RCCache<RCCheckFramebuffer>                        RCCache_OnCheckFramebuffer[2];
-    
+
 
 
     void Renderer::OnTexture2DCreated(Texture2D &texture)
@@ -867,7 +879,7 @@ namespace GTEngine
         rc.vertexArray = static_cast<OpenGL20::VertexArray*>(vertexArray.GetRendererData());
 
         rc.dataSize = static_cast<GLsizeiptr>(vertexArray.GetVertexCount() * vertexArray.GetFormat().GetSize() * sizeof(float));
-        
+
         if (vertexArray.GetVertexDataPtr() != nullptr)
         {
             rc.data = malloc(rc.dataSize);
@@ -892,7 +904,7 @@ namespace GTEngine
 
 
         rc.dataSize = static_cast<GLsizeiptr>(vertexArray.GetIndexCount() * sizeof(unsigned int));
-        
+
         if (vertexArray.GetIndexDataPtr() != nullptr)
         {
             rc.data = malloc(rc.dataSize);
@@ -967,7 +979,7 @@ namespace GTEngine
         rc.texture       = static_cast<OpenGL20::Texture2D*>(texture->GetRendererData());
         rc.textureTarget = texture->GetTarget();
         rc.attachment    = GL_COLOR_ATTACHMENT0_EXT + index;
-        
+
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
 

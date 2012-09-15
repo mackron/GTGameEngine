@@ -65,7 +65,7 @@ namespace GTEngine
         /// Destructor.
         virtual ~SceneCullingManager() {}
 
-        
+
         /// Adds an object to the manager.
         ///
         /// @param object [in] A reference to the object.
@@ -149,7 +149,6 @@ namespace GTEngine
         /// The different flags that can be set on the manager.
         enum Flags
         {
-            None               = 0,
             NoOcclusionCulling = (1 << 1),
             NoFrustumCulling   = (1 << 2),
         };
