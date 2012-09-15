@@ -224,6 +224,39 @@ namespace GTEngine
         }
     }
 
+    
+    void Editor_ModelEditor::PlayAnimation()
+    {
+        auto modelComponent = this->modelNode.GetComponent<GTEngine::ModelComponent>();
+        if (modelComponent != nullptr)
+        {
+            auto model = modelComponent->GetModel();
+            if (model != nullptr)
+            {
+                AnimationSequence sequence;
+                sequence.AddFrame(0, model->animation.GetKeyFrameCount(), 0.0f, true);      // '0.0f' is the transition time. 'true' says to loop.
+                
+                model->PlayAnimation(sequence);
+            }
+        }
+    }
+
+    void Editor_ModelEditor::StopAnimation()
+    {
+        auto modelComponent = this->modelNode.GetComponent<GTEngine::ModelComponent>();
+        if (modelComponent != nullptr)
+        {
+            auto model = modelComponent->GetModel();
+            if (model != nullptr)
+            {
+                AnimationSequence sequence;
+                sequence.AddFrame(0, model->animation.GetKeyFrameCount(), 0.0f, true);      // '0.0f' is the transition time. 'true' says to loop.
+                
+                model->StopAnimation();
+            }
+        }
+    }
+
 
     //////////////////////////////////
     // Events

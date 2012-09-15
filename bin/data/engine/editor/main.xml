@@ -26,8 +26,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <style  url="styles/panel-groupbox.style" />
 <script url="scripts/panel-groupbox.lua"  />
 
-<script url="scripts/modeleditor-materialpanel.lua" />
-<script url="scripts/modeleditor-cdpanel.lua" />
+<script url="scripts/modeleditor-materialpanel.lua"   />
+<script url="scripts/modeleditor-animationspanel.lua" />
+<script url="scripts/modeleditor-cdpanel.lua"         />
 
 
 <!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
@@ -200,6 +201,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     
     Editor_ModelEditor_Panel_Materials:ModelEditor_MaterialPanel();
+    Editor_ModelEditor_Panel_Animations:ModelEditor_AnimationsPanel();
     Editor_ModelEditor_Panel_CD:ModelEditor_CDPanel();
 ]]>
 </script>
@@ -363,6 +365,8 @@ hidden by default.
                     <div id="Editor_ModelEditor_Viewport" style='width:100%;  height:100%; border:1px #222;'  />
                     <div id="Editor_ModelEditor_Panel"    style='width:250px; height:100%; border:1px #222; allow-mouse-resize:true; left-gripper-width:2px; min-width:32px;'>
                         <div id="Editor_ModelEditor_Panel_Materials" styleclass='panel-groupbox' />
+                        <div styleclass='panel-groupbox-separator' />
+                        <div id="Editor_ModelEditor_Panel_Animations" styleclass='panel-groupbox' />
                         <div styleclass='panel-groupbox-separator' />
                         <div id="Editor_ModelEditor_Panel_CD" styleclass='panel-groupbox' />
                     </div>

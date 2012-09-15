@@ -64,7 +64,7 @@ namespace GTEngine
         ///
         /// @param startKeyFrame [in] The index of the key frame to start at.
         /// @param endKeyFrame   [in] The index of the key frame to end at.
-        /// @param loop           [in] Whether or not the sequence should loop.
+        /// @param loop          [in] Whether or not the sequence should loop.
         ///
         /// @remarks
         ///     <loop> should only be set to try for the last frame. It does not make sense to loop on anything other than that.

@@ -223,6 +223,9 @@ namespace GTEngine
                 script.SetTableFunction(-1, "ShowConvexDecomposition",  FFI::ModelEditorFFI::ShowConvexDecomposition);
                 script.SetTableFunction(-1, "HideConvexDecomposition",  FFI::ModelEditorFFI::HideConvexDecomposition);
                 script.SetTableFunction(-1, "BuildConvexDecomposition", FFI::ModelEditorFFI::BuildConvexDecomposition);
+
+                script.SetTableFunction(-1, "PlayAnimation", FFI::ModelEditorFFI::PlayAnimation);
+                script.SetTableFunction(-1, "StopAnimation", FFI::ModelEditorFFI::StopAnimation);
             }
             script.Pop(1);
         }
@@ -317,6 +320,22 @@ namespace GTEngine
         settings.addFacesPoints                = script.ToBoolean(10);
 
         game.GetEditor().GetModelEditor().BuildConvexDecomposition(settings);
+        return 0;
+    }
+
+    int Editor::FFI::ModelEditorFFI::PlayAnimation(GTCore::Script &script)
+    {
+        auto &game = GameScript::FFI::GetGameObject(script);
+
+        game.GetEditor().GetModelEditor().PlayAnimation();
+        return 0;
+    }
+
+    int Editor::FFI::ModelEditorFFI::StopAnimation(GTCore::Script &script)
+    {
+        auto &game = GameScript::FFI::GetGameObject(script);
+
+        game.GetEditor().GetModelEditor().StopAnimation();
         return 0;
     }
 }

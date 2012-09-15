@@ -196,6 +196,9 @@ namespace GTEngine
                 static int ShowConvexDecomposition(GTCore::Script &script);
                 static int HideConvexDecomposition(GTCore::Script &script);
                 static int BuildConvexDecomposition(GTCore::Script &script);
+
+                static int PlayAnimation(GTCore::Script &script);
+                static int StopAnimation(GTCore::Script &script);
             };
         };
     };

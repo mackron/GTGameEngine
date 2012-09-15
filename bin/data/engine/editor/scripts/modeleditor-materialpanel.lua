@@ -11,15 +11,6 @@ function GTGUI.Element:ModelEditor_MaterialPanel()
         new:OnKeyPressed(function(data)
             if data.key == GTGUI.Keys.Enter then
                 new:ApplyMaterial();
-            --[[
-                if Editor.ModelEditor.SetMaterial(new.index, new:GetText()) then
-                    new:SetStyle("border-color", "#6a6a6a");
-                else
-                    new:SetStyle("border-color", "#cc6a6a");
-                end
-                
-                Editor_TabBar:GetActiveTab():MarkAsModified();
-                ]]
             end
         end)
         
