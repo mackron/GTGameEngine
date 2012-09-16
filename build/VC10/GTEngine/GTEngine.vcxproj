@@ -213,6 +213,17 @@
     <ClInclude Include="..\..\..\include\GTEngine\GarbageCollector.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GTEngine.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GUIEventHandler.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdCircularList.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdGraph.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdHACD.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdICHull.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdManifoldMesh.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdMeshDecimator.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdMicroAllocator.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdRaycastMesh.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdSArray.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdVector.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdVersion.h" />
     <ClInclude Include="..\..\..\include\GTEngine\Logging.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Material.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\MaterialLibrary.hpp" />
@@ -336,6 +347,13 @@
     <ClCompile Include="..\..\..\source\GarbageCollector.cpp" />
     <ClCompile Include="..\..\..\source\GTEngine.cpp" />
     <ClCompile Include="..\..\..\source\GUIEventHandler.cpp" />
+    <ClCompile Include="..\..\..\source\HACD\hacdGraph.cpp" />
+    <ClCompile Include="..\..\..\source\HACD\hacdHACD.cpp" />
+    <ClCompile Include="..\..\..\source\HACD\hacdICHull.cpp" />
+    <ClCompile Include="..\..\..\source\HACD\hacdManifoldMesh.cpp" />
+    <ClCompile Include="..\..\..\source\HACD\hacdMeshDecimator.cpp" />
+    <ClCompile Include="..\..\..\source\HACD\hacdMicroAllocator.cpp" />
+    <ClCompile Include="..\..\..\source\HACD\hacdRaycastMesh.cpp" />
     <ClCompile Include="..\..\..\source\Logging.cpp" />
     <ClCompile Include="..\..\..\source\Material.cpp" />
     <ClCompile Include="..\..\..\source\MaterialLibrary.cpp" />
@@ -426,6 +444,8 @@
     <None Include="..\..\..\bin\data\engine\shaders\glsl\gui.shader" />
     <None Include="..\..\..\bin\data\engine\shaders\glsl\lines.shader" />
     <None Include="..\..\..\bin\data\engine\shaders\glsl\materials.shader" />
+    <None Include="..\..\..\include\GTEngine\HACD\hacdCircularList.inl" />
+    <None Include="..\..\..\include\GTEngine\HACD\hacdVector.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
