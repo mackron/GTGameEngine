@@ -25,6 +25,8 @@ function GTGUI.Element:PanelGroupBox(titleText)
     self.Title = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-title' />");
     self.Body  = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-body'  />");
     
+    self.isCollapsed = false;
+    
     self.Title:PanelGroupBoxTitle(titleText);
     
     
@@ -32,6 +34,7 @@ function GTGUI.Element:PanelGroupBox(titleText)
         if self:IsCollapsed() then
             self.Title.Arrow:SetStyle("background-image", "std-arrow-down");
             self.Body:Show();
+            self.isCollapsed = false;
         end
     end
     
@@ -39,10 +42,11 @@ function GTGUI.Element:PanelGroupBox(titleText)
         if not self:IsCollapsed() then
             self.Title.Arrow:SetStyle("background-image", "std-arrow-right");
             self.Body:Hide();
+            self.isCollapsed = true;
         end
     end
     
     function self:IsCollapsed()
-        return self.Body:IsVisible() == false;
+        return self.isCollapsed;
     end
 end

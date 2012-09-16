@@ -79,4 +79,6 @@ function GTGUI.Element:ModelEditor_CDPanel()
         self.BuildButton:Enable();
         Editor_TabBar:GetActiveTab():MarkAsModified();
     end);
+    
+    return self;
 end
