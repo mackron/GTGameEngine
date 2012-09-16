@@ -102,6 +102,12 @@
     <Filter Include="source\HACD">
       <UniqueIdentifier>{5bacd430-d144-47fd-8152-4c38a5078a03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Recast">
+      <UniqueIdentifier>{b97d27c0-22e7-4690-8b07-06dc330c93a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Recast">
+      <UniqueIdentifier>{2fa51656-b7c6-46fd-9c3c-e931c66dcd16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -515,6 +521,63 @@
     <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdVersion.h">
       <Filter>include\HACD</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourAlloc.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourAssert.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourCommon.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourCrowd.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourLocalBoundary.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourNavMesh.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourNavMeshBuilder.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourNavMeshQuery.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourNode.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourObstacleAvoidance.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourPathCorridor.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourPathQueue.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourProximityGrid.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourStatus.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourTileCache.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourTileCacheBuilder.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\Recast.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\RecastAlloc.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\RecastAssert.h">
+      <Filter>include\Recast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -843,6 +906,78 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\HACD\hacdRaycastMesh.cpp">
       <Filter>source\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourAlloc.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourCommon.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourCrowd.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourLocalBoundary.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourNavMesh.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourNavMeshBuilder.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourNavMeshQuery.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourNode.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourObstacleAvoidance.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourPathCorridor.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourPathQueue.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourProximityGrid.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourTileCache.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourTileCacheBuilder.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\Recast.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastAlloc.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastArea.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastContour.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastFilter.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastLayers.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastMesh.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastMeshDetail.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastRasterization.cpp">
+      <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastRegion.cpp">
+      <Filter>source\Recast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

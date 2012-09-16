@@ -14,6 +14,13 @@
  */
 #include <GTEngine/HACD/hacdICHull.h>
 #include <limits>
+
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4706)   // assignment within conditional expression.
+    #pragma warning(disable:4701)   // potentially uninitialized local variable used.
+#endif
+
 namespace HACD
 {   
 	const double ICHull::sc_eps = 0.000000001;
@@ -1002,3 +1009,6 @@ namespace HACD
 	}
 }
 
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
