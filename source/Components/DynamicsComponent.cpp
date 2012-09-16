@@ -1,10 +1,10 @@
 
 // HACD headers need to be first.
-#include <hacdCircularList.h>
-#include <hacdVector.h>
-#include <hacdICHull.h>
-#include <hacdGraph.h>
-#include <hacdHACD.h>
+#include <GTEngine/HACD/hacdCircularList.h>
+#include <GTEngine/HACD/hacdVector.h>
+#include <GTEngine/HACD/hacdICHull.h>
+#include <GTEngine/HACD/hacdGraph.h>
+#include <GTEngine/HACD/hacdHACD.h>
 
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Physics.hpp>

@@ -96,6 +96,12 @@
     <Filter Include="include\Rendering\OpenGL">
       <UniqueIdentifier>{8f41a52c-bdaa-43e6-8cad-5cdfe9d57b14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\HACD">
+      <UniqueIdentifier>{860f02ca-3f47-4e3a-a785-0671f17daf1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\HACD">
+      <UniqueIdentifier>{5bacd430-d144-47fd-8152-4c38a5078a03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -476,6 +482,39 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\OpenGL\OpenGL20.hpp">
       <Filter>include\Rendering\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdCircularList.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdGraph.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdHACD.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdICHull.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdManifoldMesh.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdMeshDecimator.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdMicroAllocator.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdRaycastMesh.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdSArray.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdVector.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdVersion.h">
+      <Filter>include\HACD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -784,6 +823,27 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\OpenGL20.cpp">
       <Filter>source\Rendering\OpenGL\OpenGL20</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdGraph.cpp">
+      <Filter>source\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdHACD.cpp">
+      <Filter>source\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdICHull.cpp">
+      <Filter>source\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdManifoldMesh.cpp">
+      <Filter>source\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdMeshDecimator.cpp">
+      <Filter>source\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdMicroAllocator.cpp">
+      <Filter>source\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdRaycastMesh.cpp">
+      <Filter>source\HACD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\engine\editor\combobox.xml">
@@ -878,6 +938,12 @@
     </None>
     <None Include="..\..\..\bin\data\engine\editor\scripts\sandbox.lua">
       <Filter>data\editor\scripts</Filter>
+    </None>
+    <None Include="..\..\..\include\GTEngine\HACD\hacdCircularList.inl">
+      <Filter>include\HACD</Filter>
+    </None>
+    <None Include="..\..\..\include\GTEngine\HACD\hacdVector.inl">
+      <Filter>include\HACD</Filter>
     </None>
   </ItemGroup>
 </Project>
