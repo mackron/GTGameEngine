@@ -1,10 +1,16 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <sstream>
 #include <iostream>
 #include <stdlib.h>
 #include <algorithm>
 #include <vector>
 #include <GTEngine/HACD/hacdMeshDecimator.h>
-#define _CRT_SECURE_NO_WARNINGS
+
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4701)   // potentially uninitialized local variable used.
+#endif
+
 namespace HACD
 {
 	MeshDecimator::MeshDecimator(void)
@@ -682,3 +688,7 @@ namespace HACD
 		return true;
 	}
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif

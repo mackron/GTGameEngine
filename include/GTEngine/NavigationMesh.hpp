@@ -8,10 +8,10 @@
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
 
-#include <Recast.h>
-#include <DetourNavMesh.h>
-#include <DetourNavMeshBuilder.h>
-#include <DetourNavMeshQuery.h>
+#include <GTEngine/Recast/Recast.h>
+#include <GTEngine/Recast/DetourNavMesh.h>
+#include <GTEngine/Recast/DetourNavMeshBuilder.h>
+#include <GTEngine/Recast/DetourNavMeshQuery.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop

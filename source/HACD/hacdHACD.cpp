@@ -24,6 +24,11 @@
 #include <GTEngine/HACD/hacdMeshDecimator.h>
 #include <GTEngine/HACD/hacdRaycastMesh.h>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4701)   // potentially uninitialized local variable used.
+#endif
+
 //#define THREAD_DIST_POINTS 1
 
 //#define HACD_DEBUG
@@ -1133,3 +1138,7 @@ namespace HACD
         }
     }
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
