@@ -14,4 +14,6 @@ function GTGUI.Element:ModelEditor_AnimationsPanel()
     self.StopButton:OnPressed(function()
         Editor.ModelEditor.StopAnimation();
     end);
+    
+    return self;
 end

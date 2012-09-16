@@ -220,6 +220,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     Editor_ModelEditor_Panel_Materials:ModelEditor_MaterialPanel();
     Editor_ModelEditor_Panel_Animations:ModelEditor_AnimationsPanel();
     Editor_ModelEditor_Panel_CD:ModelEditor_CDPanel();
+    
+    Editor_ModelEditor_Panel_Animations:Collapse();
+    Editor_ModelEditor_Panel_CD:Collapse();
 ]]>
 </script>
 
