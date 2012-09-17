@@ -7,6 +7,9 @@
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Weffc++"
     #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7))
+        #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+    #endif
 #endif
 
 #include <BulletCollision/Gimpact/btBoxCollision.h>
