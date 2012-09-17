@@ -28,7 +28,6 @@ uses 1 or each light, it will use the following: A1D1P1.
     varying vec3 VertexOutput_Bitangent;
     varying vec4 VertexOutput_Position;
     varying vec4 VertexOutput_PositionWS;
-    varying vec3 VertexOutput_PositionNDC;
 </shader>
 
 <shader id="Engine_FragmentLightingOutput">
@@ -83,7 +82,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     }
 </shader>
 
-<shader id="Engine_DirectionalLight">
+<shader id="Engine_DirectionalLight_NoShadow">
     struct DirectionalLight
     {
         vec3 Colour;
@@ -100,10 +99,62 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         float diffuse  = DiffuseFactor(N, L);
         float specular = SpecularFactor(N, H, 64.0);
-            
+
         diffuseOut  += light.Colour * diffuse;
         specularOut += light.Colour * specular;
     }
+</shader>
+
+<shader id="Engine_DirectionalLight">
+<![CDATA[
+    struct DirectionalLight
+    {
+        vec3 Colour;
+        vec3 Direction;
+    };
+    
+    varying vec4 VertexOutput_ShadowCoord;
+    uniform sampler2D ShadowMap;
+    
+    void CalculateDirectionalLighting(DirectionalLight light, inout vec3 diffuseOut, inout vec3 specularOut)
+    {
+        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
+    
+        vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
+        vec3 L = -light.Direction;
+        vec3 H = normalize(L - normalize(VertexOutput_Position.xyz));
+        
+        float diffuse  = DiffuseFactor(N, L);
+        float specular = SpecularFactor(N, H, 64.0);
+        
+        
+        vec2  shadowCoord = VertexOutput_ShadowCoord.xy * 0.5 + 0.5;
+        float shadowDepth = VertexOutput_ShadowCoord.z - 0.00001;
+        
+        float shadow = 0.0;
+        
+        vec2 filter[8];
+        filter[0] = vec2( 0.0005,  0.0005);
+        filter[1] = vec2( 0.0005, -0.0005);
+        filter[2] = vec2(-0.0005,  0.0005);
+        filter[3] = vec2(-0.0005, -0.0005);
+        filter[4] = vec2( 0.00025,  0.00025);
+        filter[5] = vec2( 0.00025, -0.00025);
+        filter[6] = vec2(-0.00025,  0.00025);
+        filter[7] = vec2(-0.00025, -0.00025);
+        
+        for (int i = 0; i < 8; ++i)
+        {
+            if (texture2D(ShadowMap, shadowCoord + filter[i]).r > shadowDepth)
+            {
+                shadow += 0.125;
+            }
+        }
+        
+        diffuseOut  += light.Colour * diffuse  * shadow;
+        specularOut += light.Colour * specular * shadow;
+    }
+]]>
 </shader>
 
 <shader id="Engine_PointLight_NoShadow">
@@ -270,6 +321,27 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
     <include url="#Engine_LightingUtils" />
+    <include url="#Engine_DirectionalLight_NoShadow" />
+    
+    <include>
+        uniform DirectionalLight DLights0;
+        
+	    void main()
+	    {
+            vec3 diffuse  = vec3(0.0, 0.0, 0.0);
+            vec3 specular = vec3(0.0, 0.0, 0.0);
+            CalculateDirectionalLighting(DLights0, diffuse, specular);
+
+		    DoFinalLightingOutput(diffuse, specular);
+	    }
+    </include>
+</shader>
+
+<shader id="Engine_LightingPass_D1">
+    <include url="#Engine_FragmentInput" />
+    <include url="#Engine_FragmentLightingOutput" />
+    <include url="#Engine_FragmentLightingUniforms" />
+    <include url="#Engine_LightingUtils" />
     <include url="#Engine_DirectionalLight" />
     
     <include>
@@ -405,13 +477,23 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentInput" />
     
     <include>
+        varying float ShadowCoordZ;
+    
         void main()
         {
-            //gl_FragData[0].r = length(VertexOutput_Position.xyz) / 25.0;
+            //gl_FragData[0].r = gl_FragCoord.z;
+            gl_FragData[0].r = ShadowCoordZ;
+        }
+    </include>
+</shader>
+
+<shader id="Engine_LightingPass_PointLightShadowMap">
+    <include url="#Engine_FragmentInput" />
+    
+    <include>
+        void main()
+        {
             gl_FragData[0].r = length(VertexOutput_Position.xyz);
-            
-            //gl_FragData[0].r = dot(VertexOutput_Position.xyz, VertexOutput_Position.xyz);
-            //gl_FragData[0].r = vec4(1000.0);
         }
     </include>
 </shader>

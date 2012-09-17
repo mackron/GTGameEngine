@@ -324,6 +324,24 @@ namespace GTEngine
             bool cullBackFace;
         };
 
+
+
+        // Begins the generation of a directional light shadow map.
+        struct RCLighting_BeginDirectionalShadowMap : public RenderCommand
+        {
+            void Execute();
+
+            /// The shader to use with the geometry for the light.
+            Shader* shader;
+
+            /// The shadow map framebuffer.
+            GTEngine::Framebuffer* framebuffer;
+
+            /// The MVP mattrix.
+            glm::mat4 mvpMatrix;
+        };
+
+
         
         // Begins the generation of a point light shadow map.
         struct RCLighting_BeginPointShadowMap : public RenderCommand
@@ -334,7 +352,7 @@ namespace GTEngine
             Shader* shader;
 
             /// The shadow map framebuffer.
-            Framebuffer* framebuffer;
+            GTEngine::Framebuffer* framebuffer;
         };
 
         // Begins the generation of an individual face on a point light shadow map.
@@ -381,6 +399,9 @@ namespace GTEngine
         /// Performs the lighting pass. This always comes after the material pass.
         void LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
 
+
+        // Builds the shadow map of the given directional light.
+        void LightingPass_BuildDirectionalLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::mat4 &projection, const glm::mat4 &view);
 
         // Builds the shadow map of the given point light.
         void LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::vec3 &position, float radius);
@@ -462,32 +483,36 @@ namespace GTEngine
 
 
         // Below are caches for render commands. There are always 2 caches - one for the front RC queue, and another for the back.
-        RCCache<RCBegin,      8>                    rcBegin[2];
-        RCCache<RCEnd,        8>                    rcEnd[2];
-        RCCache<RCBeginLayer, 8>                    rcBeginLayer[2];
-        RCCache<RCEndLayer,   8>                    rcEndLayer[2];
-        RCCache<RCDrawVA>                           rcDrawVA[2];
-        RCCache<RCSetFaceCulling>                   rcSetFaceCulling[2];
-        RCCache<RCBeginLighting>                    rcBeginLighting[2];
-        RCCache<RCControlBlending>                  rcControlBlending[2];
-        RCCache<RCLighting_SetShader>               rcLighting_SetShader[2];
-        RCCache<RCLighting_DrawGeometry>            rcLighting_DrawGeometry[2];
-        RCCache<RCLighting_BeginPointShadowMap>     rcLighting_BeginPointShadowMap[2];
-        RCCache<RCLighting_BeginPointShadowMapFace> rcLighting_BeginPointShadowMapFace[2];
-        RCCache<RCLighting_EndShadowMap>            rcLighting_EndShadowMap[2];
-        RCCache<RCLighting_DrawShadowPassGeometry>  rcLighting_DrawShadowPassGeometry[2];
+        RCCache<RCBegin,      8>                      rcBegin[2];
+        RCCache<RCEnd,        8>                      rcEnd[2];
+        RCCache<RCBeginLayer, 8>                      rcBeginLayer[2];
+        RCCache<RCEndLayer,   8>                      rcEndLayer[2];
+        RCCache<RCDrawVA>                             rcDrawVA[2];
+        RCCache<RCSetFaceCulling>                     rcSetFaceCulling[2];
+        RCCache<RCBeginLighting>                      rcBeginLighting[2];
+        RCCache<RCControlBlending>                    rcControlBlending[2];
+        RCCache<RCLighting_SetShader>                 rcLighting_SetShader[2];
+        RCCache<RCLighting_DrawGeometry>              rcLighting_DrawGeometry[2];
+        RCCache<RCLighting_BeginDirectionalShadowMap> rcLighting_BeginDirectionalShadowMap[2];
+        RCCache<RCLighting_BeginPointShadowMap>       rcLighting_BeginPointShadowMap[2];
+        RCCache<RCLighting_BeginPointShadowMapFace>   rcLighting_BeginPointShadowMapFace[2];
+        RCCache<RCLighting_EndShadowMap>              rcLighting_EndShadowMap[2];
+        RCCache<RCLighting_DrawShadowPassGeometry>    rcLighting_DrawShadowPassGeometry[2];
 
         
         // Below are various shaders for use by the renderer.
         struct
         {
             Shader* Lighting_NoShadow_A1;
+            
             Shader* Lighting_NoShadow_D1;
+            Shader* Lighting_D1;
             Shader* Lighting_NoShadow_P1;
             Shader* Lighting_P1;
             Shader* Lighting_NoShadow_S1;
 
             Shader* Lighting_ShadowMap;
+            Shader* Lighting_PointLightShadowMap;
 
             Shader* Compositor_DiffuseOnly;
             Shader* Compositor_NormalsOnly;
@@ -504,6 +529,16 @@ namespace GTEngine
         GTCore::List<MaterialMetadata*> materialMetadatas;
 
 
+        /// The normal shadow map for lights requiring only a single 2D texture.
+        Texture2D shadowMap;
+
+        /// The depth buffer for the normal shadow map.
+        Texture2D shadowMapDepthBuffer;
+
+        /// The framebuffer to use for normal shadow maps.
+        GTEngine::Framebuffer shadowMapFramebuffer;
+
+
         /// The cube map to use for point lights.
         TextureCube pointLightShadowMap;
 
@@ -511,7 +546,7 @@ namespace GTEngine
         Texture2D pointLightShadowMapDepthBuffer;
 
         /// The framebuffer to use for point light shadow maps.
-        Framebuffer pointLightShadowMapFramebuffer;
+        GTEngine::Framebuffer pointLightShadowMapFramebuffer;
 
 
         /// The metadata of the material definitions being used in the current frame. This is cleared at the beginning of every frame.
