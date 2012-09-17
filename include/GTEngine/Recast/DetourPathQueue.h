@@ -22,6 +22,12 @@
 #include "DetourNavMesh.h"
 #include "DetourNavMeshQuery.h"
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 static const unsigned int DT_PATHQ_INVALID = 0;
 
 typedef unsigned int dtPathQueueRef;
@@ -73,3 +79,7 @@ public:
 };
 
 #endif // DETOURPATHQUEUE_H
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

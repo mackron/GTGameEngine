@@ -21,6 +21,12 @@
 
 #include "DetourNavMesh.h"
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 enum dtNodeFlags
 {
 	DT_NODE_OPEN = 0x01,
@@ -157,3 +163,7 @@ private:
 
 
 #endif // DETOURNODE_H
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

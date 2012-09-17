@@ -15,6 +15,11 @@
 #include <GTEngine/HACD/hacdManifoldMesh.h>
 using namespace std;
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 
 namespace HACD
 {    
@@ -600,3 +605,7 @@ namespace HACD
 		return false;
     }
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

@@ -3,6 +3,11 @@
 
 #include "DetourStatus.h"
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+    #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#endif
 
 
 typedef unsigned int dtObstacleRef;
@@ -207,4 +212,8 @@ private:
 dtTileCache* dtAllocTileCache();
 void dtFreeTileCache(dtTileCache* tc);
 
+#endif
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif

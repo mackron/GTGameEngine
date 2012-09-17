@@ -18,6 +18,12 @@
 #include <stdlib.h>
 #include "hacdVersion.h"
 #include "hacdMicroAllocator.h"
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 namespace HACD
 {
 	//!	CircularListElement class.
@@ -48,7 +54,7 @@ namespace HACD
 	template < typename T > class CircularList
 	{
 	public:
-        HeapManager * const     				GetHeapManager() const { return m_heapManager;}
+        HeapManager *           				GetHeapManager() const { return m_heapManager;}
 		void									SetHeapManager(HeapManager * const heapManager) { m_heapManager = heapManager;}
         CircularListElement<T> *  &             GetHead() { return m_head;}        
 		const CircularListElement<T> *          GetHead() const { return m_head;}
@@ -82,4 +88,8 @@ namespace HACD
 	};
 }
 #include "hacdCircularList.inl"
+#endif
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif

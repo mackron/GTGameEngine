@@ -24,6 +24,10 @@
 #include <GTEngine/Recast/RecastAlloc.h>
 #include <GTEngine/Recast/RecastAssert.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 
 static int getCornerHeight(int x, int y, int i, int dir,
 						   const rcCompactHeightfield& chf,
@@ -130,6 +134,7 @@ static void walkContour(int x, int y, int i,
 				case 0: pz++; break;
 				case 1: px++; pz++; break;
 				case 2: px++; break;
+				default: break;
 			}
 			int r = 0;
 			const rcCompactSpan& s = chf.spans[i];
@@ -849,3 +854,7 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 	
 	return true;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

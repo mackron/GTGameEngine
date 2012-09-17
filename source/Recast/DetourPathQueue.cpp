@@ -23,6 +23,11 @@
 #include <GTEngine/Recast/DetourAlloc.h>
 #include <GTEngine/Recast/DetourCommon.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 
 dtPathQueue::dtPathQueue() :
 	m_nextHandle(1),
@@ -197,3 +202,8 @@ dtStatus dtPathQueue::getPathResult(dtPathQueueRef ref, dtPolyRef* path, int* pa
 	}
 	return DT_FAILURE;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif

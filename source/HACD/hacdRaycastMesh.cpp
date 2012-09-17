@@ -17,6 +17,14 @@
 #include <assert.h>
 #include <limits>
 #include <GTEngine/HACD/hacdManifoldMesh.h>
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 namespace HACD
 {
 	bool BBox::Raycast(const Vec3<Float> & origin, const Vec3<Float> & dir, Float & distMin) const
@@ -278,6 +286,10 @@ namespace HACD
 		return false;
 	}
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
 
 

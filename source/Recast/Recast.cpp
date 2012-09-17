@@ -29,6 +29,11 @@
 #include <GTEngine/Recast/RecastAlloc.h>
 #include <GTEngine/Recast/RecastAssert.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 float rcSqrt(float x)
 {
 	return sqrtf(x);
@@ -493,3 +498,8 @@ static int getCompactHeightFieldMemoryusage(const rcCompactHeightfield& chf)
 	return size;
 }
 */
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
+

@@ -22,6 +22,12 @@
 #include "DetourAlloc.h"
 #include "DetourStatus.h"
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 // Note: If you want to use 64-bit refs, change the types of both dtPolyRef & dtTileRef.
 // It is also recommended that you change dtHashRef() to a proper 64-bit hash.
 
@@ -680,3 +686,7 @@ For a properly built navigation mesh, vertex A will always be within the bounds 
 Vertex B is not required to be within the bounds of the mesh.
 
 */
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

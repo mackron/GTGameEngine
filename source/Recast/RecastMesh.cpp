@@ -24,6 +24,11 @@
 #include <GTEngine/Recast/RecastAlloc.h>
 #include <GTEngine/Recast/RecastAssert.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 struct rcEdge
 {
 	unsigned short vert[2];
@@ -1426,3 +1431,7 @@ bool rcCopyPolyMesh(rcContext* ctx, const rcPolyMesh& src, rcPolyMesh& dst)
 	
 	return true;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

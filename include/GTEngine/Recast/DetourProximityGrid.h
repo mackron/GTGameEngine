@@ -19,6 +19,11 @@
 #ifndef DETOURPROXIMITYGRID_H
 #define DETOURPROXIMITYGRID_H
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 class dtProximityGrid
 {
 	int m_maxItems;
@@ -59,7 +64,7 @@ public:
 	int getItemCountAt(const int x, const int y) const;
 	
 	inline const int* getBounds() const { return m_bounds; }
-	inline const float getCellSize() const { return m_cellSize; }
+	inline float getCellSize() const { return m_cellSize; }
 };
 
 dtProximityGrid* dtAllocProximityGrid();

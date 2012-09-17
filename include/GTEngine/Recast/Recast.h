@@ -1001,7 +1001,7 @@ inline void rcSetCon(rcCompactSpan& s, int dir, int i)
 {
 	const unsigned int shift = (unsigned int)dir*6;
 	unsigned int con = s.con;
-	s.con = (con & ~(0x3f << shift)) | (((unsigned int)i & 0x3f) << shift);
+	s.con = (con & ~(0x3fU << shift)) | (((unsigned int)i & 0x3fU) << shift);
 }
 
 /// Gets neighbor connection data for the specified direction.

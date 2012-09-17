@@ -30,6 +30,13 @@
 #include <GTEngine/Recast/DetourAssert.h>
 #include <GTEngine/Recast/DetourAlloc.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+    #pragma GCC diagnostic ignored "-Wignored-qualifiers"
+#endif
+
 
 dtCrowd* dtAllocCrowd()
 {
@@ -474,7 +481,7 @@ const dtObstacleAvoidanceParams* dtCrowd::getObstacleAvoidanceParams(const int i
 	return 0;
 }
 
-const int dtCrowd::getAgentCount() const
+int dtCrowd::getAgentCount() const
 {
 	return m_maxAgents;
 }
@@ -1414,4 +1421,7 @@ void dtCrowd::update(const float dt, dtCrowdAgentDebugInfo* debug)
 	
 }
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 

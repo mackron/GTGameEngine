@@ -38,6 +38,13 @@ All rights reserved.
 #include "hacdSArray.h"
 #include <set>
 #include "hacdMicroAllocator.h"
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 namespace HACD
 {
 	class TMMTriangle;
@@ -161,7 +168,7 @@ namespace HACD
 	{
 		public:
 			//! 
-            HeapManager * const     							GetHeapManager() const { return m_heapManager;}
+            HeapManager *           							GetHeapManager() const { return m_heapManager;}
 			//!
 			void												SetHeapManager(HeapManager * const heapManager)
                                                                 { 
@@ -264,4 +271,8 @@ namespace HACD
                                                                                   Vec3<double> & pa, Vec3<double> & pb, 
                                                                                   double & mua, double &mub);
 }
+#endif
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif

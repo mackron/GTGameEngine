@@ -19,6 +19,12 @@
 #include <stdlib.h>
 #include <GTEngine/Recast/DetourAlloc.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
+
 static void *dtAllocDefault(int size, dtAllocHint)
 {
 	return malloc(size);

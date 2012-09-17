@@ -19,6 +19,9 @@
     #pragma warning(push)
     #pragma warning(disable:4706)   // assignment within conditional expression.
     #pragma warning(disable:4701)   // potentially uninitialized local variable used.
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
 #endif
 
 namespace HACD
@@ -1011,4 +1014,6 @@ namespace HACD
 
 #if defined(_MSC_VER)
     #pragma warning(pop)
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic push
 #endif

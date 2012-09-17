@@ -25,6 +25,12 @@
 #include <float.h>
 #include <new>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 static const float DT_PI = 3.14159265f;
 
 static int sweepCircleCircle(const float* c0, const float r0, const float* v,
@@ -541,4 +547,8 @@ int dtObstacleAvoidanceQuery::sampleVelocityAdaptive(const float* pos, const flo
 	
 	return ns;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 

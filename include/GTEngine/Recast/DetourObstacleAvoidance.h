@@ -19,6 +19,12 @@
 #ifndef DETOUROBSTACLEAVOIDANCE_H
 #define DETOUROBSTACLEAVOIDANCE_H
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 struct dtObstacleCircle
 {
 	float p[3];				///< Position of the obstacle
@@ -152,3 +158,7 @@ void dtFreeObstacleAvoidanceQuery(dtObstacleAvoidanceQuery* ptr);
 
 
 #endif // DETOUROBSTACLEAVOIDANCE_H
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

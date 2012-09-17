@@ -22,6 +22,11 @@
 #include "DetourNavMesh.h"
 #include "DetourStatus.h"
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 
 // Define DT_VIRTUAL_QUERYFILTER if you wish to derive a custom filter from dtQueryFilter.
 // On certain platforms indirect or virtual function call is expensive. The default
@@ -475,3 +480,7 @@ dtNavMeshQuery* dtAllocNavMeshQuery();
 void dtFreeNavMeshQuery(dtNavMeshQuery* query);
 
 #endif // DETOURNAVMESHQUERY_H
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

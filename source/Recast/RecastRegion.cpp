@@ -28,6 +28,13 @@
 #include <new>
 
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 static void calculateDistanceField(rcCompactHeightfield& chf, unsigned short* src, unsigned short& maxDist)
 {
 	const int w = chf.width;
@@ -1333,5 +1340,10 @@ bool rcBuildRegions(rcContext* ctx, rcCompactHeightfield& chf,
 	
 	return true;
 }
+
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
 

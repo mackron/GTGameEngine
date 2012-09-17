@@ -20,7 +20,12 @@
 #include <string.h>
 #include <GTEngine/Recast/RecastAlloc.h>
 
-static void *rcAllocDefault(int size, rcAllocHint)
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
+static void *rcAllocDefault(size_t size, rcAllocHint)
 {
 	return malloc(size);
 }
@@ -41,7 +46,7 @@ void rcAllocSetCustom(rcAllocFunc *allocFunc, rcFreeFunc *freeFunc)
 }
 
 /// @see rcAllocSetCustom
-void* rcAlloc(int size, rcAllocHint hint)
+void* rcAlloc(size_t size, rcAllocHint hint)
 {
 	return sRecastAllocFunc(size, hint);
 }
@@ -85,4 +90,8 @@ void rcIntArray::resize(int n)
 	}
 	m_size = n;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 

@@ -22,6 +22,11 @@
 #include "hacdVector.h"
 #include "hacdSArray.h"
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 namespace HACD
 {
 	typedef double Float;
@@ -94,4 +99,8 @@ namespace HACD
 		friend class RMNode;
 	};
 }
+#endif
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif

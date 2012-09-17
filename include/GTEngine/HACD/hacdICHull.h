@@ -40,7 +40,7 @@ namespace HACD
 		public:
 			static const double									sc_eps;
 			//! 
-            HeapManager * const     							GetHeapManager() const { return m_heapManager;}
+            HeapManager *            							GetHeapManager() const { return m_heapManager;}
 			//!
 			void												SetHeapManager(HeapManager * const heapManager)
                                                                 { 

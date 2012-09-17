@@ -23,6 +23,11 @@
 #include <GTEngine/Recast/DetourAssert.h>
 #include <GTEngine/Recast/DetourAlloc.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 
 int dtMergeCorridorStartMoved(dtPolyRef* path, const int npath, const int maxPath,
 							  const dtPolyRef* visited, const int nvisited)
@@ -586,3 +591,7 @@ bool dtPathCorridor::isValid(const int maxLookAhead, dtNavMeshQuery* navquery, c
 
 	return true;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

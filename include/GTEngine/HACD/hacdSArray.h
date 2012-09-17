@@ -21,6 +21,11 @@
 #include <stdlib.h>
 #define SARRAY_DEFAULT_MIN_SIZE 16
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 namespace HACD
 {
 	//!	SArray.
@@ -41,11 +46,11 @@ namespace HACD
                                     { 
                                         return m_size;
                                     }
-            T * const               Data()
+            T *                     Data()
                                     { 
                                         return (m_maxSize == N)? m_data0 : m_data;
                                     }
-            const T * const         Data() const
+            const T *               Data() const
                                     { 
                                         return (m_maxSize == N)? m_data0 : m_data;
                                     }
@@ -112,7 +117,7 @@ namespace HACD
                                         }
                                         return false;
                                     }
-            void                    operator=(const SArray & rhs)       
+            SArray &                operator=(const SArray & rhs)       
                                     {
                                         if (m_maxSize < rhs.m_size)
                                         {
@@ -122,6 +127,8 @@ namespace HACD
                                         }
                                         m_size = rhs.m_size;
                                         memcpy(Data(), rhs.Data(), m_size*sizeof(T));
+                                        
+                                        return *this;
                                     }
             void                    Initialize()
                                     {
@@ -151,4 +158,8 @@ namespace HACD
             size_t                  m_maxSize;
        };    
 }
+#endif
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif

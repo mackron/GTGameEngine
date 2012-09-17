@@ -28,6 +28,13 @@
 #include <new>
 
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 inline bool overlapSlabs(const float* amin, const float* amax,
 						 const float* bmin, const float* bmax,
 						 const float px, const float py)
@@ -949,6 +956,7 @@ int dtNavMesh::getNeighbourTilesAt(const int x, const int y, const int side, dtM
 		case 5: nx--; ny--; break;
 		case 6: ny--; break;
 		case 7: nx++; ny--; break;
+		default: break;
 	};
 
 	return getTilesAt(nx, ny, tiles, maxTiles);
@@ -1448,4 +1456,9 @@ dtStatus dtNavMesh::getPolyArea(dtPolyRef ref, unsigned char* resultArea) const
 	
 	return DT_SUCCESS;
 }
+
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 

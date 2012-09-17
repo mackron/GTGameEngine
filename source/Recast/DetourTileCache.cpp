@@ -9,6 +9,13 @@
 #include <string.h>
 #include <new>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 dtTileCache* dtAllocTileCache()
 {
 	void* mem = dtAlloc(sizeof(dtTileCache), DT_ALLOC_PERM);
@@ -702,3 +709,7 @@ void dtTileCache::getObstacleBounds(const struct dtTileCacheObstacle* ob, float*
 	bmax[1] = ob->pos[1] + ob->height;
 	bmax[2] = ob->pos[2] + ob->radius;	
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
