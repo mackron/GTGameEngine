@@ -38,7 +38,7 @@ GTGameEngine depends on the following libraries:
 
 GTGameEngine is licenced under the MIT licence:
 
-Copyright (C) 2012 by GalickTech Pty. Ltd.
+Copyright (C) 2012 David Reid
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
