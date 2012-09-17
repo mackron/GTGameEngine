@@ -289,6 +289,11 @@ namespace GTEngine
 
 
 
+        /// Enables colour writing.
+        static void EnableColourWrites();
+
+        /// Disables colour writing.
+        static void DisableColourWrites();
 
         /// Enables depth testing.
         static void EnableDepthTest();

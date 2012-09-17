@@ -106,6 +106,7 @@ namespace GTEngine
             : CurrentShader(nullptr),
               ViewportX(0), ViewportY(0), ViewportWidth(0), ViewportHeight(0),
               ScissorX(0), ScissorY(0), ScissorWidth(0), ScissorHeight(0), IsScissorEnabled(false),
+              IsColourWritesEnabled(true),
               IsDepthTestEnabled(false), IsDepthWritesEnabled(true), CurrentDepthFunc(RendererFunction_Less),
               IsStencilTestEnabled(false),
               IsBlendingEnabled(false), CurrentBlendSourceFactor(BlendFunc_One), CurrentBlendDestFactor(BlendFunc_Zero), CurrentBlendEquation(BlendEquation_Add),
@@ -129,6 +130,9 @@ namespace GTEngine
         unsigned int ScissorWidth;
         unsigned int ScissorHeight;
         bool IsScissorEnabled;
+
+        /// The current colour writing state.
+        bool IsColourWritesEnabled;
 
         /// The current depth testing state.
         bool IsDepthTestEnabled;
@@ -636,6 +640,24 @@ namespace GTEngine
         }
     }
 
+
+    void Renderer::EnableColourWrites()
+    {
+        if (!RendererState.IsColourWritesEnabled)
+        {
+            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+            RendererState.IsColourWritesEnabled = true;
+        }
+    }
+
+    void Renderer::DisableColourWrites()
+    {
+        if (RendererState.IsColourWritesEnabled)
+        {
+            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+            RendererState.IsColourWritesEnabled = false;
+        }
+    }
 
     void Renderer::EnableDepthTest()
     {
