@@ -26,6 +26,11 @@
 #include <GTEngine/Recast/RecastAlloc.h>
 #include <GTEngine/Recast/RecastAssert.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 /// @par 
 /// 
 /// Basically, any spans that are closer to a boundary or obstruction than the specified radius 
@@ -600,3 +605,7 @@ void rcMarkCylinderArea(rcContext* ctx, const float* pos,
 	
 	ctx->stopTimer(RC_TIMER_MARK_CYLINDER_AREA);
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

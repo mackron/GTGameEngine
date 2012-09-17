@@ -37,6 +37,11 @@
 
 */
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#endif
+
 
 // This code snippet provides a high speed micro-allocator.
 //
@@ -63,7 +68,7 @@
 //
 #include <stdio.h>
 
-#ifdef _WIN32
+#if defined(_WIN32)
 	typedef __int64				NxI64;
 	typedef signed int			NxI32;
 	typedef signed short		NxI16;
@@ -77,7 +82,7 @@
 	typedef float				NxF32;
 	typedef double				NxF64;
 
-#elif __gnu_linux__
+#elif defined(__gnu_linux__)
 	typedef long long			NxI64;
 	typedef signed int			NxI32;
 	typedef signed short		NxI16;
@@ -91,7 +96,7 @@
 	typedef float				NxF32;
 	typedef double				NxF64;
 
-#elif __APPLE__
+#elif defined(__APPLE__)
 	typedef long long			NxI64;
 	typedef signed int			NxI32;
 	typedef signed short		NxI16;
@@ -105,7 +110,7 @@
 	typedef float				NxF32;
 	typedef double				NxF64;
 
-#elif __CELLOS_LV2__
+#elif defined(__CELLOS_LV2__)
 	typedef long long			NxI64;
 	typedef signed int			NxI32;
 	typedef signed short		NxI16;
@@ -119,7 +124,7 @@
 	typedef float				NxF32;
 	typedef double				NxF64;
 
-#elif _XBOX
+#elif defined(_XBOX)
 	typedef __int64				NxI64;
 	typedef signed int			NxI32;
 	typedef signed short		NxI16;
@@ -201,4 +206,8 @@ void performUnitTests(void);
 
 }; // end of namespace
 
+#endif
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif

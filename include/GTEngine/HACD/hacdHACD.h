@@ -23,6 +23,11 @@
 #include <vector>
 #include <queue>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 namespace HACD
 {
     const double                                    sc_pi = 3.14159265;
@@ -86,38 +91,38 @@ namespace HACD
 		void										SetNTargetTrianglesDecimatedMesh(size_t  targetNTrianglesDecimatedMesh) { m_targetNTrianglesDecimatedMesh = targetNTrianglesDecimatedMesh;}
 		//! Gives the triangles partitionas an array of size m_nTriangles where the i-th element specifies the cluster to which belong the i-th triangle
 		//! @return triangles partition
-		const long * const							GetPartition() const { return m_partition;}
+		const long *    							GetPartition() const { return m_partition;}
         //! Sets the scale factor
 		//! @param scale scale factor
 		void										SetScaleFactor(double  scale) { m_scale = scale;}
 		//! Gives the scale factor
 		//! @return scale factor
-		const double								GetScaleFactor() const { return m_scale;}
+		double      								GetScaleFactor() const { return m_scale;}
         //! Sets the threshold to detect small clusters. The threshold is expressed as a percentage of the total mesh surface (default 0.25%)
 		//! @param smallClusterThreshold threshold to detect small clusters
 		void										SetSmallClusterThreshold(double  smallClusterThreshold) { m_smallClusterThreshold = smallClusterThreshold;}
 		//! Gives the threshold to detect small clusters. The threshold is expressed as a percentage of the total mesh surface (default 0.25%)
 		//! @return threshold to detect small clusters
-		const double								GetSmallClusterThreshold() const { return m_smallClusterThreshold;}
+		double	         							GetSmallClusterThreshold() const { return m_smallClusterThreshold;}
 		//! Sets the call-back function
 		//! @param callBack pointer to the call-back function
 		void										SetCallBack(CallBackFunction  callBack) { m_callBack = callBack;}
 		//! Gives the call-back function
 		//! @return pointer to the call-back function
-		const CallBackFunction                      GetCallBack() const { return m_callBack;}
+		CallBackFunction                            GetCallBack() const { return m_callBack;}
         
         //! Specifies whether faces points should be added when computing the concavity
 		//! @param addFacesPoints true = faces points should be added
 		void										SetAddFacesPoints(bool  addFacesPoints) { m_addFacesPoints = addFacesPoints;}
 		//! Specifies wheter faces points should be added when computing the concavity
 		//! @return true = faces points should be added
-		const bool									GetAddFacesPoints() const { return m_addFacesPoints;}
+		bool							     		GetAddFacesPoints() const { return m_addFacesPoints;}
         //! Specifies whether extra points should be added when computing the concavity
 		//! @param addExteraDistPoints true = extra points should be added
 		void										SetAddExtraDistPoints(bool  addExtraDistPoints) { m_addExtraDistPoints = addExtraDistPoints;}
 		//! Specifies wheter extra points should be added when computing the concavity
 		//! @return true = extra points should be added
-		const bool									GetAddExtraDistPoints() const { return m_addExtraDistPoints;}
+		bool				     					GetAddExtraDistPoints() const { return m_addExtraDistPoints;}
         //! Sets the points of the input mesh (Remark: the input points will be scaled and shifted. Use DenormalizeData() to invert those operations)
 		//! @param points pointer to the input points
 		void										SetPoints(Vec3<Real>  * points) { m_points = points;}
@@ -132,10 +137,10 @@ namespace HACD
 		const Vec3<long>   *			            GetDecimatedTriangles() const { return m_trianglesDecimated;}        
 		//! Gives the number of points in the decimated mesh.
 		//! @return number of points the decimated mesh mesh
-		const size_t								GetNDecimatedPoints() const { return m_nPointsDecimated;}
+		size_t					        			GetNDecimatedPoints() const { return m_nPointsDecimated;}
 		//! Gives the number of triangles in the decimated mesh.
 		//! @return number of triangles the decimated mesh
-		const size_t								GetNDecimatedTriangles() const { return m_nTrianglesDecimated;}
+		size_t			         					GetNDecimatedTriangles() const { return m_nTrianglesDecimated;}
 		//! Sets the triangles of the input mesh.
 		//! @param triangles points pointer to the input points
 		void										SetTriangles(Vec3<long>  * triangles) { m_triangles = triangles;}
@@ -147,19 +152,19 @@ namespace HACD
 		void										SetNPoints(size_t nPoints) { m_nPoints = nPoints;}
 		//! Gives the number of points in the input mesh.
 		//! @return number of points the input mesh
-		const size_t								GetNPoints() const { return m_nPoints;}
+		size_t				        				GetNPoints() const { return m_nPoints;}
 		//! Sets the number of triangles in the input mesh.
 		//! @param nTriangles number of triangles in the input mesh
 		void										SetNTriangles(size_t nTriangles) { m_nTriangles = nTriangles;}
 		//! Gives the number of triangles in the input mesh.
 		//! @return number of triangles the input mesh
-		const size_t								GetNTriangles() const { return m_nTriangles;}
+		size_t					         			GetNTriangles() const { return m_nTriangles;}
 		//! Sets the minimum number of clusters to be generated.
 		//! @param nClusters minimum number of clusters
 		void										SetNClusters(size_t nClusters) { m_nMinClusters = nClusters;}
 		//! Gives the number of generated clusters.
 		//! @return number of generated clusters
-		const size_t								GetNClusters() const { return m_nClusters;}
+		size_t				        				GetNClusters() const { return m_nClusters;}
 		//! Sets the maximum allowed concavity.
 		//! @param concavity maximum concavity
 		void										SetConcavity(double concavity) { m_concavity = concavity;}
@@ -189,7 +194,7 @@ namespace HACD
         void										SetNVerticesPerCH(size_t nVerticesPerCH) { m_nVerticesPerCH = nVerticesPerCH;}
 		//! Gives the maximum number of vertices for each generated convex-hull.
 		//! @return maximum # vertices per CH
-		const size_t								GetNVerticesPerCH() const { return m_nVerticesPerCH;}
+		size_t					        			GetNVerticesPerCH() const { return m_nVerticesPerCH;}
 		//! Gives the number of vertices for the cluster number numCH.
 		//! @return number of vertices
 		size_t                                      GetNPointsCH(size_t numCH) const;
@@ -306,10 +311,10 @@ namespace HACD
         bool                                        m_addFacesPoints;           //>! specifies whether to add faces points or not
         bool                                        m_addExtraDistPoints;       //>! specifies whether to add extra points for concave shapes or not
 
-        friend HACD * const                         CreateHACD(HeapManager * heapManager = 0);
+        friend HACD *                               CreateHACD(HeapManager * heapManager = 0);
         friend void                                 DestroyHACD(HACD * const hacd);
 	};
-    inline HACD * const CreateHACD(HeapManager * heapManager) 
+    inline HACD * CreateHACD(HeapManager * heapManager) 
     { 
         return new HACD(heapManager);
     }
@@ -318,4 +323,8 @@ namespace HACD
         delete hacd;
     }
 }
+#endif
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif

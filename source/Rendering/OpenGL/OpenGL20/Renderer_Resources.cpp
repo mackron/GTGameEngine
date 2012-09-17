@@ -8,12 +8,17 @@
 #include <GTEngine/Rendering/RCCache.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTCore/String.hpp>
 
 #include <gtgl/gtgl.h>
 
 #include "../TypeConversion.hpp"
 
-#include <GTCore/String.hpp>
+// We're going to silence warnings about members being initialised in constructors. Makes the render commands ugly.
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 
 
 // Render commands.

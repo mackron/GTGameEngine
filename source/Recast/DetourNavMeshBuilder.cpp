@@ -26,6 +26,11 @@
 #include <GTEngine/Recast/DetourAlloc.h>
 #include <GTEngine/Recast/DetourAssert.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 static unsigned short MESH_NULL_IDX = 0xffff;
 
 
@@ -236,6 +241,7 @@ static unsigned char classifyOffMeshPoint(const float* pt, const float* bmin, co
 	case XM|ZM: return 5;
 	case ZM: return 6;
 	case XP|ZM: return 7;
+	default: break;
 	};
 	return 0xff;	
 }
@@ -731,3 +737,7 @@ bool dtNavMeshDataSwapEndian(unsigned char* data, const int /*dataSize*/)
 	
 	return true;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

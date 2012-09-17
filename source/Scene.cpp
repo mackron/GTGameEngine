@@ -234,9 +234,9 @@ namespace GTEngine
 namespace GTEngine
 {
     Scene::Scene()
-        : renderer(new DefaultSceneRenderer), deleteRenderer(true),
+        : renderer(new DefaultSceneRenderer),
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
-          deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
+          deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
           paused(false),
           viewports(), nodes(),
           ambientLightComponents(), directionalLightComponents(),
@@ -245,9 +245,9 @@ namespace GTEngine
     }
 
     Scene::Scene(SceneUpdateManager &updateManagerIn, ScenePhysicsManager &physicsManagerIn, SceneCullingManager &cullingManagerIn)
-        : renderer(new DefaultSceneRenderer), deleteRenderer(true),
+        : renderer(new DefaultSceneRenderer),
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
-          deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
+          deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
           paused(false),
           viewports(), nodes(),
           ambientLightComponents(), directionalLightComponents(),

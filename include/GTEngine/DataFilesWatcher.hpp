@@ -92,6 +92,11 @@ namespace GTEngine
 
             /// The list of children. We use a dictionary here in order to keep everything in alphabetical order and to also allow fast searching.
             GTCore::Dictionary<Item*> children;
+            
+            
+        private:    // No copying.
+            Item(const Item &);
+            Item & operator=(const Item &);
         };
 
         /// Base class for handling events.

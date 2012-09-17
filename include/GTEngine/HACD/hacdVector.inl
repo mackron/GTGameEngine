@@ -50,11 +50,12 @@ namespace HACD
 		return sqrt(m_data[0]*m_data[0]+m_data[1]*m_data[1]+m_data[2]*m_data[2]);
 	}
 	template <typename T>	
-	inline  void Vec3<T>::operator= (const Vec3 & rhs)
+	inline  Vec3<T> & Vec3<T>::operator= (const Vec3 & rhs)
 	{ 
 		this->m_data[0] = rhs.m_data[0]; 
 		this->m_data[1] = rhs.m_data[1]; 
-		this->m_data[2] = rhs.m_data[2]; 
+		this->m_data[2] = rhs.m_data[2];
+		return *this;
 	}
 	template <typename T>	
 	inline  void Vec3<T>::operator+=(const Vec3 & rhs)
@@ -162,7 +163,7 @@ namespace HACD
 	inline Vec3<T>::Vec3() {}
     
     template<typename T>
-    inline const bool Colinear(const Vec3<T> & a, const Vec3<T> & b, const Vec3<T> & c)
+    inline bool Colinear(const Vec3<T> & a, const Vec3<T> & b, const Vec3<T> & c)
     {
         return  ((c.Z() - a.Z()) * (b.Y() - a.Y()) - (b.Z() - a.Z()) * (c.Y() - a.Y()) == 0.0 /*EPS*/) &&
                 ((b.Z() - a.Z()) * (c.X() - a.X()) - (b.X() - a.X()) * (c.Z() - a.Z()) == 0.0 /*EPS*/) &&
@@ -170,7 +171,7 @@ namespace HACD
     }
     
     template<typename T>
-    inline const T Volume(const Vec3<T> & a, const Vec3<T> & b, const Vec3<T> & c, const Vec3<T> & d)
+    inline T Volume(const Vec3<T> & a, const Vec3<T> & b, const Vec3<T> & c, const Vec3<T> & d)
     {
         return (a-d) * ((b-d) ^ (c-d));
     }

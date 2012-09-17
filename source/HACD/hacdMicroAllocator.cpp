@@ -51,7 +51,12 @@
 #endif
 
 
-#pragma warning(disable:4100)
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+    #pragma GCC diagnostic ignored "-Wtype-limits"
+    #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#endif
 
 namespace HACD
 {
@@ -867,7 +872,6 @@ void          releaseHeapManager(HeapManager *heap)
 
 #ifdef WIN32
 #include <windows.h>
-#pragma comment(lib,"winmm.lib")
 #else
 static NxU32 timeGetTime(void)
 {
@@ -991,3 +995,7 @@ void * heap_realloc(HeapManager *hm,void *oldMem,size_t newSize)
 }
 
 }; // end of namespace
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

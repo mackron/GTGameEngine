@@ -24,6 +24,10 @@
 #include <GTEngine/Recast/DetourAlloc.h>
 #include <GTEngine/Recast/DetourAssert.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 
 dtProximityGrid* dtAllocProximityGrid()
 {
@@ -192,3 +196,7 @@ int dtProximityGrid::getItemCountAt(const int x, const int y) const
 	
 	return n;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

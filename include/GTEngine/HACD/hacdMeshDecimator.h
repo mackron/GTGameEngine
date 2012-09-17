@@ -23,6 +23,12 @@ All rights reserved.
 #include "hacdVector.h"
 #include "hacdSArray.h"
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 namespace HACD
 {
 	typedef double Float;
@@ -64,7 +70,7 @@ namespace HACD
 		void									SetCallBack(CallBackFunction  callBack) { m_callBack = callBack;}
 		//! Gives the call-back function
 		//! @return pointer to the call-back function
-		const CallBackFunction                  GetCallBack() const { return m_callBack;}
+		CallBackFunction                        GetCallBack() const { return m_callBack;}
 
 		inline void								SetEColManifoldConstraint(bool ecolManifoldConstraint) { m_ecolManifoldConstraint = ecolManifoldConstraint; }
 		inline size_t							GetNVertices()const {return m_nVertices;};
@@ -112,4 +118,8 @@ namespace HACD
 		bool									m_ecolManifoldConstraint;
 	};
 }
+#endif
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif

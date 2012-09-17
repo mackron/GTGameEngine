@@ -22,6 +22,11 @@
 #include <GTEngine/Recast/DetourCommon.h>
 #include <string.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 inline unsigned int dtHashRef(dtPolyRef a)
 {
 	a += ~(a<<15);
@@ -162,3 +167,7 @@ void dtNodeQueue::trickleDown(int i, dtNode* node)
 	}
 	bubbleUp(i, node);
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

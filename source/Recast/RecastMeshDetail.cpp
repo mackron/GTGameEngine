@@ -27,6 +27,13 @@
 #include <GTEngine/Recast/RecastAssert.h>
 
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 static const unsigned RC_UNSET_HEIGHT = 0xffff;
 
 struct rcHeightPatch
@@ -1242,4 +1249,8 @@ bool rcMergePolyMeshDetails(rcContext* ctx, rcPolyMeshDetail** meshes, const int
 	
 	return true;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 

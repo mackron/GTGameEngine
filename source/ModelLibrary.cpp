@@ -1569,7 +1569,7 @@ namespace GTEngine
 
                         GTCore::String fileName;
 
-                        if (length > 0)
+                        if (fileNameLength > 0)
                         {
                             auto tempFileName = static_cast<char*>(malloc(fileNameLength + 1));                         // <-- +1 for null terminator. Not included in 'fileNameLength'.
                             GTCore::IO::Read(file, tempFileName, fileNameLength); tempFileName[fileNameLength] = '\0';

@@ -27,6 +27,12 @@
 #include <GTEngine/Recast/DetourAssert.h>
 #include <new>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 /// @class dtQueryFilter
 ///
 /// <b>The Default Implementation</b>
@@ -3304,3 +3310,7 @@ bool dtNavMeshQuery::isInClosedList(dtPolyRef ref) const
 	const dtNode* node = m_nodePool->findNode(ref);
 	return node && node->flags & DT_NODE_CLOSED;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

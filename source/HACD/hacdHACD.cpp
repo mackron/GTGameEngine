@@ -27,6 +27,10 @@
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4701)   // potentially uninitialized local variable used.
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
 #endif
 
 //#define THREAD_DIST_POINTS 1
@@ -148,7 +152,7 @@ namespace HACD
             if (m_callBack)
             {
                 char msg[1024];
-                sprintf(msg, "nCC %lu\n", m_graph.m_nCCs);
+                sprintf(msg, "nCC %lu\n", static_cast<long unsigned int>(m_graph.m_nCCs));
                 (*m_callBack)(msg, 0.0, 0.0,  m_graph.GetNVertices());
                 
             }
@@ -679,7 +683,7 @@ namespace HACD
                 {
 					if ((!condition1) && m_callBack)
 					{
-						sprintf(msg, "\n-> %lu\t%f\t%f\t%f\n", m_pqueue.size(), m_graph.m_vertices[v1].m_surf*100.0/m_area, m_graph.m_vertices[v2].m_surf*100.0/m_area, m_graph.m_edges[currentEdge.m_name].m_concavity);
+						sprintf(msg, "\n-> %lu\t%f\t%f\t%f\n", static_cast<long unsigned int>(m_pqueue.size()), m_graph.m_vertices[v1].m_surf*100.0/m_area, m_graph.m_vertices[v2].m_surf*100.0/m_area, m_graph.m_edges[currentEdge.m_name].m_concavity);
 						(*m_callBack)(msg, progress, globalConcavity,  m_graph.GetNVertices());
 					}
 					globalConcavity = std::max<double>(globalConcavity ,m_graph.m_edges[currentEdge.m_name].m_concavity);
@@ -879,7 +883,8 @@ namespace HACD
                 if (m_callBack) 
                 {
                     char msg[1024];
-                    sprintf(msg, "\t CH(%lu) \t %lu \t %lf \t %lu \t %f \t %lu\n", v, static_cast<unsigned long>(p), m_graph.m_vertices[v].m_concavity, m_graph.m_vertices[v].m_distPoints.Size(),  m_graph.m_vertices[v].m_surf*100.0/m_area, m_graph.m_vertices[v].m_ancestors.size());
+                    sprintf(msg, "\t CH(%lu) \t %lu \t %lf \t %lu \t %f \t %lu\n", static_cast<long unsigned int>(v), static_cast<unsigned long>(p), m_graph.m_vertices[v].m_concavity,
+                            static_cast<long unsigned int>(m_graph.m_vertices[v].m_distPoints.Size()),  m_graph.m_vertices[v].m_surf*100.0/m_area, static_cast<long unsigned int>(m_graph.m_vertices[v].m_ancestors.size()));
 					(*m_callBack)(msg, 0.0, 0.0, m_nClusters);
 					p++;
                 }
@@ -1141,4 +1146,6 @@ namespace HACD
 
 #if defined(_MSC_VER)
     #pragma warning(pop)
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif

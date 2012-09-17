@@ -30,11 +30,21 @@ namespace GTEngine
             {
                 switch (attachment.type)
                 {
-                //case ShaderParameterType_Texture1D:   static_cast<Texture1D* >(attachment.texture)->OnDetachFromShader(*this); break;
-                case ShaderParameterType_Texture2D:   static_cast<Texture2D*  >(attachment.texture)->OnDetachFromShader(*this);  break;
-                //case ShaderParameterType_Texture3D:   static_cast<Texture3D* >(attachment.texture)->OnDetachFromShader(*this); break;
+                //case ShaderParameterType_Texture1D:   static_cast<Texture1D*  >(attachment.texture)->OnDetachFromShader(*this); break;
+                case ShaderParameterType_Texture2D:   static_cast<Texture2D*  >(attachment.texture)->OnDetachFromShader(*this); break;
+                //case ShaderParameterType_Texture3D:   static_cast<Texture3D*  >(attachment.texture)->OnDetachFromShader(*this); break;
                 case ShaderParameterType_TextureCube: static_cast<TextureCube*>(attachment.texture)->OnDetachFromShader(*this); break;
 
+
+                case ShaderParameterType_Float:
+                case ShaderParameterType_Float2:
+                case ShaderParameterType_Float3:
+                case ShaderParameterType_Float4:
+                case ShaderParameterType_Float2x2:
+                case ShaderParameterType_Float3x3:
+                case ShaderParameterType_Float4x4:
+                case ShaderParameterType_Texture1D:
+                case ShaderParameterType_Texture3D:
                 default: break;
                 }
             }

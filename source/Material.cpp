@@ -41,7 +41,8 @@ namespace GTEngine
         : fileName(),
           diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(),
           defaultParams(),
-          enableTransparency()
+          enableTransparency(),
+          metadata()
     {
     }
 

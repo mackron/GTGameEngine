@@ -23,6 +23,11 @@
 #include <GTEngine/Recast/DetourCommon.h>
 #include <GTEngine/Recast/DetourAssert.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
 
 dtLocalBoundary::dtLocalBoundary() :
 	m_nsegs(0),
@@ -134,4 +139,8 @@ bool dtLocalBoundary::isValid(dtNavMeshQuery* navquery, const dtQueryFilter* fil
 	
 	return true;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 

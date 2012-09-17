@@ -21,6 +21,12 @@
 
 #include "DetourNavMeshQuery.h"
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 /// Represents a dynamic polygon corridor used to plan agent movement.
 /// @ingroup crowd, detour
 class dtPathCorridor
@@ -142,3 +148,7 @@ int dtMergeCorridorStartShortcut(dtPolyRef* path, const int npath, const int max
 								 const dtPolyRef* visited, const int nvisited);
 
 #endif // DETOUTPATHCORRIDOR_H
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

@@ -26,6 +26,12 @@
 #include "DetourProximityGrid.h"
 #include "DetourPathQueue.h"
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
+
 /// The maximum number of neighbors that a crowd agent can take into account
 /// for steering decisions.
 /// @ingroup crowd
@@ -253,7 +259,7 @@ public:
 
 	/// The maximum number of agents that can be managed by the object.
 	/// @return The maximum number of agents.
-	const int getAgentCount() const;
+	int getAgentCount() const;
 	
 	/// Adds a new agent to the crowd.
 	///  @param[in]		pos		The requested position of the agent. [(x, y, z)]
@@ -430,3 +436,8 @@ A higher value will result in agents trying to stay farther away from each other
 the cost of more difficult steering in tight spaces.
 
 */
+
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif

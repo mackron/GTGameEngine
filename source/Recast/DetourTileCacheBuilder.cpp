@@ -23,6 +23,11 @@
 #include <string.h>
 #include <math.h>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 
 template<class T> class dtFixedArray
 {
@@ -496,6 +501,7 @@ static bool walkContour(dtTileCacheLayer& layer, int x, int y, dtTempContour& co
 				case 0: pz++; break;
 				case 1: px++; pz++; break;
 				case 2: px++; break;
+				default: break;
 			}
 			
 			// Try to merge with previous vertex.
@@ -2149,4 +2155,8 @@ bool dtTileCacheHeaderSwapEndian(unsigned char* data, const int dataSize)
 	
 	return true;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 

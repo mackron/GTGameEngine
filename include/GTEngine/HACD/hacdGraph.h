@@ -23,6 +23,11 @@
 #include "hacdSArray.h"
 //#define HACD_PRECOMPUTE_CHULLS
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 namespace HACD
 {
     class GraphVertex;
@@ -115,4 +120,8 @@ namespace HACD
 		friend class HACD;
     };
 }
+#endif
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif

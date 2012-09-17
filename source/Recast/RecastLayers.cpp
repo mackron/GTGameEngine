@@ -27,6 +27,12 @@
 #include <GTEngine/Recast/RecastAssert.h>
 
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+
+
 static const int RC_MAX_LAYERS = RC_NOT_CONNECTED;
 static const int RC_MAX_NEIS = 16;
 
@@ -618,3 +624,7 @@ bool rcBuildHeightfieldLayers(rcContext* ctx, rcCompactHeightfield& chf,
 	
 	return true;
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
