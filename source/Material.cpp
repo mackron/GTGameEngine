@@ -178,6 +178,35 @@ namespace GTEngine
                 this->normalShaderID = "Material_DefaultNormal";
             }
 
+            // <refraction>
+            auto refractionNode = materialNode->first_node("refraction");
+            if (refractionNode != nullptr)
+            {
+                auto idAttr = normalNode->first_attribute("id");
+                if (idAttr != nullptr)
+                {
+                    this->refractionShaderID = idAttr->value();
+                }
+                else
+                {
+                    GenerateAnonymousShaderID(this->refractionShaderID);
+                }
+
+                if (refractionNode->value_size() > 0)
+                {
+                    ShaderLibrary::AddShaderString(this->refractionShaderID.c_str(), refractionNode->value());
+                }
+
+
+                this->refractive = true;
+            }
+            else
+            {
+                // Note how we don't set a default ID here.
+                this->refractive = false;
+            }
+
+
 
             // <defaultproperties>. Optional.
             auto defaultpropertiesNode = materialNode->first_node("defaultproperties");

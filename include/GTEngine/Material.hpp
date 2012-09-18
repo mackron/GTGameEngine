@@ -53,6 +53,12 @@ namespace GTEngine
         ///
         /// @return A pointer to the metadata associated with the key or null if there is no metadata for that key.
         void* GetMetadata(size_t key);
+
+
+
+        /// Determines whether or not the material is refractive.
+        bool IsRefractive() const { return this->refractive; }
+
         
 
     public:
@@ -72,18 +78,28 @@ namespace GTEngine
         /// The ID of the normal shader.
         GTCore::String normalShaderID;
 
+        /// The ID of the refraction shader. This can actually be null if this->refractive is false.
+        GTCore::String refractionShaderID;
+
+
         /// The default parameters.
         ShaderParameterCache defaultParams;
-
-
-        /// Keeps track of whether or not the material should have transparency enabled.
-        bool enableTransparency;
 
 
         /// Every material can have metadata associated with it. This is one way of doing things like associating a shader to a material or whatnot. The default
         /// renderer will use this system. This is a map allowing something to associate a pointer to a key. The key is a size_t which will allow a pointer to
         /// an object to be used if desired.
         GTCore::Map<size_t, void*> metadata;
+
+
+
+    private:
+
+        /// Keeps track of whether or not the material should have transparency enabled.
+        bool enableTransparency;
+
+        /// Keeps track of whether or not the material is refractive.
+        bool refractive;
 
 
     private:
@@ -136,7 +152,11 @@ namespace GTEngine
 
 
         /// Determines whether or not transparency should be enabled for this material.
-        bool IsTransparencyEnabled() const { return this->definition.enableTransparency; }
+        //bool IsTransparencyEnabled() const { return this->definition.enableTransparency; }
+
+        /// Determines whether or not the material is refractive.
+        bool IsRefractive() const { return this->definition.IsRefractive(); }
+
 
 
         /// Sets the metadata pointer to use with the given key.

@@ -68,7 +68,7 @@ public:
                 physics->AddBoxCollisionShape(0.5f, 0.5f, 0.5f);
                 physics->SetMass(1.0f);
 
-                physicsObject.SetPosition(static_cast<float>(x) - 2.0f, static_cast<float>(y) + 10.0f, 0.0f);
+                physicsObject.SetPosition(static_cast<float>(x) - 2.0f, static_cast<float>(y) + 10.0f, static_cast<float>(y) * 0.4f);
 
                 this->scene.AddSceneNode(physicsObject);
             }
