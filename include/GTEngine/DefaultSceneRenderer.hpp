@@ -280,6 +280,55 @@ namespace GTEngine
         };
 
 
+
+        // A general function for drawing a vertex array during a lighting pass.
+        //
+        // The way the renderer works is that is creates a single set of render commands that will be reused over multiple passes for
+        // drawing the visible geometry. This is done for efficiency.
+        //
+        // There are two general phases to the renderer. As the command is executed, it sets flags to control branching. The first
+        // operation will perform the required operations for the material pass. Once this has been executed, it will set a flag
+        // which will cause it to branch for the second phase, which is the lighting pass.
+        struct RCDrawGeometry : public RenderCommand
+        {
+            RCDrawGeometry()
+                : doingMaterialPass(true)
+            {
+            }
+
+
+            /// RenderCommand::Execute()
+            void Execute();
+
+
+
+            /// The shader parameters to set for the material.
+            ShaderParameterCache materialParameters;
+
+            /// The shader to use in the material pass.
+            Shader* materialShader;
+
+
+            /// The vertex array to draw.
+            VertexArray* va;
+
+            /// The MVP matrix to apply to the geometry.
+            glm::mat4 mvpMatrix;
+            glm::mat3 normalMatrix;
+            glm::mat4 modelViewMatrix;
+            glm::mat4 modelMatrix;
+
+            /// Whether or not the face culling should change.
+            bool changeFaceCulling;
+            bool cullFrontFace;
+            bool cullBackFace;
+
+            /// Keeps track of whether or not to do the material pass. Should default to true.
+            bool doingMaterialPass;
+        };
+
+
+
         // Sets a shader.
         struct RCLighting_SetShader : public RenderCommand
         {
@@ -299,29 +348,6 @@ namespace GTEngine
 
             Texture2D* materialBuffer2;
             glm::vec2  screenSize;
-        };
-
-        // A general function for drawing a vertex array during a lighting pass.
-        //
-        // This class will use the current shader.
-        struct RCLighting_DrawGeometry : public RenderCommand
-        {
-            void Execute();
-
-
-            /// The vertex array to draw.
-            VertexArray* va;
-
-            /// The MVP matrix to apply to the geometry.
-            glm::mat4 mvpMatrix;
-            glm::mat3 normalMatrix;
-            glm::mat4 modelViewMatrix;
-            glm::mat4 modelMatrix;
-
-            /// Whether or not the face culling should change.
-            bool changeFaceCulling;
-            bool cullFrontFace;
-            bool cullBackFace;
         };
 
 
@@ -487,12 +513,10 @@ namespace GTEngine
         RCCache<RCEnd,        8>                      rcEnd[2];
         RCCache<RCBeginLayer, 8>                      rcBeginLayer[2];
         RCCache<RCEndLayer,   8>                      rcEndLayer[2];
-        RCCache<RCDrawVA>                             rcDrawVA[2];
-        RCCache<RCSetFaceCulling>                     rcSetFaceCulling[2];
         RCCache<RCBeginLighting>                      rcBeginLighting[2];
         RCCache<RCControlBlending>                    rcControlBlending[2];
+        RCCache<RCDrawGeometry>                       rcDrawGeometry[2];
         RCCache<RCLighting_SetShader>                 rcLighting_SetShader[2];
-        RCCache<RCLighting_DrawGeometry>              rcLighting_DrawGeometry[2];
         RCCache<RCLighting_BeginDirectionalShadowMap> rcLighting_BeginDirectionalShadowMap[2];
         RCCache<RCLighting_BeginPointShadowMap>       rcLighting_BeginPointShadowMap[2];
         RCCache<RCLighting_BeginPointShadowMapFace>   rcLighting_BeginPointShadowMapFace[2];

@@ -238,12 +238,10 @@ namespace GTEngine
         this->rcEnd[Renderer::BackIndex].Reset();
         this->rcBeginLayer[Renderer::BackIndex].Reset();
         this->rcEndLayer[Renderer::BackIndex].Reset();
-        this->rcDrawVA[Renderer::BackIndex].Reset();
-        this->rcSetFaceCulling[Renderer::BackIndex].Reset();
         this->rcBeginLighting[Renderer::BackIndex].Reset();
         this->rcControlBlending[Renderer::BackIndex].Reset();
+        this->rcDrawGeometry[Renderer::BackIndex].Reset();
         this->rcLighting_SetShader[Renderer::BackIndex].Reset();
-        this->rcLighting_DrawGeometry[Renderer::BackIndex].Reset();
         this->rcLighting_BeginDirectionalShadowMap[Renderer::BackIndex].Reset();
         this->rcLighting_BeginPointShadowMap[Renderer::BackIndex].Reset();
         this->rcLighting_BeginPointShadowMapFace[Renderer::BackIndex].Reset();
@@ -396,16 +394,6 @@ namespace GTEngine
                     auto material = mesh->GetMaterial();
                     if (material != nullptr)
                     {
-                        auto meshVA = this->GetMeshGeometry(*mesh, model->IsAnimating());
-
-                        auto &rcDrawVA = this->rcDrawVA[Renderer::BackIndex].Acquire();
-                        rcDrawVA.SetVertexArray(meshVA);
-                        rcDrawVA.SetParameter("MVPMatrix",       MVPMatrix);
-                        rcDrawVA.SetParameter("NormalMatrix",    NormalMatrix);
-                        rcDrawVA.SetParameter("ModelViewMatrix", ModelViewMatrix);
-                        rcDrawVA.SetParameter("ModelMatrix",     ModelMatrix);
-
-                        
                         // This is the pass where the animated geometry needs to be applied, if applicable. To do this, we first check that
                         // the model is being animated. If so, we need to create a skinned geometry vertex array and calculate the blended
                         // vertex information.
@@ -417,19 +405,13 @@ namespace GTEngine
                                 // Now that we have skinned geometry vertex array, we need to apply the skinning to it.
                                 mesh->ApplySkinning();
                             }
-
-                            rcDrawVA.SetVertexArray(skinnedGeometry);
-                        }
-                        else
-                        {
-                            rcDrawVA.SetVertexArray(mesh->GetGeometry());
                         }
 
 
-                        // Here is where we need to retrieve a shader for the material. This managed completely by the renderer
+                        // Here is where we need to retrieve a shader for the material. This is stored as metadata. If the shader has not yet been created,
+                        // it will be created now.
                         auto &materialMetadata = this->GetMaterialMetadata(*material);
 
-                        // If we don't have a shader, it needs to be created.
                         if (materialMetadata.materialPassShader == nullptr)
                         {
                             materialMetadata.materialPassShader = this->CreateMaterialPassShader(*material);
@@ -438,8 +420,18 @@ namespace GTEngine
                         this->usedMaterials.Insert(&materialMetadata);
 
 
-                        // Now that we have the shader, we can set some properties and set it on the render command.
-                        rcDrawVA.SetShader(materialMetadata.materialPassShader);
+
+
+                        auto &rcDrawGeometry = this->rcDrawGeometry[Renderer::BackIndex].Acquire();
+                        rcDrawGeometry.va                = this->GetMeshGeometry(*mesh, model->IsAnimating());
+                        rcDrawGeometry.mvpMatrix         = MVPMatrix;
+                        rcDrawGeometry.normalMatrix      = NormalMatrix;
+                        rcDrawGeometry.modelViewMatrix   = ModelViewMatrix;
+                        rcDrawGeometry.modelMatrix       = ModelMatrix;
+                        rcDrawGeometry.changeFaceCulling = !(modelComponent->CullBackFaces() == true && modelComponent->CullFrontFaces() == false);
+                        rcDrawGeometry.cullBackFace      = modelComponent->CullBackFaces();
+                        rcDrawGeometry.cullFrontFace     = modelComponent->CullFrontFaces();
+                        rcDrawGeometry.materialShader    = materialMetadata.materialPassShader;
 
                         // The material may have pending properties. These need to be set on the shader also.
                         auto &materialParams = material->GetParameters();
@@ -449,31 +441,13 @@ namespace GTEngine
                             assert(iParam        != nullptr);
                             assert(iParam->value != nullptr);
 
-                            rcDrawVA.SetParameter(iParam->key, iParam->value);
+                            rcDrawGeometry.materialParameters.Set(iParam->key, iParam->value);
                         }
 
-                        auto &rcSetFaceCulling = this->rcSetFaceCulling[Renderer::BackIndex].Acquire();
-                        rcSetFaceCulling.SetCullingMode(modelComponent->CullFrontFaces(), modelComponent->CullBackFaces());
-
-                        // Here is where we determine where the render commands are added. We don't append the commands straight onto the renderer directly. Instead, we just
-                        // append to local RC queues which will be mapped to a material definition. At the end, we just append those local queues to the main one. This is
-                        // how we group commands by material.
-                        
-                        materialMetadata.materialPassRCs.Append(rcSetFaceCulling);
-                        materialMetadata.materialPassRCs.Append(rcDrawVA);
 
 
-                        // Here we need to create the render command that will draw the geometry of the mesh in each of the lighting passes.
-                        auto &rcLighting_DrawGeometry = this->rcLighting_DrawGeometry[Renderer::BackIndex].Acquire();
-                        rcLighting_DrawGeometry.va                = meshVA;
-                        rcLighting_DrawGeometry.mvpMatrix         = MVPMatrix;
-                        rcLighting_DrawGeometry.normalMatrix      = NormalMatrix;
-                        rcLighting_DrawGeometry.modelViewMatrix   = ModelViewMatrix;
-                        rcLighting_DrawGeometry.modelMatrix       = ModelMatrix;
-                        rcLighting_DrawGeometry.changeFaceCulling = !(modelComponent->CullBackFaces() == true && modelComponent->CullFrontFaces() == false);
-                        rcLighting_DrawGeometry.cullBackFace      = modelComponent->CullBackFaces();
-                        rcLighting_DrawGeometry.cullFrontFace     = modelComponent->CullFrontFaces();
-                        this->lightingDrawRCs.Append(rcLighting_DrawGeometry);
+                        materialMetadata.materialPassRCs.Append(rcDrawGeometry);
+                        this->lightingDrawRCs.Append(rcDrawGeometry);
                     }
                 }
             }
@@ -713,11 +687,7 @@ namespace GTEngine
             {
                 auto component = static_cast<const SceneNode &>(light).GetComponent<GTEngine::DirectionalLightComponent>();
 
-                glm::mat4 lightProjection = glm::ortho(-20.0f, 20.0f,
-                                                       -20.0f, 20.0f,
-                                                         1.0f, 10000.0f);
-
-                //glm::mat4 lightProjection = glm::perspective(90.0f, 1.0f, 1.0f, 10000.0f);
+                glm::mat4 lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 1.0f, 10000.0f);
                 glm::mat4 lightView       = glm::mat4_cast(glm::inverse(component->GetNode().GetWorldOrientation())) * glm::translate(-component->GetNode().GetWorldPosition());
 
 
@@ -726,7 +696,6 @@ namespace GTEngine
                 rcSetShader.SetParameter("DLights0.Colour",    component->GetColour());
                 rcSetShader.SetParameter("DLights0.Direction", glm::normalize(glm::mat3(this->view) * component->GetNode().GetWorldForwardVector()));
 
-                //rcSetShader.SetParameter("ShadowMVPMatrix", projection * view);
                 rcSetShader.SetParameter("ShadowProjectionMatrix", lightProjection);
                 rcSetShader.SetParameter("ShadowViewMatrix",       lightView);
             }
@@ -1083,12 +1052,32 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer::RCLighting_DrawGeometry::Execute()
+    void DefaultSceneRenderer::RCDrawGeometry::Execute()
     {
+        // If we're doing the material pass, we need to 
+        if (this->doingMaterialPass)
+        {
+            Renderer::SetShader(this->materialShader);
+
+            for (size_t i = 0; i < this->materialParameters.GetCount(); ++i)
+            {
+                auto iParamName  = this->materialParameters.GetNameByIndex(i);
+                auto iParamValue = this->materialParameters.GetByIndex(i);
+
+                iParamValue->SetOnCurrentShader(iParamName);
+            }
+
+
+            this->doingMaterialPass = false;
+        }
+
+
+
         if (this->changeFaceCulling)
         {
             Renderer::SetFaceCulling(this->cullFrontFace, this->cullBackFace);
         }
+
 
         Renderer::SetShaderParameter("MVPMatrix",       this->mvpMatrix);
         Renderer::SetShaderParameter("NormalMatrix",    this->normalMatrix);
