@@ -97,27 +97,30 @@ namespace GTEngine
                   finalOutput(nullptr),
                   depthStencil(nullptr),
                   lightingBuffer0(nullptr), lightingBuffer1(nullptr),
-                  materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr)
+                  materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr),
+                  opaqueColourBuffer(nullptr)
             {
                 this->depthStencil = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_Depth24_Stencil8);
 
                 if (Renderer::SupportFloatTextures())
                 {
-                    this->finalOutput     = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                    this->lightingBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                    this->lightingBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
-                    this->materialBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                    this->materialBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                    this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);       // <-- Look into using R10G10B10A2. Need to handle sign.
+                    this->finalOutput        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                    this->lightingBuffer0    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                    this->lightingBuffer1    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                    this->materialBuffer0    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->materialBuffer1    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->materialBuffer2    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);       // <-- Look into using R10G10B10A2. Need to handle sign.
+                    this->opaqueColourBuffer = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
                 }
                 else
                 {
-                    this->finalOutput     = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                    this->lightingBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                    this->lightingBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                    this->materialBuffer0 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                    this->materialBuffer1 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
-                    this->materialBuffer2 = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->finalOutput        = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->lightingBuffer0    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->lightingBuffer1    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->materialBuffer0    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->materialBuffer1    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->materialBuffer2    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->opaqueColourBuffer = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                 }
 
                 this->finalOutput->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
@@ -126,17 +129,19 @@ namespace GTEngine
                 this->materialBuffer0->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
                 this->materialBuffer1->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
                 this->materialBuffer2->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+                this->opaqueColourBuffer->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
 
                 this->finalOutput->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
 
 
                 this->AttachDepthStencilBuffer(this->depthStencil);
-                this->AttachColourBuffer(this->finalOutput,     0);
-                this->AttachColourBuffer(this->materialBuffer0, 1);
-                this->AttachColourBuffer(this->materialBuffer1, 2);
-                this->AttachColourBuffer(this->materialBuffer2, 3);
-                this->AttachColourBuffer(this->lightingBuffer0, 4);
-                this->AttachColourBuffer(this->lightingBuffer1, 5);
+                this->AttachColourBuffer(this->finalOutput,        0);
+                this->AttachColourBuffer(this->materialBuffer0,    1);
+                this->AttachColourBuffer(this->materialBuffer1,    2);
+                this->AttachColourBuffer(this->materialBuffer2,    3);
+                this->AttachColourBuffer(this->lightingBuffer0,    4);
+                this->AttachColourBuffer(this->lightingBuffer1,    5);
+                this->AttachColourBuffer(this->opaqueColourBuffer, 6);
             }
 
             /// Destructor
@@ -149,14 +154,16 @@ namespace GTEngine
                 delete this->materialBuffer0;
                 delete this->materialBuffer1;
                 delete this->materialBuffer2;
+                delete this->opaqueColourBuffer;
             
-                this->finalOutput     = nullptr;
-                this->depthStencil    = nullptr;
-                this->lightingBuffer0 = nullptr;
-                this->lightingBuffer1 = nullptr;
-                this->materialBuffer0 = nullptr;
-                this->materialBuffer1 = nullptr;
-                this->materialBuffer2 = nullptr;
+                this->finalOutput        = nullptr;
+                this->depthStencil       = nullptr;
+                this->lightingBuffer0    = nullptr;
+                this->lightingBuffer1    = nullptr;
+                this->materialBuffer0    = nullptr;
+                this->materialBuffer1    = nullptr;
+                this->materialBuffer2    = nullptr;
+                this->opaqueColourBuffer = nullptr;
             }
 
 
@@ -175,6 +182,8 @@ namespace GTEngine
                 this->materialBuffer0->Resize(this->width, this->height);
                 this->materialBuffer1->Resize(this->width, this->height);
                 this->materialBuffer2->Resize(this->width, this->height);
+
+                this->opaqueColourBuffer->Resize(this->width, this->height);
             }
 
 
@@ -212,6 +221,9 @@ namespace GTEngine
             Texture2D* materialBuffer0;     // RGB = Diffuse.  A = Shininess.
             Texture2D* materialBuffer1;     // RGB = Emissive. A = Transparency.
             Texture2D* materialBuffer2;     // RGB = Normals for normal mapping. A = nothing.
+
+            // The colour buffer that will contain the opaque geometry which will be used as the background for transparent geometry.
+            Texture2D* opaqueColourBuffer;
         };
 
 
