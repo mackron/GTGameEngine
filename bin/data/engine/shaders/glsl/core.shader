@@ -111,7 +111,6 @@
         VertexOutput_Position    = ModelViewMatrix * vec4(VertexInput_Position, 1.0);
         VertexOutput_PositionWS  = ModelMatrix     * vec4(VertexInput_Position, 1.0);
         VertexOutput_ShadowCoord = (ShadowProjectionMatrix * ShadowViewMatrix * ModelMatrix) * vec4(VertexInput_Position, 1.0);
-        //VertexOutput_ShadowCoord.xy /= VertexOutput_ShadowCoord.w;
 	}
 </shader>
 
@@ -125,8 +124,8 @@
 
 	void main()
 	{
-        gl_Position = MVPMatrix * vec4(VertexInput_Position, 1.0);
-        ShadowCoord = gl_Position;
+        ShadowCoord = MVPMatrix * vec4(VertexInput_Position, 1.0);
+        gl_Position = ShadowCoord;
 	}
 </shader>
 
