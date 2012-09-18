@@ -128,8 +128,12 @@ uses 1 or each light, it will use the following: A1D1P1.
         float specular = SpecularFactor(N, H, 64.0);
         
         
-        vec2  shadowCoord = VertexOutput_ShadowCoord.xy * 0.5 + 0.5;
-        float shadowDepth = VertexOutput_ShadowCoord.z - 0.00001;
+        vec4  shadowCoord = VertexOutput_ShadowCoord / VertexOutput_ShadowCoord.w;
+        float shadowDepth = shadowCoord.z - 0.00001;
+        //float pixelDepth  = texture2D(ShadowMap, shadowCoord.xy * 0.5 + 0.5).r;
+        
+        //float shadow = (pixelDepth < shadowDepth) ? 0.0 : 1.0;
+        
         
         float shadow = 0.0;
         
@@ -145,11 +149,12 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         for (int i = 0; i < 8; ++i)
         {
-            if (texture2D(ShadowMap, shadowCoord + filter[i]).r > shadowDepth)
+            if (texture2D(ShadowMap, (shadowCoord.xy * 0.5 + 0.5) + filter[i]).r > shadowDepth)
             {
                 shadow += 0.125;
             }
         }
+        
         
         diffuseOut  += light.Colour * diffuse  * shadow;
         specularOut += light.Colour * specular * shadow;
@@ -252,8 +257,7 @@ uses 1 or each light, it will use the following: A1D1P1.
 ]]>
 </shader>
 
-
-<shader id="Engine_SpotLight">
+<shader id="Engine_SpotLight_NoShadow">
     struct SpotLight
     {
         vec3  Colour;
@@ -286,6 +290,80 @@ uses 1 or each light, it will use the following: A1D1P1.
         diffuseOut  += light.Colour * diffuse  * attenuation * spot;
         specularOut += light.Colour * specular * attenuation * spot;
     }
+</shader>
+
+<shader id="Engine_SpotLight">
+<![CDATA[
+    struct SpotLight
+    {
+        vec3  Colour;
+        vec3  Position;
+        vec3  Direction;
+        float CosAngleInner;               // cos(radians(degrees))
+        float CosAngleOuter;               // cos(radians(degrees))
+        
+        float ConstantAttenuation;
+        float LinearAttenuation;
+        float QuadraticAttenuation;
+    };
+    
+    varying vec4 VertexOutput_ShadowCoord;
+    uniform sampler2D ShadowMap;
+    
+    void CalculateSpotLighting(SpotLight light, inout vec3 diffuseOut, inout vec3 specularOut)
+    {
+        // N - Input normal
+        // L - Non-normalized light vector from the light to the vertex
+        
+        vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
+        
+        vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
+        vec3 L = light.Position - VertexOutput_Position.xyz;
+        vec3 H = normalize(normalize(L) - normalize(VertexOutput_Position.xyz));
+        
+        float diffuse     = DiffuseFactor(N, normalize(L));
+        float specular    = SpecularFactor(N, H, 64.0);
+        float attenuation = AttenuationFactor(light.ConstantAttenuation, light.LinearAttenuation, light.QuadraticAttenuation, length(L));
+        float spot        = SpotFactor(L, light.Direction, light.CosAngleInner, light.CosAngleOuter);
+        
+        
+        vec4  shadowCoord = VertexOutput_ShadowCoord / VertexOutput_ShadowCoord.w;
+        float shadowDepth = shadowCoord.z - 0.0002;
+        //float pixelDepth  = texture2D(ShadowMap, shadowCoord.xy * 0.5 + 0.5).r;
+        
+        
+        
+        float shadow = 1.0;
+        if (VertexOutput_ShadowCoord.w > 0.0)
+        {
+            shadow = 0.0;
+            
+            vec2 filter[8];
+            filter[0] = vec2( 0.0005,  0.0005);
+            filter[1] = vec2( 0.0005, -0.0005);
+            filter[2] = vec2(-0.0005,  0.0005);
+            filter[3] = vec2(-0.0005, -0.0005);
+            filter[4] = vec2( 0.00025,  0.00025);
+            filter[5] = vec2( 0.00025, -0.00025);
+            filter[6] = vec2(-0.00025,  0.00025);
+            filter[7] = vec2(-0.00025, -0.00025);
+            
+            for (int i = 0; i < 8; ++i)
+            {
+                if (texture2D(ShadowMap, (shadowCoord.xy * 0.5 + 0.5) + filter[i]).r > shadowDepth)
+                {
+                    shadow += 0.125;
+                }
+            }
+        
+            //shadow = (pixelDepth < shadowDepth) ? 0.0 : 1.0;
+        }
+        
+
+        diffuseOut  += light.Colour * diffuse  * attenuation * spot * shadow;
+        specularOut += light.Colour * specular * attenuation * spot * shadow;
+    }
+]]>
 </shader>
 
 
@@ -407,6 +485,27 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentLightingOutput" />
     <include url="#Engine_FragmentLightingUniforms" />
     <include url="#Engine_LightingUtils" />
+    <include url="#Engine_SpotLight_NoShadow" />
+    
+    <include>
+        uniform SpotLight SLight0;
+        
+	    void main()
+	    {
+            vec3 diffuse  = vec3(0.0, 0.0, 0.0);
+            vec3 specular = vec3(0.0, 0.0, 0.0);
+            CalculateSpotLighting(SLight0, diffuse, specular);
+            
+		    DoFinalLightingOutput(diffuse, specular);
+	    }
+    </include>
+</shader>
+
+<shader id="Engine_LightingPass_S1">
+    <include url="#Engine_FragmentInput" />
+    <include url="#Engine_FragmentLightingOutput" />
+    <include url="#Engine_FragmentLightingUniforms" />
+    <include url="#Engine_LightingUtils" />
     <include url="#Engine_SpotLight" />
     
     <include>
@@ -477,12 +576,11 @@ uses 1 or each light, it will use the following: A1D1P1.
     <include url="#Engine_FragmentInput" />
     
     <include>
-        varying float ShadowCoordZ;
+        varying vec4 ShadowCoord;
     
         void main()
         {
-            //gl_FragData[0].r = gl_FragCoord.z;
-            gl_FragData[0].r = ShadowCoordZ;
+            gl_FragData[0].r = ShadowCoord.z / ShadowCoord.w;
         }
     </include>
 </shader>
