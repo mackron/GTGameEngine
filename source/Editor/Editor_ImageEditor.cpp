@@ -12,7 +12,7 @@ namespace GTEngine
 {
     Editor_ImageEditor::Editor_ImageEditor(Editor &editor)
         : editor(editor), currentImage(nullptr), GUI(), viewportEventHandler(*this),
-          zoom(1.0f)
+          currentState(nullptr), loadedStates()
     {
     }
 
@@ -30,9 +30,43 @@ namespace GTEngine
 
     bool Editor_ImageEditor::LoadImage(const char* fileName)
     {
-        this->currentImage = Texture2DLibrary::Acquire(fileName);
-        
-        return this->currentImage != nullptr;
+        auto newImage = Texture2DLibrary::Acquire(fileName);
+        if (newImage != nullptr)
+        {
+            this->currentImage = newImage;
+
+
+            // Now we need to setup some state for the new model. If the model has already had it's state recorded, we can just restore it from the map.
+            auto iState = this->loadedStates.Find(fileName);
+            if (iState != nullptr)
+            {
+                this->currentState = iState->value;
+            }
+            else
+            {
+                this->currentState = new State;
+                this->loadedStates.Add(fileName, this->currentState);
+            }
+
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    float Editor_ImageEditor::GetZoom() const
+    {
+        return (this->currentState != nullptr) ? this->currentState->zoom : 1.0f;
+    }
+
+    void Editor_ImageEditor::SetZoom(float zoom)
+    {
+        if (this->currentState != nullptr)
+        {
+            this->currentState->zoom = zoom;
+        }
     }
 
 
