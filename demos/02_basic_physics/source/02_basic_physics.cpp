@@ -46,7 +46,7 @@ public:
         this->lightNode.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.5f, 0.5f, 0.5f);
         this->lightNode.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.4f, 0.4f, 0.4f);
         this->lightNode.GetComponent<GTEngine::DirectionalLightComponent>()->EnableShadowCasting();
-        this->lightNode.SetPosition(12.0f, 12.0f, 12.0f);
+        this->lightNode.SetPosition(6.0f, 6.0f, 6.0f);
         this->lightNode.LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
 

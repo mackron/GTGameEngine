@@ -150,7 +150,7 @@ namespace GTEngine
     {
         unsigned int shadowMapSize = SHADOW_MAP_SIZE;
 
-
+        this->shadowMap.SetWrapMode(TextureWrapMode_Clamp);
         this->shadowMap.SetData(           shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
         this->shadowMapDepthBuffer.SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_Depth24_Stencil8);
         
@@ -183,6 +183,7 @@ namespace GTEngine
         this->Shaders.Lighting_NoShadow_P1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_P1");
         this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_P1");
         this->Shaders.Lighting_NoShadow_S1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_S1");
+        this->Shaders.Lighting_S1                    = ShaderLibrary::Acquire("Engine_DefaultShadowVS",    "Engine_LightingPass_S1");
         this->Shaders.Lighting_ShadowMap             = ShaderLibrary::Acquire("Engine_ShadowVS",           "Engine_LightingPass_ShadowMap");
         this->Shaders.Lighting_PointLightShadowMap   = ShaderLibrary::Acquire("Engine_PointLightShadowVS", "Engine_LightingPass_PointLightShadowMap");
         this->Shaders.Compositor_DiffuseOnly         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_Compositor_DiffuseOnly");
@@ -192,6 +193,7 @@ namespace GTEngine
 
         this->Shaders.Lighting_D1->SetParameter("ShadowMap", &this->shadowMap);
         this->Shaders.Lighting_P1->SetParameter("ShadowMap", &this->pointLightShadowMap);
+        this->Shaders.Lighting_S1->SetParameter("ShadowMap", &this->shadowMap);
     }
 
     DefaultSceneRenderer::~DefaultSceneRenderer()
@@ -209,6 +211,7 @@ namespace GTEngine
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_P1);
         ShaderLibrary::Unacquire(Shaders.Lighting_P1);
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_S1);
+        ShaderLibrary::Unacquire(Shaders.Lighting_S1);
         ShaderLibrary::Unacquire(Shaders.Lighting_ShadowMap);
         ShaderLibrary::Unacquire(Shaders.Lighting_PointLightShadowMap);
         ShaderLibrary::Unacquire(Shaders.Compositor_DiffuseOnly);
@@ -523,7 +526,17 @@ namespace GTEngine
 
     void DefaultSceneRenderer::__SpotLight(const SceneObject &object)
     {
-        this->spotLights_NoShadows.PushBack(&object);
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            if (static_cast<const SceneNode &>(object).GetComponent<SpotLightComponent>()->IsShadowCastingEnabled())
+            {
+                this->spotLights.PushBack(&object);
+            }
+            else
+            {
+                this->spotLights_NoShadows.PushBack(&object);
+            }
+        }
     }
 
 
@@ -695,8 +708,8 @@ namespace GTEngine
                 glm::mat4 lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 1.0f, 10000.0f);
                 glm::mat4 lightView       = glm::mat4_cast(glm::inverse(component->GetNode().GetWorldOrientation())) * glm::translate(-component->GetNode().GetWorldPosition());
 
+                this->LightingPass_BuildShadowMap(scene, framebuffer, lightProjection, lightView);
 
-                this->LightingPass_BuildDirectionalLightShadowMap(scene, framebuffer, lightProjection, lightView);
 
                 rcSetShader.SetParameter("DLights0.Colour",    component->GetColour());
                 rcSetShader.SetParameter("DLights0.Direction", glm::normalize(glm::mat3(this->view) * component->GetNode().GetWorldForwardVector()));
@@ -748,10 +761,58 @@ namespace GTEngine
 
             this->pointLights.PopBack();
         }
+
+        while (this->spotLights.count > 0)
+        {
+            auto &light = *this->spotLights.GetBack();
+
+            auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
+            rcSetShader.shader          = this->Shaders.Lighting_S1;
+            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
+            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+
+            if (light.GetType() == SceneObjectType_SceneNode)
+            {
+                auto component = static_cast<const SceneNode &>(light).GetComponent<GTEngine::SpotLightComponent>();
+
+                glm::mat4 lightProjection = glm::perspective(component->GetOuterAngle() * 2.0f, 1.0f, 0.1f, component->GetApproximateLength());
+                glm::mat4 lightView       = glm::mat4_cast(glm::inverse(component->GetNode().GetWorldOrientation())) * glm::translate(-component->GetNode().GetWorldPosition());
+
+
+                this->LightingPass_BuildShadowMap(scene, framebuffer, lightProjection, lightView);
+
+
+                rcSetShader.SetParameter("SLight0.Position",             glm::vec3(this->view * glm::vec4(component->GetNode().GetWorldPosition(), 1.0f)));
+                rcSetShader.SetParameter("SLight0.Direction",            glm::normalize(glm::mat3(this->view) * component->GetNode().GetWorldForwardVector()));
+                rcSetShader.SetParameter("SLight0.CosAngleInner",        glm::cos(glm::radians(component->GetInnerAngle())));
+                rcSetShader.SetParameter("SLight0.CosAngleOuter",        glm::cos(glm::radians(component->GetOuterAngle())));
+                rcSetShader.SetParameter("SLight0.Colour",               component->GetColour());
+                rcSetShader.SetParameter("SLight0.ConstantAttenuation",  component->GetConstantAttenuation());
+                rcSetShader.SetParameter("SLight0.LinearAttenuation",    component->GetLinearAttenuation());
+                rcSetShader.SetParameter("SLight0.QuadraticAttenuation", component->GetQuadraticAttenuation());
+
+
+                glm::mat4 bias(
+                    0.5f, 0.0f, 0.0f, 0.0f,
+                    0.0f, 0.5f, 0.0f, 0.0f,
+                    0.0f, 0.0f, 0.5f, 0.0f,
+                    0.5f, 0.5f, 0.5f, 1.0f);
+
+                rcSetShader.SetParameter("ShadowProjectionMatrix", /*bias * */lightProjection);
+                rcSetShader.SetParameter("ShadowViewMatrix",       lightView);
+            }
+
+
+            Renderer::BackRCQueue->Append(rcSetShader);
+            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
+
+
+            this->spotLights.PopBack();
+        }
     }
 
 
-    void DefaultSceneRenderer::LightingPass_BuildDirectionalLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::mat4 &lightProjection, const glm::mat4 &lightView)
+    void DefaultSceneRenderer::LightingPass_BuildShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::mat4 &lightProjection, const glm::mat4 &lightView)
     {
         auto &rcBeginShadowMap = this->rcLighting_BeginDirectionalShadowMap[Renderer::BackIndex].Acquire();
         rcBeginShadowMap.shader      = this->Shaders.Lighting_ShadowMap;
@@ -1122,7 +1183,7 @@ namespace GTEngine
 
         Renderer::DisableStencilTest();
 
-        Renderer::ClearColour(0.0f, 0.0f, 0.0f, 0.0f);
+        Renderer::ClearColour(1.0f, 1.0f, 1.0f, 1.0f);
         Renderer::ClearDepth(1.0f);
         Renderer::Clear(GTEngine::DepthBuffer | GTEngine::ColourBuffer);
     }

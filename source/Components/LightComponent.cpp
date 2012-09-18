@@ -89,7 +89,7 @@ namespace GTEngine
         double l = this->linearAttenuation;
         double q = this->quadraticAttenuation;
 
-        return static_cast<float>((-l + sqrt(l * l - 4.0 * (c - 100.0) * q)) / (2.0 * q));      // <-- <c - 100.0f> was previously <c - 1000.0f>. Might need to keep experimenting here.
+        return static_cast<float>((-l + sqrt(l * l - 4.0 * (c - 1000.0) * q)) / (2.0 * q));      // <-- <c - 100.0f> was previously <c - 1000.0f>. Might need to keep experimenting here.
     }
 
     void SpotLightComponent::EnableShadowCasting()

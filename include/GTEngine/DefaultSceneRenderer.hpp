@@ -433,7 +433,7 @@ namespace GTEngine
 
 
         // Builds the shadow map of the given directional light.
-        void LightingPass_BuildDirectionalLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::mat4 &projection, const glm::mat4 &view);
+        void LightingPass_BuildShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::mat4 &projection, const glm::mat4 &view);
 
         // Builds the shadow map of the given point light.
         void LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::vec3 &position, float radius);
@@ -541,6 +541,7 @@ namespace GTEngine
             Shader* Lighting_NoShadow_P1;
             Shader* Lighting_P1;
             Shader* Lighting_NoShadow_S1;
+            Shader* Lighting_S1;
 
             Shader* Lighting_ShadowMap;
             Shader* Lighting_PointLightShadowMap;
