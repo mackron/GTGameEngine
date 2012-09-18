@@ -51,6 +51,13 @@
     }
 </shader>
 
+<shader id="Material_NoRefraction">
+    vec3 Refraction()
+    {
+        return vec3(0.0, 0.0, 1.0);
+    }
+</shader>
+
 
 <shader id="Material_SimpleDiffuse">
     uniform vec3 DiffuseColour;
@@ -106,3 +113,13 @@
         return texture2D(EmissiveTexture, VertexOutput_TexCoord).rgb;
     }
 </shader>
+
+<shader id="Material_TexturedRefraction">
+    uniform sampler2D RefractionMap;
+    
+    vec3 Refraction()
+    {
+        return normalize(texture2D(RefractionMap, VertexOutput_TexCoord).rgb * 2.0 - 1.0);
+    }
+</shader>
+
