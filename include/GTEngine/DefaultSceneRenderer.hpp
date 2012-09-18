@@ -280,8 +280,17 @@ namespace GTEngine
         };
 
 
+        // Render command for setting a shader.
+        struct RCSetShader : public RenderCommand
+        {
+            void Execute();
 
-        // A general function for drawing a vertex array during a lighting pass.
+            /// The shader to activate.
+            Shader* shader;
+        };
+
+
+        // A general function for drawing a vertex array.
         //
         // The way the renderer works is that is creates a single set of render commands that will be reused over multiple passes for
         // drawing the visible geometry. This is done for efficiency.
@@ -304,9 +313,6 @@ namespace GTEngine
 
             /// The shader parameters to set for the material.
             ShaderParameterCache materialParameters;
-
-            /// The shader to use in the material pass.
-            Shader* materialShader;
 
 
             /// The vertex array to draw.
@@ -515,6 +521,7 @@ namespace GTEngine
         RCCache<RCEndLayer,   8>                      rcEndLayer[2];
         RCCache<RCBeginLighting>                      rcBeginLighting[2];
         RCCache<RCControlBlending>                    rcControlBlending[2];
+        RCCache<RCSetShader>                          rcSetShader[2];
         RCCache<RCDrawGeometry>                       rcDrawGeometry[2];
         RCCache<RCLighting_SetShader>                 rcLighting_SetShader[2];
         RCCache<RCLighting_BeginDirectionalShadowMap> rcLighting_BeginDirectionalShadowMap[2];

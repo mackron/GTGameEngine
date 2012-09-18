@@ -240,6 +240,7 @@ namespace GTEngine
         this->rcEndLayer[Renderer::BackIndex].Reset();
         this->rcBeginLighting[Renderer::BackIndex].Reset();
         this->rcControlBlending[Renderer::BackIndex].Reset();
+        this->rcSetShader[Renderer::BackIndex].Reset();
         this->rcDrawGeometry[Renderer::BackIndex].Reset();
         this->rcLighting_SetShader[Renderer::BackIndex].Reset();
         this->rcLighting_BeginDirectionalShadowMap[Renderer::BackIndex].Reset();
@@ -431,7 +432,6 @@ namespace GTEngine
                         rcDrawGeometry.changeFaceCulling = !(modelComponent->CullBackFaces() == true && modelComponent->CullFrontFaces() == false);
                         rcDrawGeometry.cullBackFace      = modelComponent->CullBackFaces();
                         rcDrawGeometry.cullFrontFace     = modelComponent->CullFrontFaces();
-                        rcDrawGeometry.materialShader    = materialMetadata.materialPassShader;
 
                         // The material may have pending properties. These need to be set on the shader also.
                         auto &materialParams = material->GetParameters();
@@ -445,7 +445,8 @@ namespace GTEngine
                         }
 
 
-
+                        // We need to add the rendering command to a couple of queues. The first queue is the queue for the material being used
+                        // by the mesh. The other queue contains the commands to call during the lighting pass.
                         materialMetadata.materialPassRCs.Append(rcDrawGeometry);
                         this->lightingDrawRCs.Append(rcDrawGeometry);
                     }
@@ -548,6 +549,10 @@ namespace GTEngine
         while (this->usedMaterials.root != nullptr)
         {
             auto &queue = this->usedMaterials.root->value->materialPassRCs;
+
+            auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
+            rcSetShader.shader = this->usedMaterials.root->value->materialPassShader;
+            Renderer::BackRCQueue->Append(rcSetShader);
 
             Renderer::BackRCQueue->Append(queue);
             queue.Clear();
@@ -1052,13 +1057,18 @@ namespace GTEngine
         }
     }
 
+
+    void DefaultSceneRenderer::RCSetShader::Execute()
+    {
+        Renderer::SetShader(this->shader);
+    }
+
+
     void DefaultSceneRenderer::RCDrawGeometry::Execute()
     {
         // If we're doing the material pass, we need to 
         if (this->doingMaterialPass)
         {
-            Renderer::SetShader(this->materialShader);
-
             for (size_t i = 0; i < this->materialParameters.GetCount(); ++i)
             {
                 auto iParamName  = this->materialParameters.GetNameByIndex(i);
