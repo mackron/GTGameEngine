@@ -36,10 +36,13 @@ namespace GTEngine
 
 
         /// Retrieves the current zoom.
-        float GetZoom() const { return this->zoom; }
+        float GetZoom() const;
 
         /// Sets the zoom.
-        void SetZoom(float newZoom) { this->zoom = newZoom; }
+        void SetZoom(float newZoom);
+
+
+
 
 
     private:
@@ -97,8 +100,24 @@ namespace GTEngine
         }viewportEventHandler;
 
 
-        /// The amount of zoom we currently have applied.
-        float zoom;
+
+        /// Structure containing the editor state for each loaded image.
+        struct State
+        {
+            State()
+                : zoom(1.0f)
+            {
+            }
+
+            float zoom;
+        };
+
+
+        /// A pointer to the State object for the currently open model.
+        State* currentState;
+
+        /// A map of State objects, mapped to the path of the appropriate model.
+        GTCore::Dictionary<State*> loadedStates;
     };
 }
 
