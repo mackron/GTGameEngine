@@ -111,12 +111,13 @@ namespace GTEngine
               IsStencilTestEnabled(false),
               IsBlendingEnabled(false), CurrentBlendSourceFactor(BlendFunc_One), CurrentBlendDestFactor(BlendFunc_Zero), CurrentBlendEquation(BlendEquation_Add),
               IsAlphaTestEnabled(false), CurrentAlphaTestFunc(RendererFunction_Always), CurrentAlphaTestRef(0.0f),
-              SwapInterval(1), SwapIntervalChanged(false)
+              SwapInterval(1), SwapIntervalChanged(false),
+              CurrentFramebuffer(nullptr)
         {
         }
 
         /// The current shader.
-        Shader *CurrentShader;
+        Shader* CurrentShader;
 
         /// The current viewport.
         int ViewportX;
@@ -157,6 +158,10 @@ namespace GTEngine
         /// Swap interval.
         int  SwapInterval;
         bool SwapIntervalChanged;
+
+
+        /// The current framebuffer.
+        Framebuffer* CurrentFramebuffer;
 
 
     private:    // No copying.
@@ -849,7 +854,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer::SetFramebuffer(Framebuffer *framebuffer)
+    void Renderer::SetFramebuffer(Framebuffer* framebuffer)
     {
         if (GTGL_EXT_framebuffer_object)
         {
@@ -859,10 +864,12 @@ namespace GTEngine
                 assert(framebufferData != nullptr);
 
                 glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebufferData->object);
+                RendererState.CurrentFramebuffer = framebuffer;
             }
             else
             {
                 glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+                RendererState.CurrentFramebuffer = nullptr;
             }
         }
         else
@@ -1123,10 +1130,44 @@ namespace GTEngine
         }
     }
 
+
     void Renderer::SetDrawBuffers(size_t count, int *buffers)
     {
         glDrawBuffers((GLsizei)count, ToOpenGLDrawBuffers(count, buffers));
     }
+
+    void Renderer::AttachColourBuffer(Texture2D &colourBuffer, size_t colourBufferIndex)
+    {
+        if (RendererState.CurrentFramebuffer != nullptr)
+        {
+            RendererState.CurrentFramebuffer->AttachColourBuffer(&colourBuffer, colourBufferIndex, true);
+        }
+    }
+
+    void Renderer::DetachColourBuffer(size_t colourBufferIndex)
+    {
+        if (RendererState.CurrentFramebuffer != nullptr)
+        {
+            RendererState.CurrentFramebuffer->DetachColourBuffer(colourBufferIndex, true);
+        }
+    }
+    
+    void Renderer::AttachDepthStencilBuffer(Texture2D &depthStencilBuffer)
+    {
+        if (RendererState.CurrentFramebuffer != nullptr)
+        {
+            RendererState.CurrentFramebuffer->AttachDepthStencilBuffer(&depthStencilBuffer, true);
+        }
+    }
+
+    void Renderer::DetachDepthStencilBuffer()
+    {
+        if (RendererState.CurrentFramebuffer != nullptr)
+        {
+            RendererState.CurrentFramebuffer->DetachDepthStencilBuffer(true);
+        }
+    }
+
 
 
     void Renderer::DrawGUI(const GTGUI::Server &gui)

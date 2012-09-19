@@ -210,8 +210,9 @@ namespace GTEngine
             /// The final output colour buffer.
             Texture2D* finalOutput;
 
-            /// The depth/stencil attachment.
+            /// The depth/stencil attachments.
             Texture2D* depthStencil;
+            Texture2D* depthStencilBackground;
 
             // The lighting buffers.
             Texture2D* lightingBuffer0;     // RGB = Diffuse.  A = nothing.

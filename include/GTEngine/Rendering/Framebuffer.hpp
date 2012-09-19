@@ -24,75 +24,66 @@ namespace GTEngine
     {
     public:
 
-        /**
-        *   \brief Constructor.
-        */
+        /// Constructor.
         Framebuffer();
 
-        /**
-        *   \brief  Destructor.
-        *
-        *   \remarks
-        *       The destructor will detach any buffers, but will not delete them. It is up to the application to manage the
-        *       deletion of attachments.
-        */
+        /// Destructor.
+        ///
+        /// @remarks
+        ///     The destructor will detach any buffers, but will not delete them. It is up to the application to manage the
+        ///     deletion of attachments.
         virtual ~Framebuffer();
 
-        /**
-        *   \brief              Attaches a colour buffer to the framebuffer.
-        *   \param  buffer [in] The colour buffer to attach to the framebuffer. The buffer is always a texture.
-        *   \param  index  [in] The index to attach the colour buffer to. Must be in the range [0, Renderer::GetMaxColourAttachments)
-        *   \return             True if the colour buffer was attached successfully; false otherwise.
-        *
-        *   \remarks
-        *       This function can still return true if the hardware doesn't support the current structure of the framebuffer. This can
-        *       only be detected after the framebuffer has been made current on the renderer. Do not rely on the return value in
-        *       determining whether or not the framebuffer is valid.
-        */
-        bool AttachColourBuffer(Texture2D* buffer, size_t index);
+        /// Attaches a colour buffer to the framebuffer.
+        ///
+        /// @param buffer                  [in] The colour buffer to attach to the framebuffer. The buffer is always a texture.
+        /// @param index                   [in] The index to attach the colour buffer to. Must be in the range [0, Renderer::GetMaxColourAttachments)
+        /// @param immediateRendererUpdate [in] Whether or not the renderer-side state should be updated immediately.
+        ///
+        /// @return True if the colour buffer was attached successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This function can still return true if the hardware doesn't support the current structure of the framebuffer. This can
+        ///     only be detected after the framebuffer has been made current on the renderer. Do not rely on the return value in
+        ///     determining whether or not the framebuffer is valid.
+        bool AttachColourBuffer(Texture2D* buffer, size_t index, bool immediateRendererUpdate = false);
 
-        /**
-        *   \brief              Attaches a depth/stencil buffer to the framebuffer.
-        *   \param  buffer [in] The depth/stencil buffer to attach to the framebuffer. The buffer is always a texture.
-        *   \return             Always returns true. We return a boolean to keep it consistent with AttachColourBuffer(), which requires a boolean return value.
-        */
-        bool AttachDepthStencilBuffer(Texture2D* buffer);
+        /// Attaches a depth/stencil buffer to the framebuffer.
+        ///
+        /// @param buffer [in]                  The depth/stencil buffer to attach to the framebuffer. The buffer is always a texture.
+        /// @param immediateRendererUpdate [in] Whether or not the renderer-side state should be updated immediately.
+        ///
+        /// @return Always returns true. We return a boolean to keep it consistent with AttachColourBuffer(), which requires a boolean return value.
+        bool AttachDepthStencilBuffer(Texture2D* buffer, bool immediateRendererUpdate = false);
 
-        /**
-        *   \brief             Detaches the colour buffer at the given index.
-        *   \param  index [in] The index of the colour buffer to detach.
-        */
-        void DetachColourBuffer(size_t index);
+        /// Detaches the colour buffer at the given index.
+        ///
+        /// @param index [in]                   The index of the colour buffer to detach.
+        /// @param immediateRendererUpdate [in] Whether or not the renderer-side state should be updated immediately.
+        void DetachColourBuffer(size_t index, bool immediateRendererUpdate = false);
 
-        /**
-        *   \brief  Detaches the depth/stencil attachment, if it has one.
-        */
-        void DetachDepthStencilBuffer();
+        /// Detaches the depth/stencil attachment, if it has one.
+        ///
+        /// @param immediateRendererUpdate [in] Whether or not the renderer-side state should be updated immediately.
+        void DetachDepthStencilBuffer(bool immediateRendererUpdate = false);
 
-        /**
-        *   \brief  Generically detaches a buffer based on it's object pointer.
-        *
-        *   \remarks
-        *       This is slower than the non-generic versions.
-        */
+        /// Generically detaches a buffer based on it's object pointer.
+        ///
+        /// @remarks
+        ///     This is slower than the non-generic versions.
         void DetachBuffer(Texture2D *buffer);
 
 
-        /**
-        *   \brief  Detaches every buffer.
-        */
+        /// Detaches every buffer.
         void DetachAllBuffers();
 
 
-        /**
-        *   \brief             Retrieves a colour buffer attachment.
-        *   \param  index [in] The index of the colour buffer to attach.
-        */
+        /// Retrieves a colour buffer attachment.
+        ///
+        /// @param index [in] The index of the colour buffer to attach.
         Texture2D* GetColourBuffer(size_t index);
 
-        /**
-        *   \brief  Retrieves the depth/stencil attachment.
-        */
+        /// Retrieves the depth/stencil attachment.
         Texture2D* GetDepthStencilBuffer();
 
 
@@ -109,18 +100,14 @@ namespace GTEngine
     // The methods below should only be called by the renderer and it's support functions.
     public:
 
-        /**
-        *   \brief  Retrieves a pointer to the internal renderer data.
-        */
+        /// Retrieves a pointer to the internal renderer data.
         const void* GetRendererData() const { return this->rendererData; }
               void* GetRendererData()       { return this->rendererData; }
 
-        /**
-        *   \brief  Sets the pointer to the internal renderer data. This should only be called by the renderer and it's support functions.
-        *
-        *   \remarks
-        *       This does not delete the previous renderer data. That is the responsibility of the caller.
-        */
+        /// Sets the pointer to the internal renderer data. This should only be called by the renderer and it's support functions.
+        ///
+        /// @remarks
+        ///     This does not delete the previous renderer data. That is the responsibility of the caller.
         void SetRendererData(void* rendererData) { this->rendererData = rendererData; }
 
 

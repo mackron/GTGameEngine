@@ -39,7 +39,7 @@ namespace GTEngine
         Renderer::OnFramebufferDeleted(*this);
     }
 
-    bool Framebuffer::AttachColourBuffer(Texture2D *buffer, size_t index)
+    bool Framebuffer::AttachColourBuffer(Texture2D *buffer, size_t index, bool immediateRendererUpdate)
     {
         if (index < this->maxColourAttachments)
         {
@@ -51,7 +51,7 @@ namespace GTEngine
                 this->colourAttachments[index] = buffer;
                 this->colourAttachments[index]->OnAttachToFramebuffer(this);
 
-                Renderer::OnColourBufferAttached(*this, index);
+                Renderer::OnColourBufferAttached(*this, index, immediateRendererUpdate);
             }
 
             return true;
@@ -60,7 +60,7 @@ namespace GTEngine
         return false;
     }
 
-    bool Framebuffer::AttachDepthStencilBuffer(Texture2D *buffer)
+    bool Framebuffer::AttachDepthStencilBuffer(Texture2D *buffer, bool immediateRendererUpdate)
     {
         if (this->depthStencilAttachment != buffer)
         {
@@ -70,13 +70,13 @@ namespace GTEngine
             this->depthStencilAttachment = buffer;
             this->depthStencilAttachment->OnAttachToFramebuffer(this);
 
-            Renderer::OnDepthStencilBufferAttached(*this);
+            Renderer::OnDepthStencilBufferAttached(*this, immediateRendererUpdate);
         }
 
         return true;
     }
 
-    void Framebuffer::DetachColourBuffer(size_t index)
+    void Framebuffer::DetachColourBuffer(size_t index, bool immediateRendererUpdate)
     {
         if (index < this->maxColourAttachments)
         {
@@ -85,23 +85,23 @@ namespace GTEngine
                 this->colourAttachments[index]->OnDetachFromFramebuffer(this);
                 this->colourAttachments[index] = nullptr;
 
-                Renderer::OnColourBufferDetached(*this, index);
+                Renderer::OnColourBufferDetached(*this, index, immediateRendererUpdate);
             }
         }
     }
 
-    void Framebuffer::DetachDepthStencilBuffer()
+    void Framebuffer::DetachDepthStencilBuffer(bool immediateRendererUpdate)
     {
         if (this->depthStencilAttachment != nullptr)
         {
             this->depthStencilAttachment->OnDetachFromFramebuffer(this);
             this->depthStencilAttachment = nullptr;
 
-            Renderer::OnDepthStencilBufferDetached(*this);
+            Renderer::OnDepthStencilBufferDetached(*this, immediateRendererUpdate);
         }
     }
 
-    void Framebuffer::DetachBuffer(Texture2D *buffer)
+    void Framebuffer::DetachBuffer(Texture2D* buffer)
     {
         for (size_t i = 0; i < this->maxColourAttachments; ++i)
         {
