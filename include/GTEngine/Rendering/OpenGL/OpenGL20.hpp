@@ -5,6 +5,7 @@
 #include <GTEngine/Rendering/Texture2D.hpp>
 #include <GTEngine/Rendering/TextureCube.hpp>
 #include <GTEngine/Rendering/VertexArray.hpp>
+#include <GTEngine/Rendering/Framebuffer.hpp>
 #include <gtgl/gtgl.h>
 
 namespace GTEngine
@@ -46,6 +47,28 @@ namespace GTEngine
 
         /// Retrieves the OpenGL object of the current index buffer.
         static GLuint GetCurrentOpenGLIndexBufferObject();
+
+
+
+        /// Sets a colour buffer for the currently bound framebuffer.
+        ///
+        /// @param framebuffer       [in] The framebuffer that's having a colour buffer attached.
+        /// @param colourBuffer      [in] The colour to attach to the framebuffer.
+        /// @param colourBufferIndex [in] The index of the colour buffer to attach the colour buffer to.
+        /// @param textureTarget     [in] The texture target, such as GL_TEXTURE_2D.
+        static void SetFramebufferColourBuffer(GLuint framebuffer, GLuint colourBuffer, size_t colourBufferIndex, Texture2DTarget textureTarget);
+
+        /// Sets the depth buffer for the given framebuffer.
+        ///
+        /// @param framebuffer [in] The framebuffer having it's depth buffer set.
+        /// @param buffer      [in] The buffer object to attach to the framebuffer. This is a Texture2D object.
+        static void SetFramebufferDepthBuffer(GLuint framebuffer, GLuint buffer);
+
+        /// Sets the stencil buffer for the given framebuffer.
+        ///
+        /// @param framebuffer [in] The framebuffer having it's stencil buffer set.
+        /// @param buffer      [in] The buffer object to attach to the framebuffer. This is a Texture2D object.
+        static void SetFramebufferStencilBuffer(GLuint framebuffer, GLuint buffer);
 
 
 

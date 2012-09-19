@@ -319,12 +319,15 @@ namespace GTEngine
                 this->LightingPass(scene, *framebuffer);
 
 
+
                 // Now we end the layer.
                 auto &rcEndLayer = this->rcEndLayer[Renderer::BackIndex].Acquire();
                 rcEndLayer.framebuffer       = framebuffer;
                 rcEndLayer.compositingShader = this->Shaders.Compositor_FinalOutput;
                 Renderer::BackRCQueue->Append(rcEndLayer);
             }
+
+
 
 
             // At this point the viewport will be finished and we can finish up.
@@ -446,6 +449,7 @@ namespace GTEngine
 
                             rcDrawGeometry.materialParameters.Set(iParam->key, iParam->value);
                         }
+
 
 
                         // We need to add the rendering command to a couple of queues. The first queue is the queue for the material being used

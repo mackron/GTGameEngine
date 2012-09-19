@@ -586,15 +586,13 @@ namespace GTEngine
         void Execute()
         {
             assert(this->framebuffer != nullptr);
-
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, this->framebuffer->object);
-            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, this->attachment, ToOpenGLTexture2DTarget(this->textureTarget), (this->texture != nullptr) ? this->texture->object : 0, 0);
+            OpenGL20::SetFramebufferColourBuffer(this->framebuffer->object, (this->texture != nullptr) ? this->texture->object : 0, this->attachmentIndex, this->textureTarget);
         }
 
         OpenGL20::Framebuffer* framebuffer;
         OpenGL20::Texture2D*   texture;
+        size_t                 attachmentIndex;
         Texture2DTarget        textureTarget;
-        GLenum                 attachment;
     };
 
 
@@ -603,6 +601,7 @@ namespace GTEngine
         void Execute()
         {
             assert(this->framebuffer != nullptr);
+
 
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, this->framebuffer->object);
 
@@ -975,47 +974,75 @@ namespace GTEngine
         ResourceRCQueues[Renderer::BackIndex].Append(rc);
     }
 
-    void Renderer::OnColourBufferAttached(Framebuffer &framebuffer, size_t index)
+    void Renderer::OnColourBufferAttached(Framebuffer &framebuffer, size_t index, bool immediate)
     {
         auto texture = framebuffer.GetColourBuffer(index);
 
         auto &rc = RCCache_OnColourBufferChanged[Renderer::BackIndex].Acquire();
-        rc.framebuffer   = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
-        rc.texture       = static_cast<OpenGL20::Texture2D*>(texture->GetRendererData());
-        rc.textureTarget = texture->GetTarget();
-        rc.attachment    = GL_COLOR_ATTACHMENT0_EXT + index;
+        rc.framebuffer     = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
+        rc.texture         = static_cast<OpenGL20::Texture2D*>(texture->GetRendererData());
+        rc.attachmentIndex = index;
+        rc.textureTarget   = texture->GetTarget();
 
-        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        if (!immediate)
+        {
+            ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        }
+        else
+        {
+            rc.Execute();
+        }
     }
 
-    void Renderer::OnColourBufferDetached(Framebuffer &framebuffer, size_t index)
+    void Renderer::OnColourBufferDetached(Framebuffer &framebuffer, size_t index, bool immediate)
     {
         auto &rc = RCCache_OnColourBufferChanged[Renderer::BackIndex].Acquire();
-        rc.framebuffer = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
-        rc.texture     = nullptr;
-        rc.attachment  = GL_COLOR_ATTACHMENT0_EXT + index;
+        rc.framebuffer     = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
+        rc.texture         = nullptr;
+        rc.attachmentIndex = index;
 
-        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        if (!immediate)
+        {
+            ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        }
+        else
+        {
+            rc.Execute();
+        }
     }
 
-    void Renderer::OnDepthStencilBufferAttached(Framebuffer &framebuffer)
+    void Renderer::OnDepthStencilBufferAttached(Framebuffer &framebuffer, bool immediate)
     {
         auto &rc = RCCache_OnDepthStencilBufferChanged[Renderer::BackIndex].Acquire();
         rc.framebuffer   = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
         rc.texture       = static_cast<OpenGL20::Texture2D*>(framebuffer.GetDepthStencilBuffer()->GetRendererData());
         rc.changeStencil = framebuffer.GetDepthStencilBuffer()->GetFormat() == GTImage::ImageFormat_Depth24_Stencil8;
 
-        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        if (!immediate)
+        {
+            ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        }
+        else
+        {
+            rc.Execute();
+        }
     }
 
-    void Renderer::OnDepthStencilBufferDetached(Framebuffer &framebuffer)
+    void Renderer::OnDepthStencilBufferDetached(Framebuffer &framebuffer, bool immediate)
     {
         auto &rc = RCCache_OnDepthStencilBufferChanged[Renderer::BackIndex].Acquire();
         rc.framebuffer   = static_cast<OpenGL20::Framebuffer*>(framebuffer.GetRendererData());
         rc.texture       = nullptr;
         rc.changeStencil = true;
 
-        ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        if (!immediate)
+        {
+            ResourceRCQueues[Renderer::BackIndex].Append(rc);
+        }
+        else
+        {
+            rc.Execute();
+        }
     }
 
     void Renderer::OnCheckFramebuffer(Framebuffer &framebuffer)

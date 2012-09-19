@@ -443,10 +443,36 @@ namespace GTEngine
 
 
 
-        /**
-        *   \brief  Sets the indices of the colour attachments to use as the render targets for future drawing operations.
-        */
+        /// Sets the indices of the colour attachments to use as the render targets for future drawing operations.
+        ///
+        /// @param count  [in] The number of buffers to use.
+        /// @param buffer [in] The indices of the colour buffers to use.
         static void SetDrawBuffers(size_t count, int* buffers);
+
+        /// Attaches a colour buffer to the currently bound framebuffer.
+        ///
+        /// @param colourBuffer      [in] The colour buffer to attach.
+        /// @param colourBufferIndex [in] The index to attach the colour buffer at.
+        ///
+        /// @remarks
+        ///     This is different to Framebuffer::AttachColourBuffer() in that it happens immediately on the calling thread.
+        static void AttachColourBuffer(Texture2D &colourBuffer, size_t colourBufferIndex);
+
+        /// Detaches a colour buffer from the currently bound framebuffer.
+        ///
+        /// @param colourBufferIndex [in] The index of the colour buffer to detach.
+        ///
+        /// @remarks
+        ///     This is different to Framebuffer::DetachColourBuffer() in that is happens immediately on the calling thread.
+        static void DetachColourBuffer(size_t colourBufferIndex);
+
+        /// Attaches a depth/stencil buffer to the currently bound framebuffer.
+        ///
+        /// @param depthStencilBuffer [in] The depth/stencil buffer to attach.
+        static void AttachDepthStencilBuffer(Texture2D &depthStencilBuffer);
+
+        /// Detaches the depth/stencil buffer from the currently bound framebuffer.
+        static void DetachDepthStencilBuffer();
 
 
 
@@ -609,23 +635,43 @@ namespace GTEngine
         ///
         /// @param framebuffer [in] The framebuffer that has just had a colour buffer attached.
         /// @param index       [in] The index of the colour buffer that was just attached.
-        static void OnColourBufferAttached(Framebuffer &framebuffer, size_t index);
+        /// @param immediate   [in] Whether or not the changes should be made on the renderer side immediately, or to delay it.
+        ///
+        /// @remarks
+        ///     If 'immediate' is true, the renderer will change the rendering state immediately on the calling thread. This must be
+        ///     left to false (default) when called from a thread other than the rendering thread.
+        static void OnColourBufferAttached(Framebuffer &framebuffer, size_t index, bool immediate = false);
 
         /// Called when a colour buffer is detached from a framebuffer.
         ///
         /// @param framebuffer [in] The framebuffer that has just had a colour buffer detached.
         /// @param index       [in] The index of the colour buffer that was just detached.
-        static void OnColourBufferDetached(Framebuffer &framebuffer, size_t index);
+        /// @param immediate   [in] Whether or not the changes should be made on the renderer side immediately, or to delay it.
+        ///
+        /// @remarks
+        ///     If 'immediate' is true, the renderer will change the rendering state immediately on the calling thread. This must be
+        ///     left to false (default) when called from a thread other than the rendering thread.
+        static void OnColourBufferDetached(Framebuffer &framebuffer, size_t index, bool immediate = false);
 
         /// Called when the depth/stencil buffer is attached to a framebuffer.
         ///
         /// @param framebuffer [in] The framebuffer that has just had a depth/stencil buffer attached.
-        static void OnDepthStencilBufferAttached(Framebuffer &framebuffer);
+        /// @param immediate   [in] Whether or not the changes should be made on the renderer side immediately, or to delay it.
+        ///
+        /// @remarks
+        ///     If 'immediate' is true, the renderer will change the rendering state immediately on the calling thread. This must be
+        ///     left to false (default) when called from a thread other than the rendering thread.
+        static void OnDepthStencilBufferAttached(Framebuffer &framebuffer, bool immediate = false);
 
         /// Called when the depth/stencil buffer is detached from a framebuffer.
         ///
         /// @param framebuffer [in] The framebuffer that has just had a depth/stencil buffer detached.
-        static void OnDepthStencilBufferDetached(Framebuffer &framebuffer);
+        /// @param immediate   [in] Whether or not the changes should be made on the renderer side immediately, or to delay it.
+        ///
+        /// @remarks
+        ///     If 'immediate' is true, the renderer will change the rendering state immediately on the calling thread. This must be
+        ///     left to false (default) when called from a thread other than the rendering thread.
+        static void OnDepthStencilBufferDetached(Framebuffer &framebuffer, bool immediate = false);
 
         /// Called when a framebuffer needs to be checked.
         ///
