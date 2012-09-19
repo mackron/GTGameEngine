@@ -15,6 +15,17 @@ namespace GTEngine
     class Framebuffer;
     class Texture2D;
 
+
+    namespace ViewportLayer
+    {
+        static const int Background = 0;
+        static const int Main       = 1;
+        static const int Foreground = 2;
+    }
+
+    static const int ViewportLayerCount = 3;
+
+
     /// Base class representing a viewport that a scene renders to.
     ///
     /// The scene the viewport is attached to can be changed dynamically. Do NOT use SceneViewport::SetScene(). Instead,
@@ -55,14 +66,14 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Remove the camera of a layer by setting <cameraNode> to nullptr.
-        void SetCameraNode(SceneNode* cameraNode, int layer = 0);
-        void SetCameraNode(SceneNode &cameraNode, int layer = 0) { this->SetCameraNode(&cameraNode, layer); }
+        void SetCameraNode(SceneNode* cameraNode, int layer = ViewportLayer::Main);
+        void SetCameraNode(SceneNode &cameraNode, int layer = ViewportLayer::Main) { this->SetCameraNode(&cameraNode, layer); }
 
         /// Retrieves a pointer to the camera node. Can return null if a camera hasn't been set, or SetCameraNode() was set with an argument of null.
         ///
         /// @param layer [in] The index of the layer whose camera is being retrieved.
-              SceneNode* GetCameraNode(int layer = 0);
-        const SceneNode* GetCameraNode(int layer = 0) const;
+              SceneNode* GetCameraNode(int layer = ViewportLayer::Main);
+        const SceneNode* GetCameraNode(int layer = ViewportLayer::Main) const;
 
 
         /// Retrieves the width of the viewport.
@@ -83,8 +94,8 @@ namespace GTEngine
 
 
         /// Retrieves a direct reference to the internal map of layer cameras.
-              GTCore::Map<int, GTEngine::SceneNode*> & GetLayerCameraMap()       { return this->cameraNodes; }
-        const GTCore::Map<int, GTEngine::SceneNode*> & GetLayerCameraMap() const { return this->cameraNodes; }
+        //      GTCore::Map<int, GTEngine::SceneNode*> & GetLayerCameraMap()       { return this->cameraNodes; }
+        //const GTCore::Map<int, GTEngine::SceneNode*> & GetLayerCameraMap() const { return this->cameraNodes; }
 
 
     // Picking.
@@ -140,8 +151,8 @@ namespace GTEngine
         /// The scene this viewport is attached to.
         Scene* scene;
 
-        /// The map for mapping a layer to a camera.
-        GTCore::Map<int, SceneNode*> cameraNodes;
+        /// The camera nodes for each layer.
+        SceneNode* cameraNodes[ViewportLayerCount];
 
 
         /// The width of the viewport.

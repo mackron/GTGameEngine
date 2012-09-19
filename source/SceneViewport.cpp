@@ -9,6 +9,9 @@ namespace GTEngine
           width(1), height(1),
           colourBuffer(nullptr)
     {
+        cameraNodes[ViewportLayer::Background] = nullptr;
+        cameraNodes[ViewportLayer::Main]       = nullptr;
+        cameraNodes[ViewportLayer::Foreground] = nullptr;
     }
 
     SceneViewport::~SceneViewport()
@@ -29,35 +32,25 @@ namespace GTEngine
 
     void SceneViewport::SetCameraNode(SceneNode* cameraNode, int layer)
     {
-        if (cameraNode != nullptr)
-        {
-            this->cameraNodes.Add(layer, cameraNode);
-        }
-        else
-        {
-            this->cameraNodes.Remove(layer);
-        }
+        assert(layer >= 0);
+        assert(layer <= 2);
+
+        this->cameraNodes[layer] = cameraNode;
     }
 
     SceneNode* SceneViewport::GetCameraNode(int layer)
     {
-        auto iCamera = this->cameraNodes.Find(layer);
-        if (iCamera != nullptr)
-        {
-            return iCamera->value;
-        }
+        assert(layer >= 0);
+        assert(layer <= 2);
 
-        return nullptr;
+        return this->cameraNodes[layer];
     }
     const SceneNode* SceneViewport::GetCameraNode(int layer) const
     {
-        auto iCamera = this->cameraNodes.Find(layer);
-        if (iCamera != nullptr)
-        {
-            return iCamera->value;
-        }
+        assert(layer >= 0);
+        assert(layer <= 2);
 
-        return nullptr;
+        return this->cameraNodes[layer];
     }
 
 

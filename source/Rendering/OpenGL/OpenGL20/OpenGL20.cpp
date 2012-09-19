@@ -176,21 +176,18 @@ namespace GTEngine
 
 
 
-    void OpenGL20::SetFramebufferColourBuffer(GLuint framebuffer, GLuint colourBuffer, size_t colourBufferIndex, Texture2DTarget textureTarget)
+    void OpenGL20::SetFramebufferColourBuffer(GLuint colourBuffer, size_t colourBufferIndex, Texture2DTarget textureTarget)
     {
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebuffer);
         glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + colourBufferIndex, ToOpenGLTexture2DTarget(textureTarget), colourBuffer, 0);
     }
 
-    void OpenGL20::SetFramebufferDepthBuffer(GLuint framebuffer, GLuint buffer)
+    void OpenGL20::SetFramebufferDepthBuffer(GLuint buffer)
     {
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebuffer);
         glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, buffer, 0);
     }
 
-    void OpenGL20::SetFramebufferStencilBuffer(GLuint framebuffer, GLuint buffer)
+    void OpenGL20::SetFramebufferStencilBuffer(GLuint buffer)
     {
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebuffer);
         glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, buffer, 0);
     }
 }

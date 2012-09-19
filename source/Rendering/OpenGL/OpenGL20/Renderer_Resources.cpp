@@ -586,7 +586,9 @@ namespace GTEngine
         void Execute()
         {
             assert(this->framebuffer != nullptr);
-            OpenGL20::SetFramebufferColourBuffer(this->framebuffer->object, (this->texture != nullptr) ? this->texture->object : 0, this->attachmentIndex, this->textureTarget);
+            
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, this->framebuffer->object);
+            OpenGL20::SetFramebufferColourBuffer((this->texture != nullptr) ? this->texture->object : 0, this->attachmentIndex, this->textureTarget);
         }
 
         OpenGL20::Framebuffer* framebuffer;
@@ -602,13 +604,12 @@ namespace GTEngine
         {
             assert(this->framebuffer != nullptr);
 
-
             glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, this->framebuffer->object);
 
-            glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, (this->texture != nullptr) ? this->texture->object : 0, 0);
+            OpenGL20::SetFramebufferDepthBuffer((this->texture != nullptr) ? this->texture->object : 0);
             if (this->changeStencil)
             {
-                glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, (this->texture != nullptr) ? this->texture->object : 0, 0);
+                OpenGL20::SetFramebufferStencilBuffer((this->texture != nullptr) ? this->texture->object : 0);
             }
         }
 
