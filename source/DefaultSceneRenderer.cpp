@@ -260,55 +260,44 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderViewport(Scene &scene, SceneViewport &viewport)
     {
-        // TODO: Should be able remove these calls once lighting is done properly.
-        this->ambientLights.Clear();
-        this->directionalLights.Clear();
-        this->pointLights.Clear();
-        this->spotLights.Clear();
-
-        this->directionalLights_NoShadows.Clear();
-        this->pointLights_NoShadows.Clear();
-        this->spotLights_NoShadows.Clear();
-
-
-
         this->usedMaterials.Clear();
         this->lightingDrawRCs.Clear();
 
 
-        // We render layer-by-layer, starting at the top and working our way down.
-        auto &layers = viewport.GetLayerCameraMap();
-        if (layers.count > 0)
+        // The little variable is used to keep track of whether or not a layer has yet been rendered. We need to properly control rendering state.
+        bool hasRenderedFirstLayer = false;
+
+
+        auto framebuffer = this->GetViewportFramebuffer(viewport);
+        assert(framebuffer != nullptr);
+
+        // The first thing we do is set the framebuffer to the current viewport. This also where the framebuffer will be resized if required.
+        auto &rcBegin = this->rcBegin[Renderer::BackIndex].Acquire();
+        rcBegin.framebuffer = framebuffer;
+        Renderer::BackRCQueue->Append(rcBegin);
+
+
+
+        // We render layer-by-layer, starting at the foreground and working our way down. There are three layers, and we can do this in a loop.
+        for (int i = ViewportLayer::Foreground; i >= ViewportLayer::Background; --i)
         {
-            auto framebuffer = this->GetViewportFramebuffer(viewport);
-
-            // The first thing we do is set the framebuffer to the current viewport. This also where the framebuffer will be resized if required.
-            auto &rcBegin = this->rcBegin[Renderer::BackIndex].Acquire();
-            rcBegin.framebuffer = framebuffer;
-            Renderer::BackRCQueue->Append(rcBegin);
+            // For now, we're ignoring the foreground.
+            if (i == ViewportLayer::Foreground) continue;
 
 
-            for (size_t i = layers.count; i > 0; --i)
+            auto cameraNode = viewport.GetCameraNode(i);
+            if (cameraNode != nullptr)
             {
-                auto cameraNode = layers.buffer[i - 1]->value;
-                if (cameraNode != nullptr)
-                {
-                    auto camera = cameraNode->GetComponent<CameraComponent>();
-                    assert(camera != nullptr);
+                auto camera = cameraNode->GetComponent<CameraComponent>();
+                assert(camera != nullptr);
 
-                    this->projection = camera->GetProjectionMatrix();
-                    this->view       = camera->GetViewMatrix();
-                }
-                else
-                {
-                    this->projection = glm::mat4();
-                    this->view       = glm::mat4();
-                }
+                this->projection = camera->GetProjectionMatrix();
+                this->view       = camera->GetViewMatrix();
 
 
                 // We first need to begin the layer.
                 auto &rcBeginLayer = this->rcBeginLayer[Renderer::BackIndex].Acquire();
-                rcBeginLayer.isFirstLayer = (i == layers.count);
+                rcBeginLayer.isFirstLayer = !hasRenderedFirstLayer;
                 Renderer::BackRCQueue->Append(rcBeginLayer);
 
 
@@ -325,17 +314,18 @@ namespace GTEngine
                 rcEndLayer.framebuffer       = framebuffer;
                 rcEndLayer.compositingShader = this->Shaders.Compositor_FinalOutput;
                 Renderer::BackRCQueue->Append(rcEndLayer);
+
+
+                hasRenderedFirstLayer = true;
             }
-
-
-
-
-            // At this point the viewport will be finished and we can finish up.
-            auto &rcEnd = this->rcEnd[Renderer::BackIndex].Acquire();
-            rcEnd.drawBackground   = this->clearColourBuffer;
-            rcEnd.backgroundColour = this->clearColour;
-            Renderer::BackRCQueue->Append(rcEnd);
         }
+
+
+        // At this point the viewport will be finished and we can finish up.
+        auto &rcEnd = this->rcEnd[Renderer::BackIndex].Acquire();
+        rcEnd.drawBackground   = this->clearColourBuffer;
+        rcEnd.backgroundColour = this->clearColour;
+        Renderer::BackRCQueue->Append(rcEnd);
     }
 
 

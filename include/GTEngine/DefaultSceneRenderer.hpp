@@ -100,7 +100,8 @@ namespace GTEngine
                   materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr),
                   opaqueColourBuffer(nullptr)
             {
-                this->depthStencil = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_Depth24_Stencil8);
+                this->depthStencil           = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_Depth24_Stencil8);
+                this->depthStencilBackground = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_Depth24_Stencil8);
 
                 if (Renderer::SupportFloatTextures())
                 {
@@ -132,6 +133,7 @@ namespace GTEngine
                 this->opaqueColourBuffer->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
 
                 this->finalOutput->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
+                this->opaqueColourBuffer->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
 
 
                 this->AttachDepthStencilBuffer(this->depthStencil);
@@ -149,21 +151,13 @@ namespace GTEngine
             {
                 delete this->finalOutput;
                 delete this->depthStencil;
+                delete this->depthStencilBackground;
                 delete this->lightingBuffer0;
                 delete this->lightingBuffer1;
                 delete this->materialBuffer0;
                 delete this->materialBuffer1;
                 delete this->materialBuffer2;
                 delete this->opaqueColourBuffer;
-            
-                this->finalOutput        = nullptr;
-                this->depthStencil       = nullptr;
-                this->lightingBuffer0    = nullptr;
-                this->lightingBuffer1    = nullptr;
-                this->materialBuffer0    = nullptr;
-                this->materialBuffer1    = nullptr;
-                this->materialBuffer2    = nullptr;
-                this->opaqueColourBuffer = nullptr;
             }
 
 
@@ -174,7 +168,9 @@ namespace GTEngine
                 this->height = newHeight;
 
                 this->finalOutput->Resize( this->width, this->height);
+
                 this->depthStencil->Resize(this->width, this->height);
+                this->depthStencilBackground->Resize(this->width, this->height);
 
                 this->lightingBuffer0->Resize(this->width, this->height);
                 this->lightingBuffer1->Resize(this->width, this->height);
