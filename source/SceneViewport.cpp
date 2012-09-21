@@ -11,7 +11,6 @@ namespace GTEngine
     {
         cameraNodes[ViewportLayer::Background] = nullptr;
         cameraNodes[ViewportLayer::Main]       = nullptr;
-        cameraNodes[ViewportLayer::Foreground] = nullptr;
     }
 
     SceneViewport::~SceneViewport()
