@@ -263,13 +263,37 @@ namespace GTEngine
         this->usedMaterials.Clear();
         this->lightingDrawRCs.Clear();
 
-
-        // The little variable is used to keep track of whether or not a layer has yet been rendered. We need to properly control rendering state.
-        bool hasRenderedFirstLayer = false;
-
-
         auto framebuffer = this->GetViewportFramebuffer(viewport);
         assert(framebuffer != nullptr);
+
+
+        // Here is the general workflow of the renderer:
+        //
+        // 1) Clear depth to 1.0 and stencil to 0.
+        // 2) Draw opaque objects.
+        //      2a) Draw opaque objects in the main layer, setting a value of 1 in the stencil buffer.
+        //      2b) Draw opaque objects in the background layer, ignoring fragments where the stencil buffer is 1 (from the main layer).
+        // 3) Build a composited image from the opaque objects, which will then be used as input for opaque objects.
+        // 4) Draw transparent objects.
+        //      4a) Draw transparent objects in the background layer.
+        //      4b) Clear the depth buffer where the background was drawn by drawing a fullscreen quad with colour writes disabled. This is required so that any transparent objects are drawn on top of the background layer.
+        //      4c) Draw transparent objects in the main layer.
+        // 5) Build the final image like normal.
+
+
+
+        // The first thing to do is setup.
+        //
+        // SetFramebuffer
+        // SetViewport
+        //
+        // EnableDepthTesting
+        // EnableStencilWrites
+        // SetDepthFunc(LEqual)
+        //
+        // SetStencilOp(Keep, Keep, Replace)
+        // SetStencilFunc(GEqual, 1, 255)
+        
 
         // The first thing we do is set the framebuffer to the current viewport. This also where the framebuffer will be resized if required.
         auto &rcBegin = this->rcBegin[Renderer::BackIndex].Acquire();
@@ -293,7 +317,6 @@ namespace GTEngine
 
                 // We first need to begin the layer.
                 auto &rcBeginLayer = this->rcBeginLayer[Renderer::BackIndex].Acquire();
-                rcBeginLayer.isFirstLayer = !hasRenderedFirstLayer;
                 Renderer::BackRCQueue->Append(rcBeginLayer);
 
 
@@ -310,9 +333,6 @@ namespace GTEngine
                 rcEndLayer.framebuffer       = framebuffer;
                 rcEndLayer.compositingShader = this->Shaders.Compositor_FinalOutput;
                 Renderer::BackRCQueue->Append(rcEndLayer);
-
-
-                hasRenderedFirstLayer = true;
             }
         }
 
@@ -995,6 +1015,19 @@ namespace GTEngine
     {
         Renderer::SetFramebuffer(this->framebuffer);
         Renderer::SetViewport(0, 0, this->framebuffer->GetWidth(), this->framebuffer->GetHeight());
+
+
+        Renderer::EnableDepthTest();
+        Renderer::EnableDepthWrites();
+        Renderer::SetDepthFunc(RendererFunction_LEqual);
+        
+        Renderer::SetStencilFunc(RendererFunction_GEqual, 1, 255);
+        Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Replace);
+
+
+        Renderer::ClearDepth(1.0f);
+        Renderer::ClearStencil(0);
+        Renderer::Clear(GTEngine::DepthBuffer | GTEngine::StencilBuffer);
     }
 
     void DefaultSceneRenderer::RCEnd::Execute()
@@ -1021,13 +1054,6 @@ namespace GTEngine
         int drawBuffers[] = {1, 2, 3};      // Material Buffers 0/1/2
         Renderer::SetDrawBuffers(3, drawBuffers);
 
-        // The first thing we need to do is clear the depth and stencil buffer, and also the colour buffer if applicable.
-        unsigned int clearbuffers = GTEngine::DepthBuffer;
-        if (this->isFirstLayer)
-        {
-            clearbuffers |= GTEngine::StencilBuffer;
-        }
-
         Renderer::EnableDepthTest();
         Renderer::SetDepthFunc(RendererFunction_LEqual);
         Renderer::EnableDepthWrites();
@@ -1035,10 +1061,6 @@ namespace GTEngine
         Renderer::EnableStencilTest();
         Renderer::SetStencilFunc(RendererFunction_GEqual, 1, 255);
         Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Replace);
-
-        Renderer::ClearDepth(1.0f);
-        Renderer::ClearStencil(0);
-        Renderer::Clear(clearbuffers);
     }
 
     void DefaultSceneRenderer::RCEndLayer::Execute()

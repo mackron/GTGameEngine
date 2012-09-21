@@ -255,7 +255,7 @@ namespace GTEngine
         {
             void Execute();
 
-            bool isFirstLayer;
+            //bool isFirstLayer;
         };
 
         // Render command for ending a layer.
