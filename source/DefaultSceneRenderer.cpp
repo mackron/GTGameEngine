@@ -277,14 +277,10 @@ namespace GTEngine
         Renderer::BackRCQueue->Append(rcBegin);
 
 
-
-        // We render layer-by-layer, starting at the foreground and working our way down. There are three layers, and we can do this in a loop.
-        for (int i = ViewportLayer::Foreground; i >= ViewportLayer::Background; --i)
+        
+        // Opaque Geometry: We render layer-by-layer, starting at the foreground and working our way down.
+        for (int i = ViewportLayer::Main; i >= ViewportLayer::Background; --i)
         {
-            // For now, we're ignoring the foreground.
-            if (i == ViewportLayer::Foreground) continue;
-
-
             auto cameraNode = viewport.GetCameraNode(i);
             if (cameraNode != nullptr)
             {
@@ -319,6 +315,13 @@ namespace GTEngine
                 hasRenderedFirstLayer = true;
             }
         }
+
+
+        // Transparent Objects:
+        //
+        // For now, we're only going to do transparent objects in the main layer.
+
+
 
 
         // At this point the viewport will be finished and we can finish up.

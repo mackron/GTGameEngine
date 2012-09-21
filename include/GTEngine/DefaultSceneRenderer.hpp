@@ -434,6 +434,20 @@ namespace GTEngine
         DefaultSceneRenderer::Framebuffer* GetViewportFramebuffer(SceneViewport &viewport);
 
 
+        /// Renders the opaque part of the main layer.
+        void RenderOpaqueMainLayer(Scene &scene, SceneViewport &viewport);
+
+        /// Renders the opaque part of the background layer.
+        void RenderOpaqueBackgroundLayer(Scene &scene, SceneViewport &viewport);
+
+        /// Renders the transparent part of the main layer.
+        void RenderTransparentMainLayer(Scene &scene, SceneViewport &viewport);
+
+        /// Renders the transparent part of the background layer.
+        void RenderTransparentBackgroundLayer(Scene &scene, SceneViewport &viewport);
+
+
+
         /// Performs the material pass. This is always the first pass.
         void MaterialPass(Scene &scene);
 

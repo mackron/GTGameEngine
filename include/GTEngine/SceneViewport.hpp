@@ -20,10 +20,9 @@ namespace GTEngine
     {
         static const int Background = 0;
         static const int Main       = 1;
-        static const int Foreground = 2;
     }
 
-    static const int ViewportLayerCount = 3;
+    static const int ViewportLayerCount = 2;
 
 
     /// Base class representing a viewport that a scene renders to.
