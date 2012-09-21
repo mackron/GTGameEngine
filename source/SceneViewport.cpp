@@ -2,6 +2,11 @@
 #include <GTEngine/SceneViewport.hpp>
 #include <GTEngine/Scene.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4351)   // Unsigned is still unsigned after negation.
+#endif
+
 namespace GTEngine
 {
     SceneViewport::SceneViewport()
@@ -32,7 +37,7 @@ namespace GTEngine
     void SceneViewport::SetCameraNode(SceneNode* cameraNode, int layer)
     {
         assert(layer >= 0);
-        assert(layer <= 2);
+        assert(layer <= 1);
 
         this->cameraNodes[layer] = cameraNode;
     }
@@ -40,14 +45,14 @@ namespace GTEngine
     SceneNode* SceneViewport::GetCameraNode(int layer)
     {
         assert(layer >= 0);
-        assert(layer <= 2);
+        assert(layer <= 1);
 
         return this->cameraNodes[layer];
     }
     const SceneNode* SceneViewport::GetCameraNode(int layer) const
     {
         assert(layer >= 0);
-        assert(layer <= 2);
+        assert(layer <= 1);
 
         return this->cameraNodes[layer];
     }
@@ -163,3 +168,7 @@ namespace GTEngine
         return glm::mat4();
     }
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
