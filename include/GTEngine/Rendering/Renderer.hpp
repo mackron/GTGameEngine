@@ -262,6 +262,9 @@ namespace GTEngine
         /// Disables blending.
         static void DisableBlending();
 
+        /// Determines whether or not blending is enabled.
+        static bool IsBlendingEnabled();
+
         /// Sets the blending function.
         static void SetBlendFunc(BlendFunc sourceFactor, BlendFunc destFactor);
 

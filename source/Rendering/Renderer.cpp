@@ -585,6 +585,11 @@ namespace GTEngine
         }
     }
 
+    bool Renderer::IsBlendingEnabled()
+    {
+        return RendererState.IsBlendingEnabled;
+    }
+
     void Renderer::SetBlendFunc(BlendFunc sourceFactor, BlendFunc destFactor)
     {
         if (RendererState.CurrentBlendSourceFactor != sourceFactor || RendererState.CurrentBlendDestFactor != destFactor)
