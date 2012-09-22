@@ -664,6 +664,46 @@ uses 1 or each light, it will use the following: A1D1P1.
     </include>
 </shader>
 
+<shader id="Engine_MaterialPass_Refraction_FS">
+    <include url="#Engine_FragmentInput" />
+    
+    <include>
+        vec4  Diffuse();
+        vec3  Emissive();
+        float Shininess();
+        vec3  Normal();
+        vec3  Refraction();
+        
+        uniform sampler2D BackgroundTexture;
+        
+        void main()
+        {
+            vec4  materialDiffuse    = Diffuse();
+            vec3  materialEmissive   = Emissive();
+            float materialShininess  = Shininess();
+            vec3  materialNormal     = Normal();
+            vec3  materialRefraction = Refraction();
+            
+            vec2 backgroundUV = ((VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5) + (normalize(materialRefraction).xy * 0.01);
+            
+            gl_FragData[0].rgb = (materialDiffuse.rgb * materialDiffuse.a) + (texture2D(BackgroundTexture, backgroundUV).rgb * (1.0 - materialDiffuse.a));
+            gl_FragData[0].a   = materialDiffuse.a;
+
+            gl_FragData[1].rgb = materialEmissive + (texture2D(BackgroundTexture, backgroundUV).rgb * (1.0 - materialDiffuse.a));
+            gl_FragData[1].a   = materialShininess;
+            
+            gl_FragData[2].rgb = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * materialNormal);
+            gl_FragData[2].a   = 1.0;
+            
+            
+            // Lighting needs to be cleared to black.
+            gl_FragData[3].rgba = vec4(0.0, 0.0, 0.0, 1.0);
+            gl_FragData[4].rgba = vec4(0.0, 0.0, 0.0, 1.0);
+        }
+    </include>
+</shader>
+
+
 <shader id="Engine_MaterialPass_ClearBackground">
     uniform vec3 ClearColour;
     
@@ -744,7 +784,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     }
 </shader>
 
-<shader id="Engine_Compositor_FinalOutput">
+<shader id="Engine_Compositor_OpaqueFinalOutput">
     varying vec2 VertexOutput_TexCoord;
     
     uniform sampler2D LightingBuffer0;      // rgb = diffuse;  a = nothing
@@ -770,8 +810,40 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         gl_FragData[0].rgb = (materialDiffuse * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
         gl_FragData[0].a   = materialTransparency;
-        
-        gl_FragData[0].rgb = pow(gl_FragData[0].rgb, vec3(1.0 / 2.2));   // sRGB (approx.)
     }
 </shader>
+
+<shader id="Engine_Compositor_FinalOutput">
+    varying vec2 VertexOutput_TexCoord;
+    
+    uniform sampler2D LightingBuffer0;      // rgb = diffuse;  a = nothing
+    uniform sampler2D LightingBuffer1;      // rgb = specular; a = nothing
+    uniform sampler2D MaterialBuffer0;      // rgb = diffuse;  a = transparancy
+    uniform sampler2D MaterialBuffer1;      // rgb = emissive; a = shininess
+    
+    void main()
+    {
+        vec4 lightingTexel0 = texture2D(LightingBuffer0, VertexOutput_TexCoord);
+        vec4 lightingTexel1 = texture2D(LightingBuffer1, VertexOutput_TexCoord);
+        vec4 materialTexel0 = texture2D(MaterialBuffer0, VertexOutput_TexCoord);
+        vec4 materialTexel1 = texture2D(MaterialBuffer1, VertexOutput_TexCoord);
+        
+        vec3 lightDiffuse  = lightingTexel0.rgb;
+        vec3 lightSpecular = lightingTexel1.rgb;
+        
+        vec3  materialDiffuse      = materialTexel0.rgb;
+        float materialTransparency = materialTexel0.a;
+        vec3  materialEmissive     = materialTexel1.rgb;
+        float materialShininess    = materialTexel1.a;
+        
+        
+        float lightFactor = materialTransparency;       // Just an alias to make things a little bit more readable.
+
+        gl_FragData[0].rgb = (materialDiffuse * lightDiffuse * lightFactor) + (materialShininess * lightSpecular * lightFactor) + materialEmissive;
+        gl_FragData[0].a   = materialTransparency;
+        
+        //gl_FragData[0].rgb = pow(gl_FragData[0].rgb, vec3(1.0 / 2.2));   // sRGB (approx.)
+    }
+</shader>
+
 

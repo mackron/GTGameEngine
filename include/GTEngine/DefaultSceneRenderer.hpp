@@ -24,6 +24,93 @@ namespace GTEngine
     {
     public:
 
+        /// Structure containing metadata for materials. There should be one of these for each material.
+        struct MaterialMetadata
+        {
+            MaterialMetadata()
+                : materialPassShader(nullptr)
+            {
+            }
+
+            Shader* materialPassShader;         ///< The shader for the material pass.
+            RCQueue materialPassRCs;            ///< The render commands for meshes using this material in the material pass.
+        };
+
+
+
+        /// Structure containing rendering state for each layer.
+        struct LayerState
+        {
+            /// The list of visible ambient lights for the currently rendering viewport.
+            GTCore::Vector<const SceneObject*> ambientLights;
+
+            /// The list of visible directional lights for the currently rendering viewport.
+            GTCore::Vector<const SceneObject*> directionalLights;
+
+            /// The list of visible point lights for the currently rendering viewport.
+            GTCore::Vector<const SceneObject*> pointLights;
+
+            /// The list of visible spot lights for the currently rendering viewport.
+            GTCore::Vector<const SceneObject*> spotLights;
+
+
+            /// The list of directional lights that are not casting shadows.
+            GTCore::Vector<const SceneObject*> directionalLights_NoShadows;
+
+            /// The list of point lights that are not casting shadows.
+            GTCore::Vector<const SceneObject*> pointLights_NoShadows;
+
+            /// The list of spot lights that are not casting shadows.
+            GTCore::Vector<const SceneObject*> spotLights_NoShadows;
+
+
+            /// Every piece of visible geometry will need to be re-rendered for every light. This needs to be efficient. To do this, we cache a draw call that
+            /// will draw the geometry in each lighting pass, and then append that to the renderer's back RC cache in one go every time it's needed. It will
+            /// be cleared at the beginning of every frame.
+            RCQueue lightingDrawRCs;
+
+            /// The same as 'lightingDrawRCs', except for refractive geometry.
+            RCQueue refractiveLightingDrawRCs;
+
+
+            /// The metadata of the material definitions being used in the current frame. This is cleared at the beginning of every frame.
+            GTCore::BinarySearchTree<MaterialMetadata*> usedMaterials;
+
+            /// Same as 'usedMaterials', only containing refractive materials.
+            GTCore::BinarySearchTree<MaterialMetadata*> usedRefractiveMaterials;
+
+
+            /// Resets the state. Should be called at the start of each render.
+            void Reset()
+            {
+                this->ambientLights.Clear();
+                this->directionalLights.Clear();
+                this->pointLights.Clear();
+                this->spotLights.Clear();
+                this->directionalLights_NoShadows.Clear();
+                this->pointLights_NoShadows.Clear();
+                this->spotLights_NoShadows.Clear();
+
+                this->lightingDrawRCs.Clear();
+                this->refractiveLightingDrawRCs.Clear();
+
+                this->usedMaterials.Clear();
+                this->usedRefractiveMaterials.Clear();
+            }
+
+            /// Determines whether or not this state has refractive geometry needing to be drawn. We use this in determining whether or not we need to do
+            /// additional rendering operations to support refractions.
+            bool HasRefractiveGeometry()
+            {
+                return !refractiveLightingDrawRCs.IsEmpty();
+            }
+        };
+
+
+
+
+    public:
+
         /// Constructor.
         DefaultSceneRenderer();
 
@@ -63,23 +150,10 @@ namespace GTEngine
         // Methods below should only be called internally, but need to be public for a few things.
 
         /// Called for a model that's visible in the currently rendering viewport.
-        void __MaterialPass_Model(const SceneObject &object, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView);
+        void __MaterialPass_Model(const SceneObject &object, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, LayerState &state);
 
         /// Called for a model that's visible in a shadow pass.
         void __ShadowPass_Model(const SceneObject &object, const glm::mat4 &projection, const glm::mat4 &view);
-
-
-        /// Called for an ambient light that's visible in the currently rendering viewport.
-        void __AmbientLight(const SceneObject &object);
-
-        /// Called for a directional light that's visible in the currently rendering viewport.
-        void __DirectionalLight(const SceneObject &object);
-
-        /// Called for a point light that's visible in the currently rendering viewport.
-        void __PointLight(const SceneObject &object);
-
-        /// Called for a spot light that's visible in the currently rendering viewport.
-        void __SpotLight(const SceneObject &object);
 
 
 
@@ -249,6 +323,32 @@ namespace GTEngine
             Shader* colourClearShader;
             int stencilIndex;
         };
+
+        // Render command for beginning transparency.
+        struct RCBeginTransparency : public RenderCommand
+        {
+            void Execute();
+        };
+
+        // Render command for beginning the foreground transparency.
+        struct RCBeginForegroundTransparency : public RenderCommand
+        {
+            void Execute();
+
+            Shader* depthClearShader;
+        };
+
+        // Render command for beginning a transparent material pass.
+        struct RCBeginTransparentMaterialPass : public RenderCommand
+        {
+            void Execute();
+
+            Shader* shader;
+            Texture2D* backgroundTexture;
+        };
+
+
+
 
         // Render command for controlling blending.
         struct RCControlBlending : public RenderCommand
@@ -421,6 +521,7 @@ namespace GTEngine
         };
 
 
+
         /// Builds the final image from the different buffers.
         struct RCBuildFinalImage : public RenderCommand
         {
@@ -460,10 +561,11 @@ namespace GTEngine
 
 
         /// Performs the material pass. This is always the first pass.
-        void MaterialPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView);
+        void MaterialPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive);
 
         /// Performs the lighting pass. This always comes after the material pass.
-        void LightingPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, int stencilIndex);
+        void LightingPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, int stencilIndex, LayerState &state, bool refractive);
+
 
 
         // Builds the shadow map of the given directional light.
@@ -473,17 +575,6 @@ namespace GTEngine
         void LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::vec3 &position, float radius);
 
 
-        /// Structure containing metadata for materials. There should be one of these for each material.
-        struct MaterialMetadata
-        {
-            MaterialMetadata()
-                : materialPassShader(nullptr)
-            {
-            }
-
-            Shader* materialPassShader;         ///< The shader for the material pass.
-            RCQueue materialPassRCs;            ///< The render commands for meshes using this material in the material pass.
-        };
 
         /// Retrieves the metadata of a material. This should never return null. If the metadata hasn't yet been created,
         /// it will be created and then returned. Future calls will return that same object.
@@ -507,29 +598,6 @@ namespace GTEngine
 
     private:
 
-        /// The list of visible ambient lights for the currently rendering viewport.
-        GTCore::Vector<const SceneObject*> ambientLights;
-
-        /// The list of visible directional lights for the currently rendering viewport.
-        GTCore::Vector<const SceneObject*> directionalLights;
-
-        /// The list of visible point lights for the currently rendering viewport.
-        GTCore::Vector<const SceneObject*> pointLights;
-
-        /// The list of visible spot lights for the currently rendering viewport.
-        GTCore::Vector<const SceneObject*> spotLights;
-
-
-        /// The list of directional lights that are not casting shadows.
-        GTCore::Vector<const SceneObject*> directionalLights_NoShadows;
-
-        /// The list of point lights that are not casting shadows.
-        GTCore::Vector<const SceneObject*> pointLights_NoShadows;
-
-        /// The list of spot lights that are not casting shadows.
-        GTCore::Vector<const SceneObject*> spotLights_NoShadows;
-
-
         /// A container for mapping a viewport to it's framebuffer.
         GTCore::Map<SceneViewport*, DefaultSceneRenderer::Framebuffer*> viewportFramebuffers;
 
@@ -543,11 +611,14 @@ namespace GTEngine
 
 
         // Below are caches for render commands. There are always 2 caches - one for the front RC queue, and another for the back.
-        RCCache<RCBegin,                 8>           rcBegin[2];
-        RCCache<RCBeginBackground,       8>           rcBeginBackground[2];
-        RCCache<RCBackgroundColourClear, 8>           rcBackgroundColourClear[2];
-        RCCache<RCBuildFinalImage,       8>           rcBuildFinalImage[2];
-        RCCache<RCBeginLighting>                      rcBeginLighting[2];
+        RCCache<RCBegin,                        8>    rcBegin[2];
+        RCCache<RCBeginBackground,              8>    rcBeginBackground[2];
+        RCCache<RCBackgroundColourClear,        8>    rcBackgroundColourClear[2];
+        RCCache<RCBuildFinalImage,              8>    rcBuildFinalImage[2];
+        RCCache<RCBeginLighting,                8>    rcBeginLighting[2];
+        RCCache<RCBeginTransparency,            8>    rcBeginTransparency[2];
+        RCCache<RCBeginForegroundTransparency,  8>    rcBeginForegroundTransparency[2];
+        RCCache<RCBeginTransparentMaterialPass, 8>    rcBeginTransparentMaterialPass[2];
         RCCache<RCControlBlending>                    rcControlBlending[2];
         RCCache<RCSetShader>                          rcSetShader[2];
         RCCache<RCDrawGeometry>                       rcDrawGeometry[2];
@@ -578,6 +649,7 @@ namespace GTEngine
             Shader* Compositor_DiffuseOnly;
             Shader* Compositor_NormalsOnly;
             Shader* Compositor_DiffuseLightingOnly;
+            Shader* Compositor_OpaqueFinalOutput;
             Shader* Compositor_FinalOutput;
 
             Shader* MaterialPass_ClearBackground;
@@ -612,14 +684,12 @@ namespace GTEngine
         GTEngine::Framebuffer pointLightShadowMapFramebuffer;
 
 
-        /// The metadata of the material definitions being used in the current frame. This is cleared at the beginning of every frame.
-        GTCore::BinarySearchTree<MaterialMetadata*> usedMaterials;
 
+        /// The rendering state of the main layer.
+        LayerState mainLayerState;
 
-        /// Every piece of visible geometry will need to be re-rendered for every light. This needs to be efficient. To do this, we cache a draw call that
-        /// will draw the geometry in each lighting pass, and then append that to the renderer's back RC cache in one go every time it's needed. It will
-        /// be cleared at the beginning of every frame.
-        RCQueue lightingDrawRCs;
+        /// The rendering state of the background layer.
+        LayerState backgroundLayerState;
     };
 }
 

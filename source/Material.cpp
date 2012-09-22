@@ -182,7 +182,7 @@ namespace GTEngine
             auto refractionNode = materialNode->first_node("refraction");
             if (refractionNode != nullptr)
             {
-                auto idAttr = normalNode->first_attribute("id");
+                auto idAttr = refractionNode->first_attribute("id");
                 if (idAttr != nullptr)
                 {
                     this->refractionShaderID = idAttr->value();

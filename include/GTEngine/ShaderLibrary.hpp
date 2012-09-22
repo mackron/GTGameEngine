@@ -149,6 +149,10 @@ namespace GTEngine
         */
         static Shader* GetLineShader();
 
+
+        /// Retrieves the depth clearing shader.
+        static Shader* GetDepthClearShader();
+
     };    
 }
 

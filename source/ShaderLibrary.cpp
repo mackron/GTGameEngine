@@ -632,6 +632,7 @@ namespace GTEngine
     static Shader* FullscreenQuadShader = nullptr;
     static Shader* ColouredBGQuadShader = nullptr;
     static Shader* LineShader           = nullptr;
+    static Shader* DepthClearShader     = nullptr;
 
     Shader* ShaderLibrary::GetGUIQuadShader()
     {
@@ -702,6 +703,16 @@ namespace GTEngine
 
         return LineShader;
     }
+
+    Shader* ShaderLibrary::GetDepthClearShader()
+    {
+        if (DepthClearShader == nullptr)
+        {
+            DepthClearShader = new Shader(ShaderLibrary::GetShaderString("Engine_ClearDepth_VS"), ShaderLibrary::GetShaderString("Engine_ClearDepth_FS"));
+        }
+
+        return DepthClearShader;
+    }
 }
 
 
@@ -717,6 +728,7 @@ namespace GTEngine
         delete FullscreenQuadShader;
         delete ColouredBGQuadShader;
         delete LineShader;
+        delete DepthClearShader;
 
         GUIQuadShader        = nullptr;
         GUIDrawShader        = nullptr;
@@ -725,6 +737,7 @@ namespace GTEngine
         FullscreenQuadShader = nullptr;
         ColouredBGQuadShader = nullptr;
         LineShader           = nullptr;
+        DepthClearShader     = nullptr;
 
         ShaderLibraryShaders::Clear();
 
