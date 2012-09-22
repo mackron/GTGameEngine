@@ -143,3 +143,19 @@
         VertexOutput_Position = ModelViewMatrix * vec4(VertexInput_Position, 1.0);
 	}
 </shader>
+
+
+<shader id="Engine_ClearDepth_VS">
+    attribute vec3 VertexInput_Position;
+
+	void main()
+	{
+        gl_Position = vec4(VertexInput_Position, 1.0);
+	}
+</shader>
+
+<shader id="Engine_ClearDepth_FS">
+    void main()
+    {
+    }
+</shader>

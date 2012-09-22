@@ -17,9 +17,11 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        DefaultSceneRenderer_MaterialPassCallback(DefaultSceneRenderer &rendererIn, const glm::mat4 &cameraProjectionIn, const glm::mat4 &cameraViewIn)
+        DefaultSceneRenderer_MaterialPassCallback(DefaultSceneRenderer &rendererIn, const glm::mat4 &cameraProjectionIn, const glm::mat4 &cameraViewIn, DefaultSceneRenderer::LayerState &layerStateIn, bool opaquePassIn)
             : SceneCullingManager::VisibleCallback(), renderer(rendererIn),
-              cameraProjection(cameraProjectionIn), cameraView(cameraViewIn)
+              cameraProjection(cameraProjectionIn), cameraView(cameraViewIn),
+              layerState(layerStateIn),
+              opaquePass(opaquePassIn)
         {
         }
 
@@ -32,32 +34,62 @@ namespace GTEngine
         /// SceneCullingManager::ProcessObjectModel().
         void ProcessObjectModel(SceneObject &object)
         {
-            this->renderer.__MaterialPass_Model(object, this->cameraProjection, this->cameraView);
+            this->renderer.__MaterialPass_Model(object, this->cameraProjection, this->cameraView, this->layerState);
         }
 
 
         /// SceneCullingManager::ProcessObjectAmbientLight().
         void ProcessObjectAmbientLight(SceneObject &object)
         {
-            this->renderer.__AmbientLight(object);
+            this->layerState.ambientLights.PushBack(&object);
         }
 
         /// SceneCullingManager::ProcessObjectDirectionalLight().
         void ProcessObjectDirectionalLight(SceneObject &object)
         {
-            this->renderer.__DirectionalLight(object);
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                if (static_cast<const SceneNode &>(object).GetComponent<DirectionalLightComponent>()->IsShadowCastingEnabled())
+                {
+                    this->layerState.directionalLights.PushBack(&object);
+                }
+                else
+                {
+                    this->layerState.directionalLights_NoShadows.PushBack(&object);
+                }
+            }
         }
 
         /// SceneCullingManager::ProcessObjectPointLight().
         void ProcessObjectPointLight(SceneObject &object)
         {
-            this->renderer.__PointLight(object);
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                if (static_cast<const SceneNode &>(object).GetComponent<PointLightComponent>()->IsShadowCastingEnabled())
+                {
+                    this->layerState.pointLights.PushBack(&object);
+                }
+                else
+                {
+                    this->layerState.pointLights_NoShadows.PushBack(&object);
+                }
+            }
         }
 
         /// SceneCullingManager::ProcessObjectSpotLight().
         void ProcessObjectSpotLight(SceneObject &object)
         {
-            this->renderer.__SpotLight(object);
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                if (static_cast<const SceneNode &>(object).GetComponent<SpotLightComponent>()->IsShadowCastingEnabled())
+                {
+                    this->layerState.spotLights.PushBack(&object);
+                }
+                else
+                {
+                    this->layerState.spotLights_NoShadows.PushBack(&object);
+                }
+            }
         }
 
 
@@ -72,6 +104,12 @@ namespace GTEngine
 
         /// The view matrix of the camera.
         const glm::mat4 &cameraView;
+
+        /// The layer state.
+        DefaultSceneRenderer::LayerState &layerState;
+
+        /// Whether or not we are rendering the opaque pass.
+        bool opaquePass;
 
 
     private:    // No copying.
@@ -146,9 +184,7 @@ namespace GTEngine
 namespace GTEngine
 {
     DefaultSceneRenderer::DefaultSceneRenderer()
-        : ambientLights(), directionalLights(), pointLights(), spotLights(),
-          directionalLights_NoShadows(), pointLights_NoShadows(), spotLights_NoShadows(),
-          viewportFramebuffers(),
+        : viewportFramebuffers(),
           clearColourBuffer(true), clearColour(0.25f, 0.25f, 0.25f),
           rcBegin(),
           Shaders(),
@@ -197,6 +233,7 @@ namespace GTEngine
         this->Shaders.Compositor_DiffuseOnly         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_Compositor_DiffuseOnly");
         this->Shaders.Compositor_NormalsOnly         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_Compositor_NormalsOnly");
         this->Shaders.Compositor_DiffuseLightingOnly = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_Compositor_DiffuseLightingOnly");
+        this->Shaders.Compositor_OpaqueFinalOutput   = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_Compositor_OpaqueFinalOutput");
         this->Shaders.Compositor_FinalOutput         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_Compositor_FinalOutput");
         this->Shaders.MaterialPass_ClearBackground   = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_MaterialPass_ClearBackground");
 
@@ -227,7 +264,7 @@ namespace GTEngine
         ShaderLibrary::Unacquire(Shaders.Compositor_DiffuseOnly);
         ShaderLibrary::Unacquire(Shaders.Compositor_NormalsOnly);
         ShaderLibrary::Unacquire(Shaders.Compositor_DiffuseLightingOnly);
-        ShaderLibrary::Unacquire(Shaders.Compositor_FinalOutput);
+        ShaderLibrary::Unacquire(Shaders.Compositor_OpaqueFinalOutput);
         ShaderLibrary::Unacquire(Shaders.MaterialPass_ClearBackground);
 
         /// The material shaders need to be deleted.
@@ -253,6 +290,9 @@ namespace GTEngine
         this->rcBackgroundColourClear[Renderer::BackIndex].Reset();
         this->rcBuildFinalImage[Renderer::BackIndex].Reset();
         this->rcBeginLighting[Renderer::BackIndex].Reset();
+        this->rcBeginTransparency[Renderer::BackIndex].Reset();
+        this->rcBeginForegroundTransparency[Renderer::BackIndex].Reset();
+        this->rcBeginTransparentMaterialPass[Renderer::BackIndex].Reset();
         this->rcControlBlending[Renderer::BackIndex].Reset();
         this->rcSetShader[Renderer::BackIndex].Reset();
         this->rcDrawGeometry[Renderer::BackIndex].Reset();
@@ -271,8 +311,9 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderViewport(Scene &scene, SceneViewport &viewport)
     {
-        this->usedMaterials.Clear();
-        this->lightingDrawRCs.Clear();
+        this->mainLayerState.Reset();
+        this->backgroundLayerState.Reset();
+
 
         auto framebuffer = this->GetViewportFramebuffer(viewport);
         assert(framebuffer != nullptr);
@@ -310,8 +351,8 @@ namespace GTEngine
             auto &cameraProjection = camera->GetProjectionMatrix();
             auto  cameraView       = camera->GetViewMatrix();
 
-            this->MaterialPass(scene, cameraProjection, cameraView);
-            this->LightingPass(scene, cameraProjection, cameraView, *framebuffer, 1);
+            this->MaterialPass(scene, cameraProjection, cameraView, *framebuffer, this->mainLayerState, false);
+            this->LightingPass(scene, cameraProjection, cameraView, *framebuffer, 1, this->mainLayerState, false);
         }
 
 
@@ -341,18 +382,81 @@ namespace GTEngine
             auto &cameraProjection = camera->GetProjectionMatrix();
             auto  cameraView       = camera->GetViewMatrix();
 
-            this->MaterialPass(scene, cameraProjection, cameraView);
-            this->LightingPass(scene, cameraProjection, cameraView, *framebuffer, 0);
+            this->MaterialPass(scene, cameraProjection, cameraView, *framebuffer,  this->backgroundLayerState, false);
+            this->LightingPass(scene, cameraProjection, cameraView, *framebuffer, 0, this->backgroundLayerState, false);
         }
         
 
+        if (this->mainLayerState.HasRefractiveGeometry() || this->backgroundLayerState.HasRefractiveGeometry())
+        {
+            // Now we need to build an image that will be used for refractions.
+            auto &rcBuildRefractionImage = this->rcBuildFinalImage[Renderer::BackIndex].Acquire();
+            rcBuildRefractionImage.colourBufferIndex = 6;
+            rcBuildRefractionImage.framebuffer       = framebuffer;
+            rcBuildRefractionImage.compositingShader = this->Shaders.Compositor_OpaqueFinalOutput;
+            Renderer::BackRCQueue->Append(rcBuildRefractionImage);
 
-        // Now we need to end the frame by simply building the final image and placing it in colour buffer 0.
-        auto &rcBuildFinalImage = this->rcBuildFinalImage[Renderer::BackIndex].Acquire();
-        rcBuildFinalImage.colourBufferIndex = 0;
-        rcBuildFinalImage.framebuffer       = framebuffer;
-        rcBuildFinalImage.compositingShader = this->Shaders.Compositor_FinalOutput;
-        Renderer::BackRCQueue->Append(rcBuildFinalImage);
+
+            // Now we need to mark the beginning of our transparency operations.
+            auto &rcBeginTransparency = this->rcBeginTransparency[Renderer::BackIndex].Acquire();
+            Renderer::BackRCQueue->Append(rcBeginTransparency);
+
+            
+            if (this->backgroundLayerState.HasRefractiveGeometry())
+            {
+                cameraNode = viewport.GetCameraNode(ViewportLayer::Background);
+                if (cameraNode != nullptr)
+                {
+                    auto camera = cameraNode->GetComponent<CameraComponent>();
+                    assert(camera != nullptr);
+
+                    auto &cameraProjection = camera->GetProjectionMatrix();
+                    auto  cameraView       = camera->GetViewMatrix();
+
+                    this->MaterialPass(scene, cameraProjection, cameraView, *framebuffer, this->backgroundLayerState, true);
+                    this->LightingPass(scene, cameraProjection, cameraView, *framebuffer, 0, this->backgroundLayerState, true);
+                }
+            }
+            
+
+            if (this->mainLayerState.HasRefractiveGeometry())
+            {
+                cameraNode = viewport.GetCameraNode(ViewportLayer::Main);
+                if (cameraNode != nullptr)
+                {
+                    auto &rcBeginForegroundTransparency = this->rcBeginForegroundTransparency[Renderer::BackIndex].Acquire();
+                    rcBeginForegroundTransparency.depthClearShader = ShaderLibrary::GetDepthClearShader();
+                    Renderer::BackRCQueue->Append(rcBeginForegroundTransparency);
+
+
+                    auto camera = cameraNode->GetComponent<CameraComponent>();
+                    assert(camera != nullptr);
+
+                    auto &cameraProjection = camera->GetProjectionMatrix();
+                    auto  cameraView       = camera->GetViewMatrix();
+
+                    this->MaterialPass(scene, cameraProjection, cameraView, *framebuffer, this->mainLayerState, true);
+                    this->LightingPass(scene, cameraProjection, cameraView, *framebuffer, 1, this->mainLayerState, true);
+                }
+            }
+
+
+            // Now we need to end the frame by simply building the final image and placing it in colour buffer 0.
+            auto &rcBuildFinalImage = this->rcBuildFinalImage[Renderer::BackIndex].Acquire();
+            rcBuildFinalImage.colourBufferIndex = 0;
+            rcBuildFinalImage.framebuffer       = framebuffer;
+            rcBuildFinalImage.compositingShader = this->Shaders.Compositor_FinalOutput;
+            Renderer::BackRCQueue->Append(rcBuildFinalImage);
+        }
+        else
+        {
+            // Now we need to end the frame by simply building the final image and placing it in colour buffer 0.
+            auto &rcBuildFinalImage = this->rcBuildFinalImage[Renderer::BackIndex].Acquire();
+            rcBuildFinalImage.colourBufferIndex = 0;
+            rcBuildFinalImage.framebuffer       = framebuffer;
+            rcBuildFinalImage.compositingShader = this->Shaders.Compositor_OpaqueFinalOutput;
+            Renderer::BackRCQueue->Append(rcBuildFinalImage);
+        }
     }
 
 
@@ -395,7 +499,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer::__MaterialPass_Model(const SceneObject &object, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView)
+    void DefaultSceneRenderer::__MaterialPass_Model(const SceneObject &object, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, LayerState &state)
     {
         if (object.GetType() == SceneObjectType_SceneNode)
         {
@@ -441,9 +545,6 @@ namespace GTEngine
                             materialMetadata.materialPassShader = this->CreateMaterialPassShader(*material);
                         }
 
-                        this->usedMaterials.Insert(&materialMetadata);
-
-
 
 
                         auto &rcDrawGeometry = this->rcDrawGeometry[Renderer::BackIndex].Acquire();
@@ -471,8 +572,18 @@ namespace GTEngine
 
                         // We need to add the rendering command to a couple of queues. The first queue is the queue for the material being used
                         // by the mesh. The other queue contains the commands to call during the lighting pass.
+                        if (material->IsRefractive())
+                        {
+                            state.usedRefractiveMaterials.Insert(&materialMetadata);
+                            state.refractiveLightingDrawRCs.Append(rcDrawGeometry);
+                        }
+                        else
+                        {
+                            state.usedMaterials.Insert(&materialMetadata);
+                            state.lightingDrawRCs.Append(rcDrawGeometry);
+                        }
+
                         materialMetadata.materialPassRCs.Append(rcDrawGeometry);
-                        this->lightingDrawRCs.Append(rcDrawGeometry);
                     }
                 }
             }
@@ -510,56 +621,6 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer::__AmbientLight(const SceneObject &object)
-    {
-        this->ambientLights.PushBack(&object);
-    }
-
-    void DefaultSceneRenderer::__DirectionalLight(const SceneObject &object)
-    {
-        if (object.GetType() == SceneObjectType_SceneNode)
-        {
-            if (static_cast<const SceneNode &>(object).GetComponent<DirectionalLightComponent>()->IsShadowCastingEnabled())
-            {
-                this->directionalLights.PushBack(&object);
-            }
-            else
-            {
-                this->directionalLights_NoShadows.PushBack(&object);
-            }
-        }
-    }
-
-    void DefaultSceneRenderer::__PointLight(const SceneObject &object)
-    {
-        if (object.GetType() == SceneObjectType_SceneNode)
-        {
-            if (static_cast<const SceneNode &>(object).GetComponent<PointLightComponent>()->IsShadowCastingEnabled())
-            {
-                this->pointLights.PushBack(&object);
-            }
-            else
-            {
-                this->pointLights_NoShadows.PushBack(&object);
-            }
-        }
-    }
-
-    void DefaultSceneRenderer::__SpotLight(const SceneObject &object)
-    {
-        if (object.GetType() == SceneObjectType_SceneNode)
-        {
-            if (static_cast<const SceneNode &>(object).GetComponent<SpotLightComponent>()->IsShadowCastingEnabled())
-            {
-                this->spotLights.PushBack(&object);
-            }
-            else
-            {
-                this->spotLights_NoShadows.PushBack(&object);
-            }
-        }
-    }
-
 
 
     ///////////////////////////////////////////////
@@ -574,28 +635,48 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer::MaterialPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView)
+    void DefaultSceneRenderer::MaterialPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive)
     {
-        DefaultSceneRenderer_MaterialPassCallback materialPassCallback(*this, cameraProjection, cameraView);
-        scene.QueryVisibleObjects(cameraProjection * cameraView, materialPassCallback);
-
         // We will have render commands waiting to be added to the main RC queue. This is where we should do this.
-        while (this->usedMaterials.root != nullptr)
+        if (!refractive)
         {
-            auto &queue = this->usedMaterials.root->value->materialPassRCs;
+            DefaultSceneRenderer_MaterialPassCallback materialPassCallback(*this, cameraProjection, cameraView, state, !refractive);        // <-- last parameter is 'opaquePass'
+            scene.QueryVisibleObjects(cameraProjection * cameraView, materialPassCallback);
 
-            auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
-            rcSetShader.shader = this->usedMaterials.root->value->materialPassShader;
-            Renderer::BackRCQueue->Append(rcSetShader);
+            while (state.usedMaterials.root != nullptr)
+            {
+                auto &queue = state.usedMaterials.root->value->materialPassRCs;
 
-            Renderer::BackRCQueue->Append(queue);
-            queue.Clear();
+                auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
+                rcSetShader.shader = state.usedMaterials.root->value->materialPassShader;
+                Renderer::BackRCQueue->Append(rcSetShader);
 
-            this->usedMaterials.RemoveRoot();
+                Renderer::BackRCQueue->Append(queue);
+                queue.Clear();
+
+                state.usedMaterials.RemoveRoot();
+            }
+        }
+        else
+        {
+            while (state.usedRefractiveMaterials.root != nullptr)
+            {
+                auto &queue = state.usedRefractiveMaterials.root->value->materialPassRCs;
+
+                auto &rcBeginTransparentMaterialPass = this->rcBeginTransparentMaterialPass[Renderer::BackIndex].Acquire();
+                rcBeginTransparentMaterialPass.shader            = state.usedRefractiveMaterials.root->value->materialPassShader;
+                rcBeginTransparentMaterialPass.backgroundTexture = framebuffer.opaqueColourBuffer;
+                Renderer::BackRCQueue->Append(rcBeginTransparentMaterialPass);
+
+                Renderer::BackRCQueue->Append(queue);
+                queue.Clear();
+
+                state.usedRefractiveMaterials.RemoveRoot();
+            }
         }
     }
 
-    void DefaultSceneRenderer::LightingPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, int stencilIndex)
+    void DefaultSceneRenderer::LightingPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, int stencilIndex, LayerState &state, bool refractive)
     {
         (void)cameraProjection;
 
@@ -608,10 +689,9 @@ namespace GTEngine
         Renderer::BackRCQueue->Append(rcBeginLighting);
 
 
-
-        while (this->ambientLights.count > 0)
+        for (size_t i = 0; i < state.ambientLights.count; ++i)
         {
-            auto &light = *this->ambientLights.GetBack();
+            auto &light = *state.ambientLights[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_A1;
@@ -625,15 +705,20 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
 
-
-            this->ambientLights.PopBack();
+            if (refractive)
+            {
+                Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
+            }
+            else
+            {
+                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+            }
         }
 
-        while (this->directionalLights_NoShadows.count > 0)
+        for (size_t i = 0; i < state.directionalLights_NoShadows.count; ++i)
         {
-            auto &light = *this->directionalLights_NoShadows.GetBack();
+            auto &light = *state.directionalLights_NoShadows[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_D1;
@@ -650,15 +735,20 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
 
-
-            this->directionalLights_NoShadows.PopBack();
+            if (refractive)
+            {
+                Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
+            }
+            else
+            {
+                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+            }
         }
 
-        while (this->pointLights_NoShadows.count > 0)
+        for (size_t i = 0; i < state.pointLights_NoShadows.count; ++i)
         {
-            auto &light = *this->pointLights_NoShadows.GetBack();
+            auto &light = *state.pointLights_NoShadows[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_P1;
@@ -678,15 +768,20 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
-
-
-            this->pointLights_NoShadows.PopBack();
+            
+            if (refractive)
+            {
+                Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
+            }
+            else
+            {
+                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+            }
         }
 
-        while (this->spotLights_NoShadows.count > 0)
+        for (size_t i = 0; i < state.spotLights_NoShadows.count; ++i)
         {
-            auto &light = *this->spotLights_NoShadows.GetBack();
+            auto &light = *state.spotLights_NoShadows[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_NoShadow_S1;
@@ -709,18 +804,23 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
-
-
-            this->spotLights_NoShadows.PopBack();
+            
+            if (refractive)
+            {
+                Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
+            }
+            else
+            {
+                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+            }
         }
 
 
 
         // With the shadowless lights done, we can now do the lights with shadow.
-        while (this->directionalLights.count > 0)
+        for (size_t i = 0; i < state.directionalLights.count; ++i)
         {
-            auto &light = *this->directionalLights.GetBack();
+            auto &light = *state.directionalLights[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_D1;
@@ -746,15 +846,20 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
-
-
-            this->directionalLights.PopBack();
+            
+            if (refractive)
+            {
+                Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
+            }
+            else
+            {
+                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+            }
         }
 
-        while (this->pointLights.count > 0)
+        for (size_t i = 0; i < state.pointLights.count; ++i)
         {
-            auto &light = *this->pointLights.GetBack();
+            auto &light = *state.pointLights[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_P1;
@@ -782,15 +887,20 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
-
-
-            this->pointLights.PopBack();
+            
+            if (refractive)
+            {
+                Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
+            }
+            else
+            {
+                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+            }
         }
 
-        while (this->spotLights.count > 0)
+        for (size_t i = 0; i < state.spotLights.count; ++i)
         {
-            auto &light = *this->spotLights.GetBack();
+            auto &light = *state.spotLights[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
             rcSetShader.shader          = this->Shaders.Lighting_S1;
@@ -830,10 +940,15 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            Renderer::BackRCQueue->Append(this->lightingDrawRCs);
-
-
-            this->spotLights.PopBack();
+            
+            if (refractive)
+            {
+                Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
+            }
+            else
+            {
+                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+            }
         }
     }
 
@@ -972,26 +1087,55 @@ namespace GTEngine
         {
             // If we get here, it means the shader does not exist. We need to create it and then add it to the cache.
             // There are two parts to the shader. There is the base shader and then the material components.
-            const char* baseShaderVS      = ShaderLibrary::GetShaderString("Engine_MaterialPass_VS");
-            const char* baseShaderFS      = ShaderLibrary::GetShaderString("Engine_MaterialPass_FS");
-            const char* materialDiffuse   = ShaderLibrary::GetShaderString(material.GetDiffuseShaderID());
-            const char* materialEmissive  = ShaderLibrary::GetShaderString(material.GetEmissiveShaderID());
-            const char* materialShininess = ShaderLibrary::GetShaderString(material.GetShininessShaderID());
-            const char* materialNormal    = ShaderLibrary::GetShaderString(material.GetNormalShaderID());
+            if (material.IsRefractive())
+            {
+                const char* baseShaderVS       = ShaderLibrary::GetShaderString("Engine_MaterialPass_VS");
+                const char* baseShaderFS       = ShaderLibrary::GetShaderString("Engine_MaterialPass_Refraction_FS");
+                const char* materialDiffuse    = ShaderLibrary::GetShaderString(material.GetDiffuseShaderID());
+                const char* materialEmissive   = ShaderLibrary::GetShaderString(material.GetEmissiveShaderID());
+                const char* materialShininess  = ShaderLibrary::GetShaderString(material.GetShininessShaderID());
+                const char* materialNormal     = ShaderLibrary::GetShaderString(material.GetNormalShaderID());
+                const char* materialRefraction = ShaderLibrary::GetShaderString(material.GetRefractionShaderID());
 
-            // With the shader strings retrieved, we need to concatinate the shaders and create the shader object.
-            GTCore::Strings::List<char> fragmentShaderString;
-            fragmentShaderString.Append(baseShaderFS);
-            fragmentShaderString.Append("\n");
-            fragmentShaderString.Append(materialDiffuse);
-            fragmentShaderString.Append("\n");
-            fragmentShaderString.Append(materialEmissive);
-            fragmentShaderString.Append("\n");
-            fragmentShaderString.Append(materialShininess);
-            fragmentShaderString.Append("\n");
-            fragmentShaderString.Append(materialNormal);
+                // With the shader strings retrieved, we need to concatinate the shaders and create the shader object.
+                GTCore::Strings::List<char> fragmentShaderString;
+                fragmentShaderString.Append(baseShaderFS);
+                fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialDiffuse);
+                fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialEmissive);
+                fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialShininess);
+                fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialNormal);
+                fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialRefraction);
 
-            shader = new Shader(baseShaderVS, fragmentShaderString.c_str());
+                shader = new Shader(baseShaderVS, fragmentShaderString.c_str());
+            }
+            else
+            {
+                const char* baseShaderVS      = ShaderLibrary::GetShaderString("Engine_MaterialPass_VS");
+                const char* baseShaderFS      = ShaderLibrary::GetShaderString("Engine_MaterialPass_FS");
+                const char* materialDiffuse   = ShaderLibrary::GetShaderString(material.GetDiffuseShaderID());
+                const char* materialEmissive  = ShaderLibrary::GetShaderString(material.GetEmissiveShaderID());
+                const char* materialShininess = ShaderLibrary::GetShaderString(material.GetShininessShaderID());
+                const char* materialNormal    = ShaderLibrary::GetShaderString(material.GetNormalShaderID());
+
+                // With the shader strings retrieved, we need to concatinate the shaders and create the shader object.
+                GTCore::Strings::List<char> fragmentShaderString;
+                fragmentShaderString.Append(baseShaderFS);
+                fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialDiffuse);
+                fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialEmissive);
+                fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialShininess);
+                fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialNormal);
+
+                shader = new Shader(baseShaderVS, fragmentShaderString.c_str());
+            }
 
             // With the shader created, we now add it to the cache.
             this->Shaders.materialPassShaders.SetShader(materialDefinition, *shader);
@@ -1015,6 +1159,10 @@ namespace GTEngine
     }
 
 
+
+
+    // TODO: Might need to make it so the main layer renders to stencil index 2 so that the background layer can use index 1 for doing lighting clears for transparency. The main
+    //       layer will use index 3 for transparent lighting clears.
 
 
     ///////////////////////////////////////////////
@@ -1087,6 +1235,73 @@ namespace GTEngine
         Renderer::SetBlendEquation(BlendEquation_Add);
         Renderer::SetBlendFunc(BlendFunc_One, BlendFunc_One);
     }
+
+
+    void DefaultSceneRenderer::RCBeginTransparency::Execute()
+    {
+        int drawBuffers[] = {1, 2, 3, 4, 5};      // Material Buffers 0/1/2, Lighting Buffers 0/1
+        Renderer::SetDrawBuffers(5, drawBuffers);
+
+        // Standard depth testing, but no writing.
+        Renderer::EnableDepthTest();
+        Renderer::EnableDepthWrites();
+        Renderer::SetDepthFunc(RendererFunction_LEqual);
+
+        // Stencil testing needs to be enabled.
+        Renderer::EnableStencilTest();
+        Renderer::SetStencilFunc(RendererFunction_GEqual, 0, 255);
+        Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Keep);
+    }
+
+    void DefaultSceneRenderer::RCBeginForegroundTransparency::Execute()
+    {
+        int drawBuffers[] = {1, 2, 3, 4, 5};      // Material Buffers 0/1/2, Lighting Buffers 0/1
+        Renderer::SetDrawBuffers(5, drawBuffers);
+
+        // Standard depth testing, but no writing.
+        Renderer::EnableDepthTest();
+        Renderer::EnableDepthWrites();
+
+
+        // We need to clear the background's depth so that foreground elements are always drawn on top of it.
+        Renderer::DisableColourWrites();
+        Renderer::SetDepthFunc(RendererFunction_Always);
+        Renderer::SetShader(this->depthClearShader);
+
+
+        float vertices[] =
+        {
+            -1.0f, -1.0f, 1.0f,
+             1.0f, -1.0f, 1.0f,
+             1.0f,  1.0f, 1.0f,
+            -1.0f,  1.0f, 1.0f,
+        };
+
+        unsigned int indices[] =
+        {
+            0, 1, 2,
+            2, 3, 0,
+        };
+
+        Renderer::Draw(vertices, indices, 6, VertexFormat::P3);
+
+
+        Renderer::EnableColourWrites();
+        Renderer::SetDepthFunc(RendererFunction_LEqual);
+
+
+        // Stencil testing needs to be enabled.
+        Renderer::DisableStencilTest();
+        Renderer::SetStencilFunc(RendererFunction_GEqual, 1, 255);
+        Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Keep);
+    }
+
+    void DefaultSceneRenderer::RCBeginTransparentMaterialPass::Execute()
+    {
+        Renderer::SetShader(this->shader);
+        Renderer::SetShaderParameter("BackgroundTexture", this->backgroundTexture);
+    }
+
 
     void DefaultSceneRenderer::RCControlBlending::Execute()
     {

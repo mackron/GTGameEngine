@@ -143,6 +143,10 @@ namespace GTEngine
         /// Retrieves the ID of the normals shader.
         const char* GetNormalShaderID() const { return this->definition.normalShaderID.c_str(); }
 
+        /// Retrieves the ID of the refraction shader.
+        const char* GetRefractionShaderID() const { return this->definition.refractionShaderID.c_str(); }
+
+
         /// Retrieves a reference to the list of default parameters.
         const GTCore::Dictionary<ShaderParameter*> & DetDefaultParameters() const { return this->definition.defaultParams.GetParameters(); }
 
