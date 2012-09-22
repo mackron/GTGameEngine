@@ -63,7 +63,7 @@ namespace GTEngine
         // Methods below should only be called internally, but need to be public for a few things.
 
         /// Called for a model that's visible in the currently rendering viewport.
-        void __MaterialPass_Model(const SceneObject &object);
+        void __MaterialPass_Model(const SceneObject &object, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView);
 
         /// Called for a model that's visible in a shadow pass.
         void __ShadowPass_Model(const SceneObject &object, const glm::mat4 &projection, const glm::mat4 &view);
@@ -100,8 +100,7 @@ namespace GTEngine
                   materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr),
                   opaqueColourBuffer(nullptr)
             {
-                this->depthStencil           = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_Depth24_Stencil8);
-                this->depthStencilBackground = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_Depth24_Stencil8);
+                this->depthStencil = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_Depth24_Stencil8);
 
                 if (Renderer::SupportFloatTextures())
                 {
@@ -151,7 +150,6 @@ namespace GTEngine
             {
                 delete this->finalOutput;
                 delete this->depthStencil;
-                delete this->depthStencilBackground;
                 delete this->lightingBuffer0;
                 delete this->lightingBuffer1;
                 delete this->materialBuffer0;
@@ -170,7 +168,6 @@ namespace GTEngine
                 this->finalOutput->Resize( this->width, this->height);
 
                 this->depthStencil->Resize(this->width, this->height);
-                this->depthStencilBackground->Resize(this->width, this->height);
 
                 this->lightingBuffer0->Resize(this->width, this->height);
                 this->lightingBuffer1->Resize(this->width, this->height);
@@ -208,7 +205,6 @@ namespace GTEngine
 
             /// The depth/stencil attachments.
             Texture2D* depthStencil;
-            Texture2D* depthStencilBackground;
 
             // The lighting buffers.
             Texture2D* lightingBuffer0;     // RGB = Diffuse.  A = nothing.
@@ -236,36 +232,13 @@ namespace GTEngine
             Framebuffer* framebuffer;
         };
 
-        /// Render command for ending the frame.
-        struct RCEnd : public RenderCommand
-        {
-            /// RenderCommand::Execute().
-            void Execute();
 
-
-            /// Whether or not the draw the background.
-            bool drawBackground;
-
-            /// The background colour.
-            glm::vec3 backgroundColour;
-        };
-
-        // Render command for beginning a layer.
-        struct RCBeginLayer : public RenderCommand
+        // Render command for beginning the background.
+        struct RCBeginBackground : public RenderCommand
         {
             void Execute();
-
-            //bool isFirstLayer;
         };
 
-        // Render command for ending a layer.
-        struct RCEndLayer : public RenderCommand
-        {
-            void Execute();
-
-            DefaultSceneRenderer::Framebuffer* framebuffer;
-            Shader* compositingShader;
-        };
 
         // Render command for beginning the lighting pass.
         struct RCBeginLighting : public RenderCommand
@@ -273,6 +246,8 @@ namespace GTEngine
             void Execute();
 
             DefaultSceneRenderer::Framebuffer* framebuffer;
+            Shader* colourClearShader;
+            int stencilIndex;
         };
 
         // Render command for controlling blending.
@@ -427,6 +402,42 @@ namespace GTEngine
         };
 
 
+        /// Performs a colour clear, clipping against the stencil buffer.
+        struct RCColourClear : public RenderCommand
+        {
+            void Execute();
+
+            glm::vec3 colour;
+        };
+
+
+        /// Performs the background colour clear.
+        struct RCBackgroundColourClear : public RenderCommand
+        {
+            void Execute();
+
+            glm::vec3 colour;
+            Shader* colourClearShader;
+        };
+
+
+        /// Builds the final image from the different buffers.
+        struct RCBuildFinalImage : public RenderCommand
+        {
+            void Execute();
+
+
+            // The index of the colour buffer to draw the final image into.
+            int colourBufferIndex;
+
+            /// The framebuffer containing the buffers to build the final image from.
+            DefaultSceneRenderer::Framebuffer* framebuffer;
+
+            /// The compositing shader.
+            Shader* compositingShader;
+        };
+
+
 
     private:
 
@@ -449,10 +460,10 @@ namespace GTEngine
 
 
         /// Performs the material pass. This is always the first pass.
-        void MaterialPass(Scene &scene);
+        void MaterialPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView);
 
         /// Performs the lighting pass. This always comes after the material pass.
-        void LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer);
+        void LightingPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, int stencilIndex);
 
 
         // Builds the shadow map of the given directional light.
@@ -530,18 +541,12 @@ namespace GTEngine
         glm::vec3 clearColour;
 
 
-        /// The projection matrix. This is updated at the start of each render.
-        glm::mat4 projection;
-        
-        /// The view matrix. This is updated at the start of each render.
-        glm::mat4 view;
-
 
         // Below are caches for render commands. There are always 2 caches - one for the front RC queue, and another for the back.
-        RCCache<RCBegin,      8>                      rcBegin[2];
-        RCCache<RCEnd,        8>                      rcEnd[2];
-        RCCache<RCBeginLayer, 8>                      rcBeginLayer[2];
-        RCCache<RCEndLayer,   8>                      rcEndLayer[2];
+        RCCache<RCBegin,                 8>           rcBegin[2];
+        RCCache<RCBeginBackground,       8>           rcBeginBackground[2];
+        RCCache<RCBackgroundColourClear, 8>           rcBackgroundColourClear[2];
+        RCCache<RCBuildFinalImage,       8>           rcBuildFinalImage[2];
         RCCache<RCBeginLighting>                      rcBeginLighting[2];
         RCCache<RCControlBlending>                    rcControlBlending[2];
         RCCache<RCSetShader>                          rcSetShader[2];
@@ -568,11 +573,14 @@ namespace GTEngine
 
             Shader* Lighting_ShadowMap;
             Shader* Lighting_PointLightShadowMap;
+            Shader* Lighting_ColourClear;
 
             Shader* Compositor_DiffuseOnly;
             Shader* Compositor_NormalsOnly;
             Shader* Compositor_DiffuseLightingOnly;
             Shader* Compositor_FinalOutput;
+
+            Shader* MaterialPass_ClearBackground;
 
             /// A cache of shaders used by materials in the material pass.
             MaterialShaderCache materialPassShaders;

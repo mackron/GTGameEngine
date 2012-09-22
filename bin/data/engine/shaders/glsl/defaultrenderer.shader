@@ -570,6 +570,15 @@ uses 1 or each light, it will use the following: A1D1P1.
 </shader>
 
 
+<shader id="Engine_LightingPass_ColourClear">
+    void main()
+    {
+        gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0);
+        gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+</shader>
+
+
 
 <!-- *** Shadow Map Shaders *** -->
 <shader id="Engine_LightingPass_ShadowMap">
@@ -653,6 +662,17 @@ uses 1 or each light, it will use the following: A1D1P1.
             gl_FragData[2].a   = 1.0;
         }
     </include>
+</shader>
+
+<shader id="Engine_MaterialPass_ClearBackground">
+    uniform vec3 ClearColour;
+    
+    void main()
+    {
+        gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0);
+        gl_FragData[1] = vec4(ClearColour,   1.0);
+        gl_FragData[2] = vec4(0.0, 0.0, 1.0, 0.0);
+    }
 </shader>
 
 
