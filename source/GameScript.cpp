@@ -193,39 +193,6 @@ namespace GTEngine
 
 
 
-    ////////////////////////////////////////////////////////////////
-    // Editor FFI
-
-    int FFI_Editor_ModelEditor_PlayAnimation(GTCore::Script &script)
-    {
-        (void)script;
-        //auto &game = GameScript::FFI::GetGameObject(script);
-
-        //game.GetEditor().GetModelEditor().PlayAnimation();
-        return 0;
-    }
-
-    int FFI_Editor_ModelEditor_StopAnimation(GTCore::Script &script)
-    {
-        (void)script;
-        //auto &game = GameScript::FFI::GetGameObject(script);
-
-        //game.GetEditor().GetModelEditor().StopAnimation();
-        return 0;
-    }
-
-
-    int FFI_Editor_ModelEditor_ResetCamera(GTCore::Script &script)
-    {
-        (void)script;
-        //auto &game = GameScript::FFI::GetGameObject(script);
-
-        //game.GetEditor().GetModelEditor().ResetCamera();
-        return 0;
-    }
-
-
-
     //////////////////////////////////////////////////////
     // RegisterFFI()
 
@@ -255,24 +222,6 @@ namespace GTEngine
         }
         this->Pop(1);    // Game
 
-
-
-        // TODO: Should move this to Editor, where it belongs.
-        this->GetGlobal("Editor");
-        if (this->IsTable(-1))
-        {
-            this->Push("ModelEditor");
-            this->GetTableValue(-2);
-            if (this->IsTable(-1))
-            {
-                this->SetTableFunction(-1, "PlayAnimation", FFI_Editor_ModelEditor_PlayAnimation);
-                this->SetTableFunction(-1, "StopAnimation", FFI_Editor_ModelEditor_StopAnimation);
-
-                this->SetTableFunction(-1, "ResetCamera",   FFI_Editor_ModelEditor_ResetCamera);
-            }
-            this->Pop(1);
-        }
-        this->Pop(1);    // Editor
 
         return true;
     }
