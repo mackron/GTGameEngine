@@ -93,7 +93,12 @@ namespace GTEngine
         }
 
         /// Called when a collision needs to be processed.
-        virtual void ProcessResult(SceneNode &object, const glm::vec3 &worldPosition, const glm::vec3 &worldNormal) = 0;
+        virtual void ProcessResult(SceneNode &object, const glm::vec3 &worldPosition, const glm::vec3 &worldNormal)
+        {
+            (void)object;
+            (void)worldPosition;
+            (void)worldNormal;
+        }
     };
 
     /// The ray test callback structure for keeping track of the closest object.
@@ -327,13 +332,14 @@ namespace GTEngine
         /// @param callback [in, out] A reference to the callback structure that will receive the results of the ray test.
         ///
         /// @return A pointer to the closest scene node to 'rayStart', or null if there were no contacts.
-        virtual SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback);
+        SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback);
+        SceneNode* RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, short collisionGroup = -1, short collisionMask = -1);
 
         /// Performs a contact test against the proximity volume of the given scene node.
         ///
         /// @param node     [in]      The node to perform the contact test against.
         /// @param callback [in, out] A reference to the callback structure that will receive the results of the contact test.
-        virtual void ContactTest(const SceneNode &node, ContactTestCallback &callback);
+        void ContactTest(const SceneNode &node, ContactTestCallback &callback);
 
 
 
@@ -344,27 +350,8 @@ namespace GTEngine
         ///
         /// @param mvp      [in] The projection matrix whose visible objects are being retrieved.
         /// @param callback [in] The callback that will receive the visible objects.
-        virtual void QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibleCallback &callback);
+        void QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibleCallback &callback);
 
-
-
-        /// Adds the applicable visible components using the given viewport's Add*Component() API.
-        ///
-        /// @param viewport [in] A reference to the viewport whose having visible components added.
-        ///
-        /// @remarks
-        ///     You should not need to call this method directly. It is intended to be used internally by SceneViewport.
-        //virtual void AddVisibleComponents(SceneViewport &viewport);     // TODO: Rename this. Waaaay to confusing..
-
-
-        // TODO: Perhaps use a nicer callback system for renderers that don't necessarilly want to use the same system...
-        /// A hacky temp function for retrieving the SceneNode components of visible objects.
-        virtual void GetVisibleComponents(const glm::mat4 &mvp,
-            GTCore::Vector<ModelComponent*>            &modelComponents,
-            GTCore::Vector<AmbientLightComponent*>     &ambientLightComponents,
-            GTCore::Vector<DirectionalLightComponent*> &directionalLightComponents,
-            GTCore::Vector<PointLightComponent*>       &pointLightComponents,
-            GTCore::Vector<SpotLightComponent*>        &spotLightComponents);
 
 
 
@@ -372,11 +359,11 @@ namespace GTEngine
     public:
 
         /// Sets the scene's gravity.
-        virtual void SetGravity(float x, float y, float z);
-                void SetGravity(const glm::vec3 &gravity) { this->SetGravity(gravity.x, gravity.y, gravity.z); }
+        void SetGravity(float x, float y, float z);
+        void SetGravity(const glm::vec3 &gravity) { this->SetGravity(gravity.x, gravity.y, gravity.z); }
 
         /// Retrieves the scene's gravity.
-        virtual void GetGravity(float &x, float &y, float &z) const;
+        void GetGravity(float &x, float &y, float &z) const;
 
         glm::vec3 GetGravity() const
         {
@@ -399,50 +386,50 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Default value is 2.0 (2 meters).
-        virtual void SetWalkableHeight(float height);
+        void SetWalkableHeight(float height);
 
         /// Sets the walkable radius of actors for navigation.
         ///
         /// @remarks
         ///     Default value is 0.5 (0.5 meters).
-        virtual void SetWalkableRadius(float radius);
+        void SetWalkableRadius(float radius);
 
         /// Sets the walkable slope angle.
         ///
         /// @remarks
         ///     Default value is 10.0 degrees.
-        virtual void SetWalkableSlopeAngle(float angle);
+        void SetWalkableSlopeAngle(float angle);
 
         /// Sets the walkable climb height (for stepping).
         ///
         /// @remarks
         ///     Default value is 0.25.
-        virtual void SetWalkableClimbHeight(float height);
+        void SetWalkableClimbHeight(float height);
 
 
         /// Retrieves the walkable height of actors for navigation.
         ///
         /// @remarks
         ///     Default value is 2.0 (2 meters).
-        virtual float GetWalkableHeight() const;
+        float GetWalkableHeight() const;
 
         /// Retrieves the walkable radius of actors for navigation.
         ///
         /// @remarks
         ///     Default value is 0.5 (0.5 meters).
-        virtual float GetWalkableRadius() const;
+        float GetWalkableRadius() const;
 
         /// Retrieves the walkable slope angle.
         ///
         /// @remarks
         ///     Default value is 10.0 degrees.
-        virtual float GetWalkableSlopeAngle() const;
+        float GetWalkableSlopeAngle() const;
 
         /// Retrieves the walkable climb height (for stepping).
         ///
         /// @remarks
         ///     Default value is 0.25.
-        virtual float GetWalkableClimbHeight() const;
+        float GetWalkableClimbHeight() const;
 
 
         /// Rebuilds the navigation mesh that will be used for doing navigation paths.

@@ -40,22 +40,18 @@ namespace GTEngine
     {
     public:
 
-        /**
-        *   \brief  Constructor.
-        *
-        *   \remarks
-        *       The constructor is where all initialisation takes place. Use operator bool or IsInitialised() to check if initialisation was successful.
-        *       \par
-        *       If initialisation was not successful, Run() will return immediately. Use Run() to start running the game.
-        */
+        /// Constructor.
+        ///
+        /// @remarks
+        ///     The constructor is where all initialisation takes place. Use operator bool or IsInitialised() to check if initialisation was successful.
+        ///     @par
+        ///     If initialisation was not successful, Run() will return immediately. Use Run() to start running the game.
         Game();
 
-        /**
-        *   \brief  Destructor.
-        *
-        *   \remarks
-        *       This is where everything will be uninitialised.
-        */
+        /// Destructor.
+        ///
+        /// @remarks
+        ///     This is where everything will be uninitialised.
         virtual ~Game();
 
 
@@ -74,54 +70,42 @@ namespace GTEngine
         void Shutdown();
 
 
-        /**
-        *   \brief  Runs the game.
-        *   \return An exit code. Zero if the game was run and closed as expected. Non-zero if an error occurs.
-        *
-        *   \remarks
-        *       This method will do everything including initialisation/uninitialisation.
-        */
+        /// Runs the game.
+        ///
+        /// @return An exit code. Zero if the game was run and closed as expected. Non-zero if an error occurs.
+        ///
+        /// @remarks
+        ///     This method will do everything including initialisation/uninitialisation.
         int Run();
 
-        /**
-        *   \brief  Determines whether or not the game is initialised.
-        *   \return True if the game was initialised successfully; false otherwise.
-        */
+        /// Determines whether or not the game is initialised.
+        ///
+        /// @return True if the game was initialised successfully; false otherwise.
         virtual bool IsInitialised() const { return this->isInitialised; }
 
-        /**
-        *   \brief  Marks the game for closure.
-        *
-        *   \remarks
-        *       This does not immediately shutdown the game. Instead it marks the game as wanting to close. It will return before
-        *       the game has actually closed.
-        */
+        /// Marks the game for closure.
+        ///
+        /// @remarks
+        ///     This does not immediately shutdown the game. Instead it marks the game as wanting to close. It will return before
+        ///     the game has actually closed.
         void Close();
 
-        /**
-        *   \brief  Sends an event to the game.
-        *
-        *   \remarks
-        *       This function is thread-safe.
-        */
+        /// Sends an event to the game.
+        ///
+        /// @remarks
+        ///     This function is thread-safe.
         void SendEvent(const GameEvent &e);
 
 
-        /**
-        *   \brief  Retrieves a reference to the internal GUI server.
-        */
+        /// Retrieves a reference to the internal GUI server.
         GTGUI::Server & GetGUI();
 
-        /**
-        *   \brief  Steps the GUI by the given delta.
-        */
+        /// Steps the GUI by the given delta.
         void StepGUI();
         void StepGUI(double deltaTimeInSeconds);
 
 
-        /**
-        *   \brief  Retrieves a pointer to the main game window.
-        */
+        /// Retrieves a pointer to the main game window.
         GTCore::Window* GetWindow() { return this->window; }
 
 
@@ -143,19 +127,13 @@ namespace GTEngine
 
 
 
-        /**
-        *   \brief  Retrieves the current position of the mouse. This is relative to the main game window.
-        */
+        /// Retrieves the current position of the mouse. This is relative to the main game window.
         void GetMousePosition(int &x, int &y);
 
-        /**
-        *   \brief  Retrieves the smoothed position of the mouse. This is required when the mouse is captured.
-        */
+        /// Retrieves the smoothed position of the mouse. This is required when the mouse is captured.
         void GetSmoothedMouseOffset(float &x, float &y);
 
-        /**
-        *   \brief  Sets the position of the mouse relative to the game's main window.
-        */
+        /// Sets the position of the mouse relative to the game's main window.
         void SetMousePosition(int x, int y);
 
 
@@ -165,9 +143,7 @@ namespace GTEngine
         
 
 
-        /**
-        *   \brief  Retrieves the time in seconds between the last two frames. Allows time based movement.
-        */
+        /// Retrieves the time in seconds between the last two frames. Allows time based movement.
         double GetDeltaTimeInSeconds() const { return this->deltaTimeInSeconds; }
 
         /// Retrieves the time in seconds since the game was launched, not including pause time.
@@ -177,24 +153,16 @@ namespace GTEngine
         double GetTimeInSeconds() const { return this->totalRunninTimeInSeconds; }
 
 
-        /**
-        *   \brief  Retrieves a pointer to the games font cache.
-        */
+        /// Retrieves a pointer to the games font cache.
         GTType::FontServer & GetFontServer() { return this->fontServer; }
 
-        /**
-        *   \brief  Retrieves a pointer to the default font.
-        */
+        /// Retrieves a pointer to the default font.
         GTType::Font* GetDefaultFont() { return this->defaultFont; }
 
-        /**
-        *   \brief  Captures the mouse.
-        */
+        /// Captures the mouse.
         void CaptureMouse();
 
-        /**
-        *   \brief  Releases the mouse.
-        */
+        /// Releases the mouse.
         void ReleaseMouse();
 
         /// Determines whether or not the mouse is captured.
@@ -223,27 +191,21 @@ namespace GTEngine
         bool IsMouseButtonDown(GTCore::MouseButton button) const;
 
 
-        /**
-        *   \brief  Pauses the game.
-        *
-        *   \remarks
-        *       When the game is paused, scene nodes will continue to render, but nothing will be stepped.
-        *       \par
-        *       This will also pause the current scene. An application should never need to explicately pause/resume a scene.
-        */
+        /// Pauses the game.
+        ///
+        /// @remarks
+        ///     When the game is paused, scene nodes will continue to render, but nothing will be stepped.
+        ///     @par
+        ///     This will also pause the current scene. An application should never need to explicately pause/resume a scene.
         void Pause();
 
-        /**
-        *   \brief  Resumes the paused game.
-        *
-        *   \remarks
-        *       This will also resume the current scene. An application should never need to explicately pause/resume a scene.
-        */
+        /// Resumes the paused game.
+        ///
+        /// @remarks
+        ///     This will also resume the current scene. An application should never need to explicately pause/resume a scene.
         void Resume();
 
-        /**
-        *   \brief  Determines whether or not the game is paused.
-        */
+        /// Determines whether or not the game is paused.
         bool IsPaused() const { return this->paused; }
 
 
