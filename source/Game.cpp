@@ -43,7 +43,8 @@ namespace GTEngine
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
           dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false),
           currentGameState(nullptr), previousGameState(nullptr),
-          dataFilesWatcherEventHandler(*this)
+          dataFilesWatcherEventHandler(*this),
+          editorToggleKey(GTCore::Keys::Tab), profilerToggleKey(GTCore::Keys::F11)
     {
     }
 
@@ -1041,6 +1042,33 @@ namespace GTEngine
         if (this->currentGameState != nullptr)
         {
             this->currentGameState->OnKeyPressed(e.keypressed.key);
+        }
+
+
+        // Editor.
+        if (e.keypressed.key == this->editorToggleKey)
+        {
+            if (!this->IsEditorOpen())
+            {
+                this->OpenEditor();
+            }
+            else
+            {
+                this->CloseEditor();
+            }
+        }
+
+        // Profiler.
+        if (e.keypressed.key == this->profilerToggleKey)
+        {
+            if (!this->IsDebuggingOpen())
+            {
+                this->ShowDebugging();
+            }
+            else
+            {
+                this->HideDebugging();
+            }
         }
     }
 
