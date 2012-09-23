@@ -32,17 +32,17 @@ namespace GTEngine
         GTCore::IO::snprintf(buffer, 64, "__AnonShaderID%d", AnonShaderIDCount);
 
         dest = buffer;
-        
+
         ++AnonShaderIDCount;
     }
 
 
     MaterialDefinition::MaterialDefinition()
         : fileName(),
-          diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(),
+          diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(),
           defaultParams(),
-          enableTransparency(),
-          metadata()
+          metadata(),
+          enableTransparency(false), refractive(false)
     {
     }
 
@@ -64,7 +64,7 @@ namespace GTEngine
         this->defaultParams.Clear();
     }
 
-    
+
     bool MaterialDefinition::LoadFromXML(char* xml)
     {
         xml_document<> document;
@@ -273,7 +273,7 @@ namespace GTEngine
                         if (nameAttr != nullptr)
                         {
                             auto valueStr = child->value();
-                            
+
                             this->defaultParams.Set(nameAttr->value(), Texture2DLibrary::Acquire(valueStr));
                         }
                     }
