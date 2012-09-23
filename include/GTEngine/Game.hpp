@@ -742,6 +742,14 @@ namespace GTEngine
         }dataFilesWatcherEventHandler;
 
 
+        /// The key binding for toggling the editor.
+        GTCore::Key editorToggleKey;
+
+        /// The key binding for toggling the profiler.
+        GTCore::Key profilerToggleKey;
+
+
+
     private:    // No copying.
         Game(const Game &);
         Game & operator=(const Game &);
