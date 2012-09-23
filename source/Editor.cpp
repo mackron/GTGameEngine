@@ -38,6 +38,10 @@ namespace GTEngine
             {
                 this->GUI.EditorMain = guiServer.GetElementByID("EditorMain");
 
+                // We actually want the editor element to be the first child of the root. If we don't do this, sometimes a game can be in a state
+                // where the editor will be placed underneath another GUI element, causing it to not look quite right.
+                guiServer.GetRootElement()->PrependChild(*this->GUI.EditorMain);
+
                 // Here we startup our sub-editors.
                 this->modelEditor.Startup();
                 this->imageEditor.Startup();

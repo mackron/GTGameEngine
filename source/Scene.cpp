@@ -553,6 +553,12 @@ namespace GTEngine
         return rayTestResult.closestSceneNode;
     }
 
+    SceneNode* Scene::RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, short collisionGroup, short collisionMask)
+    {
+        RayTestCallback callback(collisionGroup, collisionMask);
+        return this->RayTest(rayStart, rayEnd, callback);
+    }
+
 
     void Scene::ContactTest(const SceneNode &node, ContactTestCallback &callback)
     {
@@ -575,23 +581,6 @@ namespace GTEngine
     }
 
 
-    void Scene::GetVisibleComponents(const glm::mat4 &mvp,
-            GTCore::Vector<ModelComponent*>            &modelComponentsOut,
-            GTCore::Vector<AmbientLightComponent*>     &ambientLightComponentsOut,
-            GTCore::Vector<DirectionalLightComponent*> &directionalLightComponentsOut,
-            GTCore::Vector<PointLightComponent*>       &pointLightComponentsOut,
-            GTCore::Vector<SpotLightComponent*>        &spotLightComponentsOut)
-    {
-        SceneCullingCallback callback
-        (
-            modelComponentsOut,
-            pointLightComponentsOut,
-            spotLightComponentsOut,
-            ambientLightComponentsOut,
-            directionalLightComponentsOut
-        );
-        this->cullingManager.ProcessVisibleObjects(mvp, callback);
-    }
 
     void Scene::SetGravity(float x, float y, float z)
     {

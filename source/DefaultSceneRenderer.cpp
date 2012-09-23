@@ -668,6 +668,7 @@ namespace GTEngine
                 rcBeginTransparentMaterialPass.backgroundTexture = framebuffer.opaqueColourBuffer;
                 Renderer::BackRCQueue->Append(rcBeginTransparentMaterialPass);
 
+
                 Renderer::BackRCQueue->Append(queue);
                 queue.Clear();
 

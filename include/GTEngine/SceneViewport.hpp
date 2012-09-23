@@ -92,11 +92,6 @@ namespace GTEngine
 
 
 
-        /// Retrieves a direct reference to the internal map of layer cameras.
-        //      GTCore::Map<int, GTEngine::SceneNode*> & GetLayerCameraMap()       { return this->cameraNodes; }
-        //const GTCore::Map<int, GTEngine::SceneNode*> & GetLayerCameraMap() const { return this->cameraNodes; }
-
-
     // Picking.
     public:
 
@@ -105,7 +100,7 @@ namespace GTEngine
         /// @param  y       [in]  The y position on the viewport the ray should start at.
         /// @param  rayNear [out] The end of the ray that is closest to the viewer.
         /// @param  rayFar  [out] The end of the ray that is farthest from the viewport.
-        void CalculatePickingRay(int x, int y, glm::vec3 &rayNear, glm::vec3 &rayFar, int layer = 0);
+        void CalculatePickingRay(int x, int y, glm::vec3 &rayNear, glm::vec3 &rayFar, int layer = ViewportLayer::Main);
 
 
     // Misc stuff.
@@ -114,12 +109,12 @@ namespace GTEngine
         /// Projects a 3D point to window coordinates based on the viewport.
         ///
         /// @param position [in] The point in 3D space being projected.
-        glm::vec3 Project(const glm::vec3 &position, int layer = 0);
+        glm::vec3 Project(const glm::vec3 &position, int layer = ViewportLayer::Main);
 
         /// Unprojects a 2D point into 3D space.
         ///
         /// @param position [in] The point in 2D space being unprojected.
-        glm::vec3 Unproject(const glm::vec3 &position, int layer = 0);
+        glm::vec3 Unproject(const glm::vec3 &position, int layer = ViewportLayer::Main);
 
         /// Retrieves a 2D projection matrix for this viewport.
         ///
@@ -132,7 +127,7 @@ namespace GTEngine
         glm::mat4 Get2DProjectionMatrix(bool yDown = false) const;
 
         /// Retrieves the model-view-projection matrix used by this viewport and it's current camera.
-        glm::mat4 GetMVPMatrix(int layer = 0) const;
+        glm::mat4 GetMVPMatrix(int layer = ViewportLayer::Main) const;
 
 
 
