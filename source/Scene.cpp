@@ -652,19 +652,24 @@ namespace GTEngine
         auto proximityComponent = node.GetComponent<ProximityComponent>();
         if (proximityComponent != nullptr)
         {
-            // The very first thing we're going to do is ensure the scaling has been applied. We do this in OnSceneNodeScaled(), too.
-            proximityComponent->ApplyScaling(node.GetWorldScale());
-
-            // Now we need to ensure the rigid body is transformed correctly.
             auto &ghostObject = proximityComponent->GetGhostObject();
-
-            btTransform transform;
-            node.GetWorldTransform(transform);
-            ghostObject.setWorldTransform(transform);
-
-            if (node.IsVisible())
+            if (ghostObject.getCollisionShape() != nullptr)
             {
-                this->physicsManager.AddGhostObject(ghostObject, proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
+                // The very first thing we're going to do is ensure the scaling has been applied. We do this in OnSceneNodeScaled(), too.
+                proximityComponent->ApplyScaling(node.GetWorldScale());
+
+                btTransform transform;
+                node.GetWorldTransform(transform);
+                ghostObject.setWorldTransform(transform);
+
+                if (node.IsVisible())
+                {
+                    this->physicsManager.AddGhostObject(ghostObject, proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
+                }
+            }
+            else
+            {
+                Log("Warning: Attempting to add a proximity component without a collision shape. Ignoring.");
             }
         }
 
