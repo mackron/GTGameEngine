@@ -507,7 +507,7 @@ namespace GTEngine
             assert(modelComponent != nullptr);
 
             auto model = modelComponent->GetModel();
-            if (model != nullptr && modelComponent->IsModelVisible())
+            if (model != nullptr)
             {
                 glm::mat4 ModelMatrix     = modelComponent->GetNode().GetWorldTransform();
                 glm::mat4 ModelViewMatrix = cameraView * ModelMatrix;
@@ -600,7 +600,7 @@ namespace GTEngine
             if (modelComponent->IsShadowCastingEnabled())
             {
                 auto model = modelComponent->GetModel();
-                if (model != nullptr && modelComponent->IsModelVisible())
+                if (model != nullptr)
                 {
                     glm::mat4 ModelViewMatrix = view       * modelComponent->GetNode().GetWorldTransform();
                     glm::mat4 MVPMatrix       = projection * ModelViewMatrix;

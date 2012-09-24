@@ -363,7 +363,7 @@ namespace GTEngine
                 auto modelComponent = sceneNode.GetComponent<ModelComponent>();
                 if (modelComponent != nullptr)
                 {
-                    if (modelComponent->GetModel() != nullptr)
+                    if (modelComponent->GetModel() != nullptr && modelComponent->IsModelVisible())
                     {
                         this->ProcessVisibleObjectModel(sceneNode, callback);
                     }
@@ -480,7 +480,7 @@ namespace GTEngine
                         auto modelComponent = sceneNode->GetComponent<ModelComponent>();
                         assert(modelComponent != nullptr);
 
-                        if (modelComponent->GetModel() != nullptr)
+                        if (modelComponent->GetModel() != nullptr && modelComponent->IsModelVisible())
                         {
                             this->cullingManager.ProcessVisibleObjectModel(*sceneNode, this->callback);
                         }
