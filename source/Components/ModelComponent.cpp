@@ -9,15 +9,13 @@ namespace GTEngine
 
     ModelComponent::ModelComponent(SceneNode &node)
         : Component(node), model(nullptr),
-          cullFrontFaces(false), cullBackFaces(true),
-          castShadow(true),
-          isOwner(false)
+          flags(CullBackFaces | CastShadow | Visible)
     {
     }
 
     ModelComponent::~ModelComponent()
     {
-        if (this->isOwner)
+        if (this->flags & Owner)
         {
             ModelLibrary::Delete(this->model);
         }
@@ -25,13 +23,21 @@ namespace GTEngine
 
     void ModelComponent::SetModel(Model* model, bool takeOwnership)
     {
-        if (this->isOwner)
+        if (this->flags & Owner)
         {
             ModelLibrary::Delete(this->model);
         }
-
+        
         this->model   = model;
-        this->isOwner = takeOwnership;
+
+        if (takeOwnership)
+        {
+            this->flags |= Owner;
+        }
+        else
+        {
+            this->flags &= ~Owner;
+        }
 
         // This component has changed. We need to let the scene know about this so that it can change culling information and whatnot.
         auto scene = this->GetNode().GetScene();
@@ -55,19 +61,34 @@ namespace GTEngine
 
     void ModelComponent::SetFaceCulling(bool cullFront, bool cullBack)
     {
-        this->cullFrontFaces = cullFront;
-        this->cullBackFaces  = cullBack;
+        if (cullFront)
+        {
+            this->flags |= CullFrontFaces;
+        }
+        else
+        {
+            this->flags &= ~CullFrontFaces;
+        }
+
+        if (cullBack)
+        {
+            this->flags |= CullBackFaces;
+        }
+        else
+        {
+            this->flags &= ~CullBackFaces;
+        }
     }
 
 
     void ModelComponent::EnableShadowCasting()
     {
-        this->castShadow = true;
+        this->flags |= CastShadow;
     }
 
     void ModelComponent::DisableShadowCasting()
     {
-        this->castShadow = false;
+        this->flags &= ~CastShadow;
     }
 }
 

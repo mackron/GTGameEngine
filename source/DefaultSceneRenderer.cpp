@@ -507,7 +507,7 @@ namespace GTEngine
             assert(modelComponent != nullptr);
 
             auto model = modelComponent->GetModel();
-            if (model != nullptr)
+            if (model != nullptr && modelComponent->IsModelVisible())
             {
                 glm::mat4 ModelMatrix     = modelComponent->GetNode().GetWorldTransform();
                 glm::mat4 ModelViewMatrix = cameraView * ModelMatrix;
@@ -553,9 +553,9 @@ namespace GTEngine
                         rcDrawGeometry.normalMatrix      = NormalMatrix;
                         rcDrawGeometry.modelViewMatrix   = ModelViewMatrix;
                         rcDrawGeometry.modelMatrix       = ModelMatrix;
-                        rcDrawGeometry.changeFaceCulling = !(modelComponent->CullBackFaces() == true && modelComponent->CullFrontFaces() == false);
-                        rcDrawGeometry.cullBackFace      = modelComponent->CullBackFaces();
-                        rcDrawGeometry.cullFrontFace     = modelComponent->CullFrontFaces();
+                        rcDrawGeometry.changeFaceCulling = !(modelComponent->IsCullingBackFaces() == true && modelComponent->IsCullingFrontFaces() == false);
+                        rcDrawGeometry.cullBackFace      = modelComponent->IsCullingBackFaces();
+                        rcDrawGeometry.cullFrontFace     = modelComponent->IsCullingFrontFaces();
 
                         // The material may have pending properties. These need to be set on the shader also.
                         auto &materialParams = material->GetParameters();
@@ -600,7 +600,7 @@ namespace GTEngine
             if (modelComponent->IsShadowCastingEnabled())
             {
                 auto model = modelComponent->GetModel();
-                if (model != nullptr)
+                if (model != nullptr && modelComponent->IsModelVisible())
                 {
                     glm::mat4 ModelViewMatrix = view       * modelComponent->GetNode().GetWorldTransform();
                     glm::mat4 MVPMatrix       = projection * ModelViewMatrix;
