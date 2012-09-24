@@ -324,7 +324,6 @@ namespace GTEngine
         if (!this->paused)
         {
             this->paused = true;
-            this->OnPause();
         }
     }
 
@@ -333,48 +332,16 @@ namespace GTEngine
         if (this->paused)
         {
             this->paused = false;
-            this->OnResume();
         }
     }
 
 
     void Scene::Update(double deltaTimeInSeconds)
     {
-        // First we need to do our pre-update cleanup of caches, dead nodes, etc.
-        //this->DoPreUpdateClean();
-
         // Before doing anything we're going to step the dynamics.
         if (!this->IsPaused())
         {
             this->physicsManager.Step(deltaTimeInSeconds);
-
-            /*
-            this->dynamicsWorld.Step(static_cast<btScalar>(deltaTimeInSeconds), 4);
-
-            // Here is where we're going to check for collisions with other rigid bodies.
-            int numManifolds = this->dynamicsWorld.GetCollisionDispatcher().getNumManifolds();
-	        for (int i = 0; i < numManifolds; i++)
-	        {
-		        auto contactManifold = this->dynamicsWorld.GetCollisionDispatcher().getManifoldByIndexInternal(i);
-		        auto obA = static_cast<const btCollisionObject*>(contactManifold->getBody0());
-		        auto obB = static_cast<const btCollisionObject*>(contactManifold->getBody1());
-
-                // We'll just use the first contact point for ours. Should probably experiment with looping over all points.
-                for (int iContact = 0; iContact < contactManifold->getNumContacts(); ++iContact)
-                {
-                    btManifoldPoint& pt = contactManifold->getContactPoint(iContact);
-
-                    auto dataA = static_cast<SceneNode*>(obA->getUserPointer());
-                    auto dataB = static_cast<SceneNode*>(obB->getUserPointer());
-
-                    if (dataA != nullptr && dataB != nullptr)
-                    {
-                        dataA->OnContact(*dataB, pt);
-                        dataB->OnContact(*dataA, pt);
-                    }
-                }
-            }
-            */
         }
 
 
@@ -397,19 +364,6 @@ namespace GTEngine
             }
         }
         this->renderer->End(*this);
-
-        
-        /*
-        // Now we need to draw everything on every attached viewport.
-        for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
-        {
-            auto viewport = iViewport->value;
-            assert(viewport != nullptr);
-
-            viewport->Render();
-        }
-        */
-
     }
 
 
@@ -861,13 +815,5 @@ namespace GTEngine
         }
 
         // TODO: Proximity, occluders.
-    }
-
-    void Scene::OnPause()
-    {
-    }
-
-    void Scene::OnResume()
-    {
     }
 }

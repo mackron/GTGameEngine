@@ -211,7 +211,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The destructor of derived classes will <b>not</b> delete attached objects.
-        virtual ~Scene();
+        ~Scene();
 
 
         /// Adds the given object to the scene.
@@ -243,35 +243,35 @@ namespace GTEngine
         /// @remarks
         ///     Internally, refreshing an object will simply remove and re-add the object from/to the scene, which will then force updates to
         ///     the internal structures (update manager, physics manager, etc).
-        virtual void RefreshObject(SceneObject &object);
+        void RefreshObject(SceneObject &object);
 
 
         /// Pauses the scene.
         ///
         /// @remarks
         ///     Calling Update() while the scene is paused will still draw each scene node, but it will not step scene nodes or animations.
-        virtual void Pause();
+        void Pause();
 
         /// Resumes the scene.
-        virtual void Resume();
+        void Resume();
 
         /// Determines whether or not the scene is paused.
         ///
         /// @return True if the scene is paused; false otherwise.
-        virtual bool IsPaused() const { return this->paused; }
+        bool IsPaused() const { return this->paused; }
 
         
         /// Steps the scene.
         ///
         /// @param deltaTimeInSeconds [in] The time in seconds to step the scene by. This will usually be the time between frames, but it can be adjusted to speed up/slow down time.
-        virtual void Update(double deltaTimeInSeconds);
+        void Update(double deltaTimeInSeconds);
 
 
         /// Retrieves a pointer to the first occurance of the scene node with the given name. Returns nullptr if none exist.
-        virtual SceneNode* FindFirstNode(const char *name);
+        SceneNode* FindFirstNode(const char *name);
 
         /// Retrieves a pointer to the first occurance of the scene node with the given component. Returns nullptr is none exist.
-        virtual SceneNode* FindFirstNodeWithComponent(const char *componentName);
+        SceneNode* FindFirstNodeWithComponent(const char *componentName);
 
         template <typename T>
         SceneNode* FindFirstNodeWithComponent()
@@ -283,19 +283,19 @@ namespace GTEngine
         /// Adds a viewport to the scene.
         ///
         /// @param viewport [in] A reference to the viewport to add to the scene.
-        virtual void AddViewport(SceneViewport &viewport);
+        void AddViewport(SceneViewport &viewport);
 
         /// Removes a viewport from the scene.
         ///
         /// @param viewport [in] A reference to the viewport to remove from the scene.
-        virtual void RemoveViewport(SceneViewport &viewport);
+        void RemoveViewport(SceneViewport &viewport);
 
         /// Removes every viewport.
-        virtual void RemoveAllViewports();
+        void RemoveAllViewports();
 
 
         /// Retrieves the AABB of the scene.
-        virtual void GetAABB(glm::vec3 &min, glm::vec3 &max) const;
+        void GetAABB(glm::vec3 &min, glm::vec3 &max) const;
 
 
         /// Retrieves a reference to the renderer.
@@ -452,26 +452,24 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This function is called when a scene node that is already part of this scene has a child attached to it.
-        virtual void OnSceneNodeAdded(SceneNode& node);
+        void OnSceneNodeAdded(SceneNode& node);
 
         /// Called after a scene node is removed from the scene.
-        virtual void OnSceneNodeRemoved(SceneNode& node);
+        void OnSceneNodeRemoved(SceneNode& node);
 
         /// Called when a scene node is moved, rotated or both. This is not called for scaling. Use OnSceneNodeScale() that.
         ///
         /// @param node [in] A reference to the node that has been transformed.
-        virtual void OnSceneNodeTransform(SceneNode &node);
+        void OnSceneNodeTransform(SceneNode &node);
 
-        virtual void OnSceneNodeScale(SceneNode& node);
-        virtual void OnSceneNodeStaticChanged(SceneNode& node);
-        virtual void OnSceneNodeVisibleChanged(SceneNode& node);
+        void OnSceneNodeScale(SceneNode& node);
+        void OnSceneNodeStaticChanged(SceneNode& node);
+        void OnSceneNodeVisibleChanged(SceneNode& node);
 
         /// Sometimes when a component changes, the scene needs to update some information. An example is when the attenuation of a point light
         /// changes, the scene may need to update culling information.
-        virtual void OnSceneNodeComponentChanged(SceneNode& node, Component& component);
+        void OnSceneNodeComponentChanged(SceneNode& node, Component& component);
 
-        virtual void OnPause();
-        virtual void OnResume();
 
 
     private:
