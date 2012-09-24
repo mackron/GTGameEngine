@@ -44,10 +44,10 @@ namespace GTEngine
         void SetFaceCulling(bool cullFront, bool cullBack);
 
         /// Determines whether or not front faces should be culled.
-        bool CullFrontFaces() const { return this->cullFrontFaces; }
+        bool IsCullingFrontFaces() const { return (this->flags & CullFrontFaces) != 0; }
 
         /// Determines whether or not back faces should be culled.
-        bool CullBackFaces() const { return this->cullBackFaces; }
+        bool IsCullingBackFaces() const { return (this->flags & CullBackFaces) != 0; }
 
         
         /// Enables shadow casting.
@@ -63,8 +63,23 @@ namespace GTEngine
         void DisableShadowCasting();
 
         /// Determines whether or not this model casts shadows.
-        bool IsShadowCastingEnabled() const { return this->castShadow; }
+        bool IsShadowCastingEnabled() const { return (this->flags & CastShadow) != 0; }
 
+
+        /// Shows the model.
+        ///
+        /// @remarks
+        ///     This is NOT the same as SceneNode::Show(). The scene node's visibility state will not be changed.
+        void ShowModel() { this->flags |= Visible; }
+
+        /// Hides the model.
+        ///
+        /// @remarks
+        ///     This is NOT the same as SceneNode::Hide(). The scene node's visibility state will not be changed, and instead only the model will be hidden.
+        void HideModel() { this->flags &= ~Visible; }
+
+        /// Determines whether or not the model is visible.
+        bool IsModelVisible() const { return (this->flags & Visible) != 0; }
 
 
     private:
@@ -72,20 +87,19 @@ namespace GTEngine
         /// A pointer to the applicable model.
         Model *model;
 
-        /// Keeps track of whether or not to draw front faces.
-        bool cullFrontFaces;
 
-        /// Keeps track of whether or not back faces should be drawn.
-        bool cullBackFaces;
-        
+        enum Flags
+        {
+            CullFrontFaces = (1 << 0),
+            CullBackFaces  = (1 << 1),
+            CastShadow     = (1 << 2),
+            Visible        = (1 << 3),
+            Owner          = (1 << 4),
+        };
 
-        /// Keeps track of whether or not this model casts a shadow.
-        bool castShadow;
+        /// The flags for this model.
+        uint32_t flags;
 
-
-        /// Keeps track of whether or not the component owns the model. If this is 'true', the component will destruct
-        /// the model when it is destructed.
-        bool isOwner;
 
     GTENGINE_DECL_COMPONENT_END()   
 }
