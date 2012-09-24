@@ -448,17 +448,13 @@ namespace GTEngine
 
     public: // Events.
 
-        /**
-        *   \brief  Called after a scene node is added to the scene. See remarks.
-        *
-        *   \remarks
-        *       This function is called when a scene node that is already part of this scene has a child attached to it.
-        */
+        /// Called after a scene node is added to the scene. See remarks.
+        ///
+        /// @remarks
+        ///     This function is called when a scene node that is already part of this scene has a child attached to it.
         virtual void OnSceneNodeAdded(SceneNode& node);
 
-        /**
-        *   \brief  Called after a scene node is removed from the scene.
-        */
+        /// Called after a scene node is removed from the scene.
         virtual void OnSceneNodeRemoved(SceneNode& node);
 
         /// Called when a scene node is moved, rotated or both. This is not called for scaling. Use OnSceneNodeScale() that.
