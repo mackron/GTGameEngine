@@ -1096,6 +1096,7 @@ namespace GTEngine
                 const char* materialEmissive   = ShaderLibrary::GetShaderString(material.GetEmissiveShaderID());
                 const char* materialShininess  = ShaderLibrary::GetShaderString(material.GetShininessShaderID());
                 const char* materialNormal     = ShaderLibrary::GetShaderString(material.GetNormalShaderID());
+                const char* materialSpecular   = ShaderLibrary::GetShaderString(material.GetSpecularShaderID());
                 const char* materialRefraction = ShaderLibrary::GetShaderString(material.GetRefractionShaderID());
 
                 // With the shader strings retrieved, we need to concatinate the shaders and create the shader object.
@@ -1110,6 +1111,8 @@ namespace GTEngine
                 fragmentShaderString.Append("\n");
                 fragmentShaderString.Append(materialNormal);
                 fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialSpecular);
+                fragmentShaderString.Append("\n");
                 fragmentShaderString.Append(materialRefraction);
 
                 shader = new Shader(baseShaderVS, fragmentShaderString.c_str());
@@ -1122,6 +1125,7 @@ namespace GTEngine
                 const char* materialEmissive  = ShaderLibrary::GetShaderString(material.GetEmissiveShaderID());
                 const char* materialShininess = ShaderLibrary::GetShaderString(material.GetShininessShaderID());
                 const char* materialNormal    = ShaderLibrary::GetShaderString(material.GetNormalShaderID());
+                const char* materialSpecular  = ShaderLibrary::GetShaderString(material.GetSpecularShaderID());
 
                 // With the shader strings retrieved, we need to concatinate the shaders and create the shader object.
                 GTCore::Strings::List<char> fragmentShaderString;
@@ -1134,6 +1138,8 @@ namespace GTEngine
                 fragmentShaderString.Append(materialShininess);
                 fragmentShaderString.Append("\n");
                 fragmentShaderString.Append(materialNormal);
+                fragmentShaderString.Append("\n");
+                fragmentShaderString.Append(materialSpecular);
 
                 shader = new Shader(baseShaderVS, fragmentShaderString.c_str());
             }

@@ -147,6 +147,9 @@ namespace GTEngine
         /// Retrieves the ID of the normals shader.
         const char* GetNormalShaderID() const { return this->definition.normalShaderID.c_str(); }
 
+        /// Retrieves the ID of the specular shader.
+        const char* GetSpecularShaderID() const { return this->definition.specularShaderID.c_str(); }
+
         /// Retrieves the ID of the refraction shader.
         const char* GetRefractionShaderID() const { return this->definition.refractionShaderID.c_str(); }
 

@@ -29,7 +29,7 @@
     }
 </shader>
 
-<shader id="Material_DefaultSpecularPower">
+<shader id="Material_DefaultSpecular">
     float Specular()
     {
         return 64.0;
