@@ -39,7 +39,7 @@ namespace GTEngine
 
     MaterialDefinition::MaterialDefinition()
         : fileName(),
-          diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(),
+          diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(), specularShaderID(),
           defaultParams(),
           metadata(),
           enableTransparency(false), refractive(false)
@@ -204,6 +204,31 @@ namespace GTEngine
             {
                 // Note how we don't set a default ID here.
                 this->refractive = false;
+            }
+            
+
+            // <specular>
+            auto specularNode = materialNode->first_node("specular");
+            if (specularNode != nullptr)
+            {
+                auto idAttr = specularNode->first_attribute("id");
+                if (idAttr != nullptr)
+                {
+                    this->specularShaderID = idAttr->value();
+                }
+                else
+                {
+                    GenerateAnonymousShaderID(this->specularShaderID);
+                }
+
+                if (specularNode->value_size() > 0)
+                {
+                    ShaderLibrary::AddShaderString(this->specularShaderID.c_str(), specularNode->value());
+                }
+            }
+            else
+            {
+                this->specularShaderID = "Material_DefaultSpecular";
             }
 
 

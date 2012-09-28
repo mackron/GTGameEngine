@@ -15,6 +15,13 @@
     }
 </shader>
 
+<shader id="Material_DefaultNormal">
+    vec3 Normal()
+    {
+        return vec3(0.0, 0.0, 1.0);
+    }
+</shader>
+
 <shader id="Material_DefaultShininess">
     float Shininess()
     {
@@ -22,12 +29,14 @@
     }
 </shader>
 
-<shader id="Material_DefaultNormal">
-    vec3 Normal()
+<shader id="Material_DefaultSpecularPower">
+    float Specular()
     {
-        return vec3(0.0, 0.0, 1.0);
+        return 64.0;
     }
 </shader>
+
+
 
 
 <shader id="Material_NoDiffuse">
@@ -59,6 +68,9 @@
 </shader>
 
 
+
+
+
 <shader id="Material_SimpleDiffuse">
     uniform vec3 DiffuseColour;
     
@@ -85,6 +97,19 @@
         return ShininessFactor;
     }
 </shader>
+
+<shader id="Material_SimpleSpecularPower">
+    uniform float SpecularPower;
+    
+    float Specular()
+    {
+        return ShininessFactor;
+    }
+</shader>
+
+
+
+
 
 
 <shader id="Material_TexturedDiffuse">

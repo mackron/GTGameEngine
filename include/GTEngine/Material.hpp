@@ -81,6 +81,10 @@ namespace GTEngine
         /// The ID of the refraction shader. This can actually be null if this->refractive is false.
         GTCore::String refractionShaderID;
 
+        /// The ID of the specular shader.
+        GTCore::String specularShaderID;
+
+
 
         /// The default parameters.
         ShaderParameterCache defaultParams;
