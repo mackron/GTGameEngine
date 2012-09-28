@@ -49,8 +49,8 @@ namespace GTEngine
 
         // We use the camera for our lights.
         this->camera.AddComponent<GTEngine::CameraComponent>();
-        this->camera.AddDirectionalLightComponent(0.5f, 0.5f, 0.5f);
-        this->camera.AddAmbientLightComponent(0.25f, 0.25f, 0.25f);
+        this->camera.AddDirectionalLightComponent(0.25f, 0.25f, 0.25f);
+        this->camera.AddAmbientLightComponent(0.6f, 0.6f, 0.6f);
 
 
         // Now we add the scene nodes to the scene.
