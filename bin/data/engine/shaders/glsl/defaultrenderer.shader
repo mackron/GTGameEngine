@@ -92,13 +92,17 @@ uses 1 or each light, it will use the following: A1D1P1.
     void CalculateDirectionalLighting(DirectionalLight light, inout vec3 diffuseOut, inout vec3 specularOut)
     {
         vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
+        
+        vec4  texel         = texture2D(Lighting_Normals, fragCoord);
+        vec3  normal        = texel.rgb;
+        float specularPower = texel.a;
     
-        vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
+        vec3 N = normal;
         vec3 L = -light.Direction;
         vec3 H = normalize(L - normalize(VertexOutput_Position.xyz));
         
         float diffuse  = DiffuseFactor(N, L);
-        float specular = SpecularFactor(N, H, 64.0);
+        float specular = SpecularFactor(N, H, specularPower);
 
         diffuseOut  += light.Colour * diffuse;
         specularOut += light.Colour * specular;
@@ -120,12 +124,16 @@ uses 1 or each light, it will use the following: A1D1P1.
     {
         vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
     
-        vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
+        vec4  texel         = texture2D(Lighting_Normals, fragCoord);
+        vec3  normal        = texel.rgb;
+        float specularPower = texel.a;
+    
+        vec3 N = normal;
         vec3 L = -light.Direction;
         vec3 H = normalize(L - normalize(VertexOutput_Position.xyz));
         
         float diffuse  = DiffuseFactor(N, L);
-        float specular = SpecularFactor(N, H, 64.0);
+        float specular = SpecularFactor(N, H, specularPower);
         
         
         vec4  shadowCoord = VertexOutput_ShadowCoord / VertexOutput_ShadowCoord.w;
@@ -180,12 +188,16 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
         
-        vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
+        vec4  texel         = texture2D(Lighting_Normals, fragCoord);
+        vec3  normal        = texel.rgb;
+        float specularPower = texel.a;
+        
+        vec3 N = normal;
         vec3 L = light.Position - VertexOutput_Position.xyz;
         vec3 H = normalize(normalize(L) - normalize(VertexOutput_Position.xyz));
 
         float diffuse     = DiffuseFactor(N, normalize(L));
-        float specular    = SpecularFactor(N, H, 64.0);
+        float specular    = SpecularFactor(N, H, specularPower);
         float attenuation = AttenuationFactor(light.ConstantAttenuation, light.LinearAttenuation, light.QuadraticAttenuation, length(L));
 
         diffuseOut  += light.Colour * diffuse  * attenuation;
@@ -215,12 +227,16 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
         
-        vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
+        vec4  texel         = texture2D(Lighting_Normals, fragCoord);
+        vec3  normal        = texel.rgb;
+        float specularPower = texel.a;
+        
+        vec3 N = normal;
         vec3 L = light.Position - VertexOutput_Position.xyz;
         vec3 H = normalize(normalize(L) - normalize(VertexOutput_Position.xyz));
 
         float diffuse     = DiffuseFactor(N, normalize(L));
-        float specular    = SpecularFactor(N, H, 64.0);
+        float specular    = SpecularFactor(N, H, specularPower);
         float attenuation = AttenuationFactor(light.ConstantAttenuation, light.LinearAttenuation, light.QuadraticAttenuation, length(L));
         
         
@@ -278,12 +294,16 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
         
-        vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
+        vec4  texel         = texture2D(Lighting_Normals, fragCoord);
+        vec3  normal        = texel.rgb;
+        float specularPower = texel.a;
+        
+        vec3 N = normal;
         vec3 L = light.Position - VertexOutput_Position.xyz;
         vec3 H = normalize(normalize(L) - normalize(VertexOutput_Position.xyz));
         
         float diffuse     = DiffuseFactor(N, normalize(L));
-        float specular    = SpecularFactor(N, H, 64.0);
+        float specular    = SpecularFactor(N, H, specularPower);
         float attenuation = AttenuationFactor(light.ConstantAttenuation, light.LinearAttenuation, light.QuadraticAttenuation, length(L));
         float spot        = SpotFactor(L, light.Direction, light.CosAngleInner, light.CosAngleOuter);
             
@@ -317,12 +337,16 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
         
-        vec3 N = texture2D(Lighting_Normals, fragCoord).rgb;
+        vec4  texel         = texture2D(Lighting_Normals, fragCoord);
+        vec3  normal        = texel.rgb;
+        float specularPower = texel.a;
+        
+        vec3 N = normal;
         vec3 L = light.Position - VertexOutput_Position.xyz;
         vec3 H = normalize(normalize(L) - normalize(VertexOutput_Position.xyz));
         
         float diffuse     = DiffuseFactor(N, normalize(L));
-        float specular    = SpecularFactor(N, H, 64.0);
+        float specular    = SpecularFactor(N, H, specularPower);
         float attenuation = AttenuationFactor(light.ConstantAttenuation, light.LinearAttenuation, light.QuadraticAttenuation, length(L));
         float spot        = SpotFactor(L, light.Direction, light.CosAngleInner, light.CosAngleOuter);
         
@@ -644,6 +668,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         vec3  Emissive();
         float Shininess();
         vec3  Normal();
+        float Specular();
         
         void main()
         {
@@ -651,6 +676,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             vec3  materialEmissive  = Emissive();
             float materialShininess = Shininess();
             vec3  materialNormal    = Normal();
+            float materialSpecular  = Specular();
             
 
             gl_FragData[0].rgba = materialDiffuse;
@@ -659,7 +685,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             gl_FragData[1].a   = materialShininess;
             
             gl_FragData[2].rgb = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * materialNormal);
-            gl_FragData[2].a   = 1.0;
+            gl_FragData[2].a   = materialSpecular;
         }
     </include>
 </shader>
@@ -672,6 +698,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         vec3  Emissive();
         float Shininess();
         vec3  Normal();
+        float Specular();
         vec3  Refraction();
         
         uniform sampler2D BackgroundTexture;
@@ -682,6 +709,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             vec3  materialEmissive   = Emissive();
             float materialShininess  = Shininess();
             vec3  materialNormal     = Normal();
+            float materialSpecular   = Specular();
             vec3  materialRefraction = Refraction();
             
             vec2 backgroundUV = ((VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5) + (normalize(materialRefraction).xy * 0.01);
@@ -693,7 +721,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             gl_FragData[1].a   = materialShininess;
             
             gl_FragData[2].rgb = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * materialNormal);
-            gl_FragData[2].a   = 1.0;
+            gl_FragData[2].a   = materialSpecular;
             
             
             // Lighting needs to be cleared to black.
