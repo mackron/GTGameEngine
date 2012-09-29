@@ -17,9 +17,8 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        DefaultSceneRenderer_MaterialPassCallback(DefaultSceneRenderer &rendererIn, const glm::mat4 &cameraProjectionIn, const glm::mat4 &cameraViewIn, DefaultSceneRenderer::LayerState &layerStateIn, bool opaquePassIn)
+        DefaultSceneRenderer_MaterialPassCallback(DefaultSceneRenderer &rendererIn, DefaultSceneRenderer::LayerState &layerStateIn, bool opaquePassIn)
             : SceneCullingManager::VisibleCallback(), renderer(rendererIn),
-              cameraProjection(cameraProjectionIn), cameraView(cameraViewIn),
               layerState(layerStateIn),
               opaquePass(opaquePassIn)
         {
@@ -34,7 +33,7 @@ namespace GTEngine
         /// SceneCullingManager::ProcessObjectModel().
         void ProcessObjectModel(SceneObject &object)
         {
-            this->renderer.__MaterialPass_Model(object, this->cameraProjection, this->cameraView, this->layerState);
+            this->renderer.__MaterialPass_Model(object, this->layerState);
         }
 
 
@@ -98,12 +97,6 @@ namespace GTEngine
 
         /// The renderer that owns this callback.
         DefaultSceneRenderer &renderer;
-
-        /// The projection matrix of the camera.
-        const glm::mat4 &cameraProjection;
-
-        /// The view matrix of the camera.
-        const glm::mat4 &cameraView;
 
         /// The layer state.
         DefaultSceneRenderer::LayerState &layerState;
@@ -221,10 +214,12 @@ namespace GTEngine
 
 
         this->Shaders.Lighting_NoShadow_A1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_A1");
-        this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_D1");
+        this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_D1");
+        //this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_D1");
         this->Shaders.Lighting_D1                    = ShaderLibrary::Acquire("Engine_DefaultShadowVS",    "Engine_LightingPass_D1");
         this->Shaders.Lighting_NoShadow_P1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_P1");
-        this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_P1");
+        this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_P1");
+        //this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_P1");
         this->Shaders.Lighting_NoShadow_S1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_S1");
         this->Shaders.Lighting_S1                    = ShaderLibrary::Acquire("Engine_DefaultShadowVS",    "Engine_LightingPass_S1");
         this->Shaders.Lighting_ShadowMap             = ShaderLibrary::Acquire("Engine_ShadowVS",           "Engine_LightingPass_ShadowMap");
@@ -348,11 +343,14 @@ namespace GTEngine
             auto camera = cameraNode->GetComponent<CameraComponent>();
             assert(camera != nullptr);
 
-            auto &cameraProjection = camera->GetProjectionMatrix();
-            auto  cameraView       = camera->GetViewMatrix();
+            this->mainLayerState.cameraProjection = camera->GetProjectionMatrix();
+            this->mainLayerState.cameraView       = camera->GetViewMatrix();
+            this->mainLayerState.cameraPosition   = cameraNode->GetWorldPosition();
+            this->mainLayerState.cameraFOV        = camera->perspective.fov;
+            this->mainLayerState.cameraAspect     = camera->perspective.aspect;
 
-            this->MaterialPass(scene, cameraProjection, cameraView, *framebuffer, this->mainLayerState, false);
-            this->LightingPass(scene, cameraProjection, cameraView, *framebuffer, 1, this->mainLayerState, false);
+            this->MaterialPass(scene, *framebuffer, this->mainLayerState, false);
+            this->LightingPass(scene, *framebuffer, this->mainLayerState, false, 1);
         }
 
 
@@ -379,11 +377,14 @@ namespace GTEngine
             auto camera = cameraNode->GetComponent<CameraComponent>();
             assert(camera != nullptr);
 
-            auto &cameraProjection = camera->GetProjectionMatrix();
-            auto  cameraView       = camera->GetViewMatrix();
+            this->backgroundLayerState.cameraProjection = camera->GetProjectionMatrix();
+            this->backgroundLayerState.cameraView       = camera->GetViewMatrix();
+            this->backgroundLayerState.cameraPosition   = cameraNode->GetWorldPosition();
+            this->backgroundLayerState.cameraFOV        = camera->perspective.fov;
+            this->backgroundLayerState.cameraAspect     = camera->perspective.aspect;
 
-            this->MaterialPass(scene, cameraProjection, cameraView, *framebuffer,  this->backgroundLayerState, false);
-            this->LightingPass(scene, cameraProjection, cameraView, *framebuffer, 0, this->backgroundLayerState, false);
+            this->MaterialPass(scene, *framebuffer, this->backgroundLayerState, false);
+            this->LightingPass(scene, *framebuffer, this->backgroundLayerState, false, 0);
         }
         
 
@@ -407,14 +408,8 @@ namespace GTEngine
                 cameraNode = viewport.GetCameraNode(ViewportLayer::Background);
                 if (cameraNode != nullptr)
                 {
-                    auto camera = cameraNode->GetComponent<CameraComponent>();
-                    assert(camera != nullptr);
-
-                    auto &cameraProjection = camera->GetProjectionMatrix();
-                    auto  cameraView       = camera->GetViewMatrix();
-
-                    this->MaterialPass(scene, cameraProjection, cameraView, *framebuffer, this->backgroundLayerState, true);
-                    this->LightingPass(scene, cameraProjection, cameraView, *framebuffer, 0, this->backgroundLayerState, true);
+                    this->MaterialPass(scene, *framebuffer, this->backgroundLayerState, true);
+                    this->LightingPass(scene, *framebuffer, this->backgroundLayerState, true, 0);
                 }
             }
             
@@ -428,15 +423,8 @@ namespace GTEngine
                     rcBeginForegroundTransparency.depthClearShader = ShaderLibrary::GetDepthClearShader();
                     Renderer::BackRCQueue->Append(rcBeginForegroundTransparency);
 
-
-                    auto camera = cameraNode->GetComponent<CameraComponent>();
-                    assert(camera != nullptr);
-
-                    auto &cameraProjection = camera->GetProjectionMatrix();
-                    auto  cameraView       = camera->GetViewMatrix();
-
-                    this->MaterialPass(scene, cameraProjection, cameraView, *framebuffer, this->mainLayerState, true);
-                    this->LightingPass(scene, cameraProjection, cameraView, *framebuffer, 1, this->mainLayerState, true);
+                    this->MaterialPass(scene, *framebuffer, this->mainLayerState, true);
+                    this->LightingPass(scene, *framebuffer, this->mainLayerState, true, 1);
                 }
             }
 
@@ -499,7 +487,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer::__MaterialPass_Model(const SceneObject &object, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, LayerState &state)
+    void DefaultSceneRenderer::__MaterialPass_Model(const SceneObject &object, LayerState &state)
     {
         if (object.GetType() == SceneObjectType_SceneNode)
         {
@@ -510,8 +498,8 @@ namespace GTEngine
             if (model != nullptr)
             {
                 glm::mat4 ModelMatrix     = modelComponent->GetNode().GetWorldTransform();
-                glm::mat4 ModelViewMatrix = cameraView * ModelMatrix;
-                glm::mat4 MVPMatrix       = cameraProjection * ModelViewMatrix;
+                glm::mat4 ModelViewMatrix = state.cameraView * ModelMatrix;
+                glm::mat4 MVPMatrix       = state.cameraProjection * ModelViewMatrix;
                 glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
 
                 for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
@@ -635,8 +623,11 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer::MaterialPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive)
+    void DefaultSceneRenderer::MaterialPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive)
     {
+        auto &cameraProjection = state.cameraProjection;
+        auto &cameraView       = state.cameraView;
+
         Math::Plane zPlane;
         zPlane.a = cameraProjection[0][3] - cameraProjection[0][2]; zPlane.b = cameraProjection[1][3] - cameraProjection[1][2]; zPlane.c = cameraProjection[2][3] - cameraProjection[2][2]; zPlane.d = cameraProjection[3][3] - cameraProjection[3][2];
         zPlane.Normalize();
@@ -644,7 +635,7 @@ namespace GTEngine
         // We will have render commands waiting to be added to the main RC queue. This is where we should do this.
         if (!refractive)
         {
-            DefaultSceneRenderer_MaterialPassCallback materialPassCallback(*this, cameraProjection, cameraView, state, !refractive);        // <-- last parameter is 'opaquePass'
+            DefaultSceneRenderer_MaterialPassCallback materialPassCallback(*this, state, !refractive);        // <-- last parameter is 'opaquePass'
             scene.QueryVisibleObjects(cameraProjection * cameraView, materialPassCallback);
 
             while (state.usedMaterials.root != nullptr)
@@ -683,10 +674,10 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer::LightingPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, int stencilIndex, LayerState &state, bool refractive)
+    void DefaultSceneRenderer::LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive, int stencilIndex)
     {
-        (void)cameraProjection;
-
+        auto &cameraProjection = state.cameraProjection;
+        auto &cameraView       = state.cameraView;
 
         // We begin with the lights that are not casting shadows. We can do an optimized pass here where we can group lights into a single pass.
         auto &rcBeginLighting = this->rcBeginLighting[Renderer::BackIndex].Acquire();
@@ -701,9 +692,14 @@ namespace GTEngine
             auto &light = *state.ambientLights[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
-            rcSetShader.shader          = this->Shaders.Lighting_NoShadow_A1;
-            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.shader            = this->Shaders.Lighting_NoShadow_A1;
+            rcSetShader.materialBuffer2   = framebuffer.materialBuffer2;
+            rcSetShader.linearDepthBuffer = framebuffer.linearDepthBuffer;
+            rcSetShader.screenSize        = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.cameraPosition    = state.cameraPosition;
+            rcSetShader.cameraFOV         = state.cameraFOV;
+            rcSetShader.cameraAspect      = state.cameraAspect;
+            rcSetShader.viewMatrix        = state.cameraView;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -728,9 +724,14 @@ namespace GTEngine
             auto &light = *state.directionalLights_NoShadows[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
-            rcSetShader.shader          = this->Shaders.Lighting_NoShadow_D1;
-            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.shader            = this->Shaders.Lighting_NoShadow_D1;
+            rcSetShader.materialBuffer2   = framebuffer.materialBuffer2;
+            rcSetShader.linearDepthBuffer = framebuffer.linearDepthBuffer;
+            rcSetShader.screenSize        = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.cameraPosition    = state.cameraPosition;
+            rcSetShader.cameraFOV         = state.cameraFOV;
+            rcSetShader.cameraAspect      = state.cameraAspect;
+            rcSetShader.viewMatrix        = state.cameraView;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -758,9 +759,14 @@ namespace GTEngine
             auto &light = *state.pointLights_NoShadows[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
-            rcSetShader.shader          = this->Shaders.Lighting_NoShadow_P1;
-            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.shader            = this->Shaders.Lighting_NoShadow_P1;
+            rcSetShader.materialBuffer2   = framebuffer.materialBuffer2;
+            rcSetShader.linearDepthBuffer = framebuffer.linearDepthBuffer;
+            rcSetShader.screenSize        = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.cameraPosition    = state.cameraPosition;
+            rcSetShader.cameraFOV         = state.cameraFOV;
+            rcSetShader.cameraAspect      = state.cameraAspect;
+            rcSetShader.viewMatrix        = state.cameraView;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -791,9 +797,14 @@ namespace GTEngine
             auto &light = *state.spotLights_NoShadows[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
-            rcSetShader.shader          = this->Shaders.Lighting_NoShadow_S1;
-            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.shader            = this->Shaders.Lighting_NoShadow_S1;
+            rcSetShader.materialBuffer2   = framebuffer.materialBuffer2;
+            rcSetShader.linearDepthBuffer = framebuffer.linearDepthBuffer;
+            rcSetShader.screenSize        = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.cameraPosition    = state.cameraPosition;
+            rcSetShader.cameraFOV         = state.cameraFOV;
+            rcSetShader.cameraAspect      = state.cameraAspect;
+            rcSetShader.viewMatrix        = state.cameraView;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -830,9 +841,14 @@ namespace GTEngine
             auto &light = *state.directionalLights[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
-            rcSetShader.shader          = this->Shaders.Lighting_D1;
-            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.shader            = this->Shaders.Lighting_D1;
+            rcSetShader.materialBuffer2   = framebuffer.materialBuffer2;
+            rcSetShader.linearDepthBuffer = framebuffer.linearDepthBuffer;
+            rcSetShader.screenSize        = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.cameraPosition    = state.cameraPosition;
+            rcSetShader.cameraFOV         = state.cameraFOV;
+            rcSetShader.cameraAspect      = state.cameraAspect;
+            rcSetShader.viewMatrix        = state.cameraView;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -869,9 +885,14 @@ namespace GTEngine
             auto &light = *state.pointLights[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
-            rcSetShader.shader          = this->Shaders.Lighting_P1;
-            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.shader            = this->Shaders.Lighting_P1;
+            rcSetShader.materialBuffer2   = framebuffer.materialBuffer2;
+            rcSetShader.linearDepthBuffer = framebuffer.linearDepthBuffer;
+            rcSetShader.screenSize        = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.cameraPosition    = state.cameraPosition;
+            rcSetShader.cameraFOV         = state.cameraFOV;
+            rcSetShader.cameraAspect      = state.cameraAspect;
+            rcSetShader.viewMatrix        = state.cameraView;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -910,9 +931,14 @@ namespace GTEngine
             auto &light = *state.spotLights[i];
 
             auto &rcSetShader = this->rcLighting_SetShader[Renderer::BackIndex].Acquire();
-            rcSetShader.shader          = this->Shaders.Lighting_S1;
-            rcSetShader.materialBuffer2 = framebuffer.materialBuffer2;
-            rcSetShader.screenSize      = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.shader            = this->Shaders.Lighting_S1;
+            rcSetShader.materialBuffer2   = framebuffer.materialBuffer2;
+            rcSetShader.linearDepthBuffer = framebuffer.linearDepthBuffer;
+            rcSetShader.screenSize        = glm::vec2(static_cast<float>(framebuffer.width), static_cast<float>(framebuffer.height));
+            rcSetShader.cameraPosition    = state.cameraPosition;
+            rcSetShader.cameraFOV         = state.cameraFOV;
+            rcSetShader.cameraAspect      = state.cameraAspect;
+            rcSetShader.viewMatrix        = state.cameraView;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -1333,8 +1359,13 @@ namespace GTEngine
     void DefaultSceneRenderer::RCLighting_SetShader::Execute()
     {
         Renderer::SetShader(this->shader);
-        Renderer::SetShaderParameter("Lighting_Normals", this->materialBuffer2);
-        Renderer::SetShaderParameter("ScreenSize",       this->screenSize);
+        Renderer::SetShaderParameter("Lighting_Normals",  this->materialBuffer2);
+        Renderer::SetShaderParameter("LinearDepthBuffer", this->linearDepthBuffer);
+        Renderer::SetShaderParameter("ScreenSize",        this->screenSize);
+        Renderer::SetShaderParameter("CameraPosition",    this->cameraPosition);
+        Renderer::SetShaderParameter("CameraTanHalfFOV",  glm::tan(glm::radians(this->cameraFOV * 0.5f)));
+        Renderer::SetShaderParameter("CameraAspect",      this->cameraAspect);
+        Renderer::SetShaderParameter("ViewMatrix",        this->viewMatrix);
 
         for (size_t i = 0; i < this->parameters.GetCount(); ++i)
         {

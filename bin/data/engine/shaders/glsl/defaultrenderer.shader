@@ -21,6 +21,27 @@ Each code is followed by a number to indicate how many of those lights are used 
 uses 1 or each light, it will use the following: A1D1P1.
 -->
 
+<shader id="Engine_LightingVS">
+    attribute vec3 VertexInput_Position;
+    
+    varying vec3 CameraDirection;
+		
+    uniform mat4 ViewMatrix;
+    uniform mat4 ModelViewMatrix;
+	uniform mat4 MVPMatrix;
+    
+    uniform float CameraTanHalfFOV;
+    uniform float CameraAspect;
+		
+	void main()
+	{
+        gl_Position     = MVPMatrix * vec4(VertexInput_Position, 1.0);
+        CameraDirection = vec3(gl_Position.x * CameraTanHalfFOV * CameraAspect,
+                               gl_Position.y * CameraTanHalfFOV,
+                               gl_Position.w);
+	}
+</shader>
+
 <shader id="Engine_FragmentInput">
     varying vec2 VertexOutput_TexCoord;
     varying vec3 VertexOutput_Normal;
@@ -43,7 +64,11 @@ uses 1 or each light, it will use the following: A1D1P1.
 
 <shader id="Engine_FragmentLightingUniforms">
     uniform sampler2D Lighting_Normals;
+    uniform sampler2D LinearDepthBuffer;
     uniform vec2      ScreenSize;
+    uniform vec3      CameraPosition;
+    
+    varying vec3      CameraDirection;
 </shader>
 
 <shader id="Engine_LightingUtils">
@@ -93,18 +118,24 @@ uses 1 or each light, it will use the following: A1D1P1.
     {
         vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
         
+        float pixelDepth    = texture2D(LinearDepthBuffer, fragCoord).r;
+        vec3  pixelPosition = CameraDirection * pixelDepth;
+        //vec3  pixelPosition = VertexOutput_Position.xyz;
+        
         vec4  texel         = texture2D(Lighting_Normals, fragCoord);
         vec3  normal        = texel.rgb;
         float specularPower = texel.a;
     
         vec3 N = normal;
         vec3 L = -light.Direction;
-        vec3 H = normalize(L - normalize(VertexOutput_Position.xyz));
+        vec3 H = normalize(L - normalize(pixelPosition));
+        //vec3 H = normalize(L - normalize(VertexOutput_Position.xyz));
         
         float diffuse  = DiffuseFactor(N, L);
         float specular = SpecularFactor(N, H, specularPower);
 
         diffuseOut  += light.Colour * diffuse;
+        //diffuseOut   = pixelPosition;
         specularOut += light.Colour * specular;
     }
 </shader>
@@ -227,13 +258,16 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         vec2 fragCoord = gl_FragCoord.xy / ScreenSize;
         
+        float fragDepth    = texture2D(LinearDepthBuffer, fragCoord).r;
+        vec3  fragPosition = CameraDirection * fragDepth;
+        
         vec4  texel         = texture2D(Lighting_Normals, fragCoord);
         vec3  normal        = texel.rgb;
         float specularPower = texel.a;
         
         vec3 N = normal;
-        vec3 L = light.Position - VertexOutput_Position.xyz;
-        vec3 H = normalize(normalize(L) - normalize(VertexOutput_Position.xyz));
+        vec3 L = light.Position - fragPosition.xyz;
+        vec3 H = normalize(normalize(L) - normalize(fragPosition.xyz));
 
         float diffuse     = DiffuseFactor(N, normalize(L));
         float specular    = SpecularFactor(N, H, specularPower);
@@ -267,6 +301,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             shadow            += (pixelDepth < shadowDepth) ? 0.125 : 0.0;
         }
         
+        //diffuseOut = fragPosition;
         diffuseOut  += light.Colour * diffuse  * attenuation * shadow;
         specularOut += light.Colour * specular * attenuation * shadow;
     }
@@ -430,6 +465,10 @@ uses 1 or each light, it will use the following: A1D1P1.
         
 	    void main()
 	    {
+            CameraDirection.xyz /=  CameraDirection.z;
+            CameraDirection.z    = -CameraDirection.z * 2.0 - 1.0;
+            
+
             vec3 diffuse  = vec3(0.0, 0.0, 0.0);
             vec3 specular = vec3(0.0, 0.0, 0.0);
             CalculateDirectionalLighting(DLights0, diffuse, specular);
@@ -494,6 +533,9 @@ uses 1 or each light, it will use the following: A1D1P1.
         
 	    void main()
 	    {
+            CameraDirection.xyz /=  CameraDirection.z;
+            CameraDirection.z    = -CameraDirection.z * 2.0 - 1.0;
+        
             vec3 diffuse  = vec3(0.0, 0.0, 0.0);
             vec3 specular = vec3(0.0, 0.0, 0.0);
             CalculatePointLighting(PLight0, diffuse, specular);
@@ -689,7 +731,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             gl_FragData[2].rgb  = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * materialNormal);
             gl_FragData[2].a    = materialSpecular;
             
-            gl_FragData[3].r    = VertexOutput_Position.xyz / zFar;
+            gl_FragData[3].r    = VertexOutput_Position.z/* / zFar*/;
         }
     </include>
 </shader>
@@ -728,7 +770,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             gl_FragData[2].rgb = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * materialNormal);
             gl_FragData[2].a   = materialSpecular;
             
-            gl_FragData[3].r   = VertexOutput_Position.xyz / zFar;
+            gl_FragData[3].r   = VertexOutput_Position.z/* / zFar*/;
             
             // Lighting needs to be cleared to black.
             gl_FragData[4].rgba = vec4(0.0, 0.0, 0.0, 1.0);

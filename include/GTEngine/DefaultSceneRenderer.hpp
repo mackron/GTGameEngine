@@ -80,6 +80,23 @@ namespace GTEngine
             GTCore::BinarySearchTree<MaterialMetadata*> usedRefractiveMaterials;
 
 
+            /// The camera projection.
+            glm::mat4 cameraProjection;
+
+            /// The camera view matrix.
+            glm::mat4 cameraView;
+
+            /// The camera world position.
+            glm::vec3 cameraPosition;
+
+            /// The camera FOV.
+            float cameraFOV;
+
+            /// The camera aspect ratio.
+            float cameraAspect;
+
+
+
             /// Resets the state. Should be called at the start of each render.
             void Reset()
             {
@@ -150,7 +167,7 @@ namespace GTEngine
         // Methods below should only be called internally, but need to be public for a few things.
 
         /// Called for a model that's visible in the currently rendering viewport.
-        void __MaterialPass_Model(const SceneObject &object, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, LayerState &state);
+        void __MaterialPass_Model(const SceneObject &object, LayerState &state);
 
         /// Called for a model that's visible in a shadow pass.
         void __ShadowPass_Model(const SceneObject &object, const glm::mat4 &projection, const glm::mat4 &view);
@@ -453,7 +470,14 @@ namespace GTEngine
             ShaderParameterCache parameters;
 
             Texture2D* materialBuffer2;
+            Texture2D* linearDepthBuffer;
+
             glm::vec2  screenSize;
+            glm::vec3  cameraPosition;
+            float      cameraFOV;
+            float      cameraAspect;
+
+            glm::mat4  viewMatrix;
         };
 
 
@@ -577,10 +601,10 @@ namespace GTEngine
 
 
         /// Performs the material pass. This is always the first pass.
-        void MaterialPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive);
+        void MaterialPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive);
 
         /// Performs the lighting pass. This always comes after the material pass.
-        void LightingPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, int stencilIndex, LayerState &state, bool refractive);
+        void LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive, int stencilIndex);
 
 
 
