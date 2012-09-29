@@ -637,6 +637,10 @@ namespace GTEngine
 
     void DefaultSceneRenderer::MaterialPass(Scene &scene, const glm::mat4 &cameraProjection, const glm::mat4 &cameraView, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive)
     {
+        Math::Plane zPlane;
+        zPlane.a = cameraProjection[0][3] - cameraProjection[0][2]; zPlane.b = cameraProjection[1][3] - cameraProjection[1][2]; zPlane.c = cameraProjection[2][3] - cameraProjection[2][2]; zPlane.d = cameraProjection[3][3] - cameraProjection[3][2];
+        zPlane.Normalize();
+
         // We will have render commands waiting to be added to the main RC queue. This is where we should do this.
         if (!refractive)
         {
@@ -649,6 +653,7 @@ namespace GTEngine
 
                 auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
                 rcSetShader.shader = state.usedMaterials.root->value->materialPassShader;
+                rcSetShader.zFar   = zPlane.d;
                 Renderer::BackRCQueue->Append(rcSetShader);
 
                 Renderer::BackRCQueue->Append(queue);
@@ -664,8 +669,9 @@ namespace GTEngine
                 auto &queue = state.usedRefractiveMaterials.root->value->materialPassRCs;
 
                 auto &rcBeginTransparentMaterialPass = this->rcBeginTransparentMaterialPass[Renderer::BackIndex].Acquire();
-                rcBeginTransparentMaterialPass.shader            = state.usedRefractiveMaterials.root->value->materialPassShader;
                 rcBeginTransparentMaterialPass.backgroundTexture = framebuffer.opaqueColourBuffer;
+                rcBeginTransparentMaterialPass.shader            = state.usedRefractiveMaterials.root->value->materialPassShader;
+                rcBeginTransparentMaterialPass.zFar              = zPlane.d;
                 Renderer::BackRCQueue->Append(rcBeginTransparentMaterialPass);
 
 
@@ -1201,15 +1207,15 @@ namespace GTEngine
         Renderer::Clear(GTEngine::ColourBuffer | GTEngine::DepthBuffer | GTEngine::StencilBuffer);
 
 
-        int drawBuffers[] = {1, 2, 3};      // Material Buffers 0/1/2
-        Renderer::SetDrawBuffers(3, drawBuffers);
+        int drawBuffers[] = {1, 2, 3, 7};      // Material Buffers 0/1/2, Linear Depth
+        Renderer::SetDrawBuffers(4, drawBuffers);
     }
 
 
     void DefaultSceneRenderer::RCBeginBackground::Execute()
     {
-        int drawBuffers[] = {1, 2, 3};      // Material Buffers 0/1/2
-        Renderer::SetDrawBuffers(3, drawBuffers);
+        int drawBuffers[] = {1, 2, 3, 7};      // Material Buffers 0/1/2, Linear Depth
+        Renderer::SetDrawBuffers(4, drawBuffers);
 
         // Standard depth testing.
         Renderer::SetDepthFunc(RendererFunction_LEqual);
@@ -1246,7 +1252,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RCBeginTransparency::Execute()
     {
-        int drawBuffers[] = {1, 2, 3, 4, 5};      // Material Buffers 0/1/2, Lighting Buffers 0/1
+        int drawBuffers[] = {1, 2, 3, 7, 4, 5};      // Material Buffers 0/1/2, Linear Depth, Lighting Buffers 0/1
         Renderer::SetDrawBuffers(5, drawBuffers);
 
         // Standard depth testing, but no writing.
@@ -1262,7 +1268,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RCBeginForegroundTransparency::Execute()
     {
-        int drawBuffers[] = {1, 2, 3, 4, 5};      // Material Buffers 0/1/2, Lighting Buffers 0/1
+        int drawBuffers[] = {1, 2, 3, 7, 4, 5};      // Material Buffers 0/1/2, Linear Depth, Lighting Buffers 0/1
         Renderer::SetDrawBuffers(5, drawBuffers);
 
         // Standard depth testing, but no writing.
@@ -1307,6 +1313,7 @@ namespace GTEngine
     {
         Renderer::SetShader(this->shader);
         Renderer::SetShaderParameter("BackgroundTexture", this->backgroundTexture);
+        Renderer::SetShaderParameter("zFar",              this->zFar);
     }
 
 
@@ -1342,6 +1349,7 @@ namespace GTEngine
     void DefaultSceneRenderer::RCSetShader::Execute()
     {
         Renderer::SetShader(this->shader);
+        Renderer::SetShaderParameter("zFar", this->zFar);
     }
 
 

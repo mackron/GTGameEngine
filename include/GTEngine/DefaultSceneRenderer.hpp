@@ -172,7 +172,7 @@ namespace GTEngine
                   depthStencil(nullptr),
                   lightingBuffer0(nullptr), lightingBuffer1(nullptr),
                   materialBuffer0(nullptr), materialBuffer1(nullptr), materialBuffer2(nullptr),
-                  opaqueColourBuffer(nullptr)
+                  opaqueColourBuffer(nullptr), linearDepthBuffer(nullptr)
             {
                 this->depthStencil = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_Depth24_Stencil8);
 
@@ -185,6 +185,7 @@ namespace GTEngine
                     this->materialBuffer1    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                     this->materialBuffer2    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);       // <-- Look into using R10G10B10A2. Need to handle sign.
                     this->opaqueColourBuffer = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA16F);
+                    this->linearDepthBuffer  = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_R32F);
                 }
                 else
                 {
@@ -195,6 +196,7 @@ namespace GTEngine
                     this->materialBuffer1    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                     this->materialBuffer2    = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                     this->opaqueColourBuffer = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
+                    this->linearDepthBuffer  = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                 }
 
                 this->finalOutput->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
@@ -204,6 +206,7 @@ namespace GTEngine
                 this->materialBuffer1->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
                 this->materialBuffer2->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
                 this->opaqueColourBuffer->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
+                this->linearDepthBuffer->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
 
                 this->finalOutput->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
                 this->opaqueColourBuffer->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
@@ -217,6 +220,7 @@ namespace GTEngine
                 this->AttachColourBuffer(this->lightingBuffer0,    4);
                 this->AttachColourBuffer(this->lightingBuffer1,    5);
                 this->AttachColourBuffer(this->opaqueColourBuffer, 6);
+                this->AttachColourBuffer(this->linearDepthBuffer,  7);
             }
 
             /// Destructor
@@ -230,6 +234,7 @@ namespace GTEngine
                 delete this->materialBuffer1;
                 delete this->materialBuffer2;
                 delete this->opaqueColourBuffer;
+                delete this->linearDepthBuffer;
             }
 
 
@@ -251,6 +256,8 @@ namespace GTEngine
                 this->materialBuffer2->Resize(this->width, this->height);
 
                 this->opaqueColourBuffer->Resize(this->width, this->height);
+
+                this->linearDepthBuffer->Resize(this->width, this->height);
             }
 
 
@@ -291,6 +298,9 @@ namespace GTEngine
 
             // The colour buffer that will contain the opaque geometry which will be used as the background for transparent geometry.
             Texture2D* opaqueColourBuffer;
+
+            /// The colour buffer containing the linear depth of each pixel. This will be used when reconstructing the world and view space positions of a pixel.
+            Texture2D* linearDepthBuffer;
         };
 
 
@@ -345,6 +355,9 @@ namespace GTEngine
 
             Shader* shader;
             Texture2D* backgroundTexture;
+
+            /// The zfar plane.
+            float zFar;
         };
 
 
@@ -371,6 +384,9 @@ namespace GTEngine
 
             /// The shader to activate.
             Shader* shader;
+
+            /// The zfar plane.
+            float zFar;
         };
 
 
