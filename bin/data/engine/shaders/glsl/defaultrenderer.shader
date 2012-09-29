@@ -670,6 +670,8 @@ uses 1 or each light, it will use the following: A1D1P1.
         vec3  Normal();
         float Specular();
         
+        uniform float zFar;
+        
         void main()
         {
             vec4  materialDiffuse   = Diffuse();
@@ -681,11 +683,13 @@ uses 1 or each light, it will use the following: A1D1P1.
 
             gl_FragData[0].rgba = materialDiffuse;
             
-            gl_FragData[1].rgb = materialEmissive;
-            gl_FragData[1].a   = materialShininess;
+            gl_FragData[1].rgb  = materialEmissive;
+            gl_FragData[1].a    = materialShininess;
             
-            gl_FragData[2].rgb = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * materialNormal);
-            gl_FragData[2].a   = materialSpecular;
+            gl_FragData[2].rgb  = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * materialNormal);
+            gl_FragData[2].a    = materialSpecular;
+            
+            gl_FragData[3].r    = VertexOutput_Position.xyz / zFar;
         }
     </include>
 </shader>
@@ -701,6 +705,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         float Specular();
         vec3  Refraction();
         
+        uniform float     zFar;
         uniform sampler2D BackgroundTexture;
         
         void main()
@@ -723,10 +728,11 @@ uses 1 or each light, it will use the following: A1D1P1.
             gl_FragData[2].rgb = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * materialNormal);
             gl_FragData[2].a   = materialSpecular;
             
+            gl_FragData[3].r   = VertexOutput_Position.xyz / zFar;
             
             // Lighting needs to be cleared to black.
-            gl_FragData[3].rgba = vec4(0.0, 0.0, 0.0, 1.0);
             gl_FragData[4].rgba = vec4(0.0, 0.0, 0.0, 1.0);
+            gl_FragData[5].rgba = vec4(0.0, 0.0, 0.0, 1.0);
         }
     </include>
 </shader>
