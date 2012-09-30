@@ -26,45 +26,15 @@ uses 1 or each light, it will use the following: A1D1P1.
     
     varying vec3 CameraDirection;
 		
-    uniform mat4 ViewMatrix;
     uniform mat4 ModelViewMatrix;
 	uniform mat4 MVPMatrix;
-    
-    uniform float CameraTanHalfFOV;
-    uniform float CameraAspect;
-		
+
 	void main()
 	{
         gl_Position     = MVPMatrix * vec4(VertexInput_Position, 1.0);
         CameraDirection = vec3(ModelViewMatrix * vec4(VertexInput_Position, 1.0));
 	}
 </shader>
-
-<shader id="Engine_ShadowedLightingVS">
-    attribute vec3 VertexInput_Position;
-    
-    varying vec3 CameraDirection;
-    varying vec3 CameraDirectionWS;
-    varying vec4 VertexOutput_ShadowCoord;
-		
-    uniform mat4 ViewMatrix;
-    uniform mat4 ModelMatrix;
-    uniform mat4 ModelViewMatrix;
-	uniform mat4 MVPMatrix;
-    
-    uniform float CameraTanHalfFOV;
-    uniform float CameraAspect;
-    
-    uniform mat4 ShadowProjectionMatrix;
-    uniform mat4 ShadowViewMatrix;
-		
-	void main()
-	{
-        gl_Position     = MVPMatrix * vec4(VertexInput_Position, 1.0);
-        CameraDirection = vec3(ModelViewMatrix * vec4(VertexInput_Position, 1.0));
-	}
-</shader>
-
 
 <shader id="Engine_FragmentInput">
     varying vec2 VertexOutput_TexCoord;
@@ -72,6 +42,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     varying vec3 VertexOutput_Tangent;
     varying vec3 VertexOutput_Bitangent;
     varying vec4 VertexOutput_Position;
+	varying vec4 VertexOutput_PositionVS;
     varying vec4 VertexOutput_PositionWS;
 </shader>
 
@@ -95,8 +66,7 @@ uses 1 or each light, it will use the following: A1D1P1.
     uniform mat4      InverseViewMatrix;
     
     varying vec3      CameraDirection;
-    varying vec3      CameraDirectionWS;
-    
+
     vec2  FragmentCoord;
     float FragmentDepth;
     vec4  FragmentPositionVS;
@@ -108,11 +78,11 @@ uses 1 or each light, it will use the following: A1D1P1.
 <shader id="Engine_LightingUtils">
     void InitLighting()
     {
-        vec3 viewRayVS = vec3(CameraDirection.xy * (-zFar / CameraDirection.z), -zFar);
+        vec3 viewRayVS = vec3(CameraDirection.xy * (zFar / CameraDirection.z), zFar);
     
         FragmentCoord         = gl_FragCoord.xy / ScreenSize;
         FragmentDepth         = texture2D(LinearDepthBuffer, FragmentCoord).r;
-        FragmentPositionVS    = vec4(viewRayVS * FragmentDepth, 1.0);
+		FragmentPositionVS    = vec4(viewRayVS * FragmentDepth, 1.0);
         FragmentPositionWS    = InverseViewMatrix * FragmentPositionVS;
         
         FragmentNormal        = texture2D(Lighting_Normals, FragmentCoord).rgb;
@@ -333,7 +303,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         }
         */
         
-        //diffuseOut = fragPosition;
+        //diffuseOut = FragmentPositionVS.xyz;
         diffuseOut  += light.Colour * diffuse  * attenuation * shadow;
         specularOut += light.Colour * specular * attenuation * shadow;
     }
@@ -711,17 +681,20 @@ uses 1 or each light, it will use the following: A1D1P1.
     varying vec3 VertexOutput_Tangent;
     varying vec3 VertexOutput_Bitangent;
     varying vec4 VertexOutput_Position;
+	varying vec4 VertexOutput_PositionVS;
     
+	uniform mat4 ModelViewMatrix;
     uniform mat4 MVPMatrix;
     uniform mat3 NormalMatrix;
     
     void main()
     {
-        VertexOutput_TexCoord  = VertexInput_TexCoord;
-        VertexOutput_Normal    = normalize(NormalMatrix * VertexInput_Normal);
-        VertexOutput_Tangent   = normalize(NormalMatrix * VertexInput_Tangent);
-        VertexOutput_Bitangent = normalize(NormalMatrix * VertexInput_Bitangent);
-        VertexOutput_Position  = MVPMatrix * vec4(VertexInput_Position, 1.0);
+        VertexOutput_TexCoord   = VertexInput_TexCoord;
+        VertexOutput_Normal     = normalize(NormalMatrix * VertexInput_Normal);
+        VertexOutput_Tangent    = normalize(NormalMatrix * VertexInput_Tangent);
+        VertexOutput_Bitangent  = normalize(NormalMatrix * VertexInput_Bitangent);
+        VertexOutput_Position   = MVPMatrix * vec4(VertexInput_Position, 1.0);
+		VertexOutput_PositionVS = ModelViewMatrix * vec4(VertexInput_Position, 1.0);
         
         gl_Position = VertexOutput_Position;
     }
@@ -756,7 +729,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             gl_FragData[2].rgb  = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * materialNormal);
             gl_FragData[2].a    = materialSpecular;
             
-            gl_FragData[3].r    = VertexOutput_Position.z / zFar;
+            gl_FragData[3].r    = VertexOutput_PositionVS.z / zFar;
         }
     </include>
 </shader>
@@ -795,7 +768,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             gl_FragData[2].rgb = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * materialNormal);
             gl_FragData[2].a   = materialSpecular;
             
-            gl_FragData[3].r   = VertexOutput_Position.z / zFar;
+            gl_FragData[3].r   = VertexOutput_PositionVS.z / zFar;
             
             // Lighting needs to be cleared to black.
             gl_FragData[4].rgba = vec4(0.0, 0.0, 0.0, 1.0);
