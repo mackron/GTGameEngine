@@ -213,16 +213,13 @@ namespace GTEngine
         this->pointLightShadowMapFramebuffer.CheckStatus();
 
 
-        this->Shaders.Lighting_NoShadow_A1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_A1");
+		this->Shaders.Lighting_NoShadow_A1           = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_A1");
         this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_D1");
-        //this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_D1");
-        this->Shaders.Lighting_D1                    = ShaderLibrary::Acquire("Engine_ShadowedLightingVS", "Engine_LightingPass_D1");
-        //this->Shaders.Lighting_D1                    = ShaderLibrary::Acquire("Engine_DefaultShadowVS",    "Engine_LightingPass_D1");
-        this->Shaders.Lighting_NoShadow_P1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_P1");
+        this->Shaders.Lighting_D1                    = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_D1");
+		this->Shaders.Lighting_NoShadow_P1           = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_P1");
         this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_P1");
-        //this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_P1");
-        this->Shaders.Lighting_NoShadow_S1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_S1");
-        this->Shaders.Lighting_S1                    = ShaderLibrary::Acquire("Engine_DefaultShadowVS",    "Engine_LightingPass_S1");
+		this->Shaders.Lighting_NoShadow_S1           = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_S1");
+		this->Shaders.Lighting_S1                    = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_S1");
         this->Shaders.Lighting_ShadowMap             = ShaderLibrary::Acquire("Engine_ShadowVS",           "Engine_LightingPass_ShadowMap");
         this->Shaders.Lighting_PointLightShadowMap   = ShaderLibrary::Acquire("Engine_PointLightShadowVS", "Engine_LightingPass_PointLightShadowMap");
         this->Shaders.Lighting_ColourClear           = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_LightingPass_ColourClear");
