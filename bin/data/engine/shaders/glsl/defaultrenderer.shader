@@ -153,11 +153,8 @@ uses 1 or each light, it will use the following: A1D1P1.
         vec3 Direction;
     };
     
-    varying vec4 VertexOutput_ShadowCoord;
-    
     uniform sampler2D ShadowMap;
-    
-    uniform mat4 LightProjectionViewMatrix;
+    uniform mat4      LightProjectionViewMatrix;
     
     void CalculateDirectionalLighting(DirectionalLight light, inout vec3 diffuseOut, inout vec3 specularOut)
     {
@@ -179,12 +176,12 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         
         float shadowDepth = shadowCoord.z - 0.00001;
-        float pixelDepth  = texture2D(ShadowMap, shadowCoord.xy * 0.5 + 0.5).r;
+        //float pixelDepth  = texture2D(ShadowMap, shadowCoord.xy * 0.5 + 0.5).r;
         
-        float shadow = (pixelDepth < shadowDepth) ? 0.0 : 1.0;
+        //float shadow = (pixelDepth < shadowDepth) ? 0.0 : 1.0;
         
         
-        /*
+        
         float shadow = 0.0;
         
         vec2 filter[8];
@@ -204,7 +201,7 @@ uses 1 or each light, it will use the following: A1D1P1.
                 shadow += 0.125;
             }
         }
-        */
+        
         
         
         diffuseOut  += light.Colour * diffuse  * shadow;
@@ -279,10 +276,10 @@ uses 1 or each light, it will use the following: A1D1P1.
         float pixelDepth = length(lightToPixel);
         pixelDepth -= (0.02 + pixelDepth * 0.005);
         
-        float shadowDepth = textureCube(ShadowMap, vec3(lightToPixel.x, -lightToPixel.y, -lightToPixel.z));
-        float shadow      = (pixelDepth < shadowDepth) ? 1.0 : 0.0;
+        //float shadowDepth = textureCube(ShadowMap, vec3(lightToPixel.x, -lightToPixel.y, -lightToPixel.z));
+        //float shadow      = (pixelDepth < shadowDepth) ? 1.0 : 0.0;
         
-        /*
+        
         vec3 filter[8];
         filter[0] = vec3( 0.0006,  0.0006,  0.0006) * pixelDepth;
         filter[1] = vec3( 0.0006, -0.0006,  0.0006) * pixelDepth;
@@ -301,7 +298,7 @@ uses 1 or each light, it will use the following: A1D1P1.
             float shadowDepth  = textureCube(ShadowMap, vec3(lightToPixel.x, -lightToPixel.y, -lightToPixel.z) + filter[i]).r;
             shadow            += (pixelDepth < shadowDepth) ? 0.125 : 0.0;
         }
-        */
+        
         
         //diffuseOut = FragmentPositionVS.xyz;
         diffuseOut  += light.Colour * diffuse  * attenuation * shadow;
@@ -358,8 +355,8 @@ uses 1 or each light, it will use the following: A1D1P1.
         float QuadraticAttenuation;
     };
     
-    varying vec4 VertexOutput_ShadowCoord;
     uniform sampler2D ShadowMap;
+	uniform mat4      LightProjectionViewMatrix;
     
     void CalculateSpotLighting(SpotLight light, inout vec3 diffuseOut, inout vec3 specularOut)
     {
@@ -375,15 +372,16 @@ uses 1 or each light, it will use the following: A1D1P1.
         float attenuation = AttenuationFactor(light.ConstantAttenuation, light.LinearAttenuation, light.QuadraticAttenuation, length(L));
         float spot        = SpotFactor(L, light.Direction, light.CosAngleInner, light.CosAngleOuter);
         
-        
-        vec4  shadowCoord = VertexOutput_ShadowCoord / VertexOutput_ShadowCoord.w;
+        vec4 shadowCoord = LightProjectionViewMatrix * FragmentPositionWS;
+        shadowCoord /= shadowCoord.w;
+
         float shadowDepth = shadowCoord.z - 0.0002;
         //float pixelDepth  = texture2D(ShadowMap, shadowCoord.xy * 0.5 + 0.5).r;
         
         
         
         float shadow = 1.0;
-        if (VertexOutput_ShadowCoord.w > 0.0)
+        if (shadowCoord.w > 0.0)
         {
             shadow = 0.0;
             
