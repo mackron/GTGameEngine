@@ -216,7 +216,8 @@ namespace GTEngine
         this->Shaders.Lighting_NoShadow_A1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_A1");
         this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_D1");
         //this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_D1");
-        this->Shaders.Lighting_D1                    = ShaderLibrary::Acquire("Engine_DefaultShadowVS",    "Engine_LightingPass_D1");
+        this->Shaders.Lighting_D1                    = ShaderLibrary::Acquire("Engine_ShadowedLightingVS", "Engine_LightingPass_D1");
+        //this->Shaders.Lighting_D1                    = ShaderLibrary::Acquire("Engine_DefaultShadowVS",    "Engine_LightingPass_D1");
         this->Shaders.Lighting_NoShadow_P1           = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_NoShadow_P1");
         this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_P1");
         //this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_DefaultVS",          "Engine_LightingPass_P1");
@@ -632,6 +633,8 @@ namespace GTEngine
         zPlane.a = cameraProjection[0][3] - cameraProjection[0][2]; zPlane.b = cameraProjection[1][3] - cameraProjection[1][2]; zPlane.c = cameraProjection[2][3] - cameraProjection[2][2]; zPlane.d = cameraProjection[3][3] - cameraProjection[3][2];
         zPlane.Normalize();
 
+        float zFar = zPlane.d;
+
         // We will have render commands waiting to be added to the main RC queue. This is where we should do this.
         if (!refractive)
         {
@@ -644,7 +647,7 @@ namespace GTEngine
 
                 auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
                 rcSetShader.shader = state.usedMaterials.root->value->materialPassShader;
-                rcSetShader.zFar   = zPlane.d;
+                rcSetShader.zFar   = zFar;
                 Renderer::BackRCQueue->Append(rcSetShader);
 
                 Renderer::BackRCQueue->Append(queue);
@@ -662,7 +665,7 @@ namespace GTEngine
                 auto &rcBeginTransparentMaterialPass = this->rcBeginTransparentMaterialPass[Renderer::BackIndex].Acquire();
                 rcBeginTransparentMaterialPass.backgroundTexture = framebuffer.opaqueColourBuffer;
                 rcBeginTransparentMaterialPass.shader            = state.usedRefractiveMaterials.root->value->materialPassShader;
-                rcBeginTransparentMaterialPass.zFar              = zPlane.d;
+                rcBeginTransparentMaterialPass.zFar              = zFar;
                 Renderer::BackRCQueue->Append(rcBeginTransparentMaterialPass);
 
 
@@ -678,6 +681,13 @@ namespace GTEngine
     {
         auto &cameraProjection = state.cameraProjection;
         auto &cameraView       = state.cameraView;
+
+        Math::Plane zPlane;
+        zPlane.a = cameraProjection[0][3] - cameraProjection[0][2]; zPlane.b = cameraProjection[1][3] - cameraProjection[1][2]; zPlane.c = cameraProjection[2][3] - cameraProjection[2][2]; zPlane.d = cameraProjection[3][3] - cameraProjection[3][2];
+        zPlane.Normalize();
+
+        float zFar = zPlane.d;
+
 
         // We begin with the lights that are not casting shadows. We can do an optimized pass here where we can group lights into a single pass.
         auto &rcBeginLighting = this->rcBeginLighting[Renderer::BackIndex].Acquire();
@@ -700,6 +710,7 @@ namespace GTEngine
             rcSetShader.cameraFOV         = state.cameraFOV;
             rcSetShader.cameraAspect      = state.cameraAspect;
             rcSetShader.viewMatrix        = state.cameraView;
+            rcSetShader.zFar              = zFar;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -732,6 +743,7 @@ namespace GTEngine
             rcSetShader.cameraFOV         = state.cameraFOV;
             rcSetShader.cameraAspect      = state.cameraAspect;
             rcSetShader.viewMatrix        = state.cameraView;
+            rcSetShader.zFar              = zFar;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -767,6 +779,7 @@ namespace GTEngine
             rcSetShader.cameraFOV         = state.cameraFOV;
             rcSetShader.cameraAspect      = state.cameraAspect;
             rcSetShader.viewMatrix        = state.cameraView;
+            rcSetShader.zFar              = zFar;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -805,6 +818,7 @@ namespace GTEngine
             rcSetShader.cameraFOV         = state.cameraFOV;
             rcSetShader.cameraAspect      = state.cameraAspect;
             rcSetShader.viewMatrix        = state.cameraView;
+            rcSetShader.zFar              = zFar;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -849,6 +863,7 @@ namespace GTEngine
             rcSetShader.cameraFOV         = state.cameraFOV;
             rcSetShader.cameraAspect      = state.cameraAspect;
             rcSetShader.viewMatrix        = state.cameraView;
+            rcSetShader.zFar              = zFar;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -865,6 +880,9 @@ namespace GTEngine
 
                 rcSetShader.SetParameter("ShadowProjectionMatrix", lightProjection);
                 rcSetShader.SetParameter("ShadowViewMatrix",       lightView);
+
+                rcSetShader.SetParameter("InverseViewMatrix",         glm::inverse(cameraView));
+                rcSetShader.SetParameter("LightProjectionViewMatrix", lightProjection * lightView);
             }
 
 
@@ -893,6 +911,7 @@ namespace GTEngine
             rcSetShader.cameraFOV         = state.cameraFOV;
             rcSetShader.cameraAspect      = state.cameraAspect;
             rcSetShader.viewMatrix        = state.cameraView;
+            rcSetShader.zFar              = zFar;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -911,6 +930,8 @@ namespace GTEngine
                 rcSetShader.SetParameter("PLight0.QuadraticAttenuation", component->GetQuadraticAttenuation());
 
                 rcSetShader.SetParameter("PLight0_PositionWS",           component->GetNode().GetWorldPosition());
+
+                rcSetShader.SetParameter("InverseViewMatrix",            glm::inverse(cameraView));
             }
 
 
@@ -939,6 +960,7 @@ namespace GTEngine
             rcSetShader.cameraFOV         = state.cameraFOV;
             rcSetShader.cameraAspect      = state.cameraAspect;
             rcSetShader.viewMatrix        = state.cameraView;
+            rcSetShader.zFar              = zFar;
 
             if (light.GetType() == SceneObjectType_SceneNode)
             {
@@ -961,14 +983,11 @@ namespace GTEngine
                 rcSetShader.SetParameter("SLight0.QuadraticAttenuation", component->GetQuadraticAttenuation());
 
 
-                glm::mat4 bias(
-                    0.5f, 0.0f, 0.0f, 0.0f,
-                    0.0f, 0.5f, 0.0f, 0.0f,
-                    0.0f, 0.0f, 0.5f, 0.0f,
-                    0.5f, 0.5f, 0.5f, 1.0f);
-
-                rcSetShader.SetParameter("ShadowProjectionMatrix", /*bias * */lightProjection);
+                rcSetShader.SetParameter("ShadowProjectionMatrix", lightProjection);
                 rcSetShader.SetParameter("ShadowViewMatrix",       lightView);
+
+                rcSetShader.SetParameter("InverseViewMatrix",         glm::inverse(cameraView));
+                rcSetShader.SetParameter("LightProjectionViewMatrix", lightProjection * lightView);
             }
 
 
@@ -1366,6 +1385,7 @@ namespace GTEngine
         Renderer::SetShaderParameter("CameraTanHalfFOV",  glm::tan(glm::radians(this->cameraFOV * 0.5f)));
         Renderer::SetShaderParameter("CameraAspect",      this->cameraAspect);
         Renderer::SetShaderParameter("ViewMatrix",        this->viewMatrix);
+        Renderer::SetShaderParameter("zFar",              this->zFar);
 
         for (size_t i = 0; i < this->parameters.GetCount(); ++i)
         {

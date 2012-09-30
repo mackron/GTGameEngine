@@ -478,6 +478,8 @@ namespace GTEngine
             float      cameraAspect;
 
             glm::mat4  viewMatrix;
+
+            float zFar;
         };
 
 
