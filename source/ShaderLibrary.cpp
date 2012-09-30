@@ -15,7 +15,7 @@
     #pragma GCC diagnostic ignored "-Winline"
     #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
-#include <rapidxml/rapidxml.hpp>
+#include <GTEngine/rapidxml.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif
