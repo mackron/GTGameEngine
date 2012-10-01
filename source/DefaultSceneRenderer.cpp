@@ -220,6 +220,14 @@ namespace GTEngine
         this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_FSQuadLightingVS",   "Engine_LightingPass_P1");
 		this->Shaders.Lighting_NoShadow_S1           = ShaderLibrary::Acquire("Engine_FSQuadLightingVS",   "Engine_LightingPass_NoShadow_S1");
 		this->Shaders.Lighting_S1                    = ShaderLibrary::Acquire("Engine_FSQuadLightingVS",   "Engine_LightingPass_S1");
+
+        this->Shaders.Lighting_NoShadow_D1_Trans     = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_D1");
+        this->Shaders.Lighting_D1_Trans              = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_D1");
+		this->Shaders.Lighting_NoShadow_P1_Trans     = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_P1");
+        this->Shaders.Lighting_P1_Trans              = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_P1");
+		this->Shaders.Lighting_NoShadow_S1_Trans     = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_S1");
+		this->Shaders.Lighting_S1_Trans              = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_S1");
+
         this->Shaders.Lighting_ShadowMap             = ShaderLibrary::Acquire("Engine_ShadowVS",           "Engine_LightingPass_ShadowMap");
         this->Shaders.Lighting_PointLightShadowMap   = ShaderLibrary::Acquire("Engine_PointLightShadowVS", "Engine_LightingPass_PointLightShadowMap");
         this->Shaders.Lighting_ColourClear           = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_LightingPass_ColourClear");
@@ -251,6 +259,14 @@ namespace GTEngine
         ShaderLibrary::Unacquire(Shaders.Lighting_P1);
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_S1);
         ShaderLibrary::Unacquire(Shaders.Lighting_S1);
+
+        ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_D1_Trans);
+        ShaderLibrary::Unacquire(Shaders.Lighting_D1_Trans);
+        ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_P1_Trans);
+        ShaderLibrary::Unacquire(Shaders.Lighting_P1_Trans);
+        ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_S1_Trans);
+        ShaderLibrary::Unacquire(Shaders.Lighting_S1_Trans);
+
         ShaderLibrary::Unacquire(Shaders.Lighting_ShadowMap);
         ShaderLibrary::Unacquire(Shaders.Lighting_PointLightShadowMap);
         ShaderLibrary::Unacquire(Shaders.Lighting_ColourClear);
@@ -574,7 +590,7 @@ namespace GTEngine
                         else
                         {
                             state.usedMaterials.Insert(&materialMetadata);
-                            state.lightingDrawRCs.Append(rcDrawGeometry);
+                            //state.lightingDrawRCs.Append(rcDrawGeometry);
                         }
 
                         materialMetadata.materialPassRCs.Append(rcDrawGeometry);
@@ -764,6 +780,7 @@ namespace GTEngine
 
             if (refractive)
             {
+                rcSetShader.shader = this->Shaders.Lighting_NoShadow_D1_Trans;
                 Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
             }
             else
@@ -810,6 +827,7 @@ namespace GTEngine
             
             if (refractive)
             {
+                rcSetShader.shader = this->Shaders.Lighting_NoShadow_P1_Trans;
                 Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
             }
             else
@@ -867,6 +885,7 @@ namespace GTEngine
             
             if (refractive)
             {
+                rcSetShader.shader = this->Shaders.Lighting_NoShadow_S1_Trans;
                 Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
             }
             else
@@ -933,6 +952,7 @@ namespace GTEngine
             
             if (refractive)
             {
+                this->Shaders.Lighting_D1_Trans;
                 Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
             }
             else
@@ -989,6 +1009,7 @@ namespace GTEngine
             
             if (refractive)
             {
+                rcSetShader.shader = this->Shaders.Lighting_P1_Trans;
                 Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
             }
             else
@@ -1060,6 +1081,7 @@ namespace GTEngine
             
             if (refractive)
             {
+                rcSetShader.shader = this->Shaders.Lighting_S1_Trans;
                 Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
             }
             else

@@ -67,7 +67,7 @@ namespace GTEngine
             /// Every piece of visible geometry will need to be re-rendered for every light. This needs to be efficient. To do this, we cache a draw call that
             /// will draw the geometry in each lighting pass, and then append that to the renderer's back RC cache in one go every time it's needed. It will
             /// be cleared at the beginning of every frame.
-            RCQueue lightingDrawRCs;
+            //RCQueue lightingDrawRCs;
 
             /// The same as 'lightingDrawRCs', except for refractive geometry.
             RCQueue refractiveLightingDrawRCs;
@@ -117,7 +117,7 @@ namespace GTEngine
                 this->pointLights_NoShadows.Clear();
                 this->spotLights_NoShadows.Clear();
 
-                this->lightingDrawRCs.Clear();
+                //this->lightingDrawRCs.Clear();
                 this->refractiveLightingDrawRCs.Clear();
 
                 this->usedMaterials.Clear();
@@ -723,6 +723,13 @@ namespace GTEngine
             Shader* Lighting_P1;
             Shader* Lighting_NoShadow_S1;
             Shader* Lighting_S1;
+
+            Shader* Lighting_NoShadow_D1_Trans;
+            Shader* Lighting_D1_Trans;
+            Shader* Lighting_NoShadow_P1_Trans;
+            Shader* Lighting_P1_Trans;
+            Shader* Lighting_NoShadow_S1_Trans;
+            Shader* Lighting_S1_Trans;
 
             Shader* Lighting_ShadowMap;
             Shader* Lighting_PointLightShadowMap;
