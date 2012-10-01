@@ -36,6 +36,21 @@ uses 1 or each light, it will use the following: A1D1P1.
 	}
 </shader>
 
+<shader id="Engine_FSQuadLightingVS">
+    attribute vec3 VertexInput_Position;
+    
+    varying vec3 CameraDirection;
+
+	uniform mat4 MVPMatrix;
+
+	void main()
+	{
+        gl_Position     = MVPMatrix * vec4(VertexInput_Position, 1.0);
+        CameraDirection = VertexInput_Position;
+	}
+</shader>
+
+
 <shader id="Engine_FragmentInput">
     varying vec2 VertexOutput_TexCoord;
     varying vec3 VertexOutput_Normal;
@@ -61,7 +76,6 @@ uses 1 or each light, it will use the following: A1D1P1.
     uniform sampler2D Lighting_Normals;
     uniform sampler2D LinearDepthBuffer;
     uniform vec2      ScreenSize;
-    uniform vec3      CameraPosition;
     uniform float     zFar;
     uniform mat4      InverseViewMatrix;
     
@@ -76,17 +90,34 @@ uses 1 or each light, it will use the following: A1D1P1.
 </shader>
 
 <shader id="Engine_LightingUtils">
-    void InitLighting()
+    void InitLightingCommon()
     {
-        vec3 viewRayVS = vec3(CameraDirection.xy * (zFar / CameraDirection.z), zFar);
-    
         FragmentCoord         = gl_FragCoord.xy / ScreenSize;
         FragmentDepth         = texture2D(LinearDepthBuffer, FragmentCoord).r;
-		FragmentPositionVS    = vec4(viewRayVS * FragmentDepth, 1.0);
-        FragmentPositionWS    = InverseViewMatrix * FragmentPositionVS;
         
         FragmentNormal        = texture2D(Lighting_Normals, FragmentCoord).rgb;
         FragmentSpecularPower = texture2D(Lighting_Normals, FragmentCoord).a;
+    }
+    
+    void InitLighting()
+    {
+        InitLightingCommon();
+    
+        vec3 viewRayVS = vec3(CameraDirection.xy * (zFar / CameraDirection.z), zFar);
+    
+		FragmentPositionVS = vec4(viewRayVS * FragmentDepth, 1.0);
+        FragmentPositionWS = InverseViewMatrix * FragmentPositionVS;
+    }
+    
+    void InitFSQuadLighting()
+    {
+        InitLightingCommon();
+        
+        vec3 viewRayVS = CameraDirection.xyz;
+        viewRayVS = -viewRayVS;
+    
+		FragmentPositionVS = vec4(viewRayVS * FragmentDepth, 1.0);
+        FragmentPositionWS = InverseViewMatrix * FragmentPositionVS;
     }
 
     float DiffuseFactor(vec3 N, vec3 L)
@@ -140,6 +171,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         float diffuse  = DiffuseFactor(N, L);
         float specular = SpecularFactor(N, H, FragmentSpecularPower);
 
+        //diffuseOut = FragmentPositionVS.xyz;
         diffuseOut  += light.Colour * diffuse;
         specularOut += light.Colour * specular;
     }
@@ -203,7 +235,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         }
         
         
-        
+        //diffuseOut = FragmentPositionWS.xyz;
         diffuseOut  += light.Colour * diffuse  * shadow;
         specularOut += light.Colour * specular * shadow;
     }
@@ -300,6 +332,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         }
         
         
+        //diffuseOut = vec3(1.0, 1.0, 1.0);
         //diffuseOut = FragmentPositionVS.xyz;
         diffuseOut  += light.Colour * diffuse  * attenuation * shadow;
         specularOut += light.Colour * specular * attenuation * shadow;
@@ -453,7 +486,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         
 	    void main()
 	    {
-            InitLighting();
+            InitFSQuadLighting();
 
             vec3 diffuse  = vec3(0.0, 0.0, 0.0);
             vec3 specular = vec3(0.0, 0.0, 0.0);
@@ -476,7 +509,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         
 	    void main()
 	    {
-            InitLighting();
+            InitFSQuadLighting();
             
             vec3 diffuse  = vec3(0.0, 0.0, 0.0);
             vec3 specular = vec3(0.0, 0.0, 0.0);

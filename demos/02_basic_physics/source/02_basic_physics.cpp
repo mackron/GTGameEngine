@@ -44,10 +44,10 @@ public:
         
 
         this->lightNode.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.5f, 0.5f, 0.5f);
-        this->lightNode.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.5f, 0.5f, 0.5f);
-        this->lightNode.GetComponent<GTEngine::DirectionalLightComponent>()->EnableShadowCasting();
-        //this->lightNode.AddComponent<GTEngine::PointLightComponent>()->SetColour(1.0f, 1.0f, 1.0f);
-        //this->lightNode.GetComponent<GTEngine::PointLightComponent>()->EnableShadowCasting();
+        //this->lightNode.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.5f, 0.5f, 0.5f);
+        //this->lightNode.GetComponent<GTEngine::DirectionalLightComponent>()->EnableShadowCasting();
+        this->lightNode.AddComponent<GTEngine::PointLightComponent>()->SetColour(1.0f, 1.0f, 1.0f);
+        this->lightNode.GetComponent<GTEngine::PointLightComponent>()->EnableShadowCasting();
         this->lightNode.SetPosition(6.0f, 6.0f, 6.0f);
         this->lightNode.LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
