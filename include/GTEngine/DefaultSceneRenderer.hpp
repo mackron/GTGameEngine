@@ -95,6 +95,15 @@ namespace GTEngine
             /// The camera aspect ratio.
             float cameraAspect;
 
+            /// The camera's z-near plane.
+            float cameraZNear;
+
+            /// The camera's z-far plane.
+            float cameraZFar;
+
+
+            /// The viewport being rendered to.
+            SceneViewport* viewport;
 
 
             /// Resets the state. Should be called at the start of each render.
@@ -450,6 +459,35 @@ namespace GTEngine
             bool doingMaterialPass;
         };
 
+        // Draws the light geometry.
+        struct RCDrawLightGeometry : public RenderCommand
+        {
+            RCDrawLightGeometry()
+            {
+            }
+
+            void Execute();
+
+            VertexArray* va;
+
+            glm::mat4 mvpMatrix;
+            glm::mat4 modelViewMatrix;
+        };
+
+        // Draws a fullscreen quad light geometry, with the quad vertices being at the four corners of the far clipping plane.
+        struct RCDrawFSQuadLightGeometry : public RenderCommand
+        {
+            RCDrawFSQuadLightGeometry()
+            {
+            }
+
+            void Execute();
+
+            SceneViewport* viewport;
+            glm::mat4 mvpMatrix;
+            glm::mat4 inverseProjectionMatrix;
+        };
+
 
 
         // Sets a shader.
@@ -664,6 +702,8 @@ namespace GTEngine
         RCCache<RCControlBlending>                    rcControlBlending[2];
         RCCache<RCSetShader>                          rcSetShader[2];
         RCCache<RCDrawGeometry>                       rcDrawGeometry[2];
+        RCCache<RCDrawLightGeometry>                  rcDrawLightGeometry[2];
+        RCCache<RCDrawFSQuadLightGeometry>            rcDrawFSQuadLightGeometry[2];
         RCCache<RCLighting_SetShader>                 rcLighting_SetShader[2];
         RCCache<RCLighting_BeginDirectionalShadowMap> rcLighting_BeginDirectionalShadowMap[2];
         RCCache<RCLighting_BeginPointShadowMap>       rcLighting_BeginPointShadowMap[2];

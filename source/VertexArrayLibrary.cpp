@@ -19,7 +19,7 @@ namespace GTEngine
                 -1.0f, -1.0f,
                  1.0f, -1.0f,
                  1.0f,  1.0f,
-                -1.0f,  1.0f,
+                -1.0f,  1.0f
             };
 
             unsigned int indices[] =

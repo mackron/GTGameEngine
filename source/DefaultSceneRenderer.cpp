@@ -213,13 +213,13 @@ namespace GTEngine
         this->pointLightShadowMapFramebuffer.CheckStatus();
 
 
-		this->Shaders.Lighting_NoShadow_A1           = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_A1");
-        this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_D1");
-        this->Shaders.Lighting_D1                    = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_D1");
-		this->Shaders.Lighting_NoShadow_P1           = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_P1");
-        this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_P1");
-		this->Shaders.Lighting_NoShadow_S1           = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_NoShadow_S1");
-		this->Shaders.Lighting_S1                    = ShaderLibrary::Acquire("Engine_LightingVS",         "Engine_LightingPass_S1");
+		this->Shaders.Lighting_NoShadow_A1           = ShaderLibrary::Acquire("Engine_FSQuadLightingVS",   "Engine_LightingPass_NoShadow_A1");
+        this->Shaders.Lighting_NoShadow_D1           = ShaderLibrary::Acquire("Engine_FSQuadLightingVS",   "Engine_LightingPass_NoShadow_D1");
+        this->Shaders.Lighting_D1                    = ShaderLibrary::Acquire("Engine_FSQuadLightingVS",   "Engine_LightingPass_D1");
+		this->Shaders.Lighting_NoShadow_P1           = ShaderLibrary::Acquire("Engine_FSQuadLightingVS",   "Engine_LightingPass_NoShadow_P1");
+        this->Shaders.Lighting_P1                    = ShaderLibrary::Acquire("Engine_FSQuadLightingVS",   "Engine_LightingPass_P1");
+		this->Shaders.Lighting_NoShadow_S1           = ShaderLibrary::Acquire("Engine_FSQuadLightingVS",   "Engine_LightingPass_NoShadow_S1");
+		this->Shaders.Lighting_S1                    = ShaderLibrary::Acquire("Engine_FSQuadLightingVS",   "Engine_LightingPass_S1");
         this->Shaders.Lighting_ShadowMap             = ShaderLibrary::Acquire("Engine_ShadowVS",           "Engine_LightingPass_ShadowMap");
         this->Shaders.Lighting_PointLightShadowMap   = ShaderLibrary::Acquire("Engine_PointLightShadowVS", "Engine_LightingPass_PointLightShadowMap");
         this->Shaders.Lighting_ColourClear           = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_LightingPass_ColourClear");
@@ -289,6 +289,8 @@ namespace GTEngine
         this->rcControlBlending[Renderer::BackIndex].Reset();
         this->rcSetShader[Renderer::BackIndex].Reset();
         this->rcDrawGeometry[Renderer::BackIndex].Reset();
+        this->rcDrawLightGeometry[Renderer::BackIndex].Reset();
+        this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Reset();
         this->rcLighting_SetShader[Renderer::BackIndex].Reset();
         this->rcLighting_BeginDirectionalShadowMap[Renderer::BackIndex].Reset();
         this->rcLighting_BeginPointShadowMap[Renderer::BackIndex].Reset();
@@ -346,6 +348,9 @@ namespace GTEngine
             this->mainLayerState.cameraPosition   = cameraNode->GetWorldPosition();
             this->mainLayerState.cameraFOV        = camera->perspective.fov;
             this->mainLayerState.cameraAspect     = camera->perspective.aspect;
+            this->mainLayerState.cameraZNear      = camera->zNear;
+            this->mainLayerState.cameraZFar       = camera->zFar;
+            this->mainLayerState.viewport         = &viewport;
 
             this->MaterialPass(scene, *framebuffer, this->mainLayerState, false);
             this->LightingPass(scene, *framebuffer, this->mainLayerState, false, 1);
@@ -380,6 +385,9 @@ namespace GTEngine
             this->backgroundLayerState.cameraPosition   = cameraNode->GetWorldPosition();
             this->backgroundLayerState.cameraFOV        = camera->perspective.fov;
             this->backgroundLayerState.cameraAspect     = camera->perspective.aspect;
+            this->backgroundLayerState.cameraZNear      = camera->zNear;
+            this->backgroundLayerState.cameraZFar       = camera->zFar;
+            this->backgroundLayerState.viewport         = &viewport;
 
             this->MaterialPass(scene, *framebuffer, this->backgroundLayerState, false);
             this->LightingPass(scene, *framebuffer, this->backgroundLayerState, false, 0);
@@ -626,11 +634,7 @@ namespace GTEngine
         auto &cameraProjection = state.cameraProjection;
         auto &cameraView       = state.cameraView;
 
-        Math::Plane zPlane;
-        zPlane.a = cameraProjection[0][3] - cameraProjection[0][2]; zPlane.b = cameraProjection[1][3] - cameraProjection[1][2]; zPlane.c = cameraProjection[2][3] - cameraProjection[2][2]; zPlane.d = cameraProjection[3][3] - cameraProjection[3][2];
-        zPlane.Normalize();
-
-        float zFar = zPlane.d;
+        float zFar = state.cameraZFar;
 
         // We will have render commands waiting to be added to the main RC queue. This is where we should do this.
         if (!refractive)
@@ -679,11 +683,7 @@ namespace GTEngine
         auto &cameraProjection = state.cameraProjection;
         auto &cameraView       = state.cameraView;
 
-        Math::Plane zPlane;
-        zPlane.a = cameraProjection[0][3] - cameraProjection[0][2]; zPlane.b = cameraProjection[1][3] - cameraProjection[1][2]; zPlane.c = cameraProjection[2][3] - cameraProjection[2][2]; zPlane.d = cameraProjection[3][3] - cameraProjection[3][2];
-        zPlane.Normalize();
-
-        float zFar = zPlane.d;
+        float zFar = state.cameraZFar;
 
 
         // We begin with the lights that are not casting shadows. We can do an optimized pass here where we can group lights into a single pass.
@@ -717,14 +717,23 @@ namespace GTEngine
 
             Renderer::BackRCQueue->Append(rcSetShader);
 
+            
             if (refractive)
             {
                 Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
             }
             else
             {
-                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+                // The ambient light can be done with a fullscreen quad.
+                auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+
+                //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
             }
+            
         }
 
         for (size_t i = 0; i < state.directionalLights_NoShadows.count; ++i)
@@ -759,7 +768,14 @@ namespace GTEngine
             }
             else
             {
-                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+                auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+                
+
+                //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
             }
         }
 
@@ -798,7 +814,22 @@ namespace GTEngine
             }
             else
             {
-                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+                // TODO: Use a sphere shape here.
+                auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+
+                /*
+                auto &rcDrawLightGeometry = this->rcDrawLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.va              = VertexArrayLibrary::GetFullscreenQuadVA();
+                rcDrawLightGeometry.mvpMatrix       = glm::mat4();                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.modelViewMatrix = glm::mat4();
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+                */
+
+                //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
             }
         }
 
@@ -840,7 +871,22 @@ namespace GTEngine
             }
             else
             {
-                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+                auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+
+                /*
+                // TODO: Use a cone shape here.
+                auto &rcDrawLightGeometry = this->rcDrawLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.va              = VertexArrayLibrary::GetFullscreenQuadVA();
+                rcDrawLightGeometry.mvpMatrix       = glm::mat4();                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.modelViewMatrix = glm::mat4();
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+                */
+
+                //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
             }
         }
 
@@ -891,7 +937,14 @@ namespace GTEngine
             }
             else
             {
-                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+                auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+                
+
+                //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
             }
         }
 
@@ -940,7 +993,22 @@ namespace GTEngine
             }
             else
             {
-                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+                // TODO: Use a sphere shape here.
+                auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+
+                /*
+                auto &rcDrawLightGeometry = this->rcDrawLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.va              = VertexArrayLibrary::GetFullscreenQuadVA();
+                rcDrawLightGeometry.mvpMatrix       = glm::mat4();                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.modelViewMatrix = glm::mat4();
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+                */
+
+                //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
             }
         }
 
@@ -996,7 +1064,22 @@ namespace GTEngine
             }
             else
             {
-                Renderer::BackRCQueue->Append(state.lightingDrawRCs);
+                // TODO: Use a cone shape here.
+                auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+
+                /*
+                auto &rcDrawLightGeometry = this->rcDrawLightGeometry[Renderer::BackIndex].Acquire();
+                rcDrawLightGeometry.va              = VertexArrayLibrary::GetFullscreenQuadVA();
+                rcDrawLightGeometry.mvpMatrix       = glm::mat4();                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
+                rcDrawLightGeometry.modelViewMatrix = glm::mat4();
+                Renderer::BackRCQueue->Append(rcDrawLightGeometry);
+                */
+
+                //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
             }
         }
     }
@@ -1282,13 +1365,17 @@ namespace GTEngine
         Renderer::SetDrawBuffers(2, drawBuffers);
 
         // The depth buffer will have been layed down.
-        Renderer::SetDepthFunc(RendererFunction_Equal);
+        //Renderer::SetDepthFunc(RendererFunction_Equal);
+        Renderer::DisableDepthTest();
         Renderer::DisableDepthWrites();
 
         // We combine lighting passes using standard blending.
         Renderer::EnableBlending();
         Renderer::SetBlendEquation(BlendEquation_Add);
         Renderer::SetBlendFunc(BlendFunc_One, BlendFunc_One);
+
+        // We want to keep stencil testing, but we don't want to modify the stencil buffer.
+        Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Keep);
     }
 
 
@@ -1345,10 +1432,11 @@ namespace GTEngine
         Renderer::SetDepthFunc(RendererFunction_LEqual);
 
 
-        // Stencil testing needs to be enabled.
-        Renderer::DisableStencilTest();
+        // We need to modify the stencil buffer just like normal because we will want to clip light volumes so that the background is not
+        // lit with foreground lights.
+        Renderer::EnableStencilTest();
         Renderer::SetStencilFunc(RendererFunction_GEqual, 1, 255);
-        Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Keep);
+        Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Replace);
     }
 
     void DefaultSceneRenderer::RCBeginTransparentMaterialPass::Execute()
@@ -1378,10 +1466,6 @@ namespace GTEngine
         Renderer::SetShaderParameter("Lighting_Normals",  this->materialBuffer2);
         Renderer::SetShaderParameter("LinearDepthBuffer", this->linearDepthBuffer);
         Renderer::SetShaderParameter("ScreenSize",        this->screenSize);
-        Renderer::SetShaderParameter("CameraPosition",    this->cameraPosition);
-        Renderer::SetShaderParameter("CameraTanHalfFOV",  glm::tan(glm::radians(this->cameraFOV * 0.5f)));
-        Renderer::SetShaderParameter("CameraAspect",      this->cameraAspect);
-        Renderer::SetShaderParameter("ViewMatrix",        this->viewMatrix);
         Renderer::SetShaderParameter("zFar",              this->zFar);
 
         for (size_t i = 0; i < this->parameters.GetCount(); ++i)
@@ -1418,6 +1502,7 @@ namespace GTEngine
         }
 
 
+        Renderer::EnableDepthTest();
 
         if (this->changeFaceCulling)
         {
@@ -1437,6 +1522,72 @@ namespace GTEngine
         {
             Renderer::SetFaceCulling(false, true);
         }
+    }
+
+
+    void DefaultSceneRenderer::RCDrawLightGeometry::Execute()
+    {
+        Renderer::DisableDepthTest();
+        Renderer::DisableDepthWrites();
+
+        Renderer::SetShaderParameter("MVPMatrix",       this->mvpMatrix);
+        Renderer::SetShaderParameter("ModelViewMatrix", this->modelViewMatrix);
+        Renderer::Draw(this->va);
+
+        // TODO: Should be able to move this.
+        Renderer::EnableDepthTest();
+    }
+
+    void DefaultSceneRenderer::RCDrawFSQuadLightGeometry::Execute()
+    {
+        Renderer::DisableDepthTest();
+        Renderer::DisableDepthWrites();
+
+        Renderer::SetShaderParameter("MVPMatrix", this->mvpMatrix);
+        
+
+        float viewportWidth  = static_cast<float>(this->viewport->GetWidth());
+        float viewportHeight = static_cast<float>(this->viewport->GetHeight());
+
+        auto camera = this->viewport->GetCameraNode()->GetComponent<GTEngine::CameraComponent>();
+        const glm::mat4 &projection = camera->GetProjectionMatrix();
+
+        glm::vec3 bottomLeft  = glm::unProject(glm::vec3(0.0f,          0.0f,           1.0f), glm::mat4(), projection, glm::vec4(0.0f, 0.0f, viewportWidth, viewportHeight));
+        glm::vec3 bottomRight = glm::unProject(glm::vec3(viewportWidth, 0.0f,           1.0f), glm::mat4(), projection, glm::vec4(0.0f, 0.0f, viewportWidth, viewportHeight));
+        glm::vec3 topRight    = glm::unProject(glm::vec3(viewportWidth, viewportHeight, 1.0f), glm::mat4(), projection, glm::vec4(0.0f, 0.0f, viewportWidth, viewportHeight));
+        glm::vec3 topLeft     = glm::unProject(glm::vec3(0.0f,          viewportHeight, 1.0f), glm::mat4(), projection, glm::vec4(0.0f, 0.0f, viewportWidth, viewportHeight));
+
+        // Note how we use an explicit zFar value here. This is needed due to floating point innacuracies. Sometimes the z component of the corner
+        // vertices will fall just over the zFar plane, which will then cause the plane to be clipped. Of course, we don't want this.
+        float vertices[] =
+        {
+            bottomLeft.x,  bottomLeft.y,  -camera->zFar,
+            bottomRight.x, bottomRight.y, -camera->zFar,
+            topRight.x,    topRight.y,    -camera->zFar,
+            topLeft.x,     topLeft.y,     -camera->zFar
+        };
+
+
+        /*
+        float vertices[] =
+        {
+            -1.0f, -1.0f, -1.0f,
+             1.0f, -1.0f, -1.0f,
+             1.0f,  1.0f, -1.0f,
+            -1.0f,  1.0f, -1.0f,
+        };
+        */
+
+        unsigned int indices[] =
+        {
+            0, 1, 2,
+            2, 3, 0,
+        };
+
+        Renderer::Draw(vertices, indices, 6, VertexFormat::P3);
+
+        // TODO: Should be able to move this.
+        Renderer::EnableDepthTest();
     }
 
 
