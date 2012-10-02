@@ -260,7 +260,7 @@ uses 1 or each light, it will use the following: A1D1P1.
         
         vec3 N = FragmentNormal;
         vec3 L = light.Position - FragmentPositionVS.xyz;
-        vec3 H = normalize(normalize(L) - normalize(FragmentPositionVS));
+        vec3 H = normalize(normalize(L) - normalize(FragmentPositionVS.xyz));
 
         float diffuse     = DiffuseFactor(N, normalize(L));
         float specular    = SpecularFactor(N, H, FragmentSpecularPower);
