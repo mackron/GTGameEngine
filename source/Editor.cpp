@@ -4,6 +4,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTGUI/Server.hpp>
 #include <GTCore/Path.hpp>
+#include <GTCore/Keyboard.hpp>
 
 
 #if defined(_MSC_VER)
@@ -16,7 +17,7 @@ namespace GTEngine
     Editor::Editor(Game &game)
         : game(game), GUI(),
           modelEditor(*this), imageEditor(*this),
-          isStarted(false), isOpen(false), disableFileWatchingAfterClose(true),
+          isStarted(false), isOpen(false), disableFileWatchingAfterClose(true), disableKeyboardAutoRepeatAfterClose(true),
           dataFilesWatcherEventHandler(*this)
     {
     }
@@ -80,6 +81,12 @@ namespace GTEngine
             this->game.GetDataFilesWatcher().CheckForChanges(false);
             this->game.GetDataFilesWatcher().DispatchEvents();
 
+            
+            // We want to keep track of whether or not auto-repeating should be disabled when the editor is closed.
+            this->disableKeyboardAutoRepeatAfterClose = !GTCore::Keyboard::IsAutoRepeatEnabled();
+            GTCore::Keyboard::EnableAutoRepeat();
+
+
             this->isOpen = true;
         }
     }
@@ -102,6 +109,14 @@ namespace GTEngine
             {
                 this->game.DisableDataFilesWatching();
             }
+
+
+            // We may want to disable auto repeat.
+            if (this->disableKeyboardAutoRepeatAfterClose)
+            {
+                GTCore::Keyboard::DisableAutoRepeat();
+            }
+
 
             this->isOpen = false;
         }

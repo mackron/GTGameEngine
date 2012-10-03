@@ -16,6 +16,7 @@
 #include <GTCore/String.hpp>
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/Path.hpp>
+#include <GTCore/Keyboard.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -128,7 +129,7 @@ namespace GTEngine
         return false;
     }
 
-    
+
     void Game::RefreshDisplay()
     {
         this->GetWindow()->SetSize(this->GetScript().GetInteger("Display.Width"), this->GetScript().GetInteger("Display.Height"));
@@ -290,8 +291,6 @@ namespace GTEngine
             this->mousePosBufferIndex = (this->mousePosBufferIndex + 1) % MouseBufferSize;
 
             this->SetMousePosition(this->mouseCenterX, this->mouseCenterY);
-
-
         }
     }
 
@@ -645,6 +644,10 @@ namespace GTEngine
                 {
                     Log("Error starting up files watcher.");
                 }
+
+
+                // We're going to have keyboard auto-repeat disabled by default. This should make things like player controlling a bit more intuitive.
+                GTCore::Keyboard::DisableAutoRepeat();
 
 
                 // Here is where we let the game object do some startup stuff.
