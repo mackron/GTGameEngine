@@ -573,9 +573,6 @@ namespace GTEngine
         /// Whether or not the game window has focus.
         bool focused;
 
-        /// Whether or not the cursor visibility state has changed.
-        bool cursorVisibleChanged;
-
         /// Whether or not the cursor is visible.
         bool isCursorVisible;
 

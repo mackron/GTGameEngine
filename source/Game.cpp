@@ -35,7 +35,7 @@ namespace GTEngine
           fontServer("var/fonts.cache"), defaultFont(nullptr),
           gui(&script, &fontServer), guiEventHandler(*this),
           paused(false), focused(true),
-          cursorVisibleChanged(false), isCursorVisible(true),
+          isCursorVisible(true),
           keyDownMap(), mouseButtonDownMap(),
           editor(*this),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
@@ -231,8 +231,8 @@ namespace GTEngine
     {
         if (!this->isCursorVisible)
         {
-            this->cursorVisibleChanged = true;
-            this->isCursorVisible      = true;
+            this->window->ShowCursor();
+            this->isCursorVisible = true;
         }
     }
 
@@ -240,8 +240,8 @@ namespace GTEngine
     {
         if (this->isCursorVisible)
         {
-            this->cursorVisibleChanged = true;
-            this->isCursorVisible      = false;
+            this->window->HideCursor();
+            this->isCursorVisible = false;
         }
     }
 
@@ -285,13 +285,13 @@ namespace GTEngine
             offsetX -= this->mouseCenterX;
             offsetY -= this->mouseCenterY;
 
-            //printf("%d %d\n", offsetX, offsetY);
-
             this->mousePosXBuffer[this->mousePosBufferIndex] = offsetX;
             this->mousePosYBuffer[this->mousePosBufferIndex] = offsetY;
             this->mousePosBufferIndex = (this->mousePosBufferIndex + 1) % MouseBufferSize;
 
             this->SetMousePosition(this->mouseCenterX, this->mouseCenterY);
+
+
         }
     }
 
@@ -737,21 +737,6 @@ namespace GTEngine
         {
             // First we need to handle any pending window messages. We do not want to wait here (first argument).
             while (GTCore::PumpNextWindowEvent(false));
-
-            // Here we check if the cursor visibility state has changed.
-            if (this->cursorVisibleChanged)
-            {
-                this->cursorVisibleChanged = false;
-
-                if (this->isCursorVisible)
-                {
-                    this->window->ShowCursor();
-                }
-                else
-                {
-                    this->window->HideCursor();
-                }
-            }
 
 
             // If we're watching the data directories, we want to check for changes now.
