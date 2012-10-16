@@ -18,18 +18,8 @@ class EditorGame : public GTEngine::Game
 {
 public:
 
-    EditorGame(int argc, char** argv)
-        : Game(argc, argv)
+    EditorGame()
     {
-        // First we'll configure the window...
-        this->GetWindow()->SetTitle("GTGameEngine Editor");
-        this->GetWindow()->SetSize(1280, 720);
-
-        // Disable v-sync for now.
-        //GTEngine::Renderer::SetSwapInterval(0);
-
-        // We open the editor straight away.
-        this->OpenEditor();
     }
 
     ~EditorGame()
@@ -41,10 +31,36 @@ public:
 // Event handlers.
 public:
 
+    bool OnStartup(int argc, char** argv)
+    {
+        (void)argc;
+        (void)argv;
+
+
+        // First we'll configure the window...
+        this->GetWindow()->SetTitle("GTGameEngine Editor");
+        this->GetWindow()->SetSize(1280, 720);
+
+        // Disable v-sync for now.
+        //GTEngine::Renderer::SetSwapInterval(0);
+
+        // We open the editor straight away.
+        this->OpenEditor();
+
+        return true;
+    }
+
     // All we need to do here is step the GUI.
     void OnUpdate()
     {
-        this->StepGUI(this->GetDeltaTimeInSeconds());
+        //this->StepGUI(this->GetDeltaTimeInSeconds());
+    }
+
+
+    // We don't want to let the editor close, so we just implement OnEditorClosing() and return false.
+    bool OnEditorClosing()
+    {
+        return false;
     }
 
 
@@ -65,23 +81,16 @@ int main(int argc, char** argv)
 
     int retValue = 1;
 
-    // The first thing to do is startup the engine.
-    if (GTEngine::Startup(argc, argv))
+    // First we start up the engine, specifying the Game class we want to instantiate. This uses the default constructor.
+    auto game = GTEngine::Startup<EditorGame>(argc, argv);
+    if (game != nullptr)
     {
-        // Now we need to instantiate a game object and run it.
-        EditorGame game(argc, argv);
-        if (game)
-        {
-            // Running the game will return a value that can be returned from main(). 0 will be returned if the
-            // game ran and closed normally.
-            retValue = game.Run();
-        }
+        // Now we run the game, keeping track of the return value.
+        retValue = game->Run();
     }
 
-    // When we get here it means the application wants to shutdown. The engine should be shutdown here for
-    // a clean termination. Note how we're shutting down AFTER destructing the game object. It's best to
-    // do cleaning up before shutting down.
-    GTEngine::Shutdown();
+    // And now we shut down the engine, passing the game object returned by Startup().
+    GTEngine::Shutdown(game);
 
 
     return retValue;

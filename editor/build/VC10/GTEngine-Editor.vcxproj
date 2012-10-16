@@ -121,7 +121,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>GTEngine-debug.lib;GTGUI-debug.lib;GTType-debug.lib;GTImage-debug.lib;GTCore-debug.lib;gtgl-debug.lib;lua-debug.lib;freetype-debug.lib;assimpD.lib;png-debug.lib;z-debug.lib;pcre-debug.lib;BulletCollision_debug.lib;BulletDynamics_debug.lib;LinearMath_debug.lib;Recast-debug.lib;Detour-debug.lib;DetourTileCache-debug.lib;DetourCrowd-debug.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GTEngine-debug.lib;GTGUI-debug.lib;GTType-debug.lib;GTImage-debug.lib;GTCore-debug.lib;gtgl-debug.lib;lua-debug.lib;freetype-debug.lib;assimpD.lib;png-debug.lib;z-debug.lib;pcre-debug.lib;BulletCollision_debug.lib;BulletDynamics_debug.lib;LinearMath_debug.lib;OpenAL32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../../lib/windows-vc10;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -151,7 +151,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>GTEngine.lib;GTGUI.lib;GTType.lib;GTImage.lib;GTCore.lib;gtgl.lib;lua.lib;freetype.lib;assimp.lib;png.lib;z.lib;pcre.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GTEngine.lib;GTGUI.lib;GTType.lib;GTImage.lib;GTCore.lib;gtgl.lib;lua.lib;freetype.lib;assimp.lib;png.lib;z.lib;pcre.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;OpenAL32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../../lib/windows-vc10;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
