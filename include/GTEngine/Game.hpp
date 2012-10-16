@@ -300,6 +300,22 @@ namespace GTEngine
         void OnFileUpdate(const DataFilesWatcher::Item &item);
 
 
+       
+        ///////////////////////////////////////////////
+        // Key Bindings.
+
+        /// Retrieves the key for toggling the editor.
+        GTCore::Key GetEditorToggleKey() const;
+
+        /// Sets the key for toggling the editor.
+        void SetEditorToggleKey(GTCore::Key key);
+
+        /// Retrieves the key for toggling the profiler.
+        GTCore::Key GetProfilerToggleKey() const;
+
+        /// Sets the key for toggling the profiler.
+        void SetProfilerToggleKey(GTCore::Key key);
+
 
     protected:
 

@@ -464,6 +464,28 @@ namespace GTEngine
 
 
 
+    GTCore::Key Game::GetEditorToggleKey() const
+    {
+        return this->editorToggleKey;
+    }
+
+    void Game::SetEditorToggleKey(GTCore::Key key)
+    {
+        this->editorToggleKey = key;
+    }
+
+    GTCore::Key Game::GetProfilerToggleKey() const
+    {
+        return this->profilerToggleKey;
+    }
+
+    void Game::SetProfilerToggleKey(GTCore::Key key)
+    {
+        this->profilerToggleKey = key;
+    }
+
+
+
     void Game::OnLoadConfigs()
     {
     }
