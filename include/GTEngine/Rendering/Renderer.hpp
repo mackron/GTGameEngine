@@ -86,7 +86,7 @@ namespace GTEngine
     class RendererEventHandler
     {
     public:
-        
+
         virtual ~RendererEventHandler();
 
         /// Called when the RC queues are swapped on the renderer.
@@ -173,7 +173,7 @@ namespace GTEngine
         static int GetSwapInterval();
 
 
-       
+
         /////////////////////////////////////////////
         // Event Handling.
 
@@ -207,7 +207,11 @@ namespace GTEngine
 
 
         /// Creates the game window.
-        static GTCore::Window * CreateGameWindow();
+        static GTCore::Window* CreateGameWindow();
+
+        /// Makes the given window the current window where rendering will take place on.
+        static void SetCurrentWindow(GTCore::Window* window);
+
 
         /// Determines whether or not the renderer uses upside down textures. True for OpenGL.
         static bool HasFlippedTextures();
@@ -300,7 +304,7 @@ namespace GTEngine
 
         /// Enables depth testing.
         static void EnableDepthTest();
-        
+
         /// Disable depth testing.
         static void DisableDepthTest();
 
@@ -419,7 +423,7 @@ namespace GTEngine
         /// Activates, enables and binds the textures of the current shader.
         static void BindCurrentShaderTextures();
 
-        
+
         static void SetShaderParameter(const char *paramName, Texture2D*   texture);
         static void SetShaderParameter(const char* paramName, TextureCube* texture);
         static void SetShaderParameter(const char *paramName, float x);
@@ -442,7 +446,7 @@ namespace GTEngine
         {
             SetShaderParameter(paramName, value.x, value.y, value.z, value.w);
         }
-        
+
 
 
 
@@ -713,7 +717,7 @@ namespace GTEngine
 
         /// A pointer to the front cache. Will never be null after the renderer has been successfully initialised.
         static RCQueue* FrontRCQueue;
-        
+
         /// In many cases it is appropriate to use a pair of objects to manage the multithreaded environment correctly. For example, meshes use
         /// a pair of VertexArray's to store skinned geometry. One of them will be updated by the update thread while the other is used by the
         /// rendering thread. BackIndex is used to access the array item to use for updating on the non-rendering threads. This will always be

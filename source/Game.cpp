@@ -108,6 +108,7 @@ namespace GTEngine
             int height = this->script.GetInteger("Display.Height");
 
             this->window->EnableFullscreen(static_cast<unsigned int>(width), static_cast<unsigned int>(height));
+            Renderer::SetCurrentWindow(this->window);
         }
     }
 
@@ -116,6 +117,7 @@ namespace GTEngine
         if (this->window != nullptr)
         {
             this->window->DisableFullscreen();
+            Renderer::SetCurrentWindow(this->window);
         }
     }
 
