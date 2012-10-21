@@ -211,7 +211,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The destructor of derived classes will <b>not</b> delete attached objects.
-        ~Scene();
+        virtual ~Scene();
 
 
         /// Adds the given object to the scene.
