@@ -50,13 +50,6 @@ public:
         return true;
     }
 
-    // All we need to do here is step the GUI.
-    void OnUpdate()
-    {
-        //this->StepGUI(this->GetDeltaTimeInSeconds());
-    }
-
-
     // We don't want to let the editor close, so we just implement OnEditorClosing() and return false.
     bool OnEditorClosing()
     {
