@@ -233,7 +233,7 @@ namespace GTEngine
         return RendererState.SwapInterval;
     }
 
-    
+
 
     //////////////////////////////////////////
     // Event Handling.
@@ -394,7 +394,7 @@ namespace GTEngine
             delete Renderer::BackRCQueue;
             delete Renderer::FrontRCQueue;
 
-            
+
             gtglShutdown();
             OpenGLContext = nullptr;
 
@@ -438,6 +438,30 @@ namespace GTEngine
 
         return window;
     }
+
+    void Renderer::SetCurrentWindow(GTCore::Window* window)
+    {
+#ifdef GTCORE_PLATFORM_WINDOWS
+        if (window != nullptr)
+        {
+            gtglSetCurrentDC(window->GetInternalObjects().hDC);
+        }
+        else
+        {
+            gtglSetCurrentDC(0);
+        }
+#else
+        if (window != nullptr)
+        {
+            gtglSetCurrentWindow(window->GetInternalObjects().window);
+        }
+        else
+        {
+            gtglSetCurrentWindow(0);
+        }
+#endif
+    }
+
 
     bool Renderer::HasFlippedTextures()
     {
@@ -526,7 +550,7 @@ namespace GTEngine
     }
 
 
-    
+
     void Renderer::Draw(const VertexArray* vertexArray, DrawMode mode)
     {
         assert(vertexArray != nullptr);
@@ -1156,7 +1180,7 @@ namespace GTEngine
             RendererState.CurrentFramebuffer->DetachColourBuffer(colourBufferIndex, true);
         }
     }
-    
+
     void Renderer::AttachDepthStencilBuffer(Texture2D &depthStencilBuffer)
     {
         if (RendererState.CurrentFramebuffer != nullptr)
