@@ -383,6 +383,7 @@ namespace GTEngine
         *       For efficiency, the up vector is not normalized internally.
         */
         void LookAt(const glm::vec3 &target, const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 0.0f));
+        void LookAt(float targetX, float targetY, float targetZ, float upX = 0.0f, float upY = 1.0f, float upZ = 0.0f) { this->LookAt(glm::vec3(targetX, targetY, targetZ), glm::vec3(upX, upY, upZ)); }
 
         /**
         *   \brief  Looks at another scene node.

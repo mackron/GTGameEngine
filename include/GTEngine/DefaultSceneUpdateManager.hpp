@@ -45,7 +45,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is called from Step().
-        void StepSceneNode(SceneNode &node, double deltaTimeInSeconds);
+        virtual void StepSceneNode(SceneNode &node, double deltaTimeInSeconds);
 
 
 
