@@ -90,6 +90,12 @@ namespace GTEngine
         /// Retrieves the colour buffer of the viewport.
         Texture2D* GetColourBuffer() { return this->colourBuffer; }
 
+        /// Sets the colour buffer of the viewport.
+        ///
+        /// @remarks
+        ///     This should only need to be used by renderers. This is just a simple setter.
+        void SetColourBuffer(Texture2D* colourBuffer) { this->colourBuffer = colourBuffer; }
+
 
 
     // Picking.
@@ -129,14 +135,6 @@ namespace GTEngine
         /// Retrieves the model-view-projection matrix used by this viewport and it's current camera.
         glm::mat4 GetMVPMatrix(int layer = ViewportLayer::Main) const;
 
-
-
-    ////////////////////////////////////////////////////////////////////////////////////
-    // Methods below should only be used internally by GTEngine.
-    public:
-
-        /// Sets the colour buffer.
-        void __SetColourBuffer(Texture2D* colourBuffer) { this->colourBuffer = colourBuffer; }
 
 
 
