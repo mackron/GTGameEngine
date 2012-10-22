@@ -17,13 +17,14 @@ namespace GTEngine
         ////////////////////////////////////////////////////
         // Callback Structures.
 
-        struct VisibleCallback
+
+        struct VisibilityCallback
         {
             /// Constructor.
-            VisibleCallback() {};
+            VisibilityCallback() {};
 
             /// Destructor.
-            virtual ~VisibleCallback() {};
+            virtual ~VisibilityCallback() {};
 
 
             /// Called when the model of the given object is processed by ProcessVisibleObjects().
@@ -139,7 +140,7 @@ namespace GTEngine
         ///
         /// @param mvp      [in] The model-view-projection matrix to cull against.
         /// @param callback [in] The callback to use when processing each visible object.
-        virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibleCallback &callback) = 0;
+        virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback) = 0;
 
 
 
