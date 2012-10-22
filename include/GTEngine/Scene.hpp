@@ -350,7 +350,7 @@ namespace GTEngine
         ///
         /// @param mvp      [in] The projection matrix whose visible objects are being retrieved.
         /// @param callback [in] The callback that will receive the visible objects.
-        void QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibleCallback &callback);
+        void QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibilityCallback &callback);
 
 
 

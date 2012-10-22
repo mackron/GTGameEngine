@@ -12,13 +12,13 @@
 namespace GTEngine
 {
     /// The callback used during the material pass.
-    class DefaultSceneRenderer_MaterialPassCallback : public SceneCullingManager::VisibleCallback
+    class DefaultSceneRenderer_MaterialPassCallback : public SceneCullingManager::VisibilityCallback
     {
     public:
 
         /// Constructor.
         DefaultSceneRenderer_MaterialPassCallback(DefaultSceneRenderer &rendererIn, DefaultSceneRenderer::LayerState &layerStateIn, bool opaquePassIn)
-            : SceneCullingManager::VisibleCallback(), renderer(rendererIn),
+            : SceneCullingManager::VisibilityCallback(), renderer(rendererIn),
               layerState(layerStateIn),
               opaquePass(opaquePassIn)
         {
@@ -113,13 +113,13 @@ namespace GTEngine
 
 
     // Culling callback for shadow map passes.
-    class DefaultSceneRenderer_ShadowPassCallback : public SceneCullingManager::VisibleCallback
+    class DefaultSceneRenderer_ShadowPassCallback : public SceneCullingManager::VisibilityCallback
     {
     public:
 
         /// Constructor.
         DefaultSceneRenderer_ShadowPassCallback(DefaultSceneRenderer &rendererIn, const glm::mat4 &projection, const glm::mat4 &view)
-            : SceneCullingManager::VisibleCallback(), renderer(rendererIn), projection(projection), view(view)
+            : SceneCullingManager::VisibilityCallback(), renderer(rendererIn), projection(projection), view(view)
         {
         }
 

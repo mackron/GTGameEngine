@@ -45,7 +45,7 @@ namespace GTEngine
 
 
         /// SceneCullingManager::ProcessVisibleObjects().
-        virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibleCallback &callback);
+        virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback);
 
 
         /// Processes the model of the given object.
@@ -54,7 +54,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
-        virtual void ProcessVisibleObjectModel(SceneObject &object, VisibleCallback &callback);
+        virtual void ProcessVisibleObjectModel(SceneObject &object, VisibilityCallback &callback);
 
         /// Processes the point light of the given object.
         ///
@@ -62,7 +62,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
-        virtual void ProcessVisibleObjectPointLight(SceneObject &object, VisibleCallback &callback);
+        virtual void ProcessVisibleObjectPointLight(SceneObject &object, VisibilityCallback &callback);
 
         /// Processes the spot light of the given object.
         ///
@@ -70,13 +70,13 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
-        virtual void ProcessVisibleObjectSpotLight(SceneObject &object, VisibleCallback &callback);
+        virtual void ProcessVisibleObjectSpotLight(SceneObject &object, VisibilityCallback &callback);
 
 
         /// Helper method for processing a visible object.
         ///
         /// @param object [in] The object being processed.
-        virtual void ProcessVisibleObject(SceneObject &object, VisibleCallback &callback);
+        virtual void ProcessVisibleObject(SceneObject &object, VisibilityCallback &callback);
 
 
 
@@ -379,7 +379,7 @@ namespace GTEngine
         struct DbvtPolicy : btDbvt::ICollide
         {
             /// Constructor.
-            DbvtPolicy(DefaultSceneCullingManager &cullingManager, VisibleCallback &callback, const glm::mat4 &mvp, size_t bufferWidth = 128, size_t bufferHeight = 128);
+            DbvtPolicy(DefaultSceneCullingManager &cullingManager, VisibilityCallback &callback, const glm::mat4 &mvp, size_t bufferWidth = 128, size_t bufferHeight = 128);
 
             /// Destructor.
             virtual ~DbvtPolicy();
@@ -633,7 +633,7 @@ namespace GTEngine
             DefaultSceneCullingManager &cullingManager;
             
             /// The callback structure that is passed around to cullingManager.
-            VisibleCallback &callback;
+            VisibilityCallback &callback;
 
             /// The model-view-projection matrix to use with the culling.
             btScalar mvp[16];

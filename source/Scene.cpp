@@ -9,7 +9,7 @@
 namespace GTEngine
 {
     /// Callback structure for doing occlusion culling against a viewport.
-    struct SceneCullingCallback : SceneCullingManager::VisibleCallback
+    struct SceneCullingCallback : SceneCullingManager::VisibilityCallback
     {
         /// Constructor
         SceneCullingCallback(GTCore::Vector<ModelComponent*> &modelComponentsOut, GTCore::Vector<PointLightComponent*> &pointLightComponentsOut, GTCore::Vector<SpotLightComponent*> &spotLightComponentsOut,
@@ -529,7 +529,7 @@ namespace GTEngine
     }
 
 
-    void Scene::QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibleCallback &callback)
+    void Scene::QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibilityCallback &callback)
     {
         this->cullingManager.ProcessVisibleObjects(mvp, callback);
     }

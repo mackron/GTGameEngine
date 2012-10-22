@@ -270,7 +270,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneCullingManager::ProcessVisibleObjects(const glm::mat4 &mvp, VisibleCallback &callback)
+    void DefaultSceneCullingManager::ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback)
     {
         auto flags = this->GetFlags();
         if ((flags & SceneCullingManager::NoFrustumCulling) && (flags & SceneCullingManager::NoOcclusionCulling))
@@ -336,23 +336,23 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneCullingManager::ProcessVisibleObjectModel(SceneObject &object, VisibleCallback &callback)
+    void DefaultSceneCullingManager::ProcessVisibleObjectModel(SceneObject &object, VisibilityCallback &callback)
     {
         callback.ProcessObjectModel(object);
     }
 
-    void DefaultSceneCullingManager::ProcessVisibleObjectPointLight(SceneObject &object, VisibleCallback &callback)
+    void DefaultSceneCullingManager::ProcessVisibleObjectPointLight(SceneObject &object, VisibilityCallback &callback)
     {
         callback.ProcessObjectPointLight(object);
     }
 
-    void DefaultSceneCullingManager::ProcessVisibleObjectSpotLight(SceneObject &object, VisibleCallback &callback)
+    void DefaultSceneCullingManager::ProcessVisibleObjectSpotLight(SceneObject &object, VisibilityCallback &callback)
     {
         callback.ProcessObjectSpotLight(object);
     }
 
 
-    void DefaultSceneCullingManager::ProcessVisibleObject(SceneObject &object, VisibleCallback &callback)
+    void DefaultSceneCullingManager::ProcessVisibleObject(SceneObject &object, VisibilityCallback &callback)
     {
         if (object.GetType() == SceneObjectType_SceneNode)
         {
@@ -408,7 +408,7 @@ namespace GTEngine
         }
     };
 
-    DefaultSceneCullingManager::DbvtPolicy::DbvtPolicy(DefaultSceneCullingManager &cullingManagerIn, VisibleCallback &callbackIn, const glm::mat4 &mvpIn, size_t bufferWidthIn, size_t bufferHeightIn)
+    DefaultSceneCullingManager::DbvtPolicy::DbvtPolicy(DefaultSceneCullingManager &cullingManagerIn, VisibilityCallback &callbackIn, const glm::mat4 &mvpIn, size_t bufferWidthIn, size_t bufferHeightIn)
         : cullingManager(cullingManagerIn), callback(callbackIn),
           mvp(),
           bufferWidth(bufferWidthIn), bufferHeight(bufferHeightIn),
