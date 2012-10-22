@@ -165,12 +165,6 @@ namespace GTEngine
         virtual void OnViewportResized(SceneViewport &viewport);
 
 
-        /// SceneRenderer::EnableBackgroundColourClearing().
-        virtual void EnableBackgroundColourClearing(float r, float g, float b);
-
-        /// SceneRenderer::DisableBackgroundColourClearing().
-        virtual void DisableBackgroundColourClearing();
-
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         // Methods below should only be called internally, but need to be public for a few things.
@@ -680,14 +674,6 @@ namespace GTEngine
 
         /// A container for mapping a viewport to it's framebuffer.
         GTCore::Map<SceneViewport*, DefaultSceneRenderer::Framebuffer*> viewportFramebuffers;
-
-
-        /// Keeps track of whether or not the colour buffer should be cleared.
-        bool clearColourBuffer;
-
-        /// The colour to clear the colour buffer with.
-        glm::vec3 clearColour;
-
 
 
         // Below are caches for render commands. There are always 2 caches - one for the front RC queue, and another for the back.
