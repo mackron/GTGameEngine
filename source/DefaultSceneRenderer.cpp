@@ -472,7 +472,7 @@ namespace GTEngine
     void DefaultSceneRenderer::AddViewport(SceneViewport &viewport)
     {
         auto framebuffer = new DefaultSceneRenderer::Framebuffer;
-        viewport.__SetColourBuffer(framebuffer->GetFinalOutputColourBuffer());
+        viewport.SetColourBuffer(framebuffer->GetFinalOutputColourBuffer());
 
         this->viewportFramebuffers.Add(&viewport, framebuffer);
     }
@@ -481,7 +481,7 @@ namespace GTEngine
     {
         auto framebuffer = this->GetViewportFramebuffer(viewport);
 
-        viewport.__SetColourBuffer(nullptr);
+        viewport.SetColourBuffer(nullptr);
         this->viewportFramebuffers.Remove(&viewport);
 
         delete framebuffer;
