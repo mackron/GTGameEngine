@@ -12,10 +12,10 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        SceneRenderer() {}
+        SceneRenderer();
 
         /// Destructor.
-        virtual ~SceneRenderer() {}
+        virtual ~SceneRenderer();
 
 
         /// Called when rendering has started for the next frame.
@@ -64,10 +64,30 @@ namespace GTEngine
         /// @param r [in] The red component of the clear colour.
         /// @param g [in] The green component of the clear colour.
         /// @param b [in] The blue component of the clear colour.
-        virtual void EnableBackgroundColourClearing(float r, float g, float b) = 0;
+        virtual void EnableBackgroundColourClearing(float r, float g, float b);
 
         /// Disables background colour clearing.
-        virtual void DisableBackgroundColourClearing() = 0;
+        virtual void DisableBackgroundColourClearing();
+
+        /// Determines whether or not background colour clearing is enabled.
+        ///
+        /// @return True if colour clearing is enabled.
+        virtual bool IsBackgroundColourClearingEnabled() const;
+
+
+        /// Retrieves the background clear colour.
+        const glm::vec3 & GetBackgroundClearColour() const;
+        
+
+
+
+    private:
+
+        /// Keeps track of whether or not colour clearing is enabled.
+        bool isColourClearingEnabled;
+
+        /// The background clearing colour. Defaults to black.
+        glm::vec3 clearColour;
     };
 }
 

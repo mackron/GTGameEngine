@@ -178,7 +178,6 @@ namespace GTEngine
 {
     DefaultSceneRenderer::DefaultSceneRenderer()
         : viewportFramebuffers(),
-          clearColourBuffer(true), clearColour(0.25f, 0.25f, 0.25f),
           rcBegin(),
           Shaders(),
           materialMetadatas(),
@@ -380,10 +379,10 @@ namespace GTEngine
 
         
         // Background clear colour, if applicable.
-        if (this->clearColourBuffer)
+        if (this->IsBackgroundColourClearingEnabled())
         {
             auto &rcBackgroundColourClear = this->rcBackgroundColourClear[Renderer::BackIndex].Acquire();
-            rcBackgroundColourClear.colour            = this->clearColour;
+            rcBackgroundColourClear.colour            = this->GetBackgroundClearColour();
             rcBackgroundColourClear.colourClearShader = this->Shaders.MaterialPass_ClearBackground;
             Renderer::BackRCQueue->Append(rcBackgroundColourClear);
         }
@@ -496,17 +495,6 @@ namespace GTEngine
         framebuffer->Resize(viewport.GetWidth(), viewport.GetHeight());
     }
 
-
-    void DefaultSceneRenderer::EnableBackgroundColourClearing(float r, float g, float b)
-    {
-        this->clearColourBuffer = true;
-        this->clearColour       = glm::vec3(r, g, b);
-    }
-
-    void DefaultSceneRenderer::DisableBackgroundColourClearing()
-    {
-        this->clearColourBuffer = false;
-    }
 
 
     void DefaultSceneRenderer::__MaterialPass_Model(const SceneObject &object, LayerState &state)
