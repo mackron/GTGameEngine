@@ -38,6 +38,10 @@ namespace GTEngine
         void SetAttachments(RigidBody &bodyB, const glm::mat4 &frameB);
 
 
+        /// Sets the limits.
+        void SetLimits(float swingSpan1, float swingSpan2, float twistSpan);
+
+
 
         /// Simple setter for setting the world that this constraint is contained in.
         ///
