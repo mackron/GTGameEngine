@@ -1,6 +1,6 @@
 
-#ifndef __GTEngine_Physics_GenericConstraint_hpp_
-#define __GTEngine_Physics_GenericConstraint_hpp_
+#ifndef __GTEngine_Physics_ConeTwistConstraint_hpp_
+#define __GTEngine_Physics_ConeTwistConstraint_hpp_
 
 #include "Bullet.hpp"
 #include "../Math.hpp"
@@ -10,19 +10,17 @@ namespace GTEngine
     class DynamicsWorld;
     class RigidBody;
 
-
-    /// Custom class for a generic 6 DOF constraint. Mainly used to make it easier to gain access to the containing dynamics world.
-    class GenericConstraint : public btGeneric6DofConstraint
+    /// Class representing a cone twist constraint.
+    class ConeTwistConstraint : public btConeTwistConstraint
     {
     public:
 
         /// Constructor.
-        GenericConstraint(RigidBody &bodyA, RigidBody &bodyB, const glm::mat4 &frameA, const glm::mat4 &frameB);
+        ConeTwistConstraint(RigidBody &bodyA, RigidBody &bodyB, const glm::mat4 &frameA, const glm::mat4 &frameB);
+        ConeTwistConstraint(RigidBody &bodyB, const glm::mat4 &frameB);
 
         /// Destructor.
-        ///
-        /// This will remove the constraint from the containing world.
-        ~GenericConstraint();
+        ~ConeTwistConstraint();
 
 
         /// Sets the attachments.
@@ -32,6 +30,13 @@ namespace GTEngine
         /// @param frameA [in] The transformation frame for objectA.
         /// @param frameB [in] The transformation frame for objectB.
         void SetAttachments(RigidBody &bodyA, RigidBody &bodyB, const glm::mat4 &frameA, const glm::mat4 &frameB);
+
+        /// Sets the attachments.
+        ///
+        /// @param bodyB  [in] A reference to the second object to attach to the constraint.
+        /// @param frameB [in] The transformation frame for objectB.
+        void SetAttachments(RigidBody &bodyB, const glm::mat4 &frameB);
+
 
 
         /// Simple setter for setting the world that this constraint is contained in.

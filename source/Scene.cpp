@@ -684,6 +684,21 @@ namespace GTEngine
             }
         }
 
+        auto coneTwistConstraintComponent = node.GetComponent<ConeTwistConstraintComponent>();
+        if (coneTwistConstraintComponent != nullptr)
+        {
+            auto constraint = coneTwistConstraintComponent->GetConstraint();
+            if (constraint != nullptr)
+            {
+                this->physicsManager.AddConstraint(*constraint);
+            }
+            else
+            {
+                Log("Warning: Attempting to add a cone twist constraint component without attachments. Ignoring.");
+            }
+        }
+
+
 
         if (node.IsVisible())
         {

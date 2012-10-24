@@ -584,6 +584,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\GenericConstraint.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ConeTwistConstraintComponent.hpp">
+      <Filter>include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\ConeTwistConstraint.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -989,6 +995,12 @@
       <Filter>source\Components</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\GenericConstraint.cpp">
+      <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\ConeTwistConstraintComponent.cpp">
+      <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\ConeTwistConstraint.cpp">
       <Filter>source\Physics</Filter>
     </ClCompile>
   </ItemGroup>

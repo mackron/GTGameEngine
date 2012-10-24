@@ -6,6 +6,7 @@
 #include "RigidBody.hpp"
 #include "GhostObject.hpp"
 #include "GenericConstraint.hpp"
+#include "ConeTwistConstraint.hpp"
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -72,12 +73,14 @@ namespace GTEngine
         /// @param disableCollisionsBetweenLinkedBodies [in] Whether or not to disable collisions between the bodies linked to the constraint.
         void AddConstraint(btTypedConstraint &constraint, bool disableCollisionsBetweenLinkedBodies = false);
         void AddConstraint(GenericConstraint &constraint, bool disableCollisionsBetweenLinkedBodies = false);
+        void AddConstraint(ConeTwistConstraint &constraint, bool disableCollisionsBetweenLinkedBodies = false);
 
         /// Removes a constraint from the world.
         ///
         /// @param constraint [in] The constraint to remove from the world.
         void RemoveConstraint(btTypedConstraint &constraint);
         void RemoveConstraint(GenericConstraint &constraint);
+        void RemoveConstraint(ConeTwistConstraint &constraint);
 
 
 
