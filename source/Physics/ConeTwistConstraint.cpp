@@ -56,4 +56,10 @@ namespace GTEngine
             world->AddConstraint(*this, disableCollisionBetweenLinkedBodies);
         }
     }
+
+
+    void ConeTwistConstraint::SetLimits(float swingSpan1, float swingSpan2, float twistSpan)
+    {
+        this->setLimit(swingSpan1, swingSpan2, twistSpan);
+    }
 }

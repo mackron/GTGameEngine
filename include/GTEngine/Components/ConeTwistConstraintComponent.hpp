@@ -29,6 +29,8 @@ namespace GTEngine
         void SetAttachments(SceneObject &objectB, const glm::mat4 &frameB);
 
 
+        /// Sets the limits.
+        void SetLimits(float swingSpan1, float swingSpan2, float twistSpan);
 
 
         /// Retrieves a pointer to the internal constraint object.
