@@ -43,6 +43,8 @@
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 
 #include <BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
+#include <BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h>
+#include <BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h>
 
 //#include <btBulletDynamicsCommon.h>
 #if defined(_MSC_VER)

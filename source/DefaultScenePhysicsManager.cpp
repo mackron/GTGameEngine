@@ -42,6 +42,19 @@ namespace GTEngine
     }
 
 
+
+    void DefaultScenePhysicsManager::AddConstraint(GenericConstraint &constraint)
+    {
+        this->world.AddConstraint(constraint);
+    }
+
+    void DefaultScenePhysicsManager::RemoveConstraint(GenericConstraint &constraint)
+    {
+        this->world.RemoveConstraint(constraint);
+    }
+
+
+
     void DefaultScenePhysicsManager::SetGravity(float x, float y, float z)
     {
         this->world.SetGravity(x, y, z);

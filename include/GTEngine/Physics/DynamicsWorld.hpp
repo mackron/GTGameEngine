@@ -5,6 +5,7 @@
 #include "BaseCollisionWorld.hpp"
 #include "RigidBody.hpp"
 #include "GhostObject.hpp"
+#include "GenericConstraint.hpp"
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -62,6 +63,21 @@ namespace GTEngine
         /// @param ghost [in] A reference to the body to remove from the world.
         void RemoveGhostObject(btGhostObject &ghost);
         void RemoveGhostObject(  GhostObject &ghost);
+
+
+
+        /// Adds a constraint to the world.
+        ///
+        /// @param constraint                           [in] The constraint to add to the world.
+        /// @param disableCollisionsBetweenLinkedBodies [in] Whether or not to disable collisions between the bodies linked to the constraint.
+        void AddConstraint(btTypedConstraint &constraint, bool disableCollisionsBetweenLinkedBodies = false);
+        void AddConstraint(GenericConstraint &constraint, bool disableCollisionsBetweenLinkedBodies = false);
+
+        /// Removes a constraint from the world.
+        ///
+        /// @param constraint [in] The constraint to remove from the world.
+        void RemoveConstraint(btTypedConstraint &constraint);
+        void RemoveConstraint(GenericConstraint &constraint);
 
 
 

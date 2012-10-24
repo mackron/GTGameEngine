@@ -674,6 +674,22 @@ namespace GTEngine
         }
 
 
+        // Again like the dynamics component, we need to add and constraint components.
+        auto genericConstraintComponent = node.GetComponent<GenericConstraintComponent>();
+        if (genericConstraintComponent != nullptr)
+        {
+            auto constraint = genericConstraintComponent->GetConstraint();
+            if (constraint != nullptr)
+            {
+                this->physicsManager.AddConstraint(*constraint);
+            }
+            else
+            {
+                Log("Warning: Attempting to add a generic constraint component without attachments. Ignoring.");
+            }
+        }
+
+
         if (node.IsVisible())
         {
             this->cullingManager.AddObject(node);
@@ -710,11 +726,22 @@ namespace GTEngine
             this->physicsManager.RemoveRigidBody(dynamicsComponent->GetRigidBody());
         }
 
-        // Same for the proximity component as the dynamics component.
+        // Same for the proximity component as the dynamics component...
         auto proximityComponent = node.GetComponent<ProximityComponent>();
         if (proximityComponent != nullptr)
         {
             this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
+        }
+
+        // ... and the same again for constraints.
+        auto genericConstraintComponent = node.GetComponent<GenericConstraintComponent>();
+        if (genericConstraintComponent != nullptr)
+        {
+            auto constraint = genericConstraintComponent->GetConstraint();
+            if (constraint != nullptr)
+            {
+                this->physicsManager.RemoveConstraint(*constraint);
+            }
         }
 
 

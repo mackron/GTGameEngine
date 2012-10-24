@@ -13,6 +13,7 @@
 #include "Components/DynamicsComponent.hpp"
 #include "Components/ProximityComponent.hpp"
 #include "Components/OccluderComponent.hpp"
+#include "Components/GenericConstraintComponent.hpp"
 
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/List.hpp>
