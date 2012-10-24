@@ -41,6 +41,14 @@ namespace GTEngine
         virtual void RemoveGhostObject(GhostObject &object);
 
 
+        
+        /// ScenePhysicsManager::AddConstraint().
+        virtual void AddConstraint(GenericConstraint &constraint);
+
+        /// ScenePhysicsManager::RemoveConstraint().
+        virtual void RemoveConstraint(GenericConstraint &constraint);
+
+
 
         /// ScenePhysicsManager::SetGravity().
         virtual void SetGravity(float x, float y, float z);

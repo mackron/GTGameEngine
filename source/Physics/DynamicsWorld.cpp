@@ -18,6 +18,16 @@ namespace GTEngine
 
     DynamicsWorld::~DynamicsWorld()
     {
+        // Constraints need to be removed.
+        for (int i = this->world.getNumConstraints() - 1; i >= 0; --i)
+        {
+            auto constraint = this->world.getConstraint(i);
+            if (constraint != nullptr)
+            {
+                this->RemoveConstraint(*constraint);
+            }
+        }
+
         // Now we need to remove all of our rigid bodies. We go backwards here to avoid reshuffling of the internal buffer.
         for (int i = this->world.getNumCollisionObjects() - 1; i >= 0; --i)
         {
@@ -128,6 +138,57 @@ namespace GTEngine
         ghost.SetWorld(nullptr);
         this->world.removeCollisionObject(&ghost);
     }
+
+
+
+    void DynamicsWorld::AddConstraint(btTypedConstraint &constraintIn, bool disableCollisionsBetweenLinkedBodies)
+    {
+        auto genericConstraint = dynamic_cast<GenericConstraint*>(&constraintIn);
+        if (genericConstraint != nullptr)
+        {
+            this->AddConstraint(*genericConstraint, disableCollisionsBetweenLinkedBodies);
+        }
+        else
+        {
+            this->world.addConstraint(&constraintIn, disableCollisionsBetweenLinkedBodies);
+        }
+    }
+
+    void DynamicsWorld::AddConstraint(GenericConstraint &constraint, bool disableCollisionsBetweenLinkedBodies)
+    {
+        auto prevWorld = constraint.GetWorld();
+        if (prevWorld != nullptr)
+        {
+            prevWorld->RemoveConstraint(constraint);
+        }
+
+        constraint.SetWorld(this);
+        constraint.IsCollisionBetweenLinkedBodiesDisabled(disableCollisionsBetweenLinkedBodies);
+
+        this->world.addConstraint(&constraint, disableCollisionsBetweenLinkedBodies);
+    }
+
+
+    void DynamicsWorld::RemoveConstraint(btTypedConstraint &constraintIn)
+    {
+        auto genericConstraint = dynamic_cast<GenericConstraint*>(&constraintIn);
+        if (genericConstraint != nullptr)
+        {
+            this->RemoveConstraint(*genericConstraint);
+        }
+        else
+        {
+            this->world.removeConstraint(&constraintIn);
+        }
+    }
+
+    void DynamicsWorld::RemoveConstraint(GenericConstraint &constraint)
+    {
+        constraint.SetWorld(nullptr);
+        this->world.removeConstraint(&constraint);
+    }
+
+
 
 
     void DynamicsWorld::Step(double timeStep, int maxSubSteps, double fixedTimeStep)

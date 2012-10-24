@@ -27,6 +27,13 @@ namespace GTEngine
         virtual void RemoveGhostObject(GhostObject &object) = 0;
 
 
+        /// Adds a constraint.
+        virtual void AddConstraint(GenericConstraint &constraint) = 0;
+        
+        /// Removes a constraint.
+        virtual void RemoveConstraint(GenericConstraint &constraint) = 0;
+
+
         /// Sets the gravity.
         virtual void SetGravity(float x, float y, float z) = 0;
 

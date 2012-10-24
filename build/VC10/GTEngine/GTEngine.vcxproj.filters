@@ -578,6 +578,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Recast\RecastAssert.h">
       <Filter>include\Recast</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\GenericConstraintComponent.hpp">
+      <Filter>include\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\GenericConstraint.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -978,6 +984,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Recast\RecastRegion.cpp">
       <Filter>source\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\GenericConstraintComponent.cpp">
+      <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\GenericConstraint.cpp">
+      <Filter>source\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
