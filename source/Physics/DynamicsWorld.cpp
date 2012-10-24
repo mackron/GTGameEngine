@@ -147,14 +147,35 @@ namespace GTEngine
         if (genericConstraint != nullptr)
         {
             this->AddConstraint(*genericConstraint, disableCollisionsBetweenLinkedBodies);
+            return;
         }
-        else
+
+        auto coneTwistConstraint = dynamic_cast<ConeTwistConstraint*>(&constraintIn);
+        if (coneTwistConstraint != nullptr)
         {
-            this->world.addConstraint(&constraintIn, disableCollisionsBetweenLinkedBodies);
+            this->AddConstraint(*coneTwistConstraint, disableCollisionsBetweenLinkedBodies);
         }
+
+
+        // We'll get here if the constraint is a standard Bullet constraint.
+        this->world.addConstraint(&constraintIn, disableCollisionsBetweenLinkedBodies);
     }
 
     void DynamicsWorld::AddConstraint(GenericConstraint &constraint, bool disableCollisionsBetweenLinkedBodies)
+    {
+        auto prevWorld = constraint.GetWorld();
+        if (prevWorld != nullptr)
+        {
+            prevWorld->RemoveConstraint(constraint);
+        }
+
+        constraint.SetWorld(this);
+        constraint.IsCollisionBetweenLinkedBodiesDisabled(disableCollisionsBetweenLinkedBodies);
+
+        this->world.addConstraint(&constraint, disableCollisionsBetweenLinkedBodies);
+    }
+
+    void DynamicsWorld::AddConstraint(ConeTwistConstraint &constraint, bool disableCollisionsBetweenLinkedBodies)
     {
         auto prevWorld = constraint.GetWorld();
         if (prevWorld != nullptr)
@@ -183,6 +204,12 @@ namespace GTEngine
     }
 
     void DynamicsWorld::RemoveConstraint(GenericConstraint &constraint)
+    {
+        constraint.SetWorld(nullptr);
+        this->world.removeConstraint(&constraint);
+    }
+
+    void DynamicsWorld::RemoveConstraint(ConeTwistConstraint &constraint)
     {
         constraint.SetWorld(nullptr);
         this->world.removeConstraint(&constraint);

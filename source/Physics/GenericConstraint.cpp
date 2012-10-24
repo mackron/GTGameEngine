@@ -36,15 +36,4 @@ namespace GTEngine
             world->AddConstraint(*this, disableCollisionBetweenLinkedBodies);
         }
     }
-
-
-    void GenericConstraint::SetWorld(DynamicsWorld* newWorld)
-    {
-        this->world = newWorld;
-    }
-
-    DynamicsWorld* GenericConstraint::GetWorld()
-    {
-        return this->world;
-    }
 }

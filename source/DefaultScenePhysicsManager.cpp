@@ -48,7 +48,18 @@ namespace GTEngine
         this->world.AddConstraint(constraint);
     }
 
+    void DefaultScenePhysicsManager::AddConstraint(ConeTwistConstraint &constraint)
+    {
+        this->world.AddConstraint(constraint);
+    }
+
+
     void DefaultScenePhysicsManager::RemoveConstraint(GenericConstraint &constraint)
+    {
+        this->world.RemoveConstraint(constraint);
+    }
+
+    void DefaultScenePhysicsManager::RemoveConstraint(ConeTwistConstraint &constraint)
     {
         this->world.RemoveConstraint(constraint);
     }

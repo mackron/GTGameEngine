@@ -44,9 +44,11 @@ namespace GTEngine
         
         /// ScenePhysicsManager::AddConstraint().
         virtual void AddConstraint(GenericConstraint &constraint);
+        virtual void AddConstraint(ConeTwistConstraint &constraint);
 
         /// ScenePhysicsManager::RemoveConstraint().
         virtual void RemoveConstraint(GenericConstraint &constraint);
+        virtual void RemoveConstraint(ConeTwistConstraint &constraint);
 
 
 

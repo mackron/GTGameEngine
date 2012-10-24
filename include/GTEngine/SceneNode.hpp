@@ -14,6 +14,7 @@
 #include "Components/ProximityComponent.hpp"
 #include "Components/OccluderComponent.hpp"
 #include "Components/GenericConstraintComponent.hpp"
+#include "Components/ConeTwistConstraintComponent.hpp"
 
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/List.hpp>
