@@ -45,6 +45,11 @@
 #include <BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
 #include <BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h>
 #include <BulletDynamics/ConstraintSolver/btGeneric6DofSpringConstraint.h>
+#include <BulletDynamics/ConstraintSolver/btHingeConstraint.h>
+#include <BulletDynamics/ConstraintSolver/btHinge2Constraint.h>
+#include <BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h>
+#include <BulletDynamics/ConstraintSolver/btConeTwistConstraint.h>
+
 
 //#include <btBulletDynamicsCommon.h>
 #if defined(_MSC_VER)

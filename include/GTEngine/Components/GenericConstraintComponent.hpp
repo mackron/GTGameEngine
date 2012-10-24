@@ -28,6 +28,12 @@ namespace GTEngine
         void SetAttachments(SceneObject &objectA, SceneObject &objectB, const glm::mat4 &frameA, const glm::mat4 &frameB);
 
 
+        /// Sets the lower linear limit.
+        void SetLinearLowerLimit(const glm::vec3 &limit);
+
+        /// Sets the upper linear limit.
+        void SetLinearUpperLimit(const glm::vec3 &limit);
+
         /// Sets the lower angular limit.
         void SetAngularLowerLimit(const glm::vec3 &limit);
 
