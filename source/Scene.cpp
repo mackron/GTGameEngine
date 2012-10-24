@@ -626,17 +626,12 @@ namespace GTEngine
         if (dynamicsComponent != nullptr)
         {
             // The very first thing we're going to do is ensure the scaling has been applied. We do this in OnSceneNodeScaled(), too.
-            dynamicsComponent->ApplyScaling(node.GetWorldScale());
+            dynamicsComponent->ApplySceneNodeScaling();
+            dynamicsComponent->ApplySceneNodeTransformation();
 
             // Now we need to ensure the rigid body is transformed correctly.
             auto &rigidBody = dynamicsComponent->GetRigidBody();
 
-            btTransform transform;
-            if (rigidBody.getMotionState() != nullptr)
-            {
-                rigidBody.getMotionState()->getWorldTransform(transform);
-                rigidBody.setWorldTransform(transform);
-            }
 
             if (node.IsVisible() && dynamicsComponent->GetCollisionShape().getNumChildShapes() > 0)
             {

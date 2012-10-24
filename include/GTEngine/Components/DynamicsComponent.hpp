@@ -132,6 +132,14 @@ namespace GTEngine
         void ApplyScaling(const glm::vec3 &scale) { this->ApplyScaling(scale.x, scale.y, scale.z); }
 
 
+        /// Applies the scaling from the scene node.
+        void ApplySceneNodeScaling();
+
+        /// Applies the transformation of the scene node to the rigid body.
+        void ApplySceneNodeTransformation();
+
+
+
         /// Sets the linear velocity of the physics object.
         void SetLinearVelocity(float x, float y, float z);
         void SetLinearVelocity(const glm::vec3 &velocity) { this->SetLinearVelocity(velocity.x, velocity.y, velocity.z); }
@@ -154,6 +162,8 @@ namespace GTEngine
 
         /// Sets the angular factor.
         void SetAngularFactor(float factor);
+        void SetAngularFactor(float x, float y, float z);
+        void SetAngularFactor(const glm::vec3 &factor) { this->SetLinearFactor(factor.x, factor.y, factor.z); }
 
 
         /// Sets the gravity of the object.
@@ -220,6 +230,8 @@ namespace GTEngine
 
         /// Retrieves a reference to the collision shape.
         btCompoundShape & GetCollisionShape() { return *this->collisionShape; }
+
+
 
 
     private:

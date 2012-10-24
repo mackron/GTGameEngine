@@ -27,6 +27,8 @@ namespace GTEngine
             auto dynamicsComponent = static_cast<SceneNode &>(objectA).GetComponent<GTEngine::DynamicsComponent>();
             if (dynamicsComponent != nullptr)
             {
+                dynamicsComponent->ApplySceneNodeScaling();
+                dynamicsComponent->ApplySceneNodeTransformation();
                 bodyA = &dynamicsComponent->GetRigidBody();
             }
         }
@@ -36,6 +38,8 @@ namespace GTEngine
             auto dynamicsComponent = static_cast<SceneNode &>(objectB).GetComponent<GTEngine::DynamicsComponent>();
             if (dynamicsComponent != nullptr)
             {
+                dynamicsComponent->ApplySceneNodeScaling();
+                dynamicsComponent->ApplySceneNodeTransformation();
                 bodyB = &dynamicsComponent->GetRigidBody();
             }
         }
@@ -57,6 +61,16 @@ namespace GTEngine
         }
     }
 
+
+    void GenericConstraintComponent::SetLinearLowerLimit(const glm::vec3 &limit)
+    {
+        this->constraint->setLinearLowerLimit(btVector3(limit.x, limit.y, limit.z));
+    }
+
+    void GenericConstraintComponent::SetLinearUpperLimit(const glm::vec3 &limit)
+    {
+        this->constraint->setLinearUpperLimit(btVector3(limit.x, limit.y, limit.z));
+    }
 
     void GenericConstraintComponent::SetAngularLowerLimit(const glm::vec3 &limit)
     {

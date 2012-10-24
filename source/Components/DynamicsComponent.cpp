@@ -328,6 +328,22 @@ namespace GTEngine
     }
 
 
+    void DynamicsComponent::ApplySceneNodeScaling()
+    {
+        this->ApplyScaling(this->node.GetWorldScale());
+    }
+
+    void DynamicsComponent::ApplySceneNodeTransformation()
+    {
+        btTransform transform;
+        if (this->rigidBody->getMotionState() != nullptr)
+        {
+            this->rigidBody->getMotionState()->getWorldTransform(transform);
+            this->rigidBody->setWorldTransform(transform);
+        }
+    }
+
+
     void DynamicsComponent::SetLinearVelocity(float x, float y, float z)
     {
         this->rigidBody->setLinearVelocity(btVector3(x, y, z) * this->rigidBody->getLinearFactor());
@@ -358,6 +374,11 @@ namespace GTEngine
     void DynamicsComponent::SetAngularFactor(float factor)
     {
         this->rigidBody->setAngularFactor(factor);
+    }
+
+    void DynamicsComponent::SetAngularFactor(float x, float y, float z)
+    {
+        this->rigidBody->setAngularFactor(btVector3(x, y, z));
     }
 
 
