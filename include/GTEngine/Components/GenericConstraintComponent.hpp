@@ -8,7 +8,7 @@
 
 namespace GTEngine
 {
-    /// Class representing a generic 6 DOF phsics constraint.
+    /// Component class for a generic 6 DOF phsics constraint.
     GTENGINE_DECL_COMPONENT_START(GenericConstraintComponent)
     public:
 
@@ -26,6 +26,7 @@ namespace GTEngine
         /// @param frameA  [in] The transformation frame for objectA.
         /// @param frameB  [in] The transformation frame for objectB.
         void SetAttachments(SceneObject &objectA, SceneObject &objectB, const glm::mat4 &frameA, const glm::mat4 &frameB);
+        void SetAttachments(SceneObject &objectB, const glm::mat4 &frameB);
 
 
         /// Sets the lower linear limit.

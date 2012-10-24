@@ -61,6 +61,38 @@ namespace GTEngine
         }
     }
 
+    void GenericConstraintComponent::SetAttachments(SceneObject &objectB, const glm::mat4 &frameB)
+    {
+        RigidBody* bodyB = nullptr;
+
+        if (objectB.GetType() == GTEngine::SceneObjectType_SceneNode)
+        {
+            auto dynamicsComponent = static_cast<SceneNode &>(objectB).GetComponent<GTEngine::DynamicsComponent>();
+            if (dynamicsComponent != nullptr)
+            {
+                dynamicsComponent->ApplySceneNodeScaling();
+                dynamicsComponent->ApplySceneNodeTransformation();
+                bodyB = &dynamicsComponent->GetRigidBody();
+            }
+        }
+
+
+
+        assert(bodyB != nullptr);
+
+
+
+        if (this->constraint == nullptr)
+        {
+            this->constraint = new GenericConstraint(*bodyB, frameB);
+        }
+        else
+        {
+            this->constraint->SetAttachments(*bodyB, frameB);
+        }
+    }
+
+
 
     void GenericConstraintComponent::SetLinearLowerLimit(const glm::vec3 &limit)
     {

@@ -18,6 +18,7 @@ namespace GTEngine
 
         /// Constructor.
         GenericConstraint(RigidBody &bodyA, RigidBody &bodyB, const glm::mat4 &frameA, const glm::mat4 &frameB);
+        GenericConstraint(RigidBody &bodyB, const glm::mat4 &frameB);
 
         /// Destructor.
         ///
@@ -32,6 +33,7 @@ namespace GTEngine
         /// @param frameA [in] The transformation frame for objectA.
         /// @param frameB [in] The transformation frame for objectB.
         void SetAttachments(RigidBody &bodyA, RigidBody &bodyB, const glm::mat4 &frameA, const glm::mat4 &frameB);
+        void SetAttachments(RigidBody &bodyB, const glm::mat4 &frameB);
 
 
         /// Simple setter for setting the world that this constraint is contained in.

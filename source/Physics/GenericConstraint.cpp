@@ -12,6 +12,12 @@ namespace GTEngine
     {
     }
 
+    GenericConstraint::GenericConstraint(RigidBody &bodyB, const glm::mat4 &frameB)
+        : btGeneric6DofConstraint(bodyB, BulletUtils::CreateTransform(frameB), false),
+          world(nullptr), isCollisionBetweenLinkedBodiesDisabled(false)
+    {
+    }
+
     GenericConstraint::~GenericConstraint()
     {
         if (this->world != nullptr)
@@ -30,6 +36,22 @@ namespace GTEngine
         // and then re-construct.
         this->~GenericConstraint();
         new (this) GenericConstraint(bodyA, bodyB, frameA, frameB);
+
+        if (world != nullptr)
+        {
+            world->AddConstraint(*this, disableCollisionBetweenLinkedBodies);
+        }
+    }
+
+    void GenericConstraint::SetAttachments(RigidBody &bodyB, const glm::mat4 &frameB)
+    {
+        auto world                               = this->GetWorld();
+        auto disableCollisionBetweenLinkedBodies = this->IsCollisionBetweenLinkedBodiesDisabled();
+
+        // The attachments are actually set via the constructor. We're going to do something really bad here. We're going to call the destructor
+        // and then re-construct.
+        this->~GenericConstraint();
+        new (this) GenericConstraint(bodyB, frameB);
 
         if (world != nullptr)
         {
