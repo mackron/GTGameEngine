@@ -459,8 +459,9 @@ namespace GTEngine
 
         /// Called when a scene node is moved, rotated or both. This is not called for scaling. Use OnSceneNodeScale() that.
         ///
-        /// @param node [in] A reference to the node that has been transformed.
-        void OnSceneNodeTransform(SceneNode &node);
+        /// @param node                 [in] A reference to the node that has been transformed.
+        /// @param updateDynamicsObject [in] Controls whether or not the dynamics object, if any, should be updated also.
+        void OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject);
 
         void OnSceneNodeScale(SceneNode& node);
         void OnSceneNodeStaticChanged(SceneNode& node);

@@ -106,10 +106,6 @@ namespace GTEngine
 
                 shader.Execute(srcVertices, this->geometry->GetVertexCount(), this->geometry->GetFormat(), dstVertices);
             }
-            else
-            {
-                memcpy(dstVertices, srcVertices, this->geometry->GetFormat().GetSize() * this->geometry->GetVertexCount());
-            }
 
 
             this->geometry->UnmapVertexData();

@@ -43,6 +43,24 @@ namespace GTEngine
 
 
 
+    void DefaultScenePhysicsManager::UpdateTransform(RigidBody &object, const glm::mat4 &newTransform)
+    {
+        auto linearVelocity  = object.getLinearVelocity();
+        auto angularVelocity = object.getAngularVelocity();
+
+        this->world.RemoveRigidBody(object);
+        {
+            object.setWorldTransform(BulletUtils::CreateTransform(newTransform));
+        }
+        this->world.AddRigidBody(object);
+
+
+        object.setLinearVelocity(linearVelocity);
+        object.setAngularFactor(angularVelocity);
+    }
+
+
+
     void DefaultScenePhysicsManager::AddConstraint(GenericConstraint &constraint)
     {
         this->world.AddConstraint(constraint);

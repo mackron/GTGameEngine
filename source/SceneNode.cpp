@@ -350,7 +350,7 @@ namespace GTEngine
     }
 
 
-    void SceneNode::SetPosition(const glm::vec3 &position)
+    void SceneNode::SetPosition(const glm::vec3 &position, bool updateDynamicsObject)
     {
         if (this->position.x != position.x || this->position.y != position.y || this->position.z != position.z)
         {
@@ -358,7 +358,7 @@ namespace GTEngine
             
             if (!this->EventsLocked())
             {
-                this->OnTransform();
+                this->OnTransform(updateDynamicsObject);
             }
         }
     }
@@ -385,7 +385,7 @@ namespace GTEngine
         return this->position;
     }
 
-    void SceneNode::SetWorldPosition(const glm::vec3 &worldPosition)
+    void SceneNode::SetWorldPosition(const glm::vec3 &worldPosition, bool updateDynamicsObject)
     {
         if (this->parent != nullptr && this->inheritPosition)
         {
@@ -393,16 +393,16 @@ namespace GTEngine
             glm::vec3 Ps = this->parent->GetWorldScale();
             glm::quat Po = this->parent->GetOrientation();
 
-            this->SetPosition(((worldPosition - Pp) * Po) / Ps);
+            this->SetPosition(((worldPosition - Pp) * Po) / Ps, updateDynamicsObject);
         }
         else
         {
-            this->SetPosition(worldPosition);
+            this->SetPosition(worldPosition, updateDynamicsObject);
         }
     }
 
 
-    void SceneNode::SetOrientation(const glm::quat &orientation)
+    void SceneNode::SetOrientation(const glm::quat &orientation, bool updateDynamicsObject)
     {
         if (this->orientation[0] != orientation[0] ||
             this->orientation[1] != orientation[1] ||
@@ -413,7 +413,7 @@ namespace GTEngine
             
             if (!this->EventsLocked())
             {
-                this->OnTransform();
+                this->OnTransform(updateDynamicsObject);
             }
         }
     }
@@ -428,15 +428,15 @@ namespace GTEngine
         return this->orientation;
     }
 
-    void SceneNode::SetWorldOrientation(const glm::quat &worldOrientation)
+    void SceneNode::SetWorldOrientation(const glm::quat &worldOrientation, bool updateDynamicsObject)
     {
         if (this->parent != nullptr && this->inheritOrientation)
         {
-            this->SetOrientation(glm::inverse(this->parent->GetWorldOrientation()) * worldOrientation);
+            this->SetOrientation(glm::inverse(this->parent->GetWorldOrientation()) * worldOrientation, updateDynamicsObject);
         }
         else
         {
-            this->SetOrientation(worldOrientation);
+            this->SetOrientation(worldOrientation, updateDynamicsObject);
         }
     }
 
@@ -611,18 +611,18 @@ namespace GTEngine
         (void)devnull;  // <-- warning silencer.
     }
 
-    void SceneNode::SetWorldTransform(const btTransform &worldTransform)
+    void SceneNode::SetWorldTransform(const btTransform &worldTransform, bool updateDynamicsObject)
     {
         // We need to lock transformation event posting because we want to do it in a single event for the sake of efficiency.
         this->LockEvents();
         {
-            this->SetWorldPosition(GTEngine::ToGLMVector3(worldTransform.getOrigin()));
-            this->SetWorldOrientation(GTEngine::ToGLMQuaternion(worldTransform.getRotation()));
+            this->SetWorldPosition(GTEngine::ToGLMVector3(worldTransform.getOrigin()), false);
+            this->SetWorldOrientation(GTEngine::ToGLMQuaternion(worldTransform.getRotation()), false);
         }
         this->UnlockEvents();
 
         // Now is where we post the transformation event.
-        this->OnTransform();
+        this->OnTransform(updateDynamicsObject);
     }
 
 
@@ -874,7 +874,7 @@ namespace GTEngine
         }
     }
 
-    void SceneNode::OnTransform()
+    void SceneNode::OnTransform(bool updateDynamicsObject)
     {
         for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
         {
@@ -883,7 +883,7 @@ namespace GTEngine
 
         if (this->scene != nullptr)
         {
-            this->scene->OnSceneNodeTransform(*this);
+            this->scene->OnSceneNodeTransform(*this, updateDynamicsObject);
         }
 
 
@@ -892,7 +892,7 @@ namespace GTEngine
         {
             if (i->IsPositionInheritanceEnabled() || i->IsOrientationInheritanceEnabled())
             {
-                i->OnTransform();
+                i->OnTransform(updateDynamicsObject);
             }
         }
     }

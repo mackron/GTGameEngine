@@ -516,6 +516,9 @@ namespace GTEngine
 
     void Scene::ContactTest(const SceneNode &node, ContactTestCallback &callback)
     {
+        // At the moment we're going to do a collision test between both the proximity and dynamics component. Not sure what to do here, exactly...
+
+
         // We do the contact test against the nodes proximity component.
         auto proximity = node.GetComponent<GTEngine::ProximityComponent>();
         if (proximity != nullptr)
@@ -525,6 +528,17 @@ namespace GTEngine
 
             SceneContactTestCallback bulletCallback(callback);
             this->physicsManager.ContactTest(proximity->GetGhostObject(), bulletCallback);
+        }
+
+
+        auto dynamics = node.GetComponent<GTEngine::DynamicsComponent>();
+        if (dynamics != nullptr)
+        {
+            callback.collisionGroup = dynamics->GetCollisionGroup();
+            callback.collisionMask  = dynamics->GetCollisionMask();
+
+            SceneContactTestCallback bulletCallback(callback);
+            this->physicsManager.ContactTest(dynamics->GetRigidBody(), bulletCallback);
         }
     }
 
@@ -758,8 +772,19 @@ namespace GTEngine
         this->cullingManager.RemoveObject(node);
     }
 
-    void Scene::OnSceneNodeTransform(SceneNode &node)
+    void Scene::OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject)
     {
+        // We might need to update the rigid body, if we have one.
+        if (updateDynamicsObject)
+        {
+            auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
+            if (dynamicsComponent != nullptr)
+            {
+                this->physicsManager.UpdateTransform(dynamicsComponent->GetRigidBody(), node.GetWorldTransform());
+            }
+        }
+
+
         // We need to update the transformations of the ghost objects in the proximity component, if applicable.
         auto proximityComponent = node.GetComponent<ProximityComponent>();
         if (proximityComponent != nullptr)
