@@ -108,6 +108,12 @@
     <Filter Include="source\Recast">
       <UniqueIdentifier>{2fa51656-b7c6-46fd-9c3c-e931c66dcd16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Utilities">
+      <UniqueIdentifier>{09fb2e36-fe44-4f49-9227-6b2c41ab3504}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Utilities">
+      <UniqueIdentifier>{2615629b-5aa6-4a64-bbd3-4d9bb29d4496}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -590,6 +596,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\ConeTwistConstraint.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Utilities\KinematicCharacterController.hpp">
+      <Filter>include\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Utilities\DynamicCharacterController.hpp">
+      <Filter>include\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1002,6 +1014,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\ConeTwistConstraint.cpp">
       <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Utilities\KinematicCharacterController.cpp">
+      <Filter>source\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Utilities\DynamicCharacterController.cpp">
+      <Filter>source\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

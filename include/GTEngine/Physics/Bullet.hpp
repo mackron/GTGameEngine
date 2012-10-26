@@ -41,6 +41,7 @@
 
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 #include <BulletDynamics/Dynamics/btRigidBody.h>
+#include <BulletDynamics/Character/btKinematicCharacterController.h>
 
 #include <BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
 #include <BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h>

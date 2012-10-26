@@ -41,6 +41,11 @@ namespace GTEngine
         virtual void RemoveGhostObject(GhostObject &object);
 
 
+
+        /// ScenePhysicsManager::UpdateTransform().
+        virtual void UpdateTransform(RigidBody &object, const glm::mat4 &newTransform);
+
+
         
         /// ScenePhysicsManager::AddConstraint().
         virtual void AddConstraint(GenericConstraint &constraint);

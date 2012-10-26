@@ -124,7 +124,8 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the rigid body.
-        RigidBody & GetRigidBody() { return *this->rigidBody; }
+              RigidBody & GetRigidBody()       { return *this->rigidBody; }
+        const RigidBody & GetRigidBody() const { return *this->rigidBody; }
 
 
         /// Applies a scale to the rigid body.

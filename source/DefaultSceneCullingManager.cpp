@@ -273,6 +273,11 @@ namespace GTEngine
     void DefaultSceneCullingManager::ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback)
     {
         auto flags = this->GetFlags();
+
+        // TODO: Occlusion culling is disabled for now since it's unstable at the moment. Need to look into this.
+        flags |= SceneCullingManager::NoOcclusionCulling;       // <-- Disable occlusion culling for now.
+
+
         if ((flags & SceneCullingManager::NoFrustumCulling) && (flags & SceneCullingManager::NoOcclusionCulling))
         {
             auto collisionObjects = this->world.GetInternalWorld().getCollisionObjectArray();

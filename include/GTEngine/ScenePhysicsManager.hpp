@@ -27,6 +27,12 @@ namespace GTEngine
         virtual void RemoveGhostObject(GhostObject &object) = 0;
 
 
+
+        /// Updates the transformation of a rigid body.
+        virtual void UpdateTransform(RigidBody &object, const glm::mat4 &newTransform) = 0;
+
+
+
         /// Adds a constraint.
         virtual void AddConstraint(GenericConstraint &constraint) = 0;
         virtual void AddConstraint(ConeTwistConstraint &constraint) = 0;

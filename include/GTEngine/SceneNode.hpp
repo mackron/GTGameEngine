@@ -319,11 +319,18 @@ namespace GTEngine
 
 
         /**
-        *   \brief                Sets the position of the node relative to the parent.
-        *   \param  position [in] The new relative position of the node.
+        *   \brief                            Sets the position of the node relative to the parent.
+        *   \param  position             [in] The new relative position of the node.
+        *   \param  updateDynamicsObject [in] Whether or not the attached dynamics object should be updated.
         */
-        void SetPosition(const glm::vec3 &position);
-        void SetPosition(float x, float y, float z) { this->SetPosition(glm::vec3(x, y, z)); }
+        void SetPosition(const glm::vec3 &position, bool updateDynamicsObject);
+        void SetPosition(float x, float y, float z, bool updateDynamicsObject) { this->SetPosition(glm::vec3(x, y, z), updateDynamicsObject); }
+
+        void SetPosition(const glm::vec3 &position) { this->SetPosition(position, true); }
+        void SetPosition(float x, float y, float z) { this->SetPosition(glm::vec3(x, y, z), true); }
+        
+
+
 
         /**
         *   \brief  Retrieves the world/absolute position of node.
@@ -333,8 +340,8 @@ namespace GTEngine
         /**
         *   \brief  Sets the world/absolute position of the node.
         */
-        void SetWorldPosition(const glm::vec3 &worldPosition);
-        void SetWorldPosition(float x, float y, float z) { this->SetWorldPosition(glm::vec3(x, y, z)); }
+        void SetWorldPosition(const glm::vec3 &worldPosition, bool updateDynamicsObject = true);
+        void SetWorldPosition(float x, float y, float z, bool updateDynamicsObject = true) { this->SetWorldPosition(glm::vec3(x, y, z), updateDynamicsObject); }
 
 
 
@@ -342,7 +349,9 @@ namespace GTEngine
         *   \brief                   Sets the orientation of the node relative to the parent.
         *   \param  orientation [in] The new orientation of the node.
         */
-        void SetOrientation(const glm::quat &orientation);
+        void SetOrientation(const glm::quat &orientation, bool updateDynamicsObject);
+        void SetOrientation(const glm::quat &orientation) { this->SetOrientation(orientation, true); }
+        
 
         /**
         *   \brief  Retrieves the world/absolute orientation of the node.
@@ -352,7 +361,7 @@ namespace GTEngine
         /**
         *   \brief  Sets the world/absolute orientation of the node.
         */
-        void SetWorldOrientation(const glm::quat &worldOrientation);
+        void SetWorldOrientation(const glm::quat &worldOrientation, bool updateDynamicsObject = true);
 
 
         /**
@@ -431,7 +440,7 @@ namespace GTEngine
         *   \param  worldTransform [in] A reference to the btTransform object containing the new world transformation.
         *   \param  offset         [in] Physics objects can be given a center of mass offset. This represents that offset.
         */
-        void SetWorldTransform(const btTransform &worldTransform);
+        void SetWorldTransform(const btTransform &worldTransform, bool updateDynamicsObject = true);
 
 
 
@@ -635,7 +644,7 @@ namespace GTEngine
         *   \remarks
         *       This will transcend the parent nodes if required.
         */
-        Scene * GetScene();
+        Scene* GetScene();
 
         /**
         *   \brief  Removes the scene node from it's current scene.
@@ -793,7 +802,7 @@ namespace GTEngine
         void OnAttach(SceneNode& childNode);
         void OnDetach(SceneNode& childNode);
         void OnDestroy();
-        void OnTransform();
+        void OnTransform(bool updateDynamicsObject);
         void OnScale();
         void OnLayerChanged(unsigned int prevLayer);
         void OnSceneChanged(Scene *prevScene);
