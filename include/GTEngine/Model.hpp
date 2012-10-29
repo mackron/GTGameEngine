@@ -118,6 +118,9 @@ namespace GTEngine
         void SetAnimationPlaybackSpeed(double speed);
 
 
+        /// Sets an animation sequence.
+
+
     private:
 
         /// Finds a bone by name.

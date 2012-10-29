@@ -48,6 +48,7 @@ namespace GTEngine
         auto linearVelocity  = object.getLinearVelocity();
         auto angularVelocity = object.getAngularVelocity();
 
+
         this->world.RemoveRigidBody(object);
         {
             object.setWorldTransform(BulletUtils::CreateTransform(newTransform));

@@ -596,9 +596,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\ConeTwistConstraint.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Utilities\KinematicCharacterController.hpp">
-      <Filter>include\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Utilities\DynamicCharacterController.hpp">
       <Filter>include\Utilities</Filter>
     </ClInclude>
@@ -1014,9 +1011,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\ConeTwistConstraint.cpp">
       <Filter>source\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Utilities\KinematicCharacterController.cpp">
-      <Filter>source\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Utilities\DynamicCharacterController.cpp">
       <Filter>source\Utilities</Filter>

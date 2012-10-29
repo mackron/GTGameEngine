@@ -111,13 +111,15 @@ namespace GTEngine
 
         /// Default constructor.
         ClosestRayTestCallback()
-            : RayTestCallback(), sceneNode(nullptr)
+            : RayTestCallback(), sceneNode(nullptr),
+              worldHitPosition(), worldHitNormal()
         {
         }
 
         /// Constructor.
         ClosestRayTestCallback(short collisionGroup, short collisionMask)
-            : RayTestCallback(collisionGroup, collisionMask), sceneNode(nullptr)
+            : RayTestCallback(collisionGroup, collisionMask), sceneNode(nullptr),
+              worldHitPosition(), worldHitNormal()
         {
         }
 
