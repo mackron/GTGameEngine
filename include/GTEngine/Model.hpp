@@ -118,8 +118,6 @@ namespace GTEngine
         void SetAnimationPlaybackSpeed(double speed);
 
 
-        /// Sets an animation sequence.
-
 
     private:
 
