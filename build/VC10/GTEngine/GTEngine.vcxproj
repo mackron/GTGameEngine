@@ -317,7 +317,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ThreadCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Utilities\DynamicCharacterController.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Utilities\KinematicCharacterController.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
@@ -461,7 +460,6 @@
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ThreadCache.cpp" />
     <ClCompile Include="..\..\..\source\Utilities\DynamicCharacterController.cpp" />
-    <ClCompile Include="..\..\..\source\Utilities\KinematicCharacterController.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp" />
     <ClCompile Include="..\..\..\source\VertexArrayLibrary.cpp" />
   </ItemGroup>
