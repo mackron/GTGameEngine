@@ -189,6 +189,21 @@ namespace GTEngine
         this->world.addConstraint(&constraint, disableCollisionsBetweenLinkedBodies);
     }
 
+    void DynamicsWorld::AddConstraint(PointToPointConstraint &constraint, bool disableCollisionsBetweenLinkedBodies)
+    {
+        auto prevWorld = constraint.GetWorld();
+        if (prevWorld != nullptr)
+        {
+            prevWorld->RemoveConstraint(constraint);
+        }
+
+        constraint.SetWorld(this);
+        constraint.IsCollisionBetweenLinkedBodiesDisabled(disableCollisionsBetweenLinkedBodies);
+
+        this->world.addConstraint(&constraint, disableCollisionsBetweenLinkedBodies);
+    }
+
+
 
     void DynamicsWorld::RemoveConstraint(btTypedConstraint &constraintIn)
     {
@@ -210,6 +225,12 @@ namespace GTEngine
     }
 
     void DynamicsWorld::RemoveConstraint(ConeTwistConstraint &constraint)
+    {
+        constraint.SetWorld(nullptr);
+        this->world.removeConstraint(&constraint);
+    }
+
+    void DynamicsWorld::RemoveConstraint(PointToPointConstraint &constraint)
     {
         constraint.SetWorld(nullptr);
         this->world.removeConstraint(&constraint);

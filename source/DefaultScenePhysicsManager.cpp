@@ -72,6 +72,11 @@ namespace GTEngine
         this->world.AddConstraint(constraint);
     }
 
+    void DefaultScenePhysicsManager::AddConstraint(PointToPointConstraint &constraint)
+    {
+        this->world.AddConstraint(constraint);
+    }
+
 
     void DefaultScenePhysicsManager::RemoveConstraint(GenericConstraint &constraint)
     {
@@ -79,6 +84,11 @@ namespace GTEngine
     }
 
     void DefaultScenePhysicsManager::RemoveConstraint(ConeTwistConstraint &constraint)
+    {
+        this->world.RemoveConstraint(constraint);
+    }
+
+    void DefaultScenePhysicsManager::RemoveConstraint(PointToPointConstraint &constraint)
     {
         this->world.RemoveConstraint(constraint);
     }

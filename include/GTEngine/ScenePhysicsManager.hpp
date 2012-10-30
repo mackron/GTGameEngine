@@ -36,10 +36,12 @@ namespace GTEngine
         /// Adds a constraint.
         virtual void AddConstraint(GenericConstraint &constraint) = 0;
         virtual void AddConstraint(ConeTwistConstraint &constraint) = 0;
+        virtual void AddConstraint(PointToPointConstraint &constraint) = 0;
         
         /// Removes a constraint.
         virtual void RemoveConstraint(GenericConstraint &constraint) = 0;
         virtual void RemoveConstraint(ConeTwistConstraint &constraint) = 0;
+        virtual void RemoveConstraint(PointToPointConstraint &constraint) = 0;
 
 
         /// Sets the gravity.
