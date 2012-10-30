@@ -184,6 +184,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\LightComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ModelComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\OccluderComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\PointToPointConstraintComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ProximityComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\SpriteComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ConvexHull.hpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\DynamicsWorld.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\GenericConstraint.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\GhostObject.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\PointToPointConstraint.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Projectile.hpp" />
@@ -346,6 +348,7 @@
     <ClCompile Include="..\..\..\source\Components\LightComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ModelComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\OccluderComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Components\PointToPointConstraintComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ProximityComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\SpriteComponent.cpp" />
     <ClCompile Include="..\..\..\source\ConvexHull.cpp" />
@@ -400,6 +403,7 @@
     <ClCompile Include="..\..\..\source\Physics\DynamicsWorld.cpp" />
     <ClCompile Include="..\..\..\source\Physics\GenericConstraint.cpp" />
     <ClCompile Include="..\..\..\source\Physics\GhostObject.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\PointToPointConstraint.cpp" />
     <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp" />
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
     <ClCompile Include="..\..\..\source\Projectile.cpp" />

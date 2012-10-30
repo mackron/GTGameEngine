@@ -602,6 +602,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Utilities\CharacterControllerEventHandler.hpp">
       <Filter>include\Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\PointToPointConstraint.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\PointToPointConstraintComponent.hpp">
+      <Filter>include\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1017,6 +1023,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Utilities\DynamicCharacterController.cpp">
       <Filter>source\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\PointToPointConstraint.cpp">
+      <Filter>source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\PointToPointConstraintComponent.cpp">
+      <Filter>source\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

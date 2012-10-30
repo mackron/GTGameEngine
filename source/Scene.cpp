@@ -712,6 +712,21 @@ namespace GTEngine
             }
         }
 
+        auto pointToPointConstraintComponent = node.GetComponent<PointToPointConstraintComponent>();
+        if (pointToPointConstraintComponent != nullptr)
+        {
+            auto constraint = pointToPointConstraintComponent->GetConstraint();
+            if (constraint != nullptr)
+            {
+                this->physicsManager.AddConstraint(*constraint);
+            }
+            else
+            {
+                Log("Warning: Attempting to add a point-to-point constraint component without attachments. Ignoring.");
+            }
+        }
+
+
 
 
         if (node.IsVisible())
@@ -762,6 +777,26 @@ namespace GTEngine
         if (genericConstraintComponent != nullptr)
         {
             auto constraint = genericConstraintComponent->GetConstraint();
+            if (constraint != nullptr)
+            {
+                this->physicsManager.RemoveConstraint(*constraint);
+            }
+        }
+
+        auto coneTwiseConstraintComponent = node.GetComponent<ConeTwistConstraintComponent>();
+        if (coneTwiseConstraintComponent != nullptr)
+        {
+            auto constraint = coneTwiseConstraintComponent->GetConstraint();
+            if (constraint != nullptr)
+            {
+                this->physicsManager.RemoveConstraint(*constraint);
+            }
+        }
+
+        auto pointToPointConstraintComponent = node.GetComponent<PointToPointConstraintComponent>();
+        if (pointToPointConstraintComponent != nullptr)
+        {
+            auto constraint = pointToPointConstraintComponent->GetConstraint();
             if (constraint != nullptr)
             {
                 this->physicsManager.RemoveConstraint(*constraint);

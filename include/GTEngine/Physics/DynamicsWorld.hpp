@@ -7,6 +7,7 @@
 #include "GhostObject.hpp"
 #include "GenericConstraint.hpp"
 #include "ConeTwistConstraint.hpp"
+#include "PointToPointConstraint.hpp"
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -74,6 +75,7 @@ namespace GTEngine
         void AddConstraint(btTypedConstraint &constraint, bool disableCollisionsBetweenLinkedBodies = false);
         void AddConstraint(GenericConstraint &constraint, bool disableCollisionsBetweenLinkedBodies = false);
         void AddConstraint(ConeTwistConstraint &constraint, bool disableCollisionsBetweenLinkedBodies = false);
+        void AddConstraint(PointToPointConstraint &constraint, bool disableCollisionsBetweenLinkedBodies = false);
 
         /// Removes a constraint from the world.
         ///
@@ -81,6 +83,7 @@ namespace GTEngine
         void RemoveConstraint(btTypedConstraint &constraint);
         void RemoveConstraint(GenericConstraint &constraint);
         void RemoveConstraint(ConeTwistConstraint &constraint);
+        void RemoveConstraint(PointToPointConstraint &constraint);
 
 
 
