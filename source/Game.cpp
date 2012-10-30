@@ -37,6 +37,7 @@ namespace GTEngine
           gui(&script, &fontServer), guiEventHandler(*this),
           paused(false), focused(true),
           isCursorVisible(true),
+          isAutoScriptReloadEnabled(false),
           keyDownMap(), mouseButtonDownMap(),
           editor(*this),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
@@ -433,6 +434,19 @@ namespace GTEngine
     }
 
 
+
+    void Game::EnableScriptAutoReload()
+    {
+        this->isAutoScriptReloadEnabled = true;
+    }
+
+    void Game::DisableScriptAutoReload()
+    {
+        this->isAutoScriptReloadEnabled = false;
+    }
+
+
+
     void Game::OnFileInsert(const DataFilesWatcher::Item &item)
     {
         (void)item;
@@ -460,6 +474,17 @@ namespace GTEngine
             else if (Texture2DLibrary::IsExtensionSupported(extension))
             {
                 Texture2DLibrary::Reload(item.info.path.c_str());
+            }
+            else
+            {
+                // If we have a script file we will reload it if applicable.
+                if (this->IsScriptAutoReloadEnabled())
+                {
+                    if (this->script.HasFileBeenLoaded(item.info.path.c_str()))
+                    {
+                        this->script.ExecuteFile(item.info.path.c_str());
+                    }
+                }
             }
         }
     }
@@ -1117,7 +1142,7 @@ namespace GTEngine
         this->focused = true;
 
         // If we're watching data files, we're going to check and update right now. This is useful for toggling between the editor and the other application.
-        if (this->IsDataFilesWatchingEnabled())
+        if (this->IsDataFilesWatchingEnabled() || this->IsScriptAutoReloadEnabled())
         {
             this->dataFilesWatcher.CheckForChanges(false);
             this->dataFilesWatcher.DispatchEvents();

@@ -599,6 +599,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Utilities\DynamicCharacterController.hpp">
       <Filter>include\Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Utilities\CharacterControllerEventHandler.hpp">
+      <Filter>include\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">

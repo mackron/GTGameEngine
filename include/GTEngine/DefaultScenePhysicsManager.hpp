@@ -77,11 +77,17 @@ namespace GTEngine
         virtual void Step(double deltaTimeInSeconds);
 
 
+        /// ScenePhysicsManager::SetSpeedScale().
+        virtual void SetSpeedScale(double scale);
+
 
     protected:
 
         /// The dynamics world containing all of our physics objects.
         DynamicsWorld world;
+
+        /// The speed scale to apply to the entire physics simulation.
+        double speedScale;
     };
 }
 

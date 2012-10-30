@@ -5,7 +5,7 @@
 namespace GTEngine
 {
     DefaultScenePhysicsManager::DefaultScenePhysicsManager()
-        : world()
+        : world(), speedScale(1.0)
     {
     }
 
@@ -116,6 +116,12 @@ namespace GTEngine
 
     void DefaultScenePhysicsManager::Step(double deltaTimeInSeconds)
     {
-        this->world.Step(static_cast<btScalar>(deltaTimeInSeconds), 4);
+        this->world.Step(static_cast<btScalar>(deltaTimeInSeconds * this->speedScale), 4);
+    }
+
+
+    void DefaultScenePhysicsManager::SetSpeedScale(double scale)
+    {
+        this->speedScale = scale;
     }
 }

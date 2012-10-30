@@ -8,7 +8,7 @@
 namespace GTEngine
 {
     GameScript::GameScript(Game &game)
-        : game(game), lastError()
+        : game(game), lastError(), loadedFiles()
     {
     }
 
@@ -85,6 +85,23 @@ namespace GTEngine
         return true;
     }
 
+    bool GameScript::LoadFile(const char* fileName)
+    {
+        if (!this->HasFileBeenLoaded(fileName))
+        {
+            GTCore::String absolutePath;
+            if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+            {
+                this->loadedFiles.PushBack(absolutePath);
+            }
+        }
+
+        return GTCore::Script::LoadFile(fileName);
+    }
+
+
+
+
     bool GameScript::Execute()
     {
         if (!GTCore::Script::Execute())
@@ -96,6 +113,18 @@ namespace GTEngine
         }
 
         return true;
+    }
+
+
+    bool GameScript::HasFileBeenLoaded(const char* fileName) const
+    {
+        GTCore::String absolutePath;
+        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        {
+            return this->loadedFiles.Exists(absolutePath);
+        }
+
+        return false;
     }
 }
 
