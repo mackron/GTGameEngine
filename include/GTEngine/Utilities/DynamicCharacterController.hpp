@@ -3,6 +3,7 @@
 #define __GTEngine_Utilities_DynamicCharacterController_hpp_
 
 #include "../SceneNode.hpp"
+#include "CharacterControllerEventHandler.hpp"
 
 namespace GTEngine
 {
@@ -40,7 +41,7 @@ namespace GTEngine
 
 
         /// Determines whether or not the controller is on the ground.
-        bool OnGround() const;
+        bool IsOnGround() const;
 
 
         /// Determines whether or not the controller is able to jump.
@@ -51,6 +52,17 @@ namespace GTEngine
 
 
 
+        /// Sets the event handler.
+        ///
+        /// @param eventHandler [in] A reference to the new event handler.
+        ///
+        /// @remarks
+        ///     Use remove event handler to remove it.
+        void SetEventHandler(CharacterControllerEventHandler &eventHandler);
+
+        /// Removes the current event handler.
+        void RemoveEventHandler();
+
 
 
         ///////////////////////////////////////////////////////
@@ -58,6 +70,15 @@ namespace GTEngine
 
         /// Called when the scene node of the character controller is updated.
         void OnUpdate(double deltaTimeInSeconds);
+
+        /// Called when the character has landed onto the ground.
+        void OnLand();
+
+        /// Called when the character is raised off the ground.
+        void OnRaise();
+
+        /// Called when the character hits it's head.
+        void OnHitHead();
 
 
 
@@ -104,6 +125,13 @@ namespace GTEngine
 
         /// Keeps track of whether or not we are on the ground.
         bool onGround;
+
+        /// Keeps track of whether or not the players head is hitting something.
+        bool isHeadTouchingSomething;
+
+
+        /// A pointer to the event handler.
+        CharacterControllerEventHandler* eventHandler;
     };
 }
 

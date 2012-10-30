@@ -222,8 +222,6 @@ namespace GTEngine
 
     void Model::OnDefinitionChanged()
     {
-        //double startTime = GTCore::Timing::GetTimeInMilliseconds();
-
         this->Clear();
 
 
@@ -245,9 +243,6 @@ namespace GTEngine
                 this->AttachMesh(this->definition.meshGeometries[i], this->definition.meshMaterials[i]->GetDefinition().fileName.c_str());
             }
         }
-
-
-        //GTEngine::Log("--- Instantiation Time: %fms ---", GTCore::Timing::GetTimeInMilliseconds() - startTime);
     }
 
 

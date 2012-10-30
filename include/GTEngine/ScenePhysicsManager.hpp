@@ -63,6 +63,15 @@ namespace GTEngine
         /// @param deltaTimeInSeconds [in] The delta time in seconds (time between updates).
         virtual void Step(double deltaTimeInSeconds) = 0;
 
+
+        /// Sets the scale to apply to the entire physics simulation.
+        ///
+        /// @param scale [in] The speed scale to apply to the entire physics simulation.
+        ///
+        /// @remarks
+        ///     Defaults to 1.0.
+        virtual void SetSpeedScale(double scale) = 0;
+
     };
 }
 

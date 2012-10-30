@@ -316,6 +316,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ThreadCache.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Utilities\CharacterControllerEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Utilities\DynamicCharacterController.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />

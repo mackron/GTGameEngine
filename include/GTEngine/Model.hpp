@@ -67,11 +67,6 @@ namespace GTEngine
         void GetBaseAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const;
 
 
-        /// Rebuilds and returns a pointer to the vertex array that can be used as the source for a collision shape with this model.
-        ///
-        /// @remarks
-        ///     This will delete any previously build collision vertex array.
-        //btTriangleIndexVertexArray* RebuildCollisionVertexArray();
 
         /// Updates the collision vertex array.
         ///

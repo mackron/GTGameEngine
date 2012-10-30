@@ -267,7 +267,6 @@ namespace GTEngine
         }
 
 
-        
         /// Generically activates the given game state.
         ///
         /// @param newGameState [in] A reference to the game state to activate.
@@ -284,6 +283,19 @@ namespace GTEngine
 
         /// Retrieves the currentnly active game state.
         GameState* GetCurrentGameState() { return this->currentGameState; }
+
+
+
+        /// Enables automatic script reloading.
+        ///
+        /// This will be disabled by default. Scripts will be reloaded when the game window receives focus.
+        void EnableScriptAutoReload();
+
+        /// Disables automatic script reloading.
+        void DisableScriptAutoReload();
+
+        /// Determines whether or not automatic script reloading is enabled.
+        bool IsScriptAutoReloadEnabled() const { return this->isAutoScriptReloadEnabled; }
 
 
 
@@ -591,6 +603,9 @@ namespace GTEngine
 
         /// Whether or not the cursor is visible.
         bool isCursorVisible;
+
+        /// Keeps track of whether or not automatic script reloading is enabled. False by default.
+        bool isAutoScriptReloadEnabled;
 
 
         /// A map of key states. This is modified as keys are pushed and released.

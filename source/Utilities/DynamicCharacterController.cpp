@@ -7,15 +7,20 @@ namespace GTEngine
     DynamicCharacterController::DynamicCharacterController(float heightIn, float radiusIn)
         : sceneNode(), sceneNodeEventHandler(*this),
           height(heightIn), radius(radiusIn),
-          onGround(false)
+          onGround(false), isHeadTouchingSomething(false),
+          eventHandler(nullptr)
     {
+        // TODO: Change to a capsule later.
+
+
         const float halfHeight = height * 0.5f;
 
         auto dynamics = this->sceneNode.AddComponent<DynamicsComponent>();
-        dynamics->AddCapsuleYCollisionShape(radius, height - (radius * 2.0f), 0.0f, halfHeight, 0.0f);
+        //dynamics->AddCapsuleYCollisionShape(radius, height - (radius * 2.0f), 0.0f, halfHeight, 0.0f);
+        dynamics->AddBoxCollisionShape(radius, halfHeight, radius, 0.0f, halfHeight, 0.0f);
         dynamics->SetMass(10.0f);
         dynamics->SetAngularFactor(0.0f, 0.0f, 0.0f);
-        dynamics->SetFriction(1.0f);
+        dynamics->SetFriction(0.0f);
         dynamics->DisableDeactivation();
 
 
@@ -50,12 +55,24 @@ namespace GTEngine
 
     bool DynamicCharacterController::CanJump() const
     {
-        return this->OnGround();
+        return this->IsOnGround();
     }
 
-    bool DynamicCharacterController::OnGround() const
+    bool DynamicCharacterController::IsOnGround() const
     {
         return this->onGround;
+    }
+
+
+
+    void DynamicCharacterController::SetEventHandler(CharacterControllerEventHandler &eventHandler)
+    {
+        this->eventHandler = &eventHandler;
+    }
+
+    void DynamicCharacterController::RemoveEventHandler()
+    {
+        this->eventHandler = nullptr;
     }
 
 
@@ -69,25 +86,103 @@ namespace GTEngine
         auto scene = this->sceneNode.GetScene();
         if (scene != nullptr)
         {
+            const bool wasOnGround              = this->onGround;
+            const bool wasHeadTouchingSomething = this->isHeadTouchingSomething;
+
+            // For ease of use.
+            const float halfHeight = this->height * 0.5f;
+
             // We need to keep track of whether or not the player is on the ground. We're going to use a ray to do this. We will shoot the ray from
             // the center of the player towards the ground, while ignoring the controller body itself.
             GTEngine::ClosestRayExceptMeTestCallback callback;
             callback.excludedNode = &this->sceneNode;
 
             // The scene node will be at the player's feet.
-            glm::vec3 rayStart = this->sceneNode.GetPosition() - glm::vec3(0.0f, -this->height * 0.5f, 0.0f);
-            glm::vec3 rayEnd   = this->sceneNode.GetPosition() + glm::vec3(0.0f, -0.1f, 0.0f);
+            glm::vec3 rayStartCenter = this->sceneNode.GetPosition() + glm::vec3(0.0f, halfHeight, 0.0f);
+            glm::vec3 rayEndCenter   = this->sceneNode.GetPosition() + glm::vec3(0.0f, -0.1f, 0.0f);
+            glm::vec3 rayStartLeft   = rayStartCenter + glm::vec3(-this->radius, -halfHeight + 0.1f, 0.0f);
+            glm::vec3 rayEndLeft     = rayEndCenter   + glm::vec3(-this->radius, 0.0f, 0.0f);
+            glm::vec3 rayStartRight  = rayStartCenter + glm::vec3(+this->radius, -halfHeight + 0.1f, 0.0f);
+            glm::vec3 rayEndRight    = rayEndCenter   + glm::vec3(+this->radius, 0.0f, 0.0f);
 
-            auto rayTestResult = scene->RayTest(rayStart, rayEnd);
-            if (rayTestResult != nullptr)
+            if (scene->RayTest(rayStartCenter, rayEndCenter) != nullptr ||
+                scene->RayTest(rayStartLeft,   rayEndLeft)   != nullptr ||
+                scene->RayTest(rayStartRight,  rayEndRight)  != nullptr)
             {
                 // TODO: Should check if the player is sitting on top of a dynamic body while it is falling or whatnot.
                 this->onGround = true;
+
+                if (!wasOnGround)
+                {
+                    this->OnLand();
+                }
             }
             else
             {
                 this->onGround = false;
+
+                if (wasOnGround)
+                {
+                    this->OnRaise();
+                }
             }
+
+
+            // Now we'll check the head.
+            rayStartCenter = this->sceneNode.GetPosition() + glm::vec3(0.0f, this->height,        0.0f);
+            rayEndCenter   = this->sceneNode.GetPosition() + glm::vec3(0.0f, this->height + 0.1f, 0.0f);
+            rayStartLeft   = rayStartCenter + glm::vec3(-this->radius, halfHeight - 0.1f, 0.0f);
+            rayEndLeft     = rayEndCenter   + glm::vec3(-this->radius, 0.0f, 0.0f);
+            rayStartRight  = rayStartCenter + glm::vec3(+this->radius, halfHeight - 0.1f, 0.0f);
+            rayEndRight    = rayEndCenter   + glm::vec3(+this->radius, 0.0f, 0.0f);
+
+            if (scene->RayTest(rayStartCenter, rayEndCenter) != nullptr ||
+                scene->RayTest(rayStartLeft,   rayEndLeft)   != nullptr ||
+                scene->RayTest(rayStartRight,  rayEndRight)  != nullptr)
+            {
+                this->isHeadTouchingSomething = true;
+
+                if (!wasHeadTouchingSomething)
+                {
+                    this->OnHitHead();
+                }
+            }
+            else
+            {
+                this->isHeadTouchingSomething = false;
+            }
+
+
+
+
+            if (this->eventHandler != nullptr)
+            {
+                this->eventHandler->OnUpdate(deltaTimeInSeconds);
+            }
+        }
+    }
+
+    void DynamicCharacterController::OnLand()
+    {
+        if (this->eventHandler != nullptr)
+        {
+            this->eventHandler->OnLand();
+        }
+    }
+
+    void DynamicCharacterController::OnRaise()
+    {
+        if (this->eventHandler != nullptr)
+        {
+            this->eventHandler->OnRaise();
+        }
+    }
+
+    void DynamicCharacterController::OnHitHead()
+    {
+        if (this->eventHandler != nullptr)
+        {
+            this->eventHandler->OnHitHead();
         }
     }
 }
