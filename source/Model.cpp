@@ -355,14 +355,14 @@ namespace GTEngine
         {
             delete this->bones.buffer[i];
         }
-        this->meshes.Clear();
+        this->bones.Clear();
 
         // Animation keys.
         for (size_t i = 0; i < this->animationKeyCache.count; ++i)
         {
             delete this->animationKeyCache[i];
         }
-        this->meshes.Clear();
+        this->animationKeyCache.Clear();
 
 
         delete this->collisionVA;
