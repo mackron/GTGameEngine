@@ -63,8 +63,7 @@ function GTGUI.Element:ModelEditor_CDPanel()
             local addExtraDistPoints      = self.AddExtraDistPoints:IsChecked();
             local addFacePoints           = self.AddFacePoints:IsChecked();
             
-            Editor.ModelEditor.BuildConvexDecomposition
-            (
+            Editor.ModelEditor.BuildConvexDecomposition(
                 compacityWeight,
                 volumeWeight,
                 minClusters,
