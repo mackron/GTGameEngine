@@ -757,22 +757,7 @@ namespace GTEngine
         }
 
 
-        // TODO: Need to handle cases where we may be in the middle of a simulation...
-        // If the node has a dynamics component, the rigid body needs to be removed.
-        auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
-        if (dynamicsComponent != nullptr)
-        {
-            this->physicsManager.RemoveRigidBody(dynamicsComponent->GetRigidBody());
-        }
-
-        // Same for the proximity component as the dynamics component...
-        auto proximityComponent = node.GetComponent<ProximityComponent>();
-        if (proximityComponent != nullptr)
-        {
-            this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
-        }
-
-        // ... and the same again for constraints.
+        // Constraints must be removed before rigid bodies!
         auto genericConstraintComponent = node.GetComponent<GenericConstraintComponent>();
         if (genericConstraintComponent != nullptr)
         {
@@ -802,6 +787,24 @@ namespace GTEngine
                 this->physicsManager.RemoveConstraint(*constraint);
             }
         }
+
+
+        // TODO: Need to handle cases where we may be in the middle of a simulation...
+        // If the node has a dynamics component, the rigid body needs to be removed.
+        auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
+        if (dynamicsComponent != nullptr)
+        {
+            this->physicsManager.RemoveRigidBody(dynamicsComponent->GetRigidBody());
+        }
+
+        // Same for the proximity component as the dynamics component...
+        auto proximityComponent = node.GetComponent<ProximityComponent>();
+        if (proximityComponent != nullptr)
+        {
+            this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
+        }
+
+        
 
 
         this->cullingManager.RemoveObject(node);
