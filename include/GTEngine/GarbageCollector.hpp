@@ -8,6 +8,7 @@ namespace GTEngine
     class Shader;
     class Framebuffer;
     class VertexArray;
+    class Bone;
 
     /// Static class representing the engine's garbage collector.
     ///
@@ -74,6 +75,14 @@ namespace GTEngine
         static void MarkForCollection(VertexArray &va, int counter = 1);
         static void MarkForCollection(VertexArray* va, int counter = 1) { if (va != nullptr) MarkForCollection(*va, counter); }
 
+        /// Marks a bone for collection.
+        ///
+        /// @param bone    [in] The bone being marked for collection.
+        /// @param counter [in] The counter to associated with the bone.
+        static void MarkForCollection(Bone &bone, int counter = 1);
+        static void MarkForCollection(Bone* bone, int counter = 1) { if (bone != nullptr) MarkForCollection(*bone, counter); }
+
+
         
     // Collecting.
     public:
@@ -89,6 +98,9 @@ namespace GTEngine
 
         /// Collects garbage vertex arrays.
         static void CollectVertexArrays();
+
+        /// Collects garbage bones.
+        static void CollectBones();
     };
 }
 
