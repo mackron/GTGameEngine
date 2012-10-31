@@ -116,11 +116,6 @@ namespace GTEngine
         }
         this->animationKeyCache.Clear();
 
-
-        for (size_t i = 0; i < this->animationChannelBones.count; ++i)
-        {
-            delete this->animationChannelBones.buffer[i];
-        }
         this->animationChannelBones.Clear();
     }
 
