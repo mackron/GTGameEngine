@@ -363,6 +363,7 @@ namespace GTEngine
             delete this->animationKeyCache[i];
         }
         this->animationKeyCache.Clear();
+        this->animationChannelBones.Clear();
 
 
         delete this->collisionVA;
