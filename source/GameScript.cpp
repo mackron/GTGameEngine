@@ -158,7 +158,7 @@ namespace GTEngine
 
     int FFI_Game_Pause(GTCore::Script &script)
     {
-        auto& game = GameScript::FFI::GetGameObject(script);
+        auto &game = GameScript::FFI::GetGameObject(script);
 
         game.Pause();
         return 0;
@@ -166,7 +166,7 @@ namespace GTEngine
 
     int FFI_Game_Resume(GTCore::Script &script)
     {
-        auto& game = GameScript::FFI::GetGameObject(script);
+        auto &game = GameScript::FFI::GetGameObject(script);
 
         game.Resume();
         return 0;
@@ -174,7 +174,7 @@ namespace GTEngine
 
     int FFI_Game_EnableFullscreen(GTCore::Script &script)
     {
-        auto& game = GameScript::FFI::GetGameObject(script);
+        auto &game = GameScript::FFI::GetGameObject(script);
 
         game.EnableFullscreen();
         return 0;
@@ -182,15 +182,24 @@ namespace GTEngine
 
     int FFI_Game_DisableFullscreen(GTCore::Script &script)
     {
-        auto& game = GameScript::FFI::GetGameObject(script);
+        auto &game = GameScript::FFI::GetGameObject(script);
 
         game.DisableFullscreen();
         return 0;
     }
 
+
+    int FFI_Game_ExecuteFile(GTCore::Script &script)
+    {
+        auto &game = GameScript::FFI::GetGameObject(script);
+
+        script.Push(game.GetScript().ExecuteFile(script.ToString(1)));
+        return 1;
+    }
+
     int FFI_Game_ExecuteScript(GTCore::Script &script)
     {
-        auto& game = GameScript::FFI::GetGameObject(script);
+        auto &game = GameScript::FFI::GetGameObject(script);
 
         script.Push(game.ExecuteScript(script.ToString(1)));
         return 1;
@@ -198,11 +207,12 @@ namespace GTEngine
 
     int FFI_Game_GetLastScriptError(GTCore::Script &script)
     {
-        auto& game = GameScript::FFI::GetGameObject(script);
+        auto &game = GameScript::FFI::GetGameObject(script);
 
         script.Push(game.GetScript().GetLastError());
         return 1;
     }
+
 
     int FFI_Game_ShowDebug(GTCore::Script &script)
     {
@@ -243,6 +253,7 @@ namespace GTEngine
             this->SetTableFunction(-1, "EnableFullscreen",   FFI_Game_EnableFullscreen);
             this->SetTableFunction(-1, "DisableFullscreen",  FFI_Game_DisableFullscreen);
 
+            this->SetTableFunction(-1, "ExecuteFile",        FFI_Game_ExecuteFile);
             this->SetTableFunction(-1, "ExecuteScript",      FFI_Game_ExecuteScript);
             this->SetTableFunction(-1, "GetLastScriptError", FFI_Game_GetLastScriptError);
 
