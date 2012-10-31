@@ -35,11 +35,16 @@ namespace GTEngine
     }
 
 
-    void DataFilesWatcher::AddEventHandler(EventHandler &eventHandler)
+    void DataFilesWatcher::AddEventHandler(EventHandler &eventHandler, bool postInsertEventsForExistingFiles)
     {
         if (!this->eventHandlers.Exists(&eventHandler))
         {
             this->eventHandlers.Append(&eventHandler);
+
+            if (postInsertEventsForExistingFiles)
+            {
+                this->__PostOnInsertRecursively(this->root, eventHandler);
+            }
         }
     }
 
@@ -248,6 +253,27 @@ namespace GTEngine
     void DataFilesWatcher::__Deactivate()
     {
         this->isActive = false;
+    }
+
+
+
+    void DataFilesWatcher::__PostOnInsertRecursively(const Item &rootItem, EventHandler &eventHandler)
+    {
+        // We want to ignore root items here.
+        if (&rootItem != &this->root && rootItem.parent != &this->root)
+        {
+            eventHandler.OnInsert(rootItem);
+        }
+
+
+        for (size_t i = 0; i < rootItem.children.count; ++i)
+        {
+            auto iChild = rootItem.children.buffer[i];
+            assert(iChild        != nullptr);
+            assert(iChild->value != nullptr);
+
+            this->__PostOnInsertRecursively(*iChild->value, eventHandler);
+        }
     }
 }
 

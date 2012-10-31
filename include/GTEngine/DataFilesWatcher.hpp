@@ -154,8 +154,9 @@ namespace GTEngine
 
         /// Adds an event handler.
         ///
-        /// @param eventHandler [in] A reference to the event handler to add.
-        void AddEventHandler(EventHandler &eventHandler);
+        /// @param eventHandler     [in] A reference to the event handler to add.
+        /// @param postInsertEvents [in] If set to true, posts OnInsert events for already-added files. Defaults to true.
+        void AddEventHandler(EventHandler &eventHandler, bool postInsertEventsForExistingFiles = true);
 
         /// Removes an event handler.
         ///
@@ -206,8 +207,23 @@ namespace GTEngine
         void __Deactivate();
 
 
-        ///////////////////////////////////////////////
-        // Attributes
+
+
+    ///////////////////////////////////////////////////
+    // Private Methods
+
+    private:
+
+        /// Recursively posts OnInsert events to the given event handler.
+        ///
+        /// @param rootItem     [in] The root item to post.
+        /// @param eventHandler [in] The event handler to posts the events to.
+        void __PostOnInsertRecursively(const Item &rootItem, EventHandler &eventHandler);
+
+
+
+    ///////////////////////////////////////////////////
+    // Attributes
 
     private:
 
