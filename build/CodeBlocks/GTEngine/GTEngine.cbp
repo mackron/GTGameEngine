@@ -119,10 +119,13 @@
 		<Unit filename="..\..\..\include\GTEngine\CollisionGroups.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Component.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Components\CameraComponent.hpp" />
+		<Unit filename="..\..\..\include\GTEngine\Components\ConeTwistConstraintComponent.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Components\DynamicsComponent.hpp" />
+		<Unit filename="..\..\..\include\GTEngine\Components\GenericConstraintComponent.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Components\LightComponent.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Components\ModelComponent.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Components\OccluderComponent.hpp" />
+		<Unit filename="..\..\..\include\GTEngine\Components\PointToPointConstraintComponent.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Components\ProximityComponent.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Components\SpriteComponent.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\DefaultSceneCullingManager.hpp" />
@@ -175,8 +178,11 @@
 		<Unit filename="..\..\..\include\GTEngine\Physics\Bullet.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Physics\CollisionObject.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Physics\CollisionWorld.hpp" />
+		<Unit filename="..\..\..\include\GTEngine\Physics\ConeTwistConstraint.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Physics\DynamicsWorld.hpp" />
+		<Unit filename="..\..\..\include\GTEngine\Physics\GenericConstraint.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Physics\GhostObject.hpp" />
+		<Unit filename="..\..\..\include\GTEngine\Physics\PointToPointConstraint.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Physics\btEllipsoidShape.hpp" />
@@ -242,6 +248,8 @@
 		<Unit filename="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\Texture2DLibrary.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\ThreadCache.hpp" />
+		<Unit filename="..\..\..\include\GTEngine\Utilities\CharacterControllerEventHandler.hpp" />
+		<Unit filename="..\..\..\include\GTEngine\Utilities\DynamicCharacterController.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\VertexArrayFactory.hpp" />
 		<Unit filename="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />
 		<Unit filename="..\..\..\source\Animation\Animation.cpp" />
@@ -264,10 +272,13 @@
 		<Unit filename="..\..\..\source\CPUVertexShader_Skinning.cpp" />
 		<Unit filename="..\..\..\source\Component.cpp" />
 		<Unit filename="..\..\..\source\Components\CameraComponent.cpp" />
+		<Unit filename="..\..\..\source\Components\ConeTwistConstraintComponent.cpp" />
 		<Unit filename="..\..\..\source\Components\DynamicsComponent.cpp" />
+		<Unit filename="..\..\..\source\Components\GenericConstraintComponent.cpp" />
 		<Unit filename="..\..\..\source\Components\LightComponent.cpp" />
 		<Unit filename="..\..\..\source\Components\ModelComponent.cpp" />
 		<Unit filename="..\..\..\source\Components\OccluderComponent.cpp" />
+		<Unit filename="..\..\..\source\Components\PointToPointConstraintComponent.cpp" />
 		<Unit filename="..\..\..\source\Components\ProximityComponent.cpp" />
 		<Unit filename="..\..\..\source\Components\SpriteComponent.cpp" />
 		<Unit filename="..\..\..\source\ConvexHull.cpp" />
@@ -314,8 +325,11 @@
 		<Unit filename="..\..\..\source\Physics\BaseCollisionWorld.cpp" />
 		<Unit filename="..\..\..\source\Physics\CollisionObject.cpp" />
 		<Unit filename="..\..\..\source\Physics\CollisionWorld.cpp" />
+		<Unit filename="..\..\..\source\Physics\ConeTwistConstraint.cpp" />
 		<Unit filename="..\..\..\source\Physics\DynamicsWorld.cpp" />
+		<Unit filename="..\..\..\source\Physics\GenericConstraint.cpp" />
 		<Unit filename="..\..\..\source\Physics\GhostObject.cpp" />
+		<Unit filename="..\..\..\source\Physics\PointToPointConstraint.cpp" />
 		<Unit filename="..\..\..\source\Physics\RigidBody.cpp" />
 		<Unit filename="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
 		<Unit filename="..\..\..\source\Physics\btEllipsoidShape.cpp" />
@@ -378,6 +392,7 @@
 		<Unit filename="..\..\..\source\ShadowVolume.cpp" />
 		<Unit filename="..\..\..\source\Texture2DLibrary.cpp" />
 		<Unit filename="..\..\..\source\ThreadCache.cpp" />
+		<Unit filename="..\..\..\source\Utilities\DynamicCharacterController.cpp" />
 		<Unit filename="..\..\..\source\VertexArrayFactory.cpp" />
 		<Unit filename="..\..\..\source\VertexArrayLibrary.cpp" />
 		<Extensions>
