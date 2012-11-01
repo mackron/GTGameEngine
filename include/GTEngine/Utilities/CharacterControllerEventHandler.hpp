@@ -8,6 +8,9 @@ namespace GTEngine
     class CharacterControllerEventHandler
     {
     public:
+        
+        /// Warning silencing destructor.
+        virtual ~CharacterControllerEventHandler() {}
 
         /// Called when the character is updated by the scene. This is called after the controller applies gravity and movement.
         virtual void OnUpdate(double deltaTimeInSeconds) { (void) deltaTimeInSeconds; }

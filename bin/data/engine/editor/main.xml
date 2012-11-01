@@ -6,7 +6,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
 <script url="scripts/datafileswatcher.lua" />
 
-
 <include url="common-controls.xml" />
 <include url="dialogs.xml"         />
 
@@ -322,7 +321,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         padding:          4px
     }
 </style>
-
     
 <!--
 The styles below are for sub-editors (model editor, image editor, etc). These are all located in the main body and are
@@ -357,12 +355,6 @@ hidden by default.
         <div id="EditorTopPanel_Left">
             <div id="Editor_MenuBar" styleclass="menubar" />
         </div>
-        
-        <!--
-        <div id="EditorTopPanel_Right" style="horizontal-align:right; vertical-align:center; padding-right:0px;">
-            <div id="ModeSwitcher" styleclass="combobox" style="height:100%; margin-right:0px;" />
-        </div>
-        -->
     </div>
     
     

@@ -684,7 +684,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive, int stencilIndex)
     {
-        auto &cameraProjection = state.cameraProjection;
+        //auto &cameraProjection = state.cameraProjection;
         auto &cameraView       = state.cameraView;
 
         float zFar = state.cameraZFar;
@@ -940,7 +940,7 @@ namespace GTEngine
             
             if (refractive)
             {
-                this->Shaders.Lighting_D1_Trans;
+                rcSetShader.shader = this->Shaders.Lighting_D1_Trans;
                 Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
             }
             else
