@@ -11,7 +11,7 @@ namespace GTEngine
 {
     /// Class representing a model.
     ///
-    /// A model contains an arbitrary number of meshes, materials and animation data. 
+    /// A model contains an arbitrary number of meshes, materials and animation data.
     class Model
     {
     public:
@@ -40,7 +40,7 @@ namespace GTEngine
         ///     It's important that <bones> refers to a list of BoneWithWeights pointers since the vertex/weight information will be needed to set the skinning vertex attributes.
         Mesh* AttachMesh(VertexArray* mesh, const char* materialFileName);
         Mesh* AttachMesh(VertexArray* mesh, const char* materialFileName, const SkinningVertexAttribute* skinningVertexAttributes);
-        
+
 
         /// Creates copies and attaches a list of bones.
         ///
@@ -140,7 +140,7 @@ namespace GTEngine
         GTCore::Vector<Bone*> bones;
 
 
-        
+
 
 
         /// The base AABB of the model.
@@ -169,6 +169,11 @@ namespace GTEngine
 
         /// The main vertex array containing collision data of the model. We use a pointer here because we're going to dynamically re-create the array where needed.
         VertexArray* collisionVA;
+
+
+    private:    // No copying.
+        Model(const Model &);
+        Model & operator=(const Model &);
     };
 }
 

@@ -1,15 +1,15 @@
 /* Copyright (c) 2011 Khaled Mamou (kmamou at gmail dot com)
  All rights reserved.
- 
- 
+
+
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
- 
+
  3. The names of the contributors may not be used to endorse or promote products derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #define _CRT_SECURE_NO_WARNINGS
@@ -31,6 +31,7 @@
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wsign-conversion"
     #pragma GCC diagnostic ignored "-Weffc++"
+    #pragma GCC diagnostic ignored "-Wuninitialized"
     #if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7))
         #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
     #endif
@@ -40,18 +41,18 @@
 
 //#define HACD_DEBUG
 namespace HACD
-{ 
+{
 
 	double  HACD::Concavity(ICHull & ch, std::map<long, DPoint> & distPoints)
     {
 		double concavity = 0.0;
-		double distance = 0.0;       
+		double distance = 0.0;
 		std::map<long, DPoint>::iterator itDP(distPoints.begin());
 		std::map<long, DPoint>::iterator itDPEnd(distPoints.end());
 		long pt;
 		const long nPoints = static_cast<long>(m_nPoints);
 		const double eps = -0.001;
-		for(; itDP != itDPEnd; ++itDP) 
+		for(; itDP != itDPEnd; ++itDP)
 		{
             if (!(itDP->second).m_computed)
             {
@@ -83,7 +84,7 @@ namespace HACD
                 distance = (itDP->second).m_dist;
             }
 
-			if (concavity < distance) 
+			if (concavity < distance)
 			{
 				concavity = distance;
 			}
@@ -94,7 +95,7 @@ namespace HACD
 	void HACD::CreateGraph()
     {
 		// vertex to triangle adjacency information
-		std::vector< std::set<long> >  vertexToTriangles;		
+		std::vector< std::set<long> >  vertexToTriangles;
 		vertexToTriangles.resize(m_nPoints);
 		for(size_t t = 0; t < m_nTriangles; ++t)
 		{
@@ -109,9 +110,9 @@ namespace HACD
 		unsigned long long tr2[3];
         long i1, j1, k1, i2, j2, k2;
         long t1, t2;
-        for (size_t v = 0; v < m_nPoints; v++) 
+        for (size_t v = 0; v < m_nPoints; v++)
 		{
-			std::set<long>::const_iterator it1(vertexToTriangles[v].begin()), itEnd(vertexToTriangles[v].end()); 
+			std::set<long>::const_iterator it1(vertexToTriangles[v].begin()), itEnd(vertexToTriangles[v].end());
 			for(; it1 != itEnd; ++it1)
 			{
                 t1 = *it1;
@@ -136,7 +137,7 @@ namespace HACD
 					{
 						for(int j = 0; j < 3; ++j)
 						{
-							if (tr1[i] == tr2[j])	
+							if (tr1[i] == tr2[j])
 							{
 								shared++;
 							}
@@ -157,10 +158,10 @@ namespace HACD
                 char msg[1024];
                 sprintf(msg, "nCC %lu\n", static_cast<long unsigned int>(m_graph.m_nCCs));
                 (*m_callBack)(msg, 0.0, 0.0,  m_graph.GetNVertices());
-                
+
             }
-            
-            if (m_graph.m_nCCs > 1) 
+
+            if (m_graph.m_nCCs > 1)
             {
                 std::vector< std::set<long> > cc2V;
                 cc2V.resize(m_graph.m_nCCs);
@@ -172,19 +173,19 @@ namespace HACD
                     cc2V[cc].insert(m_triangles[t].Y());
                     cc2V[cc].insert(m_triangles[t].Z());
                 }
-                
+
                 for(size_t cc1 = 0; cc1 < m_graph.m_nCCs; ++cc1)
                 {
                     for(size_t cc2 = cc1+1; cc2 < m_graph.m_nCCs; ++cc2)
                     {
-                        std::set<long>::const_iterator itV1(cc2V[cc1].begin()), itVEnd1(cc2V[cc1].end()); 
+                        std::set<long>::const_iterator itV1(cc2V[cc1].begin()), itVEnd1(cc2V[cc1].end());
                         for(; itV1 != itVEnd1; ++itV1)
                         {
 							double distC1C2 = std::numeric_limits<double>::max();
                             double dist;
                             t1 = -1;
                             t2 = -1;
-                            std::set<long>::const_iterator itV2(cc2V[cc2].begin()), itVEnd2(cc2V[cc2].end()); 
+                            std::set<long>::const_iterator itV2(cc2V[cc2].begin()), itVEnd2(cc2V[cc2].end());
                             for(; itV2 != itVEnd2; ++itV2)
                             {
                                 dist = (m_points[*itV1] - m_points[*itV2]).GetNorm();
@@ -192,9 +193,9 @@ namespace HACD
                                 {
                                     distC1C2 = dist;
                                     t1 = *vertexToTriangles[*itV1].begin();
-                                    
-									std::set<long>::const_iterator it2(vertexToTriangles[*itV2].begin()), 
-																   it2End(vertexToTriangles[*itV2].end()); 
+
+									std::set<long>::const_iterator it2(vertexToTriangles[*itV2].begin()),
+																   it2End(vertexToTriangles[*itV2].end());
 									t2 = -1;
 									for(; it2 != it2End; ++it2)
 									{
@@ -208,7 +209,7 @@ namespace HACD
                             }
                             if (distC1C2 <= m_ccConnectDist && t1 >= 0 && t2 >= 0)
                             {
-                                m_graph.AddEdge(t1, t2);                    
+                                m_graph.AddEdge(t1, t2);
                             }
                         }
                     }
@@ -226,7 +227,7 @@ namespace HACD
         {
             delete [] m_facePoints;
             delete [] m_faceNormals;
-            
+
 			m_facePoints = new Vec3<Real>[m_nTriangles];
             m_faceNormals = new Vec3<Real>[m_nTriangles];
 /*
@@ -247,7 +248,7 @@ namespace HACD
         double progress = 0.0;
 		char msg[1024];
 		double ptgStep = 1.0;
-		m_area = 0.0;				
+		m_area = 0.0;
 		for(unsigned long f = 0; f < m_nTriangles; f++)
         {
             progress = f * 100.0 / m_nTriangles;
@@ -264,7 +265,7 @@ namespace HACD
 			m_graph.m_vertices[f].m_distPoints.PushBack(DPoint(i, 0, false, false));
 			m_graph.m_vertices[f].m_distPoints.PushBack(DPoint(j, 0, false, false));
 			m_graph.m_vertices[f].m_distPoints.PushBack(DPoint(k, 0, false, false));
-            
+
             ICHull  * ch = new ICHull(m_heapManager);
             m_graph.m_vertices[f].m_convexHull = ch;
             ch->AddPoint(m_points[i], i);
@@ -296,8 +297,8 @@ namespace HACD
         }
 
 		// Now we have all the points in the KD tree, optimize the distance points insertion by running them in parallel
-		// if possible. 
-		if (m_addExtraDistPoints)	
+		// if possible.
+		if (m_addExtraDistPoints)
         {
 			if (m_callBack)
 				(*m_callBack)("++ Also adding distance points\n", 0.0, 0.0, 0);
@@ -337,7 +338,7 @@ namespace HACD
 				#endif
 				{
 					completed++;
-				
+
 					progress = completed * 100.0 / m_nTriangles;
 					if (fabs(progress-progressOld) > ptgStep && m_callBack)
 					{
@@ -345,11 +346,11 @@ namespace HACD
 						(*m_callBack)(msg, progress, 0.0,  m_nTriangles);
 						progressOld = progress;
 					}
-				}        
+				}
 			}
 		}
 
-        for (size_t v = 0; v < m_nPoints; v++) 
+        for (size_t v = 0; v < m_nPoints; v++)
 		{
 			m_normals[v].Normalize();
 		}
@@ -365,7 +366,7 @@ namespace HACD
 		Vec3<Real> min = m_points[0];
 		Vec3<Real> max = m_points[0];
 		Real x, y, z;
-        for (size_t v = 1; v < m_nPoints ; v++) 
+        for (size_t v = 1; v < m_nPoints ; v++)
         {
 			m_barycenter += m_points[v];
             x = m_points[v].X();
@@ -383,7 +384,7 @@ namespace HACD
         const Real invDiag = static_cast<Real>(2.0 * m_scale / m_diag);
 		if (m_diag != 0.0)
 		{
-			for (size_t v = 0; v < m_nPoints ; v++) 
+			for (size_t v = 0; v < m_nPoints ; v++)
 			{
 				m_points[v] = (m_points[v] - m_barycenter) * invDiag;
 			}
@@ -398,7 +399,7 @@ namespace HACD
 		if (m_diag != 0.0)
 		{
 			const Real diag = static_cast<Real>(m_diag / (2.0 * m_scale));
-			for (size_t v = 0; v < m_nPoints ; v++) 
+			for (size_t v = 0; v < m_nPoints ; v++)
 			{
 				m_points[v] = m_points[v] * diag + m_barycenter;
 			}
@@ -437,8 +438,8 @@ namespace HACD
 		m_targetNTrianglesDecimatedMesh = 1000;
 		m_flatRegionThreshold = 1.0;
 		m_smallClusterThreshold = 0.25;
-		m_area = 0.0;					
-	}																
+		m_area = 0.0;
+	}
 	HACD::~HACD(void)
 	{
 		delete [] m_normals;
@@ -474,23 +475,23 @@ namespace HACD
 		}
 
 #endif
-	
+
         // create the edge's convex-hull
         ICHull  * ch = new ICHull(m_heapManager);
-        (*ch) = (*gV1.m_convexHull);       
+        (*ch) = (*gV1.m_convexHull);
 		// update distPoints
 #ifdef HACD_PRECOMPUTE_CHULLS
         delete gE.m_convexHull;
         gE.m_convexHull = 0;
 #endif
         std::map<long, DPoint> distPoints;
-		for(size_t p = 0; p < gV1.m_distPoints.Size(); ++p) 
+		for(size_t p = 0; p < gV1.m_distPoints.Size(); ++p)
 		{
 			distPoints[gV1.m_distPoints[p].m_name] = gV1.m_distPoints[p];
 		}
 
-		std::map<long, DPoint>::iterator itDP1;	
-		for(size_t p = 0; p < gV2.m_distPoints.Size(); ++p) 
+		std::map<long, DPoint>::iterator itDP1;
+		for(size_t p = 0; p < gV2.m_distPoints.Size(); ++p)
 		{
 			const DPoint & point =  gV2.m_distPoints[p];
 			itDP1 = distPoints.find(point.m_name);
@@ -512,7 +513,7 @@ namespace HACD
                 }
             }
 		}
-		
+
 		ch->SetDistPoints(&distPoints);
         // create the convex-hull
         while (ch->Process() == ICHullErrorInconsistent)		// if we face problems when constructing the visual-hull. really ugly!!!!
@@ -525,11 +526,11 @@ namespace HACD
 			long ptIndex = 0;
 			verticesCH.Next();
 			// add noise to avoid the problem
-			ptIndex = verticesCH.GetHead()->GetData().m_name;			
+			ptIndex = verticesCH.GetHead()->GetData().m_name;
 			ch->AddPoint(m_points[ptIndex]+ m_scale * 0.0001 * Vec3<Real>(rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5), ptIndex);
 			for(size_t v = 1; v < nV; ++v)
 			{
-				ptIndex = verticesCH.GetHead()->GetData().m_name;			
+				ptIndex = verticesCH.GetHead()->GetData().m_name;
 				ch->AddPoint(m_points[ptIndex], ptIndex);
 				verticesCH.Next();
 			}
@@ -541,8 +542,8 @@ namespace HACD
 			const long nPoints = static_cast<long>(m_nPoints);
             std::map<long, DPoint>::iterator itDP(distPoints.begin());
             std::map<long, DPoint>::iterator itDPEnd(distPoints.end());
-            for(; itDP != itDPEnd; ++itDP) 
-            {	
+            for(; itDP != itDPEnd; ++itDP)
+            {
 
 				if (itDP->first >= nPoints)
                 {
@@ -567,7 +568,7 @@ namespace HACD
 		}
 #endif
 		double surf = gV1.m_surf + gV2.m_surf;
-        double concavity = 0.0;	
+        double concavity = 0.0;
 		double surfCH = ch->ComputeArea() / 2.0;
 		double volumeCH = ch->ComputeVolume();
 		double vol2Surf = volumeCH / surfCH;
@@ -592,19 +593,19 @@ namespace HACD
 		if (m_alpha > 0.0)
 		{
             std::set<unsigned long long> boudaryEdges1;
-            for(size_t edV1 = 0; edV1 < gV1.m_boudaryEdges.Size(); ++edV1) 
+            for(size_t edV1 = 0; edV1 < gV1.m_boudaryEdges.Size(); ++edV1)
             {
                 boudaryEdges1.insert(gV1.m_boudaryEdges[edV1]);
             }
             std::set<unsigned long long> boudaryEdges2;
-            for(size_t edV2 = 0; edV2 < gV2.m_boudaryEdges.Size(); ++edV2) 
+            for(size_t edV2 = 0; edV2 < gV2.m_boudaryEdges.Size(); ++edV2)
             {
                 boudaryEdges2.insert(gV2.m_boudaryEdges[edV2]);
-            }                      
+            }
 			std::set<unsigned long long> boudaryEdges;
-			std::set_symmetric_difference (boudaryEdges1.begin(), 
-								           boudaryEdges1.end(), 
-								           boudaryEdges2.begin(), 
+			std::set_symmetric_difference (boudaryEdges1.begin(),
+								           boudaryEdges1.end(),
+								           boudaryEdges2.begin(),
 								           boudaryEdges2.end(),
 								           std::inserter( boudaryEdges, boudaryEdges.begin() ) );
 
@@ -612,7 +613,7 @@ namespace HACD
 			std::set<unsigned long long>::const_iterator itBEEnd(boudaryEdges.end());
 			for(; itBE != itBEEnd; ++itBE)
 			{
-					perimeter += (m_points[static_cast<long>((*itBE) >> 32)] - 
+					perimeter += (m_points[static_cast<long>((*itBE) >> 32)] -
 								   m_points[static_cast<long>((*itBE) & 0xFFFFFFFFULL)]).GetNorm();
 			}
 		}
@@ -624,7 +625,7 @@ namespace HACD
     bool HACD::InitializePriorityQueue()
     {
 		m_pqueue.reserve(m_graph.m_nE + 100);
-        for (size_t e=0; e < m_graph.m_nE; ++e) 
+        for (size_t e=0; e < m_graph.m_nE; ++e)
         {
             ComputeEdgeCost(static_cast<long>(e));
 			m_pqueue.push(GraphEdgePriorityQueue(static_cast<long>(e), m_graph.m_edges[e].m_error));
@@ -635,13 +636,13 @@ namespace HACD
 	{
 		double areaThreshold = m_area * m_smallClusterThreshold / 100.0;
 		long v1 = -1;
-        long v2 = -1;        
+        long v2 = -1;
         double progressOld = -1.0;
         double progress = 0.0;
-        double globalConcavity  = 0.0;     
+        double globalConcavity  = 0.0;
 		char msg[1024];
 		double ptgStep = 1.0;
-        while ( !m_pqueue.empty() ) 
+        while ( !m_pqueue.empty() )
 		{
 
             progress = 100.0-m_graph.GetNVertices() * 100.0 / m_nTriangles;
@@ -673,15 +674,15 @@ namespace HACD
                 currentEdge = m_pqueue.top();
                 m_pqueue.pop();
 			}
-			while (  m_graph.m_edges[currentEdge.m_name].m_deleted || 
+			while (  m_graph.m_edges[currentEdge.m_name].m_deleted ||
 					 m_graph.m_edges[currentEdge.m_name].m_error != currentEdge.m_priority);
 
 			if (!done)
 			{
 				v1 = m_graph.m_edges[currentEdge.m_name].m_v1;
-				v2 = m_graph.m_edges[currentEdge.m_name].m_v2;	
+				v2 = m_graph.m_edges[currentEdge.m_name].m_v2;
 				bool condition1 = (m_graph.m_edges[currentEdge.m_name].m_concavity < m_concavity) && (globalConcavity < m_concavity) && (m_graph.GetNVertices() > m_nMinClusters) && (m_graph.GetNEdges() > 0);
-				bool condition2 = (m_graph.m_vertices[v1].m_surf < areaThreshold || m_graph.m_vertices[v2].m_surf < areaThreshold);				
+				bool condition2 = (m_graph.m_vertices[v1].m_surf < areaThreshold || m_graph.m_vertices[v2].m_surf < areaThreshold);
 				if (condition1 || condition2)
                 {
 					if ((!condition1) && m_callBack)
@@ -700,13 +701,13 @@ namespace HACD
 					(gV1.m_convexHull)->SetDistPoints(0);
 					// update distPoints
 					std::map<long, DPoint> distPoints;
-					for(size_t p = 0; p < gV1.m_distPoints.Size(); ++p) 
+					for(size_t p = 0; p < gV1.m_distPoints.Size(); ++p)
 					{
 						distPoints[gV1.m_distPoints[p].m_name] = gV1.m_distPoints[p];
 					}
 
-					std::map<long, DPoint>::iterator itDP1;	
-					for(size_t p = 0; p < gV2.m_distPoints.Size(); ++p) 
+					std::map<long, DPoint>::iterator itDP1;
+					for(size_t p = 0; p < gV2.m_distPoints.Size(); ++p)
 					{
 						const DPoint & point =  gV2.m_distPoints[p];
 						itDP1 = distPoints.find(point.m_name);
@@ -727,24 +728,24 @@ namespace HACD
 					gV1.m_distPoints.Resize(distPoints.size());
 					std::map<long, DPoint>::iterator itDP(distPoints.begin());
 					std::map<long, DPoint>::iterator itDPEnd(distPoints.end());
-					for(; itDP != itDPEnd; ++itDP) 
+					for(; itDP != itDPEnd; ++itDP)
 					{
 						const DPoint & point = itDP->second;
 						gV1.m_distPoints.PushBack(itDP->second);
 					}
 	#else
-					ICHull  * ch = gV1.m_convexHull;								  
+					ICHull  * ch = gV1.m_convexHull;
 
-					ch->SetDistPoints(0);											  
+					ch->SetDistPoints(0);
 					// update distPoints
 					std::map<long, DPoint> distPoints;
-					for(size_t p = 0; p < gV1.m_distPoints.Size(); ++p) 
+					for(size_t p = 0; p < gV1.m_distPoints.Size(); ++p)
 					{
 						distPoints[gV1.m_distPoints[p].m_name] = gV1.m_distPoints[p];
 					}
 
-					std::map<long, DPoint>::iterator itDP1;	
-					for(size_t p = 0; p < gV2.m_distPoints.Size(); ++p) 
+					std::map<long, DPoint>::iterator itDP1;
+					for(size_t p = 0; p < gV2.m_distPoints.Size(); ++p)
 					{
 						const DPoint & point =  gV2.m_distPoints[p];
 						itDP1 = distPoints.find(point.m_name);
@@ -770,7 +771,7 @@ namespace HACD
 					gV1.m_distPoints.Resize(distPoints.size());
 					std::map<long, DPoint>::iterator itDP(distPoints.begin());
 					std::map<long, DPoint>::iterator itDPEnd(distPoints.end());
-					for(; itDP != itDPEnd; ++itDP) 
+					for(; itDP != itDPEnd; ++itDP)
 					{
 						gV1.m_distPoints.PushBack(itDP->second);
 					}
@@ -785,11 +786,11 @@ namespace HACD
 						long ptIndex = 0;
 						verticesCH.Next();
 						// add noise to avoid the problem
-						ptIndex = verticesCH.GetHead()->GetData().m_name;			
+						ptIndex = verticesCH.GetHead()->GetData().m_name;
 						ch->AddPoint(m_points[ptIndex]+ m_scale * 0.0001 * Vec3<Real>(rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5), ptIndex);
 						for(size_t v = 1; v < nV; ++v)
 						{
-							ptIndex = verticesCH.GetHead()->GetData().m_name;			
+							ptIndex = verticesCH.GetHead()->GetData().m_name;
 							ch->AddPoint(m_points[ptIndex], ptIndex);
 							verticesCH.Next();
 						}
@@ -803,8 +804,8 @@ namespace HACD
 				const long nPoints = static_cast<long>(m_nPoints);
 				std::map<long, DPoint>::iterator itDP(distPoints.begin());
 				std::map<long, DPoint>::iterator itDPEnd(distPoints.end());
-				for(; itDP != itDPEnd; ++itDP) 
-				{	
+				for(; itDP != itDPEnd; ++itDP)
+				{
 
 					if (itDP->first >= nPoints)
 					{
@@ -833,19 +834,19 @@ namespace HACD
 					if (m_alpha > 0.0)
 					{
 						std::set<unsigned long long> boudaryEdges1;
-						for(size_t edV1 = 0; edV1 < gV1.m_boudaryEdges.Size(); ++edV1) 
+						for(size_t edV1 = 0; edV1 < gV1.m_boudaryEdges.Size(); ++edV1)
 						{
 							boudaryEdges1.insert(gV1.m_boudaryEdges[edV1]);
 						}
 						std::set<unsigned long long> boudaryEdges2;
-						for(size_t edV2 = 0; edV2 < gV2.m_boudaryEdges.Size(); ++edV2) 
+						for(size_t edV2 = 0; edV2 < gV2.m_boudaryEdges.Size(); ++edV2)
 						{
 							boudaryEdges2.insert(gV2.m_boudaryEdges[edV2]);
-						}                      
+						}
 						std::set<unsigned long long> boudaryEdges;
-						std::set_symmetric_difference (boudaryEdges1.begin(), 
-													   boudaryEdges1.end(), 
-													   boudaryEdges2.begin(), 
+						std::set_symmetric_difference (boudaryEdges1.begin(),
+													   boudaryEdges1.end(),
+													   boudaryEdges2.begin(),
 													   boudaryEdges2.end(),
 													   std::inserter( boudaryEdges, boudaryEdges.begin() ) );
 						gV1.m_boudaryEdges.Clear();
@@ -858,7 +859,7 @@ namespace HACD
 					}
 					gV1.m_surf += gV2.m_surf;
 
-	#ifdef HACD_DEBUG				
+	#ifdef HACD_DEBUG
 					printf("v1 %i v2 %i \n", v1, v2);
 	#endif
 					m_graph.EdgeCollapse(v1, v2);
@@ -879,11 +880,11 @@ namespace HACD
         m_cVertices.clear();
 		m_nClusters = m_graph.GetNVertices();
         m_cVertices.reserve(m_nClusters);
-		for (size_t p=0, v = 0; v != m_graph.m_vertices.size(); ++v) 
+		for (size_t p=0, v = 0; v != m_graph.m_vertices.size(); ++v)
 		{
 			if (!m_graph.m_vertices[v].m_deleted)
 			{
-                if (m_callBack) 
+                if (m_callBack)
                 {
                     char msg[1024];
                     sprintf(msg, "\t CH(%lu) \t %lu \t %lf \t %lu \t %f \t %lu\n", static_cast<long unsigned int>(v), static_cast<unsigned long>(p), m_graph.m_vertices[v].m_concavity,
@@ -891,7 +892,7 @@ namespace HACD
 					(*m_callBack)(msg, 0.0, 0.0, m_nClusters);
 					p++;
                 }
-                m_cVertices.push_back(static_cast<long>(v));			
+                m_cVertices.push_back(static_cast<long>(v));
 			}
 		}
         if (m_callBack)
@@ -901,7 +902,7 @@ namespace HACD
         }
 
 	}
-        
+
     bool HACD::Compute(bool fullCH, bool exportDistPoints)
     {
 		if ( !m_points || !m_triangles || !m_nPoints || !m_nTriangles)
@@ -944,7 +945,7 @@ namespace HACD
 			msg << "\t scale                          \t" << m_scale << std::endl;
 			msg << "\t add extra distance points      \t" << m_addExtraDistPoints << std::endl;
             msg << "\t add face distance points       \t" << m_addFacesPoints << std::endl;
-			msg << "\t produce full convex-hulls      \t" << fullCH << std::endl;	
+			msg << "\t produce full convex-hulls      \t" << fullCH << std::endl;
 			msg << "\t max. distance to connect CCs   \t" << m_ccConnectDist << std::endl;
 			msg << "\t threshold for small clusters   \t" << m_smallClusterThreshold << std::endl;
 			(*m_callBack)(msg.str().c_str(), 0.0, 0.0, nV);
@@ -958,7 +959,7 @@ namespace HACD
 		InitializeDualGraph();
 		if (m_callBack) (*m_callBack)("+ Initializing Priority Queue\n", 0.0, 0.0, nV);
         InitializePriorityQueue();
-        // we simplify the graph		
+        // we simplify the graph
 		if (m_callBack) (*m_callBack)("+ Simplification ...\n", 0.0, 0.0, m_nTriangles);
 		Simplify();
 		if (m_callBack) (*m_callBack)("+ Denormalizing Data\n", 0.0, 0.0, m_nClusters);
@@ -968,7 +969,7 @@ namespace HACD
         m_convexHulls = new ICHull[m_nClusters];
 		delete [] m_partition;
 	    m_partition = new long [m_nTriangles];
-		for (size_t p = 0; p != m_cVertices.size(); ++p) 
+		for (size_t p = 0; p != m_cVertices.size(); ++p)
 		{
 			size_t v = m_cVertices[p];
 			m_partition[v] = static_cast<long>(p);
@@ -977,7 +978,7 @@ namespace HACD
 				m_partition[m_graph.m_vertices[v].m_ancestors[a]] = static_cast<long>(p);
 			}
             // compute the convex-hull
-            for(size_t itCH = 0; itCH < m_graph.m_vertices[v].m_distPoints.Size(); ++itCH) 
+            for(size_t itCH = 0; itCH < m_graph.m_vertices[v].m_distPoints.Size(); ++itCH)
             {
 				const DPoint & point = m_graph.m_vertices[v].m_distPoints[itCH];
                 if (!point.m_distOnly)
@@ -996,11 +997,11 @@ namespace HACD
 					long ptIndex = 0;
 					verticesCH.Next();
 					// add noise to avoid the problem
-					ptIndex = verticesCH.GetHead()->GetData().m_name;			
+					ptIndex = verticesCH.GetHead()->GetData().m_name;
 					ch->AddPoint(m_points[ptIndex]+ m_diag * 0.0001 * Vec3<Real>(rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5), ptIndex);
 					for(size_t v = 1; v < nV; ++v)
 					{
-						ptIndex = verticesCH.GetHead()->GetData().m_name;			
+						ptIndex = verticesCH.GetHead()->GetData().m_name;
 						ch->AddPoint(m_points[ptIndex], ptIndex);
 						verticesCH.Next();
 					}
@@ -1018,11 +1019,11 @@ namespace HACD
 					long ptIndex = 0;
 					verticesCH.Next();
 					// add noise to avoid the problem
-					ptIndex = verticesCH.GetHead()->GetData().m_name;			
+					ptIndex = verticesCH.GetHead()->GetData().m_name;
 					ch->AddPoint(m_points[ptIndex]+ m_diag * 0.0001 * Vec3<Real>(rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5), ptIndex);
 					for(size_t v = 1; v < nV; ++v)
 					{
-						ptIndex = verticesCH.GetHead()->GetData().m_name;			
+						ptIndex = verticesCH.GetHead()->GetData().m_name;
 						ch->AddPoint(m_points[ptIndex], ptIndex);
 						verticesCH.Next();
 					}
@@ -1035,10 +1036,10 @@ namespace HACD
 			{
 				m_convexHulls[p].m_mesh.Save("debug.wrl");
 			}
-#endif 
+#endif
             if (exportDistPoints)
             {
-                for(size_t itCH = 0; itCH < m_graph.m_vertices[v].m_distPoints.Size(); ++itCH) 
+                for(size_t itCH = 0; itCH < m_graph.m_vertices[v].m_distPoints.Size(); ++itCH)
 				{
 					const DPoint & point = m_graph.m_vertices[v].m_distPoints[itCH];
                     if (point.m_distOnly)
@@ -1068,7 +1069,7 @@ namespace HACD
 		}
         return true;
     }
-    
+
     size_t HACD::GetNTrianglesCH(size_t numCH) const
     {
         if (numCH >= m_nClusters)
@@ -1110,7 +1111,7 @@ namespace HACD
             Material mat;
             if (numCluster < 0)
             {
-                for (size_t p = 0; p != m_nClusters; ++p) 
+                for (size_t p = 0; p != m_nClusters; ++p)
                 {
                     if (!uniColor)
                     {

@@ -68,6 +68,11 @@ namespace GTEngine
 
         /// Keeps track of whether or not collisions between linked bodies are disabled.
         bool isCollisionBetweenLinkedBodiesDisabled;
+
+
+    private:    // No copying.
+        GenericConstraint(const GenericConstraint &);
+        GenericConstraint & operator=(const GenericConstraint &);
     };
 }
 

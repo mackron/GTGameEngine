@@ -181,14 +181,15 @@ namespace GTEngine
           rcBegin(),
           Shaders(),
           materialMetadatas(),
-          shadowMap(), shadowMapDepthBuffer(), shadowMapFramebuffer(), pointLightShadowMap(), pointLightShadowMapDepthBuffer(), pointLightShadowMapFramebuffer()
+          shadowMap(), shadowMapDepthBuffer(), shadowMapFramebuffer(), pointLightShadowMap(), pointLightShadowMapDepthBuffer(), pointLightShadowMapFramebuffer(),
+          mainLayerState(), backgroundLayerState()
     {
         unsigned int shadowMapSize = SHADOW_MAP_SIZE;
 
         this->shadowMap.SetWrapMode(TextureWrapMode_Clamp);
         this->shadowMap.SetData(           shadowMapSize, shadowMapSize, GTImage::ImageFormat_R32F, nullptr);
         this->shadowMapDepthBuffer.SetData(shadowMapSize, shadowMapSize, GTImage::ImageFormat_Depth24_Stencil8);
-        
+
         this->shadowMapFramebuffer.AttachColourBuffer(&this->shadowMap, 0);
         this->shadowMapFramebuffer.AttachDepthStencilBuffer(&this->shadowMapDepthBuffer);
         this->shadowMapFramebuffer.CheckStatus();
@@ -350,7 +351,7 @@ namespace GTEngine
         Renderer::BackRCQueue->Append(rcBegin);
 
 
-        
+
         // Main layer, opaque.
         auto cameraNode = viewport.GetCameraNode(ViewportLayer::Main);
         if (cameraNode != nullptr)
@@ -372,12 +373,12 @@ namespace GTEngine
         }
 
 
-        
+
         // Now we begin the background.
         auto &rcBeginBackground = this->rcBeginBackground[Renderer::BackIndex].Acquire();
         Renderer::BackRCQueue->Append(rcBeginBackground);
 
-        
+
         // Background clear colour, if applicable.
         if (this->IsBackgroundColourClearingEnabled())
         {
@@ -407,7 +408,7 @@ namespace GTEngine
             this->MaterialPass(scene, *framebuffer, this->backgroundLayerState, false);
             this->LightingPass(scene, *framebuffer, this->backgroundLayerState, false, 0);
         }
-        
+
 
         if (this->mainLayerState.HasRefractiveGeometry() || this->backgroundLayerState.HasRefractiveGeometry())
         {
@@ -423,7 +424,7 @@ namespace GTEngine
             auto &rcBeginTransparency = this->rcBeginTransparency[Renderer::BackIndex].Acquire();
             Renderer::BackRCQueue->Append(rcBeginTransparency);
 
-            
+
             if (this->backgroundLayerState.HasRefractiveGeometry())
             {
                 cameraNode = viewport.GetCameraNode(ViewportLayer::Background);
@@ -433,7 +434,7 @@ namespace GTEngine
                     this->LightingPass(scene, *framebuffer, this->backgroundLayerState, true, 0);
                 }
             }
-            
+
 
             if (this->mainLayerState.HasRefractiveGeometry())
             {
@@ -721,7 +722,7 @@ namespace GTEngine
 
             Renderer::BackRCQueue->Append(rcSetShader);
 
-            
+
             if (refractive)
             {
                 Renderer::BackRCQueue->Append(state.refractiveLightingDrawRCs);
@@ -737,7 +738,7 @@ namespace GTEngine
 
                 //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
             }
-            
+
         }
 
         for (size_t i = 0; i < state.directionalLights_NoShadows.count; ++i)
@@ -778,7 +779,7 @@ namespace GTEngine
                 rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
                 rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
                 Renderer::BackRCQueue->Append(rcDrawLightGeometry);
-                
+
 
                 //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
             }
@@ -812,7 +813,7 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            
+
             if (refractive)
             {
                 rcSetShader.shader = this->Shaders.Lighting_NoShadow_P1_Trans;
@@ -870,7 +871,7 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            
+
             if (refractive)
             {
                 rcSetShader.shader = this->Shaders.Lighting_NoShadow_S1_Trans;
@@ -937,7 +938,7 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            
+
             if (refractive)
             {
                 rcSetShader.shader = this->Shaders.Lighting_D1_Trans;
@@ -950,7 +951,7 @@ namespace GTEngine
                 rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
                 rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
                 Renderer::BackRCQueue->Append(rcDrawLightGeometry);
-                
+
 
                 //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
             }
@@ -994,7 +995,7 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            
+
             if (refractive)
             {
                 rcSetShader.shader = this->Shaders.Lighting_P1_Trans;
@@ -1066,7 +1067,7 @@ namespace GTEngine
 
 
             Renderer::BackRCQueue->Append(rcSetShader);
-            
+
             if (refractive)
             {
                 rcSetShader.shader = this->Shaders.Lighting_S1_Trans;
@@ -1123,7 +1124,7 @@ namespace GTEngine
         glm::mat4 negativeYViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(+90.0f, glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-position);
         glm::mat4 positiveZViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(  0.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);
         glm::mat4 negativeZViewMatrix = glm::mat4_cast(glm::inverse(glm::angleAxis(180.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-position);
-        
+
         glm::mat4 projectionMatrix = glm::perspective(90.0f, 1.0f, 0.1f, radius);
 
 
@@ -1152,7 +1153,7 @@ namespace GTEngine
         DefaultSceneRenderer_ShadowPassCallback negativeXCallback(*this, projectionMatrix, negativeXViewMatrix);
         scene.QueryVisibleObjects(projectionMatrix * negativeXViewMatrix, negativeXCallback);
 
-        
+
 
         // Positive Y
         auto &rcBeginPositiveY = this->rcLighting_BeginPointShadowMapFace[Renderer::BackIndex].Acquire();
@@ -1302,7 +1303,7 @@ namespace GTEngine
                 return skinnedGeometry;
             }
         }
-        
+
         return mesh.GetGeometry();
     }
 
@@ -1319,7 +1320,7 @@ namespace GTEngine
     void DefaultSceneRenderer::RCBegin::Execute()
     {
         Renderer::SetFramebuffer(this->framebuffer);
-        
+
         int lightsDrawBuffers[] = {1, 2, 3, 4, 5};      // Material Buffers 0/1/2, Lighting Buffers 0/1
         Renderer::SetDrawBuffers(5, lightsDrawBuffers);
 
@@ -1330,7 +1331,7 @@ namespace GTEngine
         Renderer::EnableDepthTest();
         Renderer::EnableDepthWrites();
         Renderer::SetDepthFunc(RendererFunction_LEqual);
-        
+
         Renderer::EnableStencilTest();
         Renderer::SetStencilFunc(RendererFunction_GEqual, 1, 255);
         Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Replace);
@@ -1355,7 +1356,7 @@ namespace GTEngine
         // Standard depth testing.
         Renderer::SetDepthFunc(RendererFunction_LEqual);
         Renderer::EnableDepthWrites();
-        
+
         // Stencil test against everything that's not 0 and leave the stencil buffer as-is.
         Renderer::EnableStencilTest();
         Renderer::SetStencilFunc(RendererFunction_Equal, 0, 255);
@@ -1497,7 +1498,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RCDrawGeometry::Execute()
     {
-        // If we're doing the material pass, we need to 
+        // If we're doing the material pass, we need to
         if (this->doingMaterialPass)
         {
             for (size_t i = 0; i < this->materialParameters.GetCount(); ++i)
@@ -1554,7 +1555,7 @@ namespace GTEngine
         Renderer::DisableDepthWrites();
 
         Renderer::SetShaderParameter("MVPMatrix", this->mvpMatrix);
-        
+
 
         float viewportWidth  = static_cast<float>(this->viewport->GetWidth());
         float viewportHeight = static_cast<float>(this->viewport->GetHeight());
@@ -1650,7 +1651,7 @@ namespace GTEngine
     {
         Renderer::SetFramebuffer(this->newFramebuffer);
         Renderer::SetViewport(0, 0, this->newFramebuffer->width, this->newFramebuffer->height);
-        
+
         Renderer::EnableBlending();
 
         Renderer::SetDepthFunc(RendererFunction_Equal);
@@ -1697,7 +1698,7 @@ namespace GTEngine
 
         Renderer::DisableStencilTest();
         Renderer::SetStencilOp(StencilOp_Keep, StencilOp_Keep, StencilOp_Keep);
-        
+
         Renderer::Draw(VertexArrayLibrary::GetFullscreenQuadVA());
     }
 }

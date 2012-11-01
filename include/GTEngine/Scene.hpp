@@ -136,6 +136,11 @@ namespace GTEngine
             this->worldHitPosition = worldHitPositionIn;
             this->worldHitNormal   = worldHitNormalIn;
         }
+
+
+    private:    // No copying.
+        ClosestRayTestCallback(const ClosestRayTestCallback &);
+        ClosestRayTestCallback & operator=(const ClosestRayTestCallback &);
     };
 
     /// The ray test callback structure for checking the closest object, not includeing the given scene node.
@@ -168,6 +173,11 @@ namespace GTEngine
 
             return ClosestRayTestCallback::NeedsCollision(collisionGroupIn, collisionMaskIn, object);
         }
+
+
+    private:    // No copying.
+        ClosestRayExceptMeTestCallback(const ClosestRayExceptMeTestCallback &);
+        ClosestRayExceptMeTestCallback & operator=(const ClosestRayExceptMeTestCallback &);
     };
 }
 
@@ -231,7 +241,7 @@ namespace GTEngine
         ///
         /// @param node [in] A reference to the scene node to add to the scene.
         void AddSceneNode(SceneNode &node);
-        
+
         /// Removes a scene node from the scene.
         ///
         /// @param node [in] A reference to the node to remove.
@@ -262,7 +272,7 @@ namespace GTEngine
         /// @return True if the scene is paused; false otherwise.
         bool IsPaused() const { return this->paused; }
 
-        
+
         /// Steps the scene.
         ///
         /// @param deltaTimeInSeconds [in] The time in seconds to step the scene by. This will usually be the time between frames, but it can be adjusted to speed up/slow down time.

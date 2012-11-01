@@ -118,6 +118,11 @@ namespace GTEngine
 
         /// A map of State objects, mapped to the path of the appropriate model.
         GTCore::Dictionary<State*> loadedStates;
+
+
+    private:    // No copying.
+        Editor_ImageEditor(const Editor_ImageEditor &);
+        Editor_ImageEditor & operator=(const Editor_ImageEditor &);
     };
 }
 

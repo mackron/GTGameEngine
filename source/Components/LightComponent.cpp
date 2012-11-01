@@ -112,6 +112,7 @@ namespace GTEngine
 
     DirectionalLightComponent::DirectionalLightComponent(SceneNode &node)
         : Component(node),
+          colour(1.0f, 1.0f, 1.0f),
           castShadows(false)
     {
     }
@@ -138,7 +139,8 @@ namespace GTEngine
     GTENGINE_IMPL_COMPONENT(AmbientLightComponent, "AmbientLight");
 
     AmbientLightComponent::AmbientLightComponent(SceneNode &node)
-        : Component(node)
+        : Component(node),
+          colour(1.0f, 1.0f, 1.0f)
     {
     }
 

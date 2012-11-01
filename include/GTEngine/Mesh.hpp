@@ -64,6 +64,11 @@ namespace GTEngine
         ///
         /// TODO: Look into changing this with a cache or something. Storing copies of the buffers for each mesh may be too expensive.
         VertexArray* skinnedGeometry[2];
+
+
+    private:    // No copying.
+        MeshSkinningData(const MeshSkinningData &);
+        MeshSkinningData & operator=(const MeshSkinningData &);
     };
 };
 
@@ -136,12 +141,12 @@ namespace GTEngine
         ///     thread. This is where the <rcIndex> comes in. It simply controls
               VertexArray* GetSkinnedGeometry();
         const VertexArray* GetSkinnedGeometry() const;
-        
+
 
         /// Retrieves the material of the mesh.
               Material* GetMaterial()       { return this->material; }
         const Material* GetMaterial() const { return this->material; }
-        
+
 
 
         /// Sets the animation data for the mesh.
@@ -159,7 +164,7 @@ namespace GTEngine
         ///     for output. If any are not present, the method will fail.
         bool GenerateTangentsAndBitangents();
 
-        
+
         /// Builds a tri-mesh collision shape based on this mesh.
         /// @param scale [in] The scale to apply to the mesh when generating the shape.
         ///
@@ -167,7 +172,7 @@ namespace GTEngine
         ///     Deletes the returned shape with 'delete'.
         //btGImpactMeshShape* BuildCollisionShape(const glm::vec3 &scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
-        
+
         /// Fills the given vertex array will a skinned version of the base geometry using the current state of the mesh's bones.
         ///
         /// @remarks
@@ -201,6 +206,11 @@ namespace GTEngine
 
         /// Keeps track of whether or not the material should be deleted.
         bool deleteMaterial;
+
+
+    private:    // No copying.
+        Mesh(const Mesh &);
+        Mesh & operator=(const Mesh &);
     };
 }
 

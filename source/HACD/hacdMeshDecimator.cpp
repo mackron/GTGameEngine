@@ -13,6 +13,7 @@
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wsign-conversion"
     #pragma GCC diagnostic ignored "-Weffc++"
+    #pragma GCC diagnostic ignored "-Wuninitialized"
     #if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7))
         #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
     #endif
@@ -46,8 +47,8 @@ namespace HACD
         std::vector<MDEdge> emptyEdges(0);
 		m_edges.swap(emptyEdges);
 		m_pqueue = 		std::priority_queue<
-				 MDEdgePriorityQueue, 
-				 std::vector<MDEdgePriorityQueue>, 
+				 MDEdgePriorityQueue,
+				 std::vector<MDEdgePriorityQueue>,
 				 std::less<MDEdgePriorityQueue> >();
 		m_triangles					= 0;
 		m_points   					= 0;
@@ -145,7 +146,7 @@ namespace HACD
         for(size_t it = 0; it < m_vertices[v1].m_edges.Size(); ++it)
 		{
             idEdge = m_vertices[v1].m_edges[it];
-			if ( (m_edges[idEdge].m_v1==v1 && m_edges[idEdge].m_v2==v2) || 
+			if ( (m_edges[idEdge].m_v1==v1 && m_edges[idEdge].m_v2==v2) ||
 				 (m_edges[idEdge].m_v1==v2 && m_edges[idEdge].m_v2==v1) )
 			{
 				return idEdge;
@@ -183,7 +184,7 @@ namespace HACD
 			if ((u == v1) || (w == v1))
 			{
 				m_trianglesTags[idTriangle] = false;
-				m_vertices[u].m_triangles.Erase(idTriangle);						
+				m_vertices[u].m_triangles.Erase(idTriangle);
 				m_vertices[w].m_triangles.Erase(idTriangle);
 				m_nTriangles--;
 			}
@@ -195,7 +196,7 @@ namespace HACD
 			else
 			{
 				m_trianglesTags[idTriangle] = false;
-				m_vertices[u].m_triangles.Erase(idTriangle);						
+				m_vertices[u].m_triangles.Erase(idTriangle);
 				m_vertices[w].m_triangles.Erase(idTriangle);
 				m_nTriangles--;
 			}
@@ -215,7 +216,7 @@ namespace HACD
 			{
 				if (m_edges[idEdge].m_v1 == v2)	m_edges[idEdge].m_v1 = v1;
 				else							m_edges[idEdge].m_v2 = v1;
-				m_vertices[v1].m_edges.Insert(idEdge);			
+				m_vertices[v1].m_edges.Insert(idEdge);
 			}
 			else
 			{
@@ -234,7 +235,7 @@ namespace HACD
 			incidentVertices.PushBack((m_edges[idEdge].m_v1!= v1)?m_edges[idEdge].m_v1:m_edges[idEdge].m_v2);
             idEdge = m_vertices[v1].m_edges[itE];
 			m_edges[idEdge].m_onBoundary = (IsBoundaryEdge(m_edges[idEdge].m_v1, m_edges[idEdge].m_v2) != -1);
-		}		
+		}
 		// update boundary vertices
 		long idVertex;
 		for(size_t itV = 0; itV < incidentVertices.Size(); ++itV)
@@ -250,7 +251,7 @@ namespace HACD
 					break;
 				}
 			}
-		}		
+		}
 	}
 	long MeshDecimator::IsBoundaryEdge(long v1, long v2) const
 	{
@@ -319,7 +320,7 @@ namespace HACD
 		Vec3<Float> coordMin = m_points[0];
 		Vec3<Float> coordMax = m_points[0];
 		Vec3<Float> coord;
-		for (size_t p = 1; p < m_nPoints ; ++p) 
+		for (size_t p = 1; p < m_nPoints ; ++p)
 		{
 			coord = m_points[p];
 			if (coordMin.X() > coord.X()) coordMin.X() = coord.X();
@@ -333,7 +334,7 @@ namespace HACD
 		m_diagBB = coordMax.GetNorm();
 
 		long i, j, k;
-		Vec3<Float> n;	
+		Vec3<Float> n;
 		Float d = 0;
 		Float area = 0;
 		for(size_t v = 0; v < m_nPoints; ++v)
@@ -409,9 +410,9 @@ namespace HACD
 		}
 	}
 	void MeshDecimator::InitializePriorityQueue()
-	{	
+	{
 		double progressOld = -1.0;
-		double progress = 0.0;    
+		double progress = 0.0;
 		char msg[1024];
 		double ptgStep = 1.0;
 		long v1, v2;
@@ -447,7 +448,7 @@ namespace HACD
 		Vec3<double> pos;
 		for(int i = 0; i < 10; ++i) Q[i] = m_vertices[v1].m_Q[i] + m_vertices[v2].m_Q[i];
 		M[0] = Q[0]; // (0, 0)
-		M[1] = Q[1]; // (0, 1) 
+		M[1] = Q[1]; // (0, 1)
 		M[2] = Q[2]; // (0, 2)
 		M[3] = Q[3]; // (0, 3)
 		M[4] = Q[1]; // (1, 0)
@@ -458,8 +459,8 @@ namespace HACD
 		M[9] = Q[5]; // (2, 1)
 		M[10] = Q[7]; // (2, 2);
 		M[11] = Q[8]; // (2, 3);
-		double det =   M[0] * M[5] * M[10] + M[1] * M[6] * M[8] + M[2] * M[4] * M[9]   
-					 - M[0] * M[6] * M[9]  - M[1] * M[4] * M[10]- M[2] * M[5] * M[8]; 
+		double det =   M[0] * M[5] * M[10] + M[1] * M[6] * M[8] + M[2] * M[4] * M[9]
+					 - M[0] * M[6] * M[9]  - M[1] * M[4] * M[10]- M[2] * M[5] * M[8];
 		if (det != 0.0)
 		{
 			double d = 1.0 / det;
@@ -482,7 +483,7 @@ namespace HACD
 			pos.Z() = static_cast<double>(newPos.Z());
 		}
 
-		double qem = pos.X()  * (Q[0] * pos.X() + Q[1] * pos.Y() + Q[2] * pos.Z() + Q[3]) +  
+		double qem = pos.X()  * (Q[0] * pos.X() + Q[1] * pos.Y() + Q[2] * pos.Z() + Q[3]) +
 					 pos.Y()  * (Q[1] * pos.X() + Q[4] * pos.Y() + Q[5] * pos.Z() + Q[6]) +
 					 pos.Z()  * (Q[2] * pos.X() + Q[5] * pos.Y() + Q[7] * pos.Z() + Q[8]) +
 								(Q[3] * pos.X() + Q[6] * pos.Y() + Q[8] * pos.Z() + Q[9]) ;
@@ -525,7 +526,7 @@ namespace HACD
 
             n1.Normalize();
             n2.Normalize();
-			if (n1*n2 < 0.0) 
+			if (n1*n2 < 0.0)
             {
                 return std::numeric_limits<double>::max();
             }
@@ -595,7 +596,7 @@ namespace HACD
 			}
 		}
 		while ( (!m_edges[currentEdge.m_name].m_tag) || (m_edges[currentEdge.m_name].m_qem != currentEdge.m_qem));
-		
+
 		if (done) return false;
 		v1 = m_edges[currentEdge.m_name].m_v1;
 		v2 = m_edges[currentEdge.m_name].m_v2;
@@ -638,13 +639,13 @@ namespace HACD
 			    }
 		    }
         }
-		return true;	
+		return true;
 	}
 	bool MeshDecimator::Decimate(size_t targetNVertices, size_t targetNTriangles, double targetError)
 	{
 		double qem = 0.0;
 		double progressOld = -1.0;
-		double progress = 0.0;    
+		double progress = 0.0;
 		char msg[1024];
 		double ptgStep = 1.0;
 
@@ -660,15 +661,15 @@ namespace HACD
 			msg << "\t QEM			                  \t" << targetError << std::endl;
 			(*m_callBack)(msg.str().c_str(), 0.0, 0.0, m_nPoints);
 		}
-		
+
 		if (m_callBack) (*m_callBack)("+ Initialize QEM \n", 0.0, 0.0, m_nPoints);
 		InitializeQEM();
 		if (m_callBack) (*m_callBack)("+ Initialize priority queue \n", 0.0, 0.0, m_nPoints);
 		InitializePriorityQueue();
 		if (m_callBack) (*m_callBack)("+ Simplification \n", 0.0, 0.0, m_nPoints);
 		double invDiag2 = 1.0 / (m_diagBB * m_diagBB);
-		while((m_pqueue.size() > 0) && 
-			  (m_nEdges > 0) && 
+		while((m_pqueue.size() > 0) &&
+			  (m_nEdges > 0) &&
 			  (m_nVertices > targetNVertices) &&
 			  (m_nTriangles > targetNTriangles) &&
 			  (qem < targetError))

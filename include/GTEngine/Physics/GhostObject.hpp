@@ -33,6 +33,11 @@ namespace GTEngine
 
         /// A pointer to the dynamics world.
         DynamicsWorld *world;
+
+
+    private:    // No copying.
+        GhostObject(const GhostObject &);
+        GhostObject & operator=(const GhostObject &);
     };
 }
 

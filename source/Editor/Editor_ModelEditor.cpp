@@ -13,7 +13,8 @@ namespace GTEngine
           modelNode(), convexHullParentNode(), convexHullNodes(),
           GUI(), viewportEventHandler(editor.GetGame(), viewport),
           cameraXRotation(), cameraYRotation(),
-          currentState(nullptr), loadedStates()
+          currentState(nullptr), loadedStates(),
+          random()
     {
         this->viewport.SetCameraNode(this->camera);
         this->scene.AddViewport(this->viewport);
@@ -216,7 +217,7 @@ namespace GTEngine
             definition.BuildConvexDecomposition(settings);
         }
 
-        
+
 
         if (this->convexHullParentNode.IsVisible())
         {
@@ -224,7 +225,7 @@ namespace GTEngine
         }
     }
 
-    
+
     void Editor_ModelEditor::PlayAnimation()
     {
         auto modelComponent = this->modelNode.GetComponent<GTEngine::ModelComponent>();
@@ -235,7 +236,7 @@ namespace GTEngine
             {
                 AnimationSequence sequence;
                 sequence.AddFrame(0, model->animation.GetKeyFrameCount(), 0.0f, true);      // '0.0f' is the transition time. 'true' says to loop.
-                
+
                 model->PlayAnimation(sequence);
             }
         }
@@ -251,7 +252,7 @@ namespace GTEngine
             {
                 AnimationSequence sequence;
                 sequence.AddFrame(0, model->animation.GetKeyFrameCount(), 0.0f, true);      // '0.0f' is the transition time. 'true' says to loop.
-                
+
                 model->StopAnimation();
             }
         }
@@ -406,7 +407,7 @@ namespace GTEngine
             {
                 GTCore::String scriptString;
                 scriptString.AssignFormatted("Editor_ModelEditor_Panel_Materials:AddMaterial('%s')", this->currentState->materials[i].c_str());
-                
+
                 script.Execute(scriptString.c_str());
             }
 
@@ -414,7 +415,7 @@ namespace GTEngine
             GTCore::String scriptString;
             scriptString.AssignFormatted("Editor_ModelEditor_Panel_CD.ShowConvexDecomposition:SetChecked(%s);", this->currentState->showConvexDecomposition ? "true" : "false");
             script.Execute(scriptString.c_str());
-            
+
             scriptString.AssignFormatted
             (
                 "Editor_ModelEditor_Panel_CD.CompacityWeight:SetValue(%f);"

@@ -40,6 +40,7 @@ namespace GTEngine
           isAutoScriptReloadEnabled(false),
           keyDownMap(), mouseButtonDownMap(),
           editor(*this),
+          DebuggingGUI(),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),

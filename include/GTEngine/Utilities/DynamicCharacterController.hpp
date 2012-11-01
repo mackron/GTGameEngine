@@ -132,6 +132,11 @@ namespace GTEngine
 
         /// A pointer to the event handler.
         CharacterControllerEventHandler* eventHandler;
+
+
+    private:    // No copying.
+        DynamicCharacterController(const DynamicCharacterController &);
+        DynamicCharacterController & operator=(const DynamicCharacterController &);
     };
 }
 

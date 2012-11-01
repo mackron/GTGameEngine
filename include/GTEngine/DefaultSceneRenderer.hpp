@@ -28,12 +28,16 @@ namespace GTEngine
         struct MaterialMetadata
         {
             MaterialMetadata()
-                : materialPassShader(nullptr)
+                : materialPassShader(nullptr), materialPassRCs()
             {
             }
 
             Shader* materialPassShader;         ///< The shader for the material pass.
             RCQueue materialPassRCs;            ///< The render commands for meshes using this material in the material pass.
+
+        private:    // No copying
+            MaterialMetadata(const MaterialMetadata &);
+            MaterialMetadata & operator=(const MaterialMetadata &);
         };
 
 
@@ -41,6 +45,16 @@ namespace GTEngine
         /// Structure containing rendering state for each layer.
         struct LayerState
         {
+            LayerState()
+                : ambientLights(), directionalLights(), pointLights(), spotLights(),
+                  directionalLights_NoShadows(), pointLights_NoShadows(), spotLights_NoShadows(),
+                  refractiveLightingDrawRCs(), usedMaterials(), usedRefractiveMaterials(),
+                  cameraProjection(), cameraView(), cameraPosition(),
+                  cameraFOV(90.0f), cameraAspect(16.0f / 9.0f), cameraZNear(0.1f), cameraZFar(1000.0f),
+                  viewport(nullptr)
+            {
+            }
+
             /// The list of visible ambient lights for the currently rendering viewport.
             GTCore::Vector<const SceneObject*> ambientLights;
 
@@ -130,6 +144,11 @@ namespace GTEngine
             {
                 return !refractiveLightingDrawRCs.IsEmpty();
             }
+
+
+        private:    // No copying.
+            LayerState(const LayerState &);
+            LayerState & operator=(const LayerState &);
         };
 
 
@@ -321,6 +340,11 @@ namespace GTEngine
 
             /// The colour buffer containing the linear depth of each pixel. This will be used when reconstructing the world and view space positions of a pixel.
             Texture2D* linearDepthBuffer;
+
+
+        private:    // No copying
+            Framebuffer(const Framebuffer &);
+            Framebuffer & operator=(const Framebuffer &);
         };
 
 
@@ -328,12 +352,23 @@ namespace GTEngine
         /// Render command for beginning the frame.
         struct RCBegin : public RenderCommand
         {
+            RCBegin()
+                : framebuffer(nullptr)
+            {
+            }
+
+
             /// RenderCommand::Execute().
             void Execute();
 
 
             /// The framebuffer to render to.
             Framebuffer* framebuffer;
+
+
+        private:    // No copying.
+            RCBegin(const RCBegin &);
+            RCBegin & operator=(const RCBegin &);
         };
 
 
@@ -347,11 +382,21 @@ namespace GTEngine
         // Render command for beginning the lighting pass.
         struct RCBeginLighting : public RenderCommand
         {
+            RCBeginLighting()
+                : framebuffer(), colourClearShader(), stencilIndex()
+            {
+            }
+
             void Execute();
 
             DefaultSceneRenderer::Framebuffer* framebuffer;
             Shader* colourClearShader;
             int stencilIndex;
+
+
+        private:    // No copying.
+            RCBeginLighting(const RCBeginLighting &);
+            RCBeginLighting & operator=(const RCBeginLighting &);
         };
 
         // Render command for beginning transparency.
@@ -363,14 +408,29 @@ namespace GTEngine
         // Render command for beginning the foreground transparency.
         struct RCBeginForegroundTransparency : public RenderCommand
         {
+            RCBeginForegroundTransparency()
+                : depthClearShader()
+            {
+            }
+
             void Execute();
 
             Shader* depthClearShader;
+
+
+        private:    // No copying.
+            RCBeginForegroundTransparency(const RCBeginForegroundTransparency &);
+            RCBeginForegroundTransparency & operator=(const RCBeginForegroundTransparency &);
         };
 
         // Render command for beginning a transparent material pass.
         struct RCBeginTransparentMaterialPass : public RenderCommand
         {
+            RCBeginTransparentMaterialPass()
+                : shader(), backgroundTexture(), zFar()
+            {
+            }
+
             void Execute();
 
             Shader* shader;
@@ -378,6 +438,11 @@ namespace GTEngine
 
             /// The zfar plane.
             float zFar;
+
+
+        private:    // No copying.
+            RCBeginTransparentMaterialPass(const RCBeginTransparentMaterialPass &);
+            RCBeginTransparentMaterialPass & operator=(const RCBeginTransparentMaterialPass &);
         };
 
 
@@ -386,6 +451,11 @@ namespace GTEngine
         // Render command for controlling blending.
         struct RCControlBlending : public RenderCommand
         {
+            RCControlBlending()
+                : enable(), sourceFactor(), destFactor()
+            {
+            }
+
             void Execute();
 
             /// Controls whether or not the blending should be enabled.
@@ -400,6 +470,11 @@ namespace GTEngine
         // Render command for setting a shader.
         struct RCSetShader : public RenderCommand
         {
+            RCSetShader()
+                : shader(), zFar()
+            {
+            }
+
             void Execute();
 
             /// The shader to activate.
@@ -407,6 +482,11 @@ namespace GTEngine
 
             /// The zfar plane.
             float zFar;
+
+
+        private:    // No copying.
+            RCSetShader(const RCSetShader &);
+            RCSetShader & operator=(const RCSetShader &);
         };
 
 
@@ -421,7 +501,10 @@ namespace GTEngine
         struct RCDrawGeometry : public RenderCommand
         {
             RCDrawGeometry()
-                : doingMaterialPass(true)
+                : materialParameters(), va(),
+                  mvpMatrix(), normalMatrix(), modelViewMatrix(), modelMatrix(),
+                  changeFaceCulling(), cullFrontFace(), cullBackFace(),
+                  doingMaterialPass(true)
             {
             }
 
@@ -451,12 +534,18 @@ namespace GTEngine
 
             /// Keeps track of whether or not to do the material pass. Should default to true.
             bool doingMaterialPass;
+
+
+        private:    // No copying.
+            RCDrawGeometry(const RCDrawGeometry &);
+            RCDrawGeometry & operator=(const RCDrawGeometry &);
         };
 
         // Draws the light geometry.
         struct RCDrawLightGeometry : public RenderCommand
         {
             RCDrawLightGeometry()
+                : va(), mvpMatrix(), modelViewMatrix()
             {
             }
 
@@ -466,12 +555,18 @@ namespace GTEngine
 
             glm::mat4 mvpMatrix;
             glm::mat4 modelViewMatrix;
+
+
+        private:    // No copying.
+            RCDrawLightGeometry(const RCDrawLightGeometry &);
+            RCDrawLightGeometry & operator=(const RCDrawLightGeometry &);
         };
 
         // Draws a fullscreen quad light geometry, with the quad vertices being at the four corners of the far clipping plane.
         struct RCDrawFSQuadLightGeometry : public RenderCommand
         {
             RCDrawFSQuadLightGeometry()
+                : viewport(), mvpMatrix(), inverseProjectionMatrix()
             {
             }
 
@@ -480,6 +575,11 @@ namespace GTEngine
             SceneViewport* viewport;
             glm::mat4 mvpMatrix;
             glm::mat4 inverseProjectionMatrix;
+
+
+        private:    // No copying.
+            RCDrawFSQuadLightGeometry(const RCDrawFSQuadLightGeometry &);
+            RCDrawFSQuadLightGeometry & operator=(const RCDrawFSQuadLightGeometry &);
         };
 
 
@@ -487,6 +587,15 @@ namespace GTEngine
         // Sets a shader.
         struct RCLighting_SetShader : public RenderCommand
         {
+            RCLighting_SetShader()
+                : shader(), parameters(),
+                  materialBuffer2(), linearDepthBuffer(),
+                  screenSize(), cameraPosition(), cameraFOV(), cameraAspect(),
+                  viewMatrix(), zFar()
+            {
+            }
+
+
             void Execute();
 
             /// Sets a shader parameter that will be set on the shader in Execute(). It's important that parameters are not set
@@ -512,6 +621,10 @@ namespace GTEngine
             glm::mat4  viewMatrix;
 
             float zFar;
+
+        private:    // No copying.
+            RCLighting_SetShader(const RCLighting_SetShader &);
+            RCLighting_SetShader & operator=(const RCLighting_SetShader &);
         };
 
 
@@ -519,6 +632,11 @@ namespace GTEngine
         // Begins the generation of a directional light shadow map.
         struct RCLighting_BeginDirectionalShadowMap : public RenderCommand
         {
+            RCLighting_BeginDirectionalShadowMap()
+                : shader(), framebuffer(), mvpMatrix()
+            {
+            }
+
             void Execute();
 
             /// The shader to use with the geometry for the light.
@@ -529,13 +647,23 @@ namespace GTEngine
 
             /// The MVP mattrix.
             glm::mat4 mvpMatrix;
+
+
+        private:    // No copying.
+            RCLighting_BeginDirectionalShadowMap(const RCLighting_BeginDirectionalShadowMap &);
+            RCLighting_BeginDirectionalShadowMap & operator=(const RCLighting_BeginDirectionalShadowMap &);
         };
 
 
-        
+
         // Begins the generation of a point light shadow map.
         struct RCLighting_BeginPointShadowMap : public RenderCommand
         {
+            RCLighting_BeginPointShadowMap()
+                : shader(), framebuffer()
+            {
+            }
+
             void Execute();
 
             /// The shader to use with geometry for the light.
@@ -543,11 +671,21 @@ namespace GTEngine
 
             /// The shadow map framebuffer.
             GTEngine::Framebuffer* framebuffer;
+
+
+        private:    // No copying.
+            RCLighting_BeginPointShadowMap(const RCLighting_BeginPointShadowMap &);
+            RCLighting_BeginPointShadowMap & operator=(const RCLighting_BeginPointShadowMap &);
         };
 
         // Begins the generation of an individual face on a point light shadow map.
         struct RCLighting_BeginPointShadowMapFace : public RenderCommand
         {
+            RCLighting_BeginPointShadowMapFace()
+                : colourBufferIndex()
+            {
+            }
+
             void Execute();
 
             /// The index of the colour buffer to use as the render target.
@@ -557,15 +695,30 @@ namespace GTEngine
         // Ends the shadow map pass.
         struct RCLighting_EndShadowMap : public RenderCommand
         {
+            RCLighting_EndShadowMap()
+                : newFramebuffer()
+            {
+            }
+
             void Execute();
 
             /// The new framebuffer.
             Framebuffer* newFramebuffer;
+
+
+        private:    // No copying.
+            RCLighting_EndShadowMap(const RCLighting_EndShadowMap &);
+            RCLighting_EndShadowMap & operator=(const RCLighting_EndShadowMap &);
         };
 
         // Draws some geometry on the shadow pass.
         struct RCLighting_DrawShadowPassGeometry : public RenderCommand
         {
+            RCLighting_DrawShadowPassGeometry()
+                : va(nullptr), mvpMatrix(), modelViewMatrix()
+            {
+            }
+
             void Execute();
 
             /// The vertex array to draw.
@@ -573,12 +726,21 @@ namespace GTEngine
 
             glm::mat4 mvpMatrix;
             glm::mat4 modelViewMatrix;
+
+        private:    // No copying.
+            RCLighting_DrawShadowPassGeometry(const RCLighting_DrawShadowPassGeometry &);
+            RCLighting_DrawShadowPassGeometry & operator=(const RCLighting_DrawShadowPassGeometry &);
         };
 
 
         /// Performs a colour clear, clipping against the stencil buffer.
         struct RCColourClear : public RenderCommand
         {
+            RCColourClear()
+                : colour()
+            {
+            }
+
             void Execute();
 
             glm::vec3 colour;
@@ -588,10 +750,20 @@ namespace GTEngine
         /// Performs the background colour clear.
         struct RCBackgroundColourClear : public RenderCommand
         {
+            RCBackgroundColourClear()
+                : colour(), colourClearShader()
+            {
+            }
+
             void Execute();
 
             glm::vec3 colour;
             Shader* colourClearShader;
+
+
+        private:    // No copying.
+            RCBackgroundColourClear(const RCBackgroundColourClear &);
+            RCBackgroundColourClear & operator=(const RCBackgroundColourClear &);
         };
 
 
@@ -599,6 +771,12 @@ namespace GTEngine
         /// Builds the final image from the different buffers.
         struct RCBuildFinalImage : public RenderCommand
         {
+            RCBuildFinalImage()
+                : colourBufferIndex(), framebuffer(), compositingShader()
+            {
+            }
+
+
             void Execute();
 
 
@@ -610,6 +788,11 @@ namespace GTEngine
 
             /// The compositing shader.
             Shader* compositingShader;
+
+
+        private:    // No copying.
+            RCBuildFinalImage(const RCBuildFinalImage &);
+            RCBuildFinalImage & operator=(const RCBuildFinalImage &);
         };
 
 
@@ -697,12 +880,30 @@ namespace GTEngine
         RCCache<RCLighting_EndShadowMap>              rcLighting_EndShadowMap[2];
         RCCache<RCLighting_DrawShadowPassGeometry>    rcLighting_DrawShadowPassGeometry[2];
 
-        
+
         // Below are various shaders for use by the renderer.
-        struct
+        struct _Shaders
         {
+            _Shaders()
+                : Lighting_NoShadow_A1(nullptr),
+                  Lighting_NoShadow_D1(nullptr), Lighting_D1(nullptr),
+                  Lighting_NoShadow_P1(nullptr), Lighting_P1(nullptr),
+                  Lighting_NoShadow_S1(nullptr), Lighting_S1(nullptr),
+                  Lighting_NoShadow_D1_Trans(nullptr), Lighting_D1_Trans(nullptr),
+                  Lighting_NoShadow_P1_Trans(nullptr), Lighting_P1_Trans(nullptr),
+                  Lighting_NoShadow_S1_Trans(nullptr), Lighting_S1_Trans(nullptr),
+                  Lighting_ShadowMap(nullptr), Lighting_PointLightShadowMap(nullptr),
+                  Lighting_ColourClear(nullptr),
+                  Compositor_DiffuseOnly(nullptr), Compositor_NormalsOnly(nullptr), Compositor_DiffuseLightingOnly(nullptr),
+                  Compositor_OpaqueFinalOutput(nullptr), Compositor_FinalOutput(nullptr),
+                  MaterialPass_ClearBackground(nullptr),
+                  materialPassShaders()
+            {
+            }
+
+
             Shader* Lighting_NoShadow_A1;
-            
+
             Shader* Lighting_NoShadow_D1;
             Shader* Lighting_D1;
             Shader* Lighting_NoShadow_P1;
@@ -731,6 +932,11 @@ namespace GTEngine
 
             /// A cache of shaders used by materials in the material pass.
             MaterialShaderCache materialPassShaders;
+
+
+        private:    // No copying.
+            _Shaders(const _Shaders &);
+            _Shaders & operator=(const _Shaders &);
 
         }Shaders;
 

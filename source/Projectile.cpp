@@ -31,7 +31,7 @@ namespace GTEngine
         // We now have the new position of the projectile. We'll need to now set a few properties.
         this->velocity = (targetPosition - this->position) / dtSecondsF;
         this->position = targetPosition;
-        
+
 
         // Now we need to modify our velocity based on gravity and acceleration. It's important that we call GetGravity() and GetAcceleration()
         // after updating so that a sub-class has a change to modify those values if need be.
@@ -57,7 +57,7 @@ namespace GTEngine
         (void)deltaTimeInSeconds;
         (void)targetPosition;
     }
-    
+
     void Projectile::OnLaunch()
     {
     }
@@ -139,7 +139,13 @@ namespace GTEngine
                 return ClosestRayTestCallback::NeedsCollision(collisionGroupIn, collisionMaskIn, object);
             }
         }
+
+
+    private:    // No copying.
+        DefaultProjectileRayTestCallback(const DefaultProjectileRayTestCallback &);
+        DefaultProjectileRayTestCallback & operator=(const DefaultProjectileRayTestCallback &);
     };
+
 
     void DefaultProjectile::OnUpdate(double deltaTimeInSeconds, glm::vec3 &targetPosition)
     {

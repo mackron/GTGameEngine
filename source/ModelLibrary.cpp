@@ -60,7 +60,7 @@ namespace GTEngine
     {
         auto newBone = new Bone;
         newBone->SetName(inputNode.mName.C_Str());
-        
+
         aiVector3D   scale(1.0f, 1.0f, 1.0f);
         aiQuaternion rotation;
         aiVector3D   position;
@@ -84,9 +84,9 @@ namespace GTEngine
         return newBone;
     }
 
-    
 
-    
+
+
     const aiNode* FindNodeByName(const aiScene &scene, const aiNode &node, const aiString &name)
     {
         if (node.mName == name)
@@ -189,7 +189,7 @@ namespace GTEngine
         }
     }
 
-    
+
 }
 
 
@@ -343,7 +343,7 @@ namespace GTEngine
                     assert(face.mNumIndices == 3);
 
                     auto indexDst = indexData + (iFace * 3);
-                    
+
                     indexDst[0] = face.mIndices[0];
                     indexDst[1] = face.mIndices[1];
                     indexDst[2] = face.mIndices[2];
@@ -462,7 +462,7 @@ namespace GTEngine
             // Here is where we load up the animations. Assimp has multiple animations, but GTEngine uses only a single animation. To
             // resolve, we simply copy over each animation into the main animation and create a named segment for that animation.
             double segmentStartTime = 0.0;
-            
+
             for (auto iAnimation = 0U; iAnimation < scene.mNumAnimations; ++iAnimation)
             {
                 auto animation = scene.mAnimations[iAnimation];
@@ -522,7 +522,7 @@ namespace GTEngine
                         newChannel.SetKey(keyFrameIndex, key);
                     }
                 }
-                
+
 
 
                 // At this point we can now create the named segment.
@@ -558,7 +558,7 @@ namespace GTEngine
             if (definition == nullptr)
             {
                 definition = new ModelDefinition(fileName);
-                
+
                 // We need to load the model.
                 if (ModelLibrary::Load(absolutePath.c_str(), *definition))
                 {
@@ -572,7 +572,7 @@ namespace GTEngine
                 }
             }
 
-            // Now all we do is 
+            // Now all we do is
             if (definition != nullptr)
             {
                 return ModelLibrary::CreateFromDefinition(*definition);
@@ -624,7 +624,7 @@ namespace GTEngine
             definition = iDefinition->value;
         }
 
-        
+
         // Now that we have information about the model, we can create a new Model object and return it.
         if (definition != nullptr)
         {
@@ -719,7 +719,7 @@ namespace GTEngine
                 GTCore::IO::Write(file, &rotation, sizeof(float) * 4);
                 GTCore::IO::Write(file, &scale,    sizeof(float) * 3);
 
-                
+
                 // 4x4 offset matrix.
                 const glm::mat4 &offsetMatrix = bone->GetOffsetMatrix();
                 GTCore::IO::Write(file, &offsetMatrix, sizeof(float) * 16);
@@ -834,7 +834,7 @@ namespace GTEngine
                     uint32_t boneIndex = static_cast<uint32_t>(iBone->index);
                     GTCore::IO::Write(file, &boneIndex, 4);
 
-                    
+
                     // Here we save the key. The key will always be a TransformAnimationKey.
                     glm::vec3 position;
                     glm::quat rotation;
@@ -865,7 +865,7 @@ namespace GTEngine
             // Here is where we write the engine-specific metadata.
             ModelLibrary::WriteGTMODELMetadata(file, definition);
 
-            
+
             // Can't forget to close the file.
             GTCore::IO::Close(file);
 
@@ -890,12 +890,12 @@ namespace GTEngine
         {
             return ModelLibrary::WriteToFile(*iDefinition->value, fileName);
         }
-        
+
         return false;
     }
 
-    
-    
+
+
 
     ////////////////////////////////////////////////////////////////////////
     // Create functions.
@@ -1058,7 +1058,7 @@ namespace GTEngine
                 auto modelsList = iDefinitionModels->value;
 
                 definitionsToDelete.Append(definition);
-                
+
                 delete definition;
                 delete modelsList;
             }
@@ -1078,7 +1078,7 @@ namespace GTEngine
                     break;
                 }
             }
-            
+
             LoadedModels.Remove(definition);
         }
     }
@@ -1255,6 +1255,11 @@ namespace GTEngine
                             GTCore::IO::Read(file, name, nameLength); name[nameLength] = '\0';
 
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
                             // Relative transform and offset matrix.
                             struct
                             {
@@ -1263,6 +1268,10 @@ namespace GTEngine
                                 glm::vec3 scale;
                                 glm::mat4 offsetMatrix;
                             }transformOffset;
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
                             GTCore::IO::Read(file, &transformOffset, sizeof(transformOffset));
 
@@ -1329,7 +1338,7 @@ namespace GTEngine
                                 // Indices.
                                 uint32_t indexCount;
                                 GTCore::IO::Read(file, &indexCount, 4);
-                                
+
                                 if (indexCount > 0)
                                 {
                                     va->SetIndexData(nullptr, static_cast<size_t>(indexCount));
@@ -1340,7 +1349,7 @@ namespace GTEngine
                                     va->UnmapIndexData();
                                 }
 
-                                
+
                                 definition.meshGeometries.PushBack(va);
                             }
 
@@ -1419,6 +1428,11 @@ namespace GTEngine
                                 assert(channel != nullptr);
 
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
                                 // Transformation.
                                 struct
                                 {
@@ -1426,6 +1440,10 @@ namespace GTEngine
                                     glm::quat rotation;
                                     glm::vec3 scale;
                                 }transform;
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
                                 GTCore::IO::Read(file, &transform, sizeof(transform));
 
@@ -1442,7 +1460,7 @@ namespace GTEngine
 
                         // Here is the engine-specific metadata.
                         ModelLibrary::LoadGTMODELMetadata(file, definition);
-                            
+
 
                         // Can't forget to close the file.
                         GTCore::IO::Close(file);
@@ -1745,7 +1763,7 @@ namespace GTEngine
             for (uint32_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
             {
                 mtlsSizeInBytes += 4;                                   // <-- Variable for storing the index of the mesh this material is applied to.
-                mtlsSizeInBytes += 4;                                   // <-- Variable for storing the size of the 
+                mtlsSizeInBytes += 4;                                   // <-- Variable for storing the size of the
                 mtlsSizeInBytes += definition.meshMaterials[iMaterial] != nullptr ? definition.meshMaterials[iMaterial]->GetDefinition().fileName.GetLengthInTs() : 0;
             }
 
@@ -1761,7 +1779,7 @@ namespace GTEngine
                 auto material = definition.meshMaterials[iMaterial];
 
                 GTCore::IO::Write(file, &iMaterial, 4);
-                
+
                 if (material == nullptr)
                 {
                     uint32_t length = 0;
@@ -1892,7 +1910,7 @@ namespace GTEngine
                 // Now we write the data.
                 GTCore::IO::Write(file, &vertexCounts[0], vertexCounts.count * 4);
                 GTCore::IO::Write(file, &indexCounts[0],  indexCounts.count  * 4);
-                
+
                 uint32_t totalVertices = static_cast<uint32_t>(vertices.count);
                 uint32_t totalIndices  = static_cast<uint32_t>(indices.count);
 
@@ -1984,7 +2002,7 @@ namespace GTEngine
                                 // Indices.
                                 uint32_t indexCount;
                                 GTCore::IO::Read(file, &indexCount, 4);
-                                
+
                                 if (indexCount > 0)
                                 {
                                     GTCore::IO::Seek(file, indexCount * sizeof(unsigned int), GTCore::IO::SeekOrigin::Current);
@@ -2034,7 +2052,7 @@ namespace GTEngine
 
                         // Here is the engine-specific metadata.
                         ModelLibrary::LoadGTMODELMetadata(file, definition);
-                            
+
 
                         // Can't forget to close the file.
                         GTCore::IO::Close(file);
