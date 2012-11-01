@@ -24,9 +24,23 @@ namespace GTEngine
         // The first thing we want to do is load some defaults.
         success = success && this->Execute
         (
-            "Game   = {};"
-            "Editor = {};"
-            ""
+            "Game = {};"
+        );
+
+
+        // Directory management.
+        success = success && this->Execute
+        (
+            "Directories ="
+            "{"
+            "    Data = {};"
+            "}"
+        );
+
+        // TODO: Consider moving these display properties into a namespace like Game or whatnot.
+        // Display stuff.
+        success = success && this->Execute
+        (
             "Display ="
             "{"
             "    Width      = 1280;"
@@ -39,11 +53,12 @@ namespace GTEngine
             "        Anisotropy = 16;"
             "    };"
             "};"
-            ""
-            "Directories ="
-            "{"
-            "    Data = {};"
-            "}"
+        );
+
+        // We need to initialise some other non-game stuff here so scripts can get early access to some objects; the editor in particular.
+        success = success && this->Execute
+        (
+            "Editor = {};"
         );
 
         // Here we load the data directories from the application config. We need to do this so that the editor has access to them. Might also come
