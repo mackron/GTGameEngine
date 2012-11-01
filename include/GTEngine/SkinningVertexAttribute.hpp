@@ -38,6 +38,11 @@ namespace GTEngine
     /// This simply contains an array of bone/weight pairs that should be applied to the vertex.
     struct SkinningVertexAttribute
     {
+        SkinningVertexAttribute()
+            : bones()
+        {
+        }
+
         void AddBoneWeightPair(int boneIndex, float weight)
         {
             this->bones.PushBack(BoneWeightPair(boneIndex, weight));

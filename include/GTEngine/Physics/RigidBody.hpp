@@ -50,6 +50,11 @@ namespace GTEngine
 
         /// A pointer to the dynamics world.
         DynamicsWorld* world;
+
+
+    private:    // No copying.
+        RigidBody(const RigidBody &);
+        RigidBody & operator=(const RigidBody &);
     };
 }
 

@@ -77,7 +77,7 @@ namespace GTEngine
         /// Stops the current models' animation.
         void StopAnimation();
 
-        
+
         ///////////////////////////////////////////////////
         // Events.
 
@@ -189,6 +189,11 @@ namespace GTEngine
 
         /// The random number generator for convex hull colours, and whatever else we may need.
         GTCore::Random random;
+
+
+    private:    // No copying.
+        Editor_ModelEditor(const Editor_ModelEditor &);
+        Editor_ModelEditor & operator=(const Editor_ModelEditor &);
     };
 }
 

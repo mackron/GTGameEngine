@@ -9,7 +9,8 @@ namespace GTEngine
         : fileName(fileNameIn),
           meshGeometries(), meshMaterials(), meshSkinningVertexAttributes(),
           bones(),
-          animation(), animationChannelBones(), animationKeyCache()
+          animation(), animationChannelBones(), animationKeyCache(),
+          convexHulls(), convexHullBuildSettings()
     {
     }
 

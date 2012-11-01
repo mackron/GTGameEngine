@@ -37,6 +37,11 @@ namespace GTEngine
 
         /// A pointer to the world that owns this object.
         BaseCollisionWorld* world;
+
+
+    private:
+        CollisionObject(const CollisionObject &);
+        CollisionObject & operator=(const CollisionObject &);
     };
 }
 

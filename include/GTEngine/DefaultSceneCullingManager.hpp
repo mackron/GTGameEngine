@@ -287,7 +287,7 @@ namespace GTEngine
 
                     // Here we need to ensure the box has the correct transformation.
                     this->modelCollisionShape->updateChildTransform(0, boxTransform);
-                    
+
                     if (world != nullptr)
                     {
                         world->AddCollisionObject(*this->modelCollisionObject);
@@ -327,7 +327,7 @@ namespace GTEngine
                     btTransform coneTransform;
                     coneTransform.setIdentity();
                     coneTransform.setOrigin(btVector3(0.0f, 0.0f, -height * 0.5f));
-                    
+
                     // I hate it, but it looks like we will have to delete and re-create the cone shape. Can't find a way to update the radius/length cleanly.
                     auto coneShape = static_cast<btConeShapeZ*>(this->spotLightCollisionShape->getChildShape(0));
 
@@ -370,6 +370,11 @@ namespace GTEngine
             /// The collision shape to use with the spot light collision object. Can be null only if <spotLightCollisionObject> is also null. We
             /// need to use a compound shape here because the cone will need to be offset by half it's height.
             btCompoundShape* spotLightCollisionShape;
+
+
+        private:    // No copying.
+            SceneNodeMetadata(const SceneNodeMetadata &);
+            SceneNodeMetadata & operator=(const SceneNodeMetadata &);
         };
 
 
@@ -407,7 +412,7 @@ namespace GTEngine
             /// @param extents [in] The extents of the AABB.
             bool QueryOccluder(const btVector3 &center, const btVector3 &extents);
 
-        
+
             /// Transforms the given point the model-view-projection matrix given during construction.
             ///
             /// @param v [in] A reference to the vector to transform.
@@ -562,7 +567,7 @@ namespace GTEngine
                         int      a   = x[2]*y[0] + x[0]*y[1] - x[2]*y[1] - x[0]*y[2] + x[1]*y[2] - x[1]*y[0];
                         btScalar ia  = 1.0f / static_cast<btScalar>(a);
                         btScalar dzx = ia * (y[2]*(z[1] - z[0]) + y[1]*(z[0] - z[2]) + y[0]*(z[2] - z[1]));
-                        btScalar dzy = ia * (x[2]*(z[0] - z[1]) + x[0]*(z[1] - z[2]) + x[1]*(z[2] - z[0])) - (dzx * width);		
+                        btScalar dzy = ia * (x[2]*(z[0] - z[1]) + x[0]*(z[1] - z[2]) + x[1]*(z[2] - z[0])) - (dzx * width);
 
                         int c[] =
                         {
@@ -631,7 +636,7 @@ namespace GTEngine
 
             /// The culling manager that owns this policy. We need to call methods on this structure.
             DefaultSceneCullingManager &cullingManager;
-            
+
             /// The callback structure that is passed around to cullingManager.
             VisibilityCallback &callback;
 
