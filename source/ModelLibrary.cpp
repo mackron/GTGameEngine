@@ -11,9 +11,18 @@
 #include <GTCore/List.hpp>
 #include <GTCore/IO.hpp>
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
 
 // assimp helpers
