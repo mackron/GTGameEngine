@@ -26,9 +26,6 @@ namespace GTEngine
         (
             "Game   = {};"
             "Editor = {};"
-            "Editor.ModelEditor    = {};"
-            "Editor.MaterialEditor = {};"
-            "Editor.SceneEditor    = {};"
             ""
             "Display ="
             "{"

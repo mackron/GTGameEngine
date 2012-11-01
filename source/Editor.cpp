@@ -220,6 +220,13 @@ namespace GTEngine
     {
         auto &script = this->game.GetScript();
 
+        script.Execute
+        (
+            "Editor.ModelEditor    = {};"
+            "Editor.MaterialEditor = {};"
+            "Editor.SceneEditor    = {};"
+        );
+
         script.GetGlobal("Editor");
         if (script.IsTable(-1))
         {
