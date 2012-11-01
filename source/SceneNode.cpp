@@ -503,6 +503,12 @@ namespace GTEngine
     }
 
 
+    void SceneNode::LookInDirection(const glm::vec3 &direction, const glm::vec3 &up)
+    {
+        this->LookAt(this->GetWorldPosition() + direction, up);
+    }
+
+
     glm::vec3 SceneNode::GetWorldForwardVector() const
     {
         return this->GetWorldOrientation() * glm::vec3(0.0f, 0.0f, -1.0f);

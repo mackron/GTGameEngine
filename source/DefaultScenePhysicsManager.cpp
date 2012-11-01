@@ -48,12 +48,18 @@ namespace GTEngine
         auto linearVelocity  = object.getLinearVelocity();
         auto angularVelocity = object.getAngularVelocity();
 
-
-        this->world.RemoveRigidBody(object);
+        auto objectWorld = object.GetWorld();
+        if (objectWorld == &this->world)
         {
-            object.setWorldTransform(BulletUtils::CreateTransform(newTransform));
+            this->world.RemoveRigidBody(object);
         }
-        this->world.AddRigidBody(object);
+
+        object.setWorldTransform(BulletUtils::CreateTransform(newTransform));
+
+        if (objectWorld == &this->world)
+        {
+            this->world.AddRigidBody(object);
+        }
 
 
         object.setLinearVelocity(linearVelocity);
