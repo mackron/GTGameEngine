@@ -44,8 +44,6 @@ public:
         
 
         this->lightNode.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.5f, 0.5f, 0.5f);
-        //this->lightNode.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.5f, 0.5f, 0.5f);
-        //this->lightNode.GetComponent<GTEngine::DirectionalLightComponent>()->EnableShadowCasting();
         this->lightNode.AddComponent<GTEngine::PointLightComponent>()->SetColour(1.5f, 1.5f, 1.5f);
         this->lightNode.GetComponent<GTEngine::PointLightComponent>()->EnableShadowCasting();
         this->lightNode.SetPosition(4.0f, 6.0f, 4.0f);
@@ -140,10 +138,6 @@ private:
 
     // In order to display the scene, we are going to need a viewport. You can attach multiple viewports
     // to a scene. This could be useful for things like split-screen or editors.
-    //
-    // In order to render the contents of a viewport, you must attach a viewport renderer. This system is
-    // useful as it allows a game to implement it's own render if it uses some kind of unique art style
-    // with it's own specific requirements.
     GTEngine::SceneViewport viewport;
 
 

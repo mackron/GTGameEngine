@@ -53,7 +53,7 @@ public:
         
         
         // Now we need to add the scene nodes to the scene. Camera's do not need to be added to the scene, but since we've got
-        // a light attached to it in this case, we need to.
+        // a light attached to it, we need to.
         this->scene.AddSceneNode(this->cameraNode);
         this->scene.AddSceneNode(this->modelNode);
 
@@ -110,10 +110,6 @@ private:
 
     // In order to display the scene, we are going to need a viewport. You can attach multiple viewports
     // to a scene. This could be useful for things like split-screen or editors.
-    //
-    // In order to render the contents of a viewport, you must attach a viewport renderer. This system is
-    // useful as it allows a game to implement it's own render if it uses some kind of unique art style
-    // with it's own specific requirements.
     GTEngine::SceneViewport viewport;
 
 
