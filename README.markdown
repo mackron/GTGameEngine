@@ -1,15 +1,13 @@
 # GTGameEngine
 
-GTGameEngine is yet another game engine written in C++. Apart from every other GalickTech
-middleware library, it uses Bullet for physics, Lua for scripting and Cg for shaders. It
-currently uses OpenGL, but it has been designed to (hopefully) allow a D3D implementation
-relatively easily.
+GTGameEngine is yet another game engine written in C++. It currently uses OpenGL,
+but it has been designed to (hopefully) allow a D3D implementation relatively easily.
 
 GTGameEngine supports Windows and Linux and compiles with MSVC, GCC and Clang. Other
 compilers have not been tested, but should mostly work. The Linux build usually lags
 behind the Windows build, so expect some errors with the Linux build occasionally.
 
-GTGameEngine is built as a static library. We do not directly support shared/dynamic
+GTGameEngine is built as a static library. There is no direct support shared/dynamic
 libraries (.so/.dll).
 
 
@@ -31,6 +29,8 @@ GTGameEngine depends on the following libraries:
 * RapidXML (http://rapidxml.sourceforge.net)
 * HACD (http://sourceforge.net/projects/hacd)
 
+
+Recast, Detour and HACD are included in the engine's source tree. Licences are below.
 
 
 
