@@ -124,6 +124,9 @@ freely, subject to the following restrictions:
 -------------------------------------------------------------------------------
 
 
+RapidXML
+
+
 Use of this software is granted under one of the following two licenses,
 to be chosen freely by the user.
 
