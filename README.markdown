@@ -28,9 +28,17 @@ GTGameEngine depends on the following libraries:
 * RapidXML (http://rapidxml.sourceforge.net)
 * Recast+Detour (http://code.google.com/p/recastnavigation)
 * HACD (http://sourceforge.net/projects/hacd)
+* OpenAL (see note below)
 
 
-Recast, Detour and HACD are included in the engine's source tree. Licences are below.
+RapidXML, Recast, Detour and HACD are included in the engine's source tree, so there
+is no need to build these manually. Licences are below.
+
+For audio we use OpenAL. We use OpenAL Soft (http://kcat.strangesoft.net/openal.html)
+as our OpenAL implementation, but you should be able to use the implementation from
+Creative just fine. We supply pre-built binaries of the OpenAL Soft implementation in
+the 'external' directory, but it would probably be best to build your own to match
+the configuration you use with your own build system.
 
 
 
