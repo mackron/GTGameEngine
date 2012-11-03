@@ -37,8 +37,8 @@ is no need to build these manually. Licences are below.
 For audio we use OpenAL. We use OpenAL Soft (http://kcat.strangesoft.net/openal.html)
 as our OpenAL implementation, but you should be able to use the implementation from
 Creative just fine. We supply pre-built binaries of the OpenAL Soft implementation in
-the 'external' directory, but it would probably be best to build your own to match
-the configuration you use with your own build system.
+the 'external' directory, but not every configuration is included. It would probably
+be best to build your own to match your own configuration.
 
 
 
