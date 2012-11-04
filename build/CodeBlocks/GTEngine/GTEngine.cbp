@@ -37,7 +37,7 @@
 			</Target>
 			<Target title="debug-linux-gcc">
 				<Option platforms="Unix;" />
-				<Option output="../../../lib/linux-gcc/libGTEngine-debug" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../lib/linux-gcc/GTEngine-debug" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/debug-linux-gcc/" />
 				<Option type="2" />
@@ -50,7 +50,7 @@
 			</Target>
 			<Target title="release-linux-gcc">
 				<Option platforms="Unix;" />
-				<Option output="../../../lib/linux-gcc/libGTEngine" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../lib/linux-gcc/GTEngine" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/release-linux-gcc/" />
 				<Option type="2" />
@@ -66,7 +66,7 @@
 			</Target>
 			<Target title="debug-linux-gcc-x64">
 				<Option platforms="Unix;" />
-				<Option output="../../../lib/linux-gcc/libGTEngine-debug-x64" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../lib/linux-gcc/GTEngine-debug-x64" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/debug-linux-gcc-x64/" />
 				<Option type="2" />
@@ -79,7 +79,7 @@
 			</Target>
 			<Target title="release-linux-gcc-x64">
 				<Option platforms="Unix;" />
-				<Option output="../../../lib/linux-gcc/libGTEngine-x64" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../lib/linux-gcc/GTEngine-x64" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/release-linux-gcc-x64/" />
 				<Option type="2" />
@@ -88,6 +88,35 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="debug-windows-clang">
+				<Option platforms="Windows;" />
+				<Option output="../../../lib/windows-clang/GTEngine-debug-x64" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/debug-windows-clang/" />
+				<Option type="2" />
+				<Option compiler="mingww64" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="release-windows-clang">
+				<Option platforms="Windows;" />
+				<Option output="../../../lib/windows-clang/GTEngine-x64" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/release-windows-clang/" />
+				<Option type="2" />
+				<Option compiler="mingww64" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-O2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
