@@ -118,30 +118,20 @@ namespace GTEngine
     // Retrieval functions for GTEngine shaders.
     public:
 
-        /**
-        *   \brief  Retrieves the shader that is used to draw a textured quad on a GUI.
-        */
+        /// Retrieves the shader that is used to draw a textured quad on a GUI.
         static Shader* GetGUIQuadShader();
 
         /// Retrieves the shader that is used with the RCDraw rendering command from GTGUI.
         static Shader* GetGUIDrawShader();
 
-        /**
-        *   \brief  Retrieves the shader that is used to draw shadows on a GUI.
-        */
-        static Shader* GetGUIShadowShader();
 
-        /**
-        *   \brief  Retrieves the shader that is used to draw a simple textured fullscreen quad.
-        */
+        /// Retrieves the shader that is used to draw a simple textured fullscreen quad.
         static Shader* GetFullscreenQuadShader();
 
         /// Retrieves the shader that is used to draw a solid colour background quad.
         static Shader* GetColouredBGQuadShader();
 
-        /**
-        *   \brief  Retrieves the shader that is used to draw wireframes.
-        */
+        /// Retrieves the shader that is used to draw wireframes.
         static Shader* GetLineShader();
 
 
