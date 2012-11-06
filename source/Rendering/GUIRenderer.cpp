@@ -12,7 +12,7 @@
 namespace GTEngine
 {
     /// A list mapping a GTImage::Image object from GTGUI to a Texture2D object in GTEngine.
-    GTCore::Map<GTImage::Image*, Texture2D*> GUITextures;
+    GTCore::Map<const GTImage::Image*, Texture2D*> GUITextures;
 
     /// A helper function for retrieving the texture object to use with the given GTImage::Image object.
     ///
@@ -20,7 +20,7 @@ namespace GTEngine
     ///     If <image> is null, this will return the default white texture. If <image> is not null and the texture has
     ///     already been created for it, the existing Texture2D object will be returned. Otherwise, a new Texture2D
     ///     object will be created and returned.
-    Texture2D* GUIRenderer_AcquireTexture2DFromImage(GTImage::Image* image);
+    Texture2D* GUIRenderer_AcquireTexture2DFromImage(const GTImage::Image* image);
 
 
 
@@ -101,14 +101,15 @@ namespace GTEngine
 
         // Here we set a few shader parameters that only need to be set once. We need to do this for all shaders. Cases like this is where a
         // uniform buffer would come in real handy. I must look into that...
-        auto textShader = ShaderLibrary::GetGUITextShader();
-        textShader->SetParameter("Projection", GUIProjection);
-
         auto quadShader = ShaderLibrary::GetGUIQuadShader();
         quadShader->SetParameter("Projection", GUIProjection);
         
         auto shadowShader = ShaderLibrary::GetGUIShadowShader();
         shadowShader->SetParameter("Projection", GUIProjection);
+
+        auto drawShader = ShaderLibrary::GetGUIDrawShader();
+        drawShader->SetParameter("Projection", GUIProjection);
+
 
         server.ExecuteFrontRCQueue();
 
@@ -189,6 +190,7 @@ void GTGUI::RCDraw::Execute()
     auto texture = GTEngine::GUIRenderer_AcquireTexture2DFromImage(this->image);
 
     GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIDrawShader());
+    GTEngine::Renderer::SetShaderParameter("Offset",  this->offsetX, this->offsetY);
     GTEngine::Renderer::SetShaderParameter("Texture", texture);
 
     if (this->enableOpacity)
@@ -264,38 +266,10 @@ void GTGUI::RCDrawShadow::Execute()
     GTEngine::Renderer::Draw(vertices, indices, 30, GTEngine::VertexFormat::P2C4);
 }
 
-void GTGUI::RCDrawText::Execute()
-{
-    assert(this->renderingInfo != nullptr);
-
-    // GTGUI is top-down, but the renderer uses bottom-up. We need to convert appropriately.
-    unsigned int width  = clipRect.right  - clipRect.left;
-    unsigned int height = clipRect.bottom - clipRect.top;
-    int x = clipRect.left;
-    int y = GTEngine::GUIViewportHeight - clipRect.bottom;
-
-    GTEngine::Renderer::SetScissor(x, y, width, height);
-
-    GTEngine::Renderer::EnableAlphaBlending();
-    GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUITextShader());
-    GTEngine::Renderer::SetShaderParameter("Offset",  offsetX, offsetY);
-    GTEngine::Renderer::SetShaderParameter("Color",   colour.r, colour.g, colour.b, this->opacity);
-
-    for (auto i = this->renderingInfo->sections.root; i != nullptr; i = i->next)
-    {
-        if (i->value->font != nullptr)
-        {
-            GTEngine::Renderer::SetShaderParameter("Texture", GTEngine::FontManager::GetTexture(*i->value->font));
-            GTEngine::Renderer::Draw(i->value->vertices, i->value->indices, i->value->indexCount, GTEngine::VertexFormat::P2T2);
-        }
-    }
-}
-
-
 
 namespace GTEngine
 {
-    Texture2D* GUIRenderer_AcquireTexture2DFromImage(GTImage::Image* image)
+    Texture2D* GUIRenderer_AcquireTexture2DFromImage(const GTImage::Image* image)
     {
         if (image != nullptr)
         {
@@ -307,7 +281,10 @@ namespace GTEngine
             else
             {
                 auto newTexture = new Texture2D(image->GetWidth(), image->GetHeight(), image->GetFormat(), image->GetBaseMipmapData());
+                newTexture->KeepClientSideData(true);
+                newTexture->SetFilter(TextureFilter_Nearest, TextureFilter_Nearest);
                 newTexture->GenerateMipmaps();
+
 
                 GUITextures.Add(image, newTexture);
 

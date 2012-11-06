@@ -127,11 +127,6 @@ namespace GTEngine
         static Shader* GetGUIDrawShader();
 
         /**
-        *   \brief  Retrieves the shader that is used to draw text on a GUI.
-        */
-        static Shader* GetGUITextShader();
-
-        /**
         *   \brief  Retrieves the shader that is used to draw shadows on a GUI.
         */
         static Shader* GetGUIShadowShader();
