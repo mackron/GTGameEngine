@@ -59,9 +59,6 @@ namespace GTEngine
 
     void GUIRenderer::Initialise()
     {
-        // Note how we don't create any shaders in the constructor. This is because we can't guarantee that they have been loaded by the shader
-        // library at this point.
-
         // This single pixel is the data for our white texture. It's important that this is an RGB8 format and not RGBA8. Reason is because we use
         // the presence of an alpha channel in determining whether or not to enable transparency.
         const uint8_t whiteTexel[3] = {0xFF, 0xFF, 0xFF};
