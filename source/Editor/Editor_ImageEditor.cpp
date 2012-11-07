@@ -70,6 +70,17 @@ namespace GTEngine
     }
 
 
+    Game & Editor_ImageEditor::GetGame()
+    {
+        return this->editor.GetGame();
+    }
+
+    const Game & Editor_ImageEditor::GetGame() const
+    {
+        return this->editor.GetGame();
+    }
+
+
 
     //////////////////////////////////////////////////////
     // ViewportEventHandler
@@ -79,9 +90,10 @@ namespace GTEngine
         auto image = this->editor.GetCurrentImage();
         if (image != nullptr)
         {
-            GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIQuadShader());
-            GTEngine::Renderer::SetShaderParameter("Texture", image);
-            GTEngine::Renderer::SetShaderParameter("Color",   1.0f, 1.0f, 1.0f, 1.0f);
+            GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetTextured2DQuadShader());
+            GTEngine::Renderer::SetShaderParameter("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
+            GTEngine::Renderer::SetShaderParameter("Texture",    image);
+            
 
             unsigned int imageWidth  = image->GetWidth();
             unsigned int imageHeight = image->GetHeight();
@@ -89,8 +101,8 @@ namespace GTEngine
             GTGUI::Rect viewportRect;
             element.GetAbsoluteRect(viewportRect);
 
-            unsigned int viewportWidth  = viewportRect.right  - viewportRect.left;
-            unsigned int viewportHeight = viewportRect.bottom - viewportRect.top;
+            float viewportWidth  = static_cast<float>(viewportRect.right  - viewportRect.left);
+            float viewportHeight = static_cast<float>(viewportRect.bottom - viewportRect.top);
 
             float zoom = this->editor.GetZoom();
 
@@ -98,6 +110,7 @@ namespace GTEngine
             float quadRight  = (viewportWidth  * 0.5f) + (imageWidth  * 0.5f * zoom) + viewportRect.left;
             float quadTop    = (viewportHeight * 0.5f) - (imageHeight * 0.5f * zoom) + viewportRect.top;
             float quadBottom = (viewportHeight * 0.5f) + (imageHeight * 0.5f * zoom) + viewportRect.top;
+
 
 
             float quadVertices[] =

@@ -42,6 +42,9 @@ namespace GTEngine
         void SetZoom(float newZoom);
 
 
+        /// Retrieves a reference to the game.
+              Game & GetGame();
+        const Game & GetGame() const;
 
 
 

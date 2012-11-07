@@ -625,28 +625,18 @@ namespace GTEngine
 // Shader object retrieval.
 namespace GTEngine
 {
-    static Shader* GUIQuadShader        = nullptr;
     static Shader* GUIDrawShader        = nullptr;
     static Shader* FullscreenQuadShader = nullptr;
+    static Shader* Textured2DQuadShader = nullptr;
     static Shader* ColouredBGQuadShader = nullptr;
     static Shader* LineShader           = nullptr;
     static Shader* DepthClearShader     = nullptr;
 
-    Shader* ShaderLibrary::GetGUIQuadShader()
-    {
-        if (GUIQuadShader == nullptr)
-        {
-            GUIQuadShader = new Shader(ShaderLibrary::GetShaderString("Engine_GUIQuad_VS"), ShaderLibrary::GetShaderString("Engine_GUIQuad_FS"));
-        }
-
-        return GUIQuadShader;
-    }
-
-    Shader* ShaderLibrary::GetGUIDrawShader()
+    Shader* ShaderLibrary::GetGUIShader()
     {
         if (GUIDrawShader == nullptr)
         {
-            GUIDrawShader = new Shader(ShaderLibrary::GetShaderString("Engine_GUIDraw_VS"), ShaderLibrary::GetShaderString("Engine_GUIDraw_FS"));
+            GUIDrawShader = new Shader(ShaderLibrary::GetShaderString("Engine_GUI_VS"), ShaderLibrary::GetShaderString("Engine_GUI_FS"));
         }
 
         return GUIDrawShader;
@@ -660,6 +650,16 @@ namespace GTEngine
         }
 
         return FullscreenQuadShader;
+    }
+
+    Shader* ShaderLibrary::GetTextured2DQuadShader()
+    {
+        if (Textured2DQuadShader == nullptr)
+        {
+            Textured2DQuadShader = new Shader(ShaderLibrary::GetShaderString("Engine_Textured2DQuad_VS"), ShaderLibrary::GetShaderString("Engine_Textured2DQuad_FS"));
+        }
+
+        return Textured2DQuadShader;
     }
 
     Shader* ShaderLibrary::GetColouredBGQuadShader()
@@ -699,16 +699,16 @@ namespace GTEngine
 {
     void ShaderLibrary::Shutdown()
     {
-        delete GUIQuadShader;
         delete GUIDrawShader;
         delete FullscreenQuadShader;
+        delete Textured2DQuadShader;
         delete ColouredBGQuadShader;
         delete LineShader;
         delete DepthClearShader;
 
-        GUIQuadShader        = nullptr;
         GUIDrawShader        = nullptr;
         FullscreenQuadShader = nullptr;
+        Textured2DQuadShader = nullptr;
         ColouredBGQuadShader = nullptr;
         LineShader           = nullptr;
         DepthClearShader     = nullptr;
