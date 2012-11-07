@@ -11,9 +11,6 @@
 
 namespace GTEngine
 {
-    /// A list mapping a GTImage::Image object from GTGUI to a Texture2D object in GTEngine.
-    GTCore::Map<const GTImage::Image*, Texture2D*> GUITextures;
-
     /// A helper function for retrieving the texture object to use with the given GTImage::Image object.
     ///
     /// @remarks
@@ -23,32 +20,12 @@ namespace GTEngine
     Texture2D* GUIRenderer_AcquireTexture2DFromImage(const GTImage::Image* image);
 
 
+    /// A list mapping a GTImage::Image object from GTGUI to a Texture2D object in GTEngine.
+    GTCore::Map<const GTImage::Image*, Texture2D*> GUITextures;
 
     /// A white texture. We use this for quads that don't use a texture.
     Texture2D* GUIWhiteTexture = nullptr;
 
-    /// The array containing a quad's vertex data. This changes dynamically.
-    float GUIQuadVertices[] =
-    {
-        0.0f,  0.0f,
-        0.0f,  0.0f,
-
-        0.0f,  0.0f,
-        1.0f,  0.0f,
-
-        0.0f,  0.0f,
-        1.0f,  1.0f,
-
-        0.0f,  0.0f,
-        0.0f,  1.0f
-    };
-
-    /// The array containing a quad's indices. This is constant for all quads.
-    unsigned int GUIQuadIndices[] =
-    {
-        0, 1, 2,
-        2, 3, 0
-    };
 
     /// The projection matrix to use when drawing the GUI.
     glm::mat4 GUIProjection;
@@ -87,7 +64,7 @@ namespace GTEngine
         {
             GUIViewportWidth  = viewportWidth;
             GUIViewportHeight = viewportHeight;
-            GUIProjection     = glm::ortho(0.0f, (float)GUIViewportWidth, (float)GUIViewportHeight, 0.0f, 0.0f, -1.0f);
+            GUIProjection     = glm::ortho(0.0f, static_cast<float>(GUIViewportWidth), static_cast<float>(GUIViewportHeight), 0.0f, 0.0f, -1.0f);
         }
         
         Renderer::SetViewport(0, 0, viewportWidth, viewportHeight);
@@ -98,10 +75,7 @@ namespace GTEngine
 
         // Here we set a few shader parameters that only need to be set once. We need to do this for all shaders. Cases like this is where a
         // uniform buffer would come in real handy. I must look into that...
-        auto quadShader = ShaderLibrary::GetGUIQuadShader();
-        quadShader->SetParameter("Projection", GUIProjection);
-
-        auto drawShader = ShaderLibrary::GetGUIDrawShader();
+        auto drawShader = ShaderLibrary::GetGUIShader();
         drawShader->SetParameter("Projection", GUIProjection);
 
 
@@ -136,54 +110,11 @@ void GTGUI::RCSetScissorRect::Execute()
     GTEngine::Renderer::SetScissor(x, y, width, height);
 }
 
-void GTGUI::RCDrawQuad::Execute()
-{
-    auto texture = GTEngine::GUIRenderer_AcquireTexture2DFromImage(this->image);
-
-    // For ease of use...
-    float left   = static_cast<float>(rect.left);
-    float right  = static_cast<float>(rect.right);
-    float top    = static_cast<float>(rect.top);
-    float bottom = static_cast<float>(rect.bottom);
-
-    GTEngine::GUIQuadVertices[0 ] = left;          GTEngine::GUIQuadVertices[1 ] = bottom;
-    GTEngine::GUIQuadVertices[2 ] = this->uvLeft;  GTEngine::GUIQuadVertices[3 ] = this->uvBottom;
-
-    GTEngine::GUIQuadVertices[4 ] = right;         GTEngine::GUIQuadVertices[5 ] = bottom;
-    GTEngine::GUIQuadVertices[6 ] = this->uvRight; GTEngine::GUIQuadVertices[7 ] = this->uvBottom;
-
-    GTEngine::GUIQuadVertices[8 ] = right;         GTEngine::GUIQuadVertices[9 ] = top;
-    GTEngine::GUIQuadVertices[10] = this->uvRight; GTEngine::GUIQuadVertices[11] = this->uvTop;
-
-    GTEngine::GUIQuadVertices[12] = left;          GTEngine::GUIQuadVertices[13] = top;
-    GTEngine::GUIQuadVertices[14] = this->uvLeft;  GTEngine::GUIQuadVertices[15] = this->uvTop;
-
-    GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIQuadShader());
-    GTEngine::Renderer::SetShaderParameter("Texture", texture);
-    GTEngine::Renderer::SetShaderParameter("Color",   colour.r, colour.g, colour.b, this->opacity);
-
-    // Need to check if blending should be enabled.
-    if ((this->opacity > 0.0f && this->opacity < 1.0f) || texture->GetFormat() == GTImage::ImageFormat_RGBA8)
-    {
-        GTEngine::Renderer::EnableAlphaBlending();
-    }
-    else
-    {
-        GTEngine::Renderer::DisableBlending();  // Ensure blending is disabled for performance.
-    }
-
-    // Only draw the quad if we can actually see it...
-    if (this->opacity > 0.0f)
-    {
-        GTEngine::Renderer::Draw(GTEngine::GUIQuadVertices, GTEngine::GUIQuadIndices, 6, GTEngine::VertexFormat::P2T2);
-    }
-}
-
 void GTGUI::RCDraw::Execute()
 {
     auto texture = GTEngine::GUIRenderer_AcquireTexture2DFromImage(this->image);
 
-    GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIDrawShader());
+    GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIShader());
     GTEngine::Renderer::SetShaderParameter("Offset",  this->offsetX, this->offsetY);
     GTEngine::Renderer::SetShaderParameter("Texture", texture);
 

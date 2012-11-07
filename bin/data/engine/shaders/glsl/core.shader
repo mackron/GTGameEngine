@@ -24,6 +24,34 @@
 
 
 
+<shader id="Engine_Textured2DQuad_VS">
+    attribute vec2 VertexInput_Position;
+    attribute vec2 VertexInput_TexCoord;
+    
+    varying vec2 VertexOutput_TexCoord;
+    
+    uniform mat4 Projection;
+
+	void main()
+	{
+        gl_Position = Projection * vec4(VertexInput_Position, 0.0, 1.0);
+        VertexOutput_TexCoord = VertexInput_TexCoord;
+	}
+</shader>
+
+<shader id="Engine_Textured2DQuad_FS">
+    varying vec2 VertexOutput_TexCoord;
+    
+    uniform sampler2D Texture;
+
+	void main()
+	{
+		gl_FragData[0] = texture2D(Texture, VertexOutput_TexCoord);
+	}
+</shader>
+
+
+
 <shader id="Engine_ColouredBGQuad_VS">
     attribute vec2 VertexInput_Position;
 

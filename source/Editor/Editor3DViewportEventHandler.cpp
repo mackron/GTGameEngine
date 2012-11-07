@@ -32,9 +32,9 @@ namespace GTEngine
     {
         auto colourBuffer = this->viewport.GetColourBuffer();
 
-        GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIQuadShader());
-        GTEngine::Renderer::SetShaderParameter("Texture", colourBuffer);
-        GTEngine::Renderer::SetShaderParameter("Color",   1.0f, 1.0f, 1.0f, 1.0f);
+        GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetTextured2DQuadShader());
+        GTEngine::Renderer::SetShaderParameter("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
+        GTEngine::Renderer::SetShaderParameter("Texture",    colourBuffer);
 
         GTGUI::Rect viewportRect;
         element.GetAbsoluteRect(viewportRect);
