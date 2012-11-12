@@ -5,6 +5,7 @@
 #include "Editor/Editor_ModelEditor.hpp"
 #include "Editor/Editor_ImageEditor.hpp"
 //#include "Editor/Editor_SoundEditor.hpp"
+#include "Editor/Editor_TextEditor.hpp"
 #include "DataFilesWatcher.hpp"
 
 namespace GTGUI
@@ -81,6 +82,11 @@ namespace GTEngine
         /// @param fileName [in] The full, absolute path of the sound being shown.
         void OnSoundActivated(const char* fileName);
 
+        /// Called when the tab for a text file is activated.
+        ///
+        /// @param fileName [in] The full, absolute path of the text file being shown.
+        void OnTextFileActivated(const char* textFile);
+
 
 
         ///////////////////////////////////////////////
@@ -132,6 +138,9 @@ namespace GTEngine
 
         /// The image editor.
         Editor_ImageEditor imageEditor;
+
+        /// The text editor.
+        Editor_TextEditor textEditor;
 
 
         /// Whether or not the editor has be started up.
@@ -189,6 +198,7 @@ namespace GTEngine
             static int OnModelActivated(GTCore::Script &script);
             static int OnImageActivated(GTCore::Script &script);
             static int OnSoundActivated(GTCore::Script &script);
+            static int OnTextFileActivated(GTCore::Script &script);
 
             struct ModelEditorFFI
             {

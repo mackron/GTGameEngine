@@ -608,6 +608,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\PointToPointConstraintComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_TextEditor.hpp">
+      <Filter>include\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1029,6 +1032,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Components\PointToPointConstraintComponent.cpp">
       <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Editor_TextEditor.cpp">
+      <Filter>source\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
