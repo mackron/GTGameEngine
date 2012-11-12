@@ -88,6 +88,24 @@ namespace GTEngine
                 return 1;
             }
 
+            int IsTextFile(GTCore::Script &script)
+            {
+                // There can be any number of text files. Perhaps we should assume that if it's not a resouce file like a model and texture, we should assume a text file?
+
+                auto extension = GTCore::Path::Extension(script.ToString(1));
+                
+                bool result = GTCore::Strings::Equal<false>(extension, "")       ||
+                              GTCore::Strings::Equal<false>(extension, "txt")    ||
+                              GTCore::Strings::Equal<false>(extension, "lua")    ||
+                              GTCore::Strings::Equal<false>(extension, "cfg")    ||
+                              GTCore::Strings::Equal<false>(extension, "xml")    ||
+                              GTCore::Strings::Equal<false>(extension, "script") ||
+                              GTCore::Strings::Equal<false>(extension, "style");
+                
+                script.Push(result);
+                return 1;
+            }
+
 
             namespace RendererFFI
             {

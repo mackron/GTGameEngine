@@ -16,7 +16,7 @@ namespace GTEngine
 {
     Editor::Editor(Game &game)
         : game(game), GUI(),
-          modelEditor(*this), imageEditor(*this),
+          modelEditor(*this), imageEditor(*this), textEditor(*this),
           isStarted(false), isOpen(false), disableFileWatchingAfterClose(true), disableKeyboardAutoRepeatAfterClose(true),
           dataFilesWatcherEventHandler(*this)
     {
@@ -47,6 +47,7 @@ namespace GTEngine
                 this->modelEditor.Startup();
                 this->imageEditor.Startup();
                 //this->soundEditor.Startup();
+                this->textEditor.Startup();
 
 
                 // Here we need to attach our files watcher event handler.
@@ -144,6 +145,11 @@ namespace GTEngine
         (void)fileName;
     }
 
+    void Editor::OnTextFileActivated(const char* fileName)
+    {
+        this->textEditor.LoadTextFile(fileName);
+    }
+
 
     void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
     {
@@ -233,9 +239,10 @@ namespace GTEngine
             script.SetTableFunction(-1, "Open",  FFI::Open);
             script.SetTableFunction(-1, "Close", FFI::Close);
 
-            script.SetTableFunction(-1, "OnModelActivated", FFI::OnModelActivated);
-            script.SetTableFunction(-1, "OnImageActivated", FFI::OnImageActivated);
-            script.SetTableFunction(-1, "OnSoundActivated", FFI::OnSoundActivated);
+            script.SetTableFunction(-1, "OnModelActivated",    FFI::OnModelActivated);
+            script.SetTableFunction(-1, "OnImageActivated",    FFI::OnImageActivated);
+            script.SetTableFunction(-1, "OnSoundActivated",    FFI::OnSoundActivated);
+            script.SetTableFunction(-1, "OnTextFileActivated", FFI::OnTextFileActivated);
 
 
             script.Push("ModelEditor");
@@ -296,6 +303,12 @@ namespace GTEngine
     int Editor::FFI::OnSoundActivated(GTCore::Script &script)
     {
         FFI::GetEditor(script).OnSoundActivated(script.ToString(1));
+        return 0;
+    }
+
+    int Editor::FFI::OnTextFileActivated(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).OnTextFileActivated(script.ToString(1));
         return 0;
     }
 
