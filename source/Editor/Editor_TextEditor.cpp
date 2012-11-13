@@ -23,7 +23,7 @@ namespace GTEngine
     {
         auto &gui = this->editor.GetGame().GetGUI();
 
-        this->GUI.TextBox = gui.GetElementByID("Editor_TextEditor_TextBox");
+        this->GUI.TextBox = gui.GetElementByID(this->editor.GetGame().GetScript().GetString("Editor_TextEditor_TextBox.TextArea:GetID()"));
     }
 
     bool Editor_TextEditor::LoadTextFile(const char* fileName)
