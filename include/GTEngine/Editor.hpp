@@ -85,7 +85,28 @@ namespace GTEngine
         /// Called when the tab for a text file is activated.
         ///
         /// @param fileName [in] The full, absolute path of the text file being shown.
-        void OnTextFileActivated(const char* textFile);
+        void OnTextFileActivated(const char* fileName);
+
+
+        /// Called when the tab for a model is closed.
+        ///
+        /// @param fileName [in] The full, absolute path of the file being closed.
+        void OnModelClosed(const char* fileName);
+
+        /// Called when the tab for an image is closed.
+        ///
+        /// @param fileName [in] The full, absolute path of the file being closed.
+        void OnImageClosed(const char* fileName);
+
+        /// Called when the tab for a sound is closed.
+        ///
+        /// @param fileName [in] The full, absolute path of the file being closed.
+        void OnSoundClosed(const char* fileName);
+
+        /// Called when the tab for a text file is closed.
+        ///
+        /// @param fileName [in] The full, absolute path of the file being closed.
+        void OnTextFileClosed(const char* fileName);
 
 
 
@@ -199,6 +220,11 @@ namespace GTEngine
             static int OnImageActivated(GTCore::Script &script);
             static int OnSoundActivated(GTCore::Script &script);
             static int OnTextFileActivated(GTCore::Script &script);
+
+            static int OnModelClosed(GTCore::Script &script);
+            static int OnImageClosed(GTCore::Script &script);
+            static int OnSoundClosed(GTCore::Script &script);
+            static int OnTextFileClosed(GTCore::Script &script);
 
             struct ModelEditorFFI
             {

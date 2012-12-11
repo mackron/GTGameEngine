@@ -23,7 +23,7 @@ namespace GTEngine
     {
     }
 
-    bool Editor_TextEditor::LoadTextFile(const char* fileName)
+    bool Editor_TextEditor::LoadFile(const char* fileName)
     {
         // What we do here is first determine whether or not the file has already been loaded. If it has, we just show the existing text box. Otherwise, we need
         // to create a new one.
@@ -90,6 +90,25 @@ namespace GTEngine
         }
 
         return true;
+    }
+
+    void Editor_TextEditor::CloseFile(const char* fileName)
+    {
+        auto iState = this->loadedStates.Find(fileName);
+        if (iState != nullptr)
+        {
+            this->GetGame().GetGUI().DeleteElement(iState->value->textBox);
+            
+
+            if (this->currentState == iState->value)
+            {
+                this->currentState = nullptr;
+            }
+
+
+            delete iState->value;
+            this->loadedStates.Remove(fileName);
+        }
     }
 
 

@@ -26,7 +26,12 @@ namespace GTEngine
         /// Loads the given text file.
         ///
         /// @param fileName [in] The name of the file to load.
-        bool LoadTextFile(const char* fileName);
+        bool LoadFile(const char* fileName);
+
+        /// Closes the given file.
+        ///
+        /// @param fileName [in] The name of the file to close.
+        void CloseFile(const char* fileName);
 
 
         /// Retrieves a reference to the game.
