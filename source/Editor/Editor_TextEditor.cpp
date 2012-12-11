@@ -21,37 +21,75 @@ namespace GTEngine
 
     void Editor_TextEditor::Startup()
     {
-        auto &gui = this->editor.GetGame().GetGUI();
-
-        this->GUI.TextBox = gui.GetElementByID(this->editor.GetGame().GetScript().GetString("Editor_TextEditor_TextBox.TextArea:GetID()"));
     }
 
     bool Editor_TextEditor::LoadTextFile(const char* fileName)
     {
-        // TODO: This is super inefficient. We should simply create a separate GUI text box for this.
-
-
-        GTCore::String fileContent;
-        if (GTCore::IO::OpenAndReadTextFile(fileName, fileContent))
+        // What we do here is first determine whether or not the file has already been loaded. If it has, we just show the existing text box. Otherwise, we need
+        // to create a new one.
+        auto iState = this->loadedStates.Find(fileName);
+        if (iState != nullptr)
         {
-            // Now we need to setup some state for the new text file. If the text file has already had it's state recorded, we can just restore it from the map.
-            auto iState = this->loadedStates.Find(fileName);
-            if (iState != nullptr)
+            if (this->currentState != nullptr)
             {
-                this->currentState = iState->value;
+                this->currentState->textBox->Hide();
+            }
+
+            this->currentState = iState->value;
+            this->currentState->textBox->Show();
+        }
+        else
+        {
+            // The file is not currently open, so we will need to open it now.
+            GTCore::String fileContent;
+            if (GTCore::IO::OpenAndReadTextFile(fileName, fileContent))
+            {
+                auto &gui    = this->editor.GetGame().GetGUI();
+                auto &script = this->editor.GetGame().GetScript();
+
+
+                // The file contents have been loaded, so now we need to create the text-box element that will display it.
+                auto textBoxElement = gui.CreateElement("<div parentid='Editor_TextEditor' styleclass='multiline-textbox' style='width:100%; height:100%; border:1px #222; vertical-align:top; font-family:liberation mono; font-size:10pt;' />");
+                if (textBoxElement != nullptr)
+                {
+                    // The element has been created, but we need to execute a script to have it turn into a proper multi-line text box.
+                    script.Execute(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s'):MultiLineTextBox();", textBoxElement->id).c_str());
+
+
+                    // Now what we need to do is actually set the text. This will be much quicker if done on the C++ side so that the script parser doesn't need to
+                    // parse potentially very large files.
+                    auto textArea = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextArea:GetID();", textBoxElement->id).c_str()));
+                    if (textArea != nullptr)
+                    {
+                        textArea->SetText(fileContent.c_str());
+
+                        // Now we just need to create a new state object and make it the current one.
+                        if (this->currentState != nullptr)
+                        {
+                            this->currentState->textBox->Hide();
+                        }
+
+                        this->currentState = new State;
+                        this->currentState->textBox = textBoxElement;
+                        this->loadedStates.Add(fileName, this->currentState);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
-                this->currentState = new State;
-                this->loadedStates.Add(fileName, this->currentState);
+                return false;
             }
-
-            this->GUI.TextBox->SetText(fileContent.c_str());
-
-            return true;
         }
 
-        return false;
+        return true;
     }
 
 
