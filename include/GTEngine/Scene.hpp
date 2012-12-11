@@ -60,17 +60,23 @@ namespace GTEngine
         glm::vec3 rayEnd;
 
 
+        // Whether or not a hit was detected.
+        bool hasCollision;
+
+
         /// Default constructor.
         RayTestCallback()
             : collisionGroup(static_cast<short>(-1)), collisionMask(static_cast<short>(-1)),
-              rayStart(), rayEnd()
+              rayStart(), rayEnd(),
+              hasCollision(false)
         {
         }
 
         /// Constructor.
         RayTestCallback(short collisionGroup, short collisionMask)
             : collisionGroup(collisionGroup), collisionMask(collisionMask),
-              rayStart(), rayEnd()
+              rayStart(), rayEnd(),
+              hasCollision(false)
         {
         }
 
