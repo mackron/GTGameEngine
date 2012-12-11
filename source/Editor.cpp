@@ -147,7 +147,28 @@ namespace GTEngine
 
     void Editor::OnTextFileActivated(const char* fileName)
     {
-        this->textEditor.LoadTextFile(fileName);
+        this->textEditor.LoadFile(fileName);
+    }
+
+
+    void Editor::OnModelClosed(const char* fileName)
+    {
+        (void)fileName;
+    }
+
+    void Editor::OnImageClosed(const char* fileName)
+    {
+        (void)fileName;
+    }
+
+    void Editor::OnSoundClosed(const char* fileName)
+    {
+        (void)fileName;
+    }
+
+    void Editor::OnTextFileClosed(const char* fileName)
+    {
+        this->textEditor.CloseFile(fileName);
     }
 
 
@@ -244,6 +265,12 @@ namespace GTEngine
             script.SetTableFunction(-1, "OnSoundActivated",    FFI::OnSoundActivated);
             script.SetTableFunction(-1, "OnTextFileActivated", FFI::OnTextFileActivated);
 
+            script.SetTableFunction(-1, "OnModelClosed",    FFI::OnModelClosed);
+            script.SetTableFunction(-1, "OnImageClosed",    FFI::OnImageClosed);
+            script.SetTableFunction(-1, "OnSoundClosed",    FFI::OnSoundClosed);
+            script.SetTableFunction(-1, "OnTextFileClosed", FFI::OnTextFileClosed);
+
+
 
             script.Push("ModelEditor");
             script.GetTableValue(-2);
@@ -311,6 +338,32 @@ namespace GTEngine
         FFI::GetEditor(script).OnTextFileActivated(script.ToString(1));
         return 0;
     }
+
+
+    int Editor::FFI::OnModelClosed(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).OnModelClosed(script.ToString(1));
+        return 0;
+    }
+
+    int Editor::FFI::OnImageClosed(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).OnImageClosed(script.ToString(1));
+        return 0;
+    }
+
+    int Editor::FFI::OnSoundClosed(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).OnSoundClosed(script.ToString(1));
+        return 0;
+    }
+
+    int Editor::FFI::OnTextFileClosed(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).OnTextFileClosed(script.ToString(1));
+        return 0;
+    }
+
 
 
     // ModelEditor

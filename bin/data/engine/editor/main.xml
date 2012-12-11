@@ -159,6 +159,15 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     end)
     
     Editor_TabBar:OnTabRemoved(function(data)
+        local filename = data.tab.path;
+        if GTEngine.IsModelFile(filename) then
+            Editor.OnModelClosed(filename);
+        elseif GTEngine.IsImageFile(filename) then
+            Editor.OnImageClosed(filename);
+        else                                                        -- Assume a text file if nothing else.
+            Editor.OnTextFileClosed(filename);
+        end
+    
         if data.tab.path then
             Editor_TabBar.OpenTabs[data.tab.path] = nil;
         end
