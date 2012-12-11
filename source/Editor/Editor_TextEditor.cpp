@@ -11,7 +11,8 @@ namespace GTEngine
 {
     Editor_TextEditor::Editor_TextEditor(Editor &editor)
         : editor(editor), GUI(),
-          currentState(nullptr), loadedStates()
+          currentState(nullptr), loadedStates(),
+          textAreaEventHandler()
     {
     }
 
@@ -58,10 +59,15 @@ namespace GTEngine
 
                     // Now what we need to do is actually set the text. This will be much quicker if done on the C++ side so that the script parser doesn't need to
                     // parse potentially very large files.
-                    auto textArea = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextArea:GetID();", textBoxElement->id).c_str()));
-                    if (textArea != nullptr)
+                    auto textAreaElement = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextArea:GetID();", textBoxElement->id).c_str()));
+                    if (textAreaElement != nullptr)
                     {
-                        textArea->SetText(fileContent.c_str());
+                        textAreaElement->SetText(fileContent.c_str());
+
+                        // Now we need to attach an event handler to the text area so we can detect changes to the text. We propagate this to the scripting
+                        // environment so that the owner tab can be marked as modified.
+                        textAreaElement->AttachEventHandler(this->textAreaEventHandler);
+
 
                         // Now we just need to create a new state object and make it the current one.
                         if (this->currentState != nullptr)
@@ -70,7 +76,9 @@ namespace GTEngine
                         }
 
                         this->currentState = new State;
-                        this->currentState->textBox = textBoxElement;
+                        this->currentState->textBox  = textBoxElement;
+                        this->currentState->textArea = textAreaElement;
+
                         this->loadedStates.Add(fileName, this->currentState);
                     }
                     else
@@ -120,6 +128,22 @@ namespace GTEngine
     const Game & Editor_TextEditor::GetGame() const
     {
         return this->editor.GetGame();
+    }
+
+
+
+    //////////////////////////////////////////////////
+    // TextAreaEventHandler
+
+    void Editor_TextEditor::TextAreaEventHandler::OnTextChanged(GTGUI::Element &element)
+    {
+        // The scripting environment needs to know that the element has been modified.
+        auto &script = element.GetServer().GetScriptServer().GetScript();
+
+        if (element.IsVisible())
+        {
+            script.Execute("Editor_TabBar:GetActiveTab():MarkAsModified()");
+        }
     }
 }
 

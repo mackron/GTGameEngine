@@ -61,13 +61,16 @@ namespace GTEngine
         struct State
         {
             State()
-                : textBox(nullptr)
+                : textBox(nullptr), textArea(nullptr)
             {
             }
 
 
-            /// The text area element.
+            /// The main text box element.
             GTGUI::Element* textBox;
+
+            /// The text area element. This is a child of textBox.
+            GTGUI::Element* textArea;
         };
 
 
@@ -76,6 +79,15 @@ namespace GTEngine
 
         /// A map of State objects, mapped to the path of the appropriate model.
         GTCore::Dictionary<State*> loadedStates;
+
+
+        /// The event handler that will be attached to the text area's. This is only used to notify the scripting environment of a change to the text.
+        struct TextAreaEventHandler : public GTGUI::ElementEventHandler
+        {
+            /// GTGUI::ElementEventHandler::OnTextChanged().
+            void OnTextChanged(GTGUI::Element &element);
+
+        }textAreaEventHandler;
 
 
     private:    // No copying.
