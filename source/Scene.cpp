@@ -220,6 +220,9 @@ namespace GTEngine
                 this->callback.ProcessResult(*sceneNode, worldHitPosition, worldHitNormal);
             }
 
+            // We have a collision, so we need to mark it as such.
+            this->callback.hasCollision = true;
+
             return this->m_closestHitFraction;
 		}
 
