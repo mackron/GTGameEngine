@@ -44,12 +44,9 @@ namespace GTEngine
         struct _GUI
         {
             _GUI()
-                : TextBox(nullptr)
             {
             }
 
-            /// The main viewport that will contain the image.
-            GTGUI::Element* TextBox;
 
         }GUI;
 
@@ -59,8 +56,13 @@ namespace GTEngine
         struct State
         {
             State()
+                : textBox(nullptr)
             {
             }
+
+
+            /// The text area element.
+            GTGUI::Element* textBox;
         };
 
 

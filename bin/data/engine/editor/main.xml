@@ -224,9 +224,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     Editor_ModelEditor_Panel_Animations:Collapse();
     Editor_ModelEditor_Panel_CD:Collapse();
-    
-    
-    Editor_TextEditor_TextBox:MultiLineTextBox();
 ]]>
 </script>
 
@@ -401,7 +398,6 @@ hidden by default.
                 
                 <!-- Text Editor -->
                 <div id="Editor_TextEditor" styleclass='sub-editor'>
-                    <div id="Editor_TextEditor_TextBox" styleclass='multiline-textbox' style='width:100%; height:100%; border:1px #222; vertical-align:top; font-family:liberation mono; font-size:10pt;' />
                 </div>
             </div>
         </div>
