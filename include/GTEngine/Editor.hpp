@@ -117,6 +117,17 @@ namespace GTEngine
         void OnTextFileClosed(const char* fileName);
 
 
+        /// Called when a file is activated.
+        ///
+        /// @param fileName [in] The full, absolute path of the file being activated.
+        void OnFileActivated(const char* fileName);
+
+        /// Called when a file is closed.
+        ///
+        /// @param fileName [in] The full, absolute path of the file being activated.
+        void OnFileClosed(const char* fileName);
+
+
 
         ///////////////////////////////////////////////
         // Events from Files Watcher.
@@ -229,14 +240,13 @@ namespace GTEngine
             static int OnSoundActivated(GTCore::Script &script);
             static int OnTextFileActivated(GTCore::Script &script);
 
-            static int OnModelClosed(GTCore::Script &script);
-            static int OnImageClosed(GTCore::Script &script);
-            static int OnSoundClosed(GTCore::Script &script);
-            static int OnTextFileClosed(GTCore::Script &script);
+
+            static int OnFileActivated(GTCore::Script &script);
+            static int OnFileClosed(GTCore::Script &script);
 
             struct ModelEditorFFI
             {
-                static int SaveModel(GTCore::Script &script);
+                static int SaveFile(GTCore::Script &script);
 
                 static int SetMaterial(GTCore::Script &script);
 

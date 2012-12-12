@@ -611,6 +611,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_TextEditor.hpp">
       <Filter>include\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\IO.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1035,6 +1038,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\Editor_TextEditor.cpp">
       <Filter>source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\IO.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

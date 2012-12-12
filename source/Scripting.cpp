@@ -2,10 +2,8 @@
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/Audio/AudioComposer.hpp>
-#include <GTEngine/ModelLibrary.hpp>
-
-#include <GTImage/Loader.hpp>
+#include <GTEngine/Audio.hpp>
+#include <GTEngine/IO.hpp>
 
 #include <GTCore/Path.hpp>
 
@@ -72,19 +70,19 @@ namespace GTEngine
             
             int IsModelFile(GTCore::Script &script)
             {
-                script.Push(ModelLibrary::IsExtensionSupported(GTCore::Path::Extension(script.ToString(1))));
+                script.Push(IO::IsSupportedModelExtension(script.ToString(1)));
                 return 1;
             }
 
             int IsImageFile(GTCore::Script &script)
             {
-                script.Push(GTImage::Loader::IsExtensionSupported(GTCore::Path::Extension(script.ToString(1))));
+                script.Push(IO::IsSupportedImageExtension(script.ToString(1)));
                 return 1;
             }
 
             int IsSoundFile(GTCore::Script &script)
             {
-                script.Push(AudioComposer::IsExtensionSupported(GTCore::Path::Extension(script.ToString(1))));
+                script.Push(IO::IsSupportedSoundExtension(script.ToString(1)));
                 return 1;
             }
 

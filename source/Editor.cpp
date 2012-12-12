@@ -2,6 +2,7 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Game.hpp>
+#include <GTEngine/IO.hpp>
 #include <GTGUI/Server.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Keyboard.hpp>
@@ -172,6 +173,47 @@ namespace GTEngine
     }
 
 
+    void Editor::OnFileActivated(const char* fileName)
+    {
+        if (IO::IsSupportedModelExtension(fileName))
+        {
+            this->OnModelActivated(fileName);
+        }
+        else if (IO::IsSupportedImageExtension(fileName))
+        {
+            this->OnImageActivated(fileName);
+        }
+        else if (IO::IsSupportedSoundExtension(fileName))
+        {
+            this->OnSoundActivated(fileName);
+        }
+        else        // Assume a text file if nothing else.
+        {
+            this->OnTextFileActivated(fileName);
+        }
+    }
+
+    void Editor::OnFileClosed(const char* fileName)
+    {
+        if (IO::IsSupportedModelExtension(fileName))
+        {
+            this->OnModelClosed(fileName);
+        }
+        else if (IO::IsSupportedImageExtension(fileName))
+        {
+            this->OnImageClosed(fileName);
+        }
+        else if (IO::IsSupportedSoundExtension(fileName))
+        {
+            this->OnSoundClosed(fileName);
+        }
+        else        // Assume a text file if nothing else.
+        {
+            this->OnTextFileClosed(fileName);
+        }
+    }
+
+
     void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
     {
         GTCore::String script;
@@ -268,18 +310,15 @@ namespace GTEngine
             script.SetTableFunction(-1, "OnSoundActivated",    FFI::OnSoundActivated);
             script.SetTableFunction(-1, "OnTextFileActivated", FFI::OnTextFileActivated);
 
-            script.SetTableFunction(-1, "OnModelClosed",    FFI::OnModelClosed);
-            script.SetTableFunction(-1, "OnImageClosed",    FFI::OnImageClosed);
-            script.SetTableFunction(-1, "OnSoundClosed",    FFI::OnSoundClosed);
-            script.SetTableFunction(-1, "OnTextFileClosed", FFI::OnTextFileClosed);
-
+            script.SetTableFunction(-1, "OnFileActivated", FFI::OnFileActivated);
+            script.SetTableFunction(-1, "OnFileClosed",    FFI::OnFileClosed);
 
 
             script.Push("ModelEditor");
             script.GetTableValue(-2);
             if (script.IsTable(-1))
             {
-                script.SetTableFunction(-1, "SaveModel", FFI::ModelEditorFFI::SaveModel);
+                script.SetTableFunction(-1, "SaveFile", FFI::ModelEditorFFI::SaveFile);
 
                 script.SetTableFunction(-1, "SetMaterial", FFI::ModelEditorFFI::SetMaterial);
 
@@ -291,6 +330,7 @@ namespace GTEngine
                 script.SetTableFunction(-1, "StopAnimation", FFI::ModelEditorFFI::StopAnimation);
             }
             script.Pop(1);
+
 
 
             script.Push("TextEditor");
@@ -352,34 +392,23 @@ namespace GTEngine
     }
 
 
-    int Editor::FFI::OnModelClosed(GTCore::Script &script)
+
+    int Editor::FFI::OnFileActivated(GTCore::Script &script)
     {
-        FFI::GetEditor(script).OnModelClosed(script.ToString(1));
+        FFI::GetEditor(script).OnFileActivated(script.ToString(1));
         return 0;
     }
 
-    int Editor::FFI::OnImageClosed(GTCore::Script &script)
+    int Editor::FFI::OnFileClosed(GTCore::Script &script)
     {
-        FFI::GetEditor(script).OnImageClosed(script.ToString(1));
-        return 0;
-    }
-
-    int Editor::FFI::OnSoundClosed(GTCore::Script &script)
-    {
-        FFI::GetEditor(script).OnSoundClosed(script.ToString(1));
-        return 0;
-    }
-
-    int Editor::FFI::OnTextFileClosed(GTCore::Script &script)
-    {
-        FFI::GetEditor(script).OnTextFileClosed(script.ToString(1));
+        FFI::GetEditor(script).OnFileClosed(script.ToString(1));
         return 0;
     }
 
 
 
     // ModelEditor
-    int Editor::FFI::ModelEditorFFI::SaveModel(GTCore::Script &script)
+    int Editor::FFI::ModelEditorFFI::SaveFile(GTCore::Script &script)
     {
         script.Push(FFI::GetEditor(script).GetModelEditor().SaveModel(script.ToString(1)));
         return 1;

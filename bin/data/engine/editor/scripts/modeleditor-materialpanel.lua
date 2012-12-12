@@ -29,7 +29,7 @@ function GTGUI.Element:ModelEditor_MaterialPanel()
                 self:SetStyle("border-color", "#cc6a6a");
             end
             
-            Editor_TabBar:GetActiveTab():MarkAsModified();
+            Editor.MarkActiveFileAsModified();
         end
         
         
