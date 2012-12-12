@@ -35,7 +35,7 @@ function Editor.OpenFilesManager.OpenFile(filename)     -- 'filename' should be 
         
         -- This will allow us to close a file with the middle mouse button.
         file.tab:OnMMBDown(function()
-            Editor.OpenFilesManager.CloseFile(file.tab.path);
+            Editor.OpenFilesManager.CloseFile(file.tab.path, true);
         end);
         
         Editor.OpenFilesManager.OpenFiles[filename] = file;
@@ -69,7 +69,7 @@ end
 function Editor.OpenFilesManager.CloseActiveFile()
     local activeTab = Editor.OpenFilesManager.TabBar:GetActiveTab();
     if activeTab ~= nil then
-        Editor.OpenFilesManager.CloseFile(activeTab.path);
+        Editor.OpenFilesManager.CloseFile(activeTab.path, true);
     end
 end
 
@@ -236,7 +236,7 @@ end
 -- @param file [in] The file object from Editor.OpenFilesManager.OpenFiles that is being closed.
 function Editor.OpenFilesManager._CloseFile(file, showSavePrompt)
     if file ~= nil then
-        if showSavePrompt == nil or (showSavePromp == true and file.isModified) then
+        if showSavePrompt and file.isModified then
             Editor.ShowYesNoCancelDialog("Save '" .. GTCore.IO.GetFileNameFromPath(file.path) .. "'?", function(result)
                 if result == Editor.YesNoCancelDialogResult.Yes then
                     Editor.OpenFilesManager.SaveFile(file.path);
