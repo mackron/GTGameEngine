@@ -63,3 +63,18 @@ dialog-footer
     padding-top:      4px
     border-top:       1px #ccc
 }
+
+
+yesnocancel-button includes button
+{
+    width:  80px
+    margin: 4px 0px
+}
+
+
+
+
+
+
+
+

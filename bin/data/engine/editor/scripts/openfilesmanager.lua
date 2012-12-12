@@ -51,8 +51,8 @@ function Editor.OpenFilesManager.OpenFile(filename)     -- 'filename' should be 
 end
 
 
-function Editor.OpenFilesManager.CloseFile(filename)
-    Editor.OpenFilesManager._CloseFile(Editor.OpenFilesManager.OpenFiles[filename]);
+function Editor.OpenFilesManager.CloseFile(filename, showSavePrompt)
+    Editor.OpenFilesManager._CloseFile(Editor.OpenFilesManager.OpenFiles[filename], showSavePrompt);
 end
 
 function Editor.OpenFilesManager.CloseAllFiles()
@@ -62,7 +62,7 @@ function Editor.OpenFilesManager.CloseAllFiles()
     end
 
     for i,value in ipairs(tempTable) do
-        Editor.OpenFilesManager._CloseFile(value);
+        Editor.OpenFilesManager._CloseFile(value, false);            -- Passing 'false' here means the save prompt will not be displayed if the file is marked as modified.
     end
 end
 
@@ -234,20 +234,33 @@ end
 -- Helper function for closing a file.
 --
 -- @param file [in] The file object from Editor.OpenFilesManager.OpenFiles that is being closed.
-function Editor.OpenFilesManager._CloseFile(file)
+function Editor.OpenFilesManager._CloseFile(file, showSavePrompt)
     if file ~= nil then
-        Editor.OnFileClosed(file.path);                         -- This is for the C++ side.
+        if showSavePrompt == nil or (showSavePromp == true and file.isModified) then
+            Editor.ShowYesNoCancelDialog("Save '" .. GTCore.IO.GetFileNameFromPath(file.path) .. "'?", function(result)
+                if result == Editor.YesNoCancelDialogResult.Yes then
+                    Editor.OpenFilesManager.SaveFile(file.path);
+                end
+                
+                if result ~= Editor.YesNoCancelDialogResult.Cancel then
+                    Editor.OpenFilesManager._CloseFile(file, false);    -- Call this same function again, but skip the dialog (the 'false' argument). This will cause the actual close operation to be performed.
+                end
+            end);
+        else
+            Editor.OnFileClosed(file.path);                             -- This is for the C++ side.
 
-        Editor.OpenFilesManager.TabBar:RemoveTab(file.tab);
-        Editor.OpenFilesManager.OpenFiles[file.path] = nil;
-        
-        if Editor.OpenFilesManager.TabBar:GetActiveTab() == nil then
-            EditorCenterCenterPanel:Hide();
-            Editor_MenuBar.File.Close:Disable();
-            Editor_MenuBar.File.CloseAll:Disable();
+            Editor.OpenFilesManager.TabBar:RemoveTab(file.tab);
+            Editor.OpenFilesManager.OpenFiles[file.path] = nil;
+            
+            if Editor.OpenFilesManager.TabBar:GetActiveTab() == nil then
+                EditorCenterCenterPanel:Hide();
+                Editor_MenuBar.File.Close:Disable();
+                Editor_MenuBar.File.CloseAll:Disable();
+            end
         end
     end
 end
+
 
 
 
