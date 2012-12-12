@@ -49,7 +49,7 @@ namespace GTEngine
 
 
                 // The file contents have been loaded, so now we need to create the text-box element that will display it.
-                auto textBoxElement = gui.CreateElement("<div parentid='Editor_TextEditor' styleclass='multiline-textbox' style='width:100%; height:100%; border:1px #222; vertical-align:top; font-family:liberation mono; font-size:10pt;' />");
+                auto textBoxElement = gui.CreateElement("<div parentid='Editor_TextEditor' styleclass='text-editor-text-area' />");
                 if (textBoxElement != nullptr)
                 {
                     // The element has been created, but we need to execute a script to have it turn into a proper multi-line text box.
@@ -62,6 +62,7 @@ namespace GTEngine
                     if (textAreaElement != nullptr)
                     {
                         textAreaElement->SetText(fileContent.c_str());
+                        textAreaElement->SetStyleAttribute("background-color", "inherit");
 
                         // Now we just need to create a new state object and make it the current one.
                         if (this->currentState != nullptr)

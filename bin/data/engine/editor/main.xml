@@ -304,6 +304,17 @@ hidden by default.
     {
         border: 1px #222
     }
+    
+    text-editor-text-area includes multiline-textbox
+    {
+        width:            100%
+        height:           100%
+        border:           1px #222
+        background-color: #333
+        vertical-align:   top
+        font-family:      liberation mono
+        font-size:        10pt
+    }
 </style>
 
 
