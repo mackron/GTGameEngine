@@ -144,16 +144,7 @@ function GTGUI.Element:DataExplorer()
     
     self.TreeView:OnItemPicked(function(data)
         if not data.item.isDirectory then
-            -- We need to activate the item's tab.
-            local tab = Editor_TabBar.OpenTabs[data.item.path];
-            if tab == nil then
-                tab = Editor_TabBar:AddTab(data.item:GetText());
-                tab.path = data.item.path;
-                
-                Editor_TabBar.OpenTabs[data.item.path] = tab;
-            end
-            
-            Editor_TabBar:ActivateTab(tab);
+            Editor.OpenFilesManager.OpenFile(data.item.path);
         end
     end)
     

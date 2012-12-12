@@ -11,8 +11,7 @@ namespace GTEngine
 {
     Editor_TextEditor::Editor_TextEditor(Editor &editor)
         : editor(editor), GUI(),
-          currentState(nullptr), loadedStates(),
-          textAreaEventHandler()
+          currentState(nullptr), loadedStates()
     {
     }
 
@@ -24,11 +23,11 @@ namespace GTEngine
     {
     }
 
-    bool Editor_TextEditor::LoadFile(const char* fileName)
+    bool Editor_TextEditor::LoadFile(const char* absolutePath)
     {
         // What we do here is first determine whether or not the file has already been loaded. If it has, we just show the existing text box. Otherwise, we need
         // to create a new one.
-        auto iState = this->loadedStates.Find(fileName);
+        auto iState = this->loadedStates.Find(absolutePath);
         if (iState != nullptr)
         {
             if (this->currentState != nullptr)
@@ -43,7 +42,7 @@ namespace GTEngine
         {
             // The file is not currently open, so we will need to open it now.
             GTCore::String fileContent;
-            if (GTCore::IO::OpenAndReadTextFile(fileName, fileContent))
+            if (GTCore::IO::OpenAndReadTextFile(absolutePath, fileContent))
             {
                 auto &gui    = this->editor.GetGame().GetGUI();
                 auto &script = this->editor.GetGame().GetScript();
@@ -64,22 +63,19 @@ namespace GTEngine
                     {
                         textAreaElement->SetText(fileContent.c_str());
 
-                        // Now we need to attach an event handler to the text area so we can detect changes to the text. We propagate this to the scripting
-                        // environment so that the owner tab can be marked as modified.
-                        textAreaElement->AttachEventHandler(this->textAreaEventHandler);
-
-
                         // Now we just need to create a new state object and make it the current one.
                         if (this->currentState != nullptr)
                         {
                             this->currentState->textBox->Hide();
                         }
 
-                        this->currentState = new State;
-                        this->currentState->textBox  = textBoxElement;
-                        this->currentState->textArea = textAreaElement;
+                        this->currentState = new State(textBoxElement, textAreaElement, absolutePath);
+                        this->loadedStates.Add(absolutePath, this->currentState);
 
-                        this->loadedStates.Add(fileName, this->currentState);
+
+                        // Now we need to attach an event handler to the text area so we can detect changes to the text. We propagate this to the scripting
+                        // environment so that the owner tab can be marked as modified.
+                        textAreaElement->AttachEventHandler(*this->currentState->textAreaEventHandler);
                     }
                     else
                     {
@@ -100,27 +96,29 @@ namespace GTEngine
         return true;
     }
 
-    bool Editor_TextEditor::SaveFile(const char* fileName)
+    bool Editor_TextEditor::SaveFile(const char* absolutePath)
     {
-        auto iState = this->loadedStates.Find(fileName);
+        auto iState = this->loadedStates.Find(absolutePath);
         if (iState != nullptr)
         {
+            iState->value->isMarkedAsModified = false;
+
             auto textArea = iState->value->textArea;
             assert(textArea != nullptr);
 
             auto text = textArea->GetText();
             if (text != nullptr)
             {
-                return GTCore::IO::OpenAndWriteTextFile(fileName, text);
+                return GTCore::IO::OpenAndWriteTextFile(absolutePath, text);
             }
         }
 
         return false;
     }
 
-    void Editor_TextEditor::CloseFile(const char* fileName)
+    void Editor_TextEditor::CloseFile(const char* absolutePath)
     {
-        auto iState = this->loadedStates.Find(fileName);
+        auto iState = this->loadedStates.Find(absolutePath);
         if (iState != nullptr)
         {
             this->GetGame().GetGUI().DeleteElement(iState->value->textBox);
@@ -133,7 +131,7 @@ namespace GTEngine
 
 
             delete iState->value;
-            this->loadedStates.Remove(fileName);
+            this->loadedStates.Remove(absolutePath);
         }
     }
 
@@ -151,16 +149,38 @@ namespace GTEngine
 
 
     //////////////////////////////////////////////////
+    // State
+
+    Editor_TextEditor::State::State(GTGUI::Element* textBoxIn, GTGUI::Element* textAreaIn, const char* absolutePathIn)
+        : textBox(textBoxIn), textArea(textAreaIn), textAreaEventHandler(new TextAreaEventHandler(this)), absolutePath(absolutePathIn), isMarkedAsModified(false)
+    {
+    }
+
+    Editor_TextEditor::State::~State()
+    {
+        delete this->textAreaEventHandler;
+    }
+
+
+    //////////////////////////////////////////////////
     // TextAreaEventHandler
+
+    Editor_TextEditor::TextAreaEventHandler::TextAreaEventHandler(State* stateIn)
+        : GTGUI::ElementEventHandler(), state(stateIn)
+    {
+    }
 
     void Editor_TextEditor::TextAreaEventHandler::OnTextChanged(GTGUI::Element &element)
     {
+        assert(this->state != nullptr);
+
         // The scripting environment needs to know that the element has been modified.
         auto &script = element.GetServer().GetScriptServer().GetScript();
 
-        if (element.IsVisible())
+        if (!this->state->isMarkedAsModified)
         {
-            script.Execute("Editor_TabBar:GetActiveTab():MarkAsModified()");
+            script.Execute(GTCore::String::CreateFormatted("Editor.MarkFileAsModified('%s')", this->state->absolutePath.c_str()).c_str());
+            this->state->isMarkedAsModified = true;
         }
     }
 }

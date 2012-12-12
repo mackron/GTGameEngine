@@ -25,18 +25,18 @@ namespace GTEngine
 
         /// Loads the given text file.
         ///
-        /// @param fileName [in] The name of the file to load.
-        bool LoadFile(const char* fileName);
+        /// @param fileName [in] The absolute path of the file to load.
+        bool LoadFile(const char* absolutePath);
 
         /// Saves the given text file.
         ///
-        /// @param fileName [in] The name of the file to save.
-        bool SaveFile(const char* fileName);
+        /// @param fileName [in] The absolute path of the file to save.
+        bool SaveFile(const char* absolutePath);
 
         /// Closes the given file.
         ///
-        /// @param fileName [in] The name of the file to close.
-        void CloseFile(const char* fileName);
+        /// @param fileName [in] The absolute path of the file to close.
+        void CloseFile(const char* absolutePath);
 
 
         /// Retrieves a reference to the game.
@@ -63,12 +63,14 @@ namespace GTEngine
 
         
         /// Structure containing the editor state for each loaded image.
+        struct TextAreaEventHandler;
         struct State
         {
-            State()
-                : textBox(nullptr), textArea(nullptr)
-            {
-            }
+            /// Constructor.
+            State(GTGUI::Element* textBox, GTGUI::Element* textArea, const char* absolutePath);
+
+            /// Destructor.
+            ~State();
 
 
             /// The main text box element.
@@ -76,6 +78,15 @@ namespace GTEngine
 
             /// The text area element. This is a child of textBox.
             GTGUI::Element* textArea;
+
+            /// The event handler attached to the text area.
+            TextAreaEventHandler* textAreaEventHandler;
+
+            /// The absolute path of the text file.
+            GTCore::String absolutePath;
+
+            /// Keeps track of whether or not the file has been marked as modified.
+            bool isMarkedAsModified;
         };
 
 
@@ -89,10 +100,16 @@ namespace GTEngine
         /// The event handler that will be attached to the text area's. This is only used to notify the scripting environment of a change to the text.
         struct TextAreaEventHandler : public GTGUI::ElementEventHandler
         {
+            /// Constructor.
+            TextAreaEventHandler(State* state);
+
             /// GTGUI::ElementEventHandler::OnTextChanged().
             void OnTextChanged(GTGUI::Element &element);
 
-        }textAreaEventHandler;
+
+            /// A pointer to the state object containing information for use by the event handler.
+            State* state;
+        };
 
 
     private:    // No copying.

@@ -228,6 +228,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdSArray.h" />
     <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdVector.h" />
     <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdVersion.h" />
+    <ClInclude Include="..\..\..\include\GTEngine\IO.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Logging.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Material.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\MaterialLibrary.hpp" />
@@ -386,6 +387,7 @@
     <ClCompile Include="..\..\..\source\HACD\hacdMeshDecimator.cpp" />
     <ClCompile Include="..\..\..\source\HACD\hacdMicroAllocator.cpp" />
     <ClCompile Include="..\..\..\source\HACD\hacdRaycastMesh.cpp" />
+    <ClCompile Include="..\..\..\source\IO.cpp" />
     <ClCompile Include="..\..\..\source\Logging.cpp" />
     <ClCompile Include="..\..\..\source\Material.cpp" />
     <ClCompile Include="..\..\..\source\MaterialLibrary.cpp" />

@@ -2,10 +2,8 @@
 function GTGUI.Element:TabBarTab(text)
     self.text        = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='tabbar-tab-text'        />");
     self.borderHider = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='tabbar-tab-borderhider' />");
-    
-    self.isActive   = false;
-    self.isModified = false;
-    
+    self.isActive    = false;
+
     function self:Activate()
         if not self.isActive then
             self.isActive = true;
@@ -24,44 +22,9 @@ function GTGUI.Element:TabBarTab(text)
     end
     
     
-    function self:IsModified()
-        return self.isModified;
-    end
-    
-    function self:MarkAsModified()
-        if not self.isModified then
-            self.isModified = true;
-            self.text:SetText(self.text:GetText() .. "*");
-            
-            -- Menu items need to be enabled.
-            Editor_MenuBar.File.Save:Enable();
-            Editor_MenuBar.File.SaveAll:Enable();
-        end
-    end
-    
-    function self:UnmarkAsModified()
-        if self.isModified then
-            self.isModified = false;
-            self.text:SetText(string.sub(self.text:GetText(), 0, -2));
-            
-            -- Here we keep our menu items up-to-date.
-            Editor_MenuBar.File.Save:Disable();
-            
-            if not Editor_TabBar:HasModifiedItem() then
-                Editor_MenuBar.File.SaveAll:Disable();
-            end
-        end
-    end
-    
-    
     self:OnLMBDown(function()
         self:Activate();
     end)
-    
-    self:OnMMBDown(function()
-        self.Parent:RemoveTab(self);
-    end)
-    
     
     self.text:SetText(text);
     
@@ -78,32 +41,24 @@ function GTGUI.Element:TabBar()
         
         self:OnTabAdded({tab = tab});
         
-        -- The center must be visible. It will be made invisible when there is not tabs open.
-        EditorCenterCenterPanel:Show();
-        Editor_MenuBar.File.Close:Enable();
-        Editor_MenuBar.File.CloseAll:Enable();
-        
-
         return tab:TabBarTab(text);
     end
     
     function self:RemoveTab(tab)
-        local newActiveTab = self.activeTab;
-        if tab == self.activeTab then
-            newActiveTab = self.activeTab:GetNextSibling() or self.activeTab:GetPrevSibling();
-            self:DeactivateActiveTab();
-        end
-        
-        self:OnTabRemoved({tab = tab});
-        
-        GTGUI.Server.DeleteElement(tab);
+        if tab then
+            local newActiveTab = self.activeTab;
+            if tab == self.activeTab then
+                newActiveTab = self.activeTab:GetNextSibling() or self.activeTab:GetPrevSibling();
+                self:DeactivateActiveTab();
+            end
 
-        if newActiveTab ~= nil then
-            self:ActivateTab(newActiveTab);
-        else
-            EditorCenterCenterPanel:Hide();
-            Editor_MenuBar.File.Close:Disable();
-            Editor_MenuBar.File.CloseAll:Disable();
+            self:OnTabRemoved({tab = tab});
+            
+            GTGUI.Server.DeleteElement(tab);
+
+            if newActiveTab ~= nil then
+                self:ActivateTab(newActiveTab);
+            end
         end
     end
     
@@ -130,23 +85,11 @@ function GTGUI.Element:TabBar()
     end
     
     function self:__ActivateTab(tab)
-        if self.activeTab ~= tab then
+        if self.activeTab ~= tab then                       -- This is a super important check. Leave this.
             self:DeactivateActiveTab();
             self.activeTab = tab;
             
             self:OnTabActivated({tab = tab});
-            
-            if self.activeTab:IsModified() then
-                Editor_MenuBar.File.Save:Enable();
-            else
-                Editor_MenuBar.File.Save:Disable();
-            end
-            
-            if Editor_TabBar:HasModifiedItem() then
-                Editor_MenuBar.File.SaveAll:Enable();
-            else
-                Editor_MenuBar.File.SaveAll:Disable();
-            end
         end
     end
     
@@ -163,16 +106,6 @@ function GTGUI.Element:TabBar()
     
     function self:GetActiveTab()
         return self.activeTab;
-    end
-    
-    
-    function self:HasModifiedItem()
-        for key,value in pairs(self.Children) do
-            if value.isModified then
-                return true;
-            end
-        end
-        return false;
     end
     
     

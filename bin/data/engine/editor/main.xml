@@ -28,6 +28,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script url="scripts/modeleditor-animationspanel.lua" />
 <script url="scripts/modeleditor-cdpanel.lua"         />
 
+<script url="scripts/openfilesmanager.lua" />
+
 
 <!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
 <script>
@@ -53,56 +55,44 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <!-- Model Editor Dialog Box -->
 <script>
 <![CDATA[
-    
+
     -- Saves an item based on it's file name.
     function Editor.SaveItem(path)
-        if GTEngine.IsModelFile(path) then
-            if not Editor.ModelEditor.SaveModel(path) then
-                CommandErrorBox:SetText("Failed to save '" .. path .. "'");
-            end
-        elseif GTEngine.IsImageFile(path) then
-        else                                                        -- Assume a text file if nothing else.
-            if not Editor.TextEditor.SaveFile(path) then
-                CommandErrorBox:SetText("Failed to save '" .. path .. "'");
-            end
-        end
+        Editor.OpenFilesManager.SaveFile(path);
     end
     
     -- Saves the current item.
     function Editor.SaveActiveItem()
-        local activeTab = Editor_TabBar:GetActiveTab();
-        if activeTab ~= nil and activeTab:IsModified() then
-            Editor.SaveItem(activeTab.path);
-            activeTab:UnmarkAsModified();
-        end
+        Editor.OpenFilesManager.SaveActiveFile();
     end
     
     -- Saves all open items.
     function Editor.SaveAllItems()
-        for key,value in pairs(Editor_TabBar.Children) do
-            if value:IsModified() then
-                Editor.SaveItem(value.path);
-                value:UnmarkAsModified();
-            end
-        end
+        Editor.OpenFilesManager.SaveAllFiles();
     end
     
     
     -- Closes the current item.
     function Editor.CloseActiveItem()
-        Editor_TabBar:RemoveActiveTab();
+        Editor.OpenFilesManager.CloseActiveFile();
     end
     
     -- Closes all currently opened items.
     function Editor.CloseAllItems()
-        Editor_TabBar:RemoveAllTabs();
+        Editor.OpenFilesManager.CloseAllFiles();
     end
     
+    -- Marks a file as modified.
+    function Editor.MarkFileAsModified(filename)
+        Editor.OpenFilesManager.MarkFileAsModified(filename);
+    end
     
-    -- This will keep track of the currently opened sub-editor.
-    OpenedSubEditor   = nil;
-    PreviousSubEditor = nil;
+    -- Marks the active file as modified.
+    function Editor.MarkActiveFileAsModified(filename)
+        Editor.OpenFilesManager.MarkActiveFileAsModified(filename);
+    end
     
+
     
     -- Here we're going to watch for some keyboard shortcuts.
     EditorMain:WatchKeyPressed(function(data)
@@ -158,60 +148,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     Editor_DataExplorer:DataExplorer();
     Editor_TabBar:TabBar();
-    Editor_TabBar.OpenTabs = {};       -- Just contains the currently opened tabs, mapped to their file path.
-    
-    Editor_TabBar:OnTabAdded(function(data)
-    end)
-    
-    Editor_TabBar:OnTabRemoved(function(data)
-        local filename = data.tab.path;
-        if GTEngine.IsModelFile(filename) then
-            Editor.OnModelClosed(filename);
-        elseif GTEngine.IsImageFile(filename) then
-            Editor.OnImageClosed(filename);
-        else                                                        -- Assume a text file if nothing else.
-            Editor.OnTextFileClosed(filename);
-        end
-    
-        if data.tab.path then
-            Editor_TabBar.OpenTabs[data.tab.path] = nil;
-        end
-    end)
-    
-    
-    -- The way we do tab switching is to only hide/show the sub editor if the new one is different to the old. The reason for this is that
-    -- hiding a 3D viewport will cause a resize which will in turn cause a new framebuffer to be generated. Due to the multithreaded environment,
-    -- this will cause a slight flicker.
-    Editor_TabBar:OnTabActivated(function(data)
-        -- We need to show the appropriate sub-editor. We determine this from the path.
-        local filename = data.tab.path;
-        if GTEngine.IsModelFile(filename) then
-            OpenedSubEditor = Editor_ModelEditor;
-            Editor.OnModelActivated(filename);
-        elseif GTEngine.IsImageFile(filename) then
-            OpenedSubEditor = Editor_ImageEditor;
-            Editor.OnImageActivated(filename);
-        else                                                        -- Assume a text file if nothing else.
-            OpenedSubEditor = Editor_TextEditor;
-            Editor.OnTextFileActivated(filename);
-        end
-        
-        if OpenedSubEditor ~= PreviousSubEditor and PreviousSubEditor ~= nil then
-            PreviousSubEditor:Hide();
-        end
-        
-        if OpenedSubEditor ~= nil then
-            OpenedSubEditor:Show();
-        end
-    end)
-    
-    Editor_TabBar:OnTabDeactivated(function(data)
-        if OpenedSubEditor ~= nil then
-            PreviousSubEditor = OpenedSubEditor;
-            OpenedSubEditor   = nil;
-        end
-    end)
-    
     
     
     
@@ -238,6 +174,11 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     Editor_ModelEditor_Panel_Animations:Collapse();
     Editor_ModelEditor_Panel_CD:Collapse();
+    
+    
+    
+    -- Here we startup the open files manager. This depends on a few things, so we need to start this up after dependencies are started up.
+    Editor.OpenFilesManager.Startup(Editor_TabBar, Editor_ModelEditor, Editor_ImageEditor, Editor_TextEditor);
 ]]>
 </script>
 
