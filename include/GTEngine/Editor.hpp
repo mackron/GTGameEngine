@@ -58,6 +58,14 @@ namespace GTEngine
               Editor_ModelEditor & GetModelEditor()       { return this->modelEditor; }
         const Editor_ModelEditor & GetModelEditor() const { return this->modelEditor; }
 
+        /// Retrieves a reference to the image sub-editor.
+              Editor_ImageEditor & GetImageEditor()       { return this->imageEditor; }
+        const Editor_ImageEditor & GetImageEditor() const { return this->imageEditor; }
+
+        /// Retrieves a reference to the text sub-editor.
+              Editor_TextEditor & GetTextEditor()       { return this->textEditor; }
+        const Editor_TextEditor & GetTextEditor() const { return this->textEditor; }
+
 
 
         ///////////////////////////////////////////////
@@ -238,6 +246,11 @@ namespace GTEngine
 
                 static int PlayAnimation(GTCore::Script &script);
                 static int StopAnimation(GTCore::Script &script);
+            };
+
+            struct TextEditorFFI
+            {
+                static int SaveFile(GTCore::Script &script);
             };
         };
     };
