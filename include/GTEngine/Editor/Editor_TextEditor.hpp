@@ -28,6 +28,11 @@ namespace GTEngine
         /// @param fileName [in] The name of the file to load.
         bool LoadFile(const char* fileName);
 
+        /// Saves the given text file.
+        ///
+        /// @param fileName [in] The name of the file to save.
+        bool SaveFile(const char* fileName);
+
         /// Closes the given file.
         ///
         /// @param fileName [in] The name of the file to close.

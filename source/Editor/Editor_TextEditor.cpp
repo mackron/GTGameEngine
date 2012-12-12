@@ -100,6 +100,24 @@ namespace GTEngine
         return true;
     }
 
+    bool Editor_TextEditor::SaveFile(const char* fileName)
+    {
+        auto iState = this->loadedStates.Find(fileName);
+        if (iState != nullptr)
+        {
+            auto textArea = iState->value->textArea;
+            assert(textArea != nullptr);
+
+            auto text = textArea->GetText();
+            if (text != nullptr)
+            {
+                return GTCore::IO::OpenAndWriteTextFile(fileName, text);
+            }
+        }
+
+        return false;
+    }
+
     void Editor_TextEditor::CloseFile(const char* fileName)
     {
         auto iState = this->loadedStates.Find(fileName);

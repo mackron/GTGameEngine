@@ -250,8 +250,11 @@ namespace GTEngine
         script.Execute
         (
             "Editor.ModelEditor    = {};"
+            "Editor.ImageEditor    = {};"
+            "Editor.SoundEditor    = {};"
             "Editor.MaterialEditor = {};"
             "Editor.SceneEditor    = {};"
+            "Editor.TextEditor     = {};"
         );
 
         script.GetGlobal("Editor");
@@ -286,6 +289,15 @@ namespace GTEngine
 
                 script.SetTableFunction(-1, "PlayAnimation", FFI::ModelEditorFFI::PlayAnimation);
                 script.SetTableFunction(-1, "StopAnimation", FFI::ModelEditorFFI::StopAnimation);
+            }
+            script.Pop(1);
+
+
+            script.Push("TextEditor");
+            script.GetTableValue(-2);
+            if (script.IsTable(-1))
+            {
+                script.SetTableFunction(-1, "SaveFile", FFI::TextEditorFFI::SaveFile);
             }
             script.Pop(1);
         }
@@ -429,6 +441,17 @@ namespace GTEngine
 
         game.GetEditor().GetModelEditor().StopAnimation();
         return 0;
+    }
+
+
+
+    ////////////////////////////////////////////////////
+    // TextFileEditor
+
+    int Editor::FFI::TextEditorFFI::SaveFile(GTCore::Script &script)
+    {
+        script.Push(FFI::GetEditor(script).GetTextEditor().SaveFile(script.ToString(1)));
+        return 1;
     }
 }
 

@@ -60,6 +60,11 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
             if not Editor.ModelEditor.SaveModel(path) then
                 CommandErrorBox:SetText("Failed to save '" .. path .. "'");
             end
+        elseif GTEngine.IsImageFile(path) then
+        else                                                        -- Assume a text file if nothing else.
+            if not Editor.TextEditor.SaveFile(path) then
+                CommandErrorBox:SetText("Failed to save '" .. path .. "'");
+            end
         end
     end
     
