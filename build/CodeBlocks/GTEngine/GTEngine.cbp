@@ -162,6 +162,9 @@
 		<Unit filename="../../../include/GTEngine/DefaultSceneUpdateManager.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/Editor3DViewportEventHandler.hpp" />
+		<Unit filename="../../../include/GTEngine/Editor/Editor_ImageEditor.hpp" />
+		<Unit filename="../../../include/GTEngine/Editor/Editor_ModelEditor.hpp" />
+		<Unit filename="../../../include/GTEngine/Editor/Editor_TextEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Errors.hpp" />
 		<Unit filename="../../../include/GTEngine/FontManager.hpp" />
 		<Unit filename="../../../include/GTEngine/GTEngine.hpp" />
@@ -187,6 +190,7 @@
 		<Unit filename="../../../include/GTEngine/HACD/hacdSArray.h" />
 		<Unit filename="../../../include/GTEngine/HACD/hacdVector.h" />
 		<Unit filename="../../../include/GTEngine/HACD/hacdVersion.h" />
+		<Unit filename="../../../include/GTEngine/IO.hpp" />
 		<Unit filename="../../../include/GTEngine/Logging.hpp" />
 		<Unit filename="../../../include/GTEngine/Material.hpp" />
 		<Unit filename="../../../include/GTEngine/MaterialLibrary.hpp" />
@@ -317,6 +321,7 @@
 		<Unit filename="../../../source/Editor/Editor3DViewportEventHandler.cpp" />
 		<Unit filename="../../../source/Editor/Editor_ImageEditor.cpp" />
 		<Unit filename="../../../source/Editor/Editor_ModelEditor.cpp" />
+		<Unit filename="../../../source/Editor/Editor_TextEditor.cpp" />
 		<Unit filename="../../../source/Errors.cpp" />
 		<Unit filename="../../../source/FontManager.cpp" />
 		<Unit filename="../../../source/GTEngine.cpp" />
@@ -337,6 +342,7 @@
 		<Unit filename="../../../source/HACD/hacdMeshDecimator.cpp" />
 		<Unit filename="../../../source/HACD/hacdMicroAllocator.cpp" />
 		<Unit filename="../../../source/HACD/hacdRaycastMesh.cpp" />
+		<Unit filename="../../../source/IO.cpp" />
 		<Unit filename="../../../source/Logging.cpp" />
 		<Unit filename="../../../source/Material.cpp" />
 		<Unit filename="../../../source/MaterialLibrary.cpp" />

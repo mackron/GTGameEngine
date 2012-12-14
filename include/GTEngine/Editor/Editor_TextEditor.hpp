@@ -61,7 +61,7 @@ namespace GTEngine
         }GUI;
 
 
-        
+
         /// Structure containing the editor state for each loaded image.
         struct TextAreaEventHandler;
         struct State
@@ -87,6 +87,11 @@ namespace GTEngine
 
             /// Keeps track of whether or not the file has been marked as modified.
             bool isMarkedAsModified;
+
+
+        private:    // No copying.
+            State(const State &);
+            State & operator=(const State &);
         };
 
 
@@ -109,6 +114,11 @@ namespace GTEngine
 
             /// A pointer to the state object containing information for use by the event handler.
             State* state;
+
+
+        private:    // No copying.
+            TextAreaEventHandler(const TextAreaEventHandler &);
+            TextAreaEventHandler & operator=(const TextAreaEventHandler &);
         };
 
 

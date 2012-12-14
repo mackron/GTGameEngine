@@ -1,11 +1,11 @@
 
 <shader id="Engine_GUI_VS">
-    attribute float2 VertexInput_Position;
-    attribute float2 VertexInput_TexCoord;
-    attribute float4 VertexInput_Colour;
+    attribute vec2 VertexInput_Position;
+    attribute vec2 VertexInput_TexCoord;
+    attribute vec4 VertexInput_Colour;
     
-    varying float2 VertexOutput_TexCoord;
-    varying float4 VertexOutput_Colour;
+    varying vec2 VertexOutput_TexCoord;
+    varying vec4 VertexOutput_Colour;
     
     uniform mat4 Projection;
     uniform vec2 Offset;
@@ -19,8 +19,8 @@
 </shader>
 
 <shader id="Engine_GUI_FS">
-    varying float2 VertexOutput_TexCoord;
-    varying float4 VertexOutput_Colour;
+    varying vec2 VertexOutput_TexCoord;
+    varying vec4 VertexOutput_Colour;
     
     uniform sampler2D Texture;
     
