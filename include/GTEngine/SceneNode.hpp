@@ -410,7 +410,7 @@ namespace GTEngine
         /// @param direction [in] The direction to look in.
         /// @param up        [in] The up direction. Defaults to (0, 1, 0). Must be normalized.
         void LookInDirection(const glm::vec3 &direction, const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 0.0f));
-        void LookInDirection(float directionX, float directionY, float directionZ, float upX = 0.0f, float upY = 0.0f, float upZ = 0.0f) { this->LookInDirection(glm::vec3(directionX, directionY, directionZ), glm::vec3(upX, upY, upZ)); }
+        void LookInDirection(float directionX, float directionY, float directionZ, float upX = 0.0f, float upY = 1.0f, float upZ = 0.0f) { this->LookInDirection(glm::vec3(directionX, directionY, directionZ), glm::vec3(upX, upY, upZ)); }
 
 
 

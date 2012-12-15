@@ -55,7 +55,7 @@ namespace GTEngine
         void SetWorldPosition(const glm::vec3 &position) { this->sceneNode.SetWorldPosition(position); }
 
         /// Retrieves the world position of the object.
-        glm::vec3 GetWorldPosition() const { return this->sceneNode.GetWorldPosition() ;}
+        glm::vec3 GetWorldPosition() const { return this->sceneNode.GetWorldPosition(); }
 
 
 
