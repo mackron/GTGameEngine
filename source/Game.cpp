@@ -965,6 +965,11 @@ namespace GTEngine
     {
         this->gui.SetViewportSize(e.size.width, e.size.height);
         this->OnSize(e.size.width, e.size.height);
+
+        if (this->currentGameState != nullptr)
+        {
+            this->currentGameState->OnSize(e.size.width, e.size.height);
+        }
     }
 
     void Game::HandleEvent_OnMouseMove(GameEvent &e)
