@@ -90,7 +90,7 @@ namespace GTEngine
         /// @param targetPosition     [in, out] The target position.
         ///
         /// @remarks
-        ///     A sub-class can control the movement of the projectile by chaning the target position. The direction and velocity of
+        ///     A sub-class can control the movement of the projectile by changing the target position. The direction and velocity of
         ///     the projectile can be determined by looking at the current and target positions. This could be useful for things such
         ///     as guided rockets or more exotic function based movement. Indeed, the movement of the projectile can be fully customized
         ///     by simply changing the target position. Keep in mind, however, that default computations will always be performed.

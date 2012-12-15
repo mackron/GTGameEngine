@@ -341,6 +341,9 @@ namespace GTEngine
 
     void Scene::Update(double deltaTimeInSeconds)
     {
+        this->OnUpdate(deltaTimeInSeconds);
+
+
         // Before doing anything we're going to step the dynamics.
         if (!this->IsPaused())
         {
@@ -608,6 +611,11 @@ namespace GTEngine
     void Scene::FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output)
     {
         this->navigationMesh.FindPath(start, end, output);
+    }
+
+
+    void Scene::OnUpdate(double)
+    {
     }
 
 

@@ -466,6 +466,14 @@ namespace GTEngine
 
     public: // Events.
 
+        /// Called when the scene is updated.
+        ///
+        /// @remarks
+        ///     This is called at the beginning of the update.
+        virtual void OnUpdate(double deltaTimeInSeconds);
+
+
+
         /// Called after a scene node is added to the scene. See remarks.
         ///
         /// @remarks
