@@ -85,4 +85,8 @@ namespace GTEngine
     void GameState::OnResume()
     {
     }
+
+    void GameState::OnSize(unsigned int, unsigned int)
+    {
+    }
 }

@@ -101,6 +101,12 @@ namespace GTEngine
         virtual void OnResume();
 
 
+        /// Called when the game window has been resized.
+        ///
+        /// @param width  [in] The new width of the game window.
+        /// @param height [in] The new height of the game window.
+        virtual void OnSize(unsigned int width, unsigned int height);
+
 
     private:
 
