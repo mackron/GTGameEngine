@@ -312,8 +312,9 @@ hidden by default.
         border:           1px #222
         background-color: #333
         vertical-align:   top
-        font-family:      liberation mono
-        font-size:        10pt
+        font-family:      freemono
+        font-size:        10.5pt
+        text-color:       #fff
     }
 </style>
 
