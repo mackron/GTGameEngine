@@ -63,6 +63,7 @@ namespace GTEngine
                     {
                         textAreaElement->SetText(fileContent.c_str());
                         textAreaElement->SetStyleAttribute("background-color", "inherit");
+                        textAreaElement->SetStyleAttribute("text-color",       "inherit");
 
                         // Now we just need to create a new state object and make it the current one.
                         if (this->currentState != nullptr)
