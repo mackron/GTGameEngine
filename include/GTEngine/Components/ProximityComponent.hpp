@@ -24,12 +24,15 @@ namespace GTEngine
 
         /// Sets the collision shape to a box.
         void SetBoxShape(float halfX, float halfY, float halfZ);
+        void SetBoxShape(const glm::vec3 halfSize) { this->SetBoxShape(halfSize.x, halfSize.y, halfSize.z); }
         
         /// Adds a sphere collision shape.
         void SetSphereShape(float radius);
 
         /// Adds an elipsoid collision shape.
         void SetEllipsoidShape(float radiusX, float radiusY, float radiusZ);
+        void SetEllipsoidShape(const glm::vec3 halfRadius) { this->SetEllipsoidShape(halfRadius.x, halfRadius.y, halfRadius.z); }
+
 
 
         /// Retrieves a reference to the internal ghost object.
