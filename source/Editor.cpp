@@ -38,7 +38,9 @@ namespace GTEngine
             // We need to grab the main elements from the server.
             if (guiServer.LoadFromFile("engine/editor/main.xml"))
             {
-                this->GUI.EditorMain = guiServer.GetElementByID("EditorMain");
+                this->GUI.EditorMain   = guiServer.GetElementByID("EditorMain");
+                this->GUI.Editor_Delta = guiServer.GetElementByID("Editor_Delta");
+                this->GUI.Editor_FPS   = guiServer.GetElementByID("Editor_FPS");
 
                 // We actually want the editor element to be the first child of the root. If we don't do this, sometimes a game can be in a state
                 // where the editor will be placed underneath another GUI element, causing it to not look quite right.
@@ -128,6 +130,33 @@ namespace GTEngine
     void Editor::Update(double deltaTimeInSeconds)
     {
         this->modelEditor.Update(deltaTimeInSeconds);
+
+
+        // We need to update the profiling GUI.
+        if (GTCore::Timing::GetTimeInSeconds() - this->lastProfilingUpdateTime > 1.0)
+        {
+            this->lastProfilingUpdateTime = GTCore::Timing::GetTimeInSeconds();
+
+
+            double delta = this->game.GetProfiler().GetAverageFrameTime();
+            double fps   = 0.0;
+
+            if (delta > 0.0)
+            {
+                fps = 1.0 / delta;
+            }
+
+
+            char deltaStr[64];
+            GTCore::IO::snprintf(deltaStr, 64, "%f", delta);
+
+            char fpsStr[64];
+            GTCore::IO::snprintf(fpsStr, 64, "%.1f", fps);
+                    
+            
+            this->GUI.Editor_Delta->SetText(deltaStr);
+            this->GUI.Editor_FPS->SetText(fpsStr);
+        }
     }
 
 

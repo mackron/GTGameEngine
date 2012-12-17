@@ -10,6 +10,7 @@
 #include "GameUpdateJob.hpp"
 #include "DataFilesWatcher.hpp"
 #include "GameState.hpp"
+#include "Profiler.hpp"
 #include "Rendering/RenderCommands/RCSetFramebuffer.hpp"
 #include <GTCore/Threading.hpp>
 #include <GTCore/Timing.hpp>
@@ -296,6 +297,13 @@ namespace GTEngine
 
         /// Determines whether or not automatic script reloading is enabled.
         bool IsScriptAutoReloadEnabled() const { return this->isAutoScriptReloadEnabled; }
+
+
+
+        /// Retrieves the profiler.
+              Profiler & GetProfiler()       { return this->profiler; }
+        const Profiler & GetProfiler() const { return this->profiler; }
+
 
 
 
@@ -620,14 +628,18 @@ namespace GTEngine
         Editor editor;
 
 
+        /// The profiler.
+        Profiler profiler;
+
+
         /// Structure containing the debuggin GUI elements.
         struct _DebuggingGUI
         {
-            _DebuggingGUI()
-                : gui(nullptr),
+            _DebuggingGUI(Game &gameIn)
+                : game(gameIn), gui(nullptr),
                   DebuggingMain(nullptr),
                   FPSValue(nullptr), DeltaValue(nullptr),
-                  updateIntervalInSeconds(0.5), timer(), totalStepCount(0), averageDelta(0.0),
+                  updateIntervalInSeconds(0.5), lastUpdateTime(0.0),
                   isInitialised(false), isShowing(false)
             {
             }
@@ -653,31 +665,61 @@ namespace GTEngine
 
             // Updates the debugging information. This should be called once per frame.
             // Returns true if the debugging information was refreshed based on the update interval. False otherwise.
-            void Step()
+            void Update(Profiler &profiler)
             {
-                if (this->timer.GetTimeSinceLastUpdate() >= updateIntervalInSeconds)
+                if (GTCore::Timing::GetTimeInSeconds() - this->lastUpdateTime >= this->updateIntervalInSeconds)
                 {
-                    this->averageDelta   = this->timer.GetTimeSinceLastUpdate() / static_cast<double>(GTCore::Max(this->totalStepCount, 1U));
-                    this->totalStepCount = 0;
+                    this->lastUpdateTime = GTCore::Timing::GetTimeInSeconds();
 
-                    this->timer.Update();
+                    double frameTime = profiler.GetAverageFrameTime();
+                    double fps       = 0.0;
 
-                    char tempStr[64];
+                    if (frameTime > 0.0)
+                    {
+                        fps = 1.0 / profiler.GetAverageFrameTime();
+                    }
+
+                    char fpsStr[64];
+                    GTCore::IO::snprintf(fpsStr, 64, "%.1f", fps);
+                    
+                    char deltaStr[64];
+                    GTCore::IO::snprintf(deltaStr, 64, "%f", frameTime);
+
+
                     if (this->FPSValue != nullptr)
                     {
-                        GTCore::IO::snprintf(tempStr, 64, "%.1f", 1.0 / this->averageDelta);
-                        this->FPSValue->SetText(tempStr);
+                        this->FPSValue->SetText(fpsStr);
                     }
-
                     if (this->DeltaValue != nullptr)
                     {
-                        GTCore::IO::snprintf(tempStr, 64, "%f", this->averageDelta);
-                        this->DeltaValue->SetText(tempStr);
+                        this->DeltaValue->SetText(deltaStr);
                     }
                 }
-
-                ++this->totalStepCount;
             }
+
+
+            /// Shows the debugging GUI.
+            void Show()
+            {
+                if (this->DebuggingMain != nullptr)
+                {
+                    this->DebuggingMain->Show();
+                }
+            }
+
+            /// Hides the debugging GUI.
+            void Hide()
+            {
+                if (this->DebuggingMain != nullptr)
+                {
+                    this->DebuggingMain->Hide();
+                }
+            }
+
+
+            /// The game that owns this structure.
+            Game &game;
+
 
             /// A pointer to the main GUI server this debugging GUI is part of. This is set in Initialise().
             GTGUI::Server* gui;
@@ -695,14 +737,8 @@ namespace GTEngine
             /// The amount of time to wait to update the debug information, in seconds.
             double updateIntervalInSeconds;
 
-            /// The timer for keeping track of the debugging interval.
-            GTCore::Timer timer;
-
-            /// The number of steps that were performed during the sum of 'totalFPS'.
-            unsigned int totalStepCount;
-
-            /// The averages FPS based on totalFPSTime and totalFPSCount.
-            double averageDelta;
+            /// The last time the GUI was updated.
+            double lastUpdateTime;
 
 
             /// Whether or not the debugging GUI has been initialised.
@@ -710,6 +746,11 @@ namespace GTEngine
 
             /// Whether or not the debugging GUI is currently showing.
             bool isShowing;
+
+
+        private:
+            _DebuggingGUI(const _DebuggingGUI &);
+            _DebuggingGUI & operator=(const _DebuggingGUI &);
 
         }DebuggingGUI;
 
