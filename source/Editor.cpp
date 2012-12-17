@@ -214,14 +214,15 @@ namespace GTEngine
     }
 
 
+    // FIXME: There's a bug here where if a file path includes double quotes, the script will fail to execute.
     void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
     {
         GTCore::String script;
         script.AssignFormatted
         (
             "local info = GTCore.IO.FileInfo:New();"
-            "info.path             = '%s';"
-            "info.absolutePath     = '%s';"
+            "info.path             = \"%s\";"
+            "info.absolutePath     = \"%s\";"
             "info.size             = %d;"
             "info.lastModifiedTime = %d;"
             "info.isDirectory      = %s;"
@@ -243,8 +244,8 @@ namespace GTEngine
         script.AssignFormatted
         (
             "local info = GTCore.IO.FileInfo:New();"
-            "info.path             = '%s';"
-            "info.absolutePath     = '%s';"
+            "info.path             = \"%s\";"
+            "info.absolutePath     = \"%s\";"
             "info.size             = %d;"
             "info.lastModifiedTime = %d;"
             "info.isDirectory      = %s;"
@@ -266,8 +267,8 @@ namespace GTEngine
         script.AssignFormatted
         (
             "local info = GTCore.IO.FileInfo:New();"
-            "info.path             = '%s';"
-            "info.absolutePath     = '%s';"
+            "info.path             = \"%s\";"
+            "info.absolutePath     = \"%s\";"
             "info.size             = %d;"
             "info.lastModifiedTime = %d;"
             "info.isDirectory      = %s;"

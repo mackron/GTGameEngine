@@ -41,9 +41,6 @@ namespace GTEngine
             }
             else
             {
-                // We should post an error.
-                GTCore::PostError("%s: %s", fileName, ConfigScript->ToString(-1));
-
                 delete ConfigScript;
                 ConfigScript = nullptr;
             }

@@ -33,21 +33,10 @@ namespace GTEngine
         bool Startup();
 
 
-        /// GTCore::Script::Load().
-        ///
-        /// This is a special implementation that keeps track of the last error message in a proper variable.
-        bool Load(const char* script);
-
         /// GTCore::Script::LoadFile().
         ///
         /// This is a special implementation that keeps track of the file so we can do auto-reloading.
         bool LoadFile(const char* fileName);
-
-        /// GTCore::Script::Execute().
-        ///
-        /// This is a special implementation that keeps track of the last error message in a proper variable.
-        bool Execute();
-        bool Execute(const char* script) { return GTCore::Script::Execute(script); }
 
 
         /// Retrieves a reference to the game object that owns this environment.
@@ -57,6 +46,12 @@ namespace GTEngine
 
         /// Retrieves a string containing the last error message for a failed script.
         const char* GetLastError() { return this->lastError.c_str(); }
+
+        /// Sets the last error message.
+        ///
+        /// @remarks
+        ///     This should only really be used internally. Mainly used for the error handler.
+        void SetLastError(const char* newLastError) { this->lastError = newLastError; }
 
 
         /// Determines whether or not the file has been loaded.
@@ -94,6 +89,28 @@ namespace GTEngine
 
         /// Keeps track of the loaded files.
         GTCore::Vector<GTCore::String> loadedFiles;
+
+
+        /// The error handler of the game script.
+        struct ErrorHandler : GTCore::ScriptErrorHandler
+        {
+            /// Constructor.
+            ErrorHandler(GameScript &script);
+
+            /// GTCore::ScriptErrorHandler::OnError().
+            void OnError(GTCore::Script &, const char* message);
+
+
+
+            /// A reference to the game script that owns this error handler.
+            GameScript &script;
+
+
+        private:    // No copying.
+            ErrorHandler(const ErrorHandler &);
+            ErrorHandler & operator=(const ErrorHandler &);
+
+        }errorHandler;
     };
 }
 
