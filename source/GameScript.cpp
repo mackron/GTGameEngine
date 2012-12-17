@@ -8,8 +8,9 @@
 namespace GTEngine
 {
     GameScript::GameScript(Game &game)
-        : game(game), lastError(), loadedFiles()
+        : game(game), lastError(), loadedFiles(), errorHandler(*this)
     {
+        this->AttachErrorHandler(errorHandler);
     }
 
     GameScript::~GameScript()
@@ -86,16 +87,6 @@ namespace GTEngine
         return success;
     }
 
-    bool GameScript::Load(const char* script)
-    {
-        if (!GTCore::Script::Load(script))
-        {
-            this->lastError = this->ToString(-1);
-            return false;
-        }
-
-        return true;
-    }
 
     bool GameScript::LoadFile(const char* fileName)
     {
@@ -111,21 +102,6 @@ namespace GTEngine
         return GTCore::Script::LoadFile(fileName);
     }
 
-
-
-
-    bool GameScript::Execute()
-    {
-        if (!GTCore::Script::Execute())
-        {
-            this->lastError = this->ToString(-1);
-            PostError("Script Error: %s", this->lastError.c_str());
-
-            return false;
-        }
-
-        return true;
-    }
 
 
     bool GameScript::HasFileBeenLoaded(const char* fileName) const
@@ -276,5 +252,23 @@ namespace GTEngine
 
 
         return true;
+    }
+
+
+
+
+
+    //////////////////////////////////////////////////////
+    // ErrorHandler
+
+    GameScript::ErrorHandler::ErrorHandler(GameScript &scriptIn)
+        : script(scriptIn)
+    {
+    }
+
+    void GameScript::ErrorHandler::OnError(GTCore::Script &, const char* message)
+    {
+        this->script.SetLastError(message);
+        PostError("Script Error: %s", message);
     }
 }
