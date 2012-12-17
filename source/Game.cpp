@@ -40,7 +40,8 @@ namespace GTEngine
           isAutoScriptReloadEnabled(false),
           keyDownMap(), mouseButtonDownMap(),
           editor(*this),
-          DebuggingGUI(),
+          profiler(),
+          DebuggingGUI(*this),
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
@@ -332,6 +333,13 @@ namespace GTEngine
     {
         if (this->OnEditorOpening())
         {
+            // The in-game profiling GUI needs to be hidden when the editor is open.
+            this->DebuggingGUI.Hide();
+
+            // We will also enable the profiler when the editor is open, because why not?
+            this->profiler.Enable();
+
+
             this->Pause();  // The game is always paused while the editor is running.
 
             if (!this->editor.IsStarted())
@@ -354,6 +362,16 @@ namespace GTEngine
             // We can now unpause the game.
             this->Resume();
 
+            if (this->DebuggingGUI.isShowing)
+            {
+                this->profiler.Enable();
+                this->DebuggingGUI.Show();
+            }
+            else
+            {
+                this->profiler.Disable();
+            }
+
             this->OnEditorClose();
         }
     }
@@ -367,24 +385,34 @@ namespace GTEngine
     void Game::ShowDebugging()
     {
         // If we haven't yet initialised the debugging GUI, we need to do it.
-        if (!DebuggingGUI.isInitialised)
+        if (!this->IsEditorOpen())
         {
-            this->DebuggingGUI.Initialise(this->gui);
-        }
+            if (!DebuggingGUI.isInitialised)
+            {
+                this->DebuggingGUI.Initialise(this->gui);
+            }
 
-        if (this->DebuggingGUI.DebuggingMain != nullptr)
-        {
-            this->DebuggingGUI.DebuggingMain->Show();
-            this->DebuggingGUI.isShowing = true;
+            if (this->DebuggingGUI.DebuggingMain != nullptr)
+            {
+                this->DebuggingGUI.DebuggingMain->Show();
+                this->DebuggingGUI.isShowing = true;
+            }
+
+            this->profiler.Enable();
         }
     }
 
     void Game::HideDebugging()
     {
-        if (this->DebuggingGUI.DebuggingMain != nullptr)
+        if (!this->IsEditorOpen())
         {
-            this->DebuggingGUI.DebuggingMain->Hide();
-            this->DebuggingGUI.isShowing = false;
+            if (this->DebuggingGUI.DebuggingMain != nullptr)
+            {
+                this->DebuggingGUI.DebuggingMain->Hide();
+                this->DebuggingGUI.isShowing = false;
+            }
+
+            this->profiler.Disable();
         }
     }
 
@@ -788,6 +816,14 @@ namespace GTEngine
     {
         while (!this->closing)
         {
+            // If the profiler is enabled, we're going to post some events to it.
+            if (this->profiler.IsEnabled())
+            {
+                this->profiler.OnBeginFrame();
+            }
+
+
+
             // First we need to handle any pending window messages. We do not want to wait here (first argument).
             while (GTCore::PumpNextWindowEvent(false));
 
@@ -827,6 +863,14 @@ namespace GTEngine
                 this->Draw();
             }
             this->EndFrame();       // <-- blocks until all threads are finished.
+
+
+
+            // Here we need to update the profiler.
+            if (this->profiler.IsEnabled())
+            {
+                this->profiler.OnEndFrame();
+            }
         }
     }
 
@@ -848,6 +892,7 @@ namespace GTEngine
         // Here is where we swap RC queues. We post an OnSwapRCQueues() event from here so that a game can do
         // it's own buffer swaps if required.
         this->SwapRCQueues();
+
 
         // Now we let the game know that we're starting the frame.
         this->OnStartFrame();
@@ -873,18 +918,25 @@ namespace GTEngine
 
     void Game::Update() //[Update Thread]
     {
+        if (this->profiler.IsEnabled())
+        {
+            this->profiler.OnBeginUpdate();
+        }
+
+
         double deltaTimeInSeconds = this->GetDeltaTimeInSeconds();
+
+        // If the debugging overlay is open, we need to show the debugging information.
+        if (this->IsDebuggingOpen())
+        {
+            this->DebuggingGUI.Update(this->profiler);
+        }
+
 
         // If the editor is open it also needs to be updated.
         if (this->editor.IsOpen())
         {
             this->editor.Update(deltaTimeInSeconds);
-        }
-
-        // If the debugging overlay is open, we need to show the debugging information.
-        if (this->IsDebuggingOpen())
-        {
-            this->DebuggingGUI.Step();
         }
 
         // The game needs to know that we're updating...
@@ -896,12 +948,25 @@ namespace GTEngine
             this->currentGameState->OnUpdate(deltaTimeInSeconds);
         }
 
+
         // We will step the GUI after updating the game.
         this->StepGUI(deltaTimeInSeconds);
+
+
+        if (this->profiler.IsEnabled())
+        {
+            this->profiler.OnEndUpdate();
+        }
     }
 
     void Game::Draw() //[Main Thread]
     {
+        if (this->profiler.IsEnabled())
+        {
+            this->profiler.OnBeginRendering();
+        }
+
+
         this->OnDraw();
         Renderer::ExecuteFrontRCQueue();
         this->OnPostDraw();
@@ -912,6 +977,12 @@ namespace GTEngine
 
 
         Renderer::SwapBuffers();
+
+
+        if (this->profiler.IsEnabled())
+        {
+            this->profiler.OnEndRendering();
+        }
     }
 
     void Game::SwapRCQueues()

@@ -163,12 +163,17 @@ namespace GTEngine
         struct _GUI
         {
             _GUI()
-                : EditorMain(nullptr)
+                : EditorMain(nullptr),
+                  Editor_Delta(nullptr), Editor_FPS(nullptr)
             {
             }
 
             /// The main editor element. Every single element used by the editor is a child of this element.
             GTGUI::Element* EditorMain;
+
+            // GUI elements for the profiling information.
+            GTGUI::Element* Editor_Delta;
+            GTGUI::Element* Editor_FPS;
 
         }GUI;
 
@@ -181,6 +186,10 @@ namespace GTEngine
 
         /// The text editor.
         Editor_TextEditor textEditor;
+
+
+        /// The last time the profiling elements were updated.
+        double lastProfilingUpdateTime;
 
 
         /// Whether or not the editor has be started up.

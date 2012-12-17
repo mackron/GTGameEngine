@@ -319,6 +319,38 @@ hidden by default.
 </style>
 
 
+<style>
+    profiling-entry
+    {
+        width:       auto
+        padding-top: 2px
+        child-plane: horizontal
+    }
+    
+    profiling-font
+    {
+        font-family: dejavu sans mono
+        font-style:  none
+        font-size:   8pt
+        text-color:  #bbb
+    }
+    
+    profiling-entry-title includes profiling-font
+    {
+        width:  auto
+        height: auto
+    }
+
+    profiling-entry-value includes profiling-font
+    {
+        width:         auto
+        height:        auto
+        padding-left:  4px
+        padding-right: 16px
+    }
+</style>
+
+
 <div id="EditorMain">
     <div id="EditorTopPanel">
         <!--
@@ -375,9 +407,17 @@ hidden by default.
     </div>
 
     <div id="EditorBottomPanel">
-        <div style="width:auto; margin-left:4px; margin-right:8px; text-color:#888;">Command:</div>
-        <div id="CommandTextBox" styleclass="textbox" style="height:22px; width:400px;" />
-        <div id="CommandErrorBox" style="height:100%; width:auto; margin-left:8px; vertical-align:center;" />
+        <div style="child-plane:horizontal; vertical-align:center; width:50%;">
+            <div style="width:auto; margin-left:4px; margin-right:8px; text-color:#888;">Command:</div>
+            <div id="CommandTextBox" styleclass="textbox" style="height:22px; width:400px;" />
+            <div id="CommandErrorBox" style="height:100%; width:auto; margin-left:8px; vertical-align:center;" />
+        </div>
+        <div style="child-plane:horizontal; vertical-align:center; horizontal-align:right; width:50%;">
+            <div styleclass="profiling-entry-title">Delta:</div>
+            <div styleclass="profiling-entry-value" id="Editor_Delta" />
+            <div styleclass="profiling-entry-title">FPS:</div>
+            <div styleclass="profiling-entry-value" id="Editor_FPS" />
+        </div>
     </div>
   
     <!-- This section contains relative positioned controls. Usually dialog boxes. -->
