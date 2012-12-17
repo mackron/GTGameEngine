@@ -324,17 +324,19 @@ namespace GTEngine
         ///////////////////////////////////////////////
         // Key Bindings.
 
-        /// Retrieves the key for toggling the editor.
-        GTCore::Key GetEditorToggleKey() const;
-
-        /// Sets the key for toggling the editor.
-        void SetEditorToggleKey(GTCore::Key key);
-
         /// Retrieves the key for toggling the profiler.
         GTCore::Key GetProfilerToggleKey() const;
 
         /// Sets the key for toggling the profiler.
         void SetProfilerToggleKey(GTCore::Key key);
+
+
+        /// Retrieves the key combination for toggling the editor.
+        const GTCore::KeyCombination & GetEditorToggleKeyCombination() const;
+
+        /// Sets the key combination for toggling the editor.
+        void SetEditorToggleKeyCombination(const GTCore::KeyCombination &newCombination);
+
 
 
     protected:
@@ -522,6 +524,11 @@ namespace GTEngine
         void SwapRCQueues();
 
 
+
+        /// Determines whether or not all of the keys in the given key combination are down.
+        bool IsKeyCombinationDown(const GTCore::KeyCombination &combination) const;
+
+
     // The methods below are used to handle events.
     private:
 
@@ -665,7 +672,6 @@ namespace GTEngine
             }
 
             // Updates the debugging information. This should be called once per frame.
-            // Returns true if the debugging information was refreshed based on the update interval. False otherwise.
             void Update(Profiler &profiler)
             {
                 if (GTCore::Timing::GetTimeInSeconds() - this->lastUpdateTime >= this->updateIntervalInSeconds)
@@ -819,11 +825,14 @@ namespace GTEngine
         }dataFilesWatcherEventHandler;
 
 
-        /// The key binding for toggling the editor.
-        GTCore::Key editorToggleKey;
+
 
         /// The key binding for toggling the profiler.
         GTCore::Key profilerToggleKey;
+
+
+        /// The key combination for toggling the editor.
+        GTCore::KeyCombination editorToggleKeyCombination;
 
 
 
