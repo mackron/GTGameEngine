@@ -17,7 +17,7 @@
     {
         positioning:  relative
         
-        padding:      4px
+        padding:      8px
         right:       -4px
         top:          4px
         width:        auto
@@ -27,14 +27,15 @@
         border:           1px #666
     }
     
-    debug-entry
+    profiler-panel-section
     {
         width:       auto
-        padding-top: 2px
-        child-plane: horizontal
+        height:      auto
+        child-plane: horizontal;
     }
     
-    debug-font
+    
+    profiler-font
     {
         font-family: dejavu sans mono
         font-style:  none
@@ -42,13 +43,7 @@
         text-color:  #bbb
     }
     
-    debug-entry-title includes debug-font
-    {
-        width:  96px
-        height: auto
-    }
-
-    debug-entry-value includes debug-font
+    profiler-text includes profiler-font
     {
         width:  auto
         height: auto
@@ -57,14 +52,18 @@
 
 <div id="DebuggingMain">
     <div id='FPSPanel'>
-        <div styleclass='debug-entry' style='padding-top:0px;'>
-            <div               styleclass='debug-entry-title'>FPS:</div>
-            <div id='FPSValue' styleclass='debug-entry-value' />
-        </div>
-
-        <div styleclass='debug-entry'>
-            <div                 styleclass='debug-entry-title'>Delta/sec:</div>
-            <div id='DeltaValue' styleclass='debug-entry-value' />
+        <div styleclass='profiler-panel-section'>
+            <div style="width:auto; padding-right:8px; horizontal-align:left">
+                <div styleclass='profiler-text' style='padding-bottom:8px; text-color:#fff'>FPS/Delta:</div>
+                <div styleclass='profiler-text' style='padding-bottom:4px;'>Update Thread:</div>
+                <div styleclass='profiler-text'>Rendering Thread:</div>
+            </div>
+            
+            <div style="width:auto; padding-left:8px; horizontal-align:right">
+                <div id="FPSValue"            styleclass='profiler-text' style='padding-bottom:8px; text-color:#fff' />
+                <div id='Profiler_UpdateTime' styleclass='profiler-text' style='padding-bottom:4px;' />
+                <div id='Profiler_RenderTime' styleclass='profiler-text' />
+            </div>
         </div>
     </div>
 </div>

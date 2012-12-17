@@ -638,7 +638,7 @@ namespace GTEngine
             _DebuggingGUI(Game &gameIn)
                 : game(gameIn), gui(nullptr),
                   DebuggingMain(nullptr),
-                  FPSValue(nullptr), DeltaValue(nullptr),
+                  FPSValue(nullptr), UpdateTime(nullptr), RenderTime(nullptr),
                   updateIntervalInSeconds(0.5), lastUpdateTime(0.0),
                   isInitialised(false), isShowing(false)
             {
@@ -654,7 +654,8 @@ namespace GTEngine
                     {
                         this->DebuggingMain = this->gui->GetElementByID("DebuggingMain");
                         this->FPSValue      = this->gui->GetElementByID("FPSValue");
-                        this->DeltaValue    = this->gui->GetElementByID("DeltaValue");
+                        this->UpdateTime    = this->gui->GetElementByID("Profiler_UpdateTime");
+                        this->RenderTime    = this->gui->GetElementByID("Profiler_RenderTime");
 
                         this->isInitialised = true;
                     }
@@ -671,29 +672,33 @@ namespace GTEngine
                 {
                     this->lastUpdateTime = GTCore::Timing::GetTimeInSeconds();
 
-                    double frameTime = profiler.GetAverageFrameTime();
-                    double fps       = 0.0;
+                    double delta = profiler.GetAverageFrameTime();
+                    double fps   = 0.0;
 
-                    if (frameTime > 0.0)
+                    if (delta > 0.0)
                     {
                         fps = 1.0 / profiler.GetAverageFrameTime();
                     }
 
-                    char fpsStr[64];
-                    GTCore::IO::snprintf(fpsStr, 64, "%.1f", fps);
-                    
-                    char deltaStr[64];
-                    GTCore::IO::snprintf(deltaStr, 64, "%f", frameTime);
-
+                    char valueStr[64];
+                    GTCore::IO::snprintf(valueStr, 64, "%.1f / %.4f", fps, delta * 1000.0);
 
                     if (this->FPSValue != nullptr)
                     {
-                        this->FPSValue->SetText(fpsStr);
+                        this->FPSValue->SetText(valueStr);
                     }
-                    if (this->DeltaValue != nullptr)
-                    {
-                        this->DeltaValue->SetText(deltaStr);
-                    }
+
+
+
+                    // Update and Render time.
+                    double updateTime = profiler.GetAverageUpdateTime();
+                    double renderTime = profiler.GetAverageRenderingTime();
+
+                    GTCore::IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", updateTime * 1000, updateTime / delta * 100.0);
+                    this->UpdateTime->SetText(valueStr);
+
+                    GTCore::IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", renderTime * 1000, renderTime / delta * 100.0);
+                    this->RenderTime->SetText(valueStr);
                 }
             }
 
@@ -730,8 +735,11 @@ namespace GTEngine
             /// The FPSValue element.
             GTGUI::Element* FPSValue;
 
-            /// The DeltaValue element.
-            GTGUI::Element* DeltaValue;
+            /// The update time element.
+            GTGUI::Element* UpdateTime;
+
+            /// The render time element.
+            GTGUI::Element* RenderTime;
 
 
             /// The amount of time to wait to update the debug information, in seconds.
