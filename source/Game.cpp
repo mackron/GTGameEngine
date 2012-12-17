@@ -48,7 +48,8 @@ namespace GTEngine
           dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false),
           currentGameState(nullptr), previousGameState(nullptr),
           dataFilesWatcherEventHandler(*this),
-          editorToggleKey(GTCore::Keys::Tab), profilerToggleKey(GTCore::Keys::F11)
+          profilerToggleKey(GTCore::Keys::F11),
+          editorToggleKeyCombination(GTCore::Keys::Shift, GTCore::Keys::Tab)
     {
     }
 
@@ -519,17 +520,6 @@ namespace GTEngine
     }
 
 
-
-    GTCore::Key Game::GetEditorToggleKey() const
-    {
-        return this->editorToggleKey;
-    }
-
-    void Game::SetEditorToggleKey(GTCore::Key key)
-    {
-        this->editorToggleKey = key;
-    }
-
     GTCore::Key Game::GetProfilerToggleKey() const
     {
         return this->profilerToggleKey;
@@ -538,6 +528,17 @@ namespace GTEngine
     void Game::SetProfilerToggleKey(GTCore::Key key)
     {
         this->profilerToggleKey = key;
+    }
+
+
+    const GTCore::KeyCombination & Game::GetEditorToggleKeyCombination() const
+    {
+        return this->editorToggleKeyCombination;
+    }
+
+    void Game::SetEditorToggleKeyCombination(const GTCore::KeyCombination &newCombination)
+    {
+        this->editorToggleKeyCombination = newCombination;
     }
 
 
@@ -994,6 +995,27 @@ namespace GTEngine
         this->gui.SwapRCQueues();
     }
 
+
+    bool Game::IsKeyCombinationDown(const GTCore::KeyCombination &combination) const
+    {
+        // We ignore keys that are set to null, but we need to always return false if all of them are null.
+        if (!combination.IsAnyKeySet())
+        {
+            return false;
+        }
+
+
+        bool down = true;
+
+        down = down && (combination.systemKey1    == GTCore::Keys::Null || this->IsKeyDown(combination.systemKey1));
+        down = down && (combination.systemKey2    == GTCore::Keys::Null || this->IsKeyDown(combination.systemKey2));
+        down = down && (combination.printableKey1 == GTCore::Keys::Null || this->IsKeyDown(combination.printableKey1));
+        down = down && (combination.printableKey2 == GTCore::Keys::Null || this->IsKeyDown(combination.printableKey2));
+
+        return down;
+    }
+
+
     void Game::HandleEvents()
     {
         GameEvent e;
@@ -1160,7 +1182,7 @@ namespace GTEngine
 
 
         // Editor.
-        if (e.keypressed.key == this->editorToggleKey)
+        if (this->editorToggleKeyCombination.IsPrintableKey(e.keypressed.key) && this->IsKeyCombinationDown(this->editorToggleKeyCombination))
         {
             if (!this->IsEditorOpen())
             {
