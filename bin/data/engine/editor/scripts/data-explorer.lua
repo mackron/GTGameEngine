@@ -31,6 +31,11 @@ function GTGUI.Element:DataExplorer()
             item.icon:SetStyle('background-image-color', '#aaa');
         end
         
+        item.titleContainer:OnRMBUp(function()
+            if item.isDirectory then
+            end
+        end);
+        
         
         -- Called when the item is torn for drag-and-drop.
         item.titleContainer:OnTear(function()

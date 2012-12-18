@@ -1183,11 +1183,11 @@ namespace GTEngine
         }
         else if (e.mousedoubleclick.button == GTCore::MouseButton_Right)
         {
-            this->gui.OnLMBDoubleClick();
+            this->gui.OnRMBDoubleClick();
         }
         else if (e.mousedoubleclick.button == GTCore::MouseButton_Middle)
         {
-            this->gui.OnLMBDoubleClick();
+            this->gui.OnMMBDoubleClick();
         }
 
         this->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
