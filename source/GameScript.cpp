@@ -34,6 +34,15 @@ namespace GTEngine
         (
             "Game.Callbacks = GTCore.CallbackManager:Create();"
 
+            "function Game.ClearCallbacks(name)"
+            "    Game.Callbacks:Clear(name);"
+            "end;"
+
+            "function Game.ClearAllCallbacks()"
+            "    Game.Callbacks:ClearAll();"
+            "end;"
+
+
             "function Game.OnStartup(arg)"
             "    Game.Callbacks:BindOrCall('OnStartup', arg);"
             "end;"
@@ -52,6 +61,54 @@ namespace GTEngine
 
             "function Game.OnPostDraw(arg)"
             "    Game.Callbacks:BindOrCall('OnPostDraw', arg);"
+            "end;"
+
+            "function Game.OnSize(arg)"
+            "    Game.Callbacks:BindOrCall('OnSize', arg);"
+            "end;"
+
+            "function Game.OnMouseMove(arg)"
+            "    Game.Callbacks:BindOrCall('OnMouseMove', arg);"
+            "end;"
+
+            "function Game.OnMouseWheel(arg)"
+            "    Game.Callbacks:BindOrCall('OnMouseWheel', arg);"
+            "end;"
+
+            "function Game.OnMouseButtonDown(arg)"
+            "    Game.Callbacks:BindOrCall('OnMouseButtonDown', arg);"
+            "end;"
+
+            "function Game.OnMouseButtonUp(arg)"
+            "    Game.Callbacks:BindOrCall('OnMouseButtonUp', arg);"
+            "end;"
+
+            "function Game.OnMouseButtonDoubleClick(arg)"
+            "    Game.Callbacks:BindOrCall('OnMouseButtonDoubleClick', arg);"
+            "end;"
+
+            "function Game.OnKeyPressed(arg)"
+            "    Game.Callbacks:BindOrCall('OnKeyPressed', arg);"
+            "end;"
+
+            "function Game.OnKeyReleased(arg)"
+            "    Game.Callbacks:BindOrCall('OnKeyReleased', arg);"
+            "end;"
+
+            "function Game.OnKeyDown(arg)"
+            "    Game.Callbacks:BindOrCall('OnKeyDown', arg);"
+            "end;"
+
+            "function Game.OnKeyUp(arg)"
+            "    Game.Callbacks:BindOrCall('OnKeyUp', arg);"
+            "end;"
+
+            "function Game.OnReceiveFocus(arg)"
+            "    Game.Callbacks:BindOrCall('OnReceiveFocus', arg);"
+            "end;"
+
+            "function Game.OnLoseFocus(arg)"
+            "    Game.Callbacks:BindOrCall('OnLoseFocus', arg);"
             "end;"
         );
 
