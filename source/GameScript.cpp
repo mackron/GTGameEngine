@@ -26,6 +26,33 @@ namespace GTEngine
         success = success && this->Execute
         (
             "Game = {};"
+            
+        );
+
+        // Now for some callbacks.
+        success = success && this->Execute
+        (
+            "Game.Callbacks = GTCore.CallbackManager:Create();"
+
+            "function Game.OnStartup(arg)"
+            "    Game.Callbacks:BindOrCall('OnStartup', arg);"
+            "end;"
+
+            "function Game.OnShutdown(arg)"
+            "    Game.Callbacks:BindOrCall('OnShutdown', arg);"
+            "end;"
+
+            "function Game.OnUpdate(arg)"
+            "    Game.Callbacks:BindOrCall('OnUpdate', arg);"
+            "end;"
+
+            "function Game.OnDraw(arg)"
+            "    Game.Callbacks:BindOrCall('OnDraw', arg);"
+            "end;"
+
+            "function Game.OnPostDraw(arg)"
+            "    Game.Callbacks:BindOrCall('OnPostDraw', arg);"
+            "end;"
         );
 
 

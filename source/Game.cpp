@@ -730,7 +730,14 @@ namespace GTEngine
 
 
                 // Here is where we let the game object do some startup stuff.
-                return this->OnStartup(argc, argv);
+                if (this->OnStartup(argc, argv))
+                {
+                    this->script.Execute("Game.OnStartup();");
+                    return true;
+                }
+
+                // OnStartup() has returned false somewhere.
+                return false;
             }
             else
             {
@@ -802,6 +809,7 @@ namespace GTEngine
 
         // We first let the game know that we are shutting down. It's important that we do this before killing anything.
         this->OnShutdown();
+        this->script.Execute("Game.OnShutdown();");
 
         if (this->defaultFont != nullptr)
         {
@@ -942,6 +950,7 @@ namespace GTEngine
 
         // The game needs to know that we're updating...
         this->OnUpdate(deltaTimeInSeconds);
+        this->script.Execute(GTCore::String::CreateFormatted("Game.OnUpdate({deltaTimeInSeconds = %f});", deltaTimeInSeconds).c_str());     // <-- TODO: Profile this compared to doing this manually through script functions.
 
         // ... and the game state.
         if (this->currentGameState != nullptr)
@@ -968,9 +977,20 @@ namespace GTEngine
         }
 
 
+        // NOTE:
+        //
+        // We're not currently calling any scripting events on the rendering thread because of a few multithreading issues with the scripting environment. Need to
+        // look deeper into what's causing this. Initial guess is that the Lua implementation isn't completely thread safe, but not looked into it.
+
+
         this->OnDraw();
+        //this->script.Execute("Game.OnDraw();");
+
         Renderer::ExecuteFrontRCQueue();
+
         this->OnPostDraw();
+        //this->script.Execute("Game.OnPostDraw();");
+
 
         // We draw the GUI on top of everything else...
         Renderer::SetFramebuffer(nullptr);

@@ -37,7 +37,7 @@
     
     profiler-font
     {
-        font-family: dejavu sans mono
+        font-family: liberation mono
         font-style:  none
         font-size:   8pt
         text-color:  #bbb
