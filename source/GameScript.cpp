@@ -43,6 +43,7 @@ namespace GTEngine
             "end;"
 
 
+            // Events
             "function Game.OnStartup(arg)"
             "    Game.Callbacks:BindOrCall('OnStartup', arg);"
             "end;"
@@ -303,6 +304,19 @@ namespace GTEngine
     }
 
 
+    int FFI_Game_IsKeyDown(GTCore::Script &script)
+    {
+        script.Push(GameScript::FFI::GetGameObject(script).IsKeyDown(static_cast<GTCore::Key>(script.ToInteger(1))));
+        return 1;
+    }
+    
+    int FFI_Game_IsMouseButtonDown(GTCore::Script &script)
+    {
+        script.Push(GameScript::FFI::GetGameObject(script).IsMouseButtonDown(static_cast<GTCore::MouseButton>(script.ToInteger(1))));
+        return 1;
+    }
+
+
 
     //////////////////////////////////////////////////////
     // RegisterFFI()
@@ -331,6 +345,9 @@ namespace GTEngine
 
             this->SetTableFunction(-1, "ShowDebug",          FFI_Game_ShowDebug);
             this->SetTableFunction(-1, "HideDebug",          FFI_Game_HideDebug);
+
+            this->SetTableFunction(-1, "IsKeyDown",          FFI_Game_IsKeyDown);
+            this->SetTableFunction(-1, "IsMouseButtonDown",  FFI_Game_IsMouseButtonDown);
         }
         this->Pop(1);    // Game
 
