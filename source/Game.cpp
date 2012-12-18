@@ -1077,7 +1077,9 @@ namespace GTEngine
     void Game::HandleEvent_OnSize(GameEvent &e)
     {
         this->gui.SetViewportSize(e.size.width, e.size.height);
+
         this->OnSize(e.size.width, e.size.height);
+        this->script.Execute(GTCore::String::CreateFormatted("Game.OnSize({width = %d, height = %d});", e.size.width, e.size.height).c_str());
 
         if (this->currentGameState != nullptr)
         {
@@ -1091,7 +1093,9 @@ namespace GTEngine
         if (!this->mouseCaptured)
         {
             this->gui.OnMouseMove(e.mousemove.x, e.mousemove.y);
+
             this->OnMouseMove(e.mousemove.x, e.mousemove.y);
+            this->script.Execute(GTCore::String::CreateFormatted("Game.OnMouseMove({x = %d, y = %d});", e.mousemove.x, e.mousemove.y).c_str());
 
             if (this->currentGameState != nullptr)
             {
@@ -1103,7 +1107,9 @@ namespace GTEngine
     void Game::HandleEvent_OnMouseWheel(GameEvent &e)
     {
         this->gui.OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+
         this->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+        this->script.Execute(GTCore::String::CreateFormatted("Game.OnMouseWheel({x = %d, y = %d, delta = %d});", e.mousewheel.x, e.mousewheel.y, e.mousewheel.delta).c_str());
 
         if (this->currentGameState != nullptr)
         {
@@ -1129,6 +1135,7 @@ namespace GTEngine
         }
 
         this->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
+        this->script.Execute(GTCore::String::CreateFormatted("Game.OnMouseButtonDown({x = %d, y = %d, button = %d});", e.mousedown.x, e.mousedown.y, static_cast<int>(e.mousedown.button)).c_str());
 
         if (this->currentGameState != nullptr)
         {
@@ -1158,6 +1165,7 @@ namespace GTEngine
         }
 
         this->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
+        this->script.Execute(GTCore::String::CreateFormatted("Game.OnMouseButtonUp({x = %d, y = %d, button = %d});", e.mouseup.x, e.mouseup.y, static_cast<int>(e.mouseup.button)).c_str());
 
         if (this->currentGameState != nullptr)
         {
@@ -1181,6 +1189,7 @@ namespace GTEngine
         }
 
         this->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
+        this->script.Execute(GTCore::String::CreateFormatted("Game.OnMouseButtonDoubleClick({x = %d, y = %d, button = %d});", e.mousedoubleclick.x, e.mousedoubleclick.y, static_cast<int>(e.mousedoubleclick.button)).c_str());
 
         if (this->currentGameState != nullptr)
         {
@@ -1193,7 +1202,9 @@ namespace GTEngine
         this->keyDownMap.Add(e.keypressed.key, true);
 
         this->gui.OnKeyPressed(e.keypressed.key);
+
         this->OnKeyPressed(e.keypressed.key);
+        this->script.Execute(GTCore::String::CreateFormatted("Game.OnKeyPressed({key = %d});", static_cast<int>(e.keypressed.key)).c_str());
 
         if (this->currentGameState != nullptr)
         {
@@ -1237,6 +1248,7 @@ namespace GTEngine
         }
 
         this->OnKeyReleased(e.keyreleased.key);
+        this->script.Execute(GTCore::String::CreateFormatted("Game.OnKeyReleased({key = %d});", static_cast<int>(e.keyreleased.key)).c_str());
 
         if (this->currentGameState != nullptr)
         {
@@ -1247,13 +1259,17 @@ namespace GTEngine
     void Game::HandleEvent_OnKeyDown(GameEvent &e)
     {
         this->gui.OnKeyDown(e.keydown.key);
+
         this->OnKeyDown(e.keydown.key);
+        this->script.Execute(GTCore::String::CreateFormatted("Game.OnKeyDown({key = %d});", static_cast<int>(e.keydown.key)).c_str());
     }
 
     void Game::HandleEvent_OnKeyUp(GameEvent &e)
     {
         this->gui.OnKeyUp(e.keyup.key);
+
         this->OnKeyUp(e.keyup.key);
+        this->script.Execute(GTCore::String::CreateFormatted("Game.OnKeyUp({key = %d});", static_cast<int>(e.keyup.key)).c_str());
     }
 
     void Game::HandleEvent_OnReceiveFocus(GameEvent &)
@@ -1268,6 +1284,7 @@ namespace GTEngine
         }
 
         this->OnReceiveFocus();
+        this->script.Execute("Game.OnReceiveFocus();");
     }
 
     void Game::HandleEvent_OnLoseFocus(GameEvent &)
@@ -1290,7 +1307,9 @@ namespace GTEngine
         }
 
         this->DisableFullscreen();
+
         this->OnLoseFocus();
+        this->script.Execute("Game.OnLoseFocus();");
     }
 }
 
