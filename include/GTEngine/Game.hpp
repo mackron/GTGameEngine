@@ -160,6 +160,7 @@ namespace GTEngine
         /// Retrieves a pointer to the default font.
         GTType::Font* GetDefaultFont() { return this->defaultFont; }
 
+
         /// Captures the mouse.
         void CaptureMouse();
 
@@ -552,6 +553,23 @@ namespace GTEngine
         void HandleEvent_OnKeyUp(GameEvent &e);
         void HandleEvent_OnReceiveFocus(GameEvent &e);
         void HandleEvent_OnLoseFocus(GameEvent &e);
+
+
+        /// Helper for posting the OnUpdate event to the scripting environment.
+        void PostScriptEvent_OnUpdate(double deltaTimeInSeconds);
+        void PostScriptEvent_OnSize(const GameEvent &e);
+        void PostScriptEvent_OnMouseMove(const GameEvent &e);
+        void PostScriptEvent_OnMouseWheel(const GameEvent &e);
+        void PostScriptEvent_OnMouseButtonDown(const GameEvent &e);
+        void PostScriptEvent_OnMouseButtonUp(const GameEvent &e);
+        void PostScriptEvent_OnMouseButtonDoubleClick(const GameEvent &e);
+        void PostScriptEvent_OnKeyPressed(const GameEvent &e);
+        void PostScriptEvent_OnKeyReleased(const GameEvent &e);
+        void PostScriptEvent_OnKeyDown(const GameEvent &e);
+        void PostScriptEvent_OnKeyUp(const GameEvent &e);
+        void PostScriptEvent_OnReceiveFocus(const GameEvent &e);
+        void PostScriptEvent_OnLoseFocus(const GameEvent &e);
+
 
 
 
