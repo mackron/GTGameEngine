@@ -312,9 +312,9 @@ hidden by default.
         border:           1px #222
         background-color: #333
         vertical-align:   top
-        font-family:      freemono
-        font-size:        10.5pt
-        text-color:       #fff
+        font-family:      liberation mono
+        font-size:        9.5pt
+        text-color:       #ccc
     }
 </style>
 
@@ -329,7 +329,7 @@ hidden by default.
     
     profiling-font
     {
-        font-family: dejavu sans mono
+        font-family: liberation mono
         font-style:  none
         font-size:   8pt
         text-color:  #bbb
