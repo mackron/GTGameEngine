@@ -56,6 +56,11 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script>
 <![CDATA[
 
+    -- Opens the given file.
+    function Editor.OpenFile(path)
+        Editor.OpenFilesManager.OpenFile(path);
+    end
+
     -- Saves an item based on it's file name.
     function Editor.SaveItem(path)
         Editor.OpenFilesManager.SaveFile(path);
@@ -425,9 +430,23 @@ hidden by default.
         <div style="width:400px; height:200px; background-color:#3a3a3a; flex-child-height:true; compound-opacity:false; enable-shadow:true;">
             <div id="YesNoCancelDialog_TextBox" style="width:100%; height:100%; vertical-align:center; font-size:10pt; text-color:#ccc; padding:16px;" />
             <div style="width:100%; height:auto%; border-top:1px #333; vertical-align:bottom; horizontal-align:right; child-plane:horizontal; padding:8px; padding-right:4px;">
-                <div id="YesNoCancelDialog_Yes"    styleclass='button yesnocancel-button' />
-                <div id="YesNoCancelDialog_No"     styleclass='button yesnocancel-button' />
-                <div id="YesNoCancelDialog_Cancel" styleclass='button yesnocancel-button' />
+                <div id="YesNoCancelDialog_Yes"    styleclass='button dialog-button' />
+                <div id="YesNoCancelDialog_No"     styleclass='button dialog-button' />
+                <div id="YesNoCancelDialog_Cancel" styleclass='button dialog-button' />
+            </div>
+        </div>
+    </div>
+    
+    <div id="NewFileDialog" style="positioning:absolute; width:100%; height:100%; z-index:1000; background-color:#000; opacity:50%; vertical-align:center; horizontal-align:center; visible:false;">
+        <div style="width:400px; height:200px; background-color:#3a3a3a; flex-child-height:true; compound-opacity:false; enable-shadow:true; padding:16px;">
+            <div style="width:100%; height:100%; vertical-align:center;">
+                <div id="NewFileDialog_TextBox"       style="width:100%; height:auto; vertical-align:center; font-size:10pt; text-color:#ccc; margin-bottom:4px;" />
+                <div id="NewFileDialog_NameTextBox"   styleclass='textbox' style="width:100%; height:auto; padding:4px;" />
+            </div>
+            <div style="width:100%; height:auto%; border-top:1px #333; vertical-align:bottom; horizontal-align:right; child-plane:horizontal; padding-top:16px; padding-right:0px;">
+                <div id="NewFileDialog_StatusTextBox" style="width:100%; height:24px; vertical-align:center; horizontal-align:right; text-color:#b66; margin-right:8px;" />
+                <div id="NewFileDialog_Create" styleclass='button dialog-button' style='enabled:false' />
+                <div id="NewFileDialog_Cancel" styleclass='button dialog-button' style='margin-right:0px;' />
             </div>
         </div>
     </div>

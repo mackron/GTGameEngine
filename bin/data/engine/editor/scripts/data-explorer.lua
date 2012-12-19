@@ -1,10 +1,66 @@
 
 function GTGUI.Element:DataExplorer()
-    self.SearchBox = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='searchbox' style='border-bottom:1px #2b2b2b; background-color:#555;' />");
-    self.TreeView  = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='treeview'  style='height:100%; border:none; transparent-mouse-input:true;' />");
+    self.SearchBox  = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='searchbox' style='border-bottom:1px #2b2b2b; background-color:#555;' />");
+    self.TreeView   = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='treeview'  style='height:100%; border:none; transparent-mouse-input:true;' />");
+    self.FolderMenu = GTGUI.Server.New("<div                                   styleclass='menu'      style='z-index:100; positioning:absolute; visible:false' />");
+    self.FileMenu   = GTGUI.Server.New("<div                                   styleclass='menu'      style='z-index:100; positioning:absolute; visible:false' />");
     
     self.SearchBox:SearchBox();
     self.TreeView:TreeView();
+    
+    self.FolderMenu:Menu();
+    self.FolderMenu:AppendItem("New Folder..."):OnPressed(function()
+        if self.FolderMenu.DestinationDirectory ~= nil then
+            Editor.ShowNewFileDialog("Create New Folder...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
+                if result == Editor.NewFileDialogResult.Create then
+                    GTCore.IO.CreateDirectory(absolutePath);
+                    Game.ScanDataFilesForChanges();                 -- This will force the files watcher to update.
+                end;
+            end);
+        end
+        
+        self.FolderMenu:Hide();
+    end);
+    
+    self.FolderMenu:AppendSeparator();
+    
+    self.FolderMenu:AppendItem("New Scene..."):OnPressed(function()
+        if self.FolderMenu.DestinationDirectory ~= nil then
+            Editor.ShowNewFileDialog("Create New Scene...", self.FolderMenu.DestinationDirectory, "gtscene", function(result, absolutePath)
+                if result == Editor.NewFileDialogResult.Create then
+                    GTCore.IO.CreateEmptyFile(absolutePath);
+                    Game.ScanDataFilesForChanges();
+                    
+                    Editor.OpenFile(absolutePath);
+                end
+            end);
+        end
+    
+        self.FolderMenu:Hide();
+    end);
+    
+    self.FolderMenu:AppendItem("New Text File..."):OnPressed(function()
+        if self.FolderMenu.DestinationDirectory ~= nil then
+            Editor.ShowNewFileDialog("Create New Text File...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
+                if result == Editor.NewFileDialogResult.Create then
+                    GTCore.IO.CreateEmptyFile(absolutePath);
+                    Game.ScanDataFilesForChanges();
+                    
+                    Editor.OpenFile(absolutePath);
+                end
+            end);
+        end
+
+        self.FolderMenu:Hide();
+    end);
+    
+    --self.FolderMenu:AppendSeparator();
+    --self.FolderMenu:AppendItem("Delete...");
+    
+    self.FileMenu:Menu();
+    
+    
+    
     
     function self:InsertItemFromFileInfo(fileInfo, text)
         -- The first step is to find the name of the parent.
@@ -31,9 +87,11 @@ function GTGUI.Element:DataExplorer()
             item.icon:SetStyle('background-image-color', '#aaa');
         end
         
+        
+        -- Called when an item is right clicked.
         item.titleContainer:OnRMBUp(function()
-            if item.isDirectory then
-            end
+            item:Select();
+            self:ShowContextMenu(item);
         end);
         
         
@@ -119,6 +177,18 @@ function GTGUI.Element:DataExplorer()
     end
     
     
+    
+    -- Shows the right-click context menu for the given item.
+    function self:ShowContextMenu(item)
+        if item.isDirectory then
+            self.FolderMenu:SetPosition(GTGUI.Server.GetMousePosition());
+            self.FolderMenu:Show();
+            self.FolderMenu.DestinationDirectory = item.path;
+        end
+    end
+    
+    
+    
     function self:OnFileInsert(fileInfo)
         -- Some files should be ignored by the explorer. We're going to filter them
         if not self:IsFileIgnored(fileInfo) then
@@ -144,6 +214,18 @@ function GTGUI.Element:DataExplorer()
     function self:OnFileUpdate(fileInfo)
         --print("Update: " .. fileInfo.absolutePath);
     end
+    
+    
+    
+    self:WatchLMBDown(function(data)
+        if not self.FolderMenu:IsChild(data.receiver) then self.FolderMenu:Hide(); end;
+        if not self.FileMenu:IsChild(data.receiver)   then self.FileMenu:Hide();   end;
+    end);
+    
+    self:WatchRMBDown(function(data)
+        if not self.FolderMenu:IsChild(data.receiver) then self.FolderMenu:Hide(); end;
+        if not self.FileMenu:IsChild(data.receiver)   then self.FileMenu:Hide();   end;
+    end);
     
     
     
