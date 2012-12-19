@@ -31,6 +31,11 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script url="scripts/openfilesmanager.lua" />
 
 
+<style  url="styles/sceneeditor.style" />
+<script url="scripts/sceneeditor.lua"  />
+
+
+
 <!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
 <script>
 <![CDATA[

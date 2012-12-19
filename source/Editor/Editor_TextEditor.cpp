@@ -87,6 +87,7 @@ namespace GTEngine
                     }
                     else
                     {
+                        gui.DeleteElement(textBoxElement);
                         return false;
                     }
                 }
