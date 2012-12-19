@@ -240,7 +240,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         
         //border-top: 1px #2b2b2b
         
-        vertical-align: center
+        vertical-align:   center
+        flex-child-width: true
     }
     
     #EditorCenterPanel
@@ -412,12 +413,12 @@ hidden by default.
     </div>
 
     <div id="EditorBottomPanel">
-        <div style="child-plane:horizontal; vertical-align:center; width:50%;">
+        <div style="child-plane:horizontal; vertical-align:center; width:100%;">
             <div style="width:auto; margin-left:4px; margin-right:8px; text-color:#888;">Command:</div>
             <div id="CommandTextBox" styleclass="textbox" style="height:22px; width:400px;" />
             <div id="CommandErrorBox" style="height:100%; width:auto; margin-left:8px; vertical-align:center;" />
         </div>
-        <div style="child-plane:horizontal; vertical-align:center; horizontal-align:right; width:50%;">
+        <div style="child-plane:horizontal; vertical-align:center; horizontal-align:right; width:auto;">
             <div styleclass="profiling-entry-title">Delta:</div>
             <div styleclass="profiling-entry-value" id="Editor_Delta" />
             <div styleclass="profiling-entry-title">FPS:</div>
