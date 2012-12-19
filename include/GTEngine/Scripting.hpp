@@ -34,6 +34,9 @@ namespace GTEngine
             /// Determines if the given file path is a sound file, based on it's extension.
             int IsSoundFile(GTCore::Script &script);
 
+            /// Determines if the given file path is a scene file, based on it's extension.
+            int IsSceneFile(GTCore::Script &script);
+
 
 
             namespace RendererFFI

@@ -23,5 +23,10 @@ namespace GTEngine
         {
             return AudioComposer::IsExtensionSupported(GTCore::Path::Extension(fileName));
         }
+
+        bool IsSupportedSceneExtension(const char* fileName)
+        {
+            return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "gtscene");
+        }
     }
 }

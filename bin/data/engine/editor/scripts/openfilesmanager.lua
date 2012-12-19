@@ -8,11 +8,12 @@ Editor.OpenFilesManager.OpenedSubEditor   = nil;
 Editor.OpenFilesManager.PreviousSubEditor = nil;
 
 
-function Editor.OpenFilesManager.Startup(tabbar, modelEditor, imageEditor, textEditor)
+function Editor.OpenFilesManager.Startup(tabbar, modelEditor, imageEditor, textEditor, sceneEditor)
     Editor.OpenFilesManager.TabBar      = tabbar;
     Editor.OpenFilesManager.ModelEditor = modelEditor;
     Editor.OpenFilesManager.ImageEditor = imageEditor;
     Editor.OpenFilesManager.TextEditor  = textEditor;
+    Editor.OpenFilesManager.SceneEditor = sceneEditor;
     
     Editor.OpenFilesManager.TabBar:OnTabActivated(function(data)
         Editor.OpenFilesManager.ShowFile(data.tab.path);
@@ -81,6 +82,8 @@ function Editor.OpenFilesManager.SaveFile(filename)
         if GTEngine.IsModelFile(filename) then
             result = Editor.ModelEditor.SaveFile(filename);
         elseif GTEngine.IsImageFile(filename) then
+        elseif GTEngine.IsSceneFile(filename) then
+            result = Editor.SceneEditor.SaveFile(filename);
         else                                                        -- Assume a text file if nothing else.
             result = Editor.TextEditor.SaveFile(filename);
         end
@@ -125,6 +128,9 @@ function Editor.OpenFilesManager.ShowFile(filename)
         elseif GTEngine.IsImageFile(filename) then
             Editor.OpenFilesManager.OpenedSubEditor = Editor.OpenFilesManager.ImageEditor;
             Editor.OnImageActivated(filename);
+        elseif GTEngine.IsSceneFile(filename) then
+            Editor.OpenFilesManager.OpenedSubEditor = Editor.OpenFilesManager.SceneEditor;
+            Editor.OnSceneActivated(filename);
         else                                                        -- Assume a text file if nothing else.
             Editor.OpenFilesManager.OpenedSubEditor = Editor.OpenFilesManager.TextEditor;
             Editor.OnTextFileActivated(filename);
