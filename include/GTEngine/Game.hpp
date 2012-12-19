@@ -798,6 +798,16 @@ namespace GTEngine
         size_t mousePosBufferIndex;
 
 
+        /// The x position of the mouse.
+        int mousePosX;
+
+        /// The y position of the mouse.
+        int mousePosY;
+
+        /// Incrementing this will cause that number of mouse move events to be discarded. Really useful for locking movement events from mouse captures.
+        int mouseMoveLockCounter;
+
+
         /// Object use for watching changes to the data directories. Mainly used for the editor.
         DataFilesWatcher dataFilesWatcher;
 

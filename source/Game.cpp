@@ -45,6 +45,7 @@ namespace GTEngine
           mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
+          mousePosX(0), mousePosY(0), mouseMoveLockCounter(0),
           dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false),
           currentGameState(nullptr), previousGameState(nullptr),
           dataFilesWatcherEventHandler(*this),
@@ -209,6 +210,8 @@ namespace GTEngine
     {
         if (!this->mouseCaptured)
         {
+            this->mouseMoveLockCounter = 1;         // We want to skip the next mouse move message which will be posted by the call to SetMousePosition() below.
+
             this->HideCursor();
             this->mouseCaptured = true;
             this->GetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
@@ -228,7 +231,8 @@ namespace GTEngine
         if (this->mouseCaptured)
         {
             this->ShowCursor();
-            this->mouseCaptured = false;
+            this->mouseCaptured        = false;
+            this->mouseMoveLockCounter = 1;
 
             this->SetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
         }
@@ -1091,17 +1095,32 @@ namespace GTEngine
 
     void Game::HandleEvent_OnMouseMove(GameEvent &e)
     {
-        // We don't post mouse events if the mouse is captured.
-        if (!this->mouseCaptured)
+        if (this->mousePosX != e.mousemove.x || this->mousePosY != e.mousemove.y)
         {
-            this->gui.OnMouseMove(e.mousemove.x, e.mousemove.y);
+            this->mousePosX = e.mousemove.x;
+            this->mousePosY = e.mousemove.y;
 
-            this->OnMouseMove(e.mousemove.x, e.mousemove.y);
-            this->PostScriptEvent_OnMouseMove(e);
-
-            if (this->currentGameState != nullptr)
+            // If we're captured and blocking, we don't want to post anything.
+            if (this->mouseMoveLockCounter == 0)
             {
-                this->currentGameState->OnMouseMove(e.mousemove.x, e.mousemove.y);
+                this->gui.OnMouseMove(e.mousemove.x, e.mousemove.y);
+
+
+                // We don't post mouse events if the mouse is captured.
+                if (!this->mouseCaptured)
+                {
+                    this->OnMouseMove(e.mousemove.x, e.mousemove.y);
+                    this->PostScriptEvent_OnMouseMove(e);
+
+                    if (this->currentGameState != nullptr)
+                    {
+                        this->currentGameState->OnMouseMove(e.mousemove.x, e.mousemove.y);
+                    }
+                }
+            }
+            else
+            {
+                --this->mouseMoveLockCounter;
             }
         }
     }
