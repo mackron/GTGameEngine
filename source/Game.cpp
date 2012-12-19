@@ -235,6 +235,9 @@ namespace GTEngine
             this->mouseMoveLockCounter = 1;
 
             this->SetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
+
+            // A MouseMove event will not be posted here, but we need to let the GUI know that the mouse might have a new position.
+            this->gui.SetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
         }
     }
 
