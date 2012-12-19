@@ -65,7 +65,7 @@ dialog-footer
 }
 
 
-yesnocancel-button includes button
+dialog-button includes button
 {
     width:  80px
     margin: 4px 0px

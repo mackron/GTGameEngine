@@ -317,6 +317,17 @@ namespace GTEngine
     }
 
 
+    int FFI_Game_ScanDataFilesForChanges(GTCore::Script &script)
+    {
+        auto &game = GameScript::FFI::GetGameObject(script);
+
+        game.GetDataFilesWatcher().CheckForChanges(false);
+        game.GetDataFilesWatcher().DispatchEvents();
+
+        return 0;
+    }
+
+
 
     //////////////////////////////////////////////////////
     // RegisterFFI()
@@ -331,23 +342,25 @@ namespace GTEngine
         this->GetGlobal("Game");
         if (this->IsTable(-1))
         {
-            this->SetTableFunction(-1, "Close",              FFI_Game_Close);
+            this->SetTableFunction(-1, "Close",                   FFI_Game_Close);
 
-            this->SetTableFunction(-1, "Pause",              FFI_Game_Pause);
-            this->SetTableFunction(-1, "Resume",             FFI_Game_Resume);
+            this->SetTableFunction(-1, "Pause",                   FFI_Game_Pause);
+            this->SetTableFunction(-1, "Resume",                  FFI_Game_Resume);
 
-            this->SetTableFunction(-1, "EnableFullscreen",   FFI_Game_EnableFullscreen);
-            this->SetTableFunction(-1, "DisableFullscreen",  FFI_Game_DisableFullscreen);
+            this->SetTableFunction(-1, "EnableFullscreen",        FFI_Game_EnableFullscreen);
+            this->SetTableFunction(-1, "DisableFullscreen",       FFI_Game_DisableFullscreen);
 
-            this->SetTableFunction(-1, "ExecuteFile",        FFI_Game_ExecuteFile);
-            this->SetTableFunction(-1, "ExecuteScript",      FFI_Game_ExecuteScript);
-            this->SetTableFunction(-1, "GetLastScriptError", FFI_Game_GetLastScriptError);
+            this->SetTableFunction(-1, "ExecuteFile",             FFI_Game_ExecuteFile);
+            this->SetTableFunction(-1, "ExecuteScript",           FFI_Game_ExecuteScript);
+            this->SetTableFunction(-1, "GetLastScriptError",      FFI_Game_GetLastScriptError);
 
-            this->SetTableFunction(-1, "ShowDebug",          FFI_Game_ShowDebug);
-            this->SetTableFunction(-1, "HideDebug",          FFI_Game_HideDebug);
+            this->SetTableFunction(-1, "ShowDebug",               FFI_Game_ShowDebug);
+            this->SetTableFunction(-1, "HideDebug",               FFI_Game_HideDebug);
 
-            this->SetTableFunction(-1, "IsKeyDown",          FFI_Game_IsKeyDown);
-            this->SetTableFunction(-1, "IsMouseButtonDown",  FFI_Game_IsMouseButtonDown);
+            this->SetTableFunction(-1, "IsKeyDown",               FFI_Game_IsKeyDown);
+            this->SetTableFunction(-1, "IsMouseButtonDown",       FFI_Game_IsMouseButtonDown);
+
+            this->SetTableFunction(-1, "ScanDataFilesForChanges", FFI_Game_ScanDataFilesForChanges);      
         }
         this->Pop(1);    // Game
 

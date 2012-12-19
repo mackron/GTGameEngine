@@ -25,6 +25,8 @@ namespace GTEngine
 
     bool Editor_TextEditor::LoadFile(const char* absolutePath)
     {
+        auto &gui = this->editor.GetGame().GetGUI();
+
         // What we do here is first determine whether or not the file has already been loaded. If it has, we just show the existing text box. Otherwise, we need
         // to create a new one.
         auto iState = this->loadedStates.Find(absolutePath);
@@ -37,6 +39,8 @@ namespace GTEngine
 
             this->currentState = iState->value;
             this->currentState->textBox->Show();
+
+            gui.FocusElement(this->currentState->textArea);
         }
         else
         {
@@ -44,7 +48,6 @@ namespace GTEngine
             GTCore::String fileContent;
             if (GTCore::IO::OpenAndReadTextFile(absolutePath, fileContent))
             {
-                auto &gui    = this->editor.GetGame().GetGUI();
                 auto &script = this->editor.GetGame().GetScript();
 
 
@@ -64,6 +67,9 @@ namespace GTEngine
                         textAreaElement->SetText(fileContent.c_str());
                         textAreaElement->SetStyleAttribute("background-color", "inherit");
                         textAreaElement->SetStyleAttribute("text-color",       "inherit");
+                        
+                        textAreaElement->textManager.MoveCursorToStart();
+                        gui.FocusElement(textAreaElement);
 
                         // Now we just need to create a new state object and make it the current one.
                         if (this->currentState != nullptr)
