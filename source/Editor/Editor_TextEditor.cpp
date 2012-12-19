@@ -119,6 +119,10 @@ namespace GTEngine
             {
                 return GTCore::IO::OpenAndWriteTextFile(absolutePath, text);
             }
+            else
+            {
+                return GTCore::IO::OpenAndWriteTextFile(absolutePath, "");
+            }
         }
 
         return false;
