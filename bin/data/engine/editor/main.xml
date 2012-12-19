@@ -183,7 +183,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     
     -- Here we startup the open files manager. This depends on a few things, so we need to start this up after dependencies are started up.
-    Editor.OpenFilesManager.Startup(Editor_TabBar, Editor_ModelEditor, Editor_ImageEditor, Editor_TextEditor);
+    Editor.OpenFilesManager.Startup(Editor_TabBar, Editor_ModelEditor, Editor_ImageEditor, Editor_TextEditor, Editor_SceneEditor);
     
     
     -- This should be temp, I think.
@@ -407,6 +407,11 @@ hidden by default.
                 
                 <!-- Text Editor -->
                 <div id="Editor_TextEditor" styleclass='sub-editor'>
+                </div>
+                
+                
+                <!-- Scene Editor -->
+                <div id="Editor_SceneEditor" styleclass='sub-editor'>
                 </div>
             </div>
         </div>

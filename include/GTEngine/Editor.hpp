@@ -6,6 +6,7 @@
 #include "Editor/Editor_ImageEditor.hpp"
 //#include "Editor/Editor_SoundEditor.hpp"
 #include "Editor/Editor_TextEditor.hpp"
+#include "Editor/Editor_SceneEditor.hpp"
 #include "DataFilesWatcher.hpp"
 
 namespace GTGUI
@@ -66,6 +67,10 @@ namespace GTEngine
               Editor_TextEditor & GetTextEditor()       { return this->textEditor; }
         const Editor_TextEditor & GetTextEditor() const { return this->textEditor; }
 
+        /// Retrieves a reference to the scene sub-editor.
+              Editor_SceneEditor & GetSceneEditor()       { return this->sceneEditor; }
+        const Editor_SceneEditor & GetSceneEditor() const { return this->sceneEditor; }
+
 
 
         ///////////////////////////////////////////////
@@ -95,6 +100,11 @@ namespace GTEngine
         /// @param fileName [in] The full, absolute path of the text file being shown.
         void OnTextFileActivated(const char* fileName);
 
+        /// Called when the tab for a scene is activated.
+        ///
+        /// @param fileName [in] The full, absolute path of the scene being shown.
+        void OnSceneActivated(const char* fileName);
+
 
         /// Called when the tab for a model is closed.
         ///
@@ -115,6 +125,11 @@ namespace GTEngine
         ///
         /// @param fileName [in] The full, absolute path of the file being closed.
         void OnTextFileClosed(const char* fileName);
+
+        /// Called when the tab for a scene is closed.
+        ///
+        /// @param fileName [in] The full, absolute path of the file being closed.
+        void OnSceneClosed(const char* fileName);
 
 
         /// Called when a file is activated.
@@ -187,6 +202,10 @@ namespace GTEngine
         /// The text editor.
         Editor_TextEditor textEditor;
 
+        /// The scene editor.
+        Editor_SceneEditor sceneEditor;
+
+
 
         /// The last time the profiling elements were updated.
         double lastProfilingUpdateTime;
@@ -248,6 +267,7 @@ namespace GTEngine
             static int OnImageActivated(GTCore::Script &script);
             static int OnSoundActivated(GTCore::Script &script);
             static int OnTextFileActivated(GTCore::Script &script);
+            static int OnSceneActivated(GTCore::Script &script);
 
 
             static int OnFileActivated(GTCore::Script &script);
@@ -268,6 +288,11 @@ namespace GTEngine
             };
 
             struct TextEditorFFI
+            {
+                static int SaveFile(GTCore::Script &script);
+            };
+
+            struct SceneEditorFFI
             {
                 static int SaveFile(GTCore::Script &script);
             };

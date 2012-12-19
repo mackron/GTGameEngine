@@ -17,7 +17,7 @@ namespace GTEngine
 {
     Editor::Editor(Game &game)
         : game(game), GUI(),
-          modelEditor(*this), imageEditor(*this), textEditor(*this),
+          modelEditor(*this), imageEditor(*this), textEditor(*this), sceneEditor(*this),
           isStarted(false), isOpen(false), disableFileWatchingAfterClose(true), disableKeyboardAutoRepeatAfterClose(true),
           dataFilesWatcherEventHandler(*this)
     {
@@ -180,6 +180,12 @@ namespace GTEngine
         this->textEditor.LoadFile(fileName);
     }
 
+    void Editor::OnSceneActivated(const char* fileName)
+    {
+        this->sceneEditor.LoadScene(fileName);
+    }
+
+
 
     void Editor::OnModelClosed(const char* fileName)
     {
@@ -201,6 +207,12 @@ namespace GTEngine
         this->textEditor.CloseFile(fileName);
     }
 
+    void Editor::OnSceneClosed(const char* fileName)
+    {
+        (void)fileName;
+    }
+
+
 
     void Editor::OnFileActivated(const char* fileName)
     {
@@ -215,6 +227,10 @@ namespace GTEngine
         else if (IO::IsSupportedSoundExtension(fileName))
         {
             this->OnSoundActivated(fileName);
+        }
+        else if (IO::IsSupportedSceneExtension(fileName))
+        {
+            this->OnSceneActivated(fileName);
         }
         else        // Assume a text file if nothing else.
         {
@@ -235,6 +251,10 @@ namespace GTEngine
         else if (IO::IsSupportedSoundExtension(fileName))
         {
             this->OnSoundClosed(fileName);
+        }
+        else if (IO::IsSupportedSceneExtension(fileName))
+        {
+            this->OnSceneClosed(fileName);
         }
         else        // Assume a text file if nothing else.
         {
@@ -339,6 +359,7 @@ namespace GTEngine
             script.SetTableFunction(-1, "OnImageActivated",    FFI::OnImageActivated);
             script.SetTableFunction(-1, "OnSoundActivated",    FFI::OnSoundActivated);
             script.SetTableFunction(-1, "OnTextFileActivated", FFI::OnTextFileActivated);
+            script.SetTableFunction(-1, "OnSceneActivated",    FFI::OnSceneActivated);
 
             script.SetTableFunction(-1, "OnFileActivated", FFI::OnFileActivated);
             script.SetTableFunction(-1, "OnFileClosed",    FFI::OnFileClosed);
@@ -418,6 +439,12 @@ namespace GTEngine
     int Editor::FFI::OnTextFileActivated(GTCore::Script &script)
     {
         FFI::GetEditor(script).OnTextFileActivated(script.ToString(1));
+        return 0;
+    }
+
+    int Editor::FFI::OnSceneActivated(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).OnSceneActivated(script.ToString(1));
         return 0;
     }
 
@@ -505,11 +532,21 @@ namespace GTEngine
 
 
     ////////////////////////////////////////////////////
-    // TextFileEditor
+    // TextEditorFFI
 
     int Editor::FFI::TextEditorFFI::SaveFile(GTCore::Script &script)
     {
         script.Push(FFI::GetEditor(script).GetTextEditor().SaveFile(script.ToString(1)));
+        return 1;
+    }
+
+
+    ////////////////////////////////////////////////////
+    // SceneEditorFFI
+
+    int Editor::FFI::SceneEditorFFI::SaveFile(GTCore::Script &script)
+    {
+        script.Push(FFI::GetEditor(script).GetSceneEditor().SaveScene(script.ToString(1)));
         return 1;
     }
 }
