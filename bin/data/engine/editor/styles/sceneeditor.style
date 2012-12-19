@@ -1,0 +1,25 @@
+
+scene-editor-main
+{
+    width:            100%
+    height:           100%
+    
+    child-plane:      horizontal
+    flex-child-width: true
+}
+
+scene-editor-viewport
+{
+    width:  100%
+    height: 100%
+    
+    border: 1px #222
+}
+
+scene-editor-panel
+{
+    width:  250px
+    height: 100%
+    
+    border: 1px #222
+}
