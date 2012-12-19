@@ -150,7 +150,7 @@ namespace GTEngine
     {
         if (this->currentState != nullptr)
         {
-            if (this->currentState->GUI.Viewport->IsVisible())
+            if (this->currentState->GUI.Main->IsVisible())
             {
                 auto &game = this->editor.GetGame();
 
@@ -223,10 +223,14 @@ namespace GTEngine
           cameraXRotation(0.0f), cameraYRotation(0.0f)
     {
         this->camera.AddComponent<GTEngine::CameraComponent>();
+        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
 
         this->viewport.SetCameraNode(this->camera);
         this->scene.AddViewport(this->viewport);
         this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
+
+
+        this->scene.AddSceneNode(this->camera);
     }
 
     Editor_SceneEditor::State::~State()

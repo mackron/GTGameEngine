@@ -51,6 +51,7 @@ namespace GTEngine
                 this->imageEditor.Startup();
                 //this->soundEditor.Startup();
                 this->textEditor.Startup();
+                this->sceneEditor.Startup();
 
 
                 // Here we need to attach our files watcher event handler.
@@ -130,6 +131,7 @@ namespace GTEngine
     void Editor::Update(double deltaTimeInSeconds)
     {
         this->modelEditor.Update(deltaTimeInSeconds);
+        this->sceneEditor.Update(deltaTimeInSeconds);
 
 
         // We need to update the profiling GUI.
