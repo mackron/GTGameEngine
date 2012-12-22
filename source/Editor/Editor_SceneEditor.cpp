@@ -220,7 +220,8 @@ namespace GTEngine
         : sceneEditor(sceneEditorIn),
           scene(), viewport(), camera(),
           viewportEventHandler(sceneEditor.GetEditor().GetGame(), viewport),
-          cameraXRotation(0.0f), cameraYRotation(0.0f)
+          cameraXRotation(0.0f), cameraYRotation(0.0f),
+          GUI()
     {
         this->camera.AddComponent<GTEngine::CameraComponent>();
         this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
