@@ -289,9 +289,9 @@ namespace GTEngine
 
             if (firstKey != nullptr && endKey != nullptr)
             {
-                glm::vec3 position = glm::mix(firstKey->position, endKey->position, interpolationFactor);
-                glm::quat rotation =      mix(firstKey->rotation, endKey->rotation, interpolationFactor);
-                glm::vec3 scale    = glm::mix(firstKey->scale,    endKey->scale,    interpolationFactor);
+                glm::vec3 position = glm::mix(  firstKey->position, endKey->position, interpolationFactor);
+                glm::quat rotation = glm::slerp(firstKey->rotation, endKey->rotation, interpolationFactor);
+                glm::vec3 scale    = glm::mix(  firstKey->scale,    endKey->scale,    interpolationFactor);
 
                 bone->SetPosition(position);
                 bone->SetRotation(rotation);

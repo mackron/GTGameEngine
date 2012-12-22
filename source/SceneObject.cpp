@@ -37,7 +37,7 @@ namespace GTEngine
 
     void SceneObject::InterpolateOrientation(const glm::quat &dest, float a)
     {
-        this->SetOrientation(GTEngine::mix(this->orientation, dest, a));
+        this->SetOrientation(glm::slerp(this->orientation, dest, a));
     }
 
     void SceneObject::InterpolateScale(const glm::vec3 &dest, float a)

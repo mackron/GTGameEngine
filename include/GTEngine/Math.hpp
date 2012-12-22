@@ -9,6 +9,8 @@
 #endif
 #define GLM_FORCE_ONLY_XYZW
 #define GLM_FORCE_SSE2
+#define GLM_SIMD_ENABLE_XYZW_UNION
+#define GLM_SIMD_ENABLE_DEFAULT_INIT
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -103,50 +105,6 @@ namespace GTEngine
             bool ContainsAABB(const Plane frustumPlanes[6], const AABB &aabb);
         }
     }
-
-
-    // Workaround for glm::tquat<T>::mix().
-    template <typename T>
-    GLM_FUNC_QUALIFIER glm::detail::tquat<T> mix
-	(
-		glm::detail::tquat<T> const & x,
-		glm::detail::tquat<T> const & y,
-		T const & a
-	)
-    {
-        if (a <= T(0))
-        {
-            return x;
-        }
-        if (a >= T(1))
-        {
-            return y;
-        }
-
-
-        glm::detail::tquat<T> z;
-
-        float d = glm::dot(x, y);
-        if (d < T(0))
-        {
-            d = -d;
-            z = -y;
-        }
-        else
-        {
-            z = y;
-        }
-
-        float angle = glm::acos(d);
-        if (angle > T(0))
-        {
-            return (glm::sin((T(1) - a) * angle) * x + glm::sin(a * angle) * z) / glm::sin(angle);
-        }
-        else
-        {
-            return x;
-        }
-	}
 }
 
 
