@@ -18,6 +18,7 @@ namespace GTEngine
     Editor::Editor(Game &game)
         : game(game), GUI(),
           modelEditor(*this), imageEditor(*this), textEditor(*this), sceneEditor(*this),
+          lastProfilingUpdateTime(0.0),
           isStarted(false), isOpen(false), disableFileWatchingAfterClose(true), disableKeyboardAutoRepeatAfterClose(true),
           dataFilesWatcherEventHandler(*this)
     {
