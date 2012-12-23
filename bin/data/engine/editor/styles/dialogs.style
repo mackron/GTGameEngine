@@ -14,28 +14,17 @@ dialog-container
     
 dialog  // Elements using this will be children of elements using 'dialog-container'
 {
-    positioning:      relative
-    left:             36px
-    top:              28px
-    width:            300px
-    height:           200px
-    padding:          8px
-    border:           1px #666
-    background-color: #444
-        
-    allow-mouse-drag: true
-        
-    allow-mouse-resize:   true
-    right-gripper-width:  8px
-    bottom-gripper-width: 8px
-        
+    background-color:  #3a3a3a;
+    flex-child-height: true;
+    padding:           16px;
+
     compound-opacity: false
-        
+
     enable-shadow:      true
-    shadow-extrusion-x: 8px
-    shadow-extrusion-y: 8px
+    shadow-extrusion-x: 12px
+    shadow-extrusion-y: 12px
     shadow-blur-radius: 8px
-    shadow-opacity:     1.0
+    shadow-opacity:     50%
 }
 
     

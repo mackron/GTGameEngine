@@ -438,7 +438,7 @@ hidden by default.
   
     <!-- This section contains relative positioned controls. Usually dialog boxes. -->
     <div id="YesNoCancelDialog" style="positioning:absolute; width:100%; height:100%; z-index:1000; background-color:#000; opacity:50%; vertical-align:center; horizontal-align:center; visible:false;">
-        <div style="width:400px; height:200px; background-color:#3a3a3a; flex-child-height:true; compound-opacity:false; enable-shadow:true; padding:16px;">
+        <div styleclass='dialog' style="width:400px; height:200px; background-color:#3a3a3a; flex-child-height:true; padding:16px;">
             <div id="YesNoCancelDialog_TextBox" style="width:100%; height:100%; vertical-align:center; font-size:10pt; text-color:#ccc;" />
             <div style="width:100%; height:auto%; border-top:1px #333; vertical-align:bottom; horizontal-align:right; child-plane:horizontal; padding-top:16px;">
                 <div id="YesNoCancelDialog_Yes"    styleclass='button dialog-button' />
@@ -449,7 +449,7 @@ hidden by default.
     </div>
     
     <div id="NewFileDialog" style="positioning:absolute; width:100%; height:100%; z-index:1000; background-color:#000; opacity:50%; vertical-align:center; horizontal-align:center; visible:false;">
-        <div style="width:400px; height:200px; background-color:#3a3a3a; flex-child-height:true; compound-opacity:false; enable-shadow:true; padding:16px;">
+        <div styleclass='dialog' style="width:400px; height:200px; background-color:#3a3a3a; flex-child-height:true; padding:16px;">
             <div style="width:100%; height:100%; vertical-align:center;">
                 <div id="NewFileDialog_TextBox"       style="width:100%; height:auto; vertical-align:center; font-size:10pt; text-color:#ccc; margin-bottom:4px;" />
                 <div id="NewFileDialog_NameTextBox"   styleclass='textbox' style="width:100%; height:auto; padding:4px;" />
