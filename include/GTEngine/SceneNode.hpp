@@ -536,14 +536,7 @@ namespace GTEngine
         template <typename T>
         void RemoveComponent()
         {
-            auto component = this->GetComponent<T>();
-            if (component != nullptr)
-            {
-                // The OnComponentDetached() event needs to be called before destruction, but after it's been removed.
-                this->components.Remove(T::Name);
-
-                delete component;
-            }
+            this->RemoveComponentByName(T::Name);
         }
 
         /**
@@ -572,6 +565,20 @@ namespace GTEngine
             delete this->pointLightComponent;
             this->pointLightComponent = nullptr;
         }
+
+        /// Removes a component by it's name.
+        ///
+        /// @param componentName [in] The name of the component to remove.
+        void RemoveComponentByName(const char* componentName)
+        {
+            auto component = this->GetComponentByName(componentName);
+            if (component != nullptr)
+            {
+                this->components.Remove(componentName);
+                delete component;
+            }
+        }
+
 
         /**
         *   \brief  Determines whether or not the node has the component as specified by 'T'.
