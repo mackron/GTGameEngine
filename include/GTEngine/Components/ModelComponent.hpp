@@ -130,7 +130,7 @@ namespace GTEngine
         bool drawWireframe;
 
 
-    GTENGINE_DECL_COMPONENT_END()   
+    GTENGINE_DECL_COMPONENT_END()
 }
 
 #endif

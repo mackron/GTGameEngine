@@ -1,6 +1,7 @@
 
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
+#include <GTEngine/CollisionGroups.hpp>
 
 namespace GTEngine
 {
@@ -16,6 +17,7 @@ namespace GTEngine
 
     void Editor_SceneEditor::Startup()
     {
+        this->InitialiseScripting();
     }
 
 
@@ -150,6 +152,132 @@ namespace GTEngine
 
 
 
+    void Editor_SceneEditor::DoMouseSelection()
+    {
+        if (this->currentState != nullptr && this->currentState->GUI.Main->IsVisible())
+        {
+            // We want to do a few ray tests here. Some stuff will have priority over other stuff. For example, any gizmo will have a higher priority over everything else.
+
+            int clickPosX;
+            int clickPosY;
+            this->currentState->viewportEventHandler.GetMousePosition(clickPosX, clickPosY);
+
+            glm::vec3 rayStart;
+            glm::vec3 rayEnd;
+            this->currentState->viewport.CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
+
+            
+            // A simple ray test for now.
+            auto selectedNode = this->currentState->scene.RayTest(rayStart, rayEnd, CollisionGroups::EditorSelectionRay, CollisionGroups::EditorSelectionVolume);
+            if (selectedNode != nullptr)
+            {
+                // The way we do the selection depends on what we're doing. If shift is being held down, we don't want to deselect anything and instead just add
+                // or remove the node to the selection. If the selected node is already selected, it needs to be deselected. Otherwise it needs to be selected.
+                if (this->editor.GetGame().IsKeyDown(GTCore::Keys::Shift))
+                {
+                    if (this->IsSceneNodeSelected(*selectedNode))
+                    {
+                        this->DeselectSceneNode(*selectedNode);
+                    }
+                    else
+                    {
+                        this->SelectSceneNode(*selectedNode);
+                    }
+                }
+                else
+                {
+                    this->DeselectAll();
+                    this->SelectSceneNode(*selectedNode);
+                }
+            }
+            else
+            {
+                // Nothing was hit, so we will deselect everything.
+                this->DeselectAll();
+            }
+        }
+    }
+
+    void Editor_SceneEditor::DeselectAll()
+    {
+        if (this->currentState != nullptr)
+        {
+            for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
+            {
+                auto node = this->currentState->selectedNodes[i];
+                
+                auto modelComponent = node->GetComponent<ModelComponent>();
+                if (modelComponent != nullptr)
+                {
+                    modelComponent->DisableWireframe();
+                }
+            }
+            this->currentState->selectedNodes.Clear();
+
+
+            // The scripting environment needs to know about this.
+            this->GetScript().Execute("Editor.SceneEditor.MarkAllNodesAsDeselected();");
+        }
+    }
+
+
+    bool Editor_SceneEditor::IsSceneNodeSelected(const SceneNode &node) const
+    {
+        // NOTE: This is temp. Implement a proper EditorMetadataComponent
+        auto modelComponent = node.GetComponent<ModelComponent>();
+        if (modelComponent != nullptr)
+        {
+            return modelComponent->IsWireframeEnabled();
+        }
+
+        return false;
+    }
+
+    void Editor_SceneEditor::SelectSceneNode(SceneNode &node)
+    {
+        if (this->currentState != nullptr && !this->IsSceneNodeSelected(node))
+        {
+            // Temp again.
+            auto modelComponent = node.GetComponent<ModelComponent>();
+            if (modelComponent != nullptr)
+            {
+                return modelComponent->EnableWireframe();
+            }
+
+
+            // NOTE: This part is not temp, but it should only be done if we have an EditorMetadataComponent.
+            assert(this->currentState->selectedNodes.Exists(&node) == false);
+            {
+                this->currentState->selectedNodes.PushBack(&node);
+
+                // The scripting environment needs to be aware of this change.
+            }
+        }
+    }
+
+    void Editor_SceneEditor::DeselectSceneNode(SceneNode &node)
+    {
+        if (this->currentState != nullptr && this->IsSceneNodeSelected(node))
+        {
+            // Temp again.
+            auto modelComponent = node.GetComponent<ModelComponent>();
+            if (modelComponent != nullptr)
+            {
+                return modelComponent->DisableWireframe();
+            }
+
+
+            // NOTE: This part is not temp, but it should only be done if we have an EditorMetadataComponent.
+            assert(this->currentState->selectedNodes.Exists(&node) == true);
+            {
+                this->currentState->selectedNodes.PushBack(&node);
+
+                // The scripting environment needs to be aware of this change.
+            }
+        }
+    }
+
+
     ////////////////////////////////////////////////
     // Events
 
@@ -241,6 +369,34 @@ namespace GTEngine
         script.Pop(1);
     }
 
+    GameScript & Editor_SceneEditor::GetScript()
+    {
+        return this->editor.GetGame().GetScript();
+    }
+
+
+    void Editor_SceneEditor::InitialiseScripting()
+    {
+        auto &script = this->editor.GetGame().GetScript();
+
+
+        //////////////////////////////////////////
+        // FFI
+
+        script.GetGlobal("Editor");
+        assert(script.IsTable(-1));
+        {
+            script.Push("SceneEditor");
+            script.GetTableValue(-2);
+            assert(script.IsTable(-1));
+            {
+                script.SetTableFunction(-1, "DoMouseSelection", SceneEditorFFI::DoMouseSelection);
+            }
+            script.Pop(1);
+        }
+        script.Pop(1);
+    }
+
 
 
 
@@ -252,6 +408,7 @@ namespace GTEngine
           scene(), viewport(), camera(),
           viewportEventHandler(sceneEditor.GetEditor().GetGame(), viewport),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
+          selectedNodes(),
           GUI()
     {
         this->camera.AddComponent<GTEngine::CameraComponent>();
@@ -267,5 +424,23 @@ namespace GTEngine
 
     Editor_SceneEditor::State::~State()
     {
+    }
+
+
+
+
+
+    ////////////////////////////////////////////////
+    // Scripting FFI
+
+    Editor_SceneEditor & Editor_SceneEditor::SceneEditorFFI::GetSceneEditor(GTCore::Script &script)
+    {
+        return GameScript::FFI::GetGameObject(script).GetEditor().GetSceneEditor();
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::DoMouseSelection(GTCore::Script &script)
+    {
+        GetSceneEditor(script).DoMouseSelection();
+        return 0;
     }
 }

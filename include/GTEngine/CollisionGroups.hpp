@@ -4,7 +4,7 @@
 
 namespace GTEngine
 {
-    /// The various engine level collision groups for collision detection.
+    /// The various engine level collision groups for collision detection. These should not be used for any gameplay related collision detection.
     namespace CollisionGroups
     {
         static const short All        = -1;             ///< Everything
