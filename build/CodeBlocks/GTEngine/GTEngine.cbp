@@ -164,6 +164,7 @@
 		<Unit filename="../../../include/GTEngine/Editor/Editor3DViewportEventHandler.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/Editor_ImageEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/Editor_ModelEditor.hpp" />
+		<Unit filename="../../../include/GTEngine/Editor/Editor_SceneEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/Editor_TextEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Errors.hpp" />
 		<Unit filename="../../../include/GTEngine/FontManager.hpp" />
@@ -216,6 +217,7 @@
 		<Unit filename="../../../include/GTEngine/Physics/RigidBody.hpp" />
 		<Unit filename="../../../include/GTEngine/Physics/SceneNodeMotionState.hpp" />
 		<Unit filename="../../../include/GTEngine/Physics/btEllipsoidShape.hpp" />
+		<Unit filename="../../../include/GTEngine/Profiler.hpp" />
 		<Unit filename="../../../include/GTEngine/Projectile.hpp" />
 		<Unit filename="../../../include/GTEngine/Random/Floor/FloorDefinition.hpp" />
 		<Unit filename="../../../include/GTEngine/Random/Floor/FloorGenerator.hpp" />
@@ -321,6 +323,7 @@
 		<Unit filename="../../../source/Editor/Editor3DViewportEventHandler.cpp" />
 		<Unit filename="../../../source/Editor/Editor_ImageEditor.cpp" />
 		<Unit filename="../../../source/Editor/Editor_ModelEditor.cpp" />
+		<Unit filename="../../../source/Editor/Editor_SceneEditor.cpp" />
 		<Unit filename="../../../source/Editor/Editor_TextEditor.cpp" />
 		<Unit filename="../../../source/Errors.cpp" />
 		<Unit filename="../../../source/FontManager.cpp" />
@@ -365,6 +368,7 @@
 		<Unit filename="../../../source/Physics/RigidBody.cpp" />
 		<Unit filename="../../../source/Physics/SceneNodeMotionState.cpp" />
 		<Unit filename="../../../source/Physics/btEllipsoidShape.cpp" />
+		<Unit filename="../../../source/Profiler.cpp" />
 		<Unit filename="../../../source/Projectile.cpp" />
 		<Unit filename="../../../source/Random/Floor/FloorDefinition.cpp" />
 		<Unit filename="../../../source/Random/Floor/FloorGenerator.cpp" />
