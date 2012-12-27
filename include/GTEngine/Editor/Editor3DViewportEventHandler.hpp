@@ -21,6 +21,14 @@ namespace GTEngine
         ~Editor3DViewportEventHandler();
 
 
+        /// Retrieves the position of the mouse, relative to the viewport.
+        void GetMousePosition(int &mousePosXOut, int &mousePosYOut) const
+        {
+            mousePosXOut = this->mousePosX;
+            mousePosYOut = this->mousePosY;
+        }
+
+
         //////////////////////////////////////////////////////////////////////////////////
         // Events.
 
@@ -57,6 +65,13 @@ namespace GTEngine
 
         /// A reference ot the scene viewport that viewport operatiosn will be happening on.
         SceneViewport &viewport;
+
+
+        /// The mouse position on the x axis.
+        int mousePosX;
+
+        /// The mouse position on the y axis.
+        int mousePosY;
 
 
 
