@@ -16,6 +16,7 @@
 #include "Components/GenericConstraintComponent.hpp"
 #include "Components/ConeTwistConstraintComponent.hpp"
 #include "Components/PointToPointConstraintComponent.hpp"
+#include "Components/EditorMetadataComponent.hpp"
 
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/List.hpp>
@@ -948,6 +949,9 @@ namespace GTEngine
 
         /// A pointer to the spot light component.
         SpotLightComponent* spotLightComponent;
+
+        /// A pointer to the editor metadata component. Renderer's will want access to this component for doing things like selections. This needs fast access.
+        EditorMetadataComponent* editorMetadataComponent;
         
         
     public:
@@ -1075,6 +1079,33 @@ namespace GTEngine
     template <> inline bool SceneNode::HasComponent<SpotLightComponent>()
     {
         return this->spotLightComponent != nullptr;
+    }
+
+
+
+    // EditorMetadataComponent Specialisation.
+    template <> inline       EditorMetadataComponent* SceneNode::GetComponent<EditorMetadataComponent>()       { return this->editorMetadataComponent; }
+    template <> inline const EditorMetadataComponent* SceneNode::GetComponent<EditorMetadataComponent>() const { return this->editorMetadataComponent; }
+
+    template <> inline EditorMetadataComponent* SceneNode::AddComponent<EditorMetadataComponent>()
+    {
+        if (this->editorMetadataComponent == nullptr)
+        {
+            this->editorMetadataComponent = new EditorMetadataComponent(*this);
+        }
+
+        return this->editorMetadataComponent;
+    }
+
+    template <> inline void SceneNode::RemoveComponent<EditorMetadataComponent>()
+    {
+        delete this->editorMetadataComponent;
+        this->editorMetadataComponent = nullptr;
+    }
+
+    template <> inline bool SceneNode::HasComponent<EditorMetadataComponent>()
+    {
+        return this->editorMetadataComponent != nullptr;
     }
 }
 
