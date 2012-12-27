@@ -95,7 +95,8 @@ namespace GTEngine
             }
         }
 
-        // With the definition retrieved, we now need to move on to
+
+        // With the definition retrieved, we now need to move on to create the actual material.
         if (definition != nullptr)
         {
             auto material = new Material(*definition);
