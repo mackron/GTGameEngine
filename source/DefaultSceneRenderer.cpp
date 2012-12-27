@@ -2,6 +2,7 @@
 #include <GTEngine/DefaultSceneRenderer.hpp>
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
+#include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 
 // In this file, DSR = DefaultSceneRenderer.
@@ -182,7 +183,8 @@ namespace GTEngine
           Shaders(),
           materialMetadatas(),
           shadowMap(), shadowMapDepthBuffer(), shadowMapFramebuffer(), pointLightShadowMap(), pointLightShadowMapDepthBuffer(), pointLightShadowMapFramebuffer(),
-          mainLayerState(), backgroundLayerState()
+          mainLayerState(), backgroundLayerState(),
+          wireframeMaterialDefinition(), wireframeMaterial(nullptr)
     {
         unsigned int shadowMapSize = SHADOW_MAP_SIZE;
 
@@ -241,6 +243,17 @@ namespace GTEngine
         this->Shaders.Lighting_D1->SetParameter("ShadowMap", &this->shadowMap);
         this->Shaders.Lighting_P1->SetParameter("ShadowMap", &this->pointLightShadowMap);
         this->Shaders.Lighting_S1->SetParameter("ShadowMap", &this->shadowMap);
+
+
+
+        // Now we need to load the wireframe material.
+        this->wireframeMaterialDefinition.LoadFromXML
+        (
+            "<material>"
+            "    <emissive id='Material_SimpleEmissive' />"
+            "</material>"
+        );
+        this->wireframeMaterial = new Material(this->wireframeMaterialDefinition);
     }
 
     DefaultSceneRenderer::~DefaultSceneRenderer()
@@ -535,6 +548,40 @@ namespace GTEngine
                         }
 
 
+                        // The vertex array of the mesh we are drawing.
+                        auto va = this->GetMeshGeometry(*mesh, model->IsAnimating());
+
+
+                        // If the geometry is having the wireframe drawn, we will need to also draw that in the material pass.
+                        if (modelComponent->IsWireframeEnabled())
+                        {
+                            auto &rcDrawWireframe = this->rcDrawGeometry[Renderer::BackIndex].Acquire();
+                            rcDrawWireframe.va                = va;
+                            rcDrawWireframe.mvpMatrix         = MVPMatrix;
+                            rcDrawWireframe.normalMatrix      = NormalMatrix;
+                            rcDrawWireframe.modelViewMatrix   = ModelViewMatrix;
+                            rcDrawWireframe.modelMatrix       = ModelMatrix;
+                            rcDrawWireframe.changeFaceCulling = true;               // It's always being changed here.
+                            rcDrawWireframe.cullBackFace      = modelComponent->IsCullingBackFaces();
+                            rcDrawWireframe.cullFrontFace     = modelComponent->IsCullingFrontFaces();
+                            rcDrawWireframe.fill              = false;              // 'false' = wireframe.
+                            rcDrawWireframe.materialParameters.Set("EmissiveColour", modelComponent->GetWireframeColour());
+
+
+                            auto &materialMetadata = this->GetMaterialMetadata(*this->wireframeMaterial);
+                            if (materialMetadata.materialPassShader == nullptr)
+                            {
+                                materialMetadata.materialPassShader = this->CreateMaterialPassShader(*this->wireframeMaterial);
+                            }
+
+                            materialMetadata.materialPassRCs.Append(rcDrawWireframe);
+
+
+                            state.usedMaterials.Insert(&materialMetadata);
+                        }
+
+
+
                         // Here is where we need to retrieve a shader for the material. This is stored as metadata. If the shader has not yet been created,
                         // it will be created now.
                         auto &materialMetadata = this->GetMaterialMetadata(*material);
@@ -543,7 +590,6 @@ namespace GTEngine
                         {
                             materialMetadata.materialPassShader = this->CreateMaterialPassShader(*material);
                         }
-
 
 
                         auto &rcDrawGeometry = this->rcDrawGeometry[Renderer::BackIndex].Acquire();
@@ -555,6 +601,12 @@ namespace GTEngine
                         rcDrawGeometry.changeFaceCulling = !(modelComponent->IsCullingBackFaces() == true && modelComponent->IsCullingFrontFaces() == false);
                         rcDrawGeometry.cullBackFace      = modelComponent->IsCullingBackFaces();
                         rcDrawGeometry.cullFrontFace     = modelComponent->IsCullingFrontFaces();
+
+                        if (modelComponent->IsWireframeEnabled())
+                        {
+                            rcDrawGeometry.enablePolygonOffset = true;
+                        }
+
 
                         // The material may have pending properties. These need to be set on the shader also.
                         auto &materialParams = material->GetParameters();
@@ -1520,6 +1572,17 @@ namespace GTEngine
             Renderer::SetFaceCulling(this->cullFrontFace, this->cullBackFace);
         }
 
+        if (!this->fill)
+        {
+            Renderer::SetPolygonMode(true, true, PolygonMode_Line);
+        }
+
+        if (this->enablePolygonOffset)
+        {
+            Renderer::EnablePolygonOffset((this->fill) ? PolygonMode_Fill : PolygonMode_Line);
+            Renderer::SetPolygonOffset(this->polygonOffsetFactor, this->polygonOffsetUnits);
+        }
+
 
         Renderer::SetShaderParameter("MVPMatrix",       this->mvpMatrix);
         Renderer::SetShaderParameter("NormalMatrix",    this->normalMatrix);
@@ -1532,6 +1595,18 @@ namespace GTEngine
         if (this->changeFaceCulling)
         {
             Renderer::SetFaceCulling(false, true);
+        }
+
+        // Default back to Fill mode.
+        if (!this->fill)
+        {
+            Renderer::SetPolygonMode(true, true, PolygonMode_Fill);
+        }
+
+        // Default back to disabled polygon offset.
+        if (this->enablePolygonOffset)
+        {
+            Renderer::DisablePolygonOffset((this->fill) ? PolygonMode_Fill : PolygonMode_Line);
         }
     }
 
