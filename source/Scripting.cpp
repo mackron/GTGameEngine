@@ -207,9 +207,7 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "SetModel",         FFI::SystemFFI::ModelComponentFFI::SetModel);
-                        script.SetTableFunction(-1, "EnableWireframe",  FFI::SystemFFI::ModelComponentFFI::EnableWireframe);
-                        script.SetTableFunction(-1, "DisableWireframe", FFI::SystemFFI::ModelComponentFFI::DisableWireframe);
+                        script.SetTableFunction(-1, "SetModel", FFI::SystemFFI::ModelComponentFFI::SetModel);
                     }
                     script.Pop(1);
                 }
@@ -476,28 +474,6 @@ namespace GTEngine
                         if (component != nullptr && filePath != nullptr)
                         {
                             component->SetModel(filePath);
-                        }
-
-                        return 0;
-                    }
-
-                    int EnableWireframe(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            component->EnableWireframe();
-                        }
-
-                        return 0;
-                    }
-
-                    int DisableWireframe(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            component->DisableWireframe();
                         }
 
                         return 0;
