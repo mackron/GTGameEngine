@@ -7,7 +7,8 @@
 namespace GTEngine
 {
     Editor3DViewportEventHandler::Editor3DViewportEventHandler(Game &game, SceneViewport &viewport)
-        : game(game), viewport(viewport)
+        : game(game), viewport(viewport),
+          mousePosX(0), mousePosY(0)
     {
     }
 
