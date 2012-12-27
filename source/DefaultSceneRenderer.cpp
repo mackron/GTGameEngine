@@ -521,6 +521,8 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
+                auto editorMetadataComponent = static_cast<const SceneNode &>(object).GetComponent<GTEngine::EditorMetadataComponent>();
+
                 glm::mat4 ModelMatrix     = modelComponent->GetNode().GetWorldTransform();
                 glm::mat4 ModelViewMatrix = state.cameraView * ModelMatrix;
                 glm::mat4 MVPMatrix       = state.cameraProjection * ModelViewMatrix;
@@ -553,7 +555,7 @@ namespace GTEngine
 
 
                         // If the geometry is having the wireframe drawn, we will need to also draw that in the material pass.
-                        if (modelComponent->IsWireframeEnabled())
+                        if (editorMetadataComponent->IsSelected())
                         {
                             auto &rcDrawWireframe = this->rcDrawGeometry[Renderer::BackIndex].Acquire();
                             rcDrawWireframe.va                = va;
@@ -565,7 +567,7 @@ namespace GTEngine
                             rcDrawWireframe.cullBackFace      = modelComponent->IsCullingBackFaces();
                             rcDrawWireframe.cullFrontFace     = modelComponent->IsCullingFrontFaces();
                             rcDrawWireframe.fill              = false;              // 'false' = wireframe.
-                            rcDrawWireframe.materialParameters.Set("EmissiveColour", modelComponent->GetWireframeColour());
+                            rcDrawWireframe.materialParameters.Set("EmissiveColour", editorMetadataComponent->GetSelectionWireframeColour());
 
 
                             auto &materialMetadata = this->GetMaterialMetadata(*this->wireframeMaterial);
@@ -602,7 +604,7 @@ namespace GTEngine
                         rcDrawGeometry.cullBackFace      = modelComponent->IsCullingBackFaces();
                         rcDrawGeometry.cullFrontFace     = modelComponent->IsCullingFrontFaces();
 
-                        if (modelComponent->IsWireframeEnabled())
+                        if (editorMetadataComponent->IsSelected())
                         {
                             rcDrawGeometry.enablePolygonOffset = true;
                         }
