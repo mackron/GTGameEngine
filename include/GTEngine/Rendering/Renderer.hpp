@@ -80,6 +80,13 @@ namespace GTEngine
         StencilOp_Invert
     };
 
+    enum PolygonMode
+    {
+        PolygonMode_Fill,
+        PolygonMode_Line,
+        PolygonMode_Point
+    };
+
 
     // TODO: Consider removing this. No longer needed, I think.
     /// Base class for event handlers that can be attached to the renderer to respond to certain events by the renderer.
@@ -376,8 +383,31 @@ namespace GTEngine
         /// Sets the face culling mode.
         ///
         /// @param  cullFront [in] Specifies whether or not front faces should be culled. A value of true will cull.
-        /// @param  cullBack  [in] Specified whether or not back faces should be culled. A value of true will cull.
+        /// @param  cullBack  [in] Specifies whether or not back faces should be culled. A value of true will cull.
         static void SetFaceCulling(bool cullFront, bool cullBack);
+
+
+        /// Sets the polygon mode (fill, wireframe or points).
+        ///
+        /// @param mode [in] The polygond mode to use.
+        static void SetPolygonMode(bool frontFaces, bool backFaces, PolygonMode mode);
+
+
+        /// Enables polygon offset for the given polygon mode.
+        ///
+        /// @param mode [in] The polygon mode where polygon offset is being enabled.
+        static void EnablePolygonOffset(PolygonMode mode);
+
+        /// Disables polygon offset for the given polygon mode.
+        ///
+        /// @param mode [in] The polygon mode where polygon offset is being disabled.
+        static void DisablePolygonOffset(PolygonMode mode);
+
+        /// Sets the polygon offset.
+        ///
+        /// @param factor [in] Scale factor.
+        /// @param units  [in] A value to use for doing a constant scale factor.
+        static void SetPolygonOffset(float factor, float units);
 
 
         /// Enables sRGB.
