@@ -6,7 +6,8 @@
 ------------------------------------------------
 -- Scene.SceneEditor
 
-Editor.SceneEditor.CurrentScene = nil;
+Editor.SceneEditor.CurrentScene  = nil;
+Editor.SceneEditor.SelectedNodes = {};
 
 
 function Editor.SceneEditor.SetCurrentScene(sceneInternalPtr)
@@ -33,4 +34,17 @@ function Editor.SceneEditor.AddSceneNode(name)
     end
     
     return nil;
+end
+
+
+function Editor.SceneEditor.MarkNodeAsSelected(internalPtr)
+    Editor.SceneEditor.SelectedNodes[internalPtr] = GTEngine.SceneNode:Create(internalPtr);
+end
+
+function Editor.SceneEditor.MarkNodeAsDeselected(internalPtr)
+    Editor.SceneEditor.SelectedNodes[internalPtr] = nil;
+end
+
+function Editor.SceneEditor.MarkAllNodesAsDeselected()
+    Editor.SceneEditor.SelectedNodes = {};
 end
