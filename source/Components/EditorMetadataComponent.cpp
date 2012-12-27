@@ -7,7 +7,7 @@ namespace GTEngine
 
     EditorMetadataComponent::EditorMetadataComponent(SceneNode &node)
         : Component(node),
-          isSelected(false)
+          isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f)
     {
     }
 
@@ -29,5 +29,16 @@ namespace GTEngine
     void EditorMetadataComponent::Deselect()
     {
         this->isSelected = false;
+    }
+
+
+    const glm::vec3 & EditorMetadataComponent::GetSelectionWireframeColour() const
+    {
+        return this->selectionWireframeColour;
+    }
+
+    void EditorMetadataComponent::SetSelectionWireframeColour(const glm::vec3 &newColour)
+    {
+        this->selectionWireframeColour = newColour;
     }
 }
