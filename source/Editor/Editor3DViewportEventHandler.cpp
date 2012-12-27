@@ -19,7 +19,7 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnSize(GTGUI::Element &element)
     {
-        int newWidth  = GTCore::Max(element.GetInnerWidth(), 1);
+        int newWidth  = GTCore::Max(element.GetInnerWidth(),  1);
         int newHeight = GTCore::Max(element.GetInnerHeight(), 1);
 
         this->viewport.Resize(newWidth, newHeight);
@@ -101,8 +101,10 @@ namespace GTEngine
         }
     }
 
-    void Editor3DViewportEventHandler::OnMouseMove(GTGUI::Element &, int, int)
+    void Editor3DViewportEventHandler::OnMouseMove(GTGUI::Element &, int x, int y)
     {
+        this->mousePosX = x;
+        this->mousePosY = y;
     }
 
     void Editor3DViewportEventHandler::OnMouseWheel(GTGUI::Element &, int delta, int x, int y)
