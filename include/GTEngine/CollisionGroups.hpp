@@ -19,9 +19,9 @@ namespace GTEngine
 
 
         
-        static const short EditorGizmo           = (1 << 13);
-        static const short EditorSelectionVolume = (1 << 14);
-        static const short EditorSelectionRay    = (1 << 15);
+        static const short EditorGizmo           = (1 << 12);
+        static const short EditorSelectionVolume = (1 << 13);
+        static const short EditorSelectionRay    = (1 << 14);
     }
 }
 
