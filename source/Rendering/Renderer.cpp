@@ -866,6 +866,95 @@ namespace GTEngine
         }
     }
 
+    
+    void Renderer::SetPolygonMode(bool frontFaces, bool backFaces, PolygonMode mode)
+    {
+        GLenum faceGL;
+        GLenum modeGL;
+
+
+        if (frontFaces && backFaces)
+        {
+            faceGL = GL_FRONT_AND_BACK;
+        }
+        else
+        {
+            if (frontFaces)
+            {
+                faceGL = GL_FRONT;
+            }
+            else
+            {
+                faceGL = GL_BACK;
+            }
+        }
+
+
+        if (mode == PolygonMode_Fill)
+        {
+            modeGL = GL_FILL;
+        }
+        else if (mode == PolygonMode_Line)
+        {
+            modeGL = GL_LINE;
+        }
+        else
+        {
+            assert(mode == PolygonMode_Point);
+            modeGL = GL_LINE;
+        }
+
+
+        glPolygonMode(faceGL, modeGL);
+    }
+
+
+    void Renderer::EnablePolygonOffset(PolygonMode mode)
+    {
+        GLenum modeGL;
+
+        if (mode == PolygonMode_Fill)
+        {
+            modeGL = GL_POLYGON_OFFSET_FILL;
+        }
+        else if (mode == PolygonMode_Line)
+        {
+            modeGL = GL_POLYGON_OFFSET_LINE;
+        }
+        else
+        {
+            modeGL = GL_POLYGON_OFFSET_POINT;
+        }
+
+        glEnable(modeGL);
+    }
+
+    void Renderer::DisablePolygonOffset(PolygonMode mode)
+    {
+        GLenum modeGL;
+
+        if (mode == PolygonMode_Fill)
+        {
+            modeGL = GL_POLYGON_OFFSET_FILL;
+        }
+        else if (mode == PolygonMode_Line)
+        {
+            modeGL = GL_POLYGON_OFFSET_LINE;
+        }
+        else
+        {
+            modeGL = GL_POLYGON_OFFSET_POINT;
+        }
+
+        glDisable(modeGL);
+    }
+
+    void Renderer::SetPolygonOffset(float factor, float units)
+    {
+        glPolygonOffset(factor, units);
+    }
+
+
     void Renderer::EnableSRGB()
     {
         if (!IsSRGBEnabled)
