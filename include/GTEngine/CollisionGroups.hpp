@@ -7,8 +7,8 @@ namespace GTEngine
     /// The various engine level collision groups for collision detection.
     namespace CollisionGroups
     {
-        static const short All     = -1;                   ///< Everything
-        static const short Nothing = 0;                    ///< Nothing
+        static const short All        = -1;             ///< Everything
+        static const short Nothing    = 0;              ///< Nothing
 
         static const short Picking    = (1 << 0);       ///< Allows for system level picking against models.
         static const short Occluder   = (1 << 1);       ///< Used for occlusion
