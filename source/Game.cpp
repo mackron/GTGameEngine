@@ -223,6 +223,9 @@ namespace GTEngine
             this->mouseCenterX = (int)windowWidth  / 2;
             this->mouseCenterY = (int)windowHeight / 2;
             this->SetMousePosition(this->mouseCenterX, this->mouseCenterY);
+
+
+            this->gui.MarkMouseAsCaptured();
         }
     }
 
@@ -238,6 +241,7 @@ namespace GTEngine
 
             // A MouseMove event will not be posted here, but we need to let the GUI know that the mouse might have a new position.
             this->gui.SetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
+            this->gui.UnmarkMouseAsCaptured();
         }
     }
 
