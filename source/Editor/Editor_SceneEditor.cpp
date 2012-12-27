@@ -21,7 +21,8 @@ namespace GTEngine
 
     bool Editor_SceneEditor::LoadScene(const char* absolutePath)
     {
-        auto &gui = this->editor.GetGame().GetGUI();
+        auto &gui    = this->editor.GetGame().GetGUI();
+        auto &script = this->editor.GetGame().GetScript();
 
         auto iState = this->loadedStates.Find(absolutePath);
         if (iState != nullptr)
@@ -40,8 +41,6 @@ namespace GTEngine
             auto file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Write);
             if (file != nullptr)
             {
-                auto &script = this->editor.GetGame().GetScript();
-
                 // We need to now create the GUI elements for this particular file. We start with the main element.
                 auto mainElement = gui.CreateElement("<div parentid='Editor_SceneEditor' styleclass='scene-editor-main' />");
                 if (mainElement != nullptr)
@@ -65,6 +64,7 @@ namespace GTEngine
                         this->loadedStates.Add(absolutePath, this->currentState);
 
                         viewportElement->AttachEventHandler(this->currentState->viewportEventHandler);
+                        viewportElement->OnSize();
 
                         this->ResetCamera();
                     }
@@ -87,6 +87,11 @@ namespace GTEngine
                 return false;
             }
         }
+
+
+        // At this point we will have a valid current state. We need to let the scripting environment know of a few things - mainly the new active scene.
+        this->SetCurrentSceneInScript(&this->currentState->scene);
+
 
         return true;
     }
@@ -112,6 +117,8 @@ namespace GTEngine
 
             if (this->currentState == iState->value)
             {
+                // We need to let the scripting environment know about a few things.
+                this->SetCurrentSceneInScript(nullptr);
                 this->currentState = nullptr;
             }
 
@@ -210,6 +217,30 @@ namespace GTEngine
         }
     }
 
+    void Editor_SceneEditor::SetCurrentSceneInScript(Scene* scene)
+    {
+        auto &script = this->editor.GetGame().GetScript();
+
+        script.GetGlobal("Editor");
+        assert(script.IsTable(-1));
+        {
+            script.Push("SceneEditor");
+            script.GetTableValue(-2);
+            assert(script.IsTable(-1));
+            {
+                script.Push("SetCurrentScene");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Push(scene);
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+        script.Pop(1);
+    }
+
 
 
 
@@ -224,7 +255,7 @@ namespace GTEngine
           GUI()
     {
         this->camera.AddComponent<GTEngine::CameraComponent>();
-        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
+        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(1.0f, 1.0f, 1.0f);
 
         this->viewport.SetCameraNode(this->camera);
         this->scene.AddViewport(this->viewport);
