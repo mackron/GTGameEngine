@@ -503,7 +503,8 @@ namespace GTEngine
             RCDrawGeometry()
                 : materialParameters(), va(),
                   mvpMatrix(), normalMatrix(), modelViewMatrix(), modelMatrix(),
-                  changeFaceCulling(), cullFrontFace(), cullBackFace(),
+                  changeFaceCulling(), cullFrontFace(), cullBackFace(), fill(true),
+                  enablePolygonOffset(false), polygonOffsetFactor(1.0f), polygonOffsetUnits(1.0f),
                   doingMaterialPass(true)
             {
             }
@@ -531,6 +532,13 @@ namespace GTEngine
             bool changeFaceCulling;
             bool cullFrontFace;
             bool cullBackFace;
+            bool fill;
+
+            /// Keeps track of whether or not to do a polygon offset.
+            bool enablePolygonOffset;
+
+            float polygonOffsetFactor;
+            float polygonOffsetUnits;
 
             /// Keeps track of whether or not to do the material pass. Should default to true.
             bool doingMaterialPass;
@@ -971,6 +979,14 @@ namespace GTEngine
 
         /// The rendering state of the background layer.
         LayerState backgroundLayerState;
+
+
+
+        /// The material definition for drawing wireframes.
+        MaterialDefinition wireframeMaterialDefinition;
+
+        /// The material to use for drawing wireframes.
+        Material* wireframeMaterial;
     };
 }
 
