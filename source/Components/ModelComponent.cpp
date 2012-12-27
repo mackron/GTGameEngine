@@ -10,7 +10,7 @@ namespace GTEngine
     ModelComponent::ModelComponent(SceneNode &node)
         : Component(node), model(nullptr),
           flags(CullBackFaces | CastShadow | Visible),
-          wireframeColour(0.25f, 0.75f, 0.25f), drawWireframe(false)
+          wireframeColour(1.0f, 0.75f, 0.5f), drawWireframe(false)
     {
     }
 
