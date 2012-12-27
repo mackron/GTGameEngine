@@ -18,8 +18,10 @@ namespace GTEngine
         static const short SpotLight  = (1 << 4);       ///< The collision object represents a spot light.
 
 
-        static const short EditorGizmo           = (1 << 14);
-        static const short EditorSelectionVolume = (1 << 15);
+        
+        static const short EditorGizmo           = (1 << 13);
+        static const short EditorSelectionVolume = (1 << 14);
+        static const short EditorSelectionRay    = (1 << 15);
     }
 }
 
