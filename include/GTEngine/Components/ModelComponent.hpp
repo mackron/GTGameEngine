@@ -82,26 +82,6 @@ namespace GTEngine
         bool IsModelVisible() const { return (this->flags & Visible) != 0; }
 
 
-
-
-        /// Enables drawing of the wireframe.
-        void EnableWireframe() { this->drawWireframe = true; }
-        
-        /// Disables drawing of the wireframe.
-        void DisableWireframe() { this->drawWireframe = false; }
-
-        /// Determines whether or not the wireframe should be drawn.
-        bool IsWireframeEnabled() const { return this->drawWireframe; }
-
-
-        /// Sets the colour of the wireframe.
-        void SetWireframeColour(float r, float g, float b) { this->wireframeColour = glm::vec3(r, g, b); }
-
-        /// Retrieves the colour of the wireframe.
-        const glm::vec3 & GetWireframeColour() const { return this->wireframeColour; }
-
-
-
     private:
 
         /// A pointer to the applicable model.
@@ -121,16 +101,7 @@ namespace GTEngine
         uint32_t flags;
 
 
-        // TODO: Should move the rendering related attributes to a different component later on.
-        
-        /// The colour to draw the wireframe.
-        glm::vec3 wireframeColour;
-
-        /// Whether or not to draw the wireframe.
-        bool drawWireframe;
-
-
-    GTENGINE_DECL_COMPONENT_END()   
+    GTENGINE_DECL_COMPONENT_END()
 }
 
 #endif

@@ -160,12 +160,6 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the component whose model is being set.
                     ///     Argument 2: The file path of the model being set.
                     int SetModel(GTCore::Script &script);
-
-                    /// Enables wireframe mode on the given model component.
-                    int EnableWireframe(GTCore::Script &script);
-
-                    /// Disables wireframe mode on the given model component.
-                    int DisableWireframe(GTCore::Script &script);
                 }
             }
         }
