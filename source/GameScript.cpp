@@ -328,6 +328,19 @@ namespace GTEngine
     }
 
 
+    int FFI_Game_CaptureMouse(GTCore::Script &script)
+    {
+        GameScript::FFI::GetGameObject(script).CaptureMouse();
+        return 0;
+    }
+
+    int FFI_Game_ReleaseMouse(GTCore::Script &script)
+    {
+        GameScript::FFI::GetGameObject(script).ReleaseMouse();
+        return 0;
+    } 
+
+
 
     //////////////////////////////////////////////////////
     // RegisterFFI()
@@ -361,6 +374,9 @@ namespace GTEngine
             this->SetTableFunction(-1, "IsMouseButtonDown",       FFI_Game_IsMouseButtonDown);
 
             this->SetTableFunction(-1, "ScanDataFilesForChanges", FFI_Game_ScanDataFilesForChanges);      
+
+            this->SetTableFunction(-1, "CaptureMouse",            FFI_Game_CaptureMouse);
+            this->SetTableFunction(-1, "ReleaseMouse",            FFI_Game_ReleaseMouse);
         }
         this->Pop(1);    // Game
 
