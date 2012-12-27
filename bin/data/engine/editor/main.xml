@@ -36,6 +36,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
 
 
+<script url="scripts/editor-main.lua" />
+
+
 <!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
 <script>
 <![CDATA[
@@ -189,10 +192,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     -- Here we startup the open files manager. This depends on a few things, so we need to start this up after dependencies are started up.
     Editor.OpenFilesManager.Startup(Editor_TabBar, Editor_ModelEditor, Editor_ImageEditor, Editor_TextEditor, Editor_SceneEditor);
-    
-    
-    -- This should be temp, I think.
-    Editor.InitialiseDialogs();
 ]]>
 </script>
 
