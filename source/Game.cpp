@@ -909,8 +909,7 @@ namespace GTEngine
         // We need to cache the current position of the mouse. We need to do this in order to get smooth mouse movement.
         this->CacheMousePosition();
 
-        // Here is where we swap RC queues. We post an OnSwapRCQueues() event from here so that a game can do
-        // it's own buffer swaps if required.
+        // Here is where we swap rendering command queues in preperation for the scene update, which is about to re-fill the back queue.
         this->SwapRCQueues();
 
 
