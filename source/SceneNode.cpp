@@ -66,7 +66,7 @@ namespace GTEngine
           flags(0),
           eventLockCounter(0),
           typeID(0),
-          modelComponent(nullptr), pointLightComponent(nullptr), spotLightComponent(nullptr)
+          modelComponent(nullptr), pointLightComponent(nullptr), spotLightComponent(nullptr), editorMetadataComponent(nullptr)
     {
     }
 
