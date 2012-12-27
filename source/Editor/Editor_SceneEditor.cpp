@@ -255,7 +255,7 @@ namespace GTEngine
           GUI()
     {
         this->camera.AddComponent<GTEngine::CameraComponent>();
-        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(1.0f, 1.0f, 1.0f);
+        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
 
         this->viewport.SetCameraNode(this->camera);
         this->scene.AddViewport(this->viewport);
