@@ -74,6 +74,14 @@ namespace GTEngine
         /// Applies the camera rotation to the camera node.
         void ApplyCameraRotation();
 
+        /// Sets the current scene in the scripting environment.
+        ///
+        /// @param scene [in] A pointer to the scene to make current. Can be null.
+        ///
+        /// @remarks
+        ///     This function simple calls the following script function "Editor.SceneEditor.SetCurrentScript(scene);"
+        void SetCurrentSceneInScript(Scene* scene);
+
 
 
     private:

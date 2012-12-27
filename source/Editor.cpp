@@ -364,8 +364,8 @@ namespace GTEngine
             script.SetTableFunction(-1, "OnTextFileActivated", FFI::OnTextFileActivated);
             script.SetTableFunction(-1, "OnSceneActivated",    FFI::OnSceneActivated);
 
-            script.SetTableFunction(-1, "OnFileActivated", FFI::OnFileActivated);
-            script.SetTableFunction(-1, "OnFileClosed",    FFI::OnFileClosed);
+            script.SetTableFunction(-1, "OnFileActivated",     FFI::OnFileActivated);
+            script.SetTableFunction(-1, "OnFileClosed",        FFI::OnFileClosed);
 
 
             script.Push("ModelEditor");

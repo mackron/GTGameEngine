@@ -11,6 +11,12 @@ function GTGUI.Element:SceneEditor()
     self.ContextMenu:Menu();
     
     self.ContextMenu:AppendItem("Add Cube"):OnPressed(function()
+        local newNode = Editor.SceneEditor.AddSceneNode("Cube");
+        if newNode ~= nil then
+            newNode:AddComponent(GTEngine.Components.ModelComponent):SetModel("engine/models/default-1x1.dae");
+            newNode:Refresh();
+        end
+        
         self.ContextMenu:Hide();
     end);
     
