@@ -4,6 +4,7 @@
 
 #include "../Scene.hpp"
 #include "../GameScript.hpp"
+#include "../Physics/CollisionWorld.hpp"
 #include "Editor3DViewportEventHandler.hpp"
 #include "SceneEditorSceneEventHandler.hpp"
 #include <GTGUI/Element.hpp>
@@ -188,6 +189,10 @@ namespace GTEngine
 
             /// The list of selected nodes.
             GTCore::Vector<SceneNode*> selectedNodes;
+
+
+            /// The collision world for doing picking/selecting.
+            CollisionWorld pickingWorld;
 
 
             struct _GUI

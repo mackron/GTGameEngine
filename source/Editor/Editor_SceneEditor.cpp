@@ -166,33 +166,42 @@ namespace GTEngine
             glm::vec3 rayEnd;
             this->currentState->viewport.CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
 
-            
-            // A simple ray test for now.
-            auto selectedNode = this->currentState->scene.RayTest(rayStart, rayEnd, CollisionGroups::EditorSelectionRay, CollisionGroups::EditorSelectionVolume);
-            if (selectedNode != nullptr)
+
+            CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
+            rayTestCallback.m_collisionFilterGroup = CollisionGroups::EditorSelectionRay;
+            rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorSelectionVolume;
+            this->currentState->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
+
+            if (rayTestCallback.hasHit())
             {
-                // The way we do the selection depends on what we're doing. If shift is being held down, we don't want to deselect anything and instead just add
-                // or remove the node to the selection. If the selected node is already selected, it needs to be deselected. Otherwise it needs to be selected.
-                if (this->editor.GetGame().IsKeyDown(GTCore::Keys::Shift))
+                // The use data of the object will be a pointer to the EditorMetadataComponent object. From this, we can grab the actual scene node.
+                auto metadata = static_cast<EditorMetadataComponent*>(rayTestCallback.m_collisionObject->getUserPointer());
+                assert(metadata != nullptr);
                 {
-                    if (this->IsSceneNodeSelected(*selectedNode))
+                    auto &selectedNode = metadata->GetNode();
+
+                    // The way we do the selection depends on what we're doing. If shift is being held down, we don't want to deselect anything and instead just add
+                    // or remove the node to the selection. If the selected node is already selected, it needs to be deselected. Otherwise it needs to be selected.
+                    if (this->editor.GetGame().IsKeyDown(GTCore::Keys::Shift))
                     {
-                        this->DeselectSceneNode(*selectedNode);
+                        if (this->IsSceneNodeSelected(selectedNode))
+                        {
+                            this->DeselectSceneNode(selectedNode);
+                        }
+                        else
+                        {
+                            this->SelectSceneNode(selectedNode);
+                        }
                     }
                     else
                     {
-                        this->SelectSceneNode(*selectedNode);
+                        this->DeselectAll();
+                        this->SelectSceneNode(selectedNode);
                     }
-                }
-                else
-                {
-                    this->DeselectAll();
-                    this->SelectSceneNode(*selectedNode);
                 }
             }
             else
             {
-                // Nothing was hit, so we will deselect everything.
                 this->DeselectAll();
             }
         }
