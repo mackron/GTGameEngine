@@ -124,6 +124,19 @@ namespace GTEngine
                 "function GTEngine.SceneNode:Refresh()"
                 "    return GTEngine.System.SceneNode.Refresh(self._internalPtr);"
                 "end;"
+
+
+                "function GTEngine.SceneNode:GetPosition()"
+                "    return GTEngine.System.SceneNode.GetPosition(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:GetRotationXYZ()"
+                "    return GTEngine.System.SceneNode.GetRotationXYZ(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:GetScale()"
+                "    return GTEngine.System.SceneNode.GetScale(self._internalPtr);"
+                "end;"
             );
 
 
@@ -188,6 +201,10 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetComponent",    FFI::SystemFFI::SceneNodeFFI::GetComponent);
 
                         script.SetTableFunction(-1, "Refresh",         FFI::SystemFFI::SceneNodeFFI::Refresh);
+
+                        script.SetTableFunction(-1, "GetPosition",     FFI::SystemFFI::SceneNodeFFI::GetPosition);
+                        script.SetTableFunction(-1, "GetRotationXYZ",  FFI::SystemFFI::SceneNodeFFI::GetRotationXYZ);
+                        script.SetTableFunction(-1, "GetScale",        FFI::SystemFFI::SceneNodeFFI::GetScale);
                     }
                     script.Pop(1);
 
@@ -390,6 +407,70 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+
+                    int GetPosition(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            auto &position = sceneNode->GetPosition();
+
+                            script.Push(position.x);
+                            script.Push(position.y);
+                            script.Push(position.z);
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                        }
+
+                        return 3;
+                    }
+
+                    int GetRotationXYZ(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            auto &orientation = sceneNode->GetOrientation();
+
+                            script.Push(glm::roll(orientation));
+                            script.Push(glm::pitch(orientation));
+                            script.Push(glm::yaw(orientation));
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                        }
+
+                        return 3;
+                    }
+
+                    int GetScale(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            auto &scale = sceneNode->GetScale();
+
+                            script.Push(scale.x);
+                            script.Push(scale.y);
+                            script.Push(scale.z);
+                        }
+                        else
+                        {
+                            script.Push(1.0f);
+                            script.Push(1.0f);
+                            script.Push(1.0f);
+                        }
+
+                        return 3;
                     }
 
 
