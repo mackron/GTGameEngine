@@ -29,6 +29,12 @@ namespace GTEngine
         auto iState = this->loadedStates.Find(absolutePath);
         if (iState != nullptr)
         {
+            // We can return early in this case.
+            if (this->currentState == iState->value)
+            {
+                return true;
+            }
+
             if (this->currentState != nullptr)
             {
                 this->currentState->GUI.Main->Hide();
@@ -103,7 +109,7 @@ namespace GTEngine
 
 
         // At this point we will have a valid current state. We need to let the scripting environment know of a few things - mainly the new active scene.
-        this->SetCurrentSceneInScript(&this->currentState->scene);
+        this->SetCurrentSceneInScript(&this->currentState->scene, this->currentState->GUI.Main->id);
 
 
         return true;
@@ -131,7 +137,7 @@ namespace GTEngine
             if (this->currentState == iState->value)
             {
                 // We need to let the scripting environment know about a few things.
-                this->SetCurrentSceneInScript(nullptr);
+                this->SetCurrentSceneInScript(nullptr, nullptr);
                 this->currentState = nullptr;
             }
 
@@ -476,7 +482,7 @@ namespace GTEngine
         }
     }
 
-    void Editor_SceneEditor::SetCurrentSceneInScript(Scene* scene)
+    void Editor_SceneEditor::SetCurrentSceneInScript(Scene* scene, const char* elementID)
     {
         auto &script = this->editor.GetGame().GetScript();
 
@@ -492,7 +498,8 @@ namespace GTEngine
                 assert(script.IsFunction(-1));
                 {
                     script.Push(scene);
-                    script.Call(1, 0);
+                    script.Push(elementID);
+                    script.Call(2, 0);
                 }
             }
             script.Pop(1);
