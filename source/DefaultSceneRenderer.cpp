@@ -555,7 +555,7 @@ namespace GTEngine
 
 
                         // If the geometry is having the wireframe drawn, we will need to also draw that in the material pass.
-                        if (editorMetadataComponent->IsSelected())
+                        if (editorMetadataComponent != nullptr && editorMetadataComponent->IsSelected())
                         {
                             auto &rcDrawWireframe = this->rcDrawGeometry[Renderer::BackIndex].Acquire();
                             rcDrawWireframe.va                = va;
@@ -604,7 +604,7 @@ namespace GTEngine
                         rcDrawGeometry.cullBackFace      = modelComponent->IsCullingBackFaces();
                         rcDrawGeometry.cullFrontFace     = modelComponent->IsCullingFrontFaces();
 
-                        if (editorMetadataComponent->IsSelected())
+                        if (editorMetadataComponent != nullptr && editorMetadataComponent->IsSelected())
                         {
                             rcDrawGeometry.enablePolygonOffset = true;
                         }
