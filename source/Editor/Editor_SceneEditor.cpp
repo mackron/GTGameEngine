@@ -379,10 +379,14 @@ namespace GTEngine
         {
             auto &node = static_cast<SceneNode &>(object);
             
-            if (!node.HasComponent<EditorMetadataComponent>())
+            auto metadata = node.GetComponent<EditorMetadataComponent>();
+            if (metadata == nullptr)
             {
-                node.AddComponent<EditorMetadataComponent>();
+                metadata = node.AddComponent<EditorMetadataComponent>();
             }
+
+            // We can cheat here and just act as if the object has been refreshed.
+            this->OnObjectRefreshed(object);
         }
     }
 
@@ -392,6 +396,8 @@ namespace GTEngine
         {
             // We need to make sure scene nodes are deseleted when they are removed from the scene.
             this->DeselectSceneNode(static_cast<SceneNode &>(object));
+
+
         }
     }
 
@@ -399,6 +405,37 @@ namespace GTEngine
     {
         if (object.GetType() == SceneObjectType_SceneNode)
         {
+            auto &node = static_cast<SceneNode &>(object);
+
+            auto metadata = node.GetComponent<EditorMetadataComponent>();
+            if (metadata != nullptr)
+            {
+                // If we have a model, we'll want to set the collision shape to that of the model.
+                if (node.HasComponent<ModelComponent>())
+                {
+                    metadata->SetPickingCollisionShapeToModel();
+                }
+                else
+                {
+                    // TODO: If the object is using a sprite for visual representation, we should setup a collision volume for that. We could use a sphere for that, I think... Nice and simple...
+                }
+
+
+                // We need to remove and re-add the collision shape since it might have changed.
+                auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
+                
+                auto world = pickingCollisionObject.GetWorld();
+                if (world != nullptr)
+                {
+                    world->RemoveCollisionObject(pickingCollisionObject);
+                }
+
+
+                if (metadata->GetPickingCollisionShape() != nullptr)
+                {
+                    this->currentState->pickingWorld.AddCollisionObject(pickingCollisionObject, CollisionGroups::EditorSelectionVolume, CollisionGroups::EditorSelectionRay);
+                }
+            }
         }
     }
 
