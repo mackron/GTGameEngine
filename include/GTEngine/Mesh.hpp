@@ -4,7 +4,6 @@
 
 #include "Rendering/VertexArray.hpp"
 #include "Material.hpp"
-#include "Physics.hpp"
 #include "Math.hpp"
 #include "SkinningVertexAttribute.hpp"
 #include "GarbageCollector.hpp"
