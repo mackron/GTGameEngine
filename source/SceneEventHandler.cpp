@@ -18,4 +18,8 @@ namespace GTEngine
     void SceneEventHandler::OnObjectRemoved(SceneObject &)
     {
     }
+
+    void SceneEventHandler::OnObjectRefreshed(SceneObject &)
+    {
+    }
 }

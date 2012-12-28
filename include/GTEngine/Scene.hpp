@@ -532,6 +532,11 @@ namespace GTEngine
         /// @param object [in] A reference to the object that is being removed.
         void PostEvent_OnObjectRemoved(SceneObject &object);
 
+        /// Helper for posting an OnObjectRefreshed event to every attached event handler.
+        ///
+        /// @param object [in] A reference to the object that has just been refreshed.
+        void PostEvent_OnObjectRefreshed(SceneObject &object);
+
 
 
     private:

@@ -321,10 +321,12 @@ namespace GTEngine
     void Scene::RefreshObject(SceneObject &object)
     {
         this->isRefreshingObject = true;
+        {
+            this->RemoveObject(object);
+            this->AddObject(object);
 
-        this->RemoveObject(object);
-        this->AddObject(object);
-
+            this->PostEvent_OnObjectRefreshed(object);
+        }
         this->isRefreshingObject = false;
     }
 
@@ -988,6 +990,14 @@ namespace GTEngine
         for (size_t i = 0; i < this->eventHandlers.count; ++i)
         {
             this->eventHandlers[i]->OnObjectRemoved(object);
+        }
+    }
+
+    void Scene::PostEvent_OnObjectRefreshed(SceneObject &object)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnObjectRefreshed(object);
         }
     }
 }
