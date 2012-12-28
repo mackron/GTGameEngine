@@ -33,6 +33,11 @@ namespace GTEngine
         /// @param object [in] A reference to the object that is being removed.
         virtual void OnObjectRemoved(SceneObject &object);
 
+        /// Called just after a scene object has been refreshed.
+        ///
+        /// @param object [in] A reference to the object that has just been refreshed.
+        virtual void OnObjectRefreshed(SceneObject &object);
+
 
     private:
 
