@@ -359,6 +359,51 @@ namespace GTEngine
     }
 
 
+    ///////////////////////////////////////////////////
+    // Scene Events
+    //
+    // These method should only be called for the active scene.
+
+    void Editor_SceneEditor::OnObjectAdded(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &node = static_cast<SceneNode &>(object);
+            
+            if (!node.HasComponent<EditorMetadataComponent>())
+            {
+                node.AddComponent<EditorMetadataComponent>();
+            }
+        }
+    }
+
+    void Editor_SceneEditor::OnObjectRemoved(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            // We need to make sure scene nodes are deseleted when they are removed from the scene.
+            this->DeselectSceneNode(static_cast<SceneNode &>(object));
+        }
+    }
+
+    void Editor_SceneEditor::OnObjectRefreshed(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+        }
+    }
+
+    void Editor_SceneEditor::OnSceneNodeTransform(SceneNode &node)
+    {
+        (void)node;
+    }
+
+    void Editor_SceneEditor::OnSceneNodeScale(SceneNode &node)
+    {
+        (void)node;
+    }
+
+
 
 
     ////////////////////////////////////////////////
@@ -437,7 +482,7 @@ namespace GTEngine
 
     Editor_SceneEditor::State::State(Editor_SceneEditor &sceneEditorIn)
         : sceneEditor(sceneEditorIn),
-          scene(), sceneEventHandler(sceneEditor, scene),
+          scene(), sceneEventHandler(sceneEditor),
           viewport(), camera(),
           viewportEventHandler(sceneEditor.GetEditor().GetGame(), viewport),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
