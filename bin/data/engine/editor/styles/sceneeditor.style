@@ -6,6 +6,8 @@ scene-editor-main
     
     child-plane:      horizontal
     flex-child-width: true
+    
+    horizontal-align: right     // Need this for allowing resizing.
 }
 
 scene-editor-viewport
@@ -18,8 +20,23 @@ scene-editor-viewport
 
 scene-editor-panel
 {
-    width:  250px
-    height: 100%
+    width:              250px
+    height:             100%
+    min-width:          32px
     
-    border: 1px #222
+    border:             1px #222
+    
+    child-plane:        horizontal
+    flex-child-width:   true
+    
+    allow-mouse-resize: true
+    left-gripper-width: 4px
+}
+
+scene-editor-panel-body
+{
+    width:   100%
+    height:  auto
+    
+    transparent-mouse-input: true
 }
