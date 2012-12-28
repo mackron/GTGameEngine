@@ -11,6 +11,18 @@ namespace GTEngine
     {
     public:
 
+        struct ClosestRayTestCallback : public btCollisionWorld::ClosestRayResultCallback
+        {
+            ClosestRayTestCallback(const glm::vec3 &rayFromWorld, const glm::vec3 &rayToWorld)
+                : btCollisionWorld::ClosestRayResultCallback(btVector3(rayFromWorld.x, rayFromWorld.y, rayFromWorld.z), btVector3(rayToWorld.x, rayToWorld.y, rayToWorld.z))
+            {
+            }
+        };
+
+
+
+    public:
+
         /// Constructor.
         CollisionWorld();
 
