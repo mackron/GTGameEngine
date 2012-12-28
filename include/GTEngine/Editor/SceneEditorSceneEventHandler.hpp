@@ -13,7 +13,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        SceneEditorSceneEventHandler(Editor_SceneEditor &sceneEditor, Scene &scene);
+        SceneEditorSceneEventHandler(Editor_SceneEditor &sceneEditore);
 
         /// Destructor.
         ~SceneEditorSceneEventHandler();
@@ -25,15 +25,21 @@ namespace GTEngine
         /// SceneEventHandler::OnObjectRemoved()
         void OnObjectRemoved(SceneObject &object);
 
+        /// SceneEventHandler::OnObjectRefreshed()
+        void OnObjectRefreshed(SceneObject &object);
+
+        /// SceneEventHandler::OnSceneNodeTransform()
+        void OnSceneNodeTransform(SceneNode &node);
+
+        /// SceneEventHandler::OnSceneNodeScale()
+        void OnSceneNodeScale(SceneNode &node);
+
 
 
     private:
 
         /// A reference to the main scene editor.
         Editor_SceneEditor &sceneEditor;
-
-        /// A reference to the scene that this event handler is attached to.
-        Scene &scene;
 
 
     private:    // No copying.

@@ -97,6 +97,29 @@ namespace GTEngine
 
 
 
+        ///////////////////////////////////////////////////
+        // Scene Events
+        //
+        // These events are received from the scene event handler for the currently active scene.
+
+        /// SceneEditorSceneEventHandler::OnObjectAdded()
+        void OnObjectAdded(SceneObject &object);
+
+        /// SceneEditorSceneEventHandler::OnObjectRemoved()
+        void OnObjectRemoved(SceneObject &object);
+
+        /// SceneEditorSceneEventHandler::OnObjectRefreshed()
+        void OnObjectRefreshed(SceneObject &object);
+
+        /// SceneEditorSceneEventHandler::OnSceneNodeTransform()
+        void OnSceneNodeTransform(SceneNode &node);
+
+        /// SceneEditorSceneEventHandler::OnSceneNodeScale().
+        void OnSceneNodeScale(SceneNode &node);
+
+
+
+
     private:
 
         /// Applies the camera rotation to the camera node.

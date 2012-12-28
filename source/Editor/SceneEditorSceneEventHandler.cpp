@@ -4,8 +4,8 @@
 
 namespace GTEngine
 {
-    SceneEditorSceneEventHandler::SceneEditorSceneEventHandler(Editor_SceneEditor &sceneEditorIn, Scene &sceneIn)
-        : sceneEditor(sceneEditorIn), scene(sceneIn)
+    SceneEditorSceneEventHandler::SceneEditorSceneEventHandler(Editor_SceneEditor &sceneEditorIn)
+        : sceneEditor(sceneEditorIn)
     {
     }
 
@@ -16,23 +16,26 @@ namespace GTEngine
 
     void SceneEditorSceneEventHandler::OnObjectAdded(SceneObject &object)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
-        {
-            auto &node = static_cast<SceneNode &>(object);
-            
-            if (!node.HasComponent<EditorMetadataComponent>())
-            {
-                node.AddComponent<EditorMetadataComponent>();
-            }
-        }
+        this->sceneEditor.OnObjectAdded(object);
     }
 
     void SceneEditorSceneEventHandler::OnObjectRemoved(SceneObject &object)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
-        {
-            // We need to make sure scene nodes are deseleted when they are removed from the scene.
-            this->sceneEditor.DeselectSceneNode(static_cast<SceneNode &>(object));
-        }
+        this->sceneEditor.OnObjectRemoved(object);
+    }
+
+    void SceneEditorSceneEventHandler::OnObjectRefreshed(SceneObject &object)
+    {
+        this->sceneEditor.OnObjectRefreshed(object);
+    }
+
+    void SceneEditorSceneEventHandler::OnSceneNodeTransform(SceneNode &node)
+    {
+        this->sceneEditor.OnSceneNodeTransform(node);
+    }
+
+    void SceneEditorSceneEventHandler::OnSceneNodeScale(SceneNode &node)
+    {
+        this->sceneEditor.OnSceneNodeScale(node);
     }
 }
