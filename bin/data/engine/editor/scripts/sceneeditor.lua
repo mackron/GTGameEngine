@@ -184,6 +184,13 @@ function GTGUI.Element:SceneEditor()
     
     
     
+    self.Viewport:OnKeyPressed(function(data)
+        if data.key == GTCore.Keys.Delete then
+            Editor.SceneEditor.DeleteSelectedSceneNodes();
+        end
+    end);
+    
+    
     
     self.Viewport:OnLMBDown(function()
         self.IsLMBDown       = true;

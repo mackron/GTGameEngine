@@ -333,6 +333,24 @@ namespace GTEngine
     }
 
 
+
+    ////////////////////////////////////////////////
+    // Editting
+
+    void Editor_SceneEditor::DeleteSelectedSceneNodes()
+    {
+        if (this->currentState != nullptr)
+        {
+            for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
+            {
+                delete this->currentState->selectedNodes[i];
+            }
+            this->currentState->selectedNodes.Clear();
+        }
+    }
+
+
+
     ////////////////////////////////////////////////
     // Events
 
@@ -562,10 +580,11 @@ namespace GTEngine
             script.GetTableValue(-2);
             assert(script.IsTable(-1));
             {
-                script.SetTableFunction(-1, "DoMouseSelection",  SceneEditorFFI::DoMouseSelection);
-                script.SetTableFunction(-1, "DeselectAll",       SceneEditorFFI::DeselectAll);
-                script.SetTableFunction(-1, "SelectSceneNode",   SceneEditorFFI::SelectSceneNode);
-                script.SetTableFunction(-1, "DeselectSceneNode", SceneEditorFFI::DeselectSceneNode);
+                script.SetTableFunction(-1, "DoMouseSelection",         SceneEditorFFI::DoMouseSelection);
+                script.SetTableFunction(-1, "DeselectAll",              SceneEditorFFI::DeselectAll);
+                script.SetTableFunction(-1, "SelectSceneNode",          SceneEditorFFI::SelectSceneNode);
+                script.SetTableFunction(-1, "DeselectSceneNode",        SceneEditorFFI::DeselectSceneNode);
+                script.SetTableFunction(-1, "DeleteSelectedSceneNodes", SceneEditorFFI::DeleteSelectedSceneNodes);
             }
             script.Pop(1);
         }
@@ -659,6 +678,12 @@ namespace GTEngine
         }
         script.Pop(1);
 
+        return 0;
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::DeleteSelectedSceneNodes(GTCore::Script &script)
+    {
+        GetSceneEditor(script).DeleteSelectedSceneNodes();
         return 0;
     }
 }

@@ -89,9 +89,15 @@ namespace GTEngine
         void DeselectSceneNode(SceneNode &node);
 
 
+        ///////////////////////////////////////////////////
+        // Editting
+
+        /// Deletes the selected scene nodes.
+        void DeleteSelectedSceneNodes();
+
 
         ///////////////////////////////////////////////////
-        // Events.
+        // Events
 
         /// Updates the model editor so that the viewport is rendered.
         void Update(double deltaTimeInSeconds);
@@ -249,6 +255,9 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A GTEngine.SceneNode:Create() table. The '_internalPtr' property is a pointer to the C++ SceneNode object.
             static int DeselectSceneNode(GTCore::Script &script);
+
+            /// Deletes all of the selected nodes.
+            static int DeleteSelectedSceneNodes(GTCore::Script &script);
         };
 
 
