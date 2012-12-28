@@ -5,6 +5,7 @@
 #include "SceneCullingManager.hpp"
 #include "Physics/CollisionWorld.hpp"
 #include "Model.hpp"
+#include "CollisionGroups.hpp"
 
 namespace GTEngine
 {
@@ -96,7 +97,7 @@ namespace GTEngine
         struct SceneNodeMetadata
         {
             SceneNodeMetadata()
-                : modelCollisionObject(nullptr),      modelCollisionShape(nullptr),
+                : modelCollisionObject(nullptr),      modelCollisionShape(nullptr), modelCollisionObjectHalfExtents(),
                   pointLightCollisionObject(nullptr), pointLightCollisionShape(nullptr),
                   spotLightCollisionObject(nullptr),  spotLightCollisionShape(nullptr)
             {
@@ -135,6 +136,9 @@ namespace GTEngine
 
                 this->modelCollisionObject->setCollisionShape(this->modelCollisionShape);
                 this->modelCollisionObject->setWorldTransform(worldTransform);
+
+
+                this->modelCollisionObjectHalfExtents = halfExtents;
             }
 
             void DeleteModelCollisionObject()
@@ -253,11 +257,23 @@ namespace GTEngine
                         world->RemoveCollisionObject(*this->modelCollisionObject);
                     }
 
+
+                    // We need to remove the shape and re-add a new one. The reason is because setLocalScaling() breaks down when the previous scale had an axis of 0.0.
+                    auto childTransform = this->modelCollisionShape->getChildTransform(0);
+
+                    delete this->modelCollisionShape->getChildShape(0);
+                    this->modelCollisionShape->removeChildShapeByIndex(0);
+
+                    this->modelCollisionShape->addChildShape(childTransform, new btBoxShape(btVector3(this->modelCollisionObjectHalfExtents.x, this->modelCollisionObjectHalfExtents.y, this->modelCollisionObjectHalfExtents.z)));
                     this->modelCollisionShape->getChildShape(0)->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
+                    this->modelCollisionShape->recalculateLocalAabb();
+
 
                     if (world != nullptr)
                     {
-                        world->AddCollisionObject(*this->modelCollisionObject);
+                        world->AddCollisionObject(*this->modelCollisionObject,
+                            CollisionGroups::Model,
+                            CollisionGroups::PointLight | CollisionGroups::SpotLight);
                     }
                 }
             }
@@ -290,7 +306,9 @@ namespace GTEngine
 
                     if (world != nullptr)
                     {
-                        world->AddCollisionObject(*this->modelCollisionObject);
+                        world->AddCollisionObject(*this->modelCollisionObject,
+                            CollisionGroups::Model,
+                            CollisionGroups::PointLight | CollisionGroups::SpotLight);
                     }
                 }
             }
@@ -309,7 +327,9 @@ namespace GTEngine
 
                     if (world != nullptr)
                     {
-                        world->AddCollisionObject(*this->pointLightCollisionObject);
+                        world->AddCollisionObject(*this->pointLightCollisionObject,
+                            CollisionGroups::PointLight,
+                            CollisionGroups::Model);
                     }
                 }
             }
@@ -340,7 +360,9 @@ namespace GTEngine
 
                     if (world != nullptr)
                     {
-                        world->AddCollisionObject(*this->spotLightCollisionObject);
+                        world->AddCollisionObject(*this->spotLightCollisionObject,
+                            CollisionGroups::SpotLight,
+                            CollisionGroups::Model);
                     }
                 }
             }
@@ -355,6 +377,9 @@ namespace GTEngine
             /// The collision shape to use for culling the model. Can be null only if <modelCollisionObject> is also null. A model's culling shape
             /// is defined by it's AABB, which will require an offset to be applied. Thus, we're going to use a compound shape.
             btCompoundShape* modelCollisionShape;
+
+            /// The half extents of the model collision shape.
+            glm::vec3 modelCollisionObjectHalfExtents;
 
 
             /// A pointer to the collision object for the point light component. Can be null.
