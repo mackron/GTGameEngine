@@ -10,6 +10,28 @@ function GTGUI.Element:Vector3Input()
         self.Z:SetText(string.format("%.4f", z));
     end
     
+    function self:GetXYZ()
+        return tonumber(self.X:GetText()), tonumber(self.Y:GetText()), tonumber(self.Z:GetText());
+    end
+    
+    
+    self.X:OnTextChanged(function()
+        self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())});
+    end);
+    
+    self.Y:OnTextChanged(function()
+        self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())});
+    end);
+    
+    self.Z:OnTextChanged(function()
+        self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())});
+    end);
+    
+    
+    function self:OnValueChanged(arg1)
+        self.Callbacks:BindOrCall("OnValueChanged", arg1);
+    end
+    
     return self;
 end
 
@@ -36,6 +58,28 @@ function GTGUI.Element:SceneEditorTransformPanel()
     self.PositionInput = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
     self.RotationInput = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
     self.ScaleInput    = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
+
+    
+    self.PositionInput:OnValueChanged(function(data)
+        local selectedNode = Editor.SceneEditor.GetFirstSelectedNode();
+        if selectedNode ~= nil then
+            selectedNode:SetPosition(data.x, data.y, data.z);
+        end
+    end);
+    
+    self.RotationInput:OnValueChanged(function(data)
+        local selectedNode = Editor.SceneEditor.GetFirstSelectedNode();
+        if selectedNode ~= nil then
+            selectedNode:SetRotationXYZ(data.x, data.y, data.z);
+        end
+    end);
+    
+    self.ScaleInput:OnValueChanged(function(data)
+        local selectedNode = Editor.SceneEditor.GetFirstSelectedNode();
+        if selectedNode ~= nil then
+            selectedNode:SetScale(data.x, data.y, data.z);
+        end
+    end);
 end
 
 
