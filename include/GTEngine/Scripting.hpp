@@ -121,6 +121,25 @@ namespace GTEngine
                     int Refresh(GTCore::Script &script);
 
 
+                    /// Retrieves the local position of the given scene node as 3 return values.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose position is being retrieved.
+                    int GetPosition(GTCore::Script &script);
+
+                    /// Retrieves the local XYZ rotation of the given scene node as 3 return values.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose rotation is being retrieved.
+                    int GetRotationXYZ(GTCore::Script &script);
+
+                    /// Retrieves the local scale of the given scene node as 3 return values.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose scale is being retrieved.
+                    int GetScale(GTCore::Script &script);
+
+
 
                     ////////////////////////////////////////////////////////////////
                     // Functions below are just helpers.
