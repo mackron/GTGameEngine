@@ -257,6 +257,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\PointToPointConstraint.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\StaticMeshCollisionShape.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Profiler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Projectile.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorDefinition.hpp" />
@@ -418,6 +419,7 @@
     <ClCompile Include="..\..\..\source\Physics\PointToPointConstraint.cpp" />
     <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp" />
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\StaticMeshCollisionShape.cpp" />
     <ClCompile Include="..\..\..\source\Profiler.cpp" />
     <ClCompile Include="..\..\..\source\Projectile.cpp" />
     <ClCompile Include="..\..\..\source\Random\Floor\FloorDefinition.cpp" />
