@@ -37,11 +37,15 @@ function GTGUI.Element:SceneEditorPanel()
     self.Body      = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel-body' style='' />");
     self.Scrollbar = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='vertical-scrollbar'      style='' />");
     
+    self.Body.MessageContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='height:auto; width:100%; margin-top:8px; horizontal-align:center; font-style:bold; text-color:#555; visible:false;' />")
     
-    self.Body.DetailsPanel = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-groupbox' style='' />");
+    
+    self.Body.PanelsContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='height:auto; width:100%;' />")
+    
+    self.Body.DetailsPanel   = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox' style='' />");
     self.Body.DetailsPanel:SceneEditorDetailsPanel();
-    GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-groupbox-separator' style='' />");
-    self.Body.TransformPanel = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-groupbox' style='' />");
+    GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox-separator' style='' />");
+    self.Body.TransformPanel = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox' style='' />");
     self.Body.TransformPanel:SceneEditorTransformPanel();
     
 
@@ -60,6 +64,24 @@ function GTGUI.Element:SceneEditorPanel()
         local offset = -data.position;
         self.Body:SetStyle("inner-offset-y", tostring(offset));
     end)
+    
+    
+    
+    -- Clears the panels and shows a message.
+    function self:HidePanels(message)
+        self.Body.PanelsContainer:Hide();
+        
+        self.Body.MessageContainer:Show();
+        self.Body.MessageContainer:SetText(message);
+    end
+    
+    -- Shows the panels.
+    function self:ShowPanels(node)
+        self.Body.MessageContainer:Hide();
+        self.Body.PanelsContainer:Show();
+        
+        self.Body.DetailsPanel.NameTextBox:SetText(node:GetName());
+    end
 end
 
 
@@ -92,6 +114,18 @@ function GTGUI.Element:SceneEditor()
         
         self.ContextMenu:Hide();
     end);
+    
+    
+    
+    function self:HidePanels(message)
+        self.Panel:HidePanels(message);
+    end
+    
+    function self:ShowPanels(node)
+        self.Panel:ShowPanels(node);
+    end
+    
+    
     
     
     self.Viewport:OnLMBDown(function()
@@ -156,6 +190,11 @@ function GTGUI.Element:SceneEditor()
             self.MouseMovedWhileCaptured = true;
         end
     end);
+    
+    
+    
+    -- We're going to hide the panels by default since nothing is selected right now.
+    self:HidePanels("Nothing Selected");
 end
 
 

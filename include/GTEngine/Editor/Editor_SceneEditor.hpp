@@ -128,11 +128,12 @@ namespace GTEngine
 
         /// Sets the current scene in the scripting environment.
         ///
-        /// @param scene [in] A pointer to the scene to make current. Can be null.
+        /// @param scene     [in] A pointer to the scene to make current. Can be null.
+        /// @param elementID [in] The ID of the element containing the scene editor.
         ///
         /// @remarks
         ///     This function simple calls the following script function "Editor.SceneEditor.SetCurrentScript(scene);"
-        void SetCurrentSceneInScript(Scene* scene);
+        void SetCurrentSceneInScript(Scene* scene, const char* elementID);
 
         /// A helper for retrieving the script object.
         GameScript & GetScript();
