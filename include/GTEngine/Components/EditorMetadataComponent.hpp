@@ -4,6 +4,7 @@
 
 #include "../Component.hpp"
 #include "../Math.hpp"
+#include "../Physics.hpp"
 
 namespace GTEngine
 {
@@ -34,6 +35,19 @@ namespace GTEngine
         void SetSelectionWireframeColour(const glm::vec3 &newColour);
 
 
+        /// Retrieves a reference to the collision object to use for picking.
+              CollisionObject & GetPickingCollisionObject()       { return this->pickingCollisionObject; }
+        const CollisionObject & GetPickingCollisionObject() const { return this->pickingCollisionObject; }
+
+        /// Retrieves a pointer to the collision shape to use for picking. Returns null if there is no collision shape.
+              btCollisionShape * GetPickingCollisionShape()       { return this->pickingCollisionShape; }
+        const btCollisionShape * GetPickingCollisionShape() const { return this->pickingCollisionShape; }
+
+
+        /// Sets the picking collision shape to that of the model geometry.
+        void SetPickingCollisionShapeToModel();
+
+
 
     private:
 
@@ -42,6 +56,12 @@ namespace GTEngine
 
         /// The colour of the wireframe to use when an object is selected.
         glm::vec3 selectionWireframeColour;
+
+        /// The collision object to use for picking.
+        CollisionObject pickingCollisionObject;
+
+        /// The collision shape to use for picking. Need to use a pointer here because we might not always use the same kind of shape for everything.
+        btCollisionShape* pickingCollisionShape;
 
 
     GTENGINE_DECL_COMPONENT_END()
