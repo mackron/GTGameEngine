@@ -4,6 +4,7 @@
 
 #include "SceneNode.hpp"
 #include "SceneViewport.hpp"
+#include "SceneEventHandler.hpp"
 #include "Physics.hpp"
 #include "DefaultSceneUpdateManager.hpp"
 #include "DefaultScenePhysicsManager.hpp"
@@ -340,6 +341,23 @@ namespace GTEngine
 
 
 
+        /// Attaches an event handler.
+        ///
+        /// @param eventHandler [in] A refernece to the event handler to attach.
+        ///
+        /// @remarks
+        ///     If the event handler is already attached, this will do nothing.
+        ///     @par
+        ///     Detach the event handler with DetachEventHandler() before deleting it.
+        void AttachEventHandler(SceneEventHandler &eventHandler);
+
+        /// Detaches an event handler.
+        ///
+        /// @param eventHandler [in] A reference to the event handler to detach.
+        void DetachEventHandler(SceneEventHandler &eventHandler);
+
+
+
     // Collision Tests.
     public:
 
@@ -501,6 +519,23 @@ namespace GTEngine
 
     private:
 
+        /////////////////////////////////////////////////
+        // Event Posting
+
+        /// Helper for posting an OnObjectAdded event to every attached event handler.
+        ///
+        /// @param object [in] A reference to the object that was just added.
+        void PostEvent_OnObjectAdded(SceneObject &object);
+
+        /// Helper for posting an OnObjectRemoved event to every attached event handler.
+        ///
+        /// @param object [in] A reference to the object that is being removed.
+        void PostEvent_OnObjectRemoved(SceneObject &object);
+
+
+
+    private:
+
         /// A pointer to the scene's renderer. This will never actually be null, but it can be changed dynamically. Thus, it needs to be a pointer instead
         /// of a reference. This will default to a heap-allocated DefaultSceneRenderer.
         SceneRenderer* renderer;
@@ -547,6 +582,10 @@ namespace GTEngine
 
         /// The navigation mesh for doing navigation paths.
         NavigationMesh navigationMesh;
+
+
+        /// The list of event handlers current attached to the scene.
+        GTCore::Vector<SceneEventHandler*> eventHandlers;
 
 
     private:    // No copying.
