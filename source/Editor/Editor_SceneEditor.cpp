@@ -287,7 +287,7 @@ namespace GTEngine
 
                 assert(this->currentState->selectedNodes.Exists(&node) == true);
                 {
-                    this->currentState->selectedNodes.RemoveFirst(&node);
+                    this->currentState->selectedNodes.RemoveFirstOccuranceOf(&node);
 
                     // The scripting environment needs to be aware of this change.
                     auto &script = this->GetScript();

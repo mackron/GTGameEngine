@@ -596,7 +596,7 @@ namespace GTEngine
             // Here we do a simple check to see if we should delete the objects, or just decrement the reference count.
             if (shaderInfo->refCount <= 1)
             {
-                AcquiredShaders.RemoveFirst(shaderInfo);
+                AcquiredShaders.RemoveFirstOccuranceOf(shaderInfo);
 
                 delete shaderInfo->shader;
                 delete shaderInfo;

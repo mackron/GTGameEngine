@@ -40,7 +40,7 @@ namespace GTEngine
 
     void DefaultSceneUpdateManager::RemoveObject(SceneObject &object)
     {
-        this->objects.RemoveFirst(&object);
+        this->objects.RemoveFirstOccuranceOf(&object);
     }
 
     void DefaultSceneUpdateManager::Step(double deltaTimeInSeconds)
