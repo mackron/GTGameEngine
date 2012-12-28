@@ -3,7 +3,9 @@
 #define __GTEngine_Editor_SceneEditor_hpp_
 
 #include "../Scene.hpp"
+#include "../GameScript.hpp"
 #include "Editor3DViewportEventHandler.hpp"
+#include "SceneEditorSceneEventHandler.hpp"
 #include <GTGUI/Element.hpp>
 
 namespace GTEngine
@@ -62,6 +64,32 @@ namespace GTEngine
 
 
         ///////////////////////////////////////////////////
+        // Selections
+
+        /// Performs a mouse selection.
+        void DoMouseSelection();
+
+        /// Deselects everything.
+        void DeselectAll();
+
+        /// Determines whether or not the given node is selected.
+        ///
+        /// @param node [in] The node to check.
+        bool IsSceneNodeSelected(const SceneNode &node) const;
+
+        /// Selects the given scene node.
+        ///
+        /// @param node [in] The node to select.
+        void SelectSceneNode(SceneNode &node);
+
+        /// Deselects the given scene node.
+        ///
+        /// @param node [in] The node to deselect.
+        void DeselectSceneNode(SceneNode &node);
+
+
+
+        ///////////////////////////////////////////////////
         // Events.
 
         /// Updates the model editor so that the viewport is rendered.
@@ -81,6 +109,14 @@ namespace GTEngine
         /// @remarks
         ///     This function simple calls the following script function "Editor.SceneEditor.SetCurrentScript(scene);"
         void SetCurrentSceneInScript(Scene* scene);
+
+        /// A helper for retrieving the script object.
+        GameScript & GetScript();
+
+
+        /// Initialises the scripting interface.
+        void InitialiseScripting();
+
 
 
 
@@ -105,8 +141,13 @@ namespace GTEngine
             /// A reference to the scene editor that owns this state.
             Editor_SceneEditor &sceneEditor;
 
+
             /// The scene object for actually displaying the scene.
             Scene scene;
+
+            /// The event handler to attach to the scene.
+            SceneEditorSceneEventHandler sceneEventHandler;
+
 
             /// The viewport that the scene will be drawn from.
             SceneViewport viewport;
@@ -120,6 +161,10 @@ namespace GTEngine
 
             float cameraXRotation;      ///< The camera's current X rotation.
             float cameraYRotation;      ///< The camera's current Y rotation.
+
+
+            /// The list of selected nodes.
+            GTCore::Vector<SceneNode*> selectedNodes;
 
 
             struct _GUI
@@ -145,6 +190,36 @@ namespace GTEngine
 
         /// A map of State objects, mapped to the path of the appropriate model.
         GTCore::Dictionary<State*> loadedStates;
+
+
+
+        /////////////////////////////////////////////////
+        /// Scripting FFI
+
+        struct SceneEditorFFI
+        {
+            /// Helper for retrieving the SceneEditor object.
+            static Editor_SceneEditor & GetSceneEditor(GTCore::Script &script);
+
+
+            /// Performs a mouse selection.
+            static int DoMouseSelection(GTCore::Script &script);
+
+            /// Deselects everything.
+            static int DeselectAll(GTCore::Script &script);
+
+            /// Selects the given scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A GTEngine.SceneNode:Create() table. The '_internalPtr' property is a pointer to the C++ SceneNode object.
+            static int SelectSceneNode(GTCore::Script &script);
+
+            /// Deselects the given scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A GTEngine.SceneNode:Create() table. The '_internalPtr' property is a pointer to the C++ SceneNode object.
+            static int DeselectSceneNode(GTCore::Script &script);
+        };
 
 
 

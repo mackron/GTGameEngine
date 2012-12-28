@@ -17,7 +17,10 @@ function GTGUI.Element:SceneEditor()
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.ModelComponent):SetModel("engine/models/default-1x1.dae");
             
-            -- TODO: Select the new node.
+            -- We want the new node to be selected, and to be the ONLY selected object.
+            Editor.SceneEditor.DeselectAll();
+            Editor.SceneEditor.SelectSceneNode(newNode);
+
             
             newNode:Refresh();
         end
