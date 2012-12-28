@@ -626,6 +626,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneEventHandler.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditorSceneEventHandler.hpp">
+      <Filter>include\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1065,6 +1068,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\SceneEventHandler.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditorSceneEventHandler.cpp">
+      <Filter>source\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
