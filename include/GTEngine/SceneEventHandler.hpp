@@ -26,12 +26,12 @@ namespace GTEngine
         /// Called when a scene object is added to the scene.
         ///
         /// @param object [in] A reference to the object that was just added.
-        virtual void OnSceneObjectAdded(SceneObject &object);
+        virtual void OnObjectAdded(SceneObject &object);
 
         /// Called when a scene object is being removed from the scene.
         ///
         /// @param object [in] A reference to the object that is being removed.
-        virtual void OnSceneObjectRemoved(SceneObject &object);
+        virtual void OnObjectRemoved(SceneObject &object);
 
 
     private:
