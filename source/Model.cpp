@@ -15,8 +15,7 @@ namespace GTEngine
           meshes(), bones(),
           aabbMin(), aabbMax(), isAABBValid(false),
           animation(), animationChannelBones(), animationKeyCache(),
-          animationPlaybackSpeed(1.0),
-          collisionVA(nullptr)
+          animationPlaybackSpeed(1.0)
     {
         // This will get the model into the correct state.
         this->OnDefinitionChanged();
@@ -200,26 +199,6 @@ namespace GTEngine
 
 
 
-    VertexArray* Model::UpdateCollisionVertexArray()
-    {
-        // TODO: For unchanged, non-animated models, just return an array from the model definition.
-        //
-        // For now we will re-create the entire array.
-        delete this->collisionVA;
-
-        // Here is where we combine the vertex arrays of every mesh and combine them to create the new data.
-        GTCore::Vector<VertexArray*> sourceArrays;
-        for (size_t i = 0; i < this->meshes.count; ++i)
-        {
-            sourceArrays.PushBack(this->meshes[i]->GetSkinnedGeometry());
-        }
-
-        this->collisionVA = VertexArrayLibrary::CreateCombined(sourceArrays.buffer, sourceArrays.count, VertexFormat::P3);
-
-        return this->collisionVA;
-    }
-    
-
     void Model::OnDefinitionChanged()
     {
         this->Clear();
@@ -364,10 +343,6 @@ namespace GTEngine
         }
         this->animationKeyCache.Clear();
         this->animationChannelBones.Clear();
-
-
-        delete this->collisionVA;
-        this->collisionVA = nullptr;
     }
 }
 

@@ -67,14 +67,6 @@ namespace GTEngine
         void GetBaseAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const;
 
 
-
-        /// Updates the collision vertex array.
-        ///
-        /// @remarks
-        ///     This will return quickly for unchanged non-animated models. For animated models, the entire array will be updated with new data.
-        VertexArray* UpdateCollisionVertexArray();
-
-
         /// Retrieves the internal list of convex hulls of this model.
         const GTCore::Vector<ConvexHull*> & GetConvexHulls() const { return this->definition.GetConvexHulls(); }
 
@@ -162,13 +154,6 @@ namespace GTEngine
 
         /// The playback speed of animations.
         double animationPlaybackSpeed;
-
-
-        /// The model's vertex array for use by a collision object.
-        //btTriangleIndexVertexArray* collisionVA;
-
-        /// The main vertex array containing collision data of the model. We use a pointer here because we're going to dynamically re-create the array where needed.
-        VertexArray* collisionVA;
 
 
     private:    // No copying.
