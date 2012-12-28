@@ -1,11 +1,11 @@
 
 #include <GTEngine/Editor/SceneEditorSceneEventHandler.hpp>
-#include <GTEngine/Scene.hpp>
+#include <GTEngine/Editor/Editor_SceneEditor.hpp>
 
 namespace GTEngine
 {
-    SceneEditorSceneEventHandler::SceneEditorSceneEventHandler(Scene &sceneIn)
-        : scene(sceneIn)
+    SceneEditorSceneEventHandler::SceneEditorSceneEventHandler(Editor_SceneEditor &sceneEditorIn, Scene &sceneIn)
+        : sceneEditor(sceneEditorIn), scene(sceneIn)
     {
     }
 
@@ -29,6 +29,10 @@ namespace GTEngine
 
     void SceneEditorSceneEventHandler::OnObjectRemoved(SceneObject &object)
     {
-        (void)object;
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            // We need to make sure scene nodes are deseleted when they are removed from the scene.
+            this->sceneEditor.DeselectSceneNode(static_cast<SceneNode &>(object));
+        }
     }
 }
