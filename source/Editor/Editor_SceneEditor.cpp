@@ -458,12 +458,46 @@ namespace GTEngine
 
     void Editor_SceneEditor::OnSceneNodeTransform(SceneNode &node)
     {
-        (void)node;
+        auto metadata = node.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            // We need to remove and re-add the collision shape since it might have changed.
+            auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
+
+
+            btTransform transform;
+            node.GetWorldTransform(transform);
+
+            pickingCollisionObject.setWorldTransform(transform);
+
+            auto world = pickingCollisionObject.GetWorld();
+            if (world != nullptr)
+            {
+                world->UpdateAABB(pickingCollisionObject);
+            }
+        }
     }
 
     void Editor_SceneEditor::OnSceneNodeScale(SceneNode &node)
     {
-        (void)node;
+        auto metadata = node.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            // We need to remove and re-add the collision shape since it might have changed.
+            auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
+                
+            auto world = pickingCollisionObject.GetWorld();
+            if (world != nullptr)
+            {
+                world->RemoveCollisionObject(pickingCollisionObject);
+            }
+
+            if (metadata->GetPickingCollisionShape() != nullptr)
+            {
+                metadata->GetPickingCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+                this->currentState->pickingWorld.AddCollisionObject(pickingCollisionObject, CollisionGroups::EditorSelectionVolume, CollisionGroups::EditorSelectionRay);
+            }
+        }
     }
 
 
