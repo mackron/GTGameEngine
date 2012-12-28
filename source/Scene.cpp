@@ -243,7 +243,8 @@ namespace GTEngine
           paused(false),
           viewports(), nodes(),
           ambientLightComponents(), directionalLightComponents(),
-          navigationMesh()
+          navigationMesh(),
+          eventHandlers()
     {
     }
 
@@ -254,7 +255,8 @@ namespace GTEngine
           paused(false),
           viewports(), nodes(),
           ambientLightComponents(), directionalLightComponents(),
-          navigationMesh()
+          navigationMesh(),
+          eventHandlers()
     {
     }
 
@@ -496,6 +498,22 @@ namespace GTEngine
             this->renderer->AddViewport(*iViewport->value);
         }
     }
+
+
+
+    void Scene::AttachEventHandler(SceneEventHandler &eventHandler)
+    {
+        if (!this->eventHandlers.Exists(&eventHandler))
+        {
+            this->eventHandlers.PushBack(&eventHandler);
+        }
+    }
+
+    void Scene::DetachEventHandler(SceneEventHandler &eventHandler)
+    {
+        this->eventHandlers.RemoveFirst(&eventHandler);
+    }
+
 
 
 
@@ -744,6 +762,11 @@ namespace GTEngine
         {
             this->cullingManager.AddObject(node);
         }
+
+
+
+        // Event handlers need to know.
+        this->PostEvent_OnObjectAdded(node);
     }
 
     void Scene::OnSceneNodeRemoved(SceneNode &node)
@@ -815,10 +838,13 @@ namespace GTEngine
             this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
         }
 
-        
 
 
         this->cullingManager.RemoveObject(node);
+
+
+        // Event handlers need to know.
+        this->PostEvent_OnObjectRemoved(node);
     }
 
     void Scene::OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject)
@@ -931,5 +957,27 @@ namespace GTEngine
         }
 
         // TODO: Proximity, occluders.
+    }
+
+
+
+
+    ///////////////////////////////////////////////////////
+    // Event Posting
+
+    void Scene::PostEvent_OnObjectAdded(SceneObject &object)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnObjectAdded(object);
+        }
+    }
+
+    void Scene::PostEvent_OnObjectRemoved(SceneObject &object)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnObjectRemoved(object);
+        }
     }
 }
