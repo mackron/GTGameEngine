@@ -22,4 +22,12 @@ namespace GTEngine
     void SceneEventHandler::OnObjectRefreshed(SceneObject &)
     {
     }
+
+    void SceneEventHandler::OnSceneNodeTransform(SceneNode &)
+    {
+    }
+
+    void SceneEventHandler::OnSceneNodeScale(SceneNode &)
+    {
+    }
 }

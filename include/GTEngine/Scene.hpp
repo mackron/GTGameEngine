@@ -537,6 +537,15 @@ namespace GTEngine
         /// @param object [in] A reference to the object that has just been refreshed.
         void PostEvent_OnObjectRefreshed(SceneObject &object);
 
+        /// Helper for posting an OnSceneNodeTransform event.
+        ///
+        /// @param node [in] A reference to the scene node that has just had it's tranformation changed.
+        void PostEvent_OnSceneNodeTransform(SceneNode &node);
+
+        /// Helper for posting an OnSceneNodeScale event.
+        ///
+        /// @param node [in] A reference to the scene node that has just had it's scale changed.
+        void PostEvent_OnSceneNodeScale(SceneNode &node);
 
 
     private:

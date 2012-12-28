@@ -6,6 +6,7 @@ namespace GTEngine
 {
     class Scene;
     class SceneObject;
+    class SceneNode;
 
     /// Class for intercepting events from a scene.
     ///
@@ -37,6 +38,17 @@ namespace GTEngine
         ///
         /// @param object [in] A reference to the object that has just been refreshed.
         virtual void OnObjectRefreshed(SceneObject &object);
+
+
+        /// Called just after a scene node has been translated and or rotated.
+        ///
+        /// @param sceneNode [in] A reference to the scene node that has just had it's tranformation changed.
+        virtual void OnSceneNodeTransform(SceneNode &sceneNode);
+
+        /// Called just after a scene node has been scaled.
+        ///
+        /// @param sceneNode [in] A reference to the scene node that has just had it's scale changed.
+        virtual void OnSceneNodeScale(SceneNode &sceneNode);
 
 
     private:

@@ -890,6 +890,10 @@ namespace GTEngine
         }
 
         this->cullingManager.UpdateTransform(node);
+
+
+        // Event handlers need to know about this.
+        this->PostEvent_OnSceneNodeTransform(node);
     }
 
     void Scene::OnSceneNodeScale(SceneNode &node)
@@ -911,6 +915,10 @@ namespace GTEngine
         {
             proximity->ApplyScaling(node.GetWorldScale());
         }
+
+
+        // Event handlers need to know about this.
+        this->PostEvent_OnSceneNodeScale(node);
     }
 
     void Scene::OnSceneNodeStaticChanged(SceneNode &)
@@ -998,6 +1006,22 @@ namespace GTEngine
         for (size_t i = 0; i < this->eventHandlers.count; ++i)
         {
             this->eventHandlers[i]->OnObjectRefreshed(object);
+        }
+    }
+
+    void Scene::PostEvent_OnSceneNodeTransform(SceneNode &node)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnSceneNodeTransform(node);
+        }
+    }
+
+    void Scene::PostEvent_OnSceneNodeScale(SceneNode &node)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnSceneNodeScale(node);
         }
     }
 }
