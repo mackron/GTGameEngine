@@ -5,6 +5,10 @@ function GTGUI.Element:Vector3Input()
     self.Z = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:0px;' />");
     
     function self:SetFromXYZ(x, y, z)
+        if x == -0.0 then x = 0.0 end;
+        if y == -0.0 then y = 0.0 end;
+        if z == -0.0 then z = 0.0 end;
+    
         self.X:SetText(string.format("%.4f", x));
         self.Y:SetText(string.format("%.4f", y));
         self.Z:SetText(string.format("%.4f", z));
