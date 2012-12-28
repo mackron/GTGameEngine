@@ -170,6 +170,7 @@ function GTGUI.Element:SceneEditor()
         end
         
         self.ContextMenu:Hide();
+        self.Viewport:Focus();
     end);
     
     
@@ -195,11 +196,13 @@ function GTGUI.Element:SceneEditor()
     self.Viewport:OnLMBDown(function()
         self.IsLMBDown       = true;
         self.HasMouseCapture = true;
+        self:Focus();
     end);
     
     self.Viewport:OnRMBDown(function()
         self.IsRMBDown       = true;
         self.HasMouseCapture = true;
+        self:Focus();
     end);
 
     
