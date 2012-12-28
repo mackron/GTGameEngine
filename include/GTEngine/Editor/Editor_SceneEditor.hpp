@@ -198,12 +198,13 @@ namespace GTEngine
             struct _GUI
             {
                 _GUI()
-                    : Main(nullptr), Viewport(nullptr)
+                    : Main(nullptr), Viewport(nullptr), Panel(nullptr)
                 {
                 }
 
                 GTGUI::Element* Main;
                 GTGUI::Element* Viewport;
+                GTGUI::Element* Panel;
 
             }GUI;
 
