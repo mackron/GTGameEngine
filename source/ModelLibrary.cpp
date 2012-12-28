@@ -1046,7 +1046,7 @@ namespace GTEngine
             assert(iDefinitionModels        != nullptr);
             assert(iDefinitionModels->value != nullptr);
 
-            iDefinitionModels->value->RemoveFirst(model);;
+            iDefinitionModels->value->RemoveFirstOccuranceOf(model);;
             delete model;
         }
     }

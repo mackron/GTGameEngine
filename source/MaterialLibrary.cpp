@@ -67,7 +67,7 @@ namespace GTEngine
 
     void MaterialLibrary::RemoveEventHandler(EventHandler &eventHandler)
     {
-        EventHandlers.RemoveFirst(&eventHandler);
+        EventHandlers.RemoveFirstOccuranceOf(&eventHandler);
     }
 
 

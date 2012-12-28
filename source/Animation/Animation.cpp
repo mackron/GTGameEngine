@@ -53,7 +53,7 @@ namespace GTEngine
 
     void Animation::DeleteChannel(AnimationChannel &channel)
     {
-        this->channels.RemoveFirst(&channel);
+        this->channels.RemoveFirstOccuranceOf(&channel);
         delete &channel;
     }
 

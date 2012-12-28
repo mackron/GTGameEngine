@@ -517,7 +517,7 @@ namespace GTEngine
 
     void Scene::DetachEventHandler(SceneEventHandler &eventHandler)
     {
-        this->eventHandlers.RemoveFirst(&eventHandler);
+        this->eventHandlers.RemoveFirstOccuranceOf(&eventHandler);
     }
 
 

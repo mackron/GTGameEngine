@@ -257,7 +257,7 @@ namespace GTEngine
     {
         RendererEventHandlerLock.Lock();
         {
-            RendererEventHandlers.RemoveFirst(&eventHandler);
+            RendererEventHandlers.RemoveFirstOccuranceOf(&eventHandler);
         }
         RendererEventHandlerLock.Unlock();
     }

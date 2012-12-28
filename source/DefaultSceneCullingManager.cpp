@@ -121,13 +121,13 @@ namespace GTEngine
             auto ambientComponent = node.GetComponent<AmbientLightComponent>();
             if (ambientComponent != nullptr)
             {
-                this->ambientLights.RemoveFirst(&node);
+                this->ambientLights.RemoveFirstOccuranceOf(&node);
             }
 
             auto directionalComponent = node.GetComponent<DirectionalLightComponent>();
             if (directionalComponent != nullptr)
             {
-                this->directionalLights.RemoveFirst(&node);
+                this->directionalLights.RemoveFirstOccuranceOf(&node);
             }
 
 
