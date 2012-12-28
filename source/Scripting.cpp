@@ -130,12 +130,24 @@ namespace GTEngine
                 "    return GTEngine.System.SceneNode.GetPosition(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.SceneNode:SetPosition(x, y, z)"
+                "    return GTEngine.System.SceneNode.SetPosition(self._internalPtr, x, y, z);"
+                "end;"
+
                 "function GTEngine.SceneNode:GetRotationXYZ()"
                 "    return GTEngine.System.SceneNode.GetRotationXYZ(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.SceneNode:SetRotationXYZ(x, y, z)"
+                "    return GTEngine.System.SceneNode.SetRotationXYZ(self._internalPtr, x, y, z);"
+                "end;"
+
                 "function GTEngine.SceneNode:GetScale()"
                 "    return GTEngine.System.SceneNode.GetScale(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:SetScale(x, y, z)"
+                "    return GTEngine.System.SceneNode.SetScale(self._internalPtr, x, y, z);"
                 "end;"
             );
 
@@ -203,8 +215,11 @@ namespace GTEngine
                         script.SetTableFunction(-1, "Refresh",         FFI::SystemFFI::SceneNodeFFI::Refresh);
 
                         script.SetTableFunction(-1, "GetPosition",     FFI::SystemFFI::SceneNodeFFI::GetPosition);
+                        script.SetTableFunction(-1, "SetPosition",     FFI::SystemFFI::SceneNodeFFI::SetPosition);
                         script.SetTableFunction(-1, "GetRotationXYZ",  FFI::SystemFFI::SceneNodeFFI::GetRotationXYZ);
+                        script.SetTableFunction(-1, "SetRotationXYZ",  FFI::SystemFFI::SceneNodeFFI::SetRotationXYZ);
                         script.SetTableFunction(-1, "GetScale",        FFI::SystemFFI::SceneNodeFFI::GetScale);
+                        script.SetTableFunction(-1, "SetScale",        FFI::SystemFFI::SceneNodeFFI::SetScale);
                     }
                     script.Pop(1);
 
@@ -431,6 +446,17 @@ namespace GTEngine
                         return 3;
                     }
 
+                    int SetPosition(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            sceneNode->SetPosition(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
                     int GetRotationXYZ(GTCore::Script &script)
                     {
                         auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
@@ -438,9 +464,9 @@ namespace GTEngine
                         {
                             auto &orientation = sceneNode->GetOrientation();
 
-                            script.Push(glm::roll(orientation));
-                            script.Push(glm::pitch(orientation));
-                            script.Push(glm::yaw(orientation));
+                            script.Push(glm::degrees(glm::roll(orientation)));
+                            script.Push(glm::degrees(glm::pitch(orientation)));
+                            script.Push(glm::degrees(glm::yaw(orientation)));
                         }
                         else
                         {
@@ -450,6 +476,17 @@ namespace GTEngine
                         }
 
                         return 3;
+                    }
+
+                    int SetRotationXYZ(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            sceneNode->SetOrientation(glm::quat(glm::vec3(glm::radians(script.ToFloat(2)), glm::radians(script.ToFloat(3)), glm::radians(script.ToFloat(4)))));
+                        }
+
+                        return 0;
                     }
 
                     int GetScale(GTCore::Script &script)
@@ -471,6 +508,17 @@ namespace GTEngine
                         }
 
                         return 3;
+                    }
+
+                    int SetScale(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            sceneNode->SetScale(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
                     }
 
 
