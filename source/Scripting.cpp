@@ -464,9 +464,9 @@ namespace GTEngine
                         {
                             auto &orientation = sceneNode->GetOrientation();
 
-                            script.Push(glm::degrees(glm::roll(orientation)));
-                            script.Push(glm::degrees(glm::pitch(orientation)));
-                            script.Push(glm::degrees(glm::yaw(orientation)));
+                            script.Push(glm::pitch(orientation));
+                            script.Push(glm::yaw(orientation));
+                            script.Push(glm::roll(orientation));
                         }
                         else
                         {
@@ -483,6 +483,7 @@ namespace GTEngine
                         auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                         if (sceneNode != nullptr)
                         {
+                            // Order: pitch/yaw/roll
                             sceneNode->SetOrientation(glm::quat(glm::vec3(glm::radians(script.ToFloat(2)), glm::radians(script.ToFloat(3)), glm::radians(script.ToFloat(4)))));
                         }
 
