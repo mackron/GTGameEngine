@@ -240,7 +240,7 @@ namespace GTEngine
         : renderer(new DefaultSceneRenderer),
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
-          paused(false),
+          paused(false), isRefreshingObject(false),
           viewports(), nodes(),
           ambientLightComponents(), directionalLightComponents(),
           navigationMesh(),
@@ -252,7 +252,7 @@ namespace GTEngine
         : renderer(new DefaultSceneRenderer),
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
-          paused(false),
+          paused(false), isRefreshingObject(false),
           viewports(), nodes(),
           ambientLightComponents(), directionalLightComponents(),
           navigationMesh(),
@@ -320,8 +320,12 @@ namespace GTEngine
 
     void Scene::RefreshObject(SceneObject &object)
     {
+        this->isRefreshingObject = true;
+
         this->RemoveObject(object);
         this->AddObject(object);
+
+        this->isRefreshingObject = false;
     }
 
     void Scene::Pause()
@@ -766,7 +770,10 @@ namespace GTEngine
 
 
         // Event handlers need to know.
-        this->PostEvent_OnObjectAdded(node);
+        if (!this->isRefreshingObject)
+        {
+            this->PostEvent_OnObjectAdded(node);
+        }
     }
 
     void Scene::OnSceneNodeRemoved(SceneNode &node)
@@ -844,7 +851,10 @@ namespace GTEngine
 
 
         // Event handlers need to know.
-        this->PostEvent_OnObjectRemoved(node);
+        if (!this->isRefreshingObject)
+        {
+            this->PostEvent_OnObjectRemoved(node);
+        }
     }
 
     void Scene::OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject)

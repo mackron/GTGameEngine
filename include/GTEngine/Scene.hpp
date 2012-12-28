@@ -565,6 +565,10 @@ namespace GTEngine
         /// Whether or not the scene is paused.
         bool paused;
 
+        /// Keeps track of whether or not we are refreshing an object. If we are, we don't want to post OnObjectAdded and OnObjectRemoved events to event handlers. Refreshing an
+        /// object just removes and re-adds it.
+        bool isRefreshingObject;
+
 
         /// The list of viewports currently attached to this scene.
         GTCore::List<SceneViewport*> viewports;
