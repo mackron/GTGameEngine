@@ -54,21 +54,32 @@ namespace GTEngine
                     auto viewportElement = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').Viewport:GetID();", mainElement->id).c_str()));
                     if (viewportElement != nullptr)
                     {
-                        // Now we just need to create a new state object and make it the current one.
-                        if (this->currentState != nullptr)
+                        auto panelElement = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').Panel:GetID();", mainElement->id).c_str()));
+                        if (panelElement != nullptr)
                         {
-                            this->currentState->GUI.Main->Hide();
+                            // Now we just need to create a new state object and make it the current one.
+                            if (this->currentState != nullptr)
+                            {
+                                this->currentState->GUI.Main->Hide();
+                            }
+
+                            this->currentState = new State(*this);
+                            this->currentState->GUI.Main     = mainElement;
+                            this->currentState->GUI.Viewport = viewportElement;
+                            this->currentState->GUI.Panel    = panelElement;
+                            this->loadedStates.Add(absolutePath, this->currentState);
+
+                            viewportElement->AttachEventHandler(this->currentState->viewportEventHandler);
+                            viewportElement->OnSize();
+
+                            this->ResetCamera();
                         }
-
-                        this->currentState = new State(*this);
-                        this->currentState->GUI.Main     = mainElement;
-                        this->currentState->GUI.Viewport = viewportElement;
-                        this->loadedStates.Add(absolutePath, this->currentState);
-
-                        viewportElement->AttachEventHandler(this->currentState->viewportEventHandler);
-                        viewportElement->OnSize();
-
-                        this->ResetCamera();
+                        else
+                        {
+                            gui.DeleteElement(mainElement);
+                            GTCore::IO::Close(file);
+                            return false;
+                        }
                     }
                     else
                     {
