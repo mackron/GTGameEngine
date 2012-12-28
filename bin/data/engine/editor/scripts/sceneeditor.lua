@@ -4,6 +4,12 @@ function GTGUI.Element:Vector3Input()
     self.Y = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:2px;' />");
     self.Z = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:0px;' />");
     
+    function self:SetFromXYZ(x, y, z)
+        self.X:SetText(string.format("%.4f", x));
+        self.Y:SetText(string.format("%.4f", y));
+        self.Z:SetText(string.format("%.4f", z));
+    end
+    
     return self;
 end
 
@@ -81,6 +87,9 @@ function GTGUI.Element:SceneEditorPanel()
         self.Body.PanelsContainer:Show();
         
         self.Body.DetailsPanel.NameTextBox:SetText(node:GetName());
+        self.Body.TransformPanel.PositionInput:SetFromXYZ(node:GetPosition());
+        self.Body.TransformPanel.RotationInput:SetFromXYZ(node:GetRotationXYZ());
+        self.Body.TransformPanel.ScaleInput:SetFromXYZ(node:GetScale());
     end
 end
 
