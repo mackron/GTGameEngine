@@ -57,30 +57,34 @@ end
 
 function Editor.SceneEditor.GetSelectedNodeCount()
     local count = 0;
-    local firstSelectedNode = nil;
-    
+
     for key,value in pairs(Editor.SceneEditor.SelectedNodes) do
         count = count + 1;
-        
-        if firstSelectedNode == nil then
-            firstSelectedNode = value;
-        end
     end
     
-    return count, firstSelectedNode;
+    return count;
+end
+
+function Editor.SceneEditor.GetFirstSelectedNode()
+    for key,value in pairs(Editor.SceneEditor.SelectedNodes) do
+        return value;
+    end
+    
+    return nil;
 end
 
 function Editor.SceneEditor.UpdatePanel()
-    local numSelectedNodes, firstSelectedNode = Editor.SceneEditor.GetSelectedNodeCount();
+    local numSelectedNodes = Editor.SceneEditor.GetSelectedNodeCount();
     
     if numSelectedNodes > 1 then        -- Multiple selections
         Editor.SceneEditor.CurrentSceneEditorElement:HidePanels("Multiple Objects Selected");
     elseif numSelectedNodes == 0 then   -- Nothing selected
         Editor.SceneEditor.CurrentSceneEditorElement:HidePanels("Nothing Selected");
     else                                -- Single selection
-        Editor.SceneEditor.CurrentSceneEditorElement:ShowPanels(firstSelectedNode);
+        Editor.SceneEditor.CurrentSceneEditorElement:ShowPanels(Editor.SceneEditor.GetFirstSelectedNode());
     end
 end
+
 
 
 
