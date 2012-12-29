@@ -7,6 +7,7 @@
 #include "../Physics/CollisionWorld.hpp"
 #include "Editor3DViewportEventHandler.hpp"
 #include "SceneEditorSceneEventHandler.hpp"
+#include "PositionGizmo.hpp"
 #include <GTGUI/Element.hpp>
 
 namespace GTEngine
@@ -200,6 +201,10 @@ namespace GTEngine
 
             /// The collision world for doing picking/selecting.
             CollisionWorld pickingWorld;
+
+
+            /// The positioning gizmo.
+            PositionGizmo positionGizmo;
 
 
             struct _GUI
