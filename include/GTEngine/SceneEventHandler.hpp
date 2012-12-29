@@ -50,6 +50,16 @@ namespace GTEngine
         /// @param sceneNode [in] A reference to the scene node that has just had it's scale changed.
         virtual void OnSceneNodeScale(SceneNode &sceneNode);
 
+        /// Called when a scene node is made invisible.
+        ///
+        /// @param sceneNode [in] A reference to the scene node that has just been made invisible.
+        virtual void OnSceneNodeHide(SceneNode &sceneNode);
+
+        /// Called when a scene node is made visible.
+        ///
+        /// @param sceneNode [in] A reference to the scene node that has just been made visible.
+        virtual void OnSceneNodeShow(SceneNode &sceneNode);
+
 
     private:
 

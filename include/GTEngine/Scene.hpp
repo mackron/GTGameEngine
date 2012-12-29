@@ -547,6 +547,16 @@ namespace GTEngine
         /// @param node [in] A reference to the scene node that has just had it's scale changed.
         void PostEvent_OnSceneNodeScale(SceneNode &node);
 
+        /// Helper for posting an OnSceneNodeHide event.
+        ///
+        /// @param node [in] A reference to the scene node that has just been made invisible.
+        void PostEvent_OnSceneNodeHide(SceneNode &node);
+
+        /// Helper for posting an OnSceneNodeShow event.
+        ///
+        /// @param node [in] A reference to the scene node that has just been made visible.
+        void PostEvent_OnSceneNodeShow(SceneNode &node);
+
 
     private:
 
