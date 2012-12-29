@@ -47,6 +47,13 @@ namespace GTEngine
         const SceneNode & GetZArrowSceneNode() const { return this->zArrowSceneNode; }
 
 
+        /// Shows the gizmo.
+        void Show();
+
+        /// Hides the gizmo.
+        void Hide();
+
+
 
     private:
 

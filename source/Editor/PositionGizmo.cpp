@@ -73,4 +73,15 @@ namespace GTEngine
     {
         return this->sceneNode.GetPosition();
     }
+
+
+    void PositionGizmo::Show()
+    {
+        this->sceneNode.Show();
+    }
+
+    void PositionGizmo::Hide()
+    {
+        this->sceneNode.Hide();
+    }
 }
