@@ -38,4 +38,14 @@ namespace GTEngine
     {
         this->sceneEditor.OnSceneNodeScale(node);
     }
+
+    void SceneEditorSceneEventHandler::OnSceneNodeHide(SceneNode &node)
+    {
+        this->sceneEditor.OnSceneNodeHide(node);
+    }
+
+    void SceneEditorSceneEventHandler::OnSceneNodeShow(SceneNode &node)
+    {
+        this->sceneEditor.OnSceneNodeShow(node);
+    }
 }

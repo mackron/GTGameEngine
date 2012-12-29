@@ -122,8 +122,14 @@ namespace GTEngine
         /// SceneEditorSceneEventHandler::OnSceneNodeTransform()
         void OnSceneNodeTransform(SceneNode &node);
 
-        /// SceneEditorSceneEventHandler::OnSceneNodeScale().
+        /// SceneEditorSceneEventHandler::OnSceneNodeScale()
         void OnSceneNodeScale(SceneNode &node);
+
+        /// SceneEditorSceneEventHandler::OnSceneNodeHide()
+        void OnSceneNodeHide(SceneNode &node);
+
+        /// SceneEditorSceneEventHandler::OnSceneNodeShow()
+        void OnSceneNodeShow(SceneNode &node);
 
 
 

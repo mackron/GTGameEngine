@@ -34,6 +34,12 @@ namespace GTEngine
         /// SceneEventHandler::OnSceneNodeScale()
         void OnSceneNodeScale(SceneNode &node);
 
+        /// SceneEventHandler::OnSceneNodeHide()
+        void OnSceneNodeHide(SceneNode &node);
+
+        /// SceneEventHandler::OnSceneNodeShow()
+        void OnSceneNodeShow(SceneNode &node);
+
 
 
     private:
