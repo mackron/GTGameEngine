@@ -186,40 +186,50 @@ namespace GTEngine
 
             CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
             rayTestCallback.m_collisionFilterGroup = CollisionGroups::EditorSelectionRay;
-            rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorSelectionVolume;
-            this->currentState->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
 
+            // The first ray test we want to do is against the gizmos. If one of these gets picked, we need to doing a transformation on the selected objects.
+            rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorGizmo;
+            this->currentState->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
             if (rayTestCallback.hasHit())
             {
-                // The use data of the object will be a pointer to the EditorMetadataComponent object. From this, we can grab the actual scene node.
-                auto metadata = static_cast<EditorMetadataComponent*>(rayTestCallback.m_collisionObject->getUserPointer());
-                assert(metadata != nullptr);
-                {
-                    auto &selectedNode = metadata->GetNode();
-
-                    // The way we do the selection depends on what we're doing. If shift is being held down, we don't want to deselect anything and instead just add
-                    // or remove the node to the selection. If the selected node is already selected, it needs to be deselected. Otherwise it needs to be selected.
-                    if (this->editor.GetGame().IsKeyDown(GTCore::Keys::Shift))
-                    {
-                        if (this->IsSceneNodeSelected(selectedNode))
-                        {
-                            this->DeselectSceneNode(selectedNode);
-                        }
-                        else
-                        {
-                            this->SelectSceneNode(selectedNode);
-                        }
-                    }
-                    else
-                    {
-                        this->DeselectAll();
-                        this->SelectSceneNode(selectedNode);
-                    }
-                }
+                printf("Picked Gizmo\n");
             }
             else
             {
-                this->DeselectAll();
+                rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorSelectionVolume;
+                this->currentState->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
+                if (rayTestCallback.hasHit())
+                {
+                    // The use data of the object will be a pointer to the EditorMetadataComponent object. From this, we can grab the actual scene node.
+                    auto metadata = static_cast<EditorMetadataComponent*>(rayTestCallback.m_collisionObject->getUserPointer());
+                    assert(metadata != nullptr);
+                    {
+                        auto &selectedNode = metadata->GetNode();
+
+                        // The way we do the selection depends on what we're doing. If shift is being held down, we don't want to deselect anything and instead just add
+                        // or remove the node to the selection. If the selected node is already selected, it needs to be deselected. Otherwise it needs to be selected.
+                        if (this->editor.GetGame().IsKeyDown(GTCore::Keys::Shift))
+                        {
+                            if (this->IsSceneNodeSelected(selectedNode))
+                            {
+                                this->DeselectSceneNode(selectedNode);
+                            }
+                            else
+                            {
+                                this->SelectSceneNode(selectedNode);
+                            }
+                        }
+                        else
+                        {
+                            this->DeselectAll();
+                            this->SelectSceneNode(selectedNode);
+                        }
+                    }
+                }
+                else
+                {
+                    this->DeselectAll();
+                }
             }
         }
     }
@@ -465,10 +475,29 @@ namespace GTEngine
                     world->RemoveCollisionObject(pickingCollisionObject);
                 }
 
+                
 
                 if (metadata->GetPickingCollisionShape() != nullptr)
                 {
-                    this->currentState->pickingWorld.AddCollisionObject(pickingCollisionObject, CollisionGroups::EditorSelectionVolume, CollisionGroups::EditorSelectionRay);
+                    btTransform transform;
+                    node.GetWorldTransform(transform);
+
+                    pickingCollisionObject.setWorldTransform(transform);
+                    pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+
+
+                    // Here we need to find the state containing the collision world this object will be added to. If the current state is null, we check the
+                    // data pointer at position 0 which, if set, will be a pointer to the State object the node belongs to.
+                    auto state = this->currentState;
+                    if (state == nullptr)
+                    {
+                        state = node.GetDataPointer<State>(0);
+                    }
+
+                    if (state != nullptr)
+                    {
+                        state->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                    }
                 }
             }
         }
@@ -604,6 +633,7 @@ namespace GTEngine
           viewportEventHandler(sceneEditor.GetEditor().GetGame(), viewport),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
           selectedNodes(),
+          positionGizmo(),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
@@ -617,6 +647,15 @@ namespace GTEngine
 
 
         this->scene.AddSceneNode(this->camera);
+
+
+        this->positionGizmo.Initialise();
+        this->positionGizmo.GetSceneNode().SetDataPointer(0, this);
+        this->positionGizmo.GetXArrowSceneNode().SetDataPointer(0, this);
+        this->positionGizmo.GetYArrowSceneNode().SetDataPointer(0, this);
+        this->positionGizmo.GetZArrowSceneNode().SetDataPointer(0, this);
+
+        this->scene.AddSceneNode(this->positionGizmo.GetSceneNode());
     }
 
     Editor_SceneEditor::State::~State()
