@@ -944,6 +944,10 @@ namespace GTEngine
             }
 
             this->cullingManager.AddObject(node);
+
+
+            // The event handlers need to know.
+            this->PostEvent_OnSceneNodeShow(node);
         }
         else
         {
@@ -963,6 +967,10 @@ namespace GTEngine
             }
 
             this->cullingManager.RemoveObject(node);
+
+
+            // The event handlers need to know.
+            this->PostEvent_OnSceneNodeHide(node);
         }
     }
 
@@ -1022,6 +1030,22 @@ namespace GTEngine
         for (size_t i = 0; i < this->eventHandlers.count; ++i)
         {
             this->eventHandlers[i]->OnSceneNodeScale(node);
+        }
+    }
+
+    void Scene::PostEvent_OnSceneNodeHide(SceneNode &node)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnSceneNodeHide(node);
+        }
+    }
+
+    void Scene::PostEvent_OnSceneNodeShow(SceneNode &node)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnSceneNodeShow(node);
         }
     }
 }
