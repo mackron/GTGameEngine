@@ -542,7 +542,35 @@ namespace GTEngine
             if (metadata->GetPickingCollisionShape() != nullptr)
             {
                 metadata->GetPickingCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
-                this->currentState->pickingWorld.AddCollisionObject(pickingCollisionObject, CollisionGroups::EditorSelectionVolume, CollisionGroups::EditorSelectionRay);
+
+                if (node.IsVisible())
+                {
+                    this->currentState->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                }
+            }
+        }
+    }
+
+    void Editor_SceneEditor::OnSceneNodeHide(SceneNode &node)
+    {
+        auto metadata = node.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            // We need to remove the collision object from the world so that we don't end up selecting it.
+            this->currentState->pickingWorld.RemoveCollisionObject(metadata->GetPickingCollisionObject());
+        }
+    }
+
+    void Editor_SceneEditor::OnSceneNodeShow(SceneNode &node)
+    {
+        auto metadata = node.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            // We need to add the collision object to the world. We assert that the collision object is not already in the world.
+            auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
+            assert(pickingCollisionObject.GetWorld() == nullptr);
+            {
+                this->currentState->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
             }
         }
     }
