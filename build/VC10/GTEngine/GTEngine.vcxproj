@@ -204,6 +204,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_ModelEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_SceneEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_TextEditor.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\PositionGizmo.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditorSceneEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Errors.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\FontManager.hpp" />
@@ -375,6 +376,7 @@
     <ClCompile Include="..\..\..\source\Editor\Editor_ModelEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor_SceneEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor_TextEditor.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\PositionGizmo.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditorSceneEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\Errors.cpp" />
     <ClCompile Include="..\..\..\source\FontManager.cpp" />
