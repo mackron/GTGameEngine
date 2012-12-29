@@ -5,6 +5,7 @@
 #include "../Component.hpp"
 #include "../Math.hpp"
 #include "../Physics.hpp"
+#include "../CollisionGroups.hpp"
 
 namespace GTEngine
 {
@@ -48,6 +49,13 @@ namespace GTEngine
         void SetPickingCollisionShapeToModel();
 
 
+        /// Sets the picking collision group.
+        void SetPickingCollisionGroup(short group);
+
+        /// Retrieves the picking collision group.
+        short GetPickingCollisionGroup() const;
+
+
 
     private:
 
@@ -62,6 +70,10 @@ namespace GTEngine
 
         /// The collision shape to use for picking. Need to use a pointer here because we might not always use the same kind of shape for everything.
         btCollisionShape* pickingCollisionShape;
+
+
+        /// The picking group.
+        short pickingCollisionGroup;
 
 
     GTENGINE_DECL_COMPONENT_END()

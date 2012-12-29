@@ -2,7 +2,6 @@
 #include <GTEngine/Components/EditorMetadataComponent.hpp>
 #include <GTEngine/Components/ModelComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
-#include <GTEngine/CollisionGroups.hpp>
 
 namespace GTEngine
 {
@@ -11,7 +10,7 @@ namespace GTEngine
     EditorMetadataComponent::EditorMetadataComponent(SceneNode &node)
         : Component(node),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
-          pickingCollisionObject(), pickingCollisionShape(nullptr)
+          pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume)
     {
         pickingCollisionObject.setUserPointer(this);
     }
@@ -80,7 +79,29 @@ namespace GTEngine
 
         if (world != nullptr && this->pickingCollisionShape != nullptr)
         {
-            world->AddCollisionObject(this->pickingCollisionObject, CollisionGroups::EditorSelectionVolume, CollisionGroups::EditorSelectionRay);
+            world->AddCollisionObject(this->pickingCollisionObject, this->pickingCollisionGroup, CollisionGroups::EditorSelectionRay);
         }
+    }
+
+
+    void EditorMetadataComponent::SetPickingCollisionGroup(short group)
+    {
+        if (this->pickingCollisionGroup != group)
+        {
+            this->pickingCollisionGroup = group;
+
+            // We will need to remove and re-add the collision objcet.
+            auto world = this->pickingCollisionObject.GetWorld();
+            if (world != nullptr)
+            {
+                world->RemoveCollisionObject(this->pickingCollisionObject);
+                world->AddCollisionObject(this->pickingCollisionObject, group, CollisionGroups::EditorSelectionRay);
+            }
+        }
+    }
+
+    short EditorMetadataComponent::GetPickingCollisionGroup() const
+    {
+        return this->pickingCollisionGroup;
     }
 }
