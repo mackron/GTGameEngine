@@ -48,6 +48,9 @@ namespace GTEngine
         /// Sets the picking collision shape to that of the model geometry.
         void SetPickingCollisionShapeToModel();
 
+        /// Sets the picking shape to a box with a given offset.
+        void SetPickingCollisionShapeToBox(const glm::vec3 &halfExtents, const glm::vec3 &offset);
+
 
         /// Sets the picking collision group.
         void SetPickingCollisionGroup(short group);

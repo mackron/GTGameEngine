@@ -84,6 +84,42 @@ namespace GTEngine
         }
     }
 
+    void EditorMetadataComponent::SetPickingCollisionShapeToBox(const glm::vec3 &halfExtents, const glm::vec3 &offset)
+    {
+        auto world = this->pickingCollisionObject.GetWorld();
+        if (world != nullptr)
+        {
+            world->RemoveCollisionObject(this->pickingCollisionObject);
+        }
+
+
+        // The old shape needs to be deleted.
+        if (this->pickingCollisionShape != nullptr)
+        {
+            delete this->pickingCollisionShape;
+            this->pickingCollisionShape = nullptr;
+        }
+
+
+        // Since we want to apply an offset to the box, we'll need to use a compund shape.
+
+        btTransform transform;
+        transform.setBasis(btMatrix3x3::getIdentity());
+        transform.setOrigin(ToBulletVector3(offset));
+
+        auto compoundShape = new btCompoundShape;
+        compoundShape->addChildShape(transform, new btBoxShape(ToBulletVector3(halfExtents)));
+
+
+
+        this->pickingCollisionObject.setCollisionShape(this->pickingCollisionShape);
+
+        if (world != nullptr && this->pickingCollisionShape != nullptr)
+        {
+            world->AddCollisionObject(this->pickingCollisionObject, this->pickingCollisionGroup, CollisionGroups::EditorSelectionRay);
+        }
+    }
+
 
     void EditorMetadataComponent::SetPickingCollisionGroup(short group)
     {
