@@ -659,10 +659,20 @@ namespace GTEngine
                         metadata->SetPickingCollisionShapeToModel();
                     }
                 }
-                else
+                
+
+                // If got a light component attached, we will want to attach a sprite here.
+                if (node.HasComponent<PointLightComponent>()       ||
+                    node.HasComponent<SpotLightComponent>()        ||
+                    node.HasComponent<DirectionalLightComponent>() ||
+                    node.HasComponent<AmbientLightComponent>() &&
+                    &node != &node.GetDataPointer<State>(0)->camera)
                 {
-                    // TODO: If the object is using a sprite for visual representation, we should setup a collision volume for that. We could use a sphere for that, I think... Nice and simple...
+                    metadata->SetModel("engine/models/default.dae");
+                    metadata->GetModel()->meshes[0]->SetMaterial("engine/materials/simple-emissive.material");
+                    metadata->GetModel()->meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 1.0f, 1.0f);
                 }
+
 
 
                 // We need to remove and re-add the collision shape since it might have changed.

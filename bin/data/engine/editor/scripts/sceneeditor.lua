@@ -227,7 +227,6 @@ function GTGUI.Element:SceneEditor()
     self.ContextMenu:AppendItem("Add Point Light"):OnPressed(function()
         local newNode = Editor.SceneEditor.AddSceneNode("PointLight");
         if newNode ~= nil then
-            newNode:AddComponent(GTEngine.Components.ModelComponent):SetModel("engine/models/sphere.dae");
             newNode:AddComponent(GTEngine.Components.PointLightComponent);
             newNode:SetScale(0.25, 0.25, 0.25);
             
