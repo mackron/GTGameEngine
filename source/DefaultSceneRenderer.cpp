@@ -560,6 +560,7 @@ namespace GTEngine
                         {
                             auto &rcDrawWireframe = this->rcDrawGeometry[Renderer::BackIndex].Acquire();
                             rcDrawWireframe.va                = va;
+                            rcDrawWireframe.drawMode          = mesh->GetDrawMode();
                             rcDrawWireframe.mvpMatrix         = MVPMatrix;
                             rcDrawWireframe.normalMatrix      = NormalMatrix;
                             rcDrawWireframe.modelViewMatrix   = ModelViewMatrix;
@@ -594,6 +595,7 @@ namespace GTEngine
 
                         auto &rcDrawGeometry = this->rcDrawGeometry[Renderer::BackIndex].Acquire();
                         rcDrawGeometry.va                = this->GetMeshGeometry(*mesh, model->IsAnimating());
+                        rcDrawGeometry.drawMode          = mesh->GetDrawMode();
                         rcDrawGeometry.mvpMatrix         = MVPMatrix;
                         rcDrawGeometry.normalMatrix      = NormalMatrix;
                         rcDrawGeometry.modelViewMatrix   = ModelViewMatrix;
@@ -1664,7 +1666,7 @@ namespace GTEngine
         Renderer::SetShaderParameter("NormalMatrix",    this->normalMatrix);
         Renderer::SetShaderParameter("ModelViewMatrix", this->modelViewMatrix);
         Renderer::SetShaderParameter("ModelMatrix",     this->modelMatrix);
-        Renderer::Draw(this->va);
+        Renderer::Draw(this->va, this->drawMode);
 
 
         // Default back to back-face culling.
