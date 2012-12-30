@@ -73,6 +73,13 @@ namespace GTEngine
         void UseModelForPickingShape(bool useModelForPickingShapeIn) { this->useModelForPickingShape = useModelForPickingShapeIn; }
 
 
+        /// Determines whether or not the scene node should be deleted when the editor is closed.
+        bool DeleteOnClose() const { return this->deleteOnClose; }
+
+        /// Sets whether or not the scene node should be deleted when the editor is closed.
+        void DeleteOnClose(bool deleteOnCloseIn) { this->deleteOnClose = deleteOnCloseIn; }
+
+
     private:
 
         /// Deletes the collision shape and sets the pointer to null.
@@ -88,6 +95,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not the picking collision shape should be that of the model.
         bool useModelForPickingShape;
+
+        /// Keeps track of whether or not the scene node should be deleted when the editor is closed.
+        bool deleteOnClose;
 
 
         /// Keeps track of whether or not the scene node is selected in the editor.
