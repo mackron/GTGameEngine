@@ -734,7 +734,7 @@ namespace GTEngine
             windowPos.y += 64.0f;
 
             glm::vec3 gizmoScale(glm::distance(this->currentState->viewport.Unproject(windowPos), gizmoPosition));
-            this->currentState->positionGizmo.GetSceneNode().SetScale(gizmoScale);
+            this->currentState->positionGizmo.SetScale(gizmoScale);
         }
     }
 
