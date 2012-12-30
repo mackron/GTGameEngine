@@ -16,6 +16,12 @@ namespace GTEngine
     {
     public:
 
+        /// Default constructor.
+        ///
+        /// @remarks
+        ///     This constructor will allow something to create a model without needing to supply a definition. This is useful for doing procedural models or whatnot.
+        Model();
+
         /// Constructor.
         ///
         /// @param definition [in] A reference to the model definition to create the model from.
@@ -38,7 +44,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     It's important that <bones> refers to a list of BoneWithWeights pointers since the vertex/weight information will be needed to set the skinning vertex attributes.
-        Mesh* AttachMesh(VertexArray* mesh, const char* materialFileName);
+        Mesh* AttachMesh(VertexArray* mesh, const char* materialFileName, DrawMode drawMode = DrawMode_Triangles);
         Mesh* AttachMesh(VertexArray* mesh, const char* materialFileName, const SkinningVertexAttribute* skinningVertexAttributes);
 
 

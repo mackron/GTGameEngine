@@ -10,6 +10,17 @@
 
 namespace GTEngine
 {
+    static ModelDefinition NullModelDefinition;
+
+    Model::Model()
+        : definition(NullModelDefinition),
+          meshes(), bones(),
+          aabbMin(), aabbMax(), isAABBValid(false),
+          animation(), animationChannelBones(), animationKeyCache(),
+          animationPlaybackSpeed(1.0)
+    {
+    }
+
     Model::Model(const ModelDefinition &definitionIn)
         : definition(definitionIn),
           meshes(), bones(),
@@ -27,9 +38,9 @@ namespace GTEngine
     }
 
 
-    Mesh* Model::AttachMesh(VertexArray* geometry, const char* materialFileName)
+    Mesh* Model::AttachMesh(VertexArray* geometry, const char* materialFileName, DrawMode drawMode)
     {
-        auto newMesh = new Mesh;
+        auto newMesh = new Mesh(drawMode);
         newMesh->SetGeometry(geometry);
         newMesh->SetMaterial(materialFileName);
 
@@ -192,6 +203,10 @@ namespace GTEngine
                 this->isAABBValid = true;
             }
         }
+
+        if (this->aabbMax.x - this->aabbMin.x < glm::epsilon<float>()) this->aabbMax.x = this->aabbMin.x + glm::epsilon<float>();
+        if (this->aabbMax.y - this->aabbMin.y < glm::epsilon<float>()) this->aabbMax.y = this->aabbMin.y + glm::epsilon<float>();
+        if (this->aabbMax.z - this->aabbMin.z < glm::epsilon<float>()) this->aabbMax.z = this->aabbMin.z + glm::epsilon<float>();
 
         aabbMin = this->aabbMin;
         aabbMax = this->aabbMax;
