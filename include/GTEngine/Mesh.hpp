@@ -7,6 +7,7 @@
 #include "Math.hpp"
 #include "SkinningVertexAttribute.hpp"
 #include "GarbageCollector.hpp"
+#include "Rendering/DrawModes.hpp"
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -89,7 +90,7 @@ namespace GTEngine
     public:
 
         /// Default constructor.
-        Mesh();
+        Mesh(DrawMode drawModeIn = DrawMode_Triangles);
 
         /// Destructor.
         ///
@@ -205,6 +206,10 @@ namespace GTEngine
 
         /// Keeps track of whether or not the material should be deleted.
         bool deleteMaterial;
+
+
+        /// The drawing mode to use when drawing this mesh.
+        DrawMode drawMode;
 
 
     private:    // No copying.
