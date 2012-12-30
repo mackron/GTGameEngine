@@ -89,6 +89,9 @@ namespace GTEngine
         /// @param node [in] The node to deselect.
         void DeselectSceneNode(SceneNode &node);
 
+        /// Retrieves the center point of the selected nodes.
+        glm::vec3 GetSelectionCenterPoint() const;
+
 
         ///////////////////////////////////////////////////
         // Editting
@@ -139,6 +142,17 @@ namespace GTEngine
         /// Applies the camera rotation to the camera node.
         void ApplyCameraRotation();
 
+
+        /// Shows and repositions the positioning gizmo.
+        void ShowPositionGizmo();
+
+        /// Hides whatever gizmo is currently showing.
+        void HideGizmos();
+
+        /// Updates the position of the gizmo.
+        void RepositionGizmos();
+
+
         /// Sets the current scene in the scripting environment.
         ///
         /// @param scene     [in] A pointer to the scene to make current. Can be null.
@@ -156,6 +170,7 @@ namespace GTEngine
         void InitialiseScripting();
 
 
+        
 
 
     private:

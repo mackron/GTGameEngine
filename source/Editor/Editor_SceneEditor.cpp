@@ -2,6 +2,10 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/CollisionGroups.hpp>
+#include <GTEngine/Logging.hpp>
+
+#undef min
+#undef max
 
 namespace GTEngine
 {
@@ -266,16 +270,17 @@ namespace GTEngine
 
     void Editor_SceneEditor::SelectSceneNode(SceneNode &node)
     {
-        if (this->currentState != nullptr && !this->IsSceneNodeSelected(node))
+        auto state = node.GetDataPointer<State>(0);
+        if (state != nullptr && !this->IsSceneNodeSelected(node))
         {
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata != nullptr)
             {
                 metadata->Select();
 
-                assert(this->currentState->selectedNodes.Exists(&node) == false);
+                assert(state->selectedNodes.Exists(&node) == false);
                 {
-                    this->currentState->selectedNodes.PushBack(&node);
+                    state->selectedNodes.PushBack(&node);
 
                     // The scripting environment needs to be aware of this change.
                     auto &script = this->GetScript();
@@ -298,6 +303,11 @@ namespace GTEngine
                         script.Pop(1);
                     }
                     script.Pop(1);
+
+
+
+                    // With a change in selection, we will need to update the position of the gizmos.
+                    this->ShowPositionGizmo();
                 }
             }
         }
@@ -305,16 +315,17 @@ namespace GTEngine
 
     void Editor_SceneEditor::DeselectSceneNode(SceneNode &node)
     {
-        if (this->currentState != nullptr && this->IsSceneNodeSelected(node))
+        auto state = node.GetDataPointer<State>(0);
+        if (state != nullptr && this->IsSceneNodeSelected(node))
         {
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata != nullptr)
             {
                 metadata->Deselect();
 
-                assert(this->currentState->selectedNodes.Exists(&node) == true);
+                assert(state->selectedNodes.Exists(&node) == true);
                 {
-                    this->currentState->selectedNodes.RemoveFirstOccuranceOf(&node);
+                    state->selectedNodes.RemoveFirstOccuranceOf(&node);
 
                     // The scripting environment needs to be aware of this change.
                     auto &script = this->GetScript();
@@ -337,9 +348,56 @@ namespace GTEngine
                         script.Pop(1);
                     }
                     script.Pop(1);
+
+
+                    // With a change in selection, we will need to update the gizmos.
+                    if (state->selectedNodes.count == 0)
+                    {
+                        this->HideGizmos();
+                    }
+                    else
+                    {
+                        this->RepositionGizmos();
+                    }
                 }
             }
         }
+    }
+
+    glm::vec3 Editor_SceneEditor::GetSelectionCenterPoint() const
+    {
+        if (this->currentState != nullptr && this->currentState->selectedNodes.count > 0)
+        {
+            glm::vec3 aabbMin( FLT_MAX,  FLT_MAX,  FLT_MAX);
+            glm::vec3 aabbMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+
+            for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
+            {
+                auto node = this->currentState->selectedNodes[i];
+                assert(node != nullptr);
+                {
+                    glm::vec3 position = node->GetWorldPosition();
+                    
+                    //aabbMin = glm::min(aabbMin, position);
+                    //aabbMax = glm::max(aabbMax, position);
+
+                    
+                    aabbMin.x = glm::min(aabbMin.x, position.x);
+                    aabbMin.y = glm::min(aabbMin.y, position.y);
+                    aabbMin.z = glm::min(aabbMin.z, position.z);
+
+                    aabbMax.x = glm::max(aabbMax.x, position.x);
+                    aabbMax.y = glm::max(aabbMax.y, position.y);
+                    aabbMax.z = glm::max(aabbMax.z, position.z);
+                }
+            }
+
+
+            return (aabbMin + aabbMax) * 0.5f;
+        }
+
+        return glm::vec3(0.0f, 0.0f, 0.0f);
     }
 
 
@@ -430,6 +488,21 @@ namespace GTEngine
                 metadata = node.AddComponent<EditorMetadataComponent>();
             }
 
+            // The default data pointer is going to be a pointer to the editor state that owns the scene node. If this has already been set, we leave it
+            // alone. Otherwise, we set it to the current state.
+            if (node.GetDataPointer<State>(0) == nullptr)
+            {
+                if (this->currentState != nullptr)
+                {
+                    node.SetDataPointer(0, this->currentState);
+                }
+                else
+                {
+                    GTEngine::Log("SceneEditor - Warning: Adding object to scene that is not the active scene. This is not stable.");
+                }
+            }
+
+
             // We can cheat here and just act as if the object has been refreshed.
             this->OnObjectRefreshed(object);
         }
@@ -442,7 +515,8 @@ namespace GTEngine
             // We need to make sure scene nodes are deseleted when they are removed from the scene.
             this->DeselectSceneNode(static_cast<SceneNode &>(object));
 
-
+            // The data pointer at position 0 will be a pointer to the Editor_SceneEditor::State object that previously owned the scene node. This needs to be cleared.
+            static_cast<SceneNode &>(object).SetDataPointer(0, nullptr);
         }
     }
 
@@ -488,15 +562,14 @@ namespace GTEngine
 
                     // Here we need to find the state containing the collision world this object will be added to. If the current state is null, we check the
                     // data pointer at position 0 which, if set, will be a pointer to the State object the node belongs to.
-                    auto state = this->currentState;
-                    if (state == nullptr)
-                    {
-                        state = node.GetDataPointer<State>(0);
-                    }
-
+                    auto state = node.GetDataPointer<State>(0);
                     if (state != nullptr)
                     {
                         state->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                    }
+                    else
+                    {
+                        GTEngine::Log("Scene Editor - Warning: Attempting to modify an object that is not part of any loaded scene.");
                     }
                 }
             }
@@ -522,6 +595,10 @@ namespace GTEngine
             {
                 world->UpdateAABB(pickingCollisionObject);
             }
+
+
+            // If the scene node was selected, we should reposition the gizmo.
+            this->RepositionGizmos();
         }
     }
 
@@ -545,7 +622,15 @@ namespace GTEngine
 
                 if (node.IsVisible())
                 {
-                    this->currentState->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                    auto state = node.GetDataPointer<State>(0);
+                    if (state != nullptr)
+                    {
+                        this->currentState->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                    }
+                    else
+                    {
+                        GTEngine::Log("Scene Editor - Warning: Attempting to scale an object that is not part of any loaded scene.");
+                    }
                 }
             }
         }
@@ -556,8 +641,14 @@ namespace GTEngine
         auto metadata = node.GetComponent<EditorMetadataComponent>();
         if (metadata != nullptr)
         {
+            auto state = node.GetDataPointer<State>(0);
+            if (state != nullptr)
+            {
+                state->pickingWorld.RemoveCollisionObject(metadata->GetPickingCollisionObject());
+            }
+
             // We need to remove the collision object from the world so that we don't end up selecting it.
-            this->currentState->pickingWorld.RemoveCollisionObject(metadata->GetPickingCollisionObject());
+            //this->currentState->pickingWorld.RemoveCollisionObject(metadata->GetPickingCollisionObject());
         }
     }
 
@@ -566,11 +657,18 @@ namespace GTEngine
         auto metadata = node.GetComponent<EditorMetadataComponent>();
         if (metadata != nullptr)
         {
-            // We need to add the collision object to the world. We assert that the collision object is not already in the world.
-            auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
-            assert(pickingCollisionObject.GetWorld() == nullptr);
+            auto state = node.GetDataPointer<State>(0);
+            if (state != nullptr)
             {
-                this->currentState->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                if (metadata->GetPickingCollisionShape() != nullptr)
+                {
+                    // We need to add the collision object to the world. We assert that the collision object is not already in the world.
+                    auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
+                    assert(pickingCollisionObject.GetWorld() == nullptr);
+                    {
+                        state->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                    }
+                }
             }
         }
     }
@@ -590,6 +688,30 @@ namespace GTEngine
             this->currentState->camera.RotateX(this->currentState->cameraXRotation);
         }
     }
+
+    void Editor_SceneEditor::ShowPositionGizmo()
+    {
+        if (this->currentState != nullptr)
+        {
+            this->currentState->positionGizmo.Show();
+            this->currentState->positionGizmo.SetPosition(this->GetSelectionCenterPoint());
+        }
+    }
+
+    void Editor_SceneEditor::HideGizmos()
+    {
+        if (this->currentState != nullptr)
+        {
+            this->currentState->positionGizmo.Hide();
+        }
+    }
+
+    void Editor_SceneEditor::RepositionGizmos()
+    {
+        this->currentState->positionGizmo.SetPosition(this->GetSelectionCenterPoint());
+    }
+
+
 
     void Editor_SceneEditor::SetCurrentSceneInScript(Scene* scene, const char* elementID)
     {
@@ -666,13 +788,16 @@ namespace GTEngine
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
 
+
         this->camera.AddComponent<GTEngine::CameraComponent>();
         this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
+        this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
+        this->camera.SetDataPointer(0, this);
+
 
         this->viewport.SetCameraNode(this->camera);
         this->scene.AddViewport(this->viewport);
         this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
-
 
         this->scene.AddSceneNode(this->camera);
 
@@ -684,6 +809,7 @@ namespace GTEngine
         this->positionGizmo.GetZArrowSceneNode().SetDataPointer(0, this);
 
         this->scene.AddSceneNode(this->positionGizmo.GetSceneNode());
+        this->positionGizmo.Hide();
     }
 
     Editor_SceneEditor::State::~State()
