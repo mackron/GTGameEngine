@@ -149,8 +149,11 @@ namespace GTEngine
         /// Hides whatever gizmo is currently showing.
         void HideGizmos();
 
-        /// Updates the position of the gizmo.
+        /// Updates the position of the gizmos.
         void RepositionGizmos();
+
+        /// Updates the scale of the gizmos so that they appear a constant size.
+        void RescaleGizmos();
 
 
         /// Sets the current scene in the scripting environment.
