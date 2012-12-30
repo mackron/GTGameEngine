@@ -63,12 +63,24 @@ namespace GTEngine
                 "    GTEngine.System.ModelComponent.SetModel(self._internalPtr, filePath);"
                 "end;"
 
-                "function GTEngine.ModelComponent:EnableWireframe()"
-                "    GTEngine.System.ModelComponent.EnableWireframe(self._internalPtr);"
+
+                // PointLightComponent
+                "GTEngine.PointLightComponent = {};"
+                "GTEngine.PointLightComponent.__index = GTEngine.PointLightComponent;"
+
+                "function GTEngine.PointLightComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.PointLightComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
                 "end;"
 
-                "function GTEngine.ModelComponent:DisableWireframe()"
-                "    GTEngine.System.ModelComponent.DisableWireframe(self._internalPtr);"
+                "function GTEngine.PointLightComponent:SetColour(r, g, b)"
+                "    GTEngine.System.PointLightComponent.SetColour(self._internalPtr, r, g, b);"
+                "end;"
+
+                "function GTEngine.PointLightComponent:GetColour()"
+                "    return GTEngine.System.PointLightComponent.GetColour(self._internalPtr);"
                 "end;"
             );
 
@@ -242,6 +254,16 @@ namespace GTEngine
                         script.SetTableFunction(-1, "SetModel", FFI::SystemFFI::ModelComponentFFI::SetModel);
                     }
                     script.Pop(1);
+
+
+                    script.Push("PointLightComponent");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "SetColour", FFI::SystemFFI::PointLightComponentFFI::SetColour);
+                        script.SetTableFunction(-1, "GetColour", FFI::SystemFFI::PointLightComponentFFI::GetColour);
+                    }
+                    script.Pop(1);
                 }
                 script.Pop(1);
 
@@ -381,6 +403,10 @@ namespace GTEngine
                         {
                             PushComponent(script, "ModelComponent", sceneNode->AddComponent<ModelComponent>());
                         }
+                        else if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
+                        {
+                            PushComponent(script, "PointLightComponent", sceneNode->AddComponent<PointLightComponent>());
+                        }
                         else
                         {
                             script.PushNil();
@@ -403,6 +429,10 @@ namespace GTEngine
                         if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
                         {
                             PushComponent(script, "ModelComponent", sceneNode->GetComponent<ModelComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
+                        {
+                            PushComponent(script, "PointLightComponent", sceneNode->GetComponent<PointLightComponent>());
                         }
                         else
                         {
@@ -607,6 +637,44 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+                }
+
+
+                //////////////////////////////////////////////////
+                // GTEngine.System.PointLightComponent
+                namespace PointLightComponentFFI
+                {
+                    int SetColour(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetColour(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetColour(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto &colour = component->GetColour();
+
+                            script.Push(colour.x);
+                            script.Push(colour.y);
+                            script.Push(colour.z);
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                        }
+
+                        return 3;
                     }
                 }
             }

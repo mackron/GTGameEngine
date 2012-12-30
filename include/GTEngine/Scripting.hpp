@@ -207,6 +207,19 @@ namespace GTEngine
                     ///     Argument 2: The file path of the model being set.
                     int SetModel(GTCore::Script &script);
                 }
+
+                namespace PointLightComponentFFI
+                {
+                    /// Sets the colour of the point light.
+                    ///
+                    /// @remarks
+                    ///     Argument 1:     A pointer to the component whose colour is being set.
+                    ///     Argument 2,3,4: The red, green and blue colour components, respectively.
+                    int SetColour(GTCore::Script &script);
+
+                    /// Retrieves the colour of the point light as 3 floats.
+                    int GetColour(GTCore::Script &script);
+                }
             }
         }
     }
