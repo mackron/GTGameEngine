@@ -727,7 +727,7 @@ namespace GTEngine
 
 
             // If the node that was transformed is the main camera we'll need to scale the gizmos so that they look a constant size.
-            if (&node == &this->currentState->camera)
+            if (&node == &this->currentState->camera || metadata->IsSelected())
             {
                 this->RescaleGizmos();
             }
