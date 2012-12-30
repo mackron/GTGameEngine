@@ -318,6 +318,15 @@ namespace GTEngine
     }
 
 
+    void Scene::RemoveAllObjects()
+    {
+        while (this->nodes.root != nullptr)
+        {
+            this->RemoveSceneNode(*this->nodes.root->value);
+        }
+    }
+
+
     void Scene::RefreshObject(SceneObject &object)
     {
         this->isRefreshingObject = true;

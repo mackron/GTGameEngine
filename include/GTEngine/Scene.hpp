@@ -255,6 +255,10 @@ namespace GTEngine
         void RemoveSceneNode(SceneNode &node);
 
 
+        /// Removes every object from the scene.
+        void RemoveAllObjects();
+
+
         /// Refreshes the given scene object.
         ///
         /// @param object [in] A reference to the object to refresh.
