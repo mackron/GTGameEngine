@@ -35,6 +35,16 @@ namespace GTEngine
         void ProcessObjectModel(SceneObject &object)
         {
             this->renderer.__MaterialPass_Model(object, this->layerState);
+
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto &node = static_cast<SceneNode &>(object);
+
+                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetModel() != nullptr)
+                {
+                    this->layerState.editorModels.Insert(&node);
+                }
+            }
         }
 
 
@@ -42,6 +52,17 @@ namespace GTEngine
         void ProcessObjectAmbientLight(SceneObject &object)
         {
             this->layerState.ambientLights.PushBack(&object);
+
+
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto &node = static_cast<SceneNode &>(object);
+
+                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetModel() != nullptr)
+                {
+                    this->layerState.editorModels.Insert(&node);
+                }
+            }
         }
 
         /// SceneCullingManager::ProcessObjectDirectionalLight().
@@ -49,13 +70,21 @@ namespace GTEngine
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                if (static_cast<const SceneNode &>(object).GetComponent<DirectionalLightComponent>()->IsShadowCastingEnabled())
+                auto &node = static_cast<SceneNode &>(object);
+
+                if (node.GetComponent<DirectionalLightComponent>()->IsShadowCastingEnabled())
                 {
                     this->layerState.directionalLights.PushBack(&object);
                 }
                 else
                 {
                     this->layerState.directionalLights_NoShadows.PushBack(&object);
+                }
+
+
+                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetModel() != nullptr)
+                {
+                    this->layerState.editorModels.Insert(&node);
                 }
             }
         }
@@ -65,6 +94,8 @@ namespace GTEngine
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
+                auto &node = static_cast<SceneNode &>(object);
+
                 if (static_cast<const SceneNode &>(object).GetComponent<PointLightComponent>()->IsShadowCastingEnabled())
                 {
                     this->layerState.pointLights.PushBack(&object);
@@ -72,6 +103,12 @@ namespace GTEngine
                 else
                 {
                     this->layerState.pointLights_NoShadows.PushBack(&object);
+                }
+
+
+                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetModel() != nullptr)
+                {
+                    this->layerState.editorModels.Insert(&node);
                 }
             }
         }
@@ -81,6 +118,8 @@ namespace GTEngine
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
+                auto &node = static_cast<SceneNode &>(object);
+
                 if (static_cast<const SceneNode &>(object).GetComponent<SpotLightComponent>()->IsShadowCastingEnabled())
                 {
                     this->layerState.spotLights.PushBack(&object);
@@ -88,6 +127,12 @@ namespace GTEngine
                 else
                 {
                     this->layerState.spotLights_NoShadows.PushBack(&object);
+                }
+
+
+                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetModel() != nullptr)
+                {
+                    this->layerState.editorModels.Insert(&node);
                 }
             }
         }
@@ -734,6 +779,77 @@ namespace GTEngine
                 queue.Clear();
 
                 state.usedMaterials.RemoveRoot();
+            }
+
+
+            // The editor models will always be opaque for now, so we'll just do them here.
+            while (state.editorModels.root != nullptr)
+            {
+                auto node = state.editorModels.root->value;
+                assert(node != nullptr);
+                {
+                    auto metadata = node->GetComponent<EditorMetadataComponent>();
+                    assert(metadata != nullptr);
+                    {
+                        auto model = metadata->GetModel();
+                        assert(model != nullptr);
+                        {
+                            glm::mat4 ModelMatrix     = metadata->IsUsingCustomModelTransform() ? metadata->GetCustomModelTransform() : node->GetWorldTransform();
+                            glm::mat4 ModelViewMatrix = state.cameraView       * ModelMatrix;
+                            glm::mat4 MVPMatrix       = state.cameraProjection * ModelViewMatrix;
+                            glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));
+
+                            for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
+                            {
+                                auto mesh = model->meshes[iMesh];
+                                assert(mesh != nullptr);
+                                {
+                                    auto material = mesh->GetMaterial();
+                                    if (material != nullptr)
+                                    {
+                                        auto &rcDrawGeometry = this->rcDrawGeometry[Renderer::BackIndex].Acquire();
+                                        rcDrawGeometry.va                = this->GetMeshGeometry(*mesh, false);
+                                        rcDrawGeometry.drawMode          = mesh->GetDrawMode();
+                                        rcDrawGeometry.mvpMatrix         = MVPMatrix;
+                                        rcDrawGeometry.normalMatrix      = NormalMatrix;
+                                        rcDrawGeometry.modelViewMatrix   = ModelViewMatrix;
+                                        rcDrawGeometry.modelMatrix       = ModelMatrix;
+                                        rcDrawGeometry.changeFaceCulling = false;
+                                        rcDrawGeometry.cullBackFace      = true;
+                                        rcDrawGeometry.cullFrontFace     = false;
+
+                                        // The material may have pending properties. These need to be set on the shader also.
+                                        auto &materialParams = material->GetParameters();
+                                        for (size_t iProperty = 0; iProperty < materialParams.count; ++iProperty)
+                                        {
+                                            auto iParam = materialParams.buffer[iProperty];
+                                            assert(iParam        != nullptr);
+                                            assert(iParam->value != nullptr);
+
+                                            rcDrawGeometry.materialParameters.Set(iParam->key, iParam->value);
+                                        }
+
+                                        auto &materialMetadata = this->GetMaterialMetadata(*this->wireframeMaterial);
+                                        if (materialMetadata.materialPassShader == nullptr)
+                                        {
+                                            materialMetadata.materialPassShader = this->CreateMaterialPassShader(*this->wireframeMaterial);
+                                        }
+
+
+                                        auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
+                                        rcSetShader.shader = materialMetadata.materialPassShader;
+                                        rcSetShader.zFar   = state.cameraZFar;
+
+                                        Renderer::BackRCQueue->Append(rcSetShader);
+                                        Renderer::BackRCQueue->Append(rcDrawGeometry);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                state.editorModels.RemoveRoot();
             }
         }
         else
