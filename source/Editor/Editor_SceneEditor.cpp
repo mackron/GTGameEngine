@@ -379,17 +379,8 @@ namespace GTEngine
                 {
                     glm::vec3 position = node->GetWorldPosition();
                     
-                    //aabbMin = glm::min(aabbMin, position);
-                    //aabbMax = glm::max(aabbMax, position);
-
-                    
-                    aabbMin.x = glm::min(aabbMin.x, position.x);
-                    aabbMin.y = glm::min(aabbMin.y, position.y);
-                    aabbMin.z = glm::min(aabbMin.z, position.z);
-
-                    aabbMax.x = glm::max(aabbMax.x, position.x);
-                    aabbMax.y = glm::max(aabbMax.y, position.y);
-                    aabbMax.z = glm::max(aabbMax.z, position.z);
+                    aabbMin = glm::min(aabbMin, position);
+                    aabbMax = glm::max(aabbMax, position);
                 }
             }
 
