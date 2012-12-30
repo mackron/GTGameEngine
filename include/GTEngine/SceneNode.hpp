@@ -565,6 +565,12 @@ namespace GTEngine
 
             delete this->pointLightComponent;
             this->pointLightComponent = nullptr;
+
+            delete this->spotLightComponent;
+            this->spotLightComponent = nullptr;
+
+            delete this->editorMetadataComponent;
+            this->editorMetadataComponent = nullptr;
         }
 
         /// Removes a component by it's name.
@@ -1107,6 +1113,13 @@ namespace GTEngine
     {
         return this->editorMetadataComponent != nullptr;
     }
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // NOTE: If you are adding a specialisation, remember to delete them manually in RemoveAllComponents()!
+    //
+    // Keep this comment at th bottom here so it's never forgotten.
 }
 
 #endif
