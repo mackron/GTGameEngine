@@ -78,26 +78,26 @@ namespace GTEngine
 
 
 
-        arrowLineVA->SetData(&arrowLineVertices[0].x, 2, arrowLineIndices, 2);
-        arrowHeadVA->SetData(&arrowHeadVertices[0].x, arrowHeadVertices.count, &arrowHeadIndices[0], arrowHeadIndices.count);
+        this->arrowLineVA->SetData(&arrowLineVertices[0].x, 2, arrowLineIndices, 2);
+        this->arrowHeadVA->SetData(&arrowHeadVertices[0].x, arrowHeadVertices.count, &arrowHeadIndices[0], arrowHeadIndices.count);
 
 
 
 
-        xArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
-        xArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
-        xArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
-        xArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
+        this->xArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->xArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
+        this->xArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
+        this->xArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
 
-        yArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
-        yArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
-        yArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
-        yArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
+        this->yArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->yArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
+        this->yArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
+        this->yArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
 
-        zArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
-        zArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
-        zArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
-        zArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
+        this->zArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->zArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
+        this->zArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
+        this->zArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
 
 
 
@@ -171,6 +171,38 @@ namespace GTEngine
     void PositionGizmo::Hide()
     {
         this->sceneNode.Hide();
+    }
+
+
+    void PositionGizmo::RestoreColours()
+    {
+        this->xArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
+        this->xArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
+
+        this->yArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
+        this->yArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
+
+        this->zArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
+        this->zArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
+    }
+
+    void PositionGizmo::ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b)
+    {
+        assert(&axisSceneNode == &this->xArrowSceneNode || &axisSceneNode == &this->yArrowSceneNode || &axisSceneNode == &this->zArrowSceneNode);
+        {
+            auto modelComponent = axisSceneNode.GetComponent<ModelComponent>();
+            if (modelComponent != nullptr)
+            {
+                auto model = modelComponent->GetModel();
+                if (model != nullptr)
+                {
+                    assert(model->meshes.count == 2);
+
+                    model->meshes[0]->GetMaterial()->SetParameter("EmissiveColour", r, g, b);
+                    model->meshes[1]->GetMaterial()->SetParameter("EmissiveColour", r, g, b);
+                }
+            }
+        }
     }
 
 

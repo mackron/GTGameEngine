@@ -65,6 +65,14 @@ namespace GTEngine
         void Hide();
 
 
+        /// Restores the colours of the gizmo axes to their defaults.
+        void RestoreColours();
+
+        /// Changes the colour of the given scene node.
+        ///
+        /// @param axisSceneNode [in] A reference to the scene node of the axis whose colour is being changed.
+        void ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b);
+
 
     private:
 
