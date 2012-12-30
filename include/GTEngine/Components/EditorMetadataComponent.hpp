@@ -80,6 +80,42 @@ namespace GTEngine
         void DeleteOnClose(bool deleteOnCloseIn) { this->deleteOnClose = deleteOnCloseIn; }
 
 
+
+        /// Sets the model.
+        void SetModel(Model* model, bool takeOwnership = false);
+        void SetModel(Model &model, bool takeOwnership = false);
+
+        /// Sets the model from a file.
+        ///
+        /// @param fileName [in] The name of the model file to load.
+        ///
+        /// @return A pointer to the model that was loaded by the component.
+        ///
+        /// @remarks
+        ///     This will load the model via the model library and will take ownership, which means it will be deleted whenever the
+        ///     component no longer uses it (either when it's change, or when the component is destructed).
+        Model* SetModel(const char* fileName);
+
+        /// Unsets the current model.
+        void UnsetModel();
+
+
+        /// Retrieves the model currently associated with this component.
+              Model* GetModel()       { return this->model; }
+        const Model* GetModel() const { return this->model; }
+
+
+        /// Specifies whether or not to use a custom transform for the model.
+        void UseCustomModelTransform(bool useCustomTransform, const glm::mat4 &customTransform = glm::mat4());
+
+        /// Determines whether or not we are using a custom transform for the model.
+        bool IsUsingCustomModelTransform() const { return this->useCustomModelTransform; }
+
+        /// Retrieves the custom model transform.
+        const glm:: mat4 & GetCustomModelTransform() const { return this->customModelTransform; }
+
+
+
     private:
 
         /// Deletes the collision shape and sets the pointer to null.
@@ -115,6 +151,22 @@ namespace GTEngine
 
         /// The picking group.
         short pickingCollisionGroup;
+
+
+        /// Keeps track of whether or not we own the model. We use this for determining whether or not we need to memory manage it ourselves.
+        bool ownsModel;
+
+        /// Keeps track of whether or not to use a custom transformation for rendering the model.
+        bool useCustomModelTransform;
+
+        /// The model to drawn in addition to the model contained within the ModelComponent. We need this to draw things like sprites, but don't want
+        /// them to be defined in ModelComponent.
+        Model* model;
+
+        /// The custom transformation to use with the model.
+        glm::mat4 customModelTransform;
+
+        
 
 
     GTENGINE_DECL_COMPONENT_END()

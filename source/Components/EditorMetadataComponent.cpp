@@ -1,7 +1,8 @@
 
 #include <GTEngine/Components/EditorMetadataComponent.hpp>
 #include <GTEngine/Components/ModelComponent.hpp>
-#include <GTEngine/SceneNode.hpp>
+#include <GTEngine/Scene.hpp>
+#include <GTEngine/ModelLibrary.hpp>
 
 namespace GTEngine
 {
@@ -11,7 +12,8 @@ namespace GTEngine
         : Component(node),
           alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
-          pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume)
+          pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
+          ownsModel(false), model(nullptr)
     {
         pickingCollisionObject.setUserPointer(this);
     }
@@ -19,6 +21,11 @@ namespace GTEngine
     EditorMetadataComponent::~EditorMetadataComponent()
     {
         this->DeleteCollisionShape();
+
+        if (this->ownsModel)
+        {
+            ModelLibrary::Delete(this->model);
+        }
     }
 
 
@@ -146,6 +153,50 @@ namespace GTEngine
     {
         this->alwaysShowOnTop = alwaysShowOnTopIn;
     }
+
+
+
+    void EditorMetadataComponent::SetModel(Model* model, bool takeOwnership)
+    {
+        if (this->ownsModel)
+        {
+            ModelLibrary::Delete(this->model);
+        }
+        
+        this->model     = model;
+        this->ownsModel = takeOwnership;
+
+
+        // This component has changed. We need to let the scene know about this so that it can change culling information and whatnot.
+        auto scene = this->GetNode().GetScene();
+        if (scene != nullptr)
+        {
+            scene->OnSceneNodeComponentChanged(this->GetNode(), *this);
+        }
+    }
+
+    void EditorMetadataComponent::SetModel(Model &model, bool takeOwnership)
+    {
+        this->SetModel(&model, takeOwnership);
+    }
+
+    Model* EditorMetadataComponent::SetModel(const char* fileName)
+    {
+        this->SetModel(ModelLibrary::LoadFromFile(fileName), true);
+        return this->model;
+    }
+
+    void EditorMetadataComponent::UnsetModel()
+    {
+        this->SetModel(static_cast<Model*>(nullptr));
+    }
+
+    void EditorMetadataComponent::UseCustomModelTransform(bool useCustomTransform, const glm::mat4 &customTransform)
+    {
+        this->useCustomModelTransform = useCustomTransform;
+        this->customModelTransform    = customTransform;
+    }
+
 
 
 
