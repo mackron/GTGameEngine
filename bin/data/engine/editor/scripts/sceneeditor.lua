@@ -22,19 +22,55 @@ function GTGUI.Element:Vector3Input()
         return tonumber(self.X:GetText()), tonumber(self.Y:GetText()), tonumber(self.Z:GetText());
     end
     
+    function self:GetXYZTable()
+        local xValue, yValue, zValue = self:GetXYZ();
+        return {x = xValue, y = yValue, z = zValue};
+    end
     
-    -- For the events below, we don't want to bounce back into SetFromXYZ() in the event that that event handler wants to do something
-    -- with the vector. Thus, we block SetFromXYZ() from being called during this event handler.
-    self.X:OnTextChanged(function()
-        self.BlockSetFromXYZ = true; self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())}); self.BlockSetFromXYZ = false;
+    
+    -- This function is called when one of the text boxes has changed. We use the same event handler for all three.
+    --
+    -- When the text of one of these elements changes, we will post an event back to the engine to have it update the position of the
+    -- object. The problem with this, is that when the position of the selected object changes via other means, these text boxes will
+    -- be updated. We end up with a sort of cylclic dependency. What we do to resolve is block calls to SetFromXYZ() during processing
+    -- of OnValueChanged() events.
+    function OnTextChangedHandler()
+        self.BlockSetFromXYZ = true;
+        self:OnValueChanged(self:GetXYZTable());
+        self.BlockSetFromXYZ = false;
+    end
+
+    self.X:OnTextChanged(OnTextChangedHandler);
+    self.Y:OnTextChanged(OnTextChangedHandler);
+    self.Z:OnTextChanged(OnTextChangedHandler);
+    
+    
+    
+    self.X:OnKeyDown(function(data)
+        if data.key == GTCore.Keys.Tab then
+            self.Y:Focus();
+            self.Y:SelectAllText();
+            
+            return false;
+        end
     end);
     
-    self.Y:OnTextChanged(function()
-        self.BlockSetFromXYZ = true; self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())}); self.BlockSetFromXYZ = false;
+    self.Y:OnKeyDown(function(data)
+        if data.key == GTCore.Keys.Tab then
+            self.Z:Focus();
+            self.Z:SelectAllText();
+            
+            return false;
+        end
     end);
     
-    self.Z:OnTextChanged(function()
-        self.BlockSetFromXYZ = true; self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())}); self.BlockSetFromXYZ = false;
+    self.Z:OnKeyDown(function(data)
+        if data.key == GTCore.Keys.Tab then
+            self.X:Focus();
+            self.X:SelectAllText();
+            
+            return false;
+        end
     end);
     
     
