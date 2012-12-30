@@ -33,26 +33,34 @@ namespace GTEngine
         auto vertexArray = reinterpret_cast<btTriangleIndexVertexArray*>(this->getMeshInterface());
         assert(vertexArray != nullptr);
         {
+            bool buildBvh = false;
+
+
             // We need to add a btIndexedMesh for each mesh in the model.
             for (size_t i = 0; i < model.meshes.count; ++i)
             {
-                auto mesh = model.meshes[i]->GetGeometry();
+                if (model.meshes[i]->GetDrawMode() == DrawMode_Triangles)
+                {
+                    auto mesh = model.meshes[i]->GetGeometry();
 
-                btIndexedMesh meshBt;
-                meshBt.m_numTriangles        = mesh->GetVertexCount() / 3;
-                meshBt.m_triangleIndexBase   = reinterpret_cast<const unsigned char*>(mesh->GetIndexDataPtr());
-                meshBt.m_triangleIndexStride = sizeof(unsigned int) * 3;
-                meshBt.m_numVertices         = mesh->GetVertexCount();
-                meshBt.m_vertexBase          = reinterpret_cast<const unsigned char*>(mesh->GetVertexDataPtr());
-                meshBt.m_vertexStride        = mesh->GetFormat().GetSizeInBytes();
-                meshBt.m_indexType           = PHY_INTEGER;
-                meshBt.m_vertexType          = PHY_FLOAT;
-                vertexArray->addIndexedMesh(meshBt);
+                    btIndexedMesh meshBt;
+                    meshBt.m_numTriangles        = mesh->GetVertexCount() / 3;
+                    meshBt.m_triangleIndexBase   = reinterpret_cast<const unsigned char*>(mesh->GetIndexDataPtr());
+                    meshBt.m_triangleIndexStride = sizeof(unsigned int) * 3;
+                    meshBt.m_numVertices         = mesh->GetVertexCount();
+                    meshBt.m_vertexBase          = reinterpret_cast<const unsigned char*>(mesh->GetVertexDataPtr());
+                    meshBt.m_vertexStride        = mesh->GetFormat().GetSizeInBytes();
+                    meshBt.m_indexType           = PHY_INTEGER;
+                    meshBt.m_vertexType          = PHY_FLOAT;
+                    vertexArray->addIndexedMesh(meshBt);
+
+                    buildBvh = true;
+                }
             }
 
             // This is some more evilness. I don't know how to apply a new mesh interface to the shape, so I'm just going to destruct and then reconstruct.
             btBvhTriangleMeshShape::~btBvhTriangleMeshShape();
-            new (this) btBvhTriangleMeshShape(vertexArray, false, model.meshes.count > 0);
+            new (this) btBvhTriangleMeshShape(vertexArray, false, buildBvh);
         }
     }
 }
