@@ -30,6 +30,17 @@ namespace GTEngine
         const glm::vec3 & GetPosition() const;
 
 
+        /// Sets the scale of the gizmo.
+        ///
+        /// @remarks
+        ///     This will also update the picking shape.
+        void SetScale(const glm::vec3 &scale);
+        
+        /// Retrieves the scale of the gizmo.
+        const glm::vec3 & GetScale() const;
+
+
+
         /// Retrieves a reference the main scene node.
               SceneNode & GetSceneNode()       { return this->sceneNode; }
         const SceneNode & GetSceneNode() const { return this->sceneNode; }

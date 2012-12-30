@@ -150,6 +150,17 @@ namespace GTEngine
         return this->sceneNode.GetPosition();
     }
 
+    
+    void PositionGizmo::SetScale(const glm::vec3 &scale)
+    {
+        this->sceneNode.SetScale(scale);
+    }
+
+    const glm::vec3 & PositionGizmo::GetScale() const
+    {
+        return this->sceneNode.GetScale();
+    }
+
 
     void PositionGizmo::Show()
     {
