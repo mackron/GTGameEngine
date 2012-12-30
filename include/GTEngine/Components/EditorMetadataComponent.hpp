@@ -63,12 +63,22 @@ namespace GTEngine
         void SetAlwaysShowOnTop(bool alwaysOnTop);
 
 
+        /// Determines whether or not the model is being used for the picking shape.
+        bool UseModelForPickingShape() const { return this->useModelForPickingShape; }
+
+        /// Sets whether or not the model should be used for the picking shape.
+        void UseModelForPickingShape(bool useModelForPickingShapeIn) { this->useModelForPickingShape = useModelForPickingShapeIn; }
+
 
     private:
 
         /// Keeps track of whether or not the scene node should be rendered on top of everything else. Depth testing will always be disabled when
         /// this is set. This is mainly intended for things like gizmos.
         bool alwaysShowOnTop;
+
+        /// Keeps track of whether or not the picking collision shape should be that of the model.
+        bool useModelForPickingShape;
+
 
         /// Keeps track of whether or not the scene node is selected in the editor.
         bool isSelected;
