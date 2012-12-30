@@ -204,6 +204,13 @@ namespace GTEngine
             ~State();
 
 
+            /// A helper method for determining if we're dragging a gizmo.
+            bool IsDraggingGizmo() const
+            {
+                return this->isDraggingGizmoX || this->isDraggingGizmoY || this->isDraggingGizmoZ;
+            }
+
+
 
             /// A reference to the scene editor that owns this state.
             Editor_SceneEditor &sceneEditor;
@@ -237,13 +244,19 @@ namespace GTEngine
             /// The collision world for doing picking/selecting.
             CollisionWorld pickingWorld;
 
-
             /// The positioning gizmo.
             PositionGizmo positionGizmo;
 
-
             /// The list of scene nodes that need to be deleted when they are removed from the scene, or the state is destructed.
             GTCore::Vector<SceneNode*> sceneNodesToDelete;
+
+
+
+            /// Keeps track of whether or not we're dragging a gizmo.
+            bool isDraggingGizmoX;
+            bool isDraggingGizmoY;
+            bool isDraggingGizmoZ;
+
 
 
             struct _GUI

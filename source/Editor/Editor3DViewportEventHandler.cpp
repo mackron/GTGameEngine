@@ -8,8 +8,7 @@ namespace GTEngine
 {
     Editor3DViewportEventHandler::Editor3DViewportEventHandler(Game &game, SceneViewport &viewport)
         : game(game), viewport(viewport),
-          mousePosX(0), mousePosY(0),
-          isMouseCameraControlEnabled(true)
+          mousePosX(0), mousePosY(0)
     {
     }
 
@@ -85,10 +84,6 @@ namespace GTEngine
         {
             this->game.ReleaseMouse();
         }
-
-
-        // TODO: Ugh, this is ugly... Just a temp thing until I have a better solution...
-        this->EnableMouseCameraControl();
     }
 
     void Editor3DViewportEventHandler::OnRMBDown(GTGUI::Element &, int, int)
