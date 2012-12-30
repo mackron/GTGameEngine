@@ -48,7 +48,7 @@ namespace GTEngine
         if (newMaterial != nullptr)
         {
             this->material       = newMaterial;
-            this->deleteMaterial = false;
+            this->deleteMaterial = true;
 
             return true;
         }
