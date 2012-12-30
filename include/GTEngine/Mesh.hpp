@@ -187,6 +187,13 @@ namespace GTEngine
         //VertexArray* GetAnimatedGeometry(size_t index);
 
 
+        /// Retrieves the draw mode of the mesh.
+        DrawMode GetDrawMode() const { return this->drawMode; }
+
+        /// Sets the draw mode of the mesh.
+        void SetDrawMode(DrawMode newDrawMode) { this->drawMode = newDrawMode; }
+
+
 
     private:
 
