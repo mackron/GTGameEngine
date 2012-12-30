@@ -302,6 +302,8 @@ namespace GTEngine
             delete this->materialMetadatas.root->value;
             this->materialMetadatas.RemoveRoot();
         }
+
+        delete this->wireframeMaterial;
     }
 
 
