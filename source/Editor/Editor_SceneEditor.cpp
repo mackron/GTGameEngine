@@ -590,6 +590,13 @@ namespace GTEngine
 
             // If the scene node was selected, we should reposition the gizmo.
             this->RepositionGizmos();
+
+
+            // If the node that was transformed is the main camera we'll need to scale the gizmos so that they look a constant size.
+            if (&node == &this->currentState->camera)
+            {
+                this->RescaleGizmos();
+            }
         }
     }
 
@@ -686,6 +693,9 @@ namespace GTEngine
         {
             this->currentState->positionGizmo.Show();
             this->currentState->positionGizmo.SetPosition(this->GetSelectionCenterPoint());
+            
+            // We'll re-scale the gizmos just to make sure.
+            this->RescaleGizmos();
         }
     }
 
@@ -699,7 +709,27 @@ namespace GTEngine
 
     void Editor_SceneEditor::RepositionGizmos()
     {
-        this->currentState->positionGizmo.SetPosition(this->GetSelectionCenterPoint());
+        if (this->currentState != nullptr)
+        {
+            this->currentState->positionGizmo.SetPosition(this->GetSelectionCenterPoint());
+        }
+    }
+
+    void Editor_SceneEditor::RescaleGizmos()
+    {
+        // We're going to determine the new scale of the gizmos by using a project/unproject system. We first project the actual position of the gizmo
+        // into window coordinates. We then add a value to the y result that will represent the size of the object on the screen. Then, we unproject
+        // that position back into world space. The length between the gizmo position and unprojected position will be the new scale.
+        if (this->currentState != nullptr)
+        {
+            glm::vec3 gizmoPosition = this->GetSelectionCenterPoint();
+
+            glm::vec3 windowPos = this->currentState->viewport.Project(gizmoPosition);
+            windowPos.y += 64.0f;
+
+            glm::vec3 scale(glm::distance(this->currentState->viewport.Unproject(windowPos), gizmoPosition));
+            this->currentState->positionGizmo.GetSceneNode().SetScale(scale);
+        }
     }
 
 
