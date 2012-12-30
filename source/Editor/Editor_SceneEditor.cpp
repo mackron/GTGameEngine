@@ -213,6 +213,13 @@ namespace GTEngine
                     {
                         this->currentState->isDraggingGizmoZ = true;
                     }
+                    else
+                    {
+                        return false;
+                    }
+
+
+                    this->currentState->positionGizmo.ChangeAxisColour(selectedNode, 1.0f, 1.0f, 1.0f);
                 }
 
                 return true;
@@ -519,6 +526,8 @@ namespace GTEngine
                 this->currentState->isDraggingGizmoX = false;
                 this->currentState->isDraggingGizmoY = false;
                 this->currentState->isDraggingGizmoZ = false;
+
+                this->currentState->positionGizmo.RestoreColours();
             }
         }
     }
