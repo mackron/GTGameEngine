@@ -56,8 +56,19 @@ namespace GTEngine
         short GetPickingCollisionGroup() const;
 
 
+        /// Determines whether or not the scene node should be rendered on top of everything else.
+        bool IsAlwaysShownOnTop() const;
+
+        /// Sets whether or not the scene node should be rendered on top of everything else.
+        void SetAlwaysShowOnTop(bool alwaysOnTop);
+
+
 
     private:
+
+        /// Keeps track of whether or not the scene node should be rendered on top of everything else. Depth testing will always be disabled when
+        /// this is set. This is mainly intended for things like gizmos.
+        bool alwaysShowOnTop;
 
         /// Keeps track of whether or not the scene node is selected in the editor.
         bool isSelected;
