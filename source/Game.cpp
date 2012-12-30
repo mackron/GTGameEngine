@@ -1161,6 +1161,14 @@ namespace GTEngine
             this->gui.OnMMBDown();
         }
 
+
+        // If the editor is open, we'll want to post this event to that too.
+        if (this->editor.IsOpen())
+        {
+            this->editor.OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
+        }
+
+
         this->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
         this->PostScriptEvent_OnMouseButtonDown(e);
 
@@ -1189,6 +1197,12 @@ namespace GTEngine
         else if (e.mouseup.button == GTCore::MouseButton_Middle)
         {
             this->gui.OnMMBUp();
+        }
+
+        // If the editor is open, we'll want to post this event to that too.
+        if (this->editor.IsOpen())
+        {
+            this->editor.OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
         }
 
         this->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);

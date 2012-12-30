@@ -29,6 +29,27 @@ namespace GTEngine
         }
 
 
+        /// Disables mouse camera control.
+        void DisableMouseCameraControl()
+        {
+            this->isMouseCameraControlEnabled = false;
+        }
+
+        /// Enables mouse camera control.
+        void EnableMouseCameraControl()
+        {
+            this->isMouseCameraControlEnabled = true;
+        }
+
+        /// Determines whether or not mouse camera control is enabled.
+        bool IsMouseCameraControlEnabled() const
+        {
+            return this->isMouseCameraControlEnabled;
+        }
+
+
+
+
         //////////////////////////////////////////////////////////////////////////////////
         // Events.
 
@@ -72,6 +93,10 @@ namespace GTEngine
 
         /// The mouse position on the y axis.
         int mousePosY;
+
+
+        /// Keeps track of whether or not mouse camera control is enabled.
+        bool isMouseCameraControlEnabled;
 
 
 

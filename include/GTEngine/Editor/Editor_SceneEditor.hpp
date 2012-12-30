@@ -68,6 +68,11 @@ namespace GTEngine
         ///////////////////////////////////////////////////
         // Selections
 
+        /// Attempts to select a gizmo with the mouse.
+        ///
+        /// @return True if a gizmo was selected.
+        bool TryGizmoMouseSelect();
+
         /// Performs a mouse selection.
         void DoMouseSelection();
 
@@ -105,6 +110,12 @@ namespace GTEngine
 
         /// Updates the model editor so that the viewport is rendered.
         void Update(double deltaTimeInSeconds);
+
+        /// Called when a mouse button is pressed.
+        void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
+
+        /// Called when a mouse button is released.
+        void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
 
 
 
@@ -270,6 +281,12 @@ namespace GTEngine
             /// Helper for retrieving the SceneEditor object.
             static Editor_SceneEditor & GetSceneEditor(GTCore::Script &script);
 
+
+            /// Attempts to select a gizmo with the mouse.
+            ///
+            /// @remarks
+            ///     Returns true if a gizmo was selected.
+            static int TryGizmoMouseSelect(GTCore::Script &script);
 
             /// Performs a mouse selection.
             static int DoMouseSelection(GTCore::Script &script);

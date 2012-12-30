@@ -79,6 +79,20 @@ namespace GTEngine
         /// Updates the editor so that it can do rendering and whatnot.
         void Update(double deltaTimeInSeconds);
 
+        /// Called when a mouse button is pusehd.
+        ///
+        /// @param button [in] The button that was pushed.
+        /// @param x      [in] The x position of the mouse at the time it was pushed.
+        /// @param y      [in] The y position of the mouse at the time it was pushed.
+        void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
+
+        /// Called when a mouse button is released.
+        ///
+        /// @param button [in] The button that was released.
+        /// @param x      [in] The x position of the mouse at the time it was released.
+        /// @param y      [in] The y position of the mouse at the time it was released.
+        void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
+
 
         /// Called when the tab for a model is activated.
         ///
