@@ -13,7 +13,7 @@ namespace GTEngine
           alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
-          ownsModel(false), model(nullptr)
+          ownsModel(false), useCustomModelTransform(false), model(nullptr), customModelTransform()
     {
         pickingCollisionObject.setUserPointer(this);
     }
