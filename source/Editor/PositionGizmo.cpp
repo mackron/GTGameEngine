@@ -48,14 +48,17 @@ namespace GTEngine
         metadata = this->xArrowSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetPickingCollisionShapeToModel();
+        metadata->SetAlwaysShowOnTop(true);
 
         metadata = this->yArrowSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetPickingCollisionShapeToModel();
+        metadata->SetAlwaysShowOnTop(true);
 
         metadata = this->zArrowSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetPickingCollisionShapeToModel();
+        metadata->SetAlwaysShowOnTop(true);
 
 
         this->sceneNode.AttachChild(this->xArrowSceneNode);
