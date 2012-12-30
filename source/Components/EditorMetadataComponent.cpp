@@ -9,6 +9,7 @@ namespace GTEngine
 
     EditorMetadataComponent::EditorMetadataComponent(SceneNode &node)
         : Component(node),
+          alwaysShowOnTop(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume)
     {
@@ -103,5 +104,16 @@ namespace GTEngine
     short EditorMetadataComponent::GetPickingCollisionGroup() const
     {
         return this->pickingCollisionGroup;
+    }
+
+
+    bool EditorMetadataComponent::IsAlwaysShownOnTop() const
+    {
+        return this->alwaysShowOnTop;
+    }
+
+    void EditorMetadataComponent::SetAlwaysShowOnTop(bool alwaysShowOnTopIn)
+    {
+        this->alwaysShowOnTop = alwaysShowOnTopIn;
     }
 }
