@@ -16,6 +16,10 @@ namespace GTEngine
 
     Editor_SceneEditor::~Editor_SceneEditor()
     {
+        for (size_t i = 0; i < this->loadedStates.count; ++i)
+        {
+            delete this->loadedStates.buffer[i]->value;
+        }
     }
 
 
