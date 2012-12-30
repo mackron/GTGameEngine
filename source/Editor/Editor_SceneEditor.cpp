@@ -179,25 +179,44 @@ namespace GTEngine
 
     bool Editor_SceneEditor::TryGizmoMouseSelect()
     {
-        int clickPosX;
-        int clickPosY;
-        this->currentState->viewportEventHandler.GetMousePosition(clickPosX, clickPosY);
-
-        glm::vec3 rayStart;
-        glm::vec3 rayEnd;
-        this->currentState->viewport.CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
-
-
-        CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
-        rayTestCallback.m_collisionFilterGroup = CollisionGroups::EditorSelectionRay;
-        rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorGizmo;
-        this->currentState->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
-        if (rayTestCallback.hasHit())
+        if (this->currentState != nullptr && this->currentState->GUI.Main->IsVisible())
         {
-            this->currentState->viewportEventHandler.DisableMouseCameraControl();
-            printf("Testing..\n");
+            int clickPosX;
+            int clickPosY;
+            this->currentState->viewportEventHandler.GetMousePosition(clickPosX, clickPosY);
 
-            return true;
+            glm::vec3 rayStart;
+            glm::vec3 rayEnd;
+            this->currentState->viewport.CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
+
+
+            CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
+            rayTestCallback.m_collisionFilterGroup = CollisionGroups::EditorSelectionRay;
+            rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorGizmo;
+            this->currentState->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
+            if (rayTestCallback.hasHit())
+            {
+                auto metadata = static_cast<EditorMetadataComponent*>(rayTestCallback.m_collisionObject->getUserPointer());
+                assert(metadata != nullptr);
+                {
+                    auto &selectedNode = metadata->GetNode();
+
+                    if (&selectedNode == &this->currentState->positionGizmo.GetXArrowSceneNode())
+                    {
+                        this->currentState->isDraggingGizmoX = true;
+                    }
+                    else if (&selectedNode == &this->currentState->positionGizmo.GetYArrowSceneNode())
+                    {
+                        this->currentState->isDraggingGizmoY = true;
+                    }
+                    else if (&selectedNode == &this->currentState->positionGizmo.GetZArrowSceneNode())
+                    {
+                        this->currentState->isDraggingGizmoZ = true;
+                    }
+                }
+
+                return true;
+            }
         }
 
         return false;
@@ -442,7 +461,7 @@ namespace GTEngine
                 auto &game = this->editor.GetGame();
 
                 // If the mouse is captured we may need to move the screen around.
-                if (game.IsMouseCaptured() && this->currentState->viewportEventHandler.IsMouseCameraControlEnabled())
+                if (game.IsMouseCaptured() && !this->currentState->IsDraggingGizmo())
                 {
                     const float moveSpeed   = 0.05f;
                     const float rotateSpeed = 0.1f;
@@ -497,7 +516,9 @@ namespace GTEngine
         {
             if (button == GTCore::MouseButton_Left)
             {
-                this->currentState->viewportEventHandler.EnableMouseCameraControl();
+                this->currentState->isDraggingGizmoX = false;
+                this->currentState->isDraggingGizmoY = false;
+                this->currentState->isDraggingGizmoZ = false;
             }
         }
     }
@@ -870,6 +891,7 @@ namespace GTEngine
           selectedNodes(),
           positionGizmo(),
           sceneNodesToDelete(),
+          isDraggingGizmoX(false), isDraggingGizmoY(false), isDraggingGizmoZ(false),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
