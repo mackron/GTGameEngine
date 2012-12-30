@@ -181,9 +181,8 @@ namespace GTEngine
         glm::vec3 halfExtents;
         halfExtents.x = 0.075f;
         halfExtents.y = 0.075f;
-        halfExtents.z = 1.0f;
+        halfExtents.z = 0.5f;
         halfExtents *= this->GetScale();
-        halfExtents *= 0.5f;
 
         glm::vec3 offset;
         offset.x = 0.0f;

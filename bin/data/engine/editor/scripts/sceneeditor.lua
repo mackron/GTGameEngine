@@ -197,6 +197,13 @@ function GTGUI.Element:SceneEditor()
         self.IsLMBDown       = true;
         self.HasMouseCapture = true;
         self:Focus();
+        
+        -- We will check for a selection on the gizmo. If we click on a gizmo, we don't want to do a mouse selection when the 
+        -- button is raised. What we'll do is trick it into thinking the mouse was moved while it was captured which will
+        -- cause the editor to not try and select anything.
+        if Editor.SceneEditor.TryGizmoMouseSelect() then
+            self.MouseMovedWhileCaptured = true;
+        end
     end);
     
     self.Viewport:OnRMBDown(function()

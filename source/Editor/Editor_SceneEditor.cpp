@@ -177,6 +177,32 @@ namespace GTEngine
 
 
 
+    bool Editor_SceneEditor::TryGizmoMouseSelect()
+    {
+        int clickPosX;
+        int clickPosY;
+        this->currentState->viewportEventHandler.GetMousePosition(clickPosX, clickPosY);
+
+        glm::vec3 rayStart;
+        glm::vec3 rayEnd;
+        this->currentState->viewport.CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
+
+
+        CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
+        rayTestCallback.m_collisionFilterGroup = CollisionGroups::EditorSelectionRay;
+        rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorGizmo;
+        this->currentState->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
+        if (rayTestCallback.hasHit())
+        {
+            this->currentState->viewportEventHandler.DisableMouseCameraControl();
+            printf("Testing..\n");
+
+            return true;
+        }
+
+        return false;
+    }
+
     void Editor_SceneEditor::DoMouseSelection()
     {
         if (this->currentState != nullptr && this->currentState->GUI.Main->IsVisible())
@@ -194,50 +220,39 @@ namespace GTEngine
 
             CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
             rayTestCallback.m_collisionFilterGroup = CollisionGroups::EditorSelectionRay;
-
-            // The first ray test we want to do is against the gizmos. If one of these gets picked, we need to doing a transformation on the selected objects.
-            rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorGizmo;
+            rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorSelectionVolume;
             this->currentState->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
             if (rayTestCallback.hasHit())
             {
-                printf("Picked Gizmo\n");
-            }
-            else
-            {
-                rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorSelectionVolume;
-                this->currentState->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
-                if (rayTestCallback.hasHit())
+                // The use data of the object will be a pointer to the EditorMetadataComponent object. From this, we can grab the actual scene node.
+                auto metadata = static_cast<EditorMetadataComponent*>(rayTestCallback.m_collisionObject->getUserPointer());
+                assert(metadata != nullptr);
                 {
-                    // The use data of the object will be a pointer to the EditorMetadataComponent object. From this, we can grab the actual scene node.
-                    auto metadata = static_cast<EditorMetadataComponent*>(rayTestCallback.m_collisionObject->getUserPointer());
-                    assert(metadata != nullptr);
-                    {
-                        auto &selectedNode = metadata->GetNode();
+                    auto &selectedNode = metadata->GetNode();
 
-                        // The way we do the selection depends on what we're doing. If shift is being held down, we don't want to deselect anything and instead just add
-                        // or remove the node to the selection. If the selected node is already selected, it needs to be deselected. Otherwise it needs to be selected.
-                        if (this->editor.GetGame().IsKeyDown(GTCore::Keys::Shift))
+                    // The way we do the selection depends on what we're doing. If shift is being held down, we don't want to deselect anything and instead just add
+                    // or remove the node to the selection. If the selected node is already selected, it needs to be deselected. Otherwise it needs to be selected.
+                    if (this->editor.GetGame().IsKeyDown(GTCore::Keys::Shift))
+                    {
+                        if (this->IsSceneNodeSelected(selectedNode))
                         {
-                            if (this->IsSceneNodeSelected(selectedNode))
-                            {
-                                this->DeselectSceneNode(selectedNode);
-                            }
-                            else
-                            {
-                                this->SelectSceneNode(selectedNode);
-                            }
+                            this->DeselectSceneNode(selectedNode);
                         }
                         else
                         {
-                            this->DeselectAll();
                             this->SelectSceneNode(selectedNode);
                         }
                     }
+                    else
+                    {
+                        this->DeselectAll();
+                        this->SelectSceneNode(selectedNode);
+                    }
                 }
-                else
-                {
-                    this->DeselectAll();
-                }
+            }
+            else
+            {
+                this->DeselectAll();
             }
         }
     }
@@ -427,7 +442,7 @@ namespace GTEngine
                 auto &game = this->editor.GetGame();
 
                 // If the mouse is captured we may need to move the screen around.
-                if (game.IsMouseCaptured())
+                if (game.IsMouseCaptured() && this->currentState->viewportEventHandler.IsMouseCameraControlEnabled())
                 {
                     const float moveSpeed   = 0.05f;
                     const float rotateSpeed = 0.1f;
@@ -462,6 +477,27 @@ namespace GTEngine
                 }
 
                 this->currentState->scene.Update(deltaTimeInSeconds);
+            }
+        }
+    }
+
+    void Editor_SceneEditor::OnMouseButtonDown(GTCore::MouseButton button, int x, int y)
+    {
+        (void)button;
+        (void)x;
+        (void)y;
+    }
+
+    void Editor_SceneEditor::OnMouseButtonUp(GTCore::MouseButton button, int x, int y)
+    {
+        (void)x;
+        (void)y;
+
+        if (this->currentState != nullptr)
+        {
+            if (button == GTCore::MouseButton_Left)
+            {
+                this->currentState->viewportEventHandler.EnableMouseCameraControl();
             }
         }
     }
@@ -807,6 +843,7 @@ namespace GTEngine
             script.GetTableValue(-2);
             assert(script.IsTable(-1));
             {
+                script.SetTableFunction(-1, "TryGizmoMouseSelect",      SceneEditorFFI::TryGizmoMouseSelect);
                 script.SetTableFunction(-1, "DoMouseSelection",         SceneEditorFFI::DoMouseSelection);
                 script.SetTableFunction(-1, "DeselectAll",              SceneEditorFFI::DeselectAll);
                 script.SetTableFunction(-1, "SelectSceneNode",          SceneEditorFFI::SelectSceneNode);
@@ -881,6 +918,12 @@ namespace GTEngine
     Editor_SceneEditor & Editor_SceneEditor::SceneEditorFFI::GetSceneEditor(GTCore::Script &script)
     {
         return GameScript::FFI::GetGameObject(script).GetEditor().GetSceneEditor();
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::TryGizmoMouseSelect(GTCore::Script &script)
+    {
+        script.Push(GetSceneEditor(script).TryGizmoMouseSelect());
+        return 1;
     }
 
     int Editor_SceneEditor::SceneEditorFFI::DoMouseSelection(GTCore::Script &script)

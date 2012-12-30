@@ -162,6 +162,16 @@ namespace GTEngine
         }
     }
 
+    void Editor::OnMouseButtonDown(GTCore::MouseButton button, int x, int y)
+    {
+        this->sceneEditor.OnMouseButtonDown(button, x, y);
+    }
+
+    void Editor::OnMouseButtonUp(GTCore::MouseButton button, int x, int y)
+    {
+        this->sceneEditor.OnMouseButtonUp(button, x, y);
+    }
+
 
     void Editor::OnModelActivated(const char* fileName)
     {
