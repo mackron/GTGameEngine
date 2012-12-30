@@ -117,19 +117,16 @@ namespace GTEngine
 
         metadata = this->xArrowSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
-        //metadata->SetPickingCollisionShapeToModel();
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
 
         metadata = this->yArrowSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
-        //metadata->SetPickingCollisionShapeToModel();
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
 
         metadata = this->zArrowSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
-        //metadata->SetPickingCollisionShapeToModel();
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
 
@@ -137,6 +134,9 @@ namespace GTEngine
         this->sceneNode.AttachChild(this->xArrowSceneNode);
         this->sceneNode.AttachChild(this->yArrowSceneNode);
         this->sceneNode.AttachChild(this->zArrowSceneNode);
+
+
+        this->UpdatePickingVolumes();
     }
 
 
@@ -154,6 +154,7 @@ namespace GTEngine
     void PositionGizmo::SetScale(const glm::vec3 &scale)
     {
         this->sceneNode.SetScale(scale);
+        this->UpdatePickingVolumes();
     }
 
     const glm::vec3 & PositionGizmo::GetScale() const
@@ -170,5 +171,42 @@ namespace GTEngine
     void PositionGizmo::Hide()
     {
         this->sceneNode.Hide();
+    }
+
+
+    void PositionGizmo::UpdatePickingVolumes()
+    {
+        // The models are actually unit length which makes determining the length of the picking volume super easy - it's the scale of the z axis. The
+        // scale of a gizmo should be uniform, so you could also use x or y.
+        glm::vec3 halfExtents;
+        halfExtents.x = 0.075f;
+        halfExtents.y = 0.075f;
+        halfExtents.z = 1.0f;
+        halfExtents *= this->GetScale();
+        halfExtents *= 0.5f;
+
+        glm::vec3 offset;
+        offset.x = 0.0f;
+        offset.y = 0.0f;
+        offset.z = -halfExtents.z;
+
+        
+        auto metadata = this->xArrowSceneNode.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            metadata->SetPickingCollisionShapeToBox(halfExtents, offset);
+        }
+
+        metadata = this->yArrowSceneNode.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            metadata->SetPickingCollisionShapeToBox(halfExtents, offset);
+        }
+
+        metadata = this->zArrowSceneNode.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            metadata->SetPickingCollisionShapeToBox(halfExtents, offset);
+        }
     }
 }

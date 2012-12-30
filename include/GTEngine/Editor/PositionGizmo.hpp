@@ -68,6 +68,13 @@ namespace GTEngine
 
     private:
 
+        /// Updates the picking volumes of the arrows.
+        void UpdatePickingVolumes();
+
+
+
+    private:
+
         /// The main scene node.
         SceneNode sceneNode;
 
