@@ -255,6 +255,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\DynamicsWorld.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\GenericConstraint.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\GhostObject.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\MeshCollisionShape.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\PointToPointConstraint.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
@@ -418,6 +419,7 @@
     <ClCompile Include="..\..\..\source\Physics\DynamicsWorld.cpp" />
     <ClCompile Include="..\..\..\source\Physics\GenericConstraint.cpp" />
     <ClCompile Include="..\..\..\source\Physics\GhostObject.cpp" />
+    <ClCompile Include="..\..\..\source\Physics\MeshCollisionShape.cpp" />
     <ClCompile Include="..\..\..\source\Physics\PointToPointConstraint.cpp" />
     <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp" />
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />

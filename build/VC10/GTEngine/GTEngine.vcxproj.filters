@@ -635,6 +635,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\PositionGizmo.hpp">
       <Filter>include\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\MeshCollisionShape.hpp">
+      <Filter>include\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1083,6 +1086,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\PositionGizmo.cpp">
       <Filter>source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\MeshCollisionShape.cpp">
+      <Filter>source\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

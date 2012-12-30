@@ -7,6 +7,7 @@
 #include "Physics/SceneNodeMotionState.hpp"
 #include "Physics/btEllipsoidShape.hpp"
 #include "Physics/StaticMeshCollisionShape.hpp"
+#include "Physics/MeshCollisionShape.hpp"
 #include "Math.hpp"
 
 namespace GTEngine
