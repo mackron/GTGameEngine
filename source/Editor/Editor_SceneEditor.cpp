@@ -204,18 +204,39 @@ namespace GTEngine
                     if (&selectedNode == &this->currentState->positionGizmo.GetXArrowSceneNode())
                     {
                         this->currentState->isDraggingGizmoX = true;
+                        this->currentState->gizmoDragAxis    = glm::vec3(1.0f, 0.0f, 0.0f);
                     }
                     else if (&selectedNode == &this->currentState->positionGizmo.GetYArrowSceneNode())
                     {
                         this->currentState->isDraggingGizmoY = true;
+                        this->currentState->gizmoDragAxis    = glm::vec3(0.0f, 1.0f, 0.0f);
                     }
                     else if (&selectedNode == &this->currentState->positionGizmo.GetZArrowSceneNode())
                     {
                         this->currentState->isDraggingGizmoZ = true;
+                        this->currentState->gizmoDragAxis    = glm::vec3(0.0f, 0.0f, 1.0f);
                     }
                     else
                     {
                         return false;
+                    }
+
+
+                    // The mouse dragging has a different level of influence depending on the direction of the axis. We need to calculate that now. We project two points - the
+                    // center of the gizmo and the end point of the selected axis. From that we can get a normalised direction vector and use that as the influence.
+                    glm::vec3 gizmoWorldPos        = this->currentState->positionGizmo.GetPosition();
+                    glm::vec3 gizmoCenterWindowPos = this->currentState->viewport.Project(gizmoWorldPos);
+                    glm::vec3 axisTipWindowPos     = this->currentState->viewport.Project(gizmoWorldPos + (selectedNode.GetForwardVector() * selectedNode.GetWorldScale()));
+
+                    this->currentState->gizmoDragFactor = glm::vec2(axisTipWindowPos - gizmoCenterWindowPos);
+                    if (glm::dot(this->currentState->gizmoDragFactor, this->currentState->gizmoDragFactor) > 0.0f)
+                    {
+                        this->currentState->gizmoDragFactor = glm::normalize(this->currentState->gizmoDragFactor);
+                    }
+                    else
+                    {
+                        this->currentState->gizmoDragFactor.x = 1.0f;
+                        this->currentState->gizmoDragFactor.y = 0.0f;
                     }
 
 
@@ -468,7 +489,7 @@ namespace GTEngine
                 auto &game = this->editor.GetGame();
 
                 // If the mouse is captured we may need to move the screen around.
-                if (game.IsMouseCaptured() && !this->currentState->IsDraggingGizmo())
+                if (game.IsMouseCaptured())
                 {
                     const float moveSpeed   = 0.05f;
                     const float rotateSpeed = 0.1f;
@@ -477,29 +498,52 @@ namespace GTEngine
                     float mouseOffsetY;
                     game.GetSmoothedMouseOffset(mouseOffsetX, mouseOffsetY);
 
-                    if (game.IsMouseButtonDown(GTCore::MouseButton_Left))
+                    if (this->currentState->IsDraggingGizmo())
                     {
-                        if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
+                        if (mouseOffsetX != 0.0f || mouseOffsetY != 0.0f)
                         {
-                            this->currentState->camera.MoveUp(-mouseOffsetY * moveSpeed);
-                            this->currentState->camera.MoveRight(mouseOffsetX * moveSpeed);
-                        }
-                        else
-                        {
-                            this->currentState->camera.MoveForward(-mouseOffsetY * moveSpeed);
-                            this->currentState->cameraYRotation += -mouseOffsetX * rotateSpeed;
+                            // We need to drag the selected objects.
+                            glm::vec3 dragAxis      = this->currentState->gizmoDragAxis;
+                            float     dragDistance  = glm::length(glm::vec2(mouseOffsetX, -mouseOffsetY));
+                            float     dragDirection = glm::dot(glm::normalize(glm::vec2(mouseOffsetX, -mouseOffsetY)), this->currentState->gizmoDragFactor);
+                            float     dragSpeed     = 0.05f;
+
+                            for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
+                            {
+                                auto node = this->currentState->selectedNodes[i];
+                                if (node != nullptr)
+                                {
+                                    node->SetWorldPosition(node->GetWorldPosition() + (dragAxis * (dragDirection * dragDistance * dragSpeed)));
+                                }
+                            }
                         }
                     }
                     else
                     {
-                        if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
+                        if (game.IsMouseButtonDown(GTCore::MouseButton_Left))
                         {
-                            this->currentState->cameraXRotation += -mouseOffsetY * rotateSpeed;
-                            this->currentState->cameraYRotation += -mouseOffsetX * rotateSpeed;
+                            if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
+                            {
+                                this->currentState->camera.MoveUp(-mouseOffsetY * moveSpeed);
+                                this->currentState->camera.MoveRight(mouseOffsetX * moveSpeed);
+                            }
+                            else
+                            {
+                                this->currentState->camera.MoveForward(-mouseOffsetY * moveSpeed);
+                                this->currentState->cameraYRotation += -mouseOffsetX * rotateSpeed;
+                            }
                         }
-                    }
+                        else
+                        {
+                            if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
+                            {
+                                this->currentState->cameraXRotation += -mouseOffsetY * rotateSpeed;
+                                this->currentState->cameraYRotation += -mouseOffsetX * rotateSpeed;
+                            }
+                        }
 
-                    this->ApplyCameraRotation();
+                        this->ApplyCameraRotation();
+                    }
                 }
 
                 this->currentState->scene.Update(deltaTimeInSeconds);
@@ -900,7 +944,7 @@ namespace GTEngine
           selectedNodes(),
           positionGizmo(),
           sceneNodesToDelete(),
-          isDraggingGizmoX(false), isDraggingGizmoY(false), isDraggingGizmoZ(false),
+          isDraggingGizmoX(false), isDraggingGizmoY(false), isDraggingGizmoZ(false), gizmoDragFactor(1.0f, 0.0f),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
