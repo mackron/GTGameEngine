@@ -845,6 +845,7 @@ namespace GTEngine
 
     Editor_SceneEditor::State::~State()
     {
+        this->sceneEditor.GetEditor().GetGame().GetGUI().DeleteElement(this->GUI.Main);
     }
 
 
