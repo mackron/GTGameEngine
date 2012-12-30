@@ -231,6 +231,10 @@ namespace GTEngine
             PositionGizmo positionGizmo;
 
 
+            /// The list of scene nodes that need to be deleted when they are removed from the scene, or the state is destructed.
+            GTCore::Vector<SceneNode*> sceneNodesToDelete;
+
+
             struct _GUI
             {
                 _GUI()
