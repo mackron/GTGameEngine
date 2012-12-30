@@ -250,7 +250,9 @@ namespace GTEngine
         this->wireframeMaterialDefinition.LoadFromXML
         (
             "<material>"
-            "    <emissive id='Material_SimpleEmissive' />"
+            "    <emissive  id='Material_SimpleEmissive' />"
+            "    <diffuse   id='Material_NoDiffuse'      />"
+            "    <shininess id='Material_NoShininess'    />"
             "</material>"
         );
         this->wireframeMaterial = new Material(this->wireframeMaterialDefinition);
