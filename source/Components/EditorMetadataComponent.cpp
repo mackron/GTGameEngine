@@ -111,7 +111,7 @@ namespace GTEngine
         compoundShape->addChildShape(transform, new btBoxShape(ToBulletVector3(halfExtents)));
 
 
-
+        this->pickingCollisionShape = compoundShape;
         this->pickingCollisionObject.setCollisionShape(this->pickingCollisionShape);
 
         if (world != nullptr && this->pickingCollisionShape != nullptr)
