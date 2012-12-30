@@ -6,10 +6,11 @@
 
 namespace GTEngine
 {
-    Mesh::Mesh()
+    Mesh::Mesh(DrawMode drawModeIn)
         : geometry(nullptr), material(nullptr),
           skinningData(nullptr),
-          hasAnimated(false), deleteMaterial(false)
+          hasAnimated(false), deleteMaterial(false),
+          drawMode(drawModeIn)
     {
     }
 
