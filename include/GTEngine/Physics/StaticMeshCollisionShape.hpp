@@ -36,6 +36,8 @@ namespace GTEngine
 
     private:
 
+        /// Constructor for constructing the shape from a Bullet mesh interface.
+        StaticMeshCollisionShape(btTriangleIndexVertexArray* meshInterface, bool buildBvh);
     };
 }
 

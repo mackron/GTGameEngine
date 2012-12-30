@@ -14,6 +14,12 @@ namespace GTEngine
         this->AddFromModel(model);
     }
 
+    StaticMeshCollisionShape::StaticMeshCollisionShape(btTriangleIndexVertexArray* meshInterface, bool buildBvh)
+        : btBvhTriangleMeshShape(meshInterface, false, buildBvh)
+    {
+    }
+
+
     StaticMeshCollisionShape::~StaticMeshCollisionShape()
     {
         delete this->getMeshInterface();
@@ -35,7 +41,6 @@ namespace GTEngine
         assert(vertexArray != nullptr);
         {
             bool buildBvh = false;
-
 
             // We need to add a btIndexedMesh for each mesh in the model.
             for (size_t i = 0; i < model.meshes.count; ++i)
@@ -61,7 +66,7 @@ namespace GTEngine
 
             // This is some more evilness. I don't know how to apply a new mesh interface to the shape, so I'm just going to destruct and then reconstruct.
             btBvhTriangleMeshShape::~btBvhTriangleMeshShape();
-            new (this) btBvhTriangleMeshShape(vertexArray, false, buildBvh);
+            new (this) StaticMeshCollisionShape(vertexArray, buildBvh);
         }
     }
 }
