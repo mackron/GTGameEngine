@@ -406,6 +406,7 @@ namespace GTEngine
         {
             for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
             {
+                this->currentState->sceneNodesToDelete.RemoveFirstOccuranceOf(this->currentState->selectedNodes[i]);
                 delete this->currentState->selectedNodes[i];
             }
             this->currentState->selectedNodes.Clear();
@@ -476,12 +477,6 @@ namespace GTEngine
         if (object.GetType() == SceneObjectType_SceneNode)
         {
             auto &node = static_cast<SceneNode &>(object);
-            
-            auto metadata = node.GetComponent<EditorMetadataComponent>();
-            if (metadata == nullptr)
-            {
-                metadata = node.AddComponent<EditorMetadataComponent>();
-            }
 
             // The default data pointer is going to be a pointer to the editor state that owns the scene node. If this has already been set, we leave it
             // alone. Otherwise, we set it to the current state.
@@ -498,6 +493,25 @@ namespace GTEngine
             }
 
 
+            
+            auto metadata = node.GetComponent<EditorMetadataComponent>();
+            if (metadata == nullptr)
+            {
+                metadata = node.AddComponent<EditorMetadataComponent>();
+
+                // When a scene node is added without a metadata component (which is true if we've made it here), we know that it must be deleted when the
+                // state is also deleted. We need to mark it as such.
+                metadata->DeleteOnClose(true);
+
+                auto state = node.GetDataPointer<State>(0);
+                if (state != nullptr)
+                {
+                    state->sceneNodesToDelete.PushBack(&node);
+                }
+            }
+
+
+
             // We can cheat here and just act as if the object has been refreshed.
             this->OnObjectRefreshed(object);
         }
@@ -507,11 +521,14 @@ namespace GTEngine
     {
         if (object.GetType() == SceneObjectType_SceneNode)
         {
+            auto &node = static_cast<SceneNode &>(object);
+
+
             // We need to make sure scene nodes are deseleted when they are removed from the scene.
-            this->DeselectSceneNode(static_cast<SceneNode &>(object));
+            this->DeselectSceneNode(node);
 
             // The data pointer at position 0 will be a pointer to the Editor_SceneEditor::State object that previously owned the scene node. This needs to be cleared.
-            static_cast<SceneNode &>(object).SetDataPointer(0, nullptr);
+            node.SetDataPointer(0, nullptr);
         }
     }
 
@@ -815,6 +832,7 @@ namespace GTEngine
           cameraXRotation(0.0f), cameraYRotation(0.0f),
           selectedNodes(),
           positionGizmo(),
+          sceneNodesToDelete(),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
@@ -845,6 +863,11 @@ namespace GTEngine
 
     Editor_SceneEditor::State::~State()
     {
+        for (size_t i = 0; i < this->sceneNodesToDelete.count; ++i)
+        {
+            delete this->sceneNodesToDelete[i];
+        }
+
         this->sceneEditor.GetEditor().GetGame().GetGUI().DeleteElement(this->GUI.Main);
     }
 
