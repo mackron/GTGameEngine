@@ -523,11 +523,11 @@ namespace GTEngine
         struct RCDrawGeometry : public RenderCommand
         {
             RCDrawGeometry()
-                : materialParameters(), va(),
+                : materialParameters(), va(), drawMode(DrawMode_Triangles),
                   mvpMatrix(), normalMatrix(), modelViewMatrix(), modelMatrix(),
+                  doingMaterialPass(true),
                   changeFaceCulling(), cullFrontFace(), cullBackFace(), fill(true),
-                  enablePolygonOffset(false), polygonOffsetFactor(1.0f), polygonOffsetUnits(1.0f),
-                  doingMaterialPass(true)
+                  enablePolygonOffset(false), polygonOffsetFactor(1.0f), polygonOffsetUnits(1.0f)
             {
             }
 
@@ -544,11 +544,18 @@ namespace GTEngine
             /// The vertex array to draw.
             VertexArray* va;
 
+            // The drawing mode to use when drawing the vertex array.
+            DrawMode drawMode;
+
+
             /// The MVP matrix to apply to the geometry.
             glm::mat4 mvpMatrix;
             glm::mat3 normalMatrix;
             glm::mat4 modelViewMatrix;
             glm::mat4 modelMatrix;
+
+            /// Keeps track of whether or not to do the material pass. Should default to true.
+            bool doingMaterialPass;
 
             /// Whether or not the face culling should change.
             bool changeFaceCulling;
@@ -561,9 +568,6 @@ namespace GTEngine
 
             float polygonOffsetFactor;
             float polygonOffsetUnits;
-
-            /// Keeps track of whether or not to do the material pass. Should default to true.
-            bool doingMaterialPass;
 
 
         private:    // No copying.
