@@ -48,7 +48,7 @@ namespace GTEngine
             LayerState()
                 : ambientLights(), directionalLights(), pointLights(), spotLights(),
                   directionalLights_NoShadows(), pointLights_NoShadows(), spotLights_NoShadows(),
-                  refractiveLightingDrawRCs(), usedMaterials(), usedRefractiveMaterials(),
+                  refractiveLightingDrawRCs(), usedMaterials(), usedRefractiveMaterials(), alwaysOnTopRCQueue(),
                   cameraProjection(), cameraView(), cameraPosition(),
                   cameraFOV(90.0f), cameraAspect(16.0f / 9.0f), cameraZNear(0.1f), cameraZFar(1000.0f),
                   viewport(nullptr)
@@ -94,6 +94,10 @@ namespace GTEngine
             GTCore::BinarySearchTree<MaterialMetadata*> usedRefractiveMaterials;
 
 
+            /// The RCQueue containing the render commands for always-on-top geometry.
+            RCQueue alwaysOnTopRCQueue;
+
+
             /// The camera projection.
             glm::mat4 cameraProjection;
 
@@ -136,6 +140,8 @@ namespace GTEngine
 
                 this->usedMaterials.Clear();
                 this->usedRefractiveMaterials.Clear();
+
+                this->alwaysOnTopRCQueue.Clear();
             }
 
             /// Determines whether or not this state has refractive geometry needing to be drawn. We use this in determining whether or not we need to do
@@ -464,6 +470,22 @@ namespace GTEngine
             /// Controls the source and dest factors.
             BlendFunc sourceFactor;
             BlendFunc destFactor;
+        };
+
+
+        // Render command for controlling depth testing and writing.
+        struct RCControlDepth : public RenderCommand
+        {
+            RCControlDepth()
+                : enableDepthTesting(), enableDepthWriting()
+            {
+            }
+
+            void Execute();
+
+
+            bool enableDepthTesting;
+            bool enableDepthWriting;
         };
 
 
@@ -828,6 +850,10 @@ namespace GTEngine
         /// Performs the material pass. This is always the first pass.
         void MaterialPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive);
 
+        /// Adds the always-on-top geometry to the back RC queue.
+        void MaterialPass_AlwaysOnTopGeometry(LayerState &state);
+
+
         /// Performs the lighting pass. This always comes after the material pass.
         void LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive, int stencilIndex);
 
@@ -877,6 +903,7 @@ namespace GTEngine
         RCCache<RCBeginForegroundTransparency,  8>    rcBeginForegroundTransparency[2];
         RCCache<RCBeginTransparentMaterialPass, 8>    rcBeginTransparentMaterialPass[2];
         RCCache<RCControlBlending>                    rcControlBlending[2];
+        RCCache<RCControlDepth>                       rcControlDepth[2];
         RCCache<RCSetShader>                          rcSetShader[2];
         RCCache<RCDrawGeometry>                       rcDrawGeometry[2];
         RCCache<RCDrawLightGeometry>                  rcDrawLightGeometry[2];

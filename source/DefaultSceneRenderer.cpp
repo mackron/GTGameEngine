@@ -316,6 +316,7 @@ namespace GTEngine
         this->rcBeginForegroundTransparency[Renderer::BackIndex].Reset();
         this->rcBeginTransparentMaterialPass[Renderer::BackIndex].Reset();
         this->rcControlBlending[Renderer::BackIndex].Reset();
+        this->rcControlDepth[Renderer::BackIndex].Reset();
         this->rcSetShader[Renderer::BackIndex].Reset();
         this->rcDrawGeometry[Renderer::BackIndex].Reset();
         this->rcDrawLightGeometry[Renderer::BackIndex].Reset();
@@ -583,11 +584,8 @@ namespace GTEngine
                         }
 
 
-
-                        // Here is where we need to retrieve a shader for the material. This is stored as metadata. If the shader has not yet been created,
-                        // it will be created now.
+                        // Here is where we need to retrieve a shader for the material. This is stored as metadata. If the shader has not yet been created, it will be created now.
                         auto &materialMetadata = this->GetMaterialMetadata(*material);
-
                         if (materialMetadata.materialPassShader == nullptr)
                         {
                             materialMetadata.materialPassShader = this->CreateMaterialPassShader(*material);
@@ -623,20 +621,36 @@ namespace GTEngine
 
 
 
-                        // We need to add the rendering command to a couple of queues. The first queue is the queue for the material being used
-                        // by the mesh. The other queue contains the commands to call during the lighting pass.
-                        if (material->IsRefractive())
+                        // If the editor metadata wants the object to be rendered on top of everything else, it needs to be done differently.
+                        if (editorMetadataComponent != nullptr && editorMetadataComponent->IsAlwaysShownOnTop())
                         {
-                            state.usedRefractiveMaterials.Insert(&materialMetadata);
-                            state.refractiveLightingDrawRCs.Append(rcDrawGeometry);
+                            // This is the case where we want to draw everything on top without depth testing.
+                            auto &rcSetShader = this->rcSetShader[Renderer::BackIndex].Acquire();
+                            rcSetShader.shader = materialMetadata.materialPassShader;
+                            rcSetShader.zFar   = state.cameraZFar;
+
+                            state.alwaysOnTopRCQueue.Append(rcSetShader);
+                            state.alwaysOnTopRCQueue.Append(rcDrawGeometry);
                         }
                         else
                         {
-                            state.usedMaterials.Insert(&materialMetadata);
-                            //state.lightingDrawRCs.Append(rcDrawGeometry);
-                        }
+                            // This is the normal case where the object should be drawn like normal.
 
-                        materialMetadata.materialPassRCs.Append(rcDrawGeometry);
+
+                            // We need to add the rendering command to a couple of queues. The first queue is the queue for the material being used
+                            // by the mesh. The other queue contains the commands to call during the lighting pass.
+                            if (material->IsRefractive())
+                            {
+                                state.usedRefractiveMaterials.Insert(&materialMetadata);
+                                state.refractiveLightingDrawRCs.Append(rcDrawGeometry);
+                            }
+                            else
+                            {
+                                state.usedMaterials.Insert(&materialMetadata);
+                            }
+
+                            materialMetadata.materialPassRCs.Append(rcDrawGeometry);
+                        }
                     }
                 }
             }
@@ -735,7 +749,44 @@ namespace GTEngine
                 state.usedRefractiveMaterials.RemoveRoot();
             }
         }
+
+
+        // Here we need to render the always-on-top geometry. We do this in a different place depending on whether or not we have transparent geometry.
+        if (state.HasRefractiveGeometry())
+        {
+            if (refractive)
+            {
+                this->MaterialPass_AlwaysOnTopGeometry(state);
+            }
+        }
+        else
+        {
+            if (!refractive)
+            {
+                this->MaterialPass_AlwaysOnTopGeometry(state);
+            }
+        }
     }
+
+    void DefaultSceneRenderer::MaterialPass_AlwaysOnTopGeometry(LayerState &state)
+    {
+        // We want to disable depth testing here. We'll re-enable it afterwards.
+        auto &rcDisableDepthTesting = this->rcControlDepth[Renderer::BackIndex].Acquire();
+        rcDisableDepthTesting.enableDepthTesting = false;
+        rcDisableDepthTesting.enableDepthWriting = true;
+        Renderer::BackRCQueue->Append(rcDisableDepthTesting);
+
+
+        Renderer::BackRCQueue->Append(state.alwaysOnTopRCQueue);
+        state.alwaysOnTopRCQueue.Clear();
+
+
+        auto &rcEnableDepthTesting = this->rcControlDepth[Renderer::BackIndex].Acquire();
+        rcEnableDepthTesting.enableDepthTesting = true;
+        rcEnableDepthTesting.enableDepthWriting = true;
+        Renderer::BackRCQueue->Append(rcEnableDepthTesting);
+    }
+
 
     void DefaultSceneRenderer::LightingPass(Scene &scene, DefaultSceneRenderer::Framebuffer &framebuffer, LayerState &state, bool refractive, int stencilIndex)
     {
@@ -1525,6 +1576,28 @@ namespace GTEngine
         }
     }
 
+    void DefaultSceneRenderer::RCControlDepth::Execute()
+    {
+        if (this->enableDepthTesting)
+        {
+            Renderer::EnableDepthTest();
+        }
+        else
+        {
+            Renderer::DisableDepthTest();
+        }
+
+        if (this->enableDepthWriting)
+        {
+            Renderer::EnableDepthWrites();
+        }
+        else
+        {
+            Renderer::DisableDepthWrites();
+        }
+    }
+
+
     void DefaultSceneRenderer::RCLighting_SetShader::Execute()
     {
         Renderer::SetShader(this->shader);
@@ -1567,7 +1640,8 @@ namespace GTEngine
         }
 
 
-        Renderer::EnableDepthTest();
+        // NOTE: I've commented this line out when I added always-on-top support. Need to test if this breaks anything. If it does, use the RCControlDepth render command.
+        //Renderer::EnableDepthTest();
 
         if (this->changeFaceCulling)
         {
