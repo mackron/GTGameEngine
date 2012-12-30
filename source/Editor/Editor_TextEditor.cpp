@@ -71,7 +71,7 @@ namespace GTEngine
                         textAreaElement->SetText(fileContent.c_str());
                         textAreaElement->SetStyleAttribute("background-color", "inherit");
                         textAreaElement->SetStyleAttribute("text-color",       "inherit");
-                        
+                     
                         textAreaElement->textManager.MoveCursorToStart();
                         gui.FocusElement(textAreaElement);
 
@@ -83,7 +83,6 @@ namespace GTEngine
 
                         this->currentState = new State(textBoxElement, textAreaElement, absolutePath);
                         this->loadedStates.Add(absolutePath, this->currentState);
-
 
                         // Now we need to attach an event handler to the text area so we can detect changes to the text. We propagate this to the scripting
                         // environment so that the owner tab can be marked as modified.
