@@ -83,6 +83,7 @@ namespace GTEngine
                             this->currentState->GUI.Panel    = panelElement;
                             this->loadedStates.Add(absolutePath, this->currentState);
 
+                            
                             viewportElement->AttachEventHandler(this->currentState->viewportEventHandler);
                             viewportElement->OnSize();
 
@@ -110,7 +111,6 @@ namespace GTEngine
             }
             else
             {
-                GTCore::IO::Close(file);
                 return false;
             }
         }
@@ -832,7 +832,7 @@ namespace GTEngine
 
         this->scene.AddSceneNode(this->camera);
 
-
+        
         this->positionGizmo.Initialise();
         this->positionGizmo.GetSceneNode().SetDataPointer(0, this);
         this->positionGizmo.GetXArrowSceneNode().SetDataPointer(0, this);
