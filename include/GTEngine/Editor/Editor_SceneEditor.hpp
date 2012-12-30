@@ -257,6 +257,13 @@ namespace GTEngine
             bool isDraggingGizmoY;
             bool isDraggingGizmoZ;
 
+            /// The axis that the gizmo is being dragged on. If the x axis is being dragged, this will be set to (1, 0, 0), etc.
+            glm::vec3 gizmoDragAxis;
+
+            /// When dragging a gizmo axis with the mouse, the x and y movement has a different level of influence as it's being dragged. We keep track of
+            /// that here. This is a normalised vector.
+            glm::vec2 gizmoDragFactor;
+
 
 
             struct _GUI
