@@ -17,6 +17,10 @@ namespace GTEngine
 
     Editor_TextEditor::~Editor_TextEditor()
     {
+        for (size_t i = 0; i < this->loadedStates.count; ++i)
+        {
+            delete this->loadedStates.buffer[i]->value;
+        }
     }
 
     void Editor_TextEditor::Startup()
@@ -171,6 +175,7 @@ namespace GTEngine
 
     Editor_TextEditor::State::~State()
     {
+        this->textBox->GetServer().DeleteElement(this->textBox);
         delete this->textAreaEventHandler;
     }
 
