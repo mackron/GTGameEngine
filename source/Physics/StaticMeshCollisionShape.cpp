@@ -50,7 +50,7 @@ namespace GTEngine
                     auto mesh = model.meshes[i]->GetGeometry();
 
                     btIndexedMesh meshBt;
-                    meshBt.m_numTriangles        = mesh->GetVertexCount() / 3;
+                    meshBt.m_numTriangles        = mesh->GetIndexCount() / 3;
                     meshBt.m_triangleIndexBase   = reinterpret_cast<const unsigned char*>(mesh->GetIndexDataPtr());
                     meshBt.m_triangleIndexStride = sizeof(unsigned int) * 3;
                     meshBt.m_numVertices         = mesh->GetVertexCount();
