@@ -47,6 +47,11 @@ namespace GTEngine
         }
     }
 
+    void ModelComponent::SetModel(Model &model, bool takeOwnership)
+    {
+        this->SetModel(&model, takeOwnership);
+    }
+
     Model* ModelComponent::SetModel(const char* fileName)
     {
         this->SetModel(ModelLibrary::LoadFromFile(fileName), true);

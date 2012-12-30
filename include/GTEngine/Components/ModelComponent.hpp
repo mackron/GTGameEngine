@@ -16,6 +16,7 @@ namespace GTEngine
 
         /// Sets the model.
         void SetModel(Model* model, bool takeOwnership = false);
+        void SetModel(Model &model, bool takeOwnership = false);
 
         /// Sets the model from a file.
         ///
