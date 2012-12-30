@@ -85,6 +85,12 @@ function Editor.SceneEditor.UpdatePanel()
     end
 end
 
+function Editor.SceneEditor.UpdateTransformPanel()
+    if Editor.SceneEditor.GetSelectedNodeCount() == 1 then
+        Editor.SceneEditor.CurrentSceneEditorElement:UpdateTransformPanel(Editor.SceneEditor.GetFirstSelectedNode());
+    end
+end
+
 
 
 

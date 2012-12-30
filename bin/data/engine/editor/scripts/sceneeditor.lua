@@ -4,14 +4,18 @@ function GTGUI.Element:Vector3Input()
     self.Y = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:2px;' />");
     self.Z = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:0px;' />");
     
-    function self:SetFromXYZ(x, y, z)
-        if x == -0.0 then x = 0.0 end;
-        if y == -0.0 then y = 0.0 end;
-        if z == -0.0 then z = 0.0 end;
+    self.BlockSetFromXYZ = false;
     
-        self.X:SetText(string.format("%.4f", x));
-        self.Y:SetText(string.format("%.4f", y));
-        self.Z:SetText(string.format("%.4f", z));
+    function self:SetFromXYZ(x, y, z)
+        if not self.BlockSetFromXYZ then
+            if x == -0.0 then x = 0.0 end;
+            if y == -0.0 then y = 0.0 end;
+            if z == -0.0 then z = 0.0 end;
+
+            self.X:SetText(string.format("%.4f", x));
+            self.Y:SetText(string.format("%.4f", y));
+            self.Z:SetText(string.format("%.4f", z));
+        end
     end
     
     function self:GetXYZ()
@@ -19,16 +23,18 @@ function GTGUI.Element:Vector3Input()
     end
     
     
+    -- For the events below, we don't want to bounce back into SetFromXYZ() in the event that that event handler wants to do something
+    -- with the vector. Thus, we block SetFromXYZ() from being called during this event handler.
     self.X:OnTextChanged(function()
-        self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())});
+        self.BlockSetFromXYZ = true; self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())}); self.BlockSetFromXYZ = false;
     end);
     
     self.Y:OnTextChanged(function()
-        self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())});
+        self.BlockSetFromXYZ = true; self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())}); self.BlockSetFromXYZ = false;
     end);
     
     self.Z:OnTextChanged(function()
-        self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())});
+        self.BlockSetFromXYZ = true; self:OnValueChanged({x = tonumber(self.X:GetText()), y = tonumber(self.Y:GetText()), z = tonumber(self.Z:GetText())}); self.BlockSetFromXYZ = false;
     end);
     
     
@@ -131,13 +137,22 @@ function GTGUI.Element:SceneEditorPanel()
     
     -- Shows the panels.
     function self:ShowPanels(node)
-        self.Body.MessageContainer:Hide();
-        self.Body.PanelsContainer:Show();
-        
-        self.Body.DetailsPanel.NameTextBox:SetText(node:GetName());
-        self.Body.TransformPanel.PositionInput:SetFromXYZ(node:GetPosition());
-        self.Body.TransformPanel.RotationInput:SetFromXYZ(node:GetRotationXYZ());
-        self.Body.TransformPanel.ScaleInput:SetFromXYZ(node:GetScale());
+        if node ~= nil then
+            self.Body.MessageContainer:Hide();
+            self.Body.PanelsContainer:Show();
+            
+            self.Body.DetailsPanel.NameTextBox:SetText(node:GetName());
+            self:UpdateTransformPanel(node);
+        end
+    end
+    
+    -- Updates the transform panel to show the transformation of the given node.
+    function self:UpdateTransformPanel(node)
+        if node ~= nil then
+            self.Body.TransformPanel.PositionInput:SetFromXYZ(node:GetPosition());
+            self.Body.TransformPanel.RotationInput:SetFromXYZ(node:GetRotationXYZ());
+            self.Body.TransformPanel.ScaleInput:SetFromXYZ(node:GetScale());
+        end
     end
 end
 
@@ -181,6 +196,10 @@ function GTGUI.Element:SceneEditor()
     
     function self:ShowPanels(node)
         self.Panel:ShowPanels(node);
+    end
+    
+    function self:UpdateTransformPanel(node)
+        self.Panel:UpdateTransformPanel(node);
     end
     
     

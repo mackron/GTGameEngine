@@ -731,6 +731,11 @@ namespace GTEngine
             {
                 this->RescaleGizmos();
             }
+
+            if (this->currentState->selectedNodes.count == 1 && &node == this->currentState->selectedNodes[0])
+            {
+                this->GetScript().Execute("Editor.SceneEditor.UpdateTransformPanel();");
+            }
         }
     }
 
