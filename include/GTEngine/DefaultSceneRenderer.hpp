@@ -78,6 +78,10 @@ namespace GTEngine
             GTCore::Vector<const SceneObject*> spotLights_NoShadows;
 
 
+            /// The list of scene nodes with editor metadata that is using a custom model.
+            GTCore::BinarySearchTree<const SceneNode*> editorModels;
+
+
             /// Every piece of visible geometry will need to be re-rendered for every light. This needs to be efficient. To do this, we cache a draw call that
             /// will draw the geometry in each lighting pass, and then append that to the renderer's back RC cache in one go every time it's needed. It will
             /// be cleared at the beginning of every frame.
@@ -134,6 +138,8 @@ namespace GTEngine
                 this->directionalLights_NoShadows.Clear();
                 this->pointLights_NoShadows.Clear();
                 this->spotLights_NoShadows.Clear();
+                
+                this->editorModels.Clear();
 
                 //this->lightingDrawRCs.Clear();
                 this->refractiveLightingDrawRCs.Clear();
