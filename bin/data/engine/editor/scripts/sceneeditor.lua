@@ -224,6 +224,25 @@ function GTGUI.Element:SceneEditor()
         self.Viewport:Focus();
     end);
     
+    self.ContextMenu:AppendItem("Add Point Light"):OnPressed(function()
+        local newNode = Editor.SceneEditor.AddSceneNode("PointLight");
+        if newNode ~= nil then
+            newNode:AddComponent(GTEngine.Components.ModelComponent):SetModel("engine/models/sphere.dae");
+            newNode:AddComponent(GTEngine.Components.PointLightComponent);
+            newNode:SetScale(0.25, 0.25, 0.25);
+            
+            -- We want the new node to be selected, and to be the ONLY selected object.
+            Editor.SceneEditor.DeselectAll();
+            Editor.SceneEditor.SelectSceneNode(newNode);
+
+            
+            newNode:Refresh();
+        end
+        
+        self.ContextMenu:Hide();
+        self.Viewport:Focus();
+    end);
+    
     
     
     function self:HidePanels(message)
