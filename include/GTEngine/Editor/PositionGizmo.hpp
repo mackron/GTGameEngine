@@ -68,6 +68,23 @@ namespace GTEngine
 
         /// The scene node for the z axis arrow.
         SceneNode zArrowSceneNode;
+
+
+        /// The model to use for for the x axis arrow.
+        Model xArrowModel;
+
+        /// The model to use for for the y axis arrow.
+        Model yArrowModel;
+
+        /// The model to use for for the z axis arrow.
+        Model zArrowModel;
+
+
+        /// The geometry of the line part of the arrow models' mesh.
+        VertexArray* arrowLineVA;
+
+        /// The geometry of the head part of the arrow models' mesh.
+        VertexArray* arrowHeadVA;
     };
 }
 
