@@ -523,7 +523,10 @@ namespace GTEngine
                 // If we have a model, we'll want to set the collision shape to that of the model.
                 if (node.HasComponent<ModelComponent>())
                 {
-                    metadata->SetPickingCollisionShapeToModel();
+                    if (metadata->UseModelForPickingShape())
+                    {
+                        metadata->SetPickingCollisionShapeToModel();
+                    }
                 }
                 else
                 {
