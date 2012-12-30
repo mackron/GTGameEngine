@@ -18,6 +18,7 @@ namespace GTEngine
 
     EditorMetadataComponent::~EditorMetadataComponent()
     {
+        this->DeleteCollisionShape();
     }
 
 
@@ -57,11 +58,8 @@ namespace GTEngine
         }
 
 
-        if (this->pickingCollisionShape != nullptr)
-        {
-            delete this->pickingCollisionShape;
-            this->pickingCollisionShape = nullptr;
-        }
+        // We'll be completely recreating the shape so we'll need to delete the old one.
+        this->DeleteCollisionShape();
 
         
         auto modelComponent = this->GetNode().GetComponent<ModelComponent>();
@@ -94,11 +92,7 @@ namespace GTEngine
 
 
         // The old shape needs to be deleted.
-        if (this->pickingCollisionShape != nullptr)
-        {
-            delete this->pickingCollisionShape;
-            this->pickingCollisionShape = nullptr;
-        }
+        this->DeleteCollisionShape();
 
 
         // Since we want to apply an offset to the box, we'll need to use a compund shape.
@@ -151,5 +145,28 @@ namespace GTEngine
     void EditorMetadataComponent::SetAlwaysShowOnTop(bool alwaysShowOnTopIn)
     {
         this->alwaysShowOnTop = alwaysShowOnTopIn;
+    }
+
+
+
+    void EditorMetadataComponent::DeleteCollisionShape()
+    {
+        if (this->pickingCollisionShape != nullptr)
+        {
+            if (this->pickingCollisionShape->getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
+            {
+                auto compoundShape = static_cast<btCompoundShape*>(this->pickingCollisionShape);
+                
+                while (compoundShape->getNumChildShapes() > 0)
+                {
+                    delete compoundShape->getChildShape(0);
+                    compoundShape->removeChildShapeByIndex(0);
+                }
+            }
+
+
+            delete this->pickingCollisionShape;
+            this->pickingCollisionShape = nullptr;
+        }
     }
 }

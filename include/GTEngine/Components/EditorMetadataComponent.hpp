@@ -75,6 +75,13 @@ namespace GTEngine
 
     private:
 
+        /// Deletes the collision shape and sets the pointer to null.
+        void DeleteCollisionShape();
+
+
+
+    private:
+
         /// Keeps track of whether or not the scene node should be rendered on top of everything else. Depth testing will always be disabled when
         /// this is set. This is mainly intended for things like gizmos.
         bool alwaysShowOnTop;
