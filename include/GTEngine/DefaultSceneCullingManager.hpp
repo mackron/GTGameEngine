@@ -97,7 +97,7 @@ namespace GTEngine
         struct SceneNodeMetadata
         {
             SceneNodeMetadata()
-                : modelCollisionObject(nullptr),      modelCollisionShape(nullptr), modelCollisionObjectHalfExtents(),
+                : modelCollisionObject(nullptr),      modelCollisionShape(nullptr), modelCollisionObjectAABBMin(), modelCollisionObjectAABBMax(),
                   pointLightCollisionObject(nullptr), pointLightCollisionShape(nullptr),
                   spotLightCollisionObject(nullptr),  spotLightCollisionShape(nullptr)
             {
@@ -119,26 +119,22 @@ namespace GTEngine
                 this->modelCollisionShape  = new btCompoundShape;
 
                 // We attach a single box to the compound shape, which will be the size of the AABB.
-                glm::vec3 aabbMin, aabbMax;
-                model.GetBaseAABB(aabbMin, aabbMax);
-
+                model.GetBaseAABB(this->modelCollisionObjectAABBMin, this->modelCollisionObjectAABBMax);
+                
+                glm::vec3 aabbMin     = this->modelCollisionObjectAABBMin * scale;
+                glm::vec3 aabbMax     = this->modelCollisionObjectAABBMax * scale;
                 glm::vec3 halfExtents = (aabbMax - aabbMin) * 0.5f;
 
                 btTransform boxTransform;
                 boxTransform.setIdentity();
                 boxTransform.setOrigin(btVector3(aabbMin.x + halfExtents.x, aabbMin.y + halfExtents.y, aabbMin.z + halfExtents.z));
 
-                auto boxShape = new btBoxShape(btVector3(halfExtents.x, halfExtents.y, halfExtents.z));
-                boxShape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
-
-                this->modelCollisionShape->addChildShape(boxTransform, boxShape);
+                this->modelCollisionShape->addChildShape(boxTransform, new btBoxShape(btVector3(halfExtents.x, halfExtents.y, halfExtents.z)));
+                this->modelCollisionShape->recalculateLocalAabb();
 
 
                 this->modelCollisionObject->setCollisionShape(this->modelCollisionShape);
                 this->modelCollisionObject->setWorldTransform(worldTransform);
-
-
-                this->modelCollisionObjectHalfExtents = halfExtents;
             }
 
             void DeleteModelCollisionObject()
@@ -258,14 +254,21 @@ namespace GTEngine
                     }
 
 
-                    // We need to remove the shape and re-add a new one. The reason is because setLocalScaling() breaks down when the previous scale had an axis of 0.0.
-                    auto childTransform = this->modelCollisionShape->getChildTransform(0);
-
+                    // We need to remove the shape and re-add a new one.
                     delete this->modelCollisionShape->getChildShape(0);
                     this->modelCollisionShape->removeChildShapeByIndex(0);
 
-                    this->modelCollisionShape->addChildShape(childTransform, new btBoxShape(btVector3(this->modelCollisionObjectHalfExtents.x, this->modelCollisionObjectHalfExtents.y, this->modelCollisionObjectHalfExtents.z)));
-                    this->modelCollisionShape->getChildShape(0)->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
+
+                    glm::vec3 aabbMin     = this->modelCollisionObjectAABBMin * scale;
+                    glm::vec3 aabbMax     = this->modelCollisionObjectAABBMax * scale;
+                    glm::vec3 halfExtents = (aabbMax - aabbMin) * 0.5f;
+
+                    btTransform boxTransform;
+                    boxTransform.setIdentity();
+                    boxTransform.setOrigin(btVector3(aabbMin.x + halfExtents.x, aabbMin.y + halfExtents.y, aabbMin.z + halfExtents.z));
+
+
+                    this->modelCollisionShape->addChildShape(boxTransform, new btBoxShape(btVector3(halfExtents.x, halfExtents.y, halfExtents.z)));
                     this->modelCollisionShape->recalculateLocalAabb();
 
 
@@ -279,7 +282,7 @@ namespace GTEngine
             }
 
             /// Refreshes the model collision object.
-            void RefreshModelCollisionObject(Model &model)
+            void RefreshModelCollisionObject(Model &model, const glm::vec3 &scale)
             {
                 if (this->modelCollisionObject != nullptr)
                 {
@@ -289,20 +292,27 @@ namespace GTEngine
                         world->RemoveCollisionObject(*this->modelCollisionObject);
                     }
 
-                    glm::vec3 aabbMin, aabbMax;
-                    model.GetBaseAABB(aabbMin, aabbMax);
 
+                    // We need to remove the shape and re-add a new one.
+                    delete this->modelCollisionShape->getChildShape(0);
+                    this->modelCollisionShape->removeChildShapeByIndex(0);
+
+
+                    model.GetBaseAABB(this->modelCollisionObjectAABBMin, this->modelCollisionObjectAABBMax);
+
+                    glm::vec3 aabbMin     = this->modelCollisionObjectAABBMin * scale;
+                    glm::vec3 aabbMax     = this->modelCollisionObjectAABBMax * scale;
                     glm::vec3 halfExtents = (aabbMax - aabbMin) * 0.5f;
 
                     btTransform boxTransform;
                     boxTransform.setIdentity();
                     boxTransform.setOrigin(btVector3(aabbMin.x + halfExtents.x, aabbMin.y + halfExtents.y, aabbMin.z + halfExtents.z));
 
-                    auto boxShape = static_cast<btBoxShape*>(this->modelCollisionShape->getChildShape(0));
-                    boxShape->setImplicitShapeDimensions(btVector3(halfExtents.x, halfExtents.y, halfExtents.z));
 
-                    // Here we need to ensure the box has the correct transformation.
-                    this->modelCollisionShape->updateChildTransform(0, boxTransform);
+                    this->modelCollisionShape->addChildShape(boxTransform, new btBoxShape(btVector3(halfExtents.x, halfExtents.y, halfExtents.z)));
+                    this->modelCollisionShape->recalculateLocalAabb();
+
+
 
                     if (world != nullptr)
                     {
@@ -378,8 +388,11 @@ namespace GTEngine
             /// is defined by it's AABB, which will require an offset to be applied. Thus, we're going to use a compound shape.
             btCompoundShape* modelCollisionShape;
 
-            /// The half extents of the model collision shape.
-            glm::vec3 modelCollisionObjectHalfExtents;
+            /// The min bounds of the model's unscaled AABB.
+            glm::vec3 modelCollisionObjectAABBMin;
+
+            /// The max bounds of the model's unscaled AABB.
+            glm::vec3 modelCollisionObjectAABBMax;
 
 
             /// A pointer to the collision object for the point light component. Can be null.
