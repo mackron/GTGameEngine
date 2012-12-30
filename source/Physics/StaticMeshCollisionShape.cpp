@@ -16,6 +16,7 @@ namespace GTEngine
 
     StaticMeshCollisionShape::~StaticMeshCollisionShape()
     {
+        delete this->getMeshInterface();
     }
 
 
