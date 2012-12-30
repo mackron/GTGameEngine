@@ -619,7 +619,10 @@ namespace GTEngine
 
             if (metadata->GetPickingCollisionShape() != nullptr)
             {
-                metadata->GetPickingCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+                if (metadata->UseModelForPickingShape())
+                {
+                    metadata->GetPickingCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+                }
 
                 if (node.IsVisible())
                 {
