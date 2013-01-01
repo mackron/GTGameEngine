@@ -135,8 +135,8 @@ namespace GTEngine
         if (texCoordOffset != -1)
         {
             vertex0[texCoordOffset + 0] = 1.0f; vertex0[texCoordOffset + 1] = 1.0f;
-            vertex1[texCoordOffset + 0] = 0.0f; vertex1[texCoordOffset + 1] = 0.0f;
-            vertex2[texCoordOffset + 0] = 0.0f; vertex2[texCoordOffset + 1] = 1.0f;
+            vertex1[texCoordOffset + 0] = 0.0f; vertex1[texCoordOffset + 1] = 1.0f;
+            vertex2[texCoordOffset + 0] = 0.0f; vertex2[texCoordOffset + 1] = 0.0f;
             vertex3[texCoordOffset + 0] = 1.0f; vertex3[texCoordOffset + 1] = 0.0f;
         }
 
