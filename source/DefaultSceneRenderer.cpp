@@ -829,10 +829,10 @@ namespace GTEngine
                                             rcDrawGeometry.materialParameters.Set(iParam->key, iParam->value);
                                         }
 
-                                        auto &materialMetadata = this->GetMaterialMetadata(*this->wireframeMaterial);
+                                        auto &materialMetadata = this->GetMaterialMetadata(*material);
                                         if (materialMetadata.materialPassShader == nullptr)
                                         {
-                                            materialMetadata.materialPassShader = this->CreateMaterialPassShader(*this->wireframeMaterial);
+                                            materialMetadata.materialPassShader = this->CreateMaterialPassShader(*material);
                                         }
 
 
