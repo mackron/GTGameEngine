@@ -169,6 +169,7 @@ namespace GTEngine
                     this->spritePickingCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f) * ToBulletVector3(this->node.GetWorldScale()));
                     
                     this->spritePickingCollisionObject = new CollisionObject;
+                    this->spritePickingCollisionObject->setUserPointer(this);
                     this->spritePickingCollisionObject->setCollisionShape(this->spritePickingCollisionShape);
                 }
             }
@@ -229,6 +230,11 @@ namespace GTEngine
     const Model* EditorMetadataComponent::GetSpriteModel() const
     {
         return this->spriteModel;
+    }
+
+    CollisionObject* EditorMetadataComponent::GetSpritePickingCollisionObject()
+    {
+        return this->spritePickingCollisionObject;
     }
 
 

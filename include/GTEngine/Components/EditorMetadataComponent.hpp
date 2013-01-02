@@ -118,6 +118,12 @@ namespace GTEngine
         ///     A pointer to the model that should be used to draw the sprite, or null if the component is not using a sprite.
         const Model* GetSpriteModel() const;
 
+        /// Retrieves a pointer to the picking collision object of the sprite.
+        ///
+        /// @return
+        ///     A pointer to the picking collision object of the sprite, or null if the component is not using a sprite.
+        CollisionObject* GetSpritePickingCollisionObject();
+
 
         /// TEMP: Sets the transformation of the sprite.
         void SetSpriteTransform(const glm::mat4 &spriteTransformIn) { this->spriteTransform = spriteTransformIn; }

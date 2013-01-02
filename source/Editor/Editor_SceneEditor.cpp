@@ -697,6 +697,14 @@ namespace GTEngine
 
                         state->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                     }
+
+
+
+                    // If we have a sprite, we'll want to add it's picking object to the picking world.
+                    if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
+                    {
+                        state->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                    }
                 }
                 else
                 {
