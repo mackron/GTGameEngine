@@ -228,8 +228,7 @@ function GTGUI.Element:SceneEditor()
         local newNode = Editor.SceneEditor.AddSceneNode("PointLight");
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.PointLightComponent);
-            newNode:SetScale(0.25, 0.25, 0.25);
-            
+
             -- We want the new node to be selected, and to be the ONLY selected object.
             Editor.SceneEditor.DeselectAll();
             Editor.SceneEditor.SelectSceneNode(newNode);
