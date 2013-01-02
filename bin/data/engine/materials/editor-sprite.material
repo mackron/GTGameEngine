@@ -1,0 +1,20 @@
+
+<material>
+    <emissive>
+        uniform sampler2D SpriteTexture;
+        uniform vec3      SpriteColour;
+    
+        vec3 Emissive()
+        {
+            return texture2D(SpriteTexture, VertexOutput_TexCoord).rgb * SpriteColour;
+        }
+    </emissive>
+    
+    <diffuse   id='Material_NoDiffuse' />
+    <shininess id='Material_NoShininess' />
+    
+    <defaultproperties>
+        <texture2D name='SpriteTexture'>engine/textures/default.png</texture2D>
+        <float3    name='SpriteColour' >1.0 1.0 1.0</float3>
+    </defaultproperties>
+</material>
