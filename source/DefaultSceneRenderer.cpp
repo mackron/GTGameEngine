@@ -40,7 +40,7 @@ namespace GTEngine
             {
                 auto &node = static_cast<SceneNode &>(object);
 
-                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetModel() != nullptr)
+                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetSpriteModel() != nullptr)
                 {
                     this->layerState.editorModels.Insert(&node);
                 }
@@ -58,7 +58,7 @@ namespace GTEngine
             {
                 auto &node = static_cast<SceneNode &>(object);
 
-                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetModel() != nullptr)
+                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetSpriteModel() != nullptr)
                 {
                     this->layerState.editorModels.Insert(&node);
                 }
@@ -82,7 +82,7 @@ namespace GTEngine
                 }
 
 
-                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetModel() != nullptr)
+                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetSpriteModel() != nullptr)
                 {
                     this->layerState.editorModels.Insert(&node);
                 }
@@ -106,7 +106,7 @@ namespace GTEngine
                 }
 
 
-                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetModel() != nullptr)
+                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetSpriteModel() != nullptr)
                 {
                     this->layerState.editorModels.Insert(&node);
                 }
@@ -130,7 +130,7 @@ namespace GTEngine
                 }
 
 
-                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetModel() != nullptr)
+                if (node.HasComponent<EditorMetadataComponent>() && node.GetComponent<EditorMetadataComponent>()->GetSpriteModel() != nullptr)
                 {
                     this->layerState.editorModels.Insert(&node);
                 }
@@ -791,10 +791,10 @@ namespace GTEngine
                     auto metadata = node->GetComponent<EditorMetadataComponent>();
                     assert(metadata != nullptr);
                     {
-                        auto model = metadata->GetModel();
+                        auto model = metadata->GetSpriteModel();
                         assert(model != nullptr);
                         {
-                            glm::mat4 ModelMatrix     = (metadata->GetModelTransformMode() != EditorMetadataComponent::ModelTransformMode_FromSceneNode) ? metadata->GetCustomModelTransform() : node->GetWorldTransform();
+                            glm::mat4 ModelMatrix     = metadata->GetSpriteTransform();
                             glm::mat4 ModelViewMatrix = state.cameraView       * ModelMatrix;
                             glm::mat4 MVPMatrix       = state.cameraProjection * ModelViewMatrix;
                             glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));

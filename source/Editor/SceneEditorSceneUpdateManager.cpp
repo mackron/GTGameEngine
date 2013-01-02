@@ -19,14 +19,14 @@ namespace GTEngine
         auto metadata = node.GetComponent<EditorMetadataComponent>();
         if (metadata != nullptr)
         {
-            if (metadata->GetModelTransformMode() == EditorMetadataComponent::ModelTransformMode_FaceCamera)
+            if (metadata->IsUsingSprite())
             {
                 glm::mat4 transform(Math::CalculateLookAtMatrix(node.GetWorldPosition(), this->cameraNode.GetWorldPosition()));
                 transform[3] = glm::vec4(node.GetWorldPosition(), 1.0f);
 
                 transform *= glm::scale(node.GetWorldScale());
 
-                metadata->SetCustomModelTransform(transform);
+                metadata->SetSpriteTransform(transform);
             }
         }
 

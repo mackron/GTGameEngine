@@ -217,28 +217,6 @@ namespace GTEngine
             }
 
 
-            /// Starts using a sprite for the given scene node.
-            void RegisterSprite(SceneNode &node, const char* texture, const glm::vec3 &colour)
-            {
-                auto metadata = node.GetComponent<EditorMetadataComponent>();
-                assert(metadata != nullptr);
-                {
-                    auto model = metadata->SetModel(ModelLibrary::CreatePlaneXY(0.25f, 0.25f));
-                    assert(model != nullptr);
-                    {
-                        model->meshes[0]->SetMaterial("engine/materials/editor-sprite.material");
-                        model->meshes[0]->GetMaterial()->SetParameter("SpriteTexture", Texture2DLibrary::Acquire(texture));
-                        model->meshes[0]->GetMaterial()->SetParameter("SpriteColour",  colour);
-                    }
-
-                    metadata->SetModelTransformMode(EditorMetadataComponent::ModelTransformMode_FaceCamera);
-
-                    metadata->UseModelForPickingShape(false);
-                    metadata->SetPickingCollisionShapeToBox(glm::vec3(0.125f, 0.125f, 0.125f), glm::vec3(0.0f, 0.0f, 0.0f));
-                }
-            }
-
-
 
             /// A reference to the scene editor that owns this state.
             Editor_SceneEditor &sceneEditor;

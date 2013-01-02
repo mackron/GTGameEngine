@@ -3,6 +3,7 @@
 #include <GTEngine/Components/ModelComponent.hpp>
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/ModelLibrary.hpp>
+#include <GTEngine/Texture2DLibrary.hpp>
 
 namespace GTEngine
 {
@@ -13,7 +14,7 @@ namespace GTEngine
           alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
-          ownsModel(false), modelTransformMode(ModelTransformMode_FromSceneNode), model(nullptr), customModelTransform()
+          spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTransform()
     {
         pickingCollisionObject.setUserPointer(this);
     }
@@ -21,11 +22,7 @@ namespace GTEngine
     EditorMetadataComponent::~EditorMetadataComponent()
     {
         this->DeleteCollisionShape();
-
-        if (this->ownsModel)
-        {
-            ModelLibrary::Delete(this->model);
-        }
+        this->HideSprite();         // <-- This will make sure everything to do with the sprite is deallocated.
     }
 
 
@@ -156,50 +153,83 @@ namespace GTEngine
 
 
 
-    Model* EditorMetadataComponent::SetModel(Model* model, bool takeOwnership)
+    void EditorMetadataComponent::ShowSprite(const char* texturePath, const glm::vec3 &colour)
     {
-        if (this->ownsModel)
+        if (this->spriteModel == nullptr)       // <-- No need to re-create the model if we already have one.
         {
-            ModelLibrary::Delete(this->model);
+            this->spriteModel = ModelLibrary::CreatePlaneXY(0.5f, 0.5f);
+            assert(this->spriteModel != nullptr);
+            assert(this->spriteModel->meshes.count == 1);
+            {
+                this->spriteModel->meshes[0]->SetMaterial("engine/materials/editor-sprite.material");
+
+                assert(this->spritePickingCollisionShape  == nullptr);
+                assert(this->spritePickingCollisionObject == nullptr);
+                {
+                    this->spritePickingCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f) * ToBulletVector3(this->node.GetWorldScale()));
+                    
+                    this->spritePickingCollisionObject = new CollisionObject;
+                    this->spritePickingCollisionObject->setCollisionShape(this->spritePickingCollisionShape);
+                }
+            }
         }
-        
-        this->model     = model;
-        this->ownsModel = takeOwnership;
 
 
-        // This component has changed. We need to let the scene know about this so that it can change culling information and whatnot.
-        auto scene = this->GetNode().GetScene();
-        if (scene != nullptr)
+        assert(this->spriteModel != nullptr);
+        assert(this->spriteModel->meshes.count == 1);
+        assert(this->spriteModel->meshes[0]->GetMaterial() != nullptr);
         {
-            scene->OnSceneNodeComponentChanged(this->GetNode(), *this);
+            this->spriteModel->meshes[0]->GetMaterial()->SetParameter("SpriteTexture", Texture2DLibrary::Acquire(texturePath));
+            this->spriteModel->meshes[0]->GetMaterial()->SetParameter("SpriteColour",  colour);
         }
-
-        return model;
     }
 
-    Model & EditorMetadataComponent::SetModel(Model &model, bool takeOwnership)
+    void EditorMetadataComponent::ShowSprite(const char* texturePath, float colourR, float colourG, float colourB)
     {
-        this->SetModel(&model, takeOwnership);
-        return model;
+        this->ShowSprite(texturePath, glm::vec3(colourR, colourG, colourB));
     }
 
-    Model* EditorMetadataComponent::SetModel(const char* fileName)
+    void EditorMetadataComponent::HideSprite()
     {
-        this->SetModel(ModelLibrary::LoadFromFile(fileName), true);
-        return this->model;
+        delete this->spritePickingCollisionObject;      // <-- the destructor will remove it from the scene.
+        delete this->spritePickingCollisionShape;
+        ModelLibrary::Delete(this->spriteModel);
+
+        this->spritePickingCollisionObject = nullptr;
+        this->spritePickingCollisionShape  = nullptr;
+        this->spriteModel                  = nullptr;
     }
 
-    void EditorMetadataComponent::UnsetModel()
+    void EditorMetadataComponent::ApplyScaleToSprite()
     {
-        this->SetModel(static_cast<Model*>(nullptr));
+        if (this->spritePickingCollisionShape != nullptr && this->spritePickingCollisionObject != nullptr)
+        {
+            auto world = this->spritePickingCollisionObject->GetWorld();
+            if (world != nullptr)
+            {
+                world->RemoveCollisionObject(*this->spritePickingCollisionObject);
+            }
+
+
+            this->spritePickingCollisionShape->setImplicitShapeDimensions(btVector3(0.5f, 0.5f, 0.5f) * ToBulletVector3(this->node.GetWorldScale()));
+
+
+            if (world != nullptr)
+            {
+                world->AddCollisionObject(*this->spritePickingCollisionObject);
+            }
+        }
     }
 
-
-    void EditorMetadataComponent::SetCustomModelTransform(const glm::mat4 &customTransform)
+    bool EditorMetadataComponent::IsUsingSprite() const
     {
-        this->customModelTransform = customTransform;
+        return this->spriteModel != nullptr;
     }
 
+    const Model* EditorMetadataComponent::GetSpriteModel() const
+    {
+        return this->spriteModel;
+    }
 
 
 

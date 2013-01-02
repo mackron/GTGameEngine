@@ -92,43 +92,38 @@ namespace GTEngine
 
 
 
-        /// Sets the model.
-        Model*  SetModel(Model* model, bool takeOwnership = false);
-        Model & SetModel(Model &model, bool takeOwnership = false);
 
-        /// Sets the model from a file.
-        ///
-        /// @param fileName [in] The name of the model file to load.
-        ///
-        /// @return A pointer to the model that was loaded by the component.
+        /// Shows a sprite on the object.
+        void ShowSprite(const char* texturePath, const glm::vec3 &colour = glm::vec3(1.0f, 1.0f, 1.0f));
+        void ShowSprite(const char* texturePath, float colourR, float colourG, float colourB);
+
+        /// Hides the sprite.
         ///
         /// @remarks
-        ///     This will load the model via the model library and will take ownership, which means it will be deleted whenever the
-        ///     component no longer uses it (either when it's change, or when the component is destructed).
-        Model* SetModel(const char* fileName);
+        ///     This will actually deallocate everything also.
+        void HideSprite();
 
-        /// Unsets the current model.
-        void UnsetModel();
+        /// Applies the scene node scaling to the sprite collision shape.
+        void ApplyScaleToSprite();
 
+        /// Determines whether or not a sprite is being used.
+        ///
+        /// @return
+        ///     True if the sprite is being shown.
+        bool IsUsingSprite() const;
 
-        /// Retrieves the model currently associated with this component.
-              Model* GetModel()       { return this->model; }
-        const Model* GetModel() const { return this->model; }
-
-
-
-        /// Sets the kind of transformation to apply to the model, if there is one.
-        void SetModelTransformMode(ModelTransformMode mode) { this->modelTransformMode = mode; }
-
-        /// Retrieves the kind of transformation to apply to the model.
-        ModelTransformMode GetModelTransformMode() const { return this->modelTransformMode; }
+        /// Retrieves a pointer to model of the sprite.
+        ///
+        /// @return
+        ///     A pointer to the model that should be used to draw the sprite, or null if the component is not using a sprite.
+        const Model* GetSpriteModel() const;
 
 
-        /// Sets the custom model transform.
-        void SetCustomModelTransform(const glm::mat4 &customTransform);
+        /// TEMP: Sets the transformation of the sprite.
+        void SetSpriteTransform(const glm::mat4 &spriteTransformIn) { this->spriteTransform = spriteTransformIn; }
 
-        /// Retrieves the custom model transform.
-        const glm:: mat4 & GetCustomModelTransform() const { return this->customModelTransform; }
+        /// TEMP: Retrieves the transformation of the sprite.
+        const glm::mat4 & GetSpriteTransform() const { return this->spriteTransform; }
 
 
 
@@ -169,20 +164,18 @@ namespace GTEngine
         short pickingCollisionGroup;
 
 
-        /// Keeps track of whether or not we own the model. We use this for determining whether or not we need to memory manage it ourselves.
-        bool ownsModel;
+        /// The model to use for the sprite. This is always memory managed by the component itself.
+        Model* spriteModel;
 
-        /// The kind of transformation to apply to the custom model.
-        ModelTransformMode modelTransformMode;
+        /// The collision object to use for the sprite. We use a pointer here because most objects won't actually be using sprites, thus we can save a bit of memory with them.
+        CollisionObject* spritePickingCollisionObject;
 
-        /// The model to drawn in addition to the model contained within the ModelComponent. We need this to draw things like sprites, but don't want
-        /// them to be defined in ModelComponent.
-        Model* model;
+        /// The collision shape to use for picking the sprite. This is a box shape.
+        btBoxShape* spritePickingCollisionShape;
 
-        /// The custom transformation to use with the model.
-        glm::mat4 customModelTransform;
+        /// TEMP: The sprite transformation.
+        glm::mat4 spriteTransform;
 
-        
 
 
     GTENGINE_DECL_COMPONENT_END()
