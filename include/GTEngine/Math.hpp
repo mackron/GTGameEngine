@@ -52,6 +52,12 @@ namespace GTEngine
         void CalculateFrustumPlanes(const glm::mat4 &mvp, Plane planes[6], bool normalize = true);
 
 
+        /// Calculates a look-at matrix.
+        glm::mat3 CalculateLookAtMatrix(const glm::vec3 &origin, const glm::vec3 &target, const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+
+
         /// Math functions for trajectories.
         namespace Trajectory
         {
