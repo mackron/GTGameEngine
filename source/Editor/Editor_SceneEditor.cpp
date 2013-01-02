@@ -176,7 +176,6 @@ namespace GTEngine
     }
 
 
-
     bool Editor_SceneEditor::TryGizmoMouseSelect()
     {
         if (this->currentState != nullptr && this->currentState->GUI.Main->IsVisible())
@@ -652,15 +651,6 @@ namespace GTEngine
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata != nullptr)
             {
-                // If we have a model, we'll want to set the collision shape to that of the model.
-                if (node.HasComponent<ModelComponent>())
-                {
-                    if (metadata->UseModelForPickingShape())
-                    {
-                        metadata->SetPickingCollisionShapeToModel();
-                    }
-                }
-
                 auto state = node.GetDataPointer<State>(0);
                 if (state != nullptr)
                 {
@@ -668,12 +658,22 @@ namespace GTEngine
                     if ((node.HasComponent<PointLightComponent>()       ||
                          node.HasComponent<SpotLightComponent>()        ||
                          node.HasComponent<DirectionalLightComponent>() ||
-                         node.HasComponent<AmbientLightComponent>()) &&
+                         node.HasComponent<AmbientLightComponent>())    &&
                          &node != &node.GetDataPointer<State>(0)->camera)
                     {
-                        state->RegisterSprite(node, "engine/textures/light-sprite.png", glm::vec3(1.0f, 1.0f, 1.0f));
+                        // TEMP: Have this controlled via the scripting environment and editor.
+                        metadata->ShowSprite("engine/textures/light-sprite.png", 1.0f, 1.0f, 1.0f);
                     }
 
+
+                    // If we have a model, we'll want to set the collision shape to that of the model.
+                    if (node.HasComponent<ModelComponent>())
+                    {
+                        if (metadata->UseModelForPickingShape())
+                        {
+                            metadata->SetPickingCollisionShapeToModel();
+                        }
+                    }
 
 
                     // We need to remove and re-add the collision shape since it might have changed.
