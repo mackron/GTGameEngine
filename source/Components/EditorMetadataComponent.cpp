@@ -13,7 +13,7 @@ namespace GTEngine
           alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
-          ownsModel(false), useCustomModelTransform(false), model(nullptr), customModelTransform()
+          ownsModel(false), modelTransformMode(ModelTransformMode_FromSceneNode), model(nullptr), customModelTransform()
     {
         pickingCollisionObject.setUserPointer(this);
     }
@@ -194,10 +194,10 @@ namespace GTEngine
         this->SetModel(static_cast<Model*>(nullptr));
     }
 
-    void EditorMetadataComponent::UseCustomModelTransform(bool useCustomTransform, const glm::mat4 &customTransform)
+
+    void EditorMetadataComponent::SetCustomModelTransform(const glm::mat4 &customTransform)
     {
-        this->useCustomModelTransform = useCustomTransform;
-        this->customModelTransform    = customTransform;
+        this->customModelTransform = customTransform;
     }
 
 

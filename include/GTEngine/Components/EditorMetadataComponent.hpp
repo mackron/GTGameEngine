@@ -12,6 +12,17 @@ namespace GTEngine
     GTENGINE_DECL_COMPONENT_START(EditorMetadataComponent)
     public:
 
+        /// Enumerator for constrolling how the custom model should be transformed.
+        enum ModelTransformMode
+        {
+            ModelTransformMode_FromSceneNode = 0,
+            ModelTransformMode_FaceCamera    = 1,
+            ModelTransformMode_Custom        = 2
+        };
+
+
+    public:
+
         /// Constructor.
         EditorMetadataComponent(SceneNode &node);
 
@@ -105,11 +116,16 @@ namespace GTEngine
         const Model* GetModel() const { return this->model; }
 
 
-        /// Specifies whether or not to use a custom transform for the model.
-        void UseCustomModelTransform(bool useCustomTransform, const glm::mat4 &customTransform = glm::mat4());
 
-        /// Determines whether or not we are using a custom transform for the model.
-        bool IsUsingCustomModelTransform() const { return this->useCustomModelTransform; }
+        /// Sets the kind of transformation to apply to the model, if there is one.
+        void SetModelTransformMode(ModelTransformMode mode) { this->modelTransformMode = mode; }
+
+        /// Retrieves the kind of transformation to apply to the model.
+        ModelTransformMode GetModelTransformMode() const { return this->modelTransformMode; }
+
+
+        /// Sets the custom model transform.
+        void SetCustomModelTransform(const glm::mat4 &customTransform);
 
         /// Retrieves the custom model transform.
         const glm:: mat4 & GetCustomModelTransform() const { return this->customModelTransform; }
@@ -156,8 +172,8 @@ namespace GTEngine
         /// Keeps track of whether or not we own the model. We use this for determining whether or not we need to memory manage it ourselves.
         bool ownsModel;
 
-        /// Keeps track of whether or not to use a custom transformation for rendering the model.
-        bool useCustomModelTransform;
+        /// The kind of transformation to apply to the custom model.
+        ModelTransformMode modelTransformMode;
 
         /// The model to drawn in addition to the model contained within the ModelComponent. We need this to draw things like sprites, but don't want
         /// them to be defined in ModelComponent.

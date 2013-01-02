@@ -5,9 +5,15 @@
 #include "../Scene.hpp"
 #include "../GameScript.hpp"
 #include "../Physics/CollisionWorld.hpp"
+#include "../ModelLibrary.hpp"
+#include "../Texture2DLibrary.hpp"
 #include "Editor3DViewportEventHandler.hpp"
 #include "SceneEditorSceneEventHandler.hpp"
+#include "SceneEditorSceneUpdateManager.hpp"
+#include "../DefaultScenePhysicsManager.hpp"
+#include "../DefaultSceneCullingManager.hpp"
 #include "PositionGizmo.hpp"
+
 #include <GTGUI/Element.hpp>
 
 namespace GTEngine
@@ -211,16 +217,31 @@ namespace GTEngine
             }
 
 
+            /// Starts using a sprite for the given scene node.
+            void RegisterSprite(SceneNode &node, const char* texture, const glm::vec3 &colour)
+            {
+                auto metadata = node.GetComponent<EditorMetadataComponent>();
+                assert(metadata != nullptr);
+                {
+                    auto model = metadata->SetModel(ModelLibrary::CreatePlaneXY(0.25f, 0.25f));
+                    assert(model != nullptr);
+                    {
+                        model->meshes[0]->SetMaterial("engine/materials/editor-sprite.material");
+                        model->meshes[0]->GetMaterial()->SetParameter("SpriteTexture", Texture2DLibrary::Acquire(texture));
+                        model->meshes[0]->GetMaterial()->SetParameter("SpriteColour",  colour);
+                    }
+
+                    metadata->SetModelTransformMode(EditorMetadataComponent::ModelTransformMode_FaceCamera);
+
+                    metadata->UseModelForPickingShape(false);
+                    metadata->SetPickingCollisionShapeToBox(glm::vec3(0.125f, 0.125f, 0.125f), glm::vec3(0.0f, 0.0f, 0.0f));
+                }
+            }
+
+
 
             /// A reference to the scene editor that owns this state.
             Editor_SceneEditor &sceneEditor;
-
-
-            /// The scene object for actually displaying the scene.
-            Scene scene;
-
-            /// The event handler to attach to the scene.
-            SceneEditorSceneEventHandler sceneEventHandler;
 
 
             /// The viewport that the scene will be drawn from.
@@ -229,16 +250,34 @@ namespace GTEngine
             /// The scene node acting as the camera for the viewport.
             SceneNode camera;
 
-
-            /// The event handler for the 3D viewport.
-            Editor3DViewportEventHandler viewportEventHandler;
-
             float cameraXRotation;      ///< The camera's current X rotation.
             float cameraYRotation;      ///< The camera's current Y rotation.
 
 
+            /// The update manager to use with the scene.
+            SceneEditorSceneUpdateManager updateManager;
+
+            /// The update manager to use for physics.
+            DefaultScenePhysicsManager physicsManager;
+
+            /// The update manager to use for culling.
+            DefaultSceneCullingManager cullingManager;
+
+            /// The scene object for actually displaying the scene.
+            Scene scene;
+
+            /// The event handler to attach to the scene.
+            SceneEditorSceneEventHandler sceneEventHandler;
+
+
+            /// The event handler for the 3D viewport.
+            Editor3DViewportEventHandler viewportEventHandler;
+
+
+
             /// The list of selected nodes.
             GTCore::Vector<SceneNode*> selectedNodes;
+
 
 
             /// The collision world for doing picking/selecting.
@@ -263,6 +302,8 @@ namespace GTEngine
             /// When dragging a gizmo axis with the mouse, the x and y movement has a different level of influence as it's being dragged. We keep track of
             /// that here. This is a normalised vector.
             glm::vec2 gizmoDragFactor;
+
+            
 
 
 
