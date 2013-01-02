@@ -156,7 +156,7 @@ namespace GTEngine
 
 
 
-    void EditorMetadataComponent::SetModel(Model* model, bool takeOwnership)
+    Model* EditorMetadataComponent::SetModel(Model* model, bool takeOwnership)
     {
         if (this->ownsModel)
         {
@@ -173,11 +173,14 @@ namespace GTEngine
         {
             scene->OnSceneNodeComponentChanged(this->GetNode(), *this);
         }
+
+        return model;
     }
 
-    void EditorMetadataComponent::SetModel(Model &model, bool takeOwnership)
+    Model & EditorMetadataComponent::SetModel(Model &model, bool takeOwnership)
     {
         this->SetModel(&model, takeOwnership);
+        return model;
     }
 
     Model* EditorMetadataComponent::SetModel(const char* fileName)
