@@ -794,7 +794,7 @@ namespace GTEngine
                         auto model = metadata->GetModel();
                         assert(model != nullptr);
                         {
-                            glm::mat4 ModelMatrix     = metadata->IsUsingCustomModelTransform() ? metadata->GetCustomModelTransform() : node->GetWorldTransform();
+                            glm::mat4 ModelMatrix     = (metadata->GetModelTransformMode() != EditorMetadataComponent::ModelTransformMode_FromSceneNode) ? metadata->GetCustomModelTransform() : node->GetWorldTransform();
                             glm::mat4 ModelViewMatrix = state.cameraView       * ModelMatrix;
                             glm::mat4 MVPMatrix       = state.cameraProjection * ModelViewMatrix;
                             glm::mat3 NormalMatrix    = glm::inverse(glm::transpose(glm::mat3(ModelViewMatrix)));

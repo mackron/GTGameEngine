@@ -546,6 +546,7 @@ namespace GTEngine
                     }
                 }
 
+
                 this->currentState->scene.Update(deltaTimeInSeconds);
             }
         }
@@ -659,53 +660,47 @@ namespace GTEngine
                         metadata->SetPickingCollisionShapeToModel();
                     }
                 }
-                
 
-                // If got a light component attached, we will want to attach a sprite here.
-                if (node.HasComponent<PointLightComponent>()       ||
-                    node.HasComponent<SpotLightComponent>()        ||
-                    node.HasComponent<DirectionalLightComponent>() ||
-                    node.HasComponent<AmbientLightComponent>() &&
-                    &node != &node.GetDataPointer<State>(0)->camera)
+                auto state = node.GetDataPointer<State>(0);
+                if (state != nullptr)
                 {
-                    metadata->SetModel("engine/models/default.dae");
-                    metadata->GetModel()->meshes[0]->SetMaterial("engine/materials/simple-emissive.material");
-                    metadata->GetModel()->meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 1.0f, 1.0f);
-                }
-
-
-
-                // We need to remove and re-add the collision shape since it might have changed.
-                auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
-                
-                auto world = pickingCollisionObject.GetWorld();
-                if (world != nullptr)
-                {
-                    world->RemoveCollisionObject(pickingCollisionObject);
-                }
-
-                
-
-                if (metadata->GetPickingCollisionShape() != nullptr)
-                {
-                    btTransform transform;
-                    node.GetWorldTransform(transform);
-
-                    pickingCollisionObject.setWorldTransform(transform);
-                    pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
-
-
-                    // Here we need to find the state containing the collision world this object will be added to. If the current state is null, we check the
-                    // data pointer at position 0 which, if set, will be a pointer to the State object the node belongs to.
-                    auto state = node.GetDataPointer<State>(0);
-                    if (state != nullptr)
+                    // If got a light component attached, we will want to attach a sprite here.
+                    if ((node.HasComponent<PointLightComponent>()       ||
+                         node.HasComponent<SpotLightComponent>()        ||
+                         node.HasComponent<DirectionalLightComponent>() ||
+                         node.HasComponent<AmbientLightComponent>()) &&
+                         &node != &node.GetDataPointer<State>(0)->camera)
                     {
+                        state->RegisterSprite(node, "engine/textures/light-sprite.png", glm::vec3(1.0f, 1.0f, 1.0f));
+                    }
+
+
+
+                    // We need to remove and re-add the collision shape since it might have changed.
+                    auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
+                
+                    auto world = pickingCollisionObject.GetWorld();
+                    if (world != nullptr)
+                    {
+                        world->RemoveCollisionObject(pickingCollisionObject);
+                    }
+
+
+
+                    if (metadata->GetPickingCollisionShape() != nullptr)
+                    {
+                        btTransform transform;
+                        node.GetWorldTransform(transform);
+
+                        pickingCollisionObject.setWorldTransform(transform);
+                        pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+
                         state->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                     }
-                    else
-                    {
-                        GTEngine::Log("Scene Editor - Warning: Attempting to modify an object that is not part of any loaded scene.");
-                    }
+                }
+                else
+                {
+                    GTEngine::Log("Scene Editor - Warning: Attempting to modify an object that is not part of any loaded scene.");
                 }
             }
         }
@@ -952,10 +947,10 @@ namespace GTEngine
 
     Editor_SceneEditor::State::State(Editor_SceneEditor &sceneEditorIn)
         : sceneEditor(sceneEditorIn),
-          scene(), sceneEventHandler(sceneEditor),
-          viewport(), camera(),
+          viewport(), camera(), cameraXRotation(0.0f), cameraYRotation(0.0f),
+          updateManager(camera), physicsManager(), cullingManager(),
+          scene(updateManager, physicsManager, cullingManager), sceneEventHandler(sceneEditor),
           viewportEventHandler(sceneEditor.GetEditor().GetGame(), viewport),
-          cameraXRotation(0.0f), cameraYRotation(0.0f),
           selectedNodes(),
           positionGizmo(),
           sceneNodesToDelete(),
