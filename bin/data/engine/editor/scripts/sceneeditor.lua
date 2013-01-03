@@ -52,8 +52,28 @@ end
 function GTGUI.Element:PointLightComponentPanel()
     self:PanelGroupBox("Point Light");
     
+    self.ColourContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
+    self.ColourLabel     = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; margin-bottom:4px; margin-right:8px;'>Colour:</div>");
+    self.ColourInput     = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true;' />"):Vector3Input();
+    
+    self.CurrentNode      = nil;
+    self.CurrentComponent = nil;
+    
+    
     function self:Update(node)
+        self.CurrentNode      = node;
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.PointLight);
+        
+        if self.CurrentComponent ~= nil then
+            self.ColourInput:SetFromXYZ(self.CurrentComponent:GetColour());
+        end
     end
+    
+    self.ColourInput:OnValueChanged(function(data)
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetColour(data.x, data.y, data.z);
+        end
+    end);
 end
 
 function GTGUI.Element:SpotLightComponentPanel()
