@@ -1048,10 +1048,14 @@ namespace GTEngine
         {
             // We need to find the list this model is part of and remove it.
             auto iDefinitionModels = LoadedModels.Find(const_cast<ModelDefinition*>(&model->GetDefinition()));      // <-- const_cast is safe here.
-            assert(iDefinitionModels        != nullptr);
-            assert(iDefinitionModels->value != nullptr);
+            if (iDefinitionModels != nullptr)
+            {
+                assert(iDefinitionModels->value != nullptr);
+                {
+                    iDefinitionModels->value->RemoveFirstOccuranceOf(model);
+                }
+            }
 
-            iDefinitionModels->value->RemoveFirstOccuranceOf(model);;
             delete model;
         }
     }
