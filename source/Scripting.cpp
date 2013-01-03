@@ -45,13 +45,13 @@ namespace GTEngine
             (
                 "GTEngine.Components = "
                 "{"
-                "    ModelComponent            = 'Model';"
-                "    CameraComponent           = 'Camera';"
-                "    PointLightComponent       = 'PointLight';"
-                "    SpotLightComponent        = 'SpotLight';"
-                "    DirectionalLightComponent = 'DirectionalLight';"
-                "    AmbientLightComponent     = 'AmbientLight';"
-                "    EditorMetadataComponent   = 'EditorMetadata';"
+                "    Model            = 'Model';"
+                "    Camera           = 'Camera';"
+                "    PointLight       = 'PointLight';"
+                "    SpotLight        = 'SpotLight';"
+                "    DirectionalLight = 'DirectionalLight';"
+                "    AmbientLight     = 'AmbientLight';"
+                "    EditorMetadata   = 'EditorMetadata';"
                 "};"
 
 
@@ -202,6 +202,11 @@ namespace GTEngine
                 "function GTEngine.SceneNode:SetScale(x, y, z)"
                 "    return GTEngine.System.SceneNode.SetScale(self._internalPtr, x, y, z);"
                 "end;"
+
+
+                "function GTEngine.SceneNode:GetAttachedComponentIDs()"
+                "    return GTEngine.System.SceneNode.GetAttachedComponentIDs(self._internalPtr);"
+                "end;"
             );
 
 
@@ -255,24 +260,26 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "Create",          FFI::SystemFFI::SceneNodeFFI::Create);
-                        script.SetTableFunction(-1, "Delete",          FFI::SystemFFI::SceneNodeFFI::Delete);
+                        script.SetTableFunction(-1, "Create",                  FFI::SystemFFI::SceneNodeFFI::Create);
+                        script.SetTableFunction(-1, "Delete",                  FFI::SystemFFI::SceneNodeFFI::Delete);
 
-                        script.SetTableFunction(-1, "GetName",         FFI::SystemFFI::SceneNodeFFI::GetName);
-                        script.SetTableFunction(-1, "SetName",         FFI::SystemFFI::SceneNodeFFI::SetName);
+                        script.SetTableFunction(-1, "GetName",                 FFI::SystemFFI::SceneNodeFFI::GetName);
+                        script.SetTableFunction(-1, "SetName",                 FFI::SystemFFI::SceneNodeFFI::SetName);
 
-                        script.SetTableFunction(-1, "AddComponent",    FFI::SystemFFI::SceneNodeFFI::AddComponent);
-                        script.SetTableFunction(-1, "RemoveComponent", FFI::SystemFFI::SceneNodeFFI::RemoveComponent);
-                        script.SetTableFunction(-1, "GetComponent",    FFI::SystemFFI::SceneNodeFFI::GetComponent);
+                        script.SetTableFunction(-1, "AddComponent",            FFI::SystemFFI::SceneNodeFFI::AddComponent);
+                        script.SetTableFunction(-1, "RemoveComponent",         FFI::SystemFFI::SceneNodeFFI::RemoveComponent);
+                        script.SetTableFunction(-1, "GetComponent",            FFI::SystemFFI::SceneNodeFFI::GetComponent);
 
-                        script.SetTableFunction(-1, "Refresh",         FFI::SystemFFI::SceneNodeFFI::Refresh);
+                        script.SetTableFunction(-1, "Refresh",                 FFI::SystemFFI::SceneNodeFFI::Refresh);
 
-                        script.SetTableFunction(-1, "GetPosition",     FFI::SystemFFI::SceneNodeFFI::GetPosition);
-                        script.SetTableFunction(-1, "SetPosition",     FFI::SystemFFI::SceneNodeFFI::SetPosition);
-                        script.SetTableFunction(-1, "GetRotationXYZ",  FFI::SystemFFI::SceneNodeFFI::GetRotationXYZ);
-                        script.SetTableFunction(-1, "SetRotationXYZ",  FFI::SystemFFI::SceneNodeFFI::SetRotationXYZ);
-                        script.SetTableFunction(-1, "GetScale",        FFI::SystemFFI::SceneNodeFFI::GetScale);
-                        script.SetTableFunction(-1, "SetScale",        FFI::SystemFFI::SceneNodeFFI::SetScale);
+                        script.SetTableFunction(-1, "GetPosition",             FFI::SystemFFI::SceneNodeFFI::GetPosition);
+                        script.SetTableFunction(-1, "SetPosition",             FFI::SystemFFI::SceneNodeFFI::SetPosition);
+                        script.SetTableFunction(-1, "GetRotationXYZ",          FFI::SystemFFI::SceneNodeFFI::GetRotationXYZ);
+                        script.SetTableFunction(-1, "SetRotationXYZ",          FFI::SystemFFI::SceneNodeFFI::SetRotationXYZ);
+                        script.SetTableFunction(-1, "GetScale",                FFI::SystemFFI::SceneNodeFFI::GetScale);
+                        script.SetTableFunction(-1, "SetScale",                FFI::SystemFFI::SceneNodeFFI::SetScale);
+
+                        script.SetTableFunction(-1, "GetAttachedComponentIDs", FFI::SystemFFI::SceneNodeFFI::GetAttachedComponentIDs);
                     }
                     script.Pop(1);
 
@@ -613,6 +620,26 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+                    int GetAttachedComponentIDs(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            script.PushNewTable();
+                            
+
+                            GTCore::Vector<GTCore::String> componentNames;
+                            sceneNode->GetAttachedComponentNames(componentNames);
+
+                            for (size_t i = 0; i < componentNames.count; ++i)
+                            {
+                                script.SetTableValue(-1, i + 1, componentNames[i].c_str());
+                            }
+                        }
+
+                        return 1;
                     }
 
 

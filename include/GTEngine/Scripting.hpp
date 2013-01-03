@@ -166,6 +166,12 @@ namespace GTEngine
                     ///     Argument 4: The z scale.
                     int SetScale(GTCore::Script &script);
 
+                    /// Returns a table containing the component IDs (names) that are attached to the given node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose component IDs are being retrieved.
+                    int GetAttachedComponentIDs(GTCore::Script &script);
+
 
 
                     ////////////////////////////////////////////////////////////////
