@@ -794,10 +794,15 @@ namespace GTEngine
             if (state != nullptr)
             {
                 state->pickingWorld.RemoveCollisionObject(metadata->GetPickingCollisionObject());
-            }
 
-            // We need to remove the collision object from the world so that we don't end up selecting it.
-            //this->currentState->pickingWorld.RemoveCollisionObject(metadata->GetPickingCollisionObject());
+                if (metadata->IsUsingSprite())
+                {
+                    assert(metadata->GetSpritePickingCollisionObject() != nullptr);
+                    {
+                        state->pickingWorld.RemoveCollisionObject(*metadata->GetSpritePickingCollisionObject());
+                    }
+                }
+            }
         }
     }
 
@@ -816,6 +821,14 @@ namespace GTEngine
                     assert(pickingCollisionObject.GetWorld() == nullptr);
                     {
                         state->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                    }
+                }
+
+                if (metadata->IsUsingSprite())
+                {
+                    assert(metadata->GetSpritePickingCollisionObject() != nullptr);
+                    {
+                        state->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                     }
                 }
             }
