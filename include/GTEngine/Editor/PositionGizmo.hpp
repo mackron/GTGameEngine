@@ -58,6 +58,20 @@ namespace GTEngine
         const SceneNode & GetZArrowSceneNode() const { return this->zArrowSceneNode; }
 
 
+        /// Retrieves a reference to the y axis circle scene node.
+              SceneNode & GetXCircleSceneNode()       { return this->xCircleSceneNode; }
+        const SceneNode & GetXCircleSceneNode() const { return this->xCircleSceneNode; }
+
+        /// Retrieves a reference to the y axis circle scene node.
+              SceneNode & GetYCircleSceneNode()       { return this->yCircleSceneNode; }
+        const SceneNode & GetYCircleSceneNode() const { return this->yCircleSceneNode; }
+
+        /// Retrieves a reference to the y axis circle scene node.
+              SceneNode & GetZCircleSceneNode()       { return this->zCircleSceneNode; }
+        const SceneNode & GetZCircleSceneNode() const { return this->zCircleSceneNode; }
+
+
+
         /// Shows the gizmo.
         void Show();
 
@@ -95,15 +109,33 @@ namespace GTEngine
         /// The scene node for the z axis arrow.
         SceneNode zArrowSceneNode;
 
+        /// The scene node for the x axis circle.
+        SceneNode xCircleSceneNode;
 
-        /// The model to use for for the x axis arrow.
+        /// The scene node for the y axis circle.
+        SceneNode yCircleSceneNode;
+
+        /// The scene node for the z axis circle.
+        SceneNode zCircleSceneNode;
+
+
+        /// The model to use for the x axis arrow.
         Model xArrowModel;
 
-        /// The model to use for for the y axis arrow.
+        /// The model to use for the y axis arrow.
         Model yArrowModel;
 
-        /// The model to use for for the z axis arrow.
+        /// The model to use for the z axis arrow.
         Model zArrowModel;
+
+        /// The model to use for the x axis circle.
+        Model xCircleModel;
+
+        /// The model to use for the y axis circle.
+        Model yCircleModel;
+
+        /// The model to use for the z axis circle.
+        Model zCircleModel;
 
 
         /// The geometry of the line part of the arrow models' mesh.
@@ -111,6 +143,10 @@ namespace GTEngine
 
         /// The geometry of the head part of the arrow models' mesh.
         VertexArray* arrowHeadVA;
+
+
+        /// The geometry of the circle mesh.
+        VertexArray* circleVA;
     };
 }
 
