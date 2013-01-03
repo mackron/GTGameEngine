@@ -185,6 +185,13 @@ function GTGUI.Element:SceneEditorDetailsPanel()
     self.NameContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()          .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; vertical-align:center;' />");
     self.NameLabel     = GTGUI.Server.New("<div parentid='" .. self.NameContainer:GetID() .. "' style='width:auto; margin-right:4px; text-color:std-text-color;'>Name:</div>");
     self.NameTextBox   = GTGUI.Server.New("<div parentid='" .. self.NameContainer:GetID() .. "' styleclass='textbox' style='width:100%;' />");
+    
+    self.NameTextBox:OnTextChanged(function()
+        local selectedNode = Editor.SceneEditor.GetFirstSelectedNode();
+        if selectedNode ~= nil then
+            selectedNode:SetName(self.NameTextBox:GetText());
+        end
+    end);
 end
 
 function GTGUI.Element:SceneEditorTransformPanel()
