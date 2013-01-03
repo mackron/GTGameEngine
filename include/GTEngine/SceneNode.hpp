@@ -603,6 +603,24 @@ namespace GTEngine
         }
 
 
+        /// Retrieves a list containing the names of the components that are currently attached to the scene node.
+        void GetAttachedComponentNames(GTCore::Vector<GTCore::String> &output)
+        {
+            // First is our specialised cases.
+            if (this->modelComponent          != nullptr) { output.PushBack(ModelComponent::Name);          }
+            if (this->pointLightComponent     != nullptr) { output.PushBack(PointLightComponent::Name);     }
+            if (this->spotLightComponent      != nullptr) { output.PushBack(SpotLightComponent::Name);      }
+            if (this->editorMetadataComponent != nullptr) { output.PushBack(EditorMetadataComponent::Name); }
+
+
+            // Now we can just read the rest from the map.
+            for (size_t i = 0; i < this->components.count; ++i)
+            {
+                output.PushBack(this->components.buffer[i]->key);
+            }
+        }
+
+
         /**
         *   \brief  Retrieves the data pointer for the given key.
         *
@@ -1116,8 +1134,9 @@ namespace GTEngine
 
 
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // NOTE: If you are adding a specialisation, remember to delete them manually in RemoveAllComponents()!
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // NOTE: If you are adding a specialisation, remember to delete them manually in RemoveAllComponents() and add
+    //       them to GetAttachedComponentNames()!
     //
     // Keep this comment at th bottom here so it's never forgotten.
 }
