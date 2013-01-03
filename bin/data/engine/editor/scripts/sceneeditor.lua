@@ -545,7 +545,7 @@ function GTGUI.Element:SceneEditor()
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.PointLight);
             
-            -- The point light will have a sprite by default.
+            -- The light will have a sprite by default.
             newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
 
             -- We want the new node to be selected, and to be the ONLY selected object.
@@ -565,7 +565,48 @@ function GTGUI.Element:SceneEditor()
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.SpotLight);
             
-            -- The point light will have a sprite by default.
+            -- The light will have a sprite by default.
+            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+
+            -- We want the new node to be selected, and to be the ONLY selected object.
+            Editor.SceneEditor.DeselectAll();
+            Editor.SceneEditor.SelectSceneNode(newNode);
+
+            
+            newNode:Refresh();
+        end
+        
+        self.ContextMenu:Hide();
+        self.Viewport:Focus();
+    end);
+    
+    self.ContextMenu:AppendItem("Add Directional Light"):OnPressed(function()
+        local newNode = Editor.SceneEditor.AddSceneNode("DirectionalLight");
+        if newNode ~= nil then
+            newNode:AddComponent(GTEngine.Components.DirectionalLight);
+            
+            -- The light will have a sprite by default.
+            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+
+            -- We want the new node to be selected, and to be the ONLY selected object.
+            Editor.SceneEditor.DeselectAll();
+            Editor.SceneEditor.SelectSceneNode(newNode);
+
+            
+            newNode:Refresh();
+        end
+        
+        self.ContextMenu:Hide();
+        self.Viewport:Focus();
+    end);
+    
+    self.ContextMenu:AppendItem("Add Ambient Light"):OnPressed(function()
+        local newNode = Editor.SceneEditor.AddSceneNode("AmbientLight");
+        if newNode ~= nil then
+            newNode:AddComponent(GTEngine.Components.AmbientLight);
+            newNode:GetComponent(GTEngine.Components.AmbientLight):SetColour(0.25, 0.25, 0.25);
+            
+            -- The light will have a sprite by default.
             newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
 
             -- We want the new node to be selected, and to be the ONLY selected object.
