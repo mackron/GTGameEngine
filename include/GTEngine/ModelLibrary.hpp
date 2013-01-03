@@ -91,6 +91,9 @@ namespace GTEngine
         static Model* CreateFromDefinition(const ModelDefinition &definition);
 
 
+        /// Creates an empty model.
+        static Model* CreateEmpty();
+
 
         /// Creates a flat plane on the XZ axis, facing the +Y axis.
         static Model* CreatePlaneXZ(float width, float height, VertexFormat &format = VertexFormat::P3T2N3);
