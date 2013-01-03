@@ -22,9 +22,10 @@ namespace GTEngine
                 "GTEngine          = {};"
                 
                 "GTEngine.System   = {};"
-                "GTEngine.System.ModelComponent = {};"
-                "GTEngine.System.SceneNode      = {};"
-                "GTEngine.System.Scene          = {};"
+                "GTEngine.System.ModelComponent          = {};"
+                "GTEngine.System.EditorMetadataComponent = {};"
+                "GTEngine.System.SceneNode               = {};"
+                "GTEngine.System.Scene                   = {};"
 
                 "GTEngine.Renderer = {};"
                 "GTEngine.Audio    = {};"
@@ -45,6 +46,7 @@ namespace GTEngine
                 "    SpotLightComponent        = 'SpotLight';"
                 "    DirectionalLightComponent = 'DirectionalLight';"
                 "    AmbientLightComponent     = 'AmbientLight';"
+                "    EditorMetadataComponent   = 'EditorMetadata';"
                 "};"
 
 
@@ -81,6 +83,28 @@ namespace GTEngine
 
                 "function GTEngine.PointLightComponent:GetColour()"
                 "    return GTEngine.System.PointLightComponent.GetColour(self._internalPtr);"
+                "end;"
+
+
+
+
+                // EditorMetadataComponent
+                "GTEngine.EditorMetadataComponent = {};"
+                "GTEngine.EditorMetadataComponent.__index = GTEngine.EditorMetadataComponent;"
+
+                "function GTEngine.EditorMetadataComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.EditorMetadataComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
+                "end;"
+
+                "function GTEngine.EditorMetadataComponent:ShowSprite(texturePath, colour)"
+                "    GTEngine.System.EditorMetadataComponent.ShowSprite(self._internalPtr, texturePath, colour);"
+                "end;"
+
+                "function GTEngine.EditorMetadataComponent:HideSprite()"
+                "    GTEngine.System.EditorMetadataComponent.HideSprite(self._internalPtr);"
                 "end;"
             );
 
@@ -264,6 +288,17 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetColour", FFI::SystemFFI::PointLightComponentFFI::GetColour);
                     }
                     script.Pop(1);
+
+
+
+                    script.Push("EditorMetadataComponent");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "ShowSprite", FFI::SystemFFI::EditorMetadataComponentFFI::ShowSprite);
+                        script.SetTableFunction(-1, "HideSprite", FFI::SystemFFI::EditorMetadataComponentFFI::HideSprite);
+                    }
+                    script.Pop(1);
                 }
                 script.Pop(1);
 
@@ -407,6 +442,10 @@ namespace GTEngine
                         {
                             PushComponent(script, "PointLightComponent", sceneNode->AddComponent<PointLightComponent>());
                         }
+                        else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
+                        {
+                            PushComponent(script, "EditorMetadataComponent", sceneNode->AddComponent<EditorMetadataComponent>());
+                        }
                         else
                         {
                             script.PushNil();
@@ -433,6 +472,10 @@ namespace GTEngine
                         else if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
                         {
                             PushComponent(script, "PointLightComponent", sceneNode->GetComponent<PointLightComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
+                        {
+                            PushComponent(script, "EditorMetadataComponent", sceneNode->GetComponent<EditorMetadataComponent>());
                         }
                         else
                         {
@@ -675,6 +718,64 @@ namespace GTEngine
                         }
 
                         return 3;
+                    }
+                }
+
+
+
+                //////////////////////////////////////////////////
+                // GTEngine.System.EditorMetadataComponent
+                namespace EditorMetadataComponentFFI
+                {
+                    int ShowSprite(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            if (script.IsString(2))
+                            {
+                                glm::vec3 colour(1.0f, 1.0f, 1.0f);
+                                if (script.IsTable(3))
+                                {
+                                    script.Push("r");
+                                    script.GetTableValue(3);
+                                    {
+                                        colour.x = script.ToFloat(-1);
+                                    }
+                                    script.Pop(1);
+
+                                    script.Push("g");
+                                    script.GetTableValue(3);
+                                    {
+                                        colour.y = script.ToFloat(-1);
+                                    }
+                                    script.Pop(1);
+
+                                    script.Push("b");
+                                    script.GetTableValue(3);
+                                    {
+                                        colour.z = script.ToFloat(-1);
+                                    }
+                                    script.Pop(1);
+                                }
+
+                                component->ShowSprite(script.ToString(2), colour);
+                            }
+                        }
+
+                        return 0;
+                    }
+
+
+                    int HideSprite(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->HideSprite();
+                        }
+
+                        return 0;
                     }
                 }
             }

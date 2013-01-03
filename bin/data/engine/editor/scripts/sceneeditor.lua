@@ -228,6 +228,9 @@ function GTGUI.Element:SceneEditor()
         local newNode = Editor.SceneEditor.AddSceneNode("PointLight");
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.PointLightComponent);
+            
+            -- The point light will have a sprite by default.
+            newNode:GetComponent(GTEngine.Components.EditorMetadataComponent):ShowSprite("engine/textures/light-sprite.png");
 
             -- We want the new node to be selected, and to be the ONLY selected object.
             Editor.SceneEditor.DeselectAll();

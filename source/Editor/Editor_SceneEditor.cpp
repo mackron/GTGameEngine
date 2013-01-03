@@ -654,18 +654,6 @@ namespace GTEngine
                 auto state = node.GetDataPointer<State>(0);
                 if (state != nullptr)
                 {
-                    // If got a light component attached, we will want to attach a sprite here.
-                    if ((node.HasComponent<PointLightComponent>()       ||
-                         node.HasComponent<SpotLightComponent>()        ||
-                         node.HasComponent<DirectionalLightComponent>() ||
-                         node.HasComponent<AmbientLightComponent>())    &&
-                         &node != &node.GetDataPointer<State>(0)->camera)
-                    {
-                        // TEMP: Have this controlled via the scripting environment and editor.
-                        metadata->ShowSprite("engine/textures/light-sprite.png", 1.0f, 1.0f, 1.0f);
-                    }
-
-
                     // If we have a model, we'll want to set the collision shape to that of the model.
                     if (node.HasComponent<ModelComponent>())
                     {
