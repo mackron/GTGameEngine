@@ -560,6 +560,26 @@ function GTGUI.Element:SceneEditor()
         self.Viewport:Focus();
     end);
     
+    self.ContextMenu:AppendItem("Add Spot Light"):OnPressed(function()
+        local newNode = Editor.SceneEditor.AddSceneNode("SpotLight");
+        if newNode ~= nil then
+            newNode:AddComponent(GTEngine.Components.SpotLight);
+            
+            -- The point light will have a sprite by default.
+            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+
+            -- We want the new node to be selected, and to be the ONLY selected object.
+            Editor.SceneEditor.DeselectAll();
+            Editor.SceneEditor.SelectSceneNode(newNode);
+
+            
+            newNode:Refresh();
+        end
+        
+        self.ContextMenu:Hide();
+        self.Viewport:Focus();
+    end);
+    
     
     
     function self:HidePanels(message)
