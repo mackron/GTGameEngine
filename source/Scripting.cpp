@@ -71,6 +71,10 @@ namespace GTEngine
                 "    GTEngine.System.ModelComponent.SetModel(self._internalPtr, filePath);"
                 "end;"
 
+                "function GTEngine.ModelComponent:GetModelPath()"
+                "    return GTEngine.System.ModelComponent.GetModelPath(self._internalPtr);"
+                "end;"
+
 
 
                 // PointLightComponent
@@ -317,7 +321,8 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "SetModel", FFI::SystemFFI::ModelComponentFFI::SetModel);
+                        script.SetTableFunction(-1, "SetModel",     FFI::SystemFFI::ModelComponentFFI::SetModel);
+                        script.SetTableFunction(-1, "GetModelPath", FFI::SystemFFI::ModelComponentFFI::GetModelPath);
                     }
                     script.Pop(1);
 
@@ -749,6 +754,25 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+                    int GetModelPath(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto model = component->GetModel();
+                            if (model != nullptr)
+                            {
+                                script.Push(model->GetDefinition().fileName.c_str());
+                            }
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+
+                        return 1;
                     }
                 }
 

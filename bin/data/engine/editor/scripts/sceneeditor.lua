@@ -38,7 +38,42 @@ end
 function GTGUI.Element:ModelComponentPanel()
     self:PanelGroupBox("Model");
     
+    self.ModelPath = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox' style='width:100%;' />");
+    
+    
+    self.CurrentNode      = nil;
+    self.CurrentComponent = nil;
+    
+    
+    self.ModelPath:OnKeyPressed(function(data)
+        if data.key == GTGUI.Keys.Enter then
+            self:UpdateModel();
+        end
+    end);
+    
+    self.ModelPath:OnDrop(function(data)
+        if data.droppedElement.isAsset then
+            self.ModelPath:SetText(data.droppedElement.path);
+            self:UpdateModel();
+        end
+    end);
+    
+    
+    
     function self:Update(node)
+        self.CurrentNode      = node;
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.Model);
+        
+        if self.CurrentComponent ~= nil then
+            self.ModelPath:SetText(self.CurrentComponent:GetModelPath());
+        end
+    end
+    
+    function self:UpdateModel()
+        if self.CurrentComponent ~= nil and self.CurrentNode ~= nil then
+            self.CurrentComponent:SetModel(self.ModelPath:GetText());
+            self.CurrentNode:Refresh();
+        end
     end
 end
 
