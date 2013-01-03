@@ -322,7 +322,54 @@ end
 function GTGUI.Element:DirectionalLightComponentPanel()
     self:PanelGroupBox("Directional Light");
     
+    -- Colour
+    self.ColourContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
+    self.ColourLabel     = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; margin-bottom:4px; margin-right:8px;'>Colour:</div>");
+    self.ColourInput     = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true;' />"):Vector3Input();
+    
+    -- Shadows
+    self.CastShadows = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:8px;' />");
+    
+    
+    
+    self.CurrentNode      = nil;
+    self.CurrentComponent = nil;
+
+    
+    self.ColourInput:OnValueChanged(function(data)
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetColour(data.x, data.y, data.z);
+        end
+    end);
+    
+    
+    
+    self.CastShadows:CheckBox("Cast Shadows");
+    
+    self.CastShadows:OnChecked(function()
+        if self.CurrentComponent ~= nil then self.CurrentComponent:EnableShadowCasting(); end;
+    end);
+    
+    self.CastShadows:OnUnchecked(function()
+        if self.CurrentComponent ~= nil then self.CurrentComponent:DisableShadowCasting(); end;
+    end);
+    
+    
+    
+    
     function self:Update(node)
+        self.CurrentNode      = node;
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.DirectionalLight);
+        
+        if self.CurrentComponent ~= nil then
+            self.ColourInput:SetFromXYZ(self.CurrentComponent:GetColour());
+            
+            if self.CurrentComponent:IsShadowCastingEnabled() then
+                self.CastShadows:Check(true);
+            else
+                self.CastShadows:Uncheck(true);
+            end
+        end
     end
     
     return self;
