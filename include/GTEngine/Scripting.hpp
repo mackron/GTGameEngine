@@ -334,6 +334,29 @@ namespace GTEngine
                     int SetAttenuation(GTCore::Script &script);
                 }
 
+                namespace DirectionalLightComponentFFI
+                {
+                    /// Sets the colour of the light.
+                    ///
+                    /// @remarks
+                    ///     Argument 1:     A pointer to the component whose colour is being set.
+                    ///     Argument 2,3,4: The red, green and blue colour components, respectively.
+                    int SetColour(GTCore::Script &script);
+
+                    /// Retrieves the colour of the light as 3 floats.
+                    int GetColour(GTCore::Script &script);
+
+
+                    /// Enables shadow casting on the light.
+                    int EnableShadowCasting(GTCore::Script &script);
+
+                    /// Disables shadow casting on the light.
+                    int DisableShadowCasting(GTCore::Script &script);
+
+                    /// Determines whether or not shadow casting is enabled.
+                    int IsShadowCastingEnabled(GTCore::Script &script);
+                }
+
                 namespace EditorMetadataComponentFFI
                 {
                     /// Shows a sprite on the object while it's shown in the editor.

@@ -186,6 +186,38 @@ namespace GTEngine
                 "end;"
 
 
+                // DirectionalLightComponent
+                "GTEngine.DirectionalLightComponent = {};"
+                "GTEngine.DirectionalLightComponent.__index = GTEngine.DirectionalLightComponent;"
+
+                "function GTEngine.DirectionalLightComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.DirectionalLightComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
+                "end;"
+
+                "function GTEngine.DirectionalLightComponent:SetColour(r, g, b)"
+                "    GTEngine.System.DirectionalLightComponent.SetColour(self._internalPtr, r, g, b);"
+                "end;"
+
+                "function GTEngine.DirectionalLightComponent:GetColour()"
+                "    return GTEngine.System.DirectionalLightComponent.GetColour(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DirectionalLightComponent:EnableShadowCasting()"
+                "    GTEngine.System.DirectionalLightComponent.EnableShadowCasting(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DirectionalLightComponent:DisableShadowCasting()"
+                "    GTEngine.System.DirectionalLightComponent.DisableShadowCasting(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DirectionalLightComponent:IsShadowCastingEnabled()"
+                "    return GTEngine.System.DirectionalLightComponent.IsShadowCastingEnabled(self._internalPtr);"
+                "end;"
+
+
 
 
                 // EditorMetadataComponent
@@ -450,6 +482,19 @@ namespace GTEngine
                     script.Pop(1);
 
 
+                    script.Push("DirectionalLightComponent");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "SetColour",               FFI::SystemFFI::DirectionalLightComponentFFI::SetColour);
+                        script.SetTableFunction(-1, "GetColour",               FFI::SystemFFI::DirectionalLightComponentFFI::GetColour);
+                        script.SetTableFunction(-1, "EnableShadowCasting",     FFI::SystemFFI::DirectionalLightComponentFFI::EnableShadowCasting);
+                        script.SetTableFunction(-1, "DisableShadowCasting",    FFI::SystemFFI::DirectionalLightComponentFFI::DisableShadowCasting);
+                        script.SetTableFunction(-1, "IsShadowCastingEnabled",  FFI::SystemFFI::DirectionalLightComponentFFI::IsShadowCastingEnabled);
+                    }
+                    script.Pop(1);
+
+
 
                     script.Push("EditorMetadataComponent");
                     script.GetTableValue(-2);
@@ -608,6 +653,10 @@ namespace GTEngine
                         {
                             PushComponent(script, "SpotLightComponent", sceneNode->AddComponent<SpotLightComponent>());
                         }
+                        else if (GTCore::Strings::Equal(componentName, DirectionalLightComponent::Name))
+                        {
+                            PushComponent(script, "DirectionalLightComponent", sceneNode->AddComponent<DirectionalLightComponent>());
+                        }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
                             PushComponent(script, "EditorMetadataComponent", sceneNode->AddComponent<EditorMetadataComponent>());
@@ -642,6 +691,10 @@ namespace GTEngine
                         else if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
                         {
                             PushComponent(script, "SpotLightComponent", sceneNode->GetComponent<SpotLightComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, DirectionalLightComponent::Name))
+                        {
+                            PushComponent(script, "DirectionalLightComponent", sceneNode->GetComponent<DirectionalLightComponent>());
                         }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
@@ -1234,6 +1287,81 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+                }
+
+
+                //////////////////////////////////////////////////
+                // GTEngine.System.DirectionalLightComponent
+                namespace DirectionalLightComponentFFI
+                {
+                    int SetColour(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetColour(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetColour(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto &colour = component->GetColour();
+
+                            script.Push(colour.x);
+                            script.Push(colour.y);
+                            script.Push(colour.z);
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                        }
+
+                        return 3;
+                    }
+
+                    int EnableShadowCasting(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->EnableShadowCasting();
+                        }
+
+                        return 0;
+                    }
+
+                    int DisableShadowCasting(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->DisableShadowCasting();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsShadowCastingEnabled(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->IsShadowCastingEnabled());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
                     }
                 }
 
