@@ -308,7 +308,7 @@ namespace GTEngine
     void EditorMetadataComponent::HideDirectionArrow()
     {
         ModelLibrary::Delete(this->directionArrowModel);
-        delete this->directionArrowVA;
+        GarbageCollector::MarkForCollection(this->directionArrowVA);
 
         this->directionArrowModel = nullptr;
         this->directionArrowVA    = nullptr;
