@@ -758,7 +758,8 @@ function GTGUI.Element:SceneEditor()
             
             -- The light will have a sprite by default.
             newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
-
+            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowDirectionArrow();
+            
             -- We want the new node to be selected, and to be the ONLY selected object.
             Editor.SceneEditor.DeselectAll();
             Editor.SceneEditor.SelectSceneNode(newNode);
@@ -778,6 +779,7 @@ function GTGUI.Element:SceneEditor()
             
             -- The light will have a sprite by default.
             newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowDirectionArrow();
 
             -- We want the new node to be selected, and to be the ONLY selected object.
             Editor.SceneEditor.DeselectAll();
