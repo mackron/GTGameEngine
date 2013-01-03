@@ -218,6 +218,26 @@ namespace GTEngine
                 "end;"
 
 
+                // AmbientLightComponent
+                "GTEngine.AmbientLightComponent = {};"
+                "GTEngine.AmbientLightComponent.__index = GTEngine.AmbientLightComponent;"
+
+                "function GTEngine.AmbientLightComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.AmbientLightComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
+                "end;"
+
+                "function GTEngine.AmbientLightComponent:SetColour(r, g, b)"
+                "    GTEngine.System.AmbientLightComponent.SetColour(self._internalPtr, r, g, b);"
+                "end;"
+
+                "function GTEngine.AmbientLightComponent:GetColour()"
+                "    return GTEngine.System.AmbientLightComponent.GetColour(self._internalPtr);"
+                "end;"
+
+
 
 
                 // EditorMetadataComponent
@@ -495,6 +515,16 @@ namespace GTEngine
                     script.Pop(1);
 
 
+                    script.Push("AmbientLightComponent");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "SetColour",               FFI::SystemFFI::AmbientLightComponentFFI::SetColour);
+                        script.SetTableFunction(-1, "GetColour",               FFI::SystemFFI::AmbientLightComponentFFI::GetColour);
+                    }
+                    script.Pop(1);
+
+
 
                     script.Push("EditorMetadataComponent");
                     script.GetTableValue(-2);
@@ -657,6 +687,10 @@ namespace GTEngine
                         {
                             PushComponent(script, "DirectionalLightComponent", sceneNode->AddComponent<DirectionalLightComponent>());
                         }
+                        else if (GTCore::Strings::Equal(componentName, AmbientLightComponent::Name))
+                        {
+                            PushComponent(script, "AmbientLightComponent", sceneNode->AddComponent<AmbientLightComponent>());
+                        }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
                             PushComponent(script, "EditorMetadataComponent", sceneNode->AddComponent<EditorMetadataComponent>());
@@ -695,6 +729,10 @@ namespace GTEngine
                         else if (GTCore::Strings::Equal(componentName, DirectionalLightComponent::Name))
                         {
                             PushComponent(script, "DirectionalLightComponent", sceneNode->GetComponent<DirectionalLightComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, AmbientLightComponent::Name))
+                        {
+                            PushComponent(script, "AmbientLightComponent", sceneNode->GetComponent<AmbientLightComponent>());
                         }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
@@ -1362,6 +1400,44 @@ namespace GTEngine
                         }
 
                         return 1;
+                    }
+                }
+
+
+                //////////////////////////////////////////////////
+                // GTEngine.System.AmbientLightComponent
+                namespace AmbientLightComponentFFI
+                {
+                    int SetColour(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<AmbientLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetColour(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetColour(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<AmbientLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto &colour = component->GetColour();
+
+                            script.Push(colour.x);
+                            script.Push(colour.y);
+                            script.Push(colour.z);
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                        }
+
+                        return 3;
                     }
                 }
 
