@@ -103,7 +103,10 @@ namespace GTEngine
         ///     This will actually deallocate everything also.
         void HideSprite();
 
-        /// Applies the scene node scaling to the sprite collision shape.
+        /// Applies the scene node transformation to the sprite picking collision shape.
+        void ApplyTransformToSprite();
+
+        /// Applies the scene node scaling to the sprite picking collision shape.
         void ApplyScaleToSprite();
 
         /// Determines whether or not a sprite is being used.

@@ -735,6 +735,14 @@ namespace GTEngine
             }
 
 
+            // The picking collision shape of the sprite will also need to be updated.
+            if (metadata->IsUsingSprite())
+            {
+                metadata->ApplyTransformToSprite();
+            }
+
+
+
             // If the scene node was selected, we should reposition the gizmo.
             this->RepositionGizmos();
 
