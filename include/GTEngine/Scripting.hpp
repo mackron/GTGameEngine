@@ -219,6 +219,15 @@ namespace GTEngine
 
                     /// Retrieves the colour of the point light as 3 floats.
                     int GetColour(GTCore::Script &script);
+
+                    /// Enables shadow casting on the point light.
+                    int EnableShadowCasting(GTCore::Script &script);
+
+                    /// Disables shadow casting on the point light.
+                    int DisableShadowCasting(GTCore::Script &script);
+
+                    /// Determines whether or not shadow casting is enabled.
+                    int IsShadowCastingEnabled(GTCore::Script &script);
                 }
 
                 namespace EditorMetadataComponentFFI
