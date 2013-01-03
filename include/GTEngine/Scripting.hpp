@@ -212,6 +212,12 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the component whose model is being set.
                     ///     Argument 2: The file path of the model being set.
                     int SetModel(GTCore::Script &script);
+
+                    /// Retrieves the path of the model currently set on the given model component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component whose model's path is being retrieved.
+                    int GetModelPath(GTCore::Script &script);
                 }
 
                 namespace PointLightComponentFFI
