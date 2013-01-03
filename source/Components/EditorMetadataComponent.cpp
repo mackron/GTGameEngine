@@ -14,7 +14,8 @@ namespace GTEngine
           alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
-          spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTransform(), spriteTexturePath()
+          spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTransform(), spriteTexturePath(),
+          directionArrowModel(nullptr), directionArrowVA(nullptr)
     {
         pickingCollisionObject.setUserPointer(this);
     }
@@ -22,7 +23,8 @@ namespace GTEngine
     EditorMetadataComponent::~EditorMetadataComponent()
     {
         this->DeleteCollisionShape();
-        this->HideSprite();         // <-- This will make sure everything to do with the sprite is deallocated.
+        this->HideSprite();             // <-- This will make sure everything to do with the sprite is deallocated.
+        this->HideDirectionArrow();     // <-- This will delete the model.
     }
 
 
@@ -266,6 +268,60 @@ namespace GTEngine
     const char* EditorMetadataComponent::GetSpriteTexturePath() const
     {
         return this->spriteTexturePath.c_str();
+    }
+
+
+
+    void EditorMetadataComponent::ShowDirectionArrow()
+    {
+        if (this->directionArrowModel == nullptr)
+        {
+            this->directionArrowModel = ModelLibrary::CreateEmpty();
+            assert(this->directionArrowModel != nullptr);
+            {
+                // Just a simple wirefram model here. Unit length, facing -Z.
+                float arrowHeadLength = 0.3f;
+                float arrowHeadWidth  = 0.1f;
+            
+                glm::vec3 vertices[4];
+                vertices[0].x =  0.0f;                  vertices[0].y = 0.0f; vertices[0].z = -1.0f;
+                vertices[1].x =  0.0f;                  vertices[1].y = 0.0f; vertices[1].z =  0.0f;
+                vertices[2].x = -arrowHeadWidth * 0.5f; vertices[2].y = 0.0f; vertices[2].z = -1.0f + arrowHeadLength;
+                vertices[3].x =  arrowHeadWidth * 0.5f; vertices[3].y = 0.0f; vertices[3].z = -1.0f + arrowHeadLength;
+
+                unsigned int indices[6] =
+                {
+                    0, 1,
+                    0, 2,
+                    0, 3
+                };
+
+                this->directionArrowVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+                this->directionArrowVA->SetData(&vertices[0].x, 4, indices, 6);
+
+                this->directionArrowModel->AttachMesh(this->directionArrowVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+                this->directionArrowModel->meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 1.0f, 0.0f);
+            }
+        }
+    }
+
+    void EditorMetadataComponent::HideDirectionArrow()
+    {
+        ModelLibrary::Delete(this->directionArrowModel);
+        delete this->directionArrowVA;
+
+        this->directionArrowModel = nullptr;
+        this->directionArrowVA    = nullptr;
+    }
+
+    bool EditorMetadataComponent::IsShowingDirectionArrow() const
+    {
+        return this->directionArrowModel != nullptr;
+    }
+
+    Model* EditorMetadataComponent::GetDirectionArrow()
+    {
+        return this->directionArrowModel;
     }
 
 
