@@ -138,6 +138,54 @@ namespace GTEngine
                 "end;"
 
 
+                // SpotLightComponent
+                "GTEngine.SpotLightComponent = {};"
+                "GTEngine.SpotLightComponent.__index = GTEngine.SpotLightComponent;"
+
+                "function GTEngine.SpotLightComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.SpotLightComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:SetColour(r, g, b)"
+                "    GTEngine.System.SpotLightComponent.SetColour(self._internalPtr, r, g, b);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:GetColour()"
+                "    return GTEngine.System.SpotLightComponent.GetColour(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:EnableShadowCasting()"
+                "    GTEngine.System.SpotLightComponent.EnableShadowCasting(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:DisableShadowCasting()"
+                "    GTEngine.System.SpotLightComponent.DisableShadowCasting(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:IsShadowCastingEnabled()"
+                "    return GTEngine.System.SpotLightComponent.IsShadowCastingEnabled(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:GetConstantAttenuation()"
+                "    return GTEngine.System.SpotLightComponent.GetConstantAttenuation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:GetLinearAttenuation()"
+                "    return GTEngine.System.SpotLightComponent.GetLinearAttenuation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:GetQuadraticAttenuation()"
+                "    return GTEngine.System.SpotLightComponent.GetQuadraticAttenuation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:SetAttenuation(constant, linear, quadratic)"
+                "    GTEngine.System.SpotLightComponent.SetAttenuation(self._internalPtr, constant, linear, quadratic);"
+                "end;"
+
+
 
 
                 // EditorMetadataComponent
@@ -385,6 +433,23 @@ namespace GTEngine
                     script.Pop(1);
 
 
+                    script.Push("SpotLightComponent");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "SetColour",               FFI::SystemFFI::SpotLightComponentFFI::SetColour);
+                        script.SetTableFunction(-1, "GetColour",               FFI::SystemFFI::SpotLightComponentFFI::GetColour);
+                        script.SetTableFunction(-1, "EnableShadowCasting",     FFI::SystemFFI::SpotLightComponentFFI::EnableShadowCasting);
+                        script.SetTableFunction(-1, "DisableShadowCasting",    FFI::SystemFFI::SpotLightComponentFFI::DisableShadowCasting);
+                        script.SetTableFunction(-1, "IsShadowCastingEnabled",  FFI::SystemFFI::SpotLightComponentFFI::IsShadowCastingEnabled);
+                        script.SetTableFunction(-1, "GetConstantAttenuation",  FFI::SystemFFI::SpotLightComponentFFI::GetConstantAttenuation);
+                        script.SetTableFunction(-1, "GetLinearAttenuation",    FFI::SystemFFI::SpotLightComponentFFI::GetLinearAttenuation);
+                        script.SetTableFunction(-1, "GetQuadraticAttenuation", FFI::SystemFFI::SpotLightComponentFFI::GetQuadraticAttenuation);
+                        script.SetTableFunction(-1, "SetAttenuation",          FFI::SystemFFI::SpotLightComponentFFI::SetAttenuation);
+                    }
+                    script.Pop(1);
+
+
 
                     script.Push("EditorMetadataComponent");
                     script.GetTableValue(-2);
@@ -539,6 +604,10 @@ namespace GTEngine
                         {
                             PushComponent(script, "PointLightComponent", sceneNode->AddComponent<PointLightComponent>());
                         }
+                        else if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
+                        {
+                            PushComponent(script, "SpotLightComponent", sceneNode->AddComponent<SpotLightComponent>());
+                        }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
                             PushComponent(script, "EditorMetadataComponent", sceneNode->AddComponent<EditorMetadataComponent>());
@@ -569,6 +638,10 @@ namespace GTEngine
                         else if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
                         {
                             PushComponent(script, "PointLightComponent", sceneNode->GetComponent<PointLightComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
+                        {
+                            PushComponent(script, "SpotLightComponent", sceneNode->GetComponent<SpotLightComponent>());
                         }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
@@ -1017,6 +1090,141 @@ namespace GTEngine
                     int SetAttenuation(GTCore::Script &script)
                     {
                         auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float constant  = script.ToFloat(2);
+                            float linear    = script.ToFloat(3);
+                            float quadratic = script.ToFloat(4);
+                            component->SetAttenuation(constant, linear, quadratic);
+                        }
+
+                        return 0;
+                    }
+                }
+
+
+                //////////////////////////////////////////////////
+                // GTEngine.System.SpotLightComponent
+                namespace SpotLightComponentFFI
+                {
+                    int SetColour(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetColour(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetColour(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto &colour = component->GetColour();
+
+                            script.Push(colour.x);
+                            script.Push(colour.y);
+                            script.Push(colour.z);
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                        }
+
+                        return 3;
+                    }
+
+                    int EnableShadowCasting(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->EnableShadowCasting();
+                        }
+
+                        return 0;
+                    }
+
+                    int DisableShadowCasting(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->DisableShadowCasting();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsShadowCastingEnabled(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->IsShadowCastingEnabled());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+
+                    int GetConstantAttenuation(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetConstantAttenuation());
+                        }
+                        else
+                        {
+                            script.Push(1.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetLinearAttenuation(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetLinearAttenuation());
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetQuadraticAttenuation(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetQuadraticAttenuation());
+                        }
+                        else
+                        {
+                            script.Push(0.0666f);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetAttenuation(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                         if (component != nullptr)
                         {
                             float constant  = script.ToFloat(2);
