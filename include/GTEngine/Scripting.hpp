@@ -220,6 +220,20 @@ namespace GTEngine
                     /// Retrieves the colour of the point light as 3 floats.
                     int GetColour(GTCore::Script &script);
                 }
+
+                namespace EditorMetadataComponentFFI
+                {
+                    /// Shows a sprite on the object while it's shown in the editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component whose model is being set.
+                    ///     Argument 2: The file path of the texture to use on the sprite.
+                    ///     Argument 3: A table containing the colour to use with the sprite. Keys are r, g and b.
+                    int ShowSprite(GTCore::Script &script);
+
+                    /// Hides the sprite.
+                    int HideSprite(GTCore::Script &script);
+                }
             }
         }
     }
