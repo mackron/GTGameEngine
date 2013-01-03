@@ -99,7 +99,7 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.PointLightComponent:IsShadowCastingEnabled()"
-                "    GTEngine.System.PointLightComponent.IsShadowCastingEnabled(self._internalPtr);"
+                "    return GTEngine.System.PointLightComponent.IsShadowCastingEnabled(self._internalPtr);"
                 "end;"
 
 
