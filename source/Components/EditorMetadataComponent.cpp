@@ -166,7 +166,7 @@ namespace GTEngine
                 assert(this->spritePickingCollisionShape  == nullptr);
                 assert(this->spritePickingCollisionObject == nullptr);
                 {
-                    this->spritePickingCollisionShape = new btBoxShape(btVector3(0.25f, 0.25f, 0.0f) * ToBulletVector3(this->node.GetWorldScale()));
+                    this->spritePickingCollisionShape = new btBoxShape(btVector3(0.25f, 0.25f, 0.0f));
                     
                     this->spritePickingCollisionObject = new CollisionObject;
                     this->spritePickingCollisionObject->setUserPointer(this);
@@ -232,8 +232,10 @@ namespace GTEngine
                 world->RemoveCollisionObject(*this->spritePickingCollisionObject);
             }
 
+            glm::vec3 scale = this->node.GetWorldScale();
+            scale.z = 1.0f;
 
-            this->spritePickingCollisionShape->setImplicitShapeDimensions(btVector3(0.25f, 0.25f, 0.0f) * ToBulletVector3(this->node.GetWorldScale()));
+            this->spritePickingCollisionShape->setImplicitShapeDimensions(btVector3(0.25f, 0.25f, 0.001f) * ToBulletVector3(scale));
 
 
             if (world != nullptr)
