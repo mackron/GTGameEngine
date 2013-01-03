@@ -75,6 +75,19 @@ namespace GTEngine
                 "    return GTEngine.System.ModelComponent.GetModelPath(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.ModelComponent:EnableShadowCasting()"
+                "    GTEngine.System.ModelComponent.EnableShadowCasting(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ModelComponent:DisableShadowCasting()"
+                "    GTEngine.System.ModelComponent.DisableShadowCasting(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ModelComponent:IsShadowCastingEnabled()"
+                "    return GTEngine.System.ModelComponent.IsShadowCastingEnabled(self._internalPtr);"
+                "end;"
+
+
 
 
                 // PointLightComponent
@@ -321,8 +334,11 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "SetModel",     FFI::SystemFFI::ModelComponentFFI::SetModel);
-                        script.SetTableFunction(-1, "GetModelPath", FFI::SystemFFI::ModelComponentFFI::GetModelPath);
+                        script.SetTableFunction(-1, "SetModel",                FFI::SystemFFI::ModelComponentFFI::SetModel);
+                        script.SetTableFunction(-1, "GetModelPath",            FFI::SystemFFI::ModelComponentFFI::GetModelPath);
+                        script.SetTableFunction(-1, "EnableShadowCasting",     FFI::SystemFFI::ModelComponentFFI::EnableShadowCasting);
+                        script.SetTableFunction(-1, "DisableShadowCasting",    FFI::SystemFFI::ModelComponentFFI::DisableShadowCasting);
+                        script.SetTableFunction(-1, "IsShadowCastingEnabled",  FFI::SystemFFI::ModelComponentFFI::IsShadowCastingEnabled);
                     }
                     script.Pop(1);
 
@@ -770,6 +786,43 @@ namespace GTEngine
                         else
                         {
                             script.PushNil();
+                        }
+
+                        return 1;
+                    }
+
+                    int EnableShadowCasting(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->EnableShadowCasting();
+                        }
+
+                        return 0;
+                    }
+
+                    int DisableShadowCasting(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->DisableShadowCasting();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsShadowCastingEnabled(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->IsShadowCastingEnabled());
+                        }
+                        else
+                        {
+                            script.Push(false);
                         }
 
                         return 1;

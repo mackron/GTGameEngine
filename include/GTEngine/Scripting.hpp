@@ -218,6 +218,15 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the component whose model's path is being retrieved.
                     int GetModelPath(GTCore::Script &script);
+
+                    /// Enables shadow casting.
+                    int EnableShadowCasting(GTCore::Script &script);
+
+                    /// Disables shadow casting.
+                    int DisableShadowCasting(GTCore::Script &script);
+
+                    /// Determines whether or not shadow casting is enabled.
+                    int IsShadowCastingEnabled(GTCore::Script &script);
                 }
 
                 namespace PointLightComponentFFI

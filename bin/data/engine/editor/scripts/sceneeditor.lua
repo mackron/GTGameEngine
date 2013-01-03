@@ -38,7 +38,11 @@ end
 function GTGUI.Element:ModelComponentPanel()
     self:PanelGroupBox("Model");
     
-    self.ModelPath = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox' style='width:100%;' />");
+    -- Model
+    self.ModelPath   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox' style='width:100%;' />");
+    
+    -- Shadows
+    self.CastShadows = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:8px;' />");
     
     
     self.CurrentNode      = nil;
@@ -60,12 +64,31 @@ function GTGUI.Element:ModelComponentPanel()
     
     
     
+    self.CastShadows:CheckBox("Cast Shadows");
+    
+    self.CastShadows:OnChecked(function()
+        if self.CurrentComponent ~= nil then self.CurrentComponent:EnableShadowCasting(); end;
+    end);
+    
+    self.CastShadows:OnUnchecked(function()
+        if self.CurrentComponent ~= nil then self.CurrentComponent:DisableShadowCasting(); end;
+    end);
+    
+    
+    
+    
     function self:Update(node)
         self.CurrentNode      = node;
         self.CurrentComponent = node:GetComponent(GTEngine.Components.Model);
         
         if self.CurrentComponent ~= nil then
             self.ModelPath:SetText(self.CurrentComponent:GetModelPath());
+            
+            if self.CurrentComponent:IsShadowCastingEnabled() then
+                self.CastShadows:Check(true);
+            else
+                self.CastShadows:Uncheck(true);
+            end
         end
     end
     
@@ -107,7 +130,7 @@ function GTGUI.Element:PointLightComponentPanel()
     
     
     -- Shadows
-    self.CastShadows     = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:8px;' />");
+    self.CastShadows = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:8px;' />");
     
     
     
