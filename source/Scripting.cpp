@@ -55,6 +55,7 @@ namespace GTEngine
                 "};"
 
 
+
                 // ModelComponent
                 "GTEngine.ModelComponent = {};"
                 "GTEngine.ModelComponent.__index = GTEngine.ModelComponent;"
@@ -69,6 +70,7 @@ namespace GTEngine
                 "function GTEngine.ModelComponent:SetModel(filePath)"
                 "    GTEngine.System.ModelComponent.SetModel(self._internalPtr, filePath);"
                 "end;"
+
 
 
                 // PointLightComponent
@@ -100,6 +102,22 @@ namespace GTEngine
 
                 "function GTEngine.PointLightComponent:IsShadowCastingEnabled()"
                 "    return GTEngine.System.PointLightComponent.IsShadowCastingEnabled(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.PointLightComponent:GetConstantAttenuation()"
+                "    return GTEngine.System.PointLightComponent.GetConstantAttenuation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.PointLightComponent:GetLinearAttenuation()"
+                "    return GTEngine.System.PointLightComponent.GetLinearAttenuation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.PointLightComponent:GetQuadraticAttenuation()"
+                "    return GTEngine.System.PointLightComponent.GetQuadraticAttenuation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.PointLightComponent:SetAttenuation(constant, linear, quadratic)"
+                "    GTEngine.System.PointLightComponent.SetAttenuation(self._internalPtr, constant, linear, quadratic);"
                 "end;"
 
 
@@ -308,11 +326,15 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "SetColour",              FFI::SystemFFI::PointLightComponentFFI::SetColour);
-                        script.SetTableFunction(-1, "GetColour",              FFI::SystemFFI::PointLightComponentFFI::GetColour);
-                        script.SetTableFunction(-1, "EnableShadowCasting",    FFI::SystemFFI::PointLightComponentFFI::EnableShadowCasting);
-                        script.SetTableFunction(-1, "DisableShadowCasting",   FFI::SystemFFI::PointLightComponentFFI::DisableShadowCasting);
-                        script.SetTableFunction(-1, "IsShadowCastingEnabled", FFI::SystemFFI::PointLightComponentFFI::IsShadowCastingEnabled);
+                        script.SetTableFunction(-1, "SetColour",               FFI::SystemFFI::PointLightComponentFFI::SetColour);
+                        script.SetTableFunction(-1, "GetColour",               FFI::SystemFFI::PointLightComponentFFI::GetColour);
+                        script.SetTableFunction(-1, "EnableShadowCasting",     FFI::SystemFFI::PointLightComponentFFI::EnableShadowCasting);
+                        script.SetTableFunction(-1, "DisableShadowCasting",    FFI::SystemFFI::PointLightComponentFFI::DisableShadowCasting);
+                        script.SetTableFunction(-1, "IsShadowCastingEnabled",  FFI::SystemFFI::PointLightComponentFFI::IsShadowCastingEnabled);
+                        script.SetTableFunction(-1, "GetConstantAttenuation",  FFI::SystemFFI::PointLightComponentFFI::GetConstantAttenuation);
+                        script.SetTableFunction(-1, "GetLinearAttenuation",    FFI::SystemFFI::PointLightComponentFFI::GetLinearAttenuation);
+                        script.SetTableFunction(-1, "GetQuadraticAttenuation", FFI::SystemFFI::PointLightComponentFFI::GetQuadraticAttenuation);
+                        script.SetTableFunction(-1, "SetAttenuation",          FFI::SystemFFI::PointLightComponentFFI::SetAttenuation);
                     }
                     script.Pop(1);
 
@@ -802,6 +824,66 @@ namespace GTEngine
                         }
 
                         return 1;
+                    }
+
+
+                    int GetConstantAttenuation(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetConstantAttenuation());
+                        }
+                        else
+                        {
+                            script.Push(1.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetLinearAttenuation(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetLinearAttenuation());
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetQuadraticAttenuation(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetQuadraticAttenuation());
+                        }
+                        else
+                        {
+                            script.Push(0.0666f);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetAttenuation(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float constant  = script.ToFloat(2);
+                            float linear    = script.ToFloat(3);
+                            float quadratic = script.ToFloat(4);
+                            component->SetAttenuation(constant, linear, quadratic);
+                        }
+
+                        return 0;
                     }
                 }
 
