@@ -250,6 +250,19 @@ namespace GTEngine
                 "function GTEngine.SceneNode:GetAttachedComponentIDs()"
                 "    return GTEngine.System.SceneNode.GetAttachedComponentIDs(self._internalPtr);"
                 "end;"
+
+
+                "function GTEngine.SceneNode:Show()"
+                "    GTEngine.System.SceneNode.Show(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:Hide()"
+                "    GTEngine.System.SceneNode.Hide(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:IsVisible()"
+                "    return GTEngine.System.SceneNode.IsVisible(self._internalPtr);"
+                "end;"
             );
 
 
@@ -323,6 +336,10 @@ namespace GTEngine
                         script.SetTableFunction(-1, "SetScale",                FFI::SystemFFI::SceneNodeFFI::SetScale);
 
                         script.SetTableFunction(-1, "GetAttachedComponentIDs", FFI::SystemFFI::SceneNodeFFI::GetAttachedComponentIDs);
+
+                        script.SetTableFunction(-1, "Show",                    FFI::SystemFFI::SceneNodeFFI::Show);
+                        script.SetTableFunction(-1, "Hide",                    FFI::SystemFFI::SceneNodeFFI::Hide);
+                        script.SetTableFunction(-1, "IsVisible",               FFI::SystemFFI::SceneNodeFFI::IsVisible);
                     }
                     script.Pop(1);
 
@@ -690,6 +707,44 @@ namespace GTEngine
                             {
                                 script.SetTableValue(-1, i + 1, componentNames[i].c_str());
                             }
+                        }
+
+                        return 1;
+                    }
+
+                    
+                    int Show(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            sceneNode->Show();
+                        }
+
+                        return 0;
+                    }
+
+                    int Hide(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            sceneNode->Hide();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsVisible(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            script.Push(sceneNode->IsVisible());
+                        }
+                        else
+                        {
+                            script.Push(false);
                         }
 
                         return 1;

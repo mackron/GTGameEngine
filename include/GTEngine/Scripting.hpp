@@ -173,6 +173,27 @@ namespace GTEngine
                     int GetAttachedComponentIDs(GTCore::Script &script);
 
 
+                    /// Shows the scene node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node.
+                    int Show(GTCore::Script &script);
+
+                    /// Hides the scene node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node.
+                    int Hide(GTCore::Script &script);
+
+                    /// Determines whether or not the node is visible.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node.
+                    int IsVisible(GTCore::Script &script);
+
+
+
+
 
                     ////////////////////////////////////////////////////////////////
                     // Functions below are just helpers.
