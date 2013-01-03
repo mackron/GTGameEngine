@@ -247,9 +247,24 @@ end
 function GTGUI.Element:EditorMetadataComponentPanel()
     self:PanelGroupBox("Editor Metadata");
     
+    -- Show in editor.
+    self.ShowInEditor  = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:8px;' />")
+    
     -- Sprite
     self.ShowSprite    = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:2px;' />");
     self.SpriteTexture = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox'  style='width:100%; enabled:false;' />");
+    
+    
+    
+    self.ShowInEditor:CheckBox("Show in Editor");
+    
+    self.ShowInEditor:OnChecked(function()
+        self:UpdateVisibility();
+    end);
+    
+    self.ShowInEditor:OnUnchecked(function()
+        self:UpdateVisibility();
+    end);
     
     
     
@@ -283,12 +298,18 @@ function GTGUI.Element:EditorMetadataComponentPanel()
     
     
     
-    
     function self:Update(node)
         self.CurrentNode      = node;
         self.CurrentComponent = node:GetComponent(GTEngine.Components.EditorMetadata);
         
         if self.CurrentComponent ~= nil then
+            if self.CurrentNode:IsVisible() then
+                self.ShowInEditor:Check(true);
+            else
+                self.ShowInEditor:Uncheck(true);
+            end
+            
+            
             if self.CurrentComponent:IsShowingSprite() then
                 self.ShowSprite:Check(true);
                 self.SpriteTexture:Enable();
@@ -298,6 +319,16 @@ function GTGUI.Element:EditorMetadataComponentPanel()
             end
             
             self.SpriteTexture:SetText(self.CurrentComponent:GetSpriteTexturePath() or "");
+        end
+    end
+    
+    function self:UpdateVisibility()
+        if self.CurrentNode ~= nil then
+            if self.ShowInEditor:IsChecked() then
+                self.CurrentNode:Show();
+            else
+                self.CurrentNode:Hide();
+            end
         end
     end
     
@@ -312,7 +343,7 @@ function GTGUI.Element:EditorMetadataComponentPanel()
             self.CurrentNode:Refresh();
         end
     end
-    
+
     
     return self;
 end
