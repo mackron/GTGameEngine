@@ -156,7 +156,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     A pointer to the model of the direction arrow, or null if it isn't being shown.
-        Model* GetDirectionArrow();
+        const Model* GetDirectionArrowModel() const;
 
 
 
