@@ -281,7 +281,7 @@ namespace GTEngine
             {
                 // Just a simple wirefram model here. Unit length, facing -Z.
                 float arrowHeadLength = 0.3f;
-                float arrowHeadWidth  = 0.1f;
+                float arrowHeadWidth  = 0.2f;
             
                 glm::vec3 vertices[4];
                 vertices[0].x =  0.0f;                  vertices[0].y = 0.0f; vertices[0].z = -1.0f;
@@ -319,7 +319,7 @@ namespace GTEngine
         return this->directionArrowModel != nullptr;
     }
 
-    Model* EditorMetadataComponent::GetDirectionArrow()
+    const Model* EditorMetadataComponent::GetDirectionArrowModel() const
     {
         return this->directionArrowModel;
     }
