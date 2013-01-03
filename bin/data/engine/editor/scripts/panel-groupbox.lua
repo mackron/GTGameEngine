@@ -1,7 +1,7 @@
 
 function GTGUI.Element:PanelGroupBoxTitle(text)
-    self.Arrow = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-title-arrow' />");
-    self.Text  = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-title-text' />");
+    self.Arrow        = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-title-arrow' />");
+    self.Text         = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-title-text'  />");
     
     self.Text:SetText(text);
     
@@ -22,8 +22,9 @@ function GTGUI.Element:PanelGroupBoxTitle(text)
 end
 
 function GTGUI.Element:PanelGroupBox(titleText)
-    self.Title = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-title' />");
-    self.Body  = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-body'  />");
+    self.Title        = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-title'     />");
+    self.Body         = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-body'      />");
+    self.BottomBorder = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-separator' />");
     
     self.isCollapsed = false;
     

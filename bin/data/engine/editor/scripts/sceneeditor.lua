@@ -1,4 +1,55 @@
 
+function Editor.SceneEditor.CreateComponentPanel(element, componentID)
+    if componentID == GTEngine.Components.ModelComponent then
+        element:ModelComponentPanel();
+    elseif componentID == GTEngine.Components.CameraComponent then
+        element:CameraComponentPanel();
+    elseif componentID == GTEngine.Components.PointLightComponent then
+        element:PointLightComponentPanel();
+    elseif componentID == GTEngine.Components.SpotLightComponent then
+        element:SpotLightComponentPanel();
+    elseif componentID == GTEngine.Components.DirectionalLightComponent then
+        element:DirectionalLightComponentPanel();
+    elseif componentID == GTEngine.Components.AmbientLightComponent then
+        element:AmbientLightComponentPanel();
+    elseif componentID == GTEngine.Components.EditorMetadataComponent then
+        element:EditorMetadataComponentPanel();
+    end
+end
+
+
+function GTGUI.Element:ModelComponentPanel()
+    self:PanelGroupBox("Model");
+    
+    
+end
+
+function GTGUI.Element:CameraComponentPanel()
+    self:PanelGroupBox("Camera");
+end
+
+function GTGUI.Element:PointLightComponentPanel()
+    self:PanelGroupBox("Point Light");
+end
+
+function GTGUI.Element:SpotLightComponentPanel()
+    self:PanelGroupBox("Spot Light");
+end
+
+function GTGUI.Element:DirectionalLightComponentPanel()
+    self:PanelGroupBox("Directional Light");
+end
+
+function GTGUI.Element:AmbientLightComponentPanel()
+    self:PanelGroupBox("Ambient Light");
+end
+
+function GTGUI.Element:EditorMetadataComponentPanel()
+    self:PanelGroupBox("Editor Metadata");
+end
+
+
+
 function GTGUI.Element:SceneEditorDetailsPanel()
     self:PanelGroupBox("Details");
     
@@ -10,17 +61,18 @@ end
 function GTGUI.Element:SceneEditorTransformPanel()
     self:PanelGroupBox("Transform");
     
-    self.Container = GTGUI.Server.New("<div parentid='" .. self:GetID()           .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
+    self.Container = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()      .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
     self.Left      = GTGUI.Server.New("<div parentid='" .. self.Container:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
     self.Right     = GTGUI.Server.New("<div parentid='" .. self.Container:GetID() .. "' style='width:100%; height:auto;' />");
+    --GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-separator' style='' />");
     
     self.PositionLabel = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; margin-bottom:4px;'>Position:</div>");
     self.RotationLabel = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; margin-bottom:4px;'>Rotation:</div>");
-    self.ScaleLabel    = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 3px;'>Scale:</div>");
+    self.ScaleLabel    = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; padding-bottom:0px'>Scale:</div>");
     
     self.PositionInput = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
     self.RotationInput = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
-    self.ScaleInput    = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
+    self.ScaleInput    = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true;' />"):Vector3Input();
 
     
     self.PositionInput:OnValueChanged(function(data)
@@ -57,9 +109,10 @@ function GTGUI.Element:SceneEditorPanel()
     
     self.Body.DetailsPanel   = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox' style='' />");
     self.Body.DetailsPanel:SceneEditorDetailsPanel();
-    GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox-separator' style='' />");
+    --GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox-separator' style='' />");
     self.Body.TransformPanel = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox' style='' />");
     self.Body.TransformPanel:SceneEditorTransformPanel();
+    
     
 
     self:OnSize(function()
