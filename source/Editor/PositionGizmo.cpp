@@ -112,6 +112,10 @@ namespace GTEngine
         this->yArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->yArrowModel);
         this->zArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->zArrowModel);
 
+        this->xArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+        this->yArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+        this->zArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+
 
         auto metadata = this->sceneNode.AddComponent<EditorMetadataComponent>();
 
