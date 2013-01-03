@@ -922,6 +922,11 @@ namespace GTEngine
         return model;
     }
 
+    Model* ModelLibrary::CreateEmpty()
+    {
+        return new Model;
+    }
+
     Model* ModelLibrary::CreatePlaneXZ(float width, float height, VertexFormat &format)
     {
         // We need a unique identifier for this mesh. We will base it on the size of the box.
