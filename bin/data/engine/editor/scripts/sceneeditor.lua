@@ -498,6 +498,13 @@ function GTGUI.Element:EditorMetadataComponentPanel()
             end
             
             self.SpriteTexture:SetText(self.CurrentComponent:GetSpriteTexturePath() or "");
+            
+            
+            if self.CurrentComponent:IsShowingDirectionArrow() then
+                self.ShowDirectionArrow:Check(true);
+            else
+                self.ShowDirectionArrow:Uncheck(true);
+            end
         end
     end
     
