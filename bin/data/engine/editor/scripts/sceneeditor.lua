@@ -22,14 +22,18 @@ function Editor.SceneEditor.CreateComponentPanel(parentPanel, componentID)
         element:DirectionalLightComponentPanel();
     elseif componentID == GTEngine.Components.AmbientLight then
         element:AmbientLightComponentPanel();
-    elseif componentID == GTEngine.Components.EditorMetadata then
+    elseif componentID == GTEngine.Components.EditorMetadata then 
         element:EditorMetadataComponentPanel();
     else
         Editor.SceneEditor.CreateCustomComponentPanel(element, componentID);
     end
     
     
-    element:Collapse();
+    -- Always have the EditorMetadata panel collapsed by default.
+    if componentID == GTEngine.Components.EditorMetadata then
+        element:Collapse();
+    end
+
     
     return element;
 end
@@ -98,6 +102,8 @@ function GTGUI.Element:ModelComponentPanel()
             self.CurrentNode:Refresh();
         end
     end
+    
+    return self;
 end
 
 function GTGUI.Element:CameraComponentPanel()
@@ -105,6 +111,8 @@ function GTGUI.Element:CameraComponentPanel()
     
     function self:Update(node)
     end
+    
+    return self;
 end
 
 function GTGUI.Element:PointLightComponentPanel()
@@ -205,6 +213,8 @@ function GTGUI.Element:PointLightComponentPanel()
             self.CurrentComponent:SetAttenuation(constant, linear, quadratic);
         end
     end
+    
+    return self;
 end
 
 function GTGUI.Element:SpotLightComponentPanel()
@@ -212,6 +222,8 @@ function GTGUI.Element:SpotLightComponentPanel()
     
     function self:Update(node)
     end
+    
+    return self;
 end
 
 function GTGUI.Element:DirectionalLightComponentPanel()
@@ -219,6 +231,8 @@ function GTGUI.Element:DirectionalLightComponentPanel()
     
     function self:Update(node)
     end
+    
+    return self;
 end
 
 function GTGUI.Element:AmbientLightComponentPanel()
@@ -226,6 +240,8 @@ function GTGUI.Element:AmbientLightComponentPanel()
     
     function self:Update(node)
     end
+    
+    return self;
 end
 
 function GTGUI.Element:EditorMetadataComponentPanel()
@@ -233,6 +249,8 @@ function GTGUI.Element:EditorMetadataComponentPanel()
     
     function self:Update(node)
     end
+    
+    return self;
 end
 
 
@@ -250,6 +268,8 @@ function GTGUI.Element:SceneEditorDetailsPanel()
             selectedNode:SetName(self.NameTextBox:GetText());
         end
     end);
+    
+    return self;
 end
 
 function GTGUI.Element:SceneEditorTransformPanel()
@@ -288,6 +308,8 @@ function GTGUI.Element:SceneEditorTransformPanel()
             selectedNode:SetScale(data.x, data.y, data.z);
         end
     end);
+    
+    return self;
 end
 
 
@@ -387,6 +409,8 @@ function GTGUI.Element:SceneEditorPanel()
             end
         end
     end
+    
+    return self;
 end
 
 
@@ -541,6 +565,9 @@ function GTGUI.Element:SceneEditor()
     
     -- We're going to hide the panels by default since nothing is selected right now.
     self:HidePanels("Nothing Selected");
+    
+    
+    return self;
 end
 
 
