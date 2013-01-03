@@ -220,7 +220,100 @@ end
 function GTGUI.Element:SpotLightComponentPanel()
     self:PanelGroupBox("Spot Light");
     
+    -- Colour
+    self.ColourContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
+    self.ColourLabel     = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; margin-bottom:4px; margin-right:8px;'>Colour:</div>");
+    self.ColourInput     = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true;' />"):Vector3Input();
+    
+    -- Attenuation
+    self.AttenuationContainer      = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
+    self.AttenuationLeft           = GTGUI.Server.New("<div parentid='" .. self.AttenuationContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
+    self.AttenuationRight          = GTGUI.Server.New("<div parentid='" .. self.AttenuationContainer:GetID() .. "' style='width:100%; height:auto;' />");
+    
+    self.ConstantAttenuationLabel  = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; margin-bottom:4px;'>Constant Attenuation:</div>");
+    self.LinearAttenuationLabel    = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; margin-bottom:4px;'>Linear Attenuation:</div>");
+    self.QuadraticAttenuationLabel = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; padding-bottom:0px'>Quadratic Attenuation:</div>");
+    
+    self.ConstantAttenuationInput  = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%; margin-bottom:2px;'></div>");
+    self.LinearAttenuationInput    = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%; margin-bottom:2px;'></div>");
+    self.QuadraticAttenuationInput = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%;'></div>");
+    
+    
+    -- Shadows
+    self.CastShadows = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:8px;' />");
+    
+    
+    
+    self.CurrentNode           = nil;
+    self.CurrentComponent      = nil;
+    self.LockAttenuationEvents = false;
+    
+    
+    
+    self.ColourInput:OnValueChanged(function(data)
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetColour(data.x, data.y, data.z);
+        end
+    end);
+    
+    
+    
+    self.ConstantAttenuationInput:OnTextChanged(function()
+        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateComponentAttenuation() end
+    end);
+    
+    self.LinearAttenuationInput:OnTextChanged(function()
+        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateComponentAttenuation() end
+    end);
+    
+    self.QuadraticAttenuationInput:OnTextChanged(function()
+        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateComponentAttenuation() end
+    end);
+    
+    
+    
+    self.CastShadows:CheckBox("Cast Shadows");
+    
+    self.CastShadows:OnChecked(function()
+        if self.CurrentComponent ~= nil then self.CurrentComponent:EnableShadowCasting(); end;
+    end);
+    
+    self.CastShadows:OnUnchecked(function()
+        if self.CurrentComponent ~= nil then self.CurrentComponent:DisableShadowCasting(); end;
+    end);
+    
+    
+    
+    
     function self:Update(node)
+        self.CurrentNode      = node;
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.SpotLight);
+        
+        if self.CurrentComponent ~= nil then
+            self.ColourInput:SetFromXYZ(self.CurrentComponent:GetColour());
+            
+            self.LockAttenuationEvents = true;
+            self.ConstantAttenuationInput:SetText( string.format("%.4f", self.CurrentComponent:GetConstantAttenuation()));
+            self.LinearAttenuationInput:SetText(   string.format("%.4f", self.CurrentComponent:GetLinearAttenuation()));
+            self.QuadraticAttenuationInput:SetText(string.format("%.4f", self.CurrentComponent:GetQuadraticAttenuation()));
+            self.LockAttenuationEvents = false;
+            
+            if self.CurrentComponent:IsShadowCastingEnabled() then
+                self.CastShadows:Check(true);
+            else
+                self.CastShadows:Uncheck(true);
+            end
+        end
+    end
+    
+    function self:UpdateComponentAttenuation()
+        if self.CurrentComponent ~= nil then
+            local constant  = tonumber(self.ConstantAttenuationInput:GetText());
+            local linear    = tonumber(self.LinearAttenuationInput:GetText());
+            local quadratic = tonumber(self.QuadraticAttenuationInput:GetText());
+            
+            self.CurrentComponent:SetAttenuation(constant, linear, quadratic);
+        end
     end
     
     return self;
