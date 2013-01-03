@@ -139,6 +139,27 @@ namespace GTEngine
 
 
 
+
+        /// Shows the direction arrow model.
+        ///
+        /// @remarks
+        ///     This does not have picking collision info.
+        void ShowDirectionArrow();
+
+        /// Hides the direction arrow model.
+        void HideDirectionArrow();
+
+        /// Determines whether or not the direction arrow is being shown.
+        bool IsShowingDirectionArrow() const;
+
+        /// Retrieves a pointer to the model of the direction arrow.
+        ///
+        /// @remarks
+        ///     A pointer to the model of the direction arrow, or null if it isn't being shown.
+        Model* GetDirectionArrow();
+
+
+
     private:
 
         /// Deletes the collision shape and sets the pointer to null.
@@ -190,6 +211,14 @@ namespace GTEngine
 
         /// TEMP: The sprite transformation.
         glm::mat4 spriteTransform;
+
+
+        /// The model to use for the direction arrow.
+        Model* directionArrowModel;
+
+        /// The vertex array to use for the direction arrow.
+        VertexArray* directionArrowVA;
+
 
 
 
