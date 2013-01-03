@@ -7,13 +7,13 @@ function GTGUI.Element:PanelGroupBoxTitle(text)
     
     
     self:OnMouseEnter(function()
-        self.Arrow:SetStyle("background-image-color", "#aaa");
-        self.Text:SetStyle("text-color", "#aaa");
+        self.Arrow:SetStyle("background-image-color", "#ddd");
+        self.Text:SetStyle("text-color", "#ddd");
     end)
     
     self:OnMouseLeave(function()
-        self.Arrow:SetStyle("background-image-color", "#999");
-        self.Text:SetStyle("text-color", "#999");
+        self.Arrow:SetStyle("background-image-color", "#bbb");
+        self.Text:SetStyle("text-color", "#bbb");
     end)
     
     self:OnPressed(function()
