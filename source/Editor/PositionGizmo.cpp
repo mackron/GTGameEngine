@@ -6,9 +6,10 @@ namespace GTEngine
 {
     PositionGizmo::PositionGizmo()
         : sceneNode(),
-          xArrowSceneNode(), yArrowSceneNode(), zArrowSceneNode(),
-          xArrowModel(),     yArrowModel(),     zArrowModel(),
-          arrowLineVA(nullptr), arrowHeadVA(nullptr)
+          xArrowSceneNode(), yArrowSceneNode(), zArrowSceneNode(), xCircleSceneNode(), yCircleSceneNode(), zCircleSceneNode(),
+          xArrowModel(),     yArrowModel(),     zArrowModel(),     xCircleModel(),     yCircleModel(),     zCircleModel(),
+          arrowLineVA(nullptr), arrowHeadVA(nullptr),
+          circleVA(nullptr)
     {
     }
 
@@ -16,14 +17,17 @@ namespace GTEngine
     {
         delete this->arrowLineVA;
         delete this->arrowHeadVA;
+
+        delete this->circleVA;
     }
 
 
     void PositionGizmo::Initialise()
     {
+        /////////////////////////////////////////
+        // Arrow Mesh
         this->arrowLineVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
         this->arrowHeadVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
-
 
         // Arrow line.
         glm::vec3 arrowLineVertices[2] =
@@ -74,30 +78,55 @@ namespace GTEngine
             arrowHeadIndices.PushBack(firstOuterBaseIndex + i);
         }
 
-        
-
-
-
         this->arrowLineVA->SetData(&arrowLineVertices[0].x, 2, arrowLineIndices, 2);
         this->arrowHeadVA->SetData(&arrowHeadVertices[0].x, arrowHeadVertices.count, &arrowHeadIndices[0], arrowHeadIndices.count);
 
 
 
 
+        /////////////////////////////////////////
+        // Circle Mesh
+        this->circleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+
+        float        circleRadius       = 1.5f;
+        unsigned int circleSegmentCount = 32;
+        float        circleSegmentAngle = glm::radians(360.0f / static_cast<float>(circleSegmentCount));
+
+        GTCore::Vector<glm::vec3> circleVertices;
+        for (unsigned int i = 0; i < circleSegmentCount; ++i)
+        {
+            glm::vec3 position;
+
+            position.x = std::cos(circleSegmentAngle * i) * circleRadius;
+            position.y = std::sin(circleSegmentAngle * i) * circleRadius;
+            position.z = 0.0f;
+
+            circleVertices.PushBack(position);
+        }
+
+        GTCore::Vector<unsigned int> circleIndices;
+        for (unsigned int i = 0; i < circleSegmentCount; ++i)
+        {
+            circleIndices.PushBack(i);
+            circleIndices.PushBack((i + 1) % circleSegmentCount);
+        }
+
+        this->circleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
+
+
+
+
+
         this->xArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
         this->xArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
-        this->xArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
-        this->xArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
-
         this->yArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
         this->yArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
-        this->yArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
-        this->yArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
-
         this->zArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
         this->zArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
-        this->zArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
-        this->zArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
+
+        this->xCircleModel.AttachMesh(circleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->yCircleModel.AttachMesh(circleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->zCircleModel.AttachMesh(circleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
 
 
 
@@ -106,15 +135,29 @@ namespace GTEngine
         this->yArrowSceneNode.RotateX( 90.0f);
         this->zArrowSceneNode.RotateX( 180.0f);
 
+        this->xCircleSceneNode.RotateY(-90.0f);
+        this->yCircleSceneNode.RotateX( 90.0f);
+        this->zCircleSceneNode.RotateX(  0.0f);
+
 
 
         this->xArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->xArrowModel);
         this->yArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->yArrowModel);
         this->zArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->zArrowModel);
 
+        this->xCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->xCircleModel);
+        this->yCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->yCircleModel);
+        this->zCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->zCircleModel);
+
+
         this->xArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
         this->yArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
         this->zArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+
+        this->xCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+        this->yCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+        this->zCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+
 
 
         auto metadata = this->sceneNode.AddComponent<EditorMetadataComponent>();
@@ -135,12 +178,35 @@ namespace GTEngine
         metadata->UseModelForPickingShape(false);
 
 
+        metadata = this->xCircleSceneNode.AddComponent<EditorMetadataComponent>();
+        metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
+        metadata->SetAlwaysShowOnTop(true);
+        metadata->UseModelForPickingShape(false);
+
+        metadata = this->yCircleSceneNode.AddComponent<EditorMetadataComponent>();
+        metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
+        metadata->SetAlwaysShowOnTop(true);
+        metadata->UseModelForPickingShape(false);
+
+        metadata = this->zCircleSceneNode.AddComponent<EditorMetadataComponent>();
+        metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
+        metadata->SetAlwaysShowOnTop(true);
+        metadata->UseModelForPickingShape(false);
+
+
+
         this->sceneNode.AttachChild(this->xArrowSceneNode);
         this->sceneNode.AttachChild(this->yArrowSceneNode);
         this->sceneNode.AttachChild(this->zArrowSceneNode);
 
+        /*
+        this->sceneNode.AttachChild(this->xCircleSceneNode);
+        this->sceneNode.AttachChild(this->yCircleSceneNode);
+        this->sceneNode.AttachChild(this->zCircleSceneNode);
+        */
 
         this->UpdatePickingVolumes();
+        this->RestoreColours();
     }
 
 
@@ -182,12 +248,14 @@ namespace GTEngine
     {
         this->xArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
         this->xArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
-
         this->yArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
         this->yArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
-
         this->zArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
         this->zArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
+
+        this->xCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f,  0.25f, 0.25f);
+        this->yCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.25f, 1.0f,  0.25f);
+        this->zCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.25f, 0.25f, 1.0f);
     }
 
     void PositionGizmo::ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b)

@@ -995,6 +995,9 @@ namespace GTEngine
         this->positionGizmo.GetXArrowSceneNode().SetDataPointer(0, this);
         this->positionGizmo.GetYArrowSceneNode().SetDataPointer(0, this);
         this->positionGizmo.GetZArrowSceneNode().SetDataPointer(0, this);
+        this->positionGizmo.GetXCircleSceneNode().SetDataPointer(0, this);
+        this->positionGizmo.GetYCircleSceneNode().SetDataPointer(0, this);
+        this->positionGizmo.GetZCircleSceneNode().SetDataPointer(0, this);
 
         this->scene.AddSceneNode(this->positionGizmo.GetSceneNode());
         this->positionGizmo.Hide();
