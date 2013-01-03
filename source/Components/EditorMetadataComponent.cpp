@@ -166,11 +166,15 @@ namespace GTEngine
                 assert(this->spritePickingCollisionShape  == nullptr);
                 assert(this->spritePickingCollisionObject == nullptr);
                 {
-                    this->spritePickingCollisionShape = new btBoxShape(btVector3(0.5f, 0.5f, 0.5f) * ToBulletVector3(this->node.GetWorldScale()));
+                    this->spritePickingCollisionShape = new btBoxShape(btVector3(0.25f, 0.25f, 0.0f) * ToBulletVector3(this->node.GetWorldScale()));
                     
                     this->spritePickingCollisionObject = new CollisionObject;
                     this->spritePickingCollisionObject->setUserPointer(this);
                     this->spritePickingCollisionObject->setCollisionShape(this->spritePickingCollisionShape);
+
+
+                    this->ApplyTransformToSprite();
+                    this->ApplyScaleToSprite();
                 }
             }
         }
@@ -201,6 +205,23 @@ namespace GTEngine
         this->spriteModel                  = nullptr;
     }
 
+    void EditorMetadataComponent::ApplyTransformToSprite()
+    {
+        if (this->spritePickingCollisionShape != nullptr && this->spritePickingCollisionObject != nullptr)
+        {
+            btTransform transform;
+            transform.setFromOpenGLMatrix(&this->spriteTransform[0][0]);
+            this->spritePickingCollisionObject->setWorldTransform(transform);
+
+
+            auto world = this->spritePickingCollisionObject->GetWorld();
+            if (world != nullptr)
+            {
+                world->UpdateAABB(*this->spritePickingCollisionObject);
+            }
+        }
+    }
+
     void EditorMetadataComponent::ApplyScaleToSprite()
     {
         if (this->spritePickingCollisionShape != nullptr && this->spritePickingCollisionObject != nullptr)
@@ -212,7 +233,7 @@ namespace GTEngine
             }
 
 
-            this->spritePickingCollisionShape->setImplicitShapeDimensions(btVector3(0.5f, 0.5f, 0.5f) * ToBulletVector3(this->node.GetWorldScale()));
+            this->spritePickingCollisionShape->setImplicitShapeDimensions(btVector3(0.25f, 0.25f, 0.0f) * ToBulletVector3(this->node.GetWorldScale()));
 
 
             if (world != nullptr)

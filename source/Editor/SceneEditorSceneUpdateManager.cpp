@@ -21,12 +21,16 @@ namespace GTEngine
         {
             if (metadata->IsUsingSprite())
             {
-                glm::mat4 transform(Math::CalculateLookAtMatrix(node.GetWorldPosition(), this->cameraNode.GetWorldPosition()));
-                transform[3] = glm::vec4(node.GetWorldPosition(), 1.0f);
+                // After transforming with the camera, we want the orientation to be such that it's facing +1.0 on the z axis. If we make it's orientation
+                // that of the camera orientation and then rotate around Y by 180 degrees, we should have it.
+                glm::quat orientation = this->cameraNode.GetWorldOrientation() * glm::angleAxis(180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-                transform *= glm::scale(node.GetWorldScale());
+                glm::mat4 transform = glm::mat4_cast(orientation);
+                transform[3] = glm::vec4(node.GetWorldPosition(), 1.0f);
+                transform   *= glm::scale(node.GetWorldScale());
 
                 metadata->SetSpriteTransform(transform);
+                metadata->ApplyTransformToSprite();
             }
         }
 
