@@ -127,6 +127,9 @@ namespace GTEngine
         ///     A pointer to the picking collision object of the sprite, or null if the component is not using a sprite.
         CollisionObject* GetSpritePickingCollisionObject();
 
+        /// Retrieves the path of the texture being used by the sprite.
+        const char* GetSpriteTexturePath() const;
+
 
         /// TEMP: Sets the transformation of the sprite.
         void SetSpriteTransform(const glm::mat4 &spriteTransformIn) { this->spriteTransform = spriteTransformIn; }
@@ -181,6 +184,9 @@ namespace GTEngine
 
         /// The collision shape to use for picking the sprite. This is a box shape.
         btBoxShape* spritePickingCollisionShape;
+
+        /// The path of the texture to use for the sprite.
+        GTCore::String spriteTexturePath;
 
         /// TEMP: The sprite transformation.
         glm::mat4 spriteTransform;

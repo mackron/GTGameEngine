@@ -276,13 +276,28 @@ namespace GTEngine
                     /// Shows a sprite on the object while it's shown in the editor.
                     ///
                     /// @remarks
-                    ///     Argument 1: A pointer to the component whose model is being set.
+                    ///     Argument 1: A pointer to the component whose sprite is being shown.
                     ///     Argument 2: The file path of the texture to use on the sprite.
                     ///     Argument 3: A table containing the colour to use with the sprite. Keys are r, g and b.
                     int ShowSprite(GTCore::Script &script);
 
                     /// Hides the sprite.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component whose sprite is being hidden.
                     int HideSprite(GTCore::Script &script);
+
+                    /// Determines whether or not a sprite is being shown.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int IsShowingSprite(GTCore::Script &script);
+
+                    /// Retrieves the path of the texture being used for the sprite.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component whose sprite texture is being retrieved.
+                    int GetSpriteTexturePath(GTCore::Script &script);
                 }
             }
         }
