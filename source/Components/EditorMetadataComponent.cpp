@@ -237,10 +237,8 @@ namespace GTEngine
                 world->RemoveCollisionObject(*this->spritePickingCollisionObject);
             }
 
-            glm::vec3 scale = this->node.GetWorldScale();
-            scale.z = 1.0f;
 
-            this->spritePickingCollisionShape->setImplicitShapeDimensions(btVector3(0.25f, 0.25f, 0.001f) * ToBulletVector3(scale));
+            this->spritePickingCollisionShape->setImplicitShapeDimensions(btVector3(0.25f, 0.25f, 0.0f) * ToBulletVector3(this->node.GetWorldScale()));
 
 
             if (world != nullptr)
