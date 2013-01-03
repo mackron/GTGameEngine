@@ -266,6 +266,19 @@ namespace GTEngine
                 "function GTEngine.EditorMetadataComponent:GetSpriteTexturePath()"
                 "    return GTEngine.System.EditorMetadataComponent.GetSpriteTexturePath(self._internalPtr);"
                 "end;"
+
+
+                "function GTEngine.EditorMetadataComponent:ShowDirectionArrow(texturePath, colour)"
+                "    GTEngine.System.EditorMetadataComponent.ShowDirectionArrow(self._internalPtr, texturePath, colour);"
+                "end;"
+
+                "function GTEngine.EditorMetadataComponent:HideDirectionArrow()"
+                "    GTEngine.System.EditorMetadataComponent.HideDirectionArrow(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.EditorMetadataComponent:IsShowingDirectionArrow()"
+                "    return GTEngine.System.EditorMetadataComponent.IsShowingDirectionArrow(self._internalPtr);"
+                "end;"
             );
 
 
@@ -530,10 +543,13 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "ShowSprite",           FFI::SystemFFI::EditorMetadataComponentFFI::ShowSprite);
-                        script.SetTableFunction(-1, "HideSprite",           FFI::SystemFFI::EditorMetadataComponentFFI::HideSprite);
-                        script.SetTableFunction(-1, "IsShowingSprite",      FFI::SystemFFI::EditorMetadataComponentFFI::IsShowingSprite);
-                        script.SetTableFunction(-1, "GetSpriteTexturePath", FFI::SystemFFI::EditorMetadataComponentFFI::GetSpriteTexturePath);
+                        script.SetTableFunction(-1, "ShowSprite",              FFI::SystemFFI::EditorMetadataComponentFFI::ShowSprite);
+                        script.SetTableFunction(-1, "HideSprite",              FFI::SystemFFI::EditorMetadataComponentFFI::HideSprite);
+                        script.SetTableFunction(-1, "IsShowingSprite",         FFI::SystemFFI::EditorMetadataComponentFFI::IsShowingSprite);
+                        script.SetTableFunction(-1, "GetSpriteTexturePath",    FFI::SystemFFI::EditorMetadataComponentFFI::GetSpriteTexturePath);
+                        script.SetTableFunction(-1, "ShowDirectionArrow",      FFI::SystemFFI::EditorMetadataComponentFFI::ShowDirectionArrow);
+                        script.SetTableFunction(-1, "HideDirectionArrow",      FFI::SystemFFI::EditorMetadataComponentFFI::HideDirectionArrow);
+                        script.SetTableFunction(-1, "IsShowingDirectionArrow", FFI::SystemFFI::EditorMetadataComponentFFI::IsShowingDirectionArrow);
                     }
                     script.Pop(1);
                 }
@@ -1486,7 +1502,6 @@ namespace GTEngine
                         return 0;
                     }
 
-
                     int HideSprite(GTCore::Script &script)
                     {
                         auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
@@ -1523,6 +1538,44 @@ namespace GTEngine
                         else
                         {
                             script.PushNil();
+                        }
+
+                        return 1;
+                    }
+
+
+                    int ShowDirectionArrow(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->ShowDirectionArrow();
+                        }
+
+                        return 0;
+                    }
+
+                    int HideDirectionArrow(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->HideDirectionArrow();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsShowingDirectionArrow(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->IsShowingDirectionArrow());
+                        }
+                        else
+                        {
+                            script.Push(false);
                         }
 
                         return 1;

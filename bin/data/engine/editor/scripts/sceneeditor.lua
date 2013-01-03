@@ -412,11 +412,14 @@ function GTGUI.Element:EditorMetadataComponentPanel()
     self:PanelGroupBox("Editor Metadata");
     
     -- Show in editor.
-    self.ShowInEditor  = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:8px;' />")
+    self.ShowInEditor       = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:8px;' />")
     
     -- Sprite
-    self.ShowSprite    = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:2px;' />");
-    self.SpriteTexture = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox'  style='width:100%; enabled:false;' />");
+    self.ShowSprite         = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:2px;' />");
+    self.SpriteTexture      = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox'  style='width:100%; enabled:false;' />");
+    
+    -- Direction Arrow
+    self.ShowDirectionArrow = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:8px;' />");
     
     
     
@@ -445,7 +448,7 @@ function GTGUI.Element:EditorMetadataComponentPanel()
     end);
     
     
-    
+
     self.SpriteTexture:OnKeyPressed(function(data)
         if data.key == GTGUI.Keys.Enter then
             self:UpdateSprite();
@@ -457,6 +460,18 @@ function GTGUI.Element:EditorMetadataComponentPanel()
             self.SpriteTexture:SetText(data.droppedElement.path);
             self:UpdateSprite();
         end
+    end);
+    
+    
+    
+    self.ShowDirectionArrow:CheckBox("Show Direction Arrow");
+    
+    self.ShowDirectionArrow:OnChecked(function()
+        self:UpdateDirectionArrow();
+    end);
+    
+    self.ShowDirectionArrow:OnUnchecked(function()
+        self:UpdateDirectionArrow();
     end);
     
     
@@ -502,6 +517,18 @@ function GTGUI.Element:EditorMetadataComponentPanel()
                 self.CurrentComponent:ShowSprite(self.SpriteTexture:GetText());
             else
                 self.CurrentComponent:HideSprite();
+            end
+            
+            self.CurrentNode:Refresh();
+        end
+    end
+    
+    function self:UpdateDirectionArrow()
+        if self.CurrentComponent ~= nil then
+            if self.ShowDirectionArrow:IsChecked() then
+                self.CurrentComponent:ShowDirectionArrow();
+            else
+                self.CurrentComponent:HideDirectionArrow();
             end
             
             self.CurrentNode:Refresh();

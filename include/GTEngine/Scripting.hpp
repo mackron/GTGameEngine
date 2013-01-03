@@ -399,6 +399,25 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the component whose sprite texture is being retrieved.
                     int GetSpriteTexturePath(GTCore::Script &script);
+
+
+                    /// Shows a direction on the object while it's shown in the editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component whose direction arrow is being shown.
+                    int ShowDirectionArrow(GTCore::Script &script);
+
+                    /// Hides the direction arrow.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component whose direction arrow is being hidden.
+                    int HideDirectionArrow(GTCore::Script &script);
+
+                    /// Determines whether or not the direction arrow is being shown.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int IsShowingDirectionArrow(GTCore::Script &script);
                 }
             }
         }
