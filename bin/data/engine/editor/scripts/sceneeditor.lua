@@ -247,8 +247,72 @@ end
 function GTGUI.Element:EditorMetadataComponentPanel()
     self:PanelGroupBox("Editor Metadata");
     
+    -- Sprite
+    self.ShowSprite    = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:2px;' />");
+    self.SpriteTexture = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox'  style='width:100%; enabled:false;' />");
+    
+    
+    
+    self.ShowSprite:CheckBox("Show Sprite");
+    
+    self.ShowSprite:OnChecked(function()
+        self.SpriteTexture:Enable();
+        self:UpdateSprite();
+    end);
+    
+    self.ShowSprite:OnUnchecked(function()
+        self.SpriteTexture:Disable();
+        self:UpdateSprite();
+    end);
+    
+    
+    
+    self.SpriteTexture:OnKeyPressed(function(data)
+        if data.key == GTGUI.Keys.Enter then
+            self:UpdateSprite();
+        end
+    end);
+    
+    self.SpriteTexture:OnDrop(function(data)
+        if data.droppedElement.isAsset then
+            self.SpriteTexture:SetText(data.droppedElement.path);
+            self:UpdateSprite();
+        end
+    end);
+    
+    
+    
+    
+    
     function self:Update(node)
+        self.CurrentNode      = node;
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.EditorMetadata);
+        
+        if self.CurrentComponent ~= nil then
+            if self.CurrentComponent:IsShowingSprite() then
+                self.ShowSprite:Check(true);
+                self.SpriteTexture:Enable();
+            else
+                self.ShowSprite:Uncheck(true);
+                self.SpriteTexture:Disable();
+            end
+            
+            self.SpriteTexture:SetText(self.CurrentComponent:GetSpriteTexturePath() or "");
+        end
     end
+    
+    function self:UpdateSprite()
+        if self.CurrentComponent ~= nil and self.CurrentNode ~= nil then
+            if self.ShowSprite:IsChecked() then
+                self.CurrentComponent:ShowSprite(self.SpriteTexture:GetText());
+            else
+                self.CurrentComponent:HideSprite();
+            end
+            
+            self.CurrentNode:Refresh();
+        end
+    end
+    
     
     return self;
 end

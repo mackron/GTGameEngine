@@ -14,7 +14,7 @@ namespace GTEngine
           alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
-          spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTransform()
+          spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTransform(), spriteTexturePath()
     {
         pickingCollisionObject.setUserPointer(this);
     }
@@ -187,6 +187,9 @@ namespace GTEngine
             this->spriteModel->meshes[0]->GetMaterial()->SetParameter("SpriteTexture", Texture2DLibrary::Acquire(texturePath));
             this->spriteModel->meshes[0]->GetMaterial()->SetParameter("SpriteColour",  colour);
         }
+
+
+        this->spriteTexturePath = texturePath;
     }
 
     void EditorMetadataComponent::ShowSprite(const char* texturePath, float colourR, float colourG, float colourB)
@@ -203,6 +206,8 @@ namespace GTEngine
         this->spritePickingCollisionObject = nullptr;
         this->spritePickingCollisionShape  = nullptr;
         this->spriteModel                  = nullptr;
+
+        this->spriteTexturePath = "";
     }
 
     void EditorMetadataComponent::ApplyTransformToSprite()
@@ -258,6 +263,11 @@ namespace GTEngine
     CollisionObject* EditorMetadataComponent::GetSpritePickingCollisionObject()
     {
         return this->spritePickingCollisionObject;
+    }
+
+    const char* EditorMetadataComponent::GetSpriteTexturePath() const
+    {
+        return this->spriteTexturePath.c_str();
     }
 
 

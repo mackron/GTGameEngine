@@ -158,6 +158,14 @@ namespace GTEngine
                 "function GTEngine.EditorMetadataComponent:HideSprite()"
                 "    GTEngine.System.EditorMetadataComponent.HideSprite(self._internalPtr);"
                 "end;"
+
+                "function GTEngine.EditorMetadataComponent:IsShowingSprite()"
+                "    return GTEngine.System.EditorMetadataComponent.IsShowingSprite(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.EditorMetadataComponent:GetSpriteTexturePath()"
+                "    return GTEngine.System.EditorMetadataComponent.GetSpriteTexturePath(self._internalPtr);"
+                "end;"
             );
 
 
@@ -365,8 +373,10 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "ShowSprite", FFI::SystemFFI::EditorMetadataComponentFFI::ShowSprite);
-                        script.SetTableFunction(-1, "HideSprite", FFI::SystemFFI::EditorMetadataComponentFFI::HideSprite);
+                        script.SetTableFunction(-1, "ShowSprite",           FFI::SystemFFI::EditorMetadataComponentFFI::ShowSprite);
+                        script.SetTableFunction(-1, "HideSprite",           FFI::SystemFFI::EditorMetadataComponentFFI::HideSprite);
+                        script.SetTableFunction(-1, "IsShowingSprite",      FFI::SystemFFI::EditorMetadataComponentFFI::IsShowingSprite);
+                        script.SetTableFunction(-1, "GetSpriteTexturePath", FFI::SystemFFI::EditorMetadataComponentFFI::GetSpriteTexturePath);
                     }
                     script.Pop(1);
                 }
@@ -1019,6 +1029,36 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+                    int IsShowingSprite(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->IsUsingSprite());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetSpriteTexturePath(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetSpriteTexturePath());
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+
+                        return 1;
                     }
                 }
             }
