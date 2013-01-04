@@ -13,7 +13,7 @@ namespace GTEngine
         : Component(node),
           alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
-          pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
+          pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
           spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTransform(), spriteTexturePath(),
           directionArrowModel(nullptr), directionArrowVA(nullptr)
     {
@@ -86,6 +86,9 @@ namespace GTEngine
         {
             world->AddCollisionObject(this->pickingCollisionObject, this->pickingCollisionGroup, CollisionGroups::EditorSelectionRay);
         }
+
+
+        this->pickingCollisionShapeType = PickingCollisionShapeType_Model;
     }
 
     void EditorMetadataComponent::SetPickingCollisionShapeToBox(const glm::vec3 &halfExtents, const glm::vec3 &offset)
@@ -118,6 +121,62 @@ namespace GTEngine
         {
             world->AddCollisionObject(this->pickingCollisionObject, this->pickingCollisionGroup, CollisionGroups::EditorSelectionRay);
         }
+
+
+        this->pickingCollisionShapeType = PickingCollisionShapeType_Box;
+    }
+
+    void EditorMetadataComponent::SetPickingCollisionShapeToTorus(float outerRadius, float innerRadius, unsigned int subdivisions)
+    {
+        auto world = this->pickingCollisionObject.GetWorld();
+        if (world != nullptr)
+        {
+            world->RemoveCollisionObject(this->pickingCollisionObject);
+        }
+
+
+        // The old shape needs to be deleted.
+        this->DeleteCollisionShape();
+
+
+        auto compoundShape = new btCompoundShape;
+
+
+        btVector3 forward(0.0f,        0.0f, -1.0f);
+        btVector3 side(   outerRadius, 0.0f,  0.0f);
+        float gap = std::sqrt(2.0f * innerRadius * innerRadius - 2.0f * innerRadius * innerRadius * std::cos((2.0f * SIMD_PI) / static_cast<float>(subdivisions)));
+
+        btCylinderShape* cylinderShape = new btCylinderShape(btVector3(innerRadius, (SIMD_PI / static_cast<float>(subdivisions)) + 0.5f * gap, innerRadius));
+
+        btTransform transform;
+        for (unsigned int i = 0; i < subdivisions; ++i)
+        {
+            float angle = (i * 2.0f * SIMD_PI) / static_cast<float>(subdivisions);
+            btVector3 position = side.rotate(forward, angle);
+            btQuaternion q(forward, angle);
+
+            transform.setIdentity();
+            transform.setOrigin(position);
+            transform.setRotation(q);
+            compoundShape->addChildShape(transform, cylinderShape);
+        }
+
+
+
+        
+
+
+
+        this->pickingCollisionShape = compoundShape;
+        this->pickingCollisionObject.setCollisionShape(this->pickingCollisionShape);
+
+        if (world != nullptr && this->pickingCollisionShape != nullptr)
+        {
+            world->AddCollisionObject(this->pickingCollisionObject, this->pickingCollisionGroup, CollisionGroups::EditorSelectionRay);
+        }
+
+
+        this->pickingCollisionShapeType = PickingCollisionShapeType_Torus;
     }
 
 
@@ -330,7 +389,7 @@ namespace GTEngine
     {
         if (this->pickingCollisionShape != nullptr)
         {
-            if (this->pickingCollisionShape->getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
+            if (this->pickingCollisionShapeType == PickingCollisionShapeType_Box)
             {
                 auto compoundShape = static_cast<btCompoundShape*>(this->pickingCollisionShape);
                 
@@ -340,6 +399,17 @@ namespace GTEngine
                     compoundShape->removeChildShapeByIndex(0);
                 }
             }
+            else if (this->pickingCollisionShapeType == PickingCollisionShapeType_Torus)
+            {
+                // We will be re-using a single cylinder shape here, so we only want to delete the first one.
+                auto compoundShape = static_cast<btCompoundShape*>(this->pickingCollisionShape);
+
+                if (compoundShape->getNumChildShapes() > 0)
+                {
+                    delete compoundShape->getChildShape(0);
+                }
+            }
+
 
 
             delete this->pickingCollisionShape;

@@ -62,6 +62,18 @@ namespace GTEngine
         /// Sets the picking shape to a box with a given offset.
         void SetPickingCollisionShapeToBox(const glm::vec3 &halfExtents, const glm::vec3 &offset);
 
+        /// Sets the picking shape to a torus.
+        ///
+        /// @param outerRadius  [in] The outer radius of the torus, minus the inner radius.
+        /// @param innerRadius  [in] The radius of the geometry making up the ring shape.
+        /// @param subdivisions [in] The number of segments to use for the ring.
+        ///
+        /// @remarks
+        ///     Currently, this is just a hacky compound shape made up of a series of cylinders.
+        ///     \par
+        ///     This will be created on the XY plane, looking down -Z.
+        void SetPickingCollisionShapeToTorus(float outerRadius, float innerRadius, unsigned int subdivisions);
+
 
         /// Sets the picking collision group.
         void SetPickingCollisionGroup(short group);
@@ -191,6 +203,17 @@ namespace GTEngine
 
         /// The collision shape to use for picking. Need to use a pointer here because we might not always use the same kind of shape for everything.
         btCollisionShape* pickingCollisionShape;
+
+
+        /// Enumerator for the type of collision shape we are using. We need this in determining how to handle certain things.
+        enum PickingCollisionShapeType
+        {
+            PickingCollisionShapeType_None,
+            PickingCollisionShapeType_Model,
+            PickingCollisionShapeType_Box,
+            PickingCollisionShapeType_Torus,
+
+        }pickingCollisionShapeType;
 
 
         /// The picking group.

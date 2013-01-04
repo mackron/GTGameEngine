@@ -199,11 +199,9 @@ namespace GTEngine
         this->sceneNode.AttachChild(this->yArrowSceneNode);
         this->sceneNode.AttachChild(this->zArrowSceneNode);
 
-        /*
         this->sceneNode.AttachChild(this->xCircleSceneNode);
         this->sceneNode.AttachChild(this->yCircleSceneNode);
         this->sceneNode.AttachChild(this->zCircleSceneNode);
-        */
 
         this->UpdatePickingVolumes();
         this->RestoreColours();
@@ -218,6 +216,18 @@ namespace GTEngine
     const glm::vec3 & TransformGizmo::GetPosition() const
     {
         return this->sceneNode.GetPosition();
+    }
+
+
+    void TransformGizmo::SetRotation(const glm::quat &rotation)
+    {
+        this->xCircleSceneNode.SetWorldOrientation(rotation);
+        this->yCircleSceneNode.SetWorldOrientation(rotation);
+        this->zCircleSceneNode.SetWorldOrientation(rotation);
+
+        this->xCircleSceneNode.RotateY(-90.0f);
+        this->yCircleSceneNode.RotateX( 90.0f);
+        this->zCircleSceneNode.RotateX(  0.0f);
     }
 
     
@@ -260,7 +270,8 @@ namespace GTEngine
 
     void TransformGizmo::ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b)
     {
-        assert(&axisSceneNode == &this->xArrowSceneNode || &axisSceneNode == &this->yArrowSceneNode || &axisSceneNode == &this->zArrowSceneNode);
+        assert(&axisSceneNode == &this->xArrowSceneNode  || &axisSceneNode == &this->yArrowSceneNode  || &axisSceneNode == &this->zArrowSceneNode ||
+               &axisSceneNode == &this->xCircleSceneNode || &axisSceneNode == &this->yCircleSceneNode || &axisSceneNode == &this->zCircleSceneNode);
         {
             auto modelComponent = axisSceneNode.GetComponent<ModelComponent>();
             if (modelComponent != nullptr)
@@ -268,10 +279,10 @@ namespace GTEngine
                 auto model = modelComponent->GetModel();
                 if (model != nullptr)
                 {
-                    assert(model->meshes.count == 2);
-
-                    model->meshes[0]->GetMaterial()->SetParameter("EmissiveColour", r, g, b);
-                    model->meshes[1]->GetMaterial()->SetParameter("EmissiveColour", r, g, b);
+                    for (size_t i = 0; i < model->meshes.count; ++i)
+                    {
+                        model->meshes[i]->GetMaterial()->SetParameter("EmissiveColour", r, g, b);
+                    }
                 }
             }
         }
@@ -310,6 +321,31 @@ namespace GTEngine
         if (metadata != nullptr)
         {
             metadata->SetPickingCollisionShapeToBox(halfExtents, offset);
+        }
+
+
+
+        // Now for the circles. We use a torus for these. We'll use the Y scale for this, but since the scale is uniform, shouldn't really matter what we use.
+        float yScale      = this->GetScale().y;
+        float outerRadius = 1.5f * yScale;              // 1.5 is the radius of the circles.
+        float innerRadius = 0.1f * yScale;              // This is the radius of the geometry making up the ring.
+
+        metadata = this->xCircleSceneNode.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            metadata->SetPickingCollisionShapeToTorus(outerRadius, innerRadius, 16);
+        }
+
+        metadata = this->yCircleSceneNode.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            metadata->SetPickingCollisionShapeToTorus(outerRadius, innerRadius, 16);
+        }
+
+        metadata = this->zCircleSceneNode.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            metadata->SetPickingCollisionShapeToTorus(outerRadius, innerRadius, 16);
         }
     }
 }
