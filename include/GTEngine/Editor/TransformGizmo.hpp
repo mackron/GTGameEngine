@@ -1,21 +1,21 @@
 
-#ifndef __GTEngine_PositionGizmo_hpp_
-#define __GTEngine_PositionGizmo_hpp_
+#ifndef __GTEngine_TransformGizmo_hpp_
+#define __GTEngine_TransformGizmo_hpp_
 
 #include "../SceneNode.hpp"
 
 namespace GTEngine
 {
     /// Class representing the positioning gizmo in an editor.
-    class PositionGizmo
+    class TransformGizmo
     {
     public:
 
         /// Constructor.
-        PositionGizmo();
+        TransformGizmo();
 
         /// Destructor.
-        ~PositionGizmo();
+        ~TransformGizmo();
 
 
         /// Initialises the gizmo.

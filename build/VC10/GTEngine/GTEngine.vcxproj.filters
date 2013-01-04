@@ -632,13 +632,13 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\StaticMeshCollisionShape.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\PositionGizmo.hpp">
-      <Filter>include\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Physics\MeshCollisionShape.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditorSceneUpdateManager.hpp">
+      <Filter>include\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\TransformGizmo.hpp">
       <Filter>include\Editor</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1087,13 +1087,13 @@
     <ClCompile Include="..\..\..\source\Physics\StaticMeshCollisionShape.cpp">
       <Filter>source\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\PositionGizmo.cpp">
-      <Filter>source\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\MeshCollisionShape.cpp">
       <Filter>source\Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\SceneEditorSceneUpdateManager.cpp">
+      <Filter>source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\TransformGizmo.cpp">
       <Filter>source\Editor</Filter>
     </ClCompile>
   </ItemGroup>

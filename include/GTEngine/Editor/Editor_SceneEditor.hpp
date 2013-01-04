@@ -12,7 +12,7 @@
 #include "SceneEditorSceneUpdateManager.hpp"
 #include "../DefaultScenePhysicsManager.hpp"
 #include "../DefaultSceneCullingManager.hpp"
-#include "PositionGizmo.hpp"
+#include "TransformGizmo.hpp"
 
 #include <GTGUI/Element.hpp>
 
@@ -161,7 +161,7 @@ namespace GTEngine
 
 
         /// Shows and repositions the positioning gizmo.
-        void ShowPositionGizmo();
+        void ShowTransformGizmo();
 
         /// Hides whatever gizmo is currently showing.
         void HideGizmos();
@@ -261,8 +261,8 @@ namespace GTEngine
             /// The collision world for doing picking/selecting.
             CollisionWorld pickingWorld;
 
-            /// The positioning gizmo.
-            PositionGizmo positionGizmo;
+            /// The transformation gizmo.
+            TransformGizmo transformGizmo;
 
             /// The list of scene nodes that need to be deleted when they are removed from the scene, or the state is destructed.
             GTCore::Vector<SceneNode*> sceneNodesToDelete;

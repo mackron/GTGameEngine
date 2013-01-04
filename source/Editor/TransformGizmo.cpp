@@ -1,10 +1,10 @@
 
-#include <GTEngine/Editor/PositionGizmo.hpp>
+#include <GTEngine/Editor/TransformGizmo.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 
 namespace GTEngine
 {
-    PositionGizmo::PositionGizmo()
+    TransformGizmo::TransformGizmo()
         : sceneNode(),
           xArrowSceneNode(), yArrowSceneNode(), zArrowSceneNode(), xCircleSceneNode(), yCircleSceneNode(), zCircleSceneNode(),
           xArrowModel(),     yArrowModel(),     zArrowModel(),     xCircleModel(),     yCircleModel(),     zCircleModel(),
@@ -13,7 +13,7 @@ namespace GTEngine
     {
     }
 
-    PositionGizmo::~PositionGizmo()
+    TransformGizmo::~TransformGizmo()
     {
         delete this->arrowLineVA;
         delete this->arrowHeadVA;
@@ -22,7 +22,7 @@ namespace GTEngine
     }
 
 
-    void PositionGizmo::Initialise()
+    void TransformGizmo::Initialise()
     {
         /////////////////////////////////////////
         // Arrow Mesh
@@ -210,41 +210,41 @@ namespace GTEngine
     }
 
 
-    void PositionGizmo::SetPosition(const glm::vec3 &position)
+    void TransformGizmo::SetPosition(const glm::vec3 &position)
     {
         this->sceneNode.SetPosition(position);
     }
 
-    const glm::vec3 & PositionGizmo::GetPosition() const
+    const glm::vec3 & TransformGizmo::GetPosition() const
     {
         return this->sceneNode.GetPosition();
     }
 
     
-    void PositionGizmo::SetScale(const glm::vec3 &scale)
+    void TransformGizmo::SetScale(const glm::vec3 &scale)
     {
         this->sceneNode.SetScale(scale);
         this->UpdatePickingVolumes();
     }
 
-    const glm::vec3 & PositionGizmo::GetScale() const
+    const glm::vec3 & TransformGizmo::GetScale() const
     {
         return this->sceneNode.GetScale();
     }
 
 
-    void PositionGizmo::Show()
+    void TransformGizmo::Show()
     {
         this->sceneNode.Show();
     }
 
-    void PositionGizmo::Hide()
+    void TransformGizmo::Hide()
     {
         this->sceneNode.Hide();
     }
 
 
-    void PositionGizmo::RestoreColours()
+    void TransformGizmo::RestoreColours()
     {
         this->xArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
         this->xArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
@@ -258,7 +258,7 @@ namespace GTEngine
         this->zCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.25f, 0.25f, 1.0f);
     }
 
-    void PositionGizmo::ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b)
+    void TransformGizmo::ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b)
     {
         assert(&axisSceneNode == &this->xArrowSceneNode || &axisSceneNode == &this->yArrowSceneNode || &axisSceneNode == &this->zArrowSceneNode);
         {
@@ -278,7 +278,7 @@ namespace GTEngine
     }
 
 
-    void PositionGizmo::UpdatePickingVolumes()
+    void TransformGizmo::UpdatePickingVolumes()
     {
         // The models are actually unit length which makes determining the length of the picking volume super easy - it's the scale of the z axis. The
         // scale of a gizmo should be uniform, so you could also use x or y.
