@@ -6,10 +6,10 @@ namespace GTEngine
 {
     TransformGizmo::TransformGizmo()
         : sceneNode(),
-          xArrowSceneNode(), yArrowSceneNode(), zArrowSceneNode(), xCircleSceneNode(), yCircleSceneNode(), zCircleSceneNode(),
-          xArrowModel(),     yArrowModel(),     zArrowModel(),     xCircleModel(),     yCircleModel(),     zCircleModel(),
+          xArrowSceneNode(), yArrowSceneNode(), zArrowSceneNode(), xCircleSceneNode(), yCircleSceneNode(), zCircleSceneNode(), cameraFacingCircleSceneNode(),
+          xArrowModel(),     yArrowModel(),     zArrowModel(),     xCircleModel(),     yCircleModel(),     zCircleModel(),     cameraFacingCircleModel(),
           arrowLineVA(nullptr), arrowHeadVA(nullptr),
-          circleVA(nullptr)
+          xCircleVA(nullptr), yCircleVA(nullptr), zCircleVA(nullptr), cameraFacingCircleVA(nullptr)
     {
     }
 
@@ -18,7 +18,10 @@ namespace GTEngine
         delete this->arrowLineVA;
         delete this->arrowHeadVA;
 
-        delete this->circleVA;
+        delete this->xCircleVA;
+        delete this->yCircleVA;
+        delete this->zCircleVA;
+        delete this->cameraFacingCircleVA;
     }
 
 
@@ -86,10 +89,8 @@ namespace GTEngine
 
         /////////////////////////////////////////
         // Circle Mesh
-        this->circleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
-
         float        circleRadius       = 1.5f;
-        unsigned int circleSegmentCount = 32;
+        unsigned int circleSegmentCount = 128;
         float        circleSegmentAngle = glm::radians(360.0f / static_cast<float>(circleSegmentCount));
 
         GTCore::Vector<glm::vec3> circleVertices;
@@ -111,7 +112,18 @@ namespace GTEngine
             circleIndices.PushBack((i + 1) % circleSegmentCount);
         }
 
-        this->circleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
+
+        this->xCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->xCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
+        
+        this->yCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->yCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
+        
+        this->zCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->zCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
+
+        this->cameraFacingCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->cameraFacingCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
 
 
 
@@ -124,9 +136,10 @@ namespace GTEngine
         this->zArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
         this->zArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
 
-        this->xCircleModel.AttachMesh(circleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
-        this->yCircleModel.AttachMesh(circleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
-        this->zCircleModel.AttachMesh(circleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->xCircleModel.AttachMesh(this->xCircleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->yCircleModel.AttachMesh(this->yCircleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->zCircleModel.AttachMesh(this->zCircleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->cameraFacingCircleModel.AttachMesh(this->cameraFacingCircleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
 
 
 
@@ -148,6 +161,7 @@ namespace GTEngine
         this->xCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->xCircleModel);
         this->yCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->yCircleModel);
         this->zCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->zCircleModel);
+        this->cameraFacingCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->cameraFacingCircleModel);
 
 
         this->xArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
@@ -157,6 +171,7 @@ namespace GTEngine
         this->xCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
         this->yCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
         this->zCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+        this->cameraFacingCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
 
 
 
@@ -193,6 +208,11 @@ namespace GTEngine
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
 
+        metadata = this->cameraFacingCircleSceneNode.AddComponent<EditorMetadataComponent>();
+        metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
+        metadata->SetAlwaysShowOnTop(true);
+        metadata->UseModelForPickingShape(false);
+
 
 
         this->sceneNode.AttachChild(this->xArrowSceneNode);
@@ -202,6 +222,7 @@ namespace GTEngine
         this->sceneNode.AttachChild(this->xCircleSceneNode);
         this->sceneNode.AttachChild(this->yCircleSceneNode);
         this->sceneNode.AttachChild(this->zCircleSceneNode);
+        this->sceneNode.AttachChild(this->cameraFacingCircleSceneNode);
 
         this->UpdatePickingVolumes();
         this->RestoreColours();
@@ -219,7 +240,7 @@ namespace GTEngine
     }
 
 
-    void TransformGizmo::SetRotation(const glm::quat &rotation)
+    void TransformGizmo::SetRotation(const glm::quat &rotation, const SceneNode &cameraNode)
     {
         this->xCircleSceneNode.SetWorldOrientation(rotation);
         this->yCircleSceneNode.SetWorldOrientation(rotation);
@@ -228,6 +249,15 @@ namespace GTEngine
         this->xCircleSceneNode.RotateY(-90.0f);
         this->yCircleSceneNode.RotateX( 90.0f);
         this->zCircleSceneNode.RotateX(  0.0f);
+
+        // We need to update the geometry of the circles so that only the pieces that are actually facing the camera are shown.
+        this->UpdateCircleVertexArray(this->xCircleVA, this->xCircleSceneNode, cameraNode);
+        this->UpdateCircleVertexArray(this->yCircleVA, this->yCircleSceneNode, cameraNode);
+        this->UpdateCircleVertexArray(this->zCircleVA, this->zCircleSceneNode, cameraNode);
+
+
+        // The camera-facing scene node needs to be facing the camera, like a sprite.
+        this->cameraFacingCircleSceneNode.SetWorldOrientation(cameraNode.GetWorldOrientation() * glm::angleAxis(0.0f, glm::vec3(0.0f, 1.0f, 0.0f)));
     }
 
     
@@ -263,9 +293,10 @@ namespace GTEngine
         this->zArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
         this->zArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
 
-        this->xCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f,  0.25f, 0.25f);
-        this->yCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.25f, 1.0f,  0.25f);
-        this->zCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.25f, 0.25f, 1.0f);
+        this->xCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f,  0.35f, 0.35f);
+        this->yCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.35f, 1.0f,  0.35f);
+        this->zCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.35f, 0.35f, 1.0f);
+        this->cameraFacingCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.75f, 0.75f, 0.75f);
     }
 
     void TransformGizmo::ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b)
@@ -346,6 +377,51 @@ namespace GTEngine
         if (metadata != nullptr)
         {
             metadata->SetPickingCollisionShapeToTorus(outerRadius, innerRadius, 32);
+        }
+    }
+
+
+
+    void TransformGizmo::UpdateCircleVertexArray(VertexArray* vertexArray, const SceneNode &circleNode, const SceneNode &cameraNode)
+    {
+        assert(vertexArray != nullptr);
+        {
+            size_t vertexCount = vertexArray->GetVertexCount();
+
+            auto circlePosition = circleNode.GetWorldPosition();
+            auto cameraPosition = cameraNode.GetWorldPosition();
+
+            auto cameraTransform = cameraNode.GetComponent<CameraComponent>()->GetViewMatrix();
+            
+            circlePosition = glm::vec3(cameraTransform * glm::vec4(circlePosition, 1.0f));
+
+            // All we do is start from the start and work our way around. If a line segment has both vertices facing away from the camera,
+            // we'll ignore it and move on.
+            GTCore::Vector<unsigned int> circleIndices;
+            for (unsigned int i = 0; i < vertexCount; ++i)
+            {
+                size_t index0 = i;
+                size_t index1 = (i + 1) % vertexCount;
+
+                auto vertexPtr0 = reinterpret_cast<const glm::vec3*>(vertexArray->GetVertexDataPtr()) + index0;
+                auto vertexPtr1 = reinterpret_cast<const glm::vec3*>(vertexArray->GetVertexDataPtr()) + index1;
+
+                glm::vec3 vertex0(cameraTransform * circleNode.GetWorldTransform() * glm::vec4(*vertexPtr0, 1.0f));
+                glm::vec3 vertex1(cameraTransform * circleNode.GetWorldTransform() * glm::vec4(*vertexPtr1, 1.0f));
+
+                if (glm::vec3(circlePosition - vertex0).z <= 0.0f ||
+                    glm::vec3(circlePosition - vertex1).z <= 0.0f)
+                {
+                    circleIndices.PushBack(index0);
+                    circleIndices.PushBack(index1);
+                }
+            }
+
+
+            if (circleIndices.count > 0)
+            {
+                vertexArray->SetIndexData(&circleIndices[0], circleIndices.count);
+            }
         }
     }
 }
