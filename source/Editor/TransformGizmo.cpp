@@ -90,7 +90,7 @@ namespace GTEngine
         /////////////////////////////////////////
         // Circle Mesh
         float        circleRadius       = 1.5f;
-        unsigned int circleSegmentCount = 128;
+        unsigned int circleSegmentCount = 64;
         float        circleSegmentAngle = glm::radians(360.0f / static_cast<float>(circleSegmentCount));
 
         GTCore::Vector<glm::vec3> circleVertices;
