@@ -553,7 +553,7 @@ namespace GTEngine
                             }
                             else if (this->currentState->gizmoDragMode == State::GizmoDragMode_Rotate)
                             {
-                                dragDirection   = glm::dot(glm::normalize(glm::vec2(-mouseOffsetY, mouseOffsetX)), this->currentState->gizmoDragFactor);
+                                dragDirection   = glm::dot(glm::normalize(glm::vec2(mouseOffsetY, -mouseOffsetX)), this->currentState->gizmoDragFactor);
                                 dragSpeed       = 0.1f;
                                 float dragAngle = dragDirection * dragDistance * dragSpeed;
 
