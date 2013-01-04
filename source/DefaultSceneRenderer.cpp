@@ -675,6 +675,7 @@ namespace GTEngine
 
                         if (editorMetadataComponent != nullptr && editorMetadataComponent->IsSelected())
                         {
+                            rcDrawGeometry.polygonOffsetUnits  = 1;
                             rcDrawGeometry.enablePolygonOffset = true;
                         }
 
