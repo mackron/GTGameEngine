@@ -200,17 +200,17 @@ namespace GTEngine
                 {
                     auto &selectedNode = metadata->GetNode();
 
-                    if (&selectedNode == &this->currentState->positionGizmo.GetXArrowSceneNode())
+                    if (&selectedNode == &this->currentState->transformGizmo.GetXArrowSceneNode())
                     {
                         this->currentState->isDraggingGizmoX = true;
                         this->currentState->gizmoDragAxis    = glm::vec3(1.0f, 0.0f, 0.0f);
                     }
-                    else if (&selectedNode == &this->currentState->positionGizmo.GetYArrowSceneNode())
+                    else if (&selectedNode == &this->currentState->transformGizmo.GetYArrowSceneNode())
                     {
                         this->currentState->isDraggingGizmoY = true;
                         this->currentState->gizmoDragAxis    = glm::vec3(0.0f, 1.0f, 0.0f);
                     }
-                    else if (&selectedNode == &this->currentState->positionGizmo.GetZArrowSceneNode())
+                    else if (&selectedNode == &this->currentState->transformGizmo.GetZArrowSceneNode())
                     {
                         this->currentState->isDraggingGizmoZ = true;
                         this->currentState->gizmoDragAxis    = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -223,7 +223,7 @@ namespace GTEngine
 
                     // The mouse dragging has a different level of influence depending on the direction of the axis. We need to calculate that now. We project two points - the
                     // center of the gizmo and the end point of the selected axis. From that we can get a normalised direction vector and use that as the influence.
-                    glm::vec3 gizmoWorldPos        = this->currentState->positionGizmo.GetPosition();
+                    glm::vec3 gizmoWorldPos        = this->currentState->transformGizmo.GetPosition();
                     glm::vec3 gizmoCenterWindowPos = this->currentState->viewport.Project(gizmoWorldPos);
                     glm::vec3 axisTipWindowPos     = this->currentState->viewport.Project(gizmoWorldPos + (selectedNode.GetForwardVector() * selectedNode.GetWorldScale()));
 
@@ -239,7 +239,7 @@ namespace GTEngine
                     }
 
 
-                    this->currentState->positionGizmo.ChangeAxisColour(selectedNode, 1.0f, 1.0f, 1.0f);
+                    this->currentState->transformGizmo.ChangeAxisColour(selectedNode, 1.0f, 1.0f, 1.0f);
                 }
 
                 return true;
@@ -372,7 +372,7 @@ namespace GTEngine
 
 
                     // With a change in selection, we will need to update the position of the gizmos.
-                    this->ShowPositionGizmo();
+                    this->ShowTransformGizmo();
                 }
             }
         }
@@ -571,7 +571,7 @@ namespace GTEngine
                 this->currentState->isDraggingGizmoY = false;
                 this->currentState->isDraggingGizmoZ = false;
 
-                this->currentState->positionGizmo.RestoreColours();
+                this->currentState->transformGizmo.RestoreColours();
             }
         }
     }
@@ -851,12 +851,12 @@ namespace GTEngine
         }
     }
 
-    void Editor_SceneEditor::ShowPositionGizmo()
+    void Editor_SceneEditor::ShowTransformGizmo()
     {
         if (this->currentState != nullptr)
         {
-            this->currentState->positionGizmo.Show();
-            this->currentState->positionGizmo.SetPosition(this->GetSelectionCenterPoint());
+            this->currentState->transformGizmo.Show();
+            this->currentState->transformGizmo.SetPosition(this->GetSelectionCenterPoint());
             
             // We'll re-scale the gizmos just to make sure.
             this->RescaleGizmos();
@@ -867,7 +867,7 @@ namespace GTEngine
     {
         if (this->currentState != nullptr)
         {
-            this->currentState->positionGizmo.Hide();
+            this->currentState->transformGizmo.Hide();
         }
     }
 
@@ -875,7 +875,7 @@ namespace GTEngine
     {
         if (this->currentState != nullptr)
         {
-            this->currentState->positionGizmo.SetPosition(this->GetSelectionCenterPoint());
+            this->currentState->transformGizmo.SetPosition(this->GetSelectionCenterPoint());
         }
     }
 
@@ -892,7 +892,7 @@ namespace GTEngine
             windowPos.y += 64.0f;
 
             glm::vec3 gizmoScale(glm::distance(this->currentState->viewport.Unproject(windowPos), gizmoPosition));
-            this->currentState->positionGizmo.SetScale(gizmoScale);
+            this->currentState->transformGizmo.SetScale(gizmoScale);
         }
     }
 
@@ -969,7 +969,7 @@ namespace GTEngine
           scene(updateManager, physicsManager, cullingManager), sceneEventHandler(sceneEditor),
           viewportEventHandler(sceneEditor.GetEditor().GetGame(), viewport),
           selectedNodes(),
-          positionGizmo(),
+          transformGizmo(),
           sceneNodesToDelete(),
           isDraggingGizmoX(false), isDraggingGizmoY(false), isDraggingGizmoZ(false), gizmoDragFactor(1.0f, 0.0f),
           GUI()
@@ -990,17 +990,17 @@ namespace GTEngine
         this->scene.AddSceneNode(this->camera);
 
         
-        this->positionGizmo.Initialise();
-        this->positionGizmo.GetSceneNode().SetDataPointer(0, this);
-        this->positionGizmo.GetXArrowSceneNode().SetDataPointer(0, this);
-        this->positionGizmo.GetYArrowSceneNode().SetDataPointer(0, this);
-        this->positionGizmo.GetZArrowSceneNode().SetDataPointer(0, this);
-        this->positionGizmo.GetXCircleSceneNode().SetDataPointer(0, this);
-        this->positionGizmo.GetYCircleSceneNode().SetDataPointer(0, this);
-        this->positionGizmo.GetZCircleSceneNode().SetDataPointer(0, this);
+        this->transformGizmo.Initialise();
+        this->transformGizmo.GetSceneNode().SetDataPointer(0, this);
+        this->transformGizmo.GetXArrowSceneNode().SetDataPointer(0, this);
+        this->transformGizmo.GetYArrowSceneNode().SetDataPointer(0, this);
+        this->transformGizmo.GetZArrowSceneNode().SetDataPointer(0, this);
+        this->transformGizmo.GetXCircleSceneNode().SetDataPointer(0, this);
+        this->transformGizmo.GetYCircleSceneNode().SetDataPointer(0, this);
+        this->transformGizmo.GetZCircleSceneNode().SetDataPointer(0, this);
 
-        this->scene.AddSceneNode(this->positionGizmo.GetSceneNode());
-        this->positionGizmo.Hide();
+        this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
+        this->transformGizmo.Hide();
     }
 
     Editor_SceneEditor::State::~State()
