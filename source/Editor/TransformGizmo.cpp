@@ -333,19 +333,19 @@ namespace GTEngine
         metadata = this->xCircleSceneNode.GetComponent<EditorMetadataComponent>();
         if (metadata != nullptr)
         {
-            metadata->SetPickingCollisionShapeToTorus(outerRadius, innerRadius, 16);
+            metadata->SetPickingCollisionShapeToTorus(outerRadius, innerRadius, 32);
         }
 
         metadata = this->yCircleSceneNode.GetComponent<EditorMetadataComponent>();
         if (metadata != nullptr)
         {
-            metadata->SetPickingCollisionShapeToTorus(outerRadius, innerRadius, 16);
+            metadata->SetPickingCollisionShapeToTorus(outerRadius, innerRadius, 32);
         }
 
         metadata = this->zCircleSceneNode.GetComponent<EditorMetadataComponent>();
         if (metadata != nullptr)
         {
-            metadata->SetPickingCollisionShapeToTorus(outerRadius, innerRadius, 16);
+            metadata->SetPickingCollisionShapeToTorus(outerRadius, innerRadius, 32);
         }
     }
 }

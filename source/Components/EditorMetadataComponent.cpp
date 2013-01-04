@@ -141,29 +141,29 @@ namespace GTEngine
 
         auto compoundShape = new btCompoundShape;
 
+        float segmentLength = 2.0f * SIMD_PI * outerRadius / static_cast<float>(subdivisions);
+        float segmentAngle  = 2.0f * SIMD_PI / static_cast<float>(subdivisions);
 
-        btVector3 forward(0.0f,        0.0f, -1.0f);
-        btVector3 side(   outerRadius, 0.0f,  0.0f);
-        float gap = std::sqrt(2.0f * innerRadius * innerRadius - 2.0f * innerRadius * innerRadius * std::cos((2.0f * SIMD_PI) / static_cast<float>(subdivisions)));
+        btCapsuleShape* cylinderShape = new btCapsuleShape(innerRadius, segmentLength);
 
-        btCylinderShape* cylinderShape = new btCylinderShape(btVector3(innerRadius, (SIMD_PI / static_cast<float>(subdivisions)) + 0.5f * gap, innerRadius));
 
         btTransform transform;
         for (unsigned int i = 0; i < subdivisions; ++i)
         {
-            float angle = (i * 2.0f * SIMD_PI) / static_cast<float>(subdivisions);
-            btVector3 position = side.rotate(forward, angle);
-            btQuaternion q(forward, angle);
+            float angle = segmentAngle * static_cast<float>(i);
+
+            btVector3 position;
+            position.setX(std::cos(angle) * outerRadius);
+            position.setY(std::sin(angle) * outerRadius);
+            position.setZ(0.0f);
+
+            btQuaternion rotation(btVector3(0.0f, 0.0f, -1.0f), angle);
 
             transform.setIdentity();
             transform.setOrigin(position);
-            transform.setRotation(q);
+            transform.setRotation(rotation);
             compoundShape->addChildShape(transform, cylinderShape);
         }
-
-
-
-        
 
 
 
