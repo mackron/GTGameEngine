@@ -414,7 +414,6 @@ namespace GTEngine
         void LookInDirection(float directionX, float directionY, float directionZ, float upX = 0.0f, float upY = 1.0f, float upZ = 0.0f) { this->LookInDirection(glm::vec3(directionX, directionY, directionZ), glm::vec3(upX, upY, upZ)); }
 
 
-
         /**
         *   \brief  Retrieves the normalised vector pointing in the forward direction of the node, in world coordinates.
         */

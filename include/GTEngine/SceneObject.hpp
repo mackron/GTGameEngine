@@ -146,6 +146,14 @@ namespace GTEngine
         glm::vec3 GetUpVector() const;
 
 
+        /// Rotates the object about the world axis around the given pivot point.
+        ///
+        /// @param angle [in] The angle of rotation.
+        /// @param axis  [in] The axis of rotation.
+        /// @param pivot [in] The pivot point to rotate around.
+        void RotateAtPivotAroundWorldAxis(float angle, const glm::vec3 &axis, const glm::vec3 &pivot);
+
+
         /// Calculates a transformation matrix for this object.
         ///
         /// @param dest [in] A reference to the matrix that will receive the transformation.
