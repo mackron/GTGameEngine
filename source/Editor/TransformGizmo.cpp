@@ -219,10 +219,11 @@ namespace GTEngine
         this->sceneNode.AttachChild(this->yArrowSceneNode);
         this->sceneNode.AttachChild(this->zArrowSceneNode);
 
+        this->sceneNode.AttachChild(this->cameraFacingCircleSceneNode);
         this->sceneNode.AttachChild(this->xCircleSceneNode);
         this->sceneNode.AttachChild(this->yCircleSceneNode);
         this->sceneNode.AttachChild(this->zCircleSceneNode);
-        this->sceneNode.AttachChild(this->cameraFacingCircleSceneNode);
+        
 
         this->UpdatePickingVolumes();
         this->RestoreColours();
