@@ -738,6 +738,8 @@ function GTGUI.Element:SceneEditor()
         self.Viewport:Focus();
     end);
     
+    self.ContextMenu:AppendSeparator();
+    
     self.ContextMenu:AppendItem("Add Point Light"):OnPressed(function()
         local newNode = Editor.SceneEditor.AddSceneNode("PointLight");
         if newNode ~= nil then
