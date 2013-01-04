@@ -5,6 +5,11 @@
 #include <GTEngine/Audio.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4355)   // 'this' used in initialise list.
+#endif
+
 namespace GTEngine
 {
     GameScript::GameScript(Game &game)
@@ -402,3 +407,8 @@ namespace GTEngine
         PostError("Script Error: %s", message);
     }
 }
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
