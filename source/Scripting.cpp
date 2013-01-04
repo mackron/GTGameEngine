@@ -28,6 +28,7 @@ namespace GTEngine
                 "GTEngine.System.SpotLightComponent        = {};"
                 "GTEngine.System.DirectionalLightComponent = {};"
                 "GTEngine.System.AmbientLightComponent     = {};"
+                "GTEngine.System.DynamicsComponent         = {};"
                 "GTEngine.System.EditorMetadataComponent   = {};"
                 "GTEngine.System.SceneNode                 = {};"
                 "GTEngine.System.Scene                     = {};"
@@ -41,21 +42,28 @@ namespace GTEngine
             //
             // Component script objects are actually very temporary. They are only used to give an interface to allow the internal representation to be modified. When a component is retrieved
             // from a scene node, it will actually create a whole new instantiation of the object.
+            script.GetGlobal("GTEngine");
+            assert(script.IsTable(-1));
+            {
+                script.Push("Components");
+                script.PushNewTable();
+                {
+                    script.SetTableValue(-1, "Model",             ModelComponent::Name);
+                    script.SetTableValue(-1, "Camera",            CameraComponent::Name);
+                    script.SetTableValue(-1, "PointLight",        PointLightComponent::Name);
+                    script.SetTableValue(-1, "SpotLight",         SpotLightComponent::Name);
+                    script.SetTableValue(-1, "DirectionalLight",  DirectionalLightComponent::Name);
+                    script.SetTableValue(-1, "AmbientLight",      AmbientLightComponent::Name);
+                    script.SetTableValue(-1, "DynamicsComponent", DynamicsComponent::Name);
+                    script.SetTableValue(-1, "EditorMetadata",    EditorMetadataComponent::Name);
+                }
+                script.SetTableValue(-3);
+            }
+            script.Pop(1);
+
+
             successful = successful && script.Execute
             (
-                "GTEngine.Components = "
-                "{"
-                "    Model            = 'Model';"
-                "    Camera           = 'Camera';"
-                "    PointLight       = 'PointLight';"
-                "    SpotLight        = 'SpotLight';"
-                "    DirectionalLight = 'DirectionalLight';"
-                "    AmbientLight     = 'AmbientLight';"
-                "    EditorMetadata   = 'EditorMetadata';"
-                "};"
-
-
-
                 // ModelComponent
                 "GTEngine.ModelComponent = {};"
                 "GTEngine.ModelComponent.__index = GTEngine.ModelComponent;"
