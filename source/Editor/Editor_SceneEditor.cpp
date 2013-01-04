@@ -607,6 +607,11 @@ namespace GTEngine
                         }
 
                         this->ApplyCameraRotation();
+
+                        if (this->currentState->transformGizmo.GetSceneNode().IsVisible())
+                        {
+                            this->currentState->transformGizmo.SetRotation(this->GetSelectionRotation(), this->currentState->camera);
+                        }
                     }
                 }
 
@@ -929,7 +934,7 @@ namespace GTEngine
         {
             this->currentState->transformGizmo.Show();
             this->currentState->transformGizmo.SetPosition(this->GetSelectionCenterPoint());
-            this->currentState->transformGizmo.SetRotation(this->GetSelectionRotation());
+            this->currentState->transformGizmo.SetRotation(this->GetSelectionRotation(), this->currentState->camera);
             
             // We'll re-scale the gizmos just to make sure.
             this->RescaleGizmos();
@@ -949,7 +954,7 @@ namespace GTEngine
         if (this->currentState != nullptr)
         {
             this->currentState->transformGizmo.SetPosition(this->GetSelectionCenterPoint());
-            this->currentState->transformGizmo.SetRotation(this->GetSelectionRotation());
+            this->currentState->transformGizmo.SetRotation(this->GetSelectionRotation(), this->currentState->camera);
         }
     }
 
@@ -1072,6 +1077,7 @@ namespace GTEngine
         this->transformGizmo.GetXCircleSceneNode().SetDataPointer(0, this);
         this->transformGizmo.GetYCircleSceneNode().SetDataPointer(0, this);
         this->transformGizmo.GetZCircleSceneNode().SetDataPointer(0, this);
+        this->transformGizmo.GetCameraFacingCircleSceneNode().SetDataPointer(0, this);
 
         this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
         this->transformGizmo.Hide();

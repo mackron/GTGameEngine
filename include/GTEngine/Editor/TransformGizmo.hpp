@@ -32,9 +32,11 @@ namespace GTEngine
 
         /// Sets the rotation of the gizmo.
         ///
+        /// @param cameraNode [in] The position of the camera.
+        ///
         /// @remarks
         ///     This is only used for rotating the circles.
-        void SetRotation(const glm::quat &rotation);
+        void SetRotation(const glm::quat &rotation, const SceneNode &cameraNode);
 
 
         /// Sets the scale of the gizmo.
@@ -56,11 +58,11 @@ namespace GTEngine
               SceneNode & GetXArrowSceneNode()       { return this->xArrowSceneNode; }
         const SceneNode & GetXArrowSceneNode() const { return this->xArrowSceneNode; }
 
-        /// Retrieves a reference to the x axis arrow scene node.
+        /// Retrieves a reference to the y axis arrow scene node.
               SceneNode & GetYArrowSceneNode()       { return this->yArrowSceneNode; }
         const SceneNode & GetYArrowSceneNode() const { return this->yArrowSceneNode; }
 
-        /// Retrieves a reference to the x axis arrow scene node.
+        /// Retrieves a reference to the z axis arrow scene node.
               SceneNode & GetZArrowSceneNode()       { return this->zArrowSceneNode; }
         const SceneNode & GetZArrowSceneNode() const { return this->zArrowSceneNode; }
 
@@ -73,9 +75,13 @@ namespace GTEngine
               SceneNode & GetYCircleSceneNode()       { return this->yCircleSceneNode; }
         const SceneNode & GetYCircleSceneNode() const { return this->yCircleSceneNode; }
 
-        /// Retrieves a reference to the y axis circle scene node.
+        /// Retrieves a reference to the z axis circle scene node.
               SceneNode & GetZCircleSceneNode()       { return this->zCircleSceneNode; }
         const SceneNode & GetZCircleSceneNode() const { return this->zCircleSceneNode; }
+
+        /// Retrieves a reference to the y axis circle scene node.
+              SceneNode & GetCameraFacingCircleSceneNode()       { return this->cameraFacingCircleSceneNode; }
+        const SceneNode & GetCameraFacingCircleSceneNode() const { return this->cameraFacingCircleSceneNode; }
 
 
 
@@ -99,6 +105,12 @@ namespace GTEngine
 
         /// Updates the picking volumes of the arrows.
         void UpdatePickingVolumes();
+
+        /// Updates the vertex arrays of the given circles so that only the front facing lines are shown.
+        ///
+        /// @remarks
+        ///     This does not change the vertices, only the indices.
+        void UpdateCircleVertexArray(VertexArray* vertexArray, const SceneNode &circleNode, const SceneNode &cameraNode);
 
 
 
@@ -125,6 +137,9 @@ namespace GTEngine
         /// The scene node for the z axis circle.
         SceneNode zCircleSceneNode;
 
+        /// The scene node for the camera-facing circle.
+        SceneNode cameraFacingCircleSceneNode;
+
 
         /// The model to use for the x axis arrow.
         Model xArrowModel;
@@ -144,6 +159,9 @@ namespace GTEngine
         /// The model to use for the z axis circle.
         Model zCircleModel;
 
+        /// The model to use for the camera-facing circle.
+        Model cameraFacingCircleModel;
+
 
         /// The geometry of the line part of the arrow models' mesh.
         VertexArray* arrowLineVA;
@@ -152,8 +170,17 @@ namespace GTEngine
         VertexArray* arrowHeadVA;
 
 
-        /// The geometry of the circle mesh.
-        VertexArray* circleVA;
+        /// The geometry of the x axis circle mesh.
+        VertexArray* xCircleVA;
+
+        /// The geometry of the y axis circle mesh.
+        VertexArray* yCircleVA;
+
+        /// The geometry of the z axis circle mesh.
+        VertexArray* zCircleVA;
+
+        /// The geometry of the camera-facing circle mesh.
+        VertexArray* cameraFacingCircleVA;
     };
 }
 
