@@ -103,6 +103,12 @@ namespace GTEngine
         /// Retrieves the center point of the selected nodes.
         glm::vec3 GetSelectionCenterPoint() const;
 
+        /// Retrieves the orientation of the selected nodes.
+        ///
+        /// @remarks
+        ///     If there are multiple selections, this will return the default quaternion.
+        glm::quat GetSelectionRotation() const;
+
 
         ///////////////////////////////////////////////////
         // Editting
@@ -280,6 +286,16 @@ namespace GTEngine
             /// When dragging a gizmo axis with the mouse, the x and y movement has a different level of influence as it's being dragged. We keep track of
             /// that here. This is a normalised vector.
             glm::vec2 gizmoDragFactor;
+
+            /// The gragging mode (translate, rotate, scale)
+            enum GizmoDragMode
+            {
+                GizmoDragMode_None,
+                GizmoDragMode_Translate,
+                GizmoDragMode_Rotate,
+                GizmoDragMode_Scale
+
+            }gizmoDragMode;
 
             
 

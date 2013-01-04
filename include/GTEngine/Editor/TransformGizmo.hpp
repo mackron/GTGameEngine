@@ -30,6 +30,13 @@ namespace GTEngine
         const glm::vec3 & GetPosition() const;
 
 
+        /// Sets the rotation of the gizmo.
+        ///
+        /// @remarks
+        ///     This is only used for rotating the circles.
+        void SetRotation(const glm::quat &rotation);
+
+
         /// Sets the scale of the gizmo.
         ///
         /// @remarks

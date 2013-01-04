@@ -200,20 +200,43 @@ namespace GTEngine
                 {
                     auto &selectedNode = metadata->GetNode();
 
+                    // Arrows
                     if (&selectedNode == &this->currentState->transformGizmo.GetXArrowSceneNode())
                     {
                         this->currentState->isDraggingGizmoX = true;
                         this->currentState->gizmoDragAxis    = glm::vec3(1.0f, 0.0f, 0.0f);
+                        this->currentState->gizmoDragMode    = State::GizmoDragMode_Translate;
                     }
                     else if (&selectedNode == &this->currentState->transformGizmo.GetYArrowSceneNode())
                     {
                         this->currentState->isDraggingGizmoY = true;
                         this->currentState->gizmoDragAxis    = glm::vec3(0.0f, 1.0f, 0.0f);
+                        this->currentState->gizmoDragMode    = State::GizmoDragMode_Translate;
                     }
                     else if (&selectedNode == &this->currentState->transformGizmo.GetZArrowSceneNode())
                     {
                         this->currentState->isDraggingGizmoZ = true;
                         this->currentState->gizmoDragAxis    = glm::vec3(0.0f, 0.0f, 1.0f);
+                        this->currentState->gizmoDragMode    = State::GizmoDragMode_Translate;
+                    }
+                    // Circles
+                    else if (&selectedNode == &this->currentState->transformGizmo.GetXCircleSceneNode())
+                    {
+                        this->currentState->isDraggingGizmoX = true;
+                        this->currentState->gizmoDragAxis    = glm::vec3(1.0f, 0.0f, 0.0f);
+                        this->currentState->gizmoDragMode    = State::GizmoDragMode_Rotate;
+                    }
+                    else if (&selectedNode == &this->currentState->transformGizmo.GetYCircleSceneNode())
+                    {
+                        this->currentState->isDraggingGizmoY = true;
+                        this->currentState->gizmoDragAxis    = glm::vec3(0.0f, 1.0f, 0.0f);
+                        this->currentState->gizmoDragMode    = State::GizmoDragMode_Rotate;
+                    }
+                    else if (&selectedNode == &this->currentState->transformGizmo.GetZCircleSceneNode())
+                    {
+                        this->currentState->isDraggingGizmoZ = true;
+                        this->currentState->gizmoDragAxis    = glm::vec3(0.0f, 0.0f, 1.0f);
+                        this->currentState->gizmoDragMode    = State::GizmoDragMode_Rotate;
                     }
                     else
                     {
@@ -456,6 +479,16 @@ namespace GTEngine
         return glm::vec3(0.0f, 0.0f, 0.0f);
     }
 
+    glm::quat Editor_SceneEditor::GetSelectionRotation() const
+    {
+        if (this->currentState != nullptr && this->currentState->selectedNodes.count == 1)
+        {
+            return this->currentState->selectedNodes[0]->GetWorldOrientation();
+        }
+
+        return glm::quat();
+    }
+
 
 
     ////////////////////////////////////////////////
@@ -507,12 +540,44 @@ namespace GTEngine
                             float     dragDirection = glm::dot(glm::normalize(glm::vec2(mouseOffsetX, -mouseOffsetY)), this->currentState->gizmoDragFactor);
                             float     dragSpeed     = 0.05f;
 
-                            for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
+                            if (this->currentState->gizmoDragMode == State::GizmoDragMode_Translate)
                             {
-                                auto node = this->currentState->selectedNodes[i];
-                                if (node != nullptr)
+                                for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
                                 {
-                                    node->SetWorldPosition(node->GetWorldPosition() + (dragAxis * (dragDirection * dragDistance * dragSpeed)));
+                                    auto node = this->currentState->selectedNodes[i];
+                                    assert(node != nullptr);
+                                    {
+                                        node->SetWorldPosition(node->GetWorldPosition() + (dragAxis * (dragDirection * dragDistance * dragSpeed)));
+                                    }
+                                }
+                            }
+                            else if (this->currentState->gizmoDragMode == State::GizmoDragMode_Rotate)
+                            {
+                                dragDirection   = glm::dot(glm::normalize(glm::vec2(-mouseOffsetY, mouseOffsetX)), this->currentState->gizmoDragFactor);
+                                dragSpeed       = 0.1f;
+                                float dragAngle = dragDirection * dragDistance * dragSpeed;
+
+                                // If we have multiple selections, we only ever do a world rotation. Otherwise, we'll do a local rotation.
+                                if (this->currentState->selectedNodes.count == 1)
+                                {
+                                    auto node = this->currentState->selectedNodes[0];
+                                    assert(node != nullptr);
+                                    {
+                                        node->Rotate(dragAngle, dragAxis);
+                                    }
+                                }
+                                else
+                                {
+                                    glm::vec3 pivot = this->GetSelectionCenterPoint();
+
+                                    for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
+                                    {
+                                        auto node = this->currentState->selectedNodes[i];
+                                        assert(node != nullptr);
+                                        {
+                                            node->RotateAtPivotAroundWorldAxis(dragAngle, dragAxis, pivot);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -681,7 +746,11 @@ namespace GTEngine
                         node.GetWorldTransform(transform);
 
                         pickingCollisionObject.setWorldTransform(transform);
-                        pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+
+                        if (metadata->UseModelForPickingShape())
+                        {
+                            pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+                        }
 
                         state->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                     }
@@ -732,7 +801,10 @@ namespace GTEngine
 
 
             // If the scene node was selected, we should reposition the gizmo.
-            this->RepositionGizmos();
+            if (metadata->IsSelected())
+            {
+                this->RepositionGizmos();
+            }
 
 
             // If the node that was transformed is the main camera we'll need to scale the gizmos so that they look a constant size.
@@ -857,6 +929,7 @@ namespace GTEngine
         {
             this->currentState->transformGizmo.Show();
             this->currentState->transformGizmo.SetPosition(this->GetSelectionCenterPoint());
+            this->currentState->transformGizmo.SetRotation(this->GetSelectionRotation());
             
             // We'll re-scale the gizmos just to make sure.
             this->RescaleGizmos();
@@ -876,6 +949,7 @@ namespace GTEngine
         if (this->currentState != nullptr)
         {
             this->currentState->transformGizmo.SetPosition(this->GetSelectionCenterPoint());
+            this->currentState->transformGizmo.SetRotation(this->GetSelectionRotation());
         }
     }
 
@@ -971,7 +1045,7 @@ namespace GTEngine
           selectedNodes(),
           transformGizmo(),
           sceneNodesToDelete(),
-          isDraggingGizmoX(false), isDraggingGizmoY(false), isDraggingGizmoZ(false), gizmoDragFactor(1.0f, 0.0f),
+          isDraggingGizmoX(false), isDraggingGizmoY(false), isDraggingGizmoZ(false), gizmoDragFactor(1.0f, 0.0f), gizmoDragMode(GizmoDragMode_None),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
