@@ -548,6 +548,55 @@ namespace GTEngine
                     int ApplyGravity(GTCore::Script &script);
 
 
+                    /// Applies a central force to the object.
+                    ///
+                    /// @param
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x force.
+                    ///     Argument 3: The y force.
+                    ///     Argument 4: The z force.
+                    int ApplyCentralForce(GTCore::Script &script);
+
+                    /// Applies a torque to the object.
+                    ///
+                    /// @param
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x torque.
+                    ///     Argument 3: The y torque.
+                    ///     Argument 4: The z torque.
+                    int ApplyTorque(GTCore::Script &script);
+
+                    /// Applies an impulse to the object.
+                    ///
+                    /// @param
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x impulse.
+                    ///     Argument 3: The y impulse.
+                    ///     Argument 4: The z impulse.
+                    ///     Argument 5: The relative x position to apply the impulse.
+                    ///     Argument 6: The relative y position to apply the impulse.
+                    ///     Argument 7: The relative z position to apply the impulse.
+                    int ApplyImpulse(GTCore::Script &script);
+
+                    /// Applies a central impulse to the object.
+                    ///
+                    /// @param
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x impulse.
+                    ///     Argument 3: The y impulse.
+                    ///     Argument 4: The z impulse.
+                    int ApplyCentralImpulse(GTCore::Script &script);
+
+                    /// Applies a torque impulse.
+                    ///
+                    /// @param
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x impulse.
+                    ///     Argument 3: The y impulse.
+                    ///     Argument 4: The z impulse.
+                    int ApplyTorqueImpulse(GTCore::Script &script);
+
+
                     /// Adds a box collision shape to the component.
                     ///
                     /// @remarks
