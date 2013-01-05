@@ -80,7 +80,7 @@ namespace GTEngine
                 assert(node != nullptr);
 
                 auto dynamics = node->GetComponent<GTEngine::DynamicsComponent>();
-                if (dynamics != nullptr && dynamics->UseWithNavigationMeshGeneration())
+                if (dynamics != nullptr && dynamics->IsNavigationMeshGenerationEnabled())
                 {
                     auto mesh = dynamics->CreateCollisionShapeMesh(true);   // <-- 'true' means to apply the scene node's transformation.
                     if (mesh != nullptr)

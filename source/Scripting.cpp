@@ -376,6 +376,36 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.DynamicsComponent:DisableDeactivation()"
+                "    GTEngine.System.DynamicsComponent.DisableDeactivation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:EnableDeactivation()"
+                "    GTEngine.System.DynamicsComponent.EnableDeactivation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:IsDeactivationEnabled()"
+                "    return GTEngine.System.DynamicsComponent.IsDeactivationEnabled(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:Activate()"
+                "    GTEngine.System.DynamicsComponent.Activate(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.DynamicsComponent:EnableNavigationMeshGeneration()"
+                "    GTEngine.System.DynamicsComponent.EnableNavigationMeshGeneration(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:DisableNavigationMeshGeneration()"
+                "    GTEngine.System.DynamicsComponent.DisableNavigationMeshGeneration(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:IsNavigationMeshGenerationEnabled()"
+                "    return GTEngine.System.DynamicsComponent.IsNavigationMeshGenerationEnabled(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.DynamicsComponent:AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
                 "    GTEngine.System.DynamicsComponent.AddBoxCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
                 "end;"
@@ -760,6 +790,15 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ApplyCentralImpulse",                            FFI::SystemFFI::DynamicsComponentFFI::ApplyCentralImpulse);
                         script.SetTableFunction(-1, "ApplyImpulse",                                   FFI::SystemFFI::DynamicsComponentFFI::ApplyImpulse);
                         script.SetTableFunction(-1, "ApplyTorqueImpulse",                             FFI::SystemFFI::DynamicsComponentFFI::ApplyTorqueImpulse);
+
+                        script.SetTableFunction(-1, "DisableDeactivation",                            FFI::SystemFFI::DynamicsComponentFFI::DisableDeactivation);
+                        script.SetTableFunction(-1, "EnableDeactivation",                             FFI::SystemFFI::DynamicsComponentFFI::EnableDeactivation);
+                        script.SetTableFunction(-1, "IsDeactivationEnabled",                          FFI::SystemFFI::DynamicsComponentFFI::IsDeactivationEnabled);
+                        script.SetTableFunction(-1, "Activate",                                       FFI::SystemFFI::DynamicsComponentFFI::Activate);
+
+                        script.SetTableFunction(-1, "EnableNavigationMeshGeneration",                 FFI::SystemFFI::DynamicsComponentFFI::EnableNavigationMeshGeneration);
+                        script.SetTableFunction(-1, "DisableNavigationMeshGeneration",                FFI::SystemFFI::DynamicsComponentFFI::DisableNavigationMeshGeneration);
+                        script.SetTableFunction(-1, "IsNavigationMeshGenerationEnabled",              FFI::SystemFFI::DynamicsComponentFFI::IsNavigationMeshGenerationEnabled);
 
                         script.SetTableFunction(-1, "AddBoxCollisionShape",                           FFI::SystemFFI::DynamicsComponentFFI::AddBoxCollisionShape);
                         script.SetTableFunction(-1, "AddSphereCollisionShape",                        FFI::SystemFFI::DynamicsComponentFFI::AddSphereCollisionShape);
@@ -2098,6 +2137,93 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+
+                    int DisableDeactivation(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->DisableDeactivation();
+                        }
+
+                        return 0;
+                    }
+
+                    int EnableDeactivation(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->EnableDeactivation();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsDeactivationEnabled(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->IsDeactivationEnabled());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int Activate(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->Activate();
+                        }
+
+                        return 0;
+                    }
+
+
+                    int EnableNavigationMeshGeneration(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->EnableNavigationMeshGeneration();
+                        }
+
+                        return 0;
+                    }
+
+                    int DisableNavigationMeshGeneration(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->DisableNavigationMeshGeneration();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsNavigationMeshGenerationEnabled(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->IsNavigationMeshGenerationEnabled());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
                     }
 
 
