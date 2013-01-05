@@ -222,7 +222,7 @@ namespace GTEngine
 
     void Editor::OnSceneClosed(const char* fileName)
     {
-        (void)fileName;
+        this->sceneEditor.CloseScene(fileName);
     }
 
 

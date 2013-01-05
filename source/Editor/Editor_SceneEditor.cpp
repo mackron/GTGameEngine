@@ -16,6 +16,9 @@ namespace GTEngine
 
     Editor_SceneEditor::~Editor_SceneEditor()
     {
+        // We want to set the current state to null so that nothing that gets executed in the destructors thinks that anything is valid.
+        this->currentState = nullptr;
+
         for (size_t i = 0; i < this->loadedStates.count; ++i)
         {
             delete this->loadedStates.buffer[i]->value;
@@ -88,6 +91,14 @@ namespace GTEngine
                             viewportElement->OnSize();
 
                             this->ResetCamera();
+
+
+                            // At this point we should actually load the scene file.
+
+
+
+                            // The scene will be done loading by this pointer, so we can close the file.
+                            GTCore::IO::Close(file);
                         }
                         else
                         {
@@ -1068,7 +1079,6 @@ namespace GTEngine
 
         this->scene.AddSceneNode(this->camera);
 
-        
         this->transformGizmo.Initialise();
         this->transformGizmo.GetSceneNode().SetDataPointer(0, this);
         this->transformGizmo.GetXArrowSceneNode().SetDataPointer(0, this);
@@ -1089,8 +1099,6 @@ namespace GTEngine
         {
             delete this->sceneNodesToDelete[i];
         }
-
-        //this->sceneEditor.GetEditor().GetGame().GetGUI().DeleteElement(this->GUI.Main);
     }
 
 

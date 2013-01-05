@@ -15,13 +15,13 @@ namespace GTEngine
 
     TransformGizmo::~TransformGizmo()
     {
-        delete this->arrowLineVA;
-        delete this->arrowHeadVA;
-
-        delete this->xCircleVA;
-        delete this->yCircleVA;
-        delete this->zCircleVA;
-        delete this->cameraFacingCircleVA;
+        GarbageCollector::MarkForCollection(this->arrowLineVA);
+        GarbageCollector::MarkForCollection(this->arrowHeadVA);
+        
+        GarbageCollector::MarkForCollection(this->xCircleVA);
+        GarbageCollector::MarkForCollection(this->yCircleVA);
+        GarbageCollector::MarkForCollection(this->zCircleVA);
+        GarbageCollector::MarkForCollection(this->cameraFacingCircleVA);
     }
 
 
@@ -223,7 +223,6 @@ namespace GTEngine
         this->sceneNode.AttachChild(this->xCircleSceneNode);
         this->sceneNode.AttachChild(this->yCircleSceneNode);
         this->sceneNode.AttachChild(this->zCircleSceneNode);
-        
 
         this->UpdatePickingVolumes();
         this->RestoreColours();

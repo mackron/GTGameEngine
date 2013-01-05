@@ -5,6 +5,7 @@
 #include <GTEngine/Rendering/Framebuffer.hpp>
 #include <GTEngine/Rendering/VertexArray.hpp>
 #include <GTEngine/Bone.hpp>
+#include <GTEngine/DefaultSceneRenderer.hpp>
 #include <GTCore/List.hpp>
 
 // GC globals.
@@ -23,11 +24,12 @@ namespace GTEngine
         int counter;
     };
 
-    static GTCore::List<GCItem<Texture2D>>   GarbageTexture2Ds;
-    static GTCore::List<GCItem<Shader>>      GarbageShaders;
-    static GTCore::List<GCItem<Framebuffer>> GarbageFramebuffers;
-    static GTCore::List<GCItem<VertexArray>> GarbageVertexArrays;
-    static GTCore::List<GCItem<Bone>>        GarbageBones;
+    static GTCore::List<GCItem<Texture2D>>     GarbageTexture2Ds;
+    static GTCore::List<GCItem<Shader>>        GarbageShaders;
+    static GTCore::List<GCItem<Framebuffer>>   GarbageFramebuffers;
+    static GTCore::List<GCItem<VertexArray>>   GarbageVertexArrays;
+    static GTCore::List<GCItem<Bone>>          GarbageBones;
+    static GTCore::List<GCItem<SceneRenderer>> GarbageSceneRenderers;
 }
 
 namespace GTEngine
@@ -68,6 +70,12 @@ namespace GTEngine
             delete GarbageBones.root->value.object;
             GarbageBones.RemoveRoot();
         }
+
+        while (GarbageSceneRenderers.root != nullptr)
+        {
+            delete GarbageSceneRenderers.root->value.object;
+            GarbageSceneRenderers.RemoveRoot();
+        }
     }
 
 
@@ -94,6 +102,11 @@ namespace GTEngine
     void GarbageCollector::MarkForCollection(Bone &bone, int counter)
     {
         GarbageBones.Append(GCItem<Bone>(&bone, counter));
+    }
+
+    void GarbageCollector::MarkForCollection(SceneRenderer &renderer, int counter)
+    {
+        GarbageSceneRenderers.Append(GCItem<SceneRenderer>(&renderer, counter));
     }
 
 
@@ -196,6 +209,28 @@ namespace GTEngine
 
                 auto next = i->next;
                 GarbageBones.Remove(i);
+
+                i = next;
+            }
+            else
+            {
+                i = i->next;
+                --gcitem.counter;
+            }
+        }
+    }
+
+    void GarbageCollector::CollectSceneRenderers()
+    {
+        for (auto i = GarbageSceneRenderers.root; i != nullptr; )
+        {
+            auto &gcitem = i->value;
+            if (gcitem.counter == 0)
+            {
+                delete gcitem.object;
+
+                auto next = i->next;
+                GarbageSceneRenderers.Remove(i);
 
                 i = next;
             }

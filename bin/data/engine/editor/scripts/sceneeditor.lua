@@ -718,16 +718,7 @@ function GTGUI.Element:SceneEditorPanel()
     
     self.ComponentPanels[GTEngine.Components.EditorMetadata] = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.EditorMetadata);
 
-    
-    
 
-    self:OnSize(function()
-        self.Scrollbar:SetPageSize(self:GetHeight());
-    end);
-    
-    self.Body:OnSize(function()
-        self.Scrollbar:SetRange(self.Body:GetHeight());
-    end)
     
     self.Scrollbar:VerticalScrollbar();
     self.Scrollbar:SetPageSize(self:GetHeight());
@@ -790,6 +781,21 @@ function GTGUI.Element:SceneEditorPanel()
             end
         end
     end
+    
+    
+    
+    self:OnSize(function()
+        if self:IsVisible() then
+            self.Scrollbar:SetPageSize(self:GetHeight());
+        end
+    end);
+    
+    self.Body:OnSize(function()
+        if self.Body:IsVisible() then
+            self.Scrollbar:SetRange(self.Body:GetHeight());
+        end
+    end)
+    
     
     return self;
 end
