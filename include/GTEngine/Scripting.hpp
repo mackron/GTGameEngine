@@ -526,7 +526,7 @@ namespace GTEngine
 
                     /// Sets the gravity to use with the object.
                     ///
-                    /// @param
+                    /// @remarks
                     ///     Argument 1: A pointer to the component.
                     ///     Argument 2: The x gravity.
                     ///     Argument 3: The y gravity.
@@ -535,7 +535,7 @@ namespace GTEngine
 
                     /// Retrieves the gravity being used with the object, as 3 floats.
                     ///
-                    /// @param
+                    /// @remarks
                     ///     Argument 1: A pointer to the component.
                     ///     @par
                     ///     The return value will be 3 floats.
@@ -543,14 +543,14 @@ namespace GTEngine
 
                     /// Applies the gravity of the object.
                     ///
-                    /// @param
+                    /// @remarks
                     ///     Argument 1: A pointer to the component.
                     int ApplyGravity(GTCore::Script &script);
 
 
                     /// Applies a central force to the object.
                     ///
-                    /// @param
+                    /// @remarks
                     ///     Argument 1: A pointer to the component.
                     ///     Argument 2: The x force.
                     ///     Argument 3: The y force.
@@ -559,7 +559,7 @@ namespace GTEngine
 
                     /// Applies a torque to the object.
                     ///
-                    /// @param
+                    /// @remarks
                     ///     Argument 1: A pointer to the component.
                     ///     Argument 2: The x torque.
                     ///     Argument 3: The y torque.
@@ -568,7 +568,7 @@ namespace GTEngine
 
                     /// Applies an impulse to the object.
                     ///
-                    /// @param
+                    /// @remarks
                     ///     Argument 1: A pointer to the component.
                     ///     Argument 2: The x impulse.
                     ///     Argument 3: The y impulse.
@@ -580,7 +580,7 @@ namespace GTEngine
 
                     /// Applies a central impulse to the object.
                     ///
-                    /// @param
+                    /// @remarks
                     ///     Argument 1: A pointer to the component.
                     ///     Argument 2: The x impulse.
                     ///     Argument 3: The y impulse.
@@ -589,12 +589,57 @@ namespace GTEngine
 
                     /// Applies a torque impulse.
                     ///
-                    /// @param
+                    /// @remarks
                     ///     Argument 1: A pointer to the component.
                     ///     Argument 2: The x impulse.
                     ///     Argument 3: The y impulse.
                     ///     Argument 4: The z impulse.
                     int ApplyTorqueImpulse(GTCore::Script &script);
+
+
+                    /// Disables deactivation of the object.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int DisableDeactivation(GTCore::Script &script);
+
+                    /// Enables deactivation of an object.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int EnableDeactivation(GTCore::Script &script);
+
+                    /// Determines whether or not deactivation is enabled.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int IsDeactivationEnabled(GTCore::Script &script);
+
+                    /// Activates the object.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int Activate(GTCore::Script &script);
+
+
+                    /// Enables navigation mesh generation for this object.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int EnableNavigationMeshGeneration(GTCore::Script &script);
+
+                    /// Disables navigation mesh generation for this object.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int DisableNavigationMeshGeneration(GTCore::Script &script);
+
+                    /// Determines whether or not navigation mesh generation is enabled.
+                    ///
+                    /// @remakrs
+                    ///     Argument 1: A pointer to the component.
+                    int IsNavigationMeshGenerationEnabled(GTCore::Script &script);
+
 
 
                     /// Adds a box collision shape to the component.

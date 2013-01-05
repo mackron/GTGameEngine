@@ -209,6 +209,9 @@ namespace GTEngine
         /// Enables deactivation of the rigid body.
         void EnableDeactivation();
 
+        /// Determines whether or not deactivation is enabled.
+        bool IsDeactivationEnabled() const;
+
         /// Activates a deactivated rigid body.
         void Activate();
 
@@ -220,7 +223,7 @@ namespace GTEngine
         void EnableNavigationMeshGeneration();
 
         /// Determines whether or not the component should be used with navigation mesh generation.
-        bool UseWithNavigationMeshGeneration() const;
+        bool IsNavigationMeshGenerationEnabled() const;
 
 
 

@@ -442,6 +442,11 @@ namespace GTEngine
         this->rigidBody->setDeactivationTime(0.0f);
     }
 
+    bool DynamicsComponent::IsDeactivationEnabled() const
+    {
+        return this->rigidBody->getActivationState() == ACTIVE_TAG;
+    }
+
     void DynamicsComponent::Activate()
     {
         this->rigidBody->activate();
@@ -458,7 +463,7 @@ namespace GTEngine
         this->useWithNavigationMesh = true;
     }
 
-    bool DynamicsComponent::UseWithNavigationMeshGeneration() const
+    bool DynamicsComponent::IsNavigationMeshGenerationEnabled() const
     { 
         return this->useWithNavigationMesh && this->IsStatic();
     }
