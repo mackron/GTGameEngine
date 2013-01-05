@@ -87,6 +87,10 @@ namespace GTEngine
     GTENGINE_DECL_COMPONENT_END()
 }
 
+
+
+
+
 /// SpotLight.
 namespace GTEngine
 {
@@ -194,6 +198,7 @@ namespace GTEngine
 }
 
 
+
 // DirectionalLight
 namespace GTEngine
 {
@@ -247,6 +252,7 @@ namespace GTEngine
 
     GTENGINE_DECL_COMPONENT_END()
 }
+
 
 
 // DirectionalLight

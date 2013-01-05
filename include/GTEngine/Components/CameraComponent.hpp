@@ -4,8 +4,6 @@
 
 #include "../Component.hpp"
 #include "../Math.hpp"
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -42,6 +40,17 @@ namespace GTEngine
         const glm::mat4 & GetProjectionMatrix() const;
 
 
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Component::Serialize()
+        void Serialize(GTCore::Serializer &serializer);
+
+        /// Component::Deserialize()
+        void Deserialize(GTCore::Deserializer &deserializer);
+
+
     public:
 
         /// The projection matrix to use with the camera.
@@ -72,23 +81,6 @@ namespace GTEngine
         float zFar;     /// The far clipping plane.
 
     GTENGINE_DECL_COMPONENT_END()
-}
-
-
-template <> inline void GTCore::Serializer::Write<GTEngine::CameraComponent>(const GTEngine::CameraComponent &component)
-{
-    this->Write(component.projection);
-    this->Write(component.ortho);           // <-- unioned with 'perspective'.
-    this->Write(component.zNear);
-    this->Write(component.zFar);
-}
-
-template <> inline void GTCore::Deserializer::Read<GTEngine::CameraComponent>(GTEngine::CameraComponent &component)
-{
-    this->Read(component.projection);
-    this->Read(component.ortho);
-    this->Read(component.zNear);
-    this->Read(component.zFar);
 }
 
 
