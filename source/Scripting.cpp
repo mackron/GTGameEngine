@@ -355,6 +355,26 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.DynamicsComponent:ApplyCentralForce(x, y, z)"
+                "    GTEngine.System.DynamicsComponent.ApplyCentralForce(self._internalPtr, x, y, z);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:ApplyTorque(x, y, z)"
+                "    GTEngine.System.DynamicsComponent.ApplyTorque(self._internalPtr, x, y, z);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:ApplyCentralImpulse(x, y, z)"
+                "    GTEngine.System.DynamicsComponent.ApplyCentralImpulse(self._internalPtr, x, y, z);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:ApplyImpulse(x, y, z, relPosX, relPosY, relPosZ)"
+                "    GTEngine.System.DynamicsComponent.ApplyImpulse(self._internalPtr, x, y, z, relPosX, relPosY, relPosZ);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:ApplyTorqueImpulse(x, y, z)"
+                "    GTEngine.System.DynamicsComponent.ApplyTorqueImpulse(self._internalPtr, x, y, z);"
+                "end;"
+
 
                 "function GTEngine.DynamicsComponent:AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
                 "    GTEngine.System.DynamicsComponent.AddBoxCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
@@ -734,6 +754,12 @@ namespace GTEngine
                         script.SetTableFunction(-1, "SetGravity",                                     FFI::SystemFFI::DynamicsComponentFFI::SetGravity);
                         script.SetTableFunction(-1, "GetGravity",                                     FFI::SystemFFI::DynamicsComponentFFI::GetGravity);
                         script.SetTableFunction(-1, "ApplyGravity",                                   FFI::SystemFFI::DynamicsComponentFFI::ApplyGravity);
+
+                        script.SetTableFunction(-1, "ApplyCentralForce",                              FFI::SystemFFI::DynamicsComponentFFI::ApplyCentralForce);
+                        script.SetTableFunction(-1, "ApplyTorque",                                    FFI::SystemFFI::DynamicsComponentFFI::ApplyTorque);
+                        script.SetTableFunction(-1, "ApplyCentralImpulse",                            FFI::SystemFFI::DynamicsComponentFFI::ApplyCentralImpulse);
+                        script.SetTableFunction(-1, "ApplyImpulse",                                   FFI::SystemFFI::DynamicsComponentFFI::ApplyImpulse);
+                        script.SetTableFunction(-1, "ApplyTorqueImpulse",                             FFI::SystemFFI::DynamicsComponentFFI::ApplyTorqueImpulse);
 
                         script.SetTableFunction(-1, "AddBoxCollisionShape",                           FFI::SystemFFI::DynamicsComponentFFI::AddBoxCollisionShape);
                         script.SetTableFunction(-1, "AddSphereCollisionShape",                        FFI::SystemFFI::DynamicsComponentFFI::AddSphereCollisionShape);
@@ -2013,6 +2039,62 @@ namespace GTEngine
                         if (component != nullptr)
                         {
                             component->ApplyGravity();
+                        }
+
+                        return 0;
+                    }
+
+
+                    int ApplyCentralForce(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->ApplyCentralForce(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
+                    int ApplyTorque(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->ApplyTorque(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
+                    int ApplyCentralImpulse(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->ApplyCentralImpulse(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
+                    int ApplyImpulse(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->ApplyImpulse(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4), script.ToFloat(5), script.ToFloat(6), script.ToFloat(7));
+                        }
+
+                        return 0;
+                    }
+
+                    int ApplyTorqueImpulse(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->ApplyTorqueImpulse(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
                         }
 
                         return 0;
