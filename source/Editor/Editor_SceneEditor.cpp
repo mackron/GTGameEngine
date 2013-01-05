@@ -1090,7 +1090,7 @@ namespace GTEngine
             delete this->sceneNodesToDelete[i];
         }
 
-        this->sceneEditor.GetEditor().GetGame().GetGUI().DeleteElement(this->GUI.Main);
+        //this->sceneEditor.GetEditor().GetGame().GetGUI().DeleteElement(this->GUI.Main);
     }
 
 
