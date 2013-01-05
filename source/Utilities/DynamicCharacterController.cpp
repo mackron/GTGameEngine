@@ -2,6 +2,11 @@
 #include <GTEngine/Utilities/DynamicCharacterController.hpp>
 #include <GTEngine/Scene.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4355)   // 'this' used in initialise list.
+#endif
+
 namespace GTEngine
 {
     DynamicCharacterController::DynamicCharacterController(float heightIn, float radiusIn)
@@ -186,3 +191,8 @@ namespace GTEngine
         }
     }
 }
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
