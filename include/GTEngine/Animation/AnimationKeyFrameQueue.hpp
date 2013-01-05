@@ -3,6 +3,8 @@
 #define __GTEngine_AnimationKeyFrameQueue_hpp_
 
 #include <GTCore/Vector.hpp>
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -60,6 +62,21 @@ namespace GTEngine
         ///
         /// @param itemIndex [in] The index of the item in the queue.
         double GetKeyFramePlaybackTime(size_t itemIndex);
+
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the key frame queue.
+        ///
+        /// @param serializer [in] A reference ot the serializer to write to.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the key frame queue.
+        ///
+        /// @param deserializer [in] A reference to the deserializer for reading the data from.
+        void Deserialize(GTCore::Deserializer &deserializer);
 
 
     private:

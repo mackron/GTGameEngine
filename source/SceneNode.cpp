@@ -102,20 +102,44 @@ namespace GTEngine
         return this->firstChild;
     }
 
+    const SceneNode* SceneNode::GetFirstChild() const
+    {
+        return this->firstChild;
+    }
+
+
     SceneNode* SceneNode::GetLastChild()
     {
         return this->lastChild;
     }
+
+    const SceneNode* SceneNode::GetLastChild() const
+    {
+        return this->lastChild;
+    }
+
 
     SceneNode* SceneNode::GetPrevSibling()
     {
         return this->prevSibling;
     }
 
+    const SceneNode* SceneNode::GetPrevSibling() const
+    {
+        return this->prevSibling;
+    }
+
+
     SceneNode* SceneNode::GetNextSibling()
     {
         return this->nextSibling;
     }
+
+    const SceneNode* SceneNode::GetNextSibling() const
+    {
+        return this->nextSibling;
+    }
+
 
     SceneNode* SceneNode::GetTopAncestor()
     {
@@ -125,6 +149,29 @@ namespace GTEngine
         }
 
         return this;
+    }
+
+    const SceneNode* SceneNode::GetTopAncestor() const
+    {
+        if (this->parent != nullptr)
+        {
+            return this->parent->GetTopAncestor();
+        }
+
+        return this;
+    }
+
+
+    size_t SceneNode::GetChildCount() const
+    {
+        size_t count = 0;
+
+        for (auto i = this->GetFirstChild(); i != nullptr; i = i->GetNextSibling())
+        {
+            ++count;
+        }
+
+        return count;
     }
 
 
@@ -774,7 +821,99 @@ namespace GTEngine
     }
 
 
-    ModelComponent* SceneNode::AddModelComponent(Model * model)
+
+    //////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void SceneNode::Serialize(GTCore::Serializer &serializer) const
+    {
+        // First, we serialize the SceneObject.
+        SceneObject::Serialize(serializer);
+
+        // Now we write everything except the components - we'll do them last.
+        serializer.Write(this->name);
+        serializer.Write(static_cast<uint32_t>(this->layer));
+        serializer.Write(this->isStatic);
+        serializer.Write(this->isVisible);
+        serializer.Write(this->inheritPosition);
+        serializer.Write(this->inheritOrientation);
+        serializer.Write(this->inheritScale);
+        serializer.Write(static_cast<uint32_t>(this->flags));
+        serializer.Write(static_cast<uint32_t>(this->typeID));
+
+        // Now we will write the components. We need to keep a component count here.
+        GTCore::Vector<GTCore::String> componentNames;
+        this->GetAttachedComponentNames(componentNames);
+
+        serializer.Write(static_cast<uint32_t>(componentNames.count));
+        for (size_t i = 0; i < componentNames.count; ++i)
+        {
+            auto component = this->GetComponentByName(componentNames[i].c_str());
+            assert(component != nullptr);
+            {
+                serializer.WriteString(component->GetName());
+                component->Serialize(serializer);
+            }
+        }
+    }
+
+    void SceneNode::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        // Deserialize the SceneObject first.
+        SceneObject::Deserialize(deserializer);
+
+        // Now we read everything except the components, which will come last.
+        deserializer.Read(this->name);
+        deserializer.Read(static_cast<uint32_t &>(this->layer));
+        deserializer.Read(this->isStatic);
+        deserializer.Read(this->isVisible);
+        deserializer.Read(this->inheritPosition);
+        deserializer.Read(this->inheritOrientation);
+        deserializer.Read(this->inheritScale);
+        deserializer.Read(static_cast<uint32_t &>(this->flags));
+        deserializer.Read(static_cast<uint32_t &>(this->typeID));
+
+        // Now we need to read the components. We start with a 32-bit value containing the component count.
+        uint32_t componentCount;
+        deserializer.Read(componentCount);
+
+        for (uint32_t i = 0; i < componentCount; ++i)
+        {
+            GTCore::String name;
+            deserializer.Read(name);
+
+            // If the scene node already contains a component of this type, we just serialize straight into it.
+            auto component = this->GetComponentByName(name.c_str());
+            if (component == nullptr)
+            {
+                component = this->AddComponentByName(name.c_str());
+            }
+
+            assert(component != nullptr);
+            {
+                component->Deserialize(deserializer);
+            }
+        }
+    }
+
+    void SceneNode::DisableSerialization()
+    {
+        this->flags = this->flags | NoSerialization;
+    }
+
+    void SceneNode::EnableSerialization()
+    {
+        this->flags = this->flags & ~NoSerialization;
+    }
+
+    bool SceneNode::IsSerializationEnabled() const
+    {
+        return (this->flags & NoSerialization) == 0;
+    }
+
+
+
+    ModelComponent* SceneNode::AddModelComponent(Model* model)
     {
         auto component = this->AddComponent<ModelComponent>();
         assert(component != nullptr);

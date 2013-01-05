@@ -209,23 +209,35 @@ namespace GTEngine
 
 
         /// Retrieves a pointer to the first child node.
-        SceneNode* GetFirstChild();
+              SceneNode* GetFirstChild();
+        const SceneNode* GetFirstChild() const;
 
         /// Retrieves a pointer to the last child node.
-        SceneNode* GetLastChild();
+              SceneNode* GetLastChild();
+        const SceneNode* GetLastChild() const;
 
         /// Retrieves a pointer to the previous sibling. Returns null if the node is the first of it's siblings, or does not have any.
-        SceneNode* GetPrevSibling();
+              SceneNode* GetPrevSibling();
+        const SceneNode* GetPrevSibling() const;
 
         /// Retrieves a pointer to the next sibling. Returns null if the node if the last of it's siblings, or does not have any.
-        SceneNode* GetNextSibling();
+              SceneNode* GetNextSibling();
+        const SceneNode* GetNextSibling() const;
 
 
         /// Retrieves the top-level ancestor.
         ///
         /// @remarks
         ///     Returns <this> if the node has not parents.
-        SceneNode* GetTopAncestor();
+              SceneNode* GetTopAncestor();
+        const SceneNode* GetTopAncestor() const;
+
+
+        /// Retrieves the number of children.
+        ///
+        /// @remarks
+        ///     This runs in O(n) time.
+        size_t GetChildCount() const;
 
 
         /**
@@ -490,7 +502,12 @@ namespace GTEngine
 
             if (GTCore::Strings::Equal(name, SpotLightComponent::Name))
             {
-                return this->pointLightComponent;
+                return this->spotLightComponent;
+            }
+
+            if (GTCore::Strings::Equal(name, EditorMetadataComponent::Name))
+            {
+                return this->editorMetadataComponent;
             }
 
 
@@ -517,9 +534,9 @@ namespace GTEngine
         *       If a component of the same type already exists, the existing one is returned and is NOT overwritten.
         */
         template <typename T>
-        T * AddComponent()
+        T* AddComponent()
         {
-            // A component of the same type can't already exist.
+            // A component of the same type can't already exist. If it doesn, we just return the existing one.
             auto component = this->GetComponent<T>();
             if (component == nullptr)
             {
@@ -529,6 +546,26 @@ namespace GTEngine
 
             return component;
         }
+
+        /// Adds a component by it's name.
+        ///
+        /// @param name [in] The name of the component to instantiate and add.
+        ///
+        /// @remarks
+        ///     This will use GTEngine::CreateComponentByName() to do the instantiation, which will in turn call Game::CreateCustomComponent() if it fails.
+        Component* AddComponentByName(const char* name)
+        {
+            // A component of the same name can't already exist. If it doesn, we just return the existing one.
+            auto component = this->GetComponentByName(name);
+            if (component == nullptr)
+            {
+                component = GTEngine::CreateComponentByName(name, *this);
+                this->components.Add(name, component);
+            }
+
+            return component;
+        }
+
 
         /**
         *   \brief  Removes the component of the type given by 'T'.
@@ -603,7 +640,7 @@ namespace GTEngine
 
 
         /// Retrieves a list containing the names of the components that are currently attached to the scene node.
-        void GetAttachedComponentNames(GTCore::Vector<GTCore::String> &output)
+        void GetAttachedComponentNames(GTCore::Vector<GTCore::String> &output) const
         {
             // First is our specialised cases.
             if (this->modelComponent          != nullptr) { output.PushBack(ModelComponent::Name);          }
@@ -787,6 +824,41 @@ namespace GTEngine
 
         /// Retrieves the application-defined type ID of this scene node.
         unsigned int GetTypeID() const { return this->typeID; }
+
+
+
+        //////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the scene node, ignoring children.
+        ///
+        /// @param serializer [in] The serializer to write the data to.
+        ///
+        /// @remarks
+        ///     This ignores children. Serialization of children should be done at a higher level.
+        ///     @par
+        ///     This will serialize every attached component also.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the scene node, ignoring children.
+        ///
+        /// @param deserializer [in] The deserializer to read the data from.
+        ///
+        /// @remarks
+        ///     This will not deserialize children. That should be done at a higher level.
+        ///     @par
+        ///     This is the opposite of Serialize(), so for any rule that applies to Serialize(), it will also apply here.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
+
+        /// Disables serialization of the scene node when serialized from a scene.
+        void DisableSerialization();
+
+        /// Enables serialization of the scene node when serialized from a scene.
+        void EnableSerialization();
+
+        /// Determines whether or not serialization is enabled.
+        bool IsSerializationEnabled() const;
 
 
 
@@ -1015,6 +1087,7 @@ namespace GTEngine
             NoPositionInheritance    = (1 << 4),
             NoOrientationInheritance = (1 << 5),
             NoScaleInheritance       = (1 << 6),
+            NoSerialization          = (1 << 7)             // <-- Only used when doing serialization from a scene.
         };
 
 

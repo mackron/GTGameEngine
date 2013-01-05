@@ -236,6 +236,9 @@ namespace GTEngine
 
 namespace GTEngine
 {
+    static const uint32_t SceneMagicNumber = 0x4f25a8b0;
+
+
     Scene::Scene()
         : renderer(new DefaultSceneRenderer),
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
@@ -645,6 +648,123 @@ namespace GTEngine
     {
         this->navigationMesh.FindPath(start, end, output);
     }
+
+
+
+    ////////////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void Scene::Serialize(GTCore::Serializer &serializer) const
+    {
+        // When serializing, all we really care about are the scene nodes. Viewports and event handlers don't really make sense in the
+        // context of serialization.
+        //
+        // We write everything in a sort of hierarchy format, with the children stored straight after their parent.
+
+        serializer.Write(static_cast<uint32_t>(GTEngine::SceneMagicNumber));
+        
+        // We need a count of root-level scene nodes - nodes without parents. We need this to do deserialization correctly.
+        uint32_t orphanNodeCount = 0;
+        for (auto i = this->nodes.root; i != nullptr; i = i->next)
+        {
+            auto node = this->nodes.root->value;
+            assert(node != nullptr);
+            {
+                if (node->GetParent() == nullptr && node->IsSerializationEnabled())
+                {
+                    ++orphanNodeCount;
+                }
+            }
+        }
+
+        serializer.Write(orphanNodeCount);
+
+
+        for (auto i = this->nodes.root; i != nullptr; i = i->next)
+        {
+            auto node = this->nodes.root->value;
+            assert(node != nullptr);
+            {
+                // We only do nodes without parents. We will recursively read the children.
+                if (node->GetParent() == nullptr && node->IsSerializationEnabled())
+                {
+                    this->SerializeSceneNode(*node, serializer);
+                }
+            }
+        }
+    }
+
+    void Scene::SerializeSceneNode(const SceneNode &sceneNode, GTCore::Serializer &serializer) const
+    {
+        sceneNode.Serialize(serializer);
+
+        // We need to count the children here. We only care about children that have serialization enabled.
+        uint32_t childCount = 0;
+        for (auto i = sceneNode.GetFirstChild(); i != nullptr; i = i->GetNextSibling())
+        {
+            if (i->IsSerializationEnabled())
+            {
+                ++childCount;
+            }
+        }
+
+        serializer.Write(childCount);
+
+
+        // Now we serialize the children.
+        for (auto i = sceneNode.GetFirstChild(); i != nullptr; i = i->GetNextSibling())
+        {
+            if (i->IsSerializationEnabled())
+            {
+                this->SerializeSceneNode(*i, serializer);
+            }
+        }
+    }
+
+
+    void Scene::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        uint32_t magicNumber;
+        deserializer.Read(magicNumber);
+
+        if (magicNumber == GTEngine::SceneMagicNumber)
+        {
+            uint32_t orphanNodeCount;
+            deserializer.Read(orphanNodeCount);
+
+            for (uint32_t i = 0; i < orphanNodeCount; ++i)
+            {
+                this->DeserializeSceneNode(deserializer);
+            }
+        }
+    }
+
+    SceneNode* Scene::DeserializeSceneNode(GTCore::Deserializer &deserializer)
+    {
+        auto node = new SceneNode;
+        node->Deserialize(deserializer);
+
+        // The next 4 bytes is the child count. Children will be stored in a hierarchal fasion, so we'll need to recursively read them, too.
+        uint32_t childCount;
+        deserializer.Read(childCount);
+
+        for (uint32_t i = 0; i < childCount; ++i)
+        {
+            auto childNode = this->DeserializeSceneNode(deserializer);
+            assert(childNode != nullptr);
+            {
+                node->AttachChild(*childNode);
+            }
+        }
+
+
+        return node;
+    }
+
+    
+
+
+
 
 
     void Scene::OnUpdate(double)

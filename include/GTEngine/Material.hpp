@@ -5,6 +5,8 @@
 #include <GTCore/String.hpp>
 #include <GTCore/Map.hpp>
 #include "ShaderParameterCache.hpp"
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -187,6 +189,28 @@ namespace GTEngine
         ///
         /// @return A pointer to the metadata associated with the key or null if there is no metadata for that key.
         void* GetMetadata(size_t key);
+
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the state of the material.
+        ///
+        /// @param serializer [in] A reference to the serializer to write to.
+        ///
+        /// @remarks
+        ///     This does not save an actual .material file. Instead it will just save the parameters and their values.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the state of the material.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read from.
+        ///
+        /// @remarks
+        ///     This does NOT load an actual .material file. It just restores parameter states.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
 
 
     // Parameter setters.

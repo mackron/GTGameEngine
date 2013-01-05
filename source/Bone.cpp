@@ -192,4 +192,30 @@ namespace GTEngine
 
         return this;
     }
+
+
+
+
+    ///////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void Bone::Serialize(GTCore::Serializer &serializer) const
+    {
+        serializer.Write(this->name);
+        serializer.Write(this->position);
+        serializer.Write(this->rotation);
+        serializer.Write(this->scale);
+        serializer.Write(this->offsetMatrix);
+        serializer.Write(this->skinningMatrix);
+    }
+
+    void Bone::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        deserializer.Read(this->name);
+        deserializer.Read(this->position);
+        deserializer.Read(this->rotation);
+        deserializer.Read(this->scale);
+        deserializer.Read(this->offsetMatrix);
+        deserializer.Read(this->skinningMatrix);
+    }
 }

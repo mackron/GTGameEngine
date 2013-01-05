@@ -2,9 +2,11 @@
 #ifndef __GTEngine_Bone_hpp_
 #define __GTEngine_Bone_hpp_
 
+#include "Math.hpp"
 #include <GTCore/Vector.hpp>
 #include <GTCore/String.hpp>
-#include "Math.hpp"
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -156,6 +158,20 @@ namespace GTEngine
         /// Retrieves the top level bone. If this bone is already the top level bone, <this> will be returned.
         Bone* GetTopLevelBone();
 
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the bone, not including hierarchy information (parent, children).
+        ///
+        /// @param serializer [in] A reference to the serializer to write to.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the bone, not including hierarchy information (parent, children).
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read from.
+        void Deserialize(GTCore::Deserializer &deserializer);
 
 
 

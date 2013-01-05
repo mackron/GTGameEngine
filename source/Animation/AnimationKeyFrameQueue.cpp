@@ -99,4 +99,30 @@ namespace GTEngine
 
         return startTime;
     }
+
+
+    ///////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void AnimationKeyFrameQueue::Serialize(GTCore::Serializer &serializer) const
+    {
+        serializer.Write(static_cast<uint32_t>(this->keyFrames.count));
+        serializer.Write(this->keyFrames.buffer, sizeof(Item) * this->keyFrames.count);
+        
+        serializer.Write(this->totalDuration);
+    }
+
+    void AnimationKeyFrameQueue::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        this->keyFrames.Clear();
+
+        uint32_t keyFramesCount;
+        deserializer.Read(keyFramesCount);
+
+        this->keyFrames.Reserve(keyFramesCount);
+        this->keyFrames.count = keyFramesCount;
+        deserializer.Read(this->keyFrames.buffer, sizeof(Item) * keyFramesCount);
+
+        deserializer.Read(this->totalDuration);
+    }
 }

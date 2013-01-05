@@ -4,6 +4,8 @@
 
 #include "SceneObjectTypes.hpp"
 #include "Math.hpp"
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -161,6 +163,21 @@ namespace GTEngine
         /// @remarks
         ///     This is not a simple accessor, but rather a calculate of the transform from the position, orientation and scale.
         void GetTransform(glm::mat4 &dest);
+
+
+
+        //////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the scene object.
+        ///
+        /// @param serializer [in] The serializer to write the data to.
+        virtual void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the scene object.
+        ///
+        /// @param deserializer [in] The deserializer to read the data from.
+        virtual void Deserialize(GTCore::Deserializer &deserializer);
 
 
 

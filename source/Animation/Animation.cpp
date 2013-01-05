@@ -249,4 +249,34 @@ namespace GTEngine
     {
         this->segments.Clear();
     }
+
+
+
+
+    ///////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void Animation::Serialize(GTCore::Serializer &serializer) const
+    {
+        // We'll save a version just in case we need to change the data later.
+        serializer.Write(static_cast<uint32_t>(1));
+
+        this->keyFrameQueue.Serialize(serializer);
+
+        serializer.Write(this->isPlaying);
+        serializer.Write(this->playbackTime);
+        serializer.Write(static_cast<uint32_t>(this->loopStartQueueIndex));
+    }
+
+    void Animation::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        uint32_t version;
+        deserializer.Read(version);
+
+        this->keyFrameQueue.Deserialize(deserializer);
+
+        deserializer.Read(this->isPlaying);
+        deserializer.Read(this->playbackTime);
+        deserializer.Read(static_cast<uint32_t &>(this->loopStartQueueIndex));
+    }
 }

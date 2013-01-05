@@ -4,6 +4,8 @@
 
 #include "VertexFormat.hpp"
 #include "../Math.hpp"
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -36,6 +38,10 @@ namespace GTEngine
         *   \brief  Constructor.
         */
         VertexArray(VertexArrayUsage usage, const VertexFormat &format);
+
+        /// Constructor.
+        VertexArray(GTCore::Deserializer &deserializer);
+
 
         /**
         *   \brief  Destructor.
@@ -115,8 +121,6 @@ namespace GTEngine
         void UnmapIndexData();
 
 
-        
-
 
 
         /**
@@ -145,6 +149,22 @@ namespace GTEngine
         *       This does not deallocate the previous renderer data. That is the responsibility of the renderer itself.
         */
         inline void SetRendererData(void *rendererData) const { this->rendererData = rendererData; }
+
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the vertex array.
+        ///
+        /// @param serializer [in] A reference to the serializer to write to.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the vertex array.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read from.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
 
 
 

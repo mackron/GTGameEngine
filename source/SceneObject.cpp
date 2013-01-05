@@ -77,4 +77,23 @@ namespace GTEngine
     {
         Math::CalculateTransformMatrix(this->position, this->orientation, this->scale, transform);
     }
+
+
+
+    //////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void SceneObject::Serialize(GTCore::Serializer &serializer) const
+    {
+        serializer.Write(this->position);
+        serializer.Write(this->orientation);
+        serializer.Write(this->scale);
+    }
+
+    void SceneObject::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        deserializer.Read(this->position);
+        deserializer.Read(this->orientation);
+        deserializer.Read(this->scale);
+    }
 }

@@ -95,6 +95,47 @@ namespace GTEngine
     {
         this->flags &= ~CastShadow;
     }
+
+
+
+    void ModelComponent::Serialize(GTCore::Serializer &serializer) const
+    {
+        serializer.Write(static_cast<uint32_t>(this->flags));
+
+        // If the model is procedural (not loaded from a file) we will just ignore it. We'll need to store a flag specifying whether or
+        // not the file name is stored.
+        if (this->model != nullptr && !this->model->GetDefinition().fileName.IsEmpty())
+        {
+            serializer.Write(true);
+            serializer.Write(this->model->GetDefinition().fileName);
+
+            // Now we serialize the model itself.
+            this->model->Serialize(serializer);
+        }
+        else
+        {
+            serializer.Write(false);
+        }
+    }
+
+    void ModelComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        deserializer.Read(static_cast<uint32_t &>(this->flags));
+
+        bool hasModel;
+        deserializer.Read(hasModel);
+
+        if (hasModel)
+        {
+            GTCore::String fileName;
+            deserializer.Read(fileName);
+
+            this->SetModel(fileName.c_str());
+
+            // With the model loaded, we just deserialize it.
+            this->model->Deserialize(deserializer);
+        }
+    }
 }
 
 

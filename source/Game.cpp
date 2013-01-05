@@ -554,6 +554,14 @@ namespace GTEngine
 
 
 
+
+    Component* Game::CreateCustomComponent(const char*, SceneNode &) const
+    {
+        return nullptr;
+    }
+
+
+
     void Game::OnLoadConfigs()
     {
     }
@@ -665,6 +673,8 @@ namespace GTEngine
     void Game::OnEditorClose()
     {
     }
+
+
 
 
     bool Game::Startup(int argc, char **argv)

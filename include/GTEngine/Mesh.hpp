@@ -8,6 +8,8 @@
 #include "SkinningVertexAttribute.hpp"
 #include "GarbageCollector.hpp"
 #include "Rendering/DrawModes.hpp"
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -105,7 +107,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Remember to consider that a change in the structure of the meshes geometry may break the animations defined by the current skeleton.
-        void SetGeometry(VertexArray* newGeometry) { this->geometry = newGeometry; }
+        void SetGeometry(VertexArray* newGeometry);
 
         /// Sets the material of the mesh.
         ///
@@ -195,6 +197,22 @@ namespace GTEngine
 
 
 
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the mesh.
+        ///
+        /// @param serializer        [in] A reference ot the serializer to write to.
+        /// @param serializeGeometry [in] Whether or not the geometry should be serialized.
+        void Serialize(GTCore::Serializer &serializer, bool serializeGeometry) const;
+
+        /// Deserializes the mesh.
+        ///
+        /// @param deserializer [in] A reference to the deserializer for reading the data from.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
+
+
     private:
 
         /// The vertex array containing the geometric data of the mesh.
@@ -210,6 +228,10 @@ namespace GTEngine
         /// geometry or skinned geometry for an animated mesh. If the mesh has not yet been animated, the base geometry needs to
         /// be used.
         bool hasAnimated;
+
+
+        /// Keeps track of whether or not the geometry should be deleted.
+        bool deleteGeometry;
 
         /// Keeps track of whether or not the material should be deleted.
         bool deleteMaterial;
