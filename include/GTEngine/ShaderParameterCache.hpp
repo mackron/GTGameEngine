@@ -5,6 +5,8 @@
 #include "ShaderParameter.hpp"
 #include "Math.hpp"
 #include <GTCore/Dictionary.hpp>
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -75,6 +77,22 @@ namespace GTEngine
 
         /// Clears the cache.
         void Clear();
+
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the parameter cache.
+        ///
+        /// @param serializer [in] A reference to the serializer to write to.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the parameter cache.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read from.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
 
 
     private:

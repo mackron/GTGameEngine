@@ -13,6 +13,16 @@ namespace GTEngine
         Renderer::OnVertexArrayCreated(*this);
     }
 
+    VertexArray::VertexArray(GTCore::Deserializer &deserializer)
+        : usage(VertexArrayUsage_Static), format(),
+          vertices(nullptr), vertexCount(0), indices(nullptr), indexCount(0),
+          verticesMapped(false), indicesMapped(false),
+          rendererData(nullptr)
+    {
+        Renderer::OnVertexArrayCreated(*this);
+        this->Deserialize(deserializer);
+    }
+
     VertexArray::~VertexArray()
     {
         delete [] this->vertices;
@@ -115,6 +125,56 @@ namespace GTEngine
 
             Renderer::OnVertexArrayIndexDataChanged(*this);
         }
+    }
+
+
+
+    ///////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void VertexArray::Serialize(GTCore::Serializer &serializer) const
+    {
+        serializer.Write(static_cast<uint32_t>(this->usage));
+        this->format.Serialize(serializer);
+
+        serializer.Write(static_cast<uint32_t>(this->vertexCount));
+        serializer.Write(this->vertices, sizeof(float) * this->format.GetSize() * this->vertexCount);
+
+        serializer.Write(static_cast<uint32_t>(this->indexCount));
+        serializer.Write(this->indices, sizeof(unsigned int) * this->indexCount);
+    }
+
+    void VertexArray::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        assert(this->verticesMapped == false);
+        assert(this->indicesMapped  == false);
+
+
+        uint32_t usageIn;
+        deserializer.Read(usageIn);
+
+        this->usage = static_cast<VertexArrayUsage>(usageIn);
+        this->format.Deserialize(deserializer);
+
+
+        // Vertices.
+        deserializer.Read(static_cast<uint32_t &>(this->vertexCount));
+
+        delete [] this->vertices;
+        this->vertices = new float[this->format.GetSize() * this->vertexCount];
+        deserializer.Read(this->vertices, sizeof(float) * this->format.GetSize() * this->vertexCount);
+
+
+        // Indices.
+        deserializer.Read(static_cast<uint32_t &>(this->indexCount));
+
+        delete [] this->indices;
+        this->indices = new unsigned int[this->indexCount];
+        deserializer.Read(this->indices, sizeof(unsigned int) * this->indexCount);
+
+
+        Renderer::OnVertexArrayVertexDataChanged(*this);
+        Renderer::OnVertexArrayIndexDataChanged(*this);
     }
 }
 

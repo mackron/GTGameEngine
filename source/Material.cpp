@@ -430,4 +430,18 @@ namespace GTEngine
 
         return nullptr;
     }
+
+
+
+    void Material::Serialize(GTCore::Serializer &serializer) const
+    {
+        // We only serialize the parameters.
+        this->parameters.Serialize(serializer);
+    }
+
+    void Material::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        // We only deserialize the parameters.
+        this->parameters.Deserialize(deserializer);
+    }
 }

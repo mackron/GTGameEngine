@@ -9,7 +9,7 @@ namespace GTEngine
     Mesh::Mesh(DrawMode drawModeIn)
         : geometry(nullptr), material(nullptr),
           skinningData(nullptr),
-          hasAnimated(false), deleteMaterial(false),
+          hasAnimated(false), deleteGeometry(false), deleteMaterial(false),
           drawMode(drawModeIn)
     {
     }
@@ -18,19 +18,35 @@ namespace GTEngine
     {
         delete this->skinningData;
 
+        if (this->deleteGeometry)
+        {
+            GarbageCollector::MarkForCollection(this->geometry);
+        }
+
         if (this->deleteMaterial)
         {
-            GTEngine::MaterialLibrary::Delete(this->material);
+            MaterialLibrary::Delete(this->material);
         }
     }
 
+
+    void Mesh::SetGeometry(VertexArray* newGeometry)
+    {
+        if (this->deleteGeometry)
+        {
+            GarbageCollector::MarkForCollection(this->geometry);
+        }
+
+        this->geometry       = newGeometry;
+        this->deleteGeometry = false;
+    }
 
 
     void Mesh::SetMaterial(Material* newMaterial)
     {
         if (this->deleteMaterial)
         {
-            GTEngine::MaterialLibrary::Delete(this->material);
+            MaterialLibrary::Delete(this->material);
         }
 
         this->material       = newMaterial;
@@ -41,10 +57,10 @@ namespace GTEngine
     {
         if (this->deleteMaterial)
         {
-            GTEngine::MaterialLibrary::Delete(this->material);
+            MaterialLibrary::Delete(this->material);
         }
 
-        auto newMaterial = GTEngine::MaterialLibrary::Create(materialFileName);
+        auto newMaterial = MaterialLibrary::Create(materialFileName);
         if (newMaterial != nullptr)
         {
             this->material       = newMaterial;
@@ -113,6 +129,76 @@ namespace GTEngine
             dstVertexArray->UnmapVertexData();
 
             this->hasAnimated = true;
+        }
+    }
+
+
+    void Mesh::Serialize(GTCore::Serializer &serializer, bool serializeGeometry) const
+    {
+        // We'll write a version number just in case we want to change a few things, which is probable.
+        serializer.Write(static_cast<uint32_t>(1));
+
+        // We need to save the file name of the material.
+        if (this->material && !this->material->GetDefinition().fileName.IsEmpty())
+        {
+            serializer.Write(true);
+            serializer.Write(this->material->GetDefinition().fileName.c_str());
+
+            // The material itself needs to be serialized.
+            this->material->Serialize(serializer);
+
+
+            // Geometry, if applicable.
+            if (serializeGeometry && this->geometry != nullptr)
+            {
+                serializer.Write(true);
+                this->geometry->Serialize(serializer);
+            }
+            else
+            {
+                serializer.Write(false);
+            }
+        }
+        else
+        {
+            serializer.Write(false);
+        }
+    }
+
+    void Mesh::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        uint32_t version;
+        deserializer.Read(version);
+
+
+        bool hasMaterial;
+        deserializer.Read(hasMaterial);
+
+        if (hasMaterial)
+        {
+            GTCore::String fileName;
+            deserializer.Read(fileName);
+
+            this->SetMaterial(fileName.c_str());
+
+            // The new material needs to be deserialized now.
+            this->material->Deserialize(deserializer);
+
+
+            // Now the geometry.
+            bool deserializeGeometry;
+            deserializer.Read(deserializeGeometry);
+            
+            if (deserializeGeometry)
+            {
+                if (this->deleteGeometry)
+                {
+                    GarbageCollector::MarkForCollection(this->geometry);
+                }
+
+                this->SetGeometry(new VertexArray(deserializer));
+                this->deleteGeometry = true;
+            }
         }
     }
 }

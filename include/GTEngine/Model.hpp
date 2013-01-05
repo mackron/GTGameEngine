@@ -6,6 +6,8 @@
 #include "Mesh.hpp"
 #include "Animation/Animation.hpp"
 #include <GTCore/Vector.hpp>
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -83,6 +85,31 @@ namespace GTEngine
         /// @remarks
         ///     When this is called, the model will have it's information updated based on the definition.
         void OnDefinitionChanged();
+
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the state of the model.
+        ///
+        /// @param serializer [in] A reference to the serializer to write to.
+        ///
+        /// @remarks
+        ///     This is only used for saving the state of the model, and not for saving an actual .gtmodel file. This does not save vertex information and whatnot.
+        ///     Instead it just saves the state that makes this instantiation different from other instantiations.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the state of the model.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read from.
+        ///
+        /// @remarks
+        ///     The only retrieves state information. It assumes that the data being read has the same number of meshes as is currently loaded in the Model object.
+        ///     @par
+        ///     The way deserialization should work is that the model should already be loaded and instantiated before restoring the state. This should NOT be used
+        ///     as a generic loading function for a mesh.
+        void Deserialize(GTCore::Deserializer &deserializer);
 
 
 

@@ -2,8 +2,10 @@
 #ifndef __GTEngine_VertexFormat_hpp_
 #define __GTEngine_VertexFormat_hpp_
 
-#include <cstddef>
 #include "VertexAttributes.hpp"
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
+#include <cstddef>
 
 #define GTENGINE_MAX_VERTEX_ATTRIBS       16
 #define GTENGINE_VERTEX_FORMAT_SIZE       (GTENGINE_MAX_VERTEX_ATTRIBS * 2 + 1)
@@ -99,6 +101,21 @@ namespace GTEngine
         //    int & operator[] (const size_t index)       { return this->attributes[index]; }
               
         VertexFormat & operator= (const VertexFormat &other);
+
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the vertex array.
+        ///
+        /// @param serializer [in] A reference to the serializer to write to.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the vertex array.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read from.
+        void Deserialize(GTCore::Deserializer &deserializer);
         
 
     private:
@@ -112,7 +129,7 @@ namespace GTEngine
         /// The internal array containing the attribute information. We initialise every item in this array to -1 (VertexAttribs::End).
         int attributes[GTENGINE_VERTEX_FORMAT_SIZE];
 
-        /// The number of number of valid integers in 'attributes'. This does not include the trailing -1 value.
+        /// The number of valid integers in 'attributes'. This does not include the trailing -1 value.
         size_t count;
 
 

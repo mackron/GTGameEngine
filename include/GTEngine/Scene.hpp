@@ -486,6 +486,22 @@ namespace GTEngine
         const GTCore::List<SceneNode*> & GetSceneNodes() const { return this->nodes; }
 
 
+
+    // Serialization/Deserialization.
+    public:
+
+        /// Serializes the scene using the given serializer.
+        ///
+        /// @param serializer [in] The serializer to copy the scene data in to.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the scene using the given deserializer.
+        ///
+        /// @param deserializer [in] The deserializer to copy the scene data from.
+        void Deserialize(GTCore::Deserializer &deserialize);
+
+
+
     public: // Events.
 
         /// Called when the scene is updated.
@@ -560,6 +576,30 @@ namespace GTEngine
         ///
         /// @param node [in] A reference to the scene node that has just been made visible.
         void PostEvent_OnSceneNodeShow(SceneNode &node);
+
+
+        /////////////////////////////////////////////////
+        // Serialization/Deserialization
+
+        /// Helper for recursively serializing a scene node.
+        ///
+        /// @param sceneNode  [in] A reference to the scene node to serialize.
+        /// @param serializer [in] A reference to the serializer to write the data to.
+        void SerializeSceneNode(const SceneNode &node, GTCore::Serializer &serializer) const;
+
+        /// Helper for deserializing a scene node.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read the data from.
+        ///
+        /// @return A pointer to the newly created scene node, with all children also created and attached.
+        ///
+        /// @remarks
+        ///     This assumes that the deserializer is sitting at the beginning of the scene node. It depends on deserialization of everything else
+        ///     making sure the exact correct number of bytes is read.
+        ///     @par
+        ///     This function will do the scene node allocation with 'new'. If a specific scene node is needed, it's best to give it a proper name
+        ///     and retrieve it with FindFirstNode().
+        SceneNode* DeserializeSceneNode(GTCore::Deserializer &deserializer);
 
 
     private:

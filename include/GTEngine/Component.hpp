@@ -62,7 +62,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not need to preserve any information about the owner scene node or the component name.
-        virtual void Serialize(GTCore::Serializer &serializer);
+        virtual void Serialize(GTCore::Serializer &serializer) const;
 
         /// Deserializes the component.
         ///
@@ -81,6 +81,21 @@ namespace GTEngine
         Component(const Component &);
         Component & operator=(const Component &);
     };
+
+
+
+    /// Creates an instantiation of a component based on it's name.
+    ///
+    /// @param componentName [in] The name of the comonent to instantiate.
+    /// @param hostSceneNode [in] The scene node to associate with the component.
+    ///
+    /// @return A pointer to the new component if successful, null otherwise.
+    ///
+    /// @remarks
+    ///     The component will be created with 'new'. Delete it with 'delete'
+    ///     @par
+    ///     If 'name' does not correspond to a component defined by the engine, this will call Game::CreateCustomComponent().
+    Component* CreateComponentByName(const char* componentName, SceneNode &hostSceneNode);
 }
 
 #endif

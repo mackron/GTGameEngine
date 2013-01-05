@@ -56,6 +56,25 @@ namespace GTEngine
     {
         this->castShadows = false;
     }
+
+
+    void PointLightComponent::Serialize(GTCore::Serializer &serializer) const
+    {
+        serializer.Write(this->colour);
+        serializer.Write(this->constantAttenuation);
+        serializer.Write(this->linearAttenuation);
+        serializer.Write(this->quadraticAttenuation);
+        serializer.Write(this->castShadows);
+    }
+
+    void PointLightComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        deserializer.Read(this->colour);
+        deserializer.Read(this->constantAttenuation);
+        deserializer.Read(this->linearAttenuation);
+        deserializer.Read(this->quadraticAttenuation);
+        deserializer.Read(this->castShadows);
+    }
 }
 
 // SpotLight
@@ -101,6 +120,29 @@ namespace GTEngine
     {
         this->castShadows = false;
     }
+
+
+    void SpotLightComponent::Serialize(GTCore::Serializer &serializer) const
+    {
+        serializer.Write(this->innerAngle);
+        serializer.Write(this->outerAngle);
+        serializer.Write(this->colour);
+        serializer.Write(this->constantAttenuation);
+        serializer.Write(this->linearAttenuation);
+        serializer.Write(this->quadraticAttenuation);
+        serializer.Write(this->castShadows);
+    }
+
+    void SpotLightComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        deserializer.Read(this->innerAngle);
+        deserializer.Read(this->outerAngle);
+        deserializer.Read(this->colour);
+        deserializer.Read(this->constantAttenuation);
+        deserializer.Read(this->linearAttenuation);
+        deserializer.Read(this->quadraticAttenuation);
+        deserializer.Read(this->castShadows);
+    }
 }
 
 
@@ -131,6 +173,19 @@ namespace GTEngine
     {
         this->castShadows = false;
     }
+
+
+    void DirectionalLightComponent::Serialize(GTCore::Serializer &serializer) const
+    {
+        serializer.Write(this->colour);
+        serializer.Write(this->castShadows);
+    }
+
+    void DirectionalLightComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        deserializer.Read(this->colour);
+        deserializer.Read(this->castShadows);
+    }
 }
 
 // AmbientLight
@@ -147,5 +202,16 @@ namespace GTEngine
     void AmbientLightComponent::Initialise(const glm::vec3 &colour)
     {
         this->colour = colour;
+    }
+
+
+    void AmbientLightComponent::Serialize(GTCore::Serializer &serializer) const
+    {
+        serializer.Write(this->colour);
+    }
+
+    void AmbientLightComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        deserializer.Read(this->colour);
     }
 }

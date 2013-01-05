@@ -66,6 +66,17 @@ namespace GTEngine
         /// Determines whether or not this model casts shadows.
         bool IsShadowCastingEnabled() const { return this->castShadows; }
 
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Component::Serialize()
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Component::Deserialize()
+        void Deserialize(GTCore::Deserializer &deserializer);
+
         
     public:
 
@@ -170,6 +181,17 @@ namespace GTEngine
         bool IsShadowCastingEnabled() const { return this->castShadows; }
 
 
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Component::Serialize()
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Component::Deserialize()
+        void Deserialize(GTCore::Deserializer &deserializer);
+
+
         
     public:
 
@@ -240,6 +262,17 @@ namespace GTEngine
         /// Determines whether or not this model casts shadows.
         bool IsShadowCastingEnabled() const { return this->castShadows; }
 
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Component::Serialize()
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Component::Deserialize()
+        void Deserialize(GTCore::Deserializer &deserializer);
+
         
     public:
 
@@ -279,6 +312,17 @@ namespace GTEngine
         */
         void SetColour(const glm::vec3 &colour)   { this->colour = colour; }
         void SetColour(float x, float y, float z) { this->SetColour(glm::vec3(x, y, z)); }
+
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Component::Serialize()
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Component::Deserialize()
+        void Deserialize(GTCore::Deserializer &deserializer);
 
         
     public:

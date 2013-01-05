@@ -8,6 +8,8 @@
 #include "AnimationKeyFrameQueue.hpp"
 #include <GTCore/Vector.hpp>
 #include <GTCore/Dictionary.hpp>
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -162,6 +164,26 @@ namespace GTEngine
 
         /// Clears only the named animation segments.
         void ClearNamedSegments();
+
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the animation state.
+        ///
+        /// @param serializer [in] A reference ot the serializer to write to.
+        ///
+        /// @remarks
+        ///     Currently, this only saves the current playback state. It does not save the key frames, channels and named segments. The serialized data
+        ///     is marked with a version number, which will make this easy enough to change in the future if required.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the animation state.
+        ///
+        /// @param deserializer [in] A reference to the deserializer for reading the data from.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
 
 
     private:

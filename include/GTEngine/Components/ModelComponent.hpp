@@ -83,6 +83,17 @@ namespace GTEngine
         bool IsModelVisible() const { return (this->flags & Visible) != 0; }
 
 
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Component::Serialize()
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Component::Deserialize()
+        void Deserialize(GTCore::Deserializer &deserializer);
+
+
     private:
 
         /// A pointer to the applicable model.

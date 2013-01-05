@@ -2,6 +2,8 @@
 #ifndef __GTEngine_ShaderParameter_hpp_
 #define __GTEngine_ShaderParameter_hpp_
 
+#include "Texture2DLibrary.hpp"
+
 #define GLM_FORCE_ONLY_XYZW
 #include <glm/glm.hpp>
 
@@ -74,6 +76,30 @@
         typeName & operator=(const typeName &); \
     }; \
 
+#define GTENGINE_SHADERPARAMETER_DECL_TEXTURE2D(typeName, typeID, valueType) \
+    struct typeName : public ShaderParameter \
+    { \
+        valueType* value; \
+        bool       unacquireInDtor; \
+        \
+        typeName(valueType* valueIn) \
+            : ShaderParameter(typeID), value(valueIn), unacquireInDtor(false) \
+        { \
+            if (this->unacquireInDtor) \
+            { \
+                Texture2DLibrary::Unacquire(this->value); \
+            } \
+        } \
+        \
+        GTENGINE_SHADERPARAMETER_DECL_COPYCTOR(typeName, typeID) \
+        GTENGINE_SHADERPARAMETER_DECL_SETONCURRENTSHADER() \
+        GTENGINE_SHADERPARAMETER_DECL_UPCAST(typeName, typeID) \
+        \
+    private: \
+        typeName(const typeName &); \
+        typeName & operator=(const typeName &); \
+    }; \
+
 
 namespace GTEngine
 {
@@ -129,7 +155,7 @@ namespace GTEngine
     GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float4x4, ShaderParameterType_Float4x4, glm::mat4);
 
     //GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_Texture1D,   ShaderParameterType_Texture1D,   Texture1D);
-    GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_Texture2D,   ShaderParameterType_Texture2D,   Texture2D);
+    GTENGINE_SHADERPARAMETER_DECL_TEXTURE2D(ShaderParameter_Texture2D,   ShaderParameterType_Texture2D,   Texture2D);
     //GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_Texture3D,   ShaderParameterType_Texture3D,   Texture3D);
     GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_TextureCube, ShaderParameterType_TextureCube, TextureCube);
 

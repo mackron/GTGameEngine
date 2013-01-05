@@ -340,6 +340,15 @@ namespace GTEngine
 
 
 
+
+        /// A virtual function that creates an instantiation of a custom component.
+        ///
+        /// @param componentName [in] The name of the component to instantiate.
+        /// @param hostSceneNode [in] The scene node that will become the owner of the new component.
+        virtual Component* CreateCustomComponent(const char* componentName, SceneNode &hostSceneNode) const;
+
+
+
     protected:
 
         void CacheMousePosition();
@@ -456,8 +465,6 @@ namespace GTEngine
 
         /// Called just after the editor has been closed.
         virtual void OnEditorClose();
-
-        
 
 
     private:

@@ -202,11 +202,11 @@ namespace GTEngine
 
                 this->isAABBValid = true;
             }
-        }
 
-        if (this->aabbMax.x - this->aabbMin.x < glm::epsilon<float>()) this->aabbMax.x = this->aabbMin.x + glm::epsilon<float>();
-        if (this->aabbMax.y - this->aabbMin.y < glm::epsilon<float>()) this->aabbMax.y = this->aabbMin.y + glm::epsilon<float>();
-        if (this->aabbMax.z - this->aabbMin.z < glm::epsilon<float>()) this->aabbMax.z = this->aabbMin.z + glm::epsilon<float>();
+            if (this->aabbMax.x - this->aabbMin.x < glm::epsilon<float>()) this->aabbMax.x = this->aabbMin.x + glm::epsilon<float>();
+            if (this->aabbMax.y - this->aabbMin.y < glm::epsilon<float>()) this->aabbMax.y = this->aabbMin.y + glm::epsilon<float>();
+            if (this->aabbMax.z - this->aabbMin.z < glm::epsilon<float>()) this->aabbMax.z = this->aabbMin.z + glm::epsilon<float>();
+        }
 
         aabbMin = this->aabbMin;
         aabbMax = this->aabbMax;
@@ -236,6 +236,122 @@ namespace GTEngine
             {
                 this->AttachMesh(this->definition.meshGeometries[i], this->definition.meshMaterials[i]->GetDefinition().fileName.c_str());
             }
+        }
+    }
+
+
+
+    void Model::Serialize(GTCore::Serializer &serializer) const
+    {
+        // A version just in case we need to change a few things, which is probable.
+        serializer.Write(static_cast<uint32_t>(1));
+
+
+        // A model will be serialized differently depending on whether or not it was loaded from a file. When loaded from a file, we
+        // will only save basic state information. Otherwise, if the model is procedural, we'll want to save everything.
+        if (&this->definition == &NullModelDefinition)
+        {
+            serializer.Write(true);
+
+            // Meshes.
+            serializer.Write(static_cast<uint32_t>(this->meshes.count));
+            for (size_t i = 0; i < this->meshes.count; ++i)
+            {
+                this->meshes[i]->Serialize(serializer, true);       // 'true' means to write the geometry data.
+            }
+        }
+        else
+        {
+            serializer.Write(false);
+
+            // Meshes.
+            serializer.Write(static_cast<uint32_t>(this->meshes.count));
+            for (size_t i = 0; i < this->meshes.count; ++i)
+            {
+                this->meshes[i]->Serialize(serializer, false);       // 'false' means to not save the geometry data.
+            }
+
+            // Bones.
+            serializer.Write(static_cast<uint32_t>(this->bones.count));
+            for (size_t i = 0; i < this->bones.count; ++i)
+            {
+                this->bones[i]->Serialize(serializer);
+            }
+
+            // Animation.
+            this->animation.Serialize(serializer);
+            serializer.Write(this->animationPlaybackSpeed);
+        }
+    }
+
+    void Model::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        // A version just in case we need to change a few things, which is probable.
+        uint32_t version;
+        deserializer.Read(version);
+
+
+        bool isProcedural;
+        deserializer.Read(isProcedural);
+
+
+        uint32_t meshCount;
+        deserializer.Read(meshCount);
+
+        // We now have to pass a few assertions. First of all, if 'isProcedural' is true, it must also be try that this->definition == NullModelDefinition. If it is
+        // not procedural, we must assert that the mesh counts are the same.
+        if (isProcedural)
+        {
+            assert(&this->definition == &NullModelDefinition);
+            {
+                // If the mesh counts are different, it might just mean that the model is empty. This is a valid state. In this case, we'll just re-create the meshes.
+                if (meshCount != this->meshes.count)
+                {
+                    this->Clear();
+
+                    for (size_t i = 0; i < meshCount; ++i)
+                    {
+                        auto mesh = this->AttachMesh(nullptr, nullptr, nullptr);
+                        mesh->Deserialize(deserializer);
+                    }
+                }
+                else
+                {
+                    for (size_t i = 0; i < meshCount; ++i)
+                    {
+                        this->meshes[i]->Deserialize(deserializer);
+                    }
+                }
+            }
+        }
+        else
+        {
+            assert(meshCount == this->meshes.count);
+            assert(!this->definition.fileName.IsEmpty());
+            {
+                for (uint32_t i = 0; i < meshCount; ++i)
+                {
+                    this->meshes[i]->Deserialize(deserializer);
+                }
+            }
+
+
+            // Bones.
+            uint32_t boneCount;
+            deserializer.Read(boneCount);
+
+            assert(boneCount == this->bones.count);
+            {
+                for (uint32_t i = 0; i < boneCount; ++i)
+                {
+                    this->bones[i]->Deserialize(deserializer);
+                }
+            }
+
+
+            // Animation.
+            this->animation.Deserialize(deserializer);
+            deserializer.Read(this->animationPlaybackSpeed);
         }
     }
 

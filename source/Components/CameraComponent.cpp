@@ -57,7 +57,7 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void CameraComponent::Serialize(GTCore::Serializer &serializer)
+    void CameraComponent::Serialize(GTCore::Serializer &serializer) const
     {
         serializer.Write(this->projection);
         serializer.Write(this->ortho);           // <-- unioned with 'perspective'.
