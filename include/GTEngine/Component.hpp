@@ -61,7 +61,7 @@ namespace GTEngine
         /// @param serializer [in] The serializer to write data to.
         ///
         /// @remarks
-        ///     This does not need to preserve any information about the owner scene node.
+        ///     This does not need to preserve any information about the owner scene node or the component name.
         virtual void Serialize(GTCore::Serializer &serializer);
 
         /// Deserializes the component.
