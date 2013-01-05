@@ -43,7 +43,7 @@ namespace GTEngine
 
     private:
 
-        /// A pointer to the constraint. Due to the way Bullet handles construction of constraint objects, we need to make this a point. We are going to need
+        /// A pointer to the constraint. Due to the way Bullet handles construction of constraint objects, we need to make this a pointer. We are going to need
         /// to dynamically delete and re-create the constraint when the attachments are changed.
         ConeTwistConstraint* constraint;
 

@@ -2,6 +2,9 @@
 #ifndef __GTEngine_Component_hpp_
 #define __GTEngine_Component_hpp_
 
+#include <GTCore/Serializer.hpp>
+#include <GTCore/Deserializer.hpp>
+
 #define GTENGINE_DECL_COMPONENT_START(className) \
     class className : public GTEngine::Component \
     { \
@@ -51,6 +54,20 @@ namespace GTEngine
         /// Retrieves a pointer to the node that this component is attached to.
               SceneNode & GetNode()       { return this->node; }
         const SceneNode & GetNode() const { return this->node; }
+
+
+        /// Serializes the component.
+        ///
+        /// @param serializer [in] The serializer to write data to.
+        ///
+        /// @remarks
+        ///     This does not need to preserve any information about the owner scene node.
+        virtual void Serialize(GTCore::Serializer &serializer);
+
+        /// Deserializes the component.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read data from.
+        virtual void Deserialize(GTCore::Deserializer &deserializer);
 
 
     protected:

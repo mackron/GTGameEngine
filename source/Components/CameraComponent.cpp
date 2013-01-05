@@ -50,4 +50,26 @@ namespace GTEngine
     {
         return this->projection;
     }
+
+
+
+
+    ///////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void CameraComponent::Serialize(GTCore::Serializer &serializer)
+    {
+        serializer.Write(this->projection);
+        serializer.Write(this->ortho);           // <-- unioned with 'perspective'.
+        serializer.Write(this->zNear);
+        serializer.Write(this->zFar);
+    }
+
+    void CameraComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        deserializer.Read(this->projection);
+        deserializer.Read(this->ortho);
+        deserializer.Read(this->zNear);
+        deserializer.Read(this->zFar);
+    }
 }

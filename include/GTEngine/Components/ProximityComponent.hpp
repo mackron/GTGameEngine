@@ -4,7 +4,6 @@
 
 #include "../Component.hpp"
 #include "../Physics.hpp"
-#include <GTCore/Vector.hpp>
 
 namespace GTEngine
 {
