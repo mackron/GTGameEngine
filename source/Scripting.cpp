@@ -303,6 +303,19 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.DynamicsComponent:SetCollisionFilter(group, mask)"
+                "    GTEngine.System.DynamicsComponent.SetCollisionFilter(self._internalPtr, group, mask);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetCollisionGroup()"
+                "    return GTEngine.System.DynamicsComponent.GetCollisionGroup(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetCollisionMask()"
+                "    return GTEngine.System.DynamicsComponent.GetCollisionMask(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.DynamicsComponent:AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
                 "    GTEngine.System.DynamicsComponent.AddBoxCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
                 "end;"
@@ -666,6 +679,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "SetDamping",                                     FFI::SystemFFI::DynamicsComponentFFI::SetDamping);
                         script.SetTableFunction(-1, "GetLinearDamping",                               FFI::SystemFFI::DynamicsComponentFFI::GetLinearDamping);
                         script.SetTableFunction(-1, "GetAngularDamping",                              FFI::SystemFFI::DynamicsComponentFFI::GetAngularDamping);
+                        script.SetTableFunction(-1, "SetCollisionFilter",                             FFI::SystemFFI::DynamicsComponentFFI::SetCollisionFilter);
+                        script.SetTableFunction(-1, "GetCollisionGroup",                              FFI::SystemFFI::DynamicsComponentFFI::GetCollisionGroup);
+                        script.SetTableFunction(-1, "GetCollisionMask",                               FFI::SystemFFI::DynamicsComponentFFI::GetCollisionMask);
 
                         script.SetTableFunction(-1, "AddBoxCollisionShape",                           FFI::SystemFFI::DynamicsComponentFFI::AddBoxCollisionShape);
                         script.SetTableFunction(-1, "AddSphereCollisionShape",                        FFI::SystemFFI::DynamicsComponentFFI::AddSphereCollisionShape);
@@ -1764,6 +1780,48 @@ namespace GTEngine
                         else
                         {
                             script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+
+                    int SetCollisionFilter(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetDamping(static_cast<short>(script.ToInteger(2)), static_cast<short>(script.ToInteger(3)));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetCollisionGroup(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(static_cast<int>(component->GetCollisionGroup()));
+                        }
+                        else
+                        {
+                            script.Push(1);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetCollisionMask(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(static_cast<int>(component->GetCollisionMask()));
+                        }
+                        else
+                        {
+                            script.Push(static_cast<int>(-1));
                         }
 
                         return 1;

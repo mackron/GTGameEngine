@@ -449,6 +449,27 @@ namespace GTEngine
                     int GetAngularDamping(GTCore::Script &script);
 
 
+                    /// Sets the collision filter.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The collision group. Only the first 16 bits are used.
+                    ///     Argument 3: The collision mask. Only the first 16 bits are used.
+                    int SetCollisionFilter(GTCore::Script &script);
+
+                    /// Retrieves the collision group.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetCollisionGroup(GTCore::Script &script);
+
+                    /// Retrieves the collision mask.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetCollisionMask(GTCore::Script &script);
+
+
                     /// Adds a box collision shape to the component.
                     ///
                     /// @remarks
