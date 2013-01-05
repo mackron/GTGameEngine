@@ -371,6 +371,160 @@ namespace GTEngine
                 }
 
 
+                namespace DynamicsComponentFFI
+                {
+                    /// Sets the mass of the object.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component whose mass is being set.
+                    ///     Argument 2: The new mass.
+                    int SetMass(GTCore::Script &script);
+
+                    /// Retrieves the mass of the object.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the componen whose mass is being retrieved.
+                    int GetMass(GTCore::Script &script);
+
+                    /// Determines whether or not the object is static.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int IsStatic(GTCore::Script &script);
+
+                    /// Determines or sets whether or not the object is kinematic.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer the component.
+                    ///     Argument 2: Whether or not the object should be made kinematic, or nil.
+                    ///
+                    ///     If the second argument is nil, this will act as a getter.
+                    int IsKinematic(GTCore::Script &script);
+
+
+                    /// Sets the friction.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer ot the component.
+                    ///     Argument 2: The friction to apply to the value.
+                    int SetFriction(GTCore::Script &script);
+
+                    /// Retrieves the friction.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetFriction(GTCore::Script &script);
+
+                    /// Sets the restituion (bounciness).
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The restitution.
+                    int SetRestitution(GTCore::Script &script);
+
+                    /// Retrieves the restitution (bounciness).
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetRestitution(GTCore::Script &script);
+
+                    /// Sets the damping.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The linear damping.
+                    ///     Argument 3: The angular damping.
+                    int SetDamping(GTCore::Script &script);
+
+                    /// Retrieves the linear damping.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetLinearDamping(GTCore::Script &script);
+
+                    /// Retrieves the angular damping.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetAngularDamping(GTCore::Script &script);
+
+
+                    /// Adds a box collision shape to the component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The half x extent.
+                    ///     Argument 3: The half y extent.
+                    ///     Argument 4: The half z extent.
+                    ///     Argument 5: Optional x offset.
+                    ///     Argument 6: Optional y offset.
+                    ///     Argument 7: Optional z offset.
+                    int AddBoxCollisionShape(GTCore::Script &script);
+
+                    /// Adds a sphere collision shape to the component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The radius.
+                    ///     Argument 5: Optional x offset.
+                    ///     Argument 6: Optional y offset.
+                    ///     Argument 7: Optional z offset.
+                    int AddSphereCollisionShape(GTCore::Script &script);
+
+                    /// Adds an ellipsoid collision shape to the component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x radius.
+                    ///     Argument 3: The y radius.
+                    ///     Argument 4: The z radius.
+                    ///     Argument 5: Optional x offset.
+                    ///     Argument 6: Optional y offset.
+                    ///     Argument 7: Optional z offset.
+                    int AddEllipsoidCollisionShape(GTCore::Script &script);
+
+                    /// Adds a cylinder collision shape to the component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The half x extent.
+                    ///     Argument 3: The half y extent.
+                    ///     Argument 4: The half z extent.
+                    ///     Argument 5: Optional x offset.
+                    ///     Argument 6: Optional y offset.
+                    ///     Argument 7: Optional z offset.
+                    int AddCylinderXCollisionShape(GTCore::Script &script);
+                    int AddCylinderYCollisionShape(GTCore::Script &script);
+                    int AddCylinderZCollisionShape(GTCore::Script &script);
+
+                    /// Adds a capsure collision shape to the component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The radius.
+                    ///     Argument 3: The length.
+                    ///     Argument 5: Optional x offset.
+                    ///     Argument 6: Optional y offset.
+                    ///     Argument 7: Optional z offset.
+                    int AddCapsuleXCollisionShape(GTCore::Script &script);
+                    int AddCapsuleYCollisionShape(GTCore::Script &script);
+                    int AddCapsuleZCollisionShape(GTCore::Script &script);
+
+                    /// Adds the convex hulls from the attached model component, if any, as collision shapes.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The margin to apply to the collision shapes.
+                    int AddConvexHullCollisionShapesFromModelComponent(GTCore::Script &script);
+
+                    /// Removes every collision shape.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int RemoveAllCollisionShapes(GTCore::Script &script);
+                }
+
+
 
                 namespace EditorMetadataComponentFFI
                 {

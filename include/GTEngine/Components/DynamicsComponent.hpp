@@ -83,6 +83,7 @@ namespace GTEngine
 
 
         /// Sets the friction of the object.
+        ///
         /// @param friction [in] The new friction value to use with the object. Larger values means more friction.
         void SetFriction(float friction);
 
@@ -90,6 +91,7 @@ namespace GTEngine
         float GetFriction() const;
 
         /// Sets the restitution of the object (bounciness).
+        ///
         /// @param restitution [in] The new restitution. Larger values means more bounciness.
         void SetRestitution(float restitution);
 
@@ -108,6 +110,7 @@ namespace GTEngine
 
 
         /// Sets the collision group and masks to use with the scene node.
+        ///
         /// @param group [in] The collision group(s) this scene node is part of.
         /// @param mask  [in] A mask of collision groups that this scene node will collide with.
         ///
