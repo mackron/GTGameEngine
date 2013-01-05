@@ -606,15 +606,17 @@ namespace GTEngine
         struct RCDrawFSQuadLightGeometry : public RenderCommand
         {
             RCDrawFSQuadLightGeometry()
-                : viewport(), mvpMatrix(), inverseProjectionMatrix()
+                : viewportWidth(), viewportHeight(), zFar(), cameraProjectionMatrix(), mvpMatrix()
             {
             }
 
             void Execute();
 
-            SceneViewport* viewport;
+            float viewportWidth;
+            float viewportHeight;
+            float zFar;
+            glm::mat4 cameraProjectionMatrix;
             glm::mat4 mvpMatrix;
-            glm::mat4 inverseProjectionMatrix;
 
 
         private:    // No copying.

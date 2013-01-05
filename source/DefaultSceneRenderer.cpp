@@ -1036,9 +1036,11 @@ namespace GTEngine
             {
                 // The ambient light can be done with a fullscreen quad.
                 auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
-                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.viewportWidth           = static_cast<float>(state.viewport->GetWidth());
+                rcDrawLightGeometry.viewportHeight          = static_cast<float>(state.viewport->GetHeight());
+                rcDrawLightGeometry.zFar                    = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->zFar;
+                rcDrawLightGeometry.cameraProjectionMatrix  = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->GetProjectionMatrix();
                 rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
-                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
                 Renderer::BackRCQueue->Append(rcDrawLightGeometry);
 
                 //Renderer::BackRCQueue->Append(state.lightingDrawRCs);
@@ -1080,9 +1082,11 @@ namespace GTEngine
             else
             {
                 auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
-                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.viewportWidth           = static_cast<float>(state.viewport->GetWidth());
+                rcDrawLightGeometry.viewportHeight          = static_cast<float>(state.viewport->GetHeight());
+                rcDrawLightGeometry.zFar                    = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->zFar;
+                rcDrawLightGeometry.cameraProjectionMatrix  = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->GetProjectionMatrix();
                 rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
-                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
                 Renderer::BackRCQueue->Append(rcDrawLightGeometry);
 
 
@@ -1128,9 +1132,11 @@ namespace GTEngine
             {
                 // TODO: Use a sphere shape here.
                 auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
-                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.viewportWidth           = static_cast<float>(state.viewport->GetWidth());
+                rcDrawLightGeometry.viewportHeight          = static_cast<float>(state.viewport->GetHeight());
+                rcDrawLightGeometry.zFar                    = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->zFar;
+                rcDrawLightGeometry.cameraProjectionMatrix  = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->GetProjectionMatrix();
                 rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
-                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
                 Renderer::BackRCQueue->Append(rcDrawLightGeometry);
 
                 /*
@@ -1185,9 +1191,11 @@ namespace GTEngine
             else
             {
                 auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
-                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.viewportWidth           = static_cast<float>(state.viewport->GetWidth());
+                rcDrawLightGeometry.viewportHeight          = static_cast<float>(state.viewport->GetHeight());
+                rcDrawLightGeometry.zFar                    = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->zFar;
+                rcDrawLightGeometry.cameraProjectionMatrix  = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->GetProjectionMatrix();
                 rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
-                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
                 Renderer::BackRCQueue->Append(rcDrawLightGeometry);
 
                 /*
@@ -1252,9 +1260,11 @@ namespace GTEngine
             else
             {
                 auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
-                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.viewportWidth           = static_cast<float>(state.viewport->GetWidth());
+                rcDrawLightGeometry.viewportHeight          = static_cast<float>(state.viewport->GetHeight());
+                rcDrawLightGeometry.zFar                    = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->zFar;
+                rcDrawLightGeometry.cameraProjectionMatrix  = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->GetProjectionMatrix();
                 rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
-                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
                 Renderer::BackRCQueue->Append(rcDrawLightGeometry);
 
 
@@ -1310,9 +1320,11 @@ namespace GTEngine
             {
                 // TODO: Use a sphere shape here.
                 auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
-                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.viewportWidth           = static_cast<float>(state.viewport->GetWidth());
+                rcDrawLightGeometry.viewportHeight          = static_cast<float>(state.viewport->GetHeight());
+                rcDrawLightGeometry.zFar                    = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->zFar;
+                rcDrawLightGeometry.cameraProjectionMatrix  = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->GetProjectionMatrix();
                 rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
-                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
                 Renderer::BackRCQueue->Append(rcDrawLightGeometry);
 
                 /*
@@ -1382,9 +1394,11 @@ namespace GTEngine
             {
                 // TODO: Use a cone shape here.
                 auto &rcDrawLightGeometry = this->rcDrawFSQuadLightGeometry[Renderer::BackIndex].Acquire();
-                rcDrawLightGeometry.viewport                = state.viewport;
+                rcDrawLightGeometry.viewportWidth           = static_cast<float>(state.viewport->GetWidth());
+                rcDrawLightGeometry.viewportHeight          = static_cast<float>(state.viewport->GetHeight());
+                rcDrawLightGeometry.zFar                    = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->zFar;
+                rcDrawLightGeometry.cameraProjectionMatrix  = state.viewport->GetCameraNode()->GetComponent<CameraComponent>()->GetProjectionMatrix();
                 rcDrawLightGeometry.mvpMatrix               = state.cameraProjection;                                                // TODO: Move this to rcSetShader when we have this new system working with all lights.
-                rcDrawLightGeometry.inverseProjectionMatrix = glm::inverse(state.cameraProjection);
                 Renderer::BackRCQueue->Append(rcDrawLightGeometry);
 
                 /*
@@ -1908,37 +1922,21 @@ namespace GTEngine
         Renderer::SetShaderParameter("MVPMatrix", this->mvpMatrix);
 
 
-        float viewportWidth  = static_cast<float>(this->viewport->GetWidth());
-        float viewportHeight = static_cast<float>(this->viewport->GetHeight());
-
-        auto camera = this->viewport->GetCameraNode()->GetComponent<GTEngine::CameraComponent>();
-        const glm::mat4 &projection = camera->GetProjectionMatrix();
-
-        glm::vec3 bottomLeft  = glm::unProject(glm::vec3(0.0f,          0.0f,           1.0f), glm::mat4(), projection, glm::vec4(0.0f, 0.0f, viewportWidth, viewportHeight));
-        glm::vec3 bottomRight = glm::unProject(glm::vec3(viewportWidth, 0.0f,           1.0f), glm::mat4(), projection, glm::vec4(0.0f, 0.0f, viewportWidth, viewportHeight));
-        glm::vec3 topRight    = glm::unProject(glm::vec3(viewportWidth, viewportHeight, 1.0f), glm::mat4(), projection, glm::vec4(0.0f, 0.0f, viewportWidth, viewportHeight));
-        glm::vec3 topLeft     = glm::unProject(glm::vec3(0.0f,          viewportHeight, 1.0f), glm::mat4(), projection, glm::vec4(0.0f, 0.0f, viewportWidth, viewportHeight));
+        glm::vec3 bottomLeft  = glm::unProject(glm::vec3(0.0f,                0.0f,                 1.0f), glm::mat4(), this->cameraProjectionMatrix, glm::vec4(0.0f, 0.0f, this->viewportWidth, this->viewportHeight));
+        glm::vec3 bottomRight = glm::unProject(glm::vec3(this->viewportWidth, 0.0f,                 1.0f), glm::mat4(), this->cameraProjectionMatrix, glm::vec4(0.0f, 0.0f, this->viewportWidth, this->viewportHeight));
+        glm::vec3 topRight    = glm::unProject(glm::vec3(this->viewportWidth, this->viewportHeight, 1.0f), glm::mat4(), this->cameraProjectionMatrix, glm::vec4(0.0f, 0.0f, this->viewportWidth, this->viewportHeight));
+        glm::vec3 topLeft     = glm::unProject(glm::vec3(0.0f,                this->viewportHeight, 1.0f), glm::mat4(), this->cameraProjectionMatrix, glm::vec4(0.0f, 0.0f, this->viewportWidth, this->viewportHeight));
 
         // Note how we use an explicit zFar value here. This is needed due to floating point innacuracies. Sometimes the z component of the corner
         // vertices will fall just over the zFar plane, which will then cause the plane to be clipped. Of course, we don't want this.
         float vertices[] =
         {
-            bottomLeft.x,  bottomLeft.y,  -camera->zFar,
-            bottomRight.x, bottomRight.y, -camera->zFar,
-            topRight.x,    topRight.y,    -camera->zFar,
-            topLeft.x,     topLeft.y,     -camera->zFar
+            bottomLeft.x,  bottomLeft.y,  -this->zFar,
+            bottomRight.x, bottomRight.y, -this->zFar,
+            topRight.x,    topRight.y,    -this->zFar,
+            topLeft.x,     topLeft.y,     -this->zFar
         };
 
-
-        /*
-        float vertices[] =
-        {
-            -1.0f, -1.0f, -1.0f,
-             1.0f, -1.0f, -1.0f,
-             1.0f,  1.0f, -1.0f,
-            -1.0f,  1.0f, -1.0f,
-        };
-        */
 
         unsigned int indices[] =
         {
