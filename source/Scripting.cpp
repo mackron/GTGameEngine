@@ -54,7 +54,7 @@ namespace GTEngine
                     script.SetTableValue(-1, "SpotLight",         SpotLightComponent::Name);
                     script.SetTableValue(-1, "DirectionalLight",  DirectionalLightComponent::Name);
                     script.SetTableValue(-1, "AmbientLight",      AmbientLightComponent::Name);
-                    script.SetTableValue(-1, "DynamicsComponent", DynamicsComponent::Name);
+                    script.SetTableValue(-1, "Dynamics",          DynamicsComponent::Name);
                     script.SetTableValue(-1, "EditorMetadata",    EditorMetadataComponent::Name);
                 }
                 script.SetTableValue(-3);
@@ -245,6 +245,111 @@ namespace GTEngine
                 "    return GTEngine.System.AmbientLightComponent.GetColour(self._internalPtr);"
                 "end;"
 
+
+
+                // DynamicsComponent
+                "GTEngine.DynamicsComponent = {};"
+                "GTEngine.DynamicsComponent.__index = GTEngine.DynamicsComponent;"
+
+                "function GTEngine.DynamicsComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.DynamicsComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:SetMass(mass)"
+                "    GTEngine.System.DynamicsComponent.SetMass(self._internalPtr, mass);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetMass()"
+                "    return GTEngine.System.DynamicsComponent.GetMass(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:IsStatic()"
+                "    return GTEngine.System.DynamicsComponent.IsStatic(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:IsKinematic(kinematic)"
+                "    return GTEngine.System.DynamicsComponent.IsKinematic(self._internalPtr, kinematic);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:SetFriction(friction)"
+                "    GTEngine.System.DynamicsComponent.SetFriction(self._internalPtr, friction);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetFriction()"
+                "    return GTEngine.System.DynamicsComponent.GetFriction(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:SetRestitution(restitution)"
+                "    GTEngine.System.DynamicsComponent.SetRestitution(self._internalPtr, restitution);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetRestitution()"
+                "    return GTEngine.System.DynamicsComponent.GetRestitution(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:SetDamping(linearDamping, angularDamping)"
+                "    GTEngine.System.DynamicsComponent.SetRestitution(self._internalPtr, linearDamping, angularDamping);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetLinearDamping()"
+                "    return GTEngine.System.DynamicsComponent.GetLinearDamping(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetAngularDamping()"
+                "    return GTEngine.System.DynamicsComponent.GetAngularDamping(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.DynamicsComponent:AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddBoxCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:AddCylinderCollisionShape(radius, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddCylinderCollisionShape(self._internalPtr, radius, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:AddEllipsoidCollisionShape(radiusX, radiusY, radiusZ, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddEllipsoidCollisionShape(self._internalPtr, radiusX, radiusY, radiusZ, offsetX, offsetY, offsetZ);"
+                "end;"
+
+
+                "function GTEngine.DynamicsComponent:AddCylinderXCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddCylinderXCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:AddCylinderYCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddCylinderYCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:AddCylinderZCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddCylinderZCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
+                "end;"
+
+
+                "function GTEngine.DynamicsComponent:AddCapsuleXCollisionShape(radius, length, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddCapsuleXCollisionShape(self._internalPtr, radius, length, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:AddCapsuleYCollisionShape(radius, length, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddCapsuleYCollisionShape(self._internalPtr, radius, length, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:AddCapsuleZCollisionShape(radius, length, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddCapsuleZCollisionShape(self._internalPtr, radius, length, offsetX, offsetY, offsetZ);"
+                "end;"
+
+
+                "function GTEngine.DynamicsComponent:AddConvexHullCollisionShapesFromModelComponent(margin)"
+                "    GTEngine.System.DynamicsComponent.AddConvexHullCollisionShapesFromModelComponent(self._internalPtr, margin);"
+                "end;"
+
+
+                "function GTEngine.DynamicsComponent:RemoveAllCollisionShapes()"
+                "    GTEngine.System.DynamicsComponent.RemoveAllCollisionShapes(self._internalPtr);"
+                "end;"
 
 
 
@@ -546,6 +651,37 @@ namespace GTEngine
                     script.Pop(1);
 
 
+                    script.Push("DynamicsComponent");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "SetMass",                                        FFI::SystemFFI::DynamicsComponentFFI::SetMass);
+                        script.SetTableFunction(-1, "GetMass",                                        FFI::SystemFFI::DynamicsComponentFFI::GetMass);
+                        script.SetTableFunction(-1, "IsStatic",                                       FFI::SystemFFI::DynamicsComponentFFI::IsStatic);
+                        script.SetTableFunction(-1, "IsKinematic",                                    FFI::SystemFFI::DynamicsComponentFFI::IsKinematic);
+                        script.SetTableFunction(-1, "SetFriction",                                    FFI::SystemFFI::DynamicsComponentFFI::SetFriction);
+                        script.SetTableFunction(-1, "GetFriction",                                    FFI::SystemFFI::DynamicsComponentFFI::GetFriction);
+                        script.SetTableFunction(-1, "SetRestitution",                                 FFI::SystemFFI::DynamicsComponentFFI::SetRestitution);
+                        script.SetTableFunction(-1, "GetRestitution",                                 FFI::SystemFFI::DynamicsComponentFFI::GetRestitution);
+                        script.SetTableFunction(-1, "SetDamping",                                     FFI::SystemFFI::DynamicsComponentFFI::SetDamping);
+                        script.SetTableFunction(-1, "GetLinearDamping",                               FFI::SystemFFI::DynamicsComponentFFI::GetLinearDamping);
+                        script.SetTableFunction(-1, "GetAngularDamping",                              FFI::SystemFFI::DynamicsComponentFFI::GetAngularDamping);
+
+                        script.SetTableFunction(-1, "AddBoxCollisionShape",                           FFI::SystemFFI::DynamicsComponentFFI::AddBoxCollisionShape);
+                        script.SetTableFunction(-1, "AddSphereCollisionShape",                        FFI::SystemFFI::DynamicsComponentFFI::AddSphereCollisionShape);
+                        script.SetTableFunction(-1, "AddEllipsoidCollisionShape",                     FFI::SystemFFI::DynamicsComponentFFI::AddEllipsoidCollisionShape);
+                        script.SetTableFunction(-1, "AddCylinderXCollisionShape",                     FFI::SystemFFI::DynamicsComponentFFI::AddCylinderXCollisionShape);
+                        script.SetTableFunction(-1, "AddCylinderYCollisionShape",                     FFI::SystemFFI::DynamicsComponentFFI::AddCylinderYCollisionShape);
+                        script.SetTableFunction(-1, "AddCylinderZCollisionShape",                     FFI::SystemFFI::DynamicsComponentFFI::AddCylinderZCollisionShape);
+                        script.SetTableFunction(-1, "AddCapsuleXCollisionShape",                      FFI::SystemFFI::DynamicsComponentFFI::AddCapsuleXCollisionShape);
+                        script.SetTableFunction(-1, "AddCapsuleYCollisionShape",                      FFI::SystemFFI::DynamicsComponentFFI::AddCapsuleYCollisionShape);
+                        script.SetTableFunction(-1, "AddCapsuleZCollisionShape",                      FFI::SystemFFI::DynamicsComponentFFI::AddCapsuleZCollisionShape);
+                        script.SetTableFunction(-1, "AddConvexHullCollisionShapesFromModelComponent", FFI::SystemFFI::DynamicsComponentFFI::AddConvexHullCollisionShapesFromModelComponent);
+                        script.SetTableFunction(-1, "RemoveAllCollisionShapes",                       FFI::SystemFFI::DynamicsComponentFFI::RemoveAllCollisionShapes);
+                    }
+                    script.Pop(1);
+
+
 
                     script.Push("EditorMetadataComponent");
                     script.GetTableValue(-2);
@@ -715,6 +851,10 @@ namespace GTEngine
                         {
                             PushComponent(script, "AmbientLightComponent", sceneNode->AddComponent<AmbientLightComponent>());
                         }
+                        else if (GTCore::Strings::Equal(componentName, DynamicsComponent::Name))
+                        {
+                            PushComponent(script, "DynamicsComponent", sceneNode->AddComponent<DynamicsComponent>());
+                        }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
                             PushComponent(script, "EditorMetadataComponent", sceneNode->AddComponent<EditorMetadataComponent>());
@@ -757,6 +897,10 @@ namespace GTEngine
                         else if (GTCore::Strings::Equal(componentName, AmbientLightComponent::Name))
                         {
                             PushComponent(script, "AmbientLightComponent", sceneNode->GetComponent<AmbientLightComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, DynamicsComponent::Name))
+                        {
+                            PushComponent(script, "DynamicsComponent", sceneNode->GetComponent<DynamicsComponent>());
                         }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
@@ -1462,6 +1606,355 @@ namespace GTEngine
                         }
 
                         return 3;
+                    }
+                }
+
+
+
+                //////////////////////////////////////////////////
+                // GTEngine.System.DynamicsComponent
+                namespace DynamicsComponentFFI
+                {
+                    int SetMass(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetMass(script.ToFloat(2));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetMass(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetMass());
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int IsStatic(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->IsStatic());
+                        }
+                        else
+                        {
+                            script.Push(1);
+                        }
+
+                        return 1;
+                    }
+
+                    int IsKinematic(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            if (script.IsNil(2))
+                            {
+                                script.Push(component->IsKinematic());
+                                return 1;
+                            }
+                            else
+                            {
+                                component->IsKinematic(script.ToBoolean(2));
+                            }
+                        }
+
+                        return 0;
+                    }
+
+
+                    int SetFriction(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetFriction(script.ToFloat(2));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetFriction(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetFriction());
+                        }
+                        else
+                        {
+                            script.Push(0.5f);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetRestitution(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetRestitution(script.ToFloat(2));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetRestitution(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetRestitution());
+                        }
+                        else
+                        {
+                            script.Push(0.5f);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetDamping(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetDamping(script.ToFloat(2), script.ToFloat(3));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetLinearDamping(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetLinearDamping());
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetAngularDamping(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetAngularDamping());
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+
+                    int AddBoxCollisionShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float halfX   = script.ToFloat(2);
+                            float halfY   = script.ToFloat(3);
+                            float halfZ   = script.ToFloat(4);
+                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+
+                            component->AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddSphereCollisionShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float radius  = script.ToFloat(2);
+                            float offsetX = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                            float offsetY = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                            float offsetZ = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+
+                            component->AddSphereCollisionShape(radius, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddEllipsoidCollisionShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float radiusX = script.ToFloat(2);
+                            float radiusY = script.ToFloat(3);
+                            float radiusZ = script.ToFloat(4);
+                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+
+                            component->AddEllipsoidCollisionShape(radiusX, radiusY, radiusZ, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCylinderXCollisionShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float halfX   = script.ToFloat(2);
+                            float halfY   = script.ToFloat(3);
+                            float halfZ   = script.ToFloat(4);
+                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+
+                            component->AddCylinderXCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCylinderYCollisionShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float halfX   = script.ToFloat(2);
+                            float halfY   = script.ToFloat(3);
+                            float halfZ   = script.ToFloat(4);
+                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+
+                            component->AddCylinderYCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCylinderZCollisionShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float halfX   = script.ToFloat(2);
+                            float halfY   = script.ToFloat(3);
+                            float halfZ   = script.ToFloat(4);
+                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+
+                            component->AddCylinderZCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCapsuleXCollisionShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float radius  = script.ToFloat(2);
+                            float length  = script.ToFloat(3);
+                            float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                            float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+
+                            component->AddCapsuleXCollisionShape(radius, length, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCapsuleYCollisionShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float radius  = script.ToFloat(2);
+                            float length  = script.ToFloat(3);
+                            float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                            float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+
+                            component->AddCapsuleYCollisionShape(radius, length, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCapsuleZCollisionShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float radius  = script.ToFloat(2);
+                            float length  = script.ToFloat(3);
+                            float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                            float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+
+                            component->AddCapsuleZCollisionShape(radius, length, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddConvexHullCollisionShapesFromModelComponent(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto modelComponent = component->GetNode().GetComponent<ModelComponent>();
+                            if (modelComponent != nullptr)
+                            {
+                                auto model = modelComponent->GetModel();
+                                if (model != nullptr)
+                                {
+                                    component->AddConvexHullShapesFromModel(*model, script.ToFloat(2));
+                                }
+                            }
+                        }
+
+                        return 0;
+                    }
+
+                    int RemoveAllCollisionShapes(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->RemoveAllCollisionShapes();
+                        }
+
+                        return 0;
                     }
                 }
 

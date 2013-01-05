@@ -22,6 +22,10 @@ function Editor.SceneEditor.CreateComponentPanel(parentPanel, componentID)
         element:DirectionalLightComponentPanel();
     elseif componentID == GTEngine.Components.AmbientLight then
         element:AmbientLightComponentPanel();
+    elseif componentID == GTEngine.Components.Dynamics then
+        element:DynamicsComponentPanel();
+    --elseif componentID == GTEngine.Components.Proximity then
+    --    element:ProximityComponentPanel();
     elseif componentID == GTEngine.Components.EditorMetadata then 
         element:EditorMetadataComponentPanel();
     else
@@ -408,6 +412,88 @@ function GTGUI.Element:AmbientLightComponentPanel()
     return self;
 end
 
+function GTGUI.Element:DynamicsComponentPanel()
+    self:PanelGroupBox("Dynamics");
+    
+    -- Mass
+    self.IsKinematic   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:0px;' />");
+    
+    self.MassContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()          .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
+    self.MassLeft      = GTGUI.Server.New("<div parentid='" .. self.MassContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
+    self.MassRight     = GTGUI.Server.New("<div parentid='" .. self.MassContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
+    
+    self.MassLabel     = GTGUI.Server.New("<div parentid='" .. self.MassLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Mass (0 = Static):</div>");
+    self.MassInput     = GTGUI.Server.New("<div parentid='" .. self.MassRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
+
+    
+    self.CurrentNode      = nil;
+    self.CurrentComponent = nil;
+
+    
+    
+    self.IsKinematic:CheckBox("Is Kinematic");
+    
+    self.IsKinematic:OnChecked(function()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:IsKinematic(true);
+            self.MassLabel:SetStyle("text-color", "#5a5a5a");
+            self.MassInput:Disable();
+        end
+    end);
+    
+    self.IsKinematic:OnUnchecked(function()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:IsKinematic(false);
+            self.MassLabel:SetStyle("text-color", "std-text-color");
+            self.MassInput:Enable();
+        end
+    end);
+    
+    
+    self.MassInput:OnTextChanged(function(data)
+        self:UpdateMass();
+    end);
+
+    
+    
+    function self:Update(node)
+        self.CurrentNode      = node;
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.Dynamics);
+        
+        if self.CurrentComponent ~= nil then
+            if self.CurrentComponent:IsKinematic() then
+                self.IsKinematic:Check(true);
+                self.MassLabel:SetStyle("text-color", "#5a5a5a");
+                self.MassInput:Disable();
+            else
+                self.IsKinematic:Uncheck(true);
+                self.MassLabel:SetStyle("text-color", "std-text-color");
+                self.MassInput:Enable();
+            end
+            
+            self.MassInput:SetText(string.format("%.4f", self.CurrentComponent:GetMass()));
+        end
+    end
+    
+    function self:UpdateMass()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetMass(tonumber(self.MassInput:GetText()));
+        end
+    end
+    
+    return self;
+end
+
+function GTGUI.Element:ProximityComponentPanel()
+    self:PanelGroupBox("Proximity");
+    
+    function self:Update(node)
+    end
+    
+    return self;
+end
+
+
 function GTGUI.Element:EditorMetadataComponentPanel()
     self:PanelGroupBox("Editor Metadata");
     
@@ -621,14 +707,16 @@ function GTGUI.Element:SceneEditorPanel()
     self.Body.TransformPanel = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox' />");
     self.Body.TransformPanel:SceneEditorTransformPanel();
     
+    
+    -- This will create the panels for every registered component. We always want the editor metadata to be last.
     self.ComponentPanels = {};
-    self.ComponentPanels[GTEngine.Components.Model]            = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.Model);
-    self.ComponentPanels[GTEngine.Components.Camera]           = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.Camera);
-    self.ComponentPanels[GTEngine.Components.PointLight]       = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.PointLight);
-    self.ComponentPanels[GTEngine.Components.SpotLight]        = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.SpotLight);
-    self.ComponentPanels[GTEngine.Components.DirectionalLight] = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.DirectionalLight);
-    self.ComponentPanels[GTEngine.Components.AmbientLight]     = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.AmbientLight);
-    self.ComponentPanels[GTEngine.Components.EditorMetadata]   = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.EditorMetadata);
+    for key,value in pairs(GTEngine.Components) do
+        if value ~= GTEngine.Components.EditorMetadata then
+            self.ComponentPanels[value] = Editor.SceneEditor.CreateComponentPanel(self, value);
+        end
+    end
+    
+    self.ComponentPanels[GTEngine.Components.EditorMetadata] = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.EditorMetadata);
 
     
     
@@ -725,6 +813,7 @@ function GTGUI.Element:SceneEditor()
         local newNode = Editor.SceneEditor.AddSceneNode("Cube");
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.Model):SetModel("engine/models/default-1x1.dae");
+            newNode:AddComponent(GTEngine.Components.Dynamics):AddBoxCollisionShape(0.5, 0.5, 0.5);
             
             -- We want the new node to be selected, and to be the ONLY selected object.
             Editor.SceneEditor.DeselectAll();
