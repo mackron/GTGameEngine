@@ -4,6 +4,7 @@
 #include <GTEngine/DefaultScenePhysicsManager.hpp>
 #include <GTEngine/DefaultSceneCullingManager.hpp>
 #include <GTEngine/Logging.hpp>
+#include <GTEngine/GarbageCollector.hpp>
 
 // Culling Callbacks.
 namespace GTEngine
@@ -273,7 +274,7 @@ namespace GTEngine
 
         if (deleteRenderer)
         {
-            delete this->renderer;
+            GarbageCollector::MarkForCollection(this->renderer);
         }
 
 
