@@ -174,7 +174,7 @@ namespace GTEngine
 
     Editor_TextEditor::State::~State()
     {
-        this->textBox->GetServer().DeleteElement(this->textBox);
+        //this->textBox->GetServer().DeleteElement(this->textBox);
         delete this->textAreaEventHandler;
     }
 
