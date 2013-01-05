@@ -470,6 +470,41 @@ namespace GTEngine
                     int GetCollisionMask(GTCore::Script &script);
 
 
+                    /// Sets the linear velocity.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x velocity.
+                    ///     Argument 3: The y velocity.
+                    ///     Argument 4: The z velocity.
+                    int SetLinearVelocity(GTCore::Script &script);
+
+                    /// Retrieves the linear velocity as 3 floats.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     @par
+                    ///     The return value will be 3 floats.
+                    int GetLinearVelocity(GTCore::Script &script);
+
+                    /// Sets the angular velocity.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x velocity.
+                    ///     Argument 3: The y velocity.
+                    ///     Argument 4: The z velocity.
+                    int SetAngularVelocity(GTCore::Script &script);
+
+                    /// Retrieves the linear velocity as 3 floats.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     @par
+                    ///     The return value will be 3 floats.
+                    int GetAngularVelocity(GTCore::Script &script);
+
+
                     /// Adds a box collision shape to the component.
                     ///
                     /// @remarks

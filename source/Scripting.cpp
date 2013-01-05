@@ -316,6 +316,24 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.DynamicsComponent:SetLinearVelocity(x, y, z)"
+                "    GTEngine.System.DynamicsComponent.SetLinearVelocity(self._internalPtr, x, y, z);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetLinearVelocity()"
+                "    return GTEngine.System.DynamicsComponent.GetLinearVelocity(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:SetAngularVelocity(x, y, z)"
+                "    GTEngine.System.DynamicsComponent.SetAngularVelocity(self._internalPtr, x, y, z);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetAngularVelocity()"
+                "    return GTEngine.System.DynamicsComponent.GetAngularVelocity(self._internalPtr);"
+                "end;"
+
+
+
                 "function GTEngine.DynamicsComponent:AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
                 "    GTEngine.System.DynamicsComponent.AddBoxCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
                 "end;"
@@ -682,6 +700,11 @@ namespace GTEngine
                         script.SetTableFunction(-1, "SetCollisionFilter",                             FFI::SystemFFI::DynamicsComponentFFI::SetCollisionFilter);
                         script.SetTableFunction(-1, "GetCollisionGroup",                              FFI::SystemFFI::DynamicsComponentFFI::GetCollisionGroup);
                         script.SetTableFunction(-1, "GetCollisionMask",                               FFI::SystemFFI::DynamicsComponentFFI::GetCollisionMask);
+
+                        script.SetTableFunction(-1, "SetLinearVelocity",                              FFI::SystemFFI::DynamicsComponentFFI::SetLinearVelocity);
+                        script.SetTableFunction(-1, "GetLinearVelocity",                              FFI::SystemFFI::DynamicsComponentFFI::GetLinearVelocity);
+                        script.SetTableFunction(-1, "SetAngularVelocity",                             FFI::SystemFFI::DynamicsComponentFFI::SetAngularVelocity);
+                        script.SetTableFunction(-1, "GetAngularVelocity",                             FFI::SystemFFI::DynamicsComponentFFI::GetAngularVelocity);
 
                         script.SetTableFunction(-1, "AddBoxCollisionShape",                           FFI::SystemFFI::DynamicsComponentFFI::AddBoxCollisionShape);
                         script.SetTableFunction(-1, "AddSphereCollisionShape",                        FFI::SystemFFI::DynamicsComponentFFI::AddSphereCollisionShape);
@@ -1822,6 +1845,71 @@ namespace GTEngine
                         else
                         {
                             script.Push(static_cast<int>(-1));
+                        }
+
+                        return 1;
+                    }
+
+
+                    int SetLinearVelocity(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetLinearVelocity(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetLinearVelocity(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            glm::vec3 velocity = component->GetLinearVelocity();
+
+                            script.Push(velocity.x);
+                            script.Push(velocity.y);
+                            script.Push(velocity.z);
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetAngularVelocity(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetAngularVelocity(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetAngularVelocity(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            glm::vec3 velocity = component->GetAngularVelocity();
+
+                            script.Push(velocity.x);
+                            script.Push(velocity.y);
+                            script.Push(velocity.z);
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                            script.Push(0.0f);
                         }
 
                         return 1;
