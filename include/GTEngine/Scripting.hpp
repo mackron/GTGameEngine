@@ -524,6 +524,30 @@ namespace GTEngine
                     int SetAngularFactor(GTCore::Script &script);
 
 
+                    /// Sets the gravity to use with the object.
+                    ///
+                    /// @param
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x gravity.
+                    ///     Argument 3: The y gravity.
+                    ///     Argument 4: The z gravity.
+                    int SetGravity(GTCore::Script &script);
+
+                    /// Retrieves the gravity being used with the object, as 3 floats.
+                    ///
+                    /// @param
+                    ///     Argument 1: A pointer to the component.
+                    ///     @par
+                    ///     The return value will be 3 floats.
+                    int GetGravity(GTCore::Script &script);
+
+                    /// Applies the gravity of the object.
+                    ///
+                    /// @param
+                    ///     Argument 1: A pointer to the component.
+                    int ApplyGravity(GTCore::Script &script);
+
+
                     /// Adds a box collision shape to the component.
                     ///
                     /// @remarks

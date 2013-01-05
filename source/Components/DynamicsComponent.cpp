@@ -387,6 +387,11 @@ namespace GTEngine
         this->rigidBody->setGravity(btVector3(x, y, z));
     }
 
+    glm::vec3 DynamicsComponent::GetGravity() const
+    {
+        return ToGLMVector3(this->rigidBody->getGravity());
+    }
+
     void DynamicsComponent::ApplyGravity()
     {
         this->rigidBody->applyGravity();

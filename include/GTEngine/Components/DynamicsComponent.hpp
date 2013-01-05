@@ -174,6 +174,9 @@ namespace GTEngine
         void SetGravity(float x, float y, float z);
         void SetGravity(const glm::vec3 &gravity) { this->SetGravity(gravity.x, gravity.y, gravity.z); }
 
+        /// Retrieves the gravity of the object.
+        glm::vec3 GetGravity() const;
+
         /// Applies the objects gravity.
         void ApplyGravity();
 

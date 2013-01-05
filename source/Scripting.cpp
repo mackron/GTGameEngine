@@ -342,6 +342,19 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.DynamicsComponent:SetGravity(x, y, z)"
+                "    GTEngine.System.DynamicsComponent.SetGravity(self._internalPtr, x, y, z);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetGravity()"
+                "    return GTEngine.System.DynamicsComponent.GetGravity(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:ApplyGravity()"
+                "    GTEngine.System.DynamicsComponent.ApplyGravity(self._internalPtr);"
+                "end;"
+
+
 
                 "function GTEngine.DynamicsComponent:AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
                 "    GTEngine.System.DynamicsComponent.AddBoxCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
@@ -717,6 +730,10 @@ namespace GTEngine
 
                         script.SetTableFunction(-1, "SetLinearFactor",                                FFI::SystemFFI::DynamicsComponentFFI::SetLinearFactor);
                         script.SetTableFunction(-1, "SetAngularFactor",                               FFI::SystemFFI::DynamicsComponentFFI::SetAngularFactor);
+
+                        script.SetTableFunction(-1, "SetGravity",                                     FFI::SystemFFI::DynamicsComponentFFI::SetGravity);
+                        script.SetTableFunction(-1, "GetGravity",                                     FFI::SystemFFI::DynamicsComponentFFI::GetGravity);
+                        script.SetTableFunction(-1, "ApplyGravity",                                   FFI::SystemFFI::DynamicsComponentFFI::ApplyGravity);
 
                         script.SetTableFunction(-1, "AddBoxCollisionShape",                           FFI::SystemFFI::DynamicsComponentFFI::AddBoxCollisionShape);
                         script.SetTableFunction(-1, "AddSphereCollisionShape",                        FFI::SystemFFI::DynamicsComponentFFI::AddSphereCollisionShape);
@@ -1952,6 +1969,50 @@ namespace GTEngine
                             {
                                 component->SetAngularFactor(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
                             }
+                        }
+
+                        return 0;
+                    }
+
+
+                    int SetGravity(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetGravity(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetGravity(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            glm::vec3 gravity = component->GetGravity();
+
+                            script.Push(gravity.x);
+                            script.Push(gravity.y);
+                            script.Push(gravity.z);
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int ApplyGravity(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->ApplyGravity();
                         }
 
                         return 0;
