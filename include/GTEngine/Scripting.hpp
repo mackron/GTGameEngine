@@ -505,6 +505,25 @@ namespace GTEngine
                     int GetAngularVelocity(GTCore::Script &script);
 
 
+                    /// Sets the linear factor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x factor.
+                    ///     Argument 3: The y factor.
+                    ///     Argument 4: The z factor.
+                    int SetLinearFactor(GTCore::Script &script);
+
+                    /// Sets the angular factor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The x factor.
+                    ///     Argument 3: The y factor.
+                    ///     Argument 4: The z factor.
+                    int SetAngularFactor(GTCore::Script &script);
+
+
                     /// Adds a box collision shape to the component.
                     ///
                     /// @remarks
