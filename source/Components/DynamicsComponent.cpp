@@ -8,7 +8,7 @@
 
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Physics.hpp>
-
+#include <GTEngine/Logging.hpp>
 
 
 namespace GTEngine
@@ -144,7 +144,7 @@ namespace GTEngine
 
 
         // We need to make sure the shape is scaled correctly.
-        glm::vec3 nodeScale = this->node.GetWorldScale();
+        glm::vec3 nodeScale = glm::max(glm::vec3(0.0001f), this->node.GetWorldScale());
         this->collisionShape->setLocalScaling(btVector3(nodeScale.x, nodeScale.y, nodeScale.z));
 
         // We should also update the mass, not that it would matter. We will do it for correctness.
@@ -314,6 +314,10 @@ namespace GTEngine
             world->RemoveRigidBody(*this->rigidBody);
         }
 
+        x = GTCore::Max(x, 0.0001f);
+        y = GTCore::Max(y, 0.0001f);
+        z = GTCore::Max(z, 0.0001f);
+
         // Now we simply apply the scaling to the shape.
         this->collisionShape->setLocalScaling(btVector3(x, y, z));
 
@@ -371,6 +375,12 @@ namespace GTEngine
         this->rigidBody->setLinearFactor(btVector3(x, y, z));
     }
 
+    glm::vec3 DynamicsComponent::GetLinearFactor() const
+    {
+        return ToGLMVector3(this->rigidBody->getLinearFactor());
+    }
+
+
     void DynamicsComponent::SetAngularFactor(float factor)
     {
         this->rigidBody->setAngularFactor(factor);
@@ -380,6 +390,12 @@ namespace GTEngine
     {
         this->rigidBody->setAngularFactor(btVector3(x, y, z));
     }
+
+    glm::vec3 DynamicsComponent::GetAngularFactor() const
+    {
+        return ToGLMVector3(this->rigidBody->getAngularFactor());
+    }
+
 
 
     void DynamicsComponent::SetGravity(float x, float y, float z)
@@ -528,6 +544,585 @@ namespace GTEngine
     }
 
 
+    ///////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void DynamicsComponent::Serialize(GTCore::Serializer &serializer) const
+    {
+        // We will use the same chunk system here like usual. We have a "general" chunk that will hold basic info such as the mass
+        // and collision filters.
+        //
+        // For everything Bullet related, we want to ensure we save floats and not btScalars. The reason for this is that Bullet can
+        // be built so that btScalar is a double. We want these to be compatible between 32- and 64-bit builds.
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_Dynamics_General;
+        header.version     = 1;
+        header.sizeInBytes = 
+            sizeof(bool)                  +     // <-- Is deactivation enabled?
+            sizeof(bool)                  +     // <-- Is navigation mesh generation enabled?
+            sizeof(short) + sizeof(short) +     // <-- Collision filter.
+            sizeof(uint32_t);
+
+        serializer.Write(header);
+        {
+            serializer.Write(this->IsDeactivationEnabled());
+            serializer.Write(this->IsNavigationMeshGenerationEnabled());
+            serializer.Write(this->collisionGroup);
+            serializer.Write(this->collisionMask);
+            serializer.Write(static_cast<uint32_t>((this->collisionShape != nullptr) ? this->collisionShape->getNumChildShapes() : 0));
+        }
+
+        
+        // Now we need to write rigid body chunk, which simply contains information about the current state of the rigid body, not including collision shapes.
+        header.id          = Serialization::ChunkID_Dynamics_RigidBody;
+        header.version     = 1;
+        header.sizeInBytes =
+            sizeof(float)                 +     // <-- Mass
+            sizeof(float)                 +     // <-- Friction
+            sizeof(float)                 +     // <-- Restitution
+            sizeof(float) + sizeof(float) +     // <-- Linear + Angular damping
+            sizeof(glm::vec3)             +     // <-- Linear velocity
+            sizeof(glm::vec3)             +     // <-- Angular velocity
+            sizeof(glm::vec3)             +     // <-- Linear factor
+            sizeof(glm::vec3)             +     // <-- Angular factor
+            sizeof(glm::vec3)             +     // <-- Gravity
+            sizeof(bool);                       // <-- Is Kinematic?
+
+        serializer.Write(header);
+        {
+            serializer.Write(this->mass);
+            serializer.Write(this->GetFriction());
+            serializer.Write(this->GetRestitution());
+            serializer.Write(this->GetLinearDamping());
+            serializer.Write(this->GetAngularDamping());
+            serializer.Write(this->GetLinearVelocity());
+            serializer.Write(this->GetAngularVelocity());
+            serializer.Write(this->GetLinearFactor());
+            serializer.Write(this->GetAngularFactor());
+            serializer.Write(this->GetGravity());
+            serializer.Write(this->IsKinematic());
+        }
+
+
+        // We do a single chunk for each attached shape. The idea behind this system is that adding new shapes won't cause any
+        // disturbances to anything else.
+        if (this->collisionShape != nullptr)
+        {
+            for (int i = 0; i < this->collisionShape->getNumChildShapes(); ++i)
+            {
+                auto shape = this->collisionShape->getChildShape(i);
+                assert(shape != nullptr);
+                {
+                    switch (shape->getShapeType())
+                    {
+                    case BOX_SHAPE_PROXYTYPE:
+                        {
+                            auto box = static_cast<btBoxShape*>(shape);
+                            
+                            header.id          = Serialization::ChunkID_Dynamics_BoxShape;
+                            header.version     = 1;
+                            header.sizeInBytes =
+                                sizeof(glm::vec3) +     // <-- Half extents
+                                sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+
+                            serializer.Write(header);
+                            serializer.Write(ToGLMVector3(box->getHalfExtentsWithMargin()));
+                            serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
+                            
+
+                            break;
+                        }
+
+                    case SPHERE_SHAPE_PROXYTYPE:
+                        {
+                            auto sphere = static_cast<btSphereShape*>(shape);
+
+                            header.id          = Serialization::ChunkID_Dynamics_SphereShape;
+                            header.version     = 1;
+                            header.sizeInBytes =
+                                sizeof(float) +         // <-- Radius.
+                                sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+
+                            serializer.Write(header);
+                            serializer.Write(static_cast<float>(sphere->getRadius()));
+                            serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
+
+                            break;
+                        }
+
+                    case CUSTOM_CONVEX_SHAPE_TYPE:          // <-- Ellipsoid for now, but need to change! If anything else uses this, we're broken!
+                        {
+                            auto ellipsoid = static_cast<btEllipsoidShape*>(shape);
+
+                            header.id          = Serialization::ChunkID_Dynamics_EllipsoidShape;
+                            header.version     = 1;
+                            header.sizeInBytes = 
+                                sizeof(glm::vec3) +     // <-- Half extents
+                                sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+
+                            serializer.Write(header);
+                            serializer.Write(ToGLMVector3(ellipsoid->getImplicitShapeDimensions() + btVector3(ellipsoid->getMargin(), ellipsoid->getMargin(), ellipsoid->getMargin())));
+                            serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
+
+                            break;
+                        }
+
+                    case CYLINDER_SHAPE_PROXYTYPE:
+                        {
+                            auto cylinder = static_cast<btCylinderShape*>(shape);
+
+                            header.id          = Serialization::ChunkID_Dynamics_CylinderShape;
+                            header.version     = 1;
+                            header.sizeInBytes = 
+                                sizeof(uint32_t)  +     // <-- Axis - 0 = X, 1 = Y, 2 = Z
+                                sizeof(glm::vec3) +     // <-- Half extents
+                                sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+
+                            serializer.Write(header);
+                            serializer.Write(static_cast<uint32_t>(cylinder->getUpAxis()));
+                            serializer.Write(ToGLMVector3(cylinder->getHalfExtentsWithMargin()));
+                            serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
+
+                            break;
+                        }
+
+                    case CAPSULE_SHAPE_PROXYTYPE:
+                        {
+                            auto capsule = static_cast<btCapsuleShape*>(shape);
+
+                            header.id          = Serialization::ChunkID_Dynamics_CapsuleShape;
+                            header.version     = 1;
+                            header.sizeInBytes = 
+                                sizeof(uint32_t) +      // <-- Axis - 0 = X, 1 = Y, 2 = Z
+                                sizeof(float)    +      // <-- Radius
+                                sizeof(float)    +      // <-- Height
+                                sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+
+                            serializer.Write(header);
+                            serializer.Write(static_cast<float>(capsule->getRadius()));
+                            serializer.Write(static_cast<float>(capsule->getHalfHeight()));
+                            serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
+
+                            break;
+                        }
+
+                    case CONVEX_HULL_SHAPE_PROXYTYPE:
+                        {
+                            auto convexHull = static_cast<btConvexHullShape*>(shape);
+                            
+                            header.id          = Serialization::ChunkID_Dynamics_ConvexHullShape;
+                            header.version     = 1;
+                            header.sizeInBytes = 
+                                sizeof(uint32_t)  +                                     // <-- Vertex count.
+                                sizeof(glm::vec3) * convexHull->getNumVertices() +      // <-- Each vertex.
+                                sizeof(float);                                          // <-- Margin. Important for convex hulls.
+
+                            serializer.Write(header);
+                            serializer.Write(static_cast<uint32_t>(convexHull->getNumVertices()));
+                            
+                            for (int iVertex = 0; iVertex < convexHull->getNumVertices(); ++iVertex)
+                            {
+                                btVector3 vertex;
+                                convexHull->getVertex(iVertex, vertex);
+
+                                serializer.Write(ToGLMVector3(vertex));
+                            }
+
+                            serializer.Write(static_cast<float>(convexHull->getMargin()));
+
+                            break;
+                        }
+
+
+                    default: break;
+                    }
+                }
+            }
+        }
+    }
+
+    void DynamicsComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        // When deserializing, it's much, much more efficient to first remove the object from the existing scene, change the settings, and then
+        // re-add it than it is to call each individual method. Thus, that's what we're doing here.
+
+
+        bool      isDeactivationEnabled      = false;
+        bool      isNavMeshGenerationEnabled = false;
+        short     newCollisionGroup          = this->collisionGroup;
+        short     newCollisionMask           = this->collisionMask;
+        uint32_t  shapeCount                 = 0;
+
+        float     newMass                    = this->mass;
+        float     newFriction                = this->GetFriction();
+        float     newRestitution             = this->GetRestitution();
+        float     newLinearDamping           = this->GetLinearDamping();
+        float     newAngularDamping          = this->GetAngularDamping();
+        glm::vec3 newLinearVelocity          = this->GetLinearVelocity();
+        glm::vec3 newAngularVelocity         = this->GetAngularVelocity();
+        glm::vec3 newLinearFactor            = this->GetLinearFactor();
+        glm::vec3 newAngularFactor           = this->GetAngularFactor();
+        glm::vec3 newGravity                 = this->GetGravity();
+        bool      newIsKinematic             = this->IsKinematic();
+
+
+
+
+        // First chunk is general info.
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+
+        switch (header.version)
+        {
+        case 1:
+            {
+                deserializer.Read(isDeactivationEnabled);
+                deserializer.Read(isNavMeshGenerationEnabled);
+                deserializer.Read(newCollisionGroup);
+                deserializer.Read(newCollisionMask);
+                deserializer.Read(shapeCount);
+
+                break;
+            }
+
+        default:
+            {
+                GTEngine::Log("DynamicsComponent deserialization error. The 'general info' chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
+                break;
+            }
+        }
+
+
+        // The next chunk should be the rigid body info.
+        deserializer.Read(header);
+
+        switch (header.version)
+        {
+            case 1:
+            {
+                deserializer.Read(newMass);
+                deserializer.Read(newFriction);
+                deserializer.Read(newRestitution);
+                deserializer.Read(newLinearDamping);
+                deserializer.Read(newAngularDamping);
+                deserializer.Read(newLinearVelocity);
+                deserializer.Read(newAngularVelocity);
+                deserializer.Read(newLinearFactor);
+                deserializer.Read(newAngularFactor);
+                deserializer.Read(newGravity);
+                deserializer.Read(newIsKinematic);
+
+                break;
+            }
+
+        default:
+            {
+                GTEngine::Log("DynamicsComponent deserialization error. The 'rigid body' chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
+                break;
+            }
+        }
+
+
+        // At this point we'll have everything except our shapes. What we want to do is remove the rigid body, change the settings, and then
+        // re-add it to the scene.
+        auto world = this->rigidBody->GetWorld();
+        if (world != nullptr)
+        {
+            world->RemoveRigidBody(*this->rigidBody);
+        }
+
+
+        if (isDeactivationEnabled)
+        {
+            this->EnableDeactivation();
+        }
+        else
+        {
+            this->DisableDeactivation();
+        }
+
+        if (isNavMeshGenerationEnabled)
+        {
+            this->EnableNavigationMeshGeneration();
+        }
+        else
+        {
+            this->DisableNavigationMeshGeneration();
+        }
+
+        this->collisionGroup = newCollisionGroup;
+        this->collisionMask  = newCollisionMask;
+
+
+        this->mass = newMass;
+        this->rigidBody->setFriction(newFriction);
+        this->rigidBody->setRestitution(newRestitution);
+        this->rigidBody->setDamping(newLinearDamping, newAngularDamping);
+        this->rigidBody->setLinearVelocity(ToBulletVector3(newLinearVelocity));
+        this->rigidBody->setAngularVelocity(ToBulletVector3(newAngularVelocity));
+        this->rigidBody->setLinearFactor(ToBulletVector3(newLinearFactor));
+        this->rigidBody->setAngularFactor(ToBulletVector3(newAngularFactor));
+        this->rigidBody->setGravity(ToBulletVector3(newGravity));
+
+        if (newIsKinematic)
+        {
+            this->rigidBody->setCollisionFlags(this->rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+            this->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+        }
+        else
+        {
+            this->rigidBody->setCollisionFlags(this->rigidBody->getCollisionFlags() & ~(btCollisionObject::CF_KINEMATIC_OBJECT));
+            this->rigidBody->setActivationState(ACTIVE_TAG);
+            this->rigidBody->setDeactivationTime(0.0f);
+        }
+
+
+        // Now we need to load the shapes. The old shapes need to be removed.
+        while (this->collisionShape->getNumChildShapes() > 0)
+        {
+            auto child = this->collisionShape->getChildShape(0);
+            this->collisionShape->removeChildShapeByIndex(0);
+
+            delete child;
+        }
+
+        for (uint32_t iShape = 0; iShape < shapeCount; ++iShape)
+        {
+            deserializer.Read(header);
+
+            switch (header.id)
+            {
+            case Serialization::ChunkID_Dynamics_BoxShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            glm::vec3 halfExtents;
+                            glm::mat4 transform;
+
+                            deserializer.Read(halfExtents);
+                            deserializer.Read(transform);
+
+                            this->collisionShape->addChildShape(ToBulletTransform(transform), new btBoxShape(ToBulletVector3(halfExtents)));
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing dynamics component. Box shape chunk version (%d) is unknown.", header.version);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_Dynamics_SphereShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            float     radius;
+                            glm::mat4 transform;
+
+                            deserializer.Read(radius);
+                            deserializer.Read(transform);
+
+                            this->collisionShape->addChildShape(ToBulletTransform(transform), new btSphereShape(radius));
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing dynamics component. Sphere shape chunk version (%d) is unknown.", header.version);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_Dynamics_EllipsoidShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            glm::vec3 halfExtents;
+                            glm::mat4 transform;
+
+                            deserializer.Read(halfExtents);
+                            deserializer.Read(transform);
+
+                            this->collisionShape->addChildShape(ToBulletTransform(transform), new btEllipsoidShape(ToBulletVector3(halfExtents)));
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing dynamics component. Ellipsoid shape chunk version (%d) is unknown.", header.version);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_Dynamics_CylinderShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            uint32_t  upAxis;
+                            glm::vec3 halfExtents;
+                            glm::mat4 transform;
+
+                            deserializer.Read(upAxis);
+                            deserializer.Read(halfExtents);
+                            deserializer.Read(transform);
+
+                            if (upAxis == 0)
+                            {
+                                this->collisionShape->addChildShape(ToBulletTransform(transform), new btCylinderShapeX(ToBulletVector3(halfExtents)));
+                            }
+                            else if (upAxis == 1)
+                            {
+                                this->collisionShape->addChildShape(ToBulletTransform(transform), new btCylinderShape(ToBulletVector3(halfExtents)));
+                            }
+                            else
+                            {
+                                this->collisionShape->addChildShape(ToBulletTransform(transform), new btCylinderShapeZ(ToBulletVector3(halfExtents)));
+                            }
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing dynamics component. Box shape chunk version (%d) is unknown.", header.version);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_Dynamics_CapsuleShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            uint32_t upAxis;
+                            float    radius;
+                            float    height;
+                            glm::mat4 transform;
+
+                            deserializer.Read(upAxis);
+                            deserializer.Read(radius);
+                            deserializer.Read(height);
+                            deserializer.Read(transform);
+
+                            if (upAxis == 0)
+                            {
+                                this->collisionShape->addChildShape(ToBulletTransform(transform), new btCapsuleShapeX(radius, height));
+                            }
+                            else if (upAxis == 1)
+                            {
+                                this->collisionShape->addChildShape(ToBulletTransform(transform), new btCapsuleShape(radius, height));
+                            }
+                            else
+                            {
+                                this->collisionShape->addChildShape(ToBulletTransform(transform), new btCapsuleShapeZ(radius, height));
+                            }
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing dynamics component. Box shape chunk version (%d) is unknown.", header.version);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+
+            case Serialization::ChunkID_Dynamics_ConvexHullShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            uint32_t                  vertexCount;
+                            GTCore::Vector<glm::vec3> vertices;
+                            float                     margin;
+
+                            deserializer.Read(vertexCount);
+
+                            vertices.Reserve(vertexCount);
+                            vertices.count = vertexCount;
+                            deserializer.Read(vertices.buffer, vertexCount * sizeof(glm::vec3));
+
+                            deserializer.Read(margin);
+
+
+                            this->collisionShape->addChildShape(btTransform::getIdentity(), new btConvexHullShape(&vertices[0].x, vertexCount, 12));
+
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing dynamics component. Box shape chunk version (%d) is unknown.", header.version);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+
+            default:
+                {
+                    // Skip over unknown chunks.
+                    deserializer.Seek(header.sizeInBytes);
+                    break;
+                }
+            }
+        }
+        
+        
+
+
+
+        // The scale needs to be applied.
+        this->ApplySceneNodeScaling();
+
+        // The mass needs to be updated.
+        this->UpdateMass();
+
+        
+
+
+        // At this point the rigid body should be in it's new state and we can re-add it to the world.
+        if (world != nullptr)
+        {
+            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
+        }
+    }
+
+
 
     void DynamicsComponent::AddCollisionShape(btCollisionShape* shape, float offsetX, float offsetY, float offsetZ)
     {
@@ -543,7 +1138,7 @@ namespace GTEngine
         this->collisionShape->addChildShape(btTransform(btMatrix3x3::getIdentity(), btVector3(offsetX, offsetY, offsetZ)), shape);
 
         // We need to make sure the shape is scaled correctly.
-        glm::vec3 nodeScale = this->node.GetWorldScale();
+        glm::vec3 nodeScale = glm::max(glm::vec3(0.0001f), this->node.GetWorldScale());
         this->collisionShape->setLocalScaling(btVector3(nodeScale.x, nodeScale.y, nodeScale.z));
 
 

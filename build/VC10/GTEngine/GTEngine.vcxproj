@@ -321,6 +321,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneUpdateManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Serialization.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp" />

@@ -17,6 +17,15 @@ namespace GTEngine
         return btVector3(v.x, v.y, v.z);
     }
 
+    inline btTransform ToBulletTransform(const glm::mat4 &m)
+    {
+        btTransform result;
+        result.setFromOpenGLMatrix(&m[0][0]);
+
+        return result;
+    }
+
+
     inline glm::vec3 ToGLMVector3(const btVector3 &v)
     {
         return glm::vec3(v.x(), v.y(), v.z());
