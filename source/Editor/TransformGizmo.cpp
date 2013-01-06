@@ -226,6 +226,21 @@ namespace GTEngine
 
         this->UpdatePickingVolumes();
         this->RestoreColours();
+
+
+        // We don't want to do serialization here.
+        this->sceneNode.DisableSerialization();
+
+
+
+        // We will give these scene nodes names to make debugging a bit easier.
+        this->sceneNode.SetName("TransformGizmo");
+        this->xArrowSceneNode.SetName("TransformGizmo_xArrowSceneNode");
+        this->yArrowSceneNode.SetName("TransformGizmo_yArrowSceneNode");
+        this->zArrowSceneNode.SetName("TransformGizmo_zArrowSceneNode");
+        this->xCircleSceneNode.SetName("TransformGizmo_xCircleSceneNode");
+        this->yCircleSceneNode.SetName("TransformGizmo_yCircleSceneNode");
+        this->zCircleSceneNode.SetName("TransformGizmo_zCircleSceneNode");
     }
 
 

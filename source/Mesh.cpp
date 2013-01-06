@@ -60,16 +60,10 @@ namespace GTEngine
             MaterialLibrary::Delete(this->material);
         }
 
-        auto newMaterial = MaterialLibrary::Create(materialFileName);
-        if (newMaterial != nullptr)
-        {
-            this->material       = newMaterial;
-            this->deleteMaterial = true;
-
-            return true;
-        }
-
-        return false;
+        this->deleteMaterial = true;
+        this->material       = MaterialLibrary::Create(materialFileName);
+        
+        return this->material != nullptr;
     }
 
 
@@ -142,7 +136,7 @@ namespace GTEngine
         if (this->material && !this->material->GetDefinition().fileName.IsEmpty())
         {
             serializer.Write(true);
-            serializer.Write(this->material->GetDefinition().fileName.c_str());
+            serializer.Write(this->material->GetDefinition().fileName);
 
             // The material itself needs to be serialized.
             this->material->Serialize(serializer);

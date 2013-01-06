@@ -74,14 +74,16 @@ function Editor.SceneEditor.GetFirstSelectedNode()
 end
 
 function Editor.SceneEditor.UpdatePanel()
-    local numSelectedNodes = Editor.SceneEditor.GetSelectedNodeCount();
-    
-    if numSelectedNodes > 1 then        -- Multiple selections
-        Editor.SceneEditor.CurrentSceneEditorElement:HidePanels("Multiple Objects Selected");
-    elseif numSelectedNodes == 0 then   -- Nothing selected
-        Editor.SceneEditor.CurrentSceneEditorElement:HidePanels("Nothing Selected");
-    else                                -- Single selection
-        Editor.SceneEditor.CurrentSceneEditorElement:ShowPanels(Editor.SceneEditor.GetFirstSelectedNode());
+    if Editor.SceneEditor.CurrentSceneEditorElement ~= nil then
+        local numSelectedNodes = Editor.SceneEditor.GetSelectedNodeCount();
+        
+        if numSelectedNodes > 1 then        -- Multiple selections
+            Editor.SceneEditor.CurrentSceneEditorElement:HidePanels("Multiple Objects Selected");
+        elseif numSelectedNodes == 0 then   -- Nothing selected
+            Editor.SceneEditor.CurrentSceneEditorElement:HidePanels("Nothing Selected");
+        else                                -- Single selection
+            Editor.SceneEditor.CurrentSceneEditorElement:ShowPanels(Editor.SceneEditor.GetFirstSelectedNode());
+        end
     end
 end
 
