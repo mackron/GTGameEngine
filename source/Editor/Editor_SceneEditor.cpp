@@ -390,10 +390,10 @@ namespace GTEngine
         return false;
     }
 
-    void Editor_SceneEditor::SelectSceneNode(SceneNode &node)
+    void Editor_SceneEditor::SelectSceneNode(SceneNode &node, bool force)
     {
         auto state = node.GetDataPointer<State>(0);
-        if (state != nullptr && !this->IsSceneNodeSelected(node))
+        if (state != nullptr && (!this->IsSceneNodeSelected(node) || force))
         {
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata != nullptr)
@@ -402,7 +402,10 @@ namespace GTEngine
 
                 assert(state->selectedNodes.Exists(&node) == false);
                 {
-                    state->selectedNodes.PushBack(&node);
+                    if (!state->selectedNodes.Exists(&node))
+                    {
+                        state->selectedNodes.PushBack(&node);
+                    }
 
                     // The scripting environment needs to be aware of this change.
                     auto &script = this->GetScript();
@@ -794,6 +797,7 @@ namespace GTEngine
                     }
 
 
+                    // If the node is visible, we'll need to include the picking collision objects.
                     if (node.IsVisible())
                     {
                         if (metadata->GetPickingCollisionShape() != nullptr)
@@ -817,6 +821,13 @@ namespace GTEngine
                         {
                             state->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                         }
+                    }
+
+
+                    // The the node is selected, we need to make sure everything is aware of it.
+                    if (metadata->IsSelected())
+                    {
+                        this->SelectSceneNode(node, true);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
                     }
                 }
                 else

@@ -92,8 +92,9 @@ namespace GTEngine
 
         /// Selects the given scene node.
         ///
-        /// @param node [in] The node to select.
-        void SelectSceneNode(SceneNode &node);
+        /// @param node  [in] The node to select.
+        /// @param force [in] Normally the scene node will not go through a full selection process if it is already marked as selected - this allows that operato to be forced, which is required sometimes.
+        void SelectSceneNode(SceneNode &node, bool force = false);
 
         /// Deselects the given scene node.
         ///
