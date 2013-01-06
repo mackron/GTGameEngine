@@ -908,7 +908,16 @@ namespace GTEngine
 
     bool SceneNode::IsSerializationEnabled() const
     {
-        return (this->flags & NoSerialization) == 0;
+        bool locallyEnabled = (this->flags & NoSerialization) == 0;
+
+        if (locallyEnabled && this->parent != nullptr)
+        {
+            return this->parent->IsSerializationEnabled();
+        }
+        else
+        {
+            return locallyEnabled;
+        }
     }
 
 

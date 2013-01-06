@@ -895,6 +895,9 @@ namespace GTEngine
         void EnableSerialization();
 
         /// Determines whether or not serialization is enabled.
+        ///
+        /// @remarks
+        ///     This is called recursively. If a parent is not serialized, neither is it children.
         bool IsSerializationEnabled() const;
 
 
