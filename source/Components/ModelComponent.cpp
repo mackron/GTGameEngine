@@ -2,6 +2,7 @@
 #include <GTEngine/Components/ModelComponent.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Scene.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -100,40 +101,87 @@ namespace GTEngine
 
     void ModelComponent::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(static_cast<uint32_t>(this->flags));
+        // The model component is simple. We have only a single chunk here. The content on this chunk will depend on the state of the
+        // model. If we have a model that was loaded from a file, we need to save the file name. If it was not loaded from a file (a
+        // procedural model), we obviously don't want to save the file name.
+        //
+        // As usual, the header of this chunk needs an exact data size, so we'll need to use an intermediary serializer.
 
-        // If the model is procedural (not loaded from a file) we will just ignore it. We'll need to store a flag specifying whether or
-        // not the file name is stored.
-        if (this->model != nullptr && !this->model->GetDefinition().fileName.IsEmpty())
+        GTCore::BasicSerializer intermediarySerializer;
+
+        // We'll save the flags first.
+        intermediarySerializer.Write(static_cast<uint32_t>(this->flags));
+        
+        // Now we save the model. It's possible that there isn't any model set at the moment, so we need to write a boolean indicating
+        // whether or not we are saving one.
+        if (this->model != nullptr)
         {
-            serializer.Write(true);
-            serializer.Write(this->model->GetDefinition().fileName);
+            intermediarySerializer.Write(true);
+            intermediarySerializer.Write(this->model->GetDefinition().fileName);
 
-            // Now we serialize the model itself.
-            this->model->Serialize(serializer);
+            this->model->Serialize(intermediarySerializer);
         }
         else
         {
-            serializer.Write(false);
+            intermediarySerializer.Write(false);
         }
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_ModelComponent_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void ModelComponent::Deserialize(GTCore::Deserializer &deserializer)
     {
-        deserializer.Read(static_cast<uint32_t &>(this->flags));
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
 
-        bool hasModel;
-        deserializer.Read(hasModel);
-
-        if (hasModel)
+        assert(header.id == Serialization::ChunkID_ModelComponent_Main);
         {
-            GTCore::String fileName;
-            deserializer.Read(fileName);
+            switch (header.version)
+            {
+            case 1:
+                {
+                    // Flags are first.
+                    deserializer.Read(static_cast<uint32_t &>(this->flags));
 
-            this->SetModel(fileName.c_str());
+                    // Next is a boolean indicating whether or not a model is defined here.
+                    bool hasModel;
+                    deserializer.Read(hasModel);
 
-            // With the model loaded, we just deserialize it.
-            this->model->Deserialize(deserializer);
+                    // We will only have additional data at this point if we have actually have a model defined.
+                    if (hasModel)
+                    {
+                        GTCore::String modelPath;
+                        deserializer.Read(modelPath);
+
+                        if (!modelPath.IsEmpty())
+                        {
+                            this->SetModel(modelPath.c_str());
+                        }
+                        else
+                        {
+                            this->SetModel(new Model, true);
+                        }
+
+                        this->model->Deserialize(deserializer);
+                    }
+
+
+                    break;
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing ModelComponent. Main chunk has an unsupported version (%d).", header.version);
+                    break;
+                }
+            }
         }
     }
 }

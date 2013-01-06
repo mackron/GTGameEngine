@@ -556,7 +556,7 @@ namespace GTEngine
         // be built so that btScalar is a double. We want these to be compatible between 32- and 64-bit builds.
 
         Serialization::ChunkHeader header;
-        header.id          = Serialization::ChunkID_Dynamics_General;
+        header.id          = Serialization::ChunkID_DynamicsComponent_Main;
         header.version     = 1;
         header.sizeInBytes = 
             sizeof(bool)                  +     // <-- Is deactivation enabled?
@@ -575,7 +575,7 @@ namespace GTEngine
 
         
         // Now we need to write rigid body chunk, which simply contains information about the current state of the rigid body, not including collision shapes.
-        header.id          = Serialization::ChunkID_Dynamics_RigidBody;
+        header.id          = Serialization::ChunkID_DynamicsComponent_RigidBody;
         header.version     = 1;
         header.sizeInBytes =
             sizeof(float)                 +     // <-- Mass
@@ -620,7 +620,7 @@ namespace GTEngine
                         {
                             auto box = static_cast<btBoxShape*>(shape);
                             
-                            header.id          = Serialization::ChunkID_Dynamics_BoxShape;
+                            header.id          = Serialization::ChunkID_DynamicsComponent_BoxShape;
                             header.version     = 1;
                             header.sizeInBytes =
                                 sizeof(glm::vec3) +     // <-- Half extents
@@ -638,7 +638,7 @@ namespace GTEngine
                         {
                             auto sphere = static_cast<btSphereShape*>(shape);
 
-                            header.id          = Serialization::ChunkID_Dynamics_SphereShape;
+                            header.id          = Serialization::ChunkID_DynamicsComponent_SphereShape;
                             header.version     = 1;
                             header.sizeInBytes =
                                 sizeof(float) +         // <-- Radius.
@@ -655,7 +655,7 @@ namespace GTEngine
                         {
                             auto ellipsoid = static_cast<btEllipsoidShape*>(shape);
 
-                            header.id          = Serialization::ChunkID_Dynamics_EllipsoidShape;
+                            header.id          = Serialization::ChunkID_DynamicsComponent_EllipsoidShape;
                             header.version     = 1;
                             header.sizeInBytes = 
                                 sizeof(glm::vec3) +     // <-- Half extents
@@ -672,7 +672,7 @@ namespace GTEngine
                         {
                             auto cylinder = static_cast<btCylinderShape*>(shape);
 
-                            header.id          = Serialization::ChunkID_Dynamics_CylinderShape;
+                            header.id          = Serialization::ChunkID_DynamicsComponent_CylinderShape;
                             header.version     = 1;
                             header.sizeInBytes = 
                                 sizeof(uint32_t)  +     // <-- Axis - 0 = X, 1 = Y, 2 = Z
@@ -691,7 +691,7 @@ namespace GTEngine
                         {
                             auto capsule = static_cast<btCapsuleShape*>(shape);
 
-                            header.id          = Serialization::ChunkID_Dynamics_CapsuleShape;
+                            header.id          = Serialization::ChunkID_DynamicsComponent_CapsuleShape;
                             header.version     = 1;
                             header.sizeInBytes = 
                                 sizeof(uint32_t) +      // <-- Axis - 0 = X, 1 = Y, 2 = Z
@@ -711,7 +711,7 @@ namespace GTEngine
                         {
                             auto convexHull = static_cast<btConvexHullShape*>(shape);
                             
-                            header.id          = Serialization::ChunkID_Dynamics_ConvexHullShape;
+                            header.id          = Serialization::ChunkID_DynamicsComponent_ConvexHullShape;
                             header.version     = 1;
                             header.sizeInBytes = 
                                 sizeof(uint32_t)  +                                     // <-- Vertex count.
@@ -893,7 +893,7 @@ namespace GTEngine
 
             switch (header.id)
             {
-            case Serialization::ChunkID_Dynamics_BoxShape:
+            case Serialization::ChunkID_DynamicsComponent_BoxShape:
                 {
                     switch (header.version)
                     {
@@ -920,7 +920,7 @@ namespace GTEngine
                     break;
                 }
 
-            case Serialization::ChunkID_Dynamics_SphereShape:
+            case Serialization::ChunkID_DynamicsComponent_SphereShape:
                 {
                     switch (header.version)
                     {
@@ -947,7 +947,7 @@ namespace GTEngine
                     break;
                 }
 
-            case Serialization::ChunkID_Dynamics_EllipsoidShape:
+            case Serialization::ChunkID_DynamicsComponent_EllipsoidShape:
                 {
                     switch (header.version)
                     {
@@ -974,7 +974,7 @@ namespace GTEngine
                     break;
                 }
 
-            case Serialization::ChunkID_Dynamics_CylinderShape:
+            case Serialization::ChunkID_DynamicsComponent_CylinderShape:
                 {
                     switch (header.version)
                     {
@@ -1014,7 +1014,7 @@ namespace GTEngine
                     break;
                 }
 
-            case Serialization::ChunkID_Dynamics_CapsuleShape:
+            case Serialization::ChunkID_DynamicsComponent_CapsuleShape:
                 {
                     switch (header.version)
                     {
@@ -1057,7 +1057,7 @@ namespace GTEngine
                 }
 
 
-            case Serialization::ChunkID_Dynamics_ConvexHullShape:
+            case Serialization::ChunkID_DynamicsComponent_ConvexHullShape:
                 {
                     switch (header.version)
                     {
