@@ -716,7 +716,12 @@ namespace GTEngine
                 // When a scene node is added without a metadata component (which is true if we've made it here), we know that it must be deleted when the
                 // state is also deleted. We need to mark it as such.
                 metadata->DeleteOnClose(true);
+            }
 
+
+            // If we're deleting on close, we need to add it to the list of nodes to delete.
+            if (metadata->DeleteOnClose())
+            {
                 auto state = node.GetDataPointer<State>(0);
                 if (state != nullptr)
                 {
