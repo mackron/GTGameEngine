@@ -668,7 +668,7 @@ namespace GTEngine
         uint32_t orphanNodeCount = 0;
         for (auto i = this->nodes.root; i != nullptr; i = i->next)
         {
-            auto node = this->nodes.root->value;
+            auto node = i->value;
             assert(node != nullptr);
             {
                 if (node->GetParent() == nullptr && node->IsSerializationEnabled())
@@ -683,7 +683,7 @@ namespace GTEngine
 
         for (auto i = this->nodes.root; i != nullptr; i = i->next)
         {
-            auto node = this->nodes.root->value;
+            auto node = i->value;
             assert(node != nullptr);
             {
                 // We only do nodes without parents. We will recursively read the children.
@@ -725,6 +725,10 @@ namespace GTEngine
 
     void Scene::Deserialize(GTCore::Deserializer &deserializer)
     {
+        // We're going to remove everything.
+        this->RemoveAllObjects();
+
+
         uint32_t magicNumber;
         deserializer.Read(magicNumber);
 
@@ -735,7 +739,11 @@ namespace GTEngine
 
             for (uint32_t i = 0; i < orphanNodeCount; ++i)
             {
-                this->DeserializeSceneNode(deserializer);
+                auto sceneNode = this->DeserializeSceneNode(deserializer);
+                assert(sceneNode != nullptr);
+                {
+                    this->AddSceneNode(*sceneNode);
+                }
             }
         }
     }

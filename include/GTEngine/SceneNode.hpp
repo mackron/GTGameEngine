@@ -555,12 +555,49 @@ namespace GTEngine
         ///     This will use GTEngine::CreateComponentByName() to do the instantiation, which will in turn call Game::CreateCustomComponent() if it fails.
         Component* AddComponentByName(const char* name)
         {
-            // A component of the same name can't already exist. If it doesn, we just return the existing one.
-            auto component = this->GetComponentByName(name);
-            if (component == nullptr)
+            Component* component = nullptr;
+
+            if (GTCore::Strings::Equal(name, ModelComponent::Name))
             {
-                component = GTEngine::CreateComponentByName(name, *this);
-                this->components.Add(name, component);
+                if (this->modelComponent == nullptr)
+                {
+                    this->modelComponent = new ModelComponent(*this);
+                }
+                component = this->modelComponent;
+            }
+            else if (GTCore::Strings::Equal(name, PointLightComponent::Name))
+            {
+                if (this->pointLightComponent == nullptr)
+                {
+                    this->pointLightComponent = new PointLightComponent(*this);
+                }
+                component = this->pointLightComponent;
+            }
+            else if (GTCore::Strings::Equal(name, SpotLightComponent::Name))
+            {
+                if (this->spotLightComponent == nullptr)
+                {
+                    this->spotLightComponent = new SpotLightComponent(*this);
+                }
+                component = this->spotLightComponent;
+            }
+            else if (GTCore::Strings::Equal(name, EditorMetadataComponent::Name))
+            {
+                if (this->editorMetadataComponent == nullptr)
+                {
+                    this->editorMetadataComponent = new EditorMetadataComponent(*this);
+                }
+                component = this->editorMetadataComponent;
+            }
+            else
+            {
+                // A component of the same name can't already exist. If it doesn, we just return the existing one.
+                component = this->GetComponentByName(name);
+                if (component == nullptr)
+                {
+                    component = GTEngine::CreateComponentByName(name, *this);
+                    this->components.Add(name, component);
+                }
             }
 
             return component;

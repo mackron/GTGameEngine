@@ -57,7 +57,7 @@ namespace GTEngine
         else
         {
             // We need to load the scene.
-            auto file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Write);
+            auto file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Read);
             if (file != nullptr)
             {
                 // We need to now create the GUI elements for this particular file. We start with the main element.
@@ -93,8 +93,18 @@ namespace GTEngine
                             this->ResetCamera();
 
 
-                            // At this point we should actually load the scene file.
+                            // At this point we should actually load the scene file. If this is an empty file, we'll just load an empty scene.
+                            if (GTCore::IO::Size(file) > 0)
+                            {
+                                this->currentState->transformGizmo.Hide();
 
+                                GTCore::FileDeserializer deserializer(file);
+                                this->currentState->scene.Deserialize(deserializer);
+
+                                // The deserializer will clear the scene, so we'll need to re-add the camera and gizmo.
+                                this->currentState->scene.AddSceneNode(this->currentState->camera);
+                                this->currentState->scene.AddSceneNode(this->currentState->transformGizmo.GetSceneNode());
+                            }
 
 
                             // The scene will be done loading by this pointer, so we can close the file.
@@ -139,6 +149,15 @@ namespace GTEngine
         auto iState = this->loadedStates.Find(absolutePath);
         if (iState != nullptr)
         {
+            FILE* file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Write);
+            if (file != nullptr)
+            {
+                GTCore::FileSerializer serializer(file);
+                iState->value->scene.Serialize(serializer);
+            }
+
+            GTCore::IO::Close(file);
+
             return true;
         }
 
@@ -150,6 +169,10 @@ namespace GTEngine
         auto iState = this->loadedStates.Find(absolutePath);
         if (iState != nullptr)
         {
+            // For now, we'll save whenever we close. This is temporary until we get proper modification detection working.
+            this->SaveScene(absolutePath);
+
+
             this->editor.GetGame().GetGUI().DeleteElement(iState->value->GUI.Main);
             
 
@@ -714,6 +737,22 @@ namespace GTEngine
         {
             auto &node = static_cast<SceneNode &>(object);
 
+            auto metadata = node.GetComponent<EditorMetadataComponent>();
+            if (metadata != nullptr)
+            {
+                auto state = node.GetDataPointer<State>(0);
+                if (state != nullptr)
+                {
+                    state->pickingWorld.RemoveCollisionObject(metadata->GetPickingCollisionObject());
+
+                    if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
+                    {
+                        state->pickingWorld.RemoveCollisionObject(*metadata->GetSpritePickingCollisionObject());
+                    }
+                }
+            }
+
+
 
             // We need to make sure scene nodes are deseleted when they are removed from the scene.
             this->DeselectSceneNode(node);
@@ -745,7 +784,7 @@ namespace GTEngine
                     }
 
 
-                    // We need to remove and re-add the collision shape since it might have changed.
+                    // We need to remove and re-add the collision shape since it might have changed. We only re-add if it's visible.
                     auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
                 
                     auto world = pickingCollisionObject.GetWorld();
@@ -755,28 +794,29 @@ namespace GTEngine
                     }
 
 
-
-                    if (metadata->GetPickingCollisionShape() != nullptr)
+                    if (node.IsVisible())
                     {
-                        btTransform transform;
-                        node.GetWorldTransform(transform);
-
-                        pickingCollisionObject.setWorldTransform(transform);
-
-                        if (metadata->UseModelForPickingShape())
+                        if (metadata->GetPickingCollisionShape() != nullptr)
                         {
-                            pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+                            btTransform transform;
+                            node.GetWorldTransform(transform);
+
+                            pickingCollisionObject.setWorldTransform(transform);
+
+                            if (metadata->UseModelForPickingShape())
+                            {
+                                pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+                            }
+
+                            state->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                         }
 
-                        state->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
-                    }
 
-
-
-                    // If we have a sprite, we'll want to add it's picking object to the picking world.
-                    if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
-                    {
-                        state->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                        // If we have a sprite, we'll want to add it's picking object to the picking world.
+                        if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
+                        {
+                            state->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                        }
                     }
                 }
                 else
@@ -904,12 +944,7 @@ namespace GTEngine
             {
                 if (metadata->GetPickingCollisionShape() != nullptr)
                 {
-                    // We need to add the collision object to the world. We assert that the collision object is not already in the world.
-                    auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
-                    assert(pickingCollisionObject.GetWorld() == nullptr);
-                    {
-                        state->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
-                    }
+                    state->pickingWorld.AddCollisionObject(metadata->GetPickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                 }
 
                 if (metadata->IsUsingSprite())
@@ -1071,6 +1106,7 @@ namespace GTEngine
         this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
         this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
         this->camera.SetDataPointer(0, this);
+        this->camera.DisableSerialization();
 
 
         this->viewport.SetCameraNode(this->camera);
