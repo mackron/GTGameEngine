@@ -1,5 +1,6 @@
 
 #include <GTEngine/SceneObject.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -85,15 +86,45 @@ namespace GTEngine
 
     void SceneObject::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(this->position);
-        serializer.Write(this->orientation);
-        serializer.Write(this->scale);
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_SceneObject;
+        header.version     = 1;
+        header.sizeInBytes =
+            sizeof(glm::vec3) +     // <-- Position
+            sizeof(glm::quat) +     // <-- Orientation
+            sizeof(glm::vec3);      // <-- Scale
+
+        serializer.Write(header);
+        {
+            serializer.Write(this->position);
+            serializer.Write(this->orientation);
+            serializer.Write(this->scale);
+        }
     }
 
     void SceneObject::Deserialize(GTCore::Deserializer &deserializer)
     {
-        deserializer.Read(this->position);
-        deserializer.Read(this->orientation);
-        deserializer.Read(this->scale);
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    deserializer.Read(this->position);
+                    deserializer.Read(this->orientation);
+                    deserializer.Read(this->scale);
+
+                    break;
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing SceneObject. Unsupported version (%d).", header.version);
+                    break;
+                }
+            }
+            
+        }
     }
 }

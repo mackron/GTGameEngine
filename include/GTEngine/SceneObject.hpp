@@ -4,8 +4,7 @@
 
 #include "SceneObjectTypes.hpp"
 #include "Math.hpp"
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
+#include "Serialization.hpp"
 
 namespace GTEngine
 {
