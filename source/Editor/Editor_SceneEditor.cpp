@@ -400,40 +400,37 @@ namespace GTEngine
             {
                 metadata->Select();
 
-                assert(state->selectedNodes.Exists(&node) == false);
+                if (!state->selectedNodes.Exists(&node))
                 {
-                    if (!state->selectedNodes.Exists(&node))
-                    {
-                        state->selectedNodes.PushBack(&node);
-                    }
+                    state->selectedNodes.PushBack(&node);
+                }
 
-                    // The scripting environment needs to be aware of this change.
-                    auto &script = this->GetScript();
+                // The scripting environment needs to be aware of this change.
+                auto &script = this->GetScript();
 
-                    script.GetGlobal("Editor");
+                script.GetGlobal("Editor");
+                assert(script.IsTable(-1));
+                {
+                    script.Push("SceneEditor");
+                    script.GetTableValue(-2);
                     assert(script.IsTable(-1));
                     {
-                        script.Push("SceneEditor");
+                        script.Push("MarkNodeAsSelected");
                         script.GetTableValue(-2);
-                        assert(script.IsTable(-1));
+                        assert(script.IsFunction(-1));
                         {
-                            script.Push("MarkNodeAsSelected");
-                            script.GetTableValue(-2);
-                            assert(script.IsFunction(-1));
-                            {
-                                script.Push(&node);
-                                script.Call(1, 0);
-                            }
+                            script.Push(&node);
+                            script.Call(1, 0);
                         }
-                        script.Pop(1);
                     }
                     script.Pop(1);
-
-
-
-                    // With a change in selection, we will need to update the position of the gizmos.
-                    this->ShowTransformGizmo();
                 }
+                script.Pop(1);
+
+
+
+                // With a change in selection, we will need to update the position of the gizmos.
+                this->ShowTransformGizmo();
             }
         }
     }
