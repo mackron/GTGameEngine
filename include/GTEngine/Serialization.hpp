@@ -44,6 +44,14 @@ namespace GTEngine
         static const uint32_t ChunkID_Dynamics_CylinderShape   = 213;
         static const uint32_t ChunkID_Dynamics_CapsuleShape    = 214;
         static const uint32_t ChunkID_Dynamics_ConvexHullShape = 215;
+
+
+        // SceneObject
+        static const uint32_t ChunkID_SceneObject     = 10000;
+
+        // SceneNode
+        static const uint32_t ChunkID_SceneNode_General        = 10100;
+        static const uint32_t ChunkID_SceneNode_Components     = 10101;
     }
 }
 

@@ -1,6 +1,7 @@
 
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Scene.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -830,31 +831,69 @@ namespace GTEngine
         // First, we serialize the SceneObject.
         SceneObject::Serialize(serializer);
 
-        // Now we write everything except the components - we'll do them last.
-        serializer.Write(this->name);
-        serializer.Write(static_cast<uint32_t>(this->layer));
-        serializer.Write(this->isStatic);
-        serializer.Write(this->isVisible);
-        serializer.Write(this->inheritPosition);
-        serializer.Write(this->inheritOrientation);
-        serializer.Write(this->inheritScale);
-        serializer.Write(static_cast<uint32_t>(this->flags));
-        serializer.Write(static_cast<uint32_t>(this->typeID));
+        
+        // The first scene node chunk, besides SceneObject, is the general attributes. We're going to use an intermediate serializer here
+        // because we're writing a string.
+        GTCore::BasicSerializer secondarySerializer;
+        secondarySerializer.Write(this->name);
+        secondarySerializer.Write(static_cast<uint32_t>(this->layer));
+        secondarySerializer.Write(this->isStatic);
+        secondarySerializer.Write(this->isVisible);
+        secondarySerializer.Write(this->inheritPosition);
+        secondarySerializer.Write(this->inheritOrientation);
+        secondarySerializer.Write(this->inheritScale);
+        secondarySerializer.Write(static_cast<uint32_t>(this->flags));
+        secondarySerializer.Write(static_cast<uint32_t>(this->typeID));
 
-        // Now we will write the components. We need to keep a component count here.
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_SceneNode_General;
+        header.version     = 1;
+        header.sizeInBytes = secondarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(secondarySerializer.GetBuffer(), header.sizeInBytes);
+
+
+
+        // The next chunk contains our components. What we want to in deserialization is the ability to skip over unknown components. To do this,
+        // we need to employ a mechanism to allow the deserializer to skip over. The most intuitive way is to just supply a variable containing
+        // the size of the component data, which is what we'll be doing.
+        //
+        // We need to use an intermediary serializer to do this so we can obtain an exact chunk size.
+        GTCore::BasicSerializer componentSerializer;
+
         GTCore::Vector<GTCore::String> componentNames;
         this->GetAttachedComponentNames(componentNames);
 
-        serializer.Write(static_cast<uint32_t>(componentNames.count));
-        for (size_t i = 0; i < componentNames.count; ++i)
+        // We first write the number of components we are saving.
+        componentSerializer.Write(static_cast<uint32_t>(componentNames.count));
+
+        // Now we need to loop over every component. Because we are saving the size of the data before the actual data itself, we need to use
+        // yet another intermediary serializer so we can retrieve the size.
+        for (size_t iComponent = 0; iComponent < componentNames.count; ++iComponent)
         {
-            auto component = this->GetComponentByName(componentNames[i].c_str());
+            auto component = this->GetComponentByName(componentNames[iComponent].c_str());
             assert(component != nullptr);
             {
-                serializer.WriteString(component->GetName());
-                component->Serialize(serializer);
+                GTCore::BasicSerializer componentSubSerializer;
+                component->Serialize(componentSubSerializer);
+
+                // We write the name, the size, then the actual data.
+                componentSerializer.WriteString(component->GetName());
+                componentSerializer.Write(static_cast<uint32_t>(componentSubSerializer.GetBufferSizeInBytes()));
+                componentSerializer.Write(componentSubSerializer.GetBuffer(), componentSubSerializer.GetBufferSizeInBytes());
             }
         }
+
+
+
+        header.id          = Serialization::ChunkID_SceneNode_Components;
+        header.version     = 1;
+        header.sizeInBytes = componentSerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(componentSerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void SceneNode::Deserialize(GTCore::Deserializer &deserializer)
@@ -862,36 +901,67 @@ namespace GTEngine
         // Deserialize the SceneObject first.
         SceneObject::Deserialize(deserializer);
 
-        // Now we read everything except the components, which will come last.
-        deserializer.Read(this->name);
-        deserializer.Read(static_cast<uint32_t &>(this->layer));
-        deserializer.Read(this->isStatic);
-        deserializer.Read(this->isVisible);
-        deserializer.Read(this->inheritPosition);
-        deserializer.Read(this->inheritOrientation);
-        deserializer.Read(this->inheritScale);
-        deserializer.Read(static_cast<uint32_t &>(this->flags));
-        deserializer.Read(static_cast<uint32_t &>(this->typeID));
-
-        // Now we need to read the components. We start with a 32-bit value containing the component count.
-        uint32_t componentCount;
-        deserializer.Read(componentCount);
-
-        for (uint32_t i = 0; i < componentCount; ++i)
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
         {
-            GTCore::String name;
-            deserializer.Read(name);
-
-            // If the scene node already contains a component of this type, we just serialize straight into it.
-            auto component = this->GetComponentByName(name.c_str());
-            if (component == nullptr)
+            assert(header.id == Serialization::ChunkID_SceneNode_General);
             {
-                component = this->AddComponentByName(name.c_str());
+                switch (header.version)
+                {
+                case 1:
+                    {
+                        deserializer.Read(this->name);
+                        deserializer.Read(static_cast<uint32_t &>(this->layer));
+                        deserializer.Read(this->isStatic);
+                        deserializer.Read(this->isVisible);
+                        deserializer.Read(this->inheritPosition);
+                        deserializer.Read(this->inheritOrientation);
+                        deserializer.Read(this->inheritScale);
+                        deserializer.Read(static_cast<uint32_t &>(this->flags));
+                        deserializer.Read(static_cast<uint32_t &>(this->typeID));
+
+                        break;
+                    }
+
+                default:
+                    {
+                        GTEngine::Log("Error deserializing SceneNode. The main chunk is an unsupported version (%d).", header.version);
+                        deserializer.Seek(header.sizeInBytes);
+
+                        break;
+                    }
+                }
             }
+        }
 
-            assert(component != nullptr);
+        deserializer.Read(header);
+        {
+            assert(header.id == Serialization::ChunkID_SceneNode_Components);
             {
-                component->Deserialize(deserializer);
+                uint32_t componentCount;
+                deserializer.Read(componentCount);
+
+                for (uint32_t iComponent = 0; iComponent < componentCount; ++iComponent)
+                {
+                    GTCore::String name;
+                    deserializer.Read(name);
+
+                    uint32_t componentDataSizeInBytes;
+                    deserializer.Read(componentDataSizeInBytes);
+
+                    auto component = this->AddComponentByName(name.c_str());
+                    if (component != nullptr)
+                    {
+                        component->Deserialize(deserializer);
+                    }
+                    else
+                    {
+                        // If we get here it means the component is unknown to both the engine and the client application. For now we're going to 
+                        // just skip over the data, but in the future what we'll do is keep hold of it (placing it into a separate list) so that
+                        // future serializations can keep hold of the data rather than losing it.
+                        deserializer.Seek(componentDataSizeInBytes);
+                    }
+                }
             }
         }
     }
