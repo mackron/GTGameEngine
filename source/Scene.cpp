@@ -655,122 +655,210 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void Scene::Serialize(GTCore::Serializer &serializer) const
+    bool Scene::Serialize(GTCore::Serializer &serializer) const
     {
-        // When serializing, all we really care about are the scene nodes. Viewports and event handlers don't really make sense in the
-        // context of serialization.
+        // The first chunk to do is the flat list of scene nodes. Not every scene node should be serialized here, so what we'll do
+        // is create a flat vector containing pointers to the scene nodes that should be written. We use a vector here to make it
+        // easier to do grab the indices for the hierarchy.
+        GTCore::Vector<SceneNode*> serializedNodes;
+        for (auto iNode = this->nodes.root; iNode != nullptr; iNode = iNode->next)
+        {
+            auto node = iNode->value;
+            assert(node != nullptr);
+            {
+                if (node->IsSerializationEnabled())
+                {
+                    serializedNodes.PushBack(node);
+                }
+            }
+        }
+
+        // At this point we have a list of all the scene nodes being serialized. We can now start on serializing. The chunk ID requires
+        // a body size in bytes. What we will do is use a second basic serializer, and then copy that data into the main serializer. While
+        // we're in this loop, we're actually going to construct data for the next chunk, which is the hierarchy chunk. We do this here
+        // to save us from another loop later on.
+        GTCore::BasicSerializer secondarySerializer;
+        GTCore::Vector<SceneNodeIndexPair> childParentPairs(serializedNodes.count);
+
+        // We need a count here so we can deserialize effectively.
+        secondarySerializer.Write(static_cast<uint32_t>(serializedNodes.count));
+
+        for (size_t iNode = 0; iNode < serializedNodes.count; ++iNode)
+        {
+            auto node = serializedNodes[iNode];
+            assert(node != nullptr);
+            {
+                // Serialize first...
+                node->Serialize(secondarySerializer);
+
+                // And then find the index of the parent, if applicable.
+                if (node->GetParent() != nullptr)
+                {
+                    SceneNodeIndexPair indexPair;
+                    indexPair.childIndex  = iNode;
+
+                    size_t parentIndex;
+                    if (serializedNodes.FindFirstIndexOf(node->GetParent(), parentIndex))
+                    {
+                        indexPair.parentIndex = static_cast<uint32_t>(parentIndex);
+                        childParentPairs.PushBack(indexPair);
+                    }
+                }
+            }
+        }
+
+
+        // We have the data, now we just write it.
+        SceneChunkHeader header;
+        header.id          = SceneChunkID_SceneNodes;
+        header.version     = 1;
+        header.sizeInBytes = static_cast<uint32_t>(secondarySerializer.GetBufferSizeInBytes());
+
+        serializer.Write(header);
+        serializer.Write(secondarySerializer.GetBuffer(), header.sizeInBytes);
+
+
+
+        // At this point the first chunck has been done. We can now save the second chunk, which is the hierarchy information. This is
+        // made up of a series of index pairs, 32-bits each (64-bits in total). The first of each pair is the scene node in question. The
+        // second index is that of it's parent, as defined in the serialized data (not the data defined in the C++ structure).
         //
-        // We write everything in a sort of hierarchy format, with the children stored straight after their parent.
+        // We have already retrieved these pairs from the previous pass. We can now just copy them straight in.
+        header.id          = SceneChunkID_SceneNodesHierarchy;
+        header.version     = 1;
+        header.sizeInBytes = sizeof(SceneNodeIndexPair) * childParentPairs.count;
 
-        serializer.Write(static_cast<uint32_t>(GTEngine::SceneMagicNumber));
-        
-        // We need a count of root-level scene nodes - nodes without parents. We need this to do deserialization correctly.
-        uint32_t orphanNodeCount = 0;
-        for (auto i = this->nodes.root; i != nullptr; i = i->next)
-        {
-            auto node = i->value;
-            assert(node != nullptr);
-            {
-                if (node->GetParent() == nullptr && node->IsSerializationEnabled())
-                {
-                    ++orphanNodeCount;
-                }
-            }
-        }
+        serializer.Write(header);
+        serializer.Write(childParentPairs.buffer, header.sizeInBytes);
 
-        serializer.Write(orphanNodeCount);
-
-
-        for (auto i = this->nodes.root; i != nullptr; i = i->next)
-        {
-            auto node = i->value;
-            assert(node != nullptr);
-            {
-                // We only do nodes without parents. We will recursively read the children.
-                if (node->GetParent() == nullptr && node->IsSerializationEnabled())
-                {
-                    this->SerializeSceneNode(*node, serializer);
-                }
-            }
-        }
+        return true;
     }
 
-    void Scene::SerializeSceneNode(const SceneNode &sceneNode, GTCore::Serializer &serializer) const
+    bool Scene::Deserialize(GTCore::Deserializer &deserializer)
     {
-        sceneNode.Serialize(serializer);
+        GTCore::Vector<SceneNode*>         deserializedNodes;
+        GTCore::Vector<SceneNodeIndexPair> childParentPairs;
 
-        // We need to count the children here. We only care about children that have serialization enabled.
-        uint32_t childCount = 0;
-        for (auto i = sceneNode.GetFirstChild(); i != nullptr; i = i->GetNextSibling())
+        bool readSceneNodes          = false;
+        bool readSceneNodesHierarchy = false;
+
+
+        SceneChunkHeader header;
+        while (deserializer.Read(header) == sizeof(SceneChunkHeader))
         {
-            if (i->IsSerializationEnabled())
+            if (header.id == SceneChunkID_SceneNodes)
             {
-                ++childCount;
+                readSceneNodes = true;
+
+                switch (header.version)
+                {
+                case 1:
+                    {
+                        // We will instantiate the nodes and place a pointer to them into 'deserializedNodes'. We will not add anything to the scene until the nodes have been
+                        // linked to their parents.
+                        uint32_t nodeCount;
+                        deserializer.Read(nodeCount);
+
+                        for (uint32_t iNode = 0; iNode < nodeCount; ++iNode)
+                        {
+                            auto node = new SceneNode;
+                            node->Deserialize(deserializer);
+
+                            deserializedNodes.PushBack(node);
+                        }
+
+                        break;
+                    }
+
+                default:
+                    {
+                        GTEngine::Log("Error deserializing scene. The version of the scene node chunk is not supported. The chunk version specified is: '%d'.\n", header.version);
+                        deserializer.Seek(header.sizeInBytes);
+
+                        return false;
+                    }
+                }
+            }
+            else if (header.id == SceneChunkID_SceneNodesHierarchy)
+            {
+                readSceneNodesHierarchy = true;
+
+                switch (header.version)
+                {
+                case 1:
+                    {
+                        size_t pairCount = header.sizeInBytes / sizeof(SceneNodeIndexPair);
+
+                        childParentPairs.Reserve(pairCount);
+                        childParentPairs.count = pairCount;
+                        deserializer.Read(childParentPairs.buffer, header.sizeInBytes);
+
+                        break;
+                    }
+
+                default:
+                    {
+                        GTEngine::Log("Error deserializing scene. The version of the scene node hierarchy chunk is not supported. The chunk version specified is: '%d'.\nThe scene node hierarchy will be broken!", header.version);
+                        deserializer.Seek(header.sizeInBytes);
+
+                        // We may have nodes instantiated, so they'll need to be killed.
+                        for (size_t iNode = 0; iNode < deserializedNodes.count; ++iNode)
+                        {
+                            delete deserializedNodes[iNode];
+                        }
+
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                deserializer.Seek(header.sizeInBytes);
+            }
+
+
+            // We can break if all the chunks we need have been read.
+            if (readSceneNodes && readSceneNodesHierarchy)
+            {
+                break;
             }
         }
 
-        serializer.Write(childCount);
 
-
-        // Now we serialize the children.
-        for (auto i = sceneNode.GetFirstChild(); i != nullptr; i = i->GetNextSibling())
+        if (readSceneNodes == false)
         {
-            if (i->IsSerializationEnabled())
-            {
-                this->SerializeSceneNode(*i, serializer);
-            }
+            GTEngine::Log("Error deserializing scene. The scene node chunk (%d) was not found.");
+            return false;
         }
-    }
+
+        if (readSceneNodesHierarchy == false)
+        {
+            GTEngine::Log("Error deserializing scene. The scene node hierarchy chunk (%d) was not found.");
+
+            // We may have nodes instantiated, so they'll need to be killed.
+            for (size_t iNode = 0; iNode < deserializedNodes.count; ++iNode)
+            {
+                delete deserializedNodes[iNode];
+            }
+
+            return false;
+        }
 
 
-    void Scene::Deserialize(GTCore::Deserializer &deserializer)
-    {
-        // We're going to remove everything.
+        // At this point everything will have loaded successfully. We will now want to clear the scene add add the new scene nodes.
         this->RemoveAllObjects();
 
-
-        uint32_t magicNumber;
-        deserializer.Read(magicNumber);
-
-        if (magicNumber == GTEngine::SceneMagicNumber)
+        for (size_t iNode = 0; iNode < deserializedNodes.count; ++iNode)
         {
-            uint32_t orphanNodeCount;
-            deserializer.Read(orphanNodeCount);
-
-            for (uint32_t i = 0; i < orphanNodeCount; ++i)
+            auto node = deserializedNodes[iNode];
+            assert(node != nullptr);
             {
-                auto sceneNode = this->DeserializeSceneNode(deserializer);
-                assert(sceneNode != nullptr);
-                {
-                    this->AddSceneNode(*sceneNode);
-                }
-            }
-        }
-    }
-
-    SceneNode* Scene::DeserializeSceneNode(GTCore::Deserializer &deserializer)
-    {
-        auto node = new SceneNode;
-        node->Deserialize(deserializer);
-
-        // The next 4 bytes is the child count. Children will be stored in a hierarchal fasion, so we'll need to recursively read them, too.
-        uint32_t childCount;
-        deserializer.Read(childCount);
-
-        for (uint32_t i = 0; i < childCount; ++i)
-        {
-            auto childNode = this->DeserializeSceneNode(deserializer);
-            assert(childNode != nullptr);
-            {
-                node->AttachChild(*childNode);
+                this->AddSceneNode(*node);
             }
         }
 
-
-        return node;
+        return true;
     }
-
-    
 
 
 
