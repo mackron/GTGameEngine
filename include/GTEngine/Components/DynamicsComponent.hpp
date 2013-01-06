@@ -6,6 +6,7 @@
 #include "../Physics.hpp"
 #include "../VertexArrayLibrary.hpp"
 #include "../ConvexHull.hpp"
+#include "../Serialization.hpp"
 #include <GTCore/Vector.hpp>
 
 namespace GTEngine
@@ -164,10 +165,17 @@ namespace GTEngine
         void SetLinearFactor(float x, float y, float z);
         void SetLinearFactor(const glm::vec3 &factor) { this->SetLinearFactor(factor.x, factor.y, factor.z); }
 
+        /// Retrieves the linear factor.
+        glm::vec3 GetLinearFactor() const;
+
+
         /// Sets the angular factor.
         void SetAngularFactor(float factor);
         void SetAngularFactor(float x, float y, float z);
         void SetAngularFactor(const glm::vec3 &factor) { this->SetLinearFactor(factor.x, factor.y, factor.z); }
+
+        /// Retrieves the angular factor.
+        glm::vec3 GetAngularFactor() const;
 
 
         /// Sets the gravity of the object.
@@ -241,6 +249,18 @@ namespace GTEngine
         /// Retrieves a reference to the collision shape.
         btCompoundShape & GetCollisionShape() { return *this->collisionShape; }
 
+
+
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Component::Serialize()
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Component::Deserialize()
+        void Deserialize(GTCore::Deserializer &deserializer);
 
 
 

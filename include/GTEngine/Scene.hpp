@@ -11,6 +11,7 @@
 #include "DefaultSceneCullingManager.hpp"
 #include "DefaultSceneRenderer.hpp"
 #include "NavigationMesh.hpp"
+#include "Serialization.hpp"
 
 
 /// Contact test callbacks.
@@ -191,28 +192,6 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    /// The chunk ID's for serialization/deserialization.
-    static const uint32_t SceneChunkID_Null                = 0;
-    static const uint32_t SceneChunkID_SceneNodes          = 1;
-    static const uint32_t SceneChunkID_SceneNodesHierarchy = 2;
-    static const uint32_t SceneChunkID_EditorMetadata      = 100;
-
-    /// Structure representing a chunk header for serialization/deserialization.
-    struct SceneChunkHeader
-    {
-        uint32_t id;
-        uint32_t version;
-        uint32_t sizeInBytes;
-    };
-
-    /// Structure for pairing a scene node with it's parent for serialization/deserialization.
-    struct SceneNodeIndexPair
-    {
-        uint32_t childIndex;
-        uint32_t parentIndex;
-    };
-
-
     /// A class representing a scene.
     ///
     /// A Scene object is actually mostly just a container around managers. The managers are what perform most of the real functionality of the scene.

@@ -678,7 +678,7 @@ namespace GTEngine
         // we're in this loop, we're actually going to construct data for the next chunk, which is the hierarchy chunk. We do this here
         // to save us from another loop later on.
         GTCore::BasicSerializer secondarySerializer;
-        GTCore::Vector<SceneNodeIndexPair> childParentPairs(serializedNodes.count);
+        GTCore::Vector<Serialization::SceneNodeIndexPair> childParentPairs(serializedNodes.count);
 
         // We need a count here so we can deserialize effectively.
         secondarySerializer.Write(static_cast<uint32_t>(serializedNodes.count));
@@ -694,13 +694,13 @@ namespace GTEngine
                 // And then find the index of the parent, if applicable.
                 if (node->GetParent() != nullptr)
                 {
-                    SceneNodeIndexPair indexPair;
-                    indexPair.childIndex  = iNode;
+                    Serialization::SceneNodeIndexPair indexPair;
+                    indexPair.index0 = iNode;
 
                     size_t parentIndex;
                     if (serializedNodes.FindFirstIndexOf(node->GetParent(), parentIndex))
                     {
-                        indexPair.parentIndex = static_cast<uint32_t>(parentIndex);
+                        indexPair.index1 = static_cast<uint32_t>(parentIndex);
                         childParentPairs.PushBack(indexPair);
                     }
                 }
@@ -709,8 +709,8 @@ namespace GTEngine
 
 
         // We have the data, now we just write it.
-        SceneChunkHeader header;
-        header.id          = SceneChunkID_SceneNodes;
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_SceneNodes;
         header.version     = 1;
         header.sizeInBytes = static_cast<uint32_t>(secondarySerializer.GetBufferSizeInBytes());
 
@@ -724,9 +724,9 @@ namespace GTEngine
         // second index is that of it's parent, as defined in the serialized data (not the data defined in the C++ structure).
         //
         // We have already retrieved these pairs from the previous pass. We can now just copy them straight in.
-        header.id          = SceneChunkID_SceneNodesHierarchy;
+        header.id          = Serialization::ChunkID_SceneNodesHierarchy;
         header.version     = 1;
-        header.sizeInBytes = sizeof(SceneNodeIndexPair) * childParentPairs.count;
+        header.sizeInBytes = sizeof(Serialization::SceneNodeIndexPair) * childParentPairs.count;
 
         serializer.Write(header);
         serializer.Write(childParentPairs.buffer, header.sizeInBytes);
@@ -736,17 +736,17 @@ namespace GTEngine
 
     bool Scene::Deserialize(GTCore::Deserializer &deserializer)
     {
-        GTCore::Vector<SceneNode*>         deserializedNodes;
-        GTCore::Vector<SceneNodeIndexPair> childParentPairs;
+        GTCore::Vector<SceneNode*>                        deserializedNodes;
+        GTCore::Vector<Serialization::SceneNodeIndexPair> childParentPairs;
 
         bool readSceneNodes          = false;
         bool readSceneNodesHierarchy = false;
 
 
-        SceneChunkHeader header;
-        while (deserializer.Read(header) == sizeof(SceneChunkHeader))
+        Serialization::ChunkHeader header;
+        while (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
         {
-            if (header.id == SceneChunkID_SceneNodes)
+            if (header.id == Serialization::ChunkID_SceneNodes)
             {
                 readSceneNodes = true;
 
@@ -779,7 +779,7 @@ namespace GTEngine
                     }
                 }
             }
-            else if (header.id == SceneChunkID_SceneNodesHierarchy)
+            else if (header.id == Serialization::ChunkID_SceneNodesHierarchy)
             {
                 readSceneNodesHierarchy = true;
 
@@ -787,7 +787,7 @@ namespace GTEngine
                 {
                 case 1:
                     {
-                        size_t pairCount = header.sizeInBytes / sizeof(SceneNodeIndexPair);
+                        size_t pairCount = header.sizeInBytes / sizeof(Serialization::SceneNodeIndexPair);
 
                         childParentPairs.Reserve(pairCount);
                         childParentPairs.count = pairCount;

@@ -2,7 +2,7 @@
 # Serialized Scene Format
 
 This document gives a very rough, high level outline of the format of a serialized
-scene.
+scene. This is mainly intended as a reference for future development.
 
 
 ## General Structure
@@ -22,10 +22,10 @@ Body
 
 
 The idea behind the chunk system is to make it easy to have different things save
-additional data that it might need. The best example is editting tool, where things
-like camera positions and settings might need to be saved. This, of course, would
-be useless for most other things, so the chunk system allows that section to be
-skipped in that case.
+additional data that it might need. The best example is editting tools, where
+things like camera positions and settings might need to be saved. This, of course,
+would be useless for most other things, so the chunk system allows that section to
+be skipped in that case.
 
 To read a specific chunk, you simply skip over all chunks until you find the one
 you're look for, or until you reach the end of the file/buffer.
@@ -33,7 +33,7 @@ you're look for, or until you reach the end of the file/buffer.
     ChunkHeader header;
     while (deserializer.Read(header) == sizeof(ChunkHeader))
     {
-        if (header.id == MyID)
+        if (header.id == MyChunkID)
         {
             ReadMyChunk(deserializer, header);
             break;
