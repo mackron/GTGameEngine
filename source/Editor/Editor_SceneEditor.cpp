@@ -534,7 +534,6 @@ namespace GTEngine
         {
             for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
             {
-                this->currentState->sceneNodesToDelete.RemoveFirstOccuranceOf(this->currentState->selectedNodes[i]);
                 delete this->currentState->selectedNodes[i];
             }
             this->currentState->selectedNodes.Clear();
@@ -719,16 +718,15 @@ namespace GTEngine
             }
 
 
-            // If we're deleting on close, we need to add it to the list of nodes to delete.
-            if (metadata->DeleteOnClose())
+            // The state needs to be made aware of this node.
+            auto state = node.GetDataPointer<State>(0);
+            if (state != nullptr)
             {
-                auto state = node.GetDataPointer<State>(0);
-                if (state != nullptr)
+                if (!state->sceneNodes.Exists(&node))
                 {
-                    state->sceneNodesToDelete.PushBack(&node);
+                    state->sceneNodes.PushBack(&node);
                 }
             }
-
 
 
             // We can cheat here and just act as if the object has been refreshed.
@@ -754,6 +752,10 @@ namespace GTEngine
                     {
                         state->pickingWorld.RemoveCollisionObject(*metadata->GetSpritePickingCollisionObject());
                     }
+
+
+                    // The state needs to know that it no longer has the node.
+                    state->sceneNodes.RemoveFirstOccuranceOf(&node);
                 }
             }
 
@@ -1108,7 +1110,8 @@ namespace GTEngine
           viewportEventHandler(sceneEditor.GetEditor().GetGame(), viewport),
           selectedNodes(),
           transformGizmo(),
-          sceneNodesToDelete(),
+          //sceneNodesToDelete(),
+          sceneNodes(),
           isDraggingGizmoX(false), isDraggingGizmoY(false), isDraggingGizmoZ(false), gizmoDragFactor(1.0f, 0.0f), gizmoDragMode(GizmoDragMode_None),
           GUI()
     {
@@ -1144,9 +1147,33 @@ namespace GTEngine
 
     Editor_SceneEditor::State::~State()
     {
+        /*
         for (size_t i = 0; i < this->sceneNodesToDelete.count; ++i)
         {
             delete this->sceneNodesToDelete[i];
+        }
+        */
+
+        // For any scene node still loaded, we need to iterate over and destroy them. Note how we don't increment every time, because deleting
+        // the node will in turn remove it from the list as a result from the event handlers.
+        for (size_t i = 0; i < this->sceneNodes.count; )
+        {
+            auto node = this->sceneNodes[i];
+            assert(node != nullptr);
+            {
+                auto metadata = node->GetComponent<EditorMetadataComponent>();
+                if (metadata != nullptr)
+                {
+                    if (metadata->DeleteOnClose())
+                    {
+                        delete node;
+                        continue;
+                    }
+                }
+            }
+
+            // We'll only get here if the scene node was not deleted.
+            ++i;
         }
     }
 

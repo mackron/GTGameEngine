@@ -272,7 +272,10 @@ namespace GTEngine
             TransformGizmo transformGizmo;
 
             /// The list of scene nodes that need to be deleted when they are removed from the scene, or the state is destructed.
-            GTCore::Vector<SceneNode*> sceneNodesToDelete;
+            //GTCore::Vector<SceneNode*> sceneNodesToDelete;
+
+            /// A flat list of every loaded scene node. We need this so we can delete them when the state object is destructed.
+            GTCore::Vector<SceneNode*> sceneNodes;
 
 
 
