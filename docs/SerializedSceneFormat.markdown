@@ -50,13 +50,13 @@ Instead, each chunk has it's own localised versioning.
 
 ## Engine-Defined Chunks
 
-### Scene Nodes - Chunk ID 1
+### Scene Nodes - ChunkID_SceneNodes
 
 A flat list containing the serialized data of each scene node. This does not contain
 hierarchy information (parent, children).
 
 
-### Scene Nodes Hierarcy - Chunk ID 2
+### Scene Nodes Hierarcy - ChunkID_SceneNodesHierarchy
 
 A flat list of indices used to link scene nodes with their parent, if any. For each
 scene node with a parent, this has two indices - the index of the node in question
@@ -64,7 +64,7 @@ and the index of it's parent. Nodes without parents are not included in this lis
 The indices are index into the list retrieved from the "Scene Nodes" chunk.
 
 
-### Editor Metadata - Chunk ID 100
+### Editor Metadata - ChunkID_SceneEditorMetadata
 
 Metadata for the scene editor. Contains things like the camera transformation at the
 time of serialization.
