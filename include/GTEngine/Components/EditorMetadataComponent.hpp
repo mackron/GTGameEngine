@@ -172,6 +172,18 @@ namespace GTEngine
 
 
 
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Component::Serialize()
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Component::Deserialize()
+        void Deserialize(GTCore::Deserializer &deserializer);
+
+
+
     private:
 
         /// Deletes the collision shape and sets the pointer to null.

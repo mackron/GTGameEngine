@@ -385,6 +385,76 @@ namespace GTEngine
 
 
 
+    ///////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void EditorMetadataComponent::Serialize(GTCore::Serializer &serializer) const
+    {
+        serializer.Write(this->alwaysShowOnTop);
+        serializer.Write(this->useModelForPickingShape);
+        serializer.Write(this->deleteOnClose);
+        serializer.Write(this->isSelected);
+        serializer.Write(this->selectionWireframeColour);
+        serializer.Write(static_cast<uint32_t>(this->pickingCollisionShapeType));
+        serializer.Write(this->pickingCollisionGroup);
+
+        if (this->IsUsingSprite())
+        {
+            serializer.Write(true);
+            serializer.Write(this->spriteTexturePath);
+        }
+        else
+        {
+            serializer.Write(false);
+        }
+
+        serializer.Write(this->IsShowingDirectionArrow());
+    }
+
+    void EditorMetadataComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        deserializer.Read(this->alwaysShowOnTop);
+        deserializer.Read(this->useModelForPickingShape);
+        deserializer.Read(this->deleteOnClose);
+        deserializer.Read(this->isSelected);
+        deserializer.Read(this->selectionWireframeColour);
+        
+        uint32_t pickingCollisionShapeTypeIn;
+        deserializer.Read(pickingCollisionShapeTypeIn);
+        this->pickingCollisionShapeType = static_cast<PickingCollisionShapeType>(pickingCollisionShapeTypeIn);
+
+        deserializer.Read(this->pickingCollisionGroup);
+
+        bool isUsingSprite;
+        deserializer.Read(isUsingSprite);
+        
+        if (isUsingSprite)
+        {
+            deserializer.Read(this->spriteTexturePath);
+            this->ShowSprite(this->spriteTexturePath.c_str());
+        }
+
+
+        bool isShowingDirectionArrow;
+        deserializer.Read(isShowingDirectionArrow);
+
+        if (isShowingDirectionArrow)
+        {
+            this->ShowDirectionArrow();
+        }
+
+
+
+        // We'll try setting the model for the picking shape now.
+        if (this->useModelForPickingShape)
+        {
+            this->SetPickingCollisionShapeToModel();
+        }
+    }
+
+
+
+
     void EditorMetadataComponent::DeleteCollisionShape()
     {
         if (this->pickingCollisionShape != nullptr)
