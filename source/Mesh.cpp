@@ -3,6 +3,7 @@
 #include <GTEngine/CPUVertexShader_Skinning.hpp>
 #include <GTEngine/Rendering.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -129,70 +130,123 @@ namespace GTEngine
 
     void Mesh::Serialize(GTCore::Serializer &serializer, bool serializeGeometry) const
     {
-        // We'll write a version number just in case we want to change a few things, which is probable.
-        serializer.Write(static_cast<uint32_t>(1));
-
-        // We need to save the file name of the material.
-        if (this->material && !this->material->GetDefinition().fileName.IsEmpty())
+        // We'll write the material chunk first.
+        if (this->material != nullptr && !this->material->GetDefinition().fileName.IsEmpty())
         {
-            serializer.Write(true);
-            serializer.Write(this->material->GetDefinition().fileName);
+            GTCore::BasicSerializer materialSerializer;
+            
+            materialSerializer.Write(this->material->GetDefinition().fileName);
+            this->material->Serialize(materialSerializer);
 
-            // The material itself needs to be serialized.
-            this->material->Serialize(serializer);
 
 
-            // Geometry, if applicable.
-            if (serializeGeometry && this->geometry != nullptr)
-            {
-                serializer.Write(true);
-                this->geometry->Serialize(serializer);
-            }
-            else
-            {
-                serializer.Write(false);
-            }
+            Serialization::ChunkHeader header;
+            header.id          = Serialization::ChunkID_Mesh_Material;
+            header.version     = 1;
+            header.sizeInBytes = materialSerializer.GetBufferSizeInBytes();
+
+            serializer.Write(header);
+            serializer.Write(materialSerializer.GetBuffer(), header.sizeInBytes);
         }
-        else
+
+        // Now the geometry.
+        if (this->geometry != nullptr && serializeGeometry)
         {
-            serializer.Write(false);
+            GTCore::BasicSerializer geometrySerializer;
+
+            this->geometry->Serialize(geometrySerializer);
+
+
+
+            Serialization::ChunkHeader header;
+            header.id          = Serialization::ChunkID_Mesh_Geometry;
+            header.version     = 1;
+            header.sizeInBytes = geometrySerializer.GetBufferSizeInBytes();
+
+            serializer.Write(header);
+            serializer.Write(geometrySerializer.GetBuffer(), header.sizeInBytes);
         }
+
+
+        // We want a null chunk at the end so we can do an iteration-based deserializer.
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_Null;
+        header.version     = 1;
+        header.sizeInBytes = 0;
+        serializer.Write(header);
     }
 
     void Mesh::Deserialize(GTCore::Deserializer &deserializer)
     {
-        uint32_t version;
-        deserializer.Read(version);
+        Serialization::ChunkHeader header;
 
-
-        bool hasMaterial;
-        deserializer.Read(hasMaterial);
-
-        if (hasMaterial)
+        do
         {
-            GTCore::String fileName;
-            deserializer.Read(fileName);
+            deserializer.Read(header);
 
-            this->SetMaterial(fileName.c_str());
-
-            // The new material needs to be deserialized now.
-            this->material->Deserialize(deserializer);
-
-
-            // Now the geometry.
-            bool deserializeGeometry;
-            deserializer.Read(deserializeGeometry);
-            
-            if (deserializeGeometry)
+            switch (header.id)
             {
-                if (this->deleteGeometry)
+            case Serialization::ChunkID_Mesh_Material:
                 {
-                    GarbageCollector::MarkForCollection(this->geometry);
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            GTCore::String materialPath;
+                            deserializer.Read(materialPath);
+
+                            this->SetMaterial(materialPath.c_str());
+                            this->material->Deserialize(deserializer);
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing Mesh. Material chunk is an unsupported version (%d).", header.version);
+                            break;
+                        }
+                    }
+
+                    break;
                 }
 
-                this->SetGeometry(new VertexArray(deserializer));
-                this->deleteGeometry = true;
+            case Serialization::ChunkID_Mesh_Geometry:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            if (this->deleteGeometry)
+                            {
+                                GarbageCollector::MarkForCollection(this->geometry);
+                            }
+
+                            this->SetGeometry(new VertexArray(deserializer));
+                            this->deleteGeometry = true;
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing Mesh. Geometry chunk is an unsupported version (%d).", header.version);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+            default:
+                {
+                    // We're not aware of the chunk, so we'll skip it.
+                    deserializer.Seek(header.sizeInBytes);
+
+                    break;
+                }
             }
-        }
+
+        } while (header.id != Serialization::ChunkID_Null);
     }
 }

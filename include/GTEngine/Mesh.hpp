@@ -7,9 +7,8 @@
 #include "Math.hpp"
 #include "SkinningVertexAttribute.hpp"
 #include "GarbageCollector.hpp"
+#include "Serialization.hpp"
 #include "Rendering/DrawModes.hpp"
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
