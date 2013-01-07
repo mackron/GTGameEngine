@@ -258,25 +258,63 @@ namespace GTEngine
 
     void Animation::Serialize(GTCore::Serializer &serializer) const
     {
-        // We'll save a version just in case we need to change the data later.
-        serializer.Write(static_cast<uint32_t>(1));
+        GTCore::BasicSerializer playbackSerializer;
+        
+        this->keyFrameQueue.Serialize(playbackSerializer);
+        
+        playbackSerializer.Write(this->isPlaying);
+        playbackSerializer.Write(this->playbackTime);
+        playbackSerializer.Write(static_cast<uint32_t>(this->loopStartQueueIndex));
 
-        this->keyFrameQueue.Serialize(serializer);
 
-        serializer.Write(this->isPlaying);
-        serializer.Write(this->playbackTime);
-        serializer.Write(static_cast<uint32_t>(this->loopStartQueueIndex));
+        // The current playback state chunk.
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_Animation_PlaybackState;
+        header.version     = 1;
+        header.sizeInBytes = playbackSerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(playbackSerializer.GetBuffer(), header.sizeInBytes);
+
+
+
+        // Null terminator.
+        header.id          = Serialization::ChunkID_Null;
+        header.version     = 1;
+        header.sizeInBytes = 0;
+        serializer.Write(header);
     }
 
     void Animation::Deserialize(GTCore::Deserializer &deserializer)
     {
-        uint32_t version;
-        deserializer.Read(version);
+        // We are going to use an iteration based deserializer here.
+        Serialization::ChunkHeader header;
 
-        this->keyFrameQueue.Deserialize(deserializer);
+        do
+        {
+            deserializer.Read(header);
 
-        deserializer.Read(this->isPlaying);
-        deserializer.Read(this->playbackTime);
-        deserializer.Read(static_cast<uint32_t &>(this->loopStartQueueIndex));
+            switch (header.id)
+            {
+            case Serialization::ChunkID_Animation_PlaybackState:
+                {
+                    this->keyFrameQueue.Deserialize(deserializer);
+
+                    deserializer.Read(this->isPlaying);
+                    deserializer.Read(this->playbackTime);
+                    deserializer.Read(static_cast<uint32_t &>(this->loopStartQueueIndex));
+
+                    break;
+                }
+
+            default:
+                {
+                    // We don't know the chunk, so we'll skip over it.
+                    deserializer.Seek(header.sizeInBytes);
+                    break;
+                }
+            }
+
+        } while (header.id != Serialization::ChunkID_Null);
     }
 }
