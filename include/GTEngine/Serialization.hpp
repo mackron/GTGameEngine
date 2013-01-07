@@ -138,6 +138,9 @@ namespace GTEngine
 
         // Model
         static const uint32_t ChunkID_Model_Main                            = CHUNK_ID(0x00000500U);
+        static const uint32_t ChunkID_Model_Meshes                          = CHUNK_ID(0x00000501U);
+        static const uint32_t ChunkID_Model_Bones                           = CHUNK_ID(0x00000502U);
+        static const uint32_t ChunkID_Model_Animation                       = CHUNK_ID(0x00000503U);
     }
 }
 
