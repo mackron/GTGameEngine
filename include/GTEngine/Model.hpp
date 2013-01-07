@@ -5,9 +5,9 @@
 #include "ModelDefinition.hpp"
 #include "Mesh.hpp"
 #include "Animation/Animation.hpp"
+#include "Serialization.hpp"
 #include <GTCore/Vector.hpp>
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
+
 
 namespace GTEngine
 {

@@ -243,116 +243,220 @@ namespace GTEngine
 
     void Model::Serialize(GTCore::Serializer &serializer) const
     {
-        // A version just in case we need to change a few things, which is probable.
-        serializer.Write(static_cast<uint32_t>(1));
+        // A model has a fairly complex set of properties. Geometry, materials, bones, animation state, etc. We're going to have a null chunk
+        // at the end so we can do an iteration-based deserializer.
 
+        // The first chunk contains the mesh data. We save the mesh data differently depending on whether or not the model is procedural. If
+        // it is, we need to save the geometry data.
+        GTCore::BasicSerializer meshesSerializer;
 
-        // A model will be serialized differently depending on whether or not it was loaded from a file. When loaded from a file, we
-        // will only save basic state information. Otherwise, if the model is procedural, we'll want to save everything.
-        if (&this->definition == &NullModelDefinition)
+        bool serializeMeshGeometry = &this->definition == &NullModelDefinition;
+        
+        meshesSerializer.Write(static_cast<uint32_t>(meshes.count));
+        for (size_t i = 0; i < meshes.count; ++i)
         {
-            serializer.Write(true);
-
-            // Meshes.
-            serializer.Write(static_cast<uint32_t>(this->meshes.count));
-            for (size_t i = 0; i < this->meshes.count; ++i)
+            auto mesh = this->meshes[i];
+            assert(mesh != nullptr);
             {
-                this->meshes[i]->Serialize(serializer, true);       // 'true' means to write the geometry data.
+                this->meshes[i]->Serialize(meshesSerializer, serializeMeshGeometry);
             }
         }
-        else
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_Model_Meshes;
+        header.version     = 1;
+        header.sizeInBytes = meshesSerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(meshesSerializer.GetBuffer(), header.sizeInBytes);
+
+
+
+        // Now bones. We'll only write this chunk if we actually have bones.
+        if (this->bones.count > 0)
         {
-            serializer.Write(false);
-
-            // Meshes.
-            serializer.Write(static_cast<uint32_t>(this->meshes.count));
-            for (size_t i = 0; i < this->meshes.count; ++i)
-            {
-                this->meshes[i]->Serialize(serializer, false);       // 'false' means to not save the geometry data.
-            }
-
-            // Bones.
-            serializer.Write(static_cast<uint32_t>(this->bones.count));
+            GTCore::BasicSerializer bonesSerializer;
+            
+            bonesSerializer.Write(static_cast<uint32_t>(bones.count));
             for (size_t i = 0; i < this->bones.count; ++i)
             {
-                this->bones[i]->Serialize(serializer);
+                auto bone = this->bones[i];
+                assert(bone != nullptr);
+                {
+                    bone->Serialize(bonesSerializer);
+                }
             }
 
-            // Animation.
-            this->animation.Serialize(serializer);
-            serializer.Write(this->animationPlaybackSpeed);
+
+            header.id          = Serialization::ChunkID_Model_Bones;
+            header.version     = 1;
+            header.sizeInBytes = bonesSerializer.GetBufferSizeInBytes();
+
+            serializer.Write(header);
+            serializer.Write(bonesSerializer.GetBuffer(), header.sizeInBytes);
         }
+
+        
+        // Finally, the animation. We only write this chunk if we actually have animation key frames.
+        if (this->animation.GetKeyFrameCount() > 0)
+        {
+            GTCore::BasicSerializer animationSerializer;
+
+            this->animation.Serialize(animationSerializer);
+            animationSerializer.Write(this->animationPlaybackSpeed);
+
+
+            header.id      = Serialization::ChunkID_Model_Animation;
+            header.version = 1;
+            header.sizeInBytes = animationSerializer.GetBufferSizeInBytes();
+
+            serializer.Write(header);
+            serializer.Write(animationSerializer.GetBuffer(), header.sizeInBytes);
+        }
+
+
+
+        // Finally, the null terminator.
+        header.id          = Serialization::ChunkID_Null;
+        header.version     = 1;
+        header.sizeInBytes = 0;
+        serializer.Write(header);
     }
 
     void Model::Deserialize(GTCore::Deserializer &deserializer)
     {
-        // A version just in case we need to change a few things, which is probable.
-        uint32_t version;
-        deserializer.Read(version);
+        // We're going to us a iteration based deserialization system here. Basically, we keep reading chunks until we hit the null terminator.
+        Serialization::ChunkHeader header;
 
-
-        bool isProcedural;
-        deserializer.Read(isProcedural);
-
-
-        uint32_t meshCount;
-        deserializer.Read(meshCount);
-
-        // We now have to pass a few assertions. First of all, if 'isProcedural' is true, it must also be try that this->definition == NullModelDefinition. If it is
-        // not procedural, we must assert that the mesh counts are the same.
-        if (isProcedural)
+        do
         {
-            assert(&this->definition == &NullModelDefinition);
-            {
-                // If the mesh counts are different, it might just mean that the model is empty. This is a valid state. In this case, we'll just re-create the meshes.
-                if (meshCount != this->meshes.count)
-                {
-                    this->Clear();
+            deserializer.Read(header);
 
-                    for (size_t i = 0; i < meshCount; ++i)
+            switch (header.id)
+            {
+            case Serialization::ChunkID_Model_Meshes:
+                {
+                    switch (header.version)
                     {
-                        auto mesh = this->AttachMesh(nullptr, nullptr, nullptr);
-                        mesh->Deserialize(deserializer);
+                    case 1:
+                        {
+                            uint32_t meshCount;
+                            deserializer.Read(meshCount);
+
+                            // Keeps track of whether or not we are allocating new meshes.
+                            bool allocateNewMeshes = false;
+
+                            // If we don't have any meshes, it probably means we're deserializing from an empty model. We'll create the meshes here.
+                            if (this->meshes.count == 0)
+                            {
+                                allocateNewMeshes = true;
+                            }
+                            else
+                            {
+                                // For now, we need to assert that the current instantiation has the same number of meshes. Should probably improve this later.
+                                assert(this->meshes.count == meshCount);
+
+                                // We don't want to allocate new meshes.
+                                allocateNewMeshes = false;
+                            }
+
+                            for (uint32_t iMesh = 0; iMesh < meshCount; ++iMesh)
+                            {
+                                Mesh* mesh = nullptr;
+
+                                if (allocateNewMeshes)
+                                {
+                                    mesh = this->AttachMesh(nullptr, nullptr, nullptr);
+                                }
+                                else
+                                {
+                                    mesh = this->meshes[iMesh];
+                                }
+
+
+                                assert(mesh != nullptr);
+                                {
+                                    mesh->Deserialize(deserializer);
+                                }
+                            }
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing model. Meshes chunk has an unsupported version (%d).", header.version);
+                            break;
+                        }
                     }
+
+                    break;
                 }
-                else
+
+
+            case Serialization::ChunkID_Model_Bones:
                 {
-                    for (size_t i = 0; i < meshCount; ++i)
+                    switch (header.version)
                     {
-                        this->meshes[i]->Deserialize(deserializer);
+                    case 1:
+                        {
+                            uint32_t boneCount;
+                            deserializer.Read(boneCount);
+
+                            // For now, we assert that the bone count is the same as the current instantiation. This needs improving.
+                            assert(this->bones.count == boneCount);
+                            {
+                                for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+                                {
+                                    this->bones[iBone]->Deserialize(deserializer);
+                                }
+                            }
+
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing model. Bones chunk has an unsupported version (%d).", header.version);
+                            break;
+                        }
                     }
+
+                    break;
                 }
-            }
-        }
-        else
-        {
-            assert(meshCount == this->meshes.count);
-            assert(!this->definition.fileName.IsEmpty());
-            {
-                for (uint32_t i = 0; i < meshCount; ++i)
+
+            case Serialization::ChunkID_Model_Animation:
                 {
-                    this->meshes[i]->Deserialize(deserializer);
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            this->animation.Deserialize(deserializer);
+                            deserializer.Read(this->animationPlaybackSpeed);
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing model. Bones chunk has an unsupported version (%d).", header.version);
+                            break;
+                        }
+                    }
+
+                    break;
                 }
-            }
 
-
-            // Bones.
-            uint32_t boneCount;
-            deserializer.Read(boneCount);
-
-            assert(boneCount == this->bones.count);
-            {
-                for (uint32_t i = 0; i < boneCount; ++i)
+            default:
                 {
-                    this->bones[i]->Deserialize(deserializer);
+                    // We don't know about the chunk so we'll just skip it.
+                    deserializer.Seek(header.sizeInBytes);
+                    break;
                 }
             }
 
-
-            // Animation.
-            this->animation.Deserialize(deserializer);
-            deserializer.Read(this->animationPlaybackSpeed);
-        }
+        } while (header.id != Serialization::ChunkID_Null);
     }
 
 
