@@ -810,6 +810,7 @@ function GTGUI.Element:SceneEditor()
     self.IsRMBDown               = false;
     self.MouseMovedWhileCaptured = false;                -- Used to determine whether or not to show the right-click context menu.
     self.HasMouseCapture         = false;
+    self.IsMouseOverViewport     = false;
     
     
     self.Panel:SceneEditorPanel();
@@ -932,25 +933,17 @@ function GTGUI.Element:SceneEditor()
         self.Panel:UpdateTransformPanel(node);
     end
     
+
     
-    
-    self.Viewport:OnKeyPressed(function(data)
-        if data.key == GTCore.Keys.Delete then
-            Editor.SceneEditor.DeleteSelectedSceneNodes();
-        elseif data.key == GTCore.Keys.T then
-            Editor.SceneEditor.SwitchGizmoToTranslateMode();
-        elseif data.key == GTCore.Keys.R then
-            Editor.SceneEditor.SwitchGizmoToRotateMode();
-        elseif data.key == GTCore.Keys.S then
-            Editor.SceneEditor.SwitchGizmoToScaleMode();
-        elseif data.key == GTCore.Keys.L then
-            Editor.SceneEditor.SwitchGizmoToLocalSpace();
-        elseif data.key == GTCore.Keys.G then
-            Editor.SceneEditor.SwitchGizmoToGlobalSpace();
-        elseif data.key == GTCore.Keys.Q then
-            Editor.SceneEditor.ToggleGizmoSpace();
-        end
+    self.Viewport:OnMouseEnter(function()
+        self.IsMouseOverViewport = true;
     end);
+    
+    self.Viewport:OnMouseLeave(function()
+        self.IsMouseOverViewport = false;
+    end);
+    
+    
     
     
     
@@ -1023,6 +1016,27 @@ function GTGUI.Element:SceneEditor()
     self:WatchMouseMove(function(data)
         if self.HasMouseCapture then
             self.MouseMovedWhileCaptured = true;
+        end
+    end);
+    
+    
+    self:WatchKeyPressed(function(data)
+        if self.IsMouseOverViewport and not GTGUI.Server.DoesFocusedElementHaveEditableText() then
+            if data.key == GTCore.Keys.Delete then
+                Editor.SceneEditor.DeleteSelectedSceneNodes();
+            elseif data.key == GTCore.Keys.T then
+                Editor.SceneEditor.SwitchGizmoToTranslateMode();
+            elseif data.key == GTCore.Keys.R then
+                Editor.SceneEditor.SwitchGizmoToRotateMode();
+            elseif data.key == GTCore.Keys.S then
+                Editor.SceneEditor.SwitchGizmoToScaleMode();
+            elseif data.key == GTCore.Keys.L then
+                Editor.SceneEditor.SwitchGizmoToLocalSpace();
+            elseif data.key == GTCore.Keys.G then
+                Editor.SceneEditor.SwitchGizmoToGlobalSpace();
+            elseif data.key == GTCore.Keys.Q then
+                Editor.SceneEditor.ToggleGizmoSpace();
+            end
         end
     end);
     
