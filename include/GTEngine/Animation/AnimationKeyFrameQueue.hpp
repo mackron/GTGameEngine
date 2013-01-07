@@ -2,9 +2,9 @@
 #ifndef __GTEngine_AnimationKeyFrameQueue_hpp_
 #define __GTEngine_AnimationKeyFrameQueue_hpp_
 
+#include "../Serialization.hpp"
 #include <GTCore/Vector.hpp>
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
+
 
 namespace GTEngine
 {
