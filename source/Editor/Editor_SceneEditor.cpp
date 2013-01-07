@@ -98,14 +98,8 @@ namespace GTEngine
                             // At this point we should actually load the scene file. If this is an empty file, we'll just load an empty scene.
                             if (GTCore::IO::Size(file) > 0)
                             {
-                                this->currentState->transformGizmo.Hide();
-
                                 GTCore::FileDeserializer deserializer(file);
-                                this->currentState->scene.Deserialize(deserializer);
-
-                                // The deserializer will clear the scene, so we'll need to re-add the camera and gizmo.
-                                this->currentState->scene.AddSceneNode(this->currentState->camera);
-                                this->currentState->scene.AddSceneNode(this->currentState->transformGizmo.GetSceneNode());
+                                this->DeserializeScene(*this->currentState, deserializer);
                             }
 
 
@@ -151,14 +145,17 @@ namespace GTEngine
         auto iState = this->loadedStates.Find(absolutePath);
         if (iState != nullptr)
         {
-            FILE* file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Write);
-            if (file != nullptr)
+            assert(iState->value != nullptr);
             {
-                GTCore::FileSerializer serializer(file);
-                iState->value->scene.Serialize(serializer);
-            }
+                FILE* file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Write);
+                if (file != nullptr)
+                {
+                    GTCore::FileSerializer serializer(file);
+                    this->SerializeScene(*iState->value, serializer);
+                }
 
-            GTCore::IO::Close(file);
+                GTCore::IO::Close(file);
+            }
 
             return true;
         }
@@ -1038,6 +1035,68 @@ namespace GTEngine
         }
     }
 
+    void Editor_SceneEditor::UpdateGizmo()
+    {
+        this->RepositionGizmos();
+        this->RescaleGizmos();
+    }
+
+
+
+    void Editor_SceneEditor::SerializeScene(const State &state, GTCore::Serializer &serializer) const
+    {
+        state.scene.Serialize(serializer);
+
+        // We now want to save our own chunk. This will contain metadata such as the camera position and whatnot.
+        GTCore::BasicSerializer metadataSerializer;
+        
+        state.camera.Serialize(metadataSerializer);
+        metadataSerializer.Write(state.cameraXRotation);
+        metadataSerializer.Write(state.cameraYRotation);
+
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_SceneEditorMetadata;
+        header.version     = 1;
+        header.sizeInBytes = metadataSerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(metadataSerializer.GetBuffer(), header.sizeInBytes);
+    }
+
+
+    void Editor_SceneEditor::DeserializeScene(State &state, GTCore::Deserializer &deserializer)
+    {
+        state.transformGizmo.Hide();
+
+
+        // With pre-deserialization done, we can now do a full deserialization of the scene.
+        state.scene.Deserialize(deserializer);
+
+        // We now want to load the metadata chunk. We'll peek at the next chunk and see if that's it. We should probably do an iteration type
+        // system later on.
+        Serialization::ChunkHeader header;
+        deserializer.Peek(&header, sizeof(Serialization::ChunkHeader));
+
+        if (header.id == Serialization::ChunkID_SceneEditorMetadata)
+        {
+            // Since we only peeked at the header, we'll need to now seek past it.
+            deserializer.Seek(sizeof(Serialization::ChunkHeader));
+
+            // The camera node needs to be deserialized.
+            state.camera.Deserialize(deserializer);
+            deserializer.Read(state.cameraXRotation);
+            deserializer.Read(state.cameraYRotation);
+        }
+
+
+        // The deserializer will clear the scene, so we'll need to re-add the camera and gizmo.
+        state.scene.AddSceneNode(state.camera);
+        state.scene.AddSceneNode(state.transformGizmo.GetSceneNode());
+
+        this->UpdateGizmo();
+    }
 
 
     void Editor_SceneEditor::SetCurrentSceneInScript(Scene* scene, const char* elementID)
