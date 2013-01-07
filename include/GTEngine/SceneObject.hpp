@@ -147,6 +147,12 @@ namespace GTEngine
         glm::vec3 GetUpVector() const;
 
 
+        /// Rotates the object about the world axis.
+        ///
+        /// @param angle [in] The angle of rotation.
+        /// @param axis  [in] The axis of rotation.
+        void RotateAroundWorldAxis(float angle, const glm::vec3 &axis);
+
         /// Rotates the object about the world axis around the given pivot point.
         ///
         /// @param angle [in] The angle of rotation.

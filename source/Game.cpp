@@ -840,6 +840,10 @@ namespace GTEngine
         delete this->window;
 
         ThreadCache::UnacquireThread(this->updateThread);
+
+
+        // NOTE: Got a random crash here. I think it was the destructor of the window. I recently added garbage collection for renderers, so perhaps
+        //       there is a sync issue with that. My first thought is that maybe the renderer was destructing rendering resources or something... don't know for sure.
     }
 
     void Game::Loop()

@@ -937,6 +937,18 @@ function GTGUI.Element:SceneEditor()
     self.Viewport:OnKeyPressed(function(data)
         if data.key == GTCore.Keys.Delete then
             Editor.SceneEditor.DeleteSelectedSceneNodes();
+        elseif data.key == GTCore.Keys.T then
+            Editor.SceneEditor.SwitchGizmoToTranslateMode();
+        elseif data.key == GTCore.Keys.R then
+            Editor.SceneEditor.SwitchGizmoToRotateMode();
+        elseif data.key == GTCore.Keys.S then
+            Editor.SceneEditor.SwitchGizmoToScaleMode();
+        elseif data.key == GTCore.Keys.L then
+            Editor.SceneEditor.SwitchGizmoToLocalSpace();
+        elseif data.key == GTCore.Keys.G then
+            Editor.SceneEditor.SwitchGizmoToGlobalSpace();
+        elseif data.key == GTCore.Keys.Q then
+            Editor.SceneEditor.ToggleGizmoSpace();
         end
     end);
     
