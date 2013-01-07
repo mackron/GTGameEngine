@@ -63,7 +63,7 @@ namespace GTEngine
 
 
         object.setLinearVelocity(linearVelocity);
-        object.setAngularFactor(angularVelocity);
+        object.setAngularVelocity(angularVelocity);
     }
 
 

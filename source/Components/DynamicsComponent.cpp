@@ -1108,6 +1108,7 @@ namespace GTEngine
 
         // The scale needs to be applied.
         this->ApplySceneNodeScaling();
+        this->ApplySceneNodeTransformation();
 
         // The mass needs to be updated.
         this->UpdateMass();
