@@ -343,7 +343,9 @@ namespace GTEngine
         if (this->rigidBody->getMotionState() != nullptr)
         {
             this->rigidBody->getMotionState()->getWorldTransform(transform);
+
             this->rigidBody->setWorldTransform(transform);
+            this->rigidBody->setInterpolationWorldTransform(transform);
         }
     }
 
@@ -1175,6 +1177,17 @@ namespace GTEngine
 
         this->rigidBody->setMassProps(this->mass, inertia);
         this->rigidBody->updateInertiaTensor();
+
+
+        // If we've turned into a static object there's a few things we'll want to do. First, we want the linear and angular velocities to
+        // be reset to zero. After that, we want to ensure the rigid body is positioned at the same position as the scene node.
+        if (this->mass == 0.0f)
+        {
+            this->rigidBody->setLinearVelocity( btVector3(0.0f, 0.0f, 0.0f));
+            this->rigidBody->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
+
+            this->ApplySceneNodeTransformation();
+        }
 
         if (world != nullptr)
         {

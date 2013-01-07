@@ -54,7 +54,14 @@ namespace GTEngine
             this->world.RemoveRigidBody(object);
         }
 
-        object.setWorldTransform(BulletUtils::CreateTransform(newTransform));
+
+
+        btTransform bulletTransform = ToBulletTransform(newTransform);
+
+        object.setWorldTransform(bulletTransform);
+        object.setInterpolationWorldTransform(bulletTransform);
+
+
 
         if (objectWorld == &this->world)
         {
