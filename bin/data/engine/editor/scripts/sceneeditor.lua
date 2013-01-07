@@ -1022,20 +1022,26 @@ function GTGUI.Element:SceneEditor()
     
     self:WatchKeyPressed(function(data)
         if self.IsMouseOverViewport and not GTGUI.Server.DoesFocusedElementHaveEditableText() then
-            if data.key == GTCore.Keys.Delete then
-                Editor.SceneEditor.DeleteSelectedSceneNodes();
-            elseif data.key == GTCore.Keys.T then
-                Editor.SceneEditor.SwitchGizmoToTranslateMode();
-            elseif data.key == GTCore.Keys.R then
-                Editor.SceneEditor.SwitchGizmoToRotateMode();
-            elseif data.key == GTCore.Keys.S then
-                Editor.SceneEditor.SwitchGizmoToScaleMode();
-            elseif data.key == GTCore.Keys.L then
-                Editor.SceneEditor.SwitchGizmoToLocalSpace();
-            elseif data.key == GTCore.Keys.G then
-                Editor.SceneEditor.SwitchGizmoToGlobalSpace();
-            elseif data.key == GTCore.Keys.Q then
-                Editor.SceneEditor.ToggleGizmoSpace();
+            if not GTGUI.Server.IsCTRLKeyDown() then
+                if data.key == GTCore.Keys.Delete then
+                    Editor.SceneEditor.DeleteSelectedSceneNodes();
+                elseif data.key == GTCore.Keys.T then
+                    Editor.SceneEditor.SwitchGizmoToTranslateMode();
+                elseif data.key == GTCore.Keys.R then
+                    Editor.SceneEditor.SwitchGizmoToRotateMode();
+                elseif data.key == GTCore.Keys.S then
+                    Editor.SceneEditor.SwitchGizmoToScaleMode();
+                elseif data.key == GTCore.Keys.L then
+                    Editor.SceneEditor.SwitchGizmoToLocalSpace();
+                elseif data.key == GTCore.Keys.G then
+                    Editor.SceneEditor.SwitchGizmoToGlobalSpace();
+                elseif data.key == GTCore.Keys.Q then
+                    Editor.SceneEditor.ToggleGizmoSpace();
+                end
+            else
+                if data.key == GTCore.Keys.D then
+                    Editor.SceneEditor.DuplicateSelectedSceneNodes();           -- This will deselect the source nodes and select the new ones.
+                end
             end
         end
     end);

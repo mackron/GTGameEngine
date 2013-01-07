@@ -141,6 +141,9 @@ namespace GTEngine
         /// Deletes the selected scene nodes.
         void DeleteSelectedSceneNodes();
 
+        /// Duplicates the selected scene nodes, deselects them and then selects the new ones.
+        void DuplicateSelectedSceneNodes();
+
 
         ///////////////////////////////////////////////////
         // Events
@@ -425,8 +428,12 @@ namespace GTEngine
             ///     Argument 1: A GTEngine.SceneNode:Create() table. The '_internalPtr' property is a pointer to the C++ SceneNode object.
             static int DeselectSceneNode(GTCore::Script &script);
 
+
             /// Deletes all of the selected nodes.
             static int DeleteSelectedSceneNodes(GTCore::Script &script);
+
+            /// Duplicates the selected scene nodes.
+            static int DuplicateSelectedSceneNodes(GTCore::Script &script);
 
 
             /// Switches the gizmo to translate mode.
