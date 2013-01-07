@@ -156,6 +156,7 @@ namespace GTEngine
         static const uint32_t ChunkID_VertexArray_Info                      = CHUNK_ID(0x00001010U);
         static const uint32_t ChunkID_VertexArray_Vertices                  = CHUNK_ID(0x00001011U);
         static const uint32_t ChunkID_VertexArray_Indices                   = CHUNK_ID(0x00001012U);
+        static const uint32_t ChunkID_ShaderParameters                      = CHUNK_ID(0x00001013U);
     }
 }
 

@@ -130,59 +130,62 @@ namespace GTEngine
 
     void ShaderParameterCache::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(static_cast<uint32_t>(this->parameters.count));
-        
+        // Just the one chunk with this one.
+        GTCore::BasicSerializer intermediarySerializer;
+
+        intermediarySerializer.Write(static_cast<uint32_t>(this->parameters.count));
+
         for (size_t i = 0; i < this->parameters.count; ++i)
         {
             auto name      = this->parameters.buffer[i]->key;
             auto parameter = this->parameters.buffer[i]->value;
 
             
-            serializer.Write(static_cast<uint32_t>(parameter->type));
-            serializer.WriteString(name);
+            intermediarySerializer.Write(static_cast<uint32_t>(parameter->type));
+            intermediarySerializer.WriteString(name);
 
             switch (parameter->type)
             {
             case ShaderParameterType_Float:
                 {
-                    serializer.Write(reinterpret_cast<ShaderParameter_Float*>(parameter)->value);
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Float*>(parameter)->value);
                     break;
                 }
 
             case ShaderParameterType_Float2:
                 {
-                    serializer.Write(reinterpret_cast<ShaderParameter_Float2*>(parameter)->value);
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Float2*>(parameter)->value);
                     break;
                 }
 
             case ShaderParameterType_Float3:
                 {
-                    serializer.Write(reinterpret_cast<ShaderParameter_Float3*>(parameter)->value);
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Float3*>(parameter)->value);
                     break;
                 }
 
             case ShaderParameterType_Float4:
                 {
-                    serializer.Write(reinterpret_cast<ShaderParameter_Float4*>(parameter)->value);
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Float4*>(parameter)->value);
                     break;
                 }
 
 
             case ShaderParameterType_Float2x2:
                 {
-                    serializer.Write(reinterpret_cast<ShaderParameter_Float2x2*>(parameter)->value);
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Float2x2*>(parameter)->value);
                     break;
                 }
 
             case ShaderParameterType_Float3x3:
                 {
-                    serializer.Write(reinterpret_cast<ShaderParameter_Float3x3*>(parameter)->value);
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Float3x3*>(parameter)->value);
                     break;
                 }
 
             case ShaderParameterType_Float4x4:
                 {
-                    serializer.Write(reinterpret_cast<ShaderParameter_Float4x4*>(parameter)->value);
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Float4x4*>(parameter)->value);
                     break;
                 }
 
@@ -191,7 +194,7 @@ namespace GTEngine
                 {
                     if (reinterpret_cast<ShaderParameter_Texture2D*>(parameter)->value->GetLinkedFileName() != nullptr)
                     {
-                        serializer.WriteString(reinterpret_cast<ShaderParameter_Texture2D*>(parameter)->value->GetLinkedFileName());
+                        intermediarySerializer.WriteString(reinterpret_cast<ShaderParameter_Texture2D*>(parameter)->value->GetLinkedFileName());
                     }
 
                     break;
@@ -202,121 +205,136 @@ namespace GTEngine
                 break;
             }
         }
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_ShaderParameters;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void ShaderParameterCache::Deserialize(GTCore::Deserializer &deserializer)
     {
         this->Clear();
 
-        uint32_t count;
-        deserializer.Read(count);
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
 
-        for (uint32_t i = 0; i < count; ++i)
+        assert(header.id == Serialization::ChunkID_ShaderParameters);
         {
-            uint32_t type;
-            deserializer.Read(type);
+            uint32_t count;
+            deserializer.Read(count);
 
-            GTCore::String name;
-            deserializer.Read(name);
-
-            switch (type)
+            for (uint32_t i = 0; i < count; ++i)
             {
-            case ShaderParameterType_Float:
+                uint32_t type;
+                deserializer.Read(type);
+
+                GTCore::String name;
+                deserializer.Read(name);
+
+                switch (type)
                 {
-                    float value;
-                    deserializer.Read(value);
-
-                    this->Set(name.c_str(), value);
-
-                    break;
-                }
-
-            case ShaderParameterType_Float2:
-                {
-                    glm::vec2 value;
-                    deserializer.Read(value);
-
-                    this->Set(name.c_str(), value);
-
-                    break;
-                }
-
-            case ShaderParameterType_Float3:
-                {
-                    glm::vec3 value;
-                    deserializer.Read(value);
-
-                    this->Set(name.c_str(), value);
-
-                    break;
-                }
-
-            case ShaderParameterType_Float4:
-                {
-                    glm::vec4 value;
-                    deserializer.Read(value);
-
-                    this->Set(name.c_str(), value);
-
-                    break;
-                }
-
-
-            case ShaderParameterType_Float2x2:
-                {
-                    glm::mat2 value;
-                    deserializer.Read(value);
-
-                    this->Set(name.c_str(), value);
-
-                    break;
-                }
-
-            case ShaderParameterType_Float3x3:
-                {
-                    glm::mat3 value;
-                    deserializer.Read(value);
-
-                    this->Set(name.c_str(), value);
-
-                    break;
-                }
-
-            case ShaderParameterType_Float4x4:
-                {
-                    glm::mat4 value;
-                    deserializer.Read(value);
-
-                    this->Set(name.c_str(), value);
-
-                    break;
-                }
-
-
-            case ShaderParameterType_Texture2D:
-                {
-                    GTCore::String value;
-                    deserializer.Read(value);
-
-                    this->Set(name.c_str(), Texture2DLibrary::Acquire(value.c_str()));
-
-                    // Because we acquire a new texture here, we need to make it so it is unacquired when this parameter is destructed.
-                    auto iParameter = this->parameters.Find(name.c_str());
-                    if (iParameter != nullptr)
+                case ShaderParameterType_Float:
                     {
-                        assert(iParameter->value       != nullptr);
-                        assert(iParameter->value->type == ShaderParameterType_Texture2D);
-                        {
-                            reinterpret_cast<ShaderParameter_Texture2D*>(iParameter->value)->unacquireInDtor = true;
-                        }
+                        float value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
                     }
 
+                case ShaderParameterType_Float2:
+                    {
+                        glm::vec2 value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
+                    }
+
+                case ShaderParameterType_Float3:
+                    {
+                        glm::vec3 value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
+                    }
+
+                case ShaderParameterType_Float4:
+                    {
+                        glm::vec4 value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
+                    }
+
+
+                case ShaderParameterType_Float2x2:
+                    {
+                        glm::mat2 value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
+                    }
+
+                case ShaderParameterType_Float3x3:
+                    {
+                        glm::mat3 value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
+                    }
+
+                case ShaderParameterType_Float4x4:
+                    {
+                        glm::mat4 value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
+                    }
+
+
+                case ShaderParameterType_Texture2D:
+                    {
+                        GTCore::String value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), Texture2DLibrary::Acquire(value.c_str()));
+
+                        // Because we acquire a new texture here, we need to make it so it is unacquired when this parameter is destructed.
+                        auto iParameter = this->parameters.Find(name.c_str());
+                        if (iParameter != nullptr)
+                        {
+                            assert(iParameter->value       != nullptr);
+                            assert(iParameter->value->type == ShaderParameterType_Texture2D);
+                            {
+                                reinterpret_cast<ShaderParameter_Texture2D*>(iParameter->value)->unacquireInDtor = true;
+                            }
+                        }
+
+                        break;
+                    }
+
+
+                default:
                     break;
                 }
-
-
-            default:
-                break;
             }
         }
     }

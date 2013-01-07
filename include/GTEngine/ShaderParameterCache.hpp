@@ -4,9 +4,8 @@
 
 #include "ShaderParameter.hpp"
 #include "Math.hpp"
+#include "Serialization.hpp"
 #include <GTCore/Dictionary.hpp>
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
 
 namespace GTEngine
 {
