@@ -84,6 +84,20 @@ namespace GTEngine
         const SceneNode & GetCameraFacingCircleSceneNode() const { return this->cameraFacingCircleSceneNode; }
 
 
+        /// Retrieves a reference to the x axis arrow scene node.
+              SceneNode & GetXScaleSceneNode()       { return this->xScaleSceneNode; }
+        const SceneNode & GetXScaleSceneNode() const { return this->xScaleSceneNode; }
+
+        /// Retrieves a reference to the y axis arrow scene node.
+              SceneNode & GetYScaleSceneNode()       { return this->yScaleSceneNode; }
+        const SceneNode & GetYScaleSceneNode() const { return this->yScaleSceneNode; }
+
+        /// Retrieves a reference to the z axis arrow scene node.
+              SceneNode & GetZScaleSceneNode()       { return this->zScaleSceneNode; }
+        const SceneNode & GetZScaleSceneNode() const { return this->zScaleSceneNode; }
+
+
+
 
         /// Shows the gizmo.
         void Show();
@@ -140,6 +154,15 @@ namespace GTEngine
         /// The scene node for the camera-facing circle.
         SceneNode cameraFacingCircleSceneNode;
 
+        /// The scene node for the x axis scale handle.
+        SceneNode xScaleSceneNode;
+
+        /// The scene node for the y axis scale handle.
+        SceneNode yScaleSceneNode;
+
+        /// The scene node for the z axis scale handle.
+        SceneNode zScaleSceneNode;
+
 
         /// The model to use for the x axis arrow.
         Model xArrowModel;
@@ -162,6 +185,15 @@ namespace GTEngine
         /// The model to use for the camera-facing circle.
         Model cameraFacingCircleModel;
 
+        /// The model to use for the x axis scale handle.
+        Model xScaleModel;
+
+        /// The model to use for the y axis scale handle.
+        Model yScaleModel;
+
+        /// The model to use for the z axis scale handle.
+        Model zScaleModel;
+
 
         /// The geometry of the line part of the arrow models' mesh.
         VertexArray* arrowLineVA;
@@ -181,6 +213,13 @@ namespace GTEngine
 
         /// The geometry of the camera-facing circle mesh.
         VertexArray* cameraFacingCircleVA;
+
+
+        /// The geometry of the line part of the scale handle.
+        VertexArray* scaleLineVA;
+
+        /// the geometry of the head part of the scale handle.
+        VertexArray* scaleHeadVA;
     };
 }
 

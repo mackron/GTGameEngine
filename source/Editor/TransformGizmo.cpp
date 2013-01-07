@@ -6,10 +6,15 @@ namespace GTEngine
 {
     TransformGizmo::TransformGizmo()
         : sceneNode(),
-          xArrowSceneNode(), yArrowSceneNode(), zArrowSceneNode(), xCircleSceneNode(), yCircleSceneNode(), zCircleSceneNode(), cameraFacingCircleSceneNode(),
-          xArrowModel(),     yArrowModel(),     zArrowModel(),     xCircleModel(),     yCircleModel(),     zCircleModel(),     cameraFacingCircleModel(),
+          xArrowSceneNode(),  yArrowSceneNode(),  zArrowSceneNode(),
+          xCircleSceneNode(), yCircleSceneNode(), zCircleSceneNode(), cameraFacingCircleSceneNode(),
+          xScaleSceneNode(),  yScaleSceneNode(),  zScaleSceneNode(),
+          xArrowModel(),      yArrowModel(),      zArrowModel(),
+          xCircleModel(),     yCircleModel(),     zCircleModel(),     cameraFacingCircleModel(),
+          xScaleModel(),      yScaleModel(),      zScaleModel(),
           arrowLineVA(nullptr), arrowHeadVA(nullptr),
-          xCircleVA(nullptr), yCircleVA(nullptr), zCircleVA(nullptr), cameraFacingCircleVA(nullptr)
+          xCircleVA(nullptr), yCircleVA(nullptr), zCircleVA(nullptr), cameraFacingCircleVA(nullptr),
+          scaleLineVA(nullptr), scaleHeadVA(nullptr)
     {
     }
 
@@ -22,6 +27,9 @@ namespace GTEngine
         GarbageCollector::MarkForCollection(this->yCircleVA);
         GarbageCollector::MarkForCollection(this->zCircleVA);
         GarbageCollector::MarkForCollection(this->cameraFacingCircleVA);
+
+        GarbageCollector::MarkForCollection(this->scaleLineVA);
+        GarbageCollector::MarkForCollection(this->scaleHeadVA);
     }
 
 
@@ -127,6 +135,72 @@ namespace GTEngine
 
 
 
+        /////////////////////////////////////////
+        // Scale Handle Mesh
+        this->scaleLineVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->scaleHeadVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+
+        // Scale line.
+        glm::vec3 scaleLineVertices[2] =
+        {
+            glm::vec3(0.0f, 0.0f,  0.0f),
+            glm::vec3(0.0f, 0.0f, -1.0f)
+        };
+        unsigned int scaleLineIndices[2] = {0, 1};
+
+
+        // Scale head.
+        float scaleHeadHalfExtent = 0.075f;
+
+        glm::vec3 scaleHeadVertices[8] =
+        {
+            // Front face (facing +Z)
+            glm::vec3(-scaleHeadHalfExtent, -scaleHeadHalfExtent, -1.0f + scaleHeadHalfExtent * 2.0f),
+            glm::vec3(+scaleHeadHalfExtent, -scaleHeadHalfExtent, -1.0f + scaleHeadHalfExtent * 2.0f),
+            glm::vec3(+scaleHeadHalfExtent, +scaleHeadHalfExtent, -1.0f + scaleHeadHalfExtent * 2.0f),
+            glm::vec3(-scaleHeadHalfExtent, +scaleHeadHalfExtent, -1.0f + scaleHeadHalfExtent * 2.0f),
+
+            // Back face (facing -Z)
+            glm::vec3(+scaleHeadHalfExtent, -scaleHeadHalfExtent, -1.0f),
+            glm::vec3(-scaleHeadHalfExtent, -scaleHeadHalfExtent, -1.0f),
+            glm::vec3(-scaleHeadHalfExtent, +scaleHeadHalfExtent, -1.0f),
+            glm::vec3(+scaleHeadHalfExtent, +scaleHeadHalfExtent, -1.0f)
+        };
+
+        unsigned int scaleHeadIndices[36] =
+        {
+            // +Z
+            0, 1, 2,
+            2, 3, 0,
+
+            // -Z
+            4, 5, 6,
+            6, 7, 4,
+
+            // +Y
+            3, 2, 7,
+            7, 6, 3,
+
+            // -Y
+            5, 4, 1,
+            1, 0, 5,
+
+            // +X
+            1, 4, 7,
+            7, 2, 1,
+
+            // -X
+            5, 0, 3,
+            3, 6, 5,
+        };
+
+        this->scaleLineVA->SetData(&scaleLineVertices[0].x, 2, scaleLineIndices, 2);
+        this->scaleHeadVA->SetData(&scaleHeadVertices[0].x, 8, scaleHeadIndices, 36);
+
+
+
+
+
 
 
         this->xArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
@@ -141,6 +215,13 @@ namespace GTEngine
         this->zCircleModel.AttachMesh(this->zCircleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
         this->cameraFacingCircleModel.AttachMesh(this->cameraFacingCircleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
 
+        this->xScaleModel.AttachMesh(scaleLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->xScaleModel.AttachMesh(scaleHeadVA, "engine/materials/simple-emissive.material");
+        this->yScaleModel.AttachMesh(scaleLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->yScaleModel.AttachMesh(scaleHeadVA, "engine/materials/simple-emissive.material");
+        this->zScaleModel.AttachMesh(scaleLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        this->zScaleModel.AttachMesh(scaleHeadVA, "engine/materials/simple-emissive.material");
+
 
 
         // All of the arrow scene nodes use the same model, only we orientate them to point in a particular direction. By default, it's pointing down -Z.
@@ -151,6 +232,10 @@ namespace GTEngine
         this->xCircleSceneNode.RotateY(-90.0f);
         this->yCircleSceneNode.RotateX( 90.0f);
         this->zCircleSceneNode.RotateX(  0.0f);
+
+        this->xScaleSceneNode.RotateY(-90.0f);
+        this->yScaleSceneNode.RotateX( 90.0f);
+        this->zScaleSceneNode.RotateX( 180.0f);
 
 
 
@@ -163,6 +248,11 @@ namespace GTEngine
         this->zCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->zCircleModel);
         this->cameraFacingCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->cameraFacingCircleModel);
 
+        this->xScaleSceneNode.AddComponent<ModelComponent>()->SetModel(this->xScaleModel);
+        this->yScaleSceneNode.AddComponent<ModelComponent>()->SetModel(this->yScaleModel);
+        this->zScaleSceneNode.AddComponent<ModelComponent>()->SetModel(this->zScaleModel);
+
+
 
         this->xArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
         this->yArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
@@ -172,6 +262,11 @@ namespace GTEngine
         this->yCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
         this->zCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
         this->cameraFacingCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+
+        this->xScaleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+        this->yScaleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+        this->zScaleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+
 
 
 
@@ -214,6 +309,25 @@ namespace GTEngine
         metadata->UseModelForPickingShape(false);
 
 
+        metadata = this->xScaleSceneNode.AddComponent<EditorMetadataComponent>();
+        metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
+        metadata->SetAlwaysShowOnTop(true);
+        metadata->UseModelForPickingShape(false);
+
+        metadata = this->yScaleSceneNode.AddComponent<EditorMetadataComponent>();
+        metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
+        metadata->SetAlwaysShowOnTop(true);
+        metadata->UseModelForPickingShape(false);
+
+        metadata = this->zScaleSceneNode.AddComponent<EditorMetadataComponent>();
+        metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
+        metadata->SetAlwaysShowOnTop(true);
+        metadata->UseModelForPickingShape(false);
+
+
+
+
+
 
         this->sceneNode.AttachChild(this->xArrowSceneNode);
         this->sceneNode.AttachChild(this->yArrowSceneNode);
@@ -223,6 +337,10 @@ namespace GTEngine
         this->sceneNode.AttachChild(this->xCircleSceneNode);
         this->sceneNode.AttachChild(this->yCircleSceneNode);
         this->sceneNode.AttachChild(this->zCircleSceneNode);
+
+        this->sceneNode.AttachChild(this->xScaleSceneNode);
+        this->sceneNode.AttachChild(this->yScaleSceneNode);
+        this->sceneNode.AttachChild(this->zScaleSceneNode);
 
         this->UpdatePickingVolumes();
         this->RestoreColours();
@@ -241,6 +359,9 @@ namespace GTEngine
         this->xCircleSceneNode.SetName("TransformGizmo_xCircleSceneNode");
         this->yCircleSceneNode.SetName("TransformGizmo_yCircleSceneNode");
         this->zCircleSceneNode.SetName("TransformGizmo_zCircleSceneNode");
+        this->xScaleSceneNode.SetName("TransformGizmo_xScaleSceneNode");
+        this->yScaleSceneNode.SetName("TransformGizmo_yScaleSceneNode");
+        this->zScaleSceneNode.SetName("TransformGizmo_zScaleSceneNode");
     }
 
 
@@ -257,16 +378,6 @@ namespace GTEngine
 
     void TransformGizmo::SetRotation(const glm::quat &rotation, const SceneNode &cameraNode)
     {
-        /*
-        this->xCircleSceneNode.SetWorldOrientation(rotation);
-        this->yCircleSceneNode.SetWorldOrientation(rotation);
-        this->zCircleSceneNode.SetWorldOrientation(rotation);
-
-        this->xCircleSceneNode.RotateY(-90.0f);
-        this->yCircleSceneNode.RotateX( 90.0f);
-        this->zCircleSceneNode.RotateX(  0.0f);
-        */
-
         this->sceneNode.SetWorldOrientation(rotation);
 
         // We need to update the geometry of the circles so that only the pieces that are actually facing the camera are shown.
@@ -316,12 +427,20 @@ namespace GTEngine
         this->yCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.35f, 1.0f,  0.35f);
         this->zCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.35f, 0.35f, 1.0f);
         this->cameraFacingCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.75f, 0.75f, 0.75f);
+
+        this->xScaleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
+        this->xScaleModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
+        this->yScaleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
+        this->yScaleModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
+        this->zScaleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
+        this->zScaleModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
     }
 
     void TransformGizmo::ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b)
     {
-        assert(&axisSceneNode == &this->xArrowSceneNode  || &axisSceneNode == &this->yArrowSceneNode  || &axisSceneNode == &this->zArrowSceneNode ||
-               &axisSceneNode == &this->xCircleSceneNode || &axisSceneNode == &this->yCircleSceneNode || &axisSceneNode == &this->zCircleSceneNode);
+        assert(&axisSceneNode == &this->xArrowSceneNode  || &axisSceneNode == &this->yArrowSceneNode  || &axisSceneNode == &this->zArrowSceneNode  ||
+               &axisSceneNode == &this->xCircleSceneNode || &axisSceneNode == &this->yCircleSceneNode || &axisSceneNode == &this->zCircleSceneNode ||
+               &axisSceneNode == &this->xScaleSceneNode  || &axisSceneNode == &this->yScaleSceneNode  || &axisSceneNode == &this->zScaleSceneNode);
         {
             auto modelComponent = axisSceneNode.GetComponent<ModelComponent>();
             if (modelComponent != nullptr)
@@ -374,6 +493,26 @@ namespace GTEngine
         }
 
 
+        metadata = this->xScaleSceneNode.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            metadata->SetPickingCollisionShapeToBox(halfExtents, offset);
+        }
+
+        metadata = this->yScaleSceneNode.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            metadata->SetPickingCollisionShapeToBox(halfExtents, offset);
+        }
+
+        metadata = this->zScaleSceneNode.GetComponent<EditorMetadataComponent>();
+        if (metadata != nullptr)
+        {
+            metadata->SetPickingCollisionShapeToBox(halfExtents, offset);
+        }
+
+
+
 
         // Now for the circles. We use a torus for these. We'll use the Y scale for this, but since the scale is uniform, shouldn't really matter what we use.
         float yScale      = this->GetScale().y;
@@ -403,6 +542,13 @@ namespace GTEngine
 
     void TransformGizmo::UpdateCircleVertexArray(VertexArray* vertexArray, const SceneNode &circleNode, const SceneNode &cameraNode)
     {
+        // NOTE:
+        //
+        // We are changing the index data here, but it is safe in this case because the data will never be greater than it's initial allocation. Thus, the
+        // vertex array will not be doing any deletions. Typically one should be aware that the rendering thread may be using the data, but in this case
+        // since we will not be forcing a reallocation we can get away with it.
+
+
         assert(vertexArray != nullptr);
         {
             size_t vertexCount = vertexArray->GetVertexCount();
