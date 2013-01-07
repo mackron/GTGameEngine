@@ -1,5 +1,6 @@
 
 #include <GTEngine/Animation/AnimationKeyFrameQueue.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -106,23 +107,56 @@ namespace GTEngine
 
     void AnimationKeyFrameQueue::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(static_cast<uint32_t>(this->keyFrames.count));
-        serializer.Write(this->keyFrames.buffer, sizeof(Item) * this->keyFrames.count);
+        Serialization::ChunkHeader header;
+        header.id = Serialization::ChunkID_AnimationKeyFrameQueue;
+        header.version = 1;
+        header.sizeInBytes = 
+            sizeof(uint32_t) +                          // <-- Key frame count.
+            sizeof(Item) * this->keyFrames.count +      // <-- Key frame data.
+            sizeof(double);                             // <-- Total duration.
+
+
+        serializer.Write(header);
+        {
+            serializer.Write(static_cast<uint32_t>(this->keyFrames.count));
+            serializer.Write(this->keyFrames.buffer, sizeof(Item) * this->keyFrames.count);
         
-        serializer.Write(this->totalDuration);
+            serializer.Write(this->totalDuration);
+        }
     }
 
     void AnimationKeyFrameQueue::Deserialize(GTCore::Deserializer &deserializer)
     {
         this->keyFrames.Clear();
 
-        uint32_t keyFramesCount;
-        deserializer.Read(keyFramesCount);
 
-        this->keyFrames.Reserve(keyFramesCount);
-        this->keyFrames.count = keyFramesCount;
-        deserializer.Read(this->keyFrames.buffer, sizeof(Item) * keyFramesCount);
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
 
-        deserializer.Read(this->totalDuration);
+        assert(header.id == Serialization::ChunkID_AnimationKeyFrameQueue);
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    uint32_t keyFramesCount;
+                    deserializer.Read(keyFramesCount);
+
+                    this->keyFrames.Reserve(keyFramesCount);
+                    this->keyFrames.count = keyFramesCount;
+                    deserializer.Read(this->keyFrames.buffer, sizeof(Item) * keyFramesCount);
+
+                    deserializer.Read(this->totalDuration);
+
+                    break;
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing AnimationKeyFrameQueue. Chunk version is unsupported (%d).", header.version);
+                    break;
+                }
+            }
+        }
     }
 }
