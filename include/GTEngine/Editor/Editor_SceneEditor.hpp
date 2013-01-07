@@ -163,6 +163,9 @@ namespace GTEngine
 
     private:
 
+        struct State;
+
+
         /// Applies the camera rotation to the camera node.
         void ApplyCameraRotation();
 
@@ -178,6 +181,22 @@ namespace GTEngine
 
         /// Updates the scale of the gizmos so that they appear a constant size.
         void RescaleGizmos();
+
+        /// Updates the gizmo so that it's scaled, positioned and rotated properly.
+        void UpdateGizmo();
+
+
+        /// Serializes the given scene scene.
+        ///
+        /// @param state      [in] A reference to the state whose scene is to be serialized.
+        /// @param serializer [in] A reference to the serializer to write to.
+        void SerializeScene(const State &state, GTCore::Serializer &serializer) const;
+
+        /// Deserializes the currently loaded scene.
+        ///
+        /// @param state        [in] A reference to the state whose scene is to be deserialized.
+        /// @param deserializer [in] A reference to the deserializer to read from.
+        void DeserializeScene(State &state, GTCore::Deserializer &deserializer);
 
 
         /// Sets the current scene in the scripting environment.
@@ -197,8 +216,6 @@ namespace GTEngine
         void InitialiseScripting();
 
 
-        /// Serializes the currently loaded scene.
-        
 
 
     private:
@@ -272,8 +289,6 @@ namespace GTEngine
             /// The transformation gizmo.
             TransformGizmo transformGizmo;
 
-            /// The list of scene nodes that need to be deleted when they are removed from the scene, or the state is destructed.
-            //GTCore::Vector<SceneNode*> sceneNodesToDelete;
 
             /// A flat list of every loaded scene node. We need this so we can delete them when the state object is destructed.
             GTCore::Vector<SceneNode*> sceneNodes;
