@@ -26,7 +26,7 @@ namespace GTEngine
         /// Loads the given text file.
         ///
         /// @param fileName [in] The absolute path of the file to load.
-        bool LoadFile(const char* absolutePath);
+        bool LoadFile(const char* absolutePath, const char* makeRelativeTo);
 
         /// Saves the given text file.
         ///

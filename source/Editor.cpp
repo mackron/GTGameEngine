@@ -173,29 +173,30 @@ namespace GTEngine
     }
 
 
-    void Editor::OnModelActivated(const char* fileName)
+    void Editor::OnModelActivated(const char* fileName, const char* makeRelativeTo)
     {
-        this->modelEditor.LoadModel(fileName);
+        this->modelEditor.LoadModel(fileName, makeRelativeTo);
     }
 
-    void Editor::OnImageActivated(const char* fileName)
+    void Editor::OnImageActivated(const char* fileName, const char* makeRelativeTo)
     {
-        this->imageEditor.LoadImage(fileName);
+        this->imageEditor.LoadImage(fileName, makeRelativeTo);
     }
 
-    void Editor::OnSoundActivated(const char* fileName)
+    void Editor::OnSoundActivated(const char* fileName, const char* makeRelativeTo)
     {
         (void)fileName;
+        (void)makeRelativeTo;
     }
 
-    void Editor::OnTextFileActivated(const char* fileName)
+    void Editor::OnTextFileActivated(const char* fileName, const char* makeRelativeTo)
     {
-        this->textEditor.LoadFile(fileName);
+        this->textEditor.LoadFile(fileName, makeRelativeTo);
     }
 
-    void Editor::OnSceneActivated(const char* fileName)
+    void Editor::OnSceneActivated(const char* fileName, const char* makeRelativeTo)
     {
-        this->sceneEditor.LoadScene(fileName);
+        this->sceneEditor.LoadScene(fileName, makeRelativeTo);
     }
 
 
@@ -227,27 +228,27 @@ namespace GTEngine
 
 
 
-    void Editor::OnFileActivated(const char* fileName)
+    void Editor::OnFileActivated(const char* fileName, const char* makeRelativeTo)
     {
         if (IO::IsSupportedModelExtension(fileName))
         {
-            this->OnModelActivated(fileName);
+            this->OnModelActivated(fileName, makeRelativeTo);
         }
         else if (IO::IsSupportedImageExtension(fileName))
         {
-            this->OnImageActivated(fileName);
+            this->OnImageActivated(fileName, makeRelativeTo);
         }
         else if (IO::IsSupportedSoundExtension(fileName))
         {
-            this->OnSoundActivated(fileName);
+            this->OnSoundActivated(fileName, makeRelativeTo);
         }
         else if (IO::IsSupportedSceneExtension(fileName))
         {
-            this->OnSceneActivated(fileName);
+            this->OnSceneActivated(fileName, makeRelativeTo);
         }
         else        // Assume a text file if nothing else.
         {
-            this->OnTextFileActivated(fileName);
+            this->OnTextFileActivated(fileName, makeRelativeTo);
         }
     }
 
@@ -433,31 +434,31 @@ namespace GTEngine
 
     int Editor::FFI::OnModelActivated(GTCore::Script &script)
     {
-        FFI::GetEditor(script).OnModelActivated(script.ToString(1));
+        FFI::GetEditor(script).OnModelActivated(script.ToString(1), script.ToString(2));
         return 0;
     }
 
     int Editor::FFI::OnImageActivated(GTCore::Script &script)
     {
-        FFI::GetEditor(script).OnImageActivated(script.ToString(1));
+        FFI::GetEditor(script).OnImageActivated(script.ToString(1), script.ToString(2));
         return 0;
     }
 
     int Editor::FFI::OnSoundActivated(GTCore::Script &script)
     {
-        FFI::GetEditor(script).OnSoundActivated(script.ToString(1));
+        FFI::GetEditor(script).OnSoundActivated(script.ToString(1), script.ToString(2));
         return 0;
     }
 
     int Editor::FFI::OnTextFileActivated(GTCore::Script &script)
     {
-        FFI::GetEditor(script).OnTextFileActivated(script.ToString(1));
+        FFI::GetEditor(script).OnTextFileActivated(script.ToString(1), script.ToString(2));
         return 0;
     }
 
     int Editor::FFI::OnSceneActivated(GTCore::Script &script)
     {
-        FFI::GetEditor(script).OnSceneActivated(script.ToString(1));
+        FFI::GetEditor(script).OnSceneActivated(script.ToString(1), script.ToString(2));
         return 0;
     }
 
@@ -465,7 +466,7 @@ namespace GTEngine
 
     int Editor::FFI::OnFileActivated(GTCore::Script &script)
     {
-        FFI::GetEditor(script).OnFileActivated(script.ToString(1));
+        FFI::GetEditor(script).OnFileActivated(script.ToString(1), script.ToString(2));
         return 0;
     }
 

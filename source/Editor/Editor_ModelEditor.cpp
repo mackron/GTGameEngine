@@ -64,9 +64,9 @@ namespace GTEngine
         this->scene.AddSceneNode(this->convexHullParentNode);
     }
 
-    bool Editor_ModelEditor::LoadModel(const char* fileName)
+    bool Editor_ModelEditor::LoadModel(const char* fileName, const char* makeRelativeTo)
     {
-        auto newModel = ModelLibrary::LoadFromFile(fileName);
+        auto newModel = ModelLibrary::LoadFromFile(fileName, makeRelativeTo);
         if (newModel != nullptr)
         {
             // The old model needs to be deleted.

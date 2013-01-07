@@ -28,9 +28,9 @@ namespace GTEngine
         this->GUI.Viewport->AttachEventHandler(this->viewportEventHandler);
     }
 
-    bool Editor_ImageEditor::LoadImage(const char* fileName)
+    bool Editor_ImageEditor::LoadImage(const char* fileName, const char* makeRelativeTo)
     {
-        auto newImage = Texture2DLibrary::Acquire(fileName);
+        auto newImage = Texture2DLibrary::Acquire(fileName, makeRelativeTo);
         if (newImage != nullptr)
         {
             this->currentImage = newImage;

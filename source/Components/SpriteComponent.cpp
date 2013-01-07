@@ -18,7 +18,7 @@ namespace GTEngine
     Texture2D* SpriteComponent::SetTexture(const char* filename)
     {
         delete this->texture;
-        this->texture = new Texture2D(filename);
+        this->texture = new Texture2D(filename, filename);
 
         return this->texture;
     }

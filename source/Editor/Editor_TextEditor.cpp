@@ -27,8 +27,10 @@ namespace GTEngine
     {
     }
 
-    bool Editor_TextEditor::LoadFile(const char* absolutePath)
+    bool Editor_TextEditor::LoadFile(const char* absolutePath, const char* makeRelativeTo)
     {
+        (void)makeRelativeTo;
+
         auto &gui = this->editor.GetGame().GetGUI();
 
         // What we do here is first determine whether or not the file has already been loaded. If it has, we just show the existing text box. Otherwise, we need
