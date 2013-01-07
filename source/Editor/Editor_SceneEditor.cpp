@@ -209,6 +209,88 @@ namespace GTEngine
     }
 
 
+    void Editor_SceneEditor::SwitchGizmoToTranslateMode()
+    {
+        if (this->currentState != nullptr)
+        {
+            this->currentState->gizmoTransformMode = State::GizmoTransformMode_Translate;
+            this->UpdateGizmo();
+        }
+    }
+
+    void Editor_SceneEditor::SwitchGizmoToRotateMode()
+    {
+        if (this->currentState != nullptr)
+        {
+            this->currentState->gizmoTransformMode = State::GizmoTransformMode_Rotate;
+            this->UpdateGizmo();
+        }
+    }
+
+    void Editor_SceneEditor::SwitchGizmoToScaleMode()
+    {
+        if (this->currentState != nullptr)
+        {
+            this->currentState->gizmoTransformMode = State::GizmoTransformMode_Scale;
+            this->UpdateGizmo();
+        }
+    }
+
+    
+    void Editor_SceneEditor::SwitchGizmoToLocalSpace()
+    {
+        if (this->currentState != nullptr)
+        {
+            this->currentState->gizmoTransformSpace = State::GizmoTransformSpace_Local;
+            this->UpdateGizmo();
+        }
+    }
+
+    void Editor_SceneEditor::SwitchGizmoToGlobalSpace()
+    {
+        if (this->currentState != nullptr)
+        {
+            this->currentState->gizmoTransformSpace = State::GizmoTransformSpace_Global;
+            this->UpdateGizmo();
+        }
+    }
+
+    void Editor_SceneEditor::ToggleGizmoSpace()
+    {
+        if (this->currentState != nullptr)
+        {
+            if (this->IsGizmoInLocalSpace())
+            {
+                this->SwitchGizmoToGlobalSpace();
+            }
+            else
+            {
+                this->SwitchGizmoToLocalSpace();
+            }
+        }
+    }
+
+    bool Editor_SceneEditor::IsGizmoInLocalSpace() const
+    {
+        if (this->currentState != nullptr)
+        {
+            return this->currentState->gizmoTransformSpace == State::GizmoTransformSpace_Local;
+        }
+
+        return false;   // Global space by default.
+    }
+
+    bool Editor_SceneEditor::IsGizmoInGlobalSpace() const
+    {
+        if (this->currentState != nullptr)
+        {
+            return this->currentState->gizmoTransformSpace == State::GizmoTransformSpace_Global;
+        }
+
+        return true;    // Global space by default.
+    }
+
+
     bool Editor_SceneEditor::TryGizmoMouseSelect()
     {
         if (this->currentState != nullptr && this->currentState->GUI.Main->IsVisible())
@@ -281,7 +363,7 @@ namespace GTEngine
                     // center of the gizmo and the end point of the selected axis. From that we can get a normalised direction vector and use that as the influence.
                     glm::vec3 gizmoWorldPos        = this->currentState->transformGizmo.GetPosition();
                     glm::vec3 gizmoCenterWindowPos = this->currentState->viewport.Project(gizmoWorldPos);
-                    glm::vec3 axisTipWindowPos     = this->currentState->viewport.Project(gizmoWorldPos + (selectedNode.GetForwardVector() * selectedNode.GetWorldScale()));
+                    glm::vec3 axisTipWindowPos     = this->currentState->viewport.Project(gizmoWorldPos + (selectedNode.GetWorldForwardVector() * selectedNode.GetWorldScale()));
 
                     this->currentState->gizmoDragFactor = glm::vec2(axisTipWindowPos - gizmoCenterWindowPos);
                     if (glm::dot(this->currentState->gizmoDragFactor, this->currentState->gizmoDragFactor) > 0.0f)
@@ -514,7 +596,7 @@ namespace GTEngine
 
     glm::quat Editor_SceneEditor::GetSelectionRotation() const
     {
-        if (this->currentState != nullptr && this->currentState->selectedNodes.count == 1)
+        if (this->currentState != nullptr && this->currentState->selectedNodes.count == 1 && this->currentState->gizmoTransformSpace == State::GizmoTransformSpace_Local)
         {
             return this->currentState->selectedNodes[0]->GetWorldOrientation();
         }
@@ -576,10 +658,19 @@ namespace GTEngine
                             {
                                 for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
                                 {
+                                    glm::vec3 translation = dragAxis * (dragDirection * dragDistance * dragSpeed);
+
                                     auto node = this->currentState->selectedNodes[i];
                                     assert(node != nullptr);
                                     {
-                                        node->SetWorldPosition(node->GetWorldPosition() + (dragAxis * (dragDirection * dragDistance * dragSpeed)));
+                                        if (this->currentState->gizmoTransformSpace == State::GizmoTransformSpace_Global)
+                                        {
+                                            node->SetWorldPosition(node->GetWorldPosition() + translation);
+                                        }
+                                        else
+                                        {
+                                            node->Translate(translation);
+                                        }
                                     }
                                 }
                             }
@@ -595,7 +686,14 @@ namespace GTEngine
                                     auto node = this->currentState->selectedNodes[0];
                                     assert(node != nullptr);
                                     {
-                                        node->Rotate(dragAngle, dragAxis);
+                                        if (this->currentState->gizmoTransformSpace == State::GizmoTransformSpace_Global)
+                                        {
+                                            node->RotateAroundWorldAxis(dragAngle, dragAxis);
+                                        }
+                                        else
+                                        {
+                                            node->Rotate(dragAngle, dragAxis);
+                                        }
                                     }
                                 }
                                 else
@@ -993,11 +1091,7 @@ namespace GTEngine
         if (this->currentState != nullptr)
         {
             this->currentState->transformGizmo.Show();
-            this->currentState->transformGizmo.SetPosition(this->GetSelectionCenterPoint());
-            this->currentState->transformGizmo.SetRotation(this->GetSelectionRotation(), this->currentState->camera);
-            
-            // We'll re-scale the gizmos just to make sure.
-            this->RescaleGizmos();
+            this->UpdateGizmo();
         }
     }
 
@@ -1035,10 +1129,59 @@ namespace GTEngine
         }
     }
 
+    void Editor_SceneEditor::ShowGizmoHandles()
+    {
+        if (this->currentState != nullptr)
+        {
+            switch (this->currentState->gizmoTransformMode)
+            {
+            case State::GizmoTransformMode_Translate:
+                {
+                    this->currentState->transformGizmo.GetXArrowSceneNode().Show();
+                    this->currentState->transformGizmo.GetYArrowSceneNode().Show();
+                    this->currentState->transformGizmo.GetZArrowSceneNode().Show();
+
+                    this->currentState->transformGizmo.GetCameraFacingCircleSceneNode().Hide();
+                    this->currentState->transformGizmo.GetXCircleSceneNode().Hide();
+                    this->currentState->transformGizmo.GetYCircleSceneNode().Hide();
+                    this->currentState->transformGizmo.GetZCircleSceneNode().Hide();
+                    
+
+                    break;
+                }
+
+            case State::GizmoTransformMode_Rotate:
+                {
+                    this->currentState->transformGizmo.GetXArrowSceneNode().Hide();
+                    this->currentState->transformGizmo.GetYArrowSceneNode().Hide();
+                    this->currentState->transformGizmo.GetZArrowSceneNode().Hide();
+
+                    this->currentState->transformGizmo.GetCameraFacingCircleSceneNode().Show();
+                    this->currentState->transformGizmo.GetXCircleSceneNode().Show();
+                    this->currentState->transformGizmo.GetYCircleSceneNode().Show();
+                    this->currentState->transformGizmo.GetZCircleSceneNode().Show();
+
+                    break;
+                }
+
+            case State::GizmoTransformMode_Scale:
+                {
+                    break;
+                }
+
+            default:
+                {
+                    break;
+                }
+            }
+        }
+    }
+
     void Editor_SceneEditor::UpdateGizmo()
     {
         this->RepositionGizmos();
         this->RescaleGizmos();
+        this->ShowGizmoHandles();
     }
 
 
@@ -1145,12 +1288,20 @@ namespace GTEngine
             script.GetTableValue(-2);
             assert(script.IsTable(-1));
             {
-                script.SetTableFunction(-1, "TryGizmoMouseSelect",      SceneEditorFFI::TryGizmoMouseSelect);
-                script.SetTableFunction(-1, "DoMouseSelection",         SceneEditorFFI::DoMouseSelection);
-                script.SetTableFunction(-1, "DeselectAll",              SceneEditorFFI::DeselectAll);
-                script.SetTableFunction(-1, "SelectSceneNode",          SceneEditorFFI::SelectSceneNode);
-                script.SetTableFunction(-1, "DeselectSceneNode",        SceneEditorFFI::DeselectSceneNode);
-                script.SetTableFunction(-1, "DeleteSelectedSceneNodes", SceneEditorFFI::DeleteSelectedSceneNodes);
+                script.SetTableFunction(-1, "TryGizmoMouseSelect",        SceneEditorFFI::TryGizmoMouseSelect);
+                script.SetTableFunction(-1, "DoMouseSelection",           SceneEditorFFI::DoMouseSelection);
+                script.SetTableFunction(-1, "DeselectAll",                SceneEditorFFI::DeselectAll);
+                script.SetTableFunction(-1, "SelectSceneNode",            SceneEditorFFI::SelectSceneNode);
+                script.SetTableFunction(-1, "DeselectSceneNode",          SceneEditorFFI::DeselectSceneNode);
+                script.SetTableFunction(-1, "DeleteSelectedSceneNodes",   SceneEditorFFI::DeleteSelectedSceneNodes);
+                script.SetTableFunction(-1, "SwitchGizmoToTranslateMode", SceneEditorFFI::SwitchGizmoToTranslateMode);
+                script.SetTableFunction(-1, "SwitchGizmoToRotateMode",    SceneEditorFFI::SwitchGizmoToRotateMode);
+                script.SetTableFunction(-1, "SwitchGizmoToScaleMode",     SceneEditorFFI::SwitchGizmoToScaleMode);
+                script.SetTableFunction(-1, "SwitchGizmoToLocalSpace",    SceneEditorFFI::SwitchGizmoToLocalSpace);
+                script.SetTableFunction(-1, "SwitchGizmoToGlobalSpace",   SceneEditorFFI::SwitchGizmoToGlobalSpace);
+                script.SetTableFunction(-1, "ToggleGizmoSpace",           SceneEditorFFI::ToggleGizmoSpace);
+                script.SetTableFunction(-1, "IsGizmoInLocalSpace",        SceneEditorFFI::IsGizmoInLocalSpace);
+                script.SetTableFunction(-1, "IsGizmoInGlobalSpace",       SceneEditorFFI::IsGizmoInGlobalSpace);
             }
             script.Pop(1);
         }
@@ -1171,9 +1322,9 @@ namespace GTEngine
           viewportEventHandler(sceneEditor.GetEditor().GetGame(), viewport),
           selectedNodes(),
           transformGizmo(),
-          //sceneNodesToDelete(),
           sceneNodes(),
-          isDraggingGizmoX(false), isDraggingGizmoY(false), isDraggingGizmoZ(false), gizmoDragFactor(1.0f, 0.0f), gizmoDragMode(GizmoDragMode_None),
+          isDraggingGizmoX(false), isDraggingGizmoY(false), isDraggingGizmoZ(false), gizmoDragFactor(1.0f, 0.0f),
+          gizmoDragMode(GizmoDragMode_None), gizmoTransformMode(GizmoTransformMode_Translate), gizmoTransformSpace(GizmoTransformSpace_Global),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
@@ -1208,13 +1359,6 @@ namespace GTEngine
 
     Editor_SceneEditor::State::~State()
     {
-        /*
-        for (size_t i = 0; i < this->sceneNodesToDelete.count; ++i)
-        {
-            delete this->sceneNodesToDelete[i];
-        }
-        */
-
         // For any scene node still loaded, we need to iterate over and destroy them. Note how we don't increment every time, because deleting
         // the node will in turn remove it from the list as a result from the event handlers.
         for (size_t i = 0; i < this->sceneNodes.count; )
@@ -1306,5 +1450,54 @@ namespace GTEngine
     {
         GetSceneEditor(script).DeleteSelectedSceneNodes();
         return 0;
+    }
+
+
+    int Editor_SceneEditor::SceneEditorFFI::SwitchGizmoToTranslateMode(GTCore::Script &script)
+    {
+        GetSceneEditor(script).SwitchGizmoToTranslateMode();
+        return 0;
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::SwitchGizmoToRotateMode(GTCore::Script &script)
+    {
+        GetSceneEditor(script).SwitchGizmoToRotateMode();
+        return 0;
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::SwitchGizmoToScaleMode(GTCore::Script &script)
+    {
+        GetSceneEditor(script).SwitchGizmoToScaleMode();
+        return 0;
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::SwitchGizmoToLocalSpace(GTCore::Script &script)
+    {
+        GetSceneEditor(script).SwitchGizmoToLocalSpace();
+        return 0;
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::SwitchGizmoToGlobalSpace(GTCore::Script &script)
+    {
+        GetSceneEditor(script).SwitchGizmoToGlobalSpace();
+        return 0;
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::ToggleGizmoSpace(GTCore::Script &script)
+    {
+        GetSceneEditor(script).ToggleGizmoSpace();
+        return 0;
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::IsGizmoInLocalSpace(GTCore::Script &script)
+    {
+        script.Push(GetSceneEditor(script).IsGizmoInLocalSpace());
+        return 1;
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::IsGizmoInGlobalSpace(GTCore::Script &script)
+    {
+        script.Push(GetSceneEditor(script).IsGizmoInGlobalSpace());
+        return 1;
     }
 }

@@ -89,7 +89,7 @@ namespace GTEngine
 
         /////////////////////////////////////////
         // Circle Mesh
-        float        circleRadius       = 1.5f;
+        float        circleRadius       = 1.0f;
         unsigned int circleSegmentCount = 64;
         float        circleSegmentAngle = glm::radians(360.0f / static_cast<float>(circleSegmentCount));
 
@@ -257,6 +257,7 @@ namespace GTEngine
 
     void TransformGizmo::SetRotation(const glm::quat &rotation, const SceneNode &cameraNode)
     {
+        /*
         this->xCircleSceneNode.SetWorldOrientation(rotation);
         this->yCircleSceneNode.SetWorldOrientation(rotation);
         this->zCircleSceneNode.SetWorldOrientation(rotation);
@@ -264,6 +265,9 @@ namespace GTEngine
         this->xCircleSceneNode.RotateY(-90.0f);
         this->yCircleSceneNode.RotateX( 90.0f);
         this->zCircleSceneNode.RotateX(  0.0f);
+        */
+
+        this->sceneNode.SetWorldOrientation(rotation);
 
         // We need to update the geometry of the circles so that only the pieces that are actually facing the camera are shown.
         this->UpdateCircleVertexArray(this->xCircleVA, this->xCircleSceneNode, cameraNode);
@@ -373,7 +377,7 @@ namespace GTEngine
 
         // Now for the circles. We use a torus for these. We'll use the Y scale for this, but since the scale is uniform, shouldn't really matter what we use.
         float yScale      = this->GetScale().y;
-        float outerRadius = 1.5f * yScale;              // 1.5 is the radius of the circles.
+        float outerRadius = 1.0f * yScale;              // 1.0 is the radius of the circles.
         float innerRadius = 0.1f * yScale;              // This is the radius of the geometry making up the ring.
 
         metadata = this->xCircleSceneNode.GetComponent<EditorMetadataComponent>();

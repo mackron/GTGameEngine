@@ -63,6 +63,12 @@ namespace GTEngine
     }
 
 
+
+    void SceneObject::RotateAroundWorldAxis(float angle, const glm::vec3 &axis)
+    {
+        this->SetOrientation(glm::angleAxis(angle, axis) * this->GetOrientation());
+    }
+
     void SceneObject::RotateAtPivotAroundWorldAxis(float angle, const glm::vec3 &axis, const glm::vec3 &pivot)
     {
         glm::quat rotation       = glm::angleAxis(angle, axis);

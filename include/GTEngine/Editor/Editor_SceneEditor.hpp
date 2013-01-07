@@ -70,6 +70,30 @@ namespace GTEngine
         void SetCameraRotation(float xRotation, float yRotation);
 
 
+        /// Switches the gizmo of the current state to translate mode.
+        void SwitchGizmoToTranslateMode();
+
+        /// Switches the gizmo of the current state to rotate mode.
+        void SwitchGizmoToRotateMode();
+
+        /// Switches the gizmo of the current state to scale mode.
+        void SwitchGizmoToScaleMode();
+
+        /// Switches the gizmo of the current state to local space.
+        void SwitchGizmoToLocalSpace();
+
+        /// Switches the gizmo of the current state to global space.
+        void SwitchGizmoToGlobalSpace();
+
+        /// Toggles the transform space of the gizmo of the current state.
+        void ToggleGizmoSpace();
+
+        /// Determines whether or not the gizmo of the current state is in local space.
+        bool IsGizmoInLocalSpace() const;
+
+        /// Determines whether or not the gizmo of the current state is in global space.s
+        bool IsGizmoInGlobalSpace() const;
+
 
         ///////////////////////////////////////////////////
         // Selections
@@ -184,6 +208,9 @@ namespace GTEngine
 
         /// Updates the gizmo so that it's scaled, positioned and rotated properly.
         void UpdateGizmo();
+
+        /// Shows the appropriate handles on the gizmo for the current 
+        void ShowGizmoHandles();
 
 
         /// Serializes the given scene scene.
@@ -317,6 +344,23 @@ namespace GTEngine
 
             }gizmoDragMode;
 
+            /// The current transform mode of the gizmo.
+            enum GizmoTransformMode
+            {
+                GizmoTransformMode_Translate,
+                GizmoTransformMode_Rotate,
+                GizmoTransformMode_Scale
+
+            }gizmoTransformMode;
+
+            /// The current transform space to use with the gizmo.
+            enum GizmoTransformSpace
+            {
+                GizmoTransformSpace_Global,
+                GizmoTransformSpace_Local
+
+            }gizmoTransformSpace;
+
             
 
 
@@ -383,6 +427,31 @@ namespace GTEngine
 
             /// Deletes all of the selected nodes.
             static int DeleteSelectedSceneNodes(GTCore::Script &script);
+
+
+            /// Switches the gizmo to translate mode.
+            static int SwitchGizmoToTranslateMode(GTCore::Script &script);
+
+            /// Switches the gizmo to rotate mode.
+            static int SwitchGizmoToRotateMode(GTCore::Script &script);
+
+            /// Switches the gizmo to scale mode.
+            static int SwitchGizmoToScaleMode(GTCore::Script &script);
+
+            /// Switches the gizmo to local space.
+            static int SwitchGizmoToLocalSpace(GTCore::Script &script);
+
+            /// Switches the gizmo to global space.
+            static int SwitchGizmoToGlobalSpace(GTCore::Script &script);
+
+            /// Toggles the gizmo space.
+            static int ToggleGizmoSpace(GTCore::Script &script);
+
+            /// Determines whether or not the gizmo is in local space.
+            static int IsGizmoInLocalSpace(GTCore::Script &script);
+
+            /// Determines whether or not the gizmo is in global space.
+            static int IsGizmoInGlobalSpace(GTCore::Script &script);
         };
 
 
