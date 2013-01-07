@@ -629,7 +629,7 @@ namespace GTEngine
                                 sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
 
                             serializer.Write(header);
-                            serializer.Write(ToGLMVector3(box->getHalfExtentsWithMargin()));
+                            serializer.Write(ToGLMVector3(box->getHalfExtentsWithMargin() / box->getLocalScaling()));
                             serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
                             
 
@@ -647,7 +647,7 @@ namespace GTEngine
                                 sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
 
                             serializer.Write(header);
-                            serializer.Write(static_cast<float>(sphere->getRadius()));
+                            serializer.Write(static_cast<float>(sphere->getRadius() / sphere->getLocalScaling().getX()));
                             serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
 
                             break;
@@ -657,6 +657,8 @@ namespace GTEngine
                         {
                             auto ellipsoid = static_cast<btEllipsoidShape*>(shape);
 
+                            btVector3 margin(ellipsoid->getMargin(), ellipsoid->getMargin(), ellipsoid->getMargin());
+
                             header.id          = Serialization::ChunkID_DynamicsComponent_EllipsoidShape;
                             header.version     = 1;
                             header.sizeInBytes = 
@@ -664,7 +666,7 @@ namespace GTEngine
                                 sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
 
                             serializer.Write(header);
-                            serializer.Write(ToGLMVector3(ellipsoid->getImplicitShapeDimensions() + btVector3(ellipsoid->getMargin(), ellipsoid->getMargin(), ellipsoid->getMargin())));
+                            serializer.Write(ToGLMVector3((ellipsoid->getImplicitShapeDimensions() + margin) / ellipsoid->getLocalScaling()));
                             serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
 
                             break;
@@ -674,6 +676,8 @@ namespace GTEngine
                         {
                             auto cylinder = static_cast<btCylinderShape*>(shape);
 
+                            uint32_t upAxis = static_cast<uint32_t>(cylinder->getUpAxis());
+
                             header.id          = Serialization::ChunkID_DynamicsComponent_CylinderShape;
                             header.version     = 1;
                             header.sizeInBytes = 
@@ -682,8 +686,8 @@ namespace GTEngine
                                 sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
 
                             serializer.Write(header);
-                            serializer.Write(static_cast<uint32_t>(cylinder->getUpAxis()));
-                            serializer.Write(ToGLMVector3(cylinder->getHalfExtentsWithMargin()));
+                            serializer.Write(upAxis);
+                            serializer.Write(ToGLMVector3(cylinder->getHalfExtentsWithMargin() / cylinder->getLocalScaling()));
                             serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
 
                             break;
@@ -692,6 +696,9 @@ namespace GTEngine
                     case CAPSULE_SHAPE_PROXYTYPE:
                         {
                             auto capsule = static_cast<btCapsuleShape*>(shape);
+
+                            uint32_t upAxis     = static_cast<uint32_t>(capsule->getUpAxis());
+                            uint32_t radiusAxis = (upAxis + 2) % 3;
 
                             header.id          = Serialization::ChunkID_DynamicsComponent_CapsuleShape;
                             header.version     = 1;
@@ -702,8 +709,9 @@ namespace GTEngine
                                 sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
 
                             serializer.Write(header);
-                            serializer.Write(static_cast<float>(capsule->getRadius()));
-                            serializer.Write(static_cast<float>(capsule->getHalfHeight()));
+                            serializer.Write(upAxis);
+                            serializer.Write(static_cast<float>(capsule->getRadius()     / capsule->getLocalScaling()[radiusAxis]));
+                            serializer.Write(static_cast<float>(capsule->getHalfHeight() / capsule->getLocalScaling()[upAxis]));
                             serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
 
                             break;
@@ -727,6 +735,9 @@ namespace GTEngine
                             {
                                 btVector3 vertex;
                                 convexHull->getVertex(iVertex, vertex);
+
+                                // We want this unscaled.
+                                vertex = vertex / convexHull->getLocalScaling();
 
                                 serializer.Write(ToGLMVector3(vertex));
                             }
@@ -866,6 +877,8 @@ namespace GTEngine
         this->rigidBody->setLinearFactor(ToBulletVector3(newLinearFactor));
         this->rigidBody->setAngularFactor(ToBulletVector3(newAngularFactor));
         this->rigidBody->setGravity(ToBulletVector3(newGravity));
+
+        this->isKinematic = newIsKinematic;
 
         if (newIsKinematic)
         {
