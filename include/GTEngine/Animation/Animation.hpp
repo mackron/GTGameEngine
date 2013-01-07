@@ -6,10 +6,10 @@
 #include "AnimationSegment.hpp"
 #include "AnimationSequence.hpp"
 #include "AnimationKeyFrameQueue.hpp"
+#include "../Serialization.hpp"
 #include <GTCore/Vector.hpp>
 #include <GTCore/Dictionary.hpp>
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
+
 
 namespace GTEngine
 {
