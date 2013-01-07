@@ -624,6 +624,49 @@ namespace GTEngine
         }
     }
 
+    void Editor_SceneEditor::DuplicateSelectedSceneNodes()
+    {
+        if (this->currentState != nullptr && this->currentState->selectedNodes.count > 0)
+        {
+            GTCore::Vector<SceneNode*> prevSelectedNodes(this->currentState->selectedNodes);
+            GTCore::Vector<SceneNode*> newNodes(prevSelectedNodes.count);
+
+            // TODO: Get this working with children.
+            for (size_t iNode = 0; iNode < prevSelectedNodes.count; ++iNode)
+            {
+                auto nodeToCopy = prevSelectedNodes[iNode];
+                assert(nodeToCopy != nullptr);
+                {
+                    auto newNode = new SceneNode;
+
+                    // To copy a node, we're going to use the serialization/deserialization system.
+                    GTCore::BasicSerializer serializer;
+                    nodeToCopy->Serialize(serializer);
+
+                    GTCore::BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
+                    newNode->Deserialize(deserializer);
+
+                    newNodes.PushBack(newNode);
+                }
+            }
+
+
+            // TODO: Link nodes to parents!
+
+            // At this point we have our list of new nodes. We now want to deselect everything and then select the new ones.
+            this->DeselectAll();
+
+            for (size_t iNode = 0; iNode < newNodes.count; ++iNode)
+            {
+                auto node = newNodes[iNode];
+                assert(node != nullptr);
+                {
+                    this->currentState->scene.AddSceneNode(*node);
+                }
+            }
+        }
+    }
+
 
 
     ////////////////////////////////////////////////
@@ -979,14 +1022,17 @@ namespace GTEngine
 
 
             // If the node that was transformed is the main camera we'll need to scale the gizmos so that they look a constant size.
-            if (&node == &this->currentState->camera || metadata->IsSelected())
+            if (this->currentState != nullptr)
             {
-                this->RescaleGizmos();
-            }
+                if (&node == &this->currentState->camera || metadata->IsSelected())
+                {
+                    this->RescaleGizmos();
+                }
 
-            if (this->currentState->selectedNodes.count == 1 && &node == this->currentState->selectedNodes[0])
-            {
-                this->GetScript().Execute("Editor.SceneEditor.UpdateTransformPanel();");
+                if (this->currentState->selectedNodes.count == 1 && &node == this->currentState->selectedNodes[0])
+                {
+                    this->GetScript().Execute("Editor.SceneEditor.UpdateTransformPanel();");
+                }
             }
         }
     }
@@ -1291,20 +1337,21 @@ namespace GTEngine
             script.GetTableValue(-2);
             assert(script.IsTable(-1));
             {
-                script.SetTableFunction(-1, "TryGizmoMouseSelect",        SceneEditorFFI::TryGizmoMouseSelect);
-                script.SetTableFunction(-1, "DoMouseSelection",           SceneEditorFFI::DoMouseSelection);
-                script.SetTableFunction(-1, "DeselectAll",                SceneEditorFFI::DeselectAll);
-                script.SetTableFunction(-1, "SelectSceneNode",            SceneEditorFFI::SelectSceneNode);
-                script.SetTableFunction(-1, "DeselectSceneNode",          SceneEditorFFI::DeselectSceneNode);
-                script.SetTableFunction(-1, "DeleteSelectedSceneNodes",   SceneEditorFFI::DeleteSelectedSceneNodes);
-                script.SetTableFunction(-1, "SwitchGizmoToTranslateMode", SceneEditorFFI::SwitchGizmoToTranslateMode);
-                script.SetTableFunction(-1, "SwitchGizmoToRotateMode",    SceneEditorFFI::SwitchGizmoToRotateMode);
-                script.SetTableFunction(-1, "SwitchGizmoToScaleMode",     SceneEditorFFI::SwitchGizmoToScaleMode);
-                script.SetTableFunction(-1, "SwitchGizmoToLocalSpace",    SceneEditorFFI::SwitchGizmoToLocalSpace);
-                script.SetTableFunction(-1, "SwitchGizmoToGlobalSpace",   SceneEditorFFI::SwitchGizmoToGlobalSpace);
-                script.SetTableFunction(-1, "ToggleGizmoSpace",           SceneEditorFFI::ToggleGizmoSpace);
-                script.SetTableFunction(-1, "IsGizmoInLocalSpace",        SceneEditorFFI::IsGizmoInLocalSpace);
-                script.SetTableFunction(-1, "IsGizmoInGlobalSpace",       SceneEditorFFI::IsGizmoInGlobalSpace);
+                script.SetTableFunction(-1, "TryGizmoMouseSelect",         SceneEditorFFI::TryGizmoMouseSelect);
+                script.SetTableFunction(-1, "DoMouseSelection",            SceneEditorFFI::DoMouseSelection);
+                script.SetTableFunction(-1, "DeselectAll",                 SceneEditorFFI::DeselectAll);
+                script.SetTableFunction(-1, "SelectSceneNode",             SceneEditorFFI::SelectSceneNode);
+                script.SetTableFunction(-1, "DeselectSceneNode",           SceneEditorFFI::DeselectSceneNode);
+                script.SetTableFunction(-1, "DeleteSelectedSceneNodes",    SceneEditorFFI::DeleteSelectedSceneNodes);
+                script.SetTableFunction(-1, "DuplicateSelectedSceneNodes", SceneEditorFFI::DuplicateSelectedSceneNodes);
+                script.SetTableFunction(-1, "SwitchGizmoToTranslateMode",  SceneEditorFFI::SwitchGizmoToTranslateMode);
+                script.SetTableFunction(-1, "SwitchGizmoToRotateMode",     SceneEditorFFI::SwitchGizmoToRotateMode);
+                script.SetTableFunction(-1, "SwitchGizmoToScaleMode",      SceneEditorFFI::SwitchGizmoToScaleMode);
+                script.SetTableFunction(-1, "SwitchGizmoToLocalSpace",     SceneEditorFFI::SwitchGizmoToLocalSpace);
+                script.SetTableFunction(-1, "SwitchGizmoToGlobalSpace",    SceneEditorFFI::SwitchGizmoToGlobalSpace);
+                script.SetTableFunction(-1, "ToggleGizmoSpace",            SceneEditorFFI::ToggleGizmoSpace);
+                script.SetTableFunction(-1, "IsGizmoInLocalSpace",         SceneEditorFFI::IsGizmoInLocalSpace);
+                script.SetTableFunction(-1, "IsGizmoInGlobalSpace",        SceneEditorFFI::IsGizmoInGlobalSpace);
             }
             script.Pop(1);
         }
@@ -1449,9 +1496,16 @@ namespace GTEngine
         return 0;
     }
 
+
     int Editor_SceneEditor::SceneEditorFFI::DeleteSelectedSceneNodes(GTCore::Script &script)
     {
         GetSceneEditor(script).DeleteSelectedSceneNodes();
+        return 0;
+    }
+
+    int Editor_SceneEditor::SceneEditorFFI::DuplicateSelectedSceneNodes(GTCore::Script &script)
+    {
+        GetSceneEditor(script).DuplicateSelectedSceneNodes();
         return 0;
     }
 
