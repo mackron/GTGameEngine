@@ -29,7 +29,8 @@ namespace GTEngine
 
         /// Acquires a texture object by it's name, relative to the data directory. See remarks.
         ///
-        /// @param fileName [in] The file name of the texture being loaded, relative to the data directory.
+        /// @param fileName       [in] The file name of the texture being loaded, relative to the data directory.
+        /// @param makeRelativeTo [in] If 'fileName' is absolute, this will be used to turn it into a relative path.
         ///
         /// @return A pointer to the texture object, or null if the texture does not exist.
         ///
@@ -38,7 +39,10 @@ namespace GTEngine
         ///     will be returned.
         ///     @par
         ///     Each call to this function must match up to an Unacquire().
-        static Texture2D* Acquire(const char* fileName);
+        ///     @par
+        ///     All resources must have a relative path somewhere. If it doesn't, there will be errors with serialization. Thus,
+        ///     this will return null if 'fileName' is absolute and 'makeRelativeTo' is null.
+        static Texture2D* Acquire(const char* fileName, const char* makeRelativeTo = nullptr);
 
         /// Acquires an already-acquired texture object. This simply increments the internal reference count.
         ///

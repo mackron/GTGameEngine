@@ -123,6 +123,19 @@ function GTGUI.Element:DataExplorer()
                 return item:GetText();
             end
         end
+        
+        function item:GetRootPath()
+            local parent = item:GetParent();
+            if parent then
+                if parent.isRoot then
+                    return item.path;
+                else
+                    return parent:GetRootPath();
+                end
+            else
+                return "";                      -- Should never actually get here...
+            end
+        end
     end
     
     function self:RemoveItemByPath(path)
@@ -231,7 +244,7 @@ function GTGUI.Element:DataExplorer()
     
     self.TreeView:OnItemPicked(function(data)
         if not data.item.isDirectory then
-            Editor.OpenFilesManager.OpenFile(data.item.path);
+            Editor.OpenFilesManager.OpenFile(data.item.path, data.item:GetRootPath());
         end
     end)
     

@@ -25,14 +25,15 @@ function Editor.OpenFilesManager.Startup(tabbar, modelEditor, imageEditor, textE
 end
 
 
-function Editor.OpenFilesManager.OpenFile(filename)     -- 'filename' should be absolute.
+function Editor.OpenFilesManager.OpenFile(filename, relativeTo)     -- 'filename' should be absolute.
     local file = Editor.OpenFilesManager.OpenFiles[filename];
     if file == nil then
         file = {};
-        file.path       = filename;
-        file.isModified = false;
-        file.tab        = Editor.OpenFilesManager.TabBar:AddTab(GTCore.IO.GetFileNameFromPath(filename));
-        file.tab.path   = filename;
+        file.path         = filename;
+        file.relativeTo   = relativeTo;
+        file.isModified   = false;
+        file.tab          = Editor.OpenFilesManager.TabBar:AddTab(GTCore.IO.GetFileNameFromPath(filename));
+        file.tab.path     = filename;
         
         -- This will allow us to close a file with the middle mouse button.
         file.tab:OnMMBDown(function()
@@ -124,16 +125,16 @@ function Editor.OpenFilesManager.ShowFile(filename)
         
         if GTEngine.IsModelFile(filename) then
             Editor.OpenFilesManager.OpenedSubEditor = Editor.OpenFilesManager.ModelEditor;
-            Editor.OnModelActivated(filename);
+            Editor.OnModelActivated(filename, file.relativeTo);
         elseif GTEngine.IsImageFile(filename) then
             Editor.OpenFilesManager.OpenedSubEditor = Editor.OpenFilesManager.ImageEditor;
-            Editor.OnImageActivated(filename);
+            Editor.OnImageActivated(filename, file.relativeTo);
         elseif GTEngine.IsSceneFile(filename) then
             Editor.OpenFilesManager.OpenedSubEditor = Editor.OpenFilesManager.SceneEditor;
-            Editor.OnSceneActivated(filename);
+            Editor.OnSceneActivated(filename, file.relativeTo);
         else                                                        -- Assume a text file if nothing else.
             Editor.OpenFilesManager.OpenedSubEditor = Editor.OpenFilesManager.TextEditor;
-            Editor.OnTextFileActivated(filename);
+            Editor.OnTextFileActivated(filename, file.relativeTo);
         end
         
         -- The way we do tab switching is to only hide/show the sub editor if the new one is different to the old. The reason for this is that

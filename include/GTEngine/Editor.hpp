@@ -97,27 +97,27 @@ namespace GTEngine
         /// Called when the tab for a model is activated.
         ///
         /// @param fileName [in] The full, absolute path of the model being shown.
-        void OnModelActivated(const char* fileName);
+        void OnModelActivated(const char* fileName, const char* makeRelativeTo);
 
         /// Called when the tab for an image is activated.
         ///
         /// @param fileName [in] The full, absolute path of the image being shown.
-        void OnImageActivated(const char* fileName);
+        void OnImageActivated(const char* fileName, const char* makeRelativeTo);
 
         /// Called when the tab for a sound is activated.
         ///
         /// @param fileName [in] The full, absolute path of the sound being shown.
-        void OnSoundActivated(const char* fileName);
+        void OnSoundActivated(const char* fileName, const char* makeRelativeTo);
 
         /// Called when the tab for a text file is activated.
         ///
         /// @param fileName [in] The full, absolute path of the text file being shown.
-        void OnTextFileActivated(const char* fileName);
+        void OnTextFileActivated(const char* fileName, const char* makeRelativeTo);
 
         /// Called when the tab for a scene is activated.
         ///
         /// @param fileName [in] The full, absolute path of the scene being shown.
-        void OnSceneActivated(const char* fileName);
+        void OnSceneActivated(const char* fileName, const char* makeRelativeTo);
 
 
         /// Called when the tab for a model is closed.
@@ -149,7 +149,7 @@ namespace GTEngine
         /// Called when a file is activated.
         ///
         /// @param fileName [in] The full, absolute path of the file being activated.
-        void OnFileActivated(const char* fileName);
+        void OnFileActivated(const char* fileName, const char* makeRelativeTo);
 
         /// Called when a file is closed.
         ///

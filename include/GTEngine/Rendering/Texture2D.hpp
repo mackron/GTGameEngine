@@ -63,11 +63,21 @@ namespace GTEngine
 
         /// Constructor.
         Texture2D(Texture2DTarget target = Texture2DTarget_Default);
-        Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data = nullptr);
-        Texture2D(const char* filename);
+        Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data = nullptr);
+        Texture2D(const char* absolutePath, const char* relativePath);
 
         /// Destructor.
         ~Texture2D();
+
+
+        /// Retrieves the relative path of the texture file.
+        ///
+        /// @return The relative path of the texture, as specified in the constructor.
+        ///
+        /// @remarks
+        ///     This will return an empty string if the image was not loaded from a file.
+        const char* GetRelativePath() const;
+
 
 
         /// Sets the base data of the texture.
@@ -167,6 +177,8 @@ namespace GTEngine
         bool IsAttachedToFramebuffer() const { return this->framebuffers.root != nullptr; }
 
 
+
+
     private:    // GTImage Image events.
 
         void OnMipmapCreated(unsigned int mipmapIndex);
@@ -225,6 +237,10 @@ namespace GTEngine
 
         /// Keeps track of whether or not the client-side texture data should be kept after it has been synced with the renderer. Defaults to false.
         bool keepClientSideData;
+
+
+        /// The relative path of the texture.
+        GTCore::String relativePath;
 
 
     private:    // No copying.

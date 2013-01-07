@@ -557,8 +557,24 @@ namespace GTEngine
 
 
 
-    Model* ModelLibrary::LoadFromFile(const char* fileName)
+    Model* ModelLibrary::LoadFromFile(const char* fileName, const char* makeRelativeTo)
     {
+        GTCore::String relativePath(fileName);
+
+        if (GTCore::Path::IsAbsolute(fileName))
+        {
+            if (makeRelativeTo != nullptr)
+            {
+                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+            }
+            else
+            {
+                GTEngine::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                return nullptr;
+            }
+        }
+
+
         // We will first find an existing model definition. If we don't find it, we create one and the load into it.
         GTCore::String absolutePath;
         if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
@@ -566,7 +582,7 @@ namespace GTEngine
             auto definition = ModelLibrary::FindDefinition(absolutePath.c_str());
             if (definition == nullptr)
             {
-                definition = new ModelDefinition(fileName);
+                definition = new ModelDefinition(relativePath.c_str());
 
                 // We need to load the model.
                 if (ModelLibrary::Load(absolutePath.c_str(), *definition))

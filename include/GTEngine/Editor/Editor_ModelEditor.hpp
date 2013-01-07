@@ -31,7 +31,7 @@ namespace GTEngine
         /// @param fileName [in] The file name of the model to load.
         ///
         /// @return True if the model is loaded successfully; false otherwise.
-        bool LoadModel(const char* fileName);
+        bool LoadModel(const char* fileName, const char* makeRelativeTo);
 
         /// Saves the model definition of the given file name.
         ///

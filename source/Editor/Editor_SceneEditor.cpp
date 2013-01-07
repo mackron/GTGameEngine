@@ -32,8 +32,10 @@ namespace GTEngine
     }
 
 
-    bool Editor_SceneEditor::LoadScene(const char* absolutePath)
+    bool Editor_SceneEditor::LoadScene(const char* absolutePath, const char* makeRelativeTo)
     {
+        (void)makeRelativeTo;
+
         auto &gui    = this->editor.GetGame().GetGUI();
         auto &script = this->editor.GetGame().GetScript();
 

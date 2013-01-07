@@ -194,7 +194,7 @@ namespace GTEngine
                 {
                     if (reinterpret_cast<ShaderParameter_Texture2D*>(parameter)->value->GetLinkedFileName() != nullptr)
                     {
-                        intermediarySerializer.WriteString(reinterpret_cast<ShaderParameter_Texture2D*>(parameter)->value->GetLinkedFileName());
+                        intermediarySerializer.WriteString(reinterpret_cast<ShaderParameter_Texture2D*>(parameter)->value->GetRelativePath());
                     }
 
                     break;

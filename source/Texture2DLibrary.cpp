@@ -1,7 +1,9 @@
 
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/Logging.hpp>
 #include <GTCore/Dictionary.hpp>
+#include <GTCore/Path.hpp>
 
 
 
@@ -64,15 +66,31 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    Texture2D* Texture2DLibrary::Acquire(const char* fileName)
+    Texture2D* Texture2DLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
     {
+        GTCore::String relativePath(fileName);
+
+        if (GTCore::Path::IsAbsolute(fileName))
+        {
+            if (makeRelativeTo != nullptr)
+            {
+                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+            }
+            else
+            {
+                GTEngine::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                return nullptr;
+            }
+        }
+
+
         GTCore::String absFileName;
         if (GTCore::IO::FindAbsolutePath(fileName, absFileName))
         {
             auto iTexture = LoadedTextures.Find(absFileName.c_str());
             if (iTexture == nullptr)
             {
-                auto newTexture = new Texture2D(absFileName.c_str());
+                auto newTexture = new Texture2D(absFileName.c_str(), relativePath.c_str());
                 if (newTexture->IsLinkedToFile())
                 {
                     newTexture->SetFilter(DefaultMinFilter, DefaultMagFilter);

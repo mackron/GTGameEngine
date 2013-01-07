@@ -39,7 +39,7 @@ namespace GTEngine
         /// @remarks
         ///     This will not reload the file if it has previously been loaded. Thus, calling this function with the same file will
         ///     be quick after the first load.
-        static Model* LoadFromFile(const char* fileName);
+        static Model* LoadFromFile(const char* fileName, const char* makeRelativeTo = nullptr);
 
         /// Generically loads a file from Neutral File Format (NFF) content.
         ///

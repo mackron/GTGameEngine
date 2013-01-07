@@ -45,7 +45,7 @@ namespace GTEngine
         /// @param absolutePath [in] The absolute path of the scene to load.
         ///
         /// @return True if the scene is loaded successfully; false otherwise.
-        bool LoadScene(const char* absolutePath);
+        bool LoadScene(const char* absolutePath, const char* makeRelativeTo);
 
         /// Saves the given scene.
         ///
@@ -197,6 +197,7 @@ namespace GTEngine
         void InitialiseScripting();
 
 
+        /// Serializes the currently loaded scene.
         
 
 

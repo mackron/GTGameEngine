@@ -38,8 +38,8 @@ namespace GTEngine
         this->SetData(width, height, format, data);
     }
 
-    Texture2D::Texture2D(const char* filename)
-        : GTImage::Image(filename),
+    Texture2D::Texture2D(const char* absolutePath, const char* relativePathIn)
+        : GTImage::Image(absolutePath), relativePath(relativePathIn),
           target(Texture2DTarget_Default),
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),
@@ -76,6 +76,12 @@ namespace GTEngine
         }
 
         Renderer::OnTexture2DDeleted(*this);
+    }
+
+
+    const char* Texture2D::GetRelativePath() const
+    {
+        return this->relativePath.c_str();
     }
 
 

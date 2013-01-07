@@ -28,7 +28,7 @@ namespace GTEngine
         /// Loads the given image.
         ///
         /// @param fileName [in] The name of the image file to load.
-        bool LoadImage(const char* fileName);
+        bool LoadImage(const char* fileName, const char* makeRelativeTo);
 
 
         /// Retrieves a pointer to the currently loaded image, as a Texture2D.
