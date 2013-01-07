@@ -435,13 +435,29 @@ namespace GTEngine
 
     void Material::Serialize(GTCore::Serializer &serializer) const
     {
-        // We only serialize the parameters.
-        this->parameters.Serialize(serializer);
+        // Our one and only chunk for now is the parameters chunk.
+        GTCore::BasicSerializer parametersSerializer;
+        this->parameters.Serialize(parametersSerializer);
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_Material_Parameters;
+        header.version     = 1;
+        header.sizeInBytes = parametersSerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(parametersSerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void Material::Deserialize(GTCore::Deserializer &deserializer)
     {
-        // We only deserialize the parameters.
-        this->parameters.Deserialize(deserializer);
+        // The only chunk for now is the parameters chunk.
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+
+        assert(header.id == Serialization::ChunkID_Material_Parameters);
+        {
+            this->parameters.Deserialize(deserializer);
+        }
     }
 }

@@ -5,8 +5,7 @@
 #include <GTCore/String.hpp>
 #include <GTCore/Map.hpp>
 #include "ShaderParameterCache.hpp"
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
+#include "Serialization.hpp"
 
 namespace GTEngine
 {

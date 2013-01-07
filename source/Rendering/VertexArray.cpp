@@ -165,6 +165,7 @@ namespace GTEngine
         }
 
 
+
         // Last of all is the index data.
         header.id          = Serialization::ChunkID_VertexArray_Indices;
         header.version     = 1;
