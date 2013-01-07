@@ -128,11 +128,11 @@ namespace GTEngine
         /// Retrieves the center point of the selected nodes.
         glm::vec3 GetSelectionCenterPoint() const;
 
-        /// Retrieves the orientation of the selected nodes.
+        /// Retrieves the orientation to use with the gizmo based on the current selection and transform settings.
         ///
         /// @remarks
         ///     If there are multiple selections, this will return the default quaternion.
-        glm::quat GetSelectionRotation() const;
+        glm::quat GetGizmoRotation() const;
 
 
         ///////////////////////////////////////////////////
