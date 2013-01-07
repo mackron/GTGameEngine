@@ -4,7 +4,8 @@ function GTGUI.Element:Vector3Input()
     self.Y = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:2px;' />");
     self.Z = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:0px;' />");
     
-    self.BlockSetFromXYZ = false;
+    self.BlockSetFromXYZ     = false;
+    self.BlockOnValueChanged = false;
     
     function self:SetFromXYZ(x, y, z)
         if not self.BlockSetFromXYZ then
@@ -12,9 +13,11 @@ function GTGUI.Element:Vector3Input()
             if y == -0.0 then y = 0.0 end;
             if z == -0.0 then z = 0.0 end;
 
+            self.BlockOnValueChanged = true;
             self.X:SetText(string.format("%.4f", x));
             self.Y:SetText(string.format("%.4f", y));
             self.Z:SetText(string.format("%.4f", z));
+            self.BlockOnValueChanged = false;
         end
     end
     
@@ -35,9 +38,11 @@ function GTGUI.Element:Vector3Input()
     -- be updated. We end up with a sort of cylclic dependency. What we do to resolve is block calls to SetFromXYZ() during processing
     -- of OnValueChanged() events.
     function OnTextChangedHandler()
-        self.BlockSetFromXYZ = true;
-        self:OnValueChanged(self:GetXYZTable());
-        self.BlockSetFromXYZ = false;
+        if not self.BlockOnValueChanged then
+            self.BlockSetFromXYZ = true;
+            self:OnValueChanged(self:GetXYZTable());
+            self.BlockSetFromXYZ = false;
+        end
     end
 
     self.X:OnTextChanged(OnTextChangedHandler);
