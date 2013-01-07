@@ -55,6 +55,9 @@ namespace GTEngine
 
             this->currentState = iState->value;
             this->currentState->GUI.Main->Show();
+
+            // The scripting environment needs to know about the change in current scene.
+            this->SetCurrentSceneInScript(&this->currentState->scene, this->currentState->GUI.Main->id);
         }
         else
         {
@@ -95,6 +98,10 @@ namespace GTEngine
                             this->ResetCamera();
 
 
+                            // We need to make the scripting environment aware of the change of scene before deserialization.
+                            this->SetCurrentSceneInScript(&this->currentState->scene, this->currentState->GUI.Main->id);
+
+
                             // At this point we should actually load the scene file. If this is an empty file, we'll just load an empty scene.
                             if (GTCore::IO::Size(file) > 0)
                             {
@@ -131,10 +138,6 @@ namespace GTEngine
                 return false;
             }
         }
-
-
-        // At this point we will have a valid current state. We need to let the scripting environment know of a few things - mainly the new active scene.
-        this->SetCurrentSceneInScript(&this->currentState->scene, this->currentState->GUI.Main->id);
 
 
         return true;
