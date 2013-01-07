@@ -440,7 +440,7 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing model. Bones chunk has an unsupported version (%d).", header.version);
+                            GTEngine::Log("Error deserializing model. Animation chunk has an unsupported version (%d).", header.version);
                             break;
                         }
                     }
