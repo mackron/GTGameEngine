@@ -1,6 +1,7 @@
 
 #include <GTEngine/Rendering/VertexArray.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -134,14 +135,48 @@ namespace GTEngine
 
     void VertexArray::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(static_cast<uint32_t>(this->usage));
-        this->format.Serialize(serializer);
+        // The info chunk is always first.
+        GTCore::BasicSerializer infoSerializer;
+        infoSerializer.Write(static_cast<uint32_t>(this->usage));
+        this->format.Serialize(infoSerializer);
 
-        serializer.Write(static_cast<uint32_t>(this->vertexCount));
-        serializer.Write(this->vertices, sizeof(float) * this->format.GetSize() * this->vertexCount);
 
-        serializer.Write(static_cast<uint32_t>(this->indexCount));
-        serializer.Write(this->indices, sizeof(unsigned int) * this->indexCount);
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_VertexArray_Info;
+        header.version     = 1;
+        header.sizeInBytes = infoSerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(infoSerializer.GetBuffer(), header.sizeInBytes);
+
+
+
+        // Next is the vertex data.
+        header.id          = Serialization::ChunkID_VertexArray_Vertices;
+        header.version     = 1;
+        header.sizeInBytes =
+            sizeof(uint32_t) +                                                  // <-- Vertex count.
+            sizeof(float) * this->format.GetSize() * this->vertexCount;         // <-- Vertex data.
+
+        serializer.Write(header);
+        {
+            serializer.Write(static_cast<uint32_t>(this->vertexCount));
+            serializer.Write(this->vertices, sizeof(float) * this->format.GetSize() * this->vertexCount);
+        }
+
+
+        // Last of all is the index data.
+        header.id          = Serialization::ChunkID_VertexArray_Indices;
+        header.version     = 1;
+        header.sizeInBytes =
+            sizeof(uint32_t) +                               // <-- Index count.
+            sizeof(unsigned int) * this->indexCount;         // <-- Index data.
+
+        serializer.Write(header);
+        {
+            serializer.Write(static_cast<uint32_t>(this->indexCount));
+            serializer.Write(this->indices, sizeof(unsigned int) * this->indexCount);
+        }
     }
 
     void VertexArray::Deserialize(GTCore::Deserializer &deserializer)
@@ -150,27 +185,80 @@ namespace GTEngine
         assert(this->indicesMapped  == false);
 
 
-        uint32_t usageIn;
-        deserializer.Read(usageIn);
+        // The first chunk should be the info chunk.
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
 
-        this->usage = static_cast<VertexArrayUsage>(usageIn);
-        this->format.Deserialize(deserializer);
+        assert(header.id == Serialization::ChunkID_VertexArray_Info);
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    uint32_t usageIn;
+                    deserializer.Read(usageIn);
+
+                    this->usage = static_cast<VertexArrayUsage>(usageIn);
+                    this->format.Deserialize(deserializer);
+
+                    break;
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing VertexArray. Info chunk is an unsupported version (%d).", header.version);
+                    break;
+                }
+            }
+        }
 
 
-        // Vertices.
-        deserializer.Read(static_cast<uint32_t &>(this->vertexCount));
+        // The next chunk should be the vertex data.
+        deserializer.Read(header);
+        assert(header.id == Serialization::ChunkID_VertexArray_Vertices);
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    deserializer.Read(static_cast<uint32_t &>(this->vertexCount));
 
-        delete [] this->vertices;
-        this->vertices = new float[this->format.GetSize() * this->vertexCount];
-        deserializer.Read(this->vertices, sizeof(float) * this->format.GetSize() * this->vertexCount);
+                    delete [] this->vertices;
+                    this->vertices = new float[this->format.GetSize() * this->vertexCount];
+                    deserializer.Read(this->vertices, sizeof(float) * this->format.GetSize() * this->vertexCount);
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing VertexArray. Vertices chunk is an unsupported version (%d).", header.version);
+                    break;
+                }
+            }
+        }
 
 
-        // Indices.
-        deserializer.Read(static_cast<uint32_t &>(this->indexCount));
+        // The last chunk should be the index data.
+        deserializer.Read(header);
+        assert(header.id == Serialization::ChunkID_VertexArray_Indices);
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    deserializer.Read(static_cast<uint32_t &>(this->indexCount));
 
-        delete [] this->indices;
-        this->indices = new unsigned int[this->indexCount];
-        deserializer.Read(this->indices, sizeof(unsigned int) * this->indexCount);
+                    delete [] this->indices;
+                    this->indices = new unsigned int[this->indexCount];
+                    deserializer.Read(this->indices, sizeof(unsigned int) * this->indexCount);
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing VertexArray. Indices chunk is an unsupported version (%d).", header.version);
+                    break;
+                }
+            }
+        }
 
 
         Renderer::OnVertexArrayVertexDataChanged(*this);
