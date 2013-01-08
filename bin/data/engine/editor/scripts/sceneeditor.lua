@@ -611,8 +611,6 @@ function GTGUI.Element:EditorMetadataComponentPanel()
             else
                 self.CurrentComponent:HideSprite();
             end
-            
-            self.CurrentNode:Refresh();
         end
     end
     
@@ -623,8 +621,6 @@ function GTGUI.Element:EditorMetadataComponentPanel()
             else
                 self.CurrentComponent:HideDirectionArrow();
             end
-            
-            self.CurrentNode:Refresh();
         end
     end
 
