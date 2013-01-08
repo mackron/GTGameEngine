@@ -32,6 +32,17 @@ namespace GTEngine
             result[2] *= scale.z;
         }
 
+        void CalculateTransformMatrix(const glm::vec3 &position, const glm::quat &orientation, glm::mat4 &result)
+        {
+            // orientation.
+            result = glm::mat4_cast(orientation);
+
+            // position.
+            result[3][0] = position.x;
+            result[3][1] = position.y;
+            result[3][2] = position.z;
+        }
+
         void CalculateFrustumPlanes(const glm::mat4 &mvp, Plane planes[6], bool normalize)
         {
             planes[0].a = mvp[0][3] - mvp[0][0]; planes[0].b = mvp[1][3] - mvp[1][0]; planes[0].c = mvp[2][3] - mvp[2][0]; planes[0].d = mvp[3][3] - mvp[3][0];

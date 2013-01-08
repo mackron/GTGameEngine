@@ -34,6 +34,9 @@ namespace GTEngine
         /// Calculates a transform matrix from a position, orientation and scale.
         void CalculateTransformMatrix(const glm::vec3 &position, const glm::quat &orientation, const glm::vec3 &scale, glm::mat4 &result);
 
+        /// Calculates a trainsform matrix from a position and orientation.
+        void CalculateTransformMatrix(const glm::vec3 &position, const glm::quat &orientation, glm::mat4 &result);
+
 
         /// Retrieves the frustum planes of the given matrix.
         ///

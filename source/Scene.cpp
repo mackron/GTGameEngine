@@ -1093,7 +1093,7 @@ namespace GTEngine
             auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
             if (dynamicsComponent != nullptr)
             {
-                this->physicsManager.UpdateTransform(dynamicsComponent->GetRigidBody(), node.GetWorldTransform());
+                this->physicsManager.UpdateTransform(dynamicsComponent->GetRigidBody(), node.GetWorldTransformWithoutScale());
             }
         }
 

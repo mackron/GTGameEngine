@@ -636,6 +636,19 @@ namespace GTEngine
         return result;
     }
 
+    glm::mat4 SceneNode::GetWorldTransformWithoutScale() const
+    {
+        glm::vec3 position;
+        glm::quat orientation;
+        glm::vec3 devnull;
+        this->GetWorldTransformComponents(position, orientation, devnull);
+
+        glm::mat4 result;
+        Math::CalculateTransformMatrix(position, orientation, result);
+
+        return result;
+    }
+
     void SceneNode::GetWorldTransform(btTransform &worldTransform) const
     {
         glm::vec3 position;
