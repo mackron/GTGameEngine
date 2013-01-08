@@ -451,6 +451,9 @@ namespace GTEngine
         */
         glm::mat4 GetWorldTransform() const;
 
+        /// Retrieves the world transform, not including the scale.
+        glm::mat4 GetWorldTransformWithoutScale() const;
+
         /**
         *   \brief                       Retrieves the Bullet transform for use with physics.
         *   \param  worldTransform [out] A reference to the Bullet btTransform object that will receive the world transformation.
