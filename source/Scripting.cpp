@@ -58,6 +58,23 @@ namespace GTEngine
                     script.SetTableValue(-1, "EditorMetadata",    EditorMetadataComponent::Name);
                 }
                 script.SetTableValue(-3);
+
+                script.Push("CollisionShapeTypes");
+                script.PushNewTable();
+                {
+                    script.SetTableValue(-1, "Box",              1);
+                    script.SetTableValue(-1, "Sphere",           2);
+                    script.SetTableValue(-1, "Ellipsoid",        3);
+                    script.SetTableValue(-1, "CylinderX",        4);
+                    script.SetTableValue(-1, "CylinderY",        5);
+                    script.SetTableValue(-1, "CylinderZ",        6);
+                    script.SetTableValue(-1, "CapsuleX",         7);
+                    script.SetTableValue(-1, "CapsuleY",         8);
+                    script.SetTableValue(-1, "CapsuleZ",         9);
+                    script.SetTableValue(-1, "ConvexHull",       10);
+                    script.SetTableValue(-1, "ModelConvexHulls", 11);       // A special type representing the case when the convex hulls from the model is being used.
+                }
+                script.SetTableValue(-3);
             }
             script.Pop(1);
 
