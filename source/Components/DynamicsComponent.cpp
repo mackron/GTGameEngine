@@ -59,8 +59,7 @@ namespace GTEngine
 
     void DynamicsComponent::AddSphereCollisionShape(float radius, float offsetX, float offsetY, float offsetZ)
     {
-        // Bullet's sphere shape does not support scaling, so we will create an ellipsoid instead.
-        this->AddEllipsoidCollisionShape(radius, radius, radius, offsetX, offsetY, offsetZ);
+        this->AddCollisionShape(new btSphereShape(radius), offsetX, offsetY, offsetZ);
     }
 
     void DynamicsComponent::AddEllipsoidCollisionShape(float radiusX, float radiusY, float radiusZ, float offsetX, float offsetY, float offsetZ)
