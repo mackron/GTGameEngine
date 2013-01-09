@@ -23,6 +23,7 @@ namespace GTEngine
           mass(0.0f),
           isKinematic(false),
           useWithNavigationMesh(true),
+          usingConvexHullsOfModel(false),
           collisionGroup(1), collisionMask(-1)
     {
         this->rigidBody->setUserPointer(&node);
@@ -116,8 +117,11 @@ namespace GTEngine
     }
 
 
-    void DynamicsComponent::AddConvexHullShapesFromModel(const Model &model, float margin)
+    void DynamicsComponent::SetCollisionShapesToModelConvexHulls(const Model &model, float margin)
     {
+        this->RemoveAllCollisionShapes();
+
+
         auto &definition = model.GetDefinition();
 
         // Unintuitively, we're not actually going to use AddConvexHullShape() here. Instead, we're going to go a little lower-level here
@@ -155,6 +159,22 @@ namespace GTEngine
         {
             world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
+
+
+        this->usingConvexHullsOfModel = true;
+    }
+
+    void DynamicsComponent::SetCollisionShapesToModelConvexHulls(float margin)
+    {
+        auto modelComponent = this->node.GetComponent<ModelComponent>();
+        if (modelComponent != nullptr)
+        {
+            auto model = modelComponent->GetModel();
+            if (model != nullptr)
+            {
+                this->SetCollisionShapesToModelConvexHulls(*model, margin);
+            }
+        }
     }
 
 
@@ -186,6 +206,9 @@ namespace GTEngine
         {
             world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
+
+
+        this->usingConvexHullsOfModel = false;
     }
 
 

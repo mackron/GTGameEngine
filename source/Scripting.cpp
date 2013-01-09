@@ -831,9 +831,11 @@ namespace GTEngine
                         script.SetTableFunction(-1, "AddCapsuleXCollisionShape",                      FFI::SystemFFI::DynamicsComponentFFI::AddCapsuleXCollisionShape);
                         script.SetTableFunction(-1, "AddCapsuleYCollisionShape",                      FFI::SystemFFI::DynamicsComponentFFI::AddCapsuleYCollisionShape);
                         script.SetTableFunction(-1, "AddCapsuleZCollisionShape",                      FFI::SystemFFI::DynamicsComponentFFI::AddCapsuleZCollisionShape);
-                        script.SetTableFunction(-1, "AddConvexHullCollisionShapesFromModelComponent", FFI::SystemFFI::DynamicsComponentFFI::AddConvexHullCollisionShapesFromModelComponent);
+                        script.SetTableFunction(-1, "SetCollisionShapesToModelConvexHulls",           FFI::SystemFFI::DynamicsComponentFFI::SetCollisionShapesToModelConvexHulls);
                         script.SetTableFunction(-1, "RemoveAllCollisionShapes",                       FFI::SystemFFI::DynamicsComponentFFI::RemoveAllCollisionShapes);
                         script.SetTableFunction(-1, "GetCollisionShapeCount",                         FFI::SystemFFI::DynamicsComponentFFI::GetCollisionShapeCount);
+
+                        script.SetTableFunction(-1, "IsUsingConvexHullsFromModel",                    FFI::SystemFFI::DynamicsComponentFFI::IsUsingConvexHullsFromModel);
                     }
                     script.Pop(1);
 
@@ -2407,20 +2409,12 @@ namespace GTEngine
                         return 0;
                     }
 
-                    int AddConvexHullCollisionShapesFromModelComponent(GTCore::Script &script)
+                    int SetCollisionShapesToModelConvexHulls(GTCore::Script &script)
                     {
                         auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                         if (component != nullptr)
                         {
-                            auto modelComponent = component->GetNode().GetComponent<ModelComponent>();
-                            if (modelComponent != nullptr)
-                            {
-                                auto model = modelComponent->GetModel();
-                                if (model != nullptr)
-                                {
-                                    component->AddConvexHullShapesFromModel(*model, script.ToFloat(2));
-                                }
-                            }
+                            component->SetCollisionShapesToModelConvexHulls(script.ToFloat(2));
                         }
 
                         return 0;
@@ -2443,6 +2437,20 @@ namespace GTEngine
                         if (component != nullptr)
                         {
                             script.Push(static_cast<int>(component->GetCollisionShapeCount()));
+                        }
+
+                        return 1;
+                    }
+
+
+
+
+                    int IsUsingConvexHullsFromModel(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(static_cast<int>(component->IsUsingConvexHullsFromModel()));
                         }
 
                         return 1;

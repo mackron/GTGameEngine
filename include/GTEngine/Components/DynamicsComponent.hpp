@@ -55,16 +55,42 @@ namespace GTEngine
         void AddConvexHullShape(const float* points, size_t pointCount, size_t stride, float margin = 0.0);
         void AddConvexHullShape(const ConvexHull &convexHull, float margin = 0.0);
 
-        /// Adds the convex hulls from the given model.
+        /// Sets the collision shapes to the convex hulls of the given model.
         ///
         /// @param model  [in] A reference to the model whose convex hulls are being added.
         /// @param margin [in] The margin to apply. This default to 0.0, but it may change later if we have issues.
-        void AddConvexHullShapesFromModel(const Model &model, float margin = 0.0f);
+        ///
+        /// @remarks
+        ///     This removes all already attached shapes before adding the new ones.
+        void SetCollisionShapesToModelConvexHulls(const Model &model, float margin = 0.0f);
 
+        /// Sets the collision shapes to the convex hulls of the model of the attached Model component, if any.
+        ///
+        /// @param margin [in] The margin to apply.
+        ///
+        /// @remarks
+        ///     This removes all already attached shapes before adding the new ones.
+        void SetCollisionShapesToModelConvexHulls(float margin = 0.0f);
 
 
         /// Removes every collision shape.
         void RemoveAllCollisionShapes();
+
+
+        /// Retrieves the number of collision shapes current attached to the component.
+        size_t GetCollisionShapeCount() const { return static_cast<size_t>(this->collisionShape->getNumChildShapes()); }
+
+        /// Retrieves a pointer to the shape at the given index.
+        ///
+        /// @param index [in] The index of the shape to retrieve.
+              btCollisionShape* GetCollisionShapeAtIndex(size_t index);
+        const btCollisionShape* GetCollisionShapeAtIndex(size_t index) const;
+
+
+        /// Determines whether or not the convex hulls of a model is being used for the collision shape.
+        bool IsUsingConvexHullsFromModel() const { return this->usingConvexHullsOfModel; }
+
+
 
 
         /// Sets the mass of the rigid body. If this is 0.0, it will be static. Defaults to 0.0.
@@ -250,15 +276,6 @@ namespace GTEngine
         btCompoundShape & GetCollisionShape() { return *this->collisionShape; }
 
 
-        /// Retrieves the number of collision shapes current attached to the component.
-        size_t GetCollisionShapeCount() const { return static_cast<size_t>(this->collisionShape->getNumChildShapes()); }
-
-        /// Retrieves a pointer to the shape at the given index.
-        ///
-        /// @param index [in] The index of the shape to retrieve.
-              btCollisionShape* GetCollisionShapeAtIndex(size_t index);
-        const btCollisionShape* GetCollisionShapeAtIndex(size_t index) const;
-
 
 
         ///////////////////////////////////////////////////////
@@ -302,6 +319,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not this object should be used for navigation mesh generation. Defaults to true.
         bool useWithNavigationMesh;
+
+        /// Keeps track of whether or not this object is using the convex hulls from the attached model for it's convex hulls.
+        bool usingConvexHullsOfModel;
 
 
         /// The collision group the scene node is part of. This is set with SetCollisionFilter(). Defaults to 1.
