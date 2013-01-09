@@ -712,39 +712,84 @@ namespace GTEngine
 
                     if (this->currentState->IsDraggingGizmo())
                     {
+                        // TODO: If the parent of a node being processed here is selected, we don't actually want to do anything with it, unless it is ignoring
+                        //       the parents transformation.
+
                         if (mouseOffsetX != 0.0f || mouseOffsetY != 0.0f)
                         {
-                            // We need to drag the selected objects.
                             glm::vec3 dragAxis      = this->currentState->gizmoDragAxis;
                             float     dragDistance  = glm::length(glm::vec2(mouseOffsetX, -mouseOffsetY));
                             float     dragDirection = glm::dot(glm::normalize(glm::vec2(mouseOffsetX, -mouseOffsetY)), this->currentState->gizmoDragFactor);
-                            float     dragSpeed     = 0.05f;
 
+                            if (this->currentState->gizmoDragMode == State::GizmoDragMode_Rotate)
+                            {
+                                dragDirection = glm::dot(glm::normalize(glm::vec2(mouseOffsetY, -mouseOffsetX)), this->currentState->gizmoDragFactor);
+                            }
+
+
+                            glm::vec3 startPosition = this->GetSelectionCenterPoint();
+                            float     startAngle    = glm::length(glm::eulerAngles(this->GetGizmoRotation()) * dragAxis);
+                            
+
+
+                            bool wasSnapping = this->currentState->isSnapping;
+                            this->currentState->isSnapping = this->GetEditor().GetGame().IsKeyDown(GTCore::Keys::Ctrl);
+
+                            if (!wasSnapping && this->currentState->isSnapping)
+                            {
+                                // If we get here, we've just started snapping.
+                                this->currentState->snapTranslation = startPosition;
+                                this->currentState->snapAngle       = startAngle;
+                            }
+
+
+                            // We need to drag the selected objects.
                             if (this->currentState->gizmoDragMode == State::GizmoDragMode_Translate)
                             {
+                                glm::vec3 translation = dragAxis * (dragDirection * dragDistance * moveSpeed);
+
+                                // What we do is simulate us moving the gizmo and then move the selected nodes by the offset.
+                                glm::vec3 endPosition = startPosition;
+
+                                if (this->currentState->gizmoTransformSpace == State::GizmoTransformSpace_Global || this->currentState->selectedNodes.count > 1)
+                                {
+                                    endPosition                         = startPosition                       + translation;
+                                    this->currentState->snapTranslation = this->currentState->snapTranslation + translation;
+                                }
+                                else
+                                {
+                                    endPosition                         = startPosition                       + (this->GetGizmoRotation() * translation);
+                                    this->currentState->snapTranslation = this->currentState->snapTranslation + (this->GetGizmoRotation() * translation);
+                                }
+
+                                // If we're snapping, we need to offset the endPosition in such a way that it causes it to snap to the "grid".
+                                if (this->currentState->isSnapping)
+                                {
+                                    glm::vec3 gridPosition = this->currentState->translateSnapSize * glm::floor(this->currentState->snapTranslation / glm::vec3(this->currentState->translateSnapSize));
+
+                                    // At this point we have an end position without snapping, and that same position by snapped to the grid ('gridPosition'). We need
+                                    // to get the difference, multiply it by the drag axis, and then add that different to the endPosition.
+                                    endPosition += (gridPosition - endPosition) * dragAxis;
+                                }
+
+                                // We we need to grab the difference between the start and end positions and add to the positions of the selected nodes.
+                                translation = endPosition - startPosition;
+
+
+
                                 for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
                                 {
-                                    glm::vec3 translation = dragAxis * (dragDirection * dragDistance * dragSpeed);
-
                                     auto node = this->currentState->selectedNodes[i];
                                     assert(node != nullptr);
                                     {
-                                        if (this->currentState->gizmoTransformSpace == State::GizmoTransformSpace_Global)
-                                        {
-                                            node->SetWorldPosition(node->GetWorldPosition() + translation);
-                                        }
-                                        else
-                                        {
-                                            node->Translate(translation);
-                                        }
+                                        // We change the world position here.
+                                        node->SetWorldPosition(node->GetWorldPosition() + translation);
                                     }
                                 }
                             }
                             else if (this->currentState->gizmoDragMode == State::GizmoDragMode_Rotate)
                             {
-                                dragDirection   = glm::dot(glm::normalize(glm::vec2(mouseOffsetY, -mouseOffsetX)), this->currentState->gizmoDragFactor);
-                                dragSpeed       = 0.1f;
-                                float dragAngle = dragDirection * dragDistance * dragSpeed;
+                                float dragAngle = dragDirection * dragDistance * rotateSpeed;
 
                                 // If we have multiple selections, we only ever do a world rotation. Otherwise, we'll do a local rotation.
                                 if (this->currentState->selectedNodes.count == 1)
@@ -785,10 +830,10 @@ namespace GTEngine
                                 float     dragDirection = glm::dot(glm::normalize(glm::vec2(mouseOffsetX, -mouseOffsetY)), this->currentState->gizmoDragFactor);
                                 float     dragSpeed     = 0.05f;
 
+                                glm::vec3 scaleOffset = dragAxis * (dragDirection * dragDistance * dragSpeed);
+
                                 for (size_t i = 0; i < this->currentState->selectedNodes.count; ++i)
                                 {
-                                    glm::vec3 scaleOffset = dragAxis * (dragDirection * dragDistance * dragSpeed);
-
                                     auto node = this->currentState->selectedNodes[i];
                                     assert(node != nullptr);
                                     {
@@ -1451,6 +1496,8 @@ namespace GTEngine
           sceneNodes(),
           isDraggingGizmoX(false), isDraggingGizmoY(false), isDraggingGizmoZ(false), gizmoDragFactor(1.0f, 0.0f),
           gizmoDragMode(GizmoDragMode_None), gizmoTransformMode(GizmoTransformMode_Translate), gizmoTransformSpace(GizmoTransformSpace_Global),
+          snapTranslation(), snapAngle(0.0f), snapScale(), isSnapping(false),
+          translateSnapSize(0.25f), rotateSnapSize(5.625f), scaleSnapSize(0.25f),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);

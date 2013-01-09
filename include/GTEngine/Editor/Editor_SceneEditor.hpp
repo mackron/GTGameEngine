@@ -364,6 +364,25 @@ namespace GTEngine
 
             }gizmoTransformSpace;
 
+
+            /// The position to use for when we snap objects to the grid. The way it works that when we are snap-dragging, we move this
+            /// and then have the positions of selected objects snap to the closest grid position.
+            glm::vec3 snapTranslation;
+            float     snapAngle;
+            glm::vec3 snapScale;
+
+            /// Keeps track of whether or not we are snapping.
+            bool isSnapping;
+
+
+            /// The size of a snapping segment for translations.
+            float translateSnapSize;
+
+            /// the size of a snapping segment for rotations.
+            float rotateSnapSize;
+
+            /// The size of a snapping segment for scale.
+            float scaleSnapSize;
             
 
 
