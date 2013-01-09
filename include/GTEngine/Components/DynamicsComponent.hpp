@@ -102,6 +102,46 @@ namespace GTEngine
         /// @param offset [in] The new offset.
         void SetCollisionShapeOffset(size_t index, float offsetX, float offsetY, float offsetZ);
 
+        /// Sets the half extents of the box shape at the given index.
+        ///
+        /// @param index [in] The index of the shape.
+        ///
+        /// @remarks
+        ///     If the shape at the given index is not a box, this method will fail and return false.
+        bool SetBoxCollisionShapeHalfExtents(size_t index, float halfX, float halfY, float halfZ);
+
+        /// Sets the radius of the sphere shape at the given index.
+        ///
+        /// @param index [in] The index of the shape.
+        ///
+        /// @remarks
+        ///     If the shape at the given index is not a sphere, this method will fail and return false.
+        bool SetSphereCollisionShapeRadius(size_t index, float radius);
+
+        /// Sets the radius of the ellipsoid shape at the given index.
+        ///
+        /// @param index [in] The index of the shape.
+        ///
+        /// @remarks
+        ///     If the shape at the given index is not an ellipsoid, this method will fail and return false.
+        bool SetEllipsoidCollisionShapeRadius(size_t index, float radiusX, float radiusY, float radiusZ);
+
+        /// Sets the half extents of the cylinder shape at the given index.
+        ///
+        /// @param index [in] The index of the shape.
+        ///
+        /// @remarks
+        ///     If the shape at the given index is not a cylinder, this method will fail and return false.
+        bool SetCylinderCollisionShapeHalfExtents(size_t index, float halfX, float halfY, float halfZ);
+
+        /// Sets the half extents of the capsule shape at the given index.
+        ///
+        /// @param index [in] The index of the shape.
+        ///
+        /// @remarks
+        ///     If the shape at the given index is not a capsule, this method will fail and return false.
+        bool SetCapsuleCollisionShapeSize(size_t index, float radius, float height);
+
 
 
         /// Sets the mass of the rigid body. If this is 0.0, it will be static. Defaults to 0.0.

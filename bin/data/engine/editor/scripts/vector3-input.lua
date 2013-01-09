@@ -22,7 +22,7 @@ function GTGUI.Element:Vector3Input()
     end
     
     function self:GetXYZ()
-        return tonumber(self.X:GetText()), tonumber(self.Y:GetText()), tonumber(self.Z:GetText());
+        return tonumber(self.X:GetText()) or 0.0, tonumber(self.Y:GetText()) or 0.0, tonumber(self.Z:GetText()) or 0.0;
     end
     
     function self:GetXYZTable()

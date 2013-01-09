@@ -749,6 +749,57 @@ namespace GTEngine
                     ///     Argument 2:       The index of the shape whose offset is being changed.
                     ///     Argument 3, 4, 5: The new offset, as 3 floats
                     int SetCollisionShapeOffset(GTCore::Script &script);
+
+                    /// Sets the extents of the box shape at the given index.
+                    ///
+                    /// @remarks
+                    ///     If the shape at the given index is not a box, this function will fail.
+                    ///     @par
+                    ///     Argument 1:       A pointer to the component.
+                    ///     Argument 2:       The index of the shape.
+                    ///     Argument 3, 4, 5: The new half extents.
+                    int SetBoxCollisionShapeHalfExtents(GTCore::Script &script);
+
+                    /// Sets the radius of the sphere shape at the given index.
+                    ///
+                    /// @remarks
+                    ///     If the shape at the given index is not a sphere, this function will fail.
+                    ///     @par
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The index of the shape.
+                    ///     Argument 3: The new radius.
+                    int SetSphereCollisionShapeRadius(GTCore::Script &script);
+
+                    /// Sets the radius of the ellipsoid shape at the given index.
+                    ///
+                    /// @remarks
+                    ///     If the shape at the given index is not an ellipsoid, this function will fail.
+                    ///     @par
+                    ///     Argument 1:       A pointer to the component.
+                    ///     Argument 2:       The index of the shape.
+                    ///     Argument 3, 4, 5: The new radius as 3 floats.
+                    int SetEllipsoidCollisionShapeRadius(GTCore::Script &script);
+
+                    /// Sets the extents of the cylinder shape at the given index.
+                    ///
+                    /// @remarks
+                    ///     If the shape at the given index is not a cylinder, this function will fail.
+                    ///     @par
+                    ///     Argument 1:       A pointer to the component.
+                    ///     Argument 2:       The index of the shape.
+                    ///     Argument 3, 4, 5: The new half extents.
+                    int SetCylinderCollisionShapeHalfExtents(GTCore::Script &script);
+
+                    /// Sets the size of the capsule shape at the given index.
+                    ///
+                    /// @remarks
+                    ///     If the shape at the given index is not an ellipsoid, this function will fail.
+                    ///     @par
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The index of the shape.
+                    ///     Argument 3: The radius of the shape.
+                    ///     Argument 4: The height of the shape.
+                    int SetCapsuleCollisionShapeSize(GTCore::Script &script);
                 }
 
 
