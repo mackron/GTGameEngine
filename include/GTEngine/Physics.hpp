@@ -8,6 +8,7 @@
 #include "Physics/btEllipsoidShape.hpp"
 #include "Physics/StaticMeshCollisionShape.hpp"
 #include "Physics/MeshCollisionShape.hpp"
+#include "Physics/CollisionShapeTypes.hpp"
 #include "Math.hpp"
 
 namespace GTEngine

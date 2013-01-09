@@ -651,9 +651,9 @@ namespace GTEngine
                 auto shape = this->collisionShape->getChildShape(i);
                 assert(shape != nullptr);
                 {
-                    switch (shape->getShapeType())
+                    switch (GetCollisionShapeType(shape))
                     {
-                    case BOX_SHAPE_PROXYTYPE:
+                    case CollisionShapeType_Box:
                         {
                             auto box = static_cast<btBoxShape*>(shape);
                             
@@ -671,7 +671,7 @@ namespace GTEngine
                             break;
                         }
 
-                    case SPHERE_SHAPE_PROXYTYPE:
+                    case CollisionShapeType_Sphere:
                         {
                             auto sphere = static_cast<btSphereShape*>(shape);
 
@@ -688,7 +688,7 @@ namespace GTEngine
                             break;
                         }
 
-                    case CUSTOM_CONVEX_SHAPE_TYPE:          // <-- Ellipsoid for now, but need to change! If anything else uses this, we're broken!
+                    case CollisionShapeType_Ellipsoid:
                         {
                             auto ellipsoid = static_cast<btEllipsoidShape*>(shape);
 
@@ -707,7 +707,9 @@ namespace GTEngine
                             break;
                         }
 
-                    case CYLINDER_SHAPE_PROXYTYPE:
+                    case CollisionShapeType_CylinderX:
+                    case CollisionShapeType_CylinderY:
+                    case CollisionShapeType_CylinderZ:
                         {
                             auto cylinder = static_cast<btCylinderShape*>(shape);
 
@@ -728,7 +730,9 @@ namespace GTEngine
                             break;
                         }
 
-                    case CAPSULE_SHAPE_PROXYTYPE:
+                    case CollisionShapeType_CapsuleX:
+                    case CollisionShapeType_CapsuleY:
+                    case CollisionShapeType_CapsuleZ:
                         {
                             auto capsule = static_cast<btCapsuleShape*>(shape);
 
@@ -752,7 +756,7 @@ namespace GTEngine
                             break;
                         }
 
-                    case CONVEX_HULL_SHAPE_PROXYTYPE:
+                    case CollisionShapeType_ConvexHull:
                         {
                             auto convexHull = static_cast<btConvexHullShape*>(shape);
                             
