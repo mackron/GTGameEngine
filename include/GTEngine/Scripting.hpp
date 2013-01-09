@@ -703,12 +703,12 @@ namespace GTEngine
                     int AddCapsuleYCollisionShape(GTCore::Script &script);
                     int AddCapsuleZCollisionShape(GTCore::Script &script);
 
-                    /// Adds the convex hulls from the attached model component, if any, as collision shapes.
+                    /// Sets the collision shapes of the object to that of the convex hulls of the model in the Model component.
                     ///
                     /// @remarks
                     ///     Argument 1: A pointer to the component.
                     ///     Argument 2: The margin to apply to the collision shapes.
-                    int AddConvexHullCollisionShapesFromModelComponent(GTCore::Script &script);
+                    int SetCollisionShapesToModelConvexHulls(GTCore::Script &script);
 
                     /// Removes every collision shape.
                     ///
@@ -728,6 +728,12 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the component.
                     ///     Argument 2: The index of the shape whose information is being retrieved.
                     //int GetCollisionShapeAtIndex(GTCore::Script &script);
+
+                    /// Determines whether or not we are using the convex hull of a model.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int IsUsingConvexHullsFromModel(GTCore::Script &script);
                 }
 
 
