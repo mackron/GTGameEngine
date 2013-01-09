@@ -1,6 +1,6 @@
 panel-groupbox
 {
-    padding-top:             4px
+    padding-top:             8px
     horizontal-align:        left
     transparent-mouse-input: true
 }
@@ -9,7 +9,7 @@ panel-groupbox-title
 {
     child-plane:    horizontal
     vertical-align: center
-    padding-left:   4px 0px
+    padding-left:   4px
 }
 
 panel-groupbox-title-arrow
@@ -36,7 +36,7 @@ panel-groupbox-title-text
 panel-groupbox-body
 {
     margin-top:  8px
-    padding:     4px 0px
+    padding:     8px 0px
     
     transparent-mouse-input: true
 }
@@ -48,7 +48,7 @@ panel-groupbox-separator
     border-bottom: 1px #494949
     
     margin-bottom: 0px
-    margin-top:    4px
+    margin-top:    8px
     
     transparent-mouse-input: true
 }
