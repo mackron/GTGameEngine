@@ -727,7 +727,7 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the component.
                     ///     Argument 2: The index of the shape whose information is being retrieved.
-                    //int GetCollisionShapeAtIndex(GTCore::Script &script);
+                    int GetCollisionShapeAtIndex(GTCore::Script &script);
 
                     /// Determines whether or not we are using the convex hull of a model.
                     ///

@@ -251,6 +251,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\btEllipsoidShape.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\Bullet.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionObject.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionShapeTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionWorld.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\ConeTwistConstraint.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\DynamicsWorld.hpp" />

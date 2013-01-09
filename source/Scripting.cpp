@@ -5,6 +5,7 @@
 #include <GTEngine/Audio.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/Scene.hpp>
+#include <GTEngine/Physics/CollisionShapeTypes.hpp>
 
 #include <GTCore/Path.hpp>
 
@@ -62,17 +63,18 @@ namespace GTEngine
                 script.Push("CollisionShapeTypes");
                 script.PushNewTable();
                 {
-                    script.SetTableValue(-1, "Box",              1);
-                    script.SetTableValue(-1, "Sphere",           2);
-                    script.SetTableValue(-1, "Ellipsoid",        3);
-                    script.SetTableValue(-1, "CylinderX",        4);
-                    script.SetTableValue(-1, "CylinderY",        5);
-                    script.SetTableValue(-1, "CylinderZ",        6);
-                    script.SetTableValue(-1, "CapsuleX",         7);
-                    script.SetTableValue(-1, "CapsuleY",         8);
-                    script.SetTableValue(-1, "CapsuleZ",         9);
-                    script.SetTableValue(-1, "ConvexHull",       10);
-                    script.SetTableValue(-1, "ModelConvexHulls", 11);       // A special type representing the case when the convex hulls from the model is being used.
+                    script.SetTableValue(-1, "None",             CollisionShapeType_None);
+                    script.SetTableValue(-1, "Box",              CollisionShapeType_Box);
+                    script.SetTableValue(-1, "Sphere",           CollisionShapeType_Sphere);
+                    script.SetTableValue(-1, "Ellipsoid",        CollisionShapeType_Ellipsoid);
+                    script.SetTableValue(-1, "CylinderX",        CollisionShapeType_CylinderX);
+                    script.SetTableValue(-1, "CylinderY",        CollisionShapeType_CylinderY);
+                    script.SetTableValue(-1, "CylinderZ",        CollisionShapeType_CylinderZ);
+                    script.SetTableValue(-1, "CapsuleX",         CollisionShapeType_CapsuleX);
+                    script.SetTableValue(-1, "CapsuleY",         CollisionShapeType_CapsuleY);
+                    script.SetTableValue(-1, "CapsuleZ",         CollisionShapeType_CapsuleZ);
+                    script.SetTableValue(-1, "ConvexHull",       CollisionShapeType_ConvexHull);
+                    script.SetTableValue(-1, "ModelConvexHulls", CollisionShapeType_ModelConvexHulls);       // A special type representing the case when the convex hulls from the model is being used.
                 }
                 script.SetTableValue(-3);
             }
@@ -476,6 +478,14 @@ namespace GTEngine
                 "    return GTEngine.System.DynamicsComponent.GetCollisionShapeCount(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.DynamicsComponent:GetCollisionShapeAtIndex()"
+                "    return GTEngine.System.DynamicsComponent.GetCollisionShapeAtIndex(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:IsUsingConvexHullsFromModel()"
+                "    return GTEngine.System.DynamicsComponent.IsUsingConvexHullsFromModel(self._internalPtr);"
+                "end;"
+
 
 
                 // EditorMetadataComponent
@@ -834,7 +844,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "SetCollisionShapesToModelConvexHulls",           FFI::SystemFFI::DynamicsComponentFFI::SetCollisionShapesToModelConvexHulls);
                         script.SetTableFunction(-1, "RemoveAllCollisionShapes",                       FFI::SystemFFI::DynamicsComponentFFI::RemoveAllCollisionShapes);
                         script.SetTableFunction(-1, "GetCollisionShapeCount",                         FFI::SystemFFI::DynamicsComponentFFI::GetCollisionShapeCount);
-
+                        script.SetTableFunction(-1, "GetCollisionShapeAtIndex",                       FFI::SystemFFI::DynamicsComponentFFI::GetCollisionShapeAtIndex);
                         script.SetTableFunction(-1, "IsUsingConvexHullsFromModel",                    FFI::SystemFFI::DynamicsComponentFFI::IsUsingConvexHullsFromModel);
                     }
                     script.Pop(1);
@@ -2442,8 +2452,116 @@ namespace GTEngine
                         return 1;
                     }
 
+                    int GetCollisionShapeAtIndex(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            int shapeIndex = script.ToInteger(2);
 
+                            auto shape = component->GetCollisionShapeAtIndex(static_cast<size_t>(shapeIndex));
+                            if (shape != nullptr)
+                            {
+                                script.PushNewTable();
+                                {
+                                    if (component->IsUsingConvexHullsFromModel())
+                                    {
+                                        script.SetTableValue(-1, "type", CollisionShapeType_ModelConvexHulls);
+                                    }
+                                    else
+                                    {
+                                        CollisionShapeType type = GetCollisionShapeType(shape);
 
+                                        // Start with the type.
+                                        script.SetTableValue(-1, "type", type);
+
+                                        // Now the shape offset.
+                                        auto &offset = component->GetCollisionShape().getChildTransform(shapeIndex).getOrigin();
+
+                                        script.SetTableValue(-1, "offsetX", offset.getX());
+                                        script.SetTableValue(-1, "offsetY", offset.getY());
+                                        script.SetTableValue(-1, "offsetZ", offset.getZ());
+
+                                        // We now need to do shape-specific properties.
+                                        switch (type)
+                                        {
+                                        case CollisionShapeType_Box:
+                                            {
+                                                auto box = static_cast<btBoxShape*>(shape);
+
+                                                btVector3 halfExtents = box->getHalfExtentsWithoutMargin() / box->getLocalScaling();
+                                                
+                                                script.SetTableValue(-1, "halfX", halfExtents.getX());
+                                                script.SetTableValue(-1, "halfY", halfExtents.getY());
+                                                script.SetTableValue(-1, "halfZ", halfExtents.getZ());
+
+                                                break;
+                                            }
+
+                                        case CollisionShapeType_Sphere:
+                                            {
+                                                auto sphere = static_cast<btSphereShape*>(shape);
+
+                                                script.SetTableValue(-1, "radius", sphere->getRadius() / sphere->getLocalScaling().getX());
+
+                                                break;
+                                            }
+
+                                        case CollisionShapeType_Ellipsoid:
+                                            {
+                                                auto ellipsoid = static_cast<btEllipsoidShape*>(shape);
+
+                                                btVector3 margin(ellipsoid->getMargin(), ellipsoid->getMargin(), ellipsoid->getMargin());
+                                                btVector3 radius = (ellipsoid->getImplicitShapeDimensions() + margin) / ellipsoid->getLocalScaling();
+
+                                                script.SetTableValue(-1, "radiusX", radius.getX());
+                                                script.SetTableValue(-1, "radiusY", radius.getY());
+                                                script.SetTableValue(-1, "radiusZ", radius.getZ());
+
+                                                break;
+                                            }
+
+                                        case CollisionShapeType_CylinderX:
+                                        case CollisionShapeType_CylinderY:
+                                        case CollisionShapeType_CylinderZ:
+                                            {
+                                                auto cylinder = static_cast<btCylinderShape*>(shape);
+
+                                                btVector3 halfExtents = cylinder->getHalfExtentsWithoutMargin() / cylinder->getLocalScaling();
+                                                
+                                                script.SetTableValue(-1, "halfX", halfExtents.getX());
+                                                script.SetTableValue(-1, "halfY", halfExtents.getY());
+                                                script.SetTableValue(-1, "halfZ", halfExtents.getZ());
+
+                                                break;
+                                            }
+
+                                        case CollisionShapeType_CapsuleX:
+                                        case CollisionShapeType_CapsuleY:
+                                        case CollisionShapeType_CapsuleZ:
+                                            {
+                                                auto capsule = static_cast<btCapsuleShape*>(shape);
+
+                                                uint32_t upAxis     = static_cast<uint32_t>(capsule->getUpAxis());
+                                                uint32_t radiusAxis = (upAxis + 2) % 3;
+
+                                                script.SetTableValue(-1, "radius", capsule->getRadius()            / capsule->getLocalScaling()[radiusAxis]);
+                                                script.SetTableValue(-1, "height", capsule->getHalfHeight() * 2.0f / capsule->getLocalScaling()[upAxis]);
+
+                                                break;
+                                            }
+
+                                        default: break;
+                                        }
+                                    }
+                                }
+
+                                return 1;
+                            }
+                        }
+
+                        return 0;
+                    }
 
                     int IsUsingConvexHullsFromModel(GTCore::Script &script)
                     {
