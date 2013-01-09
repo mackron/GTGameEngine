@@ -211,6 +211,34 @@ namespace GTEngine
         this->usingConvexHullsOfModel = false;
     }
 
+    void DynamicsComponent::RemoveCollisionShapeAtIndex(size_t index)
+    {
+        // Since the shapes are being changed we need to remove the rigid body from the world first.
+        auto world = this->rigidBody->GetWorld();
+        if (world != nullptr)
+        {
+            world->RemoveRigidBody(*this->rigidBody);
+        }
+
+
+        // All children need to be removed from the shape.
+        this->collisionShape->removeChildShapeByIndex(static_cast<int>(index));
+
+
+        // We should also update the mass, not that it would matter. We will do it for correctness.
+        this->UpdateMass();
+
+        // Now the rigid body needs to be re-added.
+        if (world != nullptr)
+        {
+            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
+        }
+
+
+        this->usingConvexHullsOfModel = false;
+    }
+
+
 
     void DynamicsComponent::SetMass(float newMass)
     {

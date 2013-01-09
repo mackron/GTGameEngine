@@ -473,13 +473,17 @@ namespace GTEngine
                 "    GTEngine.System.DynamicsComponent.RemoveAllCollisionShapes(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.DynamicsComponent:RemoveCollisionShapeAtIndex(index)"
+                "    GTEngine.System.DynamicsComponent.RemoveCollisionShapeAtIndex(self._internalPtr, index);"
+                "end;"
+
 
                 "function GTEngine.DynamicsComponent:GetCollisionShapeCount()"
                 "    return GTEngine.System.DynamicsComponent.GetCollisionShapeCount(self._internalPtr);"
                 "end;"
 
-                "function GTEngine.DynamicsComponent:GetCollisionShapeAtIndex()"
-                "    return GTEngine.System.DynamicsComponent.GetCollisionShapeAtIndex(self._internalPtr);"
+                "function GTEngine.DynamicsComponent:GetCollisionShapeAtIndex(index)"
+                "    return GTEngine.System.DynamicsComponent.GetCollisionShapeAtIndex(self._internalPtr, index);"
                 "end;"
 
                 "function GTEngine.DynamicsComponent:IsUsingConvexHullsFromModel()"
@@ -843,6 +847,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "AddCapsuleZCollisionShape",                      FFI::SystemFFI::DynamicsComponentFFI::AddCapsuleZCollisionShape);
                         script.SetTableFunction(-1, "SetCollisionShapesToModelConvexHulls",           FFI::SystemFFI::DynamicsComponentFFI::SetCollisionShapesToModelConvexHulls);
                         script.SetTableFunction(-1, "RemoveAllCollisionShapes",                       FFI::SystemFFI::DynamicsComponentFFI::RemoveAllCollisionShapes);
+                        script.SetTableFunction(-1, "RemoveCollisionShapeAtIndex",                    FFI::SystemFFI::DynamicsComponentFFI::RemoveCollisionShapeAtIndex);
                         script.SetTableFunction(-1, "GetCollisionShapeCount",                         FFI::SystemFFI::DynamicsComponentFFI::GetCollisionShapeCount);
                         script.SetTableFunction(-1, "GetCollisionShapeAtIndex",                       FFI::SystemFFI::DynamicsComponentFFI::GetCollisionShapeAtIndex);
                         script.SetTableFunction(-1, "IsUsingConvexHullsFromModel",                    FFI::SystemFFI::DynamicsComponentFFI::IsUsingConvexHullsFromModel);
@@ -2441,6 +2446,17 @@ namespace GTEngine
                         return 0;
                     }
 
+                    int RemoveCollisionShapeAtIndex(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->RemoveCollisionShapeAtIndex(static_cast<size_t>(script.ToInteger(2) - 1));    // Minus 1 because Lua is 1 based.
+                        }
+
+                        return 0;
+                    }
+
                     int GetCollisionShapeCount(GTCore::Script &script)
                     {
                         auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
@@ -2457,7 +2473,7 @@ namespace GTEngine
                         auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                         if (component != nullptr)
                         {
-                            int shapeIndex = script.ToInteger(2);
+                            int shapeIndex = script.ToInteger(2) - 1;   // Lua is 1 based, so we subtract 1.
 
                             auto shape = component->GetCollisionShapeAtIndex(static_cast<size_t>(shapeIndex));
                             if (shape != nullptr)
@@ -2489,7 +2505,7 @@ namespace GTEngine
                                             {
                                                 auto box = static_cast<btBoxShape*>(shape);
 
-                                                btVector3 halfExtents = box->getHalfExtentsWithoutMargin() / box->getLocalScaling();
+                                                btVector3 halfExtents = box->getHalfExtentsWithMargin() / box->getLocalScaling();
                                                 
                                                 script.SetTableValue(-1, "halfX", halfExtents.getX());
                                                 script.SetTableValue(-1, "halfY", halfExtents.getY());
@@ -2527,7 +2543,7 @@ namespace GTEngine
                                             {
                                                 auto cylinder = static_cast<btCylinderShape*>(shape);
 
-                                                btVector3 halfExtents = cylinder->getHalfExtentsWithoutMargin() / cylinder->getLocalScaling();
+                                                btVector3 halfExtents = cylinder->getHalfExtentsWithMargin() / cylinder->getLocalScaling();
                                                 
                                                 script.SetTableValue(-1, "halfX", halfExtents.getX());
                                                 script.SetTableValue(-1, "halfY", halfExtents.getY());
