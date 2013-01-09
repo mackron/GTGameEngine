@@ -546,6 +546,18 @@ namespace GTEngine
     }
 
 
+    btCollisionShape* DynamicsComponent::GetCollisionShapeAtIndex(size_t index)
+    {
+        return this->collisionShape->getChildShape(static_cast<int>(index));
+    }
+
+    const btCollisionShape* DynamicsComponent::GetCollisionShapeAtIndex(size_t index) const
+    {
+        return this->collisionShape->getChildShape(static_cast<int>(index));
+    }
+
+
+
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 

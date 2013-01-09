@@ -715,6 +715,19 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the component.
                     int RemoveAllCollisionShapes(GTCore::Script &script);
+
+                    /// Retrieves the number of collision shapes.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetCollisionShapeCount(GTCore::Script &script);
+
+                    /// Retrieves a table containing information about the collision shape of the given index.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The index of the shape whose information is being retrieved.
+                    //int GetCollisionShapeAtIndex(GTCore::Script &script);
                 }
 
 

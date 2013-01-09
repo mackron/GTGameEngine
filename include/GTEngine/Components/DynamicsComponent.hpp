@@ -250,6 +250,14 @@ namespace GTEngine
         btCompoundShape & GetCollisionShape() { return *this->collisionShape; }
 
 
+        /// Retrieves the number of collision shapes current attached to the component.
+        size_t GetCollisionShapeCount() const { return static_cast<size_t>(this->collisionShape->getNumChildShapes()); }
+
+        /// Retrieves a pointer to the shape at the given index.
+        ///
+        /// @param index [in] The index of the shape to retrieve.
+              btCollisionShape* GetCollisionShapeAtIndex(size_t index);
+        const btCollisionShape* GetCollisionShapeAtIndex(size_t index) const;
 
 
 

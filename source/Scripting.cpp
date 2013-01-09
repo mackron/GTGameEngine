@@ -455,6 +455,11 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.DynamicsComponent:GetCollisionShapeCount()"
+                "    return GTEngine.System.DynamicsComponent.GetCollisionShapeCount(self._internalPtr);"
+                "end;"
+
+
 
                 // EditorMetadataComponent
                 "GTEngine.EditorMetadataComponent = {};"
@@ -811,6 +816,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "AddCapsuleZCollisionShape",                      FFI::SystemFFI::DynamicsComponentFFI::AddCapsuleZCollisionShape);
                         script.SetTableFunction(-1, "AddConvexHullCollisionShapesFromModelComponent", FFI::SystemFFI::DynamicsComponentFFI::AddConvexHullCollisionShapesFromModelComponent);
                         script.SetTableFunction(-1, "RemoveAllCollisionShapes",                       FFI::SystemFFI::DynamicsComponentFFI::RemoveAllCollisionShapes);
+                        script.SetTableFunction(-1, "GetCollisionShapeCount",                         FFI::SystemFFI::DynamicsComponentFFI::GetCollisionShapeCount);
                     }
                     script.Pop(1);
 
@@ -2412,6 +2418,17 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+                    int GetCollisionShapeCount(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(static_cast<int>(component->GetCollisionShapeCount()));
+                        }
+
+                        return 1;
                     }
                 }
 
