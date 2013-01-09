@@ -96,6 +96,12 @@ namespace GTEngine
         bool IsUsingConvexHullsFromModel() const { return this->usingConvexHullsOfModel; }
 
 
+        /// Sets the offset to use for the shape at the given index.
+        ///
+        /// @param index  [in] The index of the shape whose offset is being changed.
+        /// @param offset [in] The new offset.
+        void SetCollisionShapeOffset(size_t index, float offsetX, float offsetY, float offsetZ);
+
 
 
         /// Sets the mass of the rigid body. If this is 0.0, it will be static. Defaults to 0.0.

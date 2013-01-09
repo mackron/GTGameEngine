@@ -741,6 +741,14 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the component.
                     int IsUsingConvexHullsFromModel(GTCore::Script &script);
+
+                    /// Sets the offset for the collision shape at the given index.
+                    ///
+                    /// @remarks
+                    ///     Argument 1:       A pointer to the component.
+                    ///     Argument 2:       The index of the shape whose offset is being changed.
+                    ///     Argument 3, 4, 5: The new offset, as 3 floats
+                    int SetCollisionShapeOffset(GTCore::Script &script);
                 }
 
 

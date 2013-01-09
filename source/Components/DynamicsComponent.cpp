@@ -608,6 +608,35 @@ namespace GTEngine
     }
 
 
+    void DynamicsComponent::SetCollisionShapeOffset(size_t index, float offsetX, float offsetY, float offsetZ)
+    {
+        // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
+        // when we're finished with the modifications.
+        auto world = this->rigidBody->GetWorld();
+        if (world != nullptr)
+        {
+            world->RemoveRigidBody(*this->rigidBody);
+        }
+
+
+        btTransform newTransform;
+        newTransform.setIdentity();
+        newTransform.setOrigin(btVector3(offsetX, offsetY, offsetZ));
+
+        this->collisionShape->updateChildTransform(index, newTransform);
+
+
+        // With a change in the shape, we also need to update the mass.
+        this->UpdateMass();
+
+        // Now we need to re-add the rigid body to the world, if it has one.
+        if (world != nullptr)
+        {
+            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
+        }
+    }
+
+
 
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
