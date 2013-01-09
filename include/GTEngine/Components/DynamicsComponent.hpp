@@ -76,6 +76,11 @@ namespace GTEngine
         /// Removes every collision shape.
         void RemoveAllCollisionShapes();
 
+        /// Removes the collision shape at the given index.
+        ///
+        /// @param index [in] The index of the shape to remove.
+        void RemoveCollisionShapeAtIndex(size_t index);
+
 
         /// Retrieves the number of collision shapes current attached to the component.
         size_t GetCollisionShapeCount() const { return static_cast<size_t>(this->collisionShape->getNumChildShapes()); }
