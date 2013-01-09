@@ -496,6 +496,27 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.DynamicsComponent:SetBoxCollisionShapeHalfExtents(index, halfX, halfY, halfZ)"
+                "    return GTEngine.System.DynamicsComponent.SetBoxCollisionShapeHalfExtents(self._internalPtr, index, halfX, halfY, halfZ);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:SetSphereCollisionShapeRadius(index, radius)"
+                "    return GTEngine.System.DynamicsComponent.SetSphereCollisionShapeRadius(self._internalPtr, index, radius);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:SetEllipsoidCollisionShapeRadius(index, radiusX, radiusY, radiusZ)"
+                "    return GTEngine.System.DynamicsComponent.SetEllipsoidCollisionShapeRadius(self._internalPtr, index, radiusX, radiusY, radiusZ);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:SetCylinderCollisionShapeHalfExtents(index, halfX, halfY, halfZ)"
+                "    return GTEngine.System.DynamicsComponent.SetCylinderCollisionShapeHalfExtents(self._internalPtr, index, halfX, halfY, halfZ);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:SetCapsuleCollisionShapeSize(index, radius, height)"
+                "    return GTEngine.System.DynamicsComponent.SetCapsuleCollisionShapeSize(self._internalPtr, index, radius, height);"
+                "end;"
+
+
 
                 // EditorMetadataComponent
                 "GTEngine.EditorMetadataComponent = {};"
@@ -857,6 +878,11 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetCollisionShapeAtIndex",                       FFI::SystemFFI::DynamicsComponentFFI::GetCollisionShapeAtIndex);
                         script.SetTableFunction(-1, "IsUsingConvexHullsFromModel",                    FFI::SystemFFI::DynamicsComponentFFI::IsUsingConvexHullsFromModel);
                         script.SetTableFunction(-1, "SetCollisionShapeOffset",                        FFI::SystemFFI::DynamicsComponentFFI::SetCollisionShapeOffset);
+                        script.SetTableFunction(-1, "SetBoxCollisionShapeHalfExtents",                FFI::SystemFFI::DynamicsComponentFFI::SetBoxCollisionShapeHalfExtents);
+                        script.SetTableFunction(-1, "SetSphereCollisionShapeRadius",                  FFI::SystemFFI::DynamicsComponentFFI::SetSphereCollisionShapeRadius);
+                        script.SetTableFunction(-1, "SetEllipsoidCollisionShapeRadius",               FFI::SystemFFI::DynamicsComponentFFI::SetEllipsoidCollisionShapeRadius);
+                        script.SetTableFunction(-1, "SetCylinderCollisionShapeHalfExtents",           FFI::SystemFFI::DynamicsComponentFFI::SetCylinderCollisionShapeHalfExtents);
+                        script.SetTableFunction(-1, "SetCapsuleCollisionShapeSize",                   FFI::SystemFFI::DynamicsComponentFFI::SetCapsuleCollisionShapeSize);
                     }
                     script.Pop(1);
 
@@ -2610,6 +2636,104 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+
+                    int SetBoxCollisionShapeHalfExtents(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                            float  halfX      = script.ToFloat(3);
+                            float  halfY      = script.ToFloat(4);
+                            float  halfZ      = script.ToFloat(5);
+
+                            script.Push(component->SetBoxCollisionShapeHalfExtents(shapeIndex, halfX, halfY, halfZ));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetSphereCollisionShapeRadius(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                            float  radius     = script.ToFloat(3);
+
+                            script.Push(component->SetSphereCollisionShapeRadius(shapeIndex, radius));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetEllipsoidCollisionShapeRadius(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                            float  radiusX    = script.ToFloat(3);
+                            float  radiusY    = script.ToFloat(4);
+                            float  radiusZ    = script.ToFloat(5);
+
+                            script.Push(component->SetEllipsoidCollisionShapeRadius(shapeIndex, radiusX, radiusY, radiusZ));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetCylinderCollisionShapeHalfExtents(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                            float  halfX      = script.ToFloat(3);
+                            float  halfY      = script.ToFloat(4);
+                            float  halfZ      = script.ToFloat(5);
+
+                            script.Push(component->SetCylinderCollisionShapeHalfExtents(shapeIndex, halfX, halfY, halfZ));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetCapsuleCollisionShapeSize(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                            float  radius     = script.ToFloat(3);
+                            float  height     = script.ToFloat(4);
+
+                            script.Push(component->SetCapsuleCollisionShapeSize(shapeIndex, radius, height));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
                     }
                 }
 

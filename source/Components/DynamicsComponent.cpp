@@ -636,6 +636,252 @@ namespace GTEngine
     }
 
 
+    bool DynamicsComponent::SetBoxCollisionShapeHalfExtents(size_t index, float halfX, float halfY, float halfZ)
+    {
+        if (GetCollisionShapeType(this->collisionShape->getChildShape(index)) == CollisionShapeType_Box)
+        {
+            // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
+            // when we're finished with the modifications.
+            auto world = this->rigidBody->GetWorld();
+            if (world != nullptr)
+            {
+                world->RemoveRigidBody(*this->rigidBody);
+            }
+
+
+            auto shape = static_cast<btBoxShape*>(this->collisionShape->getChildShape(index));
+
+
+            // And this is how we are going to change the extents... Can't find a better way to do this
+            shape->~btBoxShape();
+            new (shape) btBoxShape(btVector3(halfX, halfY, halfZ));
+
+
+            // We need to call this in order to get everything looking correct.
+            this->collisionShape->updateChildTransform(index, this->collisionShape->getChildTransform(index));
+
+
+            // With a change in the shape, we also need to update the mass.
+            this->UpdateMass();
+
+            // Now we need to re-add the rigid body to the world, if it has one.
+            if (world != nullptr)
+            {
+                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
+            }
+
+
+            return true;
+        }
+        
+        return false;
+    }
+
+    bool DynamicsComponent::SetSphereCollisionShapeRadius(size_t index, float radius)
+    {
+        if (GetCollisionShapeType(this->collisionShape->getChildShape(index)) == CollisionShapeType_Sphere)
+        {
+            // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
+            // when we're finished with the modifications.
+            auto world = this->rigidBody->GetWorld();
+            if (world != nullptr)
+            {
+                world->RemoveRigidBody(*this->rigidBody);
+            }
+
+
+            auto shape = static_cast<btSphereShape*>(this->collisionShape->getChildShape(index));
+
+
+            // And this is how we are going to change the extents... Can't find a better way to do this
+            shape->~btSphereShape();
+            new (shape) btSphereShape(radius);
+
+
+            // We need to call this in order to get everything looking correct.
+            this->collisionShape->updateChildTransform(index, this->collisionShape->getChildTransform(index));
+
+
+            // With a change in the shape, we also need to update the mass.
+            this->UpdateMass();
+
+            // Now we need to re-add the rigid body to the world, if it has one.
+            if (world != nullptr)
+            {
+                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
+            }
+
+
+            return true;
+        }
+        
+        return false;
+    }
+
+    bool DynamicsComponent::SetEllipsoidCollisionShapeRadius(size_t index, float radiusX, float radiusY, float radiusZ)
+    {
+        if (GetCollisionShapeType(this->collisionShape->getChildShape(index)) == CollisionShapeType_Ellipsoid)
+        {
+            // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
+            // when we're finished with the modifications.
+            auto world = this->rigidBody->GetWorld();
+            if (world != nullptr)
+            {
+                world->RemoveRigidBody(*this->rigidBody);
+            }
+
+
+            auto shape = static_cast<btEllipsoidShape*>(this->collisionShape->getChildShape(index));
+
+
+            // And this is how we are going to change the extents... Can't find a better way to do this
+            shape->~btEllipsoidShape();
+            new (shape) btEllipsoidShape(btVector3(radiusX, radiusY, radiusZ));
+
+
+            // We need to call this in order to get everything looking correct.
+            this->collisionShape->updateChildTransform(index, this->collisionShape->getChildTransform(index));
+
+
+            // With a change in the shape, we also need to update the mass.
+            this->UpdateMass();
+
+            // Now we need to re-add the rigid body to the world, if it has one.
+            if (world != nullptr)
+            {
+                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
+            }
+
+
+            return true;
+        }
+        
+        return false;
+    }
+
+    bool DynamicsComponent::SetCylinderCollisionShapeHalfExtents(size_t index, float halfX, float halfY, float halfZ)
+    {
+        auto type = GetCollisionShapeType(this->collisionShape->getChildShape(index));
+
+        if (type == CollisionShapeType_CylinderX || type == CollisionShapeType_CylinderY || type == CollisionShapeType_CylinderZ)
+        {
+            // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
+            // when we're finished with the modifications.
+            auto world = this->rigidBody->GetWorld();
+            if (world != nullptr)
+            {
+                world->RemoveRigidBody(*this->rigidBody);
+            }
+
+
+            if (type == CollisionShapeType_CylinderX)
+            {
+                auto shape = static_cast<btCylinderShapeX*>(this->collisionShape->getChildShape(index));
+
+                // And this is how we are going to change the extents... Can't find a better way to do this
+                shape->~btCylinderShapeX();
+                new (shape) btCylinderShapeX(btVector3(halfX, halfY, halfZ));
+            }
+            else if (type == CollisionShapeType_CylinderY)
+            {
+                auto shape = static_cast<btCylinderShape*>(this->collisionShape->getChildShape(index));
+
+                // And this is how we are going to change the extents... Can't find a better way to do this
+                shape->~btCylinderShape();
+                new (shape) btCylinderShape(btVector3(halfX, halfY, halfZ));
+            }
+            else if (type == CollisionShapeType_CylinderZ)
+            {
+                auto shape = static_cast<btCylinderShapeZ*>(this->collisionShape->getChildShape(index));
+
+                // And this is how we are going to change the extents... Can't find a better way to do this
+                shape->~btCylinderShapeZ();
+                new (shape) btCylinderShapeZ(btVector3(halfX, halfY, halfZ));
+            }
+
+
+            // We need to call this in order to get everything looking correct.
+            this->collisionShape->updateChildTransform(index, this->collisionShape->getChildTransform(index));
+
+
+            // With a change in the shape, we also need to update the mass.
+            this->UpdateMass();
+
+            // Now we need to re-add the rigid body to the world, if it has one.
+            if (world != nullptr)
+            {
+                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
+            }
+
+
+            return true;
+        }
+        
+        return false;
+    }
+
+    bool DynamicsComponent::SetCapsuleCollisionShapeSize(size_t index, float radius, float height)
+    {
+        auto type = GetCollisionShapeType(this->collisionShape->getChildShape(index));
+
+        if (type == CollisionShapeType_CapsuleX || type == CollisionShapeType_CapsuleY || type == CollisionShapeType_CapsuleZ)
+        {
+            // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
+            // when we're finished with the modifications.
+            auto world = this->rigidBody->GetWorld();
+            if (world != nullptr)
+            {
+                world->RemoveRigidBody(*this->rigidBody);
+            }
+
+
+            if (type == CollisionShapeType_CapsuleX)
+            {
+                auto shape = static_cast<btCapsuleShapeX*>(this->collisionShape->getChildShape(index));
+
+                // And this is how we are going to change the extents... Can't find a better way to do this
+                shape->~btCapsuleShapeX();
+                new (shape) btCapsuleShapeX(radius, height);
+            }
+            else if (type == CollisionShapeType_CapsuleY)
+            {
+                auto shape = static_cast<btCapsuleShape*>(this->collisionShape->getChildShape(index));
+
+                // And this is how we are going to change the extents... Can't find a better way to do this
+                shape->~btCapsuleShape();
+                new (shape) btCapsuleShape(radius, height);
+            }
+            else if (type == CollisionShapeType_CapsuleZ)
+            {
+                auto shape = static_cast<btCapsuleShapeZ*>(this->collisionShape->getChildShape(index));
+
+                // And this is how we are going to change the extents... Can't find a better way to do this
+                shape->~btCapsuleShapeZ();
+                new (shape) btCapsuleShapeZ(radius, height);
+            }
+
+
+            // We need to call this in order to get everything looking correct.
+            this->collisionShape->updateChildTransform(index, this->collisionShape->getChildTransform(index));
+
+
+            // With a change in the shape, we also need to update the mass.
+            this->UpdateMass();
+
+            // Now we need to re-add the rigid body to the world, if it has one.
+            if (world != nullptr)
+            {
+                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
+            }
+
+
+            return true;
+        }
+        
+        return false;
+    }
+
+
 
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
