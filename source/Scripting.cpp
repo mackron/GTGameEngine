@@ -491,6 +491,11 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.DynamicsComponent:SetCollisionShapeOffset(index, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.SetCollisionShapeOffset(self._internalPtr, index, offsetX, offsetY, offsetZ);"
+                "end;"
+
+
 
                 // EditorMetadataComponent
                 "GTEngine.EditorMetadataComponent = {};"
@@ -851,6 +856,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetCollisionShapeCount",                         FFI::SystemFFI::DynamicsComponentFFI::GetCollisionShapeCount);
                         script.SetTableFunction(-1, "GetCollisionShapeAtIndex",                       FFI::SystemFFI::DynamicsComponentFFI::GetCollisionShapeAtIndex);
                         script.SetTableFunction(-1, "IsUsingConvexHullsFromModel",                    FFI::SystemFFI::DynamicsComponentFFI::IsUsingConvexHullsFromModel);
+                        script.SetTableFunction(-1, "SetCollisionShapeOffset",                        FFI::SystemFFI::DynamicsComponentFFI::SetCollisionShapeOffset);
                     }
                     script.Pop(1);
 
@@ -2588,6 +2594,22 @@ namespace GTEngine
                         }
 
                         return 1;
+                    }
+
+                    int SetCollisionShapeOffset(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2)) - 1;        // Minus 1 because Lua is 1 based.
+                            float  offsetX    = script.ToFloat(3);
+                            float  offsetY    = script.ToFloat(4);
+                            float  offsetZ    = script.ToFloat(5);
+
+                            component->SetCollisionShapeOffset(shapeIndex, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
                     }
                 }
 
