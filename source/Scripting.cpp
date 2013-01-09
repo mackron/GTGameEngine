@@ -429,8 +429,8 @@ namespace GTEngine
                 "    GTEngine.System.DynamicsComponent.AddBoxCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
                 "end;"
 
-                "function GTEngine.DynamicsComponent:AddCylinderCollisionShape(radius, offsetX, offsetY, offsetZ)"
-                "    GTEngine.System.DynamicsComponent.AddCylinderCollisionShape(self._internalPtr, radius, offsetX, offsetY, offsetZ);"
+                "function GTEngine.DynamicsComponent:AddSphereCollisionShape(radius, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddSphereCollisionShape(self._internalPtr, radius, offsetX, offsetY, offsetZ);"
                 "end;"
 
                 "function GTEngine.DynamicsComponent:AddEllipsoidCollisionShape(radiusX, radiusY, radiusZ, offsetX, offsetY, offsetZ)"
