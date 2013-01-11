@@ -81,14 +81,17 @@ namespace GTEngine
         ///     This will delete every command the comes after the current command index.
         void AddInsertCommand(const GTCore::Vector<SceneNode*> &sceneNodes)
         {
+            (void)sceneNodes;
         }
 
         void AddDeleteCommand(const GTCore::Vector<SceneNode*> &sceneNodes)
         {
+            (void)sceneNodes;
         }
 
         void AddUpdateCommand(const GTCore::Vector<SceneNode*> &sceneNodes)
         {
+            (void)sceneNodes;
         }
 
 
