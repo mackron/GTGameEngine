@@ -20,6 +20,91 @@ namespace GTEngine
 {
     class Editor;
 
+    /// Enumerator for the different kinds of commands in the scene editor.
+    enum SceneEditorCommandType
+    {
+        SceneEditorCommandType_Insert,
+        SceneEditorCommandType_Delete,
+        SceneEditorCommandType_Update
+    };
+
+
+    /// Structure containing information about a command that has just taken place.
+    ///
+    /// A command will consist of pointers to relevant scene nodes and a serializer that will contain the serialized data associated
+    /// with that command.
+    ///
+    /// All commands come down to insert, delete or update/modify.
+    struct SceneEditorCommand
+    {
+        SceneEditorCommand()
+            : type(), sceneNodes(), serializer()
+        {
+        }
+
+        /// The type of this command.
+        SceneEditorCommandType type;
+
+        /// The scene nodes in question. For a delete command, this will be an empty list since it doesn't make sense to hold pointers
+        /// to deleted scene nodes.
+        GTCore::Vector<SceneNode*> sceneNodes;
+
+        /// The serializer containing the serialized state of the scene nodes in question. When the command restored, this will be
+        /// deserialized.
+        GTCore::BasicSerializer serializer;
+    };
+
+
+    /// Class representing an undo/redo stack.
+    class SceneEditorCommandStack
+    {
+    public:
+
+        SceneEditorCommandStack()
+            : commands(), commandIndex(1)
+        {
+        }
+
+        ~SceneEditorCommandStack()
+        {
+            for (size_t i = 0; i < this->commands.count; ++i)
+            {
+                delete this->commands[i];
+            }
+        }
+
+
+
+        /// Appends a new command.
+        ///
+        /// @remarks
+        ///     This will delete every command the comes after the current command index.
+        void AddInsertCommand(const GTCore::Vector<SceneNode*> &sceneNodes)
+        {
+        }
+
+        void AddDeleteCommand(const GTCore::Vector<SceneNode*> &sceneNodes)
+        {
+        }
+
+        void AddUpdateCommand(const GTCore::Vector<SceneNode*> &sceneNodes)
+        {
+        }
+
+
+
+    private:
+
+        /// The list of commands in the stack.
+        GTCore::Vector<SceneEditorCommand*> commands;
+
+        /// The current command index. When we undo, this moves backwards. When we redo, it moves forward.
+        size_t commandIndex;
+    };
+
+
+
+    /// The scene editor.
     class Editor_SceneEditor
     {
     public:
@@ -229,6 +314,12 @@ namespace GTEngine
         void DeserializeScene(State &state, GTCore::Deserializer &deserializer);
 
 
+        /// Marks the given scene as modified.
+        ///
+        /// @param fileName [in] The file name of the scene being marked as modified.
+        void MarkSceneAsModified(const char* fileName);
+
+
         /// Sets the current scene in the scripting environment.
         ///
         /// @param scene     [in] A pointer to the scene to make current. Can be null.
@@ -245,6 +336,8 @@ namespace GTEngine
         /// Initialises the scripting interface.
         void InitialiseScripting();
 
+
+        
 
 
 
@@ -384,6 +477,9 @@ namespace GTEngine
             /// The size of a snapping segment for scale.
             float scaleSnapSize;
             
+
+            /// Keeps track of whether or not an object was transformed with the gizmo.
+            bool transformedObjectWithGizmo;
 
 
 

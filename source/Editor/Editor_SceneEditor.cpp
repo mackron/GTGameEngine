@@ -717,6 +717,9 @@ namespace GTEngine
 
                         if (mouseOffsetX != 0.0f || mouseOffsetY != 0.0f)
                         {
+                            this->currentState->transformedObjectWithGizmo = true;
+
+
                             glm::vec3 dragAxis      = this->currentState->gizmoDragAxis;
                             float     dragDistance  = glm::length(glm::vec2(mouseOffsetX, -mouseOffsetY));
                             float     dragDirection = glm::dot(glm::normalize(glm::vec2(mouseOffsetX, -mouseOffsetY)), this->currentState->gizmoDragFactor);
@@ -908,6 +911,13 @@ namespace GTEngine
                 this->currentState->isDraggingGizmoZ = false;
 
                 this->currentState->transformGizmo.RestoreColours();
+
+                if (this->currentState->transformedObjectWithGizmo)
+                {
+                    this->MarkCurrentSceneAsModified();
+
+                    this->currentState->transformedObjectWithGizmo = false;
+                }
             }
         }
     }
@@ -1412,6 +1422,14 @@ namespace GTEngine
     }
 
 
+
+    void Editor_SceneEditor::MarkSceneAsModified(const char* fileName)
+    {
+
+    }
+
+
+
     void Editor_SceneEditor::SetCurrentSceneInScript(Scene* scene, const char* elementID)
     {
         auto &script = this->editor.GetGame().GetScript();
@@ -1498,6 +1516,7 @@ namespace GTEngine
           gizmoDragMode(GizmoDragMode_None), gizmoTransformMode(GizmoTransformMode_Translate), gizmoTransformSpace(GizmoTransformSpace_Global),
           snapTranslation(), snapAngle(0.0f), snapScale(), isSnapping(false),
           translateSnapSize(0.25f), rotateSnapSize(5.625f), scaleSnapSize(0.25f),
+          transformedObjectWithGizmo(false),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
