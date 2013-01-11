@@ -2,6 +2,8 @@
 #ifndef __GTEngine_Editor_hpp_
 #define __GTEngine_Editor_hpp_
 
+#include "Editor/SceneEditor/SceneEditor.hpp"
+
 #include "Editor/Editor_ModelEditor.hpp"
 #include "Editor/Editor_ImageEditor.hpp"
 //#include "Editor/Editor_SoundEditor.hpp"
@@ -187,6 +189,13 @@ namespace GTEngine
 
         /// The game that owns this editor object.
         Game &game;
+
+
+        /// The list of open files. This is indexed by the full, absolute file path. We need to index like this since we need to support
+        /// multiple data directories, which may result in something having the same relative path.
+        GTCore::Dictionary<SubEditor*> openedFiles;
+
+
 
         /// Structure containing the GUI elements.
         struct _GUI
