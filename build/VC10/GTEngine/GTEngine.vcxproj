@@ -170,6 +170,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSegment.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSequence.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\AssetTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\Sound.hpp" />

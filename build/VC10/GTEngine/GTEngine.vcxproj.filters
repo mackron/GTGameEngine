@@ -659,6 +659,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditor.hpp">
       <Filter>include\Editor\SceneEditor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\AssetTypes.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
