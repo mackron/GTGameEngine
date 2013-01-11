@@ -9,14 +9,19 @@ namespace GTEngine
 {
     namespace IO
     {
+        bool IsSupportedImageExtension(const char* fileName)
+        {
+            return GTImage::Loader::IsExtensionSupported(GTCore::Path::Extension(fileName));
+        }
+
         bool IsSupportedModelExtension(const char* fileName)
         {
             return ModelLibrary::IsExtensionSupported(GTCore::Path::Extension(fileName));
         }
 
-        bool IsSupportedImageExtension(const char* fileName)
+        bool IsSupportedMaterialExtension(const char* fileName)
         {
-            return GTImage::Loader::IsExtensionSupported(GTCore::Path::Extension(fileName));
+            return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "material");
         }
 
         bool IsSupportedSoundExtension(const char* fileName)
@@ -24,9 +29,48 @@ namespace GTEngine
             return AudioComposer::IsExtensionSupported(GTCore::Path::Extension(fileName));
         }
 
+        bool IsSupportedParticleEffectExtension(const char* fileName)
+        {
+            return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "gtparticle");
+        }
+
         bool IsSupportedSceneExtension(const char* fileName)
         {
             return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "gtscene");
+        }
+
+
+
+        AssetType GetAssetTypeFromExtension(const char* fileName)
+        {
+            if (IsSupportedImageExtension(fileName))
+            {
+                return AssetType_Image;
+            }
+            else if (IsSupportedModelExtension(fileName))
+            {
+                return AssetType_Model;
+            }
+            else if (IsSupportedMaterialExtension(fileName))
+            {
+                return AssetType_Material;
+            }
+            else if (IsSupportedSoundExtension(fileName))
+            {
+                return AssetType_Sound;
+            }
+            else if (IsSupportedParticleEffectExtension(fileName))
+            {
+                return AssetType_ParticleEffect;
+            }
+            else if (IsSupportedSceneExtension(fileName))
+            {
+                return AssetType_Scene;
+            }
+            else
+            {
+                return AssetType_TextFile;
+            }
         }
     }
 }
