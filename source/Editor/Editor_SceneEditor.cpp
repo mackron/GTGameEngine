@@ -914,7 +914,7 @@ namespace GTEngine
 
                 if (this->currentState->transformedObjectWithGizmo)
                 {
-                    this->MarkCurrentSceneAsModified();
+                    //this->MarkCurrentSceneAsModified();
 
                     this->currentState->transformedObjectWithGizmo = false;
                 }
