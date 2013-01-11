@@ -114,6 +114,12 @@
     <Filter Include="source\Utilities">
       <UniqueIdentifier>{2615629b-5aa6-4a64-bbd3-4d9bb29d4496}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Editor\SceneEditor">
+      <UniqueIdentifier>{618b7492-06f6-44e5-8af6-bee77cce28a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Editor\SceneEditor">
+      <UniqueIdentifier>{57e9dbee-c46f-4198-8e82-b2acdb266b1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -647,6 +653,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionShapeTypes.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SubEditor.hpp">
+      <Filter>include\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditor.hpp">
+      <Filter>include\Editor\SceneEditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1101,6 +1113,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\TransformGizmo.cpp">
       <Filter>source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SubEditor.cpp">
+      <Filter>source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditor.cpp">
+      <Filter>source\Editor\SceneEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
