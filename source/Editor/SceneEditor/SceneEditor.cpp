@@ -908,16 +908,20 @@ namespace GTEngine
         this->GUI.Main->Hide();
     }
 
-    void SceneEditor::Save()
+    bool SceneEditor::Save()
     {
         FILE* file = GTCore::IO::Open(this->GetAbsolutePath(), GTCore::IO::OpenMode::Write);
         if (file != nullptr)
         {
             GTCore::FileSerializer serializer(file);
             this->SerializeScene(serializer);
+
+            GTCore::IO::Close(file);
+
+            return true;
         }
 
-        GTCore::IO::Close(file);
+        return false;
     }
 
     void SceneEditor::OnUpdate(double deltaTimeInSeconds)

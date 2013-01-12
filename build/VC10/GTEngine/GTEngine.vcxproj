@@ -210,6 +210,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SubEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SubEditorTabEventHandler.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\TextEditor\TextEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\TransformGizmo.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Errors.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\FontManager.hpp" />
@@ -389,6 +390,7 @@
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SubEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SubEditorTabEventHandler.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\TextEditor\TextEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\TransformGizmo.cpp" />
     <ClCompile Include="..\..\..\source\Errors.cpp" />
     <ClCompile Include="..\..\..\source\FontManager.cpp" />

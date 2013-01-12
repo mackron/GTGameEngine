@@ -171,7 +171,7 @@ namespace GTEngine
         void Hide();
 
         /// SubEditor::Save()
-        void Save();
+        bool Save();
 
         /// SubEditor::Update()
         void OnUpdate(double deltaTimeInSeconds);

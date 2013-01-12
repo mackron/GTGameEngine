@@ -120,6 +120,42 @@
     <Filter Include="source\Editor\SceneEditor">
       <UniqueIdentifier>{57e9dbee-c46f-4198-8e82-b2acdb266b1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Editor\TextEditor">
+      <UniqueIdentifier>{daee27b1-04ee-4bf8-9065-4815a41def6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Editor\ModelEditor">
+      <UniqueIdentifier>{90aaf4e9-e824-48c3-8db2-d56414873a50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Editor\ImageEditor">
+      <UniqueIdentifier>{1a7e0cf3-9dae-44dd-8709-690008cd4070}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Editor\SoundEditor">
+      <UniqueIdentifier>{44420a04-4ca5-4697-b883-ed604e431abf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Editor\ParticleEditor">
+      <UniqueIdentifier>{f2021dca-864b-4df8-aa10-88403af21743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Editor\MaterialEditor">
+      <UniqueIdentifier>{b590ffbe-f3ae-4698-b7fe-201ed8ec5f46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Editor\TextEditor">
+      <UniqueIdentifier>{30f4a538-b214-490a-ab9c-e483b40c6396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Editor\ModelEditor">
+      <UniqueIdentifier>{1d9ad203-93fc-42d2-b43d-2eca441a57e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Editor\ImageEditor">
+      <UniqueIdentifier>{8555adf4-4837-4006-8fe6-a4f6b074b43a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Editor\SoundEditor">
+      <UniqueIdentifier>{b172d823-bcdd-4196-9d57-b30bb5cac970}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Editor\MaterialEditor">
+      <UniqueIdentifier>{f6f5a59f-d7d9-47da-909a-044467e33386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Editor\ParticleEditor">
+      <UniqueIdentifier>{9561ecb4-3e5c-4b6c-ad2d-d36ecf896052}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -665,6 +701,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SubEditorTabEventHandler.hpp">
       <Filter>include\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\TextEditor\TextEditor.hpp">
+      <Filter>include\Editor\TextEditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1128,6 +1167,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\SubEditorTabEventHandler.cpp">
       <Filter>source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\TextEditor\TextEditor.cpp">
+      <Filter>source\Editor\TextEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
