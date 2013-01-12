@@ -335,6 +335,11 @@ namespace GTEngine
             static int Open(GTCore::Script &script);
             static int Close(GTCore::Script &script);
 
+            static int OpenFile(GTCore::Script &script);
+            static int CloseFile(GTCore::Script &script);
+            static int ShowFile(GTCore::Script &script);
+            static int HideCurrentlyShownFile(GTCore::Script &script);
+
             static int OnModelActivated(GTCore::Script &script);
             static int OnImageActivated(GTCore::Script &script);
             static int OnSoundActivated(GTCore::Script &script);
