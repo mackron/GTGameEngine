@@ -1507,6 +1507,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         
         self.Panel:UpdateTransformPanel(node);
     end
+
     
     
     function self:OnSelectionChanged()

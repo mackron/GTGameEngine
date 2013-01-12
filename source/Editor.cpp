@@ -233,7 +233,7 @@ namespace GTEngine
         {
             if (relativeTo != nullptr)
             {
-                GTCore::IO::ToAbsolutePath(path, relativeTo);
+                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
             }
             else
             {
@@ -250,20 +250,29 @@ namespace GTEngine
             auto editor = iEditor->value;
             assert(editor != nullptr);
             {
-                if (this->currentlyShownEditor != nullptr && absolutePath == this->currentlyShownEditor->GetAbsolutePath())
+                // If the file is modified, what we actually want to do is show the Save File dialog. This dialog will control whether or not
+                // the file is saved and closed.
+                if (editor->IsMarkedAsModified())
                 {
-                    this->HideCurrentlyShownFile();
+                    this->ShowSaveFileDialog(absolutePath.c_str());
                 }
-            }
+                else
+                {
+                    if (this->currentlyShownEditor != nullptr && absolutePath == this->currentlyShownEditor->GetAbsolutePath())
+                    {
+                        this->HideCurrentlyShownFile();
+                    }
 
-            delete editor;
-            this->openedFiles.RemoveByIndex(iEditor->index);
+                    delete editor;
+                    this->openedFiles.RemoveByIndex(iEditor->index);
 
 
-            // If there are no files open, we need to hide the center, center panel.
-            if (this->openedFiles.count == 0)
-            {
-                this->GUI.EditorCenterCenterPanel->Hide();
+                    // If there are no files open, we need to hide the center, center panel.
+                    if (this->openedFiles.count == 0)
+                    {
+                        this->GUI.EditorCenterCenterPanel->Hide();
+                    }
+                }
             }
         }
     }
@@ -276,7 +285,7 @@ namespace GTEngine
         {
             if (relativeTo != nullptr)
             {
-                GTCore::IO::ToAbsolutePath(path, relativeTo);
+                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
             }
             else
             {
@@ -359,6 +368,98 @@ namespace GTEngine
         }
     }
 
+
+    bool Editor::SaveFile(const char* path, const char* relativeTo)
+    {
+        GTCore::String absolutePath(path);
+
+        if (GTCore::Path::IsRelative(path))
+        {
+            if (relativeTo != nullptr)
+            {
+                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+            }
+            else
+            {
+                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                return false;
+            }
+        }
+
+
+        auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        if (iSubEditor != nullptr)
+        {
+            auto subEditor = iSubEditor->value;
+            assert(subEditor != nullptr);
+            {
+                return subEditor->Save();
+            }
+        }
+
+        return false;
+    }
+
+
+    void Editor::MarkFileAsModified(const char* path, const char* relativeTo)
+    {
+        GTCore::String absolutePath(path);
+
+        if (GTCore::Path::IsRelative(path))
+        {
+            if (relativeTo != nullptr)
+            {
+                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+            }
+            else
+            {
+                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                return;
+            }
+        }
+
+
+        auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        if (iSubEditor != nullptr)
+        {
+            auto subEditor = iSubEditor->value;
+            assert(subEditor != nullptr);
+            {
+                return subEditor->MarkAsModified();
+            }
+        }
+    }
+
+    void Editor::UnmarkFileAsModified(const char* path, const char* relativeTo)
+    {
+        GTCore::String absolutePath(path);
+
+        if (GTCore::Path::IsRelative(path))
+        {
+            if (relativeTo != nullptr)
+            {
+                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+            }
+            else
+            {
+                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                return;
+            }
+        }
+
+
+        auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        if (iSubEditor != nullptr)
+        {
+            auto subEditor = iSubEditor->value;
+            assert(subEditor != nullptr);
+            {
+                return subEditor->UnmarkAsModified();
+            }
+        }
+    }
+
+
     bool Editor::IsFileMarkedAsModified(const char* path, const char* relativeTo)
     {
         GTCore::String absolutePath(path);
@@ -367,7 +468,7 @@ namespace GTEngine
         {
             if (relativeTo != nullptr)
             {
-                GTCore::IO::ToAbsolutePath(path, relativeTo);
+                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
             }
             else
             {
@@ -389,7 +490,6 @@ namespace GTEngine
 
         return false;
     }
-
 
 
 
@@ -623,6 +723,28 @@ namespace GTEngine
 
 
 
+
+
+    void Editor::ShowSaveFileDialog(const char* absolutePath)
+    {
+        // We let the scripting environment handle all of this.
+        auto &script = this->game.GetScript();
+
+        script.GetGlobal("Editor");
+        assert(script.IsTable(-1));
+        {
+            script.Push("ShowSaveFileDialog");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.Push(absolutePath);
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
+    }
+
+
     void Editor::StartupScripting()
     {
         auto &script = this->game.GetScript();
@@ -648,6 +770,10 @@ namespace GTEngine
             script.SetTableFunction(-1, "CloseFile",              FFI::CloseFile);
             script.SetTableFunction(-1, "ShowFile",               FFI::ShowFile);
             script.SetTableFunction(-1, "HideCurrentlyShownFile", FFI::HideCurrentlyShownFile);
+            script.SetTableFunction(-1, "SaveFile",               FFI::SaveFile);
+            script.SetTableFunction(-1, "MarkFileAsModified",     FFI::MarkFileAsModified);
+            script.SetTableFunction(-1, "UnmarkFileAsModified",   FFI::UnmarkFileAsModified);
+            script.SetTableFunction(-1, "IsFileMarkedAsModified", FFI::IsFileMarkedAsModified);
 
             script.SetTableFunction(-1, "OnModelActivated",       FFI::OnModelActivated);
             script.SetTableFunction(-1, "OnImageActivated",       FFI::OnImageActivated);
@@ -734,6 +860,30 @@ namespace GTEngine
     {
         FFI::GetEditor(script).HideCurrentlyShownFile();
         return 0;
+    }
+
+    int Editor::FFI::SaveFile(GTCore::Script &script)
+    {
+        script.Push(FFI::GetEditor(script).SaveFile(script.ToString(1), script.ToString(2)));
+        return 1;
+    }
+
+    int Editor::FFI::MarkFileAsModified(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).MarkFileAsModified(script.ToString(1), script.ToString(2));
+        return 0;
+    }
+
+    int Editor::FFI::UnmarkFileAsModified(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).UnmarkFileAsModified(script.ToString(1), script.ToString(2));
+        return 0;
+    }
+
+    int Editor::FFI::IsFileMarkedAsModified(GTCore::Script &script)
+    {
+        script.Push(FFI::GetEditor(script).IsFileMarkedAsModified(script.ToString(1), script.ToString(2)));
+        return 1;
     }
 
 

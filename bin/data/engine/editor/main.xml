@@ -64,6 +64,23 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script>
 <![CDATA[
 
+    function Editor.ShowSaveFileDialog(absolutePath)
+        Editor.ShowYesNoCancelDialog("Save '" .. GTCore.IO.GetFileNameFromPath(absolutePath) .. "'?", function(result)
+            if result == Editor.YesNoCancelDialogResult.Yes then
+                Editor.SaveFile(absolutePath);
+            end
+            
+            if result ~= Editor.YesNoCancelDialogResult.Cancel then
+                -- We'll get here if the result was 'Yes' or 'No', in which case we want to close the file. The catch is that when Editor.CloseFile() is called,
+                -- it will try to show this dialog again. To fix, we're going to unmark the file as modified.
+                Editor.UnmarkFileAsModified(absolutePath);
+                Editor.CloseFile(absolutePath);
+            end
+        end);
+    end
+
+
+
     -- Saves an item based on it's file name.
     function Editor.SaveItem(path)
         Editor.OpenFilesManager.SaveFile(path);
