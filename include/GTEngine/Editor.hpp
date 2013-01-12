@@ -3,6 +3,7 @@
 #define __GTEngine_Editor_hpp_
 
 #include "Editor/SceneEditor/SceneEditor.hpp"
+#include "Editor/TextEditor/TextEditor.hpp"
 
 #include "Editor/Editor_ModelEditor.hpp"
 #include "Editor/Editor_ImageEditor.hpp"

@@ -190,6 +190,12 @@ namespace GTEngine
                         break;
                     }
 
+                case AssetType_TextFile:
+                    {
+                        newSubEditor = new TextEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
                 default:
                     {
                         // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create

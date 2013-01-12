@@ -74,7 +74,7 @@ namespace GTEngine
         virtual void Hide();
 
         /// Called when the file needs to be saved.
-        virtual void Save();
+        virtual bool Save();
 
         /// Updates the editor.
         ///

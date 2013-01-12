@@ -128,14 +128,25 @@ namespace GTEngine
     }
 
     
+    // TODO: Fix up this whole firstChild thing that's going on here. It's just hacky, ugly and inflexible. Will want to use the scripting interface.
     void SubEditor::MarkAsModified()
     {
         this->isMarkedAsModified = true;
+
+        // We will modify the text of the tab to show a star to the right.
+        GTCore::String tabText = this->GetTabElement()->firstChild->GetText();
+        tabText += "*";
+
+        this->GetTabElement()->firstChild->SetText(tabText.c_str());
     }
 
     void SubEditor::UnmarkAsModified()
     {
         this->isMarkedAsModified = false;
+
+        // Now we want to remove the star.
+        GTCore::String tabText(this->GetTabElement()->firstChild->GetText(), GTCore::Strings::SizeInBytes(this->GetTabElement()->firstChild->GetText()) - 1);
+        this->GetTabElement()->firstChild->SetText(tabText.c_str());
     }
 
     bool SubEditor::IsMarkedAsModified() const
@@ -169,8 +180,9 @@ namespace GTEngine
     {
     }
 
-    void SubEditor::Save()
+    bool SubEditor::Save()
     {
+        return true;
     }
 
     void SubEditor::OnUpdate(double)
