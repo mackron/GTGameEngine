@@ -31,7 +31,7 @@ function GTGUI.Element:DataExplorer()
                     GTCore.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
                     
-                    Editor.OpenFile(absolutePath);
+                    Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
                 end
             end);
         end
@@ -46,7 +46,7 @@ function GTGUI.Element:DataExplorer()
                     GTCore.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
                     
-                    Editor.OpenFile(absolutePath);
+                    Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
                 end
             end);
         end
@@ -244,7 +244,7 @@ function GTGUI.Element:DataExplorer()
     
     self.TreeView:OnItemPicked(function(data)
         if not data.item.isDirectory then
-            Editor.OpenFilesManager.OpenFile(data.item.path, data.item:GetRootPath());
+            Editor.OpenFile(data.item.path, data.item:GetRootPath());
         end
     end)
     

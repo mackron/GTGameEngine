@@ -42,9 +42,10 @@ namespace GTEngine
             // We need to grab the main elements from the server.
             if (guiServer.LoadFromFile("engine/editor/main.xml"))
             {
-                this->GUI.EditorMain   = guiServer.GetElementByID("EditorMain");
-                this->GUI.Editor_Delta = guiServer.GetElementByID("Editor_Delta");
-                this->GUI.Editor_FPS   = guiServer.GetElementByID("Editor_FPS");
+                this->GUI.EditorMain              = guiServer.GetElementByID("EditorMain");
+                this->GUI.EditorCenterCenterPanel = guiServer.GetElementByID("EditorCenterCenterPanel");
+                this->GUI.Editor_Delta            = guiServer.GetElementByID("Editor_Delta");
+                this->GUI.Editor_FPS              = guiServer.GetElementByID("Editor_FPS");
 
                 // We actually want the editor element to be the first child of the root. If we don't do this, sometimes a game can be in a state
                 // where the editor will be placed underneath another GUI element, causing it to not look quite right.
@@ -197,6 +198,9 @@ namespace GTEngine
                 // At this point we will have a sub-editor and all we need to do is add it to our list and show it.
                 this->openedFiles.Add(absolutePath.c_str(), newSubEditor);
 
+                // There is a center panel that needs to be shown. It is the center, center panel.
+                this->GUI.EditorCenterCenterPanel->Show();
+
                 // TODO: Let the scripting environmnent know about this.
             }
             else
@@ -248,6 +252,13 @@ namespace GTEngine
             this->openedFiles.RemoveByIndex(iEditor->index);
 
 
+            // If there are no files open, we need to hide the center, center panel.
+            if (this->openedFiles.count == 0)
+            {
+                this->GUI.EditorCenterCenterPanel->Hide();
+            }
+
+
             // TODO: Let the scripting environment know about this.
         }
     }
@@ -278,6 +289,52 @@ namespace GTEngine
             {
                 // The previously shown editor needs to be hidden.
                 this->HideCurrentlyShownFile();
+
+                // Now what we do is activate the tab. We do NOT want to post an OnTabActivated event from this, because otherwise
+                // we'll end up getting stuck recursively. To prevent this, we simple pass 'true' to the second argument of ActivateTab().
+                auto &script = this->GetGame().GetScript();
+
+                script.GetGlobal("Editor_TabBar");
+                assert(script.IsTable(-1));
+                {
+                    script.Push("ActivateTab");
+                    script.GetTableValue(-2);
+                    assert(script.IsFunction(-1));
+                    {
+                        script.PushValue(-2);       // 'self'.
+
+                        // We need to get the element.
+                        script.GetGlobal("GTGUI");
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("Server");
+                            script.GetTableValue(-2);
+                            assert(script.IsTable(-1));
+                            {
+                                script.Push("GetElementByID");
+                                script.GetTableValue(-2);
+                                assert(script.IsFunction(-1));
+                                {
+                                    script.Push(editorToShow->GetTabElement()->id);
+                                    script.Call(1, 1);
+
+                                    // The return value needs to be relocated so that it is placed as the second argument to Editor_TabBar:RemoveTab().
+                                    script.InsertIntoStack(-3);
+                                }
+                            }
+                            script.Pop(1);  // GTGUI.Server
+                        }
+                        script.Pop(1);      // GTGUI
+
+                        // We need to pass true as the last argument (blockEvent) so that we don't post an OnTabActivated event, which would in turn result in us getting stuck in a recursive loop.
+                        script.Push(true);
+
+                        // Now we need to call the function, ignoring any return values.
+                        script.Call(3, 0);
+                    }
+                }
+                script.Pop(1);
+
 
                 // Now we can set and show the newly showing editor.
                 this->currentlyShownEditor = editorToShow;

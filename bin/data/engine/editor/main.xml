@@ -65,9 +65,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <![CDATA[
 
     -- Opens the given file.
-    function Editor.OpenFile(path)
-        Editor.OpenFilesManager.OpenFile(path);
-    end
+    --function Editor.OpenFile(path)
+    --    Editor.OpenFilesManager.OpenFile(path);
+    --end
 
     -- Saves an item based on it's file name.
     function Editor.SaveItem(path)
@@ -167,11 +167,11 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     Editor_TabBar:TabBar();
     
     Editor_TabBar:OnTabActivated(function(data)
-        Editor.OpenFilesManager.ShowFile(data.tab.path);
+        Editor.ShowFile(data.tab.absolutePath);
     end);
     
     Editor_TabBar:OnTabDeactivated(function(data)
-        Editor.OpenFilesManager.HideFile();
+        Editor.HideCurrentlyShownFile();
     end);
     
     

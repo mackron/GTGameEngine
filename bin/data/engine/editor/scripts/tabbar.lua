@@ -4,12 +4,12 @@ function GTGUI.Element:TabBarTab(text)
     self.borderHider = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='tabbar-tab-borderhider' />");
     self.isActive    = false;
 
-    function self:Activate()
+    function self:Activate(blockEvent)
         if not self.isActive then
             self.isActive = true;
             self:AttachStyleClass('tabbar-tab-active');
             self.borderHider:Show();
-            self.Parent:__ActivateTab(self);
+            self.Parent:__ActivateTab(self, blockEvent);
         end
     end
     
@@ -80,16 +80,16 @@ function GTGUI.Element:TabBar()
     end
     
     
-    function self:ActivateTab(tab)
-        if tab then tab:Activate(); end
+    function self:ActivateTab(tab, blockEvent)
+        if tab then tab:Activate(blockEvent); end
     end
     
-    function self:__ActivateTab(tab)
+    function self:__ActivateTab(tab, blockEvent)
         if self.activeTab ~= tab then                       -- This is a super important check. Leave this.
             self:DeactivateActiveTab();
             self.activeTab = tab;
             
-            self:OnTabActivated({tab = tab});
+            if not blockEvent then self:OnTabActivated({tab = tab}) end;
         end
     end
     

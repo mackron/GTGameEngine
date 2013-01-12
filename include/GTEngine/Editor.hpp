@@ -263,13 +263,16 @@ namespace GTEngine
         struct _GUI
         {
             _GUI()
-                : EditorMain(nullptr),
+                : EditorMain(nullptr), EditorCenterCenterPanel(nullptr),
                   Editor_Delta(nullptr), Editor_FPS(nullptr)
             {
             }
 
             /// The main editor element. Every single element used by the editor is a child of this element.
             GTGUI::Element* EditorMain;
+
+            /// The center, center panel element. This will be dynamically shown and hidden as tabs are added or removed.
+            GTGUI::Element* EditorCenterCenterPanel;
 
             // GUI elements for the profiling information.
             GTGUI::Element* Editor_Delta;
