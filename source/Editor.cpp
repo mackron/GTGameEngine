@@ -531,10 +531,11 @@ namespace GTEngine
 
         script.Execute
         (
-            "Editor.ModelEditor    = {};"
             "Editor.ImageEditor    = {};"
-            "Editor.SoundEditor    = {};"
+            "Editor.ModelEditor    = {};"
             "Editor.MaterialEditor = {};"
+            "Editor.SoundEditor    = {};"
+            "Editor.ParticleEditor = {};"
             "Editor.SceneEditor    = {};"
             "Editor.TextEditor     = {};"
         );
@@ -542,17 +543,22 @@ namespace GTEngine
         script.GetGlobal("Editor");
         if (script.IsTable(-1))
         {
-            script.SetTableFunction(-1, "Open",  FFI::Open);
-            script.SetTableFunction(-1, "Close", FFI::Close);
+            script.SetTableFunction(-1, "Open",                   FFI::Open);
+            script.SetTableFunction(-1, "Close",                  FFI::Close);
 
-            script.SetTableFunction(-1, "OnModelActivated",    FFI::OnModelActivated);
-            script.SetTableFunction(-1, "OnImageActivated",    FFI::OnImageActivated);
-            script.SetTableFunction(-1, "OnSoundActivated",    FFI::OnSoundActivated);
-            script.SetTableFunction(-1, "OnTextFileActivated", FFI::OnTextFileActivated);
-            script.SetTableFunction(-1, "OnSceneActivated",    FFI::OnSceneActivated);
+            script.SetTableFunction(-1, "OpenFile",               FFI::OpenFile);
+            script.SetTableFunction(-1, "CloseFile",              FFI::CloseFile);
+            script.SetTableFunction(-1, "ShowFile",               FFI::ShowFile);
+            script.SetTableFunction(-1, "HideCurrentlyShownFile", FFI::HideCurrentlyShownFile);
 
-            script.SetTableFunction(-1, "OnFileActivated",     FFI::OnFileActivated);
-            script.SetTableFunction(-1, "OnFileClosed",        FFI::OnFileClosed);
+            script.SetTableFunction(-1, "OnModelActivated",       FFI::OnModelActivated);
+            script.SetTableFunction(-1, "OnImageActivated",       FFI::OnImageActivated);
+            script.SetTableFunction(-1, "OnSoundActivated",       FFI::OnSoundActivated);
+            script.SetTableFunction(-1, "OnTextFileActivated",    FFI::OnTextFileActivated);
+            script.SetTableFunction(-1, "OnSceneActivated",       FFI::OnSceneActivated);
+
+            script.SetTableFunction(-1, "OnFileActivated",        FFI::OnFileActivated);
+            script.SetTableFunction(-1, "OnFileClosed",           FFI::OnFileClosed);
 
 
             script.Push("ModelEditor");
@@ -604,6 +610,31 @@ namespace GTEngine
     int Editor::FFI::Close(GTCore::Script &script)
     {
         GameScript::FFI::GetGameObject(script).CloseEditor();
+        return 0;
+    }
+
+
+    int Editor::FFI::OpenFile(GTCore::Script &script)
+    {
+        script.Push(FFI::GetEditor(script).OpenFile(script.ToString(1), script.ToString(2)));
+        return 1;
+    }
+
+    int Editor::FFI::CloseFile(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).CloseFile(script.ToString(1), script.ToString(2));
+        return 0;
+    }
+
+    int Editor::FFI::ShowFile(GTCore::Script &script)
+    {
+        script.Push(FFI::GetEditor(script).ShowFile(script.ToString(1), script.ToString(2)));
+        return 1;
+    }
+
+    int Editor::FFI::HideCurrentlyShownFile(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).HideCurrentlyShownFile();
         return 0;
     }
 
