@@ -57,6 +57,52 @@ namespace GTEngine
         bool IsOpen() const { return this->isOpen; }
 
 
+        /// Opens a file.
+        ///
+        /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
+        /// @param relativeTo [in] If 'path' is absolute, defines the base path that will be used to retrieve the relative path.
+        ///
+        /// @return True if the file is opened successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     The editor must be aware of the files absolute AND relative paths. If 'path' is absolute, it needs to have it's relative path
+        ///     extracted from that. In order to do that, we need the base part of the path that is used to make it relative. If is an error
+        ///     for 'path' to be absolute while 'relativeTo' is null.
+        bool OpenFile(const char* path, const char* relativeTo = nullptr);
+
+        /// Closes a file.
+        ///
+        /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
+        /// @param relativeTo [in] If 'path' is relative, defines the base path to will be used to make it absolute.
+        ///
+        /// @remarks
+        ///     Internally, the editor uses absolute paths to associate editors with files. If 'path' is relative, it will need to be converted
+        ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
+        ///     relative.
+        ///
+        ///     This function does not save or prompt to save. It simply closes the file and discards any changes. Saving and save prompting
+        ///     should be done at a higher level.
+        void CloseFile(const char* path, const char* relativeTo = nullptr);
+
+        /// Shows the given file.
+        ///
+        /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
+        /// @param relativeTo [in] If 'path' is relative, defines the base path to will be used to make it absolute.
+        ///
+        /// @return True if the file is shown successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     Internally, the editor uses absolute paths to associate editors with files. If 'path' is relative, it will need to be converted
+        ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
+        ///     relative.
+        bool ShowFile(const char* path, const char* relativeTo = nullptr);
+
+        /// Hides the file and it's editor that is current being shown.
+        void HideCurrentlyShownFile();
+
+
+
+
         /// Retrieves a reference to the model sub-editor.
               Editor_ModelEditor & GetModelEditor()       { return this->modelEditor; }
         const Editor_ModelEditor & GetModelEditor() const { return this->modelEditor; }
@@ -194,6 +240,9 @@ namespace GTEngine
         /// The list of open files. This is indexed by the full, absolute file path. We need to index like this since we need to support
         /// multiple data directories, which may result in something having the same relative path.
         GTCore::Dictionary<SubEditor*> openedFiles;
+
+        /// A pointer to the sub-editor that is currently being shown.
+        SubEditor* currentlyShownEditor;
 
 
 

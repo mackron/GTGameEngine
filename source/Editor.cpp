@@ -1,6 +1,7 @@
 
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/Logging.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTGUI/Server.hpp>
@@ -16,7 +17,9 @@
 namespace GTEngine
 {
     Editor::Editor(Game &game)
-        : game(game), GUI(),
+        : game(game),
+          openedFiles(), currentlyShownEditor(nullptr),
+          GUI(),
           modelEditor(*this), imageEditor(*this), textEditor(*this), sceneEditor(*this),
           lastProfilingUpdateTime(0.0),
           isStarted(false), isOpen(false), disableFileWatchingAfterClose(true), disableKeyboardAutoRepeatAfterClose(true),
@@ -127,6 +130,179 @@ namespace GTEngine
             this->isOpen = false;
         }
     }
+
+
+    bool Editor::OpenFile(const char* path, const char* relativeTo)
+    {
+        // We need to make sure we have an absolute and relative path.
+        GTCore::String absolutePath;
+        GTCore::String relativePath;
+
+        if (GTCore::Path::IsAbsolute(path))
+        {
+            if (relativeTo != nullptr)
+            {
+                absolutePath = path;
+                relativePath = GTCore::IO::ToRelativePath(path, relativeTo);
+            }
+            else
+            {
+                // We're unable to retrieve the relative path because 'path' is absolute and 'relativeTo' is null.
+                return false;
+            }
+        }
+        else
+        {
+            // The file needs to exist. If it doesn't, we need to return false.
+            if (GTCore::IO::FindAbsolutePath(path, absolutePath))
+            {
+                relativePath = path;
+            }
+            else
+            {
+                GTEngine::PostError("Editor: Can not open file '%s'. Check that the file exists or if it's already in use.\n", path);
+                return false;
+            }
+        }
+
+
+        // At this point, we will have absolute and relative paths. We now need to check if the file is already open. If so, we just switch to it. Otherwise, we need
+        // to open it.
+        if (this->openedFiles.Find(absolutePath.c_str()) == nullptr)
+        {
+            if (GTCore::IO::FileExists(absolutePath.c_str()))
+            {
+                SubEditor* newSubEditor = nullptr;
+
+                // The file exists, so now we just create our sub-editor. The specific sub-editor will be based on the file name.
+                auto type = GTEngine::IO::GetAssetTypeFromExtension(absolutePath.c_str());
+            
+                switch (type)
+                {
+                case AssetType_Scene:
+                    {
+                        newSubEditor = new SceneEditor(absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
+                default:
+                    {
+                        // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
+                        // a SubEditor object for it.
+                        GTEngine::Log("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
+                        newSubEditor = new SubEditor(absolutePath.c_str(), relativePath.c_str());
+                    }
+                }
+
+                // At this point we will have a sub-editor and all we need to do is add it to our list and show it.
+                this->openedFiles.Add(absolutePath.c_str(), newSubEditor);
+
+                // TODO: Let the scripting environmnent know about this.
+            }
+            else
+            {
+                GTEngine::PostError("Editor: Can not open file '%s'. Does not exist.\n", path);
+                return false;
+            }
+        }
+
+
+        // Now we just to need show the newly opened file.
+        this->ShowFile(absolutePath.c_str());
+
+        return true;
+    }
+
+    void Editor::CloseFile(const char* path, const char* relativeTo)
+    {
+        GTCore::String absolutePath(path);
+
+        if (GTCore::Path::IsRelative(path))
+        {
+            if (relativeTo != nullptr)
+            {
+                GTCore::IO::ToAbsolutePath(path, relativeTo);
+            }
+            else
+            {
+                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                return;
+            }
+        }
+
+
+        // At this point we will have our absolute path. We need to retrieve the sub editor, and call it's hide function before we completely delete it.
+        auto iEditor = this->openedFiles.Find(absolutePath.c_str());
+        if (iEditor != nullptr)
+        {
+            auto editor = iEditor->value;
+            assert(editor != nullptr);
+            {
+                if (this->currentlyShownEditor != nullptr && absolutePath == this->currentlyShownEditor->GetAbsolutePath())
+                {
+                    this->HideCurrentlyShownFile();
+                }
+            }
+
+            delete editor;
+            this->openedFiles.RemoveByIndex(iEditor->index);
+
+
+            // TODO: Let the scripting environment know about this.
+        }
+    }
+
+    bool Editor::ShowFile(const char* path, const char* relativeTo)
+    {
+        GTCore::String absolutePath(path);
+
+        if (GTCore::Path::IsRelative(path))
+        {
+            if (relativeTo != nullptr)
+            {
+                GTCore::IO::ToAbsolutePath(path, relativeTo);
+            }
+            else
+            {
+                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                return false;
+            }
+        }
+
+
+        auto iEditorToShow = this->openedFiles.Find(absolutePath.c_str());
+        if (iEditorToShow != nullptr)
+        {
+            auto editorToShow = iEditorToShow->value;
+            assert(editorToShow != nullptr);
+            {
+                // The previously shown editor needs to be hidden.
+                this->HideCurrentlyShownFile();
+
+                // Now we can set and show the newly showing editor.
+                this->currentlyShownEditor = editorToShow;
+                this->currentlyShownEditor->Show();
+            }
+        }
+
+        // TODO: Let the scripting environment know about this.
+
+        return true;
+    }
+
+    void Editor::HideCurrentlyShownFile()
+    {
+        if (this->currentlyShownEditor != nullptr)
+        {
+            this->currentlyShownEditor->Hide();
+            this->currentlyShownEditor = nullptr;
+
+            // TODO: Let the scripting environment know about this.
+        }
+    }
+
+
+
 
 
     void Editor::Update(double deltaTimeInSeconds)
