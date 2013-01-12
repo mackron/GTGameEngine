@@ -1,10 +1,10 @@
 
 #include <GTEngine/Editor/SceneEditorSceneEventHandler.hpp>
-#include <GTEngine/Editor/Editor_SceneEditor.hpp>
+#include <GTEngine/Editor/SceneEditor/SceneEditor.hpp>
 
 namespace GTEngine
 {
-    SceneEditorSceneEventHandler::SceneEditorSceneEventHandler(Editor_SceneEditor &sceneEditorIn)
+    SceneEditorSceneEventHandler::SceneEditorSceneEventHandler(SceneEditor &sceneEditorIn)
         : sceneEditor(sceneEditorIn)
     {
     }

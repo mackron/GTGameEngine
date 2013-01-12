@@ -33,6 +33,7 @@ namespace GTEngine
                 "GTEngine.System.EditorMetadataComponent   = {};"
                 "GTEngine.System.SceneNode                 = {};"
                 "GTEngine.System.Scene                     = {};"
+                "GTEngine.System.SceneEditor               = {};"
 
                 "GTEngine.Renderer = {};"
                 "GTEngine.Audio    = {};"
@@ -899,6 +900,32 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ShowDirectionArrow",      FFI::SystemFFI::EditorMetadataComponentFFI::ShowDirectionArrow);
                         script.SetTableFunction(-1, "HideDirectionArrow",      FFI::SystemFFI::EditorMetadataComponentFFI::HideDirectionArrow);
                         script.SetTableFunction(-1, "IsShowingDirectionArrow", FFI::SystemFFI::EditorMetadataComponentFFI::IsShowingDirectionArrow);
+                    }
+                    script.Pop(1);
+
+
+                    script.Push("SceneEditor");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "GetScenePtr",                  FFI::SystemFFI::SceneEditorFFI::GetScenePtr);
+                        script.SetTableFunction(-1, "DeselectAll",                  FFI::SystemFFI::SceneEditorFFI::DeselectAll);
+                        script.SetTableFunction(-1, "SelectSceneNode",              FFI::SystemFFI::SceneEditorFFI::SelectSceneNode);
+                        script.SetTableFunction(-1, "DeselectSceneNode",            FFI::SystemFFI::SceneEditorFFI::DeselectSceneNode);
+                        script.SetTableFunction(-1, "GetSelectedSceneNodeCount",    FFI::SystemFFI::SceneEditorFFI::GetSelectedSceneNodeCount);
+                        script.SetTableFunction(-1, "GetFirstSelectedSceneNodePtr", FFI::SystemFFI::SceneEditorFFI::GetFirstSelectedSceneNodePtr);
+                        script.SetTableFunction(-1, "TryGizmoMouseSelect",          FFI::SystemFFI::SceneEditorFFI::TryGizmoMouseSelect);
+                        script.SetTableFunction(-1, "DoMouseSelection",             FFI::SystemFFI::SceneEditorFFI::DoMouseSelection);
+                        script.SetTableFunction(-1, "DeleteSelectedSceneNodes",     FFI::SystemFFI::SceneEditorFFI::DeleteSelectedSceneNodes);
+                        script.SetTableFunction(-1, "DuplicateSelectedSceneNodes",  FFI::SystemFFI::SceneEditorFFI::DuplicateSelectedSceneNodes);
+                        script.SetTableFunction(-1, "SwitchGizmoToTranslateMode",   FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToTranslateMode);
+                        script.SetTableFunction(-1, "SwitchGizmoToRotateMode",      FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToRotateMode);
+                        script.SetTableFunction(-1, "SwitchGizmoToScaleMode",       FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToScaleMode);
+                        script.SetTableFunction(-1, "SwitchGizmoToLocalSpace",      FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToLocalSpace);
+                        script.SetTableFunction(-1, "SwitchGizmoToGlobalSpace",     FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToGlobalSpace);
+                        script.SetTableFunction(-1, "ToggleGizmoSpace",             FFI::SystemFFI::SceneEditorFFI::ToggleGizmoSpace);
+                        script.SetTableFunction(-1, "IsGizmoInLocalSpace",          FFI::SystemFFI::SceneEditorFFI::IsGizmoInLocalSpace);
+                        script.SetTableFunction(-1, "IsGizmoInGlobalSpace",         FFI::SystemFFI::SceneEditorFFI::IsGizmoInGlobalSpace);
                     }
                     script.Pop(1);
                 }
@@ -2856,6 +2883,244 @@ namespace GTEngine
                         else
                         {
                             script.Push(false);
+                        }
+
+                        return 1;
+                    }
+                }
+
+
+
+                namespace SceneEditorFFI
+                {
+                    int GetScenePtr(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(&sceneEditor->GetScene());
+                        }
+                        else
+                        {
+                            script.Push(static_cast<void*>(nullptr));
+                        }
+                        
+                        return 1;
+                    }
+
+                    int DeselectAll(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->DeselectAll();
+                        }
+
+                        return 0;
+                    }
+
+                    int SelectSceneNode(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+                            if (sceneNode != nullptr)
+                            {
+                                sceneEditor->SelectSceneNode(*sceneNode);
+                            }
+                        }
+
+                        return 0;
+                    }
+
+                    int DeselectSceneNode(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+                            if (sceneNode != nullptr)
+                            {
+                                sceneEditor->DeselectSceneNode(*sceneNode);
+                            }
+                        }
+
+                        return 0;
+                    }
+
+                    int GetSelectedSceneNodeCount(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(static_cast<int>(sceneEditor->GetSelectedSceneNodeCount()));
+                        }
+                        else
+                        {
+                            script.Push(0);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetFirstSelectedSceneNodePtr(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->GetFirstSelectedSceneNode());
+                        }
+                        else
+                        {
+                            script.Push(static_cast<void*>(nullptr));
+                        }
+
+                        return 1;
+                    }
+
+
+                    int TryGizmoMouseSelect(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->TryGizmoMouseSelect());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int DoMouseSelection(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->DoMouseSelection();
+                        }
+
+                        return 0;
+                    }
+
+
+                    int DeleteSelectedSceneNodes(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->DeleteSelectedSceneNodes();
+                        }
+
+                        return 0;
+                    }
+
+                    int DuplicateSelectedSceneNodes(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->DuplicateSelectedSceneNodes();
+                        }
+
+                        return 0;
+                    }
+
+
+                    int SwitchGizmoToTranslateMode(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->SwitchGizmoToTranslateMode();
+                        }
+
+                        return 0;
+                    }
+
+                    int SwitchGizmoToRotateMode(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->SwitchGizmoToRotateMode();
+                        }
+
+                        return 0;
+                    }
+
+                    int SwitchGizmoToScaleMode(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->SwitchGizmoToScaleMode();
+                        }
+
+                        return 0;
+                    }
+
+                    int SwitchGizmoToLocalSpace(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->SwitchGizmoToLocalSpace();
+                        }
+
+                        return 0;
+                    }
+
+                    int SwitchGizmoToGlobalSpace(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->SwitchGizmoToGlobalSpace();
+                        }
+
+                        return 0;
+                    }
+
+                    int ToggleGizmoSpace(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->ToggleGizmoSpace();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsGizmoInLocalSpace(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->IsGizmoInLocalSpace());
+                        }
+                        else
+                        {
+                            script.Push(true);      // Local space by default.
+                        }
+
+                        return 1;
+                    }
+
+                    int IsGizmoInGlobalSpace(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->IsGizmoInGlobalSpace());
+                        }
+                        else
+                        {
+                            script.Push(true);      // Global space by default.
                         }
 
                         return 1;

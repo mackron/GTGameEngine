@@ -6,6 +6,8 @@
 ------------------------------------------------
 -- Scene.SceneEditor
 
+--[[
+
 Editor.SceneEditor.CurrentScene              = nil;
 Editor.SceneEditor.CurrentSceneEditorElement = nil;
 Editor.SceneEditor.SelectedNodes = {};
@@ -92,7 +94,7 @@ function Editor.SceneEditor.UpdateTransformPanel()
         Editor.SceneEditor.CurrentSceneEditorElement:UpdateTransformPanel(Editor.SceneEditor.GetFirstSelectedNode());
     end
 end
-
+]]
 
 
 

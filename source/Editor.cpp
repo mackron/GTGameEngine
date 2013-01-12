@@ -29,6 +29,10 @@ namespace GTEngine
 
     Editor::~Editor()
     {
+        for (size_t i = 0; i < this->openedFiles.count; ++i)
+        {
+            delete this->openedFiles.buffer[i]->value;
+        }
     }
 
     bool Editor::Startup(GTGUI::Server &guiServer)
@@ -52,11 +56,11 @@ namespace GTEngine
                 guiServer.GetRootElement()->PrependChild(*this->GUI.EditorMain);
 
                 // Here we startup our sub-editors.
-                this->modelEditor.Startup();
-                this->imageEditor.Startup();
+                //this->modelEditor.Startup();
+                //this->imageEditor.Startup();
                 //this->soundEditor.Startup();
-                this->textEditor.Startup();
-                this->sceneEditor.Startup();
+                //this->textEditor.Startup();
+                //this->sceneEditor.Startup();
 
 
                 // Here we need to attach our files watcher event handler.
@@ -200,8 +204,6 @@ namespace GTEngine
 
                 // There is a center panel that needs to be shown. It is the center, center panel.
                 this->GUI.EditorCenterCenterPanel->Show();
-
-                // TODO: Let the scripting environmnent know about this.
             }
             else
             {
@@ -257,9 +259,6 @@ namespace GTEngine
             {
                 this->GUI.EditorCenterCenterPanel->Hide();
             }
-
-
-            // TODO: Let the scripting environment know about this.
         }
     }
 
@@ -342,8 +341,6 @@ namespace GTEngine
             }
         }
 
-        // TODO: Let the scripting environment know about this.
-
         return true;
     }
 
@@ -353,8 +350,6 @@ namespace GTEngine
         {
             this->currentlyShownEditor->Hide();
             this->currentlyShownEditor = nullptr;
-
-            // TODO: Let the scripting environment know about this.
         }
     }
 
@@ -395,8 +390,11 @@ namespace GTEngine
 
     void Editor::Update(double deltaTimeInSeconds)
     {
-        this->modelEditor.Update(deltaTimeInSeconds);
-        this->sceneEditor.Update(deltaTimeInSeconds);
+        if (this->currentlyShownEditor != nullptr)
+        {
+            this->currentlyShownEditor->OnUpdate(deltaTimeInSeconds);
+        }
+
 
 
         // We need to update the profiling GUI.
@@ -419,7 +417,7 @@ namespace GTEngine
 
             char fpsStr[64];
             GTCore::IO::snprintf(fpsStr, 64, "%.1f", fps);
-                    
+
             
             this->GUI.Editor_Delta->SetText(deltaStr);
             this->GUI.Editor_FPS->SetText(fpsStr);
@@ -428,12 +426,18 @@ namespace GTEngine
 
     void Editor::OnMouseButtonDown(GTCore::MouseButton button, int x, int y)
     {
-        this->sceneEditor.OnMouseButtonDown(button, x, y);
+        if (this->currentlyShownEditor != nullptr)
+        {
+            this->currentlyShownEditor->OnMouseButtonDown(button, x, y);
+        }
     }
 
     void Editor::OnMouseButtonUp(GTCore::MouseButton button, int x, int y)
     {
-        this->sceneEditor.OnMouseButtonUp(button, x, y);
+        if (this->currentlyShownEditor != nullptr)
+        {
+            this->currentlyShownEditor->OnMouseButtonUp(button, x, y);
+        }
     }
 
 
