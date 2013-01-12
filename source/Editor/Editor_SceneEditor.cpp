@@ -1425,7 +1425,7 @@ namespace GTEngine
 
     void Editor_SceneEditor::MarkSceneAsModified(const char* fileName)
     {
-
+        (void)fileName;
     }
 
 
