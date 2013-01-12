@@ -172,6 +172,16 @@ namespace GTEngine
     void SubEditor::Save()
     {
     }
+
+
+
+    ///////////////////////////////////////////////////
+    // Events.
+
+    void SubEditor::Close()
+    {
+        this->ownerEditor.CloseFile(this->absolutePath.c_str());
+    }
 }
 
 #if defined(_MSC_VER)
