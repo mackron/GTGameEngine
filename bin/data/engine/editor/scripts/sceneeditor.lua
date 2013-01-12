@@ -1100,10 +1100,19 @@ function GTGUI.Element:SceneEditorDetailsPanel()
     self.NameLabel     = GTGUI.Server.New("<div parentid='" .. self.NameContainer:GetID() .. "' style='width:auto; margin-right:4px; text-color:std-text-color;'>Name:</div>");
     self.NameTextBox   = GTGUI.Server.New("<div parentid='" .. self.NameContainer:GetID() .. "' styleclass='textbox' style='width:100%;' />");
     
+    self.SceneNode = nil;
+    
+    
+    function self:Update(node)
+        self.SceneNode = node;
+        
+        self.NameTextBox:SetText(node:GetName());
+    end
+    
+    
     self.NameTextBox:OnTextChanged(function()
-        local selectedNode = Editor.SceneEditor.GetFirstSelectedNode();
-        if selectedNode ~= nil then
-            selectedNode:SetName(self.NameTextBox:GetText());
+        if self.SceneNode ~= nil then
+            self.SceneNode:SetName(self.NameTextBox:GetText());
         end
     end);
     
@@ -1124,26 +1133,35 @@ function GTGUI.Element:SceneEditorTransformPanel()
     self.PositionInput = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
     self.RotationInput = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
     self.ScaleInput    = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true;' />"):Vector3Input();
+    
+    self.SceneNode = nil;
 
     
+    function self:Update(node)
+        self.SceneNode = node;
+        
+        self.PositionInput:SetFromXYZ(node:GetPosition());
+        self.RotationInput:SetFromXYZ(node:GetRotationXYZ());
+        self.ScaleInput:SetFromXYZ(node:GetScale());
+    end
+    
+    
+    
     self.PositionInput:OnValueChanged(function(data)
-        local selectedNode = Editor.SceneEditor.GetFirstSelectedNode();
-        if selectedNode ~= nil then
-            selectedNode:SetPosition(data.x, data.y, data.z);
+        if self.SceneNode ~= nil then
+            self.SceneNode:SetPosition(data.x, data.y, data.z);
         end
     end);
     
     self.RotationInput:OnValueChanged(function(data)
-        local selectedNode = Editor.SceneEditor.GetFirstSelectedNode();
-        if selectedNode ~= nil then
-            selectedNode:SetRotationXYZ(data.x, data.y, data.z);
+        if self.SceneNode ~= nil then
+            self.SceneNode:SetRotationXYZ(data.x, data.y, data.z);
         end
     end);
     
     self.ScaleInput:OnValueChanged(function(data)
-        local selectedNode = Editor.SceneEditor.GetFirstSelectedNode();
-        if selectedNode ~= nil then
-            selectedNode:SetScale(data.x, data.y, data.z);
+        if self.SceneNode ~= nil then
+            self.SceneNode:SetScale(data.x, data.y, data.z);
         end
     end);
     
@@ -1203,7 +1221,7 @@ function GTGUI.Element:SceneEditorPanel()
             self.Body.MessageContainer:Hide();
             self.Body.PanelsContainer:Show();
             
-            self.Body.DetailsPanel.NameTextBox:SetText(node:GetName());
+            self:UpdateDetailsPanel(node);
             self:UpdateTransformPanel(node);
             
             -- Here is where we will show the panels for the individual components. What we will do is first hide every panel, and then show
@@ -1213,12 +1231,18 @@ function GTGUI.Element:SceneEditorPanel()
         end
     end
     
+    
+    -- Updates the details panel.
+    function self:UpdateDetailsPanel(node)
+        if node ~= nil then
+            self.Body.DetailsPanel:Update(node);
+        end
+    end
+    
     -- Updates the transform panel to show the transformation of the given node.
     function self:UpdateTransformPanel(node)
         if node ~= nil then
-            self.Body.TransformPanel.PositionInput:SetFromXYZ(node:GetPosition());
-            self.Body.TransformPanel.RotationInput:SetFromXYZ(node:GetRotationXYZ());
-            self.Body.TransformPanel.ScaleInput:SetFromXYZ(node:GetScale());
+            self.Body.TransformPanel:Update(node);
         end
     end
     
@@ -1260,11 +1284,14 @@ function GTGUI.Element:SceneEditorPanel()
 end
 
 
-function GTGUI.Element:SceneEditor()
+function GTGUI.Element:SceneEditor(_internalPtr)
     self.Viewport    = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-viewport' style='' />");
     self.Panel       = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
     self.ContextMenu = GTGUI.Server.New("<div                                   styleclass='menu'                  style='z-index:100; positioning:absolute; visible:false' />");
     
+    self._internalPtr            = _internalPtr;
+    self.Scene                   = GTEngine.Scene:Create(GTEngine.System.SceneEditor.GetScenePtr(_internalPtr));
+    self.SelectedSceneNode       = nil;
     self.IsLMBDown               = false;
     self.IsRMBDown               = false;
     self.MouseMovedWhileCaptured = false;                -- Used to determine whether or not to show the right-click context menu.
@@ -1276,14 +1303,14 @@ function GTGUI.Element:SceneEditor()
     self.ContextMenu:Menu();
     
     self.ContextMenu:AppendItem("Add Cube"):OnPressed(function()
-        local newNode = Editor.SceneEditor.AddSceneNode("Cube");
+        local newNode = self:AddSceneNode("Cube");
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.Model):SetModel("engine/models/default-1x1.dae");
             newNode:AddComponent(GTEngine.Components.Dynamics):AddBoxCollisionShape(0.5, 0.5, 0.5);
             
             -- We want the new node to be selected, and to be the ONLY selected object.
-            Editor.SceneEditor.DeselectAll();
-            Editor.SceneEditor.SelectSceneNode(newNode);
+            self:DeselectAll();
+            self:SelectSceneNode(newNode);
 
             
             newNode:Refresh();
@@ -1296,7 +1323,7 @@ function GTGUI.Element:SceneEditor()
     self.ContextMenu:AppendSeparator();
     
     self.ContextMenu:AppendItem("Add Point Light"):OnPressed(function()
-        local newNode = Editor.SceneEditor.AddSceneNode("PointLight");
+        local newNode = self:AddSceneNode("PointLight");
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.PointLight);
             
@@ -1304,8 +1331,8 @@ function GTGUI.Element:SceneEditor()
             newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
 
             -- We want the new node to be selected, and to be the ONLY selected object.
-            Editor.SceneEditor.DeselectAll();
-            Editor.SceneEditor.SelectSceneNode(newNode);
+            self:DeselectAll();
+            self:SelectSceneNode(newNode);
 
             
             newNode:Refresh();
@@ -1316,7 +1343,7 @@ function GTGUI.Element:SceneEditor()
     end);
     
     self.ContextMenu:AppendItem("Add Spot Light"):OnPressed(function()
-        local newNode = Editor.SceneEditor.AddSceneNode("SpotLight");
+        local newNode = self:AddSceneNode("SpotLight");
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.SpotLight);
             
@@ -1325,8 +1352,8 @@ function GTGUI.Element:SceneEditor()
             newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowDirectionArrow();
             
             -- We want the new node to be selected, and to be the ONLY selected object.
-            Editor.SceneEditor.DeselectAll();
-            Editor.SceneEditor.SelectSceneNode(newNode);
+            self:DeselectAll();
+            self:SelectSceneNode(newNode);
 
             
             newNode:Refresh();
@@ -1337,7 +1364,7 @@ function GTGUI.Element:SceneEditor()
     end);
     
     self.ContextMenu:AppendItem("Add Directional Light"):OnPressed(function()
-        local newNode = Editor.SceneEditor.AddSceneNode("DirectionalLight");
+        local newNode = self:AddSceneNode("DirectionalLight");
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.DirectionalLight);
             
@@ -1346,8 +1373,8 @@ function GTGUI.Element:SceneEditor()
             newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowDirectionArrow();
 
             -- We want the new node to be selected, and to be the ONLY selected object.
-            Editor.SceneEditor.DeselectAll();
-            Editor.SceneEditor.SelectSceneNode(newNode);
+            self:DeselectAll();
+            self:SelectSceneNode(newNode);
 
             
             newNode:Refresh();
@@ -1358,7 +1385,7 @@ function GTGUI.Element:SceneEditor()
     end);
     
     self.ContextMenu:AppendItem("Add Ambient Light"):OnPressed(function()
-        local newNode = Editor.SceneEditor.AddSceneNode("AmbientLight");
+        local newNode = self:AddSceneNode("AmbientLight");
         if newNode ~= nil then
             newNode:AddComponent(GTEngine.Components.AmbientLight);
             newNode:GetComponent(GTEngine.Components.AmbientLight):SetColour(0.25, 0.25, 0.25);
@@ -1367,8 +1394,8 @@ function GTGUI.Element:SceneEditor()
             newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
 
             -- We want the new node to be selected, and to be the ONLY selected object.
-            Editor.SceneEditor.DeselectAll();
-            Editor.SceneEditor.SelectSceneNode(newNode);
+            self:DeselectAll();
+            self:SelectSceneNode(newNode);
 
             
             newNode:Refresh();
@@ -1380,6 +1407,91 @@ function GTGUI.Element:SceneEditor()
     
     
     
+    
+    function self:AddSceneNode(name)
+        local node = GTEngine.SceneNode:Create();
+        node:SetName(name);
+        
+        self.Scene:AddSceneNode(node);
+
+        return node;
+    end
+    
+    function self:DeselectAll()
+        GTEngine.System.SceneEditor.DeselectAll(self._internalPtr);
+    end
+    
+    function self:SelectSceneNode(nodeToSelect)
+        GTEngine.System.SceneEditor.SelectSceneNode(self._internalPtr, nodeToSelect._internalPtr);
+    end
+    
+    function self:DeselectSceneNode(nodeToSelect)
+        GTEngine.System.SceneEditor.DeselectSceneNode(self._internalPtr, nodeToSelect._internalPtr);
+    end
+    
+    function self:GetSelectedSceneNodeCount()
+        return GTEngine.System.SceneEditor.GetSelectedSceneNodeCount(self._internalPtr);
+    end
+    
+    function self:GetSelectedSceneNode()
+        return self.SelectedSceneNode;
+    end
+    
+    function self:SetSelectedSceneNode(internalPtr)
+        if internalPtr ~= nil then
+            self.SelectedSceneNode = GTEngine.SceneNode:Create(internalPtr);
+        else
+            self.SelectedSceneNode = nil;
+        end
+    end
+    
+    function self:TryGizmoMouseSelect()
+        return GTEngine.System.SceneEditor.TryGizmoMouseSelect(self._internalPtr);
+    end
+    
+    function self:DoMouseSelection()
+        GTEngine.System.SceneEditor.DoMouseSelection(self._internalPtr);
+    end
+    
+    
+    function self:DeleteSelectedSceneNodes()
+        GTEngine.System.SceneEditor.DeleteSelectedSceneNodes(self._internalPtr);
+    end
+    
+    function self:SwitchGizmoToTranslateMode()
+        GTEngine.System.SceneEditor.SwitchGizmoToTranslateMode(self._internalPtr);
+    end
+    
+    function self:SwitchGizmoToRotateMode()
+        GTEngine.System.SceneEditor.SwitchGizmoToRotateMode(self._internalPtr);
+    end
+    
+    function self:SwitchGizmoToScaleMode()
+        GTEngine.System.SceneEditor.SwitchGizmoToScaleMode(self._internalPtr);
+    end
+    
+    function self:SwitchGizmoToLocalSpace()
+        GTEngine.System.SceneEditor.SwitchGizmoToLocalSpace(self._internalPtr);
+    end
+    
+    function self:SwitchGizmoToGlobalSpace()
+        GTEngine.System.SceneEditor.SwitchGizmoToGlobalSpace(self._internalPtr);
+    end
+    
+    function self:ToggleGizmoSpace()
+        GTEngine.System.SceneEditor.ToggleGizmoSpace(self._internalPtr);
+    end
+    
+    function self:DuplicateSelectedSceneNodes()
+        GTEngine.System.SceneEditor.DuplicateSelectedSceneNodes(self._internalPtr);
+    end
+    
+    function self:DeleteSelectedSceneNodes()
+        GTEngine.System.SceneEditor.DeleteSelectedSceneNodes(self._internalPtr);
+    end
+    
+
+    
     function self:HidePanels(message)
         self.Panel:HidePanels(message);
     end
@@ -1389,8 +1501,29 @@ function GTGUI.Element:SceneEditor()
     end
     
     function self:UpdateTransformPanel(node)
+        if node == nil then
+            node = self:GetSelectedSceneNode();
+        end
+        
         self.Panel:UpdateTransformPanel(node);
     end
+    
+    
+    function self:OnSelectionChanged()
+        local selectedNodeCount = self:GetSelectedSceneNodeCount();
+        
+        if selectedNodeCount > 1 then        -- Multiple selections
+            self:SetSelectedSceneNode(nil);
+            self:HidePanels("Multiple Objects Selected");
+        elseif selectedNodeCount == 0 then   -- Nothing selected
+            self:SetSelectedSceneNode(nil);
+            self:HidePanels("Nothing Selected");
+        else                                 -- Single selection
+            self:SetSelectedSceneNode(GTEngine.System.SceneEditor.GetFirstSelectedSceneNodePtr(self._internalPtr));
+            self:ShowPanels(self:GetSelectedSceneNode());
+        end
+    end
+    
     
 
     
@@ -1414,7 +1547,7 @@ function GTGUI.Element:SceneEditor()
         -- We will check for a selection on the gizmo. If we click on a gizmo, we don't want to do a mouse selection when the 
         -- button is raised. What we'll do is trick it into thinking the mouse was moved while it was captured which will
         -- cause the editor to not try and select anything.
-        if Editor.SceneEditor.TryGizmoMouseSelect() then
+        if self:TryGizmoMouseSelect() then
             self.MouseMovedWhileCaptured = true;
         end
     end);
@@ -1445,7 +1578,7 @@ function GTGUI.Element:SceneEditor()
     
     self:WatchLMBUp(function(data)
         if not self.MouseMovedWhileCaptured and self.HasMouseCapture and not self.IsRMBDown then
-            Editor.SceneEditor.DoMouseSelection();
+            self:DoMouseSelection();
         end
         
         if not GTGUI.Server.IsRMBDown() then
@@ -1483,23 +1616,23 @@ function GTGUI.Element:SceneEditor()
         if self.IsMouseOverViewport and not GTGUI.Server.DoesFocusedElementHaveEditableText() then
             if not GTGUI.Server.IsCTRLKeyDown() then
                 if data.key == GTCore.Keys.Delete then
-                    Editor.SceneEditor.DeleteSelectedSceneNodes();
+                    self:DeleteSelectedSceneNodes();
                 elseif data.key == GTCore.Keys.T then
-                    Editor.SceneEditor.SwitchGizmoToTranslateMode();
+                    self:SwitchGizmoToTranslateMode();
                 elseif data.key == GTCore.Keys.R then
-                    Editor.SceneEditor.SwitchGizmoToRotateMode();
+                    self:SwitchGizmoToRotateMode();
                 elseif data.key == GTCore.Keys.S then
-                    Editor.SceneEditor.SwitchGizmoToScaleMode();
+                    self:SwitchGizmoToScaleMode();
                 elseif data.key == GTCore.Keys.L then
-                    Editor.SceneEditor.SwitchGizmoToLocalSpace();
+                    self:SwitchGizmoToLocalSpace();
                 elseif data.key == GTCore.Keys.G then
-                    Editor.SceneEditor.SwitchGizmoToGlobalSpace();
+                    self:SwitchGizmoToGlobalSpace();
                 elseif data.key == GTCore.Keys.Q then
-                    Editor.SceneEditor.ToggleGizmoSpace();
+                    self:ToggleGizmoSpace();
                 end
             else
                 if data.key == GTCore.Keys.D then
-                    Editor.SceneEditor.DuplicateSelectedSceneNodes();           -- This will deselect the source nodes and select the new ones.
+                    self:DuplicateSelectedSceneNodes();           -- This will deselect the source nodes and select the new ones.
                 end
             end
         end

@@ -396,7 +396,7 @@ namespace GTEngine
             Scene scene;
 
             /// The event handler to attach to the scene.
-            SceneEditorSceneEventHandler sceneEventHandler;
+            //SceneEditorSceneEventHandler sceneEventHandler;
 
 
             /// The event handler for the 3D viewport.

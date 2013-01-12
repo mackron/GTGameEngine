@@ -6,14 +6,14 @@
 
 namespace GTEngine
 {
-    class Editor_SceneEditor;
+    class SceneEditor;
 
     class SceneEditorSceneEventHandler : public SceneEventHandler
     {
     public:
 
         /// Constructor.
-        SceneEditorSceneEventHandler(Editor_SceneEditor &sceneEditore);
+        SceneEditorSceneEventHandler(SceneEditor &sceneEditor);
 
         /// Destructor.
         ~SceneEditorSceneEventHandler();
@@ -45,7 +45,7 @@ namespace GTEngine
     private:
 
         /// A reference to the main scene editor.
-        Editor_SceneEditor &sceneEditor;
+        SceneEditor &sceneEditor;
 
 
     private:    // No copying.

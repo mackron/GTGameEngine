@@ -851,6 +851,125 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the component.
                     int IsShowingDirectionArrow(GTCore::Script &script);
                 }
+
+
+
+                namespace SceneEditorFFI
+                {
+                    /// Retrieves the C++ pointer to the scene of the given scene editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int GetScenePtr(GTCore::Script &script);
+
+                    /// Deselects everything in the given scene editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int DeselectAll(GTCore::Script &script);
+
+                    /// Selects the given scene node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor containing the scene node.
+                    ///     Argument 2: A pointer to the scene node to select.
+                    int SelectSceneNode(GTCore::Script &script);
+
+                    /// Deselects the given scene node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor containing the scene node.
+                    ///     Argument 2: A pointer to the scene node to deselect.
+                    int DeselectSceneNode(GTCore::Script &script);
+
+                    /// Retrieves the number of nodes that are currently selected.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int GetSelectedSceneNodeCount(GTCore::Script &script);
+
+                    /// Retrieves a pointer to the first selected node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int GetFirstSelectedSceneNodePtr(GTCore::Script &script);
+
+                    /// Attempts to select a gizmo with the mouse.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    ///
+                    ///     Returns true if a gizmo was selected.
+                    int TryGizmoMouseSelect(GTCore::Script &script);
+
+                    /// Performs a mouse selection.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int DoMouseSelection(GTCore::Script &script);
+
+
+                    /// Deletes all of the selected nodes.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int DeleteSelectedSceneNodes(GTCore::Script &script);
+
+                    /// Duplicates the selected scene nodes.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int DuplicateSelectedSceneNodes(GTCore::Script &script);
+
+
+                    /// Switches the gizmo to translate mode.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int SwitchGizmoToTranslateMode(GTCore::Script &script);
+
+                    /// Switches the gizmo to rotate mode.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int SwitchGizmoToRotateMode(GTCore::Script &script);
+
+                    /// Switches the gizmo to scale mode.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int SwitchGizmoToScaleMode(GTCore::Script &script);
+
+                    /// Switches the gizmo to local space.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int SwitchGizmoToLocalSpace(GTCore::Script &script);
+
+                    /// Switches the gizmo to global space.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int SwitchGizmoToGlobalSpace(GTCore::Script &script);
+
+                    /// Toggles the gizmo space.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int ToggleGizmoSpace(GTCore::Script &script);
+
+                    /// Determines whether or not the gizmo is in local space.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int IsGizmoInLocalSpace(GTCore::Script &script);
+
+                    /// Determines whether or not the gizmo is in global space.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int IsGizmoInGlobalSpace(GTCore::Script &script);
+                }
             }
         }
     }

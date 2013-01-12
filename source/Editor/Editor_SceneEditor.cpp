@@ -1507,7 +1507,7 @@ namespace GTEngine
         : sceneEditor(sceneEditorIn),
           viewport(), camera(), cameraXRotation(0.0f), cameraYRotation(0.0f),
           updateManager(camera), physicsManager(), cullingManager(),
-          scene(updateManager, physicsManager, cullingManager), sceneEventHandler(sceneEditor),
+          scene(updateManager, physicsManager, cullingManager), //sceneEventHandler(sceneEditor),
           viewportEventHandler(sceneEditor.GetEditor().GetGame(), viewport),
           selectedNodes(),
           transformGizmo(),
@@ -1519,7 +1519,7 @@ namespace GTEngine
           transformedObjectWithGizmo(false),
           GUI()
     {
-        this->scene.AttachEventHandler(this->sceneEventHandler);
+        //this->scene.AttachEventHandler(this->sceneEventHandler);
 
 
         this->camera.AddComponent<GTEngine::CameraComponent>();

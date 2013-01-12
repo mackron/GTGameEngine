@@ -173,6 +173,18 @@ namespace GTEngine
     {
     }
 
+    void SubEditor::OnUpdate(double)
+    {
+    }
+
+    void SubEditor::OnMouseButtonDown(GTCore::MouseButton, int, int)
+    {
+    }
+
+    void SubEditor::OnMouseButtonUp(GTCore::MouseButton, int, int)
+    {
+    }
+
 
 
     ///////////////////////////////////////////////////

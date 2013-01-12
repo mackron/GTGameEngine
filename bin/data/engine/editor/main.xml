@@ -64,11 +64,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script>
 <![CDATA[
 
-    -- Opens the given file.
-    --function Editor.OpenFile(path)
-    --    Editor.OpenFilesManager.OpenFile(path);
-    --end
-
     -- Saves an item based on it's file name.
     function Editor.SaveItem(path)
         Editor.OpenFilesManager.SaveFile(path);
@@ -176,7 +171,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     
     
-
+--[[
     Editor_ModelEditor_Panel:OnSize(function()
         Editor_ModelEditor_Panel_Scrollbar:SetPageSize(Editor_ModelEditor_Panel:GetHeight());
     end);
@@ -199,11 +194,11 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     Editor_ModelEditor_Panel_Animations:Collapse();
     Editor_ModelEditor_Panel_CD:Collapse();
-    
+    ]]
     
     
     -- Here we startup the open files manager. This depends on a few things, so we need to start this up after dependencies are started up.
-    Editor.OpenFilesManager.Startup(Editor_TabBar, Editor_ModelEditor, Editor_ImageEditor, Editor_TextEditor, Editor_SceneEditor);
+    --Editor.OpenFilesManager.Startup(Editor_TabBar, Editor_ModelEditor, Editor_ImageEditor, Editor_TextEditor, Editor_SceneEditor);
 ]]>
 </script>
 
@@ -399,7 +394,12 @@ hidden by default.
                 <div id='Editor_TabBar' styleclass='tabbar' style='height:100%;' />
             </div>
             <div id="EditorBody">
+                <div id="Editor_SubEditorContainer" styleclass='sub-editor' style='visible:true'>
+                </div>
+            
+            
                 <!-- Model Editor -->
+                <!--
                 <div id="Editor_ModelEditor" styleclass='sub-editor' style='horizontal-align:right; flex-child-width:true; child-plane:horizontal;'>
                     <div id="Editor_ModelEditor_Viewport" style='width:100%;  height:100%; border:1px #222;'  />
                     <div id="Editor_ModelEditor_Panel"    style='width:250px; height:100%; border:1px #222; allow-mouse-resize:true; left-gripper-width:2px; min-width:32px; child-plane:horizontal; flex-child-width:true;'>
@@ -411,22 +411,26 @@ hidden by default.
                         <div id="Editor_ModelEditor_Panel_Scrollbar" styleclass='vertical-scrollbar' style='visible:true' />
                     </div>
                 </div>
-                
+                -->
                 
                 <!-- Image Editor -->
+                <!--
                 <div id="Editor_ImageEditor" styleclass='sub-editor'>
                     <div id="Editor_ImageEditor_Viewport" style='width:100%; height:100%' />
                 </div>
-                
+                -->
                 
                 <!-- Text Editor -->
+                <!--
                 <div id="Editor_TextEditor" styleclass='sub-editor'>
                 </div>
-                
+                -->
                 
                 <!-- Scene Editor -->
+                <!--
                 <div id="Editor_SceneEditor" styleclass='sub-editor'>
                 </div>
+                -->
             </div>
         </div>
     </div>

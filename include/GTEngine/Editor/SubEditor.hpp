@@ -76,6 +76,17 @@ namespace GTEngine
         /// Called when the file needs to be saved.
         virtual void Save();
 
+        /// Updates the editor.
+        ///
+        /// @param deltaTimeInSeconds [in] The time since the last frame, in seconds.
+        virtual void OnUpdate(double deltaTimeInSeconds);
+
+        /// Called when a mouse button is pressed.
+        virtual void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
+
+        /// Called when a mouse button is released.
+        virtual void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
+
 
 
         ///////////////////////////////////////////////////
