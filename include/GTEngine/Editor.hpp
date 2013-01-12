@@ -101,6 +101,41 @@ namespace GTEngine
         /// Hides the file and it's editor that is current being shown.
         void HideCurrentlyShownFile();
 
+        /// Saves the given file.
+        ///
+        /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
+        /// @param relativeTo [in] If 'path' is relative, defines the base path to will be used to make it absolute.
+        ///
+        /// @return True if the file is shown successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     Internally, the editor uses absolute paths to associate editors with files. If 'path' is relative, it will need to be converted
+        ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
+        ///     relative.
+        bool SaveFile(const char* path, const char* relativeTo = nullptr);
+
+        /// Marks the given file as modified.
+        ///
+        /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
+        /// @param relativeTo [in] If 'path' is relative, defines the base path to will be used to make it absolute.
+        ///
+        /// @remarks
+        ///     Internally, the editor uses absolute paths to associate editors with files. If 'path' is relative, it will need to be converted
+        ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
+        ///     relative.
+        void MarkFileAsModified(const char* path, const char* relativeTo = nullptr);
+
+        /// Marks the given file as modified.
+        ///
+        /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
+        /// @param relativeTo [in] If 'path' is relative, defines the base path to will be used to make it absolute.
+        ///
+        /// @remarks
+        ///     Internally, the editor uses absolute paths to associate editors with files. If 'path' is relative, it will need to be converted
+        ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
+        ///     relative.
+        void UnmarkFileAsModified(const char* path, const char* relativeTo = nullptr);
+
         /// Determines if the given file is marked as modified.
         ///
         /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
@@ -113,7 +148,6 @@ namespace GTEngine
         ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
         ///     relative.
         bool IsFileMarkedAsModified(const char* path, const char* relativeTo = nullptr);
-
 
 
 
@@ -241,6 +275,15 @@ namespace GTEngine
 
     private:
 
+        /// Shows the save file dialog for the given file.
+        ///
+        /// @param absolutePath [in] The absolute path of the file being closed and saved.
+        ///
+        /// @remarks
+        ///     This is only shown when the file is being closed while being marked as modified. Thus, when the 'Yes' or 'No' buttons
+        ///     are hit, the file will be closed. If the 'cancel' button is hit, it will not be saved and the file will remain open.
+        void ShowSaveFileDialog(const char* absolutePath);
+
         /// Starts up the scripting environment for the editor.
         void StartupScripting();
 
@@ -356,6 +399,10 @@ namespace GTEngine
             static int CloseFile(GTCore::Script &script);
             static int ShowFile(GTCore::Script &script);
             static int HideCurrentlyShownFile(GTCore::Script &script);
+            static int SaveFile(GTCore::Script &script);
+            static int MarkFileAsModified(GTCore::Script &script);
+            static int UnmarkFileAsModified(GTCore::Script &script);
+            static int IsFileMarkedAsModified(GTCore::Script &script);
 
             static int OnModelActivated(GTCore::Script &script);
             static int OnImageActivated(GTCore::Script &script);
