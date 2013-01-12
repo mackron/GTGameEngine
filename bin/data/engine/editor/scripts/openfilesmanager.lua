@@ -7,21 +7,12 @@ Editor.OpenFilesManager.OpenFiles         = {};         -- Indexed by absolute f
 Editor.OpenFilesManager.OpenedSubEditor   = nil;
 Editor.OpenFilesManager.PreviousSubEditor = nil;
 
-
 function Editor.OpenFilesManager.Startup(tabbar, modelEditor, imageEditor, textEditor, sceneEditor)
     Editor.OpenFilesManager.TabBar      = tabbar;
     Editor.OpenFilesManager.ModelEditor = modelEditor;
     Editor.OpenFilesManager.ImageEditor = imageEditor;
     Editor.OpenFilesManager.TextEditor  = textEditor;
     Editor.OpenFilesManager.SceneEditor = sceneEditor;
-    
-    Editor.OpenFilesManager.TabBar:OnTabActivated(function(data)
-        Editor.OpenFilesManager.ShowFile(data.tab.path);
-    end);
-    
-    Editor.OpenFilesManager.TabBar:OnTabDeactivated(function(data)
-        Editor.OpenFilesManager.HideFile();
-    end);
 end
 
 

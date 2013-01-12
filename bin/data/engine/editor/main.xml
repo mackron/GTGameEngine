@@ -159,8 +159,20 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     
     
+    -- Data explorer
     Editor_DataExplorer:DataExplorer();
+    
+    
+    -- Tab bar
     Editor_TabBar:TabBar();
+    
+    Editor_TabBar:OnTabActivated(function(data)
+        Editor.OpenFilesManager.ShowFile(data.tab.path);
+    end);
+    
+    Editor_TabBar:OnTabDeactivated(function(data)
+        Editor.OpenFilesManager.HideFile();
+    end);
     
     
     
