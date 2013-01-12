@@ -3,8 +3,8 @@
 
 namespace GTEngine
 {
-    SceneEditor::SceneEditor(const char* path, const char* relativeTo)
-        : SubEditor(path, relativeTo)
+    SceneEditor::SceneEditor(Editor &ownerEditor, const char* path, const char* relativeTo)
+        : SubEditor(ownerEditor, path, relativeTo)
     {
     }
 

@@ -181,7 +181,7 @@ namespace GTEngine
                 {
                 case AssetType_Scene:
                     {
-                        newSubEditor = new SceneEditor(absolutePath.c_str(), relativePath.c_str());
+                        newSubEditor = new SceneEditor(*this, absolutePath.c_str(), relativePath.c_str());
                         break;
                     }
 
@@ -190,7 +190,7 @@ namespace GTEngine
                         // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
                         // a SubEditor object for it.
                         GTEngine::Log("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
-                        newSubEditor = new SubEditor(absolutePath.c_str(), relativePath.c_str());
+                        newSubEditor = new SubEditor(*this, absolutePath.c_str(), relativePath.c_str());
                     }
                 }
 

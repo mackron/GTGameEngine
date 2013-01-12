@@ -12,7 +12,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        SceneEditor(const char* path, const char* relativeTo);
+        SceneEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath);
 
         /// Destructor.
         ~SceneEditor();
