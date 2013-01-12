@@ -1,18 +1,119 @@
 
 #include <GTEngine/Editor/SubEditor.hpp>
 #include <GTEngine/Editor.hpp>
+#include <GTEngine/Game.hpp>
 #include <GTCore/IO.hpp>
 #include <GTCore/Path.hpp>
+
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4355)   // 'this' used in initialise list.
+#endif
 
 namespace GTEngine
 {
     SubEditor::SubEditor(Editor &ownerEditorIn, const char* absolutePathIn, const char* relativePathIn)
-        : ownerEditor(ownerEditorIn), absolutePath(absolutePathIn), relativePath(relativePathIn)
+        : ownerEditor(ownerEditorIn), absolutePath(absolutePathIn), relativePath(relativePathIn),
+          tabElement(nullptr), tabEventHandler(*this),
+          isMarkedAsModified(false)
     {
+        // We need to create a tab for this new editor.
+        //
+        // To do this, we're going to first push the main tab bar. Then, we're going to call AddTab() on that tab bar with the
+        // name of the file (not the full path).
+        auto &gui    = this->GetGUI();
+        auto &script = this->GetScript();
+        
+        script.GetGlobal("Editor_TabBar");
+        assert(script.IsTable(-1));
+        {
+            script.Push("AddTab");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);
+                script.Push(GTCore::IO::FileName(this->absolutePath.c_str()));
+                script.Call(2, 1);
+
+                // The top item on the stack is the tab GUI element. We now need to set the 'absolutePath' and 'relativePath' attributes.
+                script.SetTableValue(-1, "absolutePath", this->absolutePath.c_str());
+                script.SetTableValue(-1, "relativePath", this->relativePath.c_str());
+
+                // We now want to get the ID of the element so we can retrieve it with gui.GetElementByID().
+                script.Push("GetID");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);
+                    script.Call(1, 1);
+
+                    // At this point, the top item will be the ID of the new tab. We will use that to retrieve it from the GUI object.
+                    assert(script.IsString(-1));
+                    {
+                        this->tabElement = gui.GetElementByID(script.ToString(-1));
+
+                        // Now we need to attach an event handler to the tab.
+                        assert(this->tabElement != nullptr);
+                        {
+                            this->tabElement->AttachEventHandler(this->tabEventHandler);
+                        }
+                    }
+                    
+                    script.Pop(1);      // <-- The return value from Editor_TabBar:AddTab():GetID().
+                }
+
+                script.Pop(1);          // <-- The return value from Editor_TabBar:AddTab().
+            }
+        }
+        script.Pop(1);
     }
 
     SubEditor::~SubEditor()
     {
+        // We need to remove the tab from the tab bar, since that is where we created it.
+        if (this->tabElement != nullptr)
+        {
+            auto &script = this->GetScript();
+
+            script.GetGlobal("Editor_TabBar");
+            assert(script.IsTable(-1));
+            {
+                script.Push("RemoveTab");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);       // 'self'
+
+                    // We need to get the element.
+                    script.GetGlobal("GTGUI");
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("Server");
+                        script.GetTableValue(-2);
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("GetElementByID");
+                            script.GetTableValue(-2);
+                            assert(script.IsFunction(-1));
+                            {
+                                script.Push(this->tabElement->id);
+                                script.Call(1, 1);
+
+                                // The return value needs to be relocated so that it is placed as the second argument to Editor_TabBar:RemoveTab().
+                                script.InsertIntoStack(-3);
+                            }
+                        }
+                        script.Pop(1);  // GTGUI.Server
+                    }
+                    script.Pop(1);      // GTGUI
+
+
+                    // Now we need to call the function, ignoring any return values.
+                    script.Call(2, 0);
+                }
+            }
+            script.Pop(1);
+        }
     }
 
 
@@ -26,6 +127,33 @@ namespace GTEngine
         return this->relativePath.c_str();
     }
 
+    
+    void SubEditor::MarkAsModified()
+    {
+        this->isMarkedAsModified = true;
+    }
+
+    void SubEditor::UnmarkAsModified()
+    {
+        this->isMarkedAsModified = false;
+    }
+
+    bool SubEditor::IsMarkedAsModified() const
+    {
+        return this->isMarkedAsModified;
+    }
+
+
+
+    GTEngine::GameScript & SubEditor::GetScript()
+    {
+        return this->ownerEditor.GetGame().GetScript();
+    }
+
+    GTGUI::Server & SubEditor::GetGUI()
+    {
+        return this->ownerEditor.GetGame().GetGUI();
+    }
 
 
 
@@ -45,3 +173,7 @@ namespace GTEngine
     {
     }
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif

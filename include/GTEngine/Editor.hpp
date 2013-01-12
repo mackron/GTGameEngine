@@ -100,6 +100,19 @@ namespace GTEngine
         /// Hides the file and it's editor that is current being shown.
         void HideCurrentlyShownFile();
 
+        /// Determines if the given file is marked as modified.
+        ///
+        /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
+        /// @param relativeTo [in] If 'path' is relative, defines the base path to will be used to make it absolute.
+        ///
+        /// @return True if the file is marked as modified; false otherwise.
+        ///
+        /// @remarks
+        ///     Internally, the editor uses absolute paths to associate editors with files. If 'path' is relative, it will need to be converted
+        ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
+        ///     relative.
+        bool IsFileMarkedAsModified(const char* path, const char* relativeTo = nullptr);
+
 
 
 

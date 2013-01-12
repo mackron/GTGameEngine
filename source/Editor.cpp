@@ -301,6 +301,37 @@ namespace GTEngine
         }
     }
 
+    bool Editor::IsFileMarkedAsModified(const char* path, const char* relativeTo)
+    {
+        GTCore::String absolutePath(path);
+
+        if (GTCore::Path::IsRelative(path))
+        {
+            if (relativeTo != nullptr)
+            {
+                GTCore::IO::ToAbsolutePath(path, relativeTo);
+            }
+            else
+            {
+                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                return false;
+            }
+        }
+
+
+        auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        if (iSubEditor != nullptr)
+        {
+            auto subEditor = iSubEditor->value;
+            assert(subEditor != nullptr);
+            {
+                return subEditor->IsMarkedAsModified();
+            }
+        }
+
+        return false;
+    }
+
 
 
 

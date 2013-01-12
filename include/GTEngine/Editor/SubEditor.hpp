@@ -3,6 +3,10 @@
 #define __GTEngine_SubEditor_hpp_
 
 #include <GTCore/String.hpp>
+#include <GTGUI/Server.hpp>
+
+#include "SubEditorTabEventHandler.hpp"
+#include "../GameScript.hpp"
 
 namespace GTEngine
 {
@@ -36,6 +40,29 @@ namespace GTEngine
         const char* GetRelativePath() const;
 
 
+        /// Retrieves the tab GUI element associated with this editor.
+              GTGUI::Element* GetTabElement()       { return this->tabElement; }
+        const GTGUI::Element* GetTabElement() const { return this->tabElement; }
+
+
+        /// Marks the file as modified.
+        void MarkAsModified();
+
+        /// Unmarks the file as modified.
+        void UnmarkAsModified();
+
+        /// Determines whether or not the file is marked as modified.
+        bool IsMarkedAsModified() const;
+
+
+
+        /// A helper function for retrieving the game script object.
+        GTEngine::GameScript & GetScript();
+
+        /// A helper function for retreiving the game GUI object.
+        GTGUI::Server & GetGUI();
+
+
 
         ///////////////////////////////////////////////////
         // Virtual Methods.
@@ -51,6 +78,17 @@ namespace GTEngine
 
 
 
+        ///////////////////////////////////////////////////
+        // Events.
+
+        /// Called when the sub-editor wants to be closed.
+        ///
+        /// @remarks
+        ///     This will tell the owner editor that this sub-editor should be removed.
+        void Close();
+
+
+
     private:
 
         /// A reference to the Editor object that owns this sub-editor.
@@ -61,6 +99,15 @@ namespace GTEngine
 
         /// The relative path of the file this editor is editting.
         GTCore::String relativePath;
+
+        /// A pointer to the tab element associated with this editor.
+        GTGUI::Element* tabElement;
+
+        /// The event handler to attack to the tab.
+        SubEditorTabEventHandler tabEventHandler;
+
+        /// Keeps track of whether or not the file is marked as modified.
+        bool isMarkedAsModified;
 
 
     private:    // No copying.
