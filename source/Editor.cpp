@@ -111,8 +111,8 @@ namespace GTEngine
         {
             this->GUI.EditorMain->Hide();
 
-            // We need to make sure everything is saved. We'll do this via the scripting environment.
-            this->game.GetScript().Execute("Editor.SaveAllItems()");
+            // We need to make sure everything is saved.
+            this->SaveAllOpenModifiedFiles();
 
             // We want to update the data files so we can see them in-game.
             this->game.GetDataFilesWatcher().CheckForChanges(false);
@@ -277,6 +277,31 @@ namespace GTEngine
         }
     }
 
+    void Editor::CloseAllOpenFiles()
+    {
+        while (this->openedFiles.count > 0)
+        {
+            auto subEditor = this->openedFiles.buffer[0]->value;
+            assert(subEditor != nullptr);
+            {
+                if (subEditor->IsMarkedAsModified())
+                {
+                    subEditor->Save();
+                }
+
+                subEditor->Close();
+            }
+        }
+    }
+
+    void Editor::CloseCurrentlyShownFile()
+    {
+        if (this->currentlyShownEditor != nullptr)
+        {
+            this->currentlyShownEditor->Close();
+        }
+    }
+
     bool Editor::ShowFile(const char* path, const char* relativeTo)
     {
         GTCore::String absolutePath(path);
@@ -395,6 +420,31 @@ namespace GTEngine
             {
                 return subEditor->Save();
             }
+        }
+
+        return false;
+    }
+
+    void Editor::SaveAllOpenModifiedFiles()
+    {
+        for (size_t i = 0; i < this->openedFiles.count; ++i)
+        {
+            auto subEditor = this->openedFiles.buffer[i]->value;
+            assert(subEditor != nullptr);
+            {
+                if (subEditor->IsMarkedAsModified())
+                {
+                    subEditor->Save();
+                }
+            }
+        }
+    }
+
+    bool Editor::SaveCurrentlyShownFile()
+    {
+        if (this->currentlyShownEditor != nullptr)
+        {
+            return this->currentlyShownEditor->Save();
         }
 
         return false;
@@ -763,26 +813,30 @@ namespace GTEngine
         script.GetGlobal("Editor");
         if (script.IsTable(-1))
         {
-            script.SetTableFunction(-1, "Open",                   FFI::Open);
-            script.SetTableFunction(-1, "Close",                  FFI::Close);
+            script.SetTableFunction(-1, "Open",                     FFI::Open);
+            script.SetTableFunction(-1, "Close",                    FFI::Close);
 
-            script.SetTableFunction(-1, "OpenFile",               FFI::OpenFile);
-            script.SetTableFunction(-1, "CloseFile",              FFI::CloseFile);
-            script.SetTableFunction(-1, "ShowFile",               FFI::ShowFile);
-            script.SetTableFunction(-1, "HideCurrentlyShownFile", FFI::HideCurrentlyShownFile);
-            script.SetTableFunction(-1, "SaveFile",               FFI::SaveFile);
-            script.SetTableFunction(-1, "MarkFileAsModified",     FFI::MarkFileAsModified);
-            script.SetTableFunction(-1, "UnmarkFileAsModified",   FFI::UnmarkFileAsModified);
-            script.SetTableFunction(-1, "IsFileMarkedAsModified", FFI::IsFileMarkedAsModified);
+            script.SetTableFunction(-1, "OpenFile",                 FFI::OpenFile);
+            script.SetTableFunction(-1, "CloseFile",                FFI::CloseFile);
+            script.SetTableFunction(-1, "CloseAllOpenFiles",        FFI::CloseAllOpenFiles);
+            script.SetTableFunction(-1, "CloseCurrentlyShownFile",  FFI::CloseCurrentlyShownFile);
+            script.SetTableFunction(-1, "ShowFile",                 FFI::ShowFile);
+            script.SetTableFunction(-1, "HideCurrentlyShownFile",   FFI::HideCurrentlyShownFile);
+            script.SetTableFunction(-1, "SaveFile",                 FFI::SaveFile);
+            script.SetTableFunction(-1, "SaveAllOpenModifiedFiles", FFI::SaveAllOpenModifiedFiles);
+            script.SetTableFunction(-1, "SaveCurrentlyShownFile",   FFI::SaveCurrentlyShownFile);
+            script.SetTableFunction(-1, "MarkFileAsModified",       FFI::MarkFileAsModified);
+            script.SetTableFunction(-1, "UnmarkFileAsModified",     FFI::UnmarkFileAsModified);
+            script.SetTableFunction(-1, "IsFileMarkedAsModified",   FFI::IsFileMarkedAsModified);
 
-            script.SetTableFunction(-1, "OnModelActivated",       FFI::OnModelActivated);
-            script.SetTableFunction(-1, "OnImageActivated",       FFI::OnImageActivated);
-            script.SetTableFunction(-1, "OnSoundActivated",       FFI::OnSoundActivated);
-            script.SetTableFunction(-1, "OnTextFileActivated",    FFI::OnTextFileActivated);
-            script.SetTableFunction(-1, "OnSceneActivated",       FFI::OnSceneActivated);
+            script.SetTableFunction(-1, "OnModelActivated",         FFI::OnModelActivated);
+            script.SetTableFunction(-1, "OnImageActivated",         FFI::OnImageActivated);
+            script.SetTableFunction(-1, "OnSoundActivated",         FFI::OnSoundActivated);
+            script.SetTableFunction(-1, "OnTextFileActivated",      FFI::OnTextFileActivated);
+            script.SetTableFunction(-1, "OnSceneActivated",         FFI::OnSceneActivated);
 
-            script.SetTableFunction(-1, "OnFileActivated",        FFI::OnFileActivated);
-            script.SetTableFunction(-1, "OnFileClosed",           FFI::OnFileClosed);
+            script.SetTableFunction(-1, "OnFileActivated",          FFI::OnFileActivated);
+            script.SetTableFunction(-1, "OnFileClosed",             FFI::OnFileClosed);
 
 
             script.Push("ModelEditor");
@@ -803,7 +857,7 @@ namespace GTEngine
             script.Pop(1);
 
 
-
+            /*
             script.Push("TextEditor");
             script.GetTableValue(-2);
             if (script.IsTable(-1))
@@ -811,6 +865,7 @@ namespace GTEngine
                 script.SetTableFunction(-1, "SaveFile", FFI::TextEditorFFI::SaveFile);
             }
             script.Pop(1);
+            */
         }
         script.Pop(1);
     }
@@ -850,6 +905,18 @@ namespace GTEngine
         return 0;
     }
 
+    int Editor::FFI::CloseAllOpenFiles(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).CloseAllOpenFiles();
+        return 0;
+    }
+
+    int Editor::FFI::CloseCurrentlyShownFile(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).CloseCurrentlyShownFile();
+        return 0;
+    }
+
     int Editor::FFI::ShowFile(GTCore::Script &script)
     {
         script.Push(FFI::GetEditor(script).ShowFile(script.ToString(1), script.ToString(2)));
@@ -865,6 +932,18 @@ namespace GTEngine
     int Editor::FFI::SaveFile(GTCore::Script &script)
     {
         script.Push(FFI::GetEditor(script).SaveFile(script.ToString(1), script.ToString(2)));
+        return 1;
+    }
+
+    int Editor::FFI::SaveAllOpenModifiedFiles(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).SaveAllOpenModifiedFiles();
+        return 0;
+    }
+
+    int Editor::FFI::SaveCurrentlyShownFile(GTCore::Script &script)
+    {
+        script.Push(FFI::GetEditor(script).SaveCurrentlyShownFile());
         return 1;
     }
 
@@ -1002,22 +1081,23 @@ namespace GTEngine
 
     ////////////////////////////////////////////////////
     // TextEditorFFI
-
+    /*
     int Editor::FFI::TextEditorFFI::SaveFile(GTCore::Script &script)
     {
         script.Push(FFI::GetEditor(script).GetTextEditor().SaveFile(script.ToString(1)));
         return 1;
     }
-
+    */
 
     ////////////////////////////////////////////////////
     // SceneEditorFFI
-
+    /*
     int Editor::FFI::SceneEditorFFI::SaveFile(GTCore::Script &script)
     {
         script.Push(FFI::GetEditor(script).GetSceneEditor().SaveScene(script.ToString(1)));
         return 1;
     }
+    */
 }
 
 

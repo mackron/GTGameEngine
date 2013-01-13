@@ -1,4 +1,7 @@
 
+--[[
+
+
 -- This object is used to manage all of the currently open files in the editor. Any operations such as opening, closing and saving
 -- is done through this object.
 
@@ -260,7 +263,7 @@ function Editor.OpenFilesManager._CloseFile(file, showSavePrompt)
 end
 
 
-
+]]
 
 
 

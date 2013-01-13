@@ -73,15 +73,24 @@ namespace GTEngine
 
     bool TextEditor::Save()
     {
+        bool wasSaved = false;
+
         auto text = this->textArea->GetText();
         if (text != nullptr)
         {
-            return GTCore::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), text);
+            wasSaved = GTCore::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), text);
         }
         else
         {
-            return GTCore::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), "");
+            wasSaved = GTCore::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), "");
         }
+
+        if (wasSaved)
+        {
+            this->UnmarkAsModified();
+        }
+
+        return wasSaved;
     }
 
 

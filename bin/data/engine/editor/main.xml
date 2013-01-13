@@ -80,7 +80,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     end
 
 
-
+--[[
     -- Saves an item based on it's file name.
     function Editor.SaveItem(path)
         Editor.OpenFilesManager.SaveFile(path);
@@ -116,14 +116,14 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     function Editor.MarkActiveFileAsModified(filename)
         Editor.OpenFilesManager.MarkActiveFileAsModified(filename);
     end
-    
+]]
 
     
     -- Here we're going to watch for some keyboard shortcuts.
     EditorMain:WatchKeyPressed(function(data)
         if GTGUI.Server.IsCTRLKeyDown() then
             if data.key == GTGUI.Keys.S then
-                Editor.SaveActiveItem();
+                Editor.SaveCurrentlyShownFile();
             end
         end
     end)
@@ -134,20 +134,20 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     Editor_MenuBar:MenuBar();
     Editor_MenuBar.File = Editor_MenuBar:AppendItem("File");
     Editor_MenuBar.File.Save = Editor_MenuBar.File.menu:AppendItem("Save"):OnPressed(function()
-        Editor.SaveActiveItem();
+        Editor.SaveCurrentlyShownFile();
         Editor_MenuBar:CollapseMenu();
     end);
     Editor_MenuBar.File.SaveAll = Editor_MenuBar.File.menu:AppendItem("Save All"):OnPressed(function()
-        Editor.SaveAllItems();
+        Editor.SaveAllOpenModifiedFiles();
         Editor_MenuBar:CollapseMenu();
     end);
     Editor_MenuBar.File.menu:AppendSeparator();
     Editor_MenuBar.File.Close = Editor_MenuBar.File.menu:AppendItem("Close"):OnPressed(function()
-        Editor.CloseActiveItem();
+        Editor.CloseCurrentlyShownFile();
         Editor_MenuBar:CollapseMenu();
     end);
     Editor_MenuBar.File.CloseAll = Editor_MenuBar.File.menu:AppendItem("Close All"):OnPressed(function()
-        Editor.CloseAllItems();
+        Editor.CloseAllOpenFiles();
         Editor_MenuBar:CollapseMenu();
     end);
     Editor_MenuBar.File.menu:AppendSeparator();
