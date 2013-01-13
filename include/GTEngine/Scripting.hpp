@@ -854,6 +854,74 @@ namespace GTEngine
 
 
 
+                namespace SubEditorFFI
+                {
+                    /// Retrieves the absolute path of the file loaded in the given sub-editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the sub-editor.
+                    int GetAbsolutePath(GTCore::Script &script);
+
+                    /// Retrieves the relative path of the file loaded in the given sub-editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the sub-editor.
+                    int GetRelativePath(GTCore::Script &script);
+                }
+
+                namespace ModelEditorFFI
+                {
+                    /// Retrieves the relative names of all of the materials in the model of the given model editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the model editor.
+                    int GetMaterials(GTCore::Script &script);
+
+                    /// Retrieves the settings used to build the convex hull of the model loaded in the given model editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the model editor.
+                    int GetConvexHullBuildSettings(GTCore::Script &script);
+
+                    /// Plays the animation track of the model loaded in the given model editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the model editor.
+                    int PlayAnimation(GTCore::Script &script);
+
+                    /// Stops the animation track of the model loaded in the given model editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the model editor.
+                    int StopAnimation(GTCore::Script &script);
+
+                    /// Sets a material on the model loaded in the given model editor.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the model editor.
+                    ///     Argument 2: The index of the material being set.
+                    ///     Argument 3: The relative path of the material to use.
+                    int SetMaterial(GTCore::Script &script);
+
+                    /// Shows the convex decomposition of the model.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the model editor.
+                    int ShowConvexDecomposition(GTCore::Script &script);
+
+                    /// Hides the convex decomposition of the model.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the model editor.
+                    int HideConvexDecomposition(GTCore::Script &script);
+
+                    /// Builds the convex decomposition of the model.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the model editor.
+                    int BuildConvexDecomposition(GTCore::Script &script);
+                }
+
                 namespace SceneEditorFFI
                 {
                     /// Retrieves the C++ pointer to the scene of the given scene editor.

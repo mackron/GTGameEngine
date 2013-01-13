@@ -1,5 +1,5 @@
 
-function GTGUI.Element:ModelEditor_CDPanel()
+function GTGUI.Element:ModelEditor_CDPanel(_internalPtr)
     self:PanelGroupBox("Convex Decomposition");
     
     self.ShowConvexDecomposition = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' />");
@@ -27,26 +27,35 @@ function GTGUI.Element:ModelEditor_CDPanel()
     self.ShowConvexDecomposition:CheckBox("Show in Viewport");
     
     self.ShowConvexDecomposition:OnChecked(function()
-        Editor.ModelEditor.ShowConvexDecomposition();
+        GTEngine.System.ModelEditor.ShowConvexDecomposition(_internalPtr);
     end)
     
     self.ShowConvexDecomposition:OnUnchecked(function()
-        Editor.ModelEditor.HideConvexDecomposition();
+        GTEngine.System.ModelEditor.HideConvexDecomposition(_internalPtr);
     end)
 
 
     -- CD Settings
-    self.CompacityWeight:LabeledSpinner(        "Compacity Weight",          0, 1000000, 1,   0.001);
-    self.VolumeWeight:LabeledSpinner(           "Volume Weight",             0, 1000000, 1,   500);
-    self.MinClusters:LabeledSpinner(            "Min Clusters",              1, 1000000, 1,   1);
-    self.VerticesPerCH:LabeledSpinner(          "Vertices Per CH",           0, 1000000, 10,  100);
-    self.Concavity:LabeledSpinner(              "Concavity",                 0, 1000000, 1,   0.001);
-    self.SmallThreshold:LabeledSpinner(         "Small Threshold",           0, 1000000, 1,   0.001);
-    self.ConnectedDistance:LabeledSpinner(      "Connected Distance",        0, 1000000, 1 ,  0.001);
-    self.SimplifiedTriangleCount:LabeledSpinner("Simplified Triangle Count", 0, 1000000, 100, 0);
+    local settings = GTEngine.System.ModelEditor.GetConvexHullBuildSettings(_internalPtr);
+    self.CompacityWeight:LabeledSpinner(        "Compacity Weight",          0, 1000000, 1,   settings.compacityWeight);
+    self.VolumeWeight:LabeledSpinner(           "Volume Weight",             0, 1000000, 1,   settings.volumeWeight);
+    self.MinClusters:LabeledSpinner(            "Min Clusters",              1, 1000000, 1,   settings.minClusters);
+    self.VerticesPerCH:LabeledSpinner(          "Vertices Per CH",           0, 1000000, 10,  settings.verticesPerCH);
+    self.Concavity:LabeledSpinner(              "Concavity",                 0, 1000000, 1,   settings.concavity);
+    self.SmallThreshold:LabeledSpinner(         "Small Threshold",           0, 1000000, 1,   settings.smallClusterThreshold);
+    self.ConnectedDistance:LabeledSpinner(      "Connected Distance",        0, 1000000, 1 ,  settings.connectedComponentsDist);
+    self.SimplifiedTriangleCount:LabeledSpinner("Simplified Triangle Count", 0, 1000000, 100, settings.simplifiedTriangleCountTarget);
     
     self.AddExtraDistPoints:CheckBox("Add Extra Distance Points");
     self.AddFacePoints:CheckBox("Add Face Points");
+    
+    if settings.addExtraDistPoints then
+        self.AddExtraDistPoints:Check();
+    end
+    
+    if settings.addFacesPoints then
+        self.AddFacePoints:Check();
+    end
     
     
     -- Build button.
@@ -63,7 +72,7 @@ function GTGUI.Element:ModelEditor_CDPanel()
             local addExtraDistPoints      = self.AddExtraDistPoints:IsChecked();
             local addFacePoints           = self.AddFacePoints:IsChecked();
             
-            Editor.ModelEditor.BuildConvexDecomposition(
+            GTEngine.System.ModelEditor.BuildConvexDecomposition(_internalPtr,
                 compacityWeight,
                 volumeWeight,
                 minClusters,
@@ -76,7 +85,7 @@ function GTGUI.Element:ModelEditor_CDPanel()
                 addFacePoints
             );
         self.BuildButton:Enable();
-        Editor.MarkActiveFileAsModified();
+        Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(_internalPtr));
     end);
     
     return self;

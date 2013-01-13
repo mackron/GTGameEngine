@@ -4,6 +4,7 @@
 #include <GTEngine/Audio/AudioComposer.hpp>
 #include <GTImage/Loader.hpp>
 #include <GTCore/Path.hpp>
+#include <GTCore/Strings/Find.hpp>
 
 namespace GTEngine
 {
@@ -71,6 +72,17 @@ namespace GTEngine
             {
                 return AssetType_TextFile;
             }
+        }
+
+
+
+        GTCore::String GetBasePath(const char* absolutePath, const char* relativePath)
+        {
+            // All we're going to do is remove the 'relativePath' part from the absolute path.
+            const char* start = absolutePath;
+            const char* end   = GTCore::Strings::FindFirst(absolutePath, relativePath);
+
+            return GTCore::String(start, end - start - 1);      // Minus 1 to remove the trailing slash.
         }
     }
 }

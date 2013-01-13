@@ -53,9 +53,9 @@ namespace GTEngine
         this->SetModel(&model, takeOwnership);
     }
 
-    Model* ModelComponent::SetModel(const char* fileName)
+    Model* ModelComponent::SetModel(const char* fileName, const char* relativeTo)
     {
-        this->SetModel(ModelLibrary::LoadFromFile(fileName), true);
+        this->SetModel(ModelLibrary::LoadFromFile(fileName, relativeTo), true);
         return this->model;
     }
 

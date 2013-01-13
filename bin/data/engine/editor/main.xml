@@ -24,6 +24,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <style  url="styles/panel-groupbox.style" />
 <script url="scripts/panel-groupbox.lua"  />
 
+<style  url="styles/modeleditor.style"                />
+<script url="scripts/modeleditor.lua"                 />
 <script url="scripts/modeleditor-materialpanel.lua"   />
 <script url="scripts/modeleditor-animationspanel.lua" />
 <script url="scripts/modeleditor-cdpanel.lua"         />
@@ -211,7 +213,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     Editor_ModelEditor_Panel_Animations:Collapse();
     Editor_ModelEditor_Panel_CD:Collapse();
-    ]]
+]]
     
     
     -- Here we startup the open files manager. This depends on a few things, so we need to start this up after dependencies are started up.
