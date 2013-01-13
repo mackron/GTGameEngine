@@ -269,6 +269,13 @@ namespace GTEngine
             
                 switch (type)
                 {
+                case AssetType_Image:
+                    {
+                        newSubEditor = new ImageEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
+
                 case AssetType_Scene:
                     {
                         newSubEditor = new SceneEditor(*this, absolutePath.c_str(), relativePath.c_str());

@@ -2,6 +2,7 @@
 #ifndef __GTEngine_Editor_hpp_
 #define __GTEngine_Editor_hpp_
 
+#include "Editor/ImageEditor/ImageEditor.hpp"
 #include "Editor/SceneEditor/SceneEditor.hpp"
 #include "Editor/TextEditor/TextEditor.hpp"
 
