@@ -30,9 +30,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script url="scripts/modeleditor-animationspanel.lua" />
 <script url="scripts/modeleditor-cdpanel.lua"         />
 
-<script url="scripts/openfilesmanager.lua" />
-
-
 <style  url="styles/sceneeditor.style" />
 <script url="scripts/sceneeditor.lua"  />
 
@@ -81,44 +78,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         end);
     end
 
-
---[[
-    -- Saves an item based on it's file name.
-    function Editor.SaveItem(path)
-        Editor.OpenFilesManager.SaveFile(path);
-    end
-    
-    -- Saves the current item.
-    function Editor.SaveActiveItem()
-        Editor.OpenFilesManager.SaveActiveFile();
-    end
-    
-    -- Saves all open items.
-    function Editor.SaveAllItems()
-        Editor.OpenFilesManager.SaveAllFiles();
-    end
-    
-    
-    -- Closes the current item.
-    function Editor.CloseActiveItem()
-        Editor.OpenFilesManager.CloseActiveFile();
-    end
-    
-    -- Closes all currently opened items.
-    function Editor.CloseAllItems()
-        Editor.OpenFilesManager.CloseAllFiles();
-    end
-    
-    -- Marks a file as modified.
-    function Editor.MarkFileAsModified(filename)
-        Editor.OpenFilesManager.MarkFileAsModified(filename);
-    end
-    
-    -- Marks the active file as modified.
-    function Editor.MarkActiveFileAsModified(filename)
-        Editor.OpenFilesManager.MarkActiveFileAsModified(filename);
-    end
-]]
 
     
     -- Here we're going to watch for some keyboard shortcuts.
@@ -187,37 +146,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     Editor_TabBar:OnTabDeactivated(function(data)
         Editor.HideCurrentlyShownFile();
     end);
-    
-    
-    
---[[
-    Editor_ModelEditor_Panel:OnSize(function()
-        Editor_ModelEditor_Panel_Scrollbar:SetPageSize(Editor_ModelEditor_Panel:GetHeight());
-    end);
-    
-    Editor_ModelEditor_Panel_Body:OnSize(function()
-        Editor_ModelEditor_Panel_Scrollbar:SetRange(Editor_ModelEditor_Panel_Body:GetHeight());
-    end)
-    
-    
-    Editor_ModelEditor_Panel_Scrollbar:VerticalScrollbar();
-    Editor_ModelEditor_Panel_Scrollbar:EnableAutoVisibility();
-    Editor_ModelEditor_Panel_Scrollbar:OnScroll(function(data)
-        local offset = -data.position;
-        Editor_ModelEditor_Panel_Body:SetStyle("inner-offset-y", tostring(offset));
-    end)
-    
-    Editor_ModelEditor_Panel_Materials:ModelEditor_MaterialPanel();
-    Editor_ModelEditor_Panel_Animations:ModelEditor_AnimationsPanel();
-    Editor_ModelEditor_Panel_CD:ModelEditor_CDPanel();
-    
-    Editor_ModelEditor_Panel_Animations:Collapse();
-    Editor_ModelEditor_Panel_CD:Collapse();
-]]
-    
-    
-    -- Here we startup the open files manager. This depends on a few things, so we need to start this up after dependencies are started up.
-    --Editor.OpenFilesManager.Startup(Editor_TabBar, Editor_ModelEditor, Editor_ImageEditor, Editor_TextEditor, Editor_SceneEditor);
 ]]>
 </script>
 
@@ -332,15 +260,6 @@ hidden by default.
         height:  100%
     }
     
-    #Editor_ModelEditor
-    {
-    }
-    
-    #Editor_ImageEditor
-    {
-        border: 1px #222
-    }
-    
     text-editor-text-area includes multiline-textbox
     {
         width:            100%
@@ -415,41 +334,6 @@ hidden by default.
             <div id="EditorBody">
                 <div id="Editor_SubEditorContainer" styleclass='sub-editor' style='visible:true'>
                 </div>
-            
-            
-                <!-- Model Editor -->
-                <!--
-                <div id="Editor_ModelEditor" styleclass='sub-editor' style='horizontal-align:right; flex-child-width:true; child-plane:horizontal;'>
-                    <div id="Editor_ModelEditor_Viewport" style='width:100%;  height:100%; border:1px #222;'  />
-                    <div id="Editor_ModelEditor_Panel"    style='width:250px; height:100%; border:1px #222; allow-mouse-resize:true; left-gripper-width:2px; min-width:32px; child-plane:horizontal; flex-child-width:true;'>
-                        <div id="Editor_ModelEditor_Panel_Body">
-                            <div id="Editor_ModelEditor_Panel_Materials" styleclass='panel-groupbox' />
-                            <div id="Editor_ModelEditor_Panel_Animations" styleclass='panel-groupbox' />
-                            <div id="Editor_ModelEditor_Panel_CD" styleclass='panel-groupbox' />
-                        </div>
-                        <div id="Editor_ModelEditor_Panel_Scrollbar" styleclass='vertical-scrollbar' style='visible:true' />
-                    </div>
-                </div>
-                -->
-                
-                <!-- Image Editor -->
-                <!--
-                <div id="Editor_ImageEditor" styleclass='sub-editor'>
-                    <div id="Editor_ImageEditor_Viewport" style='width:100%; height:100%' />
-                </div>
-                -->
-                
-                <!-- Text Editor -->
-                <!--
-                <div id="Editor_TextEditor" styleclass='sub-editor'>
-                </div>
-                -->
-                
-                <!-- Scene Editor -->
-                <!--
-                <div id="Editor_SceneEditor" styleclass='sub-editor'>
-                </div>
-                -->
             </div>
         </div>
     </div>
