@@ -164,6 +164,14 @@ namespace GTEngine
         ///     relative.
         bool IsFileMarkedAsModified(const char* path, const char* relativeTo = nullptr);
 
+        /// Determines if any open file is marked as modified.
+        bool IsAnyOpenFileMarkedAsModified();
+
+
+
+        /// Updates the menu buttons by enabling and disabling the buttons based on the modification state.
+        void UpdateMenuButtonEnableStates();
+
 
 
         /// Retrieves a reference to the model sub-editor.
@@ -332,6 +340,13 @@ namespace GTEngine
 
             /// The center, center panel element. This will be dynamically shown and hidden as tabs are added or removed.
             GTGUI::Element* EditorCenterCenterPanel;
+
+            // Menu buttons.
+            GTGUI::Element* File_Save;
+            GTGUI::Element* File_SaveAll;
+            GTGUI::Element* File_Close;
+            GTGUI::Element* File_CloseAll;
+
 
             // GUI elements for the profiling information.
             GTGUI::Element* Editor_Delta;
