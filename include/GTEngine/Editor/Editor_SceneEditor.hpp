@@ -516,6 +516,7 @@ namespace GTEngine
         /////////////////////////////////////////////////
         /// Scripting FFI
 
+        /*
         struct SceneEditorFFI
         {
             /// Helper for retrieving the SceneEditor object.
@@ -578,7 +579,7 @@ namespace GTEngine
             /// Determines whether or not the gizmo is in global space.
             static int IsGizmoInGlobalSpace(GTCore::Script &script);
         };
-
+        */
 
 
     private:    // No copying.

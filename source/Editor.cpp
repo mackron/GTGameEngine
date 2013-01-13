@@ -20,7 +20,7 @@ namespace GTEngine
         : game(game),
           openedFiles(), currentlyShownEditor(nullptr),
           GUI(),
-          modelEditor(*this), imageEditor(*this), textEditor(*this), sceneEditor(*this),
+          //modelEditor(*this), imageEditor(*this), textEditor(*this), sceneEditor(*this),
           lastProfilingUpdateTime(0.0),
           isStarted(false), isOpen(false), disableFileWatchingAfterClose(true), disableKeyboardAutoRepeatAfterClose(true),
           dataFilesWatcherEventHandler(*this)
@@ -744,6 +744,7 @@ namespace GTEngine
     }
 
 
+    /*
     void Editor::OnModelActivated(const char* fileName, const char* makeRelativeTo)
     {
         this->modelEditor.LoadModel(fileName, makeRelativeTo);
@@ -846,7 +847,7 @@ namespace GTEngine
             this->OnTextFileClosed(fileName);
         }
     }
-
+    */
 
     // FIXME: There's a bug here where if a file path includes double quotes, the script will fail to execute.
     void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
@@ -976,6 +977,7 @@ namespace GTEngine
             script.SetTableFunction(-1, "UnmarkFileAsModified",     FFI::UnmarkFileAsModified);
             script.SetTableFunction(-1, "IsFileMarkedAsModified",   FFI::IsFileMarkedAsModified);
 
+            /*
             script.SetTableFunction(-1, "OnModelActivated",         FFI::OnModelActivated);
             script.SetTableFunction(-1, "OnImageActivated",         FFI::OnImageActivated);
             script.SetTableFunction(-1, "OnSoundActivated",         FFI::OnSoundActivated);
@@ -984,8 +986,9 @@ namespace GTEngine
 
             script.SetTableFunction(-1, "OnFileActivated",          FFI::OnFileActivated);
             script.SetTableFunction(-1, "OnFileClosed",             FFI::OnFileClosed);
+            */
 
-
+            /*
             script.Push("ModelEditor");
             script.GetTableValue(-2);
             if (script.IsTable(-1))
@@ -1002,7 +1005,7 @@ namespace GTEngine
                 script.SetTableFunction(-1, "StopAnimation", FFI::ModelEditorFFI::StopAnimation);
             }
             script.Pop(1);
-
+            */
 
             /*
             script.Push("TextEditor");
@@ -1113,6 +1116,7 @@ namespace GTEngine
     }
 
 
+    /*
     int Editor::FFI::OnModelActivated(GTCore::Script &script)
     {
         FFI::GetEditor(script).OnModelActivated(script.ToString(1), script.ToString(2));
@@ -1156,9 +1160,10 @@ namespace GTEngine
         FFI::GetEditor(script).OnFileClosed(script.ToString(1));
         return 0;
     }
+    */
 
 
-
+    /*
     // ModelEditor
     int Editor::FFI::ModelEditorFFI::SaveFile(GTCore::Script &script)
     {
@@ -1223,7 +1228,7 @@ namespace GTEngine
         game.GetEditor().GetModelEditor().StopAnimation();
         return 0;
     }
-
+    */
 
 
     ////////////////////////////////////////////////////
