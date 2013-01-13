@@ -35,13 +35,7 @@ function GTGUI.Element:ModelEditor_MaterialsPanel(_internalPtr)
         
         self.MaterialTextBoxes[new.index] = new;
     end
-    
-    --[[
-    function self:RemoveMaterials()
-        self.Body:DeleteAllChildren();
-        self.MaterialTextBoxes = {};
-    end
-    ]]
+
     
     function self:GetMaterial(index)
         assert(index <= #self.MaterialTextBoxes, "MaterialPanel:GetMaterial() - index out or range (index = " .. tostring(index) .. ", table size = " .. tostring(#self.MaterialTextBoxes));
