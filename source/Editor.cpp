@@ -51,6 +51,91 @@ namespace GTEngine
                 this->GUI.Editor_Delta            = guiServer.GetElementByID("Editor_Delta");
                 this->GUI.Editor_FPS              = guiServer.GetElementByID("Editor_FPS");
 
+                // We need to grab the GUI elements for the menu buttons.
+                script.GetGlobal("Editor_MenuBar");
+                assert(script.IsTable(-1));
+                {
+                    script.Push("File");
+                    script.GetTableValue(-2);
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("Save");
+                        script.GetTableValue(-2);
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("GetID");
+                            script.GetTableValue(-2);
+                            assert(script.IsFunction(-1));
+                            {
+                                script.PushValue(-2);   // 'self'
+                                script.Call(1, 1);
+
+                                this->GUI.File_Save = guiServer.GetElementByID(script.ToString(-1));
+
+                                script.Pop(1);  // Return value from GetID().
+                            }
+                        }
+                        script.Pop(1);
+
+                        script.Push("SaveAll");
+                        script.GetTableValue(-2);
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("GetID");
+                            script.GetTableValue(-2);
+                            assert(script.IsFunction(-1));
+                            {
+                                script.PushValue(-2);   // 'self'
+                                script.Call(1, 1);
+
+                                this->GUI.File_SaveAll = guiServer.GetElementByID(script.ToString(-1));
+
+                                script.Pop(1);  // Return value from GetID().
+                            }
+                        }
+                        script.Pop(1);
+
+                        script.Push("Close");
+                        script.GetTableValue(-2);
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("GetID");
+                            script.GetTableValue(-2);
+                            assert(script.IsFunction(-1));
+                            {
+                                script.PushValue(-2);   // 'self'
+                                script.Call(1, 1);
+
+                                this->GUI.File_Close = guiServer.GetElementByID(script.ToString(-1));
+
+                                script.Pop(1);  // Return value from GetID().
+                            }
+                        }
+                        script.Pop(1);
+
+                        script.Push("CloseAll");
+                        script.GetTableValue(-2);
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("GetID");
+                            script.GetTableValue(-2);
+                            assert(script.IsFunction(-1));
+                            {
+                                script.PushValue(-2);   // 'self'
+                                script.Call(1, 1);
+
+                                this->GUI.File_CloseAll = guiServer.GetElementByID(script.ToString(-1));
+
+                                script.Pop(1);  // Return value from GetID().
+                            }
+                        }
+                        script.Pop(1);
+                    }
+                    script.Pop(1);
+                }
+                script.Pop(1);
+
+
                 // We actually want the editor element to be the first child of the root. If we don't do this, sometimes a game can be in a state
                 // where the editor will be placed underneath another GUI element, causing it to not look quite right.
                 guiServer.GetRootElement()->PrependChild(*this->GUI.EditorMain);
@@ -272,6 +357,10 @@ namespace GTEngine
                     {
                         this->GUI.EditorCenterCenterPanel->Hide();
                     }
+
+
+                    // Menu buttons need to be updated.
+                    this->UpdateMenuButtonEnableStates();
                 }
             }
         }
@@ -381,6 +470,9 @@ namespace GTEngine
             }
         }
 
+        // Menu buttons need to be updated.
+        this->UpdateMenuButtonEnableStates();
+
         return true;
     }
 
@@ -418,7 +510,11 @@ namespace GTEngine
             auto subEditor = iSubEditor->value;
             assert(subEditor != nullptr);
             {
-                return subEditor->Save();
+                if (subEditor->Save())
+                {
+                    this->UpdateMenuButtonEnableStates();
+                    return true;
+                }
             }
         }
 
@@ -475,7 +571,8 @@ namespace GTEngine
             auto subEditor = iSubEditor->value;
             assert(subEditor != nullptr);
             {
-                return subEditor->MarkAsModified();
+                subEditor->MarkAsModified();
+                this->UpdateMenuButtonEnableStates();
             }
         }
     }
@@ -504,7 +601,8 @@ namespace GTEngine
             auto subEditor = iSubEditor->value;
             assert(subEditor != nullptr);
             {
-                return subEditor->UnmarkAsModified();
+                subEditor->UnmarkAsModified();
+                this->UpdateMenuButtonEnableStates();
             }
         }
     }
@@ -539,6 +637,55 @@ namespace GTEngine
         }
 
         return false;
+    }
+
+    bool Editor::IsAnyOpenFileMarkedAsModified()
+    {
+        for (size_t i = 0; i < this->openedFiles.count; ++i)
+        {
+            auto subEditor = this->openedFiles.buffer[i]->value;
+            assert(subEditor != nullptr);
+            {
+                if (subEditor->IsMarkedAsModified())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    void Editor::UpdateMenuButtonEnableStates()
+    {
+        if (this->openedFiles.count > 0)
+        {
+            this->GUI.File_Close->Enable();
+            this->GUI.File_CloseAll->Enable();
+
+            if (this->IsAnyOpenFileMarkedAsModified())
+            {
+                if (this->currentlyShownEditor != nullptr && this->currentlyShownEditor->IsMarkedAsModified())
+                {
+                    this->GUI.File_Save->Enable();
+                }
+
+                this->GUI.File_SaveAll->Enable();
+            }
+            else
+            {
+                this->GUI.File_Save->Disable();
+                this->GUI.File_SaveAll->Disable();
+            }
+        }
+        else
+        {
+            this->GUI.File_Save->Disable();
+            this->GUI.File_SaveAll->Disable();
+            this->GUI.File_Close->Disable();
+            this->GUI.File_CloseAll->Disable();
+        }
     }
 
 

@@ -138,6 +138,10 @@ namespace GTEngine
         tabText += "*";
 
         this->GetTabElement()->firstChild->SetText(tabText.c_str());
+
+
+
+        this->ownerEditor.UpdateMenuButtonEnableStates();
     }
 
     void SubEditor::UnmarkAsModified()
@@ -147,6 +151,9 @@ namespace GTEngine
         // Now we want to remove the star.
         GTCore::String tabText(this->GetTabElement()->firstChild->GetText(), GTCore::Strings::SizeInBytes(this->GetTabElement()->firstChild->GetText()) - 1);
         this->GetTabElement()->firstChild->SetText(tabText.c_str());
+
+
+        this->ownerEditor.UpdateMenuButtonEnableStates();
     }
 
     bool SubEditor::IsMarkedAsModified() const
