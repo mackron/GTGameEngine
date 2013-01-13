@@ -55,6 +55,13 @@ namespace GTEngine
         bool IsMarkedAsModified() const;
 
 
+        /// Closes the sub-editor.
+        ///
+        /// @remarks
+        ///     This will tell the owner editor that this sub-editor should be removed.
+        void Close();
+
+
 
         /// A helper function for retrieving the game script object.
         GTEngine::GameScript & GetScript();
@@ -89,15 +96,12 @@ namespace GTEngine
 
 
 
-        ///////////////////////////////////////////////////
-        // Events.
+    private:
 
-        /// Called when the sub-editor wants to be closed.
+        /// Helper method for setting the text of the tab.
         ///
-        /// @remarks
-        ///     This will tell the owner editor that this sub-editor should be removed.
-        void Close();
-
+        /// @param text [in] The new text.
+        void SetTabText(const char* text);
 
 
     private:

@@ -131,34 +131,43 @@ namespace GTEngine
     // TODO: Fix up this whole firstChild thing that's going on here. It's just hacky, ugly and inflexible. Will want to use the scripting interface.
     void SubEditor::MarkAsModified()
     {
-        this->isMarkedAsModified = true;
+        if (!this->isMarkedAsModified)
+        {
+            this->isMarkedAsModified = true;
 
-        // We will modify the text of the tab to show a star to the right.
-        GTCore::String tabText = this->GetTabElement()->firstChild->GetText();
-        tabText += "*";
-
-        this->GetTabElement()->firstChild->SetText(tabText.c_str());
+            // We will modify the text of the tab to show a star to the right.
+            GTCore::String tabText(GTCore::IO::FileName(this->GetRelativePath())); tabText += "*";
+            this->SetTabText(tabText.c_str());
 
 
-
-        this->ownerEditor.UpdateMenuButtonEnableStates();
+            this->ownerEditor.UpdateMenuButtonEnableStates();
+        }
     }
 
     void SubEditor::UnmarkAsModified()
     {
-        this->isMarkedAsModified = false;
+        if (this->isMarkedAsModified)
+        {
+            this->isMarkedAsModified = false;
 
-        // Now we want to remove the star.
-        GTCore::String tabText(this->GetTabElement()->firstChild->GetText(), GTCore::Strings::SizeInBytes(this->GetTabElement()->firstChild->GetText()) - 1);
-        this->GetTabElement()->firstChild->SetText(tabText.c_str());
+            // Now we want to remove the star.
+            this->SetTabText(GTCore::IO::FileName(this->GetRelativePath()));
 
 
-        this->ownerEditor.UpdateMenuButtonEnableStates();
+            this->ownerEditor.UpdateMenuButtonEnableStates();
+        }
     }
 
     bool SubEditor::IsMarkedAsModified() const
     {
         return this->isMarkedAsModified;
+    }
+
+
+
+    void SubEditor::Close()
+    {
+        this->ownerEditor.CloseFile(this->absolutePath.c_str());
     }
 
 
@@ -207,11 +216,31 @@ namespace GTEngine
 
 
     ///////////////////////////////////////////////////
-    // Events.
+    // Private Methods.
 
-    void SubEditor::Close()
+    void SubEditor::SetTabText(const char* text)
     {
-        this->ownerEditor.CloseFile(this->absolutePath.c_str());
+        // This is slightly annoying because the text needs to be set on a child of the main tab. We do it all via the scripting interface.
+        auto &script = this->GetScript();
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GetTabElement()->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("text");
+            script.GetTableValue(-2);
+            assert(script.IsTable(-1));
+            {
+                script.Push("SetText");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // 'self'
+                    script.Push(text);
+                    script.Call(2, 0);
+                }
+            }
+            script.Pop(1);
+        }
+        script.Pop(1);
     }
 }
 
