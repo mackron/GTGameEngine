@@ -704,6 +704,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\TextEditor\TextEditor.hpp">
       <Filter>include\Editor\TextEditor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\ImageEditor\ImageEditor.hpp">
+      <Filter>include\Editor\ImageEditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1170,6 +1173,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\TextEditor\TextEditor.cpp">
       <Filter>source\Editor\TextEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\ImageEditor\ImageEditor.cpp">
+      <Filter>source\Editor\ImageEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
