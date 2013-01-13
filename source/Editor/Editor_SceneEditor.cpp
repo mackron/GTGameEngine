@@ -1463,6 +1463,7 @@ namespace GTEngine
 
     void Editor_SceneEditor::InitialiseScripting()
     {
+        /*
         auto &script = this->editor.GetGame().GetScript();
 
 
@@ -1495,6 +1496,7 @@ namespace GTEngine
             script.Pop(1);
         }
         script.Pop(1);
+        */
     }
 
 
@@ -1583,7 +1585,7 @@ namespace GTEngine
 
     ////////////////////////////////////////////////
     // Scripting FFI
-
+    /*
     Editor_SceneEditor & Editor_SceneEditor::SceneEditorFFI::GetSceneEditor(GTCore::Script &script)
     {
         return GameScript::FFI::GetGameObject(script).GetEditor().GetSceneEditor();
@@ -1702,4 +1704,5 @@ namespace GTEngine
         script.Push(GetSceneEditor(script).IsGizmoInGlobalSpace());
         return 1;
     }
+    */
 }

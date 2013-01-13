@@ -173,7 +173,7 @@ namespace GTEngine
         void UpdateMenuButtonEnableStates();
 
 
-
+        /*
         /// Retrieves a reference to the model sub-editor.
               Editor_ModelEditor & GetModelEditor()       { return this->modelEditor; }
         const Editor_ModelEditor & GetModelEditor() const { return this->modelEditor; }
@@ -189,7 +189,7 @@ namespace GTEngine
         /// Retrieves a reference to the scene sub-editor.
               Editor_SceneEditor & GetSceneEditor()       { return this->sceneEditor; }
         const Editor_SceneEditor & GetSceneEditor() const { return this->sceneEditor; }
-
+        */
 
 
         ///////////////////////////////////////////////
@@ -212,7 +212,7 @@ namespace GTEngine
         /// @param y      [in] The y position of the mouse at the time it was released.
         void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
 
-
+        /*
         /// Called when the tab for a model is activated.
         ///
         /// @param fileName [in] The full, absolute path of the model being shown.
@@ -274,7 +274,7 @@ namespace GTEngine
         ///
         /// @param fileName [in] The full, absolute path of the file being activated.
         void OnFileClosed(const char* fileName);
-
+        */
 
 
         ///////////////////////////////////////////////
@@ -292,7 +292,7 @@ namespace GTEngine
         
 
         /// Called when the definition of a model has changed.
-        void OnModelDefinitionChanged(const char* absolutePath) { this->modelEditor.OnModelDefinitionChanged(absolutePath); }
+        void OnModelDefinitionChanged(const char* absolutePath) { (void)absolutePath; /*this->modelEditor.OnModelDefinitionChanged(absolutePath);*/ }
 
 
 
@@ -356,16 +356,16 @@ namespace GTEngine
 
 
         /// The model editor.
-        Editor_ModelEditor modelEditor;
+        //Editor_ModelEditor modelEditor;
 
         /// The image editor.
-        Editor_ImageEditor imageEditor;
+        //Editor_ImageEditor imageEditor;
 
         /// The text editor.
-        Editor_TextEditor textEditor;
+        //Editor_TextEditor textEditor;
 
         /// The scene editor.
-        Editor_SceneEditor sceneEditor;
+        //Editor_SceneEditor sceneEditor;
 
 
 
@@ -438,16 +438,18 @@ namespace GTEngine
             static int UnmarkFileAsModified(GTCore::Script &script);
             static int IsFileMarkedAsModified(GTCore::Script &script);
 
+            /*
             static int OnModelActivated(GTCore::Script &script);
             static int OnImageActivated(GTCore::Script &script);
             static int OnSoundActivated(GTCore::Script &script);
             static int OnTextFileActivated(GTCore::Script &script);
             static int OnSceneActivated(GTCore::Script &script);
 
-
             static int OnFileActivated(GTCore::Script &script);
             static int OnFileClosed(GTCore::Script &script);
+            */
 
+            /*
             struct ModelEditorFFI
             {
                 static int SaveFile(GTCore::Script &script);
@@ -461,6 +463,7 @@ namespace GTEngine
                 static int PlayAnimation(GTCore::Script &script);
                 static int StopAnimation(GTCore::Script &script);
             };
+            */
 
             /*
             struct TextEditorFFI
