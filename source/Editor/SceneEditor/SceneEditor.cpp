@@ -918,6 +918,8 @@ namespace GTEngine
 
             GTCore::IO::Close(file);
 
+            this->UnmarkAsModified();
+
             return true;
         }
 

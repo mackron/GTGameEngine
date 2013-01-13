@@ -85,6 +85,15 @@ namespace GTEngine
         ///     should be done at a higher level.
         void CloseFile(const char* path, const char* relativeTo = nullptr);
 
+        /// Closes every open file.
+        ///
+        /// @remarks
+        ///     Currently, this will save any modified files.
+        void CloseAllOpenFiles();
+
+        /// Closes the currently shown file.
+        void CloseCurrentlyShownFile();
+
         /// Shows the given file.
         ///
         /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
@@ -113,6 +122,12 @@ namespace GTEngine
         ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
         ///     relative.
         bool SaveFile(const char* path, const char* relativeTo = nullptr);
+
+        /// Saves every open file marked as modified.
+        void SaveAllOpenModifiedFiles();
+
+        /// Saves the currently shown file.
+        bool SaveCurrentlyShownFile();
 
         /// Marks the given file as modified.
         ///
@@ -397,9 +412,13 @@ namespace GTEngine
 
             static int OpenFile(GTCore::Script &script);
             static int CloseFile(GTCore::Script &script);
+            static int CloseAllOpenFiles(GTCore::Script &script);
+            static int CloseCurrentlyShownFile(GTCore::Script &script);
             static int ShowFile(GTCore::Script &script);
             static int HideCurrentlyShownFile(GTCore::Script &script);
             static int SaveFile(GTCore::Script &script);
+            static int SaveAllOpenModifiedFiles(GTCore::Script &script);
+            static int SaveCurrentlyShownFile(GTCore::Script &script);
             static int MarkFileAsModified(GTCore::Script &script);
             static int UnmarkFileAsModified(GTCore::Script &script);
             static int IsFileMarkedAsModified(GTCore::Script &script);
@@ -428,6 +447,7 @@ namespace GTEngine
                 static int StopAnimation(GTCore::Script &script);
             };
 
+            /*
             struct TextEditorFFI
             {
                 static int SaveFile(GTCore::Script &script);
@@ -437,6 +457,7 @@ namespace GTEngine
             {
                 static int SaveFile(GTCore::Script &script);
             };
+            */
         };
     };
 }
