@@ -33,6 +33,9 @@ namespace GTEngine
                 "GTEngine.System.EditorMetadataComponent   = {};"
                 "GTEngine.System.SceneNode                 = {};"
                 "GTEngine.System.Scene                     = {};"
+
+                "GTEngine.System.SubEditor                 = {};"
+                "GTEngine.System.ModelEditor               = {};"
                 "GTEngine.System.SceneEditor               = {};"
 
                 "GTEngine.Renderer = {};"
@@ -903,6 +906,30 @@ namespace GTEngine
                     }
                     script.Pop(1);
 
+
+                    script.Push("SubEditor");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "GetAbsolutePath",              FFI::SystemFFI::SubEditorFFI::GetAbsolutePath);
+                        script.SetTableFunction(-1, "GetRelativePath",              FFI::SystemFFI::SubEditorFFI::GetRelativePath);
+                    }
+                    script.Pop(1);
+
+                    script.Push("ModelEditor");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "GetMaterials",                 FFI::SystemFFI::ModelEditorFFI::GetMaterials);
+                        script.SetTableFunction(-1, "GetConvexHullBuildSettings",   FFI::SystemFFI::ModelEditorFFI::GetConvexHullBuildSettings);
+                        script.SetTableFunction(-1, "PlayAnimation",                FFI::SystemFFI::ModelEditorFFI::PlayAnimation);
+                        script.SetTableFunction(-1, "StopAnimation",                FFI::SystemFFI::ModelEditorFFI::StopAnimation);
+                        script.SetTableFunction(-1, "SetMaterial",                  FFI::SystemFFI::ModelEditorFFI::SetMaterial);
+                        script.SetTableFunction(-1, "ShowConvexDecomposition",      FFI::SystemFFI::ModelEditorFFI::ShowConvexDecomposition);
+                        script.SetTableFunction(-1, "HideConvexDecomposition",      FFI::SystemFFI::ModelEditorFFI::HideConvexDecomposition);
+                        script.SetTableFunction(-1, "BuildConvexDecomposition",     FFI::SystemFFI::ModelEditorFFI::BuildConvexDecomposition);
+                    }
+                    script.Pop(1);
 
                     script.Push("SceneEditor");
                     script.GetTableValue(-2);
@@ -2890,6 +2917,168 @@ namespace GTEngine
                 }
 
 
+
+                namespace SubEditorFFI
+                {
+                    int GetAbsolutePath(GTCore::Script &script)
+                    {
+                        auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
+                        if (subEditor != nullptr)
+                        {
+                            script.Push(subEditor->GetAbsolutePath());
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+
+                        return 1;
+                    }
+
+                    int GetRelativePath(GTCore::Script &script)
+                    {
+                        auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
+                        if (subEditor != nullptr)
+                        {
+                            script.Push(subEditor->GetRelativePath());
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+
+                        return 1;
+                    }
+                }
+
+                namespace ModelEditorFFI
+                {
+                    int GetMaterials(GTCore::Script &script)
+                    {
+                        script.PushNewTable();
+
+                        auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                        if (modelEditor != nullptr)
+                        {
+                            GTCore::Vector<GTCore::String> materials;
+                            modelEditor->GetMaterials(materials);
+
+                            for (size_t i = 0; i < materials.count; ++i)
+                            {
+                                script.SetTableValue(-1, static_cast<int>(i + 1), materials[i].c_str());
+                            }
+                        }
+
+                        return 1;
+                    }
+
+                    int GetConvexHullBuildSettings(GTCore::Script &script)
+                    {
+                        ConvexHullBuildSettings settings;
+
+                        auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                        if (modelEditor != nullptr)
+                        {
+                            modelEditor->GetConvexHullBuildSettings(settings);
+                        }
+
+                        script.PushNewTable();
+                        script.SetTableValue(-1, "compacityWeight",               settings.compacityWeight);
+                        script.SetTableValue(-1, "volumeWeight",                  settings.volumeWeight);
+                        script.SetTableValue(-1, "minClusters",                   static_cast<int>(settings.minClusters));
+                        script.SetTableValue(-1, "verticesPerCH",                 static_cast<int>(settings.verticesPerCH));
+                        script.SetTableValue(-1, "concavity",                     settings.concavity);
+                        script.SetTableValue(-1, "smallClusterThreshold",         settings.smallClusterThreshold);
+                        script.SetTableValue(-1, "connectedComponentsDist",       settings.connectedComponentsDist);
+                        script.SetTableValue(-1, "simplifiedTriangleCountTarget", static_cast<int>(settings.simplifiedTriangleCountTarget));
+                        script.SetTableValue(-1, "addExtraDistPoints",            settings.addExtraDistPoints);
+                        script.SetTableValue(-1, "addFacesPoints",                settings.addFacesPoints);
+
+                        return 1;
+                    }
+
+                    int PlayAnimation(GTCore::Script &script)
+                    {
+                        auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                        if (modelEditor != nullptr)
+                        {
+                            modelEditor->PlayAnimation();
+                        }
+
+                        return 0;
+                    }
+
+                    int StopAnimation(GTCore::Script &script)
+                    {
+                        auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                        if (modelEditor != nullptr)
+                        {
+                            modelEditor->StopAnimation();
+                        }
+
+                        return 0;
+                    }
+
+                    int SetMaterial(GTCore::Script &script)
+                    {
+                        auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                        if (modelEditor != nullptr)
+                        {
+                            script.Push(modelEditor->SetMaterial(script.ToInteger(2) - 1, script.ToString(3)));     // Minus 1 in the first argument because Lua is 1 based.
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int ShowConvexDecomposition(GTCore::Script &script)
+                    {
+                        auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                        if (modelEditor != nullptr)
+                        {
+                            modelEditor->ShowConvexDecomposition();
+                        }
+
+                        return 0;
+                    }
+
+                    int HideConvexDecomposition(GTCore::Script &script)
+                    {
+                        auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                        if (modelEditor != nullptr)
+                        {
+                            modelEditor->HideConvexDecomposition();
+                        }
+
+                        return 0;
+                    }
+
+                    int BuildConvexDecomposition(GTCore::Script &script)
+                    {
+                        auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                        if (modelEditor != nullptr)
+                        {
+                            ConvexHullBuildSettings settings;
+                            settings.compacityWeight               = script.ToFloat(2);
+                            settings.volumeWeight                  = script.ToFloat(3);
+                            settings.minClusters                   = static_cast<unsigned int>(script.ToInteger(4));
+                            settings.verticesPerCH                 = static_cast<unsigned int>(script.ToInteger(5));
+                            settings.concavity                     = script.ToFloat(6);
+                            settings.smallClusterThreshold         = script.ToFloat(7);
+                            settings.connectedComponentsDist       = script.ToFloat(8);
+                            settings.simplifiedTriangleCountTarget = static_cast<unsigned int>(script.ToInteger(9));
+                            settings.addExtraDistPoints            = script.ToBoolean(10);
+                            settings.addFacesPoints                = script.ToBoolean(11);
+
+                            modelEditor->BuildConvexDecomposition(settings);
+                        }
+
+                        return 0;
+                    }
+                }
 
                 namespace SceneEditorFFI
                 {

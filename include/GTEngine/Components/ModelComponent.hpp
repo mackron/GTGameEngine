@@ -27,7 +27,7 @@ namespace GTEngine
         /// @remarks
         ///     This will load the model via the model library and will take ownership, which means it will be deleted whenever the
         ///     component no longer uses it (either when it's change, or when the component is destructed).
-        Model* SetModel(const char* fileName);
+        Model* SetModel(const char* fileName, const char* relativeTo = nullptr);
 
         /// Unsets the current model.
         void UnsetModel();

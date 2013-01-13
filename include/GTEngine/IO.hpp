@@ -62,6 +62,17 @@ namespace GTEngine
         /// @remarks
         ///     If the asset type is unknown, it will assume a text file.
         AssetType GetAssetTypeFromExtension(const char* fileName);
+
+
+
+        /// Retrieves the base path of the given absolute and relative paths.
+        ///
+        /// @param absolutePath [in] The absolute path.
+        /// @param relativePath [in] The relative path.
+        ///
+        /// @remarks
+        ///     The relative path can not contain '.' and '..' characters.
+        GTCore::String GetBasePath(const char* absolutePath, const char* relativePath);
     }
 }
 
