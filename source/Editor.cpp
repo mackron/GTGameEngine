@@ -275,6 +275,12 @@ namespace GTEngine
                         break;
                     }
 
+                case AssetType_Model:
+                    {
+                        newSubEditor = new ModelEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
 
                 case AssetType_Scene:
                     {
