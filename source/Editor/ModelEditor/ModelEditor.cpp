@@ -362,8 +362,21 @@ namespace GTEngine
         // We need to delete any existing convex hull nodes so that they are re-built to account for changes.
         for (size_t i = 0; i < this->convexHullNodes.count; ++i)
         {
-            // TODO: We need to delete the model we created for this node.
-            delete this->convexHullNodes[i];
+            auto node = this->convexHullNodes[i];
+            assert(node != nullptr);
+            {
+                auto modelComponent = node->GetComponent<ModelComponent>();
+                assert(modelComponent != nullptr);
+                {
+                    auto model = modelComponent->GetModel();
+                    assert(model != nullptr);
+                    {
+                        ModelLibrary::Delete(model);
+                    }
+                }
+
+                delete node;
+            }
         }
         this->convexHullNodes.Clear();
     }
