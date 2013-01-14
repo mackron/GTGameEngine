@@ -103,6 +103,9 @@ namespace GTEngine
     ModelEditor::~ModelEditor()
     {
         this->GetGUI().DeleteElement(this->mainElement);
+
+        // Convex hulls need to be deleted.
+        this->DeleteConvexHulls();
     }
 
 
