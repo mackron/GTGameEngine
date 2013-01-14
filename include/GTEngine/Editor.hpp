@@ -6,12 +6,6 @@
 #include "Editor/ModelEditor/ModelEditor.hpp"
 #include "Editor/SceneEditor/SceneEditor.hpp"
 #include "Editor/TextEditor/TextEditor.hpp"
-
-#include "Editor/Editor_ModelEditor.hpp"
-#include "Editor/Editor_ImageEditor.hpp"
-//#include "Editor/Editor_SoundEditor.hpp"
-#include "Editor/Editor_TextEditor.hpp"
-#include "Editor/Editor_SceneEditor.hpp"
 #include "DataFilesWatcher.hpp"
 
 namespace GTGUI
@@ -175,24 +169,6 @@ namespace GTEngine
         void UpdateMenuButtonEnableStates();
 
 
-        /*
-        /// Retrieves a reference to the model sub-editor.
-              Editor_ModelEditor & GetModelEditor()       { return this->modelEditor; }
-        const Editor_ModelEditor & GetModelEditor() const { return this->modelEditor; }
-
-        /// Retrieves a reference to the image sub-editor.
-              Editor_ImageEditor & GetImageEditor()       { return this->imageEditor; }
-        const Editor_ImageEditor & GetImageEditor() const { return this->imageEditor; }
-
-        /// Retrieves a reference to the text sub-editor.
-              Editor_TextEditor & GetTextEditor()       { return this->textEditor; }
-        const Editor_TextEditor & GetTextEditor() const { return this->textEditor; }
-
-        /// Retrieves a reference to the scene sub-editor.
-              Editor_SceneEditor & GetSceneEditor()       { return this->sceneEditor; }
-        const Editor_SceneEditor & GetSceneEditor() const { return this->sceneEditor; }
-        */
-
 
         ///////////////////////////////////////////////
         // Events.
@@ -214,69 +190,6 @@ namespace GTEngine
         /// @param y      [in] The y position of the mouse at the time it was released.
         void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
 
-        /*
-        /// Called when the tab for a model is activated.
-        ///
-        /// @param fileName [in] The full, absolute path of the model being shown.
-        void OnModelActivated(const char* fileName, const char* makeRelativeTo);
-
-        /// Called when the tab for an image is activated.
-        ///
-        /// @param fileName [in] The full, absolute path of the image being shown.
-        void OnImageActivated(const char* fileName, const char* makeRelativeTo);
-
-        /// Called when the tab for a sound is activated.
-        ///
-        /// @param fileName [in] The full, absolute path of the sound being shown.
-        void OnSoundActivated(const char* fileName, const char* makeRelativeTo);
-
-        /// Called when the tab for a text file is activated.
-        ///
-        /// @param fileName [in] The full, absolute path of the text file being shown.
-        void OnTextFileActivated(const char* fileName, const char* makeRelativeTo);
-
-        /// Called when the tab for a scene is activated.
-        ///
-        /// @param fileName [in] The full, absolute path of the scene being shown.
-        void OnSceneActivated(const char* fileName, const char* makeRelativeTo);
-
-
-        /// Called when the tab for a model is closed.
-        ///
-        /// @param fileName [in] The full, absolute path of the file being closed.
-        void OnModelClosed(const char* fileName);
-
-        /// Called when the tab for an image is closed.
-        ///
-        /// @param fileName [in] The full, absolute path of the file being closed.
-        void OnImageClosed(const char* fileName);
-
-        /// Called when the tab for a sound is closed.
-        ///
-        /// @param fileName [in] The full, absolute path of the file being closed.
-        void OnSoundClosed(const char* fileName);
-
-        /// Called when the tab for a text file is closed.
-        ///
-        /// @param fileName [in] The full, absolute path of the file being closed.
-        void OnTextFileClosed(const char* fileName);
-
-        /// Called when the tab for a scene is closed.
-        ///
-        /// @param fileName [in] The full, absolute path of the file being closed.
-        void OnSceneClosed(const char* fileName);
-
-
-        /// Called when a file is activated.
-        ///
-        /// @param fileName [in] The full, absolute path of the file being activated.
-        void OnFileActivated(const char* fileName, const char* makeRelativeTo);
-
-        /// Called when a file is closed.
-        ///
-        /// @param fileName [in] The full, absolute path of the file being activated.
-        void OnFileClosed(const char* fileName);
-        */
 
 
         ///////////////////////////////////////////////
@@ -357,19 +270,6 @@ namespace GTEngine
         }GUI;
 
 
-        /// The model editor.
-        //Editor_ModelEditor modelEditor;
-
-        /// The image editor.
-        //Editor_ImageEditor imageEditor;
-
-        /// The text editor.
-        //Editor_TextEditor textEditor;
-
-        /// The scene editor.
-        //Editor_SceneEditor sceneEditor;
-
-
 
         /// The last time the profiling elements were updated.
         double lastProfilingUpdateTime;
@@ -439,45 +339,6 @@ namespace GTEngine
             static int MarkFileAsModified(GTCore::Script &script);
             static int UnmarkFileAsModified(GTCore::Script &script);
             static int IsFileMarkedAsModified(GTCore::Script &script);
-
-            /*
-            static int OnModelActivated(GTCore::Script &script);
-            static int OnImageActivated(GTCore::Script &script);
-            static int OnSoundActivated(GTCore::Script &script);
-            static int OnTextFileActivated(GTCore::Script &script);
-            static int OnSceneActivated(GTCore::Script &script);
-
-            static int OnFileActivated(GTCore::Script &script);
-            static int OnFileClosed(GTCore::Script &script);
-            */
-
-            /*
-            struct ModelEditorFFI
-            {
-                static int SaveFile(GTCore::Script &script);
-
-                static int SetMaterial(GTCore::Script &script);
-
-                static int ShowConvexDecomposition(GTCore::Script &script);
-                static int HideConvexDecomposition(GTCore::Script &script);
-                static int BuildConvexDecomposition(GTCore::Script &script);
-
-                static int PlayAnimation(GTCore::Script &script);
-                static int StopAnimation(GTCore::Script &script);
-            };
-            */
-
-            /*
-            struct TextEditorFFI
-            {
-                static int SaveFile(GTCore::Script &script);
-            };
-
-            struct SceneEditorFFI
-            {
-                static int SaveFile(GTCore::Script &script);
-            };
-            */
         };
     };
 }
