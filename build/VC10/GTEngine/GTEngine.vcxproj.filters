@@ -515,12 +515,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\GameState.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_ImageEditor.hpp">
-      <Filter>include\Editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_ModelEditor.hpp">
-      <Filter>include\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\SceneRenderer.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -650,17 +644,11 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\PointToPointConstraintComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_TextEditor.hpp">
-      <Filter>include\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\IO.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Profiler.hpp">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor_SceneEditor.hpp">
-      <Filter>include\Editor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Components\EditorMetadataComponent.hpp">
       <Filter>include\Components</Filter>
@@ -997,12 +985,6 @@
     <ClCompile Include="..\..\..\source\GameState.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\Editor_ImageEditor.cpp">
-      <Filter>source\Editor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\Editor_ModelEditor.cpp">
-      <Filter>source\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\SceneRenderer.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -1132,17 +1114,11 @@
     <ClCompile Include="..\..\..\source\Components\PointToPointConstraintComponent.cpp">
       <Filter>source\Components</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\Editor_TextEditor.cpp">
-      <Filter>source\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\IO.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Profiler.cpp">
       <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\Editor_SceneEditor.cpp">
-      <Filter>source\Editor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Components\EditorMetadataComponent.cpp">
       <Filter>source\Components</Filter>
