@@ -337,6 +337,11 @@ namespace GTEngine
         }
     }
 
+    void ModelEditor::OnModelDefinitionChanged()
+    {
+        // All we need to do is refresh.
+        this->Refresh();
+    }
 
 
 
@@ -361,6 +366,29 @@ namespace GTEngine
             delete this->convexHullNodes[i];
         }
         this->convexHullNodes.Clear();
+    }
+
+    void ModelEditor::Refresh()
+    {
+        // We want to refresh the scene node itself so that culling information is updated.
+        this->modelNode.Refresh();
+
+
+        // GTGUI.Server.GetElementByID(this->mainElement->id):Refresh()
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("Refresh");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);       // 'self'
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
     }
 }
 

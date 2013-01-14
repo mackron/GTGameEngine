@@ -15,5 +15,13 @@ function GTGUI.Element:ModelEditor_AnimationsPanel(_internalPtr)
         GTEngine.System.ModelEditor.StopAnimation(_internalPtr);
     end);
     
+    
+    function self:Refresh()
+    end
+    
+    
+    -- We just do a refresh to get everything setup correctly.
+    self:Refresh();
+    
     return self;
 end

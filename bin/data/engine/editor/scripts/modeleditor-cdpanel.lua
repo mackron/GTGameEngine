@@ -33,9 +33,8 @@ function GTGUI.Element:ModelEditor_CDPanel(_internalPtr)
     self.ShowConvexDecomposition:OnUnchecked(function()
         GTEngine.System.ModelEditor.HideConvexDecomposition(_internalPtr);
     end)
-
-
-    -- CD Settings
+    
+    
     local settings = GTEngine.System.ModelEditor.GetConvexHullBuildSettings(_internalPtr);
     self.CompacityWeight:LabeledSpinner(        "Compacity Weight",          0, 1000000, 1,   settings.compacityWeight);
     self.VolumeWeight:LabeledSpinner(           "Volume Weight",             0, 1000000, 1,   settings.volumeWeight);
@@ -49,15 +48,31 @@ function GTGUI.Element:ModelEditor_CDPanel(_internalPtr)
     self.AddExtraDistPoints:CheckBox("Add Extra Distance Points");
     self.AddFacePoints:CheckBox("Add Face Points");
     
-    if settings.addExtraDistPoints then
-        self.AddExtraDistPoints:Check();
+    
+    function self:Refresh()
+        -- CD Settings
+        local settings = GTEngine.System.ModelEditor.GetConvexHullBuildSettings(_internalPtr);
+        
+        self.CompacityWeight:SetValue(        settings.compacityWeight);
+        self.VolumeWeight:SetValue(           settings.volumeWeight);
+        self.MinClusters:SetValue(            settings.minClusters);
+        self.VerticesPerCH:SetValue(          settings.verticesPerCH);
+        self.Concavity:SetValue(              settings.concavity);
+        self.SmallThreshold:SetValue(         settings.smallClusterThreshold);
+        self.ConnectedDistance:SetValue(      settings.connectedComponentsDist);
+        self.SimplifiedTriangleCount:SetValue(settings.simplifiedTriangleCountTarget);
+        
+        if settings.addExtraDistPoints then
+            self.AddExtraDistPoints:Check();
+        end
+        
+        if settings.addFacesPoints then
+            self.AddFacePoints:Check();
+        end
     end
     
-    if settings.addFacesPoints then
-        self.AddFacePoints:Check();
-    end
     
-    
+
     -- Build button.
     self.BuildButton:Button("Build"):OnPressed(function()
         self.BuildButton:Disable();
@@ -87,6 +102,11 @@ function GTGUI.Element:ModelEditor_CDPanel(_internalPtr)
         self.BuildButton:Enable();
         Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(_internalPtr));
     end);
+    
+    
+    
+    -- We just do a refresh to get everything setup correctly.
+    self:Refresh();
     
     return self;
 end

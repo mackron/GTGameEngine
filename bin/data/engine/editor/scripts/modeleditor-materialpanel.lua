@@ -36,6 +36,10 @@ function GTGUI.Element:ModelEditor_MaterialsPanel(_internalPtr)
         self.MaterialTextBoxes[new.index] = new;
     end
 
+    function self:RemoveMaterials()
+        self.Body:DeleteAllChildren();
+        self.MaterialTextBoxes = {};
+    end
     
     function self:GetMaterial(index)
         assert(index <= #self.MaterialTextBoxes, "MaterialPanel:GetMaterial() - index out or range (index = " .. tostring(index) .. ", table size = " .. tostring(#self.MaterialTextBoxes));
@@ -43,13 +47,21 @@ function GTGUI.Element:ModelEditor_MaterialsPanel(_internalPtr)
     end
     
     
-    
-    -- We need to add all of the materials.
-    local materials = GTEngine.System.ModelEditor.GetMaterials(_internalPtr);
-    for i,value in ipairs(materials) do
-        self:AddMaterial(value);
+    function self:Refresh()
+        self:RemoveMaterials();
+        
+        -- We need to add all of the materials.
+        local materials = GTEngine.System.ModelEditor.GetMaterials(_internalPtr);
+        for i,value in ipairs(materials) do
+            self:AddMaterial(value);
+        end
     end
     
+    
+    
+    
+    -- We just do a refresh to get everything setup correctly.
+    self:Refresh();
     
     
     return self;
