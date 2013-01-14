@@ -76,6 +76,10 @@ namespace GTEngine
         void OnUpdate(double deltaTimeInSeconds);
 
 
+        /// Special event called by the main editor when the definition of the model has changed.
+        void OnModelDefinitionChanged();
+
+
     private:
 
         /// Applies the camera rotation to the camera node.
@@ -83,6 +87,9 @@ namespace GTEngine
 
         /// Deletes the convex hulls for the currently loaded model.
         void DeleteConvexHulls();
+
+        /// Refreshes the model editor.
+        void Refresh();
 
 
     private:

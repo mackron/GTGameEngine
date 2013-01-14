@@ -46,6 +46,9 @@ namespace GTEngine
 
         this->meshes.PushBack(newMesh);
 
+        // The AABB is no longer valid.
+        this->isAABBValid = false;
+
         return newMesh;
     }
 
@@ -164,6 +167,10 @@ namespace GTEngine
 
 
         this->GenerateTangentsAndBitangents();
+
+
+        // The AABB is no longer valid.
+        this->isAABBValid = false;
     }
 
     void Model::GenerateTangentsAndBitangents()
@@ -457,6 +464,10 @@ namespace GTEngine
             }
 
         } while (header.id != Serialization::ChunkID_Null);
+
+
+        // The AABB is no longer valid after deserialization.
+        this->isAABBValid = false;
     }
 
 
@@ -578,6 +589,10 @@ namespace GTEngine
         }
         this->animationKeyCache.Clear();
         this->animationChannelBones.Clear();
+
+
+        // The AABB is no longer valid.
+        this->isAABBValid = false;
     }
 }
 

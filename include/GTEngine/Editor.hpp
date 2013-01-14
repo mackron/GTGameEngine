@@ -207,7 +207,9 @@ namespace GTEngine
         
 
         /// Called when the definition of a model has changed.
-        void OnModelDefinitionChanged(const char* absolutePath) { (void)absolutePath; /*this->modelEditor.OnModelDefinitionChanged(absolutePath);*/ }
+        ///
+        /// @oaram absolutePath [in] The absolute path of the model that has just changed.
+        void OnModelDefinitionChanged(const char* absolutePath);
 
 
 

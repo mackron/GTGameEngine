@@ -22,6 +22,15 @@ function GTGUI.Element:ModelEditorPanel(_internalPtr)
     
     
     
+    function self:Refresh()
+        self.MaterialsPanel:Refresh();
+        self.AnimationsPanel:Refresh();
+        self.CDPanel:Refresh();
+    end;
+    
+    
+    
+    
     self:OnSize(function()
         if self:IsVisible() then
             self.Scrollbar:SetPageSize(self:GetHeight());
@@ -48,6 +57,12 @@ function GTGUI.Element:ModelEditor(_internalPtr)
     self.HasMouseCapture = false;
     
     self.Panel:ModelEditorPanel(self._internalPtr);
+    
+    
+    function self:Refresh()
+        self.Panel:Refresh();
+    end
+    
     
     
     
