@@ -519,11 +519,22 @@ function GTGUI.Element:SpotLightComponentPanel()
     
     self.ConstantAttenuationLabel  = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; margin-bottom:4px;'>Constant Attenuation:</div>");
     self.LinearAttenuationLabel    = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; margin-bottom:4px;'>Linear Attenuation:</div>");
-    self.QuadraticAttenuationLabel = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; padding-bottom:0px'>Quadratic Attenuation:</div>");
+    self.QuadraticAttenuationLabel = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding-top:2px;'                   >Quadratic Attenuation:</div>");
     
     self.ConstantAttenuationInput  = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%; margin-bottom:2px;'></div>");
     self.LinearAttenuationInput    = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%; margin-bottom:2px;'></div>");
     self.QuadraticAttenuationInput = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%;'></div>");
+    
+    -- Angles
+    self.AnglesContainer  = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:8px;' />");
+    self.AnglesLeft       = GTGUI.Server.New("<div parentid='" .. self.AnglesContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
+    self.AnglesRight      = GTGUI.Server.New("<div parentid='" .. self.AnglesContainer:GetID() .. "' style='width:100%; height:auto;' />");
+    
+    self.InnerAngleLabel  = GTGUI.Server.New("<div parentid='" .. self.AnglesLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; margin-bottom:4px;'>Inner Angle:</div>");
+    self.OuterAngleLabel  = GTGUI.Server.New("<div parentid='" .. self.AnglesLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding-top:2px;'                   >Outer Angle:</div>");
+    
+    self.InnerAngleInput  = GTGUI.Server.New("<div parentid='" .. self.AnglesRight:GetID()  .. "' styleclass='textbox' style='width:100%; margin-bottom:2px;'></div>");
+    self.OuterAngleInput  = GTGUI.Server.New("<div parentid='" .. self.AnglesRight:GetID()  .. "' styleclass='textbox' style='width:100%;'></div>");
     
     
     -- Shadows
@@ -534,6 +545,7 @@ function GTGUI.Element:SpotLightComponentPanel()
     self.CurrentNode           = nil;
     self.CurrentComponent      = nil;
     self.LockAttenuationEvents = false;
+    self.LockAnglesEvents      = false;
     
     
     
@@ -555,6 +567,16 @@ function GTGUI.Element:SpotLightComponentPanel()
     
     self.QuadraticAttenuationInput:OnTextChanged(function()
         if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateComponentAttenuation() end
+    end);
+    
+    
+    
+    self.InnerAngleInput:OnTextChanged(function()
+        if self.CurrentComponent ~= nil and not self.LockAnglesEvents then self:UpdateComponentAngles() end
+    end);
+    
+    self.OuterAngleInput:OnTextChanged(function()
+        if self.CurrentComponent ~= nil and not self.LockAnglesEvents then self:UpdateComponentAngles() end
     end);
     
     
@@ -585,6 +607,12 @@ function GTGUI.Element:SpotLightComponentPanel()
             self.QuadraticAttenuationInput:SetText(string.format("%.4f", self.CurrentComponent:GetQuadraticAttenuation()));
             self.LockAttenuationEvents = false;
             
+            self.LockAnglesEvents = true;
+            local innerAngle, outerAngle = self.CurrentComponent:GetAngles();
+            self.InnerAngleInput:SetText(string.format("%.4g", innerAngle));
+            self.OuterAngleInput:SetText(string.format("%.4g", outerAngle));
+            self.LockAnglesEvents = false;
+            
             if self.CurrentComponent:IsShadowCastingEnabled() then
                 self.CastShadows:Check(true);
             else
@@ -600,6 +628,15 @@ function GTGUI.Element:SpotLightComponentPanel()
             local quadratic = tonumber(self.QuadraticAttenuationInput:GetText());
             
             self.CurrentComponent:SetAttenuation(constant, linear, quadratic);
+        end
+    end
+    
+    function self:UpdateComponentAngles()
+        if self.CurrentComponent ~= nil then
+            local innerAngle = tonumber(self.InnerAngleInput:GetText());
+            local outerAngle = tonumber(self.OuterAngleInput:GetText());
+            
+            self.CurrentComponent:SetAngles(innerAngle, outerAngle);
         end
     end
     
