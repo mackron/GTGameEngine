@@ -268,6 +268,19 @@ function GTGUI.Element:NewCollisionShapeMenu()
 end
 
 
+function GTGUI.Element:NewComponentMenu()
+    self.Items = {}
+    
+    function self:AppendNewItem(title)
+        local newItem = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='new-component-menu-item' />");
+        newItem:SetText(title);
+        
+        self.Items[newItem:GetID()] = newItem;
+        
+        return newItem;
+    end
+end
+
 
 -- Editor.SceneEditor.CreateCustomComponentPanel()
 --
@@ -1215,6 +1228,86 @@ function GTGUI.Element:SceneEditorPanel()
     end
     
     self.ComponentPanels[GTEngine.Components.EditorMetadata] = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.EditorMetadata);
+    
+    
+    
+    -- New Component Button/Menu
+    self.NewComponentContainer      = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID()       .. "' styleclass='new-component-container'             style='' />");
+    self.NewComponentTitleContainer = GTGUI.Server.New("<div parentid='" .. self.NewComponentContainer:GetID()      .. "' styleclass='new-component-title-container'       style='' />");
+    self.NewComponentIcon           = GTGUI.Server.New("<div parentid='" .. self.NewComponentTitleContainer:GetID() .. "' styleclass='new-component-title-container-icon'  style='' />");
+    self.NewComponentLabel          = GTGUI.Server.New("<div parentid='" .. self.NewComponentTitleContainer:GetID() .. "' styleclass='new-component-title-container-label' style=''>New Component</div>");
+    self.NewComponentBottomBorder   = GTGUI.Server.New("<div parentid='" .. self.NewComponentTitleContainer:GetID() .. "' styleclass='new-component-title-container-bottom-border' />");
+    
+    self.NewComponentMenu           = GTGUI.Server.New("<div parentid='" .. self.NewComponentContainer:GetID()      .. "' styleclass='new-component-menu'  style='visible:false;' />");
+    self.NewComponentMenu:NewComponentMenu();
+    
+    self.NewComponentTitleContainer:OnLMBDown(function()
+        if not self.NewComponentTitleContainer.IsOpen then
+            self.NewComponentTitleContainer.IsOpen = true;
+            self.NewComponentTitleContainer:AttachStyleClass("new-component-title-container-open");
+            self.NewComponentIcon:AttachStyleClass("new-component-title-container-icon-open");
+            self.NewComponentBottomBorder:Show();
+            self.NewComponentMenu:Show();
+        else
+            self.NewComponentTitleContainer.IsOpen = false;
+            self.NewComponentTitleContainer:DetachStyleClass("new-component-title-container-open");
+            self.NewComponentIcon:DetachStyleClass("new-component-title-container-icon-open");
+            self.NewComponentBottomBorder:Hide();
+            self.NewComponentMenu:Hide();
+        end
+    end);
+    
+    
+    self.NewComponentMenu:AppendNewItem("Model"):OnPressed(function()
+        local component = self.CurrentSceneNode:AddComponent(GTEngine.Components.Model);
+        if component ~= nil then
+            component:SetModel("engine/models/default.dae");
+        end
+        
+        self.CurrentSceneNode:Refresh();
+        self:UpdateComponentPanels();
+    end);
+    
+    self.NewComponentMenu:AppendNewItem("Point Light"):OnPressed(function()
+        self.CurrentSceneNode:AddComponent(GTEngine.Components.PointLight);
+
+        self.CurrentSceneNode:Refresh();
+        self:UpdateComponentPanels();
+    end);
+    
+    self.NewComponentMenu:AppendNewItem("Spot Light"):OnPressed(function()
+        self.CurrentSceneNode:AddComponent(GTEngine.Components.SpotLight);
+        
+        self.CurrentSceneNode:Refresh();
+        self:UpdateComponentPanels();
+    end);
+    
+    self.NewComponentMenu:AppendNewItem("Directional Light"):OnPressed(function()
+        self.CurrentSceneNode:AddComponent(GTEngine.Components.DirectionalLight);
+        
+        self.CurrentSceneNode:Refresh();
+        self:UpdateComponentPanels();
+    end);
+    
+    self.NewComponentMenu:AppendNewItem("Ambient Light"):OnPressed(function()
+        local component = self.CurrentSceneNode:AddComponent(GTEngine.Components.AmbientLight);
+        if component ~= nil then
+            component:SetColour(0.25, 0.25, 0.25);
+        end
+        
+        self.CurrentSceneNode:Refresh();
+        self:UpdateComponentPanels();
+    end);
+    
+    self.NewComponentMenu:AppendNewItem("Dynamics (Collision and Physics)"):OnPressed(function()
+        self.CurrentSceneNode:AddComponent(GTEngine.Components.Dynamics);
+        
+        self.CurrentSceneNode:Refresh();
+        self:UpdateComponentPanels();
+    end);
+    
+    
+    
     
 
     
