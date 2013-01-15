@@ -561,14 +561,19 @@ namespace GTEngine
         this->viewportFramebuffers.Add(&viewport, framebuffer);
     }
 
-    void DefaultSceneRenderer::RemoveViewport(SceneViewport &viewport)
+    // TODO: Implement this properly. The issue is that when a scene is destructed, it will call this method on everything. A problem
+    //       then arises if the framebuffer is being used on the rendering thread. Basically, we need to garbage collect instead of
+    //       deleting straight away.
+    void DefaultSceneRenderer::RemoveViewport(SceneViewport &/*viewport*/)
     {
+        /*
         auto framebuffer = this->GetViewportFramebuffer(viewport);
 
         viewport.SetColourBuffer(nullptr);
         this->viewportFramebuffers.Remove(&viewport);
 
         delete framebuffer;
+        */
     }
 
     void DefaultSceneRenderer::OnViewportResized(SceneViewport &viewport)

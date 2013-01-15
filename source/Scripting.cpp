@@ -216,6 +216,14 @@ namespace GTEngine
                 "    GTEngine.System.SpotLightComponent.SetAttenuation(self._internalPtr, constant, linear, quadratic);"
                 "end;"
 
+                "function GTEngine.SpotLightComponent:SetAngles(inner, outer)"
+                "    GTEngine.System.SpotLightComponent.SetAngles(self._internalPtr, inner, outer);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:GetAngles()"
+                "    return GTEngine.System.SpotLightComponent.GetAngles(self._internalPtr);"
+                "end;"
+
 
                 // DirectionalLightComponent
                 "GTEngine.DirectionalLightComponent = {};"
@@ -800,6 +808,8 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetLinearAttenuation",    FFI::SystemFFI::SpotLightComponentFFI::GetLinearAttenuation);
                         script.SetTableFunction(-1, "GetQuadraticAttenuation", FFI::SystemFFI::SpotLightComponentFFI::GetQuadraticAttenuation);
                         script.SetTableFunction(-1, "SetAttenuation",          FFI::SystemFFI::SpotLightComponentFFI::SetAttenuation);
+                        script.SetTableFunction(-1, "SetAngles",               FFI::SystemFFI::SpotLightComponentFFI::SetAngles);
+                        script.SetTableFunction(-1, "GetAngles",               FFI::SystemFFI::SpotLightComponentFFI::GetAngles);
                     }
                     script.Pop(1);
 
@@ -1774,6 +1784,37 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+
+                    int SetAngles(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float inner = script.ToFloat(2);
+                            float outer = script.ToFloat(3);
+                            component->SetAngles(inner, outer);
+                        }
+
+                        return 0;
+                    }
+
+                    int GetAngles(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetInnerAngle());
+                            script.Push(component->GetOuterAngle());
+                        }
+                        else
+                        {
+                            script.Push(40.0f);
+                            script.Push(45.0f);
+                        }
+
+                        return 2;
                     }
                 }
 

@@ -339,6 +339,21 @@ namespace GTEngine
                     ///     Argument 3: The linear attenuation.
                     ///     Argument 4: The quadratic attenuation.
                     int SetAttenuation(GTCore::Script &script);
+
+
+                    /// Sets the inner and outer angles of the spot light.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The inner angle.
+                    ///     Argument 3: The outer angle.
+                    int SetAngles(GTCore::Script &script);
+
+                    /// Retrieves the inner and outer angles of the spot light, as two floats.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetAngles(GTCore::Script &script);
                 }
 
                 namespace DirectionalLightComponentFFI
