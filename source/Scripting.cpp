@@ -658,6 +658,11 @@ namespace GTEngine
                 "function GTEngine.SceneNode:IsVisible()"
                 "    return GTEngine.System.SceneNode.IsVisible(self._internalPtr);"
                 "end;"
+
+
+                "function GTEngine.SceneNode:GetScenePtr()"
+                "    return GTEngine.System.SceneNode.GetScenePtr(self._internalPtr);"
+                "end;"
             );
 
 
@@ -735,6 +740,8 @@ namespace GTEngine
                         script.SetTableFunction(-1, "Show",                    FFI::SystemFFI::SceneNodeFFI::Show);
                         script.SetTableFunction(-1, "Hide",                    FFI::SystemFFI::SceneNodeFFI::Hide);
                         script.SetTableFunction(-1, "IsVisible",               FFI::SystemFFI::SceneNodeFFI::IsVisible);
+
+                        script.SetTableFunction(-1, "GetScenePtr",             FFI::SystemFFI::SceneNodeFFI::GetScenePtr);
                     }
                     script.Pop(1);
 
@@ -1332,6 +1339,21 @@ namespace GTEngine
                         if (sceneNode != nullptr)
                         {
                             script.Push(sceneNode->IsVisible());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetScenePtr(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr && sceneNode->GetScene() != nullptr)
+                        {
+                            script.Push(sceneNode->GetScene());
                         }
                         else
                         {

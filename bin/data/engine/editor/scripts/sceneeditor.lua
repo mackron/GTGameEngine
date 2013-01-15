@@ -313,7 +313,7 @@ end
 
 
 function GTGUI.Element:ModelComponentPanel()
-    self:PanelGroupBox("Model");
+    self:PanelGroupBox("Model", true);
     
     -- Model
     self.ModelPath   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox' style='width:100%;' />");
@@ -376,11 +376,12 @@ function GTGUI.Element:ModelComponentPanel()
         end
     end
     
+    
     return self;
 end
 
 function GTGUI.Element:CameraComponentPanel()
-    self:PanelGroupBox("Camera");
+    self:PanelGroupBox("Camera", true);
     
     function self:Update(node)
     end
@@ -389,7 +390,7 @@ function GTGUI.Element:CameraComponentPanel()
 end
 
 function GTGUI.Element:PointLightComponentPanel()
-    self:PanelGroupBox("Point Light");
+    self:PanelGroupBox("Point Light", true);
     
     -- Colour
     self.ColourContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
@@ -491,7 +492,7 @@ function GTGUI.Element:PointLightComponentPanel()
 end
 
 function GTGUI.Element:SpotLightComponentPanel()
-    self:PanelGroupBox("Spot Light");
+    self:PanelGroupBox("Spot Light", true);
     
     -- Colour
     self.ColourContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
@@ -593,7 +594,7 @@ function GTGUI.Element:SpotLightComponentPanel()
 end
 
 function GTGUI.Element:DirectionalLightComponentPanel()
-    self:PanelGroupBox("Directional Light");
+    self:PanelGroupBox("Directional Light", true);
     
     -- Colour
     self.ColourContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
@@ -649,7 +650,7 @@ function GTGUI.Element:DirectionalLightComponentPanel()
 end
 
 function GTGUI.Element:AmbientLightComponentPanel()
-    self:PanelGroupBox("Ambient Light");
+    self:PanelGroupBox("Ambient Light", true);
     
     -- Colour
     self.ColourContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
@@ -682,7 +683,7 @@ function GTGUI.Element:AmbientLightComponentPanel()
 end
 
 function GTGUI.Element:DynamicsComponentPanel()
-    self:PanelGroupBox("Dynamics");
+    self:PanelGroupBox("Dynamics", true);
     
     -- Mass
     self.IsKinematic   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:0px;' />");
@@ -948,7 +949,7 @@ function GTGUI.Element:DynamicsComponentPanel()
 end
 
 function GTGUI.Element:ProximityComponentPanel()
-    self:PanelGroupBox("Proximity");
+    self:PanelGroupBox("Proximity", true);
     
     function self:Update(node)
     end
@@ -1185,16 +1186,36 @@ function GTGUI.Element:SceneEditorPanel()
     self.Body.TransformPanel:SceneEditorTransformPanel();
     
     
+    self.CurrentSceneNode = nil;            -- The scene node whose details are currently being shown on this panel.
+    self.SceneEditor      = self.Parent;    -- The parent of this element will be the main editor.
+    
+    
+    
     -- This will create the panels for every registered component. We always want the editor metadata to be last.
     self.ComponentPanels = {};
     for key,value in pairs(GTEngine.Components) do
         if value ~= GTEngine.Components.EditorMetadata then
-            self.ComponentPanels[value] = Editor.SceneEditor.CreateComponentPanel(self, value);
+            local panel = Editor.SceneEditor.CreateComponentPanel(self, value);
+            self.ComponentPanels[value] = panel;
+            
+            -- We need to attach an event handler to each component panel for when it is closed. When closing a component panel, that component
+            -- will be removed from the scene node. Note that closing a panel is not the same as collapsing it.
+            panel:OnClose(function()
+                local scenePtr     = self.SceneEditor:GetScenePtr();
+                local sceneNodePtr = self.CurrentSceneNode._internalPtr;
+        
+                GTEngine.System.Scene.RemoveSceneNode(scenePtr, sceneNodePtr);
+                    self.CurrentSceneNode:RemoveComponent(value);
+                GTEngine.System.Scene.AddSceneNode(scenePtr, sceneNodePtr);
+                
+                -- Removing the scene node will deselect it. We want to reselect it. Reselecting will update the panels.
+                self.SceneEditor:SelectSceneNode(self.CurrentSceneNode);
+            end);
         end
     end
     
     self.ComponentPanels[GTEngine.Components.EditorMetadata] = Editor.SceneEditor.CreateComponentPanel(self, GTEngine.Components.EditorMetadata);
-
+    
 
     
     self.Scrollbar:VerticalScrollbar();
@@ -1215,7 +1236,15 @@ function GTGUI.Element:SceneEditorPanel()
         self.Body.MessageContainer:SetText(message);
     end
     
-    -- Shows the panels.
+    -- Shows the panels, but does not update them.
+    --
+    -- This will also update the details of the panels.
+    function self:ShowPanels()
+        self.Body.MessageContainer:Hide();
+        self.Body.PanelsContainer:Show();
+    end
+    
+    --[[
     function self:ShowPanels(node)
         if node ~= nil then
             self.Body.MessageContainer:Hide();
@@ -1230,20 +1259,28 @@ function GTGUI.Element:SceneEditorPanel()
             self:ShowComponentPanels(node);
         end
     end
+    ]]
     
     
     -- Updates the details panel.
-    function self:UpdateDetailsPanel(node)
-        if node ~= nil then
-            self.Body.DetailsPanel:Update(node);
+    function self:UpdateDetailsPanel()
+        if self.CurrentSceneNode ~= nil then
+            self.Body.DetailsPanel:Update(self.CurrentSceneNode);
         end
     end
     
-    -- Updates the transform panel to show the transformation of the given node.
-    function self:UpdateTransformPanel(node)
-        if node ~= nil then
-            self.Body.TransformPanel:Update(node);
+    -- Updates the transform panel to show the transformation of the current node.
+    function self:UpdateTransformPanel()
+        if self.CurrentSceneNode ~= nil then
+            self.Body.TransformPanel:Update(self.CurrentSceneNode);
         end
+    end
+    
+    
+    -- Updates the component panels.
+    function self:UpdateComponentPanels()
+        self:HideAllComponentPanels();
+        self:ShowComponentPanels();
     end
     
     
@@ -1254,14 +1291,29 @@ function GTGUI.Element:SceneEditorPanel()
         end
     end
     
-    -- Shows the relevant component panels for the given node.
-    function self:ShowComponentPanels(node)
-        if node ~= nil then
-            local componentIDs = node:GetAttachedComponentIDs();
+    -- Shows the relevant component panels for the current node.
+    function self:ShowComponentPanels()
+        if self.CurrentSceneNode ~= nil then
+            local componentIDs = self.CurrentSceneNode:GetAttachedComponentIDs();
             for i,value in ipairs(componentIDs) do
                 self.ComponentPanels[value]:Show();
-                self.ComponentPanels[value]:Update(node);
+                self.ComponentPanels[value]:Update(self.CurrentSceneNode);
             end
+        end
+    end
+    
+    
+    
+    -- Updates the panel to show the details of the given scene node.\
+    --
+    -- This does not actually show the panels.
+    function self:Update(node)
+        self.CurrentSceneNode = node;
+        
+        if self.CurrentSceneNode ~= nil then
+            self:UpdateDetailsPanel();
+            self:UpdateTransformPanel();
+            self:UpdateComponentPanels();
         end
     end
     
@@ -1407,6 +1459,9 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     
     
+    function self:GetScenePtr()
+        return self.Scene._internalPtr;
+    end
     
     function self:AddSceneNode(name)
         local node = GTEngine.SceneNode:Create();
@@ -1496,16 +1551,16 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self.Panel:HidePanels(message);
     end
     
-    function self:ShowPanels(node)
-        self.Panel:ShowPanels(node);
+    function self:ShowPanels()
+        self.Panel:ShowPanels();
     end
     
-    function self:UpdateTransformPanel(node)
-        if node == nil then
-            node = self:GetSelectedSceneNode();
-        end
-        
-        self.Panel:UpdateTransformPanel(node);
+    function self:UpdatePanels()
+        self.Panel:Update(self:GetSelectedSceneNode());
+    end
+    
+    function self:UpdateTransformPanel()
+        self.Panel:UpdateTransformPanel();
     end
 
     
@@ -1521,7 +1576,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
             self:HidePanels("Nothing Selected");
         else                                 -- Single selection
             self:SetSelectedSceneNode(GTEngine.System.SceneEditor.GetFirstSelectedSceneNodePtr(self._internalPtr));
-            self:ShowPanels(self:GetSelectedSceneNode());
+            self:UpdatePanels();
+            self:ShowPanels();
         end
     end
     
