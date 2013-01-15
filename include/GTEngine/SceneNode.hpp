@@ -657,6 +657,23 @@ namespace GTEngine
             auto component = this->GetComponentByName(componentName);
             if (component != nullptr)
             {
+                if (component == this->modelComponent)
+                {
+                    this->modelComponent = nullptr;
+                }
+                else if (component == this->pointLightComponent)
+                {
+                    this->pointLightComponent = nullptr;
+                }
+                else if (component == this->spotLightComponent)
+                {
+                    this->spotLightComponent = nullptr;
+                }
+                else if (component == this->editorMetadataComponent)
+                {
+                    this->editorMetadataComponent = nullptr;
+                }
+
                 this->components.Remove(componentName);
                 delete component;
             }
