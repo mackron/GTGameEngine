@@ -182,6 +182,127 @@ collision-shape-panel-new-menu-item:pushed
 
 
 
+
+
+
+new-component-container
+{
+    padding:4px;
+}
+
+
+new-component-title-container
+{
+    width:            auto
+    height:           auto
+    child-plane:      horizontal
+    flex-child-width: true
+    horizontal-align: left
+    vertical-align:   center
+    margin-top:       2px
+    padding:          6px 4px
+    font-style:       bold
+    
+
+    background-image-color: std-text-color
+    text-color:             std-text-color
+}
+
+new-component-title-container:hovered
+{
+    background-image-color: #ccc
+    text-color:             #ccc
+}
+
+new-component-title-container-open
+{
+    background-color:       #444
+    
+    border:                 1px #777
+    border-bottom:          none
+    
+    text-color:             #ccc
+    background-image-color: #ccc
+    
+    padding:                5px 3px
+    padding-bottom:         4px
+}
+
+new-component-title-container-icon
+{
+    width:                   8px
+    height:                  12px
+    background-image:        std-plus
+    background-image-color:  inherit
+    transparent-mouse-input: true
+}
+
+new-component-title-container-icon-open
+{
+    background-image: std-minus
+}
+
+
+new-component-title-container-label
+{
+    width:                   auto
+    text-color:              inherit
+    margin-left:             4px
+    transparent-mouse-input: true
+}
+
+new-component-title-container-bottom-border
+{
+    visible:             false;
+
+    positioning:         relative
+    width:               100%
+    height:              1px
+    bottom:              1px
+    relative-width-mode: inner-border
+    position-origin:     inner-border
+    background-color:    #444
+}
+
+
+new-component-menu
+{
+    background-color: #444
+    
+    width:            100%
+    height:           auto
+    
+    border:           1px #777
+}
+
+new-component-menu-item
+{
+    width:            100%
+    height:           auto
+    
+    vertical-align:   center
+    padding:          4px
+    
+    text-color:       #bbb
+    background-color: #444
+}
+
+new-component-menu-item:hovered
+{
+    text-color:       #ccc
+    background-color: #555
+}
+
+new-component-menu-item:pushed
+{
+    text-color:       #ddd
+    background-color: #666
+}
+
+
+
+
+
 vector3-container
 {
 }
