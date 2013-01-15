@@ -1244,23 +1244,6 @@ function GTGUI.Element:SceneEditorPanel()
         self.Body.PanelsContainer:Show();
     end
     
-    --[[
-    function self:ShowPanels(node)
-        if node ~= nil then
-            self.Body.MessageContainer:Hide();
-            self.Body.PanelsContainer:Show();
-            
-            self:UpdateDetailsPanel(node);
-            self:UpdateTransformPanel(node);
-            
-            -- Here is where we will show the panels for the individual components. What we will do is first hide every panel, and then show
-            -- the ones that the input node actually uses.
-            self:HideAllComponentPanels();
-            self:ShowComponentPanels(node);
-        end
-    end
-    ]]
-    
     
     -- Updates the details panel.
     function self:UpdateDetailsPanel()
