@@ -668,8 +668,9 @@ namespace GTEngine
             auto &node = static_cast<SceneNode &>(object);
 
             auto metadata = node.GetComponent<EditorMetadataComponent>();
-            if (metadata != nullptr)
+            assert(metadata != nullptr);
             {
+                // Collision shapes need to be removed.
                 this->pickingWorld.RemoveCollisionObject(metadata->GetPickingCollisionObject());
 
                 if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
@@ -678,17 +679,17 @@ namespace GTEngine
                 }
 
 
+                // We need to make sure scene nodes are deseleted when they are removed from the scene.
+                this->DeselectSceneNode(node);
+
+
                 // The state needs to know that it no longer has the node.
                 this->sceneNodes.RemoveFirstOccuranceOf(&node);
+
+
+                // The data pointer at position 0 will be a pointer to the Editor_SceneEditor::State object that previously owned the scene node. This needs to be cleared.
+                node.SetDataPointer(0, nullptr);
             }
-
-
-
-            // We need to make sure scene nodes are deseleted when they are removed from the scene.
-            this->DeselectSceneNode(node);
-
-            // The data pointer at position 0 will be a pointer to the Editor_SceneEditor::State object that previously owned the scene node. This needs to be cleared.
-            node.SetDataPointer(0, nullptr);
         }
     }
 
