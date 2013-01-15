@@ -724,18 +724,24 @@ namespace GTEngine
                 // If the node is visible, we'll need to include the picking collision objects.
                 if (node.IsVisible())
                 {
+                    // If the picking shape is set to the model, we want to update it here just to make sure everything is valid.
+                    if (metadata->UseModelForPickingShape())
+                    {
+                        metadata->SetPickingCollisionShapeToModel();
+
+                        if (metadata->GetPickingCollisionShape())
+                        {
+                            pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+                        }
+                    }
+
+
                     if (metadata->GetPickingCollisionShape() != nullptr)
                     {
                         btTransform transform;
                         node.GetWorldTransform(transform);
 
                         pickingCollisionObject.setWorldTransform(transform);
-
-                        if (metadata->UseModelForPickingShape())
-                        {
-                            pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
-                        }
-
                         this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                     }
 
