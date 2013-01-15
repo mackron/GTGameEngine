@@ -193,6 +193,13 @@ namespace GTEngine
 
 
 
+                    /// Retrieves a pointer to the scene that this node is part of, if any.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node.
+                    int GetScenePtr(GTCore::Script &script);
+
+
 
 
                     ////////////////////////////////////////////////////////////////

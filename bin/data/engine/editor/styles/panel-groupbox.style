@@ -7,9 +7,10 @@ panel-groupbox
 
 panel-groupbox-title
 {
-    child-plane:    horizontal
-    vertical-align: center
-    padding-left:   4px
+    child-plane:      horizontal
+    vertical-align:   center
+    padding:          4px 0px
+    flex-child-width: true
 }
 
 panel-groupbox-title-arrow
@@ -32,6 +33,25 @@ panel-groupbox-title-text
     
     transparent-mouse-input: true
 }
+
+panel-groupbox-title-cross
+{
+    width:                  12px
+    height:                 12px
+    background-image:       std-cross
+    background-image-color: #555
+}
+
+panel-groupbox-title-cross:hovered
+{
+    background-image-color: #f99
+}
+
+panel-groupbox-title-cross:pushed
+{
+    background-image-color: #f66
+}
+
 
 panel-groupbox-body
 {
