@@ -266,6 +266,9 @@ namespace GTEngine
 
     Scene::~Scene()
     {
+        this->RemoveAllViewports();
+
+
         while (this->nodes.root != nullptr)
         {
             this->RemoveSceneNode(*this->nodes.root->value);
@@ -493,7 +496,7 @@ namespace GTEngine
     {
         assert(this->renderer != nullptr);
 
-        // We need to remove all of the viewports from teh renderer.
+        // We need to remove all of the viewports from the renderer.
         for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
         {
             assert(iViewport->value != nullptr);
