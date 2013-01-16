@@ -1511,9 +1511,17 @@ end
 
 
 function GTGUI.Element:SceneEditor(_internalPtr)
+    self:SubEditor();
+
     self.Viewport    = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-viewport' style='' />");
     self.Panel       = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
     self.ContextMenu = GTGUI.Server.New("<div                                   styleclass='menu'                  style='z-index:100; positioning:absolute; visible:false' />");
+    
+    self.PhysicsButton     = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()       .. "' styleclass='physics-button-container' style='' />");
+    self.PhysicsButtonIcon = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID() .. "' styleclass='physics-button-icon'      style='' />");
+    self.PhysicsButtonText = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID() .. "' styleclass='physics-button-text'      style=''>Physics</div>");
+    
+    
     
     self._internalPtr            = _internalPtr;
     self.Scene                   = GTEngine.Scene:Create(GTEngine.System.SceneEditor.GetScenePtr(_internalPtr));
@@ -1630,6 +1638,19 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self.ContextMenu:Hide();
         self.Viewport:Focus();
     end);
+    
+    
+    
+    self.PhysicsButton:OnPressed(function()
+        if GTEngine.System.SceneEditor.IsPhysicsSimulationEnabled(self._internalPtr) then
+            GTEngine.System.SceneEditor.DisablePhysicsSimulation(self._internalPtr);
+            self.PhysicsButtonIcon:DetachStyleClass("physics-button-icon-stop");
+        else
+            GTEngine.System.SceneEditor.EnablePhysicsSimulation(self._internalPtr);
+            self.PhysicsButtonIcon:AttachStyleClass("physics-button-icon-stop");
+        end
+    end);
+    
     
     
     

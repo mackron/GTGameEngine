@@ -26,6 +26,7 @@ namespace GTEngine
           snapTranslation(), snapAngle(0.0f), snapScale(), isSnapping(false),
           translateSnapSize(0.25f), rotateSnapSize(5.625f), scaleSnapSize(0.25f),
           transformedObjectWithGizmo(false),
+          simulationSerializer(),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
@@ -181,6 +182,23 @@ namespace GTEngine
         }
 
 
+
+        // GUI elements need to be deleted. We will delete the toolbar first, via the scripting interface.
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("DeleteToolBar");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
+
         // We need to delete the main GUI element, along with it's children.
         this->GetGUI().DeleteElement(this->GUI.Main);
     }
@@ -198,6 +216,31 @@ namespace GTEngine
         this->cameraXRotation = xRotation;
         this->cameraYRotation = yRotation;
         this->ApplyCameraRotation();
+    }
+
+
+    void SceneEditor::EnablePhysicsSimulation()
+    {
+        this->simulationSerializer.Clear();
+        this->SerializeScene(this->simulationSerializer);
+
+        this->physicsManager.EnableSimulation();
+    }
+
+    void SceneEditor::DisablePhysicsSimulation()
+    {
+        this->physicsManager.DisableSimulation();
+
+        if (this->simulationSerializer.GetBuffer() != nullptr && this->simulationSerializer.GetBufferSizeInBytes() > 0)
+        {
+            GTCore::BasicDeserializer deserializer(this->simulationSerializer.GetBuffer(), this->simulationSerializer.GetBufferSizeInBytes());
+            this->DeserializeScene(deserializer);
+        }
+    }
+
+    bool SceneEditor::IsPhysicsSimulationEnabled() const
+    {
+        return this->physicsManager.IsSimulationEnabled();
     }
 
 
@@ -906,12 +949,47 @@ namespace GTEngine
 
     void SceneEditor::Show()
     {
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("ShowToolBar");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
+
+
         this->GUI.Main->Show();
     }
 
     void SceneEditor::Hide()
     {
         this->Save();               // TEMP!!!!
+
+
+
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("HideToolBar");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
+
+
         this->GUI.Main->Hide();
     }
 
@@ -1188,7 +1266,8 @@ namespace GTEngine
     {
         this->transformGizmo.Hide();
 
-
+        this->DeleteAllMarkedSceneNodes();
+        
         // With pre-deserialization done, we can now do a full deserialization of the scene.
         this->scene.Deserialize(deserializer);
 
@@ -1214,6 +1293,32 @@ namespace GTEngine
         this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
 
         this->UpdateGizmo();
+    }
+
+
+    void SceneEditor::DeleteAllMarkedSceneNodes()
+    {
+        // For any scene node still loaded, we need to iterate over and destroy them. Note how we don't increment every time, because deleting
+        // the node will in turn remove it from the list as a result from the event handlers.
+        for (size_t i = 0; i < this->sceneNodes.count; )
+        {
+            auto node = this->sceneNodes[i];
+            assert(node != nullptr);
+            {
+                auto metadata = node->GetComponent<EditorMetadataComponent>();
+                if (metadata != nullptr)
+                {
+                    if (metadata->DeleteOnClose())
+                    {
+                        delete node;
+                        continue;
+                    }
+                }
+            }
+
+            // We'll only get here if the scene node was not deleted.
+            ++i;
+        }
     }
 
 

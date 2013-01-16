@@ -698,6 +698,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorSceneUpdateManager.hpp">
       <Filter>include\Editor\SceneEditor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorPhysicsManager.hpp">
+      <Filter>include\Editor\SceneEditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1157,6 +1160,9 @@
       <Filter>source\Editor\SceneEditor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorSceneUpdateManager.cpp">
+      <Filter>source\Editor\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorPhysicsManager.cpp">
       <Filter>source\Editor\SceneEditor</Filter>
     </ClCompile>
   </ItemGroup>

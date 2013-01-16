@@ -1080,6 +1080,25 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
                     int IsGizmoInGlobalSpace(GTCore::Script &script);
+
+
+                    /// Enables physics simulation.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int EnablePhysicsSimulation(GTCore::Script &script);
+
+                    /// Disable physics simulation.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int DisablePhysicsSimulation(GTCore::Script &script);
+
+                    /// Determines whether or not physics simulation is enabled.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int IsPhysicsSimulationEnabled(GTCore::Script &script);
                 }
             }
         }

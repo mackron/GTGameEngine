@@ -7,7 +7,7 @@
 #include "../Editor3DViewportEventHandler.hpp"
 #include "../SceneEditor/SceneEditorSceneEventHandler.hpp"
 #include "../SceneEditor/SceneEditorSceneUpdateManager.hpp"
-#include "../../DefaultScenePhysicsManager.hpp"
+#include "../SceneEditor/SceneEditorPhysicsManager.hpp"
 #include "../../DefaultSceneCullingManager.hpp"
 #include "../../Scene.hpp"
 #include "../../GameScript.hpp"
@@ -43,6 +43,15 @@ namespace GTEngine
         /// @param yRotation [in] The new y rotation.
         void SetCameraRotation(float xRotation, float yRotation);
 
+
+        /// Enables physics simulation of the entire scene.
+        void EnablePhysicsSimulation();
+
+        /// Disables the physics simulation of the entire scene, restoring the scene back to normal.
+        void DisablePhysicsSimulation();
+
+        /// Determines whether or not the physics simulation is running.
+        bool IsPhysicsSimulationEnabled() const;
 
 
         ///////////////////////////////////////////////////
@@ -203,6 +212,10 @@ namespace GTEngine
         void DeserializeScene(GTCore::Deserializer &deserializer);
 
 
+        /// Deletes every scene node that is marked for needing deletion.
+        void DeleteAllMarkedSceneNodes();
+
+
         /// Shows and repositions the positioning gizmo.
         void ShowTransformGizmo();
 
@@ -245,7 +258,7 @@ namespace GTEngine
         SceneEditorSceneUpdateManager updateManager;
 
         /// The update manager to use for physics.
-        DefaultScenePhysicsManager physicsManager;
+        SceneEditorPhysicsManager physicsManager;
 
         /// The update manager to use for culling.
         DefaultSceneCullingManager cullingManager;
@@ -331,6 +344,10 @@ namespace GTEngine
 
         /// Keeps track of whether or not an object was transformed with the gizmo.
         bool transformedObjectWithGizmo;
+
+
+        /// The basic serializer containing the serialized scene that will be restored whenever a simulation has finished running.
+        GTCore::BasicSerializer simulationSerializer;
 
 
         /// Structure containing the GUI elements of the editor.

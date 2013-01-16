@@ -985,6 +985,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ToggleGizmoSpace",             FFI::SystemFFI::SceneEditorFFI::ToggleGizmoSpace);
                         script.SetTableFunction(-1, "IsGizmoInLocalSpace",          FFI::SystemFFI::SceneEditorFFI::IsGizmoInLocalSpace);
                         script.SetTableFunction(-1, "IsGizmoInGlobalSpace",         FFI::SystemFFI::SceneEditorFFI::IsGizmoInGlobalSpace);
+                        script.SetTableFunction(-1, "EnablePhysicsSimulation",      FFI::SystemFFI::SceneEditorFFI::EnablePhysicsSimulation);
+                        script.SetTableFunction(-1, "DisablePhysicsSimulation",     FFI::SystemFFI::SceneEditorFFI::DisablePhysicsSimulation);
+                        script.SetTableFunction(-1, "IsPhysicsSimulationEnabled",   FFI::SystemFFI::SceneEditorFFI::IsPhysicsSimulationEnabled);
                     }
                     script.Pop(1);
                 }
@@ -3463,6 +3466,44 @@ namespace GTEngine
                         else
                         {
                             script.Push(true);      // Global space by default.
+                        }
+
+                        return 1;
+                    }
+
+
+                    int EnablePhysicsSimulation(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->EnablePhysicsSimulation();
+                        }
+                        
+                        return 0;
+                    }
+
+                    int DisablePhysicsSimulation(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->DisablePhysicsSimulation();
+                        }
+                        
+                        return 0;
+                    }
+
+                    int IsPhysicsSimulationEnabled(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->IsPhysicsSimulationEnabled());
+                        }
+                        else
+                        {
+                            script.Push(false);
                         }
 
                         return 1;
