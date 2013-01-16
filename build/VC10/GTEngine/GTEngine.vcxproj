@@ -204,6 +204,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\ImageEditor\ImageEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\ModelEditor\ModelEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditor.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorCommand.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorPhysicsManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorSceneEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorSceneUpdateManager.hpp" />
