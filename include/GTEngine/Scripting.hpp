@@ -255,6 +255,27 @@ namespace GTEngine
 
                     /// Determines whether or not shadow casting is enabled.
                     int IsShadowCastingEnabled(GTCore::Script &script);
+
+
+                    /// Sets a material of the model currently set on the given model component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The index of the material being set.
+                    ///     Argument 3: The name of the new material.
+                    int SetMaterial(GTCore::Script &script);
+
+                    /// Retrieves the name of the material at the given index of the model currently set on the given model component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetMaterialPath(GTCore::Script &script);
+
+                    /// Retrieves the number of materials on the model currently attached to the given model component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetMaterialCount(GTCore::Script &script);
                 }
 
                 namespace PointLightComponentFFI

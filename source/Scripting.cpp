@@ -118,6 +118,18 @@ namespace GTEngine
                 "    return GTEngine.System.ModelComponent.IsShadowCastingEnabled(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.ModelComponent:SetMaterial(index, path)"
+                "    return GTEngine.System.ModelComponent.SetMaterial(self._internalPtr, index, path);"
+                "end;"
+
+                "function GTEngine.ModelComponent:GetMaterialPath(index)"
+                "    return GTEngine.System.ModelComponent.GetMaterialPath(self._internalPtr, index);"
+                "end;"
+
+                "function GTEngine.ModelComponent:GetMaterialCount()"
+                "    return GTEngine.System.ModelComponent.GetMaterialCount(self._internalPtr);"
+                "end;"
+
 
 
 
@@ -774,6 +786,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "EnableShadowCasting",     FFI::SystemFFI::ModelComponentFFI::EnableShadowCasting);
                         script.SetTableFunction(-1, "DisableShadowCasting",    FFI::SystemFFI::ModelComponentFFI::DisableShadowCasting);
                         script.SetTableFunction(-1, "IsShadowCastingEnabled",  FFI::SystemFFI::ModelComponentFFI::IsShadowCastingEnabled);
+                        script.SetTableFunction(-1, "SetMaterial",             FFI::SystemFFI::ModelComponentFFI::SetMaterial);
+                        script.SetTableFunction(-1, "GetMaterialPath",         FFI::SystemFFI::ModelComponentFFI::GetMaterialPath);
+                        script.SetTableFunction(-1, "GetMaterialCount",        FFI::SystemFFI::ModelComponentFFI::GetMaterialCount);
                     }
                     script.Pop(1);
 
@@ -1511,6 +1526,81 @@ namespace GTEngine
                         else
                         {
                             script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+
+                    int SetMaterial(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto model = component->GetModel();
+                            if (model != nullptr)
+                            {
+                                auto index        = script.ToInteger(2) - 1;        // Minus 1 because Lua is 1 based.
+                                auto materialPath = script.ToString(3);
+
+                                script.Push(model->meshes[index]->SetMaterial(materialPath));
+                            }
+                            else
+                            {
+                                script.Push(false);
+                            }
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetMaterialPath(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto model = component->GetModel();
+                            if (model != nullptr)
+                            {
+                                auto index = script.ToInteger(2) - 1;   // Minus 1 because Lua is 1 based.
+
+                                script.Push(model->meshes[index]->GetMaterial()->GetDefinition().fileName.c_str());
+                            }
+                            else
+                            {
+                                script.PushNil();
+                            }
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+
+                        return 1;
+                    }
+
+                    int GetMaterialCount(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto model = component->GetModel();
+                            if (model != nullptr)
+                            {
+                                script.Push(static_cast<int>(model->meshes.count));
+                            }
+                            else
+                            {
+                                script.Push(0);
+                            }
+                        }
+                        else
+                        {
+                            script.Push(0);
                         }
 
                         return 1;

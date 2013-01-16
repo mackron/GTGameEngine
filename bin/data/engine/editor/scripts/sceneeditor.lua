@@ -334,6 +334,16 @@ function GTGUI.Element:ModelComponentPanel()
     -- Shadows
     self.CastShadows = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:8px;' />");
     
+    -- Materials
+    self.MaterialsTitle     = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='width:100%; text-color:#bbb; margin-top:8px; flex-child-width:true; child-plane:horizontal; vertical-align:center;' />");
+    self.MaterialsLeft      = GTGUI.Server.New("<div parentid='" .. self.MaterialsTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
+    self.MaterialsLabel     = GTGUI.Server.New("<div parentid='" .. self.MaterialsTitle:GetID() .. "' style='width:auto; text-color:#777; margin:4px 0px; vertical-align:center;'>Materials</div>");
+    self.MaterialsRight     = GTGUI.Server.New("<div parentid='" .. self.MaterialsTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
+    
+    self.MaterialTextBoxes = {};
+    
+    
+    
     
     self.CurrentNode      = nil;
     self.CurrentComponent = nil;
@@ -366,6 +376,50 @@ function GTGUI.Element:ModelComponentPanel()
     
     
     
+    function self:AddMaterialTextBox(path)
+        local new = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox' style='width:100%; margin:0px 2px;'>" .. path .. "</div>");
+        new.index = #self.MaterialTextBoxes + 1;
+        
+        new:OnKeyPressed(function(data)
+            if data.key == GTGUI.Keys.Enter then
+                self:UpdateModelMaterial(new.index);
+            end
+        end)
+        
+        new:OnDrop(function(data)
+            if data.droppedElement.isAsset then
+                new:SetText(data.droppedElement.path);
+                self:UpdateModelMaterial(new.index);
+            end
+        end)
+        
+        
+        --[[
+        function new:ApplyMaterial()
+            if GTEngine.System.ModelEditor.SetMaterial(_internalPtr, self.index, self:GetText()) then
+                self:SetStyle("border-color", "#6a6a6a");
+            else
+                self:SetStyle("border-color", "#cc6a6a");
+            end
+            
+            Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(_internalPtr));
+        end
+        ]]
+        
+        
+        self.MaterialTextBoxes[new.index] = new;
+    end
+    
+    
+    function self:RemoveMaterials()
+        for i,value in ipairs(self.MaterialTextBoxes) do
+            GTGUI.Server.DeleteElement(value);
+        end
+        
+        self.MaterialTextBoxes = {};
+    end
+    
+    
     
     function self:Update(node)
         self.CurrentNode      = node;
@@ -379,6 +433,14 @@ function GTGUI.Element:ModelComponentPanel()
             else
                 self.CastShadows:Uncheck(true);
             end
+            
+            -- Materials
+            self:RemoveMaterials();
+            
+            local materialCount = self.CurrentComponent:GetMaterialCount();
+            for i=1,materialCount do
+                self:AddMaterialTextBox(self.CurrentComponent:GetMaterialPath(i));
+            end
         end
     end
     
@@ -386,6 +448,18 @@ function GTGUI.Element:ModelComponentPanel()
         if self.CurrentComponent ~= nil and self.CurrentNode ~= nil then
             self.CurrentComponent:SetModel(self.ModelPath:GetText());
             self.CurrentNode:Refresh();
+        end
+    end
+    
+    function self:UpdateModelMaterial(index)
+        if self.CurrentComponent ~= nil and self.CurrentNode ~= nil then
+            local textbox = self.MaterialTextBoxes[index];
+        
+            if self.CurrentComponent:SetMaterial(index, textbox:GetText()) then
+                textbox:SetStyle("border-color", "#6a6a6a");
+            else
+                textbox:SetStyle("border-color", "#cc6a6a");
+            end
         end
     end
     
@@ -750,7 +824,7 @@ function GTGUI.Element:DynamicsComponentPanel()
     
     self.CollisionShapesTitle     = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='width:100%; text-color:#bbb; margin-top:8px; flex-child-width:true; child-plane:horizontal; vertical-align:center;' />");
     self.CollisionShapesLeft      = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
-    self.CollisionShapesLabel     = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:auto; text-color:#bbb; margin:4px 0px; vertical-align:center;'>Collision Shapes</div>");
+    self.CollisionShapesLabel     = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:auto; text-color:#777; margin:4px 0px; vertical-align:center;'>Collision Shapes</div>");
     self.CollisionShapesRight     = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
     self.CollisionShapesContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' />");
     self.CollisionShapePanels = {};
