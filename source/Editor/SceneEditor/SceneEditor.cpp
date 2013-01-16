@@ -19,7 +19,8 @@ namespace GTEngine
           updateManager(camera), physicsManager(), cullingManager(),
           scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
           viewportEventHandler(ownerEditor.GetGame(), viewport),
-          sceneNodes(), selectedNodes(),
+          sceneNodes(), nextSceneNodeID(0),
+          selectedNodes(),
           pickingWorld(),
           transformGizmo(), gizmoDragAxis(1.0f, 0.0f, 0.0f), gizmoDragFactor(1.0f, 0.0f),
           gizmoDragMode(GizmoDragMode_None), gizmoTransformMode(GizmoTransformMode_Translate), gizmoTransformSpace(GizmoTransformSpace_Global),
@@ -27,6 +28,7 @@ namespace GTEngine
           translateSnapSize(0.25f), rotateSnapSize(5.625f), scaleSnapSize(0.25f),
           transformedObjectWithGizmo(false),
           simulationSerializer(),
+          commandStack(), commandIndex(0),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
@@ -163,7 +165,7 @@ namespace GTEngine
         // the node will in turn remove it from the list as a result from the event handlers.
         for (size_t i = 0; i < this->sceneNodes.count; )
         {
-            auto node = this->sceneNodes[i];
+            auto node = this->sceneNodes.buffer[i]->value;
             assert(node != nullptr);
             {
                 auto metadata = node->GetComponent<EditorMetadataComponent>();
@@ -602,6 +604,58 @@ namespace GTEngine
         }
     }
 
+    void SceneEditor::Undo()
+    {
+        if (this->commandIndex > 0)
+        {
+            --this->commandIndex;
+
+            auto &command = this->commandStack[this->commandIndex];
+
+            if (command.type == SceneEditorCommandType_Insert)
+            {
+                // The scene nodes in this command need to be deleted.
+            }
+            else if (command.type == SceneEditorCommandType_Delete)
+            {
+                // The scene nodes in this command need to be inserted.
+            }
+            else
+            {
+                assert(command.type == SceneEditorCommandType_Update);
+                {
+                    // The scene nodes in this command just need to be updated.
+                }
+            }
+        }
+    }
+
+    void SceneEditor::Redo()
+    {
+        if (this->commandIndex < this->commandStack.count)
+        {
+            auto &command = this->commandStack[this->commandIndex];
+
+            if (command.type == SceneEditorCommandType_Insert)
+            {
+                // The scene nodes in this command need to be inserted.
+            }
+            else if (command.type == SceneEditorCommandType_Delete)
+            {
+                // The scene nodes in this command need to be deleted.
+            }
+            else
+            {
+                assert(command.type == SceneEditorCommandType_Update);
+                {
+                    // The scene nodes in this command just need to be updated.
+                }
+            }
+
+            ++this->commandIndex;
+        }
+    }
+
 
 
     ///////////////////////////////////////////////////
@@ -692,11 +746,24 @@ namespace GTEngine
             }
 
 
-            // The state needs to be made aware of this node.
-            if (!this->sceneNodes.Exists(&node))
+            assert(metadata != nullptr);
             {
-                this->sceneNodes.PushBack(&node);
+                size_t uniqueID = metadata->GetID();
+                
+                // If the unique ID is 0, it means one needs to be generated.
+                if (uniqueID == 0)
+                {
+                    uniqueID = ++this->nextSceneNodeID;
+                    metadata->SetID(uniqueID);
+                }
+
+
+                if (this->sceneNodes.Find(uniqueID) == nullptr)
+                {
+                    this->sceneNodes.Add(uniqueID, &node);
+                }
             }
+
 
 
             // We can cheat here and just act as if the object has been refreshed.
@@ -727,7 +794,7 @@ namespace GTEngine
 
 
                 // The state needs to know that it no longer has the node.
-                this->sceneNodes.RemoveFirstOccuranceOf(&node);
+                this->sceneNodes.Remove(metadata->GetID());
 
 
                 // The data pointer at position 0 will be a pointer to the Editor_SceneEditor::State object that previously owned the scene node. This needs to be cleared.
@@ -1302,7 +1369,7 @@ namespace GTEngine
         // the node will in turn remove it from the list as a result from the event handlers.
         for (size_t i = 0; i < this->sceneNodes.count; )
         {
-            auto node = this->sceneNodes[i];
+            auto node = this->sceneNodes.buffer[i]->value;
             assert(node != nullptr);
             {
                 auto metadata = node->GetComponent<EditorMetadataComponent>();
