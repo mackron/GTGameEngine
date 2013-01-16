@@ -951,6 +951,11 @@ namespace GTEngine
         {
             assert(header.id == Serialization::ChunkID_SceneNode_Components);
             {
+                // We need to remove components that were not part of the serialized data. Otherwise, the scene node won't be in the correct state.
+                GTCore::Vector<GTCore::String> componentsToRemove;
+                this->GetAttachedComponentNames(componentsToRemove);
+
+
                 uint32_t componentCount;
                 deserializer.Read(componentCount);
 
@@ -974,6 +979,17 @@ namespace GTEngine
                         // future serializations can keep hold of the data rather than losing it.
                         deserializer.Seek(componentDataSizeInBytes);
                     }
+
+
+                    // We don't want to remove this component later on.
+                    componentsToRemove.RemoveFirstOccuranceOf(name);
+                }
+
+
+                // Now we need to remove some no-longer-used components.
+                for (size_t i = 0; i < componentsToRemove.count; ++i)
+                {
+                    this->RemoveComponentByName(componentsToRemove[i].c_str());
                 }
             }
         }

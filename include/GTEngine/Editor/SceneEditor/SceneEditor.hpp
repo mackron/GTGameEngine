@@ -2,6 +2,7 @@
 #ifndef __GTEngine_SceneEditor_hpp_
 #define __GTEngine_SceneEditor_hpp_
 
+#include "SceneEditorCommand.hpp"
 #include "../SubEditor.hpp"
 #include "../TransformGizmo.hpp"
 #include "../Editor3DViewportEventHandler.hpp"
@@ -110,6 +111,11 @@ namespace GTEngine
         /// Duplicates the selected scene nodes, deselects them and then selects the new ones.
         void DuplicateSelectedSceneNodes();
 
+        /// Performs an undo operation.
+        void Undo();
+
+        /// Performs a redo operation.
+        void Redo();
 
 
         ///////////////////////////////////////////////////
@@ -273,8 +279,12 @@ namespace GTEngine
         Editor3DViewportEventHandler viewportEventHandler;
 
 
-        /// A flat list of every loaded scene node. We need this so we can delete them when the state object is destructed.
-        GTCore::Vector<SceneNode*> sceneNodes;
+        /// The list of all relevant scene nodes mapped to a unique ID.
+        GTCore::Map<size_t, SceneNode*> sceneNodes;
+
+        /// The ID to use for the next scene node.
+        size_t nextSceneNodeID;
+
 
         /// The list of selected nodes.
         GTCore::Vector<SceneNode*> selectedNodes;
@@ -348,6 +358,15 @@ namespace GTEngine
 
         /// The basic serializer containing the serialized scene that will be restored whenever a simulation has finished running.
         GTCore::BasicSerializer simulationSerializer;
+
+
+        /// The stack of undo/redo commands.
+        GTCore::Vector<SceneEditorCommand> commandStack;
+
+        /// The index of the command that we're currently sitting on. We move this as we undo or redo. This always sits at 1 above the command that
+        /// will be the next to be undone. New commands will be placed at this index.
+        size_t commandIndex;
+
 
 
         /// Structure containing the GUI elements of the editor.

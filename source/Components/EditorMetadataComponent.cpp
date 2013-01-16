@@ -15,7 +15,8 @@ namespace GTEngine
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
           spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTransform(), spriteTexturePath(),
-          directionArrowModel(nullptr), directionArrowVA(nullptr)
+          directionArrowModel(nullptr), directionArrowVA(nullptr),
+          uniqueID(0)
     {
         pickingCollisionObject.setUserPointer(this);
     }
@@ -381,6 +382,18 @@ namespace GTEngine
     const Model* EditorMetadataComponent::GetDirectionArrowModel() const
     {
         return this->directionArrowModel;
+    }
+
+
+
+    size_t EditorMetadataComponent::GetID() const
+    {
+        return this->uniqueID;
+    }
+
+    void EditorMetadataComponent::SetID(size_t newID)
+    {
+        this->uniqueID = newID;
     }
 
 
