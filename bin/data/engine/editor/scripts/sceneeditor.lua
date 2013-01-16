@@ -392,20 +392,7 @@ function GTGUI.Element:ModelComponentPanel()
                 self:UpdateModelMaterial(new.index);
             end
         end)
-        
-        
-        --[[
-        function new:ApplyMaterial()
-            if GTEngine.System.ModelEditor.SetMaterial(_internalPtr, self.index, self:GetText()) then
-                self:SetStyle("border-color", "#6a6a6a");
-            else
-                self:SetStyle("border-color", "#cc6a6a");
-            end
-            
-            Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(_internalPtr));
-        end
-        ]]
-        
+
         
         self.MaterialTextBoxes[new.index] = new;
     end
