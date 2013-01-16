@@ -4,6 +4,7 @@
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -403,65 +404,98 @@ namespace GTEngine
 
     void EditorMetadataComponent::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(this->alwaysShowOnTop);
-        serializer.Write(this->useModelForPickingShape);
-        serializer.Write(this->deleteOnClose);
-        serializer.Write(this->isSelected);
-        serializer.Write(this->selectionWireframeColour);
-        serializer.Write(static_cast<uint32_t>(this->pickingCollisionShapeType));
-        serializer.Write(this->pickingCollisionGroup);
+        GTCore::BasicSerializer intermediarySerializer;
+
+        intermediarySerializer.Write(static_cast<uint32_t>(uniqueID));
+        intermediarySerializer.Write(this->alwaysShowOnTop);
+        intermediarySerializer.Write(this->useModelForPickingShape);
+        intermediarySerializer.Write(this->deleteOnClose);
+        intermediarySerializer.Write(this->isSelected);
+        intermediarySerializer.Write(this->selectionWireframeColour);
+        intermediarySerializer.Write(static_cast<uint32_t>(this->pickingCollisionShapeType));
+        intermediarySerializer.Write(this->pickingCollisionGroup);
 
         if (this->IsUsingSprite())
         {
-            serializer.Write(true);
-            serializer.Write(this->spriteTexturePath);
+            intermediarySerializer.Write(true);
+            intermediarySerializer.Write(this->spriteTexturePath);
         }
         else
         {
-            serializer.Write(false);
+            intermediarySerializer.Write(false);
         }
 
-        serializer.Write(this->IsShowingDirectionArrow());
+        intermediarySerializer.Write(this->IsShowingDirectionArrow());
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_EditorMetadataComponent_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void EditorMetadataComponent::Deserialize(GTCore::Deserializer &deserializer)
     {
-        deserializer.Read(this->alwaysShowOnTop);
-        deserializer.Read(this->useModelForPickingShape);
-        deserializer.Read(this->deleteOnClose);
-        deserializer.Read(this->isSelected);
-        deserializer.Read(this->selectionWireframeColour);
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+
+        assert(header.id == Serialization::ChunkID_EditorMetadataComponent_Main);
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    deserializer.Read(static_cast<uint32_t &>(this->uniqueID));
+                    deserializer.Read(this->alwaysShowOnTop);
+                    deserializer.Read(this->useModelForPickingShape);
+                    deserializer.Read(this->deleteOnClose);
+                    deserializer.Read(this->isSelected);
+                    deserializer.Read(this->selectionWireframeColour);
         
-        uint32_t pickingCollisionShapeTypeIn;
-        deserializer.Read(pickingCollisionShapeTypeIn);
-        this->pickingCollisionShapeType = static_cast<PickingCollisionShapeType>(pickingCollisionShapeTypeIn);
+                    uint32_t pickingCollisionShapeTypeIn;
+                    deserializer.Read(pickingCollisionShapeTypeIn);
+                    this->pickingCollisionShapeType = static_cast<PickingCollisionShapeType>(pickingCollisionShapeTypeIn);
 
-        deserializer.Read(this->pickingCollisionGroup);
+                    deserializer.Read(this->pickingCollisionGroup);
 
-        bool isUsingSprite;
-        deserializer.Read(isUsingSprite);
+                    bool isUsingSprite;
+                    deserializer.Read(isUsingSprite);
         
-        if (isUsingSprite)
-        {
-            deserializer.Read(this->spriteTexturePath);
-            this->ShowSprite(this->spriteTexturePath.c_str());
-        }
+                    if (isUsingSprite)
+                    {
+                        deserializer.Read(this->spriteTexturePath);
+                        this->ShowSprite(this->spriteTexturePath.c_str());
+                    }
 
 
-        bool isShowingDirectionArrow;
-        deserializer.Read(isShowingDirectionArrow);
+                    bool isShowingDirectionArrow;
+                    deserializer.Read(isShowingDirectionArrow);
 
-        if (isShowingDirectionArrow)
-        {
-            this->ShowDirectionArrow();
-        }
+                    if (isShowingDirectionArrow)
+                    {
+                        this->ShowDirectionArrow();
+                    }
 
 
+                    // We'll try setting the model for the picking shape now.
+                    if (this->useModelForPickingShape)
+                    {
+                        this->SetPickingCollisionShapeToModel();
+                    }
 
-        // We'll try setting the model for the picking shape now.
-        if (this->useModelForPickingShape)
-        {
-            this->SetPickingCollisionShapeToModel();
+
+                    break;
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing EditorMetadataComponent. Main chunk has an unsupported version (%d).", header.version);
+                    break;
+                }
+            }
         }
     }
 
