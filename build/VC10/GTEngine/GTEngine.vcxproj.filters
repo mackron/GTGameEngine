@@ -656,17 +656,11 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneEventHandler.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditorSceneEventHandler.hpp">
-      <Filter>include\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Physics\StaticMeshCollisionShape.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Physics\MeshCollisionShape.hpp">
       <Filter>include\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditorSceneUpdateManager.hpp">
-      <Filter>include\Editor</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Editor\TransformGizmo.hpp">
       <Filter>include\Editor</Filter>
@@ -697,6 +691,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Editor\ModelEditor\ModelEditor.hpp">
       <Filter>include\Editor\ModelEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorSceneEventHandler.hpp">
+      <Filter>include\Editor\SceneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorSceneUpdateManager.hpp">
+      <Filter>include\Editor\SceneEditor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1126,17 +1126,11 @@
     <ClCompile Include="..\..\..\source\SceneEventHandler.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\SceneEditorSceneEventHandler.cpp">
-      <Filter>source\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\StaticMeshCollisionShape.cpp">
       <Filter>source\Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\MeshCollisionShape.cpp">
       <Filter>source\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\SceneEditorSceneUpdateManager.cpp">
-      <Filter>source\Editor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\TransformGizmo.cpp">
       <Filter>source\Editor</Filter>
@@ -1158,6 +1152,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\ModelEditor\ModelEditor.cpp">
       <Filter>source\Editor\ModelEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorSceneEventHandler.cpp">
+      <Filter>source\Editor\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorSceneUpdateManager.cpp">
+      <Filter>source\Editor\SceneEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

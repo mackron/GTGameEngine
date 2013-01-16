@@ -2,7 +2,7 @@
 #ifndef __GTEngine_SceneEditorSceneUpdateManager_hpp_
 #define __GTEngine_SceneEditorSceneUpdateManager_hpp_
 
-#include "../DefaultSceneUpdateManager.hpp"
+#include "../../DefaultSceneUpdateManager.hpp"
 
 namespace GTEngine
 {
