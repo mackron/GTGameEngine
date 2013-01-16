@@ -301,6 +301,56 @@ new-component-menu-item:pushed
 
 
 
+physics-button-container
+{
+    width:          auto
+    height:         100%
+    child-plane:    horizontal
+    vertical-align: center
+    text-color:     std-text-color
+    margin-left:    32px
+}
+
+physics-button-container:hovered
+{
+    text-color:     #ccc
+}
+
+physics-button-icon
+{
+    width:                   13px
+    height:                  13px
+    
+    background-image:        std-arrow-right-medium
+    background-image-color:  #6a6
+    
+    
+    transparent-mouse-input: true
+}
+
+physics-button-icon:hovered
+{
+    background-image-color:  #8c8
+}
+
+physics-button-icon-stop
+{
+    background-image:        std-square-8x8
+    background-image-color:  #a66
+    background-repeat:       stretch
+}
+
+
+physics-button-text
+{
+    width:                   auto
+    text-color:              inherit
+    transparent-mouse-input: true
+    vertical-align:          center
+    margin-left:             2px
+}
+
+
 
 
 vector3-container

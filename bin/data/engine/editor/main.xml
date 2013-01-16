@@ -24,6 +24,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <style  url="styles/panel-groupbox.style" />
 <script url="scripts/panel-groupbox.lua"  />
 
+
+<script url="scripts/sub-editor.lua" />
+
 <style  url="styles/modeleditor.style"                />
 <script url="scripts/modeleditor.lua"                 />
 <script url="scripts/modeleditor-materialpanel.lua"   />
@@ -162,30 +165,34 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     #EditorTopPanel
     {
-        width:          100%
-        height:         22px
-        child-plane:    horizontal
-        vertical-align: center
-        padding-left:   4px
+        width:            100%
+        height:           22px
+        child-plane:      horizontal
+        vertical-align:   center
+        padding-left:     4px
+        flex-child-width: true
         
-        border-bottom: 1px #2b2b2b
+        border-bottom:    1px #2b2b2b
     }
     
     #EditorTopPanel_Left
     {
-        width:          50%
+        width:          auto
         height:         100%
         child-plane:    horizontal
         vertical-align: center
+        border-right:   1px #444
+        padding-right:  4px
     }
     
     #EditorTopPanel_Right
     {
-        width:            50%
+        width:            100%
         height:           100%
         child-plane:      horizontal
         vertical-align:   center
-        horizontal-align: right
+        border-left:      1px #222
+        padding-left:     4px
     }
     
     
@@ -314,6 +321,8 @@ hidden by default.
         -->
         <div id="EditorTopPanel_Left">
             <div id="Editor_MenuBar" styleclass="menubar" />
+        </div>
+        <div id="EditorTopPanel_Right">
         </div>
     </div>
     

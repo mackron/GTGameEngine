@@ -5,7 +5,7 @@ var menuBorder:           1px #666
 
 menubar
 {
-    width:          50%
+    width:          auto
     height:         100%
     child-plane:    horizontal
     vertical-align: center
