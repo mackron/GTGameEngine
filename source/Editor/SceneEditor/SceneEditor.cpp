@@ -1312,6 +1312,8 @@ namespace GTEngine
 
         // We now want to save our own chunk. This will contain metadata such as the camera position and whatnot.
         GTCore::BasicSerializer metadataSerializer;
+
+        metadataSerializer.Write(static_cast<uint32_t>(this->nextSceneNodeID));
         
         this->camera.Serialize(metadataSerializer);
         metadataSerializer.Write(this->cameraXRotation);
@@ -1347,6 +1349,8 @@ namespace GTEngine
         {
             // Since we only peeked at the header, we'll need to now seek past it.
             deserializer.Seek(sizeof(Serialization::ChunkHeader));
+
+            deserializer.Read(static_cast<uint32_t &>(this->nextSceneNodeID));
 
             // The camera node needs to be deserialized.
             this->camera.Deserialize(deserializer);
