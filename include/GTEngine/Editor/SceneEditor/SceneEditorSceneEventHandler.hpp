@@ -2,7 +2,7 @@
 #ifndef __GTEngine_SceneEditorSceneEventHandler_hpp_
 #define __GTEngine_SceneEditorSceneEventHandler_hpp_
 
-#include "../SceneEventHandler.hpp"
+#include "../../SceneEventHandler.hpp"
 
 namespace GTEngine
 {
