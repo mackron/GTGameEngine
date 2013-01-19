@@ -1099,6 +1099,45 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
                     int IsPhysicsSimulationEnabled(GTCore::Script &script);
+
+
+#if 0
+                    /// Appends an insert command for the selected scene nodes.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int AppendInsertCommandForSelectedNodes(GTCore::Script &script);
+
+                    /// Appends an delete command for the selected scene nodes.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int AppendDeleteCommandForSelectedNodes(GTCore::Script &script);
+
+                    /// Appends an update command for the selected scene nodes.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int AppendUpdateCommandForSelectedNodes(GTCore::Script &script);
+#endif
+
+                    /// Appends a new state stack frame for doing undo/redo operations.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int AppendStateStackFrame(GTCore::Script &script);
+
+                    /// Performs an undo operation.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int Undo(GTCore::Script &script);
+
+                    /// Performs a redo operation.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int Redo(GTCore::Script &script);
                 }
             }
         }
