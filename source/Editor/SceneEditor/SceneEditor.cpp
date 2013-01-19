@@ -13,6 +13,10 @@
 
 namespace GTEngine
 {
+    // TODO: Make this a script variable so we can change this around.
+    static const size_t MaxStateStackFrames = 20;
+
+
     SceneEditor::SceneEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           viewport(), camera(), cameraXRotation(0.0f), cameraYRotation(0.0f),
@@ -27,8 +31,8 @@ namespace GTEngine
           snapTranslation(), snapAngle(0.0f), snapScale(), isSnapping(false),
           translateSnapSize(0.25f), rotateSnapSize(5.625f), scaleSnapSize(0.25f),
           transformedObjectWithGizmo(false),
-          simulationSerializer(),
-          commandStack(), commandIndex(0),
+          simulationSerializer(), transformationSerializer(),
+          sceneStateStack(), sceneStateIndex(0),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
@@ -81,8 +85,6 @@ namespace GTEngine
             {
                 // The main element has been created, but we need to run a script to have it turn it into a proper SceneEditor object.
                 script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-
-                // Now we need to call SceneEditor() on that object, passing 'this' as the internal pointer.
                 assert(script.IsTable(-1));
                 {
                     script.Push("SceneEditor");
@@ -152,6 +154,10 @@ namespace GTEngine
                 GTCore::FileDeserializer deserializer(file);
                 this->DeserializeScene(deserializer);
             }
+
+
+            // We want an undo/redo stack item for the initial state of the scene.
+            this->AppendStateStackFrame();
 
 
             // The scene will be done loading by this pointer, so we can close the file.
@@ -347,6 +353,11 @@ namespace GTEngine
 
 
                     this->transformGizmo.ChangeAxisColour(selectedNode, 1.0f, 1.0f, 1.0f);
+
+
+                    // What we need to do now is serialize the state of every selected node so that we can create an update command for the undo/redo stack.
+                    this->transformationSerializer.Clear();
+                    this->SerializeSceneNodes(this->selectedNodes, this->transformationSerializer);
                 }
 
                 return true;
@@ -403,7 +414,7 @@ namespace GTEngine
                     else
                     {
                         // If the node is already the selected one, we don't do anything.
-                        if (!(this->selectedNodes.count == 1 && this->selectedNodes[0] == &selectedNode))
+                        if (!(this->selectedNodes.count == 1 && this->selectedNodes[0] == metadata->GetID()))
                         {
                             this->DeselectAll();
                             this->SelectSceneNode(selectedNode);
@@ -422,10 +433,15 @@ namespace GTEngine
     {
         while (this->selectedNodes.count > 0)
         {
-            auto node = this->selectedNodes[0];
-            assert(node != nullptr);
-
-            this->DeselectSceneNode(*node);
+            auto iNode = this->sceneNodes.Find(this->selectedNodes[0]);
+            assert(iNode != nullptr);
+            {
+                auto node = iNode->value;
+                assert(node != nullptr);
+                {
+                    this->DeselectSceneNode(*node);
+                }
+            }
         }
     }
 
@@ -450,9 +466,9 @@ namespace GTEngine
             {
                 metadata->Select();
 
-                if (!this->selectedNodes.Exists(&node))
+                if (!this->selectedNodes.Exists(metadata->GetID()))
                 {
-                    this->selectedNodes.PushBack(&node);
+                    this->selectedNodes.PushBack(metadata->GetID());
                 }
 
                 // The scripting environment needs to be aware of this change.
@@ -461,6 +477,18 @@ namespace GTEngine
 
                 // With a change in selection, we will need to update the position of the gizmos.
                 this->ShowTransformGizmo();
+            }
+        }
+    }
+
+    void SceneEditor::SelectSceneNodes(const GTCore::Vector<size_t> &selectedNodeIDs)
+    {
+        for (size_t i = 0; i < selectedNodeIDs.count; ++i)
+        {
+            auto node = this->GetSceneNodeByID(selectedNodeIDs[i]);
+            assert(node != nullptr);
+            {
+                this->SelectSceneNode(*node);
             }
         }
     }
@@ -474,9 +502,9 @@ namespace GTEngine
             {
                 metadata->Deselect();
 
-                assert(this->selectedNodes.Exists(&node) == true);
+                assert(this->selectedNodes.Exists(metadata->GetID()) == true);
                 {
-                    this->selectedNodes.RemoveFirstOccuranceOf(&node);
+                    this->selectedNodes.RemoveFirstOccuranceOf(metadata->GetID());
 
                     // The scripting environment needs to be aware of this change.
                     this->PostOnSelectionChangedEventToScript();
@@ -506,13 +534,17 @@ namespace GTEngine
 
             for (size_t i = 0; i < this->selectedNodes.count; ++i)
             {
-                auto node = this->selectedNodes[i];
-                assert(node != nullptr);
+                auto iNode = this->sceneNodes.Find(this->selectedNodes[i]);
+                assert(iNode != nullptr);
                 {
-                    glm::vec3 position = node->GetWorldPosition();
+                    auto node = iNode->value;
+                    assert(node != nullptr);
+                    {
+                        glm::vec3 position = node->GetWorldPosition();
                     
-                    aabbMin = glm::min(aabbMin, position);
-                    aabbMax = glm::max(aabbMax, position);
+                        aabbMin = glm::min(aabbMin, position);
+                        aabbMax = glm::max(aabbMax, position);
+                    }
                 }
             }
 
@@ -527,7 +559,11 @@ namespace GTEngine
     {
         if (this->selectedNodes.count == 1 && (this->gizmoTransformSpace == GizmoTransformSpace_Local || this->gizmoTransformMode == GizmoTransformMode_Scale))
         {
-            return this->selectedNodes[0]->GetWorldOrientation();
+            auto node = this->GetSceneNodeByID(this->selectedNodes[0]);
+            assert(node != nullptr);
+            {
+                return node->GetWorldOrientation();
+            }
         }
 
         return glm::quat();
@@ -542,7 +578,7 @@ namespace GTEngine
     {
         if (this->selectedNodes.count > 0)
         {
-            return this->selectedNodes[0];
+            return this->GetSceneNodeByID(this->selectedNodes[0]);
         }
 
         return nullptr;
@@ -554,24 +590,34 @@ namespace GTEngine
 
     void SceneEditor::DeleteSelectedSceneNodes()
     {
-        for (size_t i = 0; i < this->selectedNodes.count; ++i)
+        if (this->selectedNodes.count > 0)
         {
-            delete this->selectedNodes[i];
+            auto nodesToDelete = this->selectedNodes;
+            this->DeleteSceneNodes(nodesToDelete);
+
+            this->AppendStateStackFrame();
         }
-        this->selectedNodes.Clear();
+    }
+
+    void SceneEditor::DeleteSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs)
+    {
+        for (size_t i = 0; i < sceneNodeIDs.count; ++i)
+        {
+            delete this->GetSceneNodeByID(sceneNodeIDs[i]);
+        }
     }
 
     void SceneEditor::DuplicateSelectedSceneNodes()
     {
         if (this->selectedNodes.count > 0)
         {
-            GTCore::Vector<SceneNode*> prevSelectedNodes(this->selectedNodes);
+            GTCore::Vector<size_t>     prevSelectedNodes(this->selectedNodes);
             GTCore::Vector<SceneNode*> newNodes(prevSelectedNodes.count);
 
             // TODO: Get this working with children.
             for (size_t iNode = 0; iNode < prevSelectedNodes.count; ++iNode)
             {
-                auto nodeToCopy = prevSelectedNodes[iNode];
+                auto nodeToCopy = this->GetSceneNodeByID(prevSelectedNodes[iNode]);
                 assert(nodeToCopy != nullptr);
                 {
                     auto newNode = new SceneNode;
@@ -598,33 +644,36 @@ namespace GTEngine
                 auto node = newNodes[iNode];
                 assert(node != nullptr);
                 {
+                    // Now before we add the new node to the scene, we need to set the unique ID to 0. That way, the new nodes will have new
+                    // ID's generated when they are added to the scene. If we don't do this, they will have the same ID as the node it was
+                    // copied from, which will then break a few things.
+                    auto metadata = node->GetComponent<EditorMetadataComponent>();
+                    assert(metadata != nullptr);
+                    {
+                        metadata->SetID(0);
+                    }
+
+
                     this->scene.AddSceneNode(*node);
                 }
             }
         }
     }
 
+
     void SceneEditor::Undo()
     {
-        if (this->commandIndex > 0)
+        assert(this->sceneStateStack.count > 0);
         {
-            --this->commandIndex;
+            if (this->sceneStateIndex > 0)
+            {
+                --this->sceneStateIndex;
 
-            auto &command = this->commandStack[this->commandIndex];
-
-            if (command.type == SceneEditorCommandType_Insert)
-            {
-                // The scene nodes in this command need to be deleted.
-            }
-            else if (command.type == SceneEditorCommandType_Delete)
-            {
-                // The scene nodes in this command need to be inserted.
-            }
-            else
-            {
-                assert(command.type == SceneEditorCommandType_Update);
+                auto serializer = this->sceneStateStack[this->sceneStateIndex];
+                assert(serializer != nullptr);
                 {
-                    // The scene nodes in this command just need to be updated.
+                    GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
+                    this->DeserializeScene(deserializer);
                 }
             }
         }
@@ -632,27 +681,56 @@ namespace GTEngine
 
     void SceneEditor::Redo()
     {
-        if (this->commandIndex < this->commandStack.count)
+        assert(this->sceneStateStack.count > 0);
         {
-            auto &command = this->commandStack[this->commandIndex];
+            if (this->sceneStateIndex < this->sceneStateStack.count - 1)
+            {
+                ++this->sceneStateIndex;
 
-            if (command.type == SceneEditorCommandType_Insert)
-            {
-                // The scene nodes in this command need to be inserted.
-            }
-            else if (command.type == SceneEditorCommandType_Delete)
-            {
-                // The scene nodes in this command need to be deleted.
-            }
-            else
-            {
-                assert(command.type == SceneEditorCommandType_Update);
+                auto serializer = this->sceneStateStack[this->sceneStateIndex];
+                assert(serializer != nullptr);
                 {
-                    // The scene nodes in this command just need to be updated.
+                    GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
+                    this->DeserializeScene(deserializer);
                 }
             }
+        }
+    }
 
-            ++this->commandIndex;
+    void SceneEditor::AppendStateStackFrame()
+    {
+        // We do not mark as modified 
+        bool markAsModified = this->sceneStateStack.count > 0;
+
+
+        // Everything after the current index needs to be removed.
+        while (this->sceneStateStack.count > this->sceneStateIndex + 1)
+        {
+            this->sceneStateStack.PopBack();
+        }
+
+        // If already have too many items in the stack, we'll need to get rid of the oldest one.
+        if (this->sceneStateStack.count >= MaxStateStackFrames && this->sceneStateStack.count > 0)
+        {
+            auto oldestState = this->sceneStateStack[0];
+            assert(oldestState != nullptr);
+            {
+                delete oldestState;
+                this->sceneStateStack.Remove(0);
+            }
+        }
+
+
+        auto serializer = new GTCore::BasicSerializer;
+        this->SerializeScene(*serializer, false);
+
+        this->sceneStateStack.PushBack(serializer);
+        this->sceneStateIndex = this->sceneStateStack.count - 1;
+
+        // A change was made, so we need to mark the scene as modified.
+        if (markAsModified)
+        {
+            this->MarkAsModified();
         }
     }
 
@@ -916,7 +994,7 @@ namespace GTEngine
                 this->RescaleGizmo();
             }
 
-            if (this->selectedNodes.count == 1 && &node == this->selectedNodes[0])
+            if (this->selectedNodes.count == 1 && metadata->GetID() == this->selectedNodes[0])
             {
                 auto &script = this->GetScript();
 
@@ -1166,7 +1244,7 @@ namespace GTEngine
 
                             for (size_t i = 0; i < this->selectedNodes.count; ++i)
                             {
-                                auto node = this->selectedNodes[i];
+                                auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
                                 assert(node != nullptr);
                                 {
                                     // We change the world position here.
@@ -1181,7 +1259,7 @@ namespace GTEngine
                             // If we have multiple selections, we only ever do a world rotation. Otherwise, we'll do a local rotation.
                             if (this->selectedNodes.count == 1)
                             {
-                                auto node = this->selectedNodes[0];
+                                auto node = this->GetSceneNodeByID(this->selectedNodes[0]);
                                 assert(node != nullptr);
                                 {
                                     if (this->gizmoTransformSpace == GizmoTransformSpace_Global)
@@ -1200,7 +1278,7 @@ namespace GTEngine
 
                                 for (size_t i = 0; i < this->selectedNodes.count; ++i)
                                 {
-                                    auto node = this->selectedNodes[i];
+                                    auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
                                     assert(node != nullptr);
                                     {
                                         node->RotateAtPivotAroundWorldAxis(dragAngle, dragAxis, pivot);
@@ -1221,7 +1299,7 @@ namespace GTEngine
 
                             for (size_t i = 0; i < this->selectedNodes.count; ++i)
                             {
-                                auto node = this->selectedNodes[i];
+                                auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
                                 assert(node != nullptr);
                                 {
                                     glm::vec3 newScale = node->GetWorldScale() + scaleOffset;
@@ -1286,7 +1364,7 @@ namespace GTEngine
 
             if (this->transformedObjectWithGizmo)
             {
-                // TODO: Create an undo/redo command.
+                this->AppendStateStackFrame();
                 this->transformedObjectWithGizmo = false;
             }
         }
@@ -1306,28 +1384,31 @@ namespace GTEngine
         this->camera.RotateX(this->cameraXRotation);
     }
 
-    void SceneEditor::SerializeScene(GTCore::Serializer &serializer) const
+    void SceneEditor::SerializeScene(GTCore::Serializer &serializer, bool serializeMetadata) const
     {
         this->scene.Serialize(serializer);
 
         // We now want to save our own chunk. This will contain metadata such as the camera position and whatnot.
-        GTCore::BasicSerializer metadataSerializer;
+        if (serializeMetadata)
+        {
+            GTCore::BasicSerializer metadataSerializer;
 
-        metadataSerializer.Write(static_cast<uint32_t>(this->nextSceneNodeID));
+            metadataSerializer.Write(static_cast<uint32_t>(this->nextSceneNodeID));
         
-        this->camera.Serialize(metadataSerializer);
-        metadataSerializer.Write(this->cameraXRotation);
-        metadataSerializer.Write(this->cameraYRotation);
+            this->camera.Serialize(metadataSerializer);
+            metadataSerializer.Write(this->cameraXRotation);
+            metadataSerializer.Write(this->cameraYRotation);
 
 
 
-        Serialization::ChunkHeader header;
-        header.id          = Serialization::ChunkID_SceneEditorMetadata;
-        header.version     = 1;
-        header.sizeInBytes = metadataSerializer.GetBufferSizeInBytes();
+            Serialization::ChunkHeader header;
+            header.id          = Serialization::ChunkID_SceneEditorMetadata;
+            header.version     = 1;
+            header.sizeInBytes = metadataSerializer.GetBufferSizeInBytes();
 
-        serializer.Write(header);
-        serializer.Write(metadataSerializer.GetBuffer(), header.sizeInBytes);
+            serializer.Write(header);
+            serializer.Write(metadataSerializer.GetBuffer(), header.sizeInBytes);
+        }
     }
 
 
@@ -1366,6 +1447,42 @@ namespace GTEngine
         this->UpdateGizmo();
     }
 
+    void SceneEditor::SerializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Serializer &serializer)
+    {
+        for (size_t i = 0; i < sceneNodeIDs.count; ++i)
+        {
+            auto node = this->GetSceneNodeByID(sceneNodeIDs[i]);
+            assert(node != nullptr);
+            {
+                node->Serialize(serializer);
+            }
+        }
+    }
+
+    void SceneEditor::DeserializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Deserializer &deserializer)
+    {
+        for (size_t i = 0; i < sceneNodeIDs.count; ++i)
+        {
+            auto node = this->GetSceneNodeByID(sceneNodeIDs[i]);
+            if (node == nullptr)
+            {
+                node = new SceneNode;
+            }
+
+            node->Deserialize(deserializer);
+
+            // If the node is not contained in the editor's scene, we need to add it.
+            if (node->GetScene() != &this->scene)
+            {
+                this->scene.AddSceneNode(*node);
+            }
+            else
+            {
+                node->Refresh();
+            }
+        }
+    }
+
 
     void SceneEditor::DeleteAllMarkedSceneNodes()
     {
@@ -1390,6 +1507,29 @@ namespace GTEngine
             // We'll only get here if the scene node was not deleted.
             ++i;
         }
+    }
+
+
+    SceneNode* SceneEditor::GetSceneNodeByID(size_t id)
+    {
+        auto iNode = this->sceneNodes.Find(id);
+        if (iNode != nullptr)
+        {
+            return iNode->value;
+        }
+
+        return nullptr;
+    }
+
+    const SceneNode* SceneEditor::GetSceneNodeByID(size_t id) const
+    {
+        auto iNode = this->sceneNodes.Find(id);
+        if (iNode != nullptr)
+        {
+            return iNode->value;
+        }
+
+        return nullptr;
     }
 
 

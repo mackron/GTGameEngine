@@ -80,6 +80,11 @@ namespace GTEngine
         /// @param force [in] Normally the scene node will not go through a full selection process if it is already marked as selected - this allows that operato to be forced, which is required sometimes.
         void SelectSceneNode(SceneNode &node, bool force = false);
 
+        /// Selects the given scene nodes.
+        ///
+        /// @param sceneNodeIDs [in] The IDs of the scene nodes to select.
+        void SelectSceneNodes(const GTCore::Vector<size_t> &selectedNodeIDs);
+
         /// Deselects the given scene node.
         ///
         /// @param node [in] The node to deselect.
@@ -108,6 +113,11 @@ namespace GTEngine
         /// Deletes the selected scene nodes.
         void DeleteSelectedSceneNodes();
 
+        /// Deletes the given scene nodes.
+        ///
+        /// @param sceneNodeIDs [in] A constant reference to the vector containing the scene nodes to delete.
+        void DeleteSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs);
+
         /// Duplicates the selected scene nodes, deselects them and then selects the new ones.
         void DuplicateSelectedSceneNodes();
 
@@ -116,6 +126,12 @@ namespace GTEngine
 
         /// Performs a redo operation.
         void Redo();
+
+
+        /// Appends a new state stack frame for undo/redo.
+        void AppendStateStackFrame();
+
+
 
 
         ///////////////////////////////////////////////////
@@ -209,17 +225,41 @@ namespace GTEngine
 
         /// Serializes the scene.
         ///
-        /// @param serializer [in] A reference to the serializer to write to.
-        void SerializeScene(GTCore::Serializer &serializer) const;
+        /// @param serializer        [in] A reference to the serializer to write to.
+        /// @param serializeMetadata [in] Whether or not metadata such as the camera position should be serialized.
+        void SerializeScene(GTCore::Serializer &serializer, bool serializeMetadata = true) const;
 
         /// Deserializes the scene.
         ///
         /// @param deserializer [in] A reference to the deserializer to read from.
         void DeserializeScene(GTCore::Deserializer &deserializer);
 
+        /// Helper method for serializing the nodes defined in the given vector.
+        ///
+        /// @param sceneNodeIDs [in] The IDs of the scene nodes to serialize.
+        /// @param serializer   [in] The serializer.
+        ///
+        /// @remarks
+        ///     This just does a simple for loop over the scene nodes and serializes each one.
+        void SerializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Serializer &serializer);
+
+        /// Helper method for deserializing the nodes defined in the given vector, adding them to the scene if necessary.
+        ///
+        /// @param sceneNodeIDs [in] The IDs of the scene nodes to deserialize.
+        /// @param deserializer [in] The deserializer.
+        ///
+        /// @remarks
+        ///     For any nodes that are not in the scene, they will be instantiated and re-added.
+        void DeserializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Deserializer &deserializer);
+
 
         /// Deletes every scene node that is marked for needing deletion.
         void DeleteAllMarkedSceneNodes();
+
+
+        /// Retrieves a scene node by it's ID, or null if the scene node is not currently instantiated.
+              SceneNode* GetSceneNodeByID(size_t id);
+        const SceneNode* GetSceneNodeByID(size_t id) const;
 
 
         /// Shows and repositions the positioning gizmo.
@@ -287,7 +327,7 @@ namespace GTEngine
 
 
         /// The list of selected nodes.
-        GTCore::Vector<SceneNode*> selectedNodes;
+        GTCore::Vector<size_t> selectedNodes;
 
 
         /// The collision world for doing picking/selecting.
@@ -359,13 +399,17 @@ namespace GTEngine
         /// The basic serializer containing the serialized scene that will be restored whenever a simulation has finished running.
         GTCore::BasicSerializer simulationSerializer;
 
+        /// The basic serializer containing the scene node information before they are transformed with the gizmo.
+        GTCore::BasicSerializer transformationSerializer;
 
-        /// The stack of undo/redo commands.
-        GTCore::Vector<SceneEditorCommand> commandStack;
+
+        /// The stack containing the serialized state of the scene for doing undo and redo. This is actually a temporary system for now until something
+        /// better is added. There is always at least one item in this stack.
+        GTCore::Vector<GTCore::BasicSerializer*> sceneStateStack;
 
         /// The index of the command that we're currently sitting on. We move this as we undo or redo. This always sits at 1 above the command that
         /// will be the next to be undone. New commands will be placed at this index.
-        size_t commandIndex;
+        size_t sceneStateIndex;
 
 
 

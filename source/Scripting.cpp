@@ -967,27 +967,30 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "GetScenePtr",                  FFI::SystemFFI::SceneEditorFFI::GetScenePtr);
-                        script.SetTableFunction(-1, "DeselectAll",                  FFI::SystemFFI::SceneEditorFFI::DeselectAll);
-                        script.SetTableFunction(-1, "SelectSceneNode",              FFI::SystemFFI::SceneEditorFFI::SelectSceneNode);
-                        script.SetTableFunction(-1, "DeselectSceneNode",            FFI::SystemFFI::SceneEditorFFI::DeselectSceneNode);
-                        script.SetTableFunction(-1, "GetSelectedSceneNodeCount",    FFI::SystemFFI::SceneEditorFFI::GetSelectedSceneNodeCount);
-                        script.SetTableFunction(-1, "GetFirstSelectedSceneNodePtr", FFI::SystemFFI::SceneEditorFFI::GetFirstSelectedSceneNodePtr);
-                        script.SetTableFunction(-1, "TryGizmoMouseSelect",          FFI::SystemFFI::SceneEditorFFI::TryGizmoMouseSelect);
-                        script.SetTableFunction(-1, "DoMouseSelection",             FFI::SystemFFI::SceneEditorFFI::DoMouseSelection);
-                        script.SetTableFunction(-1, "DeleteSelectedSceneNodes",     FFI::SystemFFI::SceneEditorFFI::DeleteSelectedSceneNodes);
-                        script.SetTableFunction(-1, "DuplicateSelectedSceneNodes",  FFI::SystemFFI::SceneEditorFFI::DuplicateSelectedSceneNodes);
-                        script.SetTableFunction(-1, "SwitchGizmoToTranslateMode",   FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToTranslateMode);
-                        script.SetTableFunction(-1, "SwitchGizmoToRotateMode",      FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToRotateMode);
-                        script.SetTableFunction(-1, "SwitchGizmoToScaleMode",       FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToScaleMode);
-                        script.SetTableFunction(-1, "SwitchGizmoToLocalSpace",      FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToLocalSpace);
-                        script.SetTableFunction(-1, "SwitchGizmoToGlobalSpace",     FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToGlobalSpace);
-                        script.SetTableFunction(-1, "ToggleGizmoSpace",             FFI::SystemFFI::SceneEditorFFI::ToggleGizmoSpace);
-                        script.SetTableFunction(-1, "IsGizmoInLocalSpace",          FFI::SystemFFI::SceneEditorFFI::IsGizmoInLocalSpace);
-                        script.SetTableFunction(-1, "IsGizmoInGlobalSpace",         FFI::SystemFFI::SceneEditorFFI::IsGizmoInGlobalSpace);
-                        script.SetTableFunction(-1, "EnablePhysicsSimulation",      FFI::SystemFFI::SceneEditorFFI::EnablePhysicsSimulation);
-                        script.SetTableFunction(-1, "DisablePhysicsSimulation",     FFI::SystemFFI::SceneEditorFFI::DisablePhysicsSimulation);
-                        script.SetTableFunction(-1, "IsPhysicsSimulationEnabled",   FFI::SystemFFI::SceneEditorFFI::IsPhysicsSimulationEnabled);
+                        script.SetTableFunction(-1, "GetScenePtr",                         FFI::SystemFFI::SceneEditorFFI::GetScenePtr);
+                        script.SetTableFunction(-1, "DeselectAll",                         FFI::SystemFFI::SceneEditorFFI::DeselectAll);
+                        script.SetTableFunction(-1, "SelectSceneNode",                     FFI::SystemFFI::SceneEditorFFI::SelectSceneNode);
+                        script.SetTableFunction(-1, "DeselectSceneNode",                   FFI::SystemFFI::SceneEditorFFI::DeselectSceneNode);
+                        script.SetTableFunction(-1, "GetSelectedSceneNodeCount",           FFI::SystemFFI::SceneEditorFFI::GetSelectedSceneNodeCount);
+                        script.SetTableFunction(-1, "GetFirstSelectedSceneNodePtr",        FFI::SystemFFI::SceneEditorFFI::GetFirstSelectedSceneNodePtr);
+                        script.SetTableFunction(-1, "TryGizmoMouseSelect",                 FFI::SystemFFI::SceneEditorFFI::TryGizmoMouseSelect);
+                        script.SetTableFunction(-1, "DoMouseSelection",                    FFI::SystemFFI::SceneEditorFFI::DoMouseSelection);
+                        script.SetTableFunction(-1, "DeleteSelectedSceneNodes",            FFI::SystemFFI::SceneEditorFFI::DeleteSelectedSceneNodes);
+                        script.SetTableFunction(-1, "DuplicateSelectedSceneNodes",         FFI::SystemFFI::SceneEditorFFI::DuplicateSelectedSceneNodes);
+                        script.SetTableFunction(-1, "SwitchGizmoToTranslateMode",          FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToTranslateMode);
+                        script.SetTableFunction(-1, "SwitchGizmoToRotateMode",             FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToRotateMode);
+                        script.SetTableFunction(-1, "SwitchGizmoToScaleMode",              FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToScaleMode);
+                        script.SetTableFunction(-1, "SwitchGizmoToLocalSpace",             FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToLocalSpace);
+                        script.SetTableFunction(-1, "SwitchGizmoToGlobalSpace",            FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToGlobalSpace);
+                        script.SetTableFunction(-1, "ToggleGizmoSpace",                    FFI::SystemFFI::SceneEditorFFI::ToggleGizmoSpace);
+                        script.SetTableFunction(-1, "IsGizmoInLocalSpace",                 FFI::SystemFFI::SceneEditorFFI::IsGizmoInLocalSpace);
+                        script.SetTableFunction(-1, "IsGizmoInGlobalSpace",                FFI::SystemFFI::SceneEditorFFI::IsGizmoInGlobalSpace);
+                        script.SetTableFunction(-1, "EnablePhysicsSimulation",             FFI::SystemFFI::SceneEditorFFI::EnablePhysicsSimulation);
+                        script.SetTableFunction(-1, "DisablePhysicsSimulation",            FFI::SystemFFI::SceneEditorFFI::DisablePhysicsSimulation);
+                        script.SetTableFunction(-1, "IsPhysicsSimulationEnabled",          FFI::SystemFFI::SceneEditorFFI::IsPhysicsSimulationEnabled);
+                        script.SetTableFunction(-1, "AppendStateStackFrame",               FFI::SystemFFI::SceneEditorFFI::AppendStateStackFrame);
+                        script.SetTableFunction(-1, "Undo",                                FFI::SystemFFI::SceneEditorFFI::Undo);
+                        script.SetTableFunction(-1, "Redo",                                FFI::SystemFFI::SceneEditorFFI::Redo);
                     }
                     script.Pop(1);
                 }
@@ -2256,7 +2259,7 @@ namespace GTEngine
                             script.Push(0.0f);
                         }
 
-                        return 1;
+                        return 3;
                     }
 
                     int SetAngularVelocity(GTCore::Script &script)
@@ -2288,7 +2291,7 @@ namespace GTEngine
                             script.Push(0.0f);
                         }
 
-                        return 1;
+                        return 3;
                     }
 
 
@@ -2351,7 +2354,7 @@ namespace GTEngine
                             script.Push(0.0f);
                         }
 
-                        return 1;
+                        return 3;
                     }
 
                     int ApplyGravity(GTCore::Script &script)
@@ -3507,6 +3510,40 @@ namespace GTEngine
                         }
 
                         return 1;
+                    }
+
+
+                    int AppendStateStackFrame(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->AppendStateStackFrame();
+                        }
+
+                        return 0;
+                    }
+
+                    int Undo(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->Undo();
+                        }
+                        
+                        return 0;
+                    }
+
+                    int Redo(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->Redo();
+                        }
+                        
+                        return 0;
                     }
                 }
             }
