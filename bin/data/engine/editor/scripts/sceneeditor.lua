@@ -1973,7 +1973,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     
     self:WatchKeyPressed(function(data)
-        print("WatchKeyPressed: " .. tostring(data.key));
         if self.IsMouseOverViewport and not GTGUI.Server.DoesFocusedElementHaveEditableText() then
             if not GTGUI.Server.IsCTRLKeyDown() then
                 if data.key == GTCore.Keys.Delete then
