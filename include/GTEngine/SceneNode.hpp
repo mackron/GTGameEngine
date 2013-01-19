@@ -202,6 +202,22 @@ namespace GTEngine
         void SetName(const char* name);
 
 
+        /// Retrieves the ID of the scene node.
+        ///
+        /// @remarks
+        ///     The ID of the scene node is set by the scene it is contained in.
+        uint64_t GetID() const;
+
+        /// Sets the ID of the scene node.
+        ///
+        /// @param newID [in] The new ID of the scene node.
+        ///
+        /// @remarks
+        ///     This should only ever be used internally by Scene. Do not call this directly.
+        void SetID(uint64_t newID);
+
+
+
         /**
         *   \brief  Retrieves the parent node, or null if the node does not have a parent.
         */
@@ -1021,6 +1037,9 @@ namespace GTEngine
         /// The name of this node. Should usually be unique, but doesn't need to be. This can be modified, so we'll use a String object
         /// to make things easier.
         GTCore::String name;
+
+        /// The unique ID of the scene node, for use by the scene that the node is currently contained in.
+        uint64_t uniqueID;
 
         /// The parent of the scene node. If this is null, it is a root object.
         SceneNode* parent;
