@@ -56,7 +56,7 @@ namespace GTEngine
 {
     SceneNode::SceneNode()
         : SceneObject(SceneObjectType_SceneNode),
-          name(),
+          name(), uniqueID(0),
           parent(nullptr),
           firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
           eventHandlers(), components(), dataPointers(),
@@ -91,6 +91,18 @@ namespace GTEngine
     {
         this->name = newName;
     }
+
+
+    uint64_t SceneNode::GetID() const
+    {
+        return this->uniqueID;
+    }
+
+    void SceneNode::SetID(uint64_t newID)
+    {
+        this->uniqueID = newID;
+    }
+
 
     SceneNode* SceneNode::GetParent()
     {
