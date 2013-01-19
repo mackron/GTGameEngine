@@ -938,53 +938,6 @@ namespace GTEngine
 
 
 
-    // Component helpers. Use these to make attaching specific components a little easier...
-    public:
-
-        /**
-        *   \brief             Helper for adding a model component.
-        *   \param  model [in] A pointer to the model to attach to the scene node.
-        *   \return            A pointer to the model component.
-        *
-        *   \remarks
-        *       If a model component is already attached, the existing model is replaced.
-        */
-        ModelComponent* AddModelComponent(Model* model);
-
-        /// Helper for adding a perspective projection camera component.
-        /// @param fov    [in] The field-of-view of the camera.
-        /// @param aspect [in] The aspect ratio of the camera.
-        /// @param zNear  [in] The position of the near plane.
-        /// @param zFar   [in] The position of the far plane.
-        CameraComponent* Add3DCameraComponent(float fov, float aspect, float zNear, float zFar);
-
-        /// Helper for adding an ambient light component.
-        /// @param colour [in] The colour of the light.
-        /// @param r      [in] The red component.
-        /// @param g      [in] The green component.
-        /// @param b      [in] The blue component.
-        AmbientLightComponent* AddAmbientLightComponent(float r, float g, float b);
-        AmbientLightComponent* AddAmbientLightComponent(const glm::vec3 &colour);
-
-        /// Helper for adding a directional light component.
-        /// @param colour [in] The colour of the light.
-        /// @param r      [in] The red component.
-        /// @param g      [in] The green component.
-        /// @param b      [in] The blue component.
-        DirectionalLightComponent* AddDirectionalLightComponent(float r, float g, float b);
-        DirectionalLightComponent* AddDirectionalLightComponent(const glm::vec3 &colour);
-
-        /// Helper for adding a point light component.
-        /// @param colour [in] The colour of the light.
-        /// @param r      [in] The red component.
-        /// @param g      [in] The green component.
-        /// @param b      [in] The blue component.
-        PointLightComponent* AddPointLightComponent(float r, float g, float b);
-        PointLightComponent* AddPointLightComponent(const glm::vec3 &colour);
-
-
-
-
     // Events. Use these to make posting events a bit easier.
     public:
 

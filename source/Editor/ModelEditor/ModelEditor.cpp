@@ -21,8 +21,8 @@ namespace GTEngine
     {
         // We use the camera for our lights.
         this->camera.AddComponent<GTEngine::CameraComponent>();
-        this->camera.AddDirectionalLightComponent(0.25f, 0.25f, 0.25f);
-        this->camera.AddAmbientLightComponent(0.6f, 0.6f, 0.6f);
+        this->camera.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
+        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.6f, 0.6f, 0.6f);
 
         // Viewport and Renderer.
         this->viewport.SetCameraNode(this->camera);
@@ -226,7 +226,7 @@ namespace GTEngine
                         hullModel->meshes[0]->GetMaterial()->SetParameter("DiffuseColour", this->random.Next<float>(0.0f, 1.0f), this->random.Next<float>(0.0f, 1.0f), this->random.Next<float>(0.0f, 1.0f));
 
                         auto node = new SceneNode;
-                        node->AddModelComponent(hullModel);
+                        node->AddComponent<GTEngine::ModelComponent>()->SetModel(hullModel);
 
                         this->convexHullNodes.PushBack(node);
 
