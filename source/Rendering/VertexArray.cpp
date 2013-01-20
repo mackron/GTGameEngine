@@ -95,7 +95,7 @@ namespace GTEngine
 
         return nullptr;
     }
-    
+
     void VertexArray::UnmapVertexData()
     {
         if (this->verticesMapped)
@@ -117,7 +117,7 @@ namespace GTEngine
 
         return nullptr;
     }
-    
+
     void VertexArray::UnmapIndexData()
     {
         if (this->indicesMapped)
@@ -222,7 +222,7 @@ namespace GTEngine
             {
             case 1:
                 {
-                    deserializer.Read(static_cast<uint32_t &>(this->vertexCount));
+                    deserializer.Read(reinterpret_cast<uint32_t &>(this->vertexCount));
 
                     delete [] this->vertices;
                     this->vertices = new float[this->format.GetSize() * this->vertexCount];
@@ -246,7 +246,7 @@ namespace GTEngine
             {
             case 1:
                 {
-                    deserializer.Read(static_cast<uint32_t &>(this->indexCount));
+                    deserializer.Read(reinterpret_cast<uint32_t &>(this->indexCount));
 
                     delete [] this->indices;
                     this->indices = new unsigned int[this->indexCount];
@@ -348,7 +348,7 @@ namespace GTEngine
                 {
                     bitangent2 *= -1.0f;
                 }
-                    
+
                 auto tangent0Src = vertex0Src + tangentStride;
                 auto tangent1Src = vertex1Src + tangentStride;
                 auto tangent2Src = vertex2Src + tangentStride;
@@ -363,7 +363,7 @@ namespace GTEngine
                 bitangent1Src[0] = bitangent1.x; bitangent1Src[1] = bitangent1.y; bitangent1Src[2] = bitangent1.z;
                 bitangent2Src[0] = bitangent2.x; bitangent2Src[1] = bitangent2.y; bitangent2Src[2] = bitangent2.z;
             }
-                
+
 
             this->UnmapIndexData();
             this->UnmapVertexData();

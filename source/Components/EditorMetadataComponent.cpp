@@ -15,7 +15,7 @@ namespace GTEngine
           alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
-          spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTransform(), spriteTexturePath(),
+          spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTransform(),
           directionArrowModel(nullptr), directionArrowVA(nullptr),
           uniqueID(0)
     {
@@ -69,7 +69,7 @@ namespace GTEngine
         // We'll be completely recreating the shape so we'll need to delete the old one.
         this->DeleteCollisionShape();
 
-        
+
         auto modelComponent = this->GetNode().GetComponent<ModelComponent>();
         if (modelComponent != nullptr)
         {
@@ -230,7 +230,7 @@ namespace GTEngine
                 assert(this->spritePickingCollisionObject == nullptr);
                 {
                     this->spritePickingCollisionShape = new btBoxShape(btVector3(0.25f, 0.25f, 0.0f));
-                    
+
                     this->spritePickingCollisionObject = new CollisionObject;
                     this->spritePickingCollisionObject->setUserPointer(this);
                     this->spritePickingCollisionObject->setCollisionShape(this->spritePickingCollisionShape);
@@ -343,7 +343,7 @@ namespace GTEngine
                 // Just a simple wirefram model here. Unit length, facing -Z.
                 float arrowHeadLength = 0.3f;
                 float arrowHeadWidth  = 0.2f;
-            
+
                 glm::vec3 vertices[4];
                 vertices[0].x =  0.0f;                  vertices[0].y = 0.0f; vertices[0].z = -1.0f;
                 vertices[1].x =  0.0f;                  vertices[1].y = 0.0f; vertices[1].z =  0.0f;
@@ -448,13 +448,13 @@ namespace GTEngine
             {
             case 1:
                 {
-                    deserializer.Read(static_cast<uint32_t &>(this->uniqueID));
+                    deserializer.Read(reinterpret_cast<uint32_t &>(this->uniqueID));
                     deserializer.Read(this->alwaysShowOnTop);
                     deserializer.Read(this->useModelForPickingShape);
                     deserializer.Read(this->deleteOnClose);
                     deserializer.Read(this->isSelected);
                     deserializer.Read(this->selectionWireframeColour);
-        
+
                     uint32_t pickingCollisionShapeTypeIn;
                     deserializer.Read(pickingCollisionShapeTypeIn);
                     this->pickingCollisionShapeType = static_cast<PickingCollisionShapeType>(pickingCollisionShapeTypeIn);
@@ -463,7 +463,7 @@ namespace GTEngine
 
                     bool isUsingSprite;
                     deserializer.Read(isUsingSprite);
-        
+
                     if (isUsingSprite)
                     {
                         deserializer.Read(this->spriteTexturePath);
@@ -509,7 +509,7 @@ namespace GTEngine
             if (this->pickingCollisionShapeType == PickingCollisionShapeType_Box)
             {
                 auto compoundShape = static_cast<btCompoundShape*>(this->pickingCollisionShape);
-                
+
                 while (compoundShape->getNumChildShapes() > 0)
                 {
                     delete compoundShape->getChildShape(0);

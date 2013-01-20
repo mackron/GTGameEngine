@@ -85,13 +85,31 @@
         typeName(valueType* valueIn) \
             : ShaderParameter(typeID), value(valueIn), unacquireInDtor(false) \
         { \
+        } \
+        \
+        typeName(const ShaderParameter* otherIn) \
+            : ShaderParameter(typeID), value(), unacquireInDtor(false) \
+        { \
+            auto other = typeName::Upcast(otherIn); \
+            assert(other != nullptr); \
+            \
+            this->value = other->value; \
+            \
+            if (other->unacquireInDtor) \
+            { \
+                this->unacquireInDtor = other->unacquireInDtor; \
+                Texture2DLibrary::Acquire(this->value); \
+            } \
+        } \
+        \
+        ~typeName() \
+        { \
             if (this->unacquireInDtor) \
             { \
                 Texture2DLibrary::Unacquire(this->value); \
             } \
         } \
         \
-        GTENGINE_SHADERPARAMETER_DECL_COPYCTOR(typeName, typeID) \
         GTENGINE_SHADERPARAMETER_DECL_SETONCURRENTSHADER() \
         GTENGINE_SHADERPARAMETER_DECL_UPCAST(typeName, typeID) \
         \
@@ -214,13 +232,13 @@ namespace GTEngine
                 //newProp = new ShaderParameter_Texture1D(propToCopy);
                 break;
             }
-            
+
         case ShaderParameterType_Texture2D:
             {
                 newProp = new ShaderParameter_Texture2D(propToCopy);
                 break;
             }
-        
+
         case ShaderParameterType_Texture3D:
             {
                 //newProp = new ShaderParameter_Texture3D(propToCopy);

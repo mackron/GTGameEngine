@@ -52,28 +52,13 @@ namespace GTEngine
     /// @param game [in] The game object returned by Startup().
     void Shutdown(Game* game);
 
-    
+
 
 
     /// Retrieves the directory containing the executable.
     ///
     /// @return The directory containing the executable.
     const char* GetExecutableDirectory();
-
-
-    // TODO: Is this a good spot for this? Not sure where to put it...
-    /// Creates an instantiation of a component based on it's name.
-    ///
-    /// @param componentName [in] The name of the comonent to instantiate.
-    /// @param hostSceneNode [in] The scene node to associate with the component.
-    ///
-    /// @return A pointer to the new component if successful, null otherwise.
-    ///
-    /// @remarks
-    ///     The component will be created with 'new'. Delete it with 'delete'
-    ///     @par
-    ///     If 'name' does not correspond to a component defined by the engine, this will call Game::CreateCustomComponent().
-    Component* CreateComponentByName(const char* componentName, SceneNode &hostSceneNode);
 }
 
 #endif

@@ -109,7 +109,7 @@ namespace GTEngine
 
         /// The loop index needs to reset.
         this->loopStartQueueIndex = static_cast<size_t>(-1);
-     
+
         // If we don't have any key frames, we won't bother doing anything.
         if (this->keyFrames.count > 0)
         {
@@ -259,9 +259,9 @@ namespace GTEngine
     void Animation::Serialize(GTCore::Serializer &serializer) const
     {
         GTCore::BasicSerializer playbackSerializer;
-        
+
         this->keyFrameQueue.Serialize(playbackSerializer);
-        
+
         playbackSerializer.Write(this->isPlaying);
         playbackSerializer.Write(this->playbackTime);
         playbackSerializer.Write(static_cast<uint32_t>(this->loopStartQueueIndex));
@@ -302,7 +302,7 @@ namespace GTEngine
 
                     deserializer.Read(this->isPlaying);
                     deserializer.Read(this->playbackTime);
-                    deserializer.Read(static_cast<uint32_t &>(this->loopStartQueueIndex));
+                    deserializer.Read(reinterpret_cast<uint32_t &>(this->loopStartQueueIndex));
 
                     break;
                 }

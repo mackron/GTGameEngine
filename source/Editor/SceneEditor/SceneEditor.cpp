@@ -37,7 +37,7 @@ namespace GTEngine
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
 
-        
+
         auto &gui    = this->GetGUI();
         auto &script = this->GetScript();
 
@@ -142,7 +142,7 @@ namespace GTEngine
                 script.Pop(1);
             }
 
-            
+
 
             // To place the camera correctly, we'll just reset it.
             this->ResetCamera();
@@ -541,7 +541,7 @@ namespace GTEngine
                     assert(node != nullptr);
                     {
                         glm::vec3 position = node->GetWorldPosition();
-                    
+
                         aabbMin = glm::min(aabbMin, position);
                         aabbMax = glm::max(aabbMax, position);
                     }
@@ -573,7 +573,7 @@ namespace GTEngine
     {
         return this->selectedNodes.count;
     }
-    
+
     SceneNode* SceneEditor::GetFirstSelectedSceneNode()
     {
         if (this->selectedNodes.count > 0)
@@ -699,7 +699,7 @@ namespace GTEngine
 
     void SceneEditor::AppendStateStackFrame()
     {
-        // We do not mark as modified 
+        // We do not mark as modified
         bool markAsModified = this->sceneStateStack.count > 0;
 
 
@@ -757,7 +757,7 @@ namespace GTEngine
         this->UpdateGizmo();
     }
 
-    
+
     void SceneEditor::SwitchGizmoToLocalSpace()
     {
         this->gizmoTransformSpace = GizmoTransformSpace_Local;
@@ -812,7 +812,7 @@ namespace GTEngine
             }
 
 
-            
+
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata == nullptr)
             {
@@ -827,7 +827,7 @@ namespace GTEngine
             assert(metadata != nullptr);
             {
                 size_t uniqueID = metadata->GetID();
-                
+
                 // If the unique ID is 0, it means one needs to be generated.
                 if (uniqueID == 0)
                 {
@@ -872,7 +872,7 @@ namespace GTEngine
 
 
                 // The state needs to know that it no longer has the node.
-                this->sceneNodes.Remove(metadata->GetID());
+                this->sceneNodes.RemoveByKey(metadata->GetID());
 
 
                 // The data pointer at position 0 will be a pointer to the Editor_SceneEditor::State object that previously owned the scene node. This needs to be cleared.
@@ -902,7 +902,7 @@ namespace GTEngine
 
                 // We need to remove and re-add the collision shape since it might have changed. We only re-add if it's visible.
                 auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
-                
+
                 auto world = pickingCollisionObject.GetWorld();
                 if (world != nullptr)
                 {
@@ -1021,7 +1021,7 @@ namespace GTEngine
         {
             // We need to remove and re-add the collision shape since it might have changed.
             auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
-                
+
             auto world = pickingCollisionObject.GetWorld();
             if (world != nullptr)
             {
@@ -1194,7 +1194,7 @@ namespace GTEngine
 
                         glm::vec3 startPosition = this->GetSelectionCenterPoint();
                         float     startAngle    = glm::length(glm::eulerAngles(this->GetGizmoRotation()) * dragAxis);
-                            
+
 
 
                         bool wasSnapping = this->isSnapping;
@@ -1306,7 +1306,7 @@ namespace GTEngine
 
                                     // Negative scaling not yet supported.
                                     newScale = glm::max(newScale, glm::vec3(0.0f, 0.0f, 0.0f));
-                                        
+
                                     node->SetWorldScale(newScale);
                                 }
                             }
@@ -1394,7 +1394,7 @@ namespace GTEngine
             GTCore::BasicSerializer metadataSerializer;
 
             metadataSerializer.Write(static_cast<uint32_t>(this->nextSceneNodeID));
-        
+
             this->camera.Serialize(metadataSerializer);
             metadataSerializer.Write(this->cameraXRotation);
             metadataSerializer.Write(this->cameraYRotation);
@@ -1417,7 +1417,7 @@ namespace GTEngine
         this->transformGizmo.Hide();
 
         this->DeleteAllMarkedSceneNodes();
-        
+
         // With pre-deserialization done, we can now do a full deserialization of the scene.
         this->scene.Deserialize(deserializer);
 
@@ -1431,7 +1431,7 @@ namespace GTEngine
             // Since we only peeked at the header, we'll need to now seek past it.
             deserializer.Seek(sizeof(Serialization::ChunkHeader));
 
-            deserializer.Read(static_cast<uint32_t &>(this->nextSceneNodeID));
+            deserializer.Read(reinterpret_cast<uint32_t &>(this->nextSceneNodeID));
 
             // The camera node needs to be deserialized.
             this->camera.Deserialize(deserializer);
@@ -1582,7 +1582,7 @@ namespace GTEngine
                 this->transformGizmo.GetXScaleSceneNode().Hide();
                 this->transformGizmo.GetYScaleSceneNode().Hide();
                 this->transformGizmo.GetZScaleSceneNode().Hide();
-                    
+
 
                 break;
             }

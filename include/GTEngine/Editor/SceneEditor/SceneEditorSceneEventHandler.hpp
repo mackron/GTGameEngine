@@ -16,7 +16,7 @@ namespace GTEngine
         SceneEditorSceneEventHandler(SceneEditor &sceneEditor);
 
         /// Destructor.
-        ~SceneEditorSceneEventHandler();
+        virtual ~SceneEditorSceneEventHandler();
 
 
         /// SceneEventHandler::OnObjectAdded()

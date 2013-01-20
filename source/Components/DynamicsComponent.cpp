@@ -532,7 +532,7 @@ namespace GTEngine
     }
 
     bool DynamicsComponent::IsNavigationMeshGenerationEnabled() const
-    { 
+    {
         return this->useWithNavigationMesh && this->IsStatic();
     }
 
@@ -673,7 +673,7 @@ namespace GTEngine
 
             return true;
         }
-        
+
         return false;
     }
 
@@ -714,7 +714,7 @@ namespace GTEngine
 
             return true;
         }
-        
+
         return false;
     }
 
@@ -755,7 +755,7 @@ namespace GTEngine
 
             return true;
         }
-        
+
         return false;
     }
 
@@ -816,7 +816,7 @@ namespace GTEngine
 
             return true;
         }
-        
+
         return false;
     }
 
@@ -877,7 +877,7 @@ namespace GTEngine
 
             return true;
         }
-        
+
         return false;
     }
 
@@ -897,7 +897,7 @@ namespace GTEngine
         Serialization::ChunkHeader header;
         header.id          = Serialization::ChunkID_DynamicsComponent_Main;
         header.version     = 1;
-        header.sizeInBytes = 
+        header.sizeInBytes =
             sizeof(bool)                  +     // <-- Is deactivation enabled?
             sizeof(bool)                  +     // <-- Is navigation mesh generation enabled?
             sizeof(short) + sizeof(short) +     // <-- Collision filter.
@@ -912,7 +912,7 @@ namespace GTEngine
             serializer.Write(static_cast<uint32_t>((this->collisionShape != nullptr) ? this->collisionShape->getNumChildShapes() : 0));
         }
 
-        
+
         // Now we need to write rigid body chunk, which simply contains information about the current state of the rigid body, not including collision shapes.
         header.id          = Serialization::ChunkID_DynamicsComponent_RigidBody;
         header.version     = 1;
@@ -958,7 +958,7 @@ namespace GTEngine
                     case CollisionShapeType_Box:
                         {
                             auto box = static_cast<btBoxShape*>(shape);
-                            
+
                             header.id          = Serialization::ChunkID_DynamicsComponent_BoxShape;
                             header.version     = 1;
                             header.sizeInBytes =
@@ -968,7 +968,7 @@ namespace GTEngine
                             serializer.Write(header);
                             serializer.Write(ToGLMVector3(box->getHalfExtentsWithMargin() / box->getLocalScaling()));
                             serializer.Write(ToGLMMatrix4(this->collisionShape->getChildTransform(i)));
-                            
+
 
                             break;
                         }
@@ -998,7 +998,7 @@ namespace GTEngine
 
                             header.id          = Serialization::ChunkID_DynamicsComponent_EllipsoidShape;
                             header.version     = 1;
-                            header.sizeInBytes = 
+                            header.sizeInBytes =
                                 sizeof(glm::vec3) +     // <-- Half extents
                                 sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
 
@@ -1019,7 +1019,7 @@ namespace GTEngine
 
                             header.id          = Serialization::ChunkID_DynamicsComponent_CylinderShape;
                             header.version     = 1;
-                            header.sizeInBytes = 
+                            header.sizeInBytes =
                                 sizeof(uint32_t)  +     // <-- Axis - 0 = X, 1 = Y, 2 = Z
                                 sizeof(glm::vec3) +     // <-- Half extents
                                 sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
@@ -1043,7 +1043,7 @@ namespace GTEngine
 
                             header.id          = Serialization::ChunkID_DynamicsComponent_CapsuleShape;
                             header.version     = 1;
-                            header.sizeInBytes = 
+                            header.sizeInBytes =
                                 sizeof(uint32_t) +      // <-- Axis - 0 = X, 1 = Y, 2 = Z
                                 sizeof(float)    +      // <-- Radius
                                 sizeof(float)    +      // <-- Height
@@ -1061,17 +1061,17 @@ namespace GTEngine
                     case CollisionShapeType_ConvexHull:
                         {
                             auto convexHull = static_cast<btConvexHullShape*>(shape);
-                            
+
                             header.id          = Serialization::ChunkID_DynamicsComponent_ConvexHullShape;
                             header.version     = 1;
-                            header.sizeInBytes = 
+                            header.sizeInBytes =
                                 sizeof(uint32_t)  +                                     // <-- Vertex count.
                                 sizeof(glm::vec3) * convexHull->getNumVertices() +      // <-- Each vertex.
                                 sizeof(float);                                          // <-- Margin. Important for convex hulls.
 
                             serializer.Write(header);
                             serializer.Write(static_cast<uint32_t>(convexHull->getNumVertices()));
-                            
+
                             for (int iVertex = 0; iVertex < convexHull->getNumVertices(); ++iVertex)
                             {
                                 btVector3 vertex;
@@ -1089,6 +1089,8 @@ namespace GTEngine
                         }
 
 
+                    case CollisionShapeType_ModelConvexHulls:
+                    case CollisionShapeType_None:
                     default: break;
                     }
                 }
@@ -1457,8 +1459,8 @@ namespace GTEngine
                 }
             }
         }
-        
-        
+
+
 
 
 
@@ -1469,7 +1471,7 @@ namespace GTEngine
         // The mass needs to be updated.
         this->UpdateMass();
 
-        
+
 
 
         // At this point the rigid body should be in it's new state and we can re-add it to the world.

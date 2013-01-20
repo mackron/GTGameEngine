@@ -65,7 +65,7 @@ namespace GTEngine
             }
 
             // This is some more evilness. I don't know how to apply a new mesh interface to the shape, so I'm just going to destruct and then reconstruct.
-            btBvhTriangleMeshShape::~btBvhTriangleMeshShape();
+            this->btBvhTriangleMeshShape::~btBvhTriangleMeshShape();
             new (this) StaticMeshCollisionShape(vertexArray, buildBvh);
         }
     }
