@@ -5,6 +5,8 @@
 #include <GTEngine/DefaultSceneCullingManager.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/GarbageCollector.hpp>
+#include <GTEngine/Errors.hpp>
+#include <GTCore/ToString.hpp>
 
 // Culling Callbacks.
 namespace GTEngine
@@ -245,7 +247,7 @@ namespace GTEngine
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
           paused(false), isRefreshingObject(false),
-          viewports(), nodes(),
+          viewports(), sceneNodes(), nextSceneNodeID(0),
           ambientLightComponents(), directionalLightComponents(),
           navigationMesh(),
           eventHandlers()
@@ -257,7 +259,7 @@ namespace GTEngine
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
           paused(false), isRefreshingObject(false),
-          viewports(), nodes(),
+          viewports(), sceneNodes(), nextSceneNodeID(0),
           ambientLightComponents(), directionalLightComponents(),
           navigationMesh(),
           eventHandlers()
@@ -267,12 +269,7 @@ namespace GTEngine
     Scene::~Scene()
     {
         this->RemoveAllViewports();
-
-
-        while (this->nodes.root != nullptr)
-        {
-            this->RemoveSceneNode(*this->nodes.root->value);
-        }
+        this->RemoveAllObjects();
 
 
         if (deleteRenderer)
@@ -327,9 +324,17 @@ namespace GTEngine
 
     void Scene::RemoveAllObjects()
     {
-        while (this->nodes.root != nullptr)
+        while (this->sceneNodes.count > 0)
         {
-            this->RemoveSceneNode(*this->nodes.root->value);
+            auto iNode = this->sceneNodes.buffer[0];
+            assert(iNode != nullptr);
+            {
+                auto node = iNode->value;
+                assert(node != nullptr);
+                {
+                    this->RemoveSceneNode(*node);
+                }
+            }
         }
     }
 
@@ -400,18 +405,18 @@ namespace GTEngine
     SceneNode* Scene::FindFirstNode(const char* name)
     {
         // Here we check every node and their children.
-        for (auto i = this->nodes.root; i != nullptr; i = i->next)
+        for (size_t i = 0; i < this->sceneNodes.count; ++i)
         {
-            if (GTCore::Strings::Equal(i->value->GetName(), name))
+            auto iNode = this->sceneNodes.buffer[i];
+            assert(iNode != nullptr);
             {
-                return i->value;
-            }
-            else
-            {
-                auto temp = i->value->FindFirstChild(name, true);
-                if (temp != nullptr)
+                auto node = iNode->value;
+                assert(node != nullptr);
                 {
-                    return temp;
+                    if (GTCore::Strings::Equal(node->GetName(), name))
+                    {
+                        return node;
+                    }
                 }
             }
         }
@@ -421,18 +426,18 @@ namespace GTEngine
 
     SceneNode* Scene::FindFirstNodeWithComponent(const char* componentName)
     {
-        for (auto i = this->nodes.root; i != nullptr; i = i->next)
+        for (size_t i = 0; i < this->sceneNodes.count; ++i)
         {
-            if (i->value->HasComponent(componentName))
+            auto iNode = this->sceneNodes.buffer[i];
+            assert(iNode != nullptr);
             {
-                return i->value;
-            }
-            else
-            {
-                auto temp = i->value->FindFirstChildWithComponent(componentName, true);
-                if (temp != nullptr)
+                auto node = iNode->value;
+                assert(node != nullptr);
                 {
-                    return temp;
+                    if (node->HasComponent(componentName))
+                    {
+                        return node;
+                    }
                 }
             }
         }
@@ -664,14 +669,18 @@ namespace GTEngine
         // is create a flat vector containing pointers to the scene nodes that should be written. We use a vector here to make it
         // easier to do grab the indices for the hierarchy.
         GTCore::Vector<SceneNode*> serializedNodes;
-        for (auto iNode = this->nodes.root; iNode != nullptr; iNode = iNode->next)
+        for (size_t i = 0; i < this->sceneNodes.count; ++i)
         {
-            auto node = iNode->value;
-            assert(node != nullptr);
+            auto iNode = this->sceneNodes.buffer[i];
+            assert(iNode != nullptr);
             {
-                if (node->IsSerializationEnabled())
+                auto node = iNode->value;
+                assert(node != nullptr);
                 {
-                    serializedNodes.PushBack(node);
+                    if (node->IsSerializationEnabled())
+                    {
+                        serializedNodes.PushBack(node);
+                    }
                 }
             }
         }
@@ -874,7 +883,24 @@ namespace GTEngine
 
     void Scene::OnSceneNodeAdded(SceneNode &node)
     {
-        this->nodes.Append(&node);
+        uint64_t uniqueID = node.GetID();
+        if (uniqueID == 0)
+        {
+            uniqueID = ++this->nextSceneNodeID;
+            node.SetID(uniqueID);
+        }
+        else
+        {
+            // If a scene node of the same ID already exists, we have a bug somewhere.
+            if (this->sceneNodes.Find(uniqueID) != nullptr)
+            {
+                GTEngine::PostError("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", GTCore::ToString(uniqueID).c_str());
+                return;
+            }
+        }
+
+
+        this->sceneNodes.Add(uniqueID, &node);
 
         // We need to add the node to the update manager.
         if ((node.GetFlags() & SceneNode::NoUpdate) == 0)
@@ -1009,7 +1035,10 @@ namespace GTEngine
 
     void Scene::OnSceneNodeRemoved(SceneNode &node)
     {
-        this->nodes.Remove(this->nodes.Find(&node));
+        // We just remove the scene node by it's ID.
+        this->sceneNodes.RemoveByKey(node.GetID());
+
+
 
         // The node must be removed from the update manager.
         this->updateManager.RemoveObject(node);

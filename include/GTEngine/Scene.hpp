@@ -478,13 +478,13 @@ namespace GTEngine
 
         /// Retrieves the points on a navigation path between the given start and end positions.
         ///
-        /// @param start  [in ] The start position.
-        /// @param end    [in ] The end position.
+        /// @param start  [in]  The start position.
+        /// @param end    [in]  The end position.
         /// @param output [out] A reference to the vector that will receive the navigation points.
         void FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output);
 
         /// A hacky temp method for retrieving a reference to the internal list of scene nodes. (Used with NavigationMesh. Will be replaced later.)
-        const GTCore::List<SceneNode*> & GetSceneNodes() const { return this->nodes; }
+        const GTCore::Map<uint64_t, SceneNode*> & GetSceneNodes() const { return this->sceneNodes; }
 
 
 
@@ -623,8 +623,14 @@ namespace GTEngine
         /// The list of viewports currently attached to this scene.
         GTCore::List<SceneViewport*> viewports;
 
-        /// The list of nodes in the scene. This is a flat list for now, but will be optimized later.
-        GTCore::List<SceneNode*> nodes;
+        // TODO: Should probably do a specialised container for this. Can probably avoid at least one pointer dereference for each scene node during iteration. Will need to be
+        //       a map so we can do fast searching.
+        /// The list of scene nodes in the scene. This contains every scene node, including those connected to a parent. This is indexed by the unique ID of the scene node.
+        GTCore::Map<uint64_t, SceneNode*> sceneNodes;
+
+        /// The next unique ID to apply to new scene nodes.
+        uint64_t nextSceneNodeID;
+
 
 
         /// The list of ambient light components.
