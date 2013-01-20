@@ -21,7 +21,7 @@ namespace GTEngine
         SceneEventHandler();
 
         /// Destructor.
-        ~SceneEventHandler();
+        virtual ~SceneEventHandler();
 
 
         /// Called when a scene object is added to the scene.
@@ -59,12 +59,6 @@ namespace GTEngine
         ///
         /// @param sceneNode [in] A reference to the scene node that has just been made visible.
         virtual void OnSceneNodeShow(SceneNode &sceneNode);
-
-
-    private:
-
-
-
     };
 }
 

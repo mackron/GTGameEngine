@@ -87,7 +87,7 @@ namespace GTEngine
         }
 
         return nullptr;
-        
+
     }
 
     ShaderParameter* ShaderParameterCache::GetByIndex(size_t index) const
@@ -140,7 +140,7 @@ namespace GTEngine
             auto name      = this->parameters.buffer[i]->key;
             auto parameter = this->parameters.buffer[i]->value;
 
-            
+
             intermediarySerializer.Write(static_cast<uint32_t>(parameter->type));
             intermediarySerializer.WriteString(name);
 
@@ -201,6 +201,9 @@ namespace GTEngine
                 }
 
 
+            case ShaderParameterType_Texture1D:
+            case ShaderParameterType_Texture3D:
+            case ShaderParameterType_TextureCube:
             default:
                 break;
             }

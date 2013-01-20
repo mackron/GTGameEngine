@@ -48,6 +48,7 @@ namespace GTEngine
             LayerState()
                 : ambientLights(), directionalLights(), pointLights(), spotLights(),
                   directionalLights_NoShadows(), pointLights_NoShadows(), spotLights_NoShadows(),
+                  editorModels(),
                   refractiveLightingDrawRCs(), usedMaterials(), usedRefractiveMaterials(), alwaysOnTopRCQueue(),
                   cameraProjection(), cameraView(), cameraPosition(),
                   cameraFOV(90.0f), cameraAspect(16.0f / 9.0f), cameraZNear(0.1f), cameraZFar(1000.0f),
@@ -138,7 +139,7 @@ namespace GTEngine
                 this->directionalLights_NoShadows.Clear();
                 this->pointLights_NoShadows.Clear();
                 this->spotLights_NoShadows.Clear();
-                
+
                 this->editorModels.Clear();
 
                 //this->lightingDrawRCs.Clear();
@@ -1026,6 +1027,11 @@ namespace GTEngine
 
         /// The material to use for drawing wireframes.
         Material* wireframeMaterial;
+
+
+    private:    // No copying.
+        DefaultSceneRenderer(const DefaultSceneRenderer &);
+        DefaultSceneRenderer & operator=(const DefaultSceneRenderer &);
     };
 }
 

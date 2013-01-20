@@ -22,7 +22,7 @@ namespace GTEngine
     {
         GarbageCollector::MarkForCollection(this->arrowLineVA);
         GarbageCollector::MarkForCollection(this->arrowHeadVA);
-        
+
         GarbageCollector::MarkForCollection(this->xCircleVA);
         GarbageCollector::MarkForCollection(this->yCircleVA);
         GarbageCollector::MarkForCollection(this->zCircleVA);
@@ -54,7 +54,7 @@ namespace GTEngine
         float        arrowHeadRadius       = 0.075f;
         unsigned int arrowHeadSegments     = 16;
         float        arrowHeadSegmentAngle = glm::radians(360.0f / static_cast<float>(arrowHeadSegments));
-        
+
         GTCore::Vector<glm::vec3>    arrowHeadVertices;
         GTCore::Vector<unsigned int> arrowHeadIndices;
 
@@ -123,10 +123,10 @@ namespace GTEngine
 
         this->xCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
         this->xCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
-        
+
         this->yCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
         this->yCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
-        
+
         this->zCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
         this->zCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
 
@@ -390,7 +390,7 @@ namespace GTEngine
         this->cameraFacingCircleSceneNode.SetWorldOrientation(cameraNode.GetWorldOrientation() * glm::angleAxis(0.0f, glm::vec3(0.0f, 1.0f, 0.0f)));
     }
 
-    
+
     void TransformGizmo::SetScale(const glm::vec3 &scale)
     {
         this->sceneNode.SetScale(scale);
@@ -473,7 +473,7 @@ namespace GTEngine
         offset.y = 0.0f;
         offset.z = -halfExtents.z;
 
-        
+
         auto metadata = this->xArrowSceneNode.GetComponent<EditorMetadataComponent>();
         if (metadata != nullptr)
         {
@@ -553,11 +553,9 @@ namespace GTEngine
         {
             size_t vertexCount = vertexArray->GetVertexCount();
 
-            auto circlePosition = circleNode.GetWorldPosition();
-            auto cameraPosition = cameraNode.GetWorldPosition();
-
+            auto circlePosition  = circleNode.GetWorldPosition();
             auto cameraTransform = cameraNode.GetComponent<CameraComponent>()->GetViewMatrix();
-            
+
             circlePosition = glm::vec3(cameraTransform * glm::vec4(circlePosition, 1.0f));
 
             // All we do is start from the start and work our way around. If a line segment has both vertices facing away from the camera,

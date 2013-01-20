@@ -58,24 +58,24 @@ namespace GTEngine
     int VertexFormat::GetAttributeOffset(int index) const
     {
         int stride = 0;
-        
+
         for (size_t i = 0; i < this->count; i += 2)
         {
             if (this->attributes[i] == index)
             {
                 return stride;
             }
-            
+
             stride += this->attributes[i + 1];
         }
-        
+
         return -1;
     }
 
     bool VertexFormat::GetAttributeInfo(int index, size_t &componentCount, size_t &offset) const
     {
         offset = 0;
-        
+
         for (size_t i = 0; i < this->count; i += 2)
         {
             if (this->attributes[i] == index)
@@ -83,7 +83,7 @@ namespace GTEngine
                 componentCount = static_cast<size_t>(this->attributes[i + 1]);
                 return true;
             }
-            
+
             offset += static_cast<size_t>(this->attributes[i + 1]);
         }
 
@@ -99,12 +99,12 @@ namespace GTEngine
         // TODO: Optimize this so that the size is stored as a variable and changed dynamically with AddAttribute().
 
         int size = 0;
-        
+
         for (size_t i = 0; i < this->count; i += 2)
         {
             size += this->attributes[i + 1];
         }
-        
+
         return static_cast<size_t>(size);
     }
 
@@ -134,7 +134,7 @@ namespace GTEngine
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -146,7 +146,7 @@ namespace GTEngine
         }
 
         this->count = other.count;
-        
+
         return *this;
     }
 
@@ -164,7 +164,7 @@ namespace GTEngine
     void VertexFormat::Deserialize(GTCore::Deserializer &deserializer)
     {
         deserializer.Read(this->attributes, sizeof(int) * GTENGINE_VERTEX_FORMAT_SIZE);
-        deserializer.Read(static_cast<uint32_t &>(this->count));
+        deserializer.Read(reinterpret_cast<uint32_t &>(this->count));
     }
 
 

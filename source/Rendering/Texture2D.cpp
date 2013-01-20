@@ -5,7 +5,7 @@
 namespace GTEngine
 {
     Texture2D::Texture2D(Texture2DTarget target)
-        : GTImage::Image(),
+        : GTImage::Image(), relativePath(),
           target(target),
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),
@@ -21,7 +21,7 @@ namespace GTEngine
     }
 
     Texture2D::Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data)
-        : GTImage::Image(),
+        : GTImage::Image(), relativePath(),
           target(Texture2DTarget_Default),
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),

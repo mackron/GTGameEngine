@@ -21,7 +21,7 @@ namespace GTEngine
             successful = successful && script.Execute
             (
                 "GTEngine          = {};"
-                
+
                 "GTEngine.System   = {};"
                 "GTEngine.System.ModelComponent            = {};"
                 "GTEngine.System.CameraComponent           = {};"
@@ -589,7 +589,7 @@ namespace GTEngine
             (
                 "GTEngine.SceneNode = {};"
                 "GTEngine.SceneNode.__index = GTEngine.SceneNode;"
-                
+
                 "function GTEngine.SceneNode:Create(internalPtr)"
                 "    local new = {};"
                 "    setmetatable(new, GTEngine.SceneNode);"
@@ -691,7 +691,7 @@ namespace GTEngine
             (
                 "GTEngine.Scene = {};"
                 "GTEngine.Scene.__index = GTEngine.Scene;"
-                
+
                 "function GTEngine.Scene:Create(internalPtr)"
                 "    local new = {};"
                 "    setmetatable(new, GTEngine.Scene);"
@@ -720,7 +720,7 @@ namespace GTEngine
             if (script.IsTable(-1))
             {
                 script.SetTableFunction(-1, "GetExecutableDirectory", FFI::GetExecutableDirectory);
-                
+
                 script.SetTableFunction(-1, "IsModelFile", FFI::IsModelFile);
                 script.SetTableFunction(-1, "IsImageFile", FFI::IsImageFile);
                 script.SetTableFunction(-1, "IsSoundFile", FFI::IsSoundFile);
@@ -1031,7 +1031,7 @@ namespace GTEngine
                 return 1;
             }
 
-            
+
             int IsModelFile(GTCore::Script &script)
             {
                 script.Push(IO::IsSupportedModelExtension(script.ToString(1)));
@@ -1061,7 +1061,7 @@ namespace GTEngine
                 // There can be any number of text files. Perhaps we should assume that if it's not a resouce file like a model and texture, we should assume a text file?
 
                 auto extension = GTCore::Path::Extension(script.ToString(1));
-                
+
                 bool result = GTCore::Strings::Equal<false>(extension, "")       ||
                               GTCore::Strings::Equal<false>(extension, "txt")    ||
                               GTCore::Strings::Equal<false>(extension, "lua")    ||
@@ -1069,7 +1069,7 @@ namespace GTEngine
                               GTCore::Strings::Equal<false>(extension, "xml")    ||
                               GTCore::Strings::Equal<false>(extension, "script") ||
                               GTCore::Strings::Equal<false>(extension, "style");
-                
+
                 script.Push(result);
                 return 1;
             }
@@ -1107,7 +1107,7 @@ namespace GTEngine
                         {
                             script.PushNil();
                         }
-                        
+
                         return 1;
                     }
 
@@ -1327,7 +1327,7 @@ namespace GTEngine
                         if (sceneNode != nullptr)
                         {
                             script.PushNewTable();
-                            
+
 
                             GTCore::Vector<GTCore::String> componentNames;
                             sceneNode->GetAttachedComponentNames(componentNames);
@@ -1341,7 +1341,7 @@ namespace GTEngine
                         return 1;
                     }
 
-                    
+
                     int Show(GTCore::Script &script)
                     {
                         auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
@@ -2751,7 +2751,7 @@ namespace GTEngine
                                                 auto box = static_cast<btBoxShape*>(shape);
 
                                                 btVector3 halfExtents = box->getHalfExtentsWithMargin() / box->getLocalScaling();
-                                                
+
                                                 script.SetTableValue(-1, "halfX", halfExtents.getX());
                                                 script.SetTableValue(-1, "halfY", halfExtents.getY());
                                                 script.SetTableValue(-1, "halfZ", halfExtents.getZ());
@@ -2789,7 +2789,7 @@ namespace GTEngine
                                                 auto cylinder = static_cast<btCylinderShape*>(shape);
 
                                                 btVector3 halfExtents = cylinder->getHalfExtentsWithMargin() / cylinder->getLocalScaling();
-                                                
+
                                                 script.SetTableValue(-1, "halfX", halfExtents.getX());
                                                 script.SetTableValue(-1, "halfY", halfExtents.getY());
                                                 script.SetTableValue(-1, "halfZ", halfExtents.getZ());
@@ -2812,6 +2812,17 @@ namespace GTEngine
                                                 break;
                                             }
 
+                                        case CollisionShapeType_ConvexHull:
+                                            {
+                                                break;
+                                            }
+
+                                        case CollisionShapeType_ModelConvexHulls:
+                                            {
+                                                break;
+                                            }
+
+                                        case CollisionShapeType_None:
                                         default: break;
                                         }
                                     }
@@ -3252,7 +3263,7 @@ namespace GTEngine
                         {
                             script.Push(static_cast<void*>(nullptr));
                         }
-                        
+
                         return 1;
                     }
 
@@ -3482,7 +3493,7 @@ namespace GTEngine
                         {
                             sceneEditor->EnablePhysicsSimulation();
                         }
-                        
+
                         return 0;
                     }
 
@@ -3493,7 +3504,7 @@ namespace GTEngine
                         {
                             sceneEditor->DisablePhysicsSimulation();
                         }
-                        
+
                         return 0;
                     }
 
@@ -3531,7 +3542,7 @@ namespace GTEngine
                         {
                             sceneEditor->Undo();
                         }
-                        
+
                         return 0;
                     }
 
@@ -3542,7 +3553,7 @@ namespace GTEngine
                         {
                             sceneEditor->Redo();
                         }
-                        
+
                         return 0;
                     }
                 }

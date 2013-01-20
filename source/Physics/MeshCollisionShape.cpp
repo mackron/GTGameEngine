@@ -61,7 +61,7 @@ namespace GTEngine
             }
 
             // This is some more evilness. I don't know how to apply a new mesh interface to the shape, so I'm just going to destruct and then reconstruct.
-            btGImpactMeshShape::~btGImpactMeshShape();
+            this->btGImpactMeshShape::~btGImpactMeshShape();
             new (this) MeshCollisionShape(vertexArray);
 
             this->updateBound();

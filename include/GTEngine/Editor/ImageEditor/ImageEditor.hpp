@@ -87,6 +87,11 @@ namespace GTEngine
 
         /// The zoom level.
         float zoom;
+
+
+    private:    // No copying.
+        ImageEditor(const ImageEditor &);
+        ImageEditor & operator=(const ImageEditor &);
     };
 }
 

@@ -44,7 +44,7 @@ namespace GTEngine
         /// @remarks
         ///     This will also update the picking shape.
         void SetScale(const glm::vec3 &scale);
-        
+
         /// Retrieves the scale of the gizmo.
         const glm::vec3 & GetScale() const;
 
@@ -220,6 +220,11 @@ namespace GTEngine
 
         /// the geometry of the head part of the scale handle.
         VertexArray* scaleHeadVA;
+
+
+    private:    // No copying.
+        TransformGizmo(const TransformGizmo &);
+        TransformGizmo & operator=(const TransformGizmo &);
     };
 }
 

@@ -54,7 +54,17 @@ namespace GTEngine
             /// A pointer to the text editor that owns the text area.
             TextEditor* ownerTextEditor;
 
+
+        private:    // No copying.
+            TextAreaEventHandler(const TextAreaEventHandler &);
+            TextAreaEventHandler & operator=(const TextAreaEventHandler &);
+
         }*textAreaEventHandler;
+
+
+    private:    // No copying.
+        TextEditor(const TextEditor &);
+        TextEditor & operator=(const TextEditor &);
     };
 }
 

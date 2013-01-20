@@ -17,7 +17,7 @@ namespace GTGUI
 namespace GTEngine
 {
     class Game;
-    
+
     /// Class representing the editor.
     ///
     /// An editor object with every Game object.
@@ -204,7 +204,7 @@ namespace GTEngine
         /// Called when a file is updated.
         void OnFileUpdate(const DataFilesWatcher::Item &item);
 
-        
+
 
         /// Called when the definition of a model has changed.
         ///
@@ -248,6 +248,7 @@ namespace GTEngine
         {
             _GUI()
                 : EditorMain(nullptr), EditorCenterCenterPanel(nullptr),
+                  File_Save(nullptr), File_SaveAll(nullptr), File_Close(nullptr), File_CloseAll(nullptr),
                   Editor_Delta(nullptr), Editor_FPS(nullptr)
             {
             }
@@ -342,6 +343,12 @@ namespace GTEngine
             static int UnmarkFileAsModified(GTCore::Script &script);
             static int IsFileMarkedAsModified(GTCore::Script &script);
         };
+
+
+
+    private:    // No copying.
+        Editor(const Editor &);
+        Editor & operator=(const Editor &);
     };
 }
 

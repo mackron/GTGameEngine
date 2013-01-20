@@ -55,7 +55,7 @@ namespace GTEngine
     *   texture.
     *
     *   A texture is constructed of mipmaps. When setting data, you actually set the data of each mipmap. The
-    *   GenerateMipmaps() method can be used to generate mipmaps from the base mipmap. 
+    *   GenerateMipmaps() method can be used to generate mipmaps from the base mipmap.
     */
     class Texture2D : public GTImage::Image
     {
@@ -204,6 +204,9 @@ namespace GTEngine
 
     private:
 
+        /// The relative path of the texture.
+        GTCore::String relativePath;
+
         /// The target. Basically, this just specifies the usage of the texture 2D, such as whether or not it's being used in a cube map or whatnot.
         Texture2DTarget target;
 
@@ -238,9 +241,6 @@ namespace GTEngine
         /// Keeps track of whether or not the client-side texture data should be kept after it has been synced with the renderer. Defaults to false.
         bool keepClientSideData;
 
-
-        /// The relative path of the texture.
-        GTCore::String relativePath;
 
 
     private:    // No copying.

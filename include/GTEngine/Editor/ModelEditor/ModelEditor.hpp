@@ -130,6 +130,11 @@ namespace GTEngine
 
         /// The random number generator for convex hull colours, and whatever else we may need.
         GTCore::Random random;
+
+
+    private:    // No copying.
+        ModelEditor(const ModelEditor &);
+        ModelEditor & operator=(const ModelEditor &);
     };
 }
 

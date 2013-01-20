@@ -142,7 +142,7 @@ namespace GTEngine
 
                 // Here we need to attach our files watcher event handler.
                 this->game.GetDataFilesWatcher().AddEventHandler(this->dataFilesWatcherEventHandler);
-                
+
 
                 this->isStarted = true;
             }
@@ -172,7 +172,7 @@ namespace GTEngine
             this->game.GetDataFilesWatcher().CheckForChanges(false);
             this->game.GetDataFilesWatcher().DispatchEvents();
 
-            
+
             // We want to keep track of whether or not auto-repeating should be disabled when the editor is closed.
             this->disableKeyboardAutoRepeatAfterClose = !GTCore::Keyboard::IsAutoRepeatEnabled();
             GTCore::Keyboard::EnableAutoRepeat();
@@ -258,7 +258,7 @@ namespace GTEngine
 
                 // The file exists, so now we just create our sub-editor. The specific sub-editor will be based on the file name.
                 auto type = GTEngine::IO::GetAssetTypeFromExtension(absolutePath.c_str());
-            
+
                 switch (type)
                 {
                 case AssetType_Image:
@@ -286,6 +286,11 @@ namespace GTEngine
                         break;
                     }
 
+                case AssetType_Material:
+                case AssetType_Sound:
+                case AssetType_ParticleEffect:
+
+                case AssetType_None:
                 default:
                     {
                         // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
@@ -726,7 +731,7 @@ namespace GTEngine
             char fpsStr[64];
             GTCore::IO::snprintf(fpsStr, 64, "%.1f", fps);
 
-            
+
             this->GUI.Editor_Delta->SetText(deltaStr);
             this->GUI.Editor_FPS->SetText(fpsStr);
         }
