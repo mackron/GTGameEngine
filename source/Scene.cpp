@@ -653,9 +653,23 @@ namespace GTEngine
 
     bool Scene::Serialize(GTCore::Serializer &serializer) const
     {
-        // The first chunk to do is the flat list of scene nodes. Not every scene node should be serialized here, so what we'll do
-        // is create a flat vector containing pointers to the scene nodes that should be written. We use a vector here to make it
-        // easier to do grab the indices for the hierarchy.
+        Serialization::ChunkHeader header;
+
+
+        // Scene Info (nextSceneNodeID, etc).
+        header.id          = Serialization::ChunkID_Scene_Info;
+        header.version     = 1;
+        header.sizeInBytes =
+            sizeof(uint64_t);           // <-- nextSceneNodeID
+
+        serializer.Write(header);
+        serializer.Write(this->nextSceneNodeID);
+
+
+
+        // This chunk is the flat list of scene nodes. Not every scene node should be serialized here, so what we'll do is create
+        // a flat vector containing pointers to the scene nodes that should be written. We use a vector here to make it easier to
+        // grab the indices for the hierarchy.
         GTCore::Vector<const SceneNode*> serializedNodes;
         for (size_t i = 0; i < this->sceneNodes.GetCount(); ++i)
         {
@@ -705,8 +719,7 @@ namespace GTEngine
 
 
         // We have the data, now we just write it.
-        Serialization::ChunkHeader header;
-        header.id          = Serialization::ChunkID_SceneNodes;
+        header.id          = Serialization::ChunkID_Scene_Nodes;
         header.version     = 1;
         header.sizeInBytes = static_cast<uint32_t>(secondarySerializer.GetBufferSizeInBytes());
 
@@ -720,7 +733,7 @@ namespace GTEngine
         // second index is that of it's parent, as defined in the serialized data (not the data defined in the C++ structure).
         //
         // We have already retrieved these pairs from the previous pass. We can now just copy them straight in.
-        header.id          = Serialization::ChunkID_SceneNodesHierarchy;
+        header.id          = Serialization::ChunkID_Scene_NodesHierarchy;
         header.version     = 1;
         header.sizeInBytes = sizeof(Serialization::SceneNodeIndexPair) * childParentPairs.count;
 
@@ -735,6 +748,7 @@ namespace GTEngine
         GTCore::Vector<SceneNode*>                        deserializedNodes;
         GTCore::Vector<Serialization::SceneNodeIndexPair> childParentPairs;
 
+        bool readInfo                = false;
         bool readSceneNodes          = false;
         bool readSceneNodesHierarchy = false;
 
@@ -742,7 +756,29 @@ namespace GTEngine
         Serialization::ChunkHeader header;
         while (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
         {
-            if (header.id == Serialization::ChunkID_SceneNodes)
+            if (header.id == Serialization::ChunkID_Scene_Info)
+            {
+                readInfo = true;
+
+                switch (header.version)
+                {
+                case 1:
+                    {
+                        deserializer.Read(this->nextSceneNodeID);
+
+                        break;
+                    }
+
+                default:
+                    {
+                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        deserializer.Seek(header.sizeInBytes);
+
+                        return false;
+                    }
+                }
+            }
+            else if (header.id == Serialization::ChunkID_Scene_Nodes)
             {
                 readSceneNodes = true;
 
@@ -768,14 +804,14 @@ namespace GTEngine
 
                 default:
                     {
-                        GTEngine::Log("Error deserializing scene. The version of the scene node chunk is not supported. The chunk version specified is: '%d'.\n", header.version);
+                        GTEngine::Log("Error deserializing scene. The version of the scene node chunk (%d) is not supported.\n", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         return false;
                     }
                 }
             }
-            else if (header.id == Serialization::ChunkID_SceneNodesHierarchy)
+            else if (header.id == Serialization::ChunkID_Scene_NodesHierarchy)
             {
                 readSceneNodesHierarchy = true;
 
@@ -794,7 +830,7 @@ namespace GTEngine
 
                 default:
                     {
-                        GTEngine::Log("Error deserializing scene. The version of the scene node hierarchy chunk is not supported. The chunk version specified is: '%d'.\nThe scene node hierarchy will be broken!", header.version);
+                        GTEngine::Log("Error deserializing scene. The version of the scene node hierarchy chunk (%d) is not supported.", header.version);
                         deserializer.Seek(header.sizeInBytes);
 
                         // We may have nodes instantiated, so they'll need to be killed.

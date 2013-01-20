@@ -63,9 +63,10 @@ namespace GTEngine
         // Scenes
 
         // Scene
-        static const uint32_t ChunkID_SceneNodes                            = CHUNK_ID(0x00000001U);
-        static const uint32_t ChunkID_SceneNodesHierarchy                   = CHUNK_ID(0x00000002U);
-        static const uint32_t ChunkID_SceneEditorMetadata                   = CHUNK_ID(0x0000000FU);
+        static const uint32_t ChunkID_Scene_Info                            = CHUNK_ID(0x00000001U);
+        static const uint32_t ChunkID_Scene_Nodes                           = CHUNK_ID(0x00000002U);
+        static const uint32_t ChunkID_Scene_NodesHierarchy                  = CHUNK_ID(0x00000003U);
+        static const uint32_t ChunkID_Scene_EditorMetadata                  = CHUNK_ID(0x0000000FU);
 
         // SceneObject
         static const uint32_t ChunkID_SceneObject                           = CHUNK_ID(0x00000010U);

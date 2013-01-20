@@ -865,6 +865,7 @@ namespace GTEngine
         // The first scene node chunk, besides SceneObject, is the general attributes. We're going to use an intermediate serializer here
         // because we're writing a string.
         GTCore::BasicSerializer secondarySerializer;
+        secondarySerializer.Write(this->uniqueID);
         secondarySerializer.Write(this->name);
         secondarySerializer.Write(static_cast<uint32_t>(this->layer));
         secondarySerializer.Write(this->isStatic);
@@ -940,6 +941,7 @@ namespace GTEngine
                 {
                 case 1:
                     {
+                        deserializer.Read(this->uniqueID);
                         deserializer.Read(this->name);
                         deserializer.Read(static_cast<uint32_t &>(this->layer));
                         deserializer.Read(this->isStatic);

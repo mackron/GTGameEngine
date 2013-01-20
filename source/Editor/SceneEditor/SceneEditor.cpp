@@ -1402,7 +1402,7 @@ namespace GTEngine
 
 
             Serialization::ChunkHeader header;
-            header.id          = Serialization::ChunkID_SceneEditorMetadata;
+            header.id          = Serialization::ChunkID_Scene_EditorMetadata;
             header.version     = 1;
             header.sizeInBytes = metadataSerializer.GetBufferSizeInBytes();
 
@@ -1426,7 +1426,7 @@ namespace GTEngine
         Serialization::ChunkHeader header;
         deserializer.Peek(&header, sizeof(Serialization::ChunkHeader));
 
-        if (header.id == Serialization::ChunkID_SceneEditorMetadata)
+        if (header.id == Serialization::ChunkID_Scene_EditorMetadata)
         {
             // Since we only peeked at the header, we'll need to now seek past it.
             deserializer.Seek(sizeof(Serialization::ChunkHeader));
