@@ -988,12 +988,12 @@ namespace GTEngine
 
     private:
 
+        /// The unique ID of the scene node, for use by the scene that the node is currently contained in.
+        uint64_t uniqueID;
+
         /// The name of this node. Should usually be unique, but doesn't need to be. This can be modified, so we'll use a String object
         /// to make things easier.
         GTCore::String name;
-
-        /// The unique ID of the scene node, for use by the scene that the node is currently contained in.
-        uint64_t uniqueID;
 
         /// The parent of the scene node. If this is null, it is a root object.
         SceneNode* parent;

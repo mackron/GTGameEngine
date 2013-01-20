@@ -624,8 +624,7 @@ namespace GTEngine
         /// The list of viewports currently attached to this scene.
         GTCore::List<SceneViewport*> viewports;
 
-        // TODO: Should probably do a specialised container for this. Can probably avoid at least one pointer dereference for each scene node during iteration. Will need to be
-        //       a map so we can do fast searching.
+
         /// The list of scene nodes in the scene. This contains every scene node, including those connected to a parent. This is indexed by the unique ID of the scene node.
         SceneNodeMap sceneNodes;
 
