@@ -765,7 +765,7 @@ namespace GTEngine
         */
         void RemoveDataPointer(size_t key)
         {
-            this->dataPointers.RemoveByValue(key);
+            this->dataPointers.RemoveByKey(key);
         }
 
 

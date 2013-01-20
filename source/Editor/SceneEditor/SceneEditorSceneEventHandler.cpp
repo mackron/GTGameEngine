@@ -1,5 +1,5 @@
 
-#include <GTEngine/Editor/SceneEditorSceneEventHandler.hpp>
+#include <GTEngine/Editor/SceneEditor/SceneEditorSceneEventHandler.hpp>
 #include <GTEngine/Editor/SceneEditor/SceneEditor.hpp>
 
 namespace GTEngine
