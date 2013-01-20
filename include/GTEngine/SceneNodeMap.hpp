@@ -75,7 +75,8 @@ namespace GTEngine
         /// @remarks
         ///     This should only be used for iteration. It's important to not add or remove items from the
         ///     map when iteration is happening since that will break the ordering.
-        SceneNode* GetSceneNodeAtIndex(size_t index);
+              SceneNode* GetSceneNodeAtIndex(size_t index);
+        const SceneNode* GetSceneNodeAtIndex(size_t index) const;
 
 
         /// Clears the map.

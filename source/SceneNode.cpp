@@ -109,6 +109,11 @@ namespace GTEngine
         return this->parent;
     }
 
+    const SceneNode* SceneNode::GetParent() const
+    {
+        return this->parent;
+    }
+
 
     SceneNode* SceneNode::GetFirstChild()
     {

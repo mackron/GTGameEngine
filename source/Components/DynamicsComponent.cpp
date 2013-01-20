@@ -537,7 +537,7 @@ namespace GTEngine
     }
 
 
-    VertexArray* DynamicsComponent::CreateCollisionShapeMesh(bool applyNodeTransform)
+    VertexArray* DynamicsComponent::CreateCollisionShapeMesh(bool applyNodeTransform) const
     {
         int shapeCount = this->collisionShape->getNumChildShapes();
 

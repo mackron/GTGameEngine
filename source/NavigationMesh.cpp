@@ -74,36 +74,32 @@ namespace GTEngine
             // Here is where we create the geometric data for the applicable scene nodes. For now we will look only at static meshes, but we will consider
             // obstacles later on.
             auto &nodes = scene.GetSceneNodes();
-            for (size_t i = 0; i < nodes.count; ++i)
+            for (size_t i = 0; i < nodes.GetCount(); ++i)
             {
-                auto iNode = nodes.buffer[i];
-                assert(iNode != nullptr);
+                auto node = nodes.GetSceneNodeAtIndex(i);
+                assert(node != nullptr);
                 {
-                    auto node = iNode->value;
-                    assert(node != nullptr);
+                    auto dynamics = node->GetComponent<GTEngine::DynamicsComponent>();
+                    if (dynamics != nullptr && dynamics->IsNavigationMeshGenerationEnabled())
                     {
-                        auto dynamics = node->GetComponent<GTEngine::DynamicsComponent>();
-                        if (dynamics != nullptr && dynamics->IsNavigationMeshGenerationEnabled())
+                        auto mesh = dynamics->CreateCollisionShapeMesh(true);   // <-- 'true' means to apply the scene node's transformation.
+                        if (mesh != nullptr)
                         {
-                            auto mesh = dynamics->CreateCollisionShapeMesh(true);   // <-- 'true' means to apply the scene node's transformation.
-                            if (mesh != nullptr)
-                            {
-                                // With the mesh information retrieved we can now rasterize the mesh on the heightfield.
-                                auto vertices      = mesh->GetVertexDataPtr();
-                                auto vertexCount   = mesh->GetVertexCount();
-                                auto indices       = reinterpret_cast<const int*>(mesh->GetIndexDataPtr());
-                                auto indexCount    = mesh->GetIndexCount();
-                                auto triangleCount = indexCount / 3;
+                            // With the mesh information retrieved we can now rasterize the mesh on the heightfield.
+                            auto vertices      = mesh->GetVertexDataPtr();
+                            auto vertexCount   = mesh->GetVertexCount();
+                            auto indices       = reinterpret_cast<const int*>(mesh->GetIndexDataPtr());
+                            auto indexCount    = mesh->GetIndexCount();
+                            auto triangleCount = indexCount / 3;
 
-                                auto walkableAreas = new unsigned char[triangleCount];
-                                memset(walkableAreas, 0, triangleCount * sizeof(unsigned char));
+                            auto walkableAreas = new unsigned char[triangleCount];
+                            memset(walkableAreas, 0, triangleCount * sizeof(unsigned char));
 
-                                rcMarkWalkableTriangles(&context, this->config.walkableSlopeAngle, vertices, vertexCount, indices, triangleCount, walkableAreas);
-                                rcRasterizeTriangles(&context, vertices, vertexCount, indices, walkableAreas, triangleCount, *heightfield, this->config.walkableClimb);
+                            rcMarkWalkableTriangles(&context, this->config.walkableSlopeAngle, vertices, vertexCount, indices, triangleCount, walkableAreas);
+                            rcRasterizeTriangles(&context, vertices, vertexCount, indices, walkableAreas, triangleCount, *heightfield, this->config.walkableClimb);
 
-                                delete [] walkableAreas;
-                                delete mesh;
-                            }
+                            delete [] walkableAreas;
+                            delete mesh;
                         }
                     }
                 }
