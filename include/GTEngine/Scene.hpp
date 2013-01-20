@@ -12,6 +12,7 @@
 #include "DefaultSceneRenderer.hpp"
 #include "NavigationMesh.hpp"
 #include "Serialization.hpp"
+#include "SceneNodeMap.hpp"
 
 
 /// Contact test callbacks.
@@ -484,7 +485,7 @@ namespace GTEngine
         void FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output);
 
         /// A hacky temp method for retrieving a reference to the internal list of scene nodes. (Used with NavigationMesh. Will be replaced later.)
-        const GTCore::Map<uint64_t, SceneNode*> & GetSceneNodes() const { return this->sceneNodes; }
+        const SceneNodeMap & GetSceneNodes() const { return this->sceneNodes; }
 
 
 
@@ -626,7 +627,7 @@ namespace GTEngine
         // TODO: Should probably do a specialised container for this. Can probably avoid at least one pointer dereference for each scene node during iteration. Will need to be
         //       a map so we can do fast searching.
         /// The list of scene nodes in the scene. This contains every scene node, including those connected to a parent. This is indexed by the unique ID of the scene node.
-        GTCore::Map<uint64_t, SceneNode*> sceneNodes;
+        SceneNodeMap sceneNodes;
 
         /// The next unique ID to apply to new scene nodes.
         uint64_t nextSceneNodeID;

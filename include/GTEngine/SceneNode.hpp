@@ -221,7 +221,8 @@ namespace GTEngine
         /**
         *   \brief  Retrieves the parent node, or null if the node does not have a parent.
         */
-        SceneNode* GetParent();
+              SceneNode* GetParent();
+        const SceneNode* GetParent() const;
 
 
         /// Retrieves a pointer to the first child node.

@@ -320,7 +320,7 @@ namespace GTEngine
         ///     This only contains vertex positions. No texture coordinates. No normals.
         ///     @par
         ///     This is useful for use by Recast (for navigation mesh generation).
-        VertexArray* CreateCollisionShapeMesh(bool applyNodeTransform = false);
+        VertexArray* CreateCollisionShapeMesh(bool applyNodeTransform = false) const;
 
 
         /// Retrieves a reference to the collision shape.

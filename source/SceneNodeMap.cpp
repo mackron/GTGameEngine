@@ -116,8 +116,6 @@ namespace GTEngine
 
     SceneNode* SceneNodeMap::FindByID(uint64_t sceneNodeID, size_t &index)
     {
-        SceneNode* result = nullptr;
-
         if (this->count > 0)
         {
             // It's just so much easier using signed values here...
@@ -143,17 +141,18 @@ namespace GTEngine
                 }
                 else
                 {
-                    result = this->buffer[mid];
-                    index  = static_cast<size_t>(mid);
-                    return result;
+                    index = static_cast<size_t>(mid);
+                    return this->buffer[mid];
                 }
             }
 
             // If we have made it here, we weren't exact.
             index = static_cast<size_t>(mid + offset);
+            return nullptr;
         }
 
-        return result;
+        index = 0;
+        return nullptr;
     }
 
     SceneNode* SceneNodeMap::FindByID(uint64_t sceneNodeID)
@@ -169,6 +168,14 @@ namespace GTEngine
     }
 
     SceneNode* SceneNodeMap::GetSceneNodeAtIndex(size_t index)
+    {
+        assert(index < this->count);
+        {
+            return this->buffer[index];
+        }
+    }
+
+    const SceneNode* SceneNodeMap::GetSceneNodeAtIndex(size_t index) const
     {
         assert(index < this->count);
         {
