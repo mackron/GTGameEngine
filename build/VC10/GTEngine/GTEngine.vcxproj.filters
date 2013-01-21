@@ -707,6 +707,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeMap.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneStateStack.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackFrame.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1172,6 +1178,12 @@
       <Filter>source\Editor\SceneEditor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\SceneNodeMap.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneStateStack.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneStateStackFrame.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
