@@ -1,41 +1,29 @@
 
 #include <GTEngine/SceneStateStack.hpp>
+#include <GTEngine/Scene.hpp>
 
 namespace GTEngine
 {
-    SceneStateStack::SceneStateStack()
-        : branches(), currentBranch(nullptr)
+    SceneStateStack::SceneStateStack(Scene &sceneIn)
+        : scene(sceneIn), branches(), masterBranch(nullptr, 0), currentBranch(&masterBranch)
     {
-        // The master branch.
-        uint32_t masterID = this->CreateBranch();
-        assert(masterID == 0);
-        {
-            this->SwitchBranch(masterID);
-        }
+        // Add the master branch.
+        this->branches.Add(0, &this->masterBranch);
     }
 
     SceneStateStack::~SceneStateStack()
     {
-        for (size_t i = 0; i < this->branches.count; ++i)
-        {
-            delete this->branches.buffer[i]->value;
-        }
     }
 
 
     uint32_t SceneStateStack::CreateBranch()
     {
-        assert(this->branches.count > 0);
+        assert(this->currentBranch != nullptr);
         {
             uint32_t newID = this->GetNewBranchID();
-
-            if (this->currentBranch != nullptr)
+            assert(newID > 0);
             {
-                this->branches.Add(newID, new SceneStateStackBranch(this->currentBranch, this->currentBranch->GetCurrentFrameIndex()));
-            }
-            else
-            {
-                this->branches.Add(newID, new SceneStateStackBranch(nullptr, 0));
+                this->branches.Add(newID, this->currentBranch->CreateBranch());
             }
 
             return newID;
@@ -60,7 +48,13 @@ namespace GTEngine
     }
 
 
-
+    void SceneStateStack::AppendFrame()
+    {
+        assert(this->currentBranch != nullptr);
+        {
+            this->currentBranch->AppendFrame();
+        }
+    }
 
 
 
@@ -69,13 +63,9 @@ namespace GTEngine
 
     uint32_t SceneStateStack::GetNewBranchID() const
     {
-        if (this->branches.count > 0)
+        assert(this->branches.count > 0);
         {
             return this->branches.buffer[this->branches.count - 1]->key + 1;
-        }
-        else
-        {
-            return 0;
         }
     }
 }

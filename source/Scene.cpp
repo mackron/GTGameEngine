@@ -8,6 +8,11 @@
 #include <GTEngine/Errors.hpp>
 #include <GTCore/ToString.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4355)   // 'this' used in initialise list.
+#endif
+
 // Culling Callbacks.
 namespace GTEngine
 {
@@ -250,7 +255,8 @@ namespace GTEngine
           viewports(), sceneNodes(), nextSceneNodeID(0),
           ambientLightComponents(), directionalLightComponents(),
           navigationMesh(),
-          eventHandlers()
+          eventHandlers(),
+          stateStack(*this)
     {
     }
 
@@ -262,7 +268,8 @@ namespace GTEngine
           viewports(), sceneNodes(), nextSceneNodeID(0),
           ambientLightComponents(), directionalLightComponents(),
           navigationMesh(),
-          eventHandlers()
+          eventHandlers(),
+          stateStack(*this)
     {
     }
 
@@ -529,6 +536,26 @@ namespace GTEngine
         this->eventHandlers.RemoveFirstOccuranceOf(&eventHandler);
     }
 
+
+
+
+    ////////////////////////////////////////////////////
+    // State Stack
+
+    uint32_t Scene::CreateStateStackBranch()
+    {
+        return this->stateStack.CreateBranch();
+    }
+
+    bool Scene::SwitchStateStackBranch(uint32_t branchID)
+    {
+        return this->stateStack.SwitchBranch(branchID);
+    }
+
+    void Scene::AppendStateStackFrame()
+    {
+        this->stateStack.AppendFrame();
+    }
 
 
 
@@ -1327,3 +1354,8 @@ namespace GTEngine
         }
     }
 }
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif

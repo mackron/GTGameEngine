@@ -13,6 +13,7 @@
 #include "NavigationMesh.hpp"
 #include "Serialization.hpp"
 #include "SceneNodeMap.hpp"
+#include "SceneStateStack.hpp"
 
 
 /// Contact test callbacks.
@@ -362,6 +363,33 @@ namespace GTEngine
         /// @param eventHandler [in] A reference to the event handler to detach.
         void DetachEventHandler(SceneEventHandler &eventHandler);
 
+        
+
+
+        ////////////////////////////////////////////
+        // State Stack
+
+        /// Creates a new branch on the state stack at the current frame, with the current branch as it's parent.
+        ///
+        /// @return The ID of the new branch.
+        uint32_t CreateStateStackBranch();
+
+        /// Switches to the branch of the given ID.
+        ///
+        /// @param branchID [in] The ID of the branch to switch to.
+        ///
+        /// @return True if the branch was switched; false otherwise. This will only fail if the branch does not exist.
+        bool SwitchStateStackBranch(uint32_t branchID);
+
+        /// Appends a state stack frame to the current branch after the current frame.
+        ///
+        /// @remarks
+        ///     This will delete every frame coming after the current frame before appending the new one.
+        ///     @par
+        ///     The new frame will become the current one.
+        void AppendStateStackFrame();
+
+
 
 
     // Collision Tests.
@@ -646,6 +674,10 @@ namespace GTEngine
 
         /// The list of event handlers current attached to the scene.
         GTCore::Vector<SceneEventHandler*> eventHandlers;
+
+
+        /// The state stack.
+        SceneStateStack stateStack;
 
 
     private:    // No copying.
