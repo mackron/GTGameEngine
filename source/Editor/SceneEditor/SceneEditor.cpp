@@ -156,6 +156,9 @@ namespace GTEngine
             }
 
 
+            // We want to do an initial commit.
+            this->scene.CommitStateStackFrame();
+
             // We want an undo/redo stack item for the initial state of the scene.
             this->AppendStateStackFrame();
 
@@ -702,6 +705,12 @@ namespace GTEngine
                 }
             }
         }
+    }
+
+    void SceneEditor::CommitStateStackFrame()
+    {
+        this->scene.CommitStateStackFrame();
+        this->MarkAsModified();
     }
 
     void SceneEditor::AppendStateStackFrame()
@@ -1371,6 +1380,7 @@ namespace GTEngine
 
             if (this->transformedObjectWithGizmo)
             {
+                this->CommitStateStackFrame();
                 this->AppendStateStackFrame();
                 this->transformedObjectWithGizmo = false;
             }
