@@ -229,6 +229,9 @@ namespace GTEngine
 
     void SceneEditor::EnablePhysicsSimulation()
     {
+        // We don't really want to be staging anything while doing physics simulation.
+        this->scene.DisableStateStackStaging();
+
         this->simulationSerializer.Clear();
         this->SerializeScene(this->simulationSerializer);
 
@@ -244,6 +247,10 @@ namespace GTEngine
             GTCore::BasicDeserializer deserializer(this->simulationSerializer.GetBuffer(), this->simulationSerializer.GetBufferSizeInBytes());
             this->DeserializeScene(deserializer);
         }
+
+
+        // We disable state stack staging, so we'll want to re-enable that now.
+        this->scene.EnableStateStackStaging();
     }
 
     bool SceneEditor::IsPhysicsSimulationEnabled() const

@@ -1,10 +1,12 @@
 
 #include <GTEngine/SceneStateStackBranch.hpp>
+#include <GTEngine/SceneStateStack.hpp>
 
 namespace GTEngine
 {
-    SceneStateStackBranch::SceneStateStackBranch(SceneStateStackBranch* parentIn, uint32_t rootFrameIndexIn)
-        : parent(parentIn), children(), rootFrameIndex(rootFrameIndexIn),
+    SceneStateStackBranch::SceneStateStackBranch(SceneStateStack &stateStackIn, SceneStateStackBranch* parentIn, uint32_t rootFrameIndexIn)
+        : stateStack(stateStackIn),
+          parent(parentIn), children(), rootFrameIndex(rootFrameIndexIn),
           frames(), currentFrameIndex(rootFrameIndexIn)
     {
     }
@@ -17,6 +19,17 @@ namespace GTEngine
         {
             delete this->frames[i];
         }
+    }
+
+
+    Scene & SceneStateStackBranch::GetScene()
+    {
+        return this->stateStack.GetScene();
+    }
+
+    const Scene & SceneStateStackBranch::GetScene() const
+    {
+        return this->stateStack.GetScene();
     }
 
 
@@ -48,7 +61,7 @@ namespace GTEngine
         assert(this->currentFrameIndex >  this->rootFrameIndex);
         assert(this->currentFrameIndex <= this->rootFrameIndex + this->frames.count);
         {
-            auto child = new SceneStateStackBranch(this, this->currentFrameIndex);
+            auto child = new SceneStateStackBranch(this->stateStack, this, this->currentFrameIndex);
             this->children.PushBack(child);
 
             return child;
@@ -74,7 +87,69 @@ namespace GTEngine
     }
 
 
-    void SceneStateStackBranch::AppendFrame()
+    void SceneStateStackBranch::StageInsert(uint64_t sceneNodeID)
+    {
+        // If a delete command with the scene node is already staged, all we want to do is remove it from the deletes and just
+        // ignore everything.
+        size_t index;
+        if (this->stagedDeletes.FindFirstIndexOf(sceneNodeID, index))
+        {
+            this->stagedDeletes.Remove(index);
+        }
+        else
+        {
+            // If the scene node is in the updates list we need to remove it.
+            this->stagedUpdates.RemoveFirstOccuranceOf(sceneNodeID);
+
+            if (!this->stagedInserts.Exists(sceneNodeID))
+            {
+                this->stagedInserts.PushBack(sceneNodeID);
+            }
+        }
+    }
+
+    void SceneStateStackBranch::StageDelete(uint64_t sceneNodeID)
+    {
+        // If an insert command with the scene node is already staged, all we want to do is remove it from the inserts and just
+        // ignore everything.
+        size_t index;
+        if (this->stagedInserts.FindFirstIndexOf(sceneNodeID, index))
+        {
+            this->stagedInserts.Remove(index);
+        }
+        else
+        {
+            // If the scene node is in the updates list we need to remove it.
+            this->stagedUpdates.RemoveFirstOccuranceOf(sceneNodeID);
+
+            if (!this->stagedDeletes.Exists(sceneNodeID))
+            {
+                this->stagedDeletes.PushBack(sceneNodeID);
+            }
+        }
+    }
+
+    void SceneStateStackBranch::StageUpdate(uint64_t sceneNodeID)
+    {
+        // We ignore update commands if an insert or delete command is already present.
+        if (!this->stagedInserts.Exists(sceneNodeID) &&
+            !this->stagedDeletes.Exists(sceneNodeID) &&
+            !this->stagedUpdates.Exists(sceneNodeID))
+        {
+            this->stagedUpdates.PushBack(sceneNodeID);
+        }
+    }
+
+
+    void SceneStateStackBranch::ClearStagingArea()
+    {
+        this->stagedDeletes.Clear();
+        this->stagedInserts.Clear();
+        this->stagedUpdates.Clear();
+    }
+
+
+    void SceneStateStackBranch::Commit()
     {
         if (this->currentFrameIndex < this->rootFrameIndex)
         {
@@ -114,12 +189,19 @@ namespace GTEngine
                 assert(frame != nullptr);
                 {
                     this->frames.PopBack();
+                    delete frame;
                 }
             }
         }
+
+
+        // Now we can append the new frame.
+        this->frames.PushBack(new SceneStateStackFrame(*this, this->stagedInserts, this->stagedDeletes, this->stagedUpdates));
+
+
+        // The staging area must be cleared after every commit.
+        this->ClearStagingArea();
     }
-
-
 
 
 

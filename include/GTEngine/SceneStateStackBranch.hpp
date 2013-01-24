@@ -4,10 +4,13 @@
 
 #include "SceneStateStackFrame.hpp"
 #include <GTCore/Vector.hpp>
-//#include <cstdint>
+
 
 namespace GTEngine
 {
+    class Scene;
+    class SceneStateStack;
+
     /// Class representing a branch on the scene stack.
     ///
     /// A branch is usually a child to another branch, except for the master branch. A branch can also, of course, have multiple children.
@@ -19,10 +22,20 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        SceneStateStackBranch(SceneStateStackBranch* parent, uint32_t rootFrameIndex);
+        SceneStateStackBranch(SceneStateStack &stateStack, SceneStateStackBranch* parent, uint32_t rootFrameIndex);
 
         /// Destructor.
         ~SceneStateStackBranch();
+
+
+        /// Retrieves a reference to the state stack that owns this branch.
+              SceneStateStack & GetStateStack()       { return this->stateStack; }
+        const SceneStateStack & GetStateStack() const { return this->stateStack; }
+
+        /// Retrieves a reference to the scene that owns the state stack that subsequently owns this branch.
+              Scene & GetScene();
+        const Scene & GetScene() const;
+
 
 
         /// Retrieves a pointer to the parent branch.
@@ -50,6 +63,9 @@ namespace GTEngine
         /// Retrieves the index of the current frame.
         uint32_t GetCurrentFrameIndex() const { return this->currentFrameIndex; }
 
+        /// Retrieves the number of frames.
+        size_t GetFrameCount() const { return this->frames.count; }
+
 
 
         /// Creates and appends a child branch at the current frame index.
@@ -67,13 +83,37 @@ namespace GTEngine
         void DeleteAllBranches();
 
 
-        /// Appends a new frame to the branch at the position just after the current frame index.
+        /// Stages an insert command of the given scene node.
+        ///
+        /// @param sceneNodeID [in] The ID of the scene node that was inserted.
+        void StageInsert(uint64_t sceneNodeID);
+
+        /// Stages a delete command of the given scene node.
+        ///
+        /// @param sceneNodeID [in] The ID of the scene node that was deleted.
+        void StageDelete(uint64_t sceneNodeID);
+
+        /// Stages an update command of the given scene node.
+        ///
+        /// @param sceneNodeID [in] The ID of the scene node that was updated.
+        void StageUpdate(uint64_t sceneNodeID);
+
+
+        /// Clears the staging area.
+        void ClearStagingArea();
+
+
+        /// Commits the changes by creating a new frame on the current branch.
         ///
         /// @remarks
+        ///     This will remove all frames after the current frame before appending the new frame, including child branches that are rooted after it.
+        ///     @par
         ///     The new frame will become the current one.
         ///     @par
-        ///     Everything coming after the current frame will be deleted, including child branches.
-        void AppendFrame();
+        ///     If the current frame is not local to the current branch, it will be re-parentend such that the parent frame will be changed the current
+        ///     frame. No branches will be deleted.
+        void Commit();
+
 
 
 
@@ -94,6 +134,10 @@ namespace GTEngine
 
     private:
 
+        /// The state stack that owns this branch.
+        SceneStateStack &stateStack;
+
+
         /// The parent branch. This will be null if the branch does not have a parent (the master branch).
         SceneStateStackBranch* parent;
 
@@ -109,6 +153,26 @@ namespace GTEngine
 
         /// The index of the current frame.
         uint32_t currentFrameIndex;
+
+
+
+        /////////////////////////////////////////
+        // Staging Area
+
+        /// The list of scene node ID's of newly inserted scene nodes in the staging area.
+        GTCore::Vector<uint64_t> stagedInserts;
+
+        /// The list of scene node ID's of newly deleted scene nodes in the staging area.
+        GTCore::Vector<uint64_t> stagedDeletes;
+
+        /// The list of scene node ID's of newly updated scene nodes in the staging area.
+        GTCore::Vector<uint64_t> stagedUpdates;
+
+
+
+    private:    // No copying.
+        SceneStateStackBranch(const SceneStateStackBranch &);
+        SceneStateStackBranch & operator=(const SceneStateStackBranch &);
     };
 }
 
