@@ -404,7 +404,7 @@ namespace GTEngine
         void DisableStateStackStaging();
 
         /// Performs a commit on the state stack.
-        void StateStackCommit();
+        void CommitStateStackFrame();
 
 
 
