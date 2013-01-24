@@ -1373,6 +1373,10 @@ namespace GTEngine
         // TODO: Proximity, occluders.
 
 
+        // The event handler needs to know about this.
+        this->PostEvent_OnSceneNodeComponentChanged(node, component);
+
+        // The node has been updated, so we need to stage it for the next commit.
         if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
@@ -1438,6 +1442,14 @@ namespace GTEngine
         for (size_t i = 0; i < this->eventHandlers.count; ++i)
         {
             this->eventHandlers[i]->OnSceneNodeShow(node);
+        }
+    }
+
+    void Scene::PostEvent_OnSceneNodeComponentChanged(SceneNode &node, Component &component)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnSceneNodeComponentChanged(node, component);
         }
     }
 }

@@ -13,6 +13,14 @@ namespace GTEngine
     }
 
 
+    void Component::OnChanged()
+    {
+        auto scene = this->node.GetScene();
+        if (scene != nullptr)
+        {
+            scene->OnSceneNodeComponentChanged(this->node, *this);
+        }
+    }
 
 
     Component* CreateComponentByName(const char* componentName, SceneNode &hostSceneNode)
