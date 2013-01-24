@@ -7,6 +7,7 @@ namespace GTEngine
     class Scene;
     class SceneObject;
     class SceneNode;
+    class Component;
 
     /// Class for intercepting events from a scene.
     ///
@@ -59,6 +60,12 @@ namespace GTEngine
         ///
         /// @param sceneNode [in] A reference to the scene node that has just been made visible.
         virtual void OnSceneNodeShow(SceneNode &sceneNode);
+
+        /// Called when a component of a scene node has changed.
+        ///
+        /// @param node      [in] A reference to the scene node whose component has just been modified.
+        /// @param component [in] A reference to the component that was changed.
+        virtual void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
     };
 }
 

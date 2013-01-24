@@ -38,4 +38,8 @@ namespace GTEngine
     void SceneEventHandler::OnSceneNodeShow(SceneNode &)
     {
     }
+
+    void SceneEventHandler::OnSceneNodeComponentChanged(SceneNode &, Component &)
+    {
+    }
 }

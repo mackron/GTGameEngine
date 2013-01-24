@@ -631,6 +631,12 @@ namespace GTEngine
         /// @param node [in] A reference to the scene node that has just been made visible.
         void PostEvent_OnSceneNodeShow(SceneNode &node);
 
+        /// Helper for posting an OnSceneNodeComponentChanged event.
+        ///
+        /// @param node      [in] A reference to the scene node whose component has just been modified.
+        /// @param component [in] A reference to the component that was changed.
+        void PostEvent_OnSceneNodeComponentChanged(SceneNode &node, Component &component);
+
 
     private:
 

@@ -70,6 +70,10 @@ namespace GTEngine
         virtual void Deserialize(GTCore::Deserializer &deserializer);
 
 
+        /// Called by inheritted classes when the component has changed so that the scene can be notified and events posted.
+        virtual void OnChanged();
+
+
     protected:
 
         /// The node this component is attached to. This can not be changed after construction and can not be null. Thus,
