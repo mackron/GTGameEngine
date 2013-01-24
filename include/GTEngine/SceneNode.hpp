@@ -938,6 +938,19 @@ namespace GTEngine
         bool IsSerializationEnabled() const;
 
 
+        /// Disables staging on the scene's state stack.
+        void DisableStateStackStaging();
+
+        /// Enables staging on the scene's state stack.
+        void EnableStateStackStaging();
+
+        /// Determines whether or not state stack staging is enabled.
+        ///
+        /// @remarks
+        ///     This is called recursively. If a parent has staging disabled, so does it's children.
+        bool IsStateStackStagingEnabled() const;
+
+
 
     // Events. Use these to make posting events a bit easier.
     public:
@@ -1121,6 +1134,7 @@ namespace GTEngine
             NoOrientationInheritance = (1 << 5),
             NoScaleInheritance       = (1 << 6),
             NoSerialization          = (1 << 7),            // <-- Only used when doing serialization from a scene.
+            NoStateStackStaging      = (1 << 8),            // <-- Disables staging on the state stack.
         };
 
 

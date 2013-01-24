@@ -49,6 +49,7 @@ namespace GTEngine
         this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
         this->camera.SetDataPointer(0, this);
         this->camera.DisableSerialization();
+        this->camera.DisableStateStackStaging();
 
 
         this->viewport.SetCameraNode(this->camera);
@@ -1454,6 +1455,9 @@ namespace GTEngine
             this->camera.Deserialize(deserializer);
             deserializer.Read(this->cameraXRotation);
             deserializer.Read(this->cameraYRotation);
+
+            this->camera.DisableSerialization();
+            this->camera.DisableStateStackStaging();
         }
 
 

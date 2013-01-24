@@ -346,8 +346,9 @@ namespace GTEngine
         this->RestoreColours();
 
 
-        // We don't want to do serialization here.
+        // We don't want to do serialization and state stack staging here.
         this->sceneNode.DisableSerialization();
+        this->sceneNode.DisableStateStackStaging();
 
 
 

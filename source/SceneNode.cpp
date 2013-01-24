@@ -1039,6 +1039,31 @@ namespace GTEngine
     }
 
 
+    void SceneNode::DisableStateStackStaging()
+    {
+        this->flags = this->flags | NoStateStackStaging;
+    }
+
+    void SceneNode::EnableStateStackStaging()
+    {
+        this->flags = this->flags & ~NoStateStackStaging;
+    }
+
+    bool SceneNode::IsStateStackStagingEnabled() const
+    {
+        bool locallyEnabled = (this->flags & NoStateStackStaging) == 0;
+
+        if (locallyEnabled && this->parent != nullptr)
+        {
+            return this->parent->IsStateStackStagingEnabled();
+        }
+        else
+        {
+            return locallyEnabled;
+        }
+    }
+
+
 
     void SceneNode::OnAttach(SceneNode &childNode)
     {
