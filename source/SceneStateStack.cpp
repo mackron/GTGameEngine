@@ -90,7 +90,7 @@ namespace GTEngine
 
     bool SceneStateStack::HasInitialFrame() const
     {
-        return this->masterBranch.GetFrameCount() > 0;
+        return this->masterBranch.GetLocalFrameCount() > 0;
     }
 
 

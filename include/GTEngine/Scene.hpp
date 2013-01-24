@@ -408,6 +408,12 @@ namespace GTEngine
         /// Performs a commit on the state stack.
         void CommitStateStackFrame();
 
+        /// Retrieves the number of stack frames on the current branch.
+        ///
+        /// @remarks
+        ///     The number of stack frames on the current branch.
+        size_t GetStateStackFrameCount() const;
+
 
 
 

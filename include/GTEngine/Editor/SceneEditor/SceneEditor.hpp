@@ -193,6 +193,11 @@ namespace GTEngine
         /// SceneEditorSceneEventHandler::OnSceneNodeShow()
         void OnSceneNodeShow(SceneNode &node);
 
+        /// SceneEditorSceneEventHandler::OnSceneNodeComponentChanged()
+        void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
+
+        /// SceneEditorSceneEventHandler::OnStateStackFrameCommitted()
+        void OnStateStackFrameCommitted();
 
 
 
@@ -415,6 +420,10 @@ namespace GTEngine
         /// will be the next to be undone. New commands will be placed at this index.
         size_t sceneStateIndex;
 
+
+        /// Keeps track of whether or not we're deserializing. We use this to control whether or not the scene should be marked as modified and stack
+        /// frames committed.
+        bool isDeserializing;
 
 
         /// Structure containing the GUI elements of the editor.

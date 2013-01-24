@@ -56,6 +56,19 @@ namespace GTEngine
     }
 
 
+    size_t SceneStateStackBranch::GetTotalFrameCount() const
+    {
+        if (this->parent != nullptr)
+        {
+            return this->rootFrameIndex + 1 + this->frames.count;
+        }
+        else
+        {
+            return this->frames.count;
+        }
+    }
+
+
     SceneStateStackBranch* SceneStateStackBranch::CreateBranch()
     {
         assert(this->currentFrameIndex >  this->rootFrameIndex);

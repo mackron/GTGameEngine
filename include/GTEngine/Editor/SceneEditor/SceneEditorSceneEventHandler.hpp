@@ -41,6 +41,13 @@ namespace GTEngine
         void OnSceneNodeShow(SceneNode &node);
 
 
+        /// SceneEventHandler::OnSceneNodeComponentChanged()
+        void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
+
+        /// SceneEventHandler::OnStateStackFrameCommitted()
+        void OnStateStackFrameCommitted();
+
+
 
     private:
 
