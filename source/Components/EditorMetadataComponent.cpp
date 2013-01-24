@@ -54,6 +54,7 @@ namespace GTEngine
     void EditorMetadataComponent::SetSelectionWireframeColour(const glm::vec3 &newColour)
     {
         this->selectionWireframeColour = newColour;
+        this->OnChanged();
     }
 
 
@@ -91,6 +92,9 @@ namespace GTEngine
 
 
         this->pickingCollisionShapeType = PickingCollisionShapeType_Model;
+
+
+        this->OnChanged();
     }
 
     void EditorMetadataComponent::SetPickingCollisionShapeToBox(const glm::vec3 &halfExtents, const glm::vec3 &offset)
@@ -126,6 +130,9 @@ namespace GTEngine
 
 
         this->pickingCollisionShapeType = PickingCollisionShapeType_Box;
+
+
+        this->OnChanged();
     }
 
     void EditorMetadataComponent::SetPickingCollisionShapeToTorus(float outerRadius, float innerRadius, unsigned int subdivisions)
@@ -144,7 +151,7 @@ namespace GTEngine
         auto compoundShape = new btCompoundShape;
 
         float segmentLength = 2.0f * SIMD_PI * outerRadius / static_cast<float>(subdivisions);
-        float segmentAngle  = 2.0f * SIMD_PI / static_cast<float>(subdivisions);
+        float segmentAngle  = 2.0f * SIMD_PI               / static_cast<float>(subdivisions);
 
         btCapsuleShape* cylinderShape = new btCapsuleShape(innerRadius, segmentLength);
 
@@ -179,6 +186,9 @@ namespace GTEngine
 
 
         this->pickingCollisionShapeType = PickingCollisionShapeType_Torus;
+
+
+        this->OnChanged();
     }
 
 
@@ -195,6 +205,9 @@ namespace GTEngine
                 world->RemoveCollisionObject(this->pickingCollisionObject);
                 world->AddCollisionObject(this->pickingCollisionObject, group, CollisionGroups::EditorSelectionRay);
             }
+
+
+            this->OnChanged();
         }
     }
 
@@ -253,6 +266,9 @@ namespace GTEngine
 
 
         this->spriteTexturePath = texturePath;
+
+
+        this->OnChanged();
     }
 
     void EditorMetadataComponent::ShowSprite(const char* texturePath, float colourR, float colourG, float colourB)
@@ -271,6 +287,9 @@ namespace GTEngine
         this->spriteModel                  = nullptr;
 
         this->spriteTexturePath = "";
+
+
+        this->OnChanged();
     }
 
     void EditorMetadataComponent::ApplyTransformToSprite()
@@ -363,6 +382,9 @@ namespace GTEngine
                 this->directionArrowModel->AttachMesh(this->directionArrowVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
                 this->directionArrowModel->meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 1.0f, 0.0f);
             }
+
+
+            this->OnChanged();
         }
     }
 
@@ -373,6 +395,9 @@ namespace GTEngine
 
         this->directionArrowModel = nullptr;
         this->directionArrowVA    = nullptr;
+
+
+        this->OnChanged();
     }
 
     bool EditorMetadataComponent::IsShowingDirectionArrow() const
@@ -497,6 +522,9 @@ namespace GTEngine
                 }
             }
         }
+
+
+        this->OnChanged();
     }
 
 
@@ -531,6 +559,10 @@ namespace GTEngine
 
             delete this->pickingCollisionShape;
             this->pickingCollisionShape = nullptr;
+
+
+
+            this->OnChanged();
         }
     }
 }

@@ -59,6 +59,9 @@ namespace GTEngine
         {
             this->constraint->SetAttachments(*bodyA, *bodyB, frameA, frameB);
         }
+
+
+        this->OnChanged();
     }
 
     void GenericConstraintComponent::SetAttachments(SceneObject &objectB, const glm::mat4 &frameB)
@@ -90,6 +93,9 @@ namespace GTEngine
         {
             this->constraint->SetAttachments(*bodyB, frameB);
         }
+
+
+        this->OnChanged();
     }
 
 
@@ -97,20 +103,24 @@ namespace GTEngine
     void GenericConstraintComponent::SetLinearLowerLimit(const glm::vec3 &limit)
     {
         this->constraint->setLinearLowerLimit(btVector3(limit.x, limit.y, limit.z));
+        this->OnChanged();
     }
 
     void GenericConstraintComponent::SetLinearUpperLimit(const glm::vec3 &limit)
     {
         this->constraint->setLinearUpperLimit(btVector3(limit.x, limit.y, limit.z));
+        this->OnChanged();
     }
 
     void GenericConstraintComponent::SetAngularLowerLimit(const glm::vec3 &limit)
     {
         this->constraint->setAngularLowerLimit(btVector3(limit.x, limit.y, limit.z));
+        this->OnChanged();
     }
 
     void GenericConstraintComponent::SetAngularUpperLimit(const glm::vec3 &limit)
     {
         this->constraint->setAngularUpperLimit(btVector3(limit.x, limit.y, limit.z));
+        this->OnChanged();
     }
 }

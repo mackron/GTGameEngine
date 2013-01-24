@@ -59,6 +59,9 @@ namespace GTEngine
         {
             this->constraint->SetAttachments(*bodyA, *bodyB, frameA, frameB);
         }
+
+
+        this->OnChanged();
     }
 
 
@@ -91,11 +94,17 @@ namespace GTEngine
         {
             this->constraint->SetAttachments(*bodyB, frameB);
         }
+
+
+
+        this->OnChanged();
     }
 
 
     void ConeTwistConstraintComponent::SetLimits(float swingSpan1, float swingSpan2, float twistSpan)
     {
         this->constraint->setLimit(swingSpan1, swingSpan2, twistSpan);
+
+        this->OnChanged();
     }
 }

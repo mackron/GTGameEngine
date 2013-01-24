@@ -28,18 +28,21 @@ namespace GTEngine
     {
     }
 
+
+    void PointLightComponent::SetColour(const glm::vec3 &colour)
+    {
+        this->colour = colour;
+        this->OnChanged();
+    }
+
+
     void PointLightComponent::SetAttenuation(float constant, float linear, float quadratic)
     {
         this->constantAttenuation  = constant;
         this->linearAttenuation    = linear;
         this->quadraticAttenuation = quadratic;
 
-        // The scene will need to update things like culling information. We need to let it know about this.
-        auto scene = this->node.GetScene();
-        if (scene != nullptr)
-        {
-            scene->OnSceneNodeComponentChanged(this->node, *this);
-        }
+        this->OnChanged();
     }
 
     float PointLightComponent::GetApproximateRadius() const
@@ -50,11 +53,13 @@ namespace GTEngine
     void PointLightComponent::EnableShadowCasting()
     {
         this->castShadows = true;
+        this->OnChanged();
     }
 
     void PointLightComponent::DisableShadowCasting()
     {
         this->castShadows = false;
+        this->OnChanged();
     }
 
 
@@ -74,6 +79,8 @@ namespace GTEngine
         deserializer.Read(this->linearAttenuation);
         deserializer.Read(this->quadraticAttenuation);
         deserializer.Read(this->castShadows);
+
+        this->OnChanged();
     }
 }
 
@@ -88,18 +95,21 @@ namespace GTEngine
     {
     }
 
+
+    void SpotLightComponent::SetColour(const glm::vec3 &colour)
+    {
+        this->colour = colour;
+        this->OnChanged();
+    }
+
+
     void SpotLightComponent::SetAttenuation(float constant, float linear, float quadratic)
     {
         this->constantAttenuation  = constant;
         this->linearAttenuation    = linear;
         this->quadraticAttenuation = quadratic;
 
-        // The scene will need to update things like culling information. We need to let it know about this.
-        auto scene = this->node.GetScene();
-        if (scene != nullptr)
-        {
-            scene->OnSceneNodeComponentChanged(this->node, *this);
-        }
+        this->OnChanged();
     }
 
     float SpotLightComponent::GetApproximateLength() const
@@ -111,14 +121,31 @@ namespace GTEngine
         return static_cast<float>((-l + sqrt(l * l - 4.0 * (c - 1000.0) * q)) / (2.0 * q));      // <-- <c - 100.0f> was previously <c - 1000.0f>. Might need to keep experimenting here.
     }
 
+
+    void SpotLightComponent::SetAngles(float newInnerAngle, float newOuterAngle)
+    {
+        if (newInnerAngle > newOuterAngle)
+        {
+            newInnerAngle = newOuterAngle;
+        }
+
+        this->innerAngle = newInnerAngle;
+        this->outerAngle = newOuterAngle;
+
+        this->OnChanged();
+    }
+
+
     void SpotLightComponent::EnableShadowCasting()
     {
         this->castShadows = true;
+        this->OnChanged();
     }
 
     void SpotLightComponent::DisableShadowCasting()
     {
         this->castShadows = false;
+        this->OnChanged();
     }
 
 
@@ -142,6 +169,8 @@ namespace GTEngine
         deserializer.Read(this->linearAttenuation);
         deserializer.Read(this->quadraticAttenuation);
         deserializer.Read(this->castShadows);
+
+        this->OnChanged();
     }
 }
 
@@ -159,19 +188,24 @@ namespace GTEngine
     {
     }
 
-    void DirectionalLightComponent::Initialise(const glm::vec3 &colour)
+
+    void DirectionalLightComponent::SetColour(const glm::vec3 &colour)
     {
         this->colour = colour;
+        this->OnChanged();
     }
+
 
     void DirectionalLightComponent::EnableShadowCasting()
     {
         this->castShadows = true;
+        this->OnChanged();
     }
 
     void DirectionalLightComponent::DisableShadowCasting()
     {
         this->castShadows = false;
+        this->OnChanged();
     }
 
 
@@ -185,6 +219,8 @@ namespace GTEngine
     {
         deserializer.Read(this->colour);
         deserializer.Read(this->castShadows);
+
+        this->OnChanged();
     }
 }
 
@@ -199,9 +235,11 @@ namespace GTEngine
     {
     }
 
-    void AmbientLightComponent::Initialise(const glm::vec3 &colour)
+
+    void AmbientLightComponent::SetColour(const glm::vec3 &colour)
     {
         this->colour = colour;
+        this->OnChanged();
     }
 
 
@@ -213,5 +251,7 @@ namespace GTEngine
     void AmbientLightComponent::Deserialize(GTCore::Deserializer &deserializer)
     {
         deserializer.Read(this->colour);
+
+        this->OnChanged();
     }
 }

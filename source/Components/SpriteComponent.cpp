@@ -20,6 +20,8 @@ namespace GTEngine
         delete this->texture;
         this->texture = new Texture2D(filename, filename);
 
+        this->OnChanged();
+
         return this->texture;
     }
 }

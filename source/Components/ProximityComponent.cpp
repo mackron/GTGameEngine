@@ -53,6 +53,8 @@ namespace GTEngine
                 world->RemoveGhostObject(this->ghostObject);
                 world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
             }
+
+            this->OnChanged();
         }
     }
 
@@ -99,6 +101,9 @@ namespace GTEngine
         }
 
         delete oldShape;
+
+
+        this->OnChanged();
     }
 }
 
