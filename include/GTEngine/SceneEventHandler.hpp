@@ -66,6 +66,10 @@ namespace GTEngine
         /// @param node      [in] A reference to the scene node whose component has just been modified.
         /// @param component [in] A reference to the component that was changed.
         virtual void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
+
+
+        /// Called when a frame is committed to the state stack.
+        virtual void OnStateStackFrameCommitted();
     };
 }
 

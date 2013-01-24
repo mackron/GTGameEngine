@@ -599,8 +599,11 @@ namespace GTEngine
             }
         }
 
-
         this->stateStack.Commit();
+
+
+        // We need to let the event handlers know about this.
+        this->PostEvent_OnStateStackFrameCommitted();
     }
 
     
@@ -1450,6 +1453,14 @@ namespace GTEngine
         for (size_t i = 0; i < this->eventHandlers.count; ++i)
         {
             this->eventHandlers[i]->OnSceneNodeComponentChanged(node, component);
+        }
+    }
+
+    void Scene::PostEvent_OnStateStackFrameCommitted()
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnStateStackFrameCommitted();
         }
     }
 }
