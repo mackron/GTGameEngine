@@ -194,6 +194,8 @@ namespace GTEngine
 
 namespace GTEngine
 {
+    // TODO: Document the state stack.
+
     /// A class representing a scene.
     ///
     /// A Scene object is actually mostly just a container around managers. The managers are what perform most of the real functionality of the scene.
