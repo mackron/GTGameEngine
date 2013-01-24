@@ -22,6 +22,9 @@ namespace GTEngine
         this->zFar   = zFar;
         
         this->projection = glm::perspective(fov * 0.5f, aspect, zNear, zFar);   // Although unintuitive, halving the FOV here is correct.
+
+
+        this->OnChanged();
     }
 
     void CameraComponent::Set2DProjection(float left, float right, float bottom, float top, float zNear, float zFar)
@@ -35,6 +38,9 @@ namespace GTEngine
         this->zFar   = zFar;
 
         this->projection = glm::ortho(left, right, bottom, top, zNear, zFar);
+
+
+        this->OnChanged();
     }
 
     glm::mat4 CameraComponent::GetViewMatrix() const
@@ -71,5 +77,7 @@ namespace GTEngine
         deserializer.Read(this->ortho);
         deserializer.Read(this->zNear);
         deserializer.Read(this->zFar);
+
+        this->OnChanged();
     }
 }

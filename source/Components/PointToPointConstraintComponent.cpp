@@ -59,6 +59,9 @@ namespace GTEngine
         {
             this->constraint->SetAttachments(*bodyA, *bodyB, pivotInA, pivotInB);
         }
+
+
+        this->OnChanged();
     }
 
 
@@ -91,5 +94,8 @@ namespace GTEngine
         {
             this->constraint->SetAttachments(*bodyB, pivotInB);
         }
+
+
+        this->OnChanged();
     }
 }

@@ -40,12 +40,8 @@ namespace GTEngine
             this->flags &= ~Owner;
         }
 
-        // This component has changed. We need to let the scene know about this so that it can change culling information and whatnot.
-        auto scene = this->GetNode().GetScene();
-        if (scene != nullptr)
-        {
-            scene->OnSceneNodeComponentChanged(this->GetNode(), *this);
-        }
+
+        this->OnChanged();
     }
 
     void ModelComponent::SetModel(Model &model, bool takeOwnership)
@@ -84,17 +80,22 @@ namespace GTEngine
         {
             this->flags &= ~CullBackFaces;
         }
+
+
+        this->OnChanged();
     }
 
 
     void ModelComponent::EnableShadowCasting()
     {
         this->flags |= CastShadow;
+        this->OnChanged();
     }
 
     void ModelComponent::DisableShadowCasting()
     {
         this->flags &= ~CastShadow;
+        this->OnChanged();
     }
 
 
@@ -183,6 +184,9 @@ namespace GTEngine
                 }
             }
         }
+
+
+        this->OnChanged();
     }
 }
 

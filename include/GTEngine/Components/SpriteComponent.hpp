@@ -17,10 +17,10 @@ namespace GTEngine
         ~SpriteComponent();
 
         /// Sets the texture to use with the sprite.
-        Texture2D * SetTexture(const char* filename);
+        Texture2D* SetTexture(const char* filename);
 
         /// Retrieves the texture of the sprite.
-        Texture2D * GetTexture() { return this->texture; }
+        Texture2D* GetTexture() { return this->texture; }
 
     private:
 

@@ -42,6 +42,9 @@ namespace GTEngine
         }
 
         delete oldShape;
+
+
+        this->OnChanged();
     }
 
   

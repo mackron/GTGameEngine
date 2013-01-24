@@ -71,13 +71,21 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is NOT the same as SceneNode::Show(). The scene node's visibility state will not be changed.
-        void ShowModel() { this->flags |= Visible; }
+        void ShowModel()
+        {
+            this->flags |= Visible;
+            this->OnChanged();
+        }
 
         /// Hides the model.
         ///
         /// @remarks
         ///     This is NOT the same as SceneNode::Hide(). The scene node's visibility state will not be changed, and instead only the model will be hidden.
-        void HideModel() { this->flags &= ~Visible; }
+        void HideModel()
+        {
+            this->flags &= ~Visible;
+            this->OnChanged();
+        }
 
         /// Determines whether or not the model is visible.
         bool IsModelVisible() const { return (this->flags & Visible) != 0; }

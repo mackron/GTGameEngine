@@ -14,40 +14,28 @@ namespace GTEngine
         /// Constructor.
         PointLightComponent(SceneNode &node);
         
-        /**
-        *   \brief  Retrievs the colour of the light.
-        */
+        
+        /// Retrieves the colour of the light.
         const glm::vec3 & GetColour() const { return this->colour; }
         
-        /**
-        *   \brief  Sets the colour of the light.
-        */
-        void SetColour(const glm::vec3 &colour)   { this->colour = colour; }
-        void SetColour(float r, float g, float b) { this->SetColour(glm::vec3(r, g, b)); }
+        /// Sets the colour of the light.
+        void SetColour(const glm::vec3 &colour);
+        void SetColour(float x, float y, float z) { this->SetColour(glm::vec3(x, y, z)); }
 
-        /**
-        *   \brief  Retrieves the constant attenuation.
-        */
+
+        /// Retrieves the constant attenuation.
         float GetConstantAttenuation() const { return this->constantAttenuation; }
         
-        /**
-        *   \brief  Retrieves the linear attenuation.
-        */
+        /// Retrieves the linear attenuation.
         float GetLinearAttenuation() const { return this->linearAttenuation; }
         
-        /**
-        *   \brief  Retrieves the quadratic attenuation.
-        */
+        /// Retrieves the quadratic attenuation.
         float GetQuadraticAttenuation() const { return this->quadraticAttenuation; }
         
-        /**
-        *   \brief  Sets the attenuation of the light.
-        */
+        /// Sets the attenuation of the light.
         void SetAttenuation(float constantAttenuation, float linearAttenuation, float quadraticAttenuation);
         
-        /**
-        *   \brief  Retrieves an approximate radius of the light.
-        */
+        /// Retrieves an approximate radius of the light.
         float GetApproximateRadius() const;
 
 
@@ -111,52 +99,34 @@ namespace GTEngine
         /// Constructor.
         SpotLightComponent(SceneNode &node);
         
-        /**
-        *   \brief  Retrievs the colour of the light.
-        */
+        
+        /// Retrieves the colour of the light.
         const glm::vec3 & GetColour() const { return this->colour; }
         
-        /**
-        *   \brief  Sets the colour of the light.
-        */
-        void SetColour(const glm::vec3 &colour)   { this->colour = colour; }
+        /// Sets the colour of the light.
+        void SetColour(const glm::vec3 &colour);
         void SetColour(float x, float y, float z) { this->SetColour(glm::vec3(x, y, z)); }
+
         
-        /**
-        *   \brief  Retrieves the constant attenuation.
-        */
+        /// Retrieves the constant attenuation.
         float GetConstantAttenuation() const { return this->constantAttenuation; }
         
-        /**
-        *   \brief  Retrieves the linear attenuation.
-        */
+        /// Retrieves the linear attenuation.
         float GetLinearAttenuation() const { return this->linearAttenuation; }
         
-        /**
-        *   \brief  Retrieves the quadratic attenuation.
-        */
+        /// Retrieves the quadratic attenuation.
         float GetQuadraticAttenuation() const { return this->quadraticAttenuation; }
         
-        /**
-        *   \brief  Sets the attenuation of the light.
-        */
+        /// Sets the attenuation of the light.
         void SetAttenuation(float constantAttenuation, float linearAttenuation, float quadraticAttenuation);
+
         
         /// Retrieves the approximate length of the light based on it's attenuation.
         float GetApproximateLength() const;
 
 
         /// Sets the inner and outer angles of the spot light.
-        void SetAngles(float newInnerAngle, float newOuterAngle)
-        {
-            if (newInnerAngle > newOuterAngle)
-            {
-                newInnerAngle = newOuterAngle;
-            }
-
-            this->innerAngle = newInnerAngle;
-            this->outerAngle = newOuterAngle;
-        }
+        void SetAngles(float newInnerAngle, float newOuterAngle);
 
         /// Retrieves the inner angle of the light.
         float GetInnerAngle() const { return this->innerAngle; }
@@ -229,21 +199,13 @@ namespace GTEngine
         
         /// Constructor.
         DirectionalLightComponent(SceneNode &node);
+
         
-        /**
-        *   \brief  Initialises the light.
-        */
-        void Initialise(const glm::vec3 &colour);
-        
-        /**
-        *   \brief  Retrievs the colour of the light.
-        */
+        /// Retrieves the colour of the light.
         const glm::vec3 & GetColour() const { return this->colour; }
         
-        /**
-        *   \brief  Sets the colour of the light.
-        */
-        void SetColour(const glm::vec3 &colour)   { this->colour = colour; }
+        /// Sets the colour of the light.
+        void SetColour(const glm::vec3 &colour);
         void SetColour(float x, float y, float z) { this->SetColour(glm::vec3(x, y, z)); }
 
 
@@ -297,20 +259,12 @@ namespace GTEngine
         /// Constructor.
         AmbientLightComponent(SceneNode &node);
         
-        /**
-        *   \brief  Initialises the light.
-        */
-        void Initialise(const glm::vec3 &colour);
-        
-        /**
-        *   \brief  Retrievs the colour of the light.
-        */
+
+        /// Retrieves the colour of the light.
         const glm::vec3 & GetColour() const { return this->colour; }
         
-        /**
-        *   \brief  Sets the colour of the light.
-        */
-        void SetColour(const glm::vec3 &colour)   { this->colour = colour; }
+        /// Sets the colour of the light.
+        void SetColour(const glm::vec3 &colour);
         void SetColour(float x, float y, float z) { this->SetColour(glm::vec3(x, y, z)); }
 
 

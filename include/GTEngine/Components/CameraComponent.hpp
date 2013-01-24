@@ -18,25 +18,18 @@ namespace GTEngine
         /// Constructor.
         CameraComponent(SceneNode &node);
 
-        /**
-        *   \brief  Sets the camera's projection to a perspective projection.
-        */
+
+        /// Sets the camera's projection to a perspective projection.
         void Set3DProjection(float fov, float aspect, float zNear, float zFar);
 
-        /**
-        *   \brief  Sets the camera's projection to an orthographic projection.
-        */
+        /// Sets the camera's projection to an orthographic projection.
         void Set2DProjection(float left, float right, float bottom, float top, float zNear, float zFar);
 
 
-        /**
-        *   \brief  Calculates a view matrix based on the position and orientation of the node.
-        */
+        /// Calculates a view matrix based on the position and orientation of the node.
         glm::mat4 GetViewMatrix() const;
 
-        /**
-        *   \brief  Retrieves the projection matrix.
-        */
+        /// Retrieves the projection matrix.
         const glm::mat4 & GetProjectionMatrix() const;
 
 

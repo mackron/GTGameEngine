@@ -161,6 +161,9 @@ namespace GTEngine
 
 
         this->usingConvexHullsOfModel = true;
+
+
+        this->OnChanged();
     }
 
     void DynamicsComponent::SetCollisionShapesToModelConvexHulls(float margin)
@@ -208,6 +211,9 @@ namespace GTEngine
 
 
         this->usingConvexHullsOfModel = false;
+
+
+        this->OnChanged();
     }
 
     void DynamicsComponent::RemoveCollisionShapeAtIndex(size_t index)
@@ -235,6 +241,9 @@ namespace GTEngine
 
 
         this->usingConvexHullsOfModel = false;
+
+
+        this->OnChanged();
     }
 
 
@@ -245,6 +254,8 @@ namespace GTEngine
         {
             this->mass = newMass;
             this->UpdateMass();
+
+            this->OnChanged();
         }
     }
 
@@ -286,6 +297,9 @@ namespace GTEngine
             {
                 world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
             }
+
+
+            this->OnChanged();
         }
     }
 
@@ -303,6 +317,7 @@ namespace GTEngine
     void DynamicsComponent::SetFriction(float friction)
     {
         this->rigidBody->setFriction(friction);
+        this->OnChanged();
     }
 
     float DynamicsComponent::GetFriction() const
@@ -313,6 +328,7 @@ namespace GTEngine
     void DynamicsComponent::SetRestitution(float restitution)
     {
         this->rigidBody->setRestitution(restitution);
+        this->OnChanged();
     }
 
     float DynamicsComponent::GetRestitution() const
@@ -324,6 +340,7 @@ namespace GTEngine
     void DynamicsComponent::SetDamping(float linear, float angular)
     {
         this->rigidBody->setDamping(linear, angular);
+        this->OnChanged();
     }
 
     float DynamicsComponent::GetLinearDamping() const
@@ -351,6 +368,8 @@ namespace GTEngine
                 world->RemoveRigidBody(*this->rigidBody);
                 world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
             }
+
+            this->OnChanged();
         }
     }
 
@@ -403,6 +422,7 @@ namespace GTEngine
     void DynamicsComponent::SetLinearVelocity(float x, float y, float z)
     {
         this->rigidBody->setLinearVelocity(btVector3(x, y, z) * this->rigidBody->getLinearFactor());
+        this->OnChanged();
     }
 
     glm::vec3 DynamicsComponent::GetLinearVelocity() const
@@ -414,6 +434,7 @@ namespace GTEngine
     void DynamicsComponent::SetAngularVelocity(float x, float y, float z)
     {
         this->rigidBody->setAngularVelocity(btVector3(x, y, z) * this->rigidBody->getAngularFactor());
+        this->OnChanged();
     }
 
     glm::vec3 DynamicsComponent::GetAngularVelocity() const
@@ -425,6 +446,7 @@ namespace GTEngine
     void DynamicsComponent::SetLinearFactor(float x, float y, float z)
     {
         this->rigidBody->setLinearFactor(btVector3(x, y, z));
+        this->OnChanged();
     }
 
     glm::vec3 DynamicsComponent::GetLinearFactor() const
@@ -436,11 +458,13 @@ namespace GTEngine
     void DynamicsComponent::SetAngularFactor(float factor)
     {
         this->rigidBody->setAngularFactor(factor);
+        this->OnChanged();
     }
 
     void DynamicsComponent::SetAngularFactor(float x, float y, float z)
     {
         this->rigidBody->setAngularFactor(btVector3(x, y, z));
+        this->OnChanged();
     }
 
     glm::vec3 DynamicsComponent::GetAngularFactor() const
@@ -453,6 +477,7 @@ namespace GTEngine
     void DynamicsComponent::SetGravity(float x, float y, float z)
     {
         this->rigidBody->setGravity(btVector3(x, y, z));
+        this->OnChanged();
     }
 
     glm::vec3 DynamicsComponent::GetGravity() const
@@ -502,12 +527,16 @@ namespace GTEngine
     {
         this->rigidBody->setActivationState(DISABLE_DEACTIVATION);
         this->rigidBody->activate();
+
+        this->OnChanged();
     }
 
     void DynamicsComponent::EnableDeactivation()
     {
         this->rigidBody->setActivationState(ACTIVE_TAG);
         this->rigidBody->setDeactivationTime(0.0f);
+
+        this->OnChanged();
     }
 
     bool DynamicsComponent::IsDeactivationEnabled() const
@@ -524,11 +553,13 @@ namespace GTEngine
     void DynamicsComponent::DisableNavigationMeshGeneration()
     {
         this->useWithNavigationMesh = false;
+        this->OnChanged();
     }
 
     void DynamicsComponent::EnableNavigationMeshGeneration()
     {
         this->useWithNavigationMesh = true;
+        this->OnChanged();
     }
 
     bool DynamicsComponent::IsNavigationMeshGenerationEnabled() const
@@ -633,6 +664,9 @@ namespace GTEngine
         {
             world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
+
+
+        this->OnChanged();
     }
 
 
@@ -669,6 +703,9 @@ namespace GTEngine
             {
                 world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
             }
+
+
+            this->OnChanged();
 
 
             return true;
@@ -712,6 +749,9 @@ namespace GTEngine
             }
 
 
+            this->OnChanged();
+
+
             return true;
         }
 
@@ -751,6 +791,9 @@ namespace GTEngine
             {
                 world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
             }
+
+
+            this->OnChanged();
 
 
             return true;
@@ -814,6 +857,9 @@ namespace GTEngine
             }
 
 
+            this->OnChanged();
+
+
             return true;
         }
 
@@ -873,6 +919,9 @@ namespace GTEngine
             {
                 world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
             }
+
+
+            this->OnChanged();
 
 
             return true;
@@ -1479,6 +1528,9 @@ namespace GTEngine
         {
             world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
+
+
+        this->OnChanged();
     }
 
 
@@ -1509,6 +1561,9 @@ namespace GTEngine
         {
             world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
+
+
+        this->OnChanged();
     }
 
     void DynamicsComponent::UpdateMass()
