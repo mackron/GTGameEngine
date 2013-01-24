@@ -63,8 +63,11 @@ namespace GTEngine
         /// Retrieves the index of the current frame.
         uint32_t GetCurrentFrameIndex() const { return this->currentFrameIndex; }
 
-        /// Retrieves the number of frames.
-        size_t GetFrameCount() const { return this->frames.count; }
+        /// Retrieves the number of local frames.
+        size_t GetLocalFrameCount() const { return this->frames.count; }
+
+        /// Retrieves the total number of frames on the branch.
+        size_t GetTotalFrameCount() const;
 
 
 

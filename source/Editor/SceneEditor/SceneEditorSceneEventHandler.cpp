@@ -48,4 +48,15 @@ namespace GTEngine
     {
         this->sceneEditor.OnSceneNodeShow(node);
     }
+
+
+    void SceneEditorSceneEventHandler::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
+    {
+        this->sceneEditor.OnSceneNodeComponentChanged(node, component);
+    }
+
+    void SceneEditorSceneEventHandler::OnStateStackFrameCommitted()
+    {
+        this->sceneEditor.OnStateStackFrameCommitted();
+    }
 }

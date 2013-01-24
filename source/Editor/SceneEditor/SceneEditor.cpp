@@ -33,6 +33,7 @@ namespace GTEngine
           transformedObjectWithGizmo(false),
           simulationSerializer(), transformationSerializer(),
           sceneStateStack(), sceneStateIndex(0),
+          isDeserializing(false),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
@@ -1104,6 +1105,32 @@ namespace GTEngine
         }
     }
 
+    void SceneEditor::OnSceneNodeComponentChanged(SceneNode &node, Component &)
+    {
+        // We don't want to do anything here if we're deserializing or if the node is not actually being saved on the state stack.
+        if (!this->isDeserializing && node.IsStateStackStagingEnabled())
+        {
+            // We'll commit the changes to the state stack so we can undo/redo this change.
+            this->CommitStateStackFrame();
+
+
+            // TEMP
+            this->AppendStateStackFrame();
+        }
+    }
+
+    void SceneEditor::OnStateStackFrameCommitted()
+    {
+        // We'll commit a new frame whenever something worth of an undo/redo operation has happened. And when that happens, we want the scene to be marked as modified.
+        //
+        // We only mark as modified if this is not the initial commit. We can determine this by looking at the number of frames. If there is only 1, it was the initial
+        // commit and we don't want to mark as modified in that case.
+        if (!this->isDeserializing && this->scene.GetStateStackFrameCount() > 1)
+        {
+            this->MarkAsModified();
+        }
+    }
+
 
 
     ///////////////////////////////////////////////////
@@ -1432,40 +1459,44 @@ namespace GTEngine
 
     void SceneEditor::DeserializeScene(GTCore::Deserializer &deserializer)
     {
-        this->transformGizmo.Hide();
-
-        this->DeleteAllMarkedSceneNodes();
-
-        // With pre-deserialization done, we can now do a full deserialization of the scene.
-        this->scene.Deserialize(deserializer);
-
-        // We now want to load the metadata chunk. We'll peek at the next chunk and see if that's it. We should probably do an iteration type
-        // system later on.
-        Serialization::ChunkHeader header;
-        deserializer.Peek(&header, sizeof(Serialization::ChunkHeader));
-
-        if (header.id == Serialization::ChunkID_Scene_EditorMetadata)
+        this->isDeserializing = true;
         {
-            // Since we only peeked at the header, we'll need to now seek past it.
-            deserializer.Seek(sizeof(Serialization::ChunkHeader));
+            this->transformGizmo.Hide();
 
-            deserializer.Read(reinterpret_cast<uint32_t &>(this->nextSceneNodeID));
+            this->DeleteAllMarkedSceneNodes();
 
-            // The camera node needs to be deserialized.
-            this->camera.Deserialize(deserializer);
-            deserializer.Read(this->cameraXRotation);
-            deserializer.Read(this->cameraYRotation);
+            // With pre-deserialization done, we can now do a full deserialization of the scene.
+            this->scene.Deserialize(deserializer);
 
-            this->camera.DisableSerialization();
-            this->camera.DisableStateStackStaging();
+            // We now want to load the metadata chunk. We'll peek at the next chunk and see if that's it. We should probably do an iteration type
+            // system later on.
+            Serialization::ChunkHeader header;
+            deserializer.Peek(&header, sizeof(Serialization::ChunkHeader));
+
+            if (header.id == Serialization::ChunkID_Scene_EditorMetadata)
+            {
+                // Since we only peeked at the header, we'll need to now seek past it.
+                deserializer.Seek(sizeof(Serialization::ChunkHeader));
+
+                deserializer.Read(reinterpret_cast<uint32_t &>(this->nextSceneNodeID));
+
+                // The camera node needs to be deserialized.
+                this->camera.Deserialize(deserializer);
+                deserializer.Read(this->cameraXRotation);
+                deserializer.Read(this->cameraYRotation);
+
+                this->camera.DisableSerialization();
+                this->camera.DisableStateStackStaging();
+            }
+
+
+            // The deserializer will clear the scene, so we'll need to re-add the camera and gizmo.
+            this->scene.AddSceneNode(this->camera);
+            this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
+
+            this->UpdateGizmo();
         }
-
-
-        // The deserializer will clear the scene, so we'll need to re-add the camera and gizmo.
-        this->scene.AddSceneNode(this->camera);
-        this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
-
-        this->UpdateGizmo();
+        this->isDeserializing = false;
     }
 
     void SceneEditor::SerializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Serializer &serializer)

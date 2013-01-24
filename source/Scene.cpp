@@ -606,6 +606,15 @@ namespace GTEngine
         this->PostEvent_OnStateStackFrameCommitted();
     }
 
+    size_t Scene::GetStateStackFrameCount() const
+    {
+        auto currentBranch = this->stateStack.GetCurrentBranch();
+        assert(currentBranch != nullptr);
+        {
+            return currentBranch->GetTotalFrameCount();
+        }
+    }
+
     
 
 
@@ -997,7 +1006,16 @@ namespace GTEngine
         }
 
 
+        // Can only stage this scene node after it's been given a valid ID.
+        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageInsert(node.GetID());
+        }
+
+
+
         this->sceneNodes.Insert(node);
+
 
         // We need to add the node to the update manager.
         if ((node.GetFlags() & SceneNode::NoUpdate) == 0)
@@ -1128,13 +1146,6 @@ namespace GTEngine
         {
             this->PostEvent_OnObjectAdded(node);
         }
-
-
-
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
-        {
-            this->stateStack.StageInsert(node.GetID());
-        }
     }
 
     void Scene::OnSceneNodeRemoved(SceneNode &node)
@@ -1230,6 +1241,13 @@ namespace GTEngine
 
     void Scene::OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject)
     {
+        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
+
+
+
         // We might need to update the rigid body, if we have one.
         if (updateDynamicsObject)
         {
@@ -1263,16 +1281,16 @@ namespace GTEngine
 
         // Event handlers need to know about this.
         this->PostEvent_OnSceneNodeTransform(node);
-
-
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
-        {
-            this->stateStack.StageUpdate(node.GetID());
-        }
     }
 
     void Scene::OnSceneNodeScale(SceneNode &node)
     {
+        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
+
+
         // Culling information needs to be updated.
         this->cullingManager.UpdateScale(node);
 
@@ -1294,12 +1312,6 @@ namespace GTEngine
 
         // Event handlers need to know about this.
         this->PostEvent_OnSceneNodeScale(node);
-
-
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
-        {
-            this->stateStack.StageUpdate(node.GetID());
-        }
     }
 
     void Scene::OnSceneNodeStaticChanged(SceneNode &node)
@@ -1312,6 +1324,12 @@ namespace GTEngine
 
     void Scene::OnSceneNodeVisibleChanged(SceneNode &node)
     {
+        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
+
+
         if (node.IsVisible())
         {
             // If the node has a dynamics component, the rigid body needs to be removed.
@@ -1357,16 +1375,17 @@ namespace GTEngine
             // The event handlers need to know.
             this->PostEvent_OnSceneNodeHide(node);
         }
-
-
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
-        {
-            this->stateStack.StageUpdate(node.GetID());
-        }
     }
 
     void Scene::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
     {
+        // The node has been updated, so we need to stage it for the next commit.
+        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
+
+
         if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
             GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
@@ -1376,14 +1395,10 @@ namespace GTEngine
         // TODO: Proximity, occluders.
 
 
+        
+
         // The event handler needs to know about this.
         this->PostEvent_OnSceneNodeComponentChanged(node, component);
-
-        // The node has been updated, so we need to stage it for the next commit.
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
-        {
-            this->stateStack.StageUpdate(node.GetID());
-        }
     }
 
 
