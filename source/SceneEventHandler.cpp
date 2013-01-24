@@ -42,4 +42,8 @@ namespace GTEngine
     void SceneEventHandler::OnSceneNodeComponentChanged(SceneNode &, Component &)
     {
     }
+
+    void SceneEventHandler::OnStateStackFrameCommitted()
+    {
+    }
 }

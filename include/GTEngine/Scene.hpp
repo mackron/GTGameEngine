@@ -637,6 +637,9 @@ namespace GTEngine
         /// @param component [in] A reference to the component that was changed.
         void PostEvent_OnSceneNodeComponentChanged(SceneNode &node, Component &component);
 
+        /// Helper for posting an OnStateStackFrameCommitted event.
+        void PostEvent_OnStateStackFrameCommitted();
+
 
     private:
 
