@@ -354,6 +354,20 @@ namespace GTEngine
         this->isRefreshingObject = false;
     }
 
+
+
+    SceneNode* Scene::GetSceneNodeByID(uint64_t sceneNodeID)
+    {
+        return this->sceneNodes.FindByID(sceneNodeID);
+    }
+
+    const SceneNode* Scene::GetSceneNodeByID(uint64_t sceneNodeID) const
+    {
+        return this->sceneNodes.FindByID(sceneNodeID);
+    }
+
+
+
     void Scene::Pause()
     {
         if (!this->paused)
@@ -552,10 +566,41 @@ namespace GTEngine
         return this->stateStack.SwitchBranch(branchID);
     }
 
-    void Scene::AppendStateStackFrame()
+    bool Scene::IsStateStackStagingEnabled() const
     {
-        this->stateStack.AppendFrame();
+        return this->stateStack.HasInitialFrame() && this->isStateStackStagingEnabled;
     }
+
+    void Scene::EnableStateStackStaging()
+    {
+        this->isStateStackStagingEnabled = true;
+    }
+
+    void Scene::DisableStateStackStaging()
+    {
+        this->isStateStackStagingEnabled = false;
+    }
+
+    void Scene::StateStackCommit()
+    {
+        // If this is the initial commit then we'll need to stage insert commands for every existing scene node.
+        if (!this->stateStack.HasInitialFrame())
+        {
+            for (size_t iNode = 0; iNode < this->sceneNodes.GetCount(); ++iNode)
+            {
+                auto node = this->sceneNodes.GetSceneNodeAtIndex(iNode);
+                assert(node != nullptr);
+                {
+                    this->stateStack.StageInsert(node->GetID());
+                }
+            }
+        }
+
+
+        this->stateStack.Commit();
+    }
+
+    
 
 
 
@@ -922,7 +967,6 @@ namespace GTEngine
 
 
 
-
     void Scene::OnUpdate(double)
     {
     }
@@ -1078,10 +1122,24 @@ namespace GTEngine
         {
             this->PostEvent_OnObjectAdded(node);
         }
+
+
+
+        if (this->IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageInsert(node.GetID());
+        }
     }
 
     void Scene::OnSceneNodeRemoved(SceneNode &node)
     {
+        // Important to stage this change before removing it.
+        if (this->IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageDelete(node.GetID());
+        }
+
+
         // We just remove the scene node by it's ID.
         this->sceneNodes.Remove(node.GetID());
 
@@ -1199,6 +1257,12 @@ namespace GTEngine
 
         // Event handlers need to know about this.
         this->PostEvent_OnSceneNodeTransform(node);
+
+
+        if (this->IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
     }
 
     void Scene::OnSceneNodeScale(SceneNode &node)
@@ -1224,10 +1288,20 @@ namespace GTEngine
 
         // Event handlers need to know about this.
         this->PostEvent_OnSceneNodeScale(node);
+
+
+        if (this->IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
     }
 
-    void Scene::OnSceneNodeStaticChanged(SceneNode &)
+    void Scene::OnSceneNodeStaticChanged(SceneNode &node)
     {
+        if (this->IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
     }
 
     void Scene::OnSceneNodeVisibleChanged(SceneNode &node)
@@ -1277,12 +1351,16 @@ namespace GTEngine
             // The event handlers need to know.
             this->PostEvent_OnSceneNodeHide(node);
         }
+
+
+        if (this->IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
     }
 
     void Scene::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
     {
-        // TODO: Perhaps consider removing this and requiring scene nodes to do a refresh?
-
         if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
             GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
@@ -1290,6 +1368,10 @@ namespace GTEngine
         }
 
         // TODO: Proximity, occluders.
+
+
+
+        this->stateStack.StageUpdate(node.GetID());
     }
 
 

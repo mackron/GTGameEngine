@@ -61,8 +61,8 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If this returns null, 'index' will receive the index to insert a new scene node at.
-        SceneNode* FindByID(uint64_t sceneNodeID, size_t &index);
-        SceneNode* FindByID(uint64_t sceneNodeID);
+        SceneNode* FindByID(uint64_t sceneNodeID, size_t &index) const;
+        SceneNode* FindByID(uint64_t sceneNodeID) const;
 
 
         /// Retrieves the number of items in the map.

@@ -114,7 +114,7 @@ namespace GTEngine
     }
 
 
-    SceneNode* SceneNodeMap::FindByID(uint64_t sceneNodeID, size_t &index)
+    SceneNode* SceneNodeMap::FindByID(uint64_t sceneNodeID, size_t &index) const
     {
         if (this->count > 0)
         {
@@ -155,7 +155,7 @@ namespace GTEngine
         return nullptr;
     }
 
-    SceneNode* SceneNodeMap::FindByID(uint64_t sceneNodeID)
+    SceneNode* SceneNodeMap::FindByID(uint64_t sceneNodeID) const
     {
         size_t devnull;
         return this->FindByID(sceneNodeID, devnull);

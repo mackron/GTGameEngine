@@ -2,10 +2,15 @@
 #include <GTEngine/SceneStateStack.hpp>
 #include <GTEngine/Scene.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4355)   // 'this' used in initialise list.
+#endif
+
 namespace GTEngine
 {
     SceneStateStack::SceneStateStack(Scene &sceneIn)
-        : scene(sceneIn), branches(), masterBranch(nullptr, 0), currentBranch(&masterBranch)
+        : scene(sceneIn), branches(), masterBranch(*this, nullptr, 0), currentBranch(&masterBranch)
     {
         // Add the master branch.
         this->branches.Add(0, &this->masterBranch);
@@ -48,12 +53,44 @@ namespace GTEngine
     }
 
 
-    void SceneStateStack::AppendFrame()
+
+    void SceneStateStack::StageInsert(uint64_t sceneNodeID)
     {
         assert(this->currentBranch != nullptr);
         {
-            this->currentBranch->AppendFrame();
+            this->currentBranch->StageInsert(sceneNodeID);
         }
+    }
+
+    void SceneStateStack::StageDelete(uint64_t sceneNodeID)
+    {
+        assert(this->currentBranch != nullptr);
+        {
+            this->currentBranch->StageDelete(sceneNodeID);
+        }
+    }
+
+    void SceneStateStack::StageUpdate(uint64_t sceneNodeID)
+    {
+        assert(this->currentBranch != nullptr);
+        {
+            this->currentBranch->StageUpdate(sceneNodeID);
+        }
+    }
+
+
+    void SceneStateStack::Commit()
+    {
+        assert(this->currentBranch != nullptr);
+        {
+            this->currentBranch->Commit();
+        }
+    }
+
+
+    bool SceneStateStack::HasInitialFrame() const
+    {
+        return this->masterBranch.GetFrameCount() > 0;
     }
 
 
@@ -69,3 +106,7 @@ namespace GTEngine
         }
     }
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif

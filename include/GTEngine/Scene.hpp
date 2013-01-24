@@ -272,6 +272,11 @@ namespace GTEngine
         void RefreshObject(SceneObject &object);
 
 
+        /// Retrieves a scene node by it's ID.
+              SceneNode* GetSceneNodeByID(uint64_t sceneNodeID);
+        const SceneNode* GetSceneNodeByID(uint64_t sceneNodeID) const;
+
+
         /// Pauses the scene.
         ///
         /// @remarks
@@ -381,13 +386,25 @@ namespace GTEngine
         /// @return True if the branch was switched; false otherwise. This will only fail if the branch does not exist.
         bool SwitchStateStackBranch(uint32_t branchID);
 
-        /// Appends a state stack frame to the current branch after the current frame.
+        /// Determines whether or not staging of the state stack is enabled.
         ///
         /// @remarks
-        ///     This will delete every frame coming after the current frame before appending the new one.
-        ///     @par
-        ///     The new frame will become the current one.
-        void AppendStateStackFrame();
+        ///     This will return true if there is at least one commit on the master branch. Thus, it is assumed that a scene
+        ///     will want to use the state stack if there is an initial commit. If there is no initial commit, it is assumed
+        ///     that the state stack is not being used and so staging is not performed.
+        bool IsStateStackStagingEnabled() const;
+
+        /// Enable state stack staging.
+        ///
+        /// @remarks
+        ///     Note that an initial commit must also have been performed for state stack staging to be enabled.
+        void EnableStateStackStaging();
+
+        /// Disables state stack staging.
+        void DisableStateStackStaging();
+
+        /// Performs a commit on the state stack.
+        void StateStackCommit();
 
 
 
@@ -533,7 +550,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If deserialization fails, the scene will be left completely unmodified.
-        bool Deserialize(GTCore::Deserializer &deserialize);
+        bool Deserialize(GTCore::Deserializer &deserializer);
 
 
 
@@ -678,6 +695,10 @@ namespace GTEngine
 
         /// The state stack.
         SceneStateStack stateStack;
+
+        /// Keeps track of whether or not staging should be enabled on the state stack.
+        bool isStateStackStagingEnabled;
+
 
 
     private:    // No copying.
