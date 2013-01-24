@@ -1120,7 +1120,7 @@ namespace GTEngine
             NoPositionInheritance    = (1 << 4),
             NoOrientationInheritance = (1 << 5),
             NoScaleInheritance       = (1 << 6),
-            NoSerialization          = (1 << 7)             // <-- Only used when doing serialization from a scene.
+            NoSerialization          = (1 << 7),            // <-- Only used when doing serialization from a scene.
         };
 
 

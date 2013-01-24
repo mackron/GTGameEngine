@@ -949,8 +949,8 @@ namespace GTEngine
                         deserializer.Read(this->inheritPosition);
                         deserializer.Read(this->inheritOrientation);
                         deserializer.Read(this->inheritScale);
-                        deserializer.Read(static_cast<uint32_t &>(this->flags));
-                        deserializer.Read(static_cast<uint32_t &>(this->typeID));
+                        deserializer.Read(reinterpret_cast<uint32_t &>(this->flags));
+                        deserializer.Read(reinterpret_cast<uint32_t &>(this->typeID));
 
                         break;
                     }
