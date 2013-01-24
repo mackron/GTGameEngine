@@ -256,7 +256,7 @@ namespace GTEngine
           ambientLightComponents(), directionalLightComponents(),
           navigationMesh(),
           eventHandlers(),
-          stateStack(*this)
+          stateStack(*this), isStateStackStagingEnabled(true)
     {
     }
 
@@ -269,7 +269,7 @@ namespace GTEngine
           ambientLightComponents(), directionalLightComponents(),
           navigationMesh(),
           eventHandlers(),
-          stateStack(*this)
+          stateStack(*this), isStateStackStagingEnabled(true)
     {
     }
 
@@ -581,7 +581,7 @@ namespace GTEngine
         this->isStateStackStagingEnabled = false;
     }
 
-    void Scene::StateStackCommit()
+    void Scene::CommitStateStackFrame()
     {
         // If this is the initial commit then we'll need to stage insert commands for every existing scene node.
         if (!this->stateStack.HasInitialFrame())
@@ -1370,8 +1370,10 @@ namespace GTEngine
         // TODO: Proximity, occluders.
 
 
-
-        this->stateStack.StageUpdate(node.GetID());
+        if (this->IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
     }
 
 

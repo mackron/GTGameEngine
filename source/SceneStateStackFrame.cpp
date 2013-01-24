@@ -20,7 +20,7 @@ namespace GTEngine
 
         for (size_t i = 0; i < deleteIDs.count; ++i)
         {
-            auto sceneNodeID         = insertIDs[i];
+            auto sceneNodeID         = deleteIDs[i];
             auto sceneNodeSerializer = new GTCore::BasicSerializer;
             this->SerializeSceneNode(sceneNodeID, *sceneNodeSerializer);
 
@@ -29,7 +29,7 @@ namespace GTEngine
 
         for (size_t i = 0; i < updateIDs.count; ++i)
         {
-            auto sceneNodeID         = insertIDs[i];
+            auto sceneNodeID         = updateIDs[i];
             auto sceneNodeSerializer = new GTCore::BasicSerializer;
             this->SerializeSceneNode(sceneNodeID, *sceneNodeSerializer);
 
