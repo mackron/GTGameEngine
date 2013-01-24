@@ -591,7 +591,10 @@ namespace GTEngine
                 auto node = this->sceneNodes.GetSceneNodeAtIndex(iNode);
                 assert(node != nullptr);
                 {
-                    this->stateStack.StageInsert(node->GetID());
+                    if (node->IsSerializationEnabled())
+                    {
+                        this->stateStack.StageInsert(node->GetID());
+                    }
                 }
             }
         }
@@ -1125,7 +1128,7 @@ namespace GTEngine
 
 
 
-        if (this->IsStateStackStagingEnabled())
+        if (this->IsStateStackStagingEnabled() && node.IsSerializationEnabled())
         {
             this->stateStack.StageInsert(node.GetID());
         }
@@ -1134,7 +1137,7 @@ namespace GTEngine
     void Scene::OnSceneNodeRemoved(SceneNode &node)
     {
         // Important to stage this change before removing it.
-        if (this->IsStateStackStagingEnabled())
+        if (this->IsStateStackStagingEnabled() && node.IsSerializationEnabled())
         {
             this->stateStack.StageDelete(node.GetID());
         }
@@ -1259,7 +1262,7 @@ namespace GTEngine
         this->PostEvent_OnSceneNodeTransform(node);
 
 
-        if (this->IsStateStackStagingEnabled())
+        if (this->IsStateStackStagingEnabled() && node.IsSerializationEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -1290,7 +1293,7 @@ namespace GTEngine
         this->PostEvent_OnSceneNodeScale(node);
 
 
-        if (this->IsStateStackStagingEnabled())
+        if (this->IsStateStackStagingEnabled() && node.IsSerializationEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -1298,7 +1301,7 @@ namespace GTEngine
 
     void Scene::OnSceneNodeStaticChanged(SceneNode &node)
     {
-        if (this->IsStateStackStagingEnabled())
+        if (this->IsStateStackStagingEnabled() && node.IsSerializationEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -1353,7 +1356,7 @@ namespace GTEngine
         }
 
 
-        if (this->IsStateStackStagingEnabled())
+        if (this->IsStateStackStagingEnabled() && node.IsSerializationEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -1370,7 +1373,7 @@ namespace GTEngine
         // TODO: Proximity, occluders.
 
 
-        if (this->IsStateStackStagingEnabled())
+        if (this->IsStateStackStagingEnabled() && node.IsSerializationEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
