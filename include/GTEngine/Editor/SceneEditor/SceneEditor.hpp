@@ -128,6 +128,10 @@ namespace GTEngine
         void Redo();
 
 
+        /// Commits a new frame to the current branch of the scene's state stack.
+        void CommitStateStackFrame();
+
+
         /// Appends a new state stack frame for undo/redo.
         void AppendStateStackFrame();
 
