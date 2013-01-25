@@ -328,6 +328,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneStateStack.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackBranch.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackFrame.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackStagingArea.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneUpdateManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting.hpp" />
@@ -496,6 +497,7 @@
     <ClCompile Include="..\..\..\source\SceneStateStack.cpp" />
     <ClCompile Include="..\..\..\source\SceneStateStackBranch.cpp" />
     <ClCompile Include="..\..\..\source\SceneStateStackFrame.cpp" />
+    <ClCompile Include="..\..\..\source\SceneStateStackStagingArea.cpp" />
     <ClCompile Include="..\..\..\source\SceneViewport.cpp" />
     <ClCompile Include="..\..\..\source\Scripting.cpp" />
     <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />
