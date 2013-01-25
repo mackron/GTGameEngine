@@ -716,6 +716,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackBranch.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackStagingArea.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1190,6 +1193,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\SceneStateStackBranch.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneStateStackStagingArea.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
