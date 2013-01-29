@@ -486,10 +486,9 @@ namespace GTEngine
 
 
 
-        /**
-        *   \brief  Retrieves a pointer to the component as specified by 'T'.
-        *   \return A pointer to the component as specified by 'T", or null if the component does not exist.
-        */
+        /// Retrieves a pointer to the component as specified by 'T'.
+        ///
+        /// @return A pointer to the component as specified by 'T", or null if the component does not exist.
         template <typename T>
         T * GetComponent()
         {
@@ -503,68 +502,25 @@ namespace GTEngine
         }
 
 
-        /**
-        *   \brief            Retrievse a component based on it's name.
-        *   \param  name [in] The name of the component to retrieve.
-        *   \return           A pointer to the component whose name is that of 'name'. Returns null if no such component exists.
-        */
-        Component* GetComponentByName(const char *name)
-        {
-            if (GTCore::Strings::Equal(name, ModelComponent::Name))
-            {
-                return this->modelComponent;
-            }
-
-            if (GTCore::Strings::Equal(name, PointLightComponent::Name))
-            {
-                return this->pointLightComponent;
-            }
-
-            if (GTCore::Strings::Equal(name, SpotLightComponent::Name))
-            {
-                return this->spotLightComponent;
-            }
-
-            if (GTCore::Strings::Equal(name, EditorMetadataComponent::Name))
-            {
-                return this->editorMetadataComponent;
-            }
+        /// Retrievse a component based on it's name.
+        ///
+        /// @param  name [in] The name of the component to retrieve.
+        ///
+        /// return A pointer to the component whose name is that of 'name'. Returns null if no such component exists.
+              Component* GetComponentByName(const char *name);
+        const Component* GetComponentByName(const char* name) const { return const_cast<SceneNode*>(this)->GetComponentByName(name); }
 
 
-            auto item = this->components.Find(name);
-            if (item != nullptr)
-            {
-                return item->value;
-            }
-
-            return nullptr;
-        }
-
-        const Component* GetComponentByName(const char* name) const
-        {
-            return const_cast<SceneNode*>(this)->GetComponentByName(name);
-        }
-
-
-        /**
-        *   \brief  Adds a component of the type given by 'T'.
-        *   \return A pointer to the new component.
-        *
-        *   \remarks
-        *       If a component of the same type already exists, the existing one is returned and is NOT overwritten.
-        */
+        /// Adds a component of the type given by 'T'.
+        ///
+        /// @return A pointer to the new component.
+        ///
+        /// @remarks
+        ///     If a component of the same type already exists, the existing one is returned and is NOT overwritten.
         template <typename T>
         T* AddComponent()
         {
-            // A component of the same type can't already exist. If it doesn, we just return the existing one.
-            auto component = this->GetComponent<T>();
-            if (component == nullptr)
-            {
-                component = new T(*this);
-                this->components.Add(T::Name, component);
-            }
-
-            return component;
+            return static_cast<T*>(this->AddComponentByName(T::Name));
         }
 
         /// Adds a component by it's name.
@@ -573,134 +529,28 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will use GTEngine::CreateComponentByName() to do the instantiation, which will in turn call Game::CreateCustomComponent() if it fails.
-        Component* AddComponentByName(const char* name)
-        {
-            Component* component = nullptr;
-
-            if (GTCore::Strings::Equal(name, ModelComponent::Name))
-            {
-                if (this->modelComponent == nullptr)
-                {
-                    this->modelComponent = new ModelComponent(*this);
-                }
-                component = this->modelComponent;
-            }
-            else if (GTCore::Strings::Equal(name, PointLightComponent::Name))
-            {
-                if (this->pointLightComponent == nullptr)
-                {
-                    this->pointLightComponent = new PointLightComponent(*this);
-                }
-                component = this->pointLightComponent;
-            }
-            else if (GTCore::Strings::Equal(name, SpotLightComponent::Name))
-            {
-                if (this->spotLightComponent == nullptr)
-                {
-                    this->spotLightComponent = new SpotLightComponent(*this);
-                }
-                component = this->spotLightComponent;
-            }
-            else if (GTCore::Strings::Equal(name, EditorMetadataComponent::Name))
-            {
-                if (this->editorMetadataComponent == nullptr)
-                {
-                    this->editorMetadataComponent = new EditorMetadataComponent(*this);
-                }
-                component = this->editorMetadataComponent;
-            }
-            else
-            {
-                // A component of the same name can't already exist. If it doesn, we just return the existing one.
-                component = this->GetComponentByName(name);
-                if (component == nullptr)
-                {
-                    component = GTEngine::CreateComponentByName(name, *this);
-                    this->components.Add(name, component);
-                }
-            }
-
-            return component;
-        }
+        Component* AddComponentByName(const char* name);
 
 
-        /**
-        *   \brief  Removes the component of the type given by 'T'.
-        */
+        /// Removes the component of the type given by 'T'.
         template <typename T>
         void RemoveComponent()
         {
             this->RemoveComponentByName(T::Name);
         }
 
-        /**
-        *   \brief  Removes every component.
-        */
-        void RemoveAllComponents()
-        {
-            // The quickest way to do this would be to delete everything in one go. However, we need to fire events in a
-            // consistent manner. The way it needs to be done if to first remove the event from the list, then call the
-            // event handler. Batching everything in one go won't allow this. Thus, we do it using a slightly slower, but
-            // consistent method.
-            while (this->components.count > 0)
-            {
-                auto component = this->components.buffer[0]->value;
-                assert(component != nullptr);
-
-                this->components.RemoveByIndex(0);
-
-                delete component;
-            }
-
-
-            delete this->modelComponent;
-            this->modelComponent = nullptr;
-
-            delete this->pointLightComponent;
-            this->pointLightComponent = nullptr;
-
-            delete this->spotLightComponent;
-            this->spotLightComponent = nullptr;
-
-            delete this->editorMetadataComponent;
-            this->editorMetadataComponent = nullptr;
-        }
-
         /// Removes a component by it's name.
         ///
         /// @param componentName [in] The name of the component to remove.
-        void RemoveComponentByName(const char* componentName)
-        {
-            auto component = this->GetComponentByName(componentName);
-            if (component != nullptr)
-            {
-                if (component == this->modelComponent)
-                {
-                    this->modelComponent = nullptr;
-                }
-                else if (component == this->pointLightComponent)
-                {
-                    this->pointLightComponent = nullptr;
-                }
-                else if (component == this->spotLightComponent)
-                {
-                    this->spotLightComponent = nullptr;
-                }
-                else if (component == this->editorMetadataComponent)
-                {
-                    this->editorMetadataComponent = nullptr;
-                }
+        void RemoveComponentByName(const char* componentName);
 
-                this->components.Remove(componentName);
-                delete component;
-            }
-        }
+        /// Removes every component.
+        void RemoveAllComponents();
 
-
-        /**
-        *   \brief  Determines whether or not the node has the component as specified by 'T'.
-        *   \return True if the scene node has the component; false otherwise.
-        */
+        
+        /// Determines whether or not the node has the component as specified by 'T'.
+        ///
+        /// @return True if the scene node has the component; false otherwise.
         inline bool HasComponent(const char *componentName)
         {
             return this->GetComponentByName(componentName) != nullptr;
@@ -714,21 +564,7 @@ namespace GTEngine
 
 
         /// Retrieves a list containing the names of the components that are currently attached to the scene node.
-        void GetAttachedComponentNames(GTCore::Vector<GTCore::String> &output) const
-        {
-            // First is our specialised cases.
-            if (this->modelComponent          != nullptr) { output.PushBack(ModelComponent::Name);          }
-            if (this->pointLightComponent     != nullptr) { output.PushBack(PointLightComponent::Name);     }
-            if (this->spotLightComponent      != nullptr) { output.PushBack(SpotLightComponent::Name);      }
-            if (this->editorMetadataComponent != nullptr) { output.PushBack(EditorMetadataComponent::Name); }
-
-
-            // Now we can just read the rest from the map.
-            for (size_t i = 0; i < this->components.count; ++i)
-            {
-                output.PushBack(this->components.buffer[i]->key);
-            }
-        }
+        void GetAttachedComponentNames(GTCore::Vector<GTCore::String> &output) const;
 
 
         /**
