@@ -695,6 +695,160 @@ namespace GTEngine
     }
 
 
+
+    /////////////////////////////////////////
+    // Components
+
+    Component* SceneNode::GetComponentByName(const char* componentName)
+    {
+        if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
+        {
+            return this->modelComponent;
+        }
+
+        if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
+        {
+            return this->pointLightComponent;
+        }
+
+        if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
+        {
+            return this->spotLightComponent;
+        }
+
+        if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
+        {
+            return this->editorMetadataComponent;
+        }
+
+
+        auto item = this->components.Find(componentName);
+        if (item != nullptr)
+        {
+            return item->value;
+        }
+
+        return nullptr;
+    }
+
+    Component* SceneNode::AddComponentByName(const char* componentName)
+    {
+        Component* component = nullptr;
+
+        if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
+        {
+            if (this->modelComponent == nullptr)
+            {
+                this->modelComponent = new ModelComponent(*this);
+            }
+            component = this->modelComponent;
+        }
+        else if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
+        {
+            if (this->pointLightComponent == nullptr)
+            {
+                this->pointLightComponent = new PointLightComponent(*this);
+            }
+            component = this->pointLightComponent;
+        }
+        else if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
+        {
+            if (this->spotLightComponent == nullptr)
+            {
+                this->spotLightComponent = new SpotLightComponent(*this);
+            }
+            component = this->spotLightComponent;
+        }
+        else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
+        {
+            if (this->editorMetadataComponent == nullptr)
+            {
+                this->editorMetadataComponent = new EditorMetadataComponent(*this);
+            }
+            component = this->editorMetadataComponent;
+        }
+        else
+        {
+            // A component of the same name can't already exist. If it doesn, we just return the existing one.
+            component = this->GetComponentByName(componentName);
+            if (component == nullptr)
+            {
+                component = GTEngine::CreateComponentByName(componentName, *this);
+                this->components.Add(componentName, component);
+            }
+        }
+
+        return component;
+    }
+
+    void SceneNode::RemoveComponentByName(const char* componentName)
+    {
+        auto component = this->GetComponentByName(componentName);
+        if (component != nullptr)
+        {
+            if (component == this->modelComponent)
+            {
+                this->modelComponent = nullptr;
+            }
+            else if (component == this->pointLightComponent)
+            {
+                this->pointLightComponent = nullptr;
+            }
+            else if (component == this->spotLightComponent)
+            {
+                this->spotLightComponent = nullptr;
+            }
+            else if (component == this->editorMetadataComponent)
+            {
+                this->editorMetadataComponent = nullptr;
+            }
+
+            this->components.Remove(componentName);
+            delete component;
+        }
+    }
+
+    void SceneNode::RemoveAllComponents()
+    {
+        // I've had too many bugs where I've forgotten to handle the specialised cases properly, so here I'm going
+        // to take it slow and do this in a way where we avoid at least one case of this kind of bug.
+        //
+        // What we'll do is just retrieve the names of all of the attached components, and then iterate over that
+        // and remove by name.
+        GTCore::Vector<GTCore::String> componentNames;
+        this->GetAttachedComponentNames(componentNames);
+
+        for (size_t i = 0; i < componentNames.count; ++i)
+        {
+            this->RemoveComponentByName(componentNames[i].c_str());
+        }
+
+
+        // And now at the end we'll assert that we have no components.
+        assert(this->components.count == 0);
+    }
+
+    void SceneNode::GetAttachedComponentNames(GTCore::Vector<GTCore::String> &output) const
+    {
+        // First is our specialised cases.
+        if (this->modelComponent          != nullptr) { output.PushBack(ModelComponent::Name);          }
+        if (this->pointLightComponent     != nullptr) { output.PushBack(PointLightComponent::Name);     }
+        if (this->spotLightComponent      != nullptr) { output.PushBack(SpotLightComponent::Name);      }
+        if (this->editorMetadataComponent != nullptr) { output.PushBack(EditorMetadataComponent::Name); }
+
+
+        // Now we can just read the rest from the map.
+        for (size_t i = 0; i < this->components.count; ++i)
+        {
+            output.PushBack(this->components.buffer[i]->key);
+        }
+    }
+
+
+
+
+
+
     void SceneNode::SetLayer(unsigned int layer)
     {
         if (this->layer != layer)
@@ -929,11 +1083,12 @@ namespace GTEngine
 
     void SceneNode::Deserialize(GTCore::Deserializer &deserializer)
     {
-        glm::vec3 oldPosition    = this->GetPosition();
-        glm::quat oldOrientation = this->GetOrientation();
-        glm::vec3 oldScale       = this->GetScale();
-        bool      wasVisible     = this->IsVisible();
-        bool      wasStatic      = this->IsStatic();
+        // For now, we want to remove the scene node before deserializing. We then re-add it afterwards.
+        auto scene = this->GetScene();
+        if (scene != nullptr)
+        {
+            scene->RemoveSceneNode(*this);
+        }
 
 
         // Deserialize the SceneObject first.
@@ -1021,26 +1176,10 @@ namespace GTEngine
         }
 
 
-
-        // We need to post events about these changes.
-        if (oldPosition != this->GetPosition() || oldOrientation != this->GetOrientation())
+        // Now we need to re-add the node.
+        if (scene != nullptr)
         {
-            this->OnTransform(true);
-        }
-
-        if (oldScale != this->GetScale())
-        {
-            this->OnScale();
-        }
-
-        if (wasVisible != this->IsVisible())
-        {
-            this->OnVisibleChanged();
-        }
-
-        if (wasStatic != this->IsStatic())
-        {
-            this->OnStaticChanged();
+            scene->AddSceneNode(*this);
         }
     }
 
