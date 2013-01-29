@@ -47,7 +47,7 @@ namespace GTEngine
         // Here we'll setup the built-in nodes.
         this->camera.AddComponent<GTEngine::CameraComponent>();
         this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
-        this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
+        this->camera.AddComponent<GTEngine::EditorMetadataComponent>()->DeleteOnClose(false);
         this->camera.SetDataPointer(0, this);
         this->camera.DisableSerialization();
         this->camera.DisableStateStackStaging();
@@ -162,7 +162,7 @@ namespace GTEngine
             this->scene.CommitStateStackFrame();
 
             // We want an undo/redo stack item for the initial state of the scene.
-            this->AppendStateStackFrame();
+            //this->AppendStateStackFrame();
 
 
             // The scene will be done loading by this pointer, so we can close the file.
@@ -463,7 +463,13 @@ namespace GTEngine
         auto metadata = node.GetComponent<EditorMetadataComponent>();
         if (metadata != nullptr)
         {
-            return metadata->IsSelected();
+            if (metadata->IsSelected())
+            {
+                return true;
+            }
+
+            // We need to also check the actual list of selected nodes. It's considered selected if it's here.
+            return this->selectedNodes.Exists(metadata->GetID());
         }
 
         return false;
@@ -471,7 +477,7 @@ namespace GTEngine
 
     void SceneEditor::SelectSceneNode(SceneNode &node, bool force)
     {
-        if (!this->IsSceneNodeSelected(node) || force)
+        if (force || !this->IsSceneNodeSelected(node))
         {
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata != nullptr)
@@ -505,32 +511,30 @@ namespace GTEngine
         }
     }
 
-    void SceneEditor::DeselectSceneNode(SceneNode &node)
+    void SceneEditor::DeselectSceneNode(SceneNode &node, bool force)
     {
-        if (this->IsSceneNodeSelected(node))
+        if (force || this->IsSceneNodeSelected(node))
         {
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata != nullptr)
             {
                 metadata->Deselect();
 
-                assert(this->selectedNodes.Exists(metadata->GetID()) == true);
+
+                this->selectedNodes.RemoveFirstOccuranceOf(metadata->GetID());
+
+                // The scripting environment needs to be aware of this change.
+                this->PostOnSelectionChangedEventToScript();
+
+
+                // With a change in selection, we will need to update the gizmos.
+                if (this->selectedNodes.count == 0)
                 {
-                    this->selectedNodes.RemoveFirstOccuranceOf(metadata->GetID());
-
-                    // The scripting environment needs to be aware of this change.
-                    this->PostOnSelectionChangedEventToScript();
-
-
-                    // With a change in selection, we will need to update the gizmos.
-                    if (this->selectedNodes.count == 0)
-                    {
-                        this->HideGizmo();
-                    }
-                    else
-                    {
-                        this->RepositionGizmo();
-                    }
+                    this->HideGizmo();
+                }
+                else
+                {
+                    this->RepositionGizmo();
                 }
             }
         }
@@ -607,7 +611,8 @@ namespace GTEngine
             auto nodesToDelete = this->selectedNodes;
             this->DeleteSceneNodes(nodesToDelete);
 
-            this->AppendStateStackFrame();
+            //this->AppendStateStackFrame();
+            this->CommitStateStackFrame();
         }
     }
 
@@ -675,6 +680,10 @@ namespace GTEngine
 
     void SceneEditor::Undo()
     {
+        this->scene.SeekStateStack(-1);
+        this->MarkAsModified();
+
+        /*
         assert(this->sceneStateStack.count > 0);
         {
             if (this->sceneStateIndex > 0)
@@ -689,10 +698,16 @@ namespace GTEngine
                 }
             }
         }
+        */
     }
 
     void SceneEditor::Redo()
     {
+        this->scene.SeekStateStack(+1);
+        this->MarkAsModified();
+
+
+        /*
         assert(this->sceneStateStack.count > 0);
         {
             if (this->sceneStateIndex < this->sceneStateStack.count - 1)
@@ -707,6 +722,7 @@ namespace GTEngine
                 }
             }
         }
+        */
     }
 
     void SceneEditor::CommitStateStackFrame()
@@ -715,6 +731,7 @@ namespace GTEngine
         this->MarkAsModified();
     }
 
+    /*
     void SceneEditor::AppendStateStackFrame()
     {
         // We do not mark as modified
@@ -751,6 +768,7 @@ namespace GTEngine
             this->MarkAsModified();
         }
     }
+    */
 
 
 
@@ -838,7 +856,7 @@ namespace GTEngine
 
                 // When a scene node is added without a metadata component (which is true if we've made it here), we know that it must be deleted when the
                 // state is also deleted. We need to mark it as such.
-                metadata->DeleteOnClose(true);
+                //metadata->DeleteOnClose(true);
             }
 
 
@@ -1105,17 +1123,33 @@ namespace GTEngine
         }
     }
 
-    void SceneEditor::OnSceneNodeComponentChanged(SceneNode &node, Component &)
+    void SceneEditor::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
     {
+        // If the component is editor metadata, we need to check the selection state.
+        if (GTCore::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
+        {
+            auto &metadata = static_cast<EditorMetadataComponent &>(component);
+
+            if (metadata.IsSelected())
+            {
+                this->SelectSceneNode(node, true);
+            }
+            else
+            {
+                this->DeselectSceneNode(node);
+            }
+        }
+
+
         // We don't want to do anything here if we're deserializing or if the node is not actually being saved on the state stack.
-        if (!this->isDeserializing && node.IsStateStackStagingEnabled())
+        if (!this->isDeserializing && node.IsStateStackStagingEnabled() && this->scene.IsStateStackStagingEnabled())
         {
             // We'll commit the changes to the state stack so we can undo/redo this change.
             this->CommitStateStackFrame();
 
 
             // TEMP
-            this->AppendStateStackFrame();
+            //this->AppendStateStackFrame();
         }
     }
 
@@ -1125,7 +1159,7 @@ namespace GTEngine
         //
         // We only mark as modified if this is not the initial commit. We can determine this by looking at the number of frames. If there is only 1, it was the initial
         // commit and we don't want to mark as modified in that case.
-        if (!this->isDeserializing && this->scene.GetStateStackFrameCount() > 1)
+        if (!this->isDeserializing && this->scene.GetStateStackFrameCount() > 1 && this->scene.IsStateStackStagingEnabled())
         {
             this->MarkAsModified();
         }
@@ -1159,10 +1193,6 @@ namespace GTEngine
 
     void SceneEditor::Hide()
     {
-        this->Save();               // TEMP!!!!
-
-
-
         auto &script = this->GetScript();
 
         script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
@@ -1409,7 +1439,7 @@ namespace GTEngine
             if (this->transformedObjectWithGizmo)
             {
                 this->CommitStateStackFrame();
-                this->AppendStateStackFrame();
+                //this->AppendStateStackFrame();
                 this->transformedObjectWithGizmo = false;
             }
         }
@@ -1459,6 +1489,7 @@ namespace GTEngine
 
     void SceneEditor::DeserializeScene(GTCore::Deserializer &deserializer)
     {
+        this->scene.DisableStateStackStaging();
         this->isDeserializing = true;
         {
             this->transformGizmo.Hide();
@@ -1497,6 +1528,7 @@ namespace GTEngine
             this->UpdateGizmo();
         }
         this->isDeserializing = false;
+        this->scene.EnableStateStackStaging();
     }
 
     void SceneEditor::SerializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Serializer &serializer)
@@ -1697,20 +1729,23 @@ namespace GTEngine
 
     void SceneEditor::PostOnSelectionChangedEventToScript()
     {
-        auto &script = this->GetScript();
-
-        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-        assert(script.IsTable(-1));
+        if (this->GUI.Main != nullptr)
         {
-            script.Push("OnSelectionChanged");
-            script.GetTableValue(-2);
-            assert(script.IsFunction(-1));
+            auto &script = this->GetScript();
+
+            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            assert(script.IsTable(-1));
             {
-                script.PushValue(-2);   // <-- 'self'.
-                script.Call(1, 0);
+                script.Push("OnSelectionChanged");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // <-- 'self'.
+                    script.Call(1, 0);
+                }
             }
+            script.Pop(1);
         }
-        script.Pop(1);
     }
 }
 

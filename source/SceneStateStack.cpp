@@ -94,6 +94,31 @@ namespace GTEngine
     }
 
 
+    void SceneStateStack::Seek(int step)
+    {
+        assert(this->currentBranch != nullptr);
+        {
+            this->currentBranch->Seek(step);
+        }
+    }
+
+    void SceneStateStack::RevertStagingArea()
+    {
+        assert(this->currentBranch != nullptr);
+        {
+            this->currentBranch->RevertStagingArea();
+        }
+    }
+
+    void SceneStateStack::ApplyToScene()
+    {
+        assert(this->currentBranch != nullptr);
+        {
+            this->currentBranch->ApplyToScene();
+        }
+    }
+
+
 
     ////////////////////////////////////////////////////////
     // Private

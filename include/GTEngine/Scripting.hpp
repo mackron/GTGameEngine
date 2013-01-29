@@ -849,6 +849,31 @@ namespace GTEngine
 
                 namespace EditorMetadataComponentFFI
                 {
+                    /// Marks the node as selected.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     @par
+                    ///     Note that this isn't enough to fully select the node. Instead, this simply marks the node as selected.
+                    int Select(GTCore::Script &script);
+
+                    /// Marks the node as deselected.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     @par
+                    ///     Note that this isn't enough to fully deselect the node. Instead, this simply marks the node as selected.
+                    int Deselect(GTCore::Script &script);
+
+                    /// Determines whether or not the node is marked as selected.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     @par
+                    ///     Returns a boolean.
+                    int IsSelected(GTCore::Script &script);
+
+
                     /// Shows a sprite on the object while it's shown in the editor.
                     ///
                     /// @remarks
@@ -1125,7 +1150,13 @@ namespace GTEngine
                     ///
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
-                    int AppendStateStackFrame(GTCore::Script &script);
+                    //int AppendStateStackFrame(GTCore::Script &script);
+
+                    /// Commits a state stack frame for undo/redo operations.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int CommitStateStackFrame(GTCore::Script &script);
 
                     /// Performs an undo operation.
                     ///

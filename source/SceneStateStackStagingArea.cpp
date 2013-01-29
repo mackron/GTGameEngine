@@ -99,4 +99,33 @@ namespace GTEngine
         this->deletes.Clear();
         this->updates.Clear();
     }
+
+
+    void SceneStateStackStagingArea::GetRestoreCommands(SceneStateStackRestoreCommands &commands)
+    {
+        // We need to do opposites. Inserts become deletes, deletes become inserts and updates are back traced until we find the most recent one.
+        
+        // Inserts
+        for (size_t i = 0; i < this->inserts.count; ++i)
+        {
+            auto sceneNodeID         = this->inserts[i];
+            commands.deletes.Add(sceneNodeID, nullptr);
+        }
+
+        // Deletes
+        for (size_t i = 0; i < this->deletes.count; ++i)
+        {
+            auto sceneNodeID         = this->deletes.buffer[i]->key;
+            auto sceneNodeSerializer = this->deletes.buffer[i]->value;
+            commands.inserts.Add(sceneNodeID, sceneNodeSerializer);
+        }
+
+        // Updates
+        for (size_t i = 0; i < this->updates.count; ++i)
+        {
+            auto sceneNodeID         = this->updates[i];
+            auto sceneNodeSerializer = this->branch.FindMostRecentSerializer(sceneNodeID, this->branch.GetCurrentFrameIndex());
+            commands.updates.Add(sceneNodeID, sceneNodeSerializer);
+        }
+    }
 }

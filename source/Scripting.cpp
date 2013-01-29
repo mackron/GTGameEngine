@@ -553,6 +553,19 @@ namespace GTEngine
                 "    return new;"
                 "end;"
 
+                "function GTEngine.EditorMetadataComponent:Select()"
+                "    GTEngine.System.EditorMetadataComponent.Select(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.EditorMetadataComponent:Deselect()"
+                "    GTEngine.System.EditorMetadataComponent.Deselect(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.EditorMetadataComponent:IsSelected()"
+                "    return GTEngine.System.EditorMetadataComponent.IsSelected(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.EditorMetadataComponent:ShowSprite(texturePath, colour)"
                 "    GTEngine.System.EditorMetadataComponent.ShowSprite(self._internalPtr, texturePath, colour);"
                 "end;"
@@ -928,6 +941,9 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
+                        script.SetTableFunction(-1, "Select",                  FFI::SystemFFI::EditorMetadataComponentFFI::Select);
+                        script.SetTableFunction(-1, "Deselect",                FFI::SystemFFI::EditorMetadataComponentFFI::Deselect);
+                        script.SetTableFunction(-1, "IsSelected",              FFI::SystemFFI::EditorMetadataComponentFFI::IsSelected);
                         script.SetTableFunction(-1, "ShowSprite",              FFI::SystemFFI::EditorMetadataComponentFFI::ShowSprite);
                         script.SetTableFunction(-1, "HideSprite",              FFI::SystemFFI::EditorMetadataComponentFFI::HideSprite);
                         script.SetTableFunction(-1, "IsShowingSprite",         FFI::SystemFFI::EditorMetadataComponentFFI::IsShowingSprite);
@@ -988,7 +1004,8 @@ namespace GTEngine
                         script.SetTableFunction(-1, "EnablePhysicsSimulation",             FFI::SystemFFI::SceneEditorFFI::EnablePhysicsSimulation);
                         script.SetTableFunction(-1, "DisablePhysicsSimulation",            FFI::SystemFFI::SceneEditorFFI::DisablePhysicsSimulation);
                         script.SetTableFunction(-1, "IsPhysicsSimulationEnabled",          FFI::SystemFFI::SceneEditorFFI::IsPhysicsSimulationEnabled);
-                        script.SetTableFunction(-1, "AppendStateStackFrame",               FFI::SystemFFI::SceneEditorFFI::AppendStateStackFrame);
+                        //script.SetTableFunction(-1, "AppendStateStackFrame",               FFI::SystemFFI::SceneEditorFFI::AppendStateStackFrame);
+                        script.SetTableFunction(-1, "CommitStateStackFrame",               FFI::SystemFFI::SceneEditorFFI::CommitStateStackFrame);
                         script.SetTableFunction(-1, "Undo",                                FFI::SystemFFI::SceneEditorFFI::Undo);
                         script.SetTableFunction(-1, "Redo",                                FFI::SystemFFI::SceneEditorFFI::Redo);
                     }
@@ -2967,6 +2984,40 @@ namespace GTEngine
                 // GTEngine.System.EditorMetadataComponent
                 namespace EditorMetadataComponentFFI
                 {
+                    int Select(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->Select();
+                        }
+
+                        return 0;
+                    }
+
+                    int Deselect(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->Deselect();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsSelected(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->IsSelected());
+                        }
+
+                        return 1;
+                    }
+
+
                     int ShowSprite(GTCore::Script &script)
                     {
                         auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
@@ -3524,12 +3575,26 @@ namespace GTEngine
                     }
 
 
+                    /*
                     int AppendStateStackFrame(GTCore::Script &script)
                     {
                         auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                         if (sceneEditor != nullptr)
                         {
                             sceneEditor->AppendStateStackFrame();
+                        }
+
+                        return 0;
+                    }
+                    */
+
+
+                    int CommitStateStackFrame(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->CommitStateStackFrame();
                         }
 
                         return 0;

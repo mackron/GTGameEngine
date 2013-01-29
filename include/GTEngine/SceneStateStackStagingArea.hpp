@@ -2,10 +2,7 @@
 #ifndef __GTEngine_SceneStateStackStagingArea_hpp_
 #define __GTEngine_SceneStateStackStagingArea_hpp_
 
-#include <GTCore/Vector.hpp>
-#include <GTCore/Map.hpp>
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
+#include "SceneStateStackRestoreCommands.hpp"
 
 namespace GTEngine
 {
@@ -65,6 +62,13 @@ namespace GTEngine
         /// Retrieves a reference to the update commands.
               GTCore::Vector<uint64_t> & GetUpdates()       { return this->updates; }
         const GTCore::Vector<uint64_t> & GetUpdates() const { return this->updates; }
+
+
+
+        /// Retrieves the set of commands to use to restore the scene from the changes in the staging area.
+        ///
+        /// @param commands [out] A reference to the object that will receive the restore commands.
+        void GetRestoreCommands(SceneStateStackRestoreCommands &commands);
 
 
     private:

@@ -929,6 +929,13 @@ namespace GTEngine
 
     void SceneNode::Deserialize(GTCore::Deserializer &deserializer)
     {
+        glm::vec3 oldPosition    = this->GetPosition();
+        glm::quat oldOrientation = this->GetOrientation();
+        glm::vec3 oldScale       = this->GetScale();
+        bool      wasVisible     = this->IsVisible();
+        bool      wasStatic      = this->IsStatic();
+
+
         // Deserialize the SceneObject first.
         SceneObject::Deserialize(deserializer);
 
@@ -1011,6 +1018,29 @@ namespace GTEngine
                     this->RemoveComponentByName(componentsToRemove[i].c_str());
                 }
             }
+        }
+
+
+
+        // We need to post events about these changes.
+        if (oldPosition != this->GetPosition() || oldOrientation != this->GetOrientation())
+        {
+            this->OnTransform(true);
+        }
+
+        if (oldScale != this->GetScale())
+        {
+            this->OnScale();
+        }
+
+        if (wasVisible != this->IsVisible())
+        {
+            this->OnVisibleChanged();
+        }
+
+        if (wasStatic != this->IsStatic())
+        {
+            this->OnStaticChanged();
         }
     }
 
