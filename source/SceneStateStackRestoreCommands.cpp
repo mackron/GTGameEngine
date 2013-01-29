@@ -1,5 +1,6 @@
 
 #include <GTEngine/SceneStateStackRestoreCommands.hpp>
+#include <GTEngine/SceneStateStackBranch.hpp>
 #include <GTEngine/Scene.hpp>
 
 namespace GTEngine
@@ -12,6 +13,100 @@ namespace GTEngine
     SceneStateStackRestoreCommands::~SceneStateStackRestoreCommands()
     {
     }
+
+
+    void SceneStateStackRestoreCommands::AddInsert(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
+    {
+        // If a delete command with the scene node is already staged, all we want to do is remove it from the deletes and just
+        // ignore everything.
+        auto iDelete = this->deletes.Find(sceneNodeID);
+        if (iDelete != nullptr)
+        {
+            this->deletes.RemoveByIndex(iDelete->index);
+        }
+        else
+        {
+            // If the scene node is in the updates list we need to remove it.
+            this->updates.RemoveByKey(sceneNodeID);
+
+            if (!this->inserts.Exists(sceneNodeID))
+            {
+                this->inserts.Add(sceneNodeID, sceneNodeSerializer);
+            }
+        }
+    }
+
+    void SceneStateStackRestoreCommands::AddDelete(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
+    {
+        // If an insert command with the scene node is already staged, all we want to do is remove it from the inserts and just
+        // ignore everything.
+        auto iInsert = this->inserts.Find(sceneNodeID);
+        if (iInsert != nullptr)
+        {
+            this->inserts.RemoveByIndex(iInsert->index);
+        }
+        else
+        {
+            this->updates.RemoveByKey(sceneNodeID);
+
+            if (!this->deletes.Exists(sceneNodeID))
+            {
+                this->deletes.Add(sceneNodeID, sceneNodeSerializer);
+            }
+        }
+    }
+
+    void SceneStateStackRestoreCommands::AddUpdate(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
+    {
+        // We ignore update commands if an insert or delete command is already present.
+        if (!this->inserts.Exists(sceneNodeID) &&
+            !this->deletes.Exists(sceneNodeID) &&
+            !this->updates.Exists(sceneNodeID))
+        {
+            this->updates.Add(sceneNodeID, sceneNodeSerializer);
+        }
+    }
+
+
+    void SceneStateStackRestoreCommands::UpdateToMostRecentSerializers(SceneStateStackBranch &branch, uint32_t startFrameIndex)
+    {
+        for (size_t i = 0; i < this->inserts.count; ++i)
+        {
+            auto iCommand = this->inserts.buffer[i];
+            assert(iCommand != nullptr);
+            {
+                auto  sceneNodeID         = iCommand->key;
+                auto &sceneNodeSerializer = iCommand->value;
+
+                sceneNodeSerializer = branch.FindMostRecentSerializer(sceneNodeID, startFrameIndex);
+            }
+        }
+
+        for (size_t i = 0; i < this->deletes.count; ++i)
+        {
+            auto iCommand = this->deletes.buffer[i];
+            assert(iCommand != nullptr);
+            {
+                auto  sceneNodeID         = iCommand->key;
+                auto &sceneNodeSerializer = iCommand->value;
+
+                sceneNodeSerializer = branch.FindMostRecentSerializer(sceneNodeID, startFrameIndex);
+            }
+        }
+
+        for (size_t i = 0; i < this->updates.count; ++i)
+        {
+            auto iCommand = this->updates.buffer[i];
+            assert(iCommand != nullptr);
+            {
+                auto  sceneNodeID         = iCommand->key;
+                auto &sceneNodeSerializer = iCommand->value;
+
+                sceneNodeSerializer = branch.FindMostRecentSerializer(sceneNodeID, startFrameIndex);
+            }
+        }
+    }
+
 
     void SceneStateStackRestoreCommands::Clear()
     {

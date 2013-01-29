@@ -317,18 +317,6 @@ namespace GTEngine
         }
     }
 
-    
-    void Scene::AddSceneNode(SceneNode &node)
-    {
-        node.SetScene(this);
-    }
-
-    void Scene::RemoveSceneNode(SceneNode &node)
-    {
-        node.SetScene(nullptr);
-    }
-
-
     void Scene::RemoveAllObjects()
     {
         while (this->sceneNodes.GetCount() > 0)
@@ -340,6 +328,47 @@ namespace GTEngine
             }
         }
     }
+
+
+    
+    void Scene::AddSceneNode(SceneNode &node)
+    {
+        node.SetScene(this);
+    }
+
+    void Scene::RemoveSceneNode(SceneNode &node)
+    {
+        node.SetScene(nullptr);
+    }
+
+    void Scene::RemoveSceneNodeByID(uint64_t sceneNodeID)
+    {
+        auto sceneNode = this->GetSceneNodeByID(sceneNodeID);
+        if (sceneNode != nullptr)
+        {
+            this->RemoveSceneNode(*sceneNode);
+        }
+    }
+
+    SceneNode* Scene::CreateNewSceneNode(GTCore::Deserializer &deserializer)
+    {
+        auto sceneNode = new SceneNode;
+        sceneNode->Deserialize(deserializer);
+
+        // We need to return false if a node of the same ID already exists.
+        if (this->GetSceneNodeByID(sceneNode->GetID()) != nullptr)
+        {
+            delete sceneNode;
+            return nullptr;
+        }
+
+
+        this->AddSceneNode(*sceneNode);
+
+        return sceneNode;
+    }
+
+    
 
 
     void Scene::RefreshObject(SceneObject &object)
@@ -614,6 +643,17 @@ namespace GTEngine
             return currentBranch->GetTotalFrameCount();
         }
     }
+
+    void Scene::SeekStateStack(int amount)
+    {
+        this->stateStack.Seek(amount);
+    }
+
+    void Scene::ApplyStateStack()
+    {
+        this->stateStack.ApplyToScene();
+    }
+
 
     
 

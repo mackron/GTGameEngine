@@ -10,6 +10,7 @@
 namespace GTEngine
 {
     class Scene;
+    class SceneStateStackBranch;
 
     /// Simple structure containing the commands that need to be executed in order to restore a scene to a different state.
     struct SceneStateStackRestoreCommands
@@ -19,6 +20,20 @@ namespace GTEngine
 
         /// Destructor.
         ~SceneStateStackRestoreCommands();
+
+
+        /// Adds an insert command.
+        void AddInsert(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
+
+        /// Adds a delete command.
+        void AddDelete(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
+
+        /// Adds an update command.
+        void AddUpdate(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
+
+
+        /// Goes through every command and updates the serialized data with the most recent data, starting from the current frame on the given branch.
+        void UpdateToMostRecentSerializers(SceneStateStackBranch &branch, uint32_t startFrameIndex);
 
 
         /// Clears the commands.

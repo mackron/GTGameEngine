@@ -248,6 +248,9 @@ namespace GTEngine
         /// @param object [in] A reference to the object to remove from the scene.
         void RemoveObject(SceneObject &object);
 
+        /// Removes every object from the scene.
+        void RemoveAllObjects();
+
 
         /// Adds a scene node to the scene.
         ///
@@ -259,9 +262,21 @@ namespace GTEngine
         /// @param node [in] A reference to the node to remove.
         void RemoveSceneNode(SceneNode &node);
 
+        /// Removes a scene node by it's ID.
+        ///
+        /// @param sceneNodeID [in] The ID of the scene node to remove.
+        void RemoveSceneNodeByID(uint64_t sceneNodeID);
 
-        /// Removes every object from the scene.
-        void RemoveAllObjects();
+        /// Creates a new scene node from the given deserializer.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to create the scene node from.
+        ///
+        /// @return A pointer to the new scene node, or null if an error occurs.
+        ///
+        /// @remarks
+        ///     If a scene node of the same ID already exists, this will return nullptr.
+        SceneNode* CreateNewSceneNode(GTCore::Deserializer &deserializer);
+        
 
 
         /// Refreshes the given scene object.
@@ -413,6 +428,17 @@ namespace GTEngine
         /// @remarks
         ///     The number of stack frames on the current branch.
         size_t GetStateStackFrameCount() const;
+
+        /// Moves the current frame by the given amount.
+        ///
+        /// @param step [in] The amount to seek by. Can be positive or negative.
+        ///
+        /// @remarks
+        ///     This will also update the scene to that of the new state frame.
+        void SeekStateStack(int step);
+
+        /// Applies the current state as defined in the state stack to the scene.
+        void ApplyStateStack();
 
 
 

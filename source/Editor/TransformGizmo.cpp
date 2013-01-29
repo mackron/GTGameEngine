@@ -271,58 +271,69 @@ namespace GTEngine
 
 
         auto metadata = this->sceneNode.AddComponent<EditorMetadataComponent>();
+        metadata->DeleteOnClose(false);
 
         metadata = this->xArrowSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
+        metadata->DeleteOnClose(false);
 
         metadata = this->yArrowSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
+        metadata->DeleteOnClose(false);
 
         metadata = this->zArrowSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
+        metadata->DeleteOnClose(false);
 
 
         metadata = this->xCircleSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
+        metadata->DeleteOnClose(false);
 
         metadata = this->yCircleSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
+        metadata->DeleteOnClose(false);
 
         metadata = this->zCircleSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
+        metadata->DeleteOnClose(false);
 
         metadata = this->cameraFacingCircleSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
+        metadata->DeleteOnClose(false);
 
 
         metadata = this->xScaleSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
+        metadata->DeleteOnClose(false);
 
         metadata = this->yScaleSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
+        metadata->DeleteOnClose(false);
 
         metadata = this->zScaleSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
+        metadata->DeleteOnClose(false);
 
 
 

@@ -88,7 +88,7 @@ namespace GTEngine
         /// Deselects the given scene node.
         ///
         /// @param node [in] The node to deselect.
-        void DeselectSceneNode(SceneNode &node);
+        void DeselectSceneNode(SceneNode &node, bool force = false);
 
         /// Retrieves the center point of the selected nodes.
         glm::vec3 GetSelectionCenterPoint() const;
@@ -133,7 +133,7 @@ namespace GTEngine
 
 
         /// Appends a new state stack frame for undo/redo.
-        void AppendStateStackFrame();
+        //void AppendStateStackFrame();
 
 
 

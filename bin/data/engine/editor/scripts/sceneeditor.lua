@@ -1571,7 +1571,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.Panel:SceneEditorPanel();
     
     self.Panel:OnSceneNodeChanged(function()
-        self:AppendStateStackFrame()
+        self:CommitStateStackFrame()
     end);
     
     
@@ -1579,111 +1579,90 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:Menu();
     
     self.ContextMenu:AppendItem("Add Cube"):OnPressed(function()
-        local newNode = self:AddSceneNode("Cube");
-        if newNode ~= nil then
-            newNode:AddComponent(GTEngine.Components.Model):SetModel("engine/models/default-1x1.dae");
-            newNode:AddComponent(GTEngine.Components.Dynamics):AddBoxCollisionShape(0.5, 0.5, 0.5);
-            
-            -- We want the new node to be selected, and to be the ONLY selected object.
-            self:DeselectAll();
-            self:SelectSceneNode(newNode);
-            
-            newNode:Refresh();
-            
-            self:AppendStateStackFrame();
-        end
+        local newNode = GTEngine.SceneNode:Create();
+        newNode:SetName("Cube");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata);
+        newNode:AddComponent(GTEngine.Components.Model):SetModel("engine/models/default-1x1.dae");
+        newNode:AddComponent(GTEngine.Components.Dynamics):AddBoxCollisionShape(0.5, 0.5, 0.5);
+        
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):Select();
+        
+        self:DeselectAll();
+        
+        self.Scene:AddSceneNode(newNode);
+        self:CommitStateStackFrame();
         
         self.ContextMenu:Hide();
-        self.Viewport:Focus();
     end);
     
     self.ContextMenu:AppendSeparator();
     
     self.ContextMenu:AppendItem("Add Point Light"):OnPressed(function()
-        local newNode = self:AddSceneNode("PointLight");
-        if newNode ~= nil then
-            newNode:AddComponent(GTEngine.Components.PointLight);
-            
-            -- The light will have a sprite by default.
-            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
-
-            -- We want the new node to be selected, and to be the ONLY selected object.
-            self:DeselectAll();
-            self:SelectSceneNode(newNode);
-            self:AppendStateStackFrame();
-
-            
-            newNode:Refresh();
-        end
+        local newNode = GTEngine.SceneNode:Create();
+        newNode:SetName("PointLight");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata);
+        newNode:AddComponent(GTEngine.Components.PointLight);
+        
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):Select();
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+        
+        self:DeselectAll();
+        
+        self.Scene:AddSceneNode(newNode);
+        self:CommitStateStackFrame();
         
         self.ContextMenu:Hide();
-        self.Viewport:Focus();
     end);
     
     self.ContextMenu:AppendItem("Add Spot Light"):OnPressed(function()
-        local newNode = self:AddSceneNode("SpotLight");
-        if newNode ~= nil then
-            newNode:AddComponent(GTEngine.Components.SpotLight);
-            
-            -- The light will have a sprite by default.
-            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
-            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowDirectionArrow();
-            
-            -- We want the new node to be selected, and to be the ONLY selected object.
-            self:DeselectAll();
-            self:SelectSceneNode(newNode);
-            self:AppendStateStackFrame();
-
-            
-            newNode:Refresh();
-        end
+        local newNode = GTEngine.SceneNode:Create();
+        newNode:SetName("SpotLight");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata);
+        newNode:AddComponent(GTEngine.Components.SpotLight);
+        
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):Select();
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+        
+        self:DeselectAll();
+        
+        self.Scene:AddSceneNode(newNode);
+        self:CommitStateStackFrame();
         
         self.ContextMenu:Hide();
-        self.Viewport:Focus();
     end);
     
     self.ContextMenu:AppendItem("Add Directional Light"):OnPressed(function()
-        local newNode = self:AddSceneNode("DirectionalLight");
-        if newNode ~= nil then
-            newNode:AddComponent(GTEngine.Components.DirectionalLight);
-            
-            -- The light will have a sprite by default.
-            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
-            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowDirectionArrow();
-
-            -- We want the new node to be selected, and to be the ONLY selected object.
-            self:DeselectAll();
-            self:SelectSceneNode(newNode);
-            self:AppendStateStackFrame();
-
-            
-            newNode:Refresh();
-        end
+        local newNode = GTEngine.SceneNode:Create();
+        newNode:SetName("DirectionalLight");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata);
+        newNode:AddComponent(GTEngine.Components.DirectionalLight);
+        
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):Select();
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+        
+        self:DeselectAll();
+        
+        self.Scene:AddSceneNode(newNode);
+        self:CommitStateStackFrame();
         
         self.ContextMenu:Hide();
-        self.Viewport:Focus();
     end);
     
     self.ContextMenu:AppendItem("Add Ambient Light"):OnPressed(function()
-        local newNode = self:AddSceneNode("AmbientLight");
-        if newNode ~= nil then
-            newNode:AddComponent(GTEngine.Components.AmbientLight);
-            newNode:GetComponent(GTEngine.Components.AmbientLight):SetColour(0.25, 0.25, 0.25);
-            
-            -- The light will have a sprite by default.
-            newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
-
-            -- We want the new node to be selected, and to be the ONLY selected object.
-            self:DeselectAll();
-            self:SelectSceneNode(newNode);
-            self:AppendStateStackFrame();
-
-            
-            newNode:Refresh();
-        end
+        local newNode = GTEngine.SceneNode:Create();
+        newNode:SetName("AmbientLight");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata);
+        newNode:AddComponent(GTEngine.Components.AmbientLight);
+        
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):Select();
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+        
+        self:DeselectAll();
+        
+        self.Scene:AddSceneNode(newNode);
+        self:CommitStateStackFrame();
         
         self.ContextMenu:Hide();
-        self.Viewport:Focus();
     end);
     
     
@@ -1705,6 +1684,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         return self.Scene._internalPtr;
     end
     
+    --[[
     function self:AddSceneNode(name)
         local node = GTEngine.SceneNode:Create();
         node:SetName(name);
@@ -1713,6 +1693,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
 
         return node;
     end
+    ]]
     
     function self:DeselectAll()
         GTEngine.System.SceneEditor.DeselectAll(self._internalPtr);
@@ -1787,8 +1768,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         GTEngine.System.SceneEditor.DeleteSelectedSceneNodes(self._internalPtr);
     end
     
-    function self:AppendStateStackFrame()
-        GTEngine.System.SceneEditor.AppendStateStackFrame(self._internalPtr);
+    function self:CommitStateStackFrame()
+        GTEngine.System.SceneEditor.CommitStateStackFrame(self._internalPtr);
     end
     
     function self:Undo()

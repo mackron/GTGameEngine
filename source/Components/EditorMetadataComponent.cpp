@@ -12,7 +12,7 @@ namespace GTEngine
 
     EditorMetadataComponent::EditorMetadataComponent(SceneNode &node)
         : Component(node),
-          alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(false),
+          alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(true),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
           spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTransform(),
@@ -92,9 +92,6 @@ namespace GTEngine
 
 
         this->pickingCollisionShapeType = PickingCollisionShapeType_Model;
-
-
-        this->OnChanged();
     }
 
     void EditorMetadataComponent::SetPickingCollisionShapeToBox(const glm::vec3 &halfExtents, const glm::vec3 &offset)
@@ -130,9 +127,6 @@ namespace GTEngine
 
 
         this->pickingCollisionShapeType = PickingCollisionShapeType_Box;
-
-
-        this->OnChanged();
     }
 
     void EditorMetadataComponent::SetPickingCollisionShapeToTorus(float outerRadius, float innerRadius, unsigned int subdivisions)
@@ -186,9 +180,6 @@ namespace GTEngine
 
 
         this->pickingCollisionShapeType = PickingCollisionShapeType_Torus;
-
-
-        this->OnChanged();
     }
 
 
@@ -559,10 +550,6 @@ namespace GTEngine
 
             delete this->pickingCollisionShape;
             this->pickingCollisionShape = nullptr;
-
-
-
-            this->OnChanged();
         }
     }
 }

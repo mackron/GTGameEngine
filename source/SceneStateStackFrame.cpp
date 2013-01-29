@@ -5,31 +5,37 @@
 
 namespace GTEngine
 {
-    SceneStateStackFrame::SceneStateStackFrame(SceneStateStackBranch &branchIn, const GTCore::Vector<uint64_t> &insertIDs, const GTCore::Vector<uint64_t> &deleteIDs, const GTCore::Vector<uint64_t> &updateIDs)
+    SceneStateStackFrame::SceneStateStackFrame(SceneStateStackBranch &branchIn, const SceneStateStackStagingArea &stagingArea)
         : branch(branchIn),
           serializedInserts(), serializedDeletes(), serializedUpdates()
     {
-        for (size_t i = 0; i < insertIDs.count; ++i)
+        auto &stagedInserts = stagingArea.GetInserts();
+        auto &stagedDeletes = stagingArea.GetDeletes();
+        auto &stagedUpdates = stagingArea.GetUpdates();
+
+
+
+        for (size_t i = 0; i < stagedInserts.count; ++i)
         {
-            auto sceneNodeID         = insertIDs[i];
+            auto sceneNodeID         = stagedInserts[i];
             auto sceneNodeSerializer = new GTCore::BasicSerializer;
             this->SerializeSceneNode(sceneNodeID, *sceneNodeSerializer);
 
             this->serializedInserts.Add(sceneNodeID, sceneNodeSerializer);
         }
 
-        for (size_t i = 0; i < deleteIDs.count; ++i)
+        for (size_t i = 0; i < stagedDeletes.count; ++i)
         {
-            auto sceneNodeID         = deleteIDs[i];
-            auto sceneNodeSerializer = new GTCore::BasicSerializer;
+            auto sceneNodeID         = stagedDeletes.buffer[i]->key;
+            auto sceneNodeSerializer = new GTCore::BasicSerializer(*stagedDeletes.buffer[i]->value);
             this->SerializeSceneNode(sceneNodeID, *sceneNodeSerializer);
 
             this->serializedDeletes.Add(sceneNodeID, sceneNodeSerializer);
         }
 
-        for (size_t i = 0; i < updateIDs.count; ++i)
+        for (size_t i = 0; i < stagedUpdates.count; ++i)
         {
-            auto sceneNodeID         = updateIDs[i];
+            auto sceneNodeID         = stagedUpdates[i];
             auto sceneNodeSerializer = new GTCore::BasicSerializer;
             this->SerializeSceneNode(sceneNodeID, *sceneNodeSerializer);
 
@@ -66,6 +72,30 @@ namespace GTEngine
         return this->branch.GetScene();
     }
 
+
+    GTCore::BasicSerializer* SceneStateStackFrame::GetSerializer(uint64_t sceneNodeID) const
+    {
+        auto iSerializer = this->serializedInserts.Find(sceneNodeID);
+        if (iSerializer != nullptr)
+        {
+            return iSerializer->value;
+        }
+
+        iSerializer = this->serializedDeletes.Find(sceneNodeID);
+        if (iSerializer != nullptr)
+        {
+            return iSerializer->value;
+        }
+        
+        iSerializer = this->serializedUpdates.Find(sceneNodeID);
+        if (iSerializer != nullptr)
+        {
+            return iSerializer->value;
+        }
+
+
+        return nullptr;
+    }
 
 
 

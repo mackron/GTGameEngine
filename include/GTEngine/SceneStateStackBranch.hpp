@@ -3,8 +3,8 @@
 #define __GTEngine_SceneStateStackBranch_hpp_
 
 #include "SceneStateStackFrame.hpp"
-#include <GTCore/Vector.hpp>
-
+#include "SceneStateStackStagingArea.hpp"
+#include "SceneStateStackRestoreCommands.hpp"
 
 namespace GTEngine
 {
@@ -63,11 +63,19 @@ namespace GTEngine
         /// Retrieves the index of the current frame.
         uint32_t GetCurrentFrameIndex() const { return this->currentFrameIndex; }
 
+        /// Retrieves the maximum frame index.
+        uint32_t GetMaxFrameIndex() const;
+
         /// Retrieves the number of local frames.
         size_t GetLocalFrameCount() const { return this->frames.count; }
 
         /// Retrieves the total number of frames on the branch.
         size_t GetTotalFrameCount() const;
+
+        /// Retrieves the frame at the given index.
+        ///
+        /// @param index [in] The index of the frame to retrieve.
+        SceneStateStackFrame* GetFrameAtIndex(uint32_t index) const;
 
 
 
@@ -118,6 +126,29 @@ namespace GTEngine
         void Commit();
 
 
+        /// Seeks the current frame by the given amount.
+        ///
+        /// @param step [in] The seek distance. Can be positive or negative.
+        void Seek(int step);
+
+        /// Reverts the staging area.
+        void RevertStagingArea();
+
+        /// Applies the state defined at the current frame to the scene.
+        void ApplyToScene();
+
+        /// Retrieves the commands that should be used to restore the scene to the given frame index.
+        ///
+        /// @remarks
+        ///     This ignores the staging area.
+        void GetRestoreCommands(uint32_t newFrameIndex, SceneStateStackRestoreCommands &commands);
+
+
+        /// Finds the most recent serializer for the given scene node starting from the current frame.
+        ///
+        /// @param sceneNodeID     [in] The ID of the scene node whose most recent serializer is being retrieved.
+        /// @param startFrameIndex [in] The index of the frame to start at.
+        GTCore::BasicSerializer* FindMostRecentSerializer(uint64_t sceneNodeID, uint32_t startFrameIndex) const;
 
 
         /////////////////////////////////////////////
@@ -158,18 +189,8 @@ namespace GTEngine
         uint32_t currentFrameIndex;
 
 
-
-        /////////////////////////////////////////
-        // Staging Area
-
-        /// The list of scene node ID's of newly inserted scene nodes in the staging area.
-        GTCore::Vector<uint64_t> stagedInserts;
-
-        /// The list of scene node ID's of newly deleted scene nodes in the staging area.
-        GTCore::Vector<uint64_t> stagedDeletes;
-
-        /// The list of scene node ID's of newly updated scene nodes in the staging area.
-        GTCore::Vector<uint64_t> stagedUpdates;
+        /// The staging area.
+        SceneStateStackStagingArea stagingArea;
 
 
 

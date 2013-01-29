@@ -2,10 +2,7 @@
 #ifndef __GTEngine_SceneStateStackFrame_hpp_
 #define __GTEngine_SceneStateStackFrame_hpp_
 
-#include <GTCore/Vector.hpp>
-#include <GTCore/Map.hpp>
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
+#include "SceneStateStackStagingArea.hpp"
 
 namespace GTEngine
 {
@@ -17,7 +14,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        SceneStateStackFrame(SceneStateStackBranch &branch, const GTCore::Vector<uint64_t> &insertIDs, const GTCore::Vector<uint64_t> &deleteIDs, const GTCore::Vector<uint64_t> &updateIDs);
+        SceneStateStackFrame(SceneStateStackBranch &branch, const SceneStateStackStagingArea &stagingArea);
 
         /// Destructor.
         ~SceneStateStackFrame();
@@ -26,6 +23,28 @@ namespace GTEngine
         /// Retrieves a reference to the scene that owns the state stack that subsequently owns this frame.
               Scene & GetScene();
         const Scene & GetScene() const;
+
+
+        /// Retrieves the serializer for the given scene node, if any.
+        ///
+        /// @param sceneNodeID [in] The ID of the scene node whose serializer is being retrieved.
+        ///
+        /// @remarks
+        ///     If the scene node is not featured in this frame null will be returned.
+        GTCore::BasicSerializer* GetSerializer(uint64_t sceneNodeID) const;
+
+
+        /// Retrieves a reference to the internal list of insert commands.
+              GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetInserts()       { return this->serializedInserts; }
+        const GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetInserts() const { return this->serializedInserts; }
+
+        /// Retrieves a reference to the internal list of delete commands.
+              GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetDeletes()       { return this->serializedDeletes; }
+        const GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetDeletes() const { return this->serializedDeletes; }
+
+        /// Retrieves a reference to the internal list of update commands.
+              GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetUpdates()       { return this->serializedUpdates; }
+        const GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetUpdates() const { return this->serializedUpdates; }
 
 
 

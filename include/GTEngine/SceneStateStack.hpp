@@ -97,6 +97,20 @@ namespace GTEngine
         bool HasInitialFrame() const;
 
 
+        /// Seeks the current branch by the given amount.
+        ///
+        /// @param step [in] The distance to seek. Can be positive or negative.
+        void Seek(int step);
+
+
+        /// Reverts the staging area of the current branch.
+        void RevertStagingArea();
+
+
+        /// Applies the current state of the stack to the scene.
+        void ApplyToScene();
+
+
 
     private:
 
