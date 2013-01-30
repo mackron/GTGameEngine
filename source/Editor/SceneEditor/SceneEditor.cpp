@@ -27,8 +27,6 @@ namespace GTEngine
           snapTranslation(), snapAngle(0.0f), snapScale(), isSnapping(false),
           translateSnapSize(0.25f), rotateSnapSize(5.625f), scaleSnapSize(0.25f),
           transformedObjectWithGizmo(false),
-          simulationSerializer(), transformationSerializer(),
-          sceneStateStack(), sceneStateIndex(0),
           isDeserializing(false),
           GUI()
     {
@@ -228,22 +226,12 @@ namespace GTEngine
     void SceneEditor::EnablePhysicsSimulation()
     {
         this->selectedNodesBeforePhysicsSimulation = this->selectedNodes;
-
-        this->simulationSerializer.Clear();
-        this->SerializeScene(this->simulationSerializer);
-
         this->physicsManager.EnableSimulation();
     }
 
     void SceneEditor::DisablePhysicsSimulation()
     {
         this->physicsManager.DisableSimulation();
-
-        if (this->simulationSerializer.GetBuffer() != nullptr && this->simulationSerializer.GetBufferSizeInBytes() > 0)
-        {
-            GTCore::BasicDeserializer deserializer(this->simulationSerializer.GetBuffer(), this->simulationSerializer.GetBufferSizeInBytes());
-            this->DeserializeScene(deserializer);
-        }
 
 
         // To restore, all we need to do is revert the staging area.
@@ -361,11 +349,6 @@ namespace GTEngine
 
 
                     this->transformGizmo.ChangeAxisColour(selectedNode, 1.0f, 1.0f, 1.0f);
-
-
-                    // What we need to do now is serialize the state of every selected node so that we can create an update command for the undo/redo stack.
-                    this->transformationSerializer.Clear();
-                    this->SerializeSceneNodes(this->selectedNodes, this->transformationSerializer);
                 }
 
                 return true;
