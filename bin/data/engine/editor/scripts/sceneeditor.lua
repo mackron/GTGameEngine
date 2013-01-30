@@ -368,12 +368,14 @@ function GTGUI.Element:ModelComponentPanel()
     self.CastShadows:OnChecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:EnableShadowCasting();
+            self.ParentPanel:OnSceneNodeChanged();
         end;
     end);
     
     self.CastShadows:OnUnchecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:DisableShadowCasting();
+            self.ParentPanel:OnSceneNodeChanged();
         end;
     end);
     
@@ -437,7 +439,7 @@ function GTGUI.Element:ModelComponentPanel()
     function self:UpdateModel()
         if self.CurrentComponent ~= nil and self.CurrentNode ~= nil then
             self.CurrentComponent:SetModel(self.ModelPath:GetText());
-            self.CurrentNode:Refresh();
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
@@ -450,6 +452,8 @@ function GTGUI.Element:ModelComponentPanel()
             else
                 textbox:SetStyle("border-color", "#cc6a6a");
             end
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
@@ -502,6 +506,7 @@ function GTGUI.Element:PointLightComponentPanel()
     self.ColourInput:OnValueChanged(function(data)
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:SetColour(data.x, data.y, data.z);
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -526,12 +531,14 @@ function GTGUI.Element:PointLightComponentPanel()
     self.CastShadows:OnChecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:EnableShadowCasting();
+            self.ParentPanel:OnSceneNodeChanged();
         end;
     end);
     
     self.CastShadows:OnUnchecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:DisableShadowCasting();
+            self.ParentPanel:OnSceneNodeChanged();
         end;
     end);
     
@@ -566,6 +573,7 @@ function GTGUI.Element:PointLightComponentPanel()
             local quadratic = tonumber(self.QuadraticAttenuationInput:GetText());
             
             self.CurrentComponent:SetAttenuation(constant, linear, quadratic);
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
@@ -620,6 +628,7 @@ function GTGUI.Element:SpotLightComponentPanel()
     self.ColourInput:OnValueChanged(function(data)
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:SetColour(data.x, data.y, data.z);
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -654,12 +663,14 @@ function GTGUI.Element:SpotLightComponentPanel()
     self.CastShadows:OnChecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:EnableShadowCasting();
+            self.ParentPanel:OnSceneNodeChanged();
         end;
     end);
     
     self.CastShadows:OnUnchecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:DisableShadowCasting();
+            self.ParentPanel:OnSceneNodeChanged();
         end;
     end);
     
@@ -700,6 +711,7 @@ function GTGUI.Element:SpotLightComponentPanel()
             local quadratic = tonumber(self.QuadraticAttenuationInput:GetText());
             
             self.CurrentComponent:SetAttenuation(constant, linear, quadratic);
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
@@ -709,6 +721,7 @@ function GTGUI.Element:SpotLightComponentPanel()
             local outerAngle = tonumber(self.OuterAngleInput:GetText());
             
             self.CurrentComponent:SetAngles(innerAngle, outerAngle);
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
@@ -735,6 +748,7 @@ function GTGUI.Element:DirectionalLightComponentPanel()
     self.ColourInput:OnValueChanged(function(data)
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:SetColour(data.x, data.y, data.z);
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -745,12 +759,14 @@ function GTGUI.Element:DirectionalLightComponentPanel()
     self.CastShadows:OnChecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:EnableShadowCasting();
+            self.ParentPanel:OnSceneNodeChanged();
         end;
     end);
     
     self.CastShadows:OnUnchecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:DisableShadowCasting();
+            self.ParentPanel:OnSceneNodeChanged();
         end;
     end);
     
@@ -791,6 +807,7 @@ function GTGUI.Element:AmbientLightComponentPanel()
     self.ColourInput:OnValueChanged(function(data)
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:SetColour(data.x, data.y, data.z);
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
 
@@ -861,6 +878,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:AddBoxCollisionShape(0.5, 0.5, 0.5);
             self:UpdateCollisionShapes();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -868,6 +887,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:AddSphereCollisionShape(1.0);
             self:UpdateCollisionShapes();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
 
@@ -875,6 +896,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:AddEllipsoidCollisionShape(1.0, 1.0, 1.0);
             self:UpdateCollisionShapes();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -882,6 +905,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:AddCylinderXCollisionShape(1.0, 0.5, 0.5);
             self:UpdateCollisionShapes();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -889,6 +914,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:AddCylinderYCollisionShape(0.0, 1.5, 0.5);
             self:UpdateCollisionShapes();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -896,6 +923,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:AddCylinderZCollisionShape(0.0, 0.5, 1.5);
             self:UpdateCollisionShapes();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -903,6 +932,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:AddCapsuleXCollisionShape(0.5, 1.0);
             self:UpdateCollisionShapes();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -910,6 +941,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:AddCapsuleYCollisionShape(0.5, 1.0);
             self:UpdateCollisionShapes();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -917,6 +950,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:AddCapsuleZCollisionShape(0.5, 1.0);
             self:UpdateCollisionShapes();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -936,6 +971,8 @@ function GTGUI.Element:DynamicsComponentPanel()
             self.CurrentComponent:IsKinematic(true);
             self.MassLabel:SetStyle("text-color", "#5a5a5a");
             self.MassInput:Disable();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -944,6 +981,8 @@ function GTGUI.Element:DynamicsComponentPanel()
             self.CurrentComponent:IsKinematic(false);
             self.MassLabel:SetStyle("text-color", "std-text-color");
             self.MassInput:Enable();
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end);
     
@@ -997,46 +1036,55 @@ function GTGUI.Element:DynamicsComponentPanel()
                         panel:CollisionShapePanel_Box():Update(shape);
                         panel:OnExtentsChanged(function(data)
                             self.CurrentComponent:SetBoxCollisionShapeHalfExtents(i, data.x * 0.5, data.y * 0.5, data.z * 0.5);
+                            self.ParentPanel:OnSceneNodeChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.Sphere           then
                         panel:CollisionShapePanel_Sphere():Update(shape);
                         panel:OnRadiusChanged(function(data)
                             self.CurrentComponent:SetSphereCollisionShapeRadius(i, data.radius);
+                            self.ParentPanel:OnSceneNodeChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.Ellipsoid        then
                         panel:CollisionShapePanel_Ellipsoid():Update(shape);
                         panel:OnRadiusChanged(function(data)
                             self.CurrentComponent:SetEllipsoidCollisionShapeRadius(i, data.x, data.y, data.z);
+                            self.ParentPanel:OnSceneNodeChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CylinderX        then
                         panel:CollisionShapePanel_CylinderX():Update(shape);
                         panel:OnExtentsChanged(function(data)
                             self.CurrentComponent:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
+                            self.ParentPanel:OnSceneNodeChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CylinderY        then
                         panel:CollisionShapePanel_CylinderY():Update(shape);
                         panel:OnExtentsChanged(function(data)
                             self.CurrentComponent:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
+                            self.ParentPanel:OnSceneNodeChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CylinderZ        then
                         panel:CollisionShapePanel_CylinderZ():Update(shape);
                         panel:OnExtentsChanged(function(data)
                             self.CurrentComponent:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
+                            self.ParentPanel:OnSceneNodeChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleX         then
                         panel:CollisionShapePanel_CapsuleX():Update(shape);
                         panel:OnSizeChanged(function(data)
                             self.CurrentComponent:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
+                            self.ParentPanel:OnSceneNodeChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleY         then
                         panel:CollisionShapePanel_CapsuleY():Update(shape);
                         panel:OnSizeChanged(function(data)
                             self.CurrentComponent:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
+                            self.ParentPanel:OnSceneNodeChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleZ         then
                         panel:CollisionShapePanel_CapsuleZ():Update(shape);
                         panel:OnSizeChanged(function(data)
                             self.CurrentComponent:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
+                            self.ParentPanel:OnSceneNodeChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.ConvexHull       then
                         panel:CollisionShapePanel_ConvexHull():Update(shape);
@@ -1047,11 +1095,13 @@ function GTGUI.Element:DynamicsComponentPanel()
                     panel:OnDelete(function()
                         self.CurrentComponent:RemoveCollisionShapeAtIndex(i);
                         self:UpdateCollisionShapes();
+                        self.ParentPanel:OnSceneNodeChanged();
                     end);
                     
                     panel:OnOffsetChanged(function(data)
                         if not self.IsUpdating then
                             self.CurrentComponent:SetCollisionShapeOffset(i, data.x, data.y, data.z);
+                            self.ParentPanel:OnSceneNodeChanged();
                         end
                     end);
             
@@ -1066,6 +1116,7 @@ function GTGUI.Element:DynamicsComponentPanel()
     function self:ApplyMass()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:SetMass(tonumber(self.MassInput:GetText()));
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
@@ -1199,6 +1250,8 @@ function GTGUI.Element:EditorMetadataComponentPanel()
             else
                 self.CurrentNode:Hide();
             end
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
@@ -1209,6 +1262,8 @@ function GTGUI.Element:EditorMetadataComponentPanel()
             else
                 self.CurrentComponent:HideSprite();
             end
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
@@ -1219,6 +1274,8 @@ function GTGUI.Element:EditorMetadataComponentPanel()
             else
                 self.CurrentComponent:HideDirectionArrow();
             end
+            
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
 
