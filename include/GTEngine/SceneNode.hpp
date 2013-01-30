@@ -647,11 +647,7 @@ namespace GTEngine
         */
         bool IsStatic() const;
 
-        /**
-        *   \brief                 Determines if the scene node is visible.
-        *   \param  recursive [in] Whether or not the visibility should be check recursively. If a parent is invisible, so is it's children.
-        */
-        bool IsVisible(bool recursive = true) const;
+        
 
         /**
         *   \brief  Sets whether or not the scene node is visible.
@@ -668,6 +664,13 @@ namespace GTEngine
         */
         inline void Hide() { this->SetVisible(false); }
 
+        /**
+        *   \brief                 Determines if the scene node is visible.
+        *   \param  recursive [in] Whether or not the visibility should be check recursively. If a parent is invisible, so is it's children.
+        */
+        bool IsVisible(bool recursive = true) const;
+
+        
 
         /// Disables position inheritance.
         void DisablePositionInheritance();
@@ -871,9 +874,6 @@ namespace GTEngine
         Scene* scene;
 
 
-        /// Keeps track of whether or not the node is visible. True by default.
-        bool isVisible;
-
         /// Keeps track of whether or not position inheritance is enabled. True by default.
         bool inheritPosition;
 
@@ -947,7 +947,7 @@ namespace GTEngine
 
             NoUpdate                 = (1 << 1),
             Static                   = (1 << 2),
-            Visible                  = (1 << 3),
+            Invisible                = (1 << 3),
             NoPositionInheritance    = (1 << 4),
             NoOrientationInheritance = (1 << 5),
             NoScaleInheritance       = (1 << 6),
