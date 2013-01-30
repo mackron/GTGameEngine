@@ -59,6 +59,13 @@ namespace GTEngine
         void ApplyScaling(float x, float y, float z);
         void ApplyScaling(const glm::vec3 &scale) { this->ApplyScaling(scale.x, scale.y, scale.z); }
 
+        
+        /// Applies the scene node's scaling.
+        void ApplySceneNodeScaling();
+
+        /// Applies the scene node's transform.
+        void ApplySceneNodeTransformation();
+
 
 
     public:

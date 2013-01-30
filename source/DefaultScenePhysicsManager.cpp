@@ -73,6 +73,16 @@ namespace GTEngine
         object.setAngularVelocity(angularVelocity);
     }
 
+    void DefaultScenePhysicsManager::UpdateTransform(GhostObject &object, const glm::mat4 &newTransform)
+    {
+        auto objectWorld = object.GetWorld();
+        assert(objectWorld == &this->world);
+        {
+            object.setWorldTransform(ToBulletTransform(newTransform));
+            objectWorld->UpdateAABB(object);
+        }
+    }
+
 
 
     void DefaultScenePhysicsManager::AddConstraint(GenericConstraint &constraint)

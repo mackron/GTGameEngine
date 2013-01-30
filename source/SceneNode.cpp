@@ -775,6 +775,18 @@ namespace GTEngine
             }
         }
 
+        if (component != nullptr)
+        {
+            if (this->scene != nullptr)
+            {
+                this->scene->OnSceneNodeComponentAdded(*this, *component);
+            }
+        }
+        else
+        {
+            Log("Warning: Failed to add component '%s' to scene node.", componentName);
+        }
+
         return component;
     }
 
@@ -783,6 +795,12 @@ namespace GTEngine
         auto component = this->GetComponentByName(componentName);
         if (component != nullptr)
         {
+            if (this->scene != nullptr)
+            {
+                this->scene->OnSceneNodeComponentRemoved(*this, *component);
+            }
+
+
             if (component == this->modelComponent)
             {
                 this->modelComponent = nullptr;

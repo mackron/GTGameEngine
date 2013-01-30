@@ -81,6 +81,18 @@ namespace GTEngine
         }
     }
 
+    void ProximityComponent::ApplySceneNodeScaling()
+    {
+        this->ApplyScaling(this->node.GetWorldScale());
+    }
+
+    void ProximityComponent::ApplySceneNodeTransformation()
+    {
+        btTransform transform;
+        this->node.GetWorldTransform(transform);
+        this->ghostObject.setWorldTransform(transform);
+    }
+
 
     void ProximityComponent::SetShape(btCollisionShape* newShape)
     {

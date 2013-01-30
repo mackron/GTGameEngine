@@ -598,14 +598,15 @@ namespace GTEngine
 
 
 
+
         /// Called after a scene node is added to the scene. See remarks.
         ///
         /// @remarks
-        ///     This function is called when a scene node that is already part of this scene has a child attached to it.
-        void OnSceneNodeAdded(SceneNode& node);
+        ///     This function is also called when a scene node that is already part of this scene has a child attached to it.
+        void OnSceneNodeAdded(SceneNode &node);
 
         /// Called after a scene node is removed from the scene.
-        void OnSceneNodeRemoved(SceneNode& node);
+        void OnSceneNodeRemoved(SceneNode &node);
 
         /// Called when a scene node is moved, rotated or both. This is not called for scaling. Use OnSceneNodeScale() that.
         ///
@@ -613,13 +614,30 @@ namespace GTEngine
         /// @param updateDynamicsObject [in] Controls whether or not the dynamics object, if any, should be updated also.
         void OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject);
 
-        void OnSceneNodeScale(SceneNode& node);
-        void OnSceneNodeStaticChanged(SceneNode& node);
-        void OnSceneNodeVisibleChanged(SceneNode& node);
+        void OnSceneNodeScale(SceneNode &node);
+        void OnSceneNodeStaticChanged(SceneNode &node);
+        void OnSceneNodeVisibleChanged(SceneNode &node);
 
-        /// Sometimes when a component changes, the scene needs to update some information. An example is when the attenuation of a point light
-        /// changes, the scene may need to update culling information.
-        void OnSceneNodeComponentChanged(SceneNode& node, Component& component);
+        /// Called after a scene node has a component attached.
+        ///
+        /// @param node      [in] A reference to the node whose component is being added.
+        /// @param component [in] A reference to the component being added.
+        void OnSceneNodeComponentAdded(SceneNode &node, Component &component, bool postEvents = true);
+
+        /// Called just before a node has a component removed.
+        ///
+        /// @param node      [in] A reference to the node whose component is being added.
+        /// @param component [in] A reference to the component being added.
+        void OnSceneNodeComponentRemoved(SceneNode &node, Component &component, bool postEvents = true);
+
+        /// Sometimes when a component changes, the scene needs to update some information.
+        ///
+        /// @param node      [in] A reference to the node whose component has been modified.
+        /// @param component [in] A reference to the component has been modified.
+        ///
+        /// @remarks
+        ///     An example is when the attenuation of a point light changes, the scene may need to update culling information.
+        void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
 
 
 
@@ -662,6 +680,18 @@ namespace GTEngine
         ///
         /// @param node [in] A reference to the scene node that has just been made visible.
         void PostEvent_OnSceneNodeShow(SceneNode &node);
+
+        /// Helper for posting an OnSceneNodeComponentAdded event.
+        ///
+        /// @param node      [in] A reference to the scene node whose component has just been added.
+        /// @param component [in] A reference to the newly added component.
+        void PostEvent_OnSceneNodeComponentAdded(SceneNode &node, Component &component);
+
+        /// Helper for posting an OnSceneNodeComponentRemoved event.
+        ///
+        /// @param node      [in] A reference to the scene node whose component has just been removed.
+        /// @param component [in] A reference to the component being removed.
+        void PostEvent_OnSceneNodeComponentRemoved(SceneNode &node, Component &component);
 
         /// Helper for posting an OnSceneNodeComponentChanged event.
         ///

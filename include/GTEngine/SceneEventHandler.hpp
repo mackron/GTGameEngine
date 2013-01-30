@@ -61,6 +61,18 @@ namespace GTEngine
         /// @param sceneNode [in] A reference to the scene node that has just been made visible.
         virtual void OnSceneNodeShow(SceneNode &sceneNode);
 
+        /// Called after a component has been added to a scene node.
+        ///
+        /// @param node      [in] A reference to the node that has just had a new component attached.
+        /// @param component [in] A reference to the newly added component.
+        virtual void OnSceneNodeComponentAdded(SceneNode &node, Component &component);
+
+        /// Called just before a component is removed from the scene node, but after the scene has handled the changes.
+        ///
+        /// @param node      [in] A reference to the node that is having a component removed.
+        /// @param component [in] A reference to the component being removed
+        virtual void OnSceneNodeComponentRemoved(SceneNode &node, Component &component);
+
         /// Called when a component of a scene node has changed.
         ///
         /// @param node      [in] A reference to the scene node whose component has just been modified.

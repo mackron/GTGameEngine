@@ -246,6 +246,8 @@ namespace GTEngine
 {
     static const uint32_t SceneMagicNumber = 0x4f25a8b0;
 
+    static const bool     DoNotPostEvents  = false;              // <-- For Scene::OnSceneNodeComponentAdded() and Scene::OnSceneNodeComponentRemoved().
+
 
     Scene::Scene()
         : renderer(new DefaultSceneRenderer),
@@ -1066,7 +1068,22 @@ namespace GTEngine
             }
         }
 
-        
+
+        // What we're now going to do is call this->OnSceneNodeComponentAdded() for every component. This allows us to avoid a lot of annoying code duplication.
+        GTCore::Vector<GTCore::String> componentNames;
+        node.GetAttachedComponentNames(componentNames);
+
+        for (size_t i = 0; i < componentNames.count; ++i)
+        {
+            auto component = node.GetComponentByName(componentNames[i].c_str());
+            assert(component != nullptr);
+            {
+                this->OnSceneNodeComponentAdded(node, *component, DoNotPostEvents);
+            }
+        }
+
+
+#if 0
         // Here we'll check the lighting components.
         auto ambientLightComponent = node.GetComponent<AmbientLightComponent>();
         if (ambientLightComponent != nullptr)
@@ -1178,7 +1195,7 @@ namespace GTEngine
         {
             this->cullingManager.AddObject(node);
         }
-
+#endif
 
 
         // Event handlers need to know.
@@ -1197,16 +1214,31 @@ namespace GTEngine
         }
 
 
-        // We just remove the scene node by it's ID.
-        this->sceneNodes.Remove(node.GetID());
+        // What we're now going to do is call this->OnSceneNodeComponentRemoved() for every component. This allows us to avoid a lot of annoying code duplication.
+        GTCore::Vector<GTCore::String> componentNames;
+        node.GetAttachedComponentNames(componentNames);
 
+        for (size_t i = 0; i < componentNames.count; ++i)
+        {
+            auto component = node.GetComponentByName(componentNames[i].c_str());
+            assert(component != nullptr);
+            {
+                this->OnSceneNodeComponentRemoved(node, *component, DoNotPostEvents);
+            }
+        }
 
 
         // The node must be removed from the update manager.
         this->updateManager.RemoveObject(node);
 
 
+        // We just remove the scene node by it's ID.
+        this->sceneNodes.Remove(node.GetID());
 
+
+        
+
+#if 0
         // The lighting components needs to be removed if applicable.
         auto ambientLightComponent = node.GetComponent<AmbientLightComponent>();
         if (ambientLightComponent != nullptr)
@@ -1267,10 +1299,8 @@ namespace GTEngine
             this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
         }
 
-
-
         this->cullingManager.RemoveObject(node);
-
+#endif
 
         // Event handlers need to know.
         if (!this->isRefreshingObject)
@@ -1286,6 +1316,9 @@ namespace GTEngine
             this->stateStack.StageUpdate(node.GetID());
         }
 
+
+        // The culling manager needs to know about this.
+        this->cullingManager.UpdateTransform(node);
 
 
         // We might need to update the rigid body, if we have one.
@@ -1303,20 +1336,9 @@ namespace GTEngine
         auto proximityComponent = node.GetComponent<ProximityComponent>();
         if (proximityComponent != nullptr)
         {
-            auto &ghostObject = proximityComponent->GetGhostObject();
-
-            auto world = ghostObject.GetWorld();
-            if (world != nullptr)
-            {
-                btTransform transform;
-                node.GetWorldTransform(transform);
-
-                ghostObject.setWorldTransform(transform);
-                world->UpdateAABB(ghostObject);
-            }
+            this->physicsManager.UpdateTransform(proximityComponent->GetGhostObject(), node.GetWorldTransformWithoutScale());
         }
 
-        this->cullingManager.UpdateTransform(node);
 
 
         // Event handlers need to know about this.
@@ -1417,6 +1439,184 @@ namespace GTEngine
         }
     }
 
+    void Scene::OnSceneNodeComponentAdded(SceneNode &node, Component &component, bool postEvents)
+    {
+        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
+
+
+        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name)      ||
+            GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
+            GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name)  ||
+            GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        {
+            if (node.IsVisible())
+            {
+                this->cullingManager.AddObject(node);
+            }
+        }
+        else
+        {
+            if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+            {
+                this->ambientLightComponents.Append(static_cast<AmbientLightComponent*>(&component));
+            }
+            else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+            {
+                this->directionalLightComponents.Append(static_cast<DirectionalLightComponent*>(&component));
+            }
+            else
+            {
+                if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+                {
+                    auto &dynamicsComponent = static_cast<DynamicsComponent &>(component);
+
+                    dynamicsComponent.ApplySceneNodeScaling();
+                    dynamicsComponent.ApplySceneNodeTransformation();
+
+                    if (node.IsVisible())
+                    {
+                        if (dynamicsComponent.GetCollisionShape().getNumChildShapes() > 0)
+                        {
+                            this->physicsManager.AddRigidBody(dynamicsComponent.GetRigidBody(), dynamicsComponent.GetCollisionGroup(), dynamicsComponent.GetCollisionMask());
+                        }
+                        else
+                        {
+                            Log("Warning: Attempting to add a dynamics component without collision shapes. The rigid body has not been added to the dynamics world.");
+                        }
+                    }
+                }
+                else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
+                {
+                    auto &proximityComponent = static_cast<ProximityComponent &>(component);
+
+                    proximityComponent.ApplySceneNodeScaling();
+                    proximityComponent.ApplySceneNodeTransformation();
+
+                    if (node.IsVisible())
+                    {
+                        if (proximityComponent.GetGhostObject().getCollisionShape() != nullptr)
+                        {
+                            this->physicsManager.AddGhostObject(proximityComponent.GetGhostObject(), proximityComponent.GetCollisionGroup(), proximityComponent.GetCollisionMask());
+                        }
+                        else
+                        {
+                            Log("Warning: Attempting to add a proximity component without a collision shape. Ignoring.");
+                        }
+                    }
+                }
+                else
+                {
+                    // Constraints.
+                    if (GTCore::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
+                    {
+                        auto constraint = static_cast<GenericConstraintComponent &>(component).GetConstraint();
+                        if (constraint != nullptr)
+                        {
+                            this->physicsManager.AddConstraint(*constraint);
+                        }
+                        else
+                        {
+                            Log("Warning: Attempting to add a generic constraint component without attachments. Ignoring.");
+                        }
+                    }
+                    else if (GTCore::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
+                    {
+                        auto constraint = static_cast<ConeTwistConstraintComponent &>(component).GetConstraint();
+                        if (constraint != nullptr)
+                        {
+                            this->physicsManager.AddConstraint(*constraint);
+                        }
+                        else
+                        {
+                            Log("Warning: Attempting to add a cone twist constraint component without attachments. Ignoring.");
+                        }
+                    }
+                    else if (GTCore::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
+                    {
+                        auto constraint = static_cast<PointToPointConstraintComponent &>(component).GetConstraint();
+                        if (constraint != nullptr)
+                        {
+                            this->physicsManager.AddConstraint(*constraint);
+                        }
+                        else
+                        {
+                            Log("Warning: Attempting to add a point-to-point constraint component without attachments. Ignoring.");
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (postEvents)
+        {
+            this->PostEvent_OnSceneNodeComponentAdded(node, component);
+        }
+    }
+
+    void Scene::OnSceneNodeComponentRemoved(SceneNode &node, Component &component, bool postEvents)
+    {
+        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
+
+
+        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name)      ||
+            GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
+            GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name)  ||
+            GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        {
+            this->cullingManager.RemoveObject(node);
+        }
+        else
+        {
+            if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+            {
+                this->ambientLightComponents.Remove(this->ambientLightComponents.Find(static_cast<AmbientLightComponent*>(&component)));
+            }
+            else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+            {
+                this->directionalLightComponents.Remove(this->directionalLightComponents.Find(static_cast<DirectionalLightComponent*>(&component)));
+            }
+            else
+            {
+                if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+                {
+                    this->physicsManager.RemoveRigidBody(static_cast<DynamicsComponent &>(component).GetRigidBody());
+                }
+                else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
+                {
+                    this->physicsManager.RemoveGhostObject(static_cast<ProximityComponent &>(component).GetGhostObject());
+                }
+                else
+                {
+                    if (GTCore::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
+                    {
+                        this->physicsManager.RemoveConstraint(*static_cast<GenericConstraintComponent &>(component).GetConstraint());
+                    }
+                    else if (GTCore::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
+                    {
+                        this->physicsManager.RemoveConstraint(*static_cast<ConeTwistConstraintComponent &>(component).GetConstraint());
+                    }
+                    else if (GTCore::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
+                    {
+                        this->physicsManager.RemoveConstraint(*static_cast<PointToPointConstraintComponent &>(component).GetConstraint());
+                    }
+                }
+            }
+        }
+
+        
+        if (postEvents)
+        {
+            this->PostEvent_OnSceneNodeComponentRemoved(node, component);
+        }
+    }
+
     void Scene::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
     {
         // The node has been updated, so we need to stage it for the next commit.
@@ -1426,14 +1626,32 @@ namespace GTEngine
         }
 
 
-        if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
-            GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name)      ||
+            GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
+            GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name)  ||
+            GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
         {
             this->cullingManager.UpdateObject(node);
         }
-
-        // TODO: Proximity, occluders.
-
+        else
+        {
+            if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+            {
+                // For now, we don't actually need to do anything here because the component itself handles everyhting. We might actually change this later on, so I'll leave
+                // this statement here. Hopefully compilers won't complain...
+            }
+            else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
+            {
+                auto &proximityComponent = static_cast<ProximityComponent &>(component);
+                
+                // We just remove and re-add. OnTransform and OnScale will ensure everything is positioned and scaled properly.
+                if (node.IsVisible())
+                {
+                    this->physicsManager.RemoveGhostObject(proximityComponent.GetGhostObject());
+                    this->physicsManager.AddGhostObject(proximityComponent.GetGhostObject(), proximityComponent.GetCollisionGroup(), proximityComponent.GetCollisionMask());
+                }
+            }
+        }
 
         
 
@@ -1500,6 +1718,22 @@ namespace GTEngine
         for (size_t i = 0; i < this->eventHandlers.count; ++i)
         {
             this->eventHandlers[i]->OnSceneNodeShow(node);
+        }
+    }
+
+    void Scene::PostEvent_OnSceneNodeComponentAdded(SceneNode &node, Component &component)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnSceneNodeComponentAdded(node, component);
+        }
+    }
+
+    void Scene::PostEvent_OnSceneNodeComponentRemoved(SceneNode &node, Component &component)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnSceneNodeComponentRemoved(node, component);
         }
     }
 
