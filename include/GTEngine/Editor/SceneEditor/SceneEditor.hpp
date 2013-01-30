@@ -418,22 +418,6 @@ namespace GTEngine
         bool transformedObjectWithGizmo;
 
 
-        /// The basic serializer containing the serialized scene that will be restored whenever a simulation has finished running.
-        GTCore::BasicSerializer simulationSerializer;
-
-        /// The basic serializer containing the scene node information before they are transformed with the gizmo.
-        GTCore::BasicSerializer transformationSerializer;
-
-
-        /// The stack containing the serialized state of the scene for doing undo and redo. This is actually a temporary system for now until something
-        /// better is added. There is always at least one item in this stack.
-        GTCore::Vector<GTCore::BasicSerializer*> sceneStateStack;
-
-        /// The index of the command that we're currently sitting on. We move this as we undo or redo. This always sits at 1 above the command that
-        /// will be the next to be undone. New commands will be placed at this index.
-        size_t sceneStateIndex;
-
-
         /// Keeps track of whether or not we're deserializing. We use this to control whether or not the scene should be marked as modified and stack
         /// frames committed.
         bool isDeserializing;
