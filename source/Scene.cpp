@@ -255,7 +255,6 @@ namespace GTEngine
           deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
           paused(false), isRefreshingObject(false),
           viewports(), sceneNodes(), nextSceneNodeID(0),
-          ambientLightComponents(), directionalLightComponents(),
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true)
@@ -268,7 +267,6 @@ namespace GTEngine
           deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
           paused(false), isRefreshingObject(false),
           viewports(), sceneNodes(), nextSceneNodeID(0),
-          ambientLightComponents(), directionalLightComponents(),
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true)
@@ -1525,8 +1523,6 @@ namespace GTEngine
             {
                 this->cullingManager.AddDirectionalLight(node);
             }
-
-            this->directionalLightComponents.Append(static_cast<DirectionalLightComponent*>(&component));
         }
         else if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
         {
@@ -1534,8 +1530,6 @@ namespace GTEngine
             {
                 this->cullingManager.AddAmbientLight(node);
             }
-
-            this->ambientLightComponents.Append(static_cast<AmbientLightComponent*>(&component));
         }
         else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
         {
@@ -1656,12 +1650,10 @@ namespace GTEngine
         else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
         {
             this->cullingManager.RemoveDirectionalLight(node);
-            this->directionalLightComponents.Remove(this->directionalLightComponents.Find(static_cast<DirectionalLightComponent*>(&component)));
         }
         else if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
         {
             this->cullingManager.RemoveAmbientLight(node);
-            this->ambientLightComponents.Remove(this->ambientLightComponents.Find(static_cast<AmbientLightComponent*>(&component)));
         }
         else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
         {

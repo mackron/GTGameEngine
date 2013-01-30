@@ -751,13 +751,6 @@ namespace GTEngine
 
 
 
-        /// The list of ambient light components.
-        GTCore::List<AmbientLightComponent*> ambientLightComponents;
-
-        /// The list of directional light components.
-        GTCore::List<DirectionalLightComponent*> directionalLightComponents;
-
-
         /// The navigation mesh for doing navigation paths.
         NavigationMesh navigationMesh;
 
