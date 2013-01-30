@@ -870,11 +870,6 @@ namespace GTEngine
         /// with the assumption that it is not part of a scene.
         Scene* scene;
 
-        /// Keeps track of whether or not the scene node is static. The scene node itself doesn't actually use this attribute.
-        /// Instead, it is used so that scene managers can do optimizations for static nodes. When this is set to true, a scene
-        /// manager will not need to perform an update step on the scene node. This will offer some great performance benefits.
-        /// By default, a scene node is NOT static. Therefore, resource/level loaders will need to ensure they set this appropriately.
-        bool isStatic;
 
         /// Keeps track of whether or not the node is visible. True by default.
         bool isVisible;
