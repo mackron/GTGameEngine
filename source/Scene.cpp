@@ -330,7 +330,7 @@ namespace GTEngine
     }
 
 
-    
+
     void Scene::AddSceneNode(SceneNode &node)
     {
         node.SetScene(this);
@@ -350,6 +350,20 @@ namespace GTEngine
         }
     }
 
+
+    SceneNode* Scene::CreateNewSceneNode()
+    {
+        auto sceneNode = new SceneNode;
+        this->AddSceneNode(*sceneNode);     // <-- This will generate the unique ID.
+
+        assert(!this->sceneNodesCreatedByScene.Exists(sceneNode->GetID()));
+        {
+            this->sceneNodesCreatedByScene.Insert(sceneNode->GetID());
+        }
+
+        return sceneNode;
+    }
+
     SceneNode* Scene::CreateNewSceneNode(GTCore::Deserializer &deserializer)
     {
         auto sceneNode = new SceneNode;
@@ -365,10 +379,15 @@ namespace GTEngine
 
         this->AddSceneNode(*sceneNode);
 
+        assert(!this->sceneNodesCreatedByScene.Exists(sceneNode->GetID()));
+        {
+            this->sceneNodesCreatedByScene.Insert(sceneNode->GetID());
+        }
+
         return sceneNode;
     }
 
-    
+
 
 
     void Scene::RefreshObject(SceneObject &object)
@@ -680,7 +699,6 @@ namespace GTEngine
     }
 
 
-    
 
 
 
@@ -1038,6 +1056,12 @@ namespace GTEngine
             assert(node != nullptr);
             {
                 this->AddSceneNode(*node);
+
+                // This node was created by this class, so we need to mark it as such.
+                assert(!this->sceneNodesCreatedByScene.Exists(node->GetID()));
+                {
+                    this->sceneNodesCreatedByScene.Insert(node->GetID());
+                }
             }
         }
 
@@ -1149,6 +1173,15 @@ namespace GTEngine
         if (!this->isRefreshingObject)
         {
             this->PostEvent_OnObjectRemoved(node);
+        }
+
+
+        // If the node was created by this scene, it needs to be deleted.
+        size_t index;
+        if (this->sceneNodesCreatedByScene.Find(node.GetID(), index))
+        {
+            this->sceneNodesCreatedByScene.RemoveAt(index);
+            delete &node;
         }
     }
 

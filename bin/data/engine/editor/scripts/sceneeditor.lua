@@ -1631,7 +1631,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:Menu();
     
     self.ContextMenu:AppendItem("Add Cube"):OnPressed(function()
-        local newNode = GTEngine.SceneNode:Create();
+        --local newNode = GTEngine.SceneNode:Create();
+        local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("Cube");
         newNode:AddComponent(GTEngine.Components.EditorMetadata);
         newNode:AddComponent(GTEngine.Components.Model):SetModel("engine/models/default-1x1.dae");

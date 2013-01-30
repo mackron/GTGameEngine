@@ -14,6 +14,7 @@
 #include "Serialization.hpp"
 #include "SceneNodeMap.hpp"
 #include "SceneStateStack.hpp"
+#include <GTCore/SortedVector.hpp>
 
 
 /// Contact test callbacks.
@@ -266,6 +267,15 @@ namespace GTEngine
         ///
         /// @param sceneNodeID [in] The ID of the scene node to remove.
         void RemoveSceneNodeByID(uint64_t sceneNodeID);
+
+
+        /// Creates a new empty scene node.
+        ///
+        /// @return A pointer to the new scene node.
+        ///
+        /// @remarks
+        ///     This will add the scene node to the scene and will be memory managed by the scene.
+        SceneNode* CreateNewSceneNode();
 
         /// Creates a new scene node from the given deserializer.
         ///
@@ -757,6 +767,10 @@ namespace GTEngine
 
         /// The next unique ID to apply to new scene nodes.
         uint64_t nextSceneNodeID;
+
+
+        /// The list of scene nodes created by the scene.
+        GTCore::SortedVector<uint64_t> sceneNodesCreatedByScene;
 
 
 
