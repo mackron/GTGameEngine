@@ -163,6 +163,7 @@ namespace GTEngine
 
     SceneEditor::~SceneEditor()
     {
+        /*
         // For any scene node still loaded, we need to iterate over and destroy them. Note how we don't increment every time, because deleting
         // the node will in turn remove it from the list as a result from the event handlers.
         for (size_t i = 0; i < this->sceneNodes.count; )
@@ -184,6 +185,7 @@ namespace GTEngine
             // We'll only get here if the scene node was not deleted.
             ++i;
         }
+        */
 
 
 

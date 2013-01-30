@@ -229,6 +229,13 @@ namespace GTEngine
                     ///     Argument 1: The internal pointer to the scene that is having the scene node removed from it.
                     ///     Argument 2: The internal pointer to the scene node being removed from the scene.
                     int RemoveSceneNode(GTCore::Script &script);
+
+                    /// Creates a new empty scene node by the given scene.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: The internal pointer to the scene that is having the scene node added to it.
+                    ///     Return:     The internal pointer to the new scene node.
+                    int CreateNewSceneNode(GTCore::Script &script);
                 }
 
 

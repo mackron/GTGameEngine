@@ -717,8 +717,18 @@ namespace GTEngine
                 "    GTEngine.System.Scene.AddSceneNode(self._internalPtr, sceneNode._internalPtr);"
                 "end;"
 
-                "function GTEngine.Scene.RemoveSceneNode(sceneNode)"
+                "function GTEngine.Scene:RemoveSceneNode(sceneNode)"
                 "    GTEngine.System.Scene.RemoveSceneNode(self._internalPtr, sceneNode._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.Scene:CreateNewSceneNode()"
+                "    local sceneNodePtr = GTEngine.System.Scene.CreateNewSceneNode(self._internalPtr);"
+                "    if sceneNodePtr ~= nil then"
+                "        return GTEngine.SceneNode:Create(sceneNodePtr);"
+                "    end;"
+                ""
+                "    return nil;"
                 "end;"
 
 
@@ -783,8 +793,9 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "AddSceneNode",    FFI::SystemFFI::SceneFFI::AddSceneNode);
-                        script.SetTableFunction(-1, "RemoveSceneNode", FFI::SystemFFI::SceneFFI::RemoveSceneNode);
+                        script.SetTableFunction(-1, "AddSceneNode",       FFI::SystemFFI::SceneFFI::AddSceneNode);
+                        script.SetTableFunction(-1, "RemoveSceneNode",    FFI::SystemFFI::SceneFFI::RemoveSceneNode);
+                        script.SetTableFunction(-1, "CreateNewSceneNode", FFI::SystemFFI::SceneFFI::CreateNewSceneNode);
                     }
                     script.Pop(1);
 
@@ -1476,6 +1487,21 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+                    int CreateNewSceneNode(GTCore::Script &script)
+                    {
+                        auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                        if (scene != nullptr)
+                        {
+                            script.Push(scene->CreateNewSceneNode());
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+
+                        return 1;
                     }
                 }
 
