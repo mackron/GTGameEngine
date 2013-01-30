@@ -1053,7 +1053,7 @@ namespace GTEngine
         }
 
 
-
+        // This adds the scene node to the main container.
         this->sceneNodes.Insert(node);
 
 
@@ -1315,11 +1315,40 @@ namespace GTEngine
         }
 
 
-        // The culling manager needs to know about this.
-        this->cullingManager.UpdateTransform(node);
+        // Culling.
+        if (node.IsVisible())
+        {
+            if (node.HasComponent<ModelComponent>())
+            {
+                if (node.GetComponent<ModelComponent>()->GetModel() != nullptr)
+                {
+                    this->cullingManager.UpdateModelTransform(node);
+                }
+            }
+            if (node.HasComponent<PointLightComponent>())
+            {
+                this->cullingManager.UpdatePointLightTransform(node);
+            }
+            if (node.HasComponent<SpotLightComponent>())
+            {
+                this->cullingManager.UpdateSpotLightTransform(node);
+            }
+            if (node.HasComponent<DirectionalLightComponent>())
+            {
+                this->cullingManager.UpdateDirectionalLightTransform(node);
+            }
+            if (node.HasComponent<AmbientLightComponent>())
+            {
+                this->cullingManager.UpdateAmbientLightTransform(node);
+            }
+            if (node.HasComponent<OccluderComponent>())
+            {
+                this->cullingManager.UpdateOccluderTransform(node);
+            }
+        }
 
 
-        // We might need to update the rigid body, if we have one.
+        // Physics and Collision Detection.
         if (updateDynamicsObject)
         {
             auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
@@ -1329,8 +1358,6 @@ namespace GTEngine
             }
         }
 
-
-        // We need to update the transformations of the ghost objects in the proximity component, if applicable.
         auto proximityComponent = node.GetComponent<ProximityComponent>();
         if (proximityComponent != nullptr)
         {
@@ -1351,18 +1378,30 @@ namespace GTEngine
         }
 
 
-        // Culling information needs to be updated.
-        this->cullingManager.UpdateScale(node);
+        // Culling.
+        if (node.IsVisible())
+        {
+            if (node.HasComponent<ModelComponent>())
+            {
+                if (node.GetComponent<ModelComponent>()->GetModel() != nullptr)
+                {
+                    this->cullingManager.UpdateModelScale(node);
+                }
+            }
+            if (node.HasComponent<OccluderComponent>())
+            {
+                this->cullingManager.UpdateOccluderScale(node);
+            }
+        }
 
 
-        // The dynamics component needs to have scaling applied.
+        // Physics and Collision Detection.
         auto dynamics = node.GetComponent<DynamicsComponent>();
         if (dynamics != nullptr)
         {
             dynamics->ApplyScaling(node.GetWorldScale());
         }
 
-        // Like dynamics, scaling must be applied to the proximity component.
         auto proximity = node.GetComponent<DynamicsComponent>();
         if (proximity != nullptr)
         {
@@ -1392,25 +1431,13 @@ namespace GTEngine
 
         if (node.IsVisible())
         {
-            // If the node has a dynamics component, the rigid body needs to be removed.
-            auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
-            if (dynamicsComponent != nullptr)
-            {
-                this->physicsManager.AddRigidBody(dynamicsComponent->GetRigidBody(), dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
-            }
-
-            // Same for the proximity component as the dynamics component.
-            auto proximityComponent = node.GetComponent<ProximityComponent>();
-            if (proximityComponent != nullptr)
-            {
-                this->physicsManager.AddGhostObject(proximityComponent->GetGhostObject(), proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
-            }
-
-
             // Culling.
             if (node.HasComponent<ModelComponent>())
             {
-                this->cullingManager.AddModel(node);
+                if (node.GetComponent<ModelComponent>()->GetModel() != nullptr)
+                {
+                    this->cullingManager.AddModel(node);
+                }
             }
             if (node.HasComponent<PointLightComponent>())
             {
@@ -1434,28 +1461,26 @@ namespace GTEngine
             }
 
 
+            // Physics and Collision Detection.
+            auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
+            if (dynamicsComponent != nullptr)
+            {
+                this->physicsManager.AddRigidBody(dynamicsComponent->GetRigidBody(), dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
+            }
+
+            auto proximityComponent = node.GetComponent<ProximityComponent>();
+            if (proximityComponent != nullptr)
+            {
+                this->physicsManager.AddGhostObject(proximityComponent->GetGhostObject(), proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
+            }
+
+
 
             // The event handlers need to know.
             this->PostEvent_OnSceneNodeShow(node);
         }
         else
         {
-            // TODO: Need to handle cases where we may be in the middle of a simulation...
-            // If the node has a dynamics component, the rigid body needs to be removed.
-            auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
-            if (dynamicsComponent != nullptr)
-            {
-                this->physicsManager.RemoveRigidBody(dynamicsComponent->GetRigidBody());
-            }
-
-            // Same for the proximity component as the dynamics component.
-            auto proximityComponent = node.GetComponent<ProximityComponent>();
-            if (proximityComponent != nullptr)
-            {
-                this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
-            }
-
-
             // Culling.
             if (node.HasComponent<ModelComponent>())
             {
@@ -1483,6 +1508,20 @@ namespace GTEngine
             }
 
 
+            // Physics and Collision Detection.
+            auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
+            if (dynamicsComponent != nullptr)
+            {
+                this->physicsManager.RemoveRigidBody(dynamicsComponent->GetRigidBody());
+            }
+
+            auto proximityComponent = node.GetComponent<ProximityComponent>();
+            if (proximityComponent != nullptr)
+            {
+                this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
+            }
+
+
             // The event handlers need to know.
             this->PostEvent_OnSceneNodeHide(node);
         }
@@ -1500,7 +1539,10 @@ namespace GTEngine
         {
             if (node.IsVisible())
             {
-                this->cullingManager.AddModel(node);
+                if (static_cast<ModelComponent &>(component).GetModel() != nullptr)
+                {
+                    this->cullingManager.AddModel(node);
+                }
             }
         }
         else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
@@ -1705,7 +1747,11 @@ namespace GTEngine
         if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
         {
             this->cullingManager.RemoveModel(node);
-            this->cullingManager.AddModel(node);
+
+            if (static_cast<ModelComponent &>(component).GetModel() != nullptr)
+            {
+                this->cullingManager.AddModel(node);
+            }
         }
         else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
         {

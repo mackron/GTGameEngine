@@ -184,11 +184,12 @@ namespace GTEngine
         /// @param object [in] A reference to the occluder object.
         ///
         /// @remarks
+        ///     This can be a scene node with an OccluderComponent.
         virtual void RemoveOccluder(SceneObject &object) = 0;
 
 
 
-
+#if 0
         /// Updates the transformation of the given object.
         ///
         /// @param object [in] A reference to the object whose transformation is being updated.
@@ -204,6 +205,76 @@ namespace GTEngine
         /// @remarks
         ///     The scale is not applied to lights. Changes to attenuation should be used instead.
         virtual void UpdateScale(SceneObject &object) = 0;
+#endif
+
+
+        /// Updates the transformation of the given model object.
+        ///
+        /// @param object [in] A reference to the model object whose transformation is being updated.
+        ///
+        /// @remarks
+        ///     The object can be a scene node with a ModelComponent.
+        ///     @par
+        ///     Scaling should be applied separately with UpdateModelScale().
+        virtual void UpdateModelTransform(SceneObject &object) = 0;
+
+        /// Updates the transformation of the given point light.
+        ///
+        /// @param object [in] A reference to the point light object whose transformation is being updated.
+        ///
+        /// @remarks
+        ///     The object can be a scene node with a PointLightComponent.
+        virtual void UpdatePointLightTransform(SceneObject &object) = 0;
+
+        /// Updates the transformation of the given spot light.
+        ///
+        /// @param object [in] A reference to the spot light object whose transformation is being updated.
+        ///
+        /// @remarks
+        ///     The object can be a scene node with a SpotLightComponent.
+        virtual void UpdateSpotLightTransform(SceneObject &object) = 0;
+
+        /// Updates the transformation of the given directional light.
+        ///
+        /// @param object [in] A reference to the directional light object whose transformation is being updated.
+        ///
+        /// @remarks
+        ///     The object can be a scene node with a DirectionalLightComponent.
+        virtual void UpdateDirectionalLightTransform(SceneObject &object) = 0;
+
+        /// Updates the transformation of the given ambient light.
+        ///
+        /// @param object [in] A reference to the ambient light object whose transformation is being updated.
+        ///
+        /// @remarks
+        ///     The object can be a scene node with an AmbientLightComponent.
+        virtual void UpdateAmbientLightTransform(SceneObject &object) = 0;
+
+        /// Updates the transformation of the occluder.
+        ///
+        /// @param object [in] A reference to the occluder object whose transformation is being updated.
+        ///
+        /// @remarks
+        ///     The object can be a scene node with an OccluderComponent.
+        virtual void UpdateOccluderTransform(SceneObject &object) = 0;
+
+
+        /// Updates the scale of the given model object.
+        ///
+        /// @param object [in] A reference to the model object whose scale is being updated.
+        ///
+        /// @remarks
+        ///     The object can be a scene node with a ModelComponent.
+        virtual void UpdateModelScale(SceneObject &object) = 0;
+
+        /// Updates the scale of the given occluder object.
+        ///
+        /// @param object [in] A reference to the occluder object whose scale is being updated.
+        ///
+        /// @remarks
+        ///     The object can be a scene node with an OccluderComponent.
+        virtual void UpdateOccluderScale(SceneObject &object) = 0;
+
 
 
         /// Called when an object has changed and needs it's culling information updated.

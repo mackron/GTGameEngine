@@ -145,35 +145,54 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::AddModel(SceneObject &object)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
+        assert(!this->models.Exists(&object));
         {
-            auto &sceneNode = static_cast<SceneNode &>(object);
-
-            auto modelComponent = sceneNode.GetComponent<ModelComponent>();
-            assert(modelComponent != nullptr);
+            if (object.GetType() == SceneObjectType_SceneNode)
             {
-                btTransform worldTransform;
-                sceneNode.GetWorldTransform(worldTransform);
+                auto &sceneNode = static_cast<SceneNode &>(object);
 
-                // If the node doesn't have any metadata associated, we'll create that now.
-                auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-                if (metadata == nullptr)
-                {
-                    metadata = new SceneNodeMetadata;
-                    sceneNode.SetDataPointer(reinterpret_cast<size_t>(this), metadata);
-                }
-
-                assert(metadata != nullptr);
+                auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+                assert(modelComponent != nullptr);
                 {
                     auto model = modelComponent->GetModel();
-                    if (model != nullptr)
+                    assert(model != nullptr);
                     {
-                        metadata->AllocateModelCollisionObject(*model, worldTransform, sceneNode.GetWorldScale());
-                        metadata->modelCollisionObject->setUserPointer(&object);
+                        btTransform worldTransform;
+                        sceneNode.GetWorldTransform(worldTransform);
 
-                        this->world.AddCollisionObject(*metadata->modelCollisionObject,
+                        auto metadata = new ModelMetadata(*model, worldTransform, sceneNode.GetWorldScale());
+                        metadata->collisionObject->setUserPointer(&object);
+
+                        this->world.AddCollisionObject(*metadata->collisionObject,
                             CollisionGroups::Model,
                             CollisionGroups::PointLight | CollisionGroups::SpotLight);
+
+                        this->models.Add(&object, metadata);
+                        
+
+#if 0
+                        // If the node doesn't have any metadata associated, we'll create that now.
+                        auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+                        if (metadata == nullptr)
+                        {
+                            metadata = new SceneNodeMetadata;
+                            sceneNode.SetDataPointer(reinterpret_cast<size_t>(this), metadata);
+                        }
+
+                        assert(metadata != nullptr);
+                        {
+                            auto model = modelComponent->GetModel();
+                            if (model != nullptr)
+                            {
+                                metadata->AllocateModelCollisionObject(*model, worldTransform, sceneNode.GetWorldScale());
+                                metadata->modelCollisionObject->setUserPointer(&object);
+
+                                this->world.AddCollisionObject(*metadata->modelCollisionObject,
+                                    CollisionGroups::Model,
+                                    CollisionGroups::PointLight | CollisionGroups::SpotLight);
+                            }
+                        }
+#endif
                     }
                 }
             }
@@ -184,12 +203,11 @@ namespace GTEngine
     {
         if (object.GetType() == SceneObjectType_SceneNode)
         {
-            auto &sceneNode = static_cast<SceneNode &>(object);
-
-            auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-            assert(metadata != nullptr);
+            auto iMetadata = this->models.Find(&object);
+            if (iMetadata != nullptr)
             {
-                metadata->DeleteModelCollisionObject();
+                delete iMetadata->value;
+                this->models.RemoveByIndex(iMetadata->index);
             }
         }
     }
@@ -207,6 +225,17 @@ namespace GTEngine
                 btTransform worldTransform;
                 sceneNode.GetWorldTransform(worldTransform);
 
+                auto metadata = new PointLightMetadata(pointLightComponent->GetApproximateRadius(), worldTransform);
+                metadata->collisionObject->setUserPointer(&object);
+
+                this->world.AddCollisionObject(*metadata->collisionObject,
+                    CollisionGroups::PointLight,
+                    CollisionGroups::Model);
+
+                this->pointLights.Add(&object, metadata);
+
+
+#if 0
                 // If the node doesn't have any metadata associated, we'll create that now.
                 auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
                 if (metadata == nullptr)
@@ -224,6 +253,7 @@ namespace GTEngine
                         CollisionGroups::PointLight,
                         CollisionGroups::Model);
                 }
+#endif
             }
         }
     }
@@ -232,12 +262,11 @@ namespace GTEngine
     {
         if (object.GetType() == SceneObjectType_SceneNode)
         {
-            auto &sceneNode = static_cast<SceneNode &>(object);
-
-            auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-            assert(metadata != nullptr);
+            auto iMetadata = this->pointLights.Find(&object);
+            if (iMetadata != nullptr)
             {
-                metadata->DeletePointLightCollisionObject();
+                delete iMetadata->value;
+                this->pointLights.RemoveByIndex(iMetadata->index);
             }
         }
     }
@@ -255,6 +284,17 @@ namespace GTEngine
                 btTransform worldTransform;
                 sceneNode.GetWorldTransform(worldTransform);
 
+                auto metadata = new SpotLightMetadata(spotLightComponent->GetOuterAngle(), spotLightComponent->GetApproximateLength(), worldTransform);
+                metadata->collisionObject->setUserPointer(&object);
+
+                this->world.AddCollisionObject(*metadata->collisionObject,
+                    CollisionGroups::SpotLight,
+                    CollisionGroups::Model);
+
+                this->spotLights.Add(&object, metadata);
+
+
+#if 0
                 // If the node doesn't have any metadata associated, we'll create that now.
                 auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
                 if (metadata == nullptr)
@@ -272,6 +312,7 @@ namespace GTEngine
                         CollisionGroups::SpotLight,
                         CollisionGroups::Model);
                 }
+#endif
             }
         }
     }
@@ -280,12 +321,11 @@ namespace GTEngine
     {
         if (object.GetType() == SceneObjectType_SceneNode)
         {
-            auto &sceneNode = static_cast<SceneNode &>(object);
-
-            auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
-            assert(metadata != nullptr);
+            auto iMetadata = this->spotLights.Find(&object);
+            if (iMetadata != nullptr)
             {
-                metadata->DeleteSpotLightCollisionObject();
+                delete iMetadata->value;
+                this->spotLights.RemoveByIndex(iMetadata->index);
             }
         }
     }
@@ -378,7 +418,7 @@ namespace GTEngine
     }
 
 
-
+#if 0
     void DefaultSceneCullingManager::UpdateTransform(SceneObject &object)
     {
         // If the object is a scene node, we want to use the world transformation.
@@ -437,6 +477,147 @@ namespace GTEngine
             }
         }
     }
+#endif
+
+    void DefaultSceneCullingManager::UpdateModelTransform(SceneObject &object)
+    {
+        assert(this->models.Exists(&object));
+        {
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto iMetadata = this->models.Find(&object);
+                assert(iMetadata != nullptr);
+                {
+                    auto metadata = iMetadata->value;
+                    assert(metadata != nullptr);
+                    {
+                        btTransform transform;
+                        static_cast<SceneNode &>(object).GetWorldTransform(transform);
+
+                        metadata->UpdateTransform(transform);
+                    }
+                }
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::UpdatePointLightTransform(SceneObject &object)
+    {
+        assert(this->pointLights.Exists(&object));
+        {
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto iMetadata = this->pointLights.Find(&object);
+                assert(iMetadata != nullptr);
+                {
+                    auto metadata = iMetadata->value;
+                    assert(metadata != nullptr);
+                    {
+                        btTransform transform;
+                        static_cast<SceneNode &>(object).GetWorldTransform(transform);
+
+                        metadata->UpdateTransform(transform);
+                    }
+                }
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::UpdateSpotLightTransform(SceneObject &object)
+    {
+        assert(this->spotLights.Exists(&object));
+        {
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto iMetadata = this->spotLights.Find(&object);
+                assert(iMetadata != nullptr);
+                {
+                    auto metadata = iMetadata->value;
+                    assert(metadata != nullptr);
+                    {
+                        btTransform transform;
+                        static_cast<SceneNode &>(object).GetWorldTransform(transform);
+
+                        metadata->UpdateTransform(transform);
+                    }
+                }
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::UpdateDirectionalLightTransform(SceneObject &object)
+    {
+        // For now, nothing to actually do here.
+        (void)object;
+    }
+
+    void DefaultSceneCullingManager::UpdateAmbientLightTransform(SceneObject &object)
+    {
+        // For now, nothing to actually do here.
+        (void)object;
+    }
+
+    void DefaultSceneCullingManager::UpdateOccluderTransform(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto occluderComponent = sceneNode.GetComponent<OccluderComponent>();
+            assert(occluderComponent != nullptr);
+            {
+                auto &collisionObject = occluderComponent->GetCollisionObject();
+
+                auto world = collisionObject.GetWorld();
+                if (world != nullptr)
+                {
+                    btTransform transform;
+                    sceneNode.GetWorldTransform(transform);
+
+                    collisionObject.setWorldTransform(transform);
+                    world->UpdateAABB(collisionObject);
+                }
+            }
+        }
+    }
+
+
+    void DefaultSceneCullingManager::UpdateModelScale(SceneObject &object)
+    {
+        assert(this->models.Exists(&object));
+        {
+            if (object.GetType() == SceneObjectType_SceneNode)
+            {
+                auto iMetadata = this->models.Find(&object);
+                assert(iMetadata != nullptr);
+                {
+                    auto metadata = iMetadata->value;
+                    assert(metadata != nullptr);
+                    {
+                        metadata->UpdateScale(static_cast<SceneNode &>(object).GetWorldScale());
+                    }
+                }
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::UpdateOccluderScale(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto occluderComponent = sceneNode.GetComponent<OccluderComponent>();
+            assert(occluderComponent != nullptr);
+            {
+                occluderComponent->ApplyScaling(sceneNode.GetWorldScale());
+            }
+        }
+    }
+
+
+
+
 
 #if 0
     void DefaultSceneCullingManager::UpdateObject(SceneObject &object)
