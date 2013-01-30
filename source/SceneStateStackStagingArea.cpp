@@ -28,13 +28,18 @@ namespace GTEngine
 
     void SceneStateStackStagingArea::StageInsert(uint64_t sceneNodeID)
     {
-        // If a delete command with the scene node is already staged, all we want to do is remove it from the deletes and just
-        // ignore everything.
+        // If a delete command with the scene node is already staged, what we actually want to do is remove the delete command and
+        // turn the insert into an update.
         auto iDelete = this->deletes.Find(sceneNodeID);
         if (iDelete != nullptr)
         {
+            // Remove the delete command.
             delete iDelete->value;
             this->deletes.RemoveByIndex(iDelete->index);
+
+            // Convert to an update command.
+            this->inserts.RemoveFirstOccuranceOf(sceneNodeID);
+            this->StageUpdate(sceneNodeID);
         }
         else
         {
