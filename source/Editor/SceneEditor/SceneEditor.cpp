@@ -225,21 +225,31 @@ namespace GTEngine
 
     void SceneEditor::EnablePhysicsSimulation()
     {
-        this->selectedNodesBeforePhysicsSimulation = this->selectedNodes;
-        this->physicsManager.EnableSimulation();
+        if (!this->IsPhysicsSimulationEnabled())
+        {
+            this->selectedNodesBeforePhysicsSimulation = this->selectedNodes;
+            this->physicsManager.EnableSimulation();
+
+            // TODO: Update the GUI to show the Stop icon.
+        }
     }
 
     void SceneEditor::DisablePhysicsSimulation()
     {
-        this->physicsManager.DisableSimulation();
+        if (this->IsPhysicsSimulationEnabled())
+        {
+            this->physicsManager.DisableSimulation();
 
 
-        // To restore, all we need to do is revert the staging area.
-        this->scene.RevertStateStackStagingArea();
+            // To restore, all we need to do is revert the staging area.
+            this->scene.RevertStateStackStagingArea();
 
-        // We want to revert the selections, too.
-        this->DeselectAll();
-        this->SelectSceneNodes(this->selectedNodesBeforePhysicsSimulation);
+            // We want to revert the selections, too.
+            this->DeselectAll();
+            this->SelectSceneNodes(this->selectedNodesBeforePhysicsSimulation);
+
+            // TODO: Update the GUI to show the Play icon.
+        }
     }
 
     bool SceneEditor::IsPhysicsSimulationEnabled() const
@@ -675,6 +685,10 @@ namespace GTEngine
         // Don't bother doing anything if we're already at the start of the current branch.
         if (this->scene.GetStateStackCurrentFrameIndex() > 0)
         {
+            // If the physics simulation is running, it needs to be stopped first.
+            this->DisablePhysicsSimulation();
+
+
             // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
             this->DeselectAll();
 
@@ -690,6 +704,10 @@ namespace GTEngine
     {
         if (this->scene.GetStateStackCurrentFrameIndex() < this->scene.GetStateStackMaxFrameIndex())
         {
+            // If the physics simulation is running, it needs to be stopped first.
+            this->DisablePhysicsSimulation();
+
+
             // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
             this->DeselectAll();
 
