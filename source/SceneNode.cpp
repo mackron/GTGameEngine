@@ -61,7 +61,6 @@ namespace GTEngine
           firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
           eventHandlers(), components(), dataPointers(),
           scene(nullptr),
-          isVisible(true),
           inheritPosition(true), inheritOrientation(true), inheritScale(true),
           flags(0),
           eventLockCounter(0),
@@ -904,7 +903,7 @@ namespace GTEngine
             }
             else
             {
-                this->flags = this->flags &~Static;
+                this->flags = this->flags & ~Static;
             }
 
 
@@ -922,11 +921,19 @@ namespace GTEngine
 
     
 
-    void SceneNode::SetVisible(bool isVisible)
+    void SceneNode::SetVisible(bool isVisibleIn)
     {
-        if (this->isVisible != isVisible)
+        if (isVisibleIn != this->IsVisible())
         {
-            this->isVisible = isVisible;
+            if (isVisibleIn)
+            {
+                this->flags = this->flags & ~Invisible;
+            }
+            else
+            {
+                this->flags = this->flags | Invisible;
+            }
+
 
             if (!this->EventsLocked())
             {
@@ -937,20 +944,20 @@ namespace GTEngine
 
     bool SceneNode::IsVisible(bool recursive) const
     {
-        if (!this->isVisible)
-        {
-            return false;
-        }
-        else
+        bool locallyVisible = (this->flags & Invisible) == 0;
+
+        if (locallyVisible)
         {
             if (recursive && this->parent != nullptr)
             {
                 return this->parent->IsVisible();
             }
-            else
-            {
-                return true;
-            }
+            
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -1016,7 +1023,6 @@ namespace GTEngine
         GTCore::BasicSerializer secondarySerializer;
         secondarySerializer.Write(this->uniqueID);
         secondarySerializer.Write(this->name);
-        secondarySerializer.Write(this->isVisible);
         secondarySerializer.Write(this->inheritPosition);
         secondarySerializer.Write(this->inheritOrientation);
         secondarySerializer.Write(this->inheritScale);
@@ -1098,7 +1104,6 @@ namespace GTEngine
                     {
                         deserializer.Read(this->uniqueID);
                         deserializer.Read(this->name);
-                        deserializer.Read(this->isVisible);
                         deserializer.Read(this->inheritPosition);
                         deserializer.Read(this->inheritOrientation);
                         deserializer.Read(this->inheritScale);
