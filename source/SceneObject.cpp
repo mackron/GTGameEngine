@@ -110,6 +110,11 @@ namespace GTEngine
 
     void SceneObject::Deserialize(GTCore::Deserializer &deserializer)
     {
+        glm::vec3 newPosition;
+        glm::quat newOrientation;
+        glm::vec3 newScale;
+
+
         Serialization::ChunkHeader header;
         deserializer.Read(header);
         {
@@ -117,9 +122,9 @@ namespace GTEngine
             {
             case 1:
                 {
-                    deserializer.Read(this->position);
-                    deserializer.Read(this->orientation);
-                    deserializer.Read(this->scale);
+                    deserializer.Read(newPosition);
+                    deserializer.Read(newOrientation);
+                    deserializer.Read(newScale);
 
                     break;
                 }
@@ -132,5 +137,10 @@ namespace GTEngine
             }
             
         }
+
+
+        this->SetPosition(newPosition);
+        this->SetOrientation(newOrientation);
+        this->SetScale(newScale);
     }
 }
