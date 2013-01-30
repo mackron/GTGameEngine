@@ -84,7 +84,7 @@ namespace GTEngine
         virtual void UpdateScale(SceneObject &object);
 
         /// SceneCullingManageR::UpdateObject().
-        virtual void UpdateObject(SceneObject &object);
+        //virtual void UpdateObject(SceneObject &object);
 
 
         /// SceneCullingManager::GetGlobalAABB().

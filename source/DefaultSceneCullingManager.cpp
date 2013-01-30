@@ -438,6 +438,7 @@ namespace GTEngine
         }
     }
 
+#if 0
     void DefaultSceneCullingManager::UpdateObject(SceneObject &object)
     {
         if (object.GetType() == SceneObjectType_SceneNode)
@@ -473,6 +474,7 @@ namespace GTEngine
             }
         }
     }
+#endif
 
 
     /*
