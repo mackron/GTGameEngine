@@ -61,7 +61,7 @@ namespace GTEngine
           firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
           eventHandlers(), components(), dataPointers(),
           scene(nullptr),
-          isStatic(false), isVisible(true),
+          isVisible(true),
           inheritPosition(true), inheritOrientation(true), inheritScale(true),
           flags(0),
           eventLockCounter(0),
@@ -894,11 +894,19 @@ namespace GTEngine
     }
 
 
-    void SceneNode::SetStatic(bool isStatic)
+    void SceneNode::SetStatic(bool isStaticIn)
     {
-        if (this->isStatic != isStatic)
+        if (isStaticIn != this->IsStatic())
         {
-            this->isStatic = isStatic;
+            if (isStaticIn)
+            {
+                this->flags = this->flags | Static;
+            }
+            else
+            {
+                this->flags = this->flags &~Static;
+            }
+
 
             if (!this->EventsLocked())
             {
@@ -909,7 +917,7 @@ namespace GTEngine
 
     bool SceneNode::IsStatic() const
     {
-        return this->isStatic;
+        return (this->flags & Static) != 0;
     }
 
     
@@ -1008,7 +1016,6 @@ namespace GTEngine
         GTCore::BasicSerializer secondarySerializer;
         secondarySerializer.Write(this->uniqueID);
         secondarySerializer.Write(this->name);
-        secondarySerializer.Write(this->isStatic);
         secondarySerializer.Write(this->isVisible);
         secondarySerializer.Write(this->inheritPosition);
         secondarySerializer.Write(this->inheritOrientation);
@@ -1091,7 +1098,6 @@ namespace GTEngine
                     {
                         deserializer.Read(this->uniqueID);
                         deserializer.Read(this->name);
-                        deserializer.Read(this->isStatic);
                         deserializer.Read(this->isVisible);
                         deserializer.Read(this->inheritPosition);
                         deserializer.Read(this->inheritOrientation);
