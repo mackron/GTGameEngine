@@ -19,6 +19,8 @@ namespace GTEngine
     {
     }
 
+
+#if 0
     void DefaultSceneCullingManager::AddObject(SceneObject &object)
     {
         // All we care about is objects with a visual representation. Culling doesn't really make sense for anything else, by default.
@@ -138,6 +140,244 @@ namespace GTEngine
             node.RemoveDataPointer(reinterpret_cast<size_t>(this));
         }
     }
+#endif
+
+
+    void DefaultSceneCullingManager::AddModel(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+            assert(modelComponent != nullptr);
+            {
+                btTransform worldTransform;
+                sceneNode.GetWorldTransform(worldTransform);
+
+                // If the node doesn't have any metadata associated, we'll create that now.
+                auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+                if (metadata == nullptr)
+                {
+                    metadata = new SceneNodeMetadata;
+                    sceneNode.SetDataPointer(reinterpret_cast<size_t>(this), metadata);
+                }
+
+                assert(metadata != nullptr);
+                {
+                    auto model = modelComponent->GetModel();
+                    if (model != nullptr)
+                    {
+                        metadata->AllocateModelCollisionObject(*model, worldTransform, sceneNode.GetWorldScale());
+                        metadata->modelCollisionObject->setUserPointer(&object);
+
+                        this->world.AddCollisionObject(*metadata->modelCollisionObject,
+                            CollisionGroups::Model,
+                            CollisionGroups::PointLight | CollisionGroups::SpotLight);
+                    }
+                }
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::RemoveModel(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+            assert(metadata != nullptr);
+            {
+                metadata->DeleteModelCollisionObject();
+            }
+        }
+    }
+
+
+    void DefaultSceneCullingManager::AddPointLight(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto pointLightComponent = sceneNode.GetComponent<PointLightComponent>();
+            assert(pointLightComponent != nullptr);
+            {
+                btTransform worldTransform;
+                sceneNode.GetWorldTransform(worldTransform);
+
+                // If the node doesn't have any metadata associated, we'll create that now.
+                auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+                if (metadata == nullptr)
+                {
+                    metadata = new SceneNodeMetadata;
+                    sceneNode.SetDataPointer(reinterpret_cast<size_t>(this), metadata);
+                }
+
+                assert(metadata != nullptr);
+                {
+                    metadata->AllocatePointLightCollisionObject(pointLightComponent->GetApproximateRadius(), worldTransform);
+                    metadata->pointLightCollisionObject->setUserPointer(&object);
+
+                    this->world.AddCollisionObject(*metadata->pointLightCollisionObject,
+                        CollisionGroups::PointLight,
+                        CollisionGroups::Model);
+                }
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::RemovePointLight(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+            assert(metadata != nullptr);
+            {
+                metadata->DeletePointLightCollisionObject();
+            }
+        }
+    }
+
+
+    void DefaultSceneCullingManager::AddSpotLight(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto spotLightComponent = sceneNode.GetComponent<SpotLightComponent>();
+            assert(spotLightComponent != nullptr);
+            {
+                btTransform worldTransform;
+                sceneNode.GetWorldTransform(worldTransform);
+
+                // If the node doesn't have any metadata associated, we'll create that now.
+                auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+                if (metadata == nullptr)
+                {
+                    metadata = new SceneNodeMetadata;
+                    sceneNode.SetDataPointer(reinterpret_cast<size_t>(this), metadata);
+                }
+
+                assert(metadata != nullptr);
+                {
+                    metadata->AllocateSpotLightCollisionObject(spotLightComponent->GetOuterAngle(), spotLightComponent->GetApproximateLength(), worldTransform);
+                    metadata->spotLightCollisionObject->setUserPointer(&object);
+
+                    this->world.AddCollisionObject(*metadata->spotLightCollisionObject,
+                        CollisionGroups::SpotLight,
+                        CollisionGroups::Model);
+                }
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::RemoveSpotLight(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto metadata = sceneNode.GetDataPointer<SceneNodeMetadata>(reinterpret_cast<size_t>(this));
+            assert(metadata != nullptr);
+            {
+                metadata->DeleteSpotLightCollisionObject();
+            }
+        }
+    }
+
+
+    void DefaultSceneCullingManager::AddDirectionalLight(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto directionalLightComponent = sceneNode.GetComponent<DirectionalLightComponent>();
+            assert(directionalLightComponent != nullptr);
+            {
+                assert(!this->directionalLights.Exists(&sceneNode));
+                {
+                    this->directionalLights.PushBack(&sceneNode);
+                }
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::RemoveDirectionalLight(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            this->directionalLights.RemoveFirstOccuranceOf(&object);
+        }
+    }
+
+
+    void DefaultSceneCullingManager::AddAmbientLight(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto ambientLightComponent = sceneNode.GetComponent<AmbientLightComponent>();
+            assert(ambientLightComponent != nullptr);
+            {
+                assert(!this->ambientLights.Exists(&sceneNode));
+                {
+                    this->ambientLights.PushBack(&sceneNode);
+                }
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::RemoveAmbientLight(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            this->ambientLights.RemoveFirstOccuranceOf(&object);
+        }
+    }
+
+
+    void DefaultSceneCullingManager::AddOccluder(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto occluderComponent = sceneNode.GetComponent<OccluderComponent>();
+            assert(occluderComponent != nullptr);
+            {
+                auto &collisionObject = occluderComponent->GetCollisionObject();
+
+                btTransform transform;
+                sceneNode.GetWorldTransform(transform);
+                collisionObject.setWorldTransform(transform);
+
+                this->world.AddCollisionObject(collisionObject, CollisionGroups::Occluder, CollisionGroups::All);
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::RemoveOccluder(SceneObject &object)
+    {
+        if (object.GetType() == SceneObjectType_SceneNode)
+        {
+            auto &sceneNode = static_cast<SceneNode &>(object);
+
+            auto occluderComponent = sceneNode.GetComponent<OccluderComponent>();
+            assert(occluderComponent != nullptr);
+            {
+                this->world.RemoveCollisionObject(occluderComponent->GetCollisionObject());
+            }
+        }
+    }
+
+
 
     void DefaultSceneCullingManager::UpdateTransform(SceneObject &object)
     {

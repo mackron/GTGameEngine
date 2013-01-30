@@ -25,11 +25,57 @@ namespace GTEngine
         virtual ~DefaultSceneCullingManager();
 
 
+#if 0
         /// SceneCullingManager::AddObject().
         virtual void AddObject(SceneObject &object);
 
         /// SceneCullingManager::RemoveObject().
         virtual void RemoveObject(SceneObject &object);
+#endif
+
+
+        /// SceneCullingManager::AddModel().
+        virtual void AddModel(SceneObject &object);
+
+        /// SceneCullingManager::RemoveModel().
+        virtual void RemoveModel(SceneObject &object);
+
+        
+        /// SceneCullingManager::AddPointLight().
+        virtual void AddPointLight(SceneObject &object);
+
+        /// SceneCullingManager::RemovePointLight().
+        virtual void RemovePointLight(SceneObject &object);
+
+        
+        /// SceneCullingManager::AddSpotLight().
+        virtual void AddSpotLight(SceneObject &object);
+
+        /// SceneCullingManager::RemoveSpotLight().
+        virtual void RemoveSpotLight(SceneObject &object);
+
+
+        /// SceneCullingManager::AddDirectionalLight().
+        virtual void AddDirectionalLight(SceneObject &object);
+
+        /// SceneCullingManager::RemoveDirectionalLight().
+        virtual void RemoveDirectionalLight(SceneObject &object);
+
+
+        /// SceneCullingManager::AddAmbientLight().
+        virtual void AddAmbientLight(SceneObject &object);
+
+        /// SceneCullingManager::RemoveAmbientLight().
+        virtual void RemoveAmbientLight(SceneObject &object);
+
+
+        /// SceneCullingManager::AddOccluder().
+        virtual void AddOccluder(SceneObject &object);
+
+        /// SceneCullingManager::RemoveOccluder().
+        virtual void RemoveOccluder(SceneObject &object);
+
+
 
         /// SceneCullingManager::UpdateTransform().
         virtual void UpdateTransform(SceneObject &object);

@@ -1408,7 +1408,33 @@ namespace GTEngine
                 this->physicsManager.AddGhostObject(proximityComponent->GetGhostObject(), proximityComponent->GetCollisionGroup(), proximityComponent->GetCollisionMask());
             }
 
-            this->cullingManager.AddObject(node);
+
+            // Culling.
+            if (node.HasComponent<ModelComponent>())
+            {
+                this->cullingManager.AddModel(node);
+            }
+            if (node.HasComponent<PointLightComponent>())
+            {
+                this->cullingManager.AddPointLight(node);
+            }
+            if (node.HasComponent<SpotLightComponent>())
+            {
+                this->cullingManager.AddSpotLight(node);
+            }
+            if (node.HasComponent<DirectionalLightComponent>())
+            {
+                this->cullingManager.AddDirectionalLight(node);
+            }
+            if (node.HasComponent<AmbientLightComponent>())
+            {
+                this->cullingManager.AddAmbientLight(node);
+            }
+            if (node.HasComponent<OccluderComponent>())
+            {
+                this->cullingManager.AddOccluder(node);
+            }
+
 
 
             // The event handlers need to know.
@@ -1431,7 +1457,32 @@ namespace GTEngine
                 this->physicsManager.RemoveGhostObject(proximityComponent->GetGhostObject());
             }
 
-            this->cullingManager.RemoveObject(node);
+
+            // Culling.
+            if (node.HasComponent<ModelComponent>())
+            {
+                this->cullingManager.RemoveModel(node);
+            }
+            if (node.HasComponent<PointLightComponent>())
+            {
+                this->cullingManager.RemovePointLight(node);
+            }
+            if (node.HasComponent<SpotLightComponent>())
+            {
+                this->cullingManager.RemoveSpotLight(node);
+            }
+            if (node.HasComponent<DirectionalLightComponent>())
+            {
+                this->cullingManager.RemoveDirectionalLight(node);
+            }
+            if (node.HasComponent<AmbientLightComponent>())
+            {
+                this->cullingManager.RemoveAmbientLight(node);
+            }
+            if (node.HasComponent<OccluderComponent>())
+            {
+                this->cullingManager.RemoveOccluder(node);
+            }
 
 
             // The event handlers need to know.
@@ -1447,104 +1498,129 @@ namespace GTEngine
         }
 
 
-        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name)      ||
-            GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
-            GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name)  ||
-            GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
         {
             if (node.IsVisible())
             {
-                this->cullingManager.AddObject(node);
+                this->cullingManager.AddModel(node);
+            }
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        {
+            if (node.IsVisible())
+            {
+                this->cullingManager.AddPointLight(node);
+            }
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        {
+            if (node.IsVisible())
+            {
+                this->cullingManager.AddSpotLight(node);
+            }
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        {
+            if (node.IsVisible())
+            {
+                this->cullingManager.AddDirectionalLight(node);
+            }
+
+            this->directionalLightComponents.Append(static_cast<DirectionalLightComponent*>(&component));
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        {
+            if (node.IsVisible())
+            {
+                this->cullingManager.AddAmbientLight(node);
+            }
+
+            this->ambientLightComponents.Append(static_cast<AmbientLightComponent*>(&component));
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        {
+            if (node.IsVisible())
+            {
+                this->cullingManager.AddOccluder(node);
             }
         }
         else
         {
-            if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+            if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
-                this->ambientLightComponents.Append(static_cast<AmbientLightComponent*>(&component));
+                auto &dynamicsComponent = static_cast<DynamicsComponent &>(component);
+
+                dynamicsComponent.ApplySceneNodeScaling();
+                dynamicsComponent.ApplySceneNodeTransformation();
+
+                if (node.IsVisible())
+                {
+                    if (dynamicsComponent.GetCollisionShape().getNumChildShapes() > 0)
+                    {
+                        this->physicsManager.AddRigidBody(dynamicsComponent.GetRigidBody(), dynamicsComponent.GetCollisionGroup(), dynamicsComponent.GetCollisionMask());
+                    }
+                    else
+                    {
+                        Log("Warning: Attempting to add a dynamics component without collision shapes. The rigid body has not been added to the dynamics world.");
+                    }
+                }
             }
-            else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+            else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
-                this->directionalLightComponents.Append(static_cast<DirectionalLightComponent*>(&component));
+                auto &proximityComponent = static_cast<ProximityComponent &>(component);
+
+                proximityComponent.ApplySceneNodeScaling();
+                proximityComponent.ApplySceneNodeTransformation();
+
+                if (node.IsVisible())
+                {
+                    if (proximityComponent.GetGhostObject().getCollisionShape() != nullptr)
+                    {
+                        this->physicsManager.AddGhostObject(proximityComponent.GetGhostObject(), proximityComponent.GetCollisionGroup(), proximityComponent.GetCollisionMask());
+                    }
+                    else
+                    {
+                        Log("Warning: Attempting to add a proximity component without a collision shape. Ignoring.");
+                    }
+                }
             }
             else
             {
-                if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+                // Constraints.
+                if (GTCore::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
                 {
-                    auto &dynamicsComponent = static_cast<DynamicsComponent &>(component);
-
-                    dynamicsComponent.ApplySceneNodeScaling();
-                    dynamicsComponent.ApplySceneNodeTransformation();
-
-                    if (node.IsVisible())
+                    auto constraint = static_cast<GenericConstraintComponent &>(component).GetConstraint();
+                    if (constraint != nullptr)
                     {
-                        if (dynamicsComponent.GetCollisionShape().getNumChildShapes() > 0)
-                        {
-                            this->physicsManager.AddRigidBody(dynamicsComponent.GetRigidBody(), dynamicsComponent.GetCollisionGroup(), dynamicsComponent.GetCollisionMask());
-                        }
-                        else
-                        {
-                            Log("Warning: Attempting to add a dynamics component without collision shapes. The rigid body has not been added to the dynamics world.");
-                        }
+                        this->physicsManager.AddConstraint(*constraint);
+                    }
+                    else
+                    {
+                        Log("Warning: Attempting to add a generic constraint component without attachments. Ignoring.");
                     }
                 }
-                else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
+                else if (GTCore::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
                 {
-                    auto &proximityComponent = static_cast<ProximityComponent &>(component);
-
-                    proximityComponent.ApplySceneNodeScaling();
-                    proximityComponent.ApplySceneNodeTransformation();
-
-                    if (node.IsVisible())
+                    auto constraint = static_cast<ConeTwistConstraintComponent &>(component).GetConstraint();
+                    if (constraint != nullptr)
                     {
-                        if (proximityComponent.GetGhostObject().getCollisionShape() != nullptr)
-                        {
-                            this->physicsManager.AddGhostObject(proximityComponent.GetGhostObject(), proximityComponent.GetCollisionGroup(), proximityComponent.GetCollisionMask());
-                        }
-                        else
-                        {
-                            Log("Warning: Attempting to add a proximity component without a collision shape. Ignoring.");
-                        }
+                        this->physicsManager.AddConstraint(*constraint);
+                    }
+                    else
+                    {
+                        Log("Warning: Attempting to add a cone twist constraint component without attachments. Ignoring.");
                     }
                 }
-                else
+                else if (GTCore::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
                 {
-                    // Constraints.
-                    if (GTCore::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
+                    auto constraint = static_cast<PointToPointConstraintComponent &>(component).GetConstraint();
+                    if (constraint != nullptr)
                     {
-                        auto constraint = static_cast<GenericConstraintComponent &>(component).GetConstraint();
-                        if (constraint != nullptr)
-                        {
-                            this->physicsManager.AddConstraint(*constraint);
-                        }
-                        else
-                        {
-                            Log("Warning: Attempting to add a generic constraint component without attachments. Ignoring.");
-                        }
+                        this->physicsManager.AddConstraint(*constraint);
                     }
-                    else if (GTCore::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
+                    else
                     {
-                        auto constraint = static_cast<ConeTwistConstraintComponent &>(component).GetConstraint();
-                        if (constraint != nullptr)
-                        {
-                            this->physicsManager.AddConstraint(*constraint);
-                        }
-                        else
-                        {
-                            Log("Warning: Attempting to add a cone twist constraint component without attachments. Ignoring.");
-                        }
-                    }
-                    else if (GTCore::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
-                    {
-                        auto constraint = static_cast<PointToPointConstraintComponent &>(component).GetConstraint();
-                        if (constraint != nullptr)
-                        {
-                            this->physicsManager.AddConstraint(*constraint);
-                        }
-                        else
-                        {
-                            Log("Warning: Attempting to add a point-to-point constraint component without attachments. Ignoring.");
-                        }
+                        Log("Warning: Attempting to add a point-to-point constraint component without attachments. Ignoring.");
                     }
                 }
             }
@@ -1565,47 +1641,55 @@ namespace GTEngine
         }
 
 
-        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name)      ||
-            GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
-            GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name)  ||
-            GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
         {
-            this->cullingManager.RemoveObject(node);
+            this->cullingManager.RemoveModel(node);
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        {
+            this->cullingManager.RemovePointLight(node);
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        {
+            this->cullingManager.RemoveSpotLight(node);
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        {
+            this->cullingManager.RemoveDirectionalLight(node);
+            this->directionalLightComponents.Remove(this->directionalLightComponents.Find(static_cast<DirectionalLightComponent*>(&component)));
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        {
+            this->cullingManager.RemoveAmbientLight(node);
+            this->ambientLightComponents.Remove(this->ambientLightComponents.Find(static_cast<AmbientLightComponent*>(&component)));
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        {
+            this->cullingManager.RemoveOccluder(node);
         }
         else
         {
-            if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+            if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
-                this->ambientLightComponents.Remove(this->ambientLightComponents.Find(static_cast<AmbientLightComponent*>(&component)));
+                this->physicsManager.RemoveRigidBody(static_cast<DynamicsComponent &>(component).GetRigidBody());
             }
-            else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+            else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
-                this->directionalLightComponents.Remove(this->directionalLightComponents.Find(static_cast<DirectionalLightComponent*>(&component)));
+                this->physicsManager.RemoveGhostObject(static_cast<ProximityComponent &>(component).GetGhostObject());
             }
             else
             {
-                if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+                if (GTCore::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
                 {
-                    this->physicsManager.RemoveRigidBody(static_cast<DynamicsComponent &>(component).GetRigidBody());
+                    this->physicsManager.RemoveConstraint(*static_cast<GenericConstraintComponent &>(component).GetConstraint());
                 }
-                else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
+                else if (GTCore::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
                 {
-                    this->physicsManager.RemoveGhostObject(static_cast<ProximityComponent &>(component).GetGhostObject());
+                    this->physicsManager.RemoveConstraint(*static_cast<ConeTwistConstraintComponent &>(component).GetConstraint());
                 }
-                else
+                else if (GTCore::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
                 {
-                    if (GTCore::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
-                    {
-                        this->physicsManager.RemoveConstraint(*static_cast<GenericConstraintComponent &>(component).GetConstraint());
-                    }
-                    else if (GTCore::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
-                    {
-                        this->physicsManager.RemoveConstraint(*static_cast<ConeTwistConstraintComponent &>(component).GetConstraint());
-                    }
-                    else if (GTCore::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
-                    {
-                        this->physicsManager.RemoveConstraint(*static_cast<PointToPointConstraintComponent &>(component).GetConstraint());
-                    }
+                    this->physicsManager.RemoveConstraint(*static_cast<PointToPointConstraintComponent &>(component).GetConstraint());
                 }
             }
         }

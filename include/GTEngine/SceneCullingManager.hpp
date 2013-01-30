@@ -67,6 +67,7 @@ namespace GTEngine
         virtual ~SceneCullingManager() {}
 
 
+#if 0
         /// Adds an object to the manager.
         ///
         /// @param object [in] A reference to the object.
@@ -82,6 +83,111 @@ namespace GTEngine
         /// @remarks
         ///     It is possible that this will be call on a object that was not necessarily added with AddObject(). This case needs to be handled safely.
         virtual void RemoveObject(SceneObject &object) = 0;
+#endif
+
+
+        /// Adds a model.
+        ///
+        /// @param object [in] A reference to the model object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with a ModelComponent.
+        virtual void AddModel(SceneObject &object) = 0;
+
+        /// Removes a model.
+        ///
+        /// @param object [in] A reference to the model object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with a ModelComponent.
+        virtual void RemoveModel(SceneObject &object) = 0;
+
+
+        /// Adds a point light.
+        ///
+        /// @param object [in] A reference to the point light object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with a PointLightComponent.
+        virtual void AddPointLight(SceneObject &object) = 0;
+
+        /// Removes a point light.
+        ///
+        /// @param object [in] A reference to the point light object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with a PointLightComponent.
+        virtual void RemovePointLight(SceneObject &object) = 0;
+
+
+        /// Adds a spot light.
+        ///
+        /// @param object [in] A reference to the spot light object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with a SpotLightComponent.
+        virtual void AddSpotLight(SceneObject &object) = 0;
+
+        /// Removes a spot light.
+        ///
+        /// @param object [in] A reference to the spot light object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with a SpotLightComponent.
+        virtual void RemoveSpotLight(SceneObject &object) = 0;
+
+
+        /// Adds a directional light.
+        ///
+        /// @param object [in] A reference to the directional light object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with a DirectionalLightComponent.
+        virtual void AddDirectionalLight(SceneObject &object) = 0;
+
+        /// Removes a directional light.
+        ///
+        /// @param object [in] A reference to the directional light object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with a DirectionalLightComponent.
+        virtual void RemoveDirectionalLight(SceneObject &object) = 0;
+
+
+        /// Adds an ambient light.
+        ///
+        /// @param object [in] A reference to the ambient light object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with an AmbientLightComponent.
+        virtual void AddAmbientLight(SceneObject &object) = 0;
+
+        /// Removes an ambient light.
+        ///
+        /// @param object [in] A reference to the ambient light object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with an AmbientLightComponent.
+        virtual void RemoveAmbientLight(SceneObject &object) = 0;
+
+
+        /// Adds an occluder.
+        ///
+        /// @param object [in] A reference to the occluder object.
+        ///
+        /// @remarks
+        ///     This can be a scene node with an OccluderComponent.
+        virtual void AddOccluder(SceneObject &object) = 0;
+
+        /// Removes an occluder.
+        ///
+        /// @param object [in] A reference to the occluder object.
+        ///
+        /// @remarks
+        virtual void RemoveOccluder(SceneObject &object) = 0;
+
+
+
 
         /// Updates the transformation of the given object.
         ///
