@@ -77,14 +77,44 @@ namespace GTEngine
 
 
 
+#if 0
         /// SceneCullingManager::UpdateTransform().
         virtual void UpdateTransform(SceneObject &object);
 
         /// SceneCullingManager::UpdateScale().
         virtual void UpdateScale(SceneObject &object);
+#endif
 
         /// SceneCullingManageR::UpdateObject().
         //virtual void UpdateObject(SceneObject &object);
+
+
+
+        /// SceneCullingManager::UpdateModelTransform().
+        virtual void UpdateModelTransform(SceneObject &object);
+
+        /// SceneCullingManager::UpdatePointLightTransform().
+        virtual void UpdatePointLightTransform(SceneObject &object);
+
+        /// SceneCullingManager::UpdateSpotLightTransform().
+        virtual void UpdateSpotLightTransform(SceneObject &object);
+
+        /// SceneCullingManager::UpdateDirectionalLightTransform().
+        virtual void UpdateDirectionalLightTransform(SceneObject &object);
+
+        /// SceneCullingManager::UpdateAmbientLightTransform().
+        virtual void UpdateAmbientLightTransform(SceneObject &object);
+
+        /// SceneCullingManager::UpdateOccluderLightTransform().
+        virtual void UpdateOccluderTransform(SceneObject &object);
+
+
+        /// SceneCullingManager::UpdateModelScale().
+        virtual void UpdateModelScale(SceneObject &object);
+
+        /// SceneCullingManager::UpdateOccluderScale().
+        virtual void UpdateOccluderScale(SceneObject &object);
+
 
 
         /// SceneCullingManager::GetGlobalAABB().
@@ -129,16 +159,241 @@ namespace GTEngine
 
     protected:
 
+        struct ModelMetadata;
+        struct PointLightMetadata;
+        struct SpotLightMetadata;
+
+
         /// The collision world containing collision objects for everything needing culling.
         CollisionWorld world;
 
+        /// A container for mapping metadata for models to scene nodes.
+        GTCore::Map<SceneObject*, ModelMetadata*> models;
+
+        /// A container for mapping metadata for point lights to scene nodes.
+        GTCore::Map<SceneObject*, PointLightMetadata*> pointLights;
+
+        /// A container for mapping metadata for spot lights to scene nodes.
+        GTCore::Map<SceneObject*, SpotLightMetadata*> spotLights;
+
         /// The ambient light objects.
-        GTCore::Vector<GTEngine::SceneObject*> ambientLights;
+        GTCore::Vector<SceneObject*> ambientLights;
 
         /// The directional light objects.
-        GTCore::Vector<GTEngine::SceneObject*> directionalLights;
+        GTCore::Vector<SceneObject*> directionalLights;
 
 
+        /// Structure containing metadata for each model.
+        struct ModelMetadata
+        {
+            ModelMetadata(Model &model, const btTransform &worldTransform, const glm::vec3 &scale)
+                : collisionObject(nullptr), collisionShape(nullptr), collisionObjectAABBMin(), collisionObjectAABBMax()
+            {
+                this->collisionObject = new CollisionObject;
+                this->collisionShape  = new btCompoundShape;
+
+                // We attach a single box to the compound shape, which will be the size of the AABB.
+                model.GetBaseAABB(this->collisionObjectAABBMin, this->collisionObjectAABBMax);
+                
+                glm::vec3 aabbMin     = this->collisionObjectAABBMin * scale;
+                glm::vec3 aabbMax     = this->collisionObjectAABBMax * scale;
+                glm::vec3 halfExtents = (aabbMax - aabbMin) * 0.5f;
+
+                btTransform boxTransform;
+                boxTransform.setIdentity();
+                boxTransform.setOrigin(btVector3(aabbMin.x + halfExtents.x, aabbMin.y + halfExtents.y, aabbMin.z + halfExtents.z));
+
+                this->collisionShape->addChildShape(boxTransform, new btBoxShape(btVector3(halfExtents.x, halfExtents.y, halfExtents.z)));
+                this->collisionShape->recalculateLocalAabb();
+
+
+                this->collisionObject->setCollisionShape(this->collisionShape);
+                this->collisionObject->setWorldTransform(worldTransform);
+            }
+
+            ~ModelMetadata()
+            {
+                if (this->collisionShape != nullptr)
+                {
+                    while (this->collisionShape->getNumChildShapes() > 0)
+                    {
+                        auto child = this->collisionShape->getChildShape(0);
+                        this->collisionShape->removeChildShapeByIndex(0);
+
+                        delete child;
+                    }
+                }
+
+                delete this->collisionObject;
+                delete this->collisionShape;
+
+                this->collisionObject = nullptr;
+                this->collisionShape  = nullptr;
+            }
+
+
+            /// Updates the transform.
+            void UpdateTransform(const btTransform &transform)
+            {
+                assert(this->collisionObject != nullptr);
+                {
+                    this->collisionObject->setWorldTransform(transform);
+                    this->collisionObject->GetWorld()->UpdateAABB(*this->collisionObject);
+                }
+            }
+
+            /// Updates the scale.
+            void UpdateScale(const glm::vec3 &scale)
+            {
+                assert(this->collisionObject != nullptr);
+                {
+                    auto world = this->collisionObject->GetWorld();
+                    if (world != nullptr)
+                    {
+                        world->RemoveCollisionObject(*this->collisionObject);
+                    }
+
+
+                    // We need to remove the shape and re-add a new one.
+                    delete this->collisionShape->getChildShape(0);
+                    this->collisionShape->removeChildShapeByIndex(0);
+
+
+                    glm::vec3 aabbMin     = this->collisionObjectAABBMin * scale;
+                    glm::vec3 aabbMax     = this->collisionObjectAABBMax * scale;
+                    glm::vec3 halfExtents = (aabbMax - aabbMin) * 0.5f;
+
+                    btTransform boxTransform;
+                    boxTransform.setIdentity();
+                    boxTransform.setOrigin(btVector3(aabbMin.x + halfExtents.x, aabbMin.y + halfExtents.y, aabbMin.z + halfExtents.z));
+
+
+                    this->collisionShape->addChildShape(boxTransform, new btBoxShape(btVector3(halfExtents.x, halfExtents.y, halfExtents.z)));
+                    this->collisionShape->recalculateLocalAabb();
+
+
+                    if (world != nullptr)
+                    {
+                        world->AddCollisionObject(*this->collisionObject,
+                            CollisionGroups::Model,
+                            CollisionGroups::PointLight | CollisionGroups::SpotLight);
+                    }
+                }
+            }
+
+
+
+            ////////////////////////////////////////////////////////////
+            // Attributes.
+
+            /// A pointer to the collision object for the model component. Can be null.
+            CollisionObject* collisionObject;
+
+            /// The collision shape to use for culling the model. Can be null only if <modelCollisionObject> is also null. A model's culling shape
+            /// is defined by it's AABB, which will require an offset to be applied. Thus, we're going to use a compound shape.
+            btCompoundShape* collisionShape;
+
+            /// The min bounds of the model's unscaled AABB.
+            glm::vec3 collisionObjectAABBMin;
+
+            /// The max bounds of the model's unscaled AABB.
+            glm::vec3 collisionObjectAABBMax;
+        };
+
+
+        /// Structure containing the metadata for each point light.
+        struct PointLightMetadata
+        {
+            PointLightMetadata(float radius, const btTransform &worldTransform)
+                : collisionObject(nullptr), collisionShape(nullptr)
+            {
+                this->collisionObject = new CollisionObject;
+                this->collisionShape  = new btSphereShape(radius);
+
+                this->collisionObject->setCollisionShape(this->collisionShape);
+                this->collisionObject->setWorldTransform(worldTransform);
+            }
+
+            ~PointLightMetadata()
+            {
+                delete this->collisionObject;
+                delete this->collisionShape;
+            }
+
+
+            /// Updates the transformation.
+            void UpdateTransform(const btTransform &transform)
+            {
+                assert(this->collisionObject != nullptr);
+                {
+                    this->collisionObject->setWorldTransform(transform);
+                    this->collisionObject->GetWorld()->UpdateAABB(*this->collisionObject);
+                }
+            }
+
+
+            ////////////////////////////////////////////////////////////
+            // Attributes.
+
+            /// A pointer to the collision object for the point light component. Can be null.
+            CollisionObject* collisionObject;
+
+            /// The collision shape to use with the point light collision object. Can be null only if <pointLightCollisionObject> is also null.
+            btSphereShape* collisionShape;
+        };
+
+
+        /// Structure containing the metadata for each spot light.
+        struct SpotLightMetadata
+        {
+            SpotLightMetadata(float outerAngle, float height, const btTransform &worldTransform)
+                : collisionObject(nullptr), collisionShape(nullptr)
+            {
+                this->collisionObject = new CollisionObject;
+                this->collisionShape  = new btCompoundShape;
+
+                // Here we create the cone shape. We need to offset by half the height because Bullet creates it's cones centered.
+                btTransform coneTransform;
+                coneTransform.setIdentity();
+                coneTransform.setOrigin(btVector3(0.0f, 0.0f, -height * 0.5f));
+                this->collisionShape->addChildShape(coneTransform, new btConeShapeZ(glm::sin(glm::radians(outerAngle)) * height, height));
+
+                this->collisionObject->setCollisionShape(this->collisionShape);
+                this->collisionObject->setWorldTransform(worldTransform);
+            }
+
+            ~SpotLightMetadata()
+            {
+                delete this->collisionObject;
+                delete this->collisionShape;
+            }
+
+
+            /// Updates the transform.
+            void UpdateTransform(const btTransform &transform)
+            {
+                assert(this->collisionObject != nullptr);
+                {
+                    this->collisionObject->setWorldTransform(transform);
+                    this->collisionObject->GetWorld()->UpdateAABB(*this->collisionObject);
+                }
+            }
+
+
+
+            ////////////////////////////////////////////////////////////
+            // Attributes.
+
+            /// A pointer to the collision object for the spot light component. Can be null.
+            CollisionObject* collisionObject;
+
+            /// The collision shape to use with the spot light collision object. Can be null only if <spotLightCollisionObject> is also null. We
+            /// need to use a compound shape here because the cone will need to be offset by half it's height.
+            btCompoundShape* collisionShape;
+        };
+
+
+#if 0
         /// Structure containing metadata for each scene node object.
         struct SceneNodeMetadata
         {
@@ -460,6 +715,7 @@ namespace GTEngine
             SceneNodeMetadata(const SceneNodeMetadata &);
             SceneNodeMetadata & operator=(const SceneNodeMetadata &);
         };
+#endif
 
 
         //////////////////////////////////////////////////////////////////
