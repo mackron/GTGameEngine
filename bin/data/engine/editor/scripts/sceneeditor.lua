@@ -1340,18 +1340,10 @@ function GTGUI.Element:SceneEditorPanel()
             -- We need to attach an event handler to each component panel for when it is closed. When closing a component panel, that component
             -- will be removed from the scene node. Note that closing a panel is not the same as collapsing it.
             panel:OnClose(function()
-                local scenePtr     = self.SceneEditor:GetScenePtr();
-                local sceneNodePtr = self.CurrentSceneNode._internalPtr;
-        
-                GTEngine.System.Scene.RemoveSceneNode(scenePtr, sceneNodePtr);
-                    self.CurrentSceneNode:RemoveComponent(value);
-                GTEngine.System.Scene.AddSceneNode(scenePtr, sceneNodePtr);
-                
-                -- Removing the scene node will deselect it. We want to reselect it. Reselecting will update the panels.
-                self.SceneEditor:SelectSceneNode(self.CurrentSceneNode);
-                
-                -- Undo/Redo point.
-                self.SceneEditor:CommitStateStackFrame();
+                self.CurrentSceneNode:RemoveComponent(value);
+
+                self:UpdateComponentPanels();
+                self:OnSceneNodeChanged();
             end);
         end
     end
