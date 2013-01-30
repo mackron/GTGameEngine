@@ -1056,14 +1056,6 @@ namespace GTEngine
                 this->DeselectSceneNode(node);
             }
         }
-
-
-        // We don't want to do anything here if we're deserializing or if the node is not actually being saved on the state stack.
-        if (!this->isDeserializing && node.IsStateStackStagingEnabled() && this->scene.IsStateStackStagingEnabled())
-        {
-            // We'll commit the changes to the state stack so we can undo/redo this change.
-            this->CommitStateStackFrame();
-        }
     }
 
     void SceneEditor::OnStateStackFrameCommitted()
