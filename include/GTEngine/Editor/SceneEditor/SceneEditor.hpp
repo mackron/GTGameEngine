@@ -132,11 +132,6 @@ namespace GTEngine
         void CommitStateStackFrame();
 
 
-        /// Appends a new state stack frame for undo/redo.
-        //void AppendStateStackFrame();
-
-
-
 
         ///////////////////////////////////////////////////
         // Gizmo Control

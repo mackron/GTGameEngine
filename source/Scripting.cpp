@@ -1004,7 +1004,6 @@ namespace GTEngine
                         script.SetTableFunction(-1, "EnablePhysicsSimulation",             FFI::SystemFFI::SceneEditorFFI::EnablePhysicsSimulation);
                         script.SetTableFunction(-1, "DisablePhysicsSimulation",            FFI::SystemFFI::SceneEditorFFI::DisablePhysicsSimulation);
                         script.SetTableFunction(-1, "IsPhysicsSimulationEnabled",          FFI::SystemFFI::SceneEditorFFI::IsPhysicsSimulationEnabled);
-                        //script.SetTableFunction(-1, "AppendStateStackFrame",               FFI::SystemFFI::SceneEditorFFI::AppendStateStackFrame);
                         script.SetTableFunction(-1, "CommitStateStackFrame",               FFI::SystemFFI::SceneEditorFFI::CommitStateStackFrame);
                         script.SetTableFunction(-1, "Undo",                                FFI::SystemFFI::SceneEditorFFI::Undo);
                         script.SetTableFunction(-1, "Redo",                                FFI::SystemFFI::SceneEditorFFI::Redo);
@@ -3573,20 +3572,6 @@ namespace GTEngine
 
                         return 1;
                     }
-
-
-                    /*
-                    int AppendStateStackFrame(GTCore::Script &script)
-                    {
-                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
-                        if (sceneEditor != nullptr)
-                        {
-                            sceneEditor->AppendStateStackFrame();
-                        }
-
-                        return 0;
-                    }
-                    */
 
 
                     int CommitStateStackFrame(GTCore::Script &script)
