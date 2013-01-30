@@ -390,6 +390,7 @@ namespace GTEngine
         // Now we simply apply the scaling to the shape.
         this->collisionShape->setLocalScaling(btVector3(x, y, z));
 
+
         // With a change in the geometry, we need to update the mass.
         this->UpdateMass();
 
@@ -1172,6 +1173,9 @@ namespace GTEngine
         bool      newIsKinematic             = this->IsKinematic();
 
 
+        // Before deserializing, we need to revert the scaling back to 1.0, 1.0, 1.0f. If we don't do this, the scale won't be
+        // be set correctly because of the way the shapes are used.
+        this->ApplyScaling(1.0f, 1.0f, 1.0f);
 
 
         // First chunk is general info.
