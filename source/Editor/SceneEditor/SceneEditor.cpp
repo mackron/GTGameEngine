@@ -672,18 +672,26 @@ namespace GTEngine
 
     void SceneEditor::Undo()
     {
+        // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
+        this->DeselectAll();
+
         this->scene.SeekStateStack(-1);
         this->MarkAsModified();
 
-        this->PostOnSelectionChangedEventToScript();
+        // All nodes need to be reselected.
+        this->ReselectSceneNodes();
     }
 
     void SceneEditor::Redo()
     {
+        // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
+        this->DeselectAll();
+
         this->scene.SeekStateStack(+1);
         this->MarkAsModified();
 
-        this->PostOnSelectionChangedEventToScript();
+        // All nodes need to be reselected.
+        this->ReselectSceneNodes();
     }
 
     void SceneEditor::CommitStateStackFrame()
@@ -774,6 +782,7 @@ namespace GTEngine
             if (metadata == nullptr)
             {
                 metadata = node.AddComponent<EditorMetadataComponent>();
+                this->OnSceneNodeComponentChanged(node, *metadata);
             }
 
 
@@ -1047,6 +1056,53 @@ namespace GTEngine
         {
             auto &metadata = static_cast<EditorMetadataComponent &>(component);
 
+
+            // We need to remove and re-add the collision object since it might have changed. We only re-add if it's visible.
+            auto &pickingCollisionObject = metadata.GetPickingCollisionObject();
+
+            auto world = pickingCollisionObject.GetWorld();
+            if (world != nullptr)
+            {
+                world->RemoveCollisionObject(pickingCollisionObject);
+            }
+
+
+            // If the node is visible, we'll need to include the picking collision objects.
+            if (node.IsVisible())
+            {
+                // If the picking shape is set to the model, we want to update it here just to make sure everything is valid.
+                if (metadata.UseModelForPickingShape())
+                {
+                    metadata.SetPickingCollisionShapeToModel();
+
+                    if (metadata.GetPickingCollisionShape())
+                    {
+                        pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+                    }
+                }
+
+
+                if (metadata.GetPickingCollisionShape() != nullptr)
+                {
+                    btTransform transform;
+                    node.GetWorldTransform(transform);
+
+                    pickingCollisionObject.setWorldTransform(transform);
+                    this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata.GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                }
+
+
+                // If we have a sprite, we'll want to add it's picking object to the picking world.
+                if (metadata.IsUsingSprite() && metadata.GetSpritePickingCollisionObject() != nullptr)
+                {
+                    this->pickingWorld.AddCollisionObject(*metadata.GetSpritePickingCollisionObject(), metadata.GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                }
+            }
+
+
+
+            // Select or deselect where appropriate.
+            /*
             if (metadata.IsSelected())
             {
                 this->SelectSceneNode(node, true);
@@ -1054,6 +1110,14 @@ namespace GTEngine
             else
             {
                 this->DeselectSceneNode(node);
+            }
+            */
+
+
+            // If anything is selected, the gizmo needs to be fully updated.
+            if (this->selectedNodes.count > 0)
+            {
+                this->UpdateGizmo();
             }
         }
     }
@@ -1649,6 +1713,41 @@ namespace GTEngine
                 }
             }
             script.Pop(1);
+        }
+    }
+
+    void SceneEditor::ReselectSceneNodes()
+    {
+        // Grab the nodes marked as selected.
+        GTCore::Vector<SceneNode*> nodesForReselection;
+        for (size_t i = 0; i < this->sceneNodes.count; ++i)
+        {
+            auto sceneNode = this->sceneNodes.buffer[i]->value;
+            assert(sceneNode != nullptr);
+            {
+                auto metadata = sceneNode->GetComponent<EditorMetadataComponent>();
+                assert(metadata != nullptr);
+                {
+                    if (metadata->IsSelected())
+                    {
+                        nodesForReselection.PushBack(sceneNode);
+                    }
+
+                    // We always want to do this regardless of whether or not the scene node is marked as selected in the metadata.
+                    this->DeselectSceneNode(*sceneNode);
+                }
+            }
+        }
+
+
+        // Reselect.
+        for (size_t i = 0; i < nodesForReselection.count; ++i)
+        {
+            auto sceneNode = nodesForReselection[i];
+            assert(sceneNode != nullptr);
+            {
+                this->SelectSceneNode(*sceneNode, true);
+            }
         }
     }
 }
