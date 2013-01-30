@@ -13,10 +13,6 @@
 
 namespace GTEngine
 {
-    // TODO: Make this a script variable so we can change this around.
-    static const size_t MaxStateStackFrames = 20;
-
-
     SceneEditor::SceneEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           viewport(), camera(), cameraXRotation(0.0f), cameraYRotation(0.0f),
@@ -160,9 +156,6 @@ namespace GTEngine
 
             // We want to do an initial commit.
             this->scene.CommitStateStackFrame();
-
-            // We want an undo/redo stack item for the initial state of the scene.
-            //this->AppendStateStackFrame();
 
 
             // The scene will be done loading by this pointer, so we can close the file.
@@ -611,7 +604,6 @@ namespace GTEngine
             auto nodesToDelete = this->selectedNodes;
             this->DeleteSceneNodes(nodesToDelete);
 
-            //this->AppendStateStackFrame();
             this->CommitStateStackFrame();
         }
     }
@@ -683,22 +675,7 @@ namespace GTEngine
         this->scene.SeekStateStack(-1);
         this->MarkAsModified();
 
-        /*
-        assert(this->sceneStateStack.count > 0);
-        {
-            if (this->sceneStateIndex > 0)
-            {
-                --this->sceneStateIndex;
-
-                auto serializer = this->sceneStateStack[this->sceneStateIndex];
-                assert(serializer != nullptr);
-                {
-                    GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
-                    this->DeserializeScene(deserializer);
-                }
-            }
-        }
-        */
+        this->PostOnSelectionChangedEventToScript();
     }
 
     void SceneEditor::Redo()
@@ -706,23 +683,7 @@ namespace GTEngine
         this->scene.SeekStateStack(+1);
         this->MarkAsModified();
 
-
-        /*
-        assert(this->sceneStateStack.count > 0);
-        {
-            if (this->sceneStateIndex < this->sceneStateStack.count - 1)
-            {
-                ++this->sceneStateIndex;
-
-                auto serializer = this->sceneStateStack[this->sceneStateIndex];
-                assert(serializer != nullptr);
-                {
-                    GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
-                    this->DeserializeScene(deserializer);
-                }
-            }
-        }
-        */
+        this->PostOnSelectionChangedEventToScript();
     }
 
     void SceneEditor::CommitStateStackFrame()
@@ -730,46 +691,6 @@ namespace GTEngine
         this->scene.CommitStateStackFrame();
         this->MarkAsModified();
     }
-
-    /*
-    void SceneEditor::AppendStateStackFrame()
-    {
-        // We do not mark as modified
-        bool markAsModified = this->sceneStateStack.count > 0;
-
-
-        // Everything after the current index needs to be removed.
-        while (this->sceneStateStack.count > this->sceneStateIndex + 1)
-        {
-            this->sceneStateStack.PopBack();
-        }
-
-        // If already have too many items in the stack, we'll need to get rid of the oldest one.
-        if (this->sceneStateStack.count >= MaxStateStackFrames && this->sceneStateStack.count > 0)
-        {
-            auto oldestState = this->sceneStateStack[0];
-            assert(oldestState != nullptr);
-            {
-                delete oldestState;
-                this->sceneStateStack.Remove(0);
-            }
-        }
-
-
-        auto serializer = new GTCore::BasicSerializer;
-        this->SerializeScene(*serializer, false);
-
-        this->sceneStateStack.PushBack(serializer);
-        this->sceneStateIndex = this->sceneStateStack.count - 1;
-
-        // A change was made, so we need to mark the scene as modified.
-        if (markAsModified)
-        {
-            this->MarkAsModified();
-        }
-    }
-    */
-
 
 
     ///////////////////////////////////////////////////
@@ -848,15 +769,11 @@ namespace GTEngine
             }
 
 
-
+            // We need a metadata component if we don't already have one.
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata == nullptr)
             {
                 metadata = node.AddComponent<EditorMetadataComponent>();
-
-                // When a scene node is added without a metadata component (which is true if we've made it here), we know that it must be deleted when the
-                // state is also deleted. We need to mark it as such.
-                //metadata->DeleteOnClose(true);
             }
 
 
@@ -1146,10 +1063,6 @@ namespace GTEngine
         {
             // We'll commit the changes to the state stack so we can undo/redo this change.
             this->CommitStateStackFrame();
-
-
-            // TEMP
-            //this->AppendStateStackFrame();
         }
     }
 
@@ -1439,7 +1352,6 @@ namespace GTEngine
             if (this->transformedObjectWithGizmo)
             {
                 this->CommitStateStackFrame();
-                //this->AppendStateStackFrame();
                 this->transformedObjectWithGizmo = false;
             }
         }
