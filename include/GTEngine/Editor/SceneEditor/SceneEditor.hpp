@@ -307,6 +307,10 @@ namespace GTEngine
         void ReselectSceneNodes();
 
 
+        /// Updates the icon on the Physics button.
+        void UpdatePhysicsButtonIcon();
+
+
     private:
 
         /// The viewport that the scene will be drawn from.

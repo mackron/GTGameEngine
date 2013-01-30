@@ -1722,12 +1722,20 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.PhysicsButton:OnPressed(function()
         if GTEngine.System.SceneEditor.IsPhysicsSimulationEnabled(self._internalPtr) then
             GTEngine.System.SceneEditor.DisablePhysicsSimulation(self._internalPtr);
-            self.PhysicsButtonIcon:DetachStyleClass("physics-button-icon-stop");
         else
             GTEngine.System.SceneEditor.EnablePhysicsSimulation(self._internalPtr);
-            self.PhysicsButtonIcon:AttachStyleClass("physics-button-icon-stop");
         end
     end);
+    
+    -- Updates the physics button icon to show the correct icon based on whether or not the simulation is enabled. This is never
+    -- actually called from the scripting environment, and instead is called from the C++ side.
+    function self:UpdatePhysicsButtonIcon()
+        if GTEngine.System.SceneEditor.IsPhysicsSimulationEnabled(self._internalPtr) then
+            self.PhysicsButtonIcon:AttachStyleClass("physics-button-icon-stop");
+        else
+            self.PhysicsButtonIcon:DetachStyleClass("physics-button-icon-stop");
+        end
+    end
     
     
     
