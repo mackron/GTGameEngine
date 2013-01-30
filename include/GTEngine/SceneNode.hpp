@@ -606,16 +606,6 @@ namespace GTEngine
         }
 
 
-        /**
-        *   \brief  Sets the layer this scene node is sitting on. Will call the OnLayerChanged() event.
-        */
-        void SetLayer(unsigned int layer);
-
-        /**
-        *   \brief  Retrieves the layer this scene node is sittign on.
-        */
-        unsigned int GetLayer() const { return this->layer; }
-
 
         /**
         *   \brief  Sets the scene of this node.
@@ -872,9 +862,6 @@ namespace GTEngine
         /// component-specific data (use a key equal to the pointer to the component).
         GTCore::Map<size_t, void*> dataPointers;
 
-        /// The index of the layer this scene node is sitting on. Nodes with a larger layer index will be rendered on top of
-        /// those with a lower index.
-        unsigned int layer;
 
         /// The scene this node is attached to, if any. Usually, a scene node is part of a scene. We need to keep track of the
         /// scene so we can notify it of certain events, such as when a component is added or removed. This can be null, in
