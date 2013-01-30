@@ -43,7 +43,8 @@ namespace GTEngine
 
 
         /// ScenePhysicsManager::UpdateTransform().
-        virtual void UpdateTransform(RigidBody &object, const glm::mat4 &newTransform);
+        virtual void UpdateTransform(RigidBody &object,   const glm::mat4 &newTransform);
+        virtual void UpdateTransform(GhostObject &object, const glm::mat4 &newTransform);
 
 
         
