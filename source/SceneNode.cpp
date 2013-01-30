@@ -730,63 +730,60 @@ namespace GTEngine
 
     Component* SceneNode::AddComponentByName(const char* componentName)
     {
-        Component* component = nullptr;
-
-        if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
+        // A component of the same name can't already exist. If it doesn, we just return the existing one.
+        auto component = this->GetComponentByName(componentName);
+        if (component == nullptr)
         {
-            if (this->modelComponent == nullptr)
+            if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
             {
-                this->modelComponent = new ModelComponent(*this);
+                assert(this->modelComponent == nullptr);
+                {
+                    component = this->modelComponent = new ModelComponent(*this);
+                }
             }
-            component = this->modelComponent;
-        }
-        else if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
-        {
-            if (this->pointLightComponent == nullptr)
+            else if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
             {
-                this->pointLightComponent = new PointLightComponent(*this);
+                assert(this->pointLightComponent == nullptr);
+                {
+                    component = this->pointLightComponent = new PointLightComponent(*this);
+                }
             }
-            component = this->pointLightComponent;
-        }
-        else if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
-        {
-            if (this->spotLightComponent == nullptr)
+            else if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
             {
-                this->spotLightComponent = new SpotLightComponent(*this);
+                assert(this->spotLightComponent == nullptr);
+                {
+                    component = this->spotLightComponent = new SpotLightComponent(*this);
+                }
             }
-            component = this->spotLightComponent;
-        }
-        else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
-        {
-            if (this->editorMetadataComponent == nullptr)
+            else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
             {
-                this->editorMetadataComponent = new EditorMetadataComponent(*this);
+                assert(this->editorMetadataComponent == nullptr);
+                {
+                    component = this->editorMetadataComponent = new EditorMetadataComponent(*this);
+                }
             }
-            component = this->editorMetadataComponent;
-        }
-        else
-        {
-            // A component of the same name can't already exist. If it doesn, we just return the existing one.
-            component = this->GetComponentByName(componentName);
-            if (component == nullptr)
+            else
             {
                 component = GTEngine::CreateComponentByName(componentName, *this);
                 this->components.Add(componentName, component);
             }
-        }
 
-        if (component != nullptr)
-        {
-            if (this->scene != nullptr)
+
+            // Here we're just letting the scene know about the new component. We'll also post a warning if the component is null while we're here.
+            if (component != nullptr)
             {
-                this->scene->OnSceneNodeComponentAdded(*this, *component);
+                if (this->scene != nullptr)
+                {
+                    this->scene->OnSceneNodeComponentAdded(*this, *component);
+                }
+            }
+            else
+            {
+                Log("Warning: Failed to add component '%s' to scene node.", componentName);
             }
         }
-        else
-        {
-            Log("Warning: Failed to add component '%s' to scene node.", componentName);
-        }
 
+        
         return component;
     }
 
@@ -1118,14 +1115,6 @@ namespace GTEngine
 
     void SceneNode::Deserialize(GTCore::Deserializer &deserializer)
     {
-        // For now, we want to remove the scene node before deserializing. We then re-add it afterwards.
-        auto scene = this->GetScene();
-        if (scene != nullptr)
-        {
-            scene->RemoveSceneNode(*this);
-        }
-
-
         // Deserialize the SceneObject first.
         SceneObject::Deserialize(deserializer);
 
@@ -1202,13 +1191,6 @@ namespace GTEngine
                     this->RemoveComponentByName(componentsToRemove[i].c_str());
                 }
             }
-        }
-
-
-        // Now we need to re-add the node.
-        if (scene != nullptr)
-        {
-            scene->AddSceneNode(*this);
         }
     }
 
