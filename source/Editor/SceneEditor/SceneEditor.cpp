@@ -1254,6 +1254,10 @@ namespace GTEngine
         FILE* file = GTCore::IO::Open(this->GetAbsolutePath(), GTCore::IO::OpenMode::Write);
         if (file != nullptr)
         {
+            // The physics simulation must be disable first!
+            this->DisablePhysicsSimulation();
+
+
             GTCore::FileSerializer serializer(file);
             this->SerializeScene(serializer);
 
