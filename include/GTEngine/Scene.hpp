@@ -429,6 +429,12 @@ namespace GTEngine
         ///     The number of stack frames on the current branch.
         size_t GetStateStackFrameCount() const;
 
+        /// Retrieves the index of the current frame of the current branch of the scene's state stack.
+        uint32_t GetStateStackCurrentFrameIndex() const;
+
+        /// Retrieves the index of the last frame of the current branch of the scene's state stack.
+        uint32_t GetStateStackMaxFrameIndex() const;
+
         /// Moves the current frame by the given amount.
         ///
         /// @param step [in] The amount to seek by. Can be positive or negative.
