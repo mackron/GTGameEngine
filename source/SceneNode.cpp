@@ -61,7 +61,6 @@ namespace GTEngine
           firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
           eventHandlers(), components(), dataPointers(),
           scene(nullptr),
-          inheritPosition(true), inheritOrientation(true), inheritScale(true),
           flags(0),
           eventLockCounter(0),
           typeID(0),
@@ -428,16 +427,16 @@ namespace GTEngine
 
     glm::vec3 SceneNode::GetWorldPosition() const
     {
-        if (this->parent != nullptr && this->inheritPosition)
+        if (this->parent != nullptr && this->IsPositionInheritanceEnabled())
         {
             glm::quat orientation;
-            if (this->inheritOrientation)
+            if (this->IsOrientationInheritanceEnabled())
             {
                 orientation = this->parent->GetWorldOrientation();
             }
 
             glm::vec3 scale(1.0f, 1.0f, 1.0f);
-            if (this->inheritScale)
+            if (this->IsScaleInheritanceEnabled())
             {
                 scale = this->parent->GetWorldScale();
             }
@@ -450,7 +449,7 @@ namespace GTEngine
 
     void SceneNode::SetWorldPosition(const glm::vec3 &worldPosition, bool updateDynamicsObject)
     {
-        if (this->parent != nullptr && this->inheritPosition)
+        if (this->parent != nullptr && this->IsPositionInheritanceEnabled())
         {
             glm::vec3 Pp = this->parent->GetWorldPosition();
             glm::vec3 Ps = this->parent->GetWorldScale();
@@ -483,7 +482,7 @@ namespace GTEngine
 
     glm::quat SceneNode::GetWorldOrientation() const
     {
-        if (this->parent != nullptr && this->inheritOrientation)
+        if (this->parent != nullptr && this->IsOrientationInheritanceEnabled())
         {
             return this->parent->GetWorldOrientation() * this->orientation;
         }
@@ -493,7 +492,7 @@ namespace GTEngine
 
     void SceneNode::SetWorldOrientation(const glm::quat &worldOrientation, bool updateDynamicsObject)
     {
-        if (this->parent != nullptr && this->inheritOrientation)
+        if (this->parent != nullptr && this->IsOrientationInheritanceEnabled())
         {
             this->SetOrientation(glm::inverse(this->parent->GetWorldOrientation()) * worldOrientation, updateDynamicsObject);
         }
@@ -519,7 +518,7 @@ namespace GTEngine
 
     glm::vec3 SceneNode::GetWorldScale() const
     {
-        if (this->parent != nullptr && this->inheritScale)
+        if (this->parent != nullptr && this->IsScaleInheritanceEnabled())
         {
             return this->parent->GetWorldScale() * this->scale;
         }
@@ -529,7 +528,7 @@ namespace GTEngine
 
     void SceneNode::SetWorldScale(const glm::vec3 &worldScale)
     {
-        if (this->parent != nullptr && this->inheritScale)
+        if (this->parent != nullptr && this->IsScaleInheritanceEnabled())
         {
             this->SetScale(worldScale / this->parent->GetWorldScale());
         }
@@ -580,11 +579,11 @@ namespace GTEngine
             this->parent->GetWorldTransformComponents(positionOut, orientationOut, scaleOut);
 
             glm::vec3 temp;
-            if (!this->inheritPosition)
+            if (!this->IsPositionInheritanceEnabled())
             {
                 positionOut = this->position;
 
-                if (!this->inheritScale)
+                if (!this->IsScaleInheritanceEnabled())
                 {
                     scaleOut = this->scale;
                 }
@@ -593,7 +592,7 @@ namespace GTEngine
                     scaleOut = scaleOut * this->scale;
                 }
 
-                if (!this->inheritOrientation)
+                if (!this->IsOrientationInheritanceEnabled())
                 {
                     orientationOut = this->orientation;
                 }
@@ -606,7 +605,7 @@ namespace GTEngine
             {
                 glm::vec3 offset = this->position;
                 
-                if (!this->inheritScale)
+                if (!this->IsScaleInheritanceEnabled())
                 {
                     scaleOut = this->scale;
                 }
@@ -616,7 +615,7 @@ namespace GTEngine
                     scaleOut = scaleOut * this->scale;
                 }
 
-                if (!this->inheritOrientation)
+                if (!this->IsOrientationInheritanceEnabled())
                 {
                     orientationOut = this->orientation;
                 }
@@ -966,45 +965,67 @@ namespace GTEngine
     {
         auto worldPosition = this->GetWorldPosition();
 
-        this->inheritPosition = false;
+        this->flags = this->flags | NoPositionInheritance;
         this->SetWorldPosition(worldPosition);     // This will ensure the position is correct.
     }
+
     void SceneNode::EnablePositionInheritance()
     {
         auto worldPosition = this->GetWorldPosition();
 
-        this->inheritPosition = true;
+        this->flags = this->flags & ~NoPositionInheritance;
         this->SetWorldPosition(worldPosition);     // This will ensure the position is correct.
     }
+
+    bool SceneNode::IsPositionInheritanceEnabled() const
+    {
+        return (this->flags & NoPositionInheritance) == 0;
+    }
+
+
 
     void SceneNode::DisableOrientationInheritance()
     {
         auto worldOrientation = this->GetWorldOrientation();
         
-        this->inheritOrientation = false;
+        this->flags = this->flags | NoOrientationInheritance;
         this->SetWorldOrientation(worldOrientation);
     }
+
     void SceneNode::EnableOrientationInheritance()
     {
         auto worldOrientation = this->GetWorldOrientation();
         
-        this->inheritOrientation = true;
+        this->flags = this->flags & ~NoOrientationInheritance;
         this->SetWorldOrientation(worldOrientation);
     }
+
+    bool SceneNode::IsOrientationInheritanceEnabled() const
+    {
+        return (this->flags & NoOrientationInheritance) == 0;
+    }
+
+
 
     void SceneNode::DisableScaleInheritance()
     {
         auto worldScale = this->GetWorldScale();
         
-        this->inheritScale = false;
+        this->flags = this->flags | NoScaleInheritance;
         this->SetWorldScale(worldScale);
     }
+
     void SceneNode::EnableScaleInheritance()
     {
         auto worldScale = this->GetWorldScale();
         
-        this->inheritScale = true;
+        this->flags = this->flags & ~NoOrientationInheritance;
         this->SetWorldScale(worldScale);
+    }
+
+    bool SceneNode::IsScaleInheritanceEnabled() const
+    {
+        return (this->flags & NoScaleInheritance) == 0;
     }
 
 
@@ -1023,9 +1044,6 @@ namespace GTEngine
         GTCore::BasicSerializer secondarySerializer;
         secondarySerializer.Write(this->uniqueID);
         secondarySerializer.Write(this->name);
-        secondarySerializer.Write(this->inheritPosition);
-        secondarySerializer.Write(this->inheritOrientation);
-        secondarySerializer.Write(this->inheritScale);
         secondarySerializer.Write(static_cast<uint32_t>(this->flags));
         secondarySerializer.Write(static_cast<uint32_t>(this->typeID));
 
@@ -1104,9 +1122,6 @@ namespace GTEngine
                     {
                         deserializer.Read(this->uniqueID);
                         deserializer.Read(this->name);
-                        deserializer.Read(this->inheritPosition);
-                        deserializer.Read(this->inheritOrientation);
-                        deserializer.Read(this->inheritScale);
                         deserializer.Read(reinterpret_cast<uint32_t &>(this->flags));
                         deserializer.Read(reinterpret_cast<uint32_t &>(this->typeID));
 

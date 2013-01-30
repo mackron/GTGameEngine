@@ -679,7 +679,7 @@ namespace GTEngine
         void EnablePositionInheritance();
 
         /// Determines whether or not position inheritance is enabled.
-        bool IsPositionInheritanceEnabled() const { return this->inheritPosition; }
+        bool IsPositionInheritanceEnabled() const;
 
 
         /// Disables orientation inheritance.
@@ -689,7 +689,7 @@ namespace GTEngine
         void EnableOrientationInheritance();
 
         /// Determines whether or not orientation inheritance is enabled.
-        bool IsOrientationInheritanceEnabled() const { return this->inheritOrientation; }
+        bool IsOrientationInheritanceEnabled() const;
 
 
         /// Disables scale inheritance.
@@ -699,7 +699,7 @@ namespace GTEngine
         void EnableScaleInheritance();
 
         /// Determines whether or not scale inheritance is enabled.
-        bool IsScaleInheritanceEnabled() const { return this->inheritScale; }
+        bool IsScaleInheritanceEnabled() const;
 
 
         /// Sets the flags of the scene node.
@@ -872,16 +872,6 @@ namespace GTEngine
         /// it is the responsibility of the scene to call SceneNode::SetScene() manually. If left unset, the scene node will go
         /// with the assumption that it is not part of a scene.
         Scene* scene;
-
-
-        /// Keeps track of whether or not position inheritance is enabled. True by default.
-        bool inheritPosition;
-
-        /// Keeps track of whether or not orientation inheritance is enabled. True by default.
-        bool inheritOrientation;
-
-        /// Keeps track of whether or not scale inheritance is enabled. True by default.
-        bool inheritScale;
 
 
         /// The scene node's flags. Defaults to 0. Changing a flags requires the node be removed and re-added to the scene in order to take effect.
