@@ -1393,37 +1393,29 @@ function GTGUI.Element:SceneEditorPanel()
             component:SetModel("engine/models/default.dae");
         end
         
-        self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
-        
-        self.SceneEditor:CommitStateStackFrame();
+        self:OnSceneNodeChanged();
     end);
     
     self.NewComponentMenu:AppendNewItem("Point Light"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.PointLight);
 
-        self.CurrentSceneNode:Refresh();
-        self:UpdateComponentPanels();
-        
-        self.SceneEditor:CommitStateStackFrame();
+        self:UpdateComponentPanels();        
+        self:OnSceneNodeChanged();
     end);
     
     self.NewComponentMenu:AppendNewItem("Spot Light"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.SpotLight);
         
-        self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
-        
-        self.SceneEditor:CommitStateStackFrame();
+        self:OnSceneNodeChanged();
     end);
     
     self.NewComponentMenu:AppendNewItem("Directional Light"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.DirectionalLight);
         
-        self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
-        
-        self.SceneEditor:CommitStateStackFrame();
+        self:OnSceneNodeChanged();
     end);
     
     self.NewComponentMenu:AppendNewItem("Ambient Light"):OnPressed(function()
@@ -1432,19 +1424,15 @@ function GTGUI.Element:SceneEditorPanel()
             component:SetColour(0.25, 0.25, 0.25);
         end
         
-        self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
-        
-        self.SceneEditor:CommitStateStackFrame();
+        self:OnSceneNodeChanged();
     end);
     
     self.NewComponentMenu:AppendNewItem("Dynamics (Collision and Physics)"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.Dynamics);
         
-        self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
-        
-        self.SceneEditor:CommitStateStackFrame();
+        self:OnSceneNodeChanged();
     end);
     
     
