@@ -291,6 +291,15 @@ namespace GTEngine
         /// Posts an OnSelectionChanged() event to the scene editor.
         void PostOnSelectionChangedEventToScript();
 
+        /// Refreshes the selections.
+        ///
+        /// @remarks
+        ///     What this does is first finds all of the nodes marked as selected. Then, it deselects everything. Finally, it cycles through the 
+        ///     nodes retrieved in the first pass and selects them.
+        ///     @par
+        ///     This method needs to be called whenever the state of the scene has changed so that the correct objects are selected.
+        void ReselectSceneNodes();
+
 
     private:
 
