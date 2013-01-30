@@ -75,6 +75,11 @@ namespace GTEngine
         void SetPickingCollisionShapeToTorus(float outerRadius, float innerRadius, unsigned int subdivisions);
 
 
+        /// Clears the picking collision shape.
+        void ClearPickingCollisionShape();
+
+
+
         /// Sets the picking collision group.
         void SetPickingCollisionGroup(short group);
 

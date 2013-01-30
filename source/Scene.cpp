@@ -674,6 +674,11 @@ namespace GTEngine
         this->stateStack.ApplyToScene();
     }
 
+    void Scene::RevertStateStackStagingArea()
+    {
+        this->stateStack.RevertStagingArea();
+    }
+
 
     
 

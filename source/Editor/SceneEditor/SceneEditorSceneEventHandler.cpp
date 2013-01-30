@@ -50,6 +50,16 @@ namespace GTEngine
     }
 
 
+    void SceneEditorSceneEventHandler::OnSceneNodeComponentAdded(SceneNode &node, Component &component)
+    {
+        this->sceneEditor.OnSceneNodeComponentAdded(node, component);
+    }
+
+    void SceneEditorSceneEventHandler::OnSceneNodeComponentRemoved(SceneNode &node, Component &component)
+    {
+        this->sceneEditor.OnSceneNodeComponentRemoved(node, component);
+    }
+
     void SceneEditorSceneEventHandler::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
     {
         this->sceneEditor.OnSceneNodeComponentChanged(node, component);

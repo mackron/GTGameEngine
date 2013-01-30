@@ -78,11 +78,19 @@ namespace GTEngine
             if (model != nullptr)
             {
                 this->pickingCollisionShape = new StaticMeshCollisionShape(*model);
+                this->pickingCollisionShape->setLocalScaling(ToBulletVector3(this->node.GetWorldScale()));
             }
         }
 
 
         this->pickingCollisionObject.setCollisionShape(this->pickingCollisionShape);
+
+
+        // Transform.
+        btTransform transform;
+        this->node.GetWorldTransform(transform);
+        this->pickingCollisionObject.setWorldTransform(transform);
+        
 
 
         if (world != nullptr && this->pickingCollisionShape != nullptr)
@@ -119,6 +127,14 @@ namespace GTEngine
 
         this->pickingCollisionShape = compoundShape;
         this->pickingCollisionObject.setCollisionShape(this->pickingCollisionShape);
+
+
+
+        // Transform.
+        this->node.GetWorldTransform(transform);
+        this->pickingCollisionObject.setWorldTransform(transform);
+
+
 
         if (world != nullptr && this->pickingCollisionShape != nullptr)
         {
@@ -173,6 +189,12 @@ namespace GTEngine
         this->pickingCollisionShape = compoundShape;
         this->pickingCollisionObject.setCollisionShape(this->pickingCollisionShape);
 
+
+        // Transform.
+        this->node.GetWorldTransform(transform);
+        this->pickingCollisionObject.setWorldTransform(transform);
+
+
         if (world != nullptr && this->pickingCollisionShape != nullptr)
         {
             world->AddCollisionObject(this->pickingCollisionObject, this->pickingCollisionGroup, CollisionGroups::EditorSelectionRay);
@@ -180,6 +202,18 @@ namespace GTEngine
 
 
         this->pickingCollisionShapeType = PickingCollisionShapeType_Torus;
+    }
+
+
+    void EditorMetadataComponent::ClearPickingCollisionShape()
+    {
+        auto world = this->pickingCollisionObject.GetWorld();
+        if (world != nullptr)
+        {
+            world->RemoveCollisionObject(this->pickingCollisionObject);
+        }
+
+        this->DeleteCollisionShape();
     }
 
 

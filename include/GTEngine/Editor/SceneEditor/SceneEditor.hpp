@@ -188,6 +188,12 @@ namespace GTEngine
         /// SceneEditorSceneEventHandler::OnSceneNodeShow()
         void OnSceneNodeShow(SceneNode &node);
 
+        /// SceneEditorSceneEventHandler::OnSceneNodeComponentAdded()
+        void OnSceneNodeComponentAdded(SceneNode &node, Component &component);
+
+        /// SceneEditorSceneEventHandler::OnSceneNodeComponentRemoved()
+        void OnSceneNodeComponentRemoved(SceneNode &node, Component &component);
+
         /// SceneEditorSceneEventHandler::OnSceneNodeComponentChanged()
         void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
 
@@ -341,6 +347,9 @@ namespace GTEngine
 
         /// The list of selected nodes.
         GTCore::Vector<size_t> selectedNodes;
+
+        /// The list of selected nodes before doing the physics simulation.
+        GTCore::Vector<size_t> selectedNodesBeforePhysicsSimulation;
 
 
         /// The collision world for doing picking/selecting.
