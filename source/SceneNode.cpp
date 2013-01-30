@@ -912,6 +912,21 @@ namespace GTEngine
         return this->isStatic;
     }
 
+    
+
+    void SceneNode::SetVisible(bool isVisible)
+    {
+        if (this->isVisible != isVisible)
+        {
+            this->isVisible = isVisible;
+
+            if (!this->EventsLocked())
+            {
+                this->OnVisibleChanged();
+            }
+        }
+    }
+
     bool SceneNode::IsVisible(bool recursive) const
     {
         if (!this->isVisible)
@@ -927,19 +942,6 @@ namespace GTEngine
             else
             {
                 return true;
-            }
-        }
-    }
-
-    void SceneNode::SetVisible(bool isVisible)
-    {
-        if (this->isVisible != isVisible)
-        {
-            this->isVisible = isVisible;
-
-            if (!this->EventsLocked())
-            {
-                this->OnVisibleChanged();
             }
         }
     }
