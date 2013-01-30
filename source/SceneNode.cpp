@@ -1115,6 +1115,10 @@ namespace GTEngine
 
     void SceneNode::Deserialize(GTCore::Deserializer &deserializer)
     {
+        auto wasStatic      = this->IsStatic();
+        auto wasVisible     = this->IsVisible();
+
+
         // Deserialize the SceneObject first.
         SceneObject::Deserialize(deserializer);
 
@@ -1191,6 +1195,17 @@ namespace GTEngine
                     this->RemoveComponentByName(componentsToRemove[i].c_str());
                 }
             }
+        }
+
+
+        if (wasStatic != this->IsStatic())
+        {
+            this->OnStaticChanged();
+        }
+
+        if (wasVisible != this->IsVisible())
+        {
+            this->OnVisibleChanged();
         }
     }
 
