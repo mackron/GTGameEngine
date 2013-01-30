@@ -214,7 +214,7 @@ namespace GTEngine
         ///     This is NOT called when the transform or scale has changed. Instead it is called when something like the attenuation or the model has changed.
         ///     @par
         ///     When 'object' is a SceneNode, this will NOT be called when a component has been added or removed.
-        virtual void UpdateObject(SceneObject &object) = 0;
+        //virtual void UpdateObject(SceneObject &object) = 0;
 
 
         /// Called when the model of an object has changed and needs to be updated.

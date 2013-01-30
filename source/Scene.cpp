@@ -1702,12 +1702,35 @@ namespace GTEngine
         }
 
 
-        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name)      ||
-            GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name) ||
-            GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name)  ||
-            GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
         {
-            this->cullingManager.UpdateObject(node);
+            this->cullingManager.RemoveModel(node);
+            this->cullingManager.AddModel(node);
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        {
+            this->cullingManager.RemovePointLight(node);
+            this->cullingManager.AddPointLight(node);
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        {
+            this->cullingManager.RemoveSpotLight(node);
+            this->cullingManager.AddSpotLight(node);
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        {
+            this->cullingManager.RemoveDirectionalLight(node);
+            this->cullingManager.AddDirectionalLight(node);
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        {
+            this->cullingManager.RemoveAmbientLight(node);
+            this->cullingManager.AddAmbientLight(node);
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        {
+            this->cullingManager.RemoveOccluder(node);
+            this->cullingManager.AddOccluder(node);
         }
         else
         {
