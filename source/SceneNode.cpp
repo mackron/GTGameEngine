@@ -60,7 +60,6 @@ namespace GTEngine
           parent(nullptr),
           firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
           eventHandlers(), components(), dataPointers(),
-          layer(0),
           scene(nullptr),
           isStatic(false), isVisible(true),
           inheritPosition(true), inheritOrientation(true), inheritScale(true),
@@ -849,20 +848,6 @@ namespace GTEngine
 
 
 
-    void SceneNode::SetLayer(unsigned int layer)
-    {
-        if (this->layer != layer)
-        {
-            unsigned int oldLayer = this->layer;
-            this->layer = layer;
-
-            if (!this->EventsLocked())
-            {
-                this->OnLayerChanged(oldLayer);
-            }
-        }
-    }
-
     void SceneNode::SetScene(Scene *scene)
     {
         auto prevScene = this->scene;
@@ -1021,7 +1006,6 @@ namespace GTEngine
         GTCore::BasicSerializer secondarySerializer;
         secondarySerializer.Write(this->uniqueID);
         secondarySerializer.Write(this->name);
-        secondarySerializer.Write(static_cast<uint32_t>(this->layer));
         secondarySerializer.Write(this->isStatic);
         secondarySerializer.Write(this->isVisible);
         secondarySerializer.Write(this->inheritPosition);
@@ -1105,7 +1089,6 @@ namespace GTEngine
                     {
                         deserializer.Read(this->uniqueID);
                         deserializer.Read(this->name);
-                        deserializer.Read(static_cast<uint32_t &>(this->layer));
                         deserializer.Read(this->isStatic);
                         deserializer.Read(this->isVisible);
                         deserializer.Read(this->inheritPosition);
