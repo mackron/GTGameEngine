@@ -672,26 +672,33 @@ namespace GTEngine
 
     void SceneEditor::Undo()
     {
-        // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
-        this->DeselectAll();
+        // Don't bother doing anything if we're already at the start of the current branch.
+        if (this->scene.GetStateStackCurrentFrameIndex() > 0)
+        {
+            // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
+            this->DeselectAll();
 
-        this->scene.SeekStateStack(-1);
-        this->MarkAsModified();
+            this->scene.SeekStateStack(-1);
+            this->MarkAsModified();
 
-        // All nodes need to be reselected.
-        this->ReselectSceneNodes();
+            // All nodes need to be reselected.
+            this->ReselectSceneNodes();
+        }
     }
 
     void SceneEditor::Redo()
     {
-        // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
-        this->DeselectAll();
+        if (this->scene.GetStateStackCurrentFrameIndex() < this->scene.GetStateStackMaxFrameIndex())
+        {
+            // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
+            this->DeselectAll();
 
-        this->scene.SeekStateStack(+1);
-        this->MarkAsModified();
+            this->scene.SeekStateStack(+1);
+            this->MarkAsModified();
 
-        // All nodes need to be reselected.
-        this->ReselectSceneNodes();
+            // All nodes need to be reselected.
+            this->ReselectSceneNodes();
+        }
     }
 
     void SceneEditor::CommitStateStackFrame()
@@ -1097,27 +1104,6 @@ namespace GTEngine
                 {
                     this->pickingWorld.AddCollisionObject(*metadata.GetSpritePickingCollisionObject(), metadata.GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                 }
-            }
-
-
-
-            // Select or deselect where appropriate.
-            /*
-            if (metadata.IsSelected())
-            {
-                this->SelectSceneNode(node, true);
-            }
-            else
-            {
-                this->DeselectSceneNode(node);
-            }
-            */
-
-
-            // If anything is selected, the gizmo needs to be fully updated.
-            if (this->selectedNodes.count > 0)
-            {
-                this->UpdateGizmo();
             }
         }
     }

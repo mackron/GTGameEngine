@@ -644,6 +644,26 @@ namespace GTEngine
         }
     }
 
+    
+    uint32_t Scene::GetStateStackCurrentFrameIndex() const
+    {
+        auto currentBranch = this->stateStack.GetCurrentBranch();
+        assert(currentBranch != nullptr);
+        {
+            return currentBranch->GetCurrentFrameIndex();
+        }
+    }
+
+    uint32_t Scene::GetStateStackMaxFrameIndex() const
+    {
+        auto currentBranch = this->stateStack.GetCurrentBranch();
+        assert(currentBranch != nullptr);
+        {
+            return currentBranch->GetMaxFrameIndex();
+        }
+    }
+
+
     void Scene::SeekStateStack(int amount)
     {
         this->stateStack.Seek(amount);
