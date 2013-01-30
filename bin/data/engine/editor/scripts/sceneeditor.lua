@@ -1349,6 +1349,9 @@ function GTGUI.Element:SceneEditorPanel()
                 
                 -- Removing the scene node will deselect it. We want to reselect it. Reselecting will update the panels.
                 self.SceneEditor:SelectSceneNode(self.CurrentSceneNode);
+                
+                -- Undo/Redo point.
+                self.SceneEditor:CommitStateStackFrame();
             end);
         end
     end
@@ -1392,6 +1395,8 @@ function GTGUI.Element:SceneEditorPanel()
         
         self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
+        
+        self.SceneEditor:CommitStateStackFrame();
     end);
     
     self.NewComponentMenu:AppendNewItem("Point Light"):OnPressed(function()
@@ -1399,6 +1404,8 @@ function GTGUI.Element:SceneEditorPanel()
 
         self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
+        
+        self.SceneEditor:CommitStateStackFrame();
     end);
     
     self.NewComponentMenu:AppendNewItem("Spot Light"):OnPressed(function()
@@ -1406,6 +1413,8 @@ function GTGUI.Element:SceneEditorPanel()
         
         self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
+        
+        self.SceneEditor:CommitStateStackFrame();
     end);
     
     self.NewComponentMenu:AppendNewItem("Directional Light"):OnPressed(function()
@@ -1413,6 +1422,8 @@ function GTGUI.Element:SceneEditorPanel()
         
         self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
+        
+        self.SceneEditor:CommitStateStackFrame();
     end);
     
     self.NewComponentMenu:AppendNewItem("Ambient Light"):OnPressed(function()
@@ -1423,6 +1434,8 @@ function GTGUI.Element:SceneEditorPanel()
         
         self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
+        
+        self.SceneEditor:CommitStateStackFrame();
     end);
     
     self.NewComponentMenu:AppendNewItem("Dynamics (Collision and Physics)"):OnPressed(function()
@@ -1430,6 +1443,8 @@ function GTGUI.Element:SceneEditorPanel()
         
         self.CurrentSceneNode:Refresh();
         self:UpdateComponentPanels();
+        
+        self.SceneEditor:CommitStateStackFrame();
     end);
     
     
