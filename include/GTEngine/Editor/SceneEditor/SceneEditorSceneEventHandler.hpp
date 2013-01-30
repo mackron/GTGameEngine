@@ -41,6 +41,12 @@ namespace GTEngine
         void OnSceneNodeShow(SceneNode &node);
 
 
+        /// SceneEventHandler::OnSceneNodeComponentAdded()
+        void OnSceneNodeComponentAdded(SceneNode &node, Component &component);
+
+        /// SceneEventHandler::OnSceneNodeComponentRemoved()
+        void OnSceneNodeComponentRemoved(SceneNode &node, Component &component);
+
         /// SceneEventHandler::OnSceneNodeComponentChanged()
         void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
 

@@ -227,8 +227,7 @@ namespace GTEngine
 
     void SceneEditor::EnablePhysicsSimulation()
     {
-        // We don't really want to be staging anything while doing physics simulation.
-        this->scene.DisableStateStackStaging();
+        this->selectedNodesBeforePhysicsSimulation = this->selectedNodes;
 
         this->simulationSerializer.Clear();
         this->SerializeScene(this->simulationSerializer);
@@ -247,8 +246,12 @@ namespace GTEngine
         }
 
 
-        // We disable state stack staging, so we'll want to re-enable that now.
-        this->scene.EnableStateStackStaging();
+        // To restore, all we need to do is revert the staging area.
+        this->scene.RevertStateStackStagingArea();
+
+        // We want to revert the selections, too.
+        this->DeselectAll();
+        this->SelectSceneNodes(this->selectedNodesBeforePhysicsSimulation);
     }
 
     bool SceneEditor::IsPhysicsSimulationEnabled() const
@@ -445,6 +448,20 @@ namespace GTEngine
                 assert(node != nullptr);
                 {
                     this->DeselectSceneNode(*node);
+                }
+            }
+        }
+
+
+        for (size_t i = 0; i < this->sceneNodes.count; ++i)
+        {
+            auto node = this->sceneNodes.buffer[i]->value;
+            assert(node != nullptr);
+            {
+                auto metadata = node->GetComponent<EditorMetadataComponent>();
+                assert(metadata != nullptr);
+                {
+                    metadata->Deselect();
                 }
             }
         }
@@ -793,6 +810,13 @@ namespace GTEngine
             }
 
 
+            // Picking volume must be set here.
+            if (metadata->UseModelForPickingShape() && node.HasComponent<ModelComponent>())
+            {
+                metadata->SetPickingCollisionShapeToModel();
+            }
+
+
             assert(metadata != nullptr);
             {
                 size_t uniqueID = metadata->GetID();
@@ -1056,6 +1080,38 @@ namespace GTEngine
         }
     }
 
+    void SceneEditor::OnSceneNodeComponentAdded(SceneNode &node, Component &component)
+    {
+        auto metadata = node.GetComponent<EditorMetadataComponent>();
+        assert(metadata != nullptr);
+        {
+            if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+            {
+                /*
+                if (metadata->UseModelForPickingShape())
+                {
+                    metadata->SetPickingCollisionShapeToModel();
+                }
+                */
+            }
+        }
+    }
+
+    void SceneEditor::OnSceneNodeComponentRemoved(SceneNode &node, Component &component)
+    {
+        auto metadata = node.GetComponent<EditorMetadataComponent>();
+        assert(metadata != nullptr);
+        {
+            if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+            {
+                if (metadata->UseModelForPickingShape())
+                {
+                    metadata->ClearPickingCollisionShape();
+                }
+            }
+        }
+    }
+
     void SceneEditor::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
     {
         // If the component is editor metadata, we need to check the selection state.
@@ -1082,19 +1138,24 @@ namespace GTEngine
                 {
                     metadata.SetPickingCollisionShapeToModel();
 
+                    /*
                     if (metadata.GetPickingCollisionShape())
                     {
                         pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
                     }
+                    */
                 }
 
 
                 if (metadata.GetPickingCollisionShape() != nullptr)
                 {
+                    /*
                     btTransform transform;
                     node.GetWorldTransform(transform);
 
                     pickingCollisionObject.setWorldTransform(transform);
+                    */
+                    
                     this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata.GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                 }
 
@@ -1103,6 +1164,26 @@ namespace GTEngine
                 if (metadata.IsUsingSprite() && metadata.GetSpritePickingCollisionObject() != nullptr)
                 {
                     this->pickingWorld.AddCollisionObject(*metadata.GetSpritePickingCollisionObject(), metadata.GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                }
+            }
+        }
+        else
+        {
+            if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+            {
+                // The picking shape needs to be updated.
+                auto metadata = node.GetComponent<EditorMetadataComponent>();
+                assert(metadata != nullptr);
+                {
+                    if (metadata->UseModelForPickingShape())
+                    {
+                        metadata->SetPickingCollisionShapeToModel();
+
+                        if (metadata->GetPickingCollisionShape() != nullptr && metadata->GetPickingCollisionObject().GetWorld() == nullptr)
+                        {
+                            this->pickingWorld.AddCollisionObject(metadata->GetPickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                        }
+                    }
                 }
             }
         }

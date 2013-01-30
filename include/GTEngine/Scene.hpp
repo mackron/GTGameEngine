@@ -446,6 +446,9 @@ namespace GTEngine
         /// Applies the current state as defined in the state stack to the scene.
         void ApplyStateStack();
 
+        /// Reverts the staging area of the state stack.
+        void RevertStateStackStagingArea();
+
 
 
 
