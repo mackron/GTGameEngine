@@ -957,22 +957,6 @@ namespace GTEngine
     template <> inline       ModelComponent* SceneNode::GetComponent<ModelComponent>()       { return this->modelComponent; }
     template <> inline const ModelComponent* SceneNode::GetComponent<ModelComponent>() const { return this->modelComponent; }
 
-    template <> inline ModelComponent* SceneNode::AddComponent<ModelComponent>()
-    {
-        if (this->modelComponent == nullptr)
-        {
-            this->modelComponent = new ModelComponent(*this);
-        }
-
-        return this->modelComponent;
-    }
-
-    template <> inline void SceneNode::RemoveComponent<ModelComponent>()
-    {
-        delete this->modelComponent;
-        this->modelComponent = nullptr;
-    }
-
     template <> inline bool SceneNode::HasComponent<ModelComponent>()
     {
         return this->modelComponent != nullptr;
@@ -983,22 +967,6 @@ namespace GTEngine
     // PointLightComponent Specialisation.
     template <> inline       PointLightComponent* SceneNode::GetComponent<PointLightComponent>()       { return this->pointLightComponent; }
     template <> inline const PointLightComponent* SceneNode::GetComponent<PointLightComponent>() const { return this->pointLightComponent; }
-
-    template <> inline PointLightComponent* SceneNode::AddComponent<PointLightComponent>()
-    {
-        if (this->pointLightComponent == nullptr)
-        {
-            this->pointLightComponent = new PointLightComponent(*this);
-        }
-
-        return this->pointLightComponent;
-    }
-
-    template <> inline void SceneNode::RemoveComponent<PointLightComponent>()
-    {
-        delete this->pointLightComponent;
-        this->pointLightComponent = nullptr;
-    }
 
     template <> inline bool SceneNode::HasComponent<PointLightComponent>()
     {
@@ -1011,22 +979,6 @@ namespace GTEngine
     template <> inline       SpotLightComponent* SceneNode::GetComponent<SpotLightComponent>()       { return this->spotLightComponent; }
     template <> inline const SpotLightComponent* SceneNode::GetComponent<SpotLightComponent>() const { return this->spotLightComponent; }
 
-    template <> inline SpotLightComponent* SceneNode::AddComponent<SpotLightComponent>()
-    {
-        if (this->spotLightComponent == nullptr)
-        {
-            this->spotLightComponent = new SpotLightComponent(*this);
-        }
-
-        return this->spotLightComponent;
-    }
-
-    template <> inline void SceneNode::RemoveComponent<SpotLightComponent>()
-    {
-        delete this->spotLightComponent;
-        this->spotLightComponent = nullptr;
-    }
-
     template <> inline bool SceneNode::HasComponent<SpotLightComponent>()
     {
         return this->spotLightComponent != nullptr;
@@ -1037,22 +989,6 @@ namespace GTEngine
     // EditorMetadataComponent Specialisation.
     template <> inline       EditorMetadataComponent* SceneNode::GetComponent<EditorMetadataComponent>()       { return this->editorMetadataComponent; }
     template <> inline const EditorMetadataComponent* SceneNode::GetComponent<EditorMetadataComponent>() const { return this->editorMetadataComponent; }
-
-    template <> inline EditorMetadataComponent* SceneNode::AddComponent<EditorMetadataComponent>()
-    {
-        if (this->editorMetadataComponent == nullptr)
-        {
-            this->editorMetadataComponent = new EditorMetadataComponent(*this);
-        }
-
-        return this->editorMetadataComponent;
-    }
-
-    template <> inline void SceneNode::RemoveComponent<EditorMetadataComponent>()
-    {
-        delete this->editorMetadataComponent;
-        this->editorMetadataComponent = nullptr;
-    }
 
     template <> inline bool SceneNode::HasComponent<EditorMetadataComponent>()
     {
