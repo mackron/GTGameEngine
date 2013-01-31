@@ -1002,7 +1002,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetFirstSelectedSceneNodePtr",        FFI::SystemFFI::SceneEditorFFI::GetFirstSelectedSceneNodePtr);
                         script.SetTableFunction(-1, "TryGizmoMouseSelect",                 FFI::SystemFFI::SceneEditorFFI::TryGizmoMouseSelect);
                         script.SetTableFunction(-1, "DoMouseSelection",                    FFI::SystemFFI::SceneEditorFFI::DoMouseSelection);
-                        script.SetTableFunction(-1, "DeleteSelectedSceneNodes",            FFI::SystemFFI::SceneEditorFFI::DeleteSelectedSceneNodes);
+                        script.SetTableFunction(-1, "RemoveSelectedSceneNodes",            FFI::SystemFFI::SceneEditorFFI::RemoveSelectedSceneNodes);
                         script.SetTableFunction(-1, "DuplicateSelectedSceneNodes",         FFI::SystemFFI::SceneEditorFFI::DuplicateSelectedSceneNodes);
                         script.SetTableFunction(-1, "SwitchGizmoToTranslateMode",          FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToTranslateMode);
                         script.SetTableFunction(-1, "SwitchGizmoToRotateMode",             FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToRotateMode);
@@ -3442,12 +3442,12 @@ namespace GTEngine
                     }
 
 
-                    int DeleteSelectedSceneNodes(GTCore::Script &script)
+                    int RemoveSelectedSceneNodes(GTCore::Script &script)
                     {
                         auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                         if (sceneEditor != nullptr)
                         {
-                            sceneEditor->DeleteSelectedSceneNodes();
+                            sceneEditor->RemoveSelectedSceneNodes();
                         }
 
                         return 0;

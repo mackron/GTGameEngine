@@ -111,12 +111,12 @@ namespace GTEngine
         // Editting
 
         /// Deletes the selected scene nodes.
-        void DeleteSelectedSceneNodes();
+        void RemoveSelectedSceneNodes();
 
         /// Deletes the given scene nodes.
         ///
         /// @param sceneNodeIDs [in] A constant reference to the vector containing the scene nodes to delete.
-        void DeleteSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs);
+        void RemoveSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs);
 
         /// Duplicates the selected scene nodes, deselects them and then selects the new ones.
         void DuplicateSelectedSceneNodes();
