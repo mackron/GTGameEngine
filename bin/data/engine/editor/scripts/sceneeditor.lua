@@ -1650,11 +1650,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:AppendItem("Add Point Light"):OnPressed(function()
         local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("PointLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata);
+        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.PointLight);
-        
-        newNode:GetComponent(GTEngine.Components.EditorMetadata):Select();
-        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         
         self:DeselectAll();
         self:SelectSceneNode(newNode);
@@ -1667,11 +1664,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:AppendItem("Add Spot Light"):OnPressed(function()
         local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("SpotLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata);
+        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.SpotLight);
-        
-        newNode:GetComponent(GTEngine.Components.EditorMetadata):Select();
-        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         
         self:DeselectAll();
         self:SelectSceneNode(newNode);
@@ -1684,11 +1678,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:AppendItem("Add Directional Light"):OnPressed(function()
         local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("DirectionalLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata);
+        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.DirectionalLight);
-        
-        newNode:GetComponent(GTEngine.Components.EditorMetadata):Select();
-        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         
         self:DeselectAll();
         self:SelectSceneNode(newNode);
@@ -1701,11 +1692,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:AppendItem("Add Ambient Light"):OnPressed(function()
         local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("AmbientLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata);
+        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.AmbientLight);
-        
-        newNode:GetComponent(GTEngine.Components.EditorMetadata):Select();
-        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         
         self:DeselectAll();
         self:SelectSceneNode(newNode);
@@ -1789,10 +1777,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         GTEngine.System.SceneEditor.DoMouseSelection(self._internalPtr);
     end
     
-    
-    function self:DeleteSelectedSceneNodes()
-        GTEngine.System.SceneEditor.DeleteSelectedSceneNodes(self._internalPtr);
-    end
+
     
     function self:SwitchGizmoToTranslateMode()
         GTEngine.System.SceneEditor.SwitchGizmoToTranslateMode(self._internalPtr);
@@ -1823,7 +1808,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
     
     function self:DeleteSelectedSceneNodes()
-        GTEngine.System.SceneEditor.DeleteSelectedSceneNodes(self._internalPtr);
+        GTEngine.System.SceneEditor.RemoveSelectedSceneNodes(self._internalPtr);
     end
     
     function self:CommitStateStackFrame()
