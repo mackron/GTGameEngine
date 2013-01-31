@@ -333,12 +333,93 @@ namespace GTEngine
 
     void Scene::AddSceneNode(SceneNode &node)
     {
-        node.SetScene(this);
+        // We're not going to allow a node to be added if it's already part of another scene. It doesn't really make sense for scene nodes to
+        // be moved around between scenes, and if it's really needed, they can just be removed from the old scene manually at a higher level.
+        if (node.GetScene() == nullptr)
+        {
+            // We need to generate an ID, if it doesn't already have one.
+            uint64_t uniqueID = node.GetID();
+            if (uniqueID == 0)
+            {
+                uniqueID = ++this->nextSceneNodeID;
+                node.SetID(uniqueID);
+            }
+            else
+            {
+                // If a scene node of the same ID already exists, we have a bug somewhere.
+                if (this->sceneNodes.Exists(uniqueID))
+                {
+                    GTEngine::PostError("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", GTCore::ToString(uniqueID).c_str());
+                    return;
+                }
+            }
+
+
+            // The scene node should not already exist!
+            assert(!this->sceneNodes.Exists(node.GetID()));
+            {
+                // This adds the node to the main container.
+                this->sceneNodes.Insert(node);
+
+                // The node needs to know that we are now it's owner.
+                node._SetScene(this);
+
+
+                // With the scene node added, we'll just post the OnSceneNodeAdded() event. This isn't really needed, but it's sort of left over from the previous design.
+                this->OnSceneNodeAdded(node);
+
+
+
+                // With the node fully added, we will now add the children.
+                for (auto iChild = node.GetFirstChild(); iChild != nullptr; iChild = iChild->GetNextSibling())
+                {
+                    this->AddSceneNode(*iChild);
+                }
+            }
+        }
+        else
+        {
+            GTEngine::PostError("Error: Attempting to add a scene node to a scene while it is already part of a different scene. Ignoring.");
+        }
     }
 
     void Scene::RemoveSceneNode(SceneNode &node)
     {
-        node.SetScene(nullptr);
+        if (node.GetScene() == this)
+        {
+            assert(this->sceneNodes.Exists(node.GetID()));
+            {
+                // Children need to be removed first.
+                for (auto iChild = node.GetFirstChild(); iChild != nullptr; iChild = iChild->GetNextSibling())
+                {
+                    this->RemoveSceneNode(*iChild);
+                }
+
+
+                // We'll now post the OnSceneNodeRemoved() as the first thing for this node.
+                this->OnSceneNodeRemoved(node);
+
+
+                // The node needs to know that we are no longer it's owner.
+                node._SetScene(nullptr);
+
+                // This removes the node from the main container.
+                this->sceneNodes.Remove(node.GetID());
+
+
+                // If we were there creator of the scene node, it needs to be deleted.
+                size_t index;
+                if (this->sceneNodesCreatedByScene.Find(node.GetID(), index))
+                {
+                    this->sceneNodesCreatedByScene.RemoveAt(index);
+                    delete &node;
+                }
+            }
+        }
+        else
+        {
+            GTEngine::Log("Warning: Attempting to remove a scene node from a scene it is not a part of. Ignoring.");
+        }
     }
 
     void Scene::RemoveSceneNodeByID(uint64_t sceneNodeID)
@@ -1078,6 +1159,7 @@ namespace GTEngine
 
     void Scene::OnSceneNodeAdded(SceneNode &node)
     {
+        /*
         uint64_t uniqueID = node.GetID();
         if (uniqueID == 0)
         {
@@ -1093,7 +1175,7 @@ namespace GTEngine
                 return;
             }
         }
-
+        */
 
         // Can only stage this scene node after it's been given a valid ID.
         if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
@@ -1103,7 +1185,7 @@ namespace GTEngine
 
 
         // This adds the scene node to the main container.
-        this->sceneNodes.Insert(node);
+        //this->sceneNodes.Insert(node);
 
 
         // We need to add the node to the update manager.
@@ -1166,7 +1248,7 @@ namespace GTEngine
 
 
         // We just remove the scene node by it's ID.
-        this->sceneNodes.Remove(node.GetID());
+        //this->sceneNodes.Remove(node.GetID());
 
 
         // Event handlers need to know.
@@ -1176,6 +1258,7 @@ namespace GTEngine
         }
 
 
+        /*
         // If the node was created by this scene, it needs to be deleted.
         size_t index;
         if (this->sceneNodesCreatedByScene.Find(node.GetID(), index))
@@ -1183,6 +1266,7 @@ namespace GTEngine
             this->sceneNodesCreatedByScene.RemoveAt(index);
             delete &node;
         }
+        */
     }
 
     void Scene::OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject)
