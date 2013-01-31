@@ -583,22 +583,22 @@ namespace GTEngine
     ///////////////////////////////////////////////////
     // Editting
 
-    void SceneEditor::DeleteSelectedSceneNodes()
+    void SceneEditor::RemoveSelectedSceneNodes()
     {
         if (this->selectedNodes.count > 0)
         {
             auto nodesToDelete = this->selectedNodes;
-            this->DeleteSceneNodes(nodesToDelete);
+            this->RemoveSceneNodes(nodesToDelete);
 
             this->CommitStateStackFrame();
         }
     }
 
-    void SceneEditor::DeleteSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs)
+    void SceneEditor::RemoveSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs)
     {
         for (size_t i = 0; i < sceneNodeIDs.count; ++i)
         {
-            delete this->GetSceneNodeByID(sceneNodeIDs[i]);
+            this->scene.RemoveSceneNodeByID(sceneNodeIDs[i]);
         }
     }
 

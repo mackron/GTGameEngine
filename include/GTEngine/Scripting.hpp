@@ -1056,7 +1056,7 @@ namespace GTEngine
                     ///
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
-                    int DeleteSelectedSceneNodes(GTCore::Script &script);
+                    int RemoveSelectedSceneNodes(GTCore::Script &script);
 
                     /// Duplicates the selected scene nodes.
                     ///
