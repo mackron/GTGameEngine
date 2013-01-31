@@ -1159,33 +1159,11 @@ namespace GTEngine
 
     void Scene::OnSceneNodeAdded(SceneNode &node)
     {
-        /*
-        uint64_t uniqueID = node.GetID();
-        if (uniqueID == 0)
-        {
-            uniqueID = ++this->nextSceneNodeID;
-            node.SetID(uniqueID);
-        }
-        else
-        {
-            // If a scene node of the same ID already exists, we have a bug somewhere.
-            if (this->sceneNodes.FindByID(uniqueID) != nullptr)
-            {
-                GTEngine::PostError("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", GTCore::ToString(uniqueID).c_str());
-                return;
-            }
-        }
-        */
-
         // Can only stage this scene node after it's been given a valid ID.
         if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageInsert(node.GetID());
         }
-
-
-        // This adds the scene node to the main container.
-        //this->sceneNodes.Insert(node);
 
 
         // We need to add the node to the update manager.
@@ -1247,26 +1225,11 @@ namespace GTEngine
         this->updateManager.RemoveObject(node);
 
 
-        // We just remove the scene node by it's ID.
-        //this->sceneNodes.Remove(node.GetID());
-
-
         // Event handlers need to know.
         if (!this->isRefreshingObject)
         {
             this->PostEvent_OnObjectRemoved(node);
         }
-
-
-        /*
-        // If the node was created by this scene, it needs to be deleted.
-        size_t index;
-        if (this->sceneNodesCreatedByScene.Find(node.GetID(), index))
-        {
-            this->sceneNodesCreatedByScene.RemoveAt(index);
-            delete &node;
-        }
-        */
     }
 
     void Scene::OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject)

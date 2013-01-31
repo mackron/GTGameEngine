@@ -863,27 +863,6 @@ namespace GTEngine
 
 
 
-
-    /*
-    void SceneNode::SetScene(Scene *scene)
-    {
-        auto prevScene = this->scene;
-        this->scene = scene;
-
-        // The scene needs to be changed for the children, too.
-        for (auto iChild = this->firstChild; iChild != nullptr; iChild = iChild->GetNextSibling())
-        {
-            iChild->SetScene(scene);
-        }
-
-        // Only if the scenes are different will we fire this event.
-        if (this->scene != prevScene && !this->EventsLocked())
-        {
-            this->OnSceneChanged(prevScene);
-        }
-    }
-    */
-    
     Scene* SceneNode::GetScene()
     {
         return this->scene;
@@ -1344,25 +1323,6 @@ namespace GTEngine
         }
     }
 
-    /*
-    void SceneNode::OnSceneChanged(Scene *prevScene)
-    {
-        for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
-        {
-            i->value->OnSceneChanged(*this, prevScene);
-        }
-
-        if (prevScene != nullptr)
-        {
-            prevScene->OnSceneNodeRemoved(*this);
-        }
-
-        if (this->scene != nullptr)
-        {
-            this->scene->OnSceneNodeAdded(*this);
-        }
-    }
-    */
 
     void SceneNode::OnStaticChanged()
     {
