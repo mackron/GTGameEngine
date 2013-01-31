@@ -163,32 +163,6 @@ namespace GTEngine
 
     SceneEditor::~SceneEditor()
     {
-        /*
-        // For any scene node still loaded, we need to iterate over and destroy them. Note how we don't increment every time, because deleting
-        // the node will in turn remove it from the list as a result from the event handlers.
-        for (size_t i = 0; i < this->sceneNodes.count; )
-        {
-            auto node = this->sceneNodes.buffer[i]->value;
-            assert(node != nullptr);
-            {
-                auto metadata = node->GetComponent<EditorMetadataComponent>();
-                if (metadata != nullptr)
-                {
-                    if (metadata->DeleteOnClose())
-                    {
-                        delete node;
-                        continue;
-                    }
-                }
-            }
-
-            // We'll only get here if the scene node was not deleted.
-            ++i;
-        }
-        */
-
-
-
         // GUI elements need to be deleted. We will delete the toolbar first, via the scripting interface.
         auto &script = this->GetScript();
 
@@ -1085,19 +1059,8 @@ namespace GTEngine
 
     void SceneEditor::OnSceneNodeComponentAdded(SceneNode &node, Component &component)
     {
-        auto metadata = node.GetComponent<EditorMetadataComponent>();
-        assert(metadata != nullptr);
-        {
-            if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
-            {
-                /*
-                if (metadata->UseModelForPickingShape())
-                {
-                    metadata->SetPickingCollisionShapeToModel();
-                }
-                */
-            }
-        }
+        (void)node;
+        (void)component;
     }
 
     void SceneEditor::OnSceneNodeComponentRemoved(SceneNode &node, Component &component)
