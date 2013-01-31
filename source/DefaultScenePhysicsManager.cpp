@@ -21,6 +21,7 @@ namespace GTEngine
     void DefaultScenePhysicsManager::AddRigidBody(RigidBody &body, short group, short mask)
     {
         this->world.AddRigidBody(body, group, mask);
+        body.activate(true);                            // <-- We want to make sure the body is initially activated.
     }
     void DefaultScenePhysicsManager::AddGhostObject(GhostObject &object, short group, short mask)
     {

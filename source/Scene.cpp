@@ -1707,8 +1707,20 @@ namespace GTEngine
         {
             if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
-                // For now, we don't actually need to do anything here because the component itself handles everyhting. We might actually change this later on, so I'll leave
-                // this statement here. Hopefully compilers won't complain...
+                auto &dynamicsComponent = static_cast<DynamicsComponent &>(component);
+
+                this->physicsManager.RemoveRigidBody(dynamicsComponent.GetRigidBody());
+
+                dynamicsComponent.ApplySceneNodeScaling();
+                dynamicsComponent.ApplySceneNodeTransformation();
+
+                if (node.IsVisible())
+                {
+                    if (dynamicsComponent.GetCollisionShape().getNumChildShapes() > 0)
+                    {
+                        this->physicsManager.AddRigidBody(dynamicsComponent.GetRigidBody(), dynamicsComponent.GetCollisionGroup(), dynamicsComponent.GetCollisionMask());
+                    }
+                }
             }
             else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
