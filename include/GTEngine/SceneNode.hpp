@@ -607,15 +607,6 @@ namespace GTEngine
 
 
 
-        /**
-        *   \brief  Sets the scene of this node.
-        *
-        *   \remarks
-        *       This will also set the scene for any children. Be aware of this in the event that the children are
-        *       already attached to a different scene.
-        */
-        //void SetScene(Scene *scene);
-
         /// Retrieves the scene this scene node is attached to, if any.
         ///
         /// @remarks
@@ -795,7 +786,6 @@ namespace GTEngine
         void OnTransform(bool updateDynamicsObject);
         void OnScale();
         void OnLayerChanged(unsigned int prevLayer);
-        //void OnSceneChanged(Scene *prevScene);
         void OnStaticChanged();
         void OnVisibleChanged();
         //void OnComponentAttached(Component& component);
@@ -873,9 +863,7 @@ namespace GTEngine
 
         /// The scene this node is attached to, if any. Usually, a scene node is part of a scene. We need to keep track of the
         /// scene so we can notify it of certain events, such as when a component is added or removed. This can be null, in
-        /// which case it's assumed that the node is not part of a scene. If a scene determines that it's nodes need scene awareness,
-        /// it is the responsibility of the scene to call SceneNode::SetScene() manually. If left unset, the scene node will go
-        /// with the assumption that it is not part of a scene.
+        /// which case it's assumed that the node is not part of a scene.
         Scene* scene;
 
 
