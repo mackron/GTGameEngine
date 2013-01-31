@@ -713,19 +713,6 @@ namespace GTEngine
 
 
 
-        /// Sets the application-defined type ID of this scene node.
-        ///
-        /// @param newTypeID [in] The new type ID.
-        ///
-        /// @remarks
-        ///     Do SetTypeID(GetTypeID() | SomeFlag), etc to do bitwise modifications.
-        void SetTypeID(unsigned int newTypeID) { this->typeID = newTypeID; }
-
-        /// Retrieves the application-defined type ID of this scene node.
-        unsigned int GetTypeID() const { return this->typeID; }
-
-
-
         //////////////////////////////////////////////////
         // Serialization/Deserialization.
 
@@ -761,6 +748,9 @@ namespace GTEngine
         /// @remarks
         ///     This is called recursively. If a parent is not serialized, neither is it children.
         bool IsSerializationEnabled() const;
+
+
+
 
 
         /// Disables staging on the scene's state stack.
@@ -874,11 +864,6 @@ namespace GTEngine
         /// The counter used for event locks. If it is > 0, the events are locked. Otherwise they are unlocked. Defaults to 0. LockEvents()
         /// will increment, whereas UnlockEvents() will decrement.
         int eventLockCounter;
-
-
-        /// Sometimes it will be required to able to generically identity scene nodes. This member is an integer that can be set by client
-        /// applications for identification purposes. It is controlled with SetTypeID() and GetTypeID(). Defaults to 0.
-        unsigned int typeID;
 
 
         // The component pointers below are used for doing fast retrievals of common components.
