@@ -1631,18 +1631,15 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:Menu();
     
     self.ContextMenu:AppendItem("Add Cube"):OnPressed(function()
-        --local newNode = GTEngine.SceneNode:Create();
         local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("Cube");
         newNode:AddComponent(GTEngine.Components.EditorMetadata);
         newNode:AddComponent(GTEngine.Components.Model):SetModel("engine/models/default-1x1.dae");
         newNode:AddComponent(GTEngine.Components.Dynamics):AddBoxCollisionShape(0.5, 0.5, 0.5);
         
-        newNode:GetComponent(GTEngine.Components.EditorMetadata):Select();
-        
         self:DeselectAll();
+        self:SelectSceneNode(newNode);
         
-        self.Scene:AddSceneNode(newNode);
         self:CommitStateStackFrame();
         
         self.ContextMenu:Hide();
@@ -1651,7 +1648,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:AppendSeparator();
     
     self.ContextMenu:AppendItem("Add Point Light"):OnPressed(function()
-        local newNode = GTEngine.SceneNode:Create();
+        local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("PointLight");
         newNode:AddComponent(GTEngine.Components.EditorMetadata);
         newNode:AddComponent(GTEngine.Components.PointLight);
@@ -1660,15 +1657,15 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         
         self:DeselectAll();
+        self:SelectSceneNode(newNode);
         
-        self.Scene:AddSceneNode(newNode);
         self:CommitStateStackFrame();
         
         self.ContextMenu:Hide();
     end);
     
     self.ContextMenu:AppendItem("Add Spot Light"):OnPressed(function()
-        local newNode = GTEngine.SceneNode:Create();
+        local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("SpotLight");
         newNode:AddComponent(GTEngine.Components.EditorMetadata);
         newNode:AddComponent(GTEngine.Components.SpotLight);
@@ -1677,15 +1674,15 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         
         self:DeselectAll();
+        self:SelectSceneNode(newNode);
         
-        self.Scene:AddSceneNode(newNode);
         self:CommitStateStackFrame();
         
         self.ContextMenu:Hide();
     end);
     
     self.ContextMenu:AppendItem("Add Directional Light"):OnPressed(function()
-        local newNode = GTEngine.SceneNode:Create();
+        local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("DirectionalLight");
         newNode:AddComponent(GTEngine.Components.EditorMetadata);
         newNode:AddComponent(GTEngine.Components.DirectionalLight);
@@ -1694,15 +1691,15 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         
         self:DeselectAll();
+        self:SelectSceneNode(newNode);
         
-        self.Scene:AddSceneNode(newNode);
         self:CommitStateStackFrame();
         
         self.ContextMenu:Hide();
     end);
     
     self.ContextMenu:AppendItem("Add Ambient Light"):OnPressed(function()
-        local newNode = GTEngine.SceneNode:Create();
+        local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("AmbientLight");
         newNode:AddComponent(GTEngine.Components.EditorMetadata);
         newNode:AddComponent(GTEngine.Components.AmbientLight);
@@ -1711,8 +1708,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         
         self:DeselectAll();
+        self:SelectSceneNode(newNode);
         
-        self.Scene:AddSceneNode(newNode);
         self:CommitStateStackFrame();
         
         self.ContextMenu:Hide();
