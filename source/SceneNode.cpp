@@ -70,7 +70,7 @@ namespace GTEngine
 
     SceneNode::~SceneNode()
     {
-        this->SetScene(nullptr);
+        this->RemoveFromScene();
 
         this->DetachFromParent();
         this->OnDestroy();
@@ -243,8 +243,12 @@ namespace GTEngine
                 this->OnAttach(child);
             }
 
-            // If we have a scene, it needs to know about the new attachment.
-            child.SetScene(this->scene);
+            
+            // Finally, we need to add the child to the current scene, if any.
+            if (this->scene != nullptr)
+            {
+                this->scene->AddSceneNode(child);
+            }
         }
     }
 
@@ -860,7 +864,7 @@ namespace GTEngine
 
 
 
-
+    /*
     void SceneNode::SetScene(Scene *scene)
     {
         auto prevScene = this->scene;
@@ -878,25 +882,27 @@ namespace GTEngine
             this->OnSceneChanged(prevScene);
         }
     }
+    */
     
-    Scene * SceneNode::GetScene()
+    Scene* SceneNode::GetScene()
     {
-        // If we don't have a scene, we will check the parents.
-        if (this->scene == nullptr)
-        {
-            if (this->parent != nullptr)
-            {
-                return this->parent->GetScene();
-            }
-        }
-
         return this->scene;
+    }
+
+    void SceneNode::_SetScene(Scene* newScene)
+    {
+        this->scene = newScene;
     }
 
     void SceneNode::RemoveFromScene()
     {
-        this->SetScene(nullptr);
+        if (this->scene != nullptr)
+        {
+            this->scene->RemoveSceneNode(*this);
+        }
     }
+
+
 
     void SceneNode::Refresh()
     {
@@ -1338,6 +1344,7 @@ namespace GTEngine
         }
     }
 
+    /*
     void SceneNode::OnSceneChanged(Scene *prevScene)
     {
         for (auto i = this->eventHandlers.root; i != nullptr; i = i->next)
@@ -1355,6 +1362,7 @@ namespace GTEngine
             this->scene->OnSceneNodeAdded(*this);
         }
     }
+    */
 
     void SceneNode::OnStaticChanged()
     {

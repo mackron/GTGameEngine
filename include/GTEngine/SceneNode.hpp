@@ -614,19 +614,24 @@ namespace GTEngine
         *       This will also set the scene for any children. Be aware of this in the event that the children are
         *       already attached to a different scene.
         */
-        void SetScene(Scene *scene);
+        //void SetScene(Scene *scene);
 
-        /**
-        *   \brief  Retrieves the scene this scene node is attached to, if any.
-        *
-        *   \remarks
-        *       This will transcend the parent nodes if required.
-        */
+        /// Retrieves the scene this scene node is attached to, if any.
+        ///
+        /// @remarks
+        ///     This will transcend the parent nodes if required.
         Scene* GetScene();
 
-        /**
-        *   \brief  Removes the scene node from it's current scene.
-        */
+        /// Simple scene setting for internal use only.
+        ///
+        /// @param newScene [in] A pointer to the new scene.
+        ///
+        /// @remarks
+        ///     This should only be used internally by Scene.
+        void _SetScene(Scene* newScene);
+
+
+        /// A helper for removing the scene node from it's current scene.
         void RemoveFromScene();
 
 
@@ -790,7 +795,7 @@ namespace GTEngine
         void OnTransform(bool updateDynamicsObject);
         void OnScale();
         void OnLayerChanged(unsigned int prevLayer);
-        void OnSceneChanged(Scene *prevScene);
+        //void OnSceneChanged(Scene *prevScene);
         void OnStaticChanged();
         void OnVisibleChanged();
         //void OnComponentAttached(Component& component);

@@ -162,6 +162,12 @@ namespace GTEngine
     }
 
 
+    bool SceneNodeMap::Exists(uint64_t sceneNodeID) const
+    {
+        return this->FindByID(sceneNodeID) != nullptr;
+    }
+
+
     size_t SceneNodeMap::GetCount() const
     {
         return this->count;

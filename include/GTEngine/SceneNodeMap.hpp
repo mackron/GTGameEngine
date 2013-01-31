@@ -65,6 +65,14 @@ namespace GTEngine
         SceneNode* FindByID(uint64_t sceneNodeID) const;
 
 
+        /// Determines whether or not a scene node of the given ID exists in the container.
+        ///
+        /// @param sceneNodeID [in] The id of the scene node to search for.
+        ///
+        /// @return True if the item exists; false otherwise.
+        bool Exists(uint64_t sceneNodeID) const;
+
+
         /// Retrieves the number of items in the map.
         ///
         /// @return The number of scene nodes in the map.
