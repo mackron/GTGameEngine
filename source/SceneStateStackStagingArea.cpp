@@ -12,6 +12,7 @@ namespace GTEngine
 
     SceneStateStackStagingArea::~SceneStateStackStagingArea()
     {
+        this->Clear();
     }
 
 
