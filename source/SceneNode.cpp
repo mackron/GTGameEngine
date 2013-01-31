@@ -63,7 +63,6 @@ namespace GTEngine
           scene(nullptr),
           flags(0),
           eventLockCounter(0),
-          typeID(0),
           modelComponent(nullptr), pointLightComponent(nullptr), spotLightComponent(nullptr), editorMetadataComponent(nullptr)
     {
     }
@@ -1045,7 +1044,6 @@ namespace GTEngine
         secondarySerializer.Write(this->uniqueID);
         secondarySerializer.Write(this->name);
         secondarySerializer.Write(static_cast<uint32_t>(this->flags));
-        secondarySerializer.Write(static_cast<uint32_t>(this->typeID));
 
 
         Serialization::ChunkHeader header;
@@ -1119,7 +1117,6 @@ namespace GTEngine
                         deserializer.Read(this->uniqueID);
                         deserializer.Read(this->name);
                         deserializer.Read(reinterpret_cast<uint32_t &>(this->flags));
-                        deserializer.Read(reinterpret_cast<uint32_t &>(this->typeID));
 
                         break;
                     }
