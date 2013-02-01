@@ -31,14 +31,14 @@ namespace GTEngine
         /// SceneCullingManager::RemoveModel().
         virtual void RemoveModel(SceneObject &object);
 
-        
+
         /// SceneCullingManager::AddPointLight().
         virtual void AddPointLight(SceneObject &object);
 
         /// SceneCullingManager::RemovePointLight().
         virtual void RemovePointLight(SceneObject &object);
 
-        
+
         /// SceneCullingManager::AddSpotLight().
         virtual void AddSpotLight(SceneObject &object);
 
@@ -172,7 +172,7 @@ namespace GTEngine
 
                 // We attach a single box to the compound shape, which will be the size of the AABB.
                 model.GetBaseAABB(this->collisionObjectAABBMin, this->collisionObjectAABBMax);
-                
+
                 glm::vec3 aabbMin     = this->collisionObjectAABBMin * scale;
                 glm::vec3 aabbMax     = this->collisionObjectAABBMax * scale;
                 glm::vec3 halfExtents = (aabbMax - aabbMin) * 0.5f;
@@ -276,6 +276,11 @@ namespace GTEngine
 
             /// The max bounds of the model's unscaled AABB.
             glm::vec3 collisionObjectAABBMax;
+
+
+        private:    // No copying.
+            ModelMetadata(const ModelMetadata &);
+            ModelMetadata & operator=(const ModelMetadata &);
         };
 
 
@@ -318,6 +323,11 @@ namespace GTEngine
 
             /// The collision shape to use with the point light collision object. Can be null only if <pointLightCollisionObject> is also null.
             btSphereShape* collisionShape;
+
+
+        private:    // No copying.
+            PointLightMetadata(const PointLightMetadata &);
+            PointLightMetadata & operator=(const PointLightMetadata &);
         };
 
 
@@ -368,6 +378,11 @@ namespace GTEngine
             /// The collision shape to use with the spot light collision object. Can be null only if <spotLightCollisionObject> is also null. We
             /// need to use a compound shape here because the cone will need to be offset by half it's height.
             btCompoundShape* collisionShape;
+
+
+        private:    // No copying.
+            SpotLightMetadata(const SpotLightMetadata &);
+            SpotLightMetadata & operator=(const SpotLightMetadata &);
         };
 
 
