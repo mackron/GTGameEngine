@@ -592,7 +592,7 @@ namespace GTEngine
 
         /// Serializes the scene using the given serializer.
         ///
-        /// @param serializer [in] The serializer to copy the scene data in to.
+        /// @param serializer [in] The serializer to write the data to.
         bool Serialize(GTCore::Serializer &serializer) const;
 
         /// Deserializes the scene using the given deserializer.
@@ -604,6 +604,22 @@ namespace GTEngine
         /// @remarks
         ///     If deserialization fails, the scene will be left completely unmodified.
         bool Deserialize(GTCore::Deserializer &deserializer);
+
+
+        /// Serializes the scene's state stack.
+        ///
+        /// @param serializer [in] A reference ot the serializer to write the data to.
+        bool SerializeStateStack(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the scene's state stack.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read the data form.
+        ///
+        /// @return True if the deserialization was successful.
+        ///
+        /// @remarks
+        ///     This will not change the current state of the scene.
+        bool DeserializeStateStack(GTCore::Deserializer &deserializer);
 
 
 

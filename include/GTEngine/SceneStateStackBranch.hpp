@@ -23,6 +23,7 @@ namespace GTEngine
 
         /// Constructor.
         SceneStateStackBranch(SceneStateStack &stateStack, SceneStateStackBranch* parent, uint32_t rootFrameIndex);
+        SceneStateStackBranch(SceneStateStack &stateStack, SceneStateStackBranch* parent, GTCore::Deserializer &deserializer);
 
         /// Destructor.
         ~SceneStateStackBranch();
@@ -84,6 +85,16 @@ namespace GTEngine
         /// @remarks
         ///     This method asserts that the current frame index is pointing to a local frame.
         SceneStateStackBranch* CreateBranch();
+        
+        /// Creates and appends a child branch from a deserializer.
+        ///
+        /// @param deserializer [in] A reference to the deserializer.
+        ///
+        /// @remarks
+        ///     The root and current frame indexes are retrieved from the deserializer.
+        SceneStateStackBranch* CreateBranch(GTCore::Deserializer &deserializer);
+
+
 
         /// Deletes a child branch.
         ///
@@ -109,6 +120,10 @@ namespace GTEngine
         /// @param sceneNodeID [in] The ID of the scene node that was updated.
         void StageUpdate(uint64_t sceneNodeID);
 
+
+
+        /// Clears the entire branch.
+        void Clear();
 
         /// Clears the staging area.
         void ClearStagingArea();
@@ -151,6 +166,18 @@ namespace GTEngine
         GTCore::BasicSerializer* FindMostRecentSerializer(uint64_t sceneNodeID, uint32_t startFrameIndex) const;
 
 
+
+        /////////////////////////////////////////////////
+        // Serialization/Deserialization
+
+        /// Serializes the state stack branch.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the state stack branch.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
+
+
         /////////////////////////////////////////////
         // Internal Use Only
 
@@ -164,6 +191,9 @@ namespace GTEngine
 
         /// Recursively finds the branch where the given frame index is local.
         SceneStateStackBranch* FindBranch(uint32_t frameIndex);
+
+        /// Deletes every local frame.
+        void ClearLocalFrames();
 
 
     private:

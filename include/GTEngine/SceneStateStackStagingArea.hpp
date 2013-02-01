@@ -3,6 +3,7 @@
 #define __GTEngine_SceneStateStackStagingArea_hpp_
 
 #include "SceneStateStackRestoreCommands.hpp"
+#include "Serialization.hpp"
 
 namespace GTEngine
 {
@@ -69,6 +70,18 @@ namespace GTEngine
         ///
         /// @param commands [out] A reference to the object that will receive the restore commands.
         void GetRestoreCommands(SceneStateStackRestoreCommands &commands);
+
+
+
+        /////////////////////////////////////////////////
+        // Serialization/Deserialization
+
+        /// Serializes the state stack staging area.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the state stack staging area.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
 
 
     private:

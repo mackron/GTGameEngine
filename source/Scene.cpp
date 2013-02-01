@@ -1131,6 +1131,10 @@ namespace GTEngine
         // At this point everything will have loaded successfully. We will now want to clear the scene add add the new scene nodes.
         this->RemoveAllObjects();
 
+        // The current state stack will be invalid, so that also needs to be cleared.
+        this->stateStack.Clear();
+
+
         for (size_t iNode = 0; iNode < deserializedNodes.count; ++iNode)
         {
             auto node = deserializedNodes[iNode];
@@ -1145,6 +1149,21 @@ namespace GTEngine
                 }
             }
         }
+
+        return true;
+    }
+
+
+    bool Scene::SerializeStateStack(GTCore::Serializer &serializer) const
+    {
+        this->stateStack.Serialize(serializer);
+
+        return true;
+    }
+
+    bool Scene::DeserializeStateStack(GTCore::Deserializer &deserializer)
+    {
+        this->stateStack.Deserialize(deserializer);
 
         return true;
     }
