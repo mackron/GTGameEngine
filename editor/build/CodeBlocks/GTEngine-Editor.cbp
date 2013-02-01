@@ -4,7 +4,7 @@
 	<Project>
 		<Option title="GTEngine-Editor" />
 		<Option pch_mode="2" />
-		<Option compiler="mingww64" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="debug-windows-gcc">
 				<Option platforms="Windows;" />
@@ -12,7 +12,7 @@
 				<Option working_dir="../../../bin/windows-gcc/" />
 				<Option object_output="obj/debug-windows-gcc/" />
 				<Option type="1" />
-				<Option compiler="mingww64" />
+				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-g" />
@@ -44,7 +44,7 @@
 				<Option working_dir="../../../bin/windows-gcc/" />
 				<Option object_output="obj/release-windows-gcc/" />
 				<Option type="1" />
-				<Option compiler="mingww64" />
+				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-O2" />
@@ -96,15 +96,12 @@
 					<Add library="freetype" />
 					<Add library="png" />
 					<Add library="z" />
-					<Add library="lua" />
+					<Add library="luajit-5.1" />
 					<Add library="pcre" />
-					<Add library="Recast" />
-					<Add library="Detour" />
-					<Add library="DetourTileCache" />
-					<Add library="DetourCrowd" />
 					<Add library="openal" />
 					<Add library="X11" />
 					<Add library="GL" />
+					<Add library="Xcursor" />
 				</Linker>
 			</Target>
 			<Target title="release-linux-gcc">
@@ -133,15 +130,12 @@
 					<Add library="freetype" />
 					<Add library="png" />
 					<Add library="z" />
-					<Add library="lua" />
+					<Add library="luajit-5.1" />
 					<Add library="pcre" />
-					<Add library="Recast" />
-					<Add library="Detour" />
-					<Add library="DetourTileCache" />
-					<Add library="DetourCrowd" />
 					<Add library="openal" />
 					<Add library="X11" />
 					<Add library="GL" />
+					<Add library="Xcursor" />
 				</Linker>
 			</Target>
 			<Target title="debug-linux-gcc-x64">
@@ -169,15 +163,12 @@
 					<Add library="freetype" />
 					<Add library="png" />
 					<Add library="z" />
-					<Add library="lua" />
+					<Add library="luajit-5.1" />
 					<Add library="pcre" />
-					<Add library="Recast" />
-					<Add library="Detour" />
-					<Add library="DetourTileCache" />
-					<Add library="DetourCrowd" />
 					<Add library="openal" />
 					<Add library="X11" />
 					<Add library="GL" />
+					<Add library="Xcursor" />
 				</Linker>
 			</Target>
 			<Target title="release-linux-gcc-x64">
@@ -206,15 +197,12 @@
 					<Add library="freetype" />
 					<Add library="png" />
 					<Add library="z" />
-					<Add library="lua" />
+					<Add library="luajit-5.1" />
 					<Add library="pcre" />
-					<Add library="Recast" />
-					<Add library="Detour" />
-					<Add library="DetourTileCache" />
-					<Add library="DetourCrowd" />
 					<Add library="openal" />
 					<Add library="X11" />
 					<Add library="GL" />
+					<Add library="Xcursor" />
 				</Linker>
 			</Target>
 		</Build>
