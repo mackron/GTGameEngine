@@ -20,7 +20,7 @@ namespace GTEngine
           scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
           viewportEventHandler(ownerEditor.GetGame(), viewport),
           sceneNodes(), nextSceneNodeID(0),
-          selectedNodes(),
+          selectedNodes(), selectedNodesBeforePhysicsSimulation(),
           pickingWorld(),
           transformGizmo(), gizmoDragAxis(1.0f, 0.0f, 0.0f), gizmoDragFactor(1.0f, 0.0f),
           gizmoDragMode(GizmoDragMode_None), gizmoTransformMode(GizmoTransformMode_Translate), gizmoTransformSpace(GizmoTransformSpace_Global),
@@ -1122,7 +1122,7 @@ namespace GTEngine
 
                     pickingCollisionObject.setWorldTransform(transform);
                     */
-                    
+
                     this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata.GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                 }
 

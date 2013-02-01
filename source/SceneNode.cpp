@@ -56,7 +56,7 @@ namespace GTEngine
 {
     SceneNode::SceneNode()
         : SceneObject(SceneObjectType_SceneNode),
-          name(), uniqueID(0),
+          uniqueID(0), name(),
           parent(nullptr),
           firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
           eventHandlers(), components(), dataPointers(),
@@ -73,7 +73,7 @@ namespace GTEngine
 
         this->DetachFromParent();
         this->OnDestroy();
-        
+
         this->DetachAllChildren();
         this->RemoveAllComponents();
     }
@@ -217,7 +217,7 @@ namespace GTEngine
             {
                 this->firstChild = &child;
             }
-            
+
             // If we already have children, this child needs to be appended to the end of the children list.
             if (this->lastChild != nullptr)
             {
@@ -226,15 +226,15 @@ namespace GTEngine
                 secondLastChild->_SetNextSibling(&child);
                 child._SetPrevSibling(secondLastChild);
             }
-            
+
             // The new item is always the last one.
             child._SetNextSibling(nullptr);
             this->lastChild = &child;
-            
-            
+
+
             // The child needs to know that this is it's new parent.
             child._SetParent(this);
-            
+
 
             // The event handlers need to know about the new child.
             if (!this->EventsLocked())
@@ -242,7 +242,7 @@ namespace GTEngine
                 this->OnAttach(child);
             }
 
-            
+
             // Finally, we need to add the child to the current scene, if any.
             if (this->scene != nullptr)
             {
@@ -272,7 +272,7 @@ namespace GTEngine
                 // The child is the root.
                 this->firstChild = childNextSibling;
             }
-            
+
             if (childNextSibling)
             {
                 childNextSibling->_SetPrevSibling(childPrevSibling);
@@ -420,7 +420,7 @@ namespace GTEngine
         if (this->position.x != position.x || this->position.y != position.y || this->position.z != position.z)
         {
             this->position = position;
-            
+
             if (!this->EventsLocked())
             {
                 this->OnTransform(updateDynamicsObject);
@@ -446,7 +446,7 @@ namespace GTEngine
 
             return this->parent->GetWorldPosition() + (orientation * (scale * this->position));
         }
-        
+
         return this->position;
     }
 
@@ -475,7 +475,7 @@ namespace GTEngine
             this->orientation[3] != orientation[3])
         {
             this->orientation = orientation;
-            
+
             if (!this->EventsLocked())
             {
                 this->OnTransform(updateDynamicsObject);
@@ -489,7 +489,7 @@ namespace GTEngine
         {
             return this->parent->GetWorldOrientation() * this->orientation;
         }
-        
+
         return this->orientation;
     }
 
@@ -525,7 +525,7 @@ namespace GTEngine
         {
             return this->parent->GetWorldScale() * this->scale;
         }
-        
+
         return this->scale;
     }
 
@@ -607,7 +607,7 @@ namespace GTEngine
             else
             {
                 glm::vec3 offset = this->position;
-                
+
                 if (!this->IsScaleInheritanceEnabled())
                 {
                     scaleOut = this->scale;
@@ -672,7 +672,7 @@ namespace GTEngine
         glm::quat orientation;
         glm::vec3 devnull;
         this->GetWorldTransformComponents(position, orientation, devnull);
-        
+
         worldTransform.setRotation(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w));
         worldTransform.setOrigin(btVector3(position.x, position.y, position.z));
 
@@ -786,7 +786,7 @@ namespace GTEngine
             }
         }
 
-        
+
         return component;
     }
 
@@ -917,7 +917,7 @@ namespace GTEngine
         return (this->flags & Static) != 0;
     }
 
-    
+
 
     void SceneNode::SetVisible(bool isVisibleIn)
     {
@@ -950,7 +950,7 @@ namespace GTEngine
             {
                 return this->parent->IsVisible();
             }
-            
+
             return true;
         }
         else
@@ -986,7 +986,7 @@ namespace GTEngine
     void SceneNode::DisableOrientationInheritance()
     {
         auto worldOrientation = this->GetWorldOrientation();
-        
+
         this->flags = this->flags | NoOrientationInheritance;
         this->SetWorldOrientation(worldOrientation);
     }
@@ -994,7 +994,7 @@ namespace GTEngine
     void SceneNode::EnableOrientationInheritance()
     {
         auto worldOrientation = this->GetWorldOrientation();
-        
+
         this->flags = this->flags & ~NoOrientationInheritance;
         this->SetWorldOrientation(worldOrientation);
     }
@@ -1009,7 +1009,7 @@ namespace GTEngine
     void SceneNode::DisableScaleInheritance()
     {
         auto worldScale = this->GetWorldScale();
-        
+
         this->flags = this->flags | NoScaleInheritance;
         this->SetWorldScale(worldScale);
     }
@@ -1017,7 +1017,7 @@ namespace GTEngine
     void SceneNode::EnableScaleInheritance()
     {
         auto worldScale = this->GetWorldScale();
-        
+
         this->flags = this->flags & ~NoOrientationInheritance;
         this->SetWorldScale(worldScale);
     }
@@ -1037,7 +1037,7 @@ namespace GTEngine
         // First, we serialize the SceneObject.
         SceneObject::Serialize(serializer);
 
-        
+
         // The first scene node chunk, besides SceneObject, is the general attributes. We're going to use an intermediate serializer here
         // because we're writing a string.
         GTCore::BasicSerializer secondarySerializer;
@@ -1159,7 +1159,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        // If we get here it means the component is unknown to both the engine and the client application. For now we're going to 
+                        // If we get here it means the component is unknown to both the engine and the client application. For now we're going to
                         // just skip over the data, but in the future what we'll do is keep hold of it (placing it into a separate list) so that
                         // future serializations can keep hold of the data rather than losing it.
                         deserializer.Seek(componentDataSizeInBytes);

@@ -292,6 +292,11 @@
 		<Unit filename="../../../include/GTEngine/SceneObjectTypes.hpp" />
 		<Unit filename="../../../include/GTEngine/ScenePhysicsManager.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneRenderer.hpp" />
+		<Unit filename="../../../include/GTEngine/SceneStateStack.hpp" />
+		<Unit filename="../../../include/GTEngine/SceneStateStackBranch.hpp" />
+		<Unit filename="../../../include/GTEngine/SceneStateStackFrame.hpp" />
+		<Unit filename="../../../include/GTEngine/SceneStateStackRestoreCommands.hpp" />
+		<Unit filename="../../../include/GTEngine/SceneStateStackStagingArea.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneUpdateManager.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneViewport.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting.hpp" />
@@ -457,6 +462,11 @@
 		<Unit filename="../../../source/SceneNodeMap.cpp" />
 		<Unit filename="../../../source/SceneObject.cpp" />
 		<Unit filename="../../../source/SceneRenderer.cpp" />
+		<Unit filename="../../../source/SceneStateStack.cpp" />
+		<Unit filename="../../../source/SceneStateStackBranch.cpp" />
+		<Unit filename="../../../source/SceneStateStackFrame.cpp" />
+		<Unit filename="../../../source/SceneStateStackRestoreCommands.cpp" />
+		<Unit filename="../../../source/SceneStateStackStagingArea.cpp" />
 		<Unit filename="../../../source/SceneViewport.cpp" />
 		<Unit filename="../../../source/Scripting.cpp" />
 		<Unit filename="../../../source/ShaderLibrary.cpp" />

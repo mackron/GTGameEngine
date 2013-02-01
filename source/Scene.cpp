@@ -254,7 +254,7 @@ namespace GTEngine
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
           paused(false), isRefreshingObject(false),
-          viewports(), sceneNodes(), nextSceneNodeID(0),
+          viewports(), sceneNodes(), nextSceneNodeID(0), sceneNodesCreatedByScene(),
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true)
@@ -266,7 +266,7 @@ namespace GTEngine
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
           paused(false), isRefreshingObject(false),
-          viewports(), sceneNodes(), nextSceneNodeID(0),
+          viewports(), sceneNodes(), nextSceneNodeID(0), sceneNodesCreatedByScene(),
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true)
@@ -744,7 +744,7 @@ namespace GTEngine
         }
     }
 
-    
+
     uint32_t Scene::GetStateStackCurrentFrameIndex() const
     {
         auto currentBranch = this->stateStack.GetCurrentBranch();
@@ -1108,15 +1108,21 @@ namespace GTEngine
         }
 
 
+        if (readInfo == false)
+        {
+            GTEngine::Log("Error deserializing scene. The info chunk (%d) was not found.", Serialization::ChunkID_Scene_Info);
+            return false;
+        }
+
         if (readSceneNodes == false)
         {
-            GTEngine::Log("Error deserializing scene. The scene node chunk (%d) was not found.");
+            GTEngine::Log("Error deserializing scene. The scene node chunk (%d) was not found.", Serialization::ChunkID_Scene_Nodes);
             return false;
         }
 
         if (readSceneNodesHierarchy == false)
         {
-            GTEngine::Log("Error deserializing scene. The scene node hierarchy chunk (%d) was not found.");
+            GTEngine::Log("Error deserializing scene. The scene node hierarchy chunk (%d) was not found.", Serialization::ChunkID_Scene_NodesHierarchy);
 
             // We may have nodes instantiated, so they'll need to be killed.
             for (size_t iNode = 0; iNode < deserializedNodes.count; ++iNode)
@@ -1672,7 +1678,7 @@ namespace GTEngine
             }
         }
 
-        
+
         if (postEvents)
         {
             this->PostEvent_OnSceneNodeComponentRemoved(node, component);
@@ -1744,7 +1750,7 @@ namespace GTEngine
             else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
                 auto &proximityComponent = static_cast<ProximityComponent &>(component);
-                
+
                 // We just remove and re-add. OnTransform and OnScale will ensure everything is positioned and scaled properly.
                 if (node.IsVisible())
                 {
@@ -1754,7 +1760,7 @@ namespace GTEngine
             }
         }
 
-        
+
 
         // The event handler needs to know about this.
         this->PostEvent_OnSceneNodeComponentChanged(node, component);

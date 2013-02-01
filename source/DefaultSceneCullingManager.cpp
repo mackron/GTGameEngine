@@ -11,7 +11,7 @@
 namespace GTEngine
 {
     DefaultSceneCullingManager::DefaultSceneCullingManager()
-        : world(), ambientLights(), directionalLights()
+        : world(), models(), pointLights(), spotLights(), ambientLights(), directionalLights()
     {
     }
 
@@ -479,7 +479,7 @@ namespace GTEngine
                         this->ProcessVisibleObjectModel(sceneNode, callback);
                     }
                 }
-                
+
                 if (sceneNode.GetComponent<PointLightComponent>() != nullptr)
                 {
                     this->ProcessVisibleObjectPointLight(sceneNode, callback);
@@ -506,7 +506,7 @@ namespace GTEngine
             {
                 q = v;
             }
-            
+
             return false;
         }
     };
@@ -635,7 +635,7 @@ namespace GTEngine
             }
         }
 
-        const int d[] = 
+        const int d[] =
         {
             1, 0, 3, 2,
             4, 5, 6, 7,
@@ -647,7 +647,7 @@ namespace GTEngine
 
         for(unsigned int i = 0; i < (sizeof(d) / sizeof(d[0])); )
         {
-            btVector4 p[] = 
+            btVector4 p[] =
             {
                 x[d[i++]],
                 x[d[i++]],
@@ -670,7 +670,7 @@ namespace GTEngine
         auto &basis = transform.getBasis();
         auto &e     = halfExtents;
 
-        btVector4 x[] = 
+        btVector4 x[] =
         {
             this->Transform(c+basis*btVector3(-e[0], -e[1], -e[2])),
             this->Transform(c+basis*btVector3(+e[0], -e[1], -e[2])),
@@ -682,7 +682,7 @@ namespace GTEngine
             this->Transform(c+basis*btVector3(-e[0], +e[1], +e[2]))
         };
 
-        const int d[] = 
+        const int d[] =
         {
             1,0,3,2,
             4,5,6,7,
@@ -694,7 +694,7 @@ namespace GTEngine
 
         for (unsigned int i = 0; i < (sizeof(d) / sizeof(d[0])); )
         {
-            btVector4 p[] = 
+            btVector4 p[] =
             {
                 x[d[i++]],
                 x[d[i++]],
