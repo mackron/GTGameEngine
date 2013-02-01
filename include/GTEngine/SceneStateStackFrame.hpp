@@ -15,6 +15,7 @@ namespace GTEngine
 
         /// Constructor.
         SceneStateStackFrame(SceneStateStackBranch &branch, const SceneStateStackStagingArea &stagingArea);
+        SceneStateStackFrame(SceneStateStackBranch &branch, GTCore::Deserializer &deserializer);
 
         /// Destructor.
         ~SceneStateStackFrame();
@@ -48,10 +49,24 @@ namespace GTEngine
 
 
 
+        /////////////////////////////////////////////////
+        // Serialization/Deserialization
+
+        /// Serializes the state stack frame.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the state stack frame.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
+
+
     private:
 
         /// Serializes the given scene node.
         bool SerializeSceneNode(uint64_t sceneNodeID, GTCore::Serializer &serializer) const;
+
+        /// Clears the frame.
+        void Clear();
 
 
     private:

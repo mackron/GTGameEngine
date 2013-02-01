@@ -111,11 +111,35 @@ namespace GTEngine
         void ApplyToScene();
 
 
+        /// Clears the stack.
+        void Clear();
+
+
+
+        /////////////////////////////////////////////////
+        // Serialization/Deserialization
+
+        /// Serializes the state stack.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the state stack.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
+
 
     private:
 
         /// Retrieves a unique ID for a new branch.
         uint32_t GetNewBranchID() const;
+
+        /// Retrieves the ID of the given branch.
+        ///
+        /// @remarks
+        ///     This runs in linear time.
+        uint32_t GetBranchID(const SceneStateStackBranch &branch) const;
+
+        /// Retrieves a pointer to the branch by the ID.
+        SceneStateStackBranch* GetBranchByID(uint32_t branchID) const;
 
 
 

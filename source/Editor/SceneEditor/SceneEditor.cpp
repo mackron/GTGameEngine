@@ -150,10 +150,11 @@ namespace GTEngine
                 GTCore::FileDeserializer deserializer(file);
                 this->DeserializeScene(deserializer);
             }
-
-
-            // We want to do an initial commit.
-            this->scene.CommitStateStackFrame();
+            else
+            {
+                // We want to do an initial commit.
+                this->scene.CommitStateStackFrame();
+            }
 
 
             // The scene will be done loading by this pointer, so we can close the file.
@@ -1479,6 +1480,8 @@ namespace GTEngine
             metadataSerializer.Write(this->cameraXRotation);
             metadataSerializer.Write(this->cameraYRotation);
 
+            // We're going to serialize the state stack, too.
+            this->scene.SerializeStateStack(metadataSerializer);
 
 
             Serialization::ChunkHeader header;
@@ -1523,6 +1526,23 @@ namespace GTEngine
 
                 this->camera.DisableSerialization();
                 this->camera.DisableStateStackStaging();
+
+
+                // We need to peek at the next bytes. If it's a state stack, we need to deserialize it.
+                if (deserializer.Peek(&header, sizeof(header)) == sizeof(header) && header.id == Serialization::ChunkID_SceneStateStack)
+                {
+                    this->scene.DeserializeStateStack(deserializer);
+                }
+                else
+                {
+                    // We need an initial commit.
+                    this->scene.CommitStateStackFrame();
+                }
+            }
+            else
+            {
+                // We need an initial commit.
+                this->scene.CommitStateStackFrame();
             }
 
 

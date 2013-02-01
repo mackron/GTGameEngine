@@ -2,6 +2,7 @@
 #include <GTEngine/SceneStateStackBranch.hpp>
 #include <GTEngine/SceneStateStack.hpp>
 #include <GTEngine/Scene.hpp>
+#include <GTEngine/Logging.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -18,14 +19,19 @@ namespace GTEngine
     {
     }
 
+    SceneStateStackBranch::SceneStateStackBranch(SceneStateStack &stateStackIn, SceneStateStackBranch* parentIn, GTCore::Deserializer &deserializer)
+        : stateStack(stateStackIn),
+          parent(parentIn), children(), rootFrameIndex(0),
+          frames(), currentFrameIndex(0),
+          stagingArea(*this)
+    {
+        this->Deserialize(deserializer);
+    }
+
     SceneStateStackBranch::~SceneStateStackBranch()
     {
         this->DeleteAllBranches();
-
-        for (size_t i = 0; i < this->frames.count; ++i)
-        {
-            delete this->frames[i];
-        }
+        this->ClearLocalFrames();
     }
 
 
@@ -130,6 +136,14 @@ namespace GTEngine
         }
     }
 
+    SceneStateStackBranch* SceneStateStackBranch::CreateBranch(GTCore::Deserializer &deserializer)
+    {
+        auto child = new SceneStateStackBranch(this->stateStack, this, deserializer);
+        this->children.PushBack(child);
+
+        return child;
+    }
+
     void SceneStateStackBranch::DeleteBranch(SceneStateStackBranch* childBranch)
     {
         size_t childIndex;
@@ -164,6 +178,13 @@ namespace GTEngine
         this->stagingArea.StageUpdate(sceneNodeID);
     }
 
+
+    void SceneStateStackBranch::Clear()
+    {
+        this->DeleteAllBranches();
+        this->ClearStagingArea();
+        this->ClearLocalFrames();
+    }
 
     void SceneStateStackBranch::ClearStagingArea()
     {
@@ -378,6 +399,100 @@ namespace GTEngine
 
 
 
+    /////////////////////////////////////////////////
+    // Serialization/Deserialization
+
+    void SceneStateStackBranch::Serialize(GTCore::Serializer &serializer) const
+    {
+        // We need to use an intermediary serializer here so we can get an exact size.
+        GTCore::BasicSerializer intermediarySerializer;
+
+
+        // Root and current frame indices.
+        intermediarySerializer.Write(this->rootFrameIndex);
+        intermediarySerializer.Write(this->currentFrameIndex);
+        
+        
+        // Frames.
+        intermediarySerializer.Write(static_cast<uint32_t>(this->frames.count));
+        
+        for (size_t i = 0; i < this->frames.count; ++i)
+        {
+            auto frame = this->frames[i];
+            assert(frame != nullptr);
+            {
+                frame->Serialize(intermediarySerializer);
+            }
+        }
+
+
+        // Staging area.
+        this->stagingArea.Serialize(intermediarySerializer);
+
+
+
+        // Now we just write to the main serializer like normal.
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_SceneStateStackBranch;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
+    }
+
+    void SceneStateStackBranch::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        this->ClearLocalFrames();
+        this->ClearStagingArea();
+
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+        {
+            assert(header.id == Serialization::ChunkID_SceneStateStackBranch);
+            {
+                switch (header.version)
+                {
+                case 1:
+                    {
+                        deserializer.Read(this->rootFrameIndex);
+                        deserializer.Read(this->currentFrameIndex);
+
+
+                        // Local frames.
+                        uint32_t frameCount;
+                        deserializer.Read(frameCount);
+
+                        for (uint32_t i = 0; i < frameCount; ++i)
+                        {
+                            this->frames.PushBack(new SceneStateStackFrame(*this, deserializer));
+                        }
+
+
+                        // Staging area.
+                        this->stagingArea.Deserialize(deserializer);
+
+
+                        break;
+                    }
+
+
+                default:
+                    {
+                        GTEngine::Log("Error deserializing SceneStateStackBranch. The main chunk is an unsupported version (%d).", header.version);
+                        deserializer.Seek(header.sizeInBytes);
+
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
     /////////////////////////////////////////////
     // Internal Use Only
 
@@ -409,6 +524,15 @@ namespace GTEngine
         }
 
         return this;
+    }
+
+    void SceneStateStackBranch::ClearLocalFrames()
+    {
+        for (size_t i = 0; i < this->frames.count; ++i)
+        {
+            delete this->frames[i];
+        }
+        this->frames.Clear();
     }
 }
 

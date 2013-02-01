@@ -148,6 +148,15 @@ namespace GTEngine
         static const uint32_t ChunkID_Material_Parameters                   = CHUNK_ID(0x00000511U);
 
 
+        /////////////////////////////////////////////////////
+        // Scene State Stack
+
+        static const uint32_t ChunkID_SceneStateStack                       = CHUNK_ID(0x00000800U);
+        static const uint32_t ChunkID_SceneStateStackBranch                 = CHUNK_ID(0x00000801U);
+        static const uint32_t ChunkID_SceneStateStackFrame                  = CHUNK_ID(0x00000802U);
+        static const uint32_t ChunkID_SceneStateStackStagingArea            = CHUNK_ID(0x00000803U);
+
+
 
         /////////////////////////////////////////////////////
         // Misc. Objects
@@ -161,6 +170,7 @@ namespace GTEngine
         static const uint32_t ChunkID_Animation_Main                        = CHUNK_ID(0x00001014U);
         static const uint32_t ChunkID_Animation_PlaybackState               = CHUNK_ID(0x00001015U);
         static const uint32_t ChunkID_AnimationKeyFrameQueue                = CHUNK_ID(0x00001016U);
+
     }
 }
 
