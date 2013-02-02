@@ -1106,8 +1106,10 @@ namespace GTEngine
 
     void SceneNode::Deserialize(GTCore::Deserializer &deserializer)
     {
+        GTCore::String newName;
         auto wasStatic  = this->IsStatic();
         auto wasVisible = this->IsVisible();
+        
 
 
         // Deserialize the SceneObject first.
@@ -1123,7 +1125,7 @@ namespace GTEngine
                 case 1:
                     {
                         deserializer.Read(this->uniqueID);
-                        deserializer.Read(this->name);
+                        deserializer.Read(newName);
                         deserializer.Read(reinterpret_cast<uint32_t &>(this->flags));
 
                         break;
@@ -1186,6 +1188,10 @@ namespace GTEngine
                 }
             }
         }
+
+
+        // The new name needs to be set with SetName() so that the OnNameChanged event is called.
+        this->SetName(newName.c_str());
 
 
         if (wasStatic != this->IsStatic())
