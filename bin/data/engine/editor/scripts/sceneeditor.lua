@@ -1598,8 +1598,39 @@ end
 
 
 function GTGUI.Element:SceneEditorPanel(sceneEditor)
-    self.PropertiesPanel = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-properties-panel'    style='' />");
+    self.TabBar          = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-tabbar'        style='' />");
+    self.Body            = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-body'          style='' />");
+    self.PropertiesPanel = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-properties-panel'    style='visible:false' />");
     self.SceneEditor     = sceneEditor;
+    
+    
+    self.TabBar:TabBar();
+    self.TabBar.ActiveTabBorderColor     = "#222";
+    self.TabBar.HoveredTabBorderColor    = "#222";
+    self.TabBar.ActiveTabBackgroundColor = "#363636";
+    
+    self.HierarchyTab  = self.TabBar:AddTab("Hierarchy");
+    self.PropertiesTab = self.TabBar:AddTab("Properties");
+    
+    
+    self.TabBar:OnTabActivated(function(data)
+        if data.tab == self.PropertiesTab then
+            self.PropertiesPanel:Show();
+        elseif data.tab == self.HierarchyTab then
+        end
+    end);
+    
+    self.TabBar:OnTabDeactivated(function(data)
+        if data.tab == self.PropertiesTab then
+            self.PropertiesPanel:Hide();
+        elseif data.tab == self.HierarchyTab then
+        end
+    end);
+    
+    
+    self.TabBar:ActivateTab(self.PropertiesTab);
+    
+    
     
     
     self.PropertiesPanel:SceneEditorPropertiesPanel();
@@ -1607,7 +1638,6 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
     self.PropertiesPanel:OnSceneNodeChanged(function()
         self.SceneEditor:CommitStateStackFrame()
     end);
-    
 end
 
 
