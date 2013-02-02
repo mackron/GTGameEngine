@@ -35,8 +35,24 @@ scene-editor-panel
 
 scene-editor-panel-body
 {
-    width:   100%
-    height:  auto
+}
+
+scene-editor-properties-panel
+{
+    width:  100%
+    height: 100%
+    
+    child-plane:        horizontal
+    flex-child-width:   true
+    
+    allow-mouse-resize: true
+    left-gripper-width: 4px
+}
+
+scene-editor-properties-panel-body
+{
+    width:  100%
+    height: auto
     
     transparent-mouse-input: true
 }
