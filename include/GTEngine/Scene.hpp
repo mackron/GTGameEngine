@@ -583,6 +583,7 @@ namespace GTEngine
         void FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output);
 
         /// A hacky temp method for retrieving a reference to the internal list of scene nodes. (Used with NavigationMesh. Will be replaced later.)
+              SceneNodeMap & GetSceneNodes()       { return this->sceneNodes; }
         const SceneNodeMap & GetSceneNodes() const { return this->sceneNodes; }
 
 
