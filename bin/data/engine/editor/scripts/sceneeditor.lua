@@ -1366,7 +1366,7 @@ function GTGUI.Element:SceneEditorTransformPanel(parentPanel)
 end
 
 
-function GTGUI.Element:SceneEditorPanel()
+function GTGUI.Element:SceneEditorPropertiesPanel()
     self.Body      = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel-body' style='' />");
     self.Scrollbar = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='vertical-scrollbar'      style='' />");
     
@@ -1620,7 +1620,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.IsMouseOverViewport     = false;
     
     
-    self.Panel:SceneEditorPanel();
+    self.Panel:SceneEditorPropertiesPanel();
     
     self.Panel:OnSceneNodeChanged(function()
         self:CommitStateStackFrame()
