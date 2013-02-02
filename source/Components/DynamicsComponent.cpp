@@ -423,7 +423,6 @@ namespace GTEngine
     void DynamicsComponent::SetLinearVelocity(float x, float y, float z)
     {
         this->rigidBody->setLinearVelocity(btVector3(x, y, z) * this->rigidBody->getLinearFactor());
-        this->OnChanged();
     }
 
     glm::vec3 DynamicsComponent::GetLinearVelocity() const
@@ -435,7 +434,6 @@ namespace GTEngine
     void DynamicsComponent::SetAngularVelocity(float x, float y, float z)
     {
         this->rigidBody->setAngularVelocity(btVector3(x, y, z) * this->rigidBody->getAngularFactor());
-        this->OnChanged();
     }
 
     glm::vec3 DynamicsComponent::GetAngularVelocity() const
