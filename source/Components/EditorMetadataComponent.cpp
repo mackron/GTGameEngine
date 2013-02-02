@@ -12,7 +12,7 @@ namespace GTEngine
 
     EditorMetadataComponent::EditorMetadataComponent(SceneNode &node)
         : Component(node),
-          alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(true),
+          alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(true), isSystemNode(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
           spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTransform(),

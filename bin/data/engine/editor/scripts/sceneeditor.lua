@@ -1598,7 +1598,50 @@ end
 
 
 function GTGUI.Element:SceneEditorHierarchyPanel()
-    self.TreeView = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-hierarchy-treeview'        style='' />");
+    self.TreeView   = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-hierarchy-treeview'        style='' />");
+    self.SceneNodes = {}
+    
+    
+    self.TreeView:TreeView();
+    
+    
+    function self:AddSceneNode(sceneNodePtr)
+        local sceneNodeID = GTEngine.System.SceneNode.GetID(sceneNodePtr);
+        
+        local item = self.SceneNodes[sceneNodeID];
+        if item == nil then
+            local sceneNodeName = GTEngine.System.SceneNode.GetName(sceneNodePtr);
+        
+            item = self.TreeView:AddItem(sceneNodeName or "Unnamed");
+            item.SceneNodeID   = sceneNodeID;
+            item.SceneNodeName = sceneNodeName;
+            
+            self.SceneNodes[sceneNodeID] = item;
+        else
+            self:UpdateSceneNode(sceneNodePtr);
+        end
+        
+        return item;
+    end
+    
+    function self:RemoveSceneNode(sceneNodePtr)
+        local sceneNodeID = GTEngine.System.SceneNode.GetID(sceneNodePtr);
+    
+        self.TreeView:RemoveItem(self.SceneNodes[sceneNodeID]);
+        self.SceneNodes[sceneNodeID] = nil;
+    end
+    
+    function self:UpdateSceneNode(sceneNodePtr)
+        local sceneNodeID = GTEngine.System.SceneNode.GetID(sceneNodePtr);
+        
+        local item = self.SceneNodes[sceneNodeID];
+        if item ~= nil then
+            local sceneNodeName = GTEngine.System.SceneNode.GetName(sceneNodePtr);
+            
+            item.SceneNodeName = sceneNodeName
+            item:SetText(sceneNodeName or "Unnamed");
+        end
+    end
 end
 
 
@@ -1681,6 +1724,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     self.Panel:SceneEditorPanel();
     self.PropertiesPanel = self.Panel.PropertiesPanel;
+    self.HierarchyPanel  = self.Panel.HierarchyPanel;
     
     
     
@@ -1901,7 +1945,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self.PropertiesPanel:Update(self:GetSelectedSceneNode());
     end
     
-    function self:UpdatePropertyTransformPanel()
+    function self:UpdatePropertiesTransformPanel()
         self.PropertiesPanel:UpdateTransformPanel();
     end
 
@@ -1921,6 +1965,14 @@ function GTGUI.Element:SceneEditor(_internalPtr)
             self:UpdatePropertyPanels();
             self:ShowPropertyPanels();
         end
+    end
+    
+    function self:OnSceneNodeAdded(sceneNodePtr)
+        self.HierarchyPanel:AddSceneNode(sceneNodePtr);
+    end
+    
+    function self:OnSceneNodeRemoved(sceneNodePtr)
+        self.HierarchyPanel:RemoveSceneNode(sceneNodePtr);
     end
     
     

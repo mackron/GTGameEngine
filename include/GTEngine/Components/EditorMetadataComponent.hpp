@@ -30,6 +30,13 @@ namespace GTEngine
         ~EditorMetadataComponent();
 
 
+        /// Determines whether or not the node is a system node (used for editor tools such as the gizmo and camera).
+        bool IsSystemNode() const { return this->isSystemNode; }
+
+        /// Sets whether or not the node is a system node (used for editor tools such as the gizmo and camera).
+        void IsSystemNode(bool isSystemNodeIn) { this->isSystemNode = isSystemNodeIn; }
+
+
         /// Determines whether or not the scene node is marked as selected.
         bool IsSelected() const;
 
@@ -214,6 +221,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not the scene node should be deleted when the editor is closed.
         bool deleteOnClose;
+
+        /// Keeps track of whether or not this is an scene node for editor functionality (gizmo, grid, camera, etc).
+        bool isSystemNode;
 
 
         /// Keeps track of whether or not the scene node is selected in the editor.
