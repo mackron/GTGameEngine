@@ -1018,6 +1018,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "CommitStateStackFrame",               FFI::SystemFFI::SceneEditorFFI::CommitStateStackFrame);
                         script.SetTableFunction(-1, "Undo",                                FFI::SystemFFI::SceneEditorFFI::Undo);
                         script.SetTableFunction(-1, "Redo",                                FFI::SystemFFI::SceneEditorFFI::Redo);
+                        script.SetTableFunction(-1, "GetSceneNodes",                       FFI::SystemFFI::SceneEditorFFI::GetSceneNodes);
                     }
                     script.Pop(1);
                 }
@@ -3631,6 +3632,25 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+
+                    int GetSceneNodes(GTCore::Script &script)
+                    {
+                        script.PushNewTable();
+
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            auto &sceneNodes = sceneEditor->GetScene().GetSceneNodes();
+
+                            for (size_t i = 0; i < sceneNodes.GetCount(); ++i)
+                            {
+                                script.SetTableValue(-1, static_cast<int>(i + 1), sceneNodes.GetSceneNodeAtIndex(i));
+                            }
+                        }
+
+                        return 1;
                     }
                 }
             }

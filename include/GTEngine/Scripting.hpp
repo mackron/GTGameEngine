@@ -1150,6 +1150,13 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
                     int Redo(GTCore::Script &script);
+
+
+                    /// Retrieves a array of pointers to the scene nodes in the scene.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int GetSceneNodes(GTCore::Script &script);
                 }
             }
         }
