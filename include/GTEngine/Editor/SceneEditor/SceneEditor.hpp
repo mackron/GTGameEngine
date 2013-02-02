@@ -297,6 +297,12 @@ namespace GTEngine
         /// Posts an OnSelectionChanged() event to the scene editor.
         void PostOnSelectionChangedEventToScript();
 
+        /// Posts an OnSceneNodeAdded() event to the scene editor.
+        void PostOnSceneNodeAddedToScript(SceneNode &node);
+
+        /// Posts an OnScenenodeRemoved() event to the scene editor.
+        void PostOnSceneNodeRemovedToScript(SceneNode &node);
+
         /// Refreshes the selections.
         ///
         /// @remarks

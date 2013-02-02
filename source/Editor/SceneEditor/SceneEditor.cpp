@@ -44,7 +44,8 @@ namespace GTEngine
         
         auto metadata = this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
         {
-            metadata->DeleteOnClose(false);
+            metadata->DeleteOnClose(false);     // <-- TODO: We need to use this anymore?
+            metadata->IsSystemNode(true);
         }
         
         this->camera.DisableSerialization();
@@ -798,9 +799,13 @@ namespace GTEngine
             }
 
 
+            // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
+            this->PostOnSceneNodeAddedToScript(node);
+
+
 
             // We can cheat here and just act as if the object has been refreshed.
-            this->OnObjectRefreshed(object);
+            this->OnObjectRefreshed(object);        // <-- We'll be removing the notion of "Refreshing", so we will need to get rid of this, too.
         }
     }
 
@@ -826,12 +831,12 @@ namespace GTEngine
                 this->DeselectSceneNode(node);
 
 
+                // We need to let the editor know about this. It will need to do things like remove it from the hierarchy explorer.
+                this->PostOnSceneNodeRemovedToScript(node);
+
+
                 // The state needs to know that it no longer has the node.
                 this->sceneNodes.RemoveByKey(metadata->GetID());
-
-
-                // The data pointer at position 0 will be a pointer to the Editor_SceneEditor::State object that previously owned the scene node. This needs to be cleared.
-                node.SetDataPointer(0, nullptr);
             }
         }
     }
@@ -956,7 +961,7 @@ namespace GTEngine
                 script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
                 assert(script.IsTable(-1));
                 {
-                    script.Push("UpdateTransformPanel");
+                    script.Push("UpdatePropertiesTransformPanel");
                     script.GetTableValue(-2);
                     assert(script.IsFunction(-1));
                     {
@@ -1088,25 +1093,11 @@ namespace GTEngine
                 if (metadata.UseModelForPickingShape())
                 {
                     metadata.SetPickingCollisionShapeToModel();
-
-                    /*
-                    if (metadata.GetPickingCollisionShape())
-                    {
-                        pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
-                    }
-                    */
                 }
 
 
                 if (metadata.GetPickingCollisionShape() != nullptr)
                 {
-                    /*
-                    btTransform transform;
-                    node.GetWorldTransform(transform);
-
-                    pickingCollisionObject.setWorldTransform(transform);
-                    */
-
                     this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata.GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                 }
 
@@ -1754,6 +1745,64 @@ namespace GTEngine
                 }
             }
             script.Pop(1);
+        }
+    }
+
+    void SceneEditor::PostOnSceneNodeAddedToScript(SceneNode &node)
+    {
+        auto metadata = node.GetComponent<EditorMetadataComponent>();
+        assert(metadata != nullptr);
+        {
+            if (!metadata->IsSystemNode())
+            {
+                assert(this->GUI.Main != nullptr);
+                {
+                    auto &script = this->GetScript();
+
+                    script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("OnSceneNodeAdded");
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.PushValue(-2);   // <-- 'self'.
+                            script.Push(&node);
+                            script.Call(2, 0);
+                        }
+                    }
+                    script.Pop(1);
+                }
+            }
+        }
+    }
+
+    void SceneEditor::PostOnSceneNodeRemovedToScript(SceneNode &node)
+    {
+        auto metadata = node.GetComponent<EditorMetadataComponent>();
+        assert(metadata != nullptr);
+        {
+            if (!metadata->IsSystemNode())
+            {
+                assert(this->GUI.Main != nullptr);
+                {
+                    auto &script = this->GetScript();
+
+                    script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("OnSceneNodeRemoved");
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.PushValue(-2);   // <-- 'self'.
+                            script.Push(&node);
+                            script.Call(2, 0);
+                        }
+                    }
+                    script.Pop(1);
+                }
+            }
         }
     }
 
