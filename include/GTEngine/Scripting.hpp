@@ -122,13 +122,6 @@ namespace GTEngine
                     int GetComponent(GTCore::Script &script);
 
 
-                    /// Refreshes the given scene node.
-                    ///
-                    /// @remarks
-                    ///     Argument 1: A pointer to the scene node being refreshed.
-                    int Refresh(GTCore::Script &script);
-
-
                     /// Retrieves the local position of the given scene node as 3 return values.
                     ///
                     /// @remarks

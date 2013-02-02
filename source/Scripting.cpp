@@ -650,11 +650,6 @@ namespace GTEngine
                 "end;"
 
 
-                "function GTEngine.SceneNode:Refresh()"
-                "    return GTEngine.System.SceneNode.Refresh(self._internalPtr);"
-                "end;"
-
-
                 "function GTEngine.SceneNode:GetPosition()"
                 "    return GTEngine.System.SceneNode.GetPosition(self._internalPtr);"
                 "end;"
@@ -774,8 +769,6 @@ namespace GTEngine
                         script.SetTableFunction(-1, "AddComponent",            FFI::SystemFFI::SceneNodeFFI::AddComponent);
                         script.SetTableFunction(-1, "RemoveComponent",         FFI::SystemFFI::SceneNodeFFI::RemoveComponent);
                         script.SetTableFunction(-1, "GetComponent",            FFI::SystemFFI::SceneNodeFFI::GetComponent);
-
-                        script.SetTableFunction(-1, "Refresh",                 FFI::SystemFFI::SceneNodeFFI::Refresh);
 
                         script.SetTableFunction(-1, "GetPosition",             FFI::SystemFFI::SceneNodeFFI::GetPosition);
                         script.SetTableFunction(-1, "SetPosition",             FFI::SystemFFI::SceneNodeFFI::SetPosition);
@@ -1259,18 +1252,6 @@ namespace GTEngine
                         }
 
                         return 1;
-                    }
-
-
-                    int Refresh(GTCore::Script &script)
-                    {
-                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
-                        if (sceneNode != nullptr)
-                        {
-                            sceneNode->Refresh();
-                        }
-
-                        return 0;
                     }
 
 
