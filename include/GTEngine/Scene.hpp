@@ -288,17 +288,6 @@ namespace GTEngine
         SceneNode* CreateNewSceneNode(GTCore::Deserializer &deserializer);
         
 
-
-        /// Refreshes the given scene object.
-        ///
-        /// @param object [in] A reference to the object to refresh.
-        ///
-        /// @remarks
-        ///     Internally, refreshing an object will simply remove and re-add the object from/to the scene, which will then force updates to
-        ///     the internal structures (update manager, physics manager, etc).
-        void RefreshObject(SceneObject &object);
-
-
         /// Retrieves a scene node by it's ID.
               SceneNode* GetSceneNodeByID(uint64_t sceneNodeID);
         const SceneNode* GetSceneNodeByID(uint64_t sceneNodeID) const;
