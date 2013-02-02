@@ -35,9 +35,46 @@ end
 function GTGUI.Element:TabBar()
     self.activeTab = nil;
     
+    self.ActiveTabBorderColor     = "#555";
+    self.HoveredTabBorderColor    = "#555";
+    self.ActiveTabBackgroundColor = "#3c3c3c";
+    
     function self:AddTab(text)
         local tab = GTGUI.Server.New("<div styleclass='tabbar-tab' />");
         self:PrependChild(tab);
+        
+        tab:OnMouseEnter(function()
+            tab:SetStyle("border-color", self.HoveredTabBorderColor);
+            
+            local prevSibling = tab:GetPrevSibling();
+            local nextSibling = tab:GetNextSibling();
+            
+            if prevSibling ~= nil and prevSibling == self.activeTab then
+                tab:SetStyle("border-left-width", "0px");
+                tab:SetStyle("padding-left",      "6px");
+            else
+                tab:SetStyle("border-left-width", "1px");
+                tab:SetStyle("padding-left",      "5px");
+            end
+            
+            if nextSibling ~= nil and nextSibling == self.activeTab then
+                tab:SetStyle("border-right-width", "0px");
+                tab:SetStyle("padding-right",      "6px");
+            else
+                tab:SetStyle("border-right-width", "1px");
+                tab:SetStyle("padding-right",      "5px");
+            end
+        end);
+        
+        tab:OnMouseLeave(function()
+            tab:SetStyle("border-color", "none");
+            
+            tab:SetStyle("border-left-width",  "0px");
+            tab:SetStyle("padding-left",       "6px");
+            
+            tab:SetStyle("border-right-width", "0px");
+            tab:SetStyle("padding-right",      "6px");
+        end);
         
         self:OnTabAdded({tab = tab});
         
@@ -88,6 +125,9 @@ function GTGUI.Element:TabBar()
         if self.activeTab ~= tab then                       -- This is a super important check. Leave this.
             self:DeactivateActiveTab();
             self.activeTab = tab;
+            self.activeTab:SetStyle("border-color",     self.ActiveTabBorderColor);
+            self.activeTab:SetStyle("background-color", self.ActiveTabBackgroundColor);
+            self.activeTab.borderHider:SetStyle("background-color", self.ActiveTabBackgroundColor);
             
             if not blockEvent then self:OnTabActivated({tab = tab}) end;
         end
@@ -96,6 +136,8 @@ function GTGUI.Element:TabBar()
     function self:DeactivateActiveTab()
         if self.activeTab ~= nil then
             self.activeTab:Deactivate();
+            self.activeTab:SetStyle("border-color",     "none");
+            self.activeTab:SetStyle("background-color", "none");
             
             self:OnTabDeactivated({tab = self.activeTab});
             
