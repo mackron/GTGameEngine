@@ -74,6 +74,14 @@ namespace GTEngine
                     int Delete(GTCore::Script &script);
 
 
+                    /// Retrieves the ID of the given scene node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose ID is being retrieved.
+                    ///
+                    ///     An important note. In the C++ side, the ID is 64-bits. On the Lua side, it is 32-bits.
+                    int GetID(GTCore::Script &script);
+
 
                     /// Retrieves the name of the given component.
                     ///
