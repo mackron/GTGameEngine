@@ -1600,9 +1600,9 @@ end
 function GTGUI.Element:SceneEditor(_internalPtr)
     self:SubEditor();
 
-    self.Viewport    = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-viewport' style='' />");
-    self.Panel       = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
-    self.ContextMenu = GTGUI.Server.New("<div                                   styleclass='menu'                  style='z-index:100; positioning:absolute; visible:false' />");
+    self.Viewport        = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-viewport' style='' />");
+    self.PropertiesPanel = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
+    self.ContextMenu     = GTGUI.Server.New("<div                                   styleclass='menu'                  style='z-index:100; positioning:absolute; visible:false' />");
     
     self.PhysicsButton     = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()       .. "' styleclass='physics-button-container' style='' />");
     self.PhysicsButtonIcon = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID() .. "' styleclass='physics-button-icon'      style='' />");
@@ -1620,9 +1620,9 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.IsMouseOverViewport     = false;
     
     
-    self.Panel:SceneEditorPropertiesPanel();
+    self.PropertiesPanel:SceneEditorPropertiesPanel();
     
-    self.Panel:OnSceneNodeChanged(function()
+    self.PropertiesPanel:OnSceneNodeChanged(function()
         self:CommitStateStackFrame()
     end);
     
@@ -1826,19 +1826,19 @@ function GTGUI.Element:SceneEditor(_internalPtr)
 
     
     function self:HidePanels(message)
-        self.Panel:HidePanels(message);
+        self.PropertiesPanel:HidePanels(message);
     end
     
     function self:ShowPanels()
-        self.Panel:ShowPanels();
+        self.PropertiesPanel:ShowPanels();
     end
     
     function self:UpdatePanels()
-        self.Panel:Update(self:GetSelectedSceneNode());
+        self.PropertiesPanel:Update(self:GetSelectedSceneNode());
     end
     
     function self:UpdateTransformPanel()
-        self.Panel:UpdateTransformPanel();
+        self.PropertiesPanel:UpdateTransformPanel();
     end
 
     

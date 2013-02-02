@@ -115,7 +115,7 @@ namespace GTEngine
                         }
                         script.Pop(1);
 
-                        script.Push("Panel");
+                        script.Push("PropertiesPanel");
                         script.GetTableValue(-2);
                         assert(script.IsTable(-1));
                         {
@@ -127,7 +127,7 @@ namespace GTEngine
                                 script.Call(1, 1);
                                 assert(script.IsString(-1));
                                 {
-                                    this->GUI.Panel = gui.GetElementByID(script.ToString(-1));
+                                    this->GUI.PropertiesPanel = gui.GetElementByID(script.ToString(-1));
                                 }
                                 script.Pop(1);          // <-- return value from GetID()
                             }
