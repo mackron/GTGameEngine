@@ -623,6 +623,11 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.SceneNode:GetID()"
+                "    return GTEngine.System.SceneNode.GetID(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.SceneNode:GetName()"
                 "    return GTEngine.System.SceneNode.GetName(self._internalPtr);"
                 "end;"
@@ -762,6 +767,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "Create",                  FFI::SystemFFI::SceneNodeFFI::Create);
                         script.SetTableFunction(-1, "Delete",                  FFI::SystemFFI::SceneNodeFFI::Delete);
 
+                        script.SetTableFunction(-1, "GetID",                   FFI::SystemFFI::SceneNodeFFI::GetID);
                         script.SetTableFunction(-1, "GetName",                 FFI::SystemFFI::SceneNodeFFI::GetName);
                         script.SetTableFunction(-1, "SetName",                 FFI::SystemFFI::SceneNodeFFI::SetName);
 
@@ -1121,6 +1127,22 @@ namespace GTEngine
                     {
                         delete reinterpret_cast<SceneNode*>(script.ToPointer(1));
                         return 0;
+                    }
+
+
+                    int GetID(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            script.Push(static_cast<int>(sceneNode->GetID()));
+                        }
+                        else
+                        {
+                            script.Push(0);
+                        }
+
+                        return 1;
                     }
 
 
