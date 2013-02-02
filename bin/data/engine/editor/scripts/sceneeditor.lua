@@ -1597,10 +1597,16 @@ function GTGUI.Element:SceneEditorPropertiesPanel()
 end
 
 
+function GTGUI.Element:SceneEditorHierarchyPanel()
+    self.TreeView = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-hierarchy-treeview'        style='' />");
+end
+
+
 function GTGUI.Element:SceneEditorPanel(sceneEditor)
     self.TabBar          = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-tabbar'        style='' />");
     self.Body            = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-body'          style='' />");
     self.PropertiesPanel = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-properties-panel'    style='visible:false' />");
+    self.HierarchyPanel  = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-hierarchy-panel'     style='visible:false' />");
     self.SceneEditor     = sceneEditor;
     
     
@@ -1617,6 +1623,7 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
         if data.tab == self.PropertiesTab then
             self.PropertiesPanel:Show();
         elseif data.tab == self.HierarchyTab then
+            self.HierarchyPanel:Show();
         end
     end);
     
@@ -1624,6 +1631,7 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
         if data.tab == self.PropertiesTab then
             self.PropertiesPanel:Hide();
         elseif data.tab == self.HierarchyTab then
+            self.HierarchyPanel:Hide();
         end
     end);
     
@@ -1638,6 +1646,10 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
     self.PropertiesPanel:OnSceneNodeChanged(function()
         self.SceneEditor:CommitStateStackFrame()
     end);
+    
+    
+    
+    self.HierarchyPanel:SceneEditorHierarchyPanel();
 end
 
 

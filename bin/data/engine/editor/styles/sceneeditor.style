@@ -59,7 +59,7 @@ scene-editor-properties-panel
     child-plane:        horizontal
     flex-child-width:   true
     
-    transparent-mouse-input:true
+    transparent-mouse-input: true
 }
 
 scene-editor-properties-panel-body
@@ -69,6 +69,23 @@ scene-editor-properties-panel-body
     
     transparent-mouse-input: true
 }
+
+
+scene-editor-hierarchy-panel
+{
+    width:  100%
+    height: 100%
+}
+
+scene-editor-hierarchy-treeview includes treeview
+{
+    width:            100%
+    height:           100%
+    border:           none
+    background-color: #363636
+}
+
+
 
 
 collision-shape-panel
