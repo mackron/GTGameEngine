@@ -24,11 +24,6 @@ namespace GTEngine
         this->sceneEditor.OnObjectRemoved(object);
     }
 
-    void SceneEditorSceneEventHandler::OnObjectRefreshed(SceneObject &object)
-    {
-        this->sceneEditor.OnObjectRefreshed(object);
-    }
-
 
     void SceneEditorSceneEventHandler::OnSceneNodeNameChanged(SceneNode &node)
     {

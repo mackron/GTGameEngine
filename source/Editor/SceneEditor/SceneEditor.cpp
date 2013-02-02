@@ -796,16 +796,56 @@ namespace GTEngine
                 {
                     this->sceneNodes.Add(uniqueID, &node);
                 }
+
+
+
+                // Picking shapes need to be created.
+                //
+                // We always create the shapes regardless of whether or not they're visible. We only add to the picking world if it's visible, though.
+                auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
+
+                if (metadata->UseModelForPickingShape())
+                {
+                    metadata->SetPickingCollisionShapeToModel();
+
+                    if (metadata->GetPickingCollisionShape())
+                    {
+                        pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
+                    }
+                }
+
+
+                if (node.IsVisible())
+                {
+                    if (metadata->GetPickingCollisionShape() != nullptr)
+                    {
+                        btTransform transform;
+                        node.GetWorldTransform(transform);
+                        pickingCollisionObject.setWorldTransform(transform);
+
+                        this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                    }
+
+
+                    // If we have a sprite, we'll want to add it's picking object to the picking world.
+                    if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
+                    {
+                        this->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                    }
+                }
+
+
+
+                // Select the scene node if it's marked as such.
+                if (metadata->IsSelected())
+                {
+                    this->SelectSceneNode(node, true);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
+                }
             }
 
 
             // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
             this->PostOnSceneNodeAddedToScript(node);
-
-
-
-            // We can cheat here and just act as if the object has been refreshed.
-            this->OnObjectRefreshed(object);        // <-- We'll be removing the notion of "Refreshing", so we will need to get rid of this, too.
         }
     }
 
@@ -837,77 +877,6 @@ namespace GTEngine
 
                 // The state needs to know that it no longer has the node.
                 this->sceneNodes.RemoveByKey(metadata->GetID());
-            }
-        }
-    }
-
-    void SceneEditor::OnObjectRefreshed(SceneObject &object)
-    {
-        if (object.GetType() == SceneObjectType_SceneNode)
-        {
-            auto &node = static_cast<SceneNode &>(object);
-
-            auto metadata = node.GetComponent<EditorMetadataComponent>();
-            if (metadata != nullptr)
-            {
-                // If we have a model, we'll want to set the collision shape to that of the model.
-                if (node.HasComponent<ModelComponent>())
-                {
-                    if (metadata->UseModelForPickingShape())
-                    {
-                        metadata->SetPickingCollisionShapeToModel();
-                    }
-                }
-
-
-                // We need to remove and re-add the collision shape since it might have changed. We only re-add if it's visible.
-                auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
-
-                auto world = pickingCollisionObject.GetWorld();
-                if (world != nullptr)
-                {
-                    world->RemoveCollisionObject(pickingCollisionObject);
-                }
-
-
-                // If the node is visible, we'll need to include the picking collision objects.
-                if (node.IsVisible())
-                {
-                    // If the picking shape is set to the model, we want to update it here just to make sure everything is valid.
-                    if (metadata->UseModelForPickingShape())
-                    {
-                        metadata->SetPickingCollisionShapeToModel();
-
-                        if (metadata->GetPickingCollisionShape())
-                        {
-                            pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
-                        }
-                    }
-
-
-                    if (metadata->GetPickingCollisionShape() != nullptr)
-                    {
-                        btTransform transform;
-                        node.GetWorldTransform(transform);
-
-                        pickingCollisionObject.setWorldTransform(transform);
-                        this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
-                    }
-
-
-                    // If we have a sprite, we'll want to add it's picking object to the picking world.
-                    if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
-                    {
-                        this->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
-                    }
-                }
-
-
-                // The the node is selected, we need to make sure everything is aware of it.
-                if (metadata->IsSelected())
-                {
-                    this->SelectSceneNode(node, true);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
-                }
             }
         }
     }
