@@ -1722,7 +1722,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.IsMouseOverViewport     = false;
     
     
-    self.Panel:SceneEditorPanel();
+    self.Panel:SceneEditorPanel(self);
     self.PropertiesPanel = self.Panel.PropertiesPanel;
     self.HierarchyPanel  = self.Panel.HierarchyPanel;
     
