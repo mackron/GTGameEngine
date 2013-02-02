@@ -626,12 +626,6 @@ namespace GTEngine
         void RemoveFromScene();
 
 
-        /// Refreshes the scene node.
-        ///
-        /// @remarks
-        ///     This simply calls Scene::RefreshObject(). If the scene node is not in a scene, this will do nothing.
-        void Refresh();
-
 
         /**
         *   \brief  Sets whether or not the scene node is static.
