@@ -29,6 +29,12 @@ namespace GTEngine
         this->sceneEditor.OnObjectRefreshed(object);
     }
 
+
+    void SceneEditorSceneEventHandler::OnSceneNodeNameChanged(SceneNode &node)
+    {
+        this->sceneEditor.OnSceneNodeNameChanged(node);
+    }
+
     void SceneEditorSceneEventHandler::OnSceneNodeTransform(SceneNode &node)
     {
         this->sceneEditor.OnSceneNodeTransform(node);

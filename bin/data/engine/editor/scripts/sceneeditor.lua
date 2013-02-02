@@ -1975,6 +1975,10 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self.HierarchyPanel:RemoveSceneNode(sceneNodePtr);
     end
     
+    function self:OnSceneNodeNameChanged(sceneNodePtr)
+        self.HierarchyPanel:UpdateSceneNode(sceneNodePtr);
+    end
+    
     
 
     
