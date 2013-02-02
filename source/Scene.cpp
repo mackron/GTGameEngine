@@ -477,8 +477,6 @@ namespace GTEngine
         {
             this->RemoveObject(object);
             this->AddObject(object);
-
-            this->PostEvent_OnObjectRefreshed(object);
         }
         this->isRefreshingObject = false;
     }
@@ -1799,13 +1797,6 @@ namespace GTEngine
         }
     }
 
-    void Scene::PostEvent_OnObjectRefreshed(SceneObject &object)
-    {
-        for (size_t i = 0; i < this->eventHandlers.count; ++i)
-        {
-            this->eventHandlers[i]->OnObjectRefreshed(object);
-        }
-    }
 
     void Scene::PostEvent_OnSceneNodeNameChanged(SceneNode &node)
     {
