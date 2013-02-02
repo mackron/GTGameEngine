@@ -265,7 +265,7 @@ namespace GTEngine
             auto mesh = this->meshes[i];
             assert(mesh != nullptr);
             {
-                this->meshes[i]->Serialize(meshesSerializer, serializeMeshGeometry);
+                mesh->Serialize(meshesSerializer, serializeMeshGeometry);
             }
         }
 

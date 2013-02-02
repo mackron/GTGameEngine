@@ -147,8 +147,7 @@ namespace GTEngine
         {
             auto &sceneNode = static_cast<SceneNode &>(object);
 
-            auto directionalLightComponent = sceneNode.GetComponent<DirectionalLightComponent>();
-            assert(directionalLightComponent != nullptr);
+            assert(sceneNode.HasComponent<DirectionalLightComponent>());
             {
                 assert(!this->directionalLights.Exists(&sceneNode));
                 {
@@ -173,8 +172,7 @@ namespace GTEngine
         {
             auto &sceneNode = static_cast<SceneNode &>(object);
 
-            auto ambientLightComponent = sceneNode.GetComponent<AmbientLightComponent>();
-            assert(ambientLightComponent != nullptr);
+            assert(sceneNode.HasComponent<AmbientLightComponent>());
             {
                 assert(!this->ambientLights.Exists(&sceneNode));
                 {
