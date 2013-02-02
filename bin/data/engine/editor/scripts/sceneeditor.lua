@@ -1825,19 +1825,19 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
 
     
-    function self:HidePanels(message)
+    function self:HidePropertyPanels(message)
         self.PropertiesPanel:HidePanels(message);
     end
     
-    function self:ShowPanels()
+    function self:ShowPropertyPanels()
         self.PropertiesPanel:ShowPanels();
     end
     
-    function self:UpdatePanels()
+    function self:UpdatePropertyPanels()
         self.PropertiesPanel:Update(self:GetSelectedSceneNode());
     end
     
-    function self:UpdateTransformPanel()
+    function self:UpdatePropertyTransformPanel()
         self.PropertiesPanel:UpdateTransformPanel();
     end
 
@@ -1848,14 +1848,14 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         
         if selectedNodeCount > 1 then        -- Multiple selections
             self:SetSelectedSceneNode(nil);
-            self:HidePanels("Multiple Objects Selected");
+            self:HidePropertyPanels("Multiple Objects Selected");
         elseif selectedNodeCount == 0 then   -- Nothing selected
             self:SetSelectedSceneNode(nil);
-            self:HidePanels("Nothing Selected");
+            self:HidePropertyPanels("Nothing Selected");
         else                                 -- Single selection
             self:SetSelectedSceneNode(GTEngine.System.SceneEditor.GetFirstSelectedSceneNodePtr(self._internalPtr));
-            self:UpdatePanels();
-            self:ShowPanels();
+            self:UpdatePropertyPanels();
+            self:ShowPropertyPanels();
         end
     end
     
@@ -1980,7 +1980,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     
     -- We're going to hide the panels by default since nothing is selected right now.
-    self:HidePanels("Nothing Selected");
+    self:HidePropertyPanels("Nothing Selected");
     
     
     return self;
