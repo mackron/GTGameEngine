@@ -25,9 +25,6 @@ namespace GTEngine
         /// SceneEventHandler::OnObjectRemoved()
         void OnObjectRemoved(SceneObject &object);
 
-        /// SceneEventHandler::OnObjectRefreshed()
-        void OnObjectRefreshed(SceneObject &object);
-
 
         /// SceneEventHandler::OnSceneNodeNameChanged()
         void OnSceneNodeNameChanged(SceneNode &node);
