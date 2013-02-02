@@ -41,8 +41,12 @@ namespace GTEngine
         // Here we'll setup the built-in nodes.
         this->camera.AddComponent<GTEngine::CameraComponent>();
         this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
-        this->camera.AddComponent<GTEngine::EditorMetadataComponent>()->DeleteOnClose(false);
-        this->camera.SetDataPointer(0, this);
+        
+        auto metadata = this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
+        {
+            metadata->DeleteOnClose(false);
+        }
+        
         this->camera.DisableSerialization();
         this->camera.DisableStateStackStaging();
 
@@ -54,20 +58,8 @@ namespace GTEngine
         this->scene.AddSceneNode(this->camera);
 
         this->transformGizmo.Initialise();
-        this->transformGizmo.GetSceneNode().SetDataPointer(0, this);
-        this->transformGizmo.GetXArrowSceneNode().SetDataPointer(0, this);
-        this->transformGizmo.GetYArrowSceneNode().SetDataPointer(0, this);
-        this->transformGizmo.GetZArrowSceneNode().SetDataPointer(0, this);
-        this->transformGizmo.GetXCircleSceneNode().SetDataPointer(0, this);
-        this->transformGizmo.GetYCircleSceneNode().SetDataPointer(0, this);
-        this->transformGizmo.GetZCircleSceneNode().SetDataPointer(0, this);
-        this->transformGizmo.GetCameraFacingCircleSceneNode().SetDataPointer(0, this);
-        this->transformGizmo.GetXScaleSceneNode().SetDataPointer(0, this);
-        this->transformGizmo.GetYScaleSceneNode().SetDataPointer(0, this);
-        this->transformGizmo.GetZScaleSceneNode().SetDataPointer(0, this);
-
-        this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
         this->transformGizmo.Hide();
+        this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
 
 
 
@@ -770,14 +762,6 @@ namespace GTEngine
         if (object.GetType() == SceneObjectType_SceneNode)
         {
             auto &node = static_cast<SceneNode &>(object);
-
-            // The default data pointer is going to be a pointer to the editor state that owns the scene node. If this has already been set, we leave it
-            // alone. Otherwise, we set it to the current state.
-            if (node.GetDataPointer<SceneEditor>(0) == nullptr)
-            {
-                node.SetDataPointer(0, this);
-            }
-
 
             // We need a metadata component if we don't already have one.
             auto metadata = node.GetComponent<EditorMetadataComponent>();
