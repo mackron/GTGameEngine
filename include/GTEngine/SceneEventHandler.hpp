@@ -41,6 +41,11 @@ namespace GTEngine
         virtual void OnObjectRefreshed(SceneObject &object);
 
 
+        /// Called just after a scene node has had it's name changed.
+        ///
+        /// @param sceneNode [in] A reference to the scene node that has just had it's name changed.
+        virtual void OnSceneNodeNameChanged(SceneNode &sceneNode);
+
         /// Called just after a scene node has been translated and or rotated.
         ///
         /// @param sceneNode [in] A reference to the scene node that has just had it's tranformation changed.

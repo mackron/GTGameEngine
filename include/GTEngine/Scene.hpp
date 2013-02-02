@@ -644,6 +644,11 @@ namespace GTEngine
         /// Called after a scene node is removed from the scene.
         void OnSceneNodeRemoved(SceneNode &node);
 
+        /// Called when the name a scene node is changed.
+        ///
+        /// @param node [in] A reference to the scene node.
+        void OnSceneNodeNameChanged(SceneNode &node);
+
         /// Called when a scene node is moved, rotated or both. This is not called for scaling. Use OnSceneNodeScale() that.
         ///
         /// @param node                 [in] A reference to the node that has been transformed.
@@ -696,6 +701,11 @@ namespace GTEngine
         ///
         /// @param object [in] A reference to the object that has just been refreshed.
         void PostEvent_OnObjectRefreshed(SceneObject &object);
+
+        /// Helper for posting an OnSceneNodeNameChanged event.
+        ///
+        /// @param node [in] A reference to the scene node that has just had it's name changed.
+        void PostEvent_OnSceneNodeNameChanged(SceneNode &node);
 
         /// Helper for posting an OnSceneNodeTransform event.
         ///
