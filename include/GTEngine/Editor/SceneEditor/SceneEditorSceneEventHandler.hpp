@@ -28,6 +28,10 @@ namespace GTEngine
         /// SceneEventHandler::OnObjectRefreshed()
         void OnObjectRefreshed(SceneObject &object);
 
+
+        /// SceneEventHandler::OnSceneNodeNameChanged()
+        void OnSceneNodeNameChanged(SceneNode &node);
+
         /// SceneEventHandler::OnSceneNodeTransform()
         void OnSceneNodeTransform(SceneNode &node);
 
