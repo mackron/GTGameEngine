@@ -1535,10 +1535,6 @@ namespace GTEngine
             {
                 this->scene.AddSceneNode(*node);
             }
-            else
-            {
-                node->Refresh();
-            }
         }
     }
 
