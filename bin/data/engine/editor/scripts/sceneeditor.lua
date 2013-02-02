@@ -1367,7 +1367,7 @@ end
 
 
 function GTGUI.Element:SceneEditorPropertiesPanel()
-    self.Body      = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel-body' style='' />");
+    self.Body      = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-properties-panel-body' style='' />");
     self.Scrollbar = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='vertical-scrollbar'      style='' />");
     
     self.Body.MessageContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='height:auto; width:100%; margin-top:8px; horizontal-align:center; font-style:bold; text-color:#555; visible:false;' />")
@@ -1597,16 +1597,33 @@ function GTGUI.Element:SceneEditorPropertiesPanel()
 end
 
 
+function GTGUI.Element:SceneEditorPanel(sceneEditor)
+    self.PropertiesPanel = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-properties-panel'    style='' />");
+    self.SceneEditor     = sceneEditor;
+    
+    
+    self.PropertiesPanel:SceneEditorPropertiesPanel();
+    
+    self.PropertiesPanel:OnSceneNodeChanged(function()
+        self.SceneEditor:CommitStateStackFrame()
+    end);
+    
+end
+
+
 function GTGUI.Element:SceneEditor(_internalPtr)
     self:SubEditor();
 
     self.Viewport        = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-viewport' style='' />");
-    self.PropertiesPanel = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
+    self.Panel           = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
+    --self.PropertiesPanel = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
     self.ContextMenu     = GTGUI.Server.New("<div                                   styleclass='menu'                  style='z-index:100; positioning:absolute; visible:false' />");
     
     self.PhysicsButton     = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()       .. "' styleclass='physics-button-container' style='' />");
     self.PhysicsButtonIcon = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID() .. "' styleclass='physics-button-icon'      style='' />");
     self.PhysicsButtonText = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID() .. "' styleclass='physics-button-text'      style=''>Physics</div>");
+    
+    
     
     
     
@@ -1620,11 +1637,16 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.IsMouseOverViewport     = false;
     
     
-    self.PropertiesPanel:SceneEditorPropertiesPanel();
+    self.Panel:SceneEditorPanel();
+    self.PropertiesPanel = self.Panel.PropertiesPanel;
     
-    self.PropertiesPanel:OnSceneNodeChanged(function()
-        self:CommitStateStackFrame()
-    end);
+    
+    
+    --self.PropertiesPanel:SceneEditorPropertiesPanel();
+    
+    --self.PropertiesPanel:OnSceneNodeChanged(function()
+    --    self:CommitStateStackFrame()
+    --end);
     
     
     
