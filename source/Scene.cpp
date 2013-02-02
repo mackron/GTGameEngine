@@ -1257,6 +1257,17 @@ namespace GTEngine
         }
     }
 
+    void Scene::OnSceneNodeNameChanged(SceneNode &node)
+    {
+        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+        }
+
+
+        this->PostEvent_OnSceneNodeNameChanged(node);
+    }
+
     void Scene::OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject)
     {
         if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
@@ -1793,6 +1804,14 @@ namespace GTEngine
         for (size_t i = 0; i < this->eventHandlers.count; ++i)
         {
             this->eventHandlers[i]->OnObjectRefreshed(object);
+        }
+    }
+
+    void Scene::PostEvent_OnSceneNodeNameChanged(SceneNode &node)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnSceneNodeNameChanged(node);
         }
     }
 

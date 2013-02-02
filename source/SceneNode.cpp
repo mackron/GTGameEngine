@@ -85,7 +85,15 @@ namespace GTEngine
 
     void SceneNode::SetName(const char* newName)
     {
-        this->name = newName;
+        if (!GTCore::Strings::Equal(newName, this->name.c_str()))
+        {
+            this->name = newName;
+
+            if (this->scene != nullptr)
+            {
+                this->scene->OnSceneNodeNameChanged(*this);
+            }
+        }
     }
 
 
