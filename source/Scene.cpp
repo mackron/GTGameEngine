@@ -470,19 +470,6 @@ namespace GTEngine
 
 
 
-
-    void Scene::RefreshObject(SceneObject &object)
-    {
-        this->isRefreshingObject = true;
-        {
-            this->RemoveObject(object);
-            this->AddObject(object);
-        }
-        this->isRefreshingObject = false;
-    }
-
-
-
     SceneNode* Scene::GetSceneNodeByID(uint64_t sceneNodeID)
     {
         return this->sceneNodes.FindByID(sceneNodeID);
