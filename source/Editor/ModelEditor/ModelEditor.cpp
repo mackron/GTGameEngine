@@ -386,10 +386,6 @@ namespace GTEngine
 
     void ModelEditor::Refresh()
     {
-        // We want to refresh the scene node itself so that culling information is updated.
-        this->modelNode.Refresh();
-
-
         // GTGUI.Server.GetElementByID(this->mainElement->id):Refresh()
         auto &script = this->GetScript();
 
