@@ -19,10 +19,6 @@ namespace GTEngine
     {
     }
 
-    void SceneEventHandler::OnObjectRefreshed(SceneObject &)
-    {
-    }
-
 
     void SceneEventHandler::OnSceneNodeNameChanged(SceneNode &)
     {

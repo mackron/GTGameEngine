@@ -697,11 +697,6 @@ namespace GTEngine
         /// @param object [in] A reference to the object that is being removed.
         void PostEvent_OnObjectRemoved(SceneObject &object);
 
-        /// Helper for posting an OnObjectRefreshed event to every attached event handler.
-        ///
-        /// @param object [in] A reference to the object that has just been refreshed.
-        void PostEvent_OnObjectRefreshed(SceneObject &object);
-
         /// Helper for posting an OnSceneNodeNameChanged event.
         ///
         /// @param node [in] A reference to the scene node that has just had it's name changed.
