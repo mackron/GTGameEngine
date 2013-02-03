@@ -1638,6 +1638,9 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             item.SceneNodeID   = sceneNodeID;
             item.SceneNodeName = sceneNodeName;
             
+            if parentItem ~= nil then
+                parentItem:Expand();
+            end
             
             item.titleContainer:OnTear(function()
                 -- We need to create an element that we'll use as the drag-and-drop element.
