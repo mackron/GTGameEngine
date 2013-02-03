@@ -1637,6 +1637,9 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             GTEngine.System.SceneNode.SetWorldPosition(sceneNodePtr, posX, posY, posZ);
             GTEngine.System.SceneNode.SetWorldRotationXYZ(sceneNodePtr, rotX, rotY, rotZ);
             GTEngine.System.SceneNode.SetWorldScale(sceneNodePtr, scaX, scaY, scaZ);
+            
+            -- Undo/Redo point.
+            self.SceneEditor:CommitStateStackFrame();
         end
     end);
     
@@ -1691,6 +1694,9 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
                         GTEngine.System.SceneNode.SetWorldPosition(childSceneNodePtr, posX, posY, posZ);
                         GTEngine.System.SceneNode.SetWorldRotationXYZ(childSceneNodePtr, rotX, rotY, rotZ);
                         GTEngine.System.SceneNode.SetWorldScale(childSceneNodePtr, scaX, scaY, scaZ);
+                        
+                        -- Undo/Redo point.
+                        self.SceneEditor:CommitStateStackFrame();
                     end
                 end
             end);
