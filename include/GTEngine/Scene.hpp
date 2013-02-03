@@ -638,6 +638,12 @@ namespace GTEngine
         /// @param node [in] A reference to the scene node.
         void OnSceneNodeNameChanged(SceneNode &node);
 
+        /// Called when the parent of a scene node has changed.
+        ///
+        /// @param node           [in] A reference to the scene node whose parent has changed.
+        /// @param previousParent [in] A pointer to the previous parent. Can be null if the previous parent was null.
+        void OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent);
+
         /// Called when a scene node is moved, rotated or both. This is not called for scaling. Use OnSceneNodeScale() that.
         ///
         /// @param node                 [in] A reference to the node that has been transformed.
@@ -701,6 +707,11 @@ namespace GTEngine
         ///
         /// @param node [in] A reference to the scene node that has just had it's name changed.
         void PostEvent_OnSceneNodeNameChanged(SceneNode &node);
+
+        /// Helper for posting an OnSceneNodeParentChanged event.
+        ///
+        /// @param node [in] A reference to the scene node whose parent has just changed.
+        void PostEvent_OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent);
 
         /// Helper for posting an OnSceneNodeTransform event.
         ///

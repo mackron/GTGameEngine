@@ -783,6 +783,8 @@ namespace GTEngine
                         script.SetTableFunction(-1, "Hide",                    FFI::SystemFFI::SceneNodeFFI::Hide);
                         script.SetTableFunction(-1, "IsVisible",               FFI::SystemFFI::SceneNodeFFI::IsVisible);
 
+                        script.SetTableFunction(-1, "AttachChild",             FFI::SystemFFI::SceneNodeFFI::AttachChild);
+
                         script.SetTableFunction(-1, "GetScenePtr",             FFI::SystemFFI::SceneNodeFFI::GetScenePtr);
                     }
                     script.Pop(1);
@@ -1017,6 +1019,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "CommitStateStackFrame",               FFI::SystemFFI::SceneEditorFFI::CommitStateStackFrame);
                         script.SetTableFunction(-1, "Undo",                                FFI::SystemFFI::SceneEditorFFI::Undo);
                         script.SetTableFunction(-1, "Redo",                                FFI::SystemFFI::SceneEditorFFI::Redo);
+                        script.SetTableFunction(-1, "GetSceneNodePtrByID",                 FFI::SystemFFI::SceneEditorFFI::GetSceneNodePtrByID);
                         script.SetTableFunction(-1, "GetSceneNodes",                       FFI::SystemFFI::SceneEditorFFI::GetSceneNodes);
                     }
                     script.Pop(1);
@@ -1160,6 +1163,20 @@ namespace GTEngine
                         if (sceneNode != nullptr)
                         {
                             sceneNode->SetName(script.ToString(2));
+                        }
+
+                        return 0;
+                    }
+
+
+                    int AttachChild(GTCore::Script &script)
+                    {
+                        auto parentNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        auto childNode  = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                        if (parentNode != nullptr && childNode != nullptr)
+                        {
+                            parentNode->AttachChild(*childNode);
                         }
 
                         return 0;
@@ -3635,6 +3652,23 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+
+                    int GetSceneNodePtrByID(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            uint64_t sceneNodeID = static_cast<uint64_t>(script.ToInteger(2));
+                            script.Push(sceneEditor->GetScene().GetSceneNodeByID(sceneNodeID));
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+
+                        return 1;
                     }
 
 
