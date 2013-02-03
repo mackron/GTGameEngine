@@ -29,6 +29,10 @@ namespace GTEngine
         /// SceneEventHandler::OnSceneNodeNameChanged()
         void OnSceneNodeNameChanged(SceneNode &node);
 
+        /// SceneEventHandler::OnSceneNodeParentChanged()
+        void OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent);
+
+
         /// SceneEventHandler::OnSceneNodeTransform()
         void OnSceneNodeTransform(SceneNode &node);
 

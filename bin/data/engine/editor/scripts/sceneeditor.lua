@@ -1626,13 +1626,15 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
     
     
     function self:AddSceneNode(sceneNodePtr)
-        local sceneNodeID = GTEngine.System.SceneNode.GetID(sceneNodePtr);
+        local sceneNodeID       = GTEngine.System.SceneNode.GetID(sceneNodePtr);
+        local parentSceneNodeID = GTEngine.System.SceneNode.GetID(GTEngine.System.SceneNode.GetParentPtr(self.SceneEditor:GetSceneNodePtrByID(sceneNodeID)));
         
         local item = self.SceneNodes[sceneNodeID];
         if item == nil then
             local sceneNodeName = GTEngine.System.SceneNode.GetName(sceneNodePtr);
-        
-            item = self.TreeView:AddItem(sceneNodeName or "Unnamed");
+            local parentItem    = self.SceneNodes[parentSceneNodeID];
+            
+            item = self.TreeView:AddItem(sceneNodeName or "Unnamed", parentItem);
             item.SceneNodeID   = sceneNodeID;
             item.SceneNodeName = sceneNodeName;
             
@@ -2039,6 +2041,11 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     function self:OnSceneNodeNameChanged(sceneNodePtr)
         self.HierarchyPanel:UpdateSceneNode(sceneNodePtr);
+    end
+    
+    function self:OnSceneNodeParentChanged(sceneNodePtr)
+        self.HierarchyPanel:RemoveSceneNode(sceneNodePtr);
+        self.HierarchyPanel:AddSceneNode(sceneNodePtr);
     end
     
     

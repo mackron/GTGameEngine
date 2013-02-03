@@ -766,6 +766,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetName",                 FFI::SystemFFI::SceneNodeFFI::GetName);
                         script.SetTableFunction(-1, "SetName",                 FFI::SystemFFI::SceneNodeFFI::SetName);
 
+                        script.SetTableFunction(-1, "GetParentPtr",            FFI::SystemFFI::SceneNodeFFI::GetParentPtr);
+                        script.SetTableFunction(-1, "AttachChild",             FFI::SystemFFI::SceneNodeFFI::AttachChild);
+
                         script.SetTableFunction(-1, "AddComponent",            FFI::SystemFFI::SceneNodeFFI::AddComponent);
                         script.SetTableFunction(-1, "RemoveComponent",         FFI::SystemFFI::SceneNodeFFI::RemoveComponent);
                         script.SetTableFunction(-1, "GetComponent",            FFI::SystemFFI::SceneNodeFFI::GetComponent);
@@ -782,8 +785,6 @@ namespace GTEngine
                         script.SetTableFunction(-1, "Show",                    FFI::SystemFFI::SceneNodeFFI::Show);
                         script.SetTableFunction(-1, "Hide",                    FFI::SystemFFI::SceneNodeFFI::Hide);
                         script.SetTableFunction(-1, "IsVisible",               FFI::SystemFFI::SceneNodeFFI::IsVisible);
-
-                        script.SetTableFunction(-1, "AttachChild",             FFI::SystemFFI::SceneNodeFFI::AttachChild);
 
                         script.SetTableFunction(-1, "GetScenePtr",             FFI::SystemFFI::SceneNodeFFI::GetScenePtr);
                     }
@@ -1168,6 +1169,21 @@ namespace GTEngine
                         return 0;
                     }
 
+
+                    int GetParentPtr(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            script.Push(sceneNode->GetParent());
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+
+                        return 1;
+                    }
 
                     int AttachChild(GTCore::Script &script)
                     {
