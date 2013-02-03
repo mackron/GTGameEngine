@@ -181,6 +181,9 @@ namespace GTEngine
         /// SceneEditorSceneEventHandler::OnSceneNodeNameChanged()
         void OnSceneNodeNameChanged(SceneNode &node);
 
+        /// SceneEditorSceneEventHandler::OnSceneNodeParentChanged()
+        void OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent);
+
         /// SceneEditorSceneEventHandler::OnSceneNodeTransform()
         void OnSceneNodeTransform(SceneNode &node);
 
@@ -306,6 +309,10 @@ namespace GTEngine
 
         /// Posts an OnSceneNodeNameChanged() event to the scene editor.
         void PostOnSceneNodeNameChangedToScript(SceneNode &node);
+
+        /// Posts an OnSceneNodeParentChanged() event to the scene editor.
+        void PostOnSceneNodeParentChangedToScript(SceneNode &node, SceneNode* previousParent);
+
 
         /// Refreshes the selections.
         ///

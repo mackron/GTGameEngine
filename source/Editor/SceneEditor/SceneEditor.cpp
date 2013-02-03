@@ -910,6 +910,11 @@ namespace GTEngine
         this->PostOnSceneNodeNameChangedToScript(node);
     }
 
+    void SceneEditor::OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent)
+    {
+        this->PostOnSceneNodeParentChangedToScript(node, previousParent);
+    }
+
     void SceneEditor::OnSceneNodeTransform(SceneNode &node)
     {
         auto metadata = node.GetComponent<EditorMetadataComponent>();
@@ -1806,6 +1811,37 @@ namespace GTEngine
             }
         }
     }
+
+    void SceneEditor::PostOnSceneNodeParentChangedToScript(SceneNode &node, SceneNode* previousParent)
+    {
+        auto metadata = node.GetComponent<EditorMetadataComponent>();
+        assert(metadata != nullptr);
+        {
+            if (!metadata->IsSystemNode())
+            {
+                assert(this->GUI.Main != nullptr);
+                {
+                    auto &script = this->GetScript();
+
+                    script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("OnSceneNodeParentChanged");
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.PushValue(-2);   // <-- 'self'.
+                            script.Push(&node);
+                            script.Push(previousParent);
+                            script.Call(3, 0);
+                        }
+                    }
+                    script.Pop(1);
+                }
+            }
+        }
+    }
+
 
     void SceneEditor::ReselectSceneNodes()
     {

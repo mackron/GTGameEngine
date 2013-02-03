@@ -97,6 +97,12 @@ namespace GTEngine
                     int SetName(GTCore::Script &script);
 
 
+                    /// Retrieves a pointer to the parent scene node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose parent is being retrieved.
+                    int GetParentPtr(GTCore::Script &script);
+
                     /// Attaches a scene node to the given node as a child.
                     ///
                     /// @remarks
