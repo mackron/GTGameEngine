@@ -1616,6 +1616,29 @@ function GTGUI.Element:SceneEditorHierarchyPanel()
             item.SceneNodeID   = sceneNodeID;
             item.SceneNodeName = sceneNodeName;
             
+            
+            item.titleContainer:OnTear(function()
+                -- We need to create an element that we'll use as the drag-and-drop element.
+                local dragAndDropElement = GTGUI.Server.New("<div style='visible:false; positioning:absolute; z-index:100; opacity:50%; width:auto; padding:4px 2px; text-color:#ccc; font-style:bold; background-color:#666; vertical-align:center;' />");
+                dragAndDropElement:SetText(item:GetText());
+                dragAndDropElement:OnSize(function()
+                    GTGUI.Server.SetDragAndDropProxyElement(dragAndDropElement, -(dragAndDropElement:GetWidth() / 2), -(dragAndDropElement:GetHeight() / 2));
+                    dragAndDropElement:Show();
+                end)
+                dragAndDropElement:OnDragAndDropProxyRemoved(function()
+                    GTGUI.Server.DeleteElement(dragAndDropElement);
+                end)
+                
+                dragAndDropElement.sceneNodeID = item.SceneNodeID;
+            end);
+            
+            item:OnDragAndDropEnter(function()
+            end);
+            
+            item:OnDragAndDropLeave(function()
+            end);
+            
+            
             self.SceneNodes[sceneNodeID] = item;
         else
             self:UpdateSceneNode(sceneNodePtr);
