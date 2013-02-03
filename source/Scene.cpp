@@ -253,7 +253,7 @@ namespace GTEngine
         : renderer(new DefaultSceneRenderer),
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
-          paused(false), isRefreshingObject(false),
+          paused(false),
           viewports(), sceneNodes(), nextSceneNodeID(0), sceneNodesCreatedByScene(),
           navigationMesh(),
           eventHandlers(),
@@ -265,7 +265,7 @@ namespace GTEngine
         : renderer(new DefaultSceneRenderer),
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
-          paused(false), isRefreshingObject(false),
+          paused(false),
           viewports(), sceneNodes(), nextSceneNodeID(0), sceneNodesCreatedByScene(),
           navigationMesh(),
           eventHandlers(),
@@ -1202,10 +1202,7 @@ namespace GTEngine
 
 
         // Event handlers need to know.
-        if (!this->isRefreshingObject)
-        {
-            this->PostEvent_OnObjectAdded(node);
-        }
+        this->PostEvent_OnObjectAdded(node);
     }
 
     void Scene::OnSceneNodeRemoved(SceneNode &node)
@@ -1236,10 +1233,7 @@ namespace GTEngine
 
 
         // Event handlers need to know.
-        if (!this->isRefreshingObject)
-        {
-            this->PostEvent_OnObjectRemoved(node);
-        }
+        this->PostEvent_OnObjectRemoved(node);
     }
 
     void Scene::OnSceneNodeNameChanged(SceneNode &node)
