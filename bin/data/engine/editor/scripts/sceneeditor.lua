@@ -1385,6 +1385,9 @@ function GTGUI.Element:SceneEditorPropertiesPanel()
     self.CurrentSceneNode = nil;            -- The scene node whose details are currently being shown on this panel.
     self.SceneEditor      = self.Parent;    -- The parent of this element will be the main editor.
     
+    self.IsMouseOver           = false;
+    self.MouseWheelScrollSpeed = 32;
+    
     
     
     -- This will create the panels for every registered component. We always want the editor metadata to be last.
@@ -1584,6 +1587,21 @@ function GTGUI.Element:SceneEditorPropertiesPanel()
             self.Scrollbar:SetRange(self.Body:GetHeight());
         end
     end)
+    
+
+    self:OnMouseEnter(function()
+        self.IsMouseOver = true;
+    end);
+    
+    self:OnMouseLeave(function()
+        self.IsMouseOver = false;
+    end);
+    
+    self:WatchMouseWheel(function(data)
+        if self.IsMouseOver then
+            self.Scrollbar:Scroll(-data.delta * self.MouseWheelScrollSpeed);
+        end
+    end);
     
     
     
