@@ -110,6 +110,12 @@ namespace GTEngine
                     ///     Argument 2: A pointer to the child node.
                     int AttachChild(GTCore::Script &script);
 
+                    /// Orphans a scene node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node being orphaned.
+                    int Orphan(GTCore::Script &script);
+
 
                     /// Adds a new component to the given scene node.
                     ///
