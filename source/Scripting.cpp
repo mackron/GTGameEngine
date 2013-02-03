@@ -637,6 +637,15 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.SceneNode:AttachChild(childNode)"
+                "    GTEngine.System.SceneNode.AttachChild(self._internalPtr, childNode._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:Orphan()"
+                "    GTEngine.System.SceneNode.Orphan(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.SceneNode:AddComponent(componentID)"
                 "    return GTEngine.System.SceneNode.AddComponent(self._internalPtr, componentID);"
                 "end;"
@@ -795,6 +804,7 @@ namespace GTEngine
 
                         script.SetTableFunction(-1, "GetParentPtr",            FFI::SystemFFI::SceneNodeFFI::GetParentPtr);
                         script.SetTableFunction(-1, "AttachChild",             FFI::SystemFFI::SceneNodeFFI::AttachChild);
+                        script.SetTableFunction(-1, "Orphan",                  FFI::SystemFFI::SceneNodeFFI::Orphan);
 
                         script.SetTableFunction(-1, "AddComponent",            FFI::SystemFFI::SceneNodeFFI::AddComponent);
                         script.SetTableFunction(-1, "RemoveComponent",         FFI::SystemFFI::SceneNodeFFI::RemoveComponent);
@@ -1226,6 +1236,17 @@ namespace GTEngine
                         if (parentNode != nullptr && childNode != nullptr)
                         {
                             parentNode->AttachChild(*childNode);
+                        }
+
+                        return 0;
+                    }
+
+                    int Orphan(GTCore::Script &script)
+                    {
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            sceneNode->DetachFromParent();
                         }
 
                         return 0;

@@ -1624,6 +1624,22 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
     
     self.TreeView:TreeView();
     
+    self.TreeView.body:OnDrop(function(data)
+        if data.droppedElement ~= nil and data.droppedElement.sceneNodeID ~= nil then
+            local sceneNodePtr = self.SceneEditor:GetSceneNodePtrByID(data.droppedElement.sceneNodeID);
+        
+            local posX, posY, posZ = GTEngine.System.SceneNode.GetWorldPosition(sceneNodePtr);
+            local rotX, rotY, rotZ = GTEngine.System.SceneNode.GetWorldRotationXYZ(sceneNodePtr);
+            local scaX, scaY, scaZ = GTEngine.System.SceneNode.GetWorldScale(sceneNodePtr);
+        
+            GTEngine.System.SceneNode.Orphan(sceneNodePtr);
+            
+            GTEngine.System.SceneNode.SetWorldPosition(sceneNodePtr, posX, posY, posZ);
+            GTEngine.System.SceneNode.SetWorldRotationXYZ(sceneNodePtr, rotX, rotY, rotZ);
+            GTEngine.System.SceneNode.SetWorldScale(sceneNodePtr, scaX, scaY, scaZ);
+        end
+    end);
+    
     
     function self:AddSceneNode(sceneNodePtr)
         local sceneNodeID       = GTEngine.System.SceneNode.GetID(sceneNodePtr);
