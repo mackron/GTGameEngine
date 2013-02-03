@@ -471,6 +471,23 @@ namespace GTEngine
         return false;
     }
 
+    bool SceneEditor::IsAncestorSelected(const SceneNode &node) const
+    {
+        if (node.GetParent() != nullptr)
+        {
+            if (this->IsSceneNodeSelected(*node.GetParent()))
+            {
+                return true;
+            }
+            else
+            {
+                return this->IsAncestorSelected(*node.GetParent());
+            }
+        }
+
+        return false;
+    }
+
     void SceneEditor::SelectSceneNode(SceneNode &node, bool force)
     {
         if (force || !this->IsSceneNodeSelected(node))
@@ -1306,8 +1323,11 @@ namespace GTEngine
                                 auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
                                 assert(node != nullptr);
                                 {
-                                    // We change the world position here.
-                                    node->SetWorldPosition(node->GetWorldPosition() + translation);
+                                    // We change the world position here. If the node has a parent who is also selected, and position inheritance is enabled, we ignore it.
+                                    if (!this->IsAncestorSelected(*node) || !node->IsPositionInheritanceEnabled())
+                                    {
+                                        node->SetWorldPosition(node->GetWorldPosition() + translation);
+                                    }
                                 }
                             }
                         }
@@ -1340,7 +1360,10 @@ namespace GTEngine
                                     auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
                                     assert(node != nullptr);
                                     {
-                                        node->RotateAtPivotAroundWorldAxis(dragAngle, dragAxis, pivot);
+                                        if (!this->IsAncestorSelected(*node) || !node->IsOrientationInheritanceEnabled())
+                                        {
+                                            node->RotateAtPivotAroundWorldAxis(dragAngle, dragAxis, pivot);
+                                        }
                                     }
                                 }
                             }
@@ -1361,12 +1384,15 @@ namespace GTEngine
                                 auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
                                 assert(node != nullptr);
                                 {
-                                    glm::vec3 newScale = node->GetWorldScale() + scaleOffset;
+                                    if (!this->IsAncestorSelected(*node) || !node->IsScaleInheritanceEnabled())
+                                    {
+                                        glm::vec3 newScale = node->GetWorldScale() + scaleOffset;
 
-                                    // Negative scaling not yet supported.
-                                    newScale = glm::max(newScale, glm::vec3(0.0f, 0.0f, 0.0f));
+                                        // Negative scaling not yet supported.
+                                        newScale = glm::max(newScale, glm::vec3(0.0f, 0.0f, 0.0f));
 
-                                    node->SetWorldScale(newScale);
+                                        node->SetWorldScale(newScale);
+                                    }
                                 }
                             }
                         }
