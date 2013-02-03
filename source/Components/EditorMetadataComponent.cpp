@@ -46,6 +46,28 @@ namespace GTEngine
     }
 
 
+    bool EditorMetadataComponent::IsAncestorSelected() const
+    {
+        if (this->node.GetParent() != nullptr)
+        {
+            auto parentMetadata = this->node.GetParent()->GetComponent<EditorMetadataComponent>();
+            if (parentMetadata != nullptr)
+            {
+                if (parentMetadata->IsSelected())
+                {
+                    return true;
+                }
+                else
+                {
+                    return parentMetadata->IsAncestorSelected();
+                }
+            }
+        }
+
+        return false;
+    }
+
+
     const glm::vec3 & EditorMetadataComponent::GetSelectionWireframeColour() const
     {
         return this->selectionWireframeColour;
