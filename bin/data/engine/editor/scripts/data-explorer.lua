@@ -102,17 +102,17 @@ function GTGUI.Element:DataExplorer()
                 local dragAndDropElement = GTGUI.Server.New("<div style='visible:false; positioning:absolute; z-index:100; opacity:50%; width:auto; padding:4px 2px; text-color:#ccc; font-style:bold; background-color:#666; vertical-align:center;' />");
                 dragAndDropElement:SetText(item:GetText());
                 dragAndDropElement:OnSize(function()
-                    GTGUI.Server.AttachElementToMouse(dragAndDropElement, -(dragAndDropElement:GetWidth() / 2), -(dragAndDropElement:GetHeight() / 2));
+                    GTGUI.Server.SetDragAndDropProxyElement(dragAndDropElement, -(dragAndDropElement:GetWidth() / 2), -(dragAndDropElement:GetHeight() / 2));
                     dragAndDropElement:Show();
                 end)
-                dragAndDropElement:WatchLMBUp(function()
+                dragAndDropElement:OnDragAndDropProxyRemoved(function()
                     GTGUI.Server.DeleteElement(dragAndDropElement);
                 end)
                 
                 dragAndDropElement.isAsset = true;
                 dragAndDropElement.path    = item:GetShortPath();
             end
-        end)
+        end);
         
         
         function item:GetShortPath()
