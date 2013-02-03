@@ -143,6 +143,12 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the scene node whose position is being retrieved.
                     int GetPosition(GTCore::Script &script);
 
+                    /// Retrieves the world position of the given scene node as 3 floats.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose world position is being retrieved.
+                    int GetWorldPosition(GTCore::Script &script);
+
                     /// Sets the local position of the given scene node.
                     ///
                     /// @remarks
@@ -152,11 +158,27 @@ namespace GTEngine
                     ///     Argument 4: The z position.
                     int SetPosition(GTCore::Script &script);
 
+                    /// Sets the world position of the given scene node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose position is being set.
+                    ///     Argument 2: The x position.
+                    ///     Argument 3: The y position.
+                    ///     Argument 4: The z position.
+                    int SetWorldPosition(GTCore::Script &script);
+
+
                     /// Retrieves the local XYZ rotation of the given scene node as 3 return values.
                     ///
                     /// @remarks
                     ///     Argument 1: A pointer to the scene node whose rotation is being retrieved.
                     int GetRotationXYZ(GTCore::Script &script);
+
+                    /// Retrieves the world XYZ rotation of the given scene node as 3 return values.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose world rotation is being retrieved.
+                    int GetWorldRotationXYZ(GTCore::Script &script);
 
                     /// Sets the local rotation of the given scene node.
                     ///
@@ -167,11 +189,27 @@ namespace GTEngine
                     ///     Argument 4: The z rotation.
                     int SetRotationXYZ(GTCore::Script &script);
 
+                    /// Sets the world rotation of the given scene node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose rotation is being set.
+                    ///     Argument 2: The x rotation.
+                    ///     Argument 3: The y rotation.
+                    ///     Argument 4: The z rotation.
+                    int SetWorldRotationXYZ(GTCore::Script &script);
+
+
                     /// Retrieves the local scale of the given scene node as 3 return values.
                     ///
                     /// @remarks
                     ///     Argument 1: A pointer to the scene node whose scale is being retrieved.
                     int GetScale(GTCore::Script &script);
+
+                    /// Retrieves the world scale of the given scene node as 3 return values.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose scale is being retrieved.
+                    int GetWorldScale(GTCore::Script &script);
 
                     /// Sets the local scale of the given scene node.
                     ///
@@ -181,6 +219,16 @@ namespace GTEngine
                     ///     Argument 3: The y scale.
                     ///     Argument 4: The z scale.
                     int SetScale(GTCore::Script &script);
+
+                    /// Sets the world scale of the given scene node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose scale is being set.
+                    ///     Argument 2: The x scale.
+                    ///     Argument 3: The y scale.
+                    ///     Argument 4: The z scale.
+                    int SetWorldScale(GTCore::Script &script);
+
 
                     /// Returns a table containing the component IDs (names) that are attached to the given node.
                     ///

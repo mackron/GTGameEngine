@@ -1663,7 +1663,15 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
                     local childSceneNodePtr  = self.SceneEditor:GetSceneNodePtrByID(childSceneNodeID);
                     
                     if parentSceneNodePtr ~= nil and childSceneNodePtr ~= nil then
+                        local posX, posY, posZ = GTEngine.System.SceneNode.GetWorldPosition(childSceneNodePtr);
+                        local rotX, rotY, rotZ = GTEngine.System.SceneNode.GetWorldRotationXYZ(childSceneNodePtr);
+                        local scaX, scaY, scaZ = GTEngine.System.SceneNode.GetWorldScale(childSceneNodePtr);
+                    
                         GTEngine.System.SceneNode.AttachChild(parentSceneNodePtr, childSceneNodePtr);
+                        
+                        GTEngine.System.SceneNode.SetWorldPosition(childSceneNodePtr, posX, posY, posZ);
+                        GTEngine.System.SceneNode.SetWorldRotationXYZ(childSceneNodePtr, rotX, rotY, rotZ);
+                        GTEngine.System.SceneNode.SetWorldScale(childSceneNodePtr, scaX, scaY, scaZ);
                     end
                 end
             end);
