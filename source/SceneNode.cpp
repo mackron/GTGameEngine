@@ -214,56 +214,58 @@ namespace GTEngine
 
     void SceneNode::AttachChild(SceneNode &child)
     {
-        auto previousParent = child.GetParent();
-
-
-        // If the childs parent is equal to this, it is already attached and so we don't need to do anything.
-        if (previousParent != this)
+        if (&child != this)
         {
-            // If the child already has a parent, it needs to be detached.
-            child.DetachFromParent(false);          // <-- 'false' = don't post OnParentChanged to the scene.
+            auto previousParent = child.GetParent();
 
-            // If we don't have children, this will be the first one...
-            if (this->firstChild == nullptr)
+            // If the childs parent is equal to this, it is already attached and so we don't need to do anything.
+            if (previousParent != this)
             {
-                this->firstChild = &child;
-            }
+                // If the child already has a parent, it needs to be detached.
+                child.DetachFromParent(false);          // <-- 'false' = don't post OnParentChanged to the scene.
 
-            // If we already have children, this child needs to be appended to the end of the children list.
-            if (this->lastChild != nullptr)
-            {
-                auto secondLastChild = this->lastChild;
-
-                secondLastChild->_SetNextSibling(&child);
-                child._SetPrevSibling(secondLastChild);
-            }
-
-            // The new item is always the last one.
-            child._SetNextSibling(nullptr);
-            this->lastChild = &child;
-
-
-            // The child needs to know that this is it's new parent.
-            child._SetParent(this);
-
-
-            // The event handlers need to know about the new child.
-            if (!this->EventsLocked())
-            {
-                this->OnAttach(child);
-            }
-
-
-            // Finally, we need to add the child to the current scene, if any.
-            if (this->scene != nullptr)
-            {
-                if (child.GetScene() != this->scene)
+                // If we don't have children, this will be the first one...
+                if (this->firstChild == nullptr)
                 {
-                    this->scene->AddSceneNode(child);
+                    this->firstChild = &child;
                 }
-                else
+
+                // If we already have children, this child needs to be appended to the end of the children list.
+                if (this->lastChild != nullptr)
                 {
-                    this->scene->OnSceneNodeParentChanged(child, previousParent);
+                    auto secondLastChild = this->lastChild;
+
+                    secondLastChild->_SetNextSibling(&child);
+                    child._SetPrevSibling(secondLastChild);
+                }
+
+                // The new item is always the last one.
+                child._SetNextSibling(nullptr);
+                this->lastChild = &child;
+
+
+                // The child needs to know that this is it's new parent.
+                child._SetParent(this);
+
+
+                // The event handlers need to know about the new child.
+                if (!this->EventsLocked())
+                {
+                    this->OnAttach(child);
+                }
+
+
+                // Finally, we need to add the child to the current scene, if any.
+                if (this->scene != nullptr)
+                {
+                    if (child.GetScene() != this->scene)
+                    {
+                        this->scene->AddSceneNode(child);
+                    }
+                    else
+                    {
+                        this->scene->OnSceneNodeParentChanged(child, previousParent);
+                    }
                 }
             }
         }
