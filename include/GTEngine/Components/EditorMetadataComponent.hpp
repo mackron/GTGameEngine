@@ -47,6 +47,13 @@ namespace GTEngine
         void Deselect();
 
 
+        /// Determines whether or not the sene node has an ancestor that is marked as selected.
+        ///
+        /// @remarks
+        ///     If the scene node does not have a parent, this will return false.
+        bool IsAncestorSelected() const;
+
+
         /// Retrieves the selection wireframe colour.
         const glm::vec3 & GetSelectionWireframeColour() const;
 

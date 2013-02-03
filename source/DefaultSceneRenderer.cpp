@@ -630,7 +630,7 @@ namespace GTEngine
 
 
                         // If the geometry is having the wireframe drawn, we will need to also draw that in the material pass.
-                        if (editorMetadataComponent != nullptr && editorMetadataComponent->IsSelected())
+                        if (editorMetadataComponent != nullptr && (editorMetadataComponent->IsSelected() || editorMetadataComponent->IsAncestorSelected()))
                         {
                             auto &rcDrawWireframe = this->rcDrawGeometry[Renderer::BackIndex].Acquire();
                             rcDrawWireframe.va                = va;
@@ -643,7 +643,15 @@ namespace GTEngine
                             rcDrawWireframe.cullBackFace      = modelComponent->IsCullingBackFaces();
                             rcDrawWireframe.cullFrontFace     = modelComponent->IsCullingFrontFaces();
                             rcDrawWireframe.fill              = false;              // 'false' = wireframe.
-                            rcDrawWireframe.materialParameters.Set("EmissiveColour", editorMetadataComponent->GetSelectionWireframeColour());
+
+                            if (editorMetadataComponent->IsSelected())
+                            {
+                                rcDrawWireframe.materialParameters.Set("EmissiveColour", editorMetadataComponent->GetSelectionWireframeColour());
+                            }
+                            else
+                            {
+                                rcDrawWireframe.materialParameters.Set("EmissiveColour", editorMetadataComponent->GetSelectionWireframeColour() * 0.66f);
+                            }
 
 
                             auto &materialMetadata = this->GetMaterialMetadata(*this->wireframeMaterial);
@@ -678,7 +686,7 @@ namespace GTEngine
                         rcDrawGeometry.cullBackFace      = modelComponent->IsCullingBackFaces();
                         rcDrawGeometry.cullFrontFace     = modelComponent->IsCullingFrontFaces();
 
-                        if (editorMetadataComponent != nullptr && editorMetadataComponent->IsSelected())
+                        if (editorMetadataComponent != nullptr && (editorMetadataComponent->IsSelected() || editorMetadataComponent->IsAncestorSelected()))
                         {
                             rcDrawGeometry.polygonOffsetUnits  = 1;
                             rcDrawGeometry.enablePolygonOffset = true;
