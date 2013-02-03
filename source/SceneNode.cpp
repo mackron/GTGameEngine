@@ -214,11 +214,14 @@ namespace GTEngine
 
     void SceneNode::AttachChild(SceneNode &child)
     {
+        auto previousParent = child.GetParent();
+
+
         // If the childs parent is equal to this, it is already attached and so we don't need to do anything.
-        if (child.GetParent() != this)
+        if (previousParent != this)
         {
             // If the child already has a parent, it needs to be detached.
-            child.DetachFromParent();
+            child.DetachFromParent(false);          // <-- 'false' = don't post OnParentChanged to the scene.
 
             // If we don't have children, this will be the first one...
             if (this->firstChild == nullptr)
@@ -254,7 +257,14 @@ namespace GTEngine
             // Finally, we need to add the child to the current scene, if any.
             if (this->scene != nullptr)
             {
-                this->scene->AddSceneNode(child);
+                if (child.GetScene() != this->scene)
+                {
+                    this->scene->AddSceneNode(child);
+                }
+                else
+                {
+                    this->scene->OnSceneNodeParentChanged(child, previousParent);
+                }
             }
         }
     }
@@ -264,9 +274,11 @@ namespace GTEngine
         parent.AttachChild(*this);
     }
 
-    void SceneNode::DetachChild(SceneNode &child)
+    void SceneNode::DetachChild(SceneNode &child, bool postParentChangedEventToScene)
     {
-        if (child.GetParent() == this)
+        auto previousParent = child.GetParent();
+
+        if (previousParent == this)
         {
             auto childPrevSibling = child.GetPrevSibling();
             auto childNextSibling = child.GetNextSibling();
@@ -302,6 +314,13 @@ namespace GTEngine
                 this->OnDetach(child);
             }
 
+
+            if (postParentChangedEventToScene && child.GetScene() != nullptr)
+            {
+                child.GetScene()->OnSceneNodeParentChanged(child, previousParent);
+            }
+
+
             // It makes more sense to leave the scene as-is, so don't be tempted to set it to nullptr like we do the parent.
         }
     }
@@ -314,12 +333,12 @@ namespace GTEngine
         }
     }
 
-    void SceneNode::DetachFromParent()
+    void SceneNode::DetachFromParent(bool postParentChangedEventToScene)
     {
         auto parent = this->GetParent();
         if (parent != nullptr)
         {
-            parent->DetachChild(*this);
+            parent->DetachChild(*this, postParentChangedEventToScene);
         }
     }
 

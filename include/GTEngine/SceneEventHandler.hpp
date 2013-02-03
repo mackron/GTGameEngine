@@ -41,6 +41,11 @@ namespace GTEngine
         /// @param sceneNode [in] A reference to the scene node that has just had it's name changed.
         virtual void OnSceneNodeNameChanged(SceneNode &sceneNode);
 
+        /// Called just after a scene node has had it's parent changed.
+        ///
+        /// @param sceneNode [in] A reference to the scene node whose parent has just been changed.
+        virtual void OnSceneNodeParentChanged(SceneNode &sceneNode, SceneNode* previousParent);
+
         /// Called just after a scene node has been translated and or rotated.
         ///
         /// @param sceneNode [in] A reference to the scene node that has just had it's tranformation changed.

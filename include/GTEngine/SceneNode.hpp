@@ -302,13 +302,14 @@ namespace GTEngine
         void AttachTo(SceneNode &parent);
 
         /**
-        *   \brief                 Detaches/orphans a child from the node.
-        *   \param  childNode [in] A pointer to the child node to detach.
+        *   \brief                                     Detaches/orphans a child from the node.
+        *   \param  childNode                     [in] A pointer to the child node to detach.
+        *   \param  postParentChangedEventToScene [in] Controls whether or not we post an OnParentChanged event to the 
         *
         *   \remarks
         *       This method does NOT delete the child.
         */
-        void DetachChild(SceneNode& childNode);
+        void DetachChild(SceneNode &childNode, bool postParentChangedEventToScene = true);
 
         /**
         *   \brief  Safely detaches/orphans all children.
@@ -318,7 +319,7 @@ namespace GTEngine
         /**
         *   \brief  Helper function for detaching this node from it's parent.
         */
-        void DetachFromParent();
+        void DetachFromParent(bool postParentChangedEventToScene = true);
 
         /**
         *   \brief            Retrieves the first child who has the given name, or nullptr if a child is not found.

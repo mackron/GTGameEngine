@@ -228,6 +228,29 @@ namespace GTEngine
     }
 
 
+    SceneNode* SceneEditor::GetSceneNodeByID(size_t id)
+    {
+        auto iNode = this->sceneNodes.Find(id);
+        if (iNode != nullptr)
+        {
+            return iNode->value;
+        }
+
+        return nullptr;
+    }
+
+    const SceneNode* SceneEditor::GetSceneNodeByID(size_t id) const
+    {
+        auto iNode = this->sceneNodes.Find(id);
+        if (iNode != nullptr)
+        {
+            return iNode->value;
+        }
+
+        return nullptr;
+    }
+
+
 
     ///////////////////////////////////////////////////
     // Scene Events
@@ -1564,28 +1587,6 @@ namespace GTEngine
         }
     }
 
-
-    SceneNode* SceneEditor::GetSceneNodeByID(size_t id)
-    {
-        auto iNode = this->sceneNodes.Find(id);
-        if (iNode != nullptr)
-        {
-            return iNode->value;
-        }
-
-        return nullptr;
-    }
-
-    const SceneNode* SceneEditor::GetSceneNodeByID(size_t id) const
-    {
-        auto iNode = this->sceneNodes.Find(id);
-        if (iNode != nullptr)
-        {
-            return iNode->value;
-        }
-
-        return nullptr;
-    }
 
 
     void SceneEditor::ShowTransformGizmo()

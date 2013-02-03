@@ -1247,6 +1247,27 @@ namespace GTEngine
         this->PostEvent_OnSceneNodeNameChanged(node);
     }
 
+    void Scene::OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent)
+    {
+        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        {
+            this->stateStack.StageUpdate(node.GetID());
+            
+            if (node.GetParent() != nullptr)
+            {
+                this->stateStack.StageUpdate(node.GetParent()->GetID());
+            }
+
+            if (previousParent != nullptr)
+            {
+                this->stateStack.StageUpdate(previousParent->GetID());
+            }
+        }
+
+
+        this->PostEvent_OnSceneNodeParentChanged(node, previousParent);
+    }
+
     void Scene::OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject)
     {
         if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
@@ -1786,6 +1807,15 @@ namespace GTEngine
             this->eventHandlers[i]->OnSceneNodeNameChanged(node);
         }
     }
+
+    void Scene::PostEvent_OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnSceneNodeParentChanged(node, previousParent);
+        }
+    }
+
 
     void Scene::PostEvent_OnSceneNodeTransform(SceneNode &node)
     {

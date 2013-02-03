@@ -1366,7 +1366,7 @@ function GTGUI.Element:SceneEditorTransformPanel(parentPanel)
 end
 
 
-function GTGUI.Element:SceneEditorPropertiesPanel()
+function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
     self.Body      = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-properties-panel-body' style='' />");
     self.Scrollbar = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='vertical-scrollbar'      style='' />");
     
@@ -1383,7 +1383,7 @@ function GTGUI.Element:SceneEditorPropertiesPanel()
     
     
     self.CurrentSceneNode = nil;            -- The scene node whose details are currently being shown on this panel.
-    self.SceneEditor      = self.Parent;    -- The parent of this element will be the main editor.
+    self.SceneEditor      = sceneEditor;
     
     self.IsMouseOver           = false;
     self.MouseWheelScrollSpeed = 32;
@@ -1615,9 +1615,11 @@ function GTGUI.Element:SceneEditorPropertiesPanel()
 end
 
 
-function GTGUI.Element:SceneEditorHierarchyPanel()
-    self.TreeView   = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-hierarchy-treeview'        style='' />");
-    self.SceneNodes = {}
+function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
+    self.TreeView    = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-hierarchy-treeview'        style='' />");
+    self.SceneNodes  = {}
+    self.SceneEditor = sceneEditor;
+    
     
     
     self.TreeView:TreeView();
@@ -1650,10 +1652,24 @@ function GTGUI.Element:SceneEditorHierarchyPanel()
                 dragAndDropElement.sceneNodeID = item.SceneNodeID;
             end);
             
-            item:OnDragAndDropEnter(function()
+            item.titleContainer:OnDrop(function(data)
+                if data.droppedElement ~= nil and data.droppedElement.sceneNodeID ~= nil then
+                    local parentSceneNodeID = item.SceneNodeID;
+                    local childSceneNodeID  = data.droppedElement.sceneNodeID;
+                    
+                    local parentSceneNodePtr = self.SceneEditor:GetSceneNodePtrByID(parentSceneNodeID);
+                    local childSceneNodePtr  = self.SceneEditor:GetSceneNodePtrByID(childSceneNodeID);
+                    
+                    if parentSceneNodePtr ~= nil and childSceneNodePtr ~= nil then
+                        GTEngine.System.SceneNode.AttachChild(parentSceneNodePtr, childSceneNodePtr);
+                    end
+                end
             end);
             
-            item:OnDragAndDropLeave(function()
+            item.titleContainer:OnDragAndDropEnter(function(data)
+            end);
+            
+            item.titleContainer:OnDragAndDropLeave(function(data)
             end);
             
             
@@ -1725,25 +1741,23 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
     
     
     
-    self.PropertiesPanel:SceneEditorPropertiesPanel();
+    self.PropertiesPanel:SceneEditorPropertiesPanel(sceneEditor);
+    self.HierarchyPanel:SceneEditorHierarchyPanel(sceneEditor);
     
+    
+    -- Properties Panel Events.
     self.PropertiesPanel:OnSceneNodeChanged(function()
         self.SceneEditor:CommitStateStackFrame()
     end);
-    
-    
-    
-    self.HierarchyPanel:SceneEditorHierarchyPanel();
 end
 
 
 function GTGUI.Element:SceneEditor(_internalPtr)
     self:SubEditor();
 
-    self.Viewport        = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-viewport' style='' />");
-    self.Panel           = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
-    --self.PropertiesPanel = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
-    self.ContextMenu     = GTGUI.Server.New("<div                                   styleclass='menu'                  style='z-index:100; positioning:absolute; visible:false' />");
+    self.Viewport          = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-viewport' style='' />");
+    self.Panel             = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
+    self.ContextMenu       = GTGUI.Server.New("<div                                   styleclass='menu'                  style='z-index:100; positioning:absolute; visible:false' />");
     
     self.PhysicsButton     = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()       .. "' styleclass='physics-button-container' style='' />");
     self.PhysicsButtonIcon = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID() .. "' styleclass='physics-button-icon'      style='' />");
@@ -1918,6 +1932,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         end
     end
     
+    
     function self:TryGizmoMouseSelect()
         return GTEngine.System.SceneEditor.TryGizmoMouseSelect(self._internalPtr);
     end
@@ -1970,6 +1985,12 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     function self:Redo()
         GTEngine.System.SceneEditor.Redo(self._internalPtr);
+    end
+    
+    
+    
+    function self:GetSceneNodePtrByID(sceneNodeID)
+        return GTEngine.System.SceneEditor.GetSceneNodePtrByID(self._internalPtr, sceneNodeID);
     end
     
 

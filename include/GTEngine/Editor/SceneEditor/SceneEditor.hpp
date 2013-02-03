@@ -55,6 +55,11 @@ namespace GTEngine
         bool IsPhysicsSimulationEnabled() const;
 
 
+        /// Retrieves a scene node by it's ID, or null if the scene node is not currently instantiated.
+              SceneNode* GetSceneNodeByID(size_t id);
+        const SceneNode* GetSceneNodeByID(size_t id) const;
+
+
         ///////////////////////////////////////////////////
         // Selections
 
@@ -266,10 +271,6 @@ namespace GTEngine
         /// Deletes every scene node that is marked for needing deletion.
         void DeleteAllMarkedSceneNodes();
 
-
-        /// Retrieves a scene node by it's ID, or null if the scene node is not currently instantiated.
-              SceneNode* GetSceneNodeByID(size_t id);
-        const SceneNode* GetSceneNodeByID(size_t id) const;
 
 
         /// Shows and repositions the positioning gizmo.

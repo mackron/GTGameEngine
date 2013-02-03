@@ -96,6 +96,15 @@ namespace GTEngine
                     ///     Argument 2: The new name for the scene node.
                     int SetName(GTCore::Script &script);
 
+
+                    /// Attaches a scene node to the given node as a child.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node whose having a child attached.
+                    ///     Argument 2: A pointer to the child node.
+                    int AttachChild(GTCore::Script &script);
+
+
                     /// Adds a new component to the given scene node.
                     ///
                     /// @remarks
@@ -1151,6 +1160,14 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
                     int Redo(GTCore::Script &script);
+
+
+                    /// Retrieves a pointer to the scene node of the given ID.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    ///     Argument 2: The ID of the scene node to retrieve.
+                    int GetSceneNodePtrByID(GTCore::Script &script);
 
 
                     /// Retrieves a array of pointers to the scene nodes in the scene.
