@@ -165,6 +165,12 @@ namespace GTEngine
         /// @param startFrameIndex [in] The index of the frame to start at.
         GTCore::BasicSerializer* FindMostRecentSerializer(uint64_t sceneNodeID, uint32_t startFrameIndex) const;
 
+        /// Finds the ID of the most recent parent for the given scene node, starting from the current frame.
+        ///
+        /// @param sceneNodeID     [in] The ID of the scene node whose most recent parent is being retrieved.
+        /// @param startFrameIndex [in] The index of the frame to start at.
+        uint64_t FindMostRecentParentSceneNodeID(uint64_t sceneNodeID, uint32_t startFrameIndex) const;
+
 
 
         /////////////////////////////////////////////////

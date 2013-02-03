@@ -34,6 +34,9 @@ namespace GTEngine
         ///     If the scene node is not featured in this frame null will be returned.
         GTCore::BasicSerializer* GetSerializer(uint64_t sceneNodeID) const;
 
+        /// Retrieves the ID of the parent scene node.
+        bool GetParentSceneNodeID(uint64_t sceneNodeID, uint64_t &parentSceneNodeIDOut) const;
+
 
         /// Retrieves a reference to the internal list of insert commands.
               GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetInserts()       { return this->serializedInserts; }
@@ -46,6 +49,10 @@ namespace GTEngine
         /// Retrieves a reference to the internal list of update commands.
               GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetUpdates()       { return this->serializedUpdates; }
         const GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetUpdates() const { return this->serializedUpdates; }
+
+        /// Retrieves a reference to the hierarchy map.
+              GTCore::Map<uint64_t, uint64_t> & GetHierarchy()       { return this->hierarchy; }
+        const GTCore::Map<uint64_t, uint64_t> & GetHierarchy() const { return this->hierarchy; }
 
 
 
@@ -82,6 +89,9 @@ namespace GTEngine
 
         /// The map containing the serialized data of updated scene nodes. Indexed by the scene node ID.
         GTCore::Map<uint64_t, GTCore::BasicSerializer*> serializedUpdates;
+
+        /// The hierarchy. The key is the child ID and the value is the parent ID. If the node does not have a parent, the value will be 0.
+        GTCore::Map<uint64_t, uint64_t> hierarchy;
 
 
 

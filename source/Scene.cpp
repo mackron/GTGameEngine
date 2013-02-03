@@ -1141,6 +1141,22 @@ namespace GTEngine
             }
         }
 
+
+        for (size_t i = 0; i < childParentPairs.count; ++i)
+        {
+            auto &pair = childParentPairs[i];
+
+            auto childSceneNode  = deserializedNodes[pair.index0];
+            auto parentSceneNode = deserializedNodes[pair.index1];
+            
+            assert(childSceneNode  != nullptr);
+            assert(parentSceneNode != nullptr);
+            {
+                parentSceneNode->AttachChild(*childSceneNode);
+            }
+        }
+
+
         return true;
     }
 

@@ -320,9 +320,10 @@ namespace GTEngine
                 auto frame = this->GetFrameAtIndex(i);
                 assert(frame != nullptr);
                 {
-                    auto &inserts = frame->GetInserts();
-                    auto &deletes = frame->GetDeletes();
-                    auto &updates = frame->GetUpdates();
+                    auto &inserts   = frame->GetInserts();
+                    auto &deletes   = frame->GetDeletes();
+                    auto &updates   = frame->GetUpdates();
+                    auto &hierarchy = frame->GetHierarchy();
 
                     for (size_t i = 0; i < inserts.count; ++i)
                     {
@@ -338,6 +339,11 @@ namespace GTEngine
                     {
                         commands.AddUpdate(updates.buffer[i]->key, nullptr);
                     }
+
+                    for (size_t i = 0; i < hierarchy.count; ++i)
+                    {
+                        commands.hierarchy.Add(hierarchy.buffer[i]->key, 0);
+                    }
                 }
             }
         }
@@ -349,9 +355,10 @@ namespace GTEngine
                 auto frame = this->GetFrameAtIndex(i - 1);
                 assert(frame != nullptr);
                 {
-                    auto &inserts = frame->GetInserts();
-                    auto &deletes = frame->GetDeletes();
-                    auto &updates = frame->GetUpdates();
+                    auto &inserts   = frame->GetInserts();
+                    auto &deletes   = frame->GetDeletes();
+                    auto &updates   = frame->GetUpdates();
+                    auto &hierarchy = frame->GetHierarchy();
 
                     for (size_t i = 0; i < inserts.count; ++i)
                     {
@@ -367,6 +374,11 @@ namespace GTEngine
                     {
                         commands.AddUpdate(updates.buffer[i]->key, nullptr);
                     }
+
+                    for (size_t i = 0; i < hierarchy.count; ++i)
+                    {
+                        commands.hierarchy.Add(hierarchy.buffer[i]->key, 0);
+                    }
                 }
             }
         }
@@ -374,6 +386,7 @@ namespace GTEngine
 
         // And now we need to update to the most recent serializers.
         commands.UpdateToMostRecentSerializers(*this, newFrameIndex);
+        commands.UpdateToMostRecentHierarchy(  *this, newFrameIndex);
     }
 
 
@@ -395,6 +408,24 @@ namespace GTEngine
         }
 
         return nullptr;
+    }
+
+    uint64_t SceneStateStackBranch::FindMostRecentParentSceneNodeID(uint64_t sceneNodeID, uint32_t startFrameIndex) const
+    {
+        for (uint32_t i = startFrameIndex + 1; i > 0; --i)
+        {
+            auto frame = this->GetFrameAtIndex(i - 1);
+            assert(frame != nullptr);
+            {
+                uint64_t parentSceneNodeID;
+                if (frame->GetParentSceneNodeID(sceneNodeID, parentSceneNodeID))
+                {
+                    return parentSceneNodeID;
+                }
+            }
+        }
+
+        return 0;
     }
 
 

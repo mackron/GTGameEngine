@@ -6,7 +6,7 @@
 namespace GTEngine
 {
     SceneStateStackRestoreCommands::SceneStateStackRestoreCommands()
-        : inserts(), deletes(), updates()
+        : inserts(), deletes(), updates(), hierarchy()
     {
     }
 
@@ -107,12 +107,29 @@ namespace GTEngine
         }
     }
 
+    void SceneStateStackRestoreCommands::UpdateToMostRecentHierarchy(SceneStateStackBranch &branch, uint32_t startFrameIndex)
+    {
+        for (size_t i = 0; i < this->hierarchy.count; ++i)
+        {
+            auto iParentID = this->hierarchy.buffer[i];
+            assert(iParentID != nullptr);
+            {
+                auto  sceneNodeID       = iParentID->key;
+                auto &parentSceneNodeID = iParentID->value;
+
+                parentSceneNodeID = branch.FindMostRecentParentSceneNodeID(sceneNodeID, startFrameIndex);
+            }
+        }
+    }
+
 
     void SceneStateStackRestoreCommands::Clear()
     {
         this->inserts.Clear();
         this->deletes.Clear();
         this->updates.Clear();
+
+        this->hierarchy.Clear();
     }
 
     void SceneStateStackRestoreCommands::Execute(Scene &scene)
@@ -149,6 +166,32 @@ namespace GTEngine
                 {
                     GTCore::BasicDeserializer deserializer(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
                     sceneNode->Deserialize(deserializer);
+                }
+            }
+        }
+
+
+        // Hierarchy re-construction.
+        for (size_t i = 0; i < this->hierarchy.count; ++i)
+        {
+            auto sceneNodeID       = this->hierarchy.buffer[i]->key;
+            auto parentSceneNodeID = this->hierarchy.buffer[i]->value;
+
+            assert(sceneNodeID != 0);
+            {
+                auto sceneNode = scene.GetSceneNodeByID(sceneNodeID);
+
+                if (parentSceneNodeID != 0)
+                {
+                    auto parentSceneNode = scene.GetSceneNodeByID(parentSceneNodeID);
+                    assert(parentSceneNode != nullptr);
+                    {
+                        parentSceneNode->AttachChild(*sceneNode);
+                    }
+                }
+                else
+                {
+                    sceneNode->DetachFromParent();
                 }
             }
         }

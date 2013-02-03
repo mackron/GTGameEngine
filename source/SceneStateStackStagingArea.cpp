@@ -51,6 +51,7 @@ namespace GTEngine
             if (!this->inserts.Exists(sceneNodeID))
             {
                 this->inserts.PushBack(sceneNodeID);
+                this->AddToHierarchy(sceneNodeID);
             }
         }
     }
@@ -63,6 +64,7 @@ namespace GTEngine
         if (this->inserts.FindFirstIndexOf(sceneNodeID, index))
         {
             this->inserts.Remove(index);
+            this->RemoveFromHierarchy(sceneNodeID);
         }
         else
         {
@@ -78,6 +80,7 @@ namespace GTEngine
                     sceneNode->Serialize(*sceneNodeSerializer);
 
                     this->deletes.Add(sceneNodeID, sceneNodeSerializer);
+                    this->AddToHierarchy(sceneNodeID);
                 }
             }
         }
@@ -92,6 +95,9 @@ namespace GTEngine
         {
             this->updates.PushBack(sceneNodeID);
         }
+
+        // Always make sure the hierarchy is updated.
+        this->AddToHierarchy(sceneNodeID);
     }
 
 
@@ -105,6 +111,8 @@ namespace GTEngine
         this->inserts.Clear();
         this->deletes.Clear();
         this->updates.Clear();
+
+        this->hierarchy.Clear();
     }
 
 
@@ -133,6 +141,15 @@ namespace GTEngine
             auto sceneNodeID         = this->updates[i];
             auto sceneNodeSerializer = this->branch.FindMostRecentSerializer(sceneNodeID, this->branch.GetCurrentFrameIndex());
             commands.updates.Add(sceneNodeID, sceneNodeSerializer);
+        }
+
+
+        // Hierarchy
+        for (size_t i = 0; i < this->hierarchy.count; ++i)
+        {
+            auto sceneNodeID       = this->hierarchy.buffer[i]->key;
+            auto parentSceneNodeID = this->branch.FindMostRecentParentSceneNodeID(sceneNodeID, this->branch.GetCurrentFrameIndex());
+            commands.hierarchy.Add(sceneNodeID, parentSceneNodeID);
         }
     }
 
@@ -172,12 +189,23 @@ namespace GTEngine
         }
 
 
-        // Deletes.
+        // Updates.
         intermediarySerializer.Write(static_cast<uint32_t>(this->updates.count));
 
         for (size_t i = 0; i < this->updates.count; ++i)
         {
             intermediarySerializer.Write(this->updates[i]);
+        }
+
+
+
+        // Hierarchy.
+        intermediarySerializer.Write(static_cast<uint32_t>(this->hierarchy.count));
+
+        for (size_t i = 0; i < this->hierarchy.count; ++i)
+        {
+            intermediarySerializer.Write(this->hierarchy.buffer[i]->key);
+            intermediarySerializer.Write(this->hierarchy.buffer[i]->value);
         }
 
 
@@ -261,6 +289,23 @@ namespace GTEngine
                         }
 
 
+
+                        // Hierarchy.
+                        uint32_t hierarchyCount;
+                        deserializer.Read(hierarchyCount);
+
+                        for (uint32_t i = 0; i < hierarchyCount; ++i)
+                        {
+                            uint64_t sceneNodeID;
+                            deserializer.Read(sceneNodeID);
+
+                            uint64_t parentSceneNodeID;
+                            deserializer.Read(parentSceneNodeID);
+
+                            this->hierarchy.Add(sceneNodeID, parentSceneNodeID);
+                        }
+
+
                         break;
                     }
 
@@ -275,5 +320,33 @@ namespace GTEngine
                 }
             }
         }
+    }
+
+
+    ////////////////////////////////////////
+    // Private
+
+    void SceneStateStackStagingArea::AddToHierarchy(uint64_t sceneNodeID)
+    {
+        auto &scene = this->GetScene();
+
+        auto sceneNode = scene.GetSceneNodeByID(sceneNodeID);
+        assert(sceneNode != nullptr);
+        {
+            auto parentSceneNode = sceneNode->GetParent();
+            if (parentSceneNode != nullptr)
+            {
+                this->hierarchy.Add(sceneNodeID, parentSceneNode->GetID());
+            }
+            else
+            {
+                this->hierarchy.Add(sceneNodeID, 0);            // 0 = no parent.
+            }
+        }
+    }
+
+    void SceneStateStackStagingArea::RemoveFromHierarchy(uint64_t sceneNodeID)
+    {
+        this->hierarchy.RemoveByKey(sceneNodeID);
     }
 }
