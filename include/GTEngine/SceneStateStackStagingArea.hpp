@@ -64,6 +64,10 @@ namespace GTEngine
               GTCore::Vector<uint64_t> & GetUpdates()       { return this->updates; }
         const GTCore::Vector<uint64_t> & GetUpdates() const { return this->updates; }
 
+        /// Retrieves a reference to the hierarchy.
+              GTCore::Map<uint64_t, uint64_t> & GetHierarchy()       { return this->hierarchy; }
+        const GTCore::Map<uint64_t, uint64_t> & GetHierarchy() const { return this->hierarchy; }
+
 
 
         /// Retrieves the set of commands to use to restore the scene from the changes in the staging area.
@@ -86,6 +90,23 @@ namespace GTEngine
 
     private:
 
+        /// Adds the given scene node to the hierarchy.
+        ///
+        /// @param sceneNodeID [in] The ID of the scene node that is being added to the hierarchy.
+        ///
+        /// @remarks
+        ///     This does nothing if the scene node does not have a parent.
+        void AddToHierarchy(uint64_t sceneNodeID);
+
+        /// Removes the given scene node from the hierarchy.
+        ///
+        /// @param sceneNodeID [in] The ID of the scene node that is being removed from the hierarchy.
+        void RemoveFromHierarchy(uint64_t sceneNodeID);
+
+
+
+    private:
+
         /// The branch that owns this staging area.
         SceneStateStackBranch &branch;
 
@@ -99,6 +120,9 @@ namespace GTEngine
 
         /// The list of scene node ID's of newly updated scene nodes in the staging area.
         GTCore::Vector<uint64_t> updates;
+
+        /// The hierarchy of the nodes containined in the staging area. The key is the main node ID and the value is the parent node ID.
+        GTCore::Map<uint64_t, uint64_t> hierarchy;
     };
 }
 

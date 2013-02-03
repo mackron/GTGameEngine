@@ -35,6 +35,9 @@ namespace GTEngine
         /// Goes through every command and updates the serialized data with the most recent data, starting from the current frame on the given branch.
         void UpdateToMostRecentSerializers(SceneStateStackBranch &branch, uint32_t startFrameIndex);
 
+        /// Goes through every scene node in the hierarchy and updates it to the most recent values.
+        void UpdateToMostRecentHierarchy(SceneStateStackBranch &branch, uint32_t startFrameIndex);
+
 
         /// Clears the commands.
         void Clear();
@@ -52,6 +55,10 @@ namespace GTEngine
 
         /// The update commands.
         GTCore::Map<uint64_t, GTCore::BasicSerializer*> updates;
+
+
+        /// The hierarchy.
+        GTCore::Map<uint64_t, uint64_t> hierarchy;
     };
 }
 
