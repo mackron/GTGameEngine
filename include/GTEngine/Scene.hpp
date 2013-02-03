@@ -644,8 +644,19 @@ namespace GTEngine
         /// @param updateDynamicsObject [in] Controls whether or not the dynamics object, if any, should be updated also.
         void OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject);
 
+        /// Called when a scene node is scaled.
+        ///
+        /// @param node [in] A reference to the node that has just been scaled.
         void OnSceneNodeScale(SceneNode &node);
+
+        /// Called after the staticness of a scene node has changed.
+        ///
+        /// @param node [in] A reference to the node whose staticness has changed.
         void OnSceneNodeStaticChanged(SceneNode &node);
+
+        /// Called after the visibility state of a scene node has changed.
+        ///
+        /// @param node [in] A reference to the node whose visibility state has changed.
         void OnSceneNodeVisibleChanged(SceneNode &node);
 
         /// Called after a scene node has a component attached.
