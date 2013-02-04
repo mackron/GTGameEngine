@@ -293,6 +293,19 @@ namespace GTEngine
         const SceneNode* GetSceneNodeByID(uint64_t sceneNodeID) const;
 
 
+        /// Retrieves the number of scene nodes in the scene.
+        size_t GetSceneNodeCount() const;
+
+        /// Retrieves a pointer to the scene node at the given index.
+        ///
+        /// @param sceneNodeIndex [in] The index of the scene node to retrieve.
+        ///
+        /// @remarks
+        ///     Use this in conjunction with GetSceneNodeCount() to do a simple 'for' loop iteration. 'index' is NOT the scene node's ID.
+              SceneNode* GetSceneNodeByIndex(size_t sceneNodeIndex);
+        const SceneNode* GetSceneNodeByIndex(size_t sceneNodeIndex) const;
+
+
         /// Sets the minimum automatically-generated scene node ID.
         ///
         /// @remarks

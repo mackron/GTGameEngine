@@ -489,6 +489,22 @@ namespace GTEngine
     }
 
 
+    size_t Scene::GetSceneNodeCount() const
+    {
+        return this->sceneNodes.GetCount();
+    }
+
+    SceneNode* Scene::GetSceneNodeByIndex(size_t sceneNodeIndex)
+    {
+        return this->sceneNodes.GetSceneNodeAtIndex(sceneNodeIndex);
+    }
+
+    const SceneNode* Scene::GetSceneNodeByIndex(size_t sceneNodeIndex) const
+    {
+        return this->sceneNodes.GetSceneNodeAtIndex(sceneNodeIndex);
+    }
+
+
     void Scene::SetMinAutoSceneNodeID(uint64_t newMinAutoSceneNodeID)
     {
         if (newMinAutoSceneNodeID > 0)
