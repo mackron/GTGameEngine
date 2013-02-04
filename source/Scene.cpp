@@ -390,10 +390,18 @@ namespace GTEngine
             assert(this->sceneNodes.Exists(node.GetID()));
             {
                 // Children need to be removed first.
+                GTCore::Vector<SceneNode*> children;
+
                 for (auto iChild = node.GetFirstChild(); iChild != nullptr; iChild = iChild->GetNextSibling())
                 {
-                    this->RemoveSceneNode(*iChild);
+                    children.PushBack(iChild);
                 }
+
+                for (size_t iChild = 0; iChild < children.count; ++iChild)
+                {
+                    this->RemoveSceneNode(*children[iChild]);
+                }
+
 
 
                 // We'll now post the OnSceneNodeRemoved() as the first thing for this node.
