@@ -254,7 +254,7 @@ namespace GTEngine
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
           paused(false),
-          viewports(), sceneNodes(), nextSceneNodeID(0), sceneNodesCreatedByScene(),
+          viewports(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true)
@@ -266,7 +266,7 @@ namespace GTEngine
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
           paused(false),
-          viewports(), sceneNodes(), nextSceneNodeID(0), sceneNodesCreatedByScene(),
+          viewports(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true)
@@ -486,6 +486,24 @@ namespace GTEngine
     const SceneNode* Scene::GetSceneNodeByID(uint64_t sceneNodeID) const
     {
         return this->sceneNodes.FindByID(sceneNodeID);
+    }
+
+
+    void Scene::SetMinAutoSceneNodeID(uint64_t newMinAutoSceneNodeID)
+    {
+        if (newMinAutoSceneNodeID > 0)
+        {
+            this->minAutoSceneNodeID = newMinAutoSceneNodeID;
+        }
+        else
+        {
+            this->minAutoSceneNodeID = 0;
+        }
+    }
+
+    uint64_t Scene::GetMinAutoSceneNodeID() const
+    {
+        return this->minAutoSceneNodeID;
     }
 
 
@@ -904,10 +922,12 @@ namespace GTEngine
         header.id          = Serialization::ChunkID_Scene_Info;
         header.version     = 1;
         header.sizeInBytes =
-            sizeof(uint64_t);           // <-- nextSceneNodeID
+            sizeof(uint64_t) +              // <-- nextSceneNodeID
+            sizeof(uint64_t);               // <-- minAutoSceneNodeID
 
         serializer.Write(header);
         serializer.Write(this->nextSceneNodeID);
+        serializer.Write(this->minAutoSceneNodeID);
 
 
 
@@ -1009,6 +1029,7 @@ namespace GTEngine
                 case 1:
                     {
                         deserializer.Read(this->nextSceneNodeID);
+                        deserializer.Read(this->minAutoSceneNodeID);
 
                         break;
                     }
@@ -1805,6 +1826,27 @@ namespace GTEngine
 
 
     ///////////////////////////////////////////////////////
+    // Private
+
+    uint64_t Scene::GenerateSceneNodeID()
+    {
+        assert(this->minAutoSceneNodeID > 0);
+        {
+            if (this->nextSceneNodeID + 1 < this->minAutoSceneNodeID)
+            {
+                this->nextSceneNodeID = this->minAutoSceneNodeID;
+            }
+            else
+            {
+                this->nextSceneNodeID += 1;
+            }
+
+            return this->nextSceneNodeID;
+        }
+    }
+
+
+
     // Event Posting
 
     void Scene::PostEvent_OnObjectAdded(SceneObject &object)
