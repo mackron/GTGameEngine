@@ -293,6 +293,18 @@ namespace GTEngine
         const SceneNode* GetSceneNodeByID(uint64_t sceneNodeID) const;
 
 
+        /// Sets the minimum automatically-generated scene node ID.
+        ///
+        /// @remarks
+        ///     This does not modify already-existing scene nodes.
+        ///     @par
+        ///     It is still OK to add pre-existing scene nodes with ID's lower than this value.
+        void SetMinAutoSceneNodeID(uint64_t newMinAutoSceneNodeID);
+
+        /// Retrieves the minimum automatically-generated scene node ID.
+        uint64_t GetMinAutoSceneNodeID() const;
+
+
         /// Pauses the scene.
         ///
         /// @remarks
@@ -690,6 +702,14 @@ namespace GTEngine
 
     private:
 
+
+        /// Generates a new unique scene node ID.
+        ///
+        /// @return A unique scene node ID.
+        uint64_t GenerateSceneNodeID();
+
+
+
         /////////////////////////////////////////////////
         // Event Posting
 
@@ -796,6 +816,9 @@ namespace GTEngine
 
         /// The next unique ID to apply to new scene nodes.
         uint64_t nextSceneNodeID;
+
+        /// The minimum ID of auto-generated IDs.
+        uint64_t minAutoSceneNodeID;
 
 
         /// The list of scene nodes created by the scene.
