@@ -722,6 +722,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackRestoreCommands.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ScriptComponent.hpp">
+      <Filter>include\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1203,6 +1206,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\SceneStateStackRestoreCommands.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\ScriptComponent.cpp">
+      <Filter>source\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
