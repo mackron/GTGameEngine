@@ -16,6 +16,7 @@
 #include "Components/GenericConstraintComponent.hpp"
 #include "Components/ConeTwistConstraintComponent.hpp"
 #include "Components/PointToPointConstraintComponent.hpp"
+#include "Components/ScriptComponent.hpp"
 #include "Components/EditorMetadataComponent.hpp"
 
 #include <GTCore/Dictionary.hpp>
