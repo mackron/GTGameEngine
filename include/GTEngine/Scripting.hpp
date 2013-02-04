@@ -1086,6 +1086,7 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor containing the scene node.
                     ///     Argument 2: A pointer to the scene node to select.
+                    ///     Argument 3: A boolean controlling whether or not to notify the editor of the change. A value of false means the editor WILL receive notification.
                     int SelectSceneNode(GTCore::Script &script);
 
                     /// Deselects the given scene node.
@@ -1093,6 +1094,7 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor containing the scene node.
                     ///     Argument 2: A pointer to the scene node to deselect.
+                    ///     Argument 3: A boolean controlling whether or not to notify the editor of the change. A value of false means the editor WILL receive notification.
                     int DeselectSceneNode(GTCore::Script &script);
 
                     /// Retrieves the number of nodes that are currently selected.
@@ -1106,6 +1108,15 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
                     int GetFirstSelectedSceneNodePtr(GTCore::Script &script);
+
+
+                    /// Retrieves an array containing the selected scene node IDs.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int GetSelectedSceneNodeIDs(GTCore::Script &script);
+
+
 
                     /// Attempts to select a gizmo with the mouse.
                     ///

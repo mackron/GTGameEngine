@@ -1616,9 +1616,10 @@ end
 
 
 function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
-    self.TreeView    = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-hierarchy-treeview'        style='' />");
-    self.SceneNodes  = {}
-    self.SceneEditor = sceneEditor;
+    self.TreeView      = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-hierarchy-treeview'        style='' />");
+    self.SceneNodes    = {}
+    self.SelectedNodes = {}
+    self.SceneEditor   = sceneEditor;
     
     
     
@@ -1642,6 +1643,47 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             self.SceneEditor:CommitStateStackFrame();
         end
     end);
+    
+    
+    -- Sets the selected items to those of the given scene node ids. Deselects anything not in the list.
+    function self:SetSelectedItemsBySceneNodeIDs(sceneNodeIDs)
+        local nodesToDeselect = {};
+        local nodesToSelect   = {};
+        
+        for i,sceneNodeID in ipairs(sceneNodeIDs) do
+            if table.indexof(self.SelectedNodes) == nil then
+                nodesToSelect[#nodesToSelect + 1] = sceneNodeID;
+            end
+        end
+        
+        for i,sceneNodeID in ipairs(self.SelectedNodes) do
+            if table.indexof(sceneNodeIDs) == nil then
+                nodesToDeselect[#nodesToDeselect + 1] = sceneNodeID;
+            end
+        end
+        
+        
+        -- We will deselect the appropriate nodes first.
+        for i,sceneNodeID in ipairs(nodesToDeselect) do
+            local treeViewItem = self.SceneNodes[sceneNodeID];
+            if treeViewItem ~= nil then
+                treeViewItem:Deselect(true);                                -- 'true' = block event (don't post the event).
+                self.SceneEditor:DeselectSceneNodeByID(sceneNodeID, true);  -- 'true' = don't post a notification back to the scripting environment.
+            end
+        end
+        
+        -- Now select.
+        for i,sceneNodeID in ipairs(nodesToSelect) do
+            local treeViewItem = self.SceneNodes[sceneNodeID];
+            if treeViewItem ~= nil then
+                treeViewItem:Select(true);                                -- 'true' = block event (don't post the event).
+                self.SceneEditor:SelectSceneNodeByID(sceneNodeID, true);  -- 'true' = don't post a notification back to the scripting environment.
+            end
+        end
+        
+        
+        self.SelectedNodes = sceneNodeIDs;
+    end
     
     
     function self:AddSceneNode(sceneNodePtr)
@@ -1705,6 +1747,15 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             end);
             
             item.titleContainer:OnDragAndDropLeave(function(data)
+            end);
+            
+            
+            item:OnSelected(function()
+                self.SceneEditor:SelectSceneNodeByID(item.SceneNodeID);
+            end);
+            
+            item:OnDeselected(function()
+                self.SceneEditor:DeselectSceneNodeByID(item.SceneNodeID);
             end);
             
             
@@ -1943,13 +1994,23 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         GTEngine.System.SceneEditor.DeselectAll(self._internalPtr);
     end
     
-    function self:SelectSceneNode(nodeToSelect)
-        GTEngine.System.SceneEditor.SelectSceneNode(self._internalPtr, nodeToSelect._internalPtr);
+    function self:SelectSceneNode(nodeToSelect, dontPostBackNotification)
+        GTEngine.System.SceneEditor.SelectSceneNode(self._internalPtr, nodeToSelect._internalPtr, dontPostBackNotification);
     end
     
-    function self:DeselectSceneNode(nodeToSelect)
-        GTEngine.System.SceneEditor.DeselectSceneNode(self._internalPtr, nodeToSelect._internalPtr);
+    function self:SelectSceneNodeByID(nodeToSelectID, dontPostBackNotification)
+        GTEngine.System.SceneEditor.SelectSceneNode(self._internalPtr, self:GetSceneNodePtrByID(nodeToSelectID), dontPostBackNotification);
     end
+    
+    
+    function self:DeselectSceneNode(nodeToSelect, dontPostBackNotification)
+        GTEngine.System.SceneEditor.DeselectSceneNode(self._internalPtr, nodeToSelect._internalPtr, dontPostBackNotification);
+    end
+    
+    function self:DeselectSceneNodeByID(nodeToSelectID, dontPostBackNotification)
+        GTEngine.System.SceneEditor.DeselectSceneNode(self._internalPtr, self:GetSceneNodePtrByID(nodeToSelectID), dontPostBackNotification);
+    end
+    
     
     function self:GetSelectedSceneNodeCount()
         return GTEngine.System.SceneEditor.GetSelectedSceneNodeCount(self._internalPtr);
@@ -1966,6 +2027,12 @@ function GTGUI.Element:SceneEditor(_internalPtr)
             self.SelectedSceneNode = nil;
         end
     end
+    
+    
+    function self:GetSelectedSceneNodeIDs()
+        return GTEngine.System.SceneEditor.GetSelectedSceneNodeIDs(self._internalPtr);
+    end
+    
     
     
     function self:TryGizmoMouseSelect()
@@ -2062,6 +2129,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
             self:UpdatePropertyPanels();
             self:ShowPropertyPanels();
         end
+        
+        self.HierarchyPanel:SetSelectedItemsBySceneNodeIDs(self:GetSelectedSceneNodeIDs());
     end
     
     function self:OnSceneNodeAdded(sceneNodePtr)

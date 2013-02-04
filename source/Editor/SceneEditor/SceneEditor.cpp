@@ -488,7 +488,7 @@ namespace GTEngine
         return false;
     }
 
-    void SceneEditor::SelectSceneNode(SceneNode &node, bool force)
+    void SceneEditor::SelectSceneNode(SceneNode &node, bool force, bool dontPostBackNotification)
     {
         if (force || !this->IsSceneNodeSelected(node))
         {
@@ -503,7 +503,10 @@ namespace GTEngine
                 }
 
                 // The scripting environment needs to be aware of this change.
-                this->PostOnSelectionChangedEventToScript();
+                if (!dontPostBackNotification)
+                {
+                    this->PostOnSelectionChangedEventToScript();
+                }
 
 
                 // With a change in selection, we will need to update the position of the gizmos.
@@ -519,12 +522,14 @@ namespace GTEngine
             auto node = this->GetSceneNodeByID(selectedNodeIDs[i]);
             assert(node != nullptr);
             {
-                this->SelectSceneNode(*node);
+                this->SelectSceneNode(*node, false, true);
             }
         }
+
+        this->PostOnSelectionChangedEventToScript();
     }
 
-    void SceneEditor::DeselectSceneNode(SceneNode &node, bool force)
+    void SceneEditor::DeselectSceneNode(SceneNode &node, bool force, bool dontPostBackNotification)
     {
         if (force || this->IsSceneNodeSelected(node))
         {
@@ -537,7 +542,10 @@ namespace GTEngine
                 this->selectedNodes.RemoveFirstOccuranceOf(metadata->GetID());
 
                 // The scripting environment needs to be aware of this change.
-                this->PostOnSelectionChangedEventToScript();
+                if (!dontPostBackNotification)
+                {
+                    this->PostOnSelectionChangedEventToScript();
+                }
 
 
                 // With a change in selection, we will need to update the gizmos.
@@ -611,6 +619,20 @@ namespace GTEngine
         }
 
         return nullptr;
+    }
+
+    void SceneEditor::GetSelectedSceneNodeIDs(GTCore::Vector<uint64_t> &sceneNodeIDsOut)
+    {
+        // TODO: When we migrate the scene node ID system over to the new one, we will want to optimize this to a simple copy. Might event change this to a simple getter.
+
+        for (size_t i = 0; i < this->selectedNodes.count; ++i)
+        {
+            auto sceneNode = this->GetSceneNodeByID(this->selectedNodes[i]);
+            assert(sceneNode != nullptr);
+            {
+                sceneNodeIDsOut.PushBack(sceneNode->GetID());
+            }
+        }
     }
 
 
