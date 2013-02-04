@@ -805,6 +805,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetParentPtr",            FFI::SystemFFI::SceneNodeFFI::GetParentPtr);
                         script.SetTableFunction(-1, "AttachChild",             FFI::SystemFFI::SceneNodeFFI::AttachChild);
                         script.SetTableFunction(-1, "Orphan",                  FFI::SystemFFI::SceneNodeFFI::Orphan);
+                        script.SetTableFunction(-1, "IsAncestor",              FFI::SystemFFI::SceneNodeFFI::IsAncestor);
+                        script.SetTableFunction(-1, "IsDescendant",            FFI::SystemFFI::SceneNodeFFI::IsDescendant);
+                        script.SetTableFunction(-1, "IsRelative",              FFI::SystemFFI::SceneNodeFFI::IsRelative);
 
                         script.SetTableFunction(-1, "AddComponent",            FFI::SystemFFI::SceneNodeFFI::AddComponent);
                         script.SetTableFunction(-1, "RemoveComponent",         FFI::SystemFFI::SceneNodeFFI::RemoveComponent);
@@ -1219,7 +1222,15 @@ namespace GTEngine
                         auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                         if (sceneNode != nullptr)
                         {
-                            script.Push(sceneNode->GetParent());
+                            auto parent = sceneNode->GetParent();
+                            if (parent != nullptr)
+                            {
+                                script.Push(sceneNode->GetParent());
+                            }
+                            else
+                            {
+                                script.PushNil();
+                            }
                         }
                         else
                         {
@@ -1251,6 +1262,57 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+                    int IsAncestor(GTCore::Script &script)
+                    {
+                        auto sceneNode         = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        auto ancestorSceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                        if (sceneNode != nullptr && ancestorSceneNode != nullptr)
+                        {
+                            script.Push(sceneNode->IsAncestor(*ancestorSceneNode));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int IsDescendant(GTCore::Script &script)
+                    {
+                        auto sceneNode           = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        auto descendantSceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                        if (sceneNode != nullptr && descendantSceneNode != nullptr)
+                        {
+                            script.Push(sceneNode->IsDescendant(*descendantSceneNode));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int IsRelative(GTCore::Script &script)
+                    {
+                        auto sceneNode         = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        auto relativeSceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                        if (sceneNode != nullptr && relativeSceneNode != nullptr)
+                        {
+                            script.Push(sceneNode->IsRelated(*relativeSceneNode));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
                     }
 
 

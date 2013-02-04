@@ -116,6 +116,27 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the scene node being orphaned.
                     int Orphan(GTCore::Script &script);
 
+                    /// Determines whether or not the given scene node is an ancestor of another.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the main scene node.
+                    ///     Argument 2: A pointer to the ancestor scene node.
+                    int IsAncestor(GTCore::Script &script);
+
+                    /// Determines whether or not the given scene node is a descendant of another.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the main scene node.
+                    ///     Argument 2: A pointer to the descendant scene node.
+                    int IsDescendant(GTCore::Script &script);
+
+                    /// Determines whether or not the given scene node is related to another.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the main scene node.
+                    ///     Argument 2: A pointer to the relative scene node.
+                    int IsRelative(GTCore::Script &script);
+
 
                     /// Adds a new component to the given scene node.
                     ///
