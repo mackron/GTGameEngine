@@ -1045,6 +1045,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "DeselectSceneNode",                   FFI::SystemFFI::SceneEditorFFI::DeselectSceneNode);
                         script.SetTableFunction(-1, "GetSelectedSceneNodeCount",           FFI::SystemFFI::SceneEditorFFI::GetSelectedSceneNodeCount);
                         script.SetTableFunction(-1, "GetFirstSelectedSceneNodePtr",        FFI::SystemFFI::SceneEditorFFI::GetFirstSelectedSceneNodePtr);
+                        script.SetTableFunction(-1, "GetSelectedSceneNodeIDs",             FFI::SystemFFI::SceneEditorFFI::GetSelectedSceneNodeIDs);
                         script.SetTableFunction(-1, "TryGizmoMouseSelect",                 FFI::SystemFFI::SceneEditorFFI::TryGizmoMouseSelect);
                         script.SetTableFunction(-1, "DoMouseSelection",                    FFI::SystemFFI::SceneEditorFFI::DoMouseSelection);
                         script.SetTableFunction(-1, "RemoveSelectedSceneNodes",            FFI::SystemFFI::SceneEditorFFI::RemoveSelectedSceneNodes);
@@ -3561,7 +3562,8 @@ namespace GTEngine
                             auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
                             if (sceneNode != nullptr)
                             {
-                                sceneEditor->SelectSceneNode(*sceneNode);
+                                bool dontPostBackNotification = script.ToBoolean(3);
+                                sceneEditor->SelectSceneNode(*sceneNode, false, dontPostBackNotification);
                             }
                         }
 
@@ -3576,7 +3578,8 @@ namespace GTEngine
                             auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
                             if (sceneNode != nullptr)
                             {
-                                sceneEditor->DeselectSceneNode(*sceneNode);
+                                bool dontPostBackNotification = script.ToBoolean(3);
+                                sceneEditor->DeselectSceneNode(*sceneNode, false, dontPostBackNotification);
                             }
                         }
 
@@ -3608,6 +3611,31 @@ namespace GTEngine
                         else
                         {
                             script.Push(static_cast<void*>(nullptr));
+                        }
+
+                        return 1;
+                    }
+
+
+                    int GetSelectedSceneNodeIDs(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            GTCore::Vector<uint64_t> selectedSceneNodeIDs;
+                            sceneEditor->GetSelectedSceneNodeIDs(selectedSceneNodeIDs);
+
+                            script.PushNewTable();
+                            {
+                                for (size_t i = 0; i < selectedSceneNodeIDs.count; ++i)
+                                {
+                                    script.SetTableValue(-1, static_cast<int>(i + 1), static_cast<int>(selectedSceneNodeIDs[i]));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            script.PushNil();
                         }
 
                         return 1;

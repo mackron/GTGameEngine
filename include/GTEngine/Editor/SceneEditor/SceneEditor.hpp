@@ -91,7 +91,7 @@ namespace GTEngine
         ///
         /// @param node  [in] The node to select.
         /// @param force [in] Normally the scene node will not go through a full selection process if it is already marked as selected - this allows that operato to be forced, which is required sometimes.
-        void SelectSceneNode(SceneNode &node, bool force = false);
+        void SelectSceneNode(SceneNode &node, bool force = false, bool dontPostBackNotification = false);
 
         /// Selects the given scene nodes.
         ///
@@ -101,7 +101,7 @@ namespace GTEngine
         /// Deselects the given scene node.
         ///
         /// @param node [in] The node to deselect.
-        void DeselectSceneNode(SceneNode &node, bool force = false);
+        void DeselectSceneNode(SceneNode &node, bool force = false, bool dontPostBackNotification = false);
 
         /// Retrieves the center point of the selected nodes.
         glm::vec3 GetSelectionCenterPoint() const;
@@ -117,6 +117,10 @@ namespace GTEngine
 
         /// Retrieves a pointer to the first selected node.
         SceneNode* GetFirstSelectedSceneNode();
+
+        /// Fills a vector with the IDs of the selected nodes.
+        void GetSelectedSceneNodeIDs(GTCore::Vector<uint64_t> &sceneNodeIDsOut);
+
 
 
 
