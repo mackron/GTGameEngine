@@ -19,7 +19,6 @@ namespace GTEngine
           updateManager(camera), physicsManager(), cullingManager(),
           scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
           viewportEventHandler(ownerEditor.GetGame(), viewport),
-          sceneNodes(), nextSceneNodeID(0),
           selectedNodes(), selectedNodesBeforePhysicsSimulation(),
           pickingWorld(),
           transformGizmo(), gizmoDragAxis(1.0f, 0.0f, 0.0f), gizmoDragFactor(1.0f, 0.0f),
@@ -228,26 +227,14 @@ namespace GTEngine
     }
 
 
-    SceneNode* SceneEditor::GetSceneNodeByID(size_t id)
+    SceneNode* SceneEditor::GetSceneNodeByID(uint64_t id)
     {
-        auto iNode = this->sceneNodes.Find(id);
-        if (iNode != nullptr)
-        {
-            return iNode->value;
-        }
-
-        return nullptr;
+        return this->scene.GetSceneNodeByID(id);
     }
 
-    const SceneNode* SceneEditor::GetSceneNodeByID(size_t id) const
+    const SceneNode* SceneEditor::GetSceneNodeByID(uint64_t id) const
     {
-        auto iNode = this->sceneNodes.Find(id);
-        if (iNode != nullptr)
-        {
-            return iNode->value;
-        }
-
-        return nullptr;
+        return this->scene.GetSceneNodeByID(id);
     }
 
 
@@ -408,7 +395,7 @@ namespace GTEngine
                     else
                     {
                         // If the node is already the selected one, we don't do anything.
-                        if (!(this->selectedNodes.count == 1 && this->selectedNodes[0] == metadata->GetID()))
+                        if (!(this->selectedNodes.count == 1 && this->selectedNodes[0] == selectedNode.GetID()))
                         {
                             this->DeselectAll();
                             this->SelectSceneNode(selectedNode);
@@ -427,21 +414,20 @@ namespace GTEngine
     {
         while (this->selectedNodes.count > 0)
         {
-            auto iNode = this->sceneNodes.Find(this->selectedNodes[0]);
-            assert(iNode != nullptr);
+            auto node = this->GetSceneNodeByID(this->selectedNodes[0]);
+            assert(node != nullptr);
             {
-                auto node = iNode->value;
-                assert(node != nullptr);
-                {
-                    this->DeselectSceneNode(*node);
-                }
+                this->DeselectSceneNode(*node);
             }
         }
 
 
-        for (size_t i = 0; i < this->sceneNodes.count; ++i)
+        // TODO: This feels bad. See if we can remove this.
+        size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+
+        for (size_t i = 0; i < sceneNodeCount; ++i)
         {
-            auto node = this->sceneNodes.buffer[i]->value;
+            auto node = this->scene.GetSceneNodeByIndex(i);
             assert(node != nullptr);
             {
                 auto metadata = node->GetComponent<EditorMetadataComponent>();
@@ -465,7 +451,7 @@ namespace GTEngine
             }
 
             // We need to also check the actual list of selected nodes. It's considered selected if it's here.
-            return this->selectedNodes.Exists(metadata->GetID());
+            return this->selectedNodes.Exists(node.GetID());
         }
 
         return false;
@@ -497,9 +483,9 @@ namespace GTEngine
             {
                 metadata->Select();
 
-                if (!this->selectedNodes.Exists(metadata->GetID()))
+                if (!this->selectedNodes.Exists(node.GetID()))
                 {
-                    this->selectedNodes.PushBack(metadata->GetID());
+                    this->selectedNodes.PushBack(node.GetID());
                 }
 
                 // The scripting environment needs to be aware of this change.
@@ -515,7 +501,7 @@ namespace GTEngine
         }
     }
 
-    void SceneEditor::SelectSceneNodes(const GTCore::Vector<size_t> &selectedNodeIDs)
+    void SceneEditor::SelectSceneNodes(const GTCore::Vector<uint64_t> &selectedNodeIDs)
     {
         for (size_t i = 0; i < selectedNodeIDs.count; ++i)
         {
@@ -539,7 +525,7 @@ namespace GTEngine
                 metadata->Deselect();
 
 
-                this->selectedNodes.RemoveFirstOccuranceOf(metadata->GetID());
+                this->selectedNodes.RemoveFirstOccuranceOf(node.GetID());
 
                 // The scripting environment needs to be aware of this change.
                 if (!dontPostBackNotification)
@@ -571,17 +557,13 @@ namespace GTEngine
 
             for (size_t i = 0; i < this->selectedNodes.count; ++i)
             {
-                auto iNode = this->sceneNodes.Find(this->selectedNodes[i]);
-                assert(iNode != nullptr);
+                auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
+                assert(node != nullptr);
                 {
-                    auto node = iNode->value;
-                    assert(node != nullptr);
-                    {
-                        glm::vec3 position = node->GetWorldPosition();
+                    glm::vec3 position = node->GetWorldPosition();
 
-                        aabbMin = glm::min(aabbMin, position);
-                        aabbMax = glm::max(aabbMax, position);
-                    }
+                    aabbMin = glm::min(aabbMin, position);
+                    aabbMax = glm::max(aabbMax, position);
                 }
             }
 
@@ -650,7 +632,7 @@ namespace GTEngine
         }
     }
 
-    void SceneEditor::RemoveSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs)
+    void SceneEditor::RemoveSceneNodes(const GTCore::Vector<uint64_t> &sceneNodeIDs)
     {
         for (size_t i = 0; i < sceneNodeIDs.count; ++i)
         {
@@ -662,7 +644,7 @@ namespace GTEngine
     {
         if (this->selectedNodes.count > 0)
         {
-            GTCore::Vector<size_t>     prevSelectedNodes(this->selectedNodes);
+            GTCore::Vector<uint64_t>   prevSelectedNodes(this->selectedNodes);
             GTCore::Vector<SceneNode*> newNodes(prevSelectedNodes.count);
 
             // TODO: Get this working with children.
@@ -701,7 +683,7 @@ namespace GTEngine
                     auto metadata = node->GetComponent<EditorMetadataComponent>();
                     assert(metadata != nullptr);
                     {
-                        metadata->SetID(0);
+                        node->SetID(0);
                     }
 
 
@@ -844,23 +826,6 @@ namespace GTEngine
 
             assert(metadata != nullptr);
             {
-                size_t uniqueID = metadata->GetID();
-
-                // If the unique ID is 0, it means one needs to be generated.
-                if (uniqueID == 0)
-                {
-                    uniqueID = ++this->nextSceneNodeID;
-                    metadata->SetID(uniqueID);
-                }
-
-
-                if (this->sceneNodes.Find(uniqueID) == nullptr)
-                {
-                    this->sceneNodes.Add(uniqueID, &node);
-                }
-
-
-
                 // Picking shapes need to be created.
                 //
                 // We always create the shapes regardless of whether or not they're visible. We only add to the picking world if it's visible, though.
@@ -935,10 +900,6 @@ namespace GTEngine
 
                 // We need to let the editor know about this. It will need to do things like remove it from the hierarchy explorer.
                 this->PostOnSceneNodeRemovedToScript(node);
-
-
-                // The state needs to know that it no longer has the node.
-                this->sceneNodes.RemoveByKey(metadata->GetID());
             }
         }
     }
@@ -996,7 +957,7 @@ namespace GTEngine
                 this->RescaleGizmo();
             }
 
-            if (this->selectedNodes.count == 1 && metadata->GetID() == this->selectedNodes[0])
+            if (this->selectedNodes.count == 1 && node.GetID() == this->selectedNodes[0])
             {
                 auto &script = this->GetScript();
 
@@ -1500,8 +1461,6 @@ namespace GTEngine
         {
             GTCore::BasicSerializer metadataSerializer;
 
-            metadataSerializer.Write(static_cast<uint32_t>(this->nextSceneNodeID));
-
             this->camera.Serialize(metadataSerializer);
             metadataSerializer.Write(this->cameraXRotation);
             metadataSerializer.Write(this->cameraYRotation);
@@ -1528,7 +1487,6 @@ namespace GTEngine
         {
             this->transformGizmo.Hide();
 
-            this->DeleteAllMarkedSceneNodes();
 
             // With pre-deserialization done, we can now do a full deserialization of the scene.
             this->scene.Deserialize(deserializer);
@@ -1542,8 +1500,6 @@ namespace GTEngine
             {
                 // Since we only peeked at the header, we'll need to now seek past it.
                 deserializer.Seek(sizeof(Serialization::ChunkHeader));
-
-                deserializer.Read(reinterpret_cast<uint32_t &>(this->nextSceneNodeID));
 
                 // The camera node needs to be deserialized.
                 this->camera.Deserialize(deserializer);
@@ -1580,6 +1536,10 @@ namespace GTEngine
         }
         this->isDeserializing = false;
         this->scene.EnableStateStackStaging();
+
+
+        // We'll let the editor do it's thing with selections.
+        this->PostOnSelectionChangedEventToScript();
     }
 
     void SceneEditor::SerializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Serializer &serializer)
@@ -1613,33 +1573,6 @@ namespace GTEngine
             }
         }
     }
-
-
-    void SceneEditor::DeleteAllMarkedSceneNodes()
-    {
-        // For any scene node still loaded, we need to iterate over and destroy them. Note how we don't increment every time, because deleting
-        // the node will in turn remove it from the list as a result from the event handlers.
-        for (size_t i = 0; i < this->sceneNodes.count; )
-        {
-            auto node = this->sceneNodes.buffer[i]->value;
-            assert(node != nullptr);
-            {
-                auto metadata = node->GetComponent<EditorMetadataComponent>();
-                if (metadata != nullptr)
-                {
-                    if (metadata->DeleteOnClose())
-                    {
-                        delete node;
-                        continue;
-                    }
-                }
-            }
-
-            // We'll only get here if the scene node was not deleted.
-            ++i;
-        }
-    }
-
 
 
     void SceneEditor::ShowTransformGizmo()
@@ -1895,9 +1828,11 @@ namespace GTEngine
     {
         // Grab the nodes marked as selected.
         GTCore::Vector<SceneNode*> nodesForReselection;
-        for (size_t i = 0; i < this->sceneNodes.count; ++i)
+        
+        size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+        for (size_t i = 0; i < sceneNodeCount; ++i)
         {
-            auto sceneNode = this->sceneNodes.buffer[i]->value;
+            auto sceneNode = this->scene.GetSceneNodeByIndex(i);
             assert(sceneNode != nullptr);
             {
                 auto metadata = sceneNode->GetComponent<EditorMetadataComponent>();

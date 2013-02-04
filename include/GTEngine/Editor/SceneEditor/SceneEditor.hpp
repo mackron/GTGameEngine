@@ -56,8 +56,8 @@ namespace GTEngine
 
 
         /// Retrieves a scene node by it's ID, or null if the scene node is not currently instantiated.
-              SceneNode* GetSceneNodeByID(size_t id);
-        const SceneNode* GetSceneNodeByID(size_t id) const;
+              SceneNode* GetSceneNodeByID(uint64_t id);
+        const SceneNode* GetSceneNodeByID(uint64_t id) const;
 
 
         ///////////////////////////////////////////////////
@@ -96,7 +96,7 @@ namespace GTEngine
         /// Selects the given scene nodes.
         ///
         /// @param sceneNodeIDs [in] The IDs of the scene nodes to select.
-        void SelectSceneNodes(const GTCore::Vector<size_t> &selectedNodeIDs);
+        void SelectSceneNodes(const GTCore::Vector<uint64_t> &selectedNodeIDs);
 
         /// Deselects the given scene node.
         ///
@@ -133,7 +133,7 @@ namespace GTEngine
         /// Deletes the given scene nodes.
         ///
         /// @param sceneNodeIDs [in] A constant reference to the vector containing the scene nodes to delete.
-        void RemoveSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs);
+        void RemoveSceneNodes(const GTCore::Vector<uint64_t> &sceneNodeIDs);
 
         /// Duplicates the selected scene nodes, deselects them and then selects the new ones.
         void DuplicateSelectedSceneNodes();
@@ -283,10 +283,6 @@ namespace GTEngine
         void DeserializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Deserializer &deserializer);
 
 
-        /// Deletes every scene node that is marked for needing deletion.
-        void DeleteAllMarkedSceneNodes();
-
-
 
         /// Shows and repositions the positioning gizmo.
         void ShowTransformGizmo();
@@ -371,18 +367,11 @@ namespace GTEngine
         Editor3DViewportEventHandler viewportEventHandler;
 
 
-        /// The list of all relevant scene nodes mapped to a unique ID.
-        GTCore::Map<size_t, SceneNode*> sceneNodes;
-
-        /// The ID to use for the next scene node.
-        size_t nextSceneNodeID;
-
-
         /// The list of selected nodes.
-        GTCore::Vector<size_t> selectedNodes;
+        GTCore::Vector<uint64_t> selectedNodes;
 
         /// The list of selected nodes before doing the physics simulation.
-        GTCore::Vector<size_t> selectedNodesBeforePhysicsSimulation;
+        GTCore::Vector<uint64_t> selectedNodesBeforePhysicsSimulation;
 
 
         /// The collision world for doing picking/selecting.

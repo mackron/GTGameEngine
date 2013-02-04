@@ -16,8 +16,7 @@ namespace GTEngine
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
           spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTransform(),
-          directionArrowModel(nullptr), directionArrowVA(nullptr),
-          uniqueID(0)
+          directionArrowModel(nullptr), directionArrowVA(nullptr)
     {
         pickingCollisionObject.setUserPointer(this);
     }
@@ -459,18 +458,6 @@ namespace GTEngine
 
 
 
-    size_t EditorMetadataComponent::GetID() const
-    {
-        return this->uniqueID;
-    }
-
-    void EditorMetadataComponent::SetID(size_t newID)
-    {
-        this->uniqueID = newID;
-    }
-
-
-
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
@@ -478,7 +465,6 @@ namespace GTEngine
     {
         GTCore::BasicSerializer intermediarySerializer;
 
-        intermediarySerializer.Write(static_cast<uint32_t>(uniqueID));
         intermediarySerializer.Write(this->alwaysShowOnTop);
         intermediarySerializer.Write(this->useModelForPickingShape);
         intermediarySerializer.Write(this->deleteOnClose);
@@ -520,7 +506,6 @@ namespace GTEngine
             {
             case 1:
                 {
-                    deserializer.Read(reinterpret_cast<uint32_t &>(this->uniqueID));
                     deserializer.Read(this->alwaysShowOnTop);
                     deserializer.Read(this->useModelForPickingShape);
                     deserializer.Read(this->deleteOnClose);
