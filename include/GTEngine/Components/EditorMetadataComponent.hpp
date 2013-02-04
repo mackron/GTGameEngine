@@ -191,14 +191,6 @@ namespace GTEngine
 
 
 
-        /// Retrieves the unique ID of the scene node.
-        size_t GetID() const;
-
-        /// Sets the ID of the scene node.
-        void SetID(size_t uniqueID);
-
-
-
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
 
@@ -283,9 +275,6 @@ namespace GTEngine
         /// The vertex array to use for the direction arrow.
         VertexArray* directionArrowVA;
 
-
-        /// The unique ID of the scene node for use by the editor.
-        size_t uniqueID;
 
 
 
