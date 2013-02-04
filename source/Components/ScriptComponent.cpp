@@ -14,4 +14,19 @@ namespace GTEngine
     ScriptComponent::~ScriptComponent()
     {
     }
+
+
+
+    ///////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void ScriptComponent::Serialize(GTCore::Serializer &serializer) const
+    {
+        (void)serializer;
+    }
+
+    void ScriptComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        (void)deserializer;
+    }
 }
