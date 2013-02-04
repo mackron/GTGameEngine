@@ -214,7 +214,7 @@ namespace GTEngine
 
     void SceneNode::AttachChild(SceneNode &child)
     {
-        if (&child != this)
+        if (&child != this && !this->IsAncestor(child))
         {
             auto previousParent = child.GetParent();
 
