@@ -1,10 +1,10 @@
 
 --- GTGameEngine Sandbox ---
 
-The GTGameEngine Sandbox is basically just the editor. It's primary use is to
-allow you to play around with the editor and try it out. It's also my way of
-showing off some of the engine's features in a way that's fairly easy for the
-average person.
+The GTGameEngine Sandbox is basically just the editor for my hobby game engine
+I've been working on. It's primary use is to allow you to play around with the
+editor and try it out. It's also my way of showing off some of the engine's
+features in a way that's fairly easy for the average person.
 
 At the moment, the sandbox is extremely basic. In fact, it's not really a
 sandbox at all yet because there's isn't really all that much you can do. A lot
@@ -19,6 +19,25 @@ Here's what you can do (spoiler: it's not much):
     - View models and edit it's basic properties.
     - View textures.
     - Edit text files (XML files are currently incorrectly detected as models)
+
+    
+    
+--- Requirements ---
+
+64-bit CPU and OS (Windows XP - 7. Windows 8 should work fine, but not tested.)
+OpenGL 2.0 support.
+
+I should note that the engine itself can be built as a 32-bit binary, but I
+probably won't ever distribute a 32-bit build of the sandbox.
+
+For the GPU, the engine does not use anything more than OpenGL 2.0, but it has
+not been heavily tested, so you may in fact need something a bit better in the
+event that I'm using an extension I've forgotten about off the top of my head.
+I've tested on nVidia and AMD GPU's, so they should work fine. It was working
+on my Sandy Bridge GPU at one point a while ago, so it might also work there.
+
+Let me know if it doesn't work since it'll probably be a bug on my end.
+
 
 
 --- Usage ---
@@ -62,16 +81,43 @@ the next major milestone for the editting tools. Currently, the only way to do
 behaviour is through the C++ environment, which is a bit of a pain, especially
 for simple prototype games.
 
-There is also currently no support for "running" the game. Again, you currently
+There is also currently no notion of "running" the game. Again, you currently
 need to use the C++ library to do this kind of stuff.
 
 You can play around with the physics by hitting the "Physics" button along the
 top. This is a simple toggle. The main motivation behind this feature is to
 make testing physics a lot easier.
 
+You can translate, rotate and scale physics objects as the physics simulation
+is running.
+
 On the subject of physics, there is currently no way of adding and removing
 constraints via the editor. This is supported by the engine, but I've not yet
 implemented a front-end for the editor.
+
+The undo/redo stack of a scene is persistant, which basically means you can do
+undo/redo operations between loads.
+
+
+Controls:
+
+    LMB:              Select
+    Shift + LMB:      Select multiple
+
+    LMB + Drag:       Move camera forward and turn.
+    RMB + Drag:       Rotate camera
+    LMB + RMB + Drag: Pan
+    
+
+    - Translate Mode           - T
+    - Rotate Mode              - R
+    - Scale Mode               - S
+    - Local Space Mode         - L
+    - World Space Mode         - G
+    - Toggle Local/World Space - Q
+    - Duplicate                - CTRL + D
+    - Delete Selected Nodes    - Delete
+
 
 
 --- Source Code ---
