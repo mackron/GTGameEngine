@@ -1,5 +1,5 @@
-/**
-*/
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTCore/Script.hpp>
 #include <GTCore/Errors.hpp>

@@ -1,3 +1,4 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 // This file contains everything relating to resource management for the renderer.
 

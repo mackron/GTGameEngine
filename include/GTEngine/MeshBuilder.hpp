@@ -1,3 +1,4 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #ifndef __PAG1_MeshBuilder_hpp_
 #define __PAG1_MeshBuilder_hpp_
