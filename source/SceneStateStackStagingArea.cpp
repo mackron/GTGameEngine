@@ -7,7 +7,7 @@
 namespace GTEngine
 {
     SceneStateStackStagingArea::SceneStateStackStagingArea(SceneStateStackBranch &branchIn)
-        : branch(branchIn), inserts(), deletes(), updates()
+        : branch(branchIn), inserts(), deletes(), updates(), hierarchy()
     {
     }
 
