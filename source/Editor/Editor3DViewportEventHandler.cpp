@@ -1,3 +1,4 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Editor/Editor3DViewportEventHandler.hpp>
 #include <GTEngine/Game.hpp>
