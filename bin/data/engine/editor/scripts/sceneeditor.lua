@@ -1653,13 +1653,13 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
         local nodesToSelect   = {};
         
         for i,sceneNodeID in ipairs(sceneNodeIDs) do
-            if table.indexof(self.SelectedNodes) == nil then
+            if table.indexof(self.SelectedNodes, sceneNodeID) == nil then
                 nodesToSelect[#nodesToSelect + 1] = sceneNodeID;
             end
         end
         
         for i,sceneNodeID in ipairs(self.SelectedNodes) do
-            if table.indexof(sceneNodeIDs) == nil then
+            if table.indexof(sceneNodeIDs, sceneNodeID) == nil then
                 nodesToDeselect[#nodesToDeselect + 1] = sceneNodeID;
             end
         end
@@ -2134,7 +2134,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
             self:ShowPropertyPanels();
         end
         
-        self.HierarchyPanel:SetSelectedItemsBySceneNodeIDs(self:GetSelectedSceneNodeIDs());
+        
+        self.HierarchyPanel:SetSelectedItemsBySceneNodeIDs(self:GetSelectedSceneNodeIDs(), true);
     end
     
     function self:OnSceneNodeAdded(sceneNodePtr)
