@@ -118,13 +118,37 @@ Controls:
     - Duplicate                - CTRL + D
     - Delete Selected Nodes    - Delete
 
+    
+    
+--- Bugs and Feedback ---
+
+Expect the editor to have bugs. I have started using GitHub's bug tracking
+system for keeping track of bugs lately. You can see them here:
+
+    https://github.com/mackron/GTGameEngine/issues
+    
+I expect you'll need a GitHub account to report bugs there, so if you don't
+want to create an account there, feel free to email me at mackron@gmail.com or
+send me a tweet at @kookaburragamer.
+
+Any feedback is hugely, hugely appreciated because it just motivatees me that
+much more to keep working on this thing. If you wanna send me any feedback,
+good or bad, you can do so here:
+
+    mackron@gmail.com
+    Twitter: @kookaburragamer
+    
+I also occasionally post development updates in blog form:
+
+    http://kookaburragamer.wordpress.com
+
 
 
 --- Source Code ---
 
 The engine is 100% free and open-source. It is hosted on GitHub at:
 
-    
+    https://github.com/mackron/GTGameEngine
 
 The source is released under the MIT licence which basically means you can do
 whatever you want with it, so long as you don't blame me if anything goes
