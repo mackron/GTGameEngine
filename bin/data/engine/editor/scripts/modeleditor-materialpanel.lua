@@ -1,3 +1,4 @@
+-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 function GTGUI.Element:ModelEditor_MaterialsPanel(_internalPtr)
     self:PanelGroupBox("Materials");
