@@ -99,9 +99,10 @@
 				<Option working_dir="" />
 				<Option object_output="obj/debug-windows-clang/" />
 				<Option type="2" />
-				<Option compiler="mingww64" />
+				<Option compiler="clang" />
 				<Option createDefFile="1" />
 				<Compiler>
+					<Add option="-std=c++11" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 				</Compiler>
@@ -112,11 +113,12 @@
 				<Option working_dir="" />
 				<Option object_output="obj/release-windows-clang/" />
 				<Option type="2" />
-				<Option compiler="mingww64" />
+				<Option compiler="clang" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-Wall" />
 					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add option="-Wall" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
