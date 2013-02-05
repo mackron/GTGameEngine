@@ -279,13 +279,14 @@ namespace GTEngine
 
         /// Creates a new scene node from the given deserializer.
         ///
-        /// @param deserializer [in] A reference to the deserializer to create the scene node from.
+        /// @param deserializer        [in] A reference to the deserializer to create the scene node from.
+        /// @param createNewIDIfExists [in] Specifies whether or not a new ID is generated if a scene node of the same ID already exists.
         ///
         /// @return A pointer to the new scene node, or null if an error occurs.
         ///
         /// @remarks
         ///     If a scene node of the same ID already exists, this will return nullptr.
-        SceneNode* CreateNewSceneNode(GTCore::Deserializer &deserializer);
+        SceneNode* CreateNewSceneNode(GTCore::Deserializer &deserializer, bool createNewIDIfExists = false);
         
 
         /// Retrieves a scene node by it's ID.
