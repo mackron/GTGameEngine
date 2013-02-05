@@ -158,4 +158,21 @@ namespace GTEngine
     {
         this->speedScale = scale;
     }
+
+
+
+
+    void DefaultScenePhysicsManager::ActivateAllRigidBodies()
+    {
+        auto &objects = this->world.GetInternalDynamicsWorld().getCollisionObjectArray();
+        
+        for (int i = 0; i < objects.size(); ++i)
+        {
+            auto object = objects[i];
+            assert(object != nullptr);
+            {
+                object->activate(true);
+            }
+        }
+    }
 }

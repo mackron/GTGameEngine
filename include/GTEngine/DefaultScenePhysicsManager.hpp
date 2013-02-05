@@ -84,6 +84,11 @@ namespace GTEngine
         virtual void SetSpeedScale(double scale);
 
 
+
+        /// Activates every rigid body in the scene.
+        void ActivateAllRigidBodies();
+
+
     protected:
 
         /// The dynamics world containing all of our physics objects.
