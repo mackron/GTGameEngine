@@ -31,37 +31,20 @@ namespace GTEngine
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
 
+        // We will add the system scene nodes to the scene before setting the minimum automatic scene node IDs. This will save
+        // us from having to manually set IDs on the system nodes.
+        this->CreateAndAddSystemNodes();
+
+
+        // We want to have a minimum ID for automatically generated IDs so that we can have enough room for system nodes such
+        // as the camera and gizmos.
+        this->scene.SetMinAutoSceneNodeID(16384);
+
+        
+
 
         auto &gui    = this->GetGUI();
         auto &script = this->GetScript();
-
-
-
-        // Here we'll setup the built-in nodes.
-        this->camera.AddComponent<GTEngine::CameraComponent>();
-        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
-        
-        auto metadata = this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
-        {
-            metadata->DeleteOnClose(false);     // <-- TODO: We need to use this anymore?
-            metadata->IsSystemNode(true);
-        }
-        
-        this->camera.DisableSerialization();
-        this->camera.DisableStateStackStaging();
-
-
-        this->viewport.SetCameraNode(this->camera);
-        this->scene.AddViewport(this->viewport);
-        this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
-
-        this->scene.AddSceneNode(this->camera);
-
-        this->transformGizmo.Initialise();
-        this->transformGizmo.Hide();
-        this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
-
-
 
         // We need to load the scene.
         auto file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Read);
@@ -1444,6 +1427,37 @@ namespace GTEngine
 
     ///////////////////////////////////////////////////
     // Private Methods.
+
+    void SceneEditor::CreateAndAddSystemNodes()
+    {
+        // There are a few pre-conditions that neeed to be met.
+        assert(this->scene.GetSceneNodeCount()     == 0);
+        assert(this->scene.GetMinAutoSceneNodeID() == 1);
+        {
+            this->camera.AddComponent<GTEngine::CameraComponent>();
+            this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
+        
+            auto metadata = this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
+            {
+                metadata->DeleteOnClose(false);     // <-- TODO: We need to use this anymore?
+                metadata->IsSystemNode(true);
+            }
+        
+            this->camera.DisableSerialization();
+            this->camera.DisableStateStackStaging();
+
+
+            this->viewport.SetCameraNode(this->camera);
+            this->scene.AddViewport(this->viewport);
+            this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
+
+            this->scene.AddSceneNode(this->camera);
+
+            this->transformGizmo.Initialise();
+            this->transformGizmo.Hide();
+            this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
+        }
+    }
 
     void SceneEditor::ApplyCameraRotation()
     {
