@@ -250,6 +250,9 @@ namespace GTEngine
         ///////////////////////////////////////////////////
         // Private Methods.
 
+        /// Creates all of the system nodes (camera, gizmos, grid, etc) and adds them to the scene.
+        void CreateAndAddSystemNodes();
+
         /// Applies the camera rotation to the camera node.
         void ApplyCameraRotation();
 
