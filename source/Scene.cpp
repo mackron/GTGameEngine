@@ -1328,6 +1328,11 @@ namespace GTEngine
         }
 
 
+        // With a change in parent, we may also have a change in the transformation.
+        this->OnSceneNodeTransform(node, true);
+        this->OnSceneNodeScale(node);
+
+
         this->PostEvent_OnSceneNodeParentChanged(node, previousParent);
     }
 
