@@ -149,7 +149,11 @@ namespace GTEngine
         {
             auto sceneNodeID       = this->hierarchy.buffer[i]->key;
             auto parentSceneNodeID = this->branch.FindMostRecentParentSceneNodeID(sceneNodeID, this->branch.GetCurrentFrameIndex());
-            commands.hierarchy.Add(sceneNodeID, parentSceneNodeID);
+
+            if (!commands.deletes.Exists(sceneNodeID))
+            {
+                commands.hierarchy.Add(sceneNodeID, parentSceneNodeID);
+            }
         }
     }
 
