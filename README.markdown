@@ -10,6 +10,12 @@ behind the Windows build, so expect some errors with the Linux build occasionall
 GTGameEngine is built as a static library. There is no direct support shared/dynamic
 libraries (.so/.dll).
 
+While I do appreciate people trying this out, I do ask that you don't yet build
+anything serious until things become a bit more stable. In particular, I'm not
+yet concerning myself with backwards compatibility with the serialized format
+of most objects, so things like model and scene files will probably break quite
+frequently.
+
 
 GTGameEngine depends on the following libraries:
 
