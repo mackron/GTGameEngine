@@ -458,9 +458,11 @@ namespace GTEngine
         auto sceneNode = new SceneNode;
         sceneNode->Deserialize(deserializer);
 
-        // We need to return false if a node of the same ID already exists.
+        // We need to return null if a node of the same ID already exists.
         if (this->GetSceneNodeByID(sceneNode->GetID()) != nullptr)
         {
+            Log("Scene::CreateNewSceneNode(GTCore::Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
+
             delete sceneNode;
             return nullptr;
         }
