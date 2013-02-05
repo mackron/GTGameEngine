@@ -1,3 +1,4 @@
+-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 -- Enumerator representing the result from the Yes/No/Cancel dialog.
 Editor.YesNoCancelDialogResult = 

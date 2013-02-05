@@ -1,3 +1,4 @@
+-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 function GTGUI.Element:PanelGroupBoxTitle(text, showCross)
     self.Arrow        = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='panel-groupbox-title-arrow' />");

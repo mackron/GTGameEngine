@@ -1,3 +1,4 @@
+-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 function GTGUI.Element:Vector3Input()
     self.X = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:2px;' />");

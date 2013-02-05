@@ -1,3 +1,4 @@
+-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 -- Takes the given element and turns it into a menu bar. Note this is only the bar itself and it's buttons and not the actual sub-menus. Instead you attach
 -- menus to the menu bar items.

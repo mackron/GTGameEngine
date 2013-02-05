@@ -1,3 +1,5 @@
+-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
 -- This file is used to create a list box from a GUI element. You create a list box with the
 -- ListBox() function, which will take the element that is being turned into a list box.
 

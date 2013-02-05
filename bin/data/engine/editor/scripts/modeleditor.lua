@@ -1,3 +1,4 @@
+-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 function GTGUI.Element:ModelEditorPanel(_internalPtr)
     self.Body      = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='model-editor-panel-body' style='' />");

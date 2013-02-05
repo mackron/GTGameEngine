@@ -1,3 +1,6 @@
+-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+
 
 -- Takes the given element and turns it into a combo box.
 function GTGUI.Element:ComboBox()
