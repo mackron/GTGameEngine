@@ -342,7 +342,12 @@ namespace GTEngine
 
                     for (size_t i = 0; i < hierarchy.count; ++i)
                     {
-                        commands.hierarchy.Add(hierarchy.buffer[i]->key, 0);
+                        uint64_t sceneNodeID = hierarchy.buffer[i]->key;
+
+                        if (!deletes.Exists(sceneNodeID))
+                        {
+                            commands.hierarchy.Add(sceneNodeID, 0);
+                        }
                     }
                 }
             }
@@ -377,7 +382,12 @@ namespace GTEngine
 
                     for (size_t i = 0; i < hierarchy.count; ++i)
                     {
-                        commands.hierarchy.Add(hierarchy.buffer[i]->key, 0);
+                        uint64_t sceneNodeID = hierarchy.buffer[i]->key;
+
+                        if (!deletes.Exists(sceneNodeID))
+                        {
+                            commands.hierarchy.Add(sceneNodeID, 0);
+                        }
                     }
                 }
             }
