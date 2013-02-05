@@ -181,6 +181,7 @@ namespace GTEngine
         {
             this->selectedNodesBeforePhysicsSimulation = this->selectedNodes;
             this->physicsManager.EnableSimulation();
+            this->physicsManager.ActivateAllRigidBodies();
 
             this->UpdatePhysicsButtonIcon();
         }
