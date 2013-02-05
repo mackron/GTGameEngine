@@ -12,7 +12,7 @@
 				<Option working_dir="../../../bin/windows-gcc/" />
 				<Option object_output="obj/debug-windows-gcc/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="mingww64" />
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-g" />
@@ -35,7 +35,7 @@
 					<Add library="z-x64" />
 					<Add library="lua-x64" />
 					<Add library="pcre-x64" />
-					<Add library="RecastDetour-x64" />
+					<Add library="winmm" />
 				</Linker>
 			</Target>
 			<Target title="release-windows-gcc">
@@ -44,7 +44,7 @@
 				<Option working_dir="../../../bin/windows-gcc/" />
 				<Option object_output="obj/release-windows-gcc/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="mingww64" />
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-O2" />
@@ -68,7 +68,7 @@
 					<Add library="z-x64" />
 					<Add library="lua-x64" />
 					<Add library="pcre-x64" />
-					<Add library="RecastDetour-x64" />
+					<Add library="winmm" />
 				</Linker>
 			</Target>
 			<Target title="debug-linux-gcc">
@@ -203,6 +203,71 @@
 					<Add library="X11" />
 					<Add library="GL" />
 					<Add library="Xcursor" />
+				</Linker>
+			</Target>
+			<Target title="debug-windows-clang">
+				<Option platforms="Windows;" />
+				<Option output="../../../bin/windows-clang/GTEngine-Editor-debug-x64" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../bin/windows-clang/" />
+				<Option object_output="obj/debug-windows-clang/" />
+				<Option type="1" />
+				<Option compiler="clang" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="GTEngine-debug-x64" />
+					<Add library="GTGUI-debug-x64" />
+					<Add library="GTType-debug-x64" />
+					<Add library="GTImage-debug-x64" />
+					<Add library="GTCore-debug-x64" />
+					<Add library="GTGL-debug-x64" />
+					<Add library="BulletDynamics-x64" />
+					<Add library="BulletCollision-x64" />
+					<Add library="LinearMath-x64" />
+					<Add library="OpenAL64" />
+					<Add library="Gdi32" />
+					<Add library="assimp-x64" />
+					<Add library="freetype-x64" />
+					<Add library="png-x64" />
+					<Add library="z-x64" />
+					<Add library="lua-x64" />
+					<Add library="pcre-x64" />
+					<Add library="winmm" />
+				</Linker>
+			</Target>
+			<Target title="release-windows-clang">
+				<Option platforms="Windows;" />
+				<Option output="../../../bin/windows-clang/GTEngine-Editor-x64" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../../bin/windows-clang/" />
+				<Option object_output="obj/release-windows-clang/" />
+				<Option type="1" />
+				<Option compiler="clang" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="GTEngine-x64" />
+					<Add library="GTGUI-x64" />
+					<Add library="GTType-x64" />
+					<Add library="GTImage-x64" />
+					<Add library="GTCore-x64" />
+					<Add library="GTGL-x64" />
+					<Add library="BulletDynamics-x64" />
+					<Add library="BulletCollision-x64" />
+					<Add library="LinearMath-x64" />
+					<Add library="OpenAL64" />
+					<Add library="Gdi32" />
+					<Add library="assimp-x64" />
+					<Add library="freetype-x64" />
+					<Add library="png-x64" />
+					<Add library="z-x64" />
+					<Add library="lua-x64" />
+					<Add library="pcre-x64" />
+					<Add library="winmm" />
 				</Linker>
 			</Target>
 		</Build>

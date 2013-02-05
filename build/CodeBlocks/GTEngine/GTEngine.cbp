@@ -158,6 +158,7 @@
 		<Unit filename="../../../include/GTEngine/Components/OccluderComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/PointToPointConstraintComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/ProximityComponent.hpp" />
+		<Unit filename="../../../include/GTEngine/Components/ScriptComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/SpriteComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/ConvexHull.hpp" />
 		<Unit filename="../../../include/GTEngine/ConvexHullBuildSettings.hpp" />
