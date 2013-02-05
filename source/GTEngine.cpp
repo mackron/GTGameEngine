@@ -34,7 +34,7 @@ namespace GTEngine
         GTCore::IO::SetCurrentDirectory(cmdLine.GetApplicationDirectory());
 
         // We need to keep hold of the executable directory for GetExecutableDirectory().
-        ExecutableDirectory = cmdLine.GetApplicationDirectory();
+        ExecutableDirectory = GTCore::IO::ToAbsolutePath(cmdLine.GetApplicationDirectory(), GTCore::IO::GetCurrentDirectory());
 
         // After moving into the application directory, we need to load up the config file and move into the data directory. From
         // there we can read the user configs and setup the log file.
