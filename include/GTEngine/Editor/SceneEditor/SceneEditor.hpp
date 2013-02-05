@@ -334,6 +334,12 @@ namespace GTEngine
         ///     This method needs to be called whenever the state of the scene has changed so that the correct objects are selected.
         void ReselectSceneNodes();
 
+        /// Recursively copies the given node and selects the copy.
+        ///
+        /// @param nodeToCopy [in] A reference to the scene node to copy.
+        /// @param parentNode [in] A pointer to the parent node. Can be null.
+        void CopySceneNodeAndChildren(SceneNode &nodeToCopy, SceneNode* parentNode);
+
 
         /// Updates the icon on the Physics button.
         void UpdatePhysicsButtonIcon();

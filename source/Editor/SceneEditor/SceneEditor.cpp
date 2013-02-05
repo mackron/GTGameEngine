@@ -630,6 +630,84 @@ namespace GTEngine
             GTCore::Vector<uint64_t>   prevSelectedNodes(this->selectedNodes);
             GTCore::Vector<SceneNode*> newNodes(prevSelectedNodes.count);
 
+
+
+            // What we're going to do is grab the IDs of all of the scene nodes we want to copy. We include all descendants.
+            GTCore::Vector<SceneNode*> sceneNodesToCopy;
+            
+            for (size_t iNode = 0; iNode < prevSelectedNodes.count; ++iNode)
+            {
+                auto nodeToCopy = this->GetSceneNodeByID(prevSelectedNodes[iNode]);
+                assert(nodeToCopy != nullptr);
+                {
+                    if (!this->IsAncestorSelected(*nodeToCopy))
+                    {
+                        sceneNodesToCopy.PushBack(nodeToCopy);
+                    }
+                }
+            }
+
+
+
+            // We want to select the new nodes, so we're going to deselect everything at this point.
+            this->DeselectAll();
+
+
+
+            // At this point sceneNodesToCopy will be filled with the IDs of the scene nodes that do not have an ancestor selected. The parent IDs for these
+            // will be to existing nodes.
+            //
+            // We will also want to copy the children of each of these nodes, but we copy the top-level ones first.
+            for (size_t iNode = 0; iNode < sceneNodesToCopy.count; ++iNode)
+            {
+                auto nodeToCopy = sceneNodesToCopy[iNode];
+                assert(nodeToCopy != nullptr);
+                {
+                    this->CopySceneNodeAndChildren(*nodeToCopy, nodeToCopy->GetParent());
+
+                    /*
+                    auto newNode = new SceneNode;
+
+                    GTCore::BasicSerializer serializer;
+                    nodeToCopy->Serialize(serializer);
+
+                    GTCore::BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
+                    newNode->Deserialize(deserializer);
+
+                    
+
+                    // The ID of the new node needs to be set to 0 so that a new ID is generated after it is added to the scene.
+                    newNode->SetID(0);
+
+                    // We now want to link the new node to the parent, if we have one.
+                    if (nodeToCopy->GetParent() != nullptr)
+                    {
+                        nodeToCopy->GetParent()->AttachChild(*newNode);     // <-- This does an implicit Scene::AddSceneNode().
+                    }
+                    else
+                    {
+                        this->scene.AddSceneNode(*newNode);
+                    }
+
+                    // Node needs to be selected.
+                    this->SelectSceneNode(*newNode, false, true);
+
+
+                    */
+                }
+            }
+
+
+            // We will let the editor know about a change in selection.
+            this->PostOnSelectionChangedEventToScript();
+
+
+            // Undo/Redo point.
+            this->CommitStateStackFrame();
+
+
+
+#if 0
             // TODO: Get this working with children.
             for (size_t iNode = 0; iNode < prevSelectedNodes.count; ++iNode)
             {
@@ -673,6 +751,7 @@ namespace GTEngine
                     this->scene.AddSceneNode(*node);
                 }
             }
+#endif
         }
     }
 
@@ -1872,6 +1951,36 @@ namespace GTEngine
             {
                 this->SelectSceneNode(*sceneNode, true);
             }
+        }
+    }
+
+
+    void SceneEditor::CopySceneNodeAndChildren(SceneNode &nodeToCopy, SceneNode* parentNode)
+    {
+        GTCore::BasicSerializer serializer;
+        nodeToCopy.Serialize(serializer);
+
+
+        GTCore::BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
+        auto newNode = this->scene.CreateNewSceneNode(deserializer, true);      // <-- 'true' means to generate a new ID if a node of the same ID already exists (spoiler: it does already exist).
+
+
+
+        // We now want to link the new node to the parent, if we have one.
+        if (parentNode != nullptr)
+        {
+            parentNode->AttachChild(*newNode);     // <-- This does an implicit Scene::AddSceneNode().
+        }
+
+        // Node needs to be selected, but we don't want to notify the editor yet (we'll do it in one go at a higher level).
+        this->SelectSceneNode(*newNode, false, true);
+
+
+
+        // And now we need to make a copy of the children. The parent will be the new node.
+        for (auto childNode = nodeToCopy.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
+        {
+            this->CopySceneNodeAndChildren(*childNode, newNode);
         }
     }
 
