@@ -799,8 +799,12 @@ namespace GTEngine
 
     void SceneEditor::CommitStateStackFrame()
     {
-        this->scene.CommitStateStackFrame();
-        this->MarkAsModified();
+        // We will never do this if a simulation is running.
+        if (!this->IsPhysicsSimulationEnabled())
+        {
+            this->scene.CommitStateStackFrame();
+            this->MarkAsModified();
+        }
     }
 
 
