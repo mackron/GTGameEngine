@@ -725,6 +725,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\ScriptComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeClass.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeClassLibrary.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1209,6 +1215,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Components\ScriptComponent.cpp">
       <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneNodeClass.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneNodeClassLibrary.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

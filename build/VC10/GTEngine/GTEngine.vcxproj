@@ -320,6 +320,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneCullingManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNode.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeClass.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeClassLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeFactory.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeMap.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneObject.hpp" />
@@ -493,6 +495,8 @@
     <ClCompile Include="..\..\..\source\SceneCullingDbvtPolicy.cpp" />
     <ClCompile Include="..\..\..\source\SceneEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\SceneNode.cpp" />
+    <ClCompile Include="..\..\..\source\SceneNodeClass.cpp" />
+    <ClCompile Include="..\..\..\source\SceneNodeClassLibrary.cpp" />
     <ClCompile Include="..\..\..\source\SceneNodeFactory.cpp" />
     <ClCompile Include="..\..\..\source\SceneNodeMap.cpp" />
     <ClCompile Include="..\..\..\source\SceneObject.cpp" />
