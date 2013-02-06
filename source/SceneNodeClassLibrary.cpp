@@ -67,6 +67,24 @@ namespace GTEngine
             if (iLoadedClass == nullptr)
             {
                 // Does not exist. Needs to be loaded.
+                auto file = GTCore::IO::Open(absFileName.c_str(), GTCore::IO::OpenMode::Read);
+                if (file != nullptr)
+                {
+                    // We use a file deserializer for this.
+                    GTCore::FileDeserializer deserializer(file);
+                    
+                    auto newSceneNodeClass = new SceneNodeClass;
+                    newSceneNodeClass->Deserialize(deserializer);
+
+                    LoadedClasses.Add(absFileName.c_str(), SceneNodeClassReference(newSceneNodeClass, 1));
+
+                    return newSceneNodeClass;
+                }
+                else
+                {
+                    GTEngine::PostError("Can not find file: %s", fileName);
+                    return nullptr;
+                }
             }
             else
             {
