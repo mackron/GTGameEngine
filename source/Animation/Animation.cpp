@@ -303,7 +303,11 @@ namespace GTEngine
 
                     deserializer.Read(this->isPlaying);
                     deserializer.Read(this->playbackTime);
-                    deserializer.Read(reinterpret_cast<uint32_t &>(this->loopStartQueueIndex));
+                    
+                    uint32_t newLoopStartQueueIndex;
+                    deserializer.Read(newLoopStartQueueIndex);
+
+                    this->loopStartQueueIndex = static_cast<size_t>(newLoopStartQueueIndex);
 
                     break;
                 }

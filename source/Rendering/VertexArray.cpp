@@ -223,7 +223,10 @@ namespace GTEngine
             {
             case 1:
                 {
-                    deserializer.Read(reinterpret_cast<uint32_t &>(this->vertexCount));
+                    uint32_t newVertexCount;
+                    deserializer.Read(newVertexCount);
+                    
+                    this->vertexCount = static_cast<size_t>(newVertexCount);
 
                     delete [] this->vertices;
                     this->vertices = new float[this->format.GetSize() * this->vertexCount];
@@ -247,7 +250,10 @@ namespace GTEngine
             {
             case 1:
                 {
-                    deserializer.Read(reinterpret_cast<uint32_t &>(this->indexCount));
+                    uint32_t newIndexCount;
+                    deserializer.Read(newIndexCount);
+
+                    this->indexCount = static_cast<size_t>(newIndexCount);
 
                     delete [] this->indices;
                     this->indices = new unsigned int[this->indexCount];
