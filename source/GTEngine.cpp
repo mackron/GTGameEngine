@@ -11,6 +11,7 @@
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
+#include <GTEngine/SceneNodeClassLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/FontManager.hpp>
 #include <GTCore/CommandLine.hpp>
@@ -120,6 +121,9 @@ namespace GTEngine
         Log("Initializing Model Library...");
         ModelLibrary::Startup();
 
+        Log("Initializing Scene Node Class Library...");
+        SceneNodeClassLibrary::Startup();
+
 
         // The font manager.
         Log("Initializing Font Manager...");
@@ -151,6 +155,7 @@ namespace GTEngine
         MaterialLibrary::Shutdown();
         ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();
+        SceneNodeClassLibrary::Shutdown();
         
 
         // It's important that the garbage collector is done after the libraries in case they use the garbage collector itself for cleanup.
