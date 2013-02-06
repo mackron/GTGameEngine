@@ -25,6 +25,16 @@ namespace GTEngine
 
 
 
+        ////////////////////////////////////////////
+        // Serialization.
+
+        /// Serializes the scene node class.
+        bool Serialize(GTCore::Serializer &serializer);
+
+        /// Deserializes the scene node class.
+        bool Deserialize(GTCore::Deserializer &deserializer);
+
+
 
     private:
         

@@ -16,6 +16,26 @@ namespace GTEngine
 
 
 
+    ////////////////////////////////////////////
+    // Serialization.
+
+    bool SceneNodeClass::Serialize(GTCore::Serializer &serializer)
+    {
+        (void)serializer;
+
+        return true;
+    }
+
+    bool SceneNodeClass::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        (void)deserializer;
+
+        this->Clear();
+
+        return true;
+    }
+
+
 
     /////////////////////////////////////////////////////
     // Private
