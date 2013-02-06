@@ -165,7 +165,11 @@ namespace GTEngine
     void VertexFormat::Deserialize(GTCore::Deserializer &deserializer)
     {
         deserializer.Read(this->attributes, sizeof(int) * GTENGINE_VERTEX_FORMAT_SIZE);
-        deserializer.Read(reinterpret_cast<uint32_t &>(this->count));
+        
+        uint32_t newCount;
+        deserializer.Read(newCount);
+        
+        this->count = static_cast<size_t>(newCount);
     }
 
 
