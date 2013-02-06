@@ -15,6 +15,7 @@
 #include "Serialization.hpp"
 #include "SceneNodeMap.hpp"
 #include "SceneStateStack.hpp"
+#include "SceneNodeClass.hpp"
 #include <GTCore/SortedVector.hpp>
 
 
@@ -288,6 +289,18 @@ namespace GTEngine
         /// @remarks
         ///     If a scene node of the same ID already exists, this will return nullptr.
         SceneNode* CreateNewSceneNode(GTCore::Deserializer &deserializer, bool createNewIDIfExists = false);
+
+        /// Creates a new scene node hierarchy from the given scene node class (prefab).
+        ///
+        /// @param sceneNodeClass [in] A reference to the scene node class to create the scene nodes from.
+        ///
+        /// @return A pointer to the top-level scene node.
+        ///
+        /// @remarks
+        ///     All definitions have only a single node as the top-level node.
+        SceneNode* CreateNewSceneNode(const SceneNodeClass &sceneNodeClass);
+
+
         
 
         /// Retrieves a scene node by it's ID.

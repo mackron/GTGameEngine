@@ -31,6 +31,12 @@ namespace GTEngine
         void SetFromSceneNode(SceneNode &sceneNode);
 
 
+        /// Retrieves a reference to the internal list of serializers.
+        const GTCore::Vector<GTCore::BasicSerializer*> & GetSerializers() const { return this->serializers; }
+
+        /// Retrieves a reference to the hierarchy.
+        const GTCore::Map<size_t, size_t> & GetHierarchy() const { return this->hierarchy; }
+
 
 
         ////////////////////////////////////////////
