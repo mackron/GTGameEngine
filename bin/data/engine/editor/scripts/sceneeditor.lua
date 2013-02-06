@@ -1769,11 +1769,29 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             self:UpdateSceneNode(sceneNodePtr);
         end
         
+        
+        -- We need to make sure children are also added.
+        local children = GTEngine.System.SceneNode.GetChildrenIDs(sceneNodePtr);
+        if children ~= nil then
+            for i,sceneNodeID in ipairs(children) do
+                self:AddSceneNode(self.SceneEditor:GetSceneNodePtrByID(sceneNodeID));
+            end
+        end
+        
+        
         return item;
     end
     
     function self:RemoveSceneNode(sceneNodePtr)
         local sceneNodeID = GTEngine.System.SceneNode.GetID(sceneNodePtr);
+    
+        -- Children will be removed first.
+        local children = GTEngine.System.SceneNode.GetChildrenIDs(sceneNodePtr);
+        if children ~= nil then
+            for i,sceneNodeID in ipairs(children) do
+                self:RemoveSceneNode(self.SceneEditor:GetSceneNodePtrByID(sceneNodeID));
+            end
+        end
     
         self.TreeView:RemoveItem(self.SceneNodes[sceneNodeID]);
         self.SceneNodes[sceneNodeID] = nil;

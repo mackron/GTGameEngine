@@ -139,6 +139,13 @@ namespace GTEngine
                     int IsRelative(GTCore::Script &script);
 
 
+                    /// Retrieves a table containing the IDs of the child nodes.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene node in question.
+                    int GetChildrenIDs(GTCore::Script &script);
+
+
                     /// Adds a new component to the given scene node.
                     ///
                     /// @remarks

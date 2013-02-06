@@ -809,6 +809,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "IsAncestor",              FFI::SystemFFI::SceneNodeFFI::IsAncestor);
                         script.SetTableFunction(-1, "IsDescendant",            FFI::SystemFFI::SceneNodeFFI::IsDescendant);
                         script.SetTableFunction(-1, "IsRelative",              FFI::SystemFFI::SceneNodeFFI::IsRelative);
+                        script.SetTableFunction(-1, "GetChildrenIDs",          FFI::SystemFFI::SceneNodeFFI::GetChildrenIDs);
 
                         script.SetTableFunction(-1, "AddComponent",            FFI::SystemFFI::SceneNodeFFI::AddComponent);
                         script.SetTableFunction(-1, "RemoveComponent",         FFI::SystemFFI::SceneNodeFFI::RemoveComponent);
@@ -1311,6 +1312,25 @@ namespace GTEngine
                         else
                         {
                             script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+
+                    int GetChildrenIDs(GTCore::Script &script)
+                    {
+                        script.PushNewTable();
+
+                        auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                        if (sceneNode != nullptr)
+                        {
+                            int index = 0;
+
+                            for (auto childNode = sceneNode->GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
+                            {
+                                script.SetTableValue(-1, ++index, static_cast<int>(childNode->GetID()));
+                            }
                         }
 
                         return 1;
