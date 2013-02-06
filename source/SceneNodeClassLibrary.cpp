@@ -125,4 +125,68 @@ namespace GTEngine
             }
         }
     }
+
+
+    SceneNodeClass* SceneNodeClassLibrary::Create(const char* absolutePath, const SceneNode &sceneNode, bool acquire)
+    {
+        assert(GTCore::Path::IsAbsolute(absolutePath));
+        {
+            auto file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Write);
+            if (file != nullptr)
+            {
+                SceneNodeClass* sceneNodeClass = nullptr;
+
+
+                // Find the class, creating if required.
+                auto iClass = LoadedClasses.Find(absolutePath);
+                if (iClass != nullptr)
+                {
+                    sceneNodeClass = iClass->value.first;
+
+                    if (acquire)
+                    {
+                        ++iClass->value.second;
+                    }
+                }
+                else
+                {
+                    sceneNodeClass = new SceneNodeClass;
+
+                    if (acquire)
+                    {
+                        LoadedClasses.Add(absolutePath, SceneNodeClassReference(sceneNodeClass, 1));
+                    }
+                }
+
+
+                // Now update and serialize the class.
+                assert(sceneNodeClass != nullptr);
+                {
+                    sceneNodeClass->SetFromSceneNode(sceneNode);
+
+                    GTCore::FileSerializer serializer(file);
+                    sceneNodeClass->Serialize(serializer);
+                }
+
+
+
+                // If we're not acquiring, we actually want to delete the class.
+                if (!acquire)
+                {
+                    delete sceneNodeClass;
+                    sceneNodeClass = nullptr;
+                }
+
+
+                return sceneNodeClass;
+            }
+            else
+            {
+                GTEngine::PostError("Can not open file for writing: %s", absolutePath);
+            }
+        }
+
+
+        return nullptr;
+    }
 }

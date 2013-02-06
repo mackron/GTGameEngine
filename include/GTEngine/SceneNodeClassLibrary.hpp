@@ -44,6 +44,17 @@ namespace GTEngine
         ///
         /// @param sceneNodeClassToUnacquire [in] A pointer to the scene node class to unacquire.
         static void Unacquire(const SceneNodeClass* sceneNodeClassToUnacquire);
+
+
+        /// Creates a new scene node class.
+        ///
+        /// @param absolutePath [in] The absolute path to save the new class to.
+        /// @param sceneNode    [in] The scene node to create the class from.
+        /// @param acquire      [in] Whether not the new class should be acquired, which will require a corresponding Unacquire() call.
+        ///
+        /// @remarks
+        ///     If a class of the same path already exists, it will be overwritten.
+        static SceneNodeClass* Create(const char* absolutePath, const SceneNode &sceneNode, bool acquire = true);
     };
 }
 
