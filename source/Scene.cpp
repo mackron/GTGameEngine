@@ -487,6 +487,63 @@ namespace GTEngine
     }
 
 
+    SceneNode* Scene::CreateNewSceneNode(const SceneNodeClass &sceneNodeClass)
+    {
+        auto &serializers = sceneNodeClass.GetSerializers();
+        auto &hierarchy   = sceneNodeClass.GetHierarchy();
+
+        if (serializers.count > 0)
+        {
+            GTCore::Vector<SceneNode*> newSceneNodes;
+
+            // We will iterate over each serializer and create nodes from them, ensuring we set the ID to 0 so that a new one is generated when we add them.
+            for (size_t i = 0; i < serializers.count; ++i)
+            {
+                auto serializer = serializers[i];
+                assert(serializer != nullptr);
+                {
+                    GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
+
+                    auto newSceneNode = new SceneNode;
+                    newSceneNode->Deserialize(deserializer);
+
+                    // We must ensure the ID is 0 so that a new one is generated when we add the node. This is super important!
+                    newSceneNode->SetID(0);
+
+                    newSceneNodes.PushBack(newSceneNode);
+                }
+            }
+
+
+            // At this point the scene nodes will be created but will not yet be linked to their parent. We'll do that now.
+            for (size_t i = 0; i < hierarchy.count; ++i)
+            {
+                size_t sceneNodeIndex       = hierarchy.buffer[i]->key;
+                size_t parentSceneNodeIndex = hierarchy.buffer[i]->value;
+
+                // There is a precondition that the root node is never actually referenced in the hierarchy.
+                assert(sceneNodeIndex != 0);
+                {
+                    newSceneNodes[parentSceneNodeIndex]->AttachChild(*newSceneNodes[sceneNodeIndex]);
+                }
+            }
+
+
+            // Everything is now parented and ready to be added. We just add the root node, which is the first one. This will add the others recursively.
+            auto rootSceneNode = newSceneNodes[0];
+            assert(rootSceneNode != nullptr);
+            {
+                this->AddSceneNode(*rootSceneNode);
+            }
+
+            return rootSceneNode;
+        }
+
+
+        return nullptr;
+    }
+
+
 
     SceneNode* Scene::GetSceneNodeByID(uint64_t sceneNodeID)
     {
