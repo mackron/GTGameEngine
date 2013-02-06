@@ -28,7 +28,7 @@ namespace GTEngine
         /// Sets the class to that of the given node and it's children.
         ///
         /// @param sceneNode [in] The scene node that will act as the definition of the new prefab.
-        void SetFromSceneNode(SceneNode &sceneNode);
+        void SetFromSceneNode(const SceneNode &sceneNode);
 
 
         /// Retrieves a reference to the internal list of serializers.
@@ -59,7 +59,7 @@ namespace GTEngine
         ///
         /// @param sceneNode   [in] The scene node to add.
         /// @param parentIndex [in] The index of the parent in the hierarchy. Set to -1 if the node does not have a parent.
-        void AddSceneNode(SceneNode &sceneNode, size_t parentIndex);
+        void AddSceneNode(const SceneNode &sceneNode, size_t parentIndex);
 
 
 

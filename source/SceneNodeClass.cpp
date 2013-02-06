@@ -17,7 +17,7 @@ namespace GTEngine
 
 
 
-    void SceneNodeClass::SetFromSceneNode(SceneNode &sceneNode)
+    void SceneNodeClass::SetFromSceneNode(const SceneNode &sceneNode)
     {
         // First, we clear everything.
         this->Clear();
@@ -165,7 +165,7 @@ namespace GTEngine
         this->hierarchy.Clear();
     }
 
-    void SceneNodeClass::AddSceneNode(SceneNode &sceneNode, size_t parentIndex)
+    void SceneNodeClass::AddSceneNode(const SceneNode &sceneNode, size_t parentIndex)
     {
         // We want to serialize the scene node and add it to the hierarchy first.
         auto serializer = new GTCore::BasicSerializer;
