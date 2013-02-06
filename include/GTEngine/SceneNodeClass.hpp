@@ -4,6 +4,7 @@
 #define __GTEngine_SceneNodeClass_hpp_
 
 #include "Serialization.hpp"
+#include "SceneNode.hpp"
 #include <GTCore/Vector.hpp>
 #include <GTCore/Map.hpp>
 
@@ -24,6 +25,13 @@ namespace GTEngine
         ~SceneNodeClass();
 
 
+        /// Sets the class to that of the given node and it's children.
+        ///
+        /// @param sceneNode [in] The scene node that will act as the definition of the new prefab.
+        void SetFromSceneNode(SceneNode &sceneNode);
+
+
+
 
         ////////////////////////////////////////////
         // Serialization.
@@ -41,12 +49,18 @@ namespace GTEngine
         /// Clears the prefab leaving it completely empty.
         void Clear();
 
+        /// Recursively adds the given scene node and it's children.
+        ///
+        /// @param sceneNode   [in] The scene node to add.
+        /// @param parentIndex [in] The index of the parent in the hierarchy. Set to -1 if the node does not have a parent.
+        void AddSceneNode(SceneNode &sceneNode, size_t parentIndex);
+
 
 
     private:
 
         /// The serialized data of every scene node.
-        GTCore::Vector<GTCore::BasicSerializer*> sceneNodeSerializers;
+        GTCore::Vector<GTCore::BasicSerializer*> serializers;
 
         /// The hierarchy. These point to indexes in sceneNodeSerializers.
         GTCore::Map<size_t, size_t> hierarchy;
