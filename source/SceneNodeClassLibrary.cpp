@@ -78,6 +78,9 @@ namespace GTEngine
 
                     LoadedClasses.Add(absFileName.c_str(), SceneNodeClassReference(newSceneNodeClass, 1));
 
+                    // Can't forget to close the file.
+                    GTCore::IO::Close(file);
+
                     return newSceneNodeClass;
                 }
                 else
@@ -137,7 +140,8 @@ namespace GTEngine
             auto file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Write);
             if (file != nullptr)
             {
-                SceneNodeClass* sceneNodeClass = nullptr;
+                SceneNodeClass* sceneNodeClass       = nullptr;
+                bool            deleteSceneNodeClass = false;       // <-- If the prefab is a new file and we are not acquire, we'll want to delete the class straight away.
 
 
                 // Find the class, creating if required.
@@ -159,6 +163,10 @@ namespace GTEngine
                     {
                         LoadedClasses.Add(absolutePath, SceneNodeClassReference(sceneNodeClass, 1));
                     }
+                    else
+                    {
+                        deleteSceneNodeClass = true;
+                    }
                 }
 
 
@@ -177,7 +185,7 @@ namespace GTEngine
 
 
                 // If we're not acquiring, we actually want to delete the class.
-                if (!acquire)
+                if (deleteSceneNodeClass)
                 {
                     delete sceneNodeClass;
                     sceneNodeClass = nullptr;
