@@ -38,6 +38,17 @@ function GTGUI.Element:DataExplorer()
         end
     end);
     
+    self.FolderMenu:AppendItem("New Prefab..."):OnPressed(function()
+        if self.FolderMenu.DestinationDirectory ~= nil then
+            Editor.ShowNewFileDialog("Create New Prefab...", self.FolderMenu.DestinationDirectory, "gtprefab", function(result, absolutePath)
+                if result == Editor.NewFileDialogResult.Create then
+                    GTCore.IO.CreateEmptyFile(absolutePath);
+                    Game.ScanDataFilesForChanges();
+                end
+            end);
+        end
+    end);
+    
     self.FolderMenu:AppendItem("New Text File..."):OnPressed(function()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Text File...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
