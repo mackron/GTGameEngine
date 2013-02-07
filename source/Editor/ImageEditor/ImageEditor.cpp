@@ -30,6 +30,9 @@ namespace GTEngine
 
     ImageEditor::~ImageEditor()
     {
+        this->GetGUI().DeleteElement(this->viewportElement);
+
+        // The image needs to be unacquired.
         Texture2DLibrary::Unacquire(this->image);
     }
 
