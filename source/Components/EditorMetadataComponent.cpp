@@ -592,6 +592,9 @@ namespace GTEngine
 
             delete this->pickingCollisionShape;
             this->pickingCollisionShape = nullptr;
+
+
+            this->pickingCollisionObject.setCollisionShape(nullptr);
         }
     }
 }

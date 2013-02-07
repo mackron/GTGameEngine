@@ -5,8 +5,10 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/SceneNodeClassLibrary.hpp>
+#include <GTEngine/IO.hpp>
 #include <GTCore/Serializer.hpp>
 #include <GTCore/Deserializer.hpp>
+#include <GTCore/Path.hpp>
 
 
 #if defined(_MSC_VER)
@@ -1466,6 +1468,43 @@ namespace GTEngine
             {
                 this->CommitStateStackFrame();
                 this->transformedObjectWithGizmo = false;
+            }
+        }
+    }
+
+    void SceneEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
+    {
+        GTCore::String absolutePath = item.info.absolutePath;
+
+        if (GTCore::Path::ExtensionEqual(item.info.absolutePath.c_str(), "gtmodel"))
+        {
+            absolutePath = GTCore::IO::RemoveExtension(item.info.absolutePath.c_str());
+        }
+
+
+        // We want to go through and notify the editor of a change to the model component of any scene node referencing this file (if it's a model file).
+        if (GTEngine::IO::IsSupportedModelExtension(item.info.path.c_str()))
+        {
+            size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+
+            for (size_t i = 0; i < sceneNodeCount; ++i)
+            {
+                auto sceneNode = this->scene.GetSceneNodeByIndex(i);
+                assert(sceneNode != nullptr);
+                {
+                    auto modelComponent = sceneNode->GetComponent<ModelComponent>();
+                    if (modelComponent != nullptr)
+                    {
+                        auto model = modelComponent->GetModel();
+                        if (model != nullptr)
+                        {
+                            if (model->GetDefinition().absolutePath == absolutePath)
+                            {
+                                this->OnSceneNodeComponentChanged(*sceneNode, *modelComponent);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
