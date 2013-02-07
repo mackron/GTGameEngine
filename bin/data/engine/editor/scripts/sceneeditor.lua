@@ -1655,7 +1655,6 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
     
     self.ContextMenu.Orphan = self.ContextMenu:AppendItem("Orphan"):OnPressed(function()
         self.SceneEditor:OrphanSceneNodeByID(self.ContextMenu.SceneNodeID);
-        self.ContextMenu:Hide();
     end);
     
     
@@ -1957,8 +1956,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self:SelectSceneNode(newNode);
         
         self:CommitStateStackFrame();
-        
-        self.ContextMenu:Hide();
     end);
     
     self.ContextMenu:AppendSeparator();
@@ -1973,8 +1970,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self:SelectSceneNode(newNode);
         
         self:CommitStateStackFrame();
-        
-        self.ContextMenu:Hide();
     end);
     
     self.ContextMenu:AppendItem("Add Spot Light"):OnPressed(function()
@@ -1987,8 +1982,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self:SelectSceneNode(newNode);
         
         self:CommitStateStackFrame();
-        
-        self.ContextMenu:Hide();
     end);
     
     self.ContextMenu:AppendItem("Add Directional Light"):OnPressed(function()
@@ -2001,8 +1994,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self:SelectSceneNode(newNode);
         
         self:CommitStateStackFrame();
-        
-        self.ContextMenu:Hide();
     end);
     
     self.ContextMenu:AppendItem("Add Ambient Light"):OnPressed(function()
@@ -2015,8 +2006,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self:SelectSceneNode(newNode);
         
         self:CommitStateStackFrame();
-        
-        self.ContextMenu:Hide();
     end);
     
     
