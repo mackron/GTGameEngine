@@ -10,6 +10,8 @@ function GTGUI.Element:DataExplorer()
     self.TreeView:TreeView();
     
     self.FolderMenu:Menu();
+    self.FolderMenu:EnableDefaultEvents();
+    
     self.FolderMenu:AppendItem("New Folder..."):OnPressed(function()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Folder...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
@@ -59,7 +61,7 @@ function GTGUI.Element:DataExplorer()
     --self.FolderMenu:AppendItem("Delete...");
     
     self.FileMenu:Menu();
-    
+    self.FileMenu:EnableDefaultEvents();
     
     
     
@@ -229,19 +231,7 @@ function GTGUI.Element:DataExplorer()
         --print("Update: " .. fileInfo.absolutePath);
     end
     
-    
-    
-    self:WatchLMBDown(function(data)
-        if not self.FolderMenu:IsChild(data.receiver) then self.FolderMenu:Hide(); end;
-        if not self.FileMenu:IsChild(data.receiver)   then self.FileMenu:Hide();   end;
-    end);
-    
-    self:WatchRMBDown(function(data)
-        if not self.FolderMenu:IsChild(data.receiver) then self.FolderMenu:Hide(); end;
-        if not self.FileMenu:IsChild(data.receiver)   then self.FileMenu:Hide();   end;
-    end);
-    
-    
+
     
     self.TreeView:OnItemPicked(function(data)
         if not data.item.isDirectory then
