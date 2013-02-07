@@ -53,7 +53,7 @@ namespace GTEngine
         // Hierarchy.
         intermediarySerializer.Write(static_cast<uint32_t>(this->hierarchy.count));
 
-        for (size_t i = 0; i < this->serializers.count; ++i)
+        for (size_t i = 0; i < this->hierarchy.count; ++i)
         {
             uint32_t sceneNodeIndex       = static_cast<uint32_t>(this->hierarchy.buffer[i]->key);
             uint32_t parentSceneNodeIndex = static_cast<uint32_t>(this->hierarchy.buffer[i]->value);
