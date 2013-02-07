@@ -109,12 +109,14 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene node whose having a child attached.
                     ///     Argument 2: A pointer to the child node.
+                    ///     Argument 3: A boolean controlling whether or not the world transformation should remain constant. 'true' = keep the world transform.
                     int AttachChild(GTCore::Script &script);
 
                     /// Orphans a scene node.
                     ///
                     /// @remarks
                     ///     Argument 1: A pointer to the scene node being orphaned.
+                    ///     Argument 2: A boolean controlling whether or not the world transformation should remain constant. 'true' = keep the world transform.
                     int Orphan(GTCore::Script &script);
 
                     /// Determines whether or not the given scene node is an ancestor of another.

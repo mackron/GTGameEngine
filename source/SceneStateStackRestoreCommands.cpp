@@ -201,7 +201,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        sceneNode->DetachFromParent();
+                        sceneNode->DetachFromParent(false);
                     }
                 }
             }

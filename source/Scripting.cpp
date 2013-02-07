@@ -1249,7 +1249,7 @@ namespace GTEngine
 
                         if (parentNode != nullptr && childNode != nullptr)
                         {
-                            parentNode->AttachChild(*childNode);
+                            parentNode->AttachChild(*childNode, script.ToBoolean(3));
                         }
 
                         return 0;
@@ -1260,7 +1260,7 @@ namespace GTEngine
                         auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                         if (sceneNode != nullptr)
                         {
-                            sceneNode->DetachFromParent();
+                            sceneNode->DetachFromParent(script.ToBoolean(2));
                         }
 
                         return 0;
