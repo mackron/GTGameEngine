@@ -1655,6 +1655,9 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
     
     self.ContextMenu.Orphan = self.ContextMenu:AppendItem("Orphan"):OnPressed(function()
         self.SceneEditor:OrphanSceneNodeByID(self.ContextMenu.SceneNodeID);
+        
+        -- Undo/Redo point.
+        self.SceneEditor:CommitStateStackFrame();
     end);
     
     
