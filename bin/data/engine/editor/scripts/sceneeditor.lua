@@ -1761,7 +1761,8 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
                     GTGUI.Server.DeleteElement(dragAndDropElement);
                 end)
                 
-                dragAndDropElement.sceneNodeID = item.SceneNodeID;
+                dragAndDropElement.sceneNodeID  = item.SceneNodeID;
+                dragAndDropElement.sceneNodePtr = self.SceneEditor:GetSceneNodePtrByID(item.SceneNodeID);
             end);
             
             item.titleContainer:OnDrop(function(data)
