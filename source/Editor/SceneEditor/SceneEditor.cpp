@@ -395,16 +395,17 @@ namespace GTEngine
         }
     }
 
-    void SceneEditor::DeselectAll()
+    void SceneEditor::DeselectAll(bool dontPostBackNotification)
     {
         while (this->selectedNodes.count > 0)
         {
             auto node = this->GetSceneNodeByID(this->selectedNodes[0]);
             assert(node != nullptr);
             {
-                this->DeselectSceneNode(*node);
+                this->DeselectSceneNode(*node, false, true);
             }
         }
+
 
 
         // TODO: This feels bad. See if we can remove this.
@@ -421,6 +422,14 @@ namespace GTEngine
                     metadata->Deselect();
                 }
             }
+        }
+
+
+
+        // We need to let the scripting environment know about this change.
+        if (dontPostBackNotification)
+        {
+            this->PostOnSelectionChangedEventToScript();
         }
     }
 
@@ -617,6 +626,11 @@ namespace GTEngine
         }
     }
 
+    void SceneEditor::RemoveSceneNode(SceneNode &sceneNodeToRemove)
+    {
+        this->scene.RemoveSceneNode(sceneNodeToRemove);
+    }
+
     void SceneEditor::RemoveSceneNodes(const GTCore::Vector<uint64_t> &sceneNodeIDs)
     {
         for (size_t i = 0; i < sceneNodeIDs.count; ++i)
@@ -652,7 +666,7 @@ namespace GTEngine
 
 
             // We want to select the new nodes, so we're going to deselect everything at this point.
-            this->DeselectAll();
+            this->DeselectAll(true);
 
 
 
@@ -666,36 +680,6 @@ namespace GTEngine
                 assert(nodeToCopy != nullptr);
                 {
                     this->CopySceneNodeAndChildren(*nodeToCopy, nodeToCopy->GetParent());
-
-                    /*
-                    auto newNode = new SceneNode;
-
-                    GTCore::BasicSerializer serializer;
-                    nodeToCopy->Serialize(serializer);
-
-                    GTCore::BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
-                    newNode->Deserialize(deserializer);
-
-                    
-
-                    // The ID of the new node needs to be set to 0 so that a new ID is generated after it is added to the scene.
-                    newNode->SetID(0);
-
-                    // We now want to link the new node to the parent, if we have one.
-                    if (nodeToCopy->GetParent() != nullptr)
-                    {
-                        nodeToCopy->GetParent()->AttachChild(*newNode);     // <-- This does an implicit Scene::AddSceneNode().
-                    }
-                    else
-                    {
-                        this->scene.AddSceneNode(*newNode);
-                    }
-
-                    // Node needs to be selected.
-                    this->SelectSceneNode(*newNode, false, true);
-
-
-                    */
                 }
             }
 
@@ -706,55 +690,17 @@ namespace GTEngine
 
             // Undo/Redo point.
             this->CommitStateStackFrame();
-
-
-
-#if 0
-            // TODO: Get this working with children.
-            for (size_t iNode = 0; iNode < prevSelectedNodes.count; ++iNode)
-            {
-                auto nodeToCopy = this->GetSceneNodeByID(prevSelectedNodes[iNode]);
-                assert(nodeToCopy != nullptr);
-                {
-                    auto newNode = new SceneNode;
-
-                    // To copy a node, we're going to use the serialization/deserialization system.
-                    GTCore::BasicSerializer serializer;
-                    nodeToCopy->Serialize(serializer);
-
-                    GTCore::BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
-                    newNode->Deserialize(deserializer);
-
-                    newNodes.PushBack(newNode);
-                }
-            }
-
-
-            // TODO: Link nodes to parents!
-
-            // At this point we have our list of new nodes. We now want to deselect everything and then select the new ones.
-            this->DeselectAll();
-
-            for (size_t iNode = 0; iNode < newNodes.count; ++iNode)
-            {
-                auto node = newNodes[iNode];
-                assert(node != nullptr);
-                {
-                    // Now before we add the new node to the scene, we need to set the unique ID to 0. That way, the new nodes will have new
-                    // ID's generated when they are added to the scene. If we don't do this, they will have the same ID as the node it was
-                    // copied from, which will then break a few things.
-                    auto metadata = node->GetComponent<EditorMetadataComponent>();
-                    assert(metadata != nullptr);
-                    {
-                        node->SetID(0);
-                    }
-
-
-                    this->scene.AddSceneNode(*node);
-                }
-            }
-#endif
         }
+    }
+
+    SceneNode & SceneEditor::DuplicateSceneNode(SceneNode &sceneNodeToDuplicate)
+    {
+        this->DeselectAll(true);        // <-- True means to block notifications to the scripting environment.
+
+        auto &newNode = this->CopySceneNodeAndChildren(sceneNodeToDuplicate, sceneNodeToDuplicate.GetParent());
+        this->SelectSceneNode(newNode, true);
+
+        return newNode;
     }
 
 
@@ -1961,7 +1907,7 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::CopySceneNodeAndChildren(SceneNode &nodeToCopy, SceneNode* parentNode)
+    SceneNode & SceneEditor::CopySceneNodeAndChildren(SceneNode &nodeToCopy, SceneNode* parentNode)
     {
         GTCore::BasicSerializer serializer;
         nodeToCopy.Serialize(serializer);
@@ -1988,6 +1934,9 @@ namespace GTEngine
         {
             this->CopySceneNodeAndChildren(*childNode, newNode);
         }
+
+
+        return *newNode;
     }
 
 

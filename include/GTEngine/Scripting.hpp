@@ -1170,11 +1170,25 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the scene editor.
                     int RemoveSelectedSceneNodes(GTCore::Script &script);
 
+                    /// Deletes the given node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    ///     Argument 2: A pointer to the scene node to delete.
+                    int RemoveSceneNode(GTCore::Script &script);
+
                     /// Duplicates the selected scene nodes.
                     ///
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
                     int DuplicateSelectedSceneNodes(GTCore::Script &script);
+
+                    /// Duplicates the given node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    ///     Argument 2: A pointer to the scene node to duplicate.
+                    int DuplicateSceneNode(GTCore::Script &script);
 
 
                     /// Switches the gizmo to translate mode.

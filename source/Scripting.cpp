@@ -1054,7 +1054,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "TryGizmoMouseSelect",                 FFI::SystemFFI::SceneEditorFFI::TryGizmoMouseSelect);
                         script.SetTableFunction(-1, "DoMouseSelection",                    FFI::SystemFFI::SceneEditorFFI::DoMouseSelection);
                         script.SetTableFunction(-1, "RemoveSelectedSceneNodes",            FFI::SystemFFI::SceneEditorFFI::RemoveSelectedSceneNodes);
+                        script.SetTableFunction(-1, "RemoveSceneNode",                     FFI::SystemFFI::SceneEditorFFI::RemoveSceneNode);
                         script.SetTableFunction(-1, "DuplicateSelectedSceneNodes",         FFI::SystemFFI::SceneEditorFFI::DuplicateSelectedSceneNodes);
+                        script.SetTableFunction(-1, "DuplicateSceneNode",                  FFI::SystemFFI::SceneEditorFFI::DuplicateSceneNode);
                         script.SetTableFunction(-1, "SwitchGizmoToTranslateMode",          FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToTranslateMode);
                         script.SetTableFunction(-1, "SwitchGizmoToRotateMode",             FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToRotateMode);
                         script.SetTableFunction(-1, "SwitchGizmoToScaleMode",              FFI::SystemFFI::SceneEditorFFI::SwitchGizmoToScaleMode);
@@ -3763,6 +3765,20 @@ namespace GTEngine
                         return 0;
                     }
 
+                    int RemoveSceneNode(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                        if (sceneEditor != nullptr && sceneNode != nullptr)
+                        {
+                            sceneEditor->RemoveSceneNode(*sceneNode);
+                        }
+
+                        return 0;
+                    }
+
+
                     int DuplicateSelectedSceneNodes(GTCore::Script &script)
                     {
                         auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
@@ -3773,6 +3789,20 @@ namespace GTEngine
 
                         return 0;
                     }
+
+                    int DuplicateSceneNode(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                        if (sceneEditor != nullptr && sceneNode != nullptr)
+                        {
+                            sceneEditor->DuplicateSceneNode(*sceneNode);
+                        }
+
+                        return 0;
+                    }
+
 
 
                     int SwitchGizmoToTranslateMode(GTCore::Script &script)
