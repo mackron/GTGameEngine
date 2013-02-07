@@ -77,8 +77,8 @@ namespace GTEngine
         void OnUpdate(double deltaTimeInSeconds);
 
 
-        /// Special event called by the main editor when the definition of the model has changed.
-        void OnModelDefinitionChanged();
+        /// SubEditor::OnFileUpdate()
+        void OnFileUpdate(const DataFilesWatcher::Item &item);
 
 
     private:

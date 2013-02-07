@@ -859,21 +859,6 @@ namespace GTEngine
     }
 
 
-    void Editor::OnModelDefinitionChanged(const char* absolutePath)
-    {
-        // If the file is already loaded, it needs to be updated to reflect the changes.
-        auto iSubEditor = this->openedFiles.Find(absolutePath);
-        if (iSubEditor != nullptr)
-        {
-            auto modelEditor = static_cast<ModelEditor*>(iSubEditor->value);
-            assert(modelEditor != nullptr);
-            {
-                modelEditor->OnModelDefinitionChanged();
-            }
-        }
-    }
-
-
 
 
 

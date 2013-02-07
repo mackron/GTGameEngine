@@ -509,9 +509,6 @@ namespace GTEngine
             if (ModelLibrary::IsExtensionSupported(extension))
             {
                 ModelLibrary::ReloadModel(item.info.path.c_str());
-
-                // We will tell the editor that the definition has changed. This will allow it to update any state information or whatnot.
-                this->editor.OnModelDefinitionChanged(item.info.absolutePath.c_str());
             }
             else if (Texture2DLibrary::IsExtensionSupported(extension))
             {
