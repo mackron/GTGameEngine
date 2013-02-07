@@ -259,6 +259,9 @@ namespace GTEngine
         /// SubEditor::OnMouseButtonUp()
         void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
 
+        /// SubEditor::OnFileUpdate()
+        void OnFileUpdate(const DataFilesWatcher::Item &item);
+
 
 
     private:
