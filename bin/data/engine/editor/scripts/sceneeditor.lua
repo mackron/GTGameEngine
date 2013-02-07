@@ -1642,6 +1642,8 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
                 GTEngine.System.SceneNode.SetWorldRotationXYZ(sceneNodePtr, rotX, rotY, rotZ);
                 GTEngine.System.SceneNode.SetWorldScale(sceneNodePtr, scaX, scaY, scaZ);
                 
+                self.SceneEditor:SelectSceneNodeByID(self.ContextMenu.SceneNodeID);
+                
                 -- Undo/Redo point.
                 self.SceneEditor:CommitStateStackFrame();
             end
@@ -1655,6 +1657,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
     
     self.ContextMenu.Orphan = self.ContextMenu:AppendItem("Orphan"):OnPressed(function()
         self.SceneEditor:OrphanSceneNodeByID(self.ContextMenu.SceneNodeID);
+        self.SceneEditor:SelectSceneNodeByID(self.ContextMenu.SceneNodeID);
         
         -- Undo/Redo point.
         self.SceneEditor:CommitStateStackFrame();
