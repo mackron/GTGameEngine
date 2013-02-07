@@ -1646,6 +1646,17 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
     self.ContextMenu:Menu();
     self.ContextMenu:EnableDefaultEvents();
     
+    self.ContextMenu.Duplicate = self.ContextMenu:AppendItem("Duplicate"):OnPressed(function()
+        self.SceneEditor:DuplicateSceneNodeByID(self.ContextMenu.SceneNodeID);
+    end);
+    
+    self.ContextMenu.Duplicate = self.ContextMenu:AppendItem("Delete"):OnPressed(function()
+        self.SceneEditor:DeleteSceneNodeByID(self.ContextMenu.SceneNodeID);
+    end);
+    
+    
+    self.ContextMenu:AppendSeparator();
+    
     self.ContextMenu.Orphan = self.ContextMenu:AppendItem("Orphan"):OnPressed(function()
         self.SceneEditor:OrphanSceneNodeByID(self.ContextMenu.SceneNodeID);
         self.SceneEditor:SelectSceneNodeByID(self.ContextMenu.SceneNodeID);
@@ -2121,13 +2132,26 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         GTEngine.System.SceneEditor.ToggleGizmoSpace(self._internalPtr);
     end
     
+    
     function self:DuplicateSelectedSceneNodes()
         GTEngine.System.SceneEditor.DuplicateSelectedSceneNodes(self._internalPtr);
     end
     
+    function self:DuplicateSceneNodeByID(sceneNodeID)
+        GTEngine.System.SceneEditor.DuplicateSceneNode(self._internalPtr, self:GetSceneNodePtrByID(sceneNodeID));
+        self:CommitStateStackFrame();
+    end
+    
+    
     function self:DeleteSelectedSceneNodes()
         GTEngine.System.SceneEditor.RemoveSelectedSceneNodes(self._internalPtr);
     end
+    
+    function self:DeleteSceneNodeByID(sceneNodeID)
+        GTEngine.System.SceneEditor.RemoveSceneNode(self._internalPtr, self:GetSceneNodePtrByID(sceneNodeID));
+        self:CommitStateStackFrame();
+    end
+    
     
     function self:CommitStateStackFrame()
         GTEngine.System.SceneEditor.CommitStateStackFrame(self._internalPtr);
