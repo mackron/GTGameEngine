@@ -427,7 +427,7 @@ namespace GTEngine
 
 
         // We need to let the scripting environment know about this change.
-        if (dontPostBackNotification)
+        if (!dontPostBackNotification)
         {
             this->PostOnSelectionChangedEventToScript();
         }
