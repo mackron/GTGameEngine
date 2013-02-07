@@ -16,9 +16,9 @@ Here's what you can do (spoiler: it's not much):
         - Lots of physics properties have not yet have a front-end GUI
         - Add and remove collision shapes
         - Play around with the mass
-    - View models and edit it's basic properties.
-    - View textures.
-    - Edit text files (XML files are currently incorrectly detected as models)
+    - View models and edit it's basic properties
+    - View textures
+    - Edit text files
 
     
     
