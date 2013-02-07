@@ -24,13 +24,20 @@ namespace GTEngine
 
 
         /// Adds an insert command.
-        void AddInsert(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
+        void AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
 
         /// Adds a delete command.
-        void AddDelete(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
+        void AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
 
         /// Adds an update command.
-        void AddUpdate(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
+        void AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
+
+        
+        /// Adds a scene node to the hierarchy.
+        void AddToHierarchy(uint64_t sceneNodeID, uint64_t parentSceneNodeID);
+
+        /// Removes a scene node from the hierarchy.
+        void RemoveFromHierarchy(uint64_t sceneNodeID);
 
 
         /// Goes through every command and updates the serialized data with the most recent data, starting from the current frame on the given branch.
