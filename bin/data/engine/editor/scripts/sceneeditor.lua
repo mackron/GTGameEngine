@@ -1818,7 +1818,9 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
         local children = GTEngine.System.SceneNode.GetChildrenIDs(sceneNodePtr);
         if children ~= nil then
             for i,sceneNodeID in ipairs(children) do
-                self:AddSceneNode(self.SceneEditor:GetSceneNodePtrByID(sceneNodeID));
+                if sceneNodeID ~= 0 then
+                    self:AddSceneNode(self.SceneEditor:GetSceneNodePtrByID(sceneNodeID));
+                end
             end
         end
         
