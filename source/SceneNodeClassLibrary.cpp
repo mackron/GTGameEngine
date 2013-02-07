@@ -83,7 +83,6 @@ namespace GTEngine
                 else
                 {
                     GTEngine::PostError("Can not find file: %s", fileName);
-                    return nullptr;
                 }
             }
             else
@@ -93,6 +92,10 @@ namespace GTEngine
 
                 return iLoadedClass->value.first;
             }
+        }
+        else
+        {
+            GTEngine::PostError("Can not find file: %s", fileName);
         }
 
 
