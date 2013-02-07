@@ -5,12 +5,18 @@ function GTGUI.Element:Menu()
 
     -- The list of items. This includes separators.
     self.items = {}
-
+    self.isDefaultEventsEnabled = false;
 
     -- Appends a menu item.
     function self:AppendItem(title)
         local item = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='menu-item'>" .. title .. "</div>");
         item:MenuItem();
+        
+        item:OnPressed(function()
+            if self.isDefaultEventsEnabled then
+                self:Hide();
+            end
+        end);
 
         self.items[#self.items + 1] = item;
 
@@ -31,7 +37,28 @@ function GTGUI.Element:Menu()
     function self:IsEmpty()
         return #self.items == 0;
     end
+    
+    
+    
+    function self:EnableDefaultEvents()
+        self.isDefaultEventsEnabled = true;
+    end
 
+    function self:DisableDefaultEvents()
+        self.isDefaultEventsEnabled = false;
+    end
+    
+    
+    function self.MouseDownEvent(data)
+        if self.isDefaultEventsEnabled then
+            if not self:IsChild(data.receiver) and data.receiver ~= GTGUI.Server.GetRootElement() then self:Hide() end
+        end
+    end
+    
+    
+    self:WatchLMBDown(self.MouseDownEvent);
+    self:WatchRMBDown(self.MouseDownEvent);
+    self:WatchMMBDown(self.MouseDownEvent);
 end
 
 
