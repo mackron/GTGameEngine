@@ -765,7 +765,10 @@ namespace GTEngine
             auto rootSceneNode = this->scene.CreateNewSceneNode(*prefab);
             if (rootSceneNode != nullptr)
             {
-                // TODO: Map the root node so we can update it when the prefab file changes.
+                // We now need to map our scene node to the component. This is recursive.
+                size_t prefabSceneNodeIndex = 0;
+                this->MapSceneNodeToPrefab(*rootSceneNode, relativePath, prefabSceneNodeIndex);
+
                 return rootSceneNode;
             }
         }
@@ -2013,6 +2016,23 @@ namespace GTEngine
                 }
             }
             script.Pop(1);
+        }
+    }
+
+
+    void SceneEditor::MapSceneNodeToPrefab(SceneNode &sceneNode, const char* prefabRelativePath, size_t &prefabSceneNodeIndex)
+    {
+        auto metadata = sceneNode.GetComponent<EditorMetadataComponent>();
+        assert(metadata != nullptr);
+        {
+            metadata->SetPrefabRelativePath(prefabRelativePath);
+            metadata->SetPrefabIndex(prefabSceneNodeIndex);
+
+            // Now we just iterate over and do the children, making sure we increment the scene node index.
+            for (auto childNode = sceneNode.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
+            {
+                this->MapSceneNodeToPrefab(*childNode, prefabRelativePath, ++prefabSceneNodeIndex);
+            }
         }
     }
 }
