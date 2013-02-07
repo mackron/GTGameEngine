@@ -122,6 +122,14 @@ function GTGUI.Element:DataExplorer()
             end
         end);
         
+        item.titleContainer:OnDrop(function(data)
+            if not item.isDirectory and GTEngine.IsPrefabFile(item.path) then
+                if data.droppedElement.sceneNodePtr ~= nil then
+                    GTEngine.CreatePrefab(item.path, data.droppedElement.sceneNodePtr);
+                end
+            end
+        end);
+        
         
         function item:GetShortPath()
             local parent = item:GetParent();

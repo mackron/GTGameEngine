@@ -43,6 +43,14 @@ namespace GTEngine
             int IsPrefabFile(GTCore::Script &script);
 
 
+            /// Creates a prefab file from a scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: The absolute path of the file to create or replace.
+            ///     Argument 2: A pointer to the scene node to create the prefrab file from.
+            int CreatePrefab(GTCore::Script &script);
+
+
 
             namespace RendererFFI
             {

@@ -6,6 +6,7 @@
 #include <GTEngine/Audio.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/Scene.hpp>
+#include <GTEngine/SceneNodeClassLibrary.hpp>
 #include <GTEngine/Physics/CollisionShapeTypes.hpp>
 
 #include <GTCore/Path.hpp>
@@ -787,6 +788,8 @@ namespace GTEngine
                 script.SetTableFunction(-1, "IsSceneFile",  FFI::IsSceneFile);
                 script.SetTableFunction(-1, "IsPrefabFile", FFI::IsPrefabFile);
 
+                script.SetTableFunction(-1, "CreatePrefab", FFI::CreatePrefab);
+
 
                 script.Push("System");
                 script.GetTableValue(-2);
@@ -1161,6 +1164,21 @@ namespace GTEngine
                 script.Push(result);
                 return 1;
             }
+
+
+            int CreatePrefab(GTCore::Script &script)
+            {
+                auto absolutePath = script.ToString(1);
+                auto sceneNode    = static_cast<SceneNode*>(script.ToPointer(2));
+
+                if (absolutePath != nullptr && sceneNode != nullptr)
+                {
+                    SceneNodeClassLibrary::Create(absolutePath, *sceneNode, false);
+                }
+
+                return 0;
+            }
+
 
 
             //////////////////////////////////////////////////
