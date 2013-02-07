@@ -1651,18 +1651,32 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
     
     -- Context Menu
     self.ContextMenu:Menu();
+    self.ContextMenu:EnableDefaultEvents();
     
-    self.ContextMenu:AppendItem("Orphan"):OnPressed(function()
+    self.ContextMenu.Orphan = self.ContextMenu:AppendItem("Orphan"):OnPressed(function()
         self.SceneEditor:OrphanSceneNodeByID(self.ContextMenu.SceneNodeID);
         self.ContextMenu:Hide();
     end);
     
     
-    
     function self:ShowContextMenu(item)
         self.ContextMenu.SceneNodeID = item.SceneNodeID;
         
-        self.ContextMenu:SetPosition(GTGUI.Server.GetMousePosition());
+        -- Some buttons might need to be disabled.
+        if self.SceneEditor:GetParentSceneNodePtrByID(item.SceneNodeID) == nil then
+            self.ContextMenu.Orphan:Disable();
+        else
+            self.ContextMenu.Orphan:Enable();
+        end
+        
+        
+        -- The position of the context menu will depend on whether or not it fits in the viewport.
+        local xPos, yPos = GTGUI.Server.GetMousePosition();
+        if (xPos + self.ContextMenu:GetWidth()) > GTGUI.Server.GetViewportWidth() then
+            xPos = xPos - self.ContextMenu:GetWidth();
+        end
+        
+        self.ContextMenu:SetPosition(xPos, yPos);
         self.ContextMenu:Show();
     end
     
@@ -1777,7 +1791,9 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             end);
             
             item.titleContainer:OnRMBUp(function()
+                self.TreeView:DeselectAllItemsExcept(item);
                 item:Select();
+                
                 self:ShowContextMenu(item);
             end);
             
@@ -1928,6 +1944,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     
     self.ContextMenu:Menu();
+    self.ContextMenu:EnableDefaultEvents();
     
     self.ContextMenu:AppendItem("Add Cube"):OnPressed(function()
         local newNode = self.Scene:CreateNewSceneNode();
@@ -2149,6 +2166,14 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     function self:GetSceneNodePtrByID(sceneNodeID)
         return GTEngine.System.SceneEditor.GetSceneNodePtrByID(self._internalPtr, sceneNodeID);
+    end
+    
+    function self:GetParentSceneNodePtrByID(sceneNodeID)
+        return GTEngine.System.SceneNode.GetParentPtr(self:GetSceneNodePtrByID(sceneNodeID));
+    end
+    
+    function self:GetParentSceneNodeIDByID(sceneNodeID)
+        return GTEngine.System.SceneNode.GetID(self:GetParentSceneNodePtrByID(sceneNodeID));
     end
     
 
