@@ -536,6 +536,21 @@ namespace GTEngine
                 this->AddSceneNode(*rootSceneNode);
             }
 
+
+            // It's important that we let the scene know that it is the creator of this node.
+            for (size_t i = 0; i < newSceneNodes.count; ++i)
+            {
+                auto newSceneNode = newSceneNodes[i];
+                assert(newSceneNode != nullptr);
+                {
+                    assert(!this->sceneNodesCreatedByScene.Exists(newSceneNode->GetID()));
+                    {
+                        this->sceneNodesCreatedByScene.Insert(newSceneNode->GetID());
+                    }
+                }
+            }
+
+
             return rootSceneNode;
         }
 
