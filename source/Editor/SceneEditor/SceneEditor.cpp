@@ -1474,14 +1474,6 @@ namespace GTEngine
 
     void SceneEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
-        GTCore::String absolutePath = item.info.absolutePath;
-
-        if (GTCore::Path::ExtensionEqual(item.info.absolutePath.c_str(), "gtmodel"))
-        {
-            absolutePath = GTCore::IO::RemoveExtension(item.info.absolutePath.c_str());
-        }
-
-
         // We want to go through and notify the editor of a change to the model component of any scene node referencing this file (if it's a model file).
         if (GTEngine::IO::IsSupportedModelExtension(item.info.path.c_str()))
         {
@@ -1498,9 +1490,16 @@ namespace GTEngine
                         auto model = modelComponent->GetModel();
                         if (model != nullptr)
                         {
-                            if (model->GetDefinition().absolutePath == absolutePath)
+                            if (model->GetDefinition().absolutePath == item.info.absolutePath || (model->GetDefinition().absolutePath + ".gtmodel") == item.info.absolutePath)
                             {
                                 this->OnSceneNodeComponentChanged(*sceneNode, *modelComponent);
+
+                                // If this model is the only one selected, we will also update the panel. To do this, we'll just let the editor
+                                // think that the selection has changed.
+                                if (this->GetSelectedSceneNodeCount() == 1 && this->selectedNodes[0] == sceneNode->GetID())
+                                {
+                                    this->PostOnSelectionChangedEventToScript();
+                                }
                             }
                         }
                     }
