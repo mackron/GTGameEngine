@@ -1492,7 +1492,7 @@ namespace GTEngine
                         {
                             if (model->GetDefinition().absolutePath == item.info.absolutePath || (model->GetDefinition().absolutePath + ".gtmodel") == item.info.absolutePath)
                             {
-                                this->OnSceneNodeComponentChanged(*sceneNode, *modelComponent);
+                                modelComponent->OnChanged();
 
                                 // If this model is the only one selected, we will also update the panel. To do this, we'll just let the editor
                                 // think that the selection has changed.
