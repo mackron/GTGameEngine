@@ -508,6 +508,9 @@ namespace GTEngine
 
         intermediarySerializer.Write(this->IsShowingDirectionArrow());
 
+        intermediarySerializer.Write(this->prefabRelativePath);
+        intermediarySerializer.Write(this->prefabIndex);
+
 
         Serialization::ChunkHeader header;
         header.id          = Serialization::ChunkID_EditorMetadataComponent_Main;
@@ -557,6 +560,11 @@ namespace GTEngine
                     {
                         this->ShowDirectionArrow();
                     }
+
+
+                    deserializer.Read(this->prefabRelativePath);
+                    deserializer.Read(this->prefabIndex);
+
 
 
                     // We'll try setting the model for the picking shape now.
