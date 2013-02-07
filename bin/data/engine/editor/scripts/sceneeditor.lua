@@ -1764,6 +1764,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
                         
                         if parentSceneNodePtr ~= nil and childSceneNodePtr ~= nil and not GTEngine.System.SceneNode.IsAncestor(parentSceneNodePtr, childSceneNodePtr) then
                             GTEngine.System.SceneNode.AttachChild(parentSceneNodePtr, childSceneNodePtr, true);
+                            self.SceneEditor:SelectSceneNodeByID(childSceneNodeID);
                             
                             -- Undo/Redo point.
                             self.SceneEditor:CommitStateStackFrame();
