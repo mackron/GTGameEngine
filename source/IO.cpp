@@ -41,6 +41,11 @@ namespace GTEngine
             return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "gtscene");
         }
 
+        bool IsSupportedPrefabExtension(const char* fileName)
+        {
+            return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "gtprefab");
+        }
+
 
 
         AssetType GetAssetTypeFromExtension(const char* fileName)
@@ -68,6 +73,10 @@ namespace GTEngine
             else if (IsSupportedSceneExtension(fileName))
             {
                 return AssetType_Scene;
+            }
+            else if (IsSupportedPrefabExtension(fileName))
+            {
+                return AssetType_Prefab;
             }
             else
             {

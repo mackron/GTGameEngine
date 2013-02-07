@@ -39,6 +39,9 @@ namespace GTEngine
             /// Determines if the given file path is a scene file, based on it's extension.
             int IsSceneFile(GTCore::Script &script);
 
+            /// Determines if the given file path is a prefab file, based on it's extension.
+            int IsPrefabFile(GTCore::Script &script);
+
 
 
             namespace RendererFFI

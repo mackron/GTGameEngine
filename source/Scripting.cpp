@@ -781,11 +781,11 @@ namespace GTEngine
             {
                 script.SetTableFunction(-1, "GetExecutableDirectory", FFI::GetExecutableDirectory);
 
-                script.SetTableFunction(-1, "IsModelFile", FFI::IsModelFile);
-                script.SetTableFunction(-1, "IsImageFile", FFI::IsImageFile);
-                script.SetTableFunction(-1, "IsSoundFile", FFI::IsSoundFile);
-                script.SetTableFunction(-1, "IsSceneFile", FFI::IsSceneFile);
-
+                script.SetTableFunction(-1, "IsModelFile",  FFI::IsModelFile);
+                script.SetTableFunction(-1, "IsImageFile",  FFI::IsImageFile);
+                script.SetTableFunction(-1, "IsSoundFile",  FFI::IsSoundFile);
+                script.SetTableFunction(-1, "IsSceneFile",  FFI::IsSceneFile);
+                script.SetTableFunction(-1, "IsPrefabFile", FFI::IsPrefabFile);
 
 
                 script.Push("System");
@@ -1135,6 +1135,12 @@ namespace GTEngine
             int IsSceneFile(GTCore::Script &script)
             {
                 script.Push(IO::IsSupportedSceneExtension(script.ToString(1)));
+                return 1;
+            }
+
+            int IsPrefabFile(GTCore::Script &script)
+            {
+                script.Push(IO::IsSupportedPrefabExtension(script.ToString(1)));
                 return 1;
             }
 
