@@ -45,6 +45,9 @@ namespace GTEngine
         /// @param yRotation [in] The new y rotation.
         void SetCameraRotation(float xRotation, float yRotation);
 
+        /// Retrieves a reference ot the camera scene node.
+        const SceneNode & GetCameraSceneNode() const { return this->camera; }
+
 
         /// Enables physics simulation of the entire scene.
         void EnablePhysicsSimulation();
@@ -154,9 +157,12 @@ namespace GTEngine
         /// Performs a redo operation.
         void Redo();
 
-
         /// Commits a new frame to the current branch of the scene's state stack.
         void CommitStateStackFrame();
+
+
+        /// Instantiates a scene prefab, positioning the root node at the origin.
+        SceneNode* InstantiatePrefab(const char* relativePath);
 
 
 

@@ -4,8 +4,10 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Logging.hpp>
+#include <GTEngine/SceneNodeClassLibrary.hpp>
 #include <GTCore/Serializer.hpp>
 #include <GTCore/Deserializer.hpp>
+
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -751,6 +753,22 @@ namespace GTEngine
             this->scene.CommitStateStackFrame();
             this->MarkAsModified();
         }
+    }
+
+    SceneNode* SceneEditor::InstantiatePrefab(const char* relativePath)
+    {
+        auto prefab = SceneNodeClassLibrary::Acquire(relativePath);
+        if (prefab != nullptr)
+        {
+            auto rootSceneNode = this->scene.CreateNewSceneNode(*prefab);
+            if (rootSceneNode != nullptr)
+            {
+                // TODO: Map the root node so we can update it when the prefab file changes.
+                return rootSceneNode;
+            }
+        }
+
+        return nullptr;
     }
 
 
