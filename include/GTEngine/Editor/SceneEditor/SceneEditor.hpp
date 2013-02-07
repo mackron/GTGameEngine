@@ -366,6 +366,10 @@ namespace GTEngine
         void UpdatePhysicsButtonIcon();
 
 
+        /// Recursively maps a scene node to a prefab.
+        void MapSceneNodeToPrefab(SceneNode &sceneNode, const char* prefabRelativePath, size_t &prefabSceneNodeIndex);
+
+
     private:
 
         /// The viewport that the scene will be drawn from.
