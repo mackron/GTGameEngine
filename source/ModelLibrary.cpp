@@ -662,7 +662,7 @@ namespace GTEngine
     }
 
 
-    bool ModelLibrary::ReloadModel(const char* fileName)
+    bool ModelLibrary::Reload(const char* fileName)
     {
         // We need to find the definition that we're updating.
         auto definition = ModelLibrary::FindDefinition(fileName);

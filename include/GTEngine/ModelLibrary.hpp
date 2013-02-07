@@ -59,7 +59,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will update every model using the given file.
-        static bool ReloadModel(const char* fileName);
+        static bool Reload(const char* fileName);
 
 
 

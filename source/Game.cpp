@@ -508,7 +508,7 @@ namespace GTEngine
 
             if (ModelLibrary::IsExtensionSupported(extension))
             {
-                ModelLibrary::ReloadModel(item.info.path.c_str());
+                ModelLibrary::Reload(item.info.path.c_str());
             }
             else if (Texture2DLibrary::IsExtensionSupported(extension))
             {
