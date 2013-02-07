@@ -328,27 +328,47 @@ namespace GTEngine
 
                     for (size_t i = 0; i < inserts.count; ++i)
                     {
-                        commands.AddInsert(inserts.buffer[i]->key, nullptr);
+                        uint64_t sceneNodeID       = inserts.buffer[i]->key;
+                        uint64_t parentSceneNodeID = 0;
+
+                        auto iParentID = hierarchy.Find(sceneNodeID);
+                        if (iParentID != nullptr)
+                        {
+                            parentSceneNodeID = iParentID->value;
+                        }
+
+
+                        commands.AddInsert(sceneNodeID, parentSceneNodeID, nullptr);
                     }
 
                     for (size_t i = 0; i < deletes.count; ++i)
                     {
-                        commands.AddDelete(deletes.buffer[i]->key, nullptr);
+                        uint64_t sceneNodeID       = deletes.buffer[i]->key;
+                        uint64_t parentSceneNodeID = 0;
+
+                        auto iParentID = hierarchy.Find(sceneNodeID);
+                        if (iParentID != nullptr)
+                        {
+                            parentSceneNodeID = iParentID->value;
+                        }
+
+
+                        commands.AddDelete(sceneNodeID, parentSceneNodeID, nullptr);
                     }
 
                     for (size_t i = 0; i < updates.count; ++i)
                     {
-                        commands.AddUpdate(updates.buffer[i]->key, nullptr);
-                    }
+                        uint64_t sceneNodeID       = updates.buffer[i]->key;
+                        uint64_t parentSceneNodeID = 0;
 
-                    for (size_t i = 0; i < hierarchy.count; ++i)
-                    {
-                        uint64_t sceneNodeID = hierarchy.buffer[i]->key;
-
-                        if (!deletes.Exists(sceneNodeID))
+                        auto iParentID = hierarchy.Find(sceneNodeID);
+                        if (iParentID != nullptr)
                         {
-                            commands.hierarchy.Add(sceneNodeID, 0);
+                            parentSceneNodeID = iParentID->value;
                         }
+
+
+                        commands.AddUpdate(sceneNodeID, parentSceneNodeID, nullptr);
                     }
                 }
             }
@@ -368,27 +388,47 @@ namespace GTEngine
 
                     for (size_t i = 0; i < inserts.count; ++i)
                     {
-                        commands.AddDelete(inserts.buffer[i]->key, nullptr);
+                        uint64_t sceneNodeID       = inserts.buffer[i]->key;
+                        uint64_t parentSceneNodeID = 0;
+
+                        auto iParentID = hierarchy.Find(sceneNodeID);
+                        if (iParentID != nullptr)
+                        {
+                            parentSceneNodeID = iParentID->value;
+                        }
+
+
+                        commands.AddDelete(sceneNodeID, parentSceneNodeID, nullptr);
                     }
 
                     for (size_t i = 0; i < deletes.count; ++i)
                     {
-                        commands.AddInsert(deletes.buffer[i]->key, nullptr);
+                        uint64_t sceneNodeID       = deletes.buffer[i]->key;
+                        uint64_t parentSceneNodeID = 0;
+
+                        auto iParentID = hierarchy.Find(sceneNodeID);
+                        if (iParentID != nullptr)
+                        {
+                            parentSceneNodeID = iParentID->value;
+                        }
+
+
+                        commands.AddInsert(sceneNodeID, parentSceneNodeID, nullptr);
                     }
 
                     for (size_t i = 0; i < updates.count; ++i)
                     {
-                        commands.AddUpdate(updates.buffer[i]->key, nullptr);
-                    }
+                        uint64_t sceneNodeID       = updates.buffer[i]->key;
+                        uint64_t parentSceneNodeID = 0;
 
-                    for (size_t i = 0; i < hierarchy.count; ++i)
-                    {
-                        uint64_t sceneNodeID = hierarchy.buffer[i]->key;
-
-                        if (!deletes.Exists(sceneNodeID))
+                        auto iParentID = hierarchy.Find(sceneNodeID);
+                        if (iParentID != nullptr)
                         {
-                            commands.hierarchy.Add(sceneNodeID, 0);
+                            parentSceneNodeID = iParentID->value;
                         }
+
+
+                        commands.AddUpdate(sceneNodeID, parentSceneNodeID, nullptr);
                     }
                 }
             }
@@ -397,7 +437,6 @@ namespace GTEngine
 
         // And now we need to update to the most recent serializers.
         commands.UpdateToMostRecentSerializers(*this, newFrameIndex);
-        commands.UpdateToMostRecentHierarchy(  *this, newFrameIndex);
     }
 
 

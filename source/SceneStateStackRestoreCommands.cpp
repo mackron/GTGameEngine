@@ -16,7 +16,7 @@ namespace GTEngine
     }
 
 
-    void SceneStateStackRestoreCommands::AddInsert(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
     {
         // If a delete command with the scene node is already staged, all we want to do is remove it from the deletes and just
         // ignore everything.
@@ -33,12 +33,15 @@ namespace GTEngine
             if (!this->inserts.Exists(sceneNodeID))
             {
                 this->inserts.Add(sceneNodeID, sceneNodeSerializer);
+                this->AddToHierarchy(sceneNodeID, parentSceneNodeID);
             }
         }
     }
 
-    void SceneStateStackRestoreCommands::AddDelete(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
     {
+        (void)parentSceneNodeID;
+
         // If an insert command with the scene node is already staged, all we want to do is remove it from the inserts and just
         // ignore everything.
         auto iInsert = this->inserts.Find(sceneNodeID);
@@ -55,9 +58,13 @@ namespace GTEngine
                 this->deletes.Add(sceneNodeID, sceneNodeSerializer);
             }
         }
+
+
+        // Always ensure the node is not referenced in the hierarchy.
+        this->RemoveFromHierarchy(sceneNodeID);
     }
 
-    void SceneStateStackRestoreCommands::AddUpdate(uint64_t sceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
     {
         // We ignore update commands if an insert or delete command is already present.
         if (!this->inserts.Exists(sceneNodeID) &&
@@ -66,6 +73,21 @@ namespace GTEngine
         {
             this->updates.Add(sceneNodeID, sceneNodeSerializer);
         }
+
+
+        // Always make sure the hierarchy is updated.
+        this->AddToHierarchy(sceneNodeID, parentSceneNodeID);
+    }
+
+
+    void SceneStateStackRestoreCommands::AddToHierarchy(uint64_t sceneNodeID, uint64_t parentSceneNodeID)
+    {
+        this->hierarchy.Add(sceneNodeID, parentSceneNodeID);
+    }
+
+    void SceneStateStackRestoreCommands::RemoveFromHierarchy(uint64_t sceneNodeID)
+    {
+        this->hierarchy.RemoveByKey(sceneNodeID);
     }
 
 
