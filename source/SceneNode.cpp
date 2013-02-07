@@ -1094,7 +1094,7 @@ namespace GTEngine
     //////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void SceneNode::Serialize(GTCore::Serializer &serializer) const
+    void SceneNode::Serialize(GTCore::Serializer &serializer, unsigned int flags) const
     {
         // First, we serialize the SceneObject.
         SceneObject::Serialize(serializer);
@@ -1103,7 +1103,16 @@ namespace GTEngine
         // The first scene node chunk, besides SceneObject, is the general attributes. We're going to use an intermediate serializer here
         // because we're writing a string.
         GTCore::BasicSerializer secondarySerializer;
-        secondarySerializer.Write(this->uniqueID);
+
+        if ((flags & NoID) == 0)
+        {
+            secondarySerializer.Write(this->uniqueID);
+        }
+        else
+        {
+            secondarySerializer.Write(static_cast<uint64_t>(0));
+        }
+
         secondarySerializer.Write(this->name);
         secondarySerializer.Write(static_cast<uint32_t>(this->flags));
 
@@ -1127,6 +1136,12 @@ namespace GTEngine
 
         GTCore::Vector<GTCore::String> componentNames;
         this->GetAttachedComponentNames(componentNames);
+
+        if ((flags & NoEditorMetadataComponent) != 0)
+        {
+            componentNames.RemoveFirstOccuranceOf(EditorMetadataComponent::Name);
+        }
+
 
         // We first write the number of components we are saving.
         componentSerializer.Write(static_cast<uint32_t>(componentNames.count));

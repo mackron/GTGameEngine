@@ -721,7 +721,7 @@ namespace GTEngine
         ///     This ignores children. Serialization of children should be done at a higher level.
         ///     @par
         ///     This will serialize every attached component also.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTCore::Serializer &serializer, unsigned int flags = 0) const;
 
         /// Deserializes the scene node, ignoring children.
         ///
@@ -918,6 +918,12 @@ namespace GTEngine
             NoScaleInheritance       = (1 << 6),
             NoSerialization          = (1 << 7),            // <-- Only used when doing serialization from a scene.
             NoStateStackStaging      = (1 << 8),            // <-- Disables staging on the state stack.
+        };
+
+        enum SerializationFlags
+        {
+            NoID                      = (1 << 1),           // <-- Set the ID to 0 when serializing.
+            NoEditorMetadataComponent = (1 << 2),           // <-- Do not save the EditorMetadataComponent if it exists.
         };
 
 
