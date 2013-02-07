@@ -1954,6 +1954,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         newNode:AddComponent(GTEngine.Components.Model):SetModel("engine/models/default-1x1.dae");
         newNode:AddComponent(GTEngine.Components.Dynamics):AddBoxCollisionShape(0.5, 0.5, 0.5);
         
+        self:PositionSceneNodeInFrontOfCamera(newNode);
+        
         self:DeselectAll();
         self:SelectSceneNode(newNode);
         
@@ -1968,6 +1970,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.PointLight);
         
+        self:PositionSceneNodeInFrontOfCamera(newNode);
+        
         self:DeselectAll();
         self:SelectSceneNode(newNode);
         
@@ -1979,6 +1983,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         newNode:SetName("SpotLight");
         newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.SpotLight);
+        
+        self:PositionSceneNodeInFrontOfCamera(newNode);
         
         self:DeselectAll();
         self:SelectSceneNode(newNode);
@@ -1992,6 +1998,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.DirectionalLight);
         
+        self:PositionSceneNodeInFrontOfCamera(newNode);
+        
         self:DeselectAll();
         self:SelectSceneNode(newNode);
         
@@ -2003,6 +2011,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         newNode:SetName("AmbientLight");
         newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.AmbientLight);
+        
+        self:PositionSceneNodeInFrontOfCamera(newNode);
         
         self:DeselectAll();
         self:SelectSceneNode(newNode);
@@ -2166,6 +2176,14 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         GTEngine.System.SceneEditor.Redo(self._internalPtr);
     end
     
+    function self:InstantiatePrefab(relativePath)
+        local rootSceneNodePtr = GTEngine.System.SceneEditor.InstantiatePrefab(self._internalPtr, relativePath);
+        
+        GTEngine.System.SceneEditor.PositionSceneNodeInFrontOfCamera(self._internalPtr, rootSceneNodePtr);
+        
+        return rootSceneNodePtr;
+    end
+    
     
     
     function self:GetSceneNodePtrByID(sceneNodeID)
@@ -2179,6 +2197,12 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     function self:GetParentSceneNodeIDByID(sceneNodeID)
         return GTEngine.System.SceneNode.GetID(self:GetParentSceneNodePtrByID(sceneNodeID));
     end
+    
+    
+    function self:PositionSceneNodeInFrontOfCamera(sceneNode)
+        GTEngine.System.SceneEditor.PositionSceneNodeInFrontOfCamera(self._internalPtr, sceneNode._internalPtr);
+    end
+    
     
 
     
@@ -2245,6 +2269,31 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     self.Viewport:OnMouseLeave(function()
         self.IsMouseOverViewport = false;
+    end);
+    
+    self.Viewport:OnDrop(function(data)
+        if data.droppedElement.isAsset then
+            if GTEngine.IsModelFile(data.droppedElement.path) then
+                local newNode = self.Scene:CreateNewSceneNode();
+                newNode:SetName("Model");
+                newNode:AddComponent(GTEngine.Components.EditorMetadata);
+                newNode:AddComponent(GTEngine.Components.Model):SetModel(data.droppedElement.path);
+                
+                self:PositionSceneNodeInFrontOfCamera(newNode);
+                
+                self:DeselectAll();
+                self:SelectSceneNode(newNode);
+                
+                self:CommitStateStackFrame();
+            elseif GTEngine.IsPrefabFile(data.droppedElement.path) then
+                local newNodePtr = self:InstantiatePrefab(data.droppedElement.path);
+                
+                self:DeselectAll();
+                GTEngine.System.SceneEditor.SelectSceneNode(self._internalPtr, newNodePtr, false);
+                
+                self:CommitStateStackFrame();
+            end
+        end
     end);
     
     

@@ -1074,8 +1074,10 @@ namespace GTEngine
                         script.SetTableFunction(-1, "CommitStateStackFrame",               FFI::SystemFFI::SceneEditorFFI::CommitStateStackFrame);
                         script.SetTableFunction(-1, "Undo",                                FFI::SystemFFI::SceneEditorFFI::Undo);
                         script.SetTableFunction(-1, "Redo",                                FFI::SystemFFI::SceneEditorFFI::Redo);
+                        script.SetTableFunction(-1, "InstantiatePrefab",                   FFI::SystemFFI::SceneEditorFFI::InstantiatePrefab);
                         script.SetTableFunction(-1, "GetSceneNodePtrByID",                 FFI::SystemFFI::SceneEditorFFI::GetSceneNodePtrByID);
                         script.SetTableFunction(-1, "GetSceneNodes",                       FFI::SystemFFI::SceneEditorFFI::GetSceneNodes);
+                        script.SetTableFunction(-1, "PositionSceneNodeInFrontOfCamera",    FFI::SystemFFI::SceneEditorFFI::PositionSceneNodeInFrontOfCamera);
                     }
                     script.Pop(1);
                 }
@@ -3998,6 +4000,22 @@ namespace GTEngine
                     }
 
 
+                    int InstantiatePrefab(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->InstantiatePrefab(script.ToString(2)));
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+
+                        return 1;
+                    }
+
+
                     int GetSceneNodePtrByID(GTCore::Script &script)
                     {
                         auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
@@ -4031,6 +4049,23 @@ namespace GTEngine
                         }
 
                         return 1;
+                    }
+
+
+                    int PositionSceneNodeInFrontOfCamera(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                        if (sceneEditor != nullptr && sceneNode != nullptr)
+                        {
+                            auto &cameraSceneNode = sceneEditor->GetCameraSceneNode();
+                            {
+                                sceneNode->SetWorldPosition(cameraSceneNode.GetWorldPosition() + (cameraSceneNode.GetWorldForwardVector() * 15.0f));
+                            }
+                        }
+
+                        return 0;
                     }
                 }
             }

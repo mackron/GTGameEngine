@@ -1289,6 +1289,16 @@ namespace GTEngine
                     int Redo(GTCore::Script &script);
 
 
+                    /// Instantiates a prefab, returning a pointer to the root node.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    ///     Argument 2: The relative path of the prefab file.
+                    ///
+                    ///     This leaves the prefab positioned at the origin. Reposition the scene node manually if needed.
+                    int InstantiatePrefab(GTCore::Script &script);
+
+
                     /// Retrieves a pointer to the scene node of the given ID.
                     ///
                     /// @remarks
@@ -1302,6 +1312,14 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
                     int GetSceneNodes(GTCore::Script &script);
+
+
+                    /// Positions the given scene node in front of the camera.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    ///     Argument 2: A pointer to the scene node.
+                    int PositionSceneNodeInFrontOfCamera(GTCore::Script &script);
                 }
             }
         }
