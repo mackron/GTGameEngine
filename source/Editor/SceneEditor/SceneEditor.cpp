@@ -1526,7 +1526,6 @@ namespace GTEngine
         
             auto metadata = this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
             {
-                metadata->DeleteOnClose(false);     // <-- TODO: We need to use this anymore?
                 metadata->IsSystemNode(true);
             }
         
