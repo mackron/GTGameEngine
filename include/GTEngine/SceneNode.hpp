@@ -292,7 +292,7 @@ namespace GTEngine
         *       \par
         *       If the child is already attached to a different scene as this node, it will be removed from that scene.
         */
-        void AttachChild(SceneNode &childNode);
+        void AttachChild(SceneNode &childNode, bool keepWorldTransform = false);
 
         /**
         *   \brief              Attaches this node to another node.
@@ -301,7 +301,7 @@ namespace GTEngine
         *   \remarks
         *       This function is the same as Attach(), only the other way around. This is more intuitive in some cases.
         */
-        void AttachTo(SceneNode &parent);
+        void AttachTo(SceneNode &parent, bool keepWorldTransform = false);
 
         /**
         *   \brief                                     Detaches/orphans a child from the node.
@@ -311,17 +311,17 @@ namespace GTEngine
         *   \remarks
         *       This method does NOT delete the child.
         */
-        void DetachChild(SceneNode &childNode, bool postParentChangedEventToScene = true);
+        void DetachChild(SceneNode &childNode, bool keepWorldTransform = false, bool postParentChangedEventToScene = true);
 
         /**
         *   \brief  Safely detaches/orphans all children.
         */
-        void DetachAllChildren();
+        void DetachAllChildren(bool keepWorldTransform = false);
 
         /**
         *   \brief  Helper function for detaching this node from it's parent.
         */
-        void DetachFromParent(bool postParentChangedEventToScene = true);
+        void DetachFromParent(bool keepWorldTransform = false, bool postParentChangedEventToScene = true);
 
         /**
         *   \brief            Retrieves the first child who has the given name, or nullptr if a child is not found.

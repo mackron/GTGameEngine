@@ -72,10 +72,10 @@ namespace GTEngine
     {
         this->RemoveFromScene();
 
-        this->DetachFromParent();
+        this->DetachFromParent(false);
         this->OnDestroy();
 
-        this->DetachAllChildren();
+        this->DetachAllChildren(false);
         this->RemoveAllComponents();
     }
 
@@ -213,7 +213,7 @@ namespace GTEngine
     }
 
 
-    void SceneNode::AttachChild(SceneNode &child)
+    void SceneNode::AttachChild(SceneNode &child, bool keepWorldTransform)
     {
         if (&child != this && !this->IsAncestor(child))
         {
@@ -222,8 +222,20 @@ namespace GTEngine
             // If the childs parent is equal to this, it is already attached and so we don't need to do anything.
             if (previousParent != this)
             {
+                glm::vec3 worldPosition;
+                glm::quat worldOrientation;
+                glm::vec3 worldScale;
+                if (keepWorldTransform)
+                {
+                    worldPosition    = child.GetWorldPosition();
+                    worldOrientation = child.GetWorldOrientation();
+                    worldScale       = child.GetWorldScale();
+                }
+
+
+
                 // If the child already has a parent, it needs to be detached.
-                child.DetachFromParent(false);          // <-- 'false' = don't post OnParentChanged to the scene.
+                child.DetachFromParent(false, false);          // <-- 'false' = don't keep the world tranasfor and don't post OnParentChanged to the scene.
 
                 // If we don't have children, this will be the first one...
                 if (this->firstChild == nullptr)
@@ -249,6 +261,14 @@ namespace GTEngine
                 child._SetParent(this);
 
 
+                if (keepWorldTransform)
+                {
+                    child.SetWorldPosition(worldPosition, true);
+                    child.SetWorldOrientation(worldOrientation, true);
+                    child.SetWorldScale(worldScale);
+                }
+
+
                 // The event handlers need to know about the new child.
                 if (!this->EventsLocked())
                 {
@@ -272,12 +292,12 @@ namespace GTEngine
         }
     }
 
-    void SceneNode::AttachTo(SceneNode &parent)
+    void SceneNode::AttachTo(SceneNode &parent, bool keepWorldTransform)
     {
-        parent.AttachChild(*this);
+        parent.AttachChild(*this, keepWorldTransform);
     }
 
-    void SceneNode::DetachChild(SceneNode &child, bool postParentChangedEventToScene)
+    void SceneNode::DetachChild(SceneNode &child, bool keepWorldTransform, bool postParentChangedEventToScene)
     {
         auto previousParent = child.GetParent();
 
@@ -307,10 +327,31 @@ namespace GTEngine
             }
 
 
+
+            glm::vec3 worldPosition;
+            glm::quat worldOrientation;
+            glm::vec3 worldScale;
+            if (keepWorldTransform)
+            {
+                worldPosition    = child.GetWorldPosition();
+                worldOrientation = child.GetWorldOrientation();
+                worldScale       = child.GetWorldScale();
+            }
+
+
             // The child needs to be orphaned.
             child._SetParent(nullptr);
             child._SetPrevSibling(nullptr);
             child._SetNextSibling(nullptr);
+
+
+            if (keepWorldTransform)
+            {
+                child.SetWorldPosition(worldPosition, true);
+                child.SetWorldOrientation(worldOrientation, true);
+                child.SetWorldScale(worldScale);
+            }
+
 
             if (!this->EventsLocked())
             {
@@ -328,20 +369,20 @@ namespace GTEngine
         }
     }
 
-    void SceneNode::DetachAllChildren()
+    void SceneNode::DetachAllChildren(bool keepWorldTransform)
     {
         while (this->firstChild != nullptr)
         {
-            this->DetachChild(*this->firstChild);
+            this->DetachChild(*this->firstChild, keepWorldTransform);
         }
     }
 
-    void SceneNode::DetachFromParent(bool postParentChangedEventToScene)
+    void SceneNode::DetachFromParent(bool keepWorldTransform, bool postParentChangedEventToScene)
     {
         auto parent = this->GetParent();
         if (parent != nullptr)
         {
-            parent->DetachChild(*this, postParentChangedEventToScene);
+            parent->DetachChild(*this, keepWorldTransform, postParentChangedEventToScene);
         }
     }
 
