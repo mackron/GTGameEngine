@@ -116,14 +116,6 @@ namespace GTEngine
         void UseModelForPickingShape(bool useModelForPickingShapeIn) { this->useModelForPickingShape = useModelForPickingShapeIn; }
 
 
-        /// Determines whether or not the scene node should be deleted when the editor is closed.
-        bool DeleteOnClose() const { return this->deleteOnClose; }
-
-        /// Sets whether or not the scene node should be deleted when the editor is closed.
-        void DeleteOnClose(bool deleteOnCloseIn) { this->deleteOnClose = deleteOnCloseIn; }
-
-
-
 
         /// Shows a sprite on the object.
         void ShowSprite(const char* texturePath, const glm::vec3 &colour = glm::vec3(1.0f, 1.0f, 1.0f));
@@ -192,6 +184,21 @@ namespace GTEngine
 
 
 
+        /// Retrieves the relative path of the prefab the scene node is linked to.
+        const char* GetPrefabRelativePath() const;
+
+        /// Sets the relative path of the prefab the scene node id linked to.
+        void SetPrefabRelativePath(const char* newPrefabRelativePath);
+
+        /// Retrieves the index of the prefab scene node the scene node of this component refers to.
+        size_t GetPrefabIndex() const;
+
+        /// Sets the index of the prefab scene node the scene node of this component refers to.
+        void SetPrefabIndex(size_t newPrefabIndex);
+
+
+
+
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
 
@@ -218,9 +225,6 @@ namespace GTEngine
 
         /// Keeps track of whether or not the picking collision shape should be that of the model.
         bool useModelForPickingShape;
-
-        /// Keeps track of whether or not the scene node should be deleted when the editor is closed.
-        bool deleteOnClose;
 
         /// Keeps track of whether or not this is an scene node for editor functionality (gizmo, grid, camera, etc).
         bool isSystemNode;
@@ -276,6 +280,13 @@ namespace GTEngine
         /// The vertex array to use for the direction arrow.
         VertexArray* directionArrowVA;
 
+
+
+        /// The name of the prefab the scene node is part of. If this is empty, it means it is not linked to a prefab.
+        GTCore::String prefabRelativePath;
+
+        /// The index of the node in the prefab. If this is 0, it is the root.
+        size_t prefabIndex;
 
 
 

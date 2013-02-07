@@ -13,11 +13,12 @@ namespace GTEngine
 
     EditorMetadataComponent::EditorMetadataComponent(SceneNode &node)
         : Component(node),
-          alwaysShowOnTop(false), useModelForPickingShape(true), deleteOnClose(true), isSystemNode(false),
+          alwaysShowOnTop(false), useModelForPickingShape(true), isSystemNode(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
           spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTransform(),
-          directionArrowModel(nullptr), directionArrowVA(nullptr)
+          directionArrowModel(nullptr), directionArrowVA(nullptr),
+          prefabRelativePath(), prefabIndex(0)
     {
         pickingCollisionObject.setUserPointer(this);
     }
@@ -459,6 +460,28 @@ namespace GTEngine
 
 
 
+    const char* EditorMetadataComponent::GetPrefabRelativePath() const
+    {
+        return this->prefabRelativePath.c_str();
+    }
+
+    void EditorMetadataComponent::SetPrefabRelativePath(const char* newPrefabRelativePath)
+    {
+        this->prefabRelativePath = newPrefabRelativePath;
+    }
+
+    size_t EditorMetadataComponent::GetPrefabIndex() const
+    {
+        return this->prefabIndex;
+    }
+
+    void EditorMetadataComponent::SetPrefabIndex(size_t newPrefabIndex)
+    {
+        this->prefabIndex = newPrefabIndex;
+    }
+
+
+
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
@@ -468,7 +491,6 @@ namespace GTEngine
 
         intermediarySerializer.Write(this->alwaysShowOnTop);
         intermediarySerializer.Write(this->useModelForPickingShape);
-        intermediarySerializer.Write(this->deleteOnClose);
         intermediarySerializer.Write(this->isSelected);
         intermediarySerializer.Write(this->selectionWireframeColour);
         intermediarySerializer.Write(static_cast<uint32_t>(this->pickingCollisionShapeType));
@@ -509,7 +531,6 @@ namespace GTEngine
                 {
                     deserializer.Read(this->alwaysShowOnTop);
                     deserializer.Read(this->useModelForPickingShape);
-                    deserializer.Read(this->deleteOnClose);
                     deserializer.Read(this->isSelected);
                     deserializer.Read(this->selectionWireframeColour);
 
