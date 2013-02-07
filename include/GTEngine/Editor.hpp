@@ -206,14 +206,6 @@ namespace GTEngine
         void OnFileUpdate(const DataFilesWatcher::Item &item);
 
 
-
-        /// Called when the definition of a model has changed.
-        ///
-        /// @oaram absolutePath [in] The absolute path of the model that has just changed.
-        void OnModelDefinitionChanged(const char* absolutePath);
-
-
-
     private:
 
         /// Shows the save file dialog for the given file.

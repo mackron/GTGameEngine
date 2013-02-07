@@ -341,10 +341,13 @@ namespace GTEngine
         }
     }
 
-    void ModelEditor::OnModelDefinitionChanged()
+
+    void ModelEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
-        // All we need to do is refresh.
-        this->Refresh();
+        if (item.info.absolutePath == this->GetAbsolutePath() || (item.info.absolutePath + ".gtmodel") == this->GetAbsolutePath())
+        {
+            this->Refresh();
+        }
     }
 
 
@@ -387,6 +390,15 @@ namespace GTEngine
 
     void ModelEditor::Refresh()
     {
+        // We need to let the scene know that the model has changed. We just call OnChanged() on the component for this. If we don't do this, the
+        // scene will not know that it needs to update the frustum culling volume.
+        auto modelComponent = this->modelNode.GetComponent<ModelComponent>();
+        assert(modelComponent != nullptr);
+        {
+            modelComponent->OnChanged();
+        }
+
+
         // GTGUI.Server.GetElementByID(this->mainElement->id):Refresh()
         auto &script = this->GetScript();
 
