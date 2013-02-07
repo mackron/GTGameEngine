@@ -216,6 +216,20 @@ namespace GTEngine
 
 
 
+    void SubEditor::OnFileInsert(const DataFilesWatcher::Item &)
+    {
+    }
+
+    void SubEditor::OnFileRemove(const DataFilesWatcher::Item &)
+    {
+    }
+
+    void SubEditor::OnFileUpdate(const DataFilesWatcher::Item &)
+    {
+    }
+
+
+
     ///////////////////////////////////////////////////
     // Private Methods.
 

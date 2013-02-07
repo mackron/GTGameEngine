@@ -777,6 +777,17 @@ namespace GTEngine
         );
 
         this->game.GetScript().Execute(script.c_str());
+
+
+        // We're now going to let every sub-editor know about this.
+        for (size_t i = 0; i < this->openedFiles.count; ++i)
+        {
+            auto subEditor = this->openedFiles.buffer[i]->value;
+            assert(subEditor != nullptr);
+            {
+                subEditor->OnFileInsert(item);
+            }
+        }
     }
 
     void Editor::OnFileRemove(const DataFilesWatcher::Item &item)
@@ -800,6 +811,17 @@ namespace GTEngine
         );
 
         this->game.GetScript().Execute(script.c_str());
+
+
+        // We're now going to let every sub-editor know about this.
+        for (size_t i = 0; i < this->openedFiles.count; ++i)
+        {
+            auto subEditor = this->openedFiles.buffer[i]->value;
+            assert(subEditor != nullptr);
+            {
+                subEditor->OnFileRemove(item);
+            }
+        }
     }
 
     void Editor::OnFileUpdate(const DataFilesWatcher::Item &item)
@@ -823,6 +845,17 @@ namespace GTEngine
         );
 
         this->game.GetScript().Execute(script.c_str());
+
+
+        // We're now going to let every sub-editor know about this.
+        for (size_t i = 0; i < this->openedFiles.count; ++i)
+        {
+            auto subEditor = this->openedFiles.buffer[i]->value;
+            assert(subEditor != nullptr);
+            {
+                subEditor->OnFileUpdate(item);
+            }
+        }
     }
 
 

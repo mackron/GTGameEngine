@@ -8,6 +8,7 @@
 
 #include "SubEditorTabEventHandler.hpp"
 #include "../GameScript.hpp"
+#include "../DataFilesWatcher.hpp"
 
 namespace GTEngine
 {
@@ -95,6 +96,21 @@ namespace GTEngine
         /// Called when a mouse button is released.
         virtual void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
 
+
+        /// Called when a file is added to a data directory.
+        ///
+        /// @param item [in] The object containing information about the file.
+        virtual void OnFileInsert(const DataFilesWatcher::Item &item);
+
+        /// Called when a file is remove from a data directory.
+        ///
+        /// @param item [in] The object containing information about the file.
+        virtual void OnFileRemove(const DataFilesWatcher::Item &item);
+
+        /// Called when a file in a data directory is updated.
+        ///
+        /// @param item [in] The object containing information about the file.
+        virtual void OnFileUpdate(const DataFilesWatcher::Item &item);
 
 
     private:
