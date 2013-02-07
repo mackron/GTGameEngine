@@ -333,6 +333,12 @@ namespace GTEngine
 
     void Model::Deserialize(GTCore::Deserializer &deserializer)
     {
+        // A model is tied to a definition. When a model is saved, it will be saved based on that definition. If the definition has changed
+        // it will mean the serialized data isn't really valid. Thus, if the definition is any different, we going to skip everything and
+        // just load up the model based on the definition.
+        bool isAbandoned = false;
+
+
         // We're going to us a iteration based deserialization system here. Basically, we keep reading chunks until we hit the null terminator.
         Serialization::ChunkHeader header;
 
@@ -344,12 +350,31 @@ namespace GTEngine
             {
             case Serialization::ChunkID_Model_Meshes:
                 {
+                    if (isAbandoned)
+                    {
+                        deserializer.Seek(header.sizeInBytes);
+                        break;
+                    }
+
                     switch (header.version)
                     {
                     case 1:
                         {
                             uint32_t meshCount;
                             deserializer.Read(meshCount);
+
+                            // We need to check if it's still possible to deserialize. If the mesh count is different, we can't reliably load anything, so
+                            // we'll need to abandon everything. Note that we don't immediately return, because we want to maintain the integrity of the
+                            // deserializer.
+                            if (this->meshes.count != meshCount && this->meshes.count != 0)
+                            {
+                                isAbandoned = true;
+                                this->OnDefinitionChanged();
+
+                                deserializer.Seek(header.sizeInBytes - sizeof(meshCount));
+                                break;
+                            }
+
 
                             // Keeps track of whether or not we are allocating new meshes.
                             bool allocateNewMeshes = false;
@@ -361,12 +386,12 @@ namespace GTEngine
                             }
                             else
                             {
-                                // For now, we need to assert that the current instantiation has the same number of meshes. Should probably improve this later.
                                 assert(this->meshes.count == meshCount);
 
                                 // We don't want to allocate new meshes.
                                 allocateNewMeshes = false;
                             }
+
 
                             for (uint32_t iMesh = 0; iMesh < meshCount; ++iMesh)
                             {
@@ -404,6 +429,12 @@ namespace GTEngine
 
             case Serialization::ChunkID_Model_Bones:
                 {
+                    if (isAbandoned)
+                    {
+                        deserializer.Seek(header.sizeInBytes);
+                        break;
+                    }
+
                     switch (header.version)
                     {
                     case 1:
@@ -411,13 +442,20 @@ namespace GTEngine
                             uint32_t boneCount;
                             deserializer.Read(boneCount);
 
-                            // For now, we assert that the bone count is the same as the current instantiation. This needs improving.
-                            assert(this->bones.count == boneCount);
+                            if (this->bones.count == boneCount)
                             {
                                 for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
                                 {
                                     this->bones[iBone]->Deserialize(deserializer);
                                 }
+                            }
+                            else
+                            {
+                                isAbandoned = true;
+                                this->OnDefinitionChanged();
+
+                                deserializer.Seek(header.sizeInBytes - sizeof(boneCount));
+                                break;
                             }
 
 
@@ -436,6 +474,12 @@ namespace GTEngine
 
             case Serialization::ChunkID_Model_Animation:
                 {
+                    if (isAbandoned)
+                    {
+                        deserializer.Seek(header.sizeInBytes);
+                        break;
+                    }
+
                     switch (header.version)
                     {
                     case 1:
