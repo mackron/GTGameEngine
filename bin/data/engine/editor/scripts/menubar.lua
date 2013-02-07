@@ -59,11 +59,15 @@ function GTGUI.Element:MenuBar()
 
 
     -- Here is where we watch for mouse-down events. We use these in determining when the menu should be collapsed.
-    self:WatchLMBDown(function(data)
-        if self.selectedItem ~= nil and self:IsChild(data.receiver) == false then
+    function self.MouseDownEvent(data)
+        if self.selectedItem ~= nil and self:IsChild(data.receiver) == false and data.receiver ~= GTGUI.Server.GetRootElement() then
             self:CollapseMenu();
         end
-    end)
+    end
+    
+    self:WatchLMBDown(self.MouseDownEvent);
+    self:WatchRMBDown(self.MouseDownEvent);
+    self:WatchMMBDown(self.MouseDownEvent);
 end
 
 
