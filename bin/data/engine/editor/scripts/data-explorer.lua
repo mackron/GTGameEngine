@@ -21,8 +21,6 @@ function GTGUI.Element:DataExplorer()
                 end;
             end);
         end
-        
-        self.FolderMenu:Hide();
     end);
     
     self.FolderMenu:AppendSeparator();
@@ -38,8 +36,6 @@ function GTGUI.Element:DataExplorer()
                 end
             end);
         end
-    
-        self.FolderMenu:Hide();
     end);
     
     self.FolderMenu:AppendItem("New Text File..."):OnPressed(function()
@@ -53,8 +49,6 @@ function GTGUI.Element:DataExplorer()
                 end
             end);
         end
-
-        self.FolderMenu:Hide();
     end);
     
     --self.FolderMenu:AppendSeparator();
