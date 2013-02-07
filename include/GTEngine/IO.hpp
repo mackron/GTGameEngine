@@ -45,12 +45,19 @@ namespace GTEngine
         /// @return True if the file is a supported particle file.
         bool IsSupportedParticleEffectExtension(const char* fileName);
 
-        /// Determines whether or not the extension of the given file path is a support scene file.
+        /// Determines whether or not the extension of the given file path is a supported scene file.
         ///
         /// @param fileName [in] The file name to check.
         ///
         /// @return True if the file is a supported scene file.
         bool IsSupportedSceneExtension(const char* fileName);
+
+        /// Determines whether or not the extension of the given file path is a supported prefab file.
+        ///
+        /// @param fileName [in] The file name to check.
+        ///
+        /// @return True if the file is a supported prefab file.
+        bool IsSupportedPrefabExtension(const char* fileName);
 
 
 

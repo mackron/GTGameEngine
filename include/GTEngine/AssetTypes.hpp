@@ -19,6 +19,7 @@ namespace GTEngine
         
         // Special
         AssetType_Scene,
+        AssetType_Prefab,
         AssetType_TextFile
     };
 }
