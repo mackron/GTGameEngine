@@ -7,12 +7,13 @@
 namespace GTEngine
 {
     ModelDefinition::ModelDefinition(const char* fileNameIn)
-        : fileName(fileNameIn),
+        : fileName(fileNameIn), absolutePath(),
           meshGeometries(), meshMaterials(), meshSkinningVertexAttributes(),
           bones(),
           animation(), animationChannelBones(), animationKeyCache(),
           convexHulls(), convexHullBuildSettings()
     {
+        GTCore::IO::FindAbsolutePath(fileNameIn, this->absolutePath);
     }
 
     ModelDefinition::~ModelDefinition()
