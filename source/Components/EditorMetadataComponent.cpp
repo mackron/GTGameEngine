@@ -480,6 +480,11 @@ namespace GTEngine
         this->prefabIndex = newPrefabIndex;
     }
 
+    bool EditorMetadataComponent::IsLinkedToPrefab() const
+    {
+        return !this->prefabRelativePath.IsEmpty();
+    }
+
 
 
     ///////////////////////////////////////////////////////

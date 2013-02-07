@@ -196,6 +196,9 @@ namespace GTEngine
         /// Sets the index of the prefab scene node the scene node of this component refers to.
         void SetPrefabIndex(size_t newPrefabIndex);
 
+        /// Determines whether or not the scene node is linked to a prefab.
+        bool IsLinkedToPrefab() const;
+
 
 
 
