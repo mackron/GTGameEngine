@@ -1632,17 +1632,8 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             local sceneNodePtr = self.SceneEditor:GetSceneNodePtrByID(data.droppedElement.sceneNodeID);
             
             if GTEngine.System.SceneNode.GetParentPtr(sceneNodePtr) ~= nil then
-                local posX, posY, posZ = GTEngine.System.SceneNode.GetWorldPosition(sceneNodePtr);
-                local rotX, rotY, rotZ = GTEngine.System.SceneNode.GetWorldRotationXYZ(sceneNodePtr);
-                local scaX, scaY, scaZ = GTEngine.System.SceneNode.GetWorldScale(sceneNodePtr);
-            
-                GTEngine.System.SceneNode.Orphan(sceneNodePtr);
-                
-                GTEngine.System.SceneNode.SetWorldPosition(sceneNodePtr, posX, posY, posZ);
-                GTEngine.System.SceneNode.SetWorldRotationXYZ(sceneNodePtr, rotX, rotY, rotZ);
-                GTEngine.System.SceneNode.SetWorldScale(sceneNodePtr, scaX, scaY, scaZ);
-                
-                self.SceneEditor:SelectSceneNodeByID(self.ContextMenu.SceneNodeID);
+                GTEngine.System.SceneNode.Orphan(sceneNodePtr, true);
+                self.SceneEditor:SelectSceneNodeByID(data.droppedElement.sceneNodeID);
                 
                 -- Undo/Redo point.
                 self.SceneEditor:CommitStateStackFrame();
@@ -1772,15 +1763,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
                         local childSceneNodePtr  = self.SceneEditor:GetSceneNodePtrByID(childSceneNodeID);
                         
                         if parentSceneNodePtr ~= nil and childSceneNodePtr ~= nil and not GTEngine.System.SceneNode.IsAncestor(parentSceneNodePtr, childSceneNodePtr) then
-                            local posX, posY, posZ = GTEngine.System.SceneNode.GetWorldPosition(childSceneNodePtr);
-                            local rotX, rotY, rotZ = GTEngine.System.SceneNode.GetWorldRotationXYZ(childSceneNodePtr);
-                            local scaX, scaY, scaZ = GTEngine.System.SceneNode.GetWorldScale(childSceneNodePtr);
-                        
-                            GTEngine.System.SceneNode.AttachChild(parentSceneNodePtr, childSceneNodePtr);
-                            
-                            GTEngine.System.SceneNode.SetWorldPosition(childSceneNodePtr, posX, posY, posZ);
-                            GTEngine.System.SceneNode.SetWorldRotationXYZ(childSceneNodePtr, rotX, rotY, rotZ);
-                            GTEngine.System.SceneNode.SetWorldScale(childSceneNodePtr, scaX, scaY, scaZ);
+                            GTEngine.System.SceneNode.AttachChild(parentSceneNodePtr, childSceneNodePtr, true);
                             
                             -- Undo/Redo point.
                             self.SceneEditor:CommitStateStackFrame();
