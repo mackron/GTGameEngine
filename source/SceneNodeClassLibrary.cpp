@@ -169,6 +169,9 @@ namespace GTEngine
                 }
 
 
+                // Can't forget to close the file...
+                GTCore::IO::Close(file);
+
 
                 // If we're not acquiring, we actually want to delete the class.
                 if (!acquire)
