@@ -1127,6 +1127,13 @@ namespace GTEngine
         }
         else
         {
+            // Assimp actually supports XML by default, but we would rather them be text files. Thus, we're going
+            // to return false if XML is specified.
+            if (GTCore::Strings::Equal<false>(extension, "xml"))
+            {
+                return false;
+            }
+
             GTCore::String assimpExt(".");
             assimpExt += extension;
 
