@@ -73,7 +73,7 @@ namespace GTEngine
         void DoMouseSelection();
 
         /// Deselects everything.
-        void DeselectAll();
+        void DeselectAll(bool dontPostBackNotification = false);
 
         /// Determines whether or not the given node is selected.
         ///
@@ -131,6 +131,9 @@ namespace GTEngine
         /// Deletes the selected scene nodes.
         void RemoveSelectedSceneNodes();
 
+        /// Deletes the given scene node.
+        void RemoveSceneNode(SceneNode &sceneNodeToRemove);
+
         /// Deletes the given scene nodes.
         ///
         /// @param sceneNodeIDs [in] A constant reference to the vector containing the scene nodes to delete.
@@ -138,6 +141,12 @@ namespace GTEngine
 
         /// Duplicates the selected scene nodes, deselects them and then selects the new ones.
         void DuplicateSelectedSceneNodes();
+
+        /// Duplicates the given scene node, deselects it and the selects the new one.
+        ///
+        /// @return A reference to the new node.
+        SceneNode & DuplicateSceneNode(SceneNode &sceneNodeToDuplicate);
+
 
         /// Performs an undo operation.
         void Undo();
@@ -339,7 +348,9 @@ namespace GTEngine
         ///
         /// @param nodeToCopy [in] A reference to the scene node to copy.
         /// @param parentNode [in] A pointer to the parent node. Can be null.
-        void CopySceneNodeAndChildren(SceneNode &nodeToCopy, SceneNode* parentNode);
+        ///
+        /// @return A reference to the new node.
+        SceneNode & CopySceneNodeAndChildren(SceneNode &nodeToCopy, SceneNode* parentNode);
 
 
         /// Updates the icon on the Physics button.
