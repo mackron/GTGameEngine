@@ -1180,7 +1180,11 @@ namespace GTEngine
                     // If the prefab is already linked to a different node, we actually want to auto-generate every ID by leaving the IDs set at 0.
                     if (GTCore::Strings::Equal<false>(prefab.GetRelativePath(), metadata->GetPrefabRelativePath()))
                     {
-                        id = metadata->GetPrefabID();
+                        // If a prefab scene node of the same ID already exists, we'll need to regenerate an ID for that node.
+                        if (prefab.GetSerializerByID(metadata->GetPrefabID()) == nullptr)
+                        {
+                            id = metadata->GetPrefabID();
+                        }
                     }
 
                     id = prefab.AddSingleSceneNode(sceneNode, id, parentID);
