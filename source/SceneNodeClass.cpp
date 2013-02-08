@@ -169,7 +169,7 @@ namespace GTEngine
     {
         // We want to serialize the scene node and add it to the hierarchy first.
         auto serializer = new GTCore::BasicSerializer;
-        sceneNode.Serialize(*serializer, SceneNode::NoID | SceneNode::NoEditorMetadataComponent);
+        sceneNode.Serialize(*serializer, SceneNode::NoID);
 
         this->serializers.PushBack(serializer);
         

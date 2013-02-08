@@ -545,6 +545,23 @@ namespace GTEngine
         }
     }
 
+    void SceneEditor::DeselectSceneNodeAndChildren(SceneNode &node, bool dontPostBackNotification)
+    {
+        this->DeselectSceneNode(node, false, false);
+
+        for (auto childNode = node.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
+        {
+            this->DeselectSceneNodeAndChildren(*childNode, false);
+        }
+
+
+        if (!dontPostBackNotification)
+        {
+            this->PostOnSelectionChangedEventToScript();
+        }
+    }
+
+
     glm::vec3 SceneEditor::GetSelectionCenterPoint() const
     {
         if (this->selectedNodes.count > 0)
@@ -768,6 +785,10 @@ namespace GTEngine
                 // We now need to map our scene node to the component. This is recursive.
                 size_t prefabSceneNodeIndex = 0;
                 this->MapSceneNodeToPrefab(*rootSceneNode, relativePath, prefabSceneNodeIndex);
+
+                // We also want to recursively deselect the scene nodes. We don't post notifications to the editor about this. The reason we do this is
+                // because the metadata component may have left it marked as selected, which we don't want.
+                this->DeselectSceneNodeAndChildren(*rootSceneNode, true);
 
                 return rootSceneNode;
             }

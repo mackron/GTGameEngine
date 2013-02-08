@@ -107,6 +107,11 @@ namespace GTEngine
         /// @param node [in] The node to deselect.
         void DeselectSceneNode(SceneNode &node, bool force = false, bool dontPostBackNotification = false);
 
+        /// Recursively deselects the given scene node and it's children.
+        ///
+        /// @param node [in] A reference to the root scene node to deselect.
+        void DeselectSceneNodeAndChildren(SceneNode &node, bool dontPostBackNotifications = false);
+
         /// Retrieves the center point of the selected nodes.
         glm::vec3 GetSelectionCenterPoint() const;
 
