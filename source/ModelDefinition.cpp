@@ -13,7 +13,10 @@ namespace GTEngine
           animation(), animationChannelBones(), animationKeyCache(),
           convexHulls(), convexHullBuildSettings()
     {
-        GTCore::IO::FindAbsolutePath(fileNameIn, this->absolutePath);
+        if (this->fileName != "")
+        {
+            GTCore::IO::FindAbsolutePath(fileNameIn, this->absolutePath);
+        }
     }
 
     ModelDefinition::~ModelDefinition()
