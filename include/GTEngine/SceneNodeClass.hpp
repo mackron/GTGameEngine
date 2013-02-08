@@ -32,10 +32,10 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the internal list of serializers.
-        const GTCore::Vector<GTCore::BasicSerializer*> & GetSerializers() const { return this->serializers; }
+        const GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetSerializers() const { return this->serializers; }
 
         /// Retrieves a reference to the hierarchy.
-        const GTCore::Map<size_t, size_t> & GetHierarchy() const { return this->hierarchy; }
+        const GTCore::Map<uint64_t, uint64_t> & GetHierarchy() const { return this->hierarchy; }
 
 
 
@@ -58,18 +58,24 @@ namespace GTEngine
         /// Recursively adds the given scene node and it's children.
         ///
         /// @param sceneNode   [in] The scene node to add.
-        /// @param parentIndex [in] The index of the parent in the hierarchy. Set to -1 if the node does not have a parent.
-        void AddSceneNode(const SceneNode &sceneNode, size_t parentIndex);
+        /// @param parentIndex [in] The index of the parent in the hierarchy. Set to 0 if the node does not have a parent.
+        void AddSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID);
 
 
 
     private:
 
         /// The serialized data of every scene node.
-        GTCore::Vector<GTCore::BasicSerializer*> serializers;
+        //GTCore::Vector<GTCore::BasicSerializer*> serializers;
+
+        /// The serialized data of every scene node, mapped to a persistent ID.
+        GTCore::Map<uint64_t, GTCore::BasicSerializer*> serializers;
 
         /// The hierarchy. These point to indexes in sceneNodeSerializers.
-        GTCore::Map<size_t, size_t> hierarchy;
+        GTCore::Map<uint64_t, uint64_t> hierarchy;
+
+        /// The next unique ID.
+        uint64_t nextID;
     };
 }
 
