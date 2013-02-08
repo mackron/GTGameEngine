@@ -932,17 +932,16 @@ namespace GTEngine
                 }
 
 
+                // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
+                this->PostOnSceneNodeAddedToScript(node);
+
 
                 // Select the scene node if it's marked as such.
                 if (metadata->IsSelected())
                 {
-                    this->SelectSceneNode(node, true);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
+                    this->SelectSceneNode(node, true, true);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
                 }
             }
-
-
-            // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
-            this->PostOnSceneNodeAddedToScript(node);
         }
     }
 
