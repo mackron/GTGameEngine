@@ -47,7 +47,8 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: The absolute path of the file to create or replace.
-            ///     Argument 2: A pointer to the scene node to create the prefrab file from.
+            ///     Argument 2: The path to make the absolute path relative to.
+            ///     Argument 3: A pointer to the scene node to create the prefrab file from.
             int CreatePrefab(GTCore::Script &script);
 
 

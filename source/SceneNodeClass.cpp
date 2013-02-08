@@ -5,8 +5,8 @@
 
 namespace GTEngine
 {
-    SceneNodeClass::SceneNodeClass()
-        : serializers(), hierarchy(), nextID(0)
+    SceneNodeClass::SceneNodeClass(const char* absolutePathIn, const char* relativePathIn)
+        : absolutePath(absolutePathIn), relativePath(relativePathIn), serializers(), hierarchy(), nextID(0)
     {
     }
 
@@ -16,6 +16,11 @@ namespace GTEngine
     }
 
 
+    const char* SceneNodeClass::GetRelativePath() const
+    {
+        return this->relativePath.c_str();
+    }
+
 
     void SceneNodeClass::SetFromSceneNode(const SceneNode &sceneNode)
     {
@@ -23,7 +28,97 @@ namespace GTEngine
         this->Clear();
 
         // We need to grab every scene node in the hierarchy, serialize them, and add them to the internal containers. Of course, this needs to be done recursively.
-        this->AddSceneNode(sceneNode, 0, 0);
+        this->AddSceneNode(sceneNode, 1, 0);        // We pass 1 here for the ID because we want the root scene node to always have that ID.
+    }
+
+
+    GTCore::BasicSerializer* SceneNodeClass::GetSerializerByID(uint64_t id)
+    {
+        auto iSerializer = this->serializers.Find(id);
+        if (iSerializer != nullptr)
+        {
+            return iSerializer->value;
+        }
+
+        return nullptr;
+    }
+
+
+    uint64_t SceneNodeClass::GetRootID() const
+    {
+        return 1;
+    }
+
+
+    void SceneNodeClass::Clear()
+    {
+        // Serializers.
+        for (size_t i = 0; i < this->serializers.count; ++i)
+        {
+            delete this->serializers.buffer[i]->value;
+        }
+        this->serializers.Clear();
+
+
+        // Hierarchy.
+        this->hierarchy.Clear();
+    }
+
+    void SceneNodeClass::AddSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
+    {
+        id = this->AddSingleSceneNode(sceneNode, id, parentID);
+
+        for (auto childNode = sceneNode.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
+        {
+            this->AddSceneNode(*childNode, 0, id);
+        }
+    }
+
+    uint64_t SceneNodeClass::AddSingleSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
+    {
+        auto serializer = new GTCore::BasicSerializer;
+        sceneNode.Serialize(*serializer, SceneNode::NoID);
+
+        if (id == 0)
+        {
+            if (this->serializers.count == 0)
+            {
+                id = 1;
+            }
+            else
+            {
+                id = ++this->nextID;
+            }
+        }
+
+        if (this->nextID <= id)
+        {
+            this->nextID = id;
+        }
+
+
+        this->serializers.Add(id, serializer);
+
+
+        if (parentID != 0)
+        {
+            this->hierarchy.Add(id, parentID);
+        }
+
+
+        return id;
+    }
+
+
+    void SceneNodeClass::GetChildIDs(uint64_t parentID, GTCore::Vector<uint64_t> &childIDs)
+    {
+        for (size_t i = 0; i < this->hierarchy.count; ++i)
+        {
+            if (this->hierarchy.buffer[i]->value == parentID)
+            {
+                childIDs.PushBack(this->hierarchy.buffer[i]->key);
+            }
+        }
     }
 
 
@@ -41,8 +136,8 @@ namespace GTEngine
 
         for (size_t i = 0; i < this->serializers.count; ++i)
         {
-            auto sceneNodeID         = this->serializers.buffer[i]->key;
-            auto sceneNodeSerializer = this->serializers.buffer[i]->value;
+            uint64_t sceneNodeID         = this->serializers.buffer[i]->key;
+            auto     sceneNodeSerializer = this->serializers.buffer[i]->value;
 
             assert(sceneNodeID         != 0);
             assert(sceneNodeSerializer != nullptr);
@@ -91,7 +186,7 @@ namespace GTEngine
         this->Clear();
 
         Serialization::ChunkHeader header;
-        deserializer.Read(header);
+        if (deserializer.Read(header) > 0)
         {
             assert(header.id == Serialization::ChunkID_SceneNodeClass);
             {
@@ -165,49 +260,23 @@ namespace GTEngine
     }
 
 
-
-    /////////////////////////////////////////////////////
-    // Private
-
-    void SceneNodeClass::Clear()
+    bool SceneNodeClass::WriteToFile()
     {
-        // Serializers.
-        for (size_t i = 0; i < this->serializers.count; ++i)
+        auto file = GTCore::IO::Open(this->absolutePath.c_str(), GTCore::IO::OpenMode::Write);
+        if (file != nullptr)
         {
-            delete this->serializers.buffer[i]->value;
+            GTCore::FileSerializer serializer(file);
+            this->Serialize(serializer);
+
+
+            GTCore::IO::Close(file);
+            return true;
         }
-        this->serializers.Clear();
-
-
-        // Hierarchy.
-        this->hierarchy.Clear();
-
-
-        this->nextID = 0;
-    }
-
-    void SceneNodeClass::AddSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
-    {
-        // We want to serialize the scene node and add it to the hierarchy first.
-        auto serializer = new GTCore::BasicSerializer;
-        sceneNode.Serialize(*serializer, SceneNode::NoID);
-
-        if (id == 0)
+        else
         {
-            id = ++this->nextID;
+            GTEngine::Log("Can not open file: '%s'.", this->absolutePath.c_str());
         }
 
-        this->serializers.Add(id, serializer);
-
-
-        if (parentID != 0)
-        {
-            this->hierarchy.Add(id, parentID);
-        }
-
-        for (auto childNode = sceneNode.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
-        {
-            this->AddSceneNode(*childNode, 0, id);
-        }
+        return false;
     }
 }

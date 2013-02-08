@@ -60,23 +60,23 @@ namespace GTEngine
         }
 
 
-        GTCore::String absFileName;
-        if (GTCore::IO::FindAbsolutePath(fileName, absFileName))
+        GTCore::String absolutePath;
+        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
         {
-            auto iLoadedClass = LoadedClasses.Find(absFileName.c_str());
+            auto iLoadedClass = LoadedClasses.Find(absolutePath.c_str());
             if (iLoadedClass == nullptr)
             {
                 // Does not exist. Needs to be loaded.
-                auto file = GTCore::IO::Open(absFileName.c_str(), GTCore::IO::OpenMode::Read);
+                auto file = GTCore::IO::Open(absolutePath.c_str(), GTCore::IO::OpenMode::Read);
                 if (file != nullptr)
                 {
                     // We use a file deserializer for this.
                     GTCore::FileDeserializer deserializer(file);
                     
-                    auto newSceneNodeClass = new SceneNodeClass;
+                    auto newSceneNodeClass = new SceneNodeClass(absolutePath.c_str(), relativePath.c_str());
                     newSceneNodeClass->Deserialize(deserializer);
 
-                    LoadedClasses.Add(absFileName.c_str(), SceneNodeClassReference(newSceneNodeClass, 1));
+                    LoadedClasses.Add(absolutePath.c_str(), SceneNodeClassReference(newSceneNodeClass, 1));
 
                     // Can't forget to close the file.
                     GTCore::IO::Close(file);
@@ -133,66 +133,37 @@ namespace GTEngine
     }
 
 
-    SceneNodeClass* SceneNodeClassLibrary::Create(const char* absolutePath, const SceneNode &sceneNode, bool acquire)
+#if 0
+    bool SceneNodeClassLibrary::Create(const char* absolutePath, const char* relativePath, const SceneNode &sceneNode)
     {
         assert(GTCore::Path::IsAbsolute(absolutePath));
+        assert(GTCore::Path::IsRelative(relativePath));
         {
+            // First we try acquiring. If this succeeds, we actually want to return false.
+            auto existingClass = SceneNodeClassLibrary::Acquire(relativePath);
+            if (existingClass != nullptr)
+            {
+                SceneNodeClassLibrary::Unacquire(existingClass);
+                return false;
+            }
+
+
+        
             auto file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Write);
             if (file != nullptr)
             {
-                SceneNodeClass* sceneNodeClass       = nullptr;
-                bool            deleteSceneNodeClass = false;       // <-- If the prefab is a new file and we are not acquire, we'll want to delete the class straight away.
+                SceneNodeClass dummyClass(relativePath);
+                dummyClass.SetFromSceneNode(sceneNode);
 
-
-                // Find the class, creating if required.
-                auto iClass = LoadedClasses.Find(absolutePath);
-                if (iClass != nullptr)
-                {
-                    sceneNodeClass = iClass->value.first;
-
-                    if (acquire)
-                    {
-                        ++iClass->value.second;
-                    }
-                }
-                else
-                {
-                    sceneNodeClass = new SceneNodeClass;
-
-                    if (acquire)
-                    {
-                        LoadedClasses.Add(absolutePath, SceneNodeClassReference(sceneNodeClass, 1));
-                    }
-                    else
-                    {
-                        deleteSceneNodeClass = true;
-                    }
-                }
-
-
-                // Now update and serialize the class.
-                assert(sceneNodeClass != nullptr);
-                {
-                    sceneNodeClass->SetFromSceneNode(sceneNode);
-
-                    GTCore::FileSerializer serializer(file);
-                    sceneNodeClass->Serialize(serializer);
-                }
+                GTCore::FileSerializer serializer(file);
+                dummyClass.Serialize(serializer);
 
 
                 // Can't forget to close the file...
                 GTCore::IO::Close(file);
 
 
-                // If we're not acquiring, we actually want to delete the class.
-                if (deleteSceneNodeClass)
-                {
-                    delete sceneNodeClass;
-                    sceneNodeClass = nullptr;
-                }
-
-
-                return sceneNodeClass;
+                return true;
             }
             else
             {
@@ -203,4 +174,5 @@ namespace GTEngine
 
         return nullptr;
     }
+#endif
 }

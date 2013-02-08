@@ -782,13 +782,25 @@ namespace GTEngine
             auto rootSceneNode = this->scene.CreateNewSceneNode(*prefab);
             if (rootSceneNode != nullptr)
             {
+                // We need to recursively map every scene node to the prefab.
+                size_t rootSceneNodeIndex = 0;
+                this->MapSceneNodeToPrefab(*rootSceneNode, *prefab, rootSceneNodeIndex);
+
+
+
+
                 // We now need to map our scene node to the component. This is recursive.
-                size_t prefabSceneNodeIndex = 0;
-                this->MapSceneNodeToPrefab(*rootSceneNode, relativePath, prefabSceneNodeIndex);
+                //uint64_t prefabSceneNodeID = prefab->GetRootID();
+                //this->MapSceneNodeToPrefab(*rootSceneNode, relativePath, prefabSceneNodeID);
 
                 // We also want to recursively deselect the scene nodes. We don't post notifications to the editor about this. The reason we do this is
                 // because the metadata component may have left it marked as selected, which we don't want.
                 this->DeselectSceneNodeAndChildren(*rootSceneNode, true);
+
+
+                // We don't need the prefab anymore, so we can unacquire.
+                SceneNodeClassLibrary::Unacquire(prefab);
+
 
                 return rootSceneNode;
             }
@@ -1530,6 +1542,84 @@ namespace GTEngine
                 }
             }
         }
+        else if (GTEngine::IO::IsSupportedPrefabExtension(item.relativePath.c_str()))
+        {
+            // It's a prefab. We need to update any scene node that uses this prefab.
+            auto prefab = SceneNodeClassLibrary::Acquire(item.relativePath.c_str());
+            if (prefab != nullptr)
+            {
+                // The new scene nodes to be added after the main iteration. The key is the node in question and the value is the parent.
+                GTCore::Map<SceneNode*, SceneNode*> newSceneNodes;
+
+
+                size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+
+                for (size_t i = 0; i < sceneNodeCount; ++i)
+                {
+                    auto sceneNode = this->scene.GetSceneNodeByIndex(i);
+                    assert(sceneNode != nullptr);
+                    {
+                        auto metadata = sceneNode->GetComponent<EditorMetadataComponent>();
+                        assert(metadata != nullptr);
+                        {
+                            if (metadata->IsLinkedToPrefab() && (item.relativePath == metadata->GetPrefabRelativePath()))
+                            {
+                                uint64_t prefabID = metadata->GetPrefabID();
+
+                                auto serializer = prefab->GetSerializerByID(prefabID);
+                                if (serializer != nullptr)
+                                {
+                                    // It's the same node, but it needs to be updated. We maintain the transformation. Not quite sure yet how I want to allow
+                                    // other attributes to be maintained.
+                                    glm::vec3 worldPosition    = sceneNode->GetWorldPosition();
+                                    glm::quat worldOrientation = sceneNode->GetWorldOrientation();
+                                    glm::vec3 worldScale       = sceneNode->GetWorldScale();
+
+                                    GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
+                                    sceneNode->Deserialize(deserializer, SceneNode::NoID);      // <-- Super important! SceneNode::NoID will cause the deserializer to keep the original ID.
+
+                                    sceneNode->SetWorldPosition(worldPosition);
+                                    sceneNode->SetWorldOrientation(worldOrientation);
+                                    sceneNode->SetWorldScale(worldScale);
+
+                                    // Deserializing will break the link to the prefab, so we'll want to re-link.
+                                    metadata->LinkToPrefab(prefab->GetRelativePath(), prefabID);
+
+                                    // We now need to create the missing child scene nodes. This needs to be done recursively, of course. This doesn't add them to the scene straight away
+                                    // because we don't want to break the current iteration.
+                                    GTCore::Vector<SceneNode*> newChildNodes;
+                                    this->CreateMissingChildPrefabSceneNodes(*prefab, *sceneNode, metadata->GetPrefabID(), newChildNodes);
+
+                                    for (size_t iChildNode = 0; iChildNode < newChildNodes.count; ++iChildNode)
+                                    {
+                                        newSceneNodes.Add(newChildNodes[iChildNode], sceneNode);
+                                    }
+                                }
+                                else
+                                {
+                                    // The scene node is no longer referenced in the prefab, so it needs to be unlinked, but not deleted.
+                                    metadata->UnlinkFromPrefab();
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                // Now we need to go ahead and link the scene nodes together. Just linking will cause the child to be added to the scene like normal.
+                for (size_t i = 0; i < newSceneNodes.count; ++i)
+                {
+                    auto childNode  = newSceneNodes.buffer[i]->key;
+                    auto parentNode = newSceneNodes.buffer[i]->value;
+
+                    assert(childNode  != nullptr);
+                    assert(parentNode != nullptr);
+                    {
+                        parentNode->AttachChild(*childNode);
+                    }
+                }
+            }
+        }
     }
 
 
@@ -2041,18 +2131,102 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::MapSceneNodeToPrefab(SceneNode &sceneNode, const char* prefabRelativePath, size_t &prefabSceneNodeIndex)
+    void SceneEditor::MapSceneNodeToPrefab(SceneNode &sceneNode, SceneNodeClass &prefab, size_t &prefabSceneNodeIndex)
     {
         auto metadata = sceneNode.GetComponent<EditorMetadataComponent>();
         assert(metadata != nullptr);
         {
-            metadata->SetPrefabRelativePath(prefabRelativePath);
-            metadata->SetPrefabIndex(prefabSceneNodeIndex);
+            metadata->SetPrefabRelativePath(prefab.GetRelativePath());
+            metadata->SetPrefabID(prefab.GetSerializers().buffer[prefabSceneNodeIndex]->key);
 
             // Now we just iterate over and do the children, making sure we increment the scene node index.
             for (auto childNode = sceneNode.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
             {
-                this->MapSceneNodeToPrefab(*childNode, prefabRelativePath, ++prefabSceneNodeIndex);
+                this->MapSceneNodeToPrefab(*childNode, prefab, ++prefabSceneNodeIndex);
+            }
+        }
+    }
+
+    void SceneEditor::CreateMissingChildPrefabSceneNodes(SceneNodeClass &prefab, const SceneNode &sceneNode, uint64_t sceneNodePrefabID, GTCore::Vector<SceneNode*> &newSceneNodes)
+    {
+        GTCore::Vector<uint64_t> childIDs;
+        prefab.GetChildIDs(sceneNodePrefabID, childIDs);
+
+        // Now we need to loop over each child and check if it's in childIDs. If it is, we ignore it. If it's not, we create it.
+        for (auto childNode = sceneNode.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
+        {
+            auto metadata = childNode->GetComponent<EditorMetadataComponent>();
+            assert(metadata != nullptr);
+            {
+                if (metadata->IsLinkedToPrefab() && childIDs.Exists(metadata->GetPrefabID()))
+                {
+                    childIDs.RemoveFirstOccuranceOf(metadata->GetPrefabID());
+                }
+            }
+        }
+
+
+        GTCore::Vector<SceneNode*> newChildNodes;
+
+        // At this point, childIDs contains only the IDs that are not present. We need to create new scene nodes for these ones.
+        for (size_t i = 0; i < childIDs.count; ++i)
+        {
+            auto serializer = prefab.GetSerializerByID(childIDs[i]);
+            assert(serializer != nullptr);
+            {
+                auto newSceneNode = new SceneNode;
+                
+                GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
+                newSceneNode->Deserialize(deserializer);
+
+                // Important that we set the ID to 0 here.
+                newSceneNode->SetID(0);
+
+
+                // Something else we want to do here is make sure it's not marked as selected in the editor metadata component.
+                auto metadata = newSceneNode->GetComponent<EditorMetadataComponent>();
+                if (metadata == nullptr)
+                {
+                    metadata = newSceneNode->AddComponent<EditorMetadataComponent>();
+                }
+                else
+                {
+                    metadata->Deselect();
+                }
+
+
+                // We need to link the new node to the prefab.
+                metadata->LinkToPrefab(prefab.GetRelativePath(), childIDs[i]);
+
+
+                newChildNodes.PushBack(newSceneNode);
+            }
+        }
+
+
+
+        // We want to call this recursively on all children, including the new ones.
+        for (auto childNode = sceneNode.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
+        {
+            auto metadata = childNode->GetComponent<EditorMetadataComponent>();
+            assert(metadata != nullptr);
+            {
+                this->CreateMissingChildPrefabSceneNodes(prefab, *childNode, metadata->GetPrefabID(), newSceneNodes);
+            }
+        }
+
+        for (size_t i = 0; i < newChildNodes.count; ++i)
+        {
+            auto childNode = newChildNodes[i];
+            assert(childNode != nullptr);
+            {
+                newSceneNodes.PushBack(childNode);
+
+                auto metadata = childNode->GetComponent<EditorMetadataComponent>();
+                assert(metadata != nullptr);
+                {
+                    this->CreateMissingChildPrefabSceneNodes(prefab, *childNode, metadata->GetPrefabID(), newSceneNodes);
+                }
             }
         }
     }
