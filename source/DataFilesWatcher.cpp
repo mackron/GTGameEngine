@@ -213,6 +213,9 @@ namespace GTEngine
                     auto newItem = new Item(info, &root);
                     addedChildren.Append(newItem);
 
+                    newItem->relativePath = GTCore::IO::ToRelativePath(info.absolutePath.c_str(), newItem->GetRootDirectory().c_str());
+                    newItem->absolutePath = info.absolutePath;
+
                     Event e;
                     e.type = 0;                 // <-- Insert
                     e.item = newItem;
