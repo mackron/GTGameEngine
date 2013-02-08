@@ -6,7 +6,7 @@
 namespace GTEngine
 {
     SceneNodeClass::SceneNodeClass()
-        : serializers(), hierarchy()
+        : serializers(), hierarchy(), nextID(0)
     {
     }
 
@@ -23,7 +23,7 @@ namespace GTEngine
         this->Clear();
 
         // We need to grab every scene node in the hierarchy, serialize them, and add them to the internal containers. Of course, this needs to be done recursively.
-        this->AddSceneNode(sceneNode, static_cast<size_t>(-1));
+        this->AddSceneNode(sceneNode, 0, 0);
     }
 
 
@@ -41,9 +41,14 @@ namespace GTEngine
 
         for (size_t i = 0; i < this->serializers.count; ++i)
         {
-            auto sceneNodeSerializer = this->serializers[i];
+            auto sceneNodeID         = this->serializers.buffer[i]->key;
+            auto sceneNodeSerializer = this->serializers.buffer[i]->value;
+
+            assert(sceneNodeID         != 0);
             assert(sceneNodeSerializer != nullptr);
             {
+                intermediarySerializer.Write(sceneNodeID);
+
                 intermediarySerializer.Write(static_cast<uint32_t>(sceneNodeSerializer->GetBufferSizeInBytes()));
                 intermediarySerializer.Write(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
             }
@@ -55,12 +60,16 @@ namespace GTEngine
 
         for (size_t i = 0; i < this->hierarchy.count; ++i)
         {
-            uint32_t sceneNodeIndex       = static_cast<uint32_t>(this->hierarchy.buffer[i]->key);
-            uint32_t parentSceneNodeIndex = static_cast<uint32_t>(this->hierarchy.buffer[i]->value);
+            uint64_t sceneNodeID       = this->hierarchy.buffer[i]->key;
+            uint64_t parentSceneNodeID = this->hierarchy.buffer[i]->value;
 
-            intermediarySerializer.Write(sceneNodeIndex);
-            intermediarySerializer.Write(parentSceneNodeIndex);
+            intermediarySerializer.Write(sceneNodeID);
+            intermediarySerializer.Write(parentSceneNodeID);
         }
+
+
+        // Additional Data.
+        intermediarySerializer.Write(this->nextID);
 
 
 
@@ -96,6 +105,10 @@ namespace GTEngine
 
                         for (uint32_t i = 0; i < serializerCount; ++i)
                         {
+                            uint64_t sceneNodeID;
+                            deserializer.Read(sceneNodeID);
+
+
                             uint32_t serializerSizeInBytes;
                             deserializer.Read(serializerSizeInBytes);
 
@@ -107,7 +120,8 @@ namespace GTEngine
 
                             free(buffer);
 
-                            this->serializers.PushBack(serializer);
+
+                            this->serializers.Add(sceneNodeID, serializer);
                         }
 
 
@@ -117,14 +131,18 @@ namespace GTEngine
 
                         for (uint32_t i = 0; i < hierarchyCount; ++i)
                         {
-                            uint32_t sceneNodeIndex;
-                            deserializer.Read(sceneNodeIndex);
+                            uint64_t sceneNodeID;
+                            deserializer.Read(sceneNodeID);
 
-                            uint32_t parentSceneNodeIndex;
-                            deserializer.Read(parentSceneNodeIndex);
+                            uint64_t parentSceneNodeID;
+                            deserializer.Read(parentSceneNodeID);
 
-                            this->hierarchy.Add(sceneNodeIndex, parentSceneNodeIndex);
+                            this->hierarchy.Add(sceneNodeID, parentSceneNodeID);
                         }
+
+
+                        // Additional Data.
+                        deserializer.Read(this->nextID);
 
 
                         break;
@@ -156,35 +174,40 @@ namespace GTEngine
         // Serializers.
         for (size_t i = 0; i < this->serializers.count; ++i)
         {
-            delete this->serializers[i];
+            delete this->serializers.buffer[i]->value;
         }
         this->serializers.Clear();
 
 
         // Hierarchy.
         this->hierarchy.Clear();
+
+
+        this->nextID = 0;
     }
 
-    void SceneNodeClass::AddSceneNode(const SceneNode &sceneNode, size_t parentIndex)
+    void SceneNodeClass::AddSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
     {
         // We want to serialize the scene node and add it to the hierarchy first.
         auto serializer = new GTCore::BasicSerializer;
         sceneNode.Serialize(*serializer, SceneNode::NoID);
 
-        this->serializers.PushBack(serializer);
-        
-        // We will grab this index of the node in the hierarchy, which will be the count, minus 1.
-        size_t sceneNodeIndex = this->serializers.count - 1;
-
-
-        if (parentIndex != static_cast<size_t>(-1))
+        if (id == 0)
         {
-            this->hierarchy.Add(sceneNodeIndex, parentIndex);
+            id = ++this->nextID;
+        }
+
+        this->serializers.Add(id, serializer);
+
+
+        if (parentID != 0)
+        {
+            this->hierarchy.Add(id, parentID);
         }
 
         for (auto childNode = sceneNode.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
         {
-            this->AddSceneNode(*childNode, sceneNodeIndex);
+            this->AddSceneNode(*childNode, 0, id);
         }
     }
 }

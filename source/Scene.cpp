@@ -494,12 +494,16 @@ namespace GTEngine
 
         if (serializers.count > 0)
         {
-            GTCore::Vector<SceneNode*> newSceneNodes;
+            GTCore::Map<uint64_t, SceneNode*> newSceneNodes;
+            SceneNode*                        rootSceneNode = nullptr;
 
             // We will iterate over each serializer and create nodes from them, ensuring we set the ID to 0 so that a new one is generated when we add them.
             for (size_t i = 0; i < serializers.count; ++i)
             {
-                auto serializer = serializers[i];
+                auto id         = serializers.buffer[i]->key;
+                auto serializer = serializers.buffer[i]->value;
+
+                assert(id         != 0);
                 assert(serializer != nullptr);
                 {
                     GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
@@ -510,7 +514,15 @@ namespace GTEngine
                     // We must ensure the ID is 0 so that a new one is generated when we add the node. This is super important!
                     newSceneNode->SetID(0);
 
-                    newSceneNodes.PushBack(newSceneNode);
+
+                    newSceneNodes.Add(id, newSceneNode);
+
+
+                    // We need the root node. It will always be the first one.
+                    if (i == 0)
+                    {
+                        rootSceneNode = newSceneNode;
+                    }
                 }
             }
 
@@ -518,19 +530,29 @@ namespace GTEngine
             // At this point the scene nodes will be created but will not yet be linked to their parent. We'll do that now.
             for (size_t i = 0; i < hierarchy.count; ++i)
             {
-                size_t sceneNodeIndex       = hierarchy.buffer[i]->key;
-                size_t parentSceneNodeIndex = hierarchy.buffer[i]->value;
+                auto sceneNodeID       = hierarchy.buffer[i]->key;
+                auto parentSceneNodeID = hierarchy.buffer[i]->value;
+
+                auto iSceneNode       = newSceneNodes.Find(sceneNodeID);
+                auto iParentSceneNode = newSceneNodes.Find(parentSceneNodeID);
 
                 // There is a precondition that the root node is never actually referenced in the hierarchy.
-                assert(sceneNodeIndex != 0);
+                assert(iSceneNode       != nullptr);
+                assert(iParentSceneNode != nullptr);
                 {
-                    newSceneNodes[parentSceneNodeIndex]->AttachChild(*newSceneNodes[sceneNodeIndex]);
+                    auto sceneNode       = iSceneNode->value;
+                    auto parentSceneNode = iParentSceneNode->value;
+
+                    assert(sceneNode       != nullptr);
+                    assert(parentSceneNode != nullptr);
+                    {
+                        parentSceneNode->AttachChild(*sceneNode);
+                    }
                 }
             }
 
 
             // Everything is now parented and ready to be added. We just add the root node, which is the first one. This will add the others recursively.
-            auto rootSceneNode = newSceneNodes[0];
             assert(rootSceneNode != nullptr);
             {
                 this->AddSceneNode(*rootSceneNode);
@@ -540,7 +562,7 @@ namespace GTEngine
             // It's important that we let the scene know that it is the creator of this node.
             for (size_t i = 0; i < newSceneNodes.count; ++i)
             {
-                auto newSceneNode = newSceneNodes[i];
+                auto newSceneNode = newSceneNodes.buffer[i]->value;
                 assert(newSceneNode != nullptr);
                 {
                     assert(!this->sceneNodesCreatedByScene.Exists(newSceneNode->GetID()));
