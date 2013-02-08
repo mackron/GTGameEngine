@@ -1568,6 +1568,9 @@ namespace GTEngine
                                 auto serializer = prefab->GetSerializerByID(prefabID);
                                 if (serializer != nullptr)
                                 {
+                                    bool wasSelected = this->IsSceneNodeSelected(*sceneNode);
+                                    this->DeselectSceneNode(*sceneNode, true, true);
+
                                     // It's the same node, but it needs to be updated. We maintain the transformation. Not quite sure yet how I want to allow
                                     // other attributes to be maintained.
                                     glm::vec3 worldPosition    = sceneNode->GetWorldPosition();
@@ -1583,6 +1586,14 @@ namespace GTEngine
 
                                     // Deserializing will break the link to the prefab, so we'll want to re-link.
                                     metadata->LinkToPrefab(prefab->GetRelativePath(), prefabID);
+                                    metadata->Deselect();
+
+                                    // We will want to reselect if we were previously selected.
+                                    if (wasSelected)
+                                    {
+                                        this->SelectSceneNode(*sceneNode, true, true);
+                                    }
+
 
                                     // We now need to create the missing child scene nodes. This needs to be done recursively, of course. This doesn't add them to the scene straight away
                                     // because we don't want to break the current iteration.
