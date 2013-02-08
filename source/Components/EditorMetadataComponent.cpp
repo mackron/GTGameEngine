@@ -18,7 +18,7 @@ namespace GTEngine
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
           spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTransform(),
           directionArrowModel(nullptr), directionArrowVA(nullptr),
-          prefabRelativePath(), prefabIndex(0)
+          prefabRelativePath(), prefabID(0)
     {
         pickingCollisionObject.setUserPointer(this);
     }
@@ -470,19 +470,31 @@ namespace GTEngine
         this->prefabRelativePath = newPrefabRelativePath;
     }
 
-    size_t EditorMetadataComponent::GetPrefabIndex() const
+    uint64_t EditorMetadataComponent::GetPrefabID() const
     {
-        return this->prefabIndex;
+        return this->prefabID;
     }
 
-    void EditorMetadataComponent::SetPrefabIndex(size_t newPrefabIndex)
+    void EditorMetadataComponent::SetPrefabID(uint64_t newPrefabID)
     {
-        this->prefabIndex = newPrefabIndex;
+        this->prefabID = newPrefabID;
     }
 
     bool EditorMetadataComponent::IsLinkedToPrefab() const
     {
         return !this->prefabRelativePath.IsEmpty();
+    }
+
+    void EditorMetadataComponent::LinkToPrefab(const char* newPrefabRelativePath, uint64_t id)
+    {
+        this->prefabRelativePath = newPrefabRelativePath;
+        this->prefabID           = id;
+    }
+
+    void EditorMetadataComponent::UnlinkFromPrefab()
+    {
+        this->prefabRelativePath = "";
+        this->prefabID           = 0;
     }
 
 
@@ -514,7 +526,7 @@ namespace GTEngine
         intermediarySerializer.Write(this->IsShowingDirectionArrow());
 
         intermediarySerializer.Write(this->prefabRelativePath);
-        intermediarySerializer.Write(this->prefabIndex);
+        intermediarySerializer.Write(this->prefabID);
 
 
         Serialization::ChunkHeader header;
@@ -568,7 +580,7 @@ namespace GTEngine
 
 
                     deserializer.Read(this->prefabRelativePath);
-                    deserializer.Read(this->prefabIndex);
+                    deserializer.Read(this->prefabID);
 
 
 

@@ -125,7 +125,7 @@ function GTGUI.Element:DataExplorer()
         item.titleContainer:OnDrop(function(data)
             if not item.isDirectory and GTEngine.IsPrefabFile(item.path) then
                 if data.droppedElement.sceneNodePtr ~= nil then
-                    GTEngine.CreatePrefab(item.path, data.droppedElement.sceneNodePtr);
+                    GTEngine.CreatePrefab(item.path, item:GetRootPath(), data.droppedElement.sceneNodePtr);
                     Game.ScanDataFilesForChanges();     -- This will force the data files watcher to update, which will in turn notify the scene of the changes to it can update any nodes linked to this prefab.
                 end
             end

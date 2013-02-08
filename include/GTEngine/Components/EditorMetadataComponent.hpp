@@ -190,14 +190,20 @@ namespace GTEngine
         /// Sets the relative path of the prefab the scene node id linked to.
         void SetPrefabRelativePath(const char* newPrefabRelativePath);
 
-        /// Retrieves the index of the prefab scene node the scene node of this component refers to.
-        size_t GetPrefabIndex() const;
+        /// Retrieves the ID of the prefab scene node the scene node of this component refers to.
+        uint64_t GetPrefabID() const;
 
-        /// Sets the index of the prefab scene node the scene node of this component refers to.
-        void SetPrefabIndex(size_t newPrefabIndex);
+        /// Sets the ID of the prefab scene node the scene node of this component refers to.
+        void SetPrefabID(uint64_t newPrefabID);
 
         /// Determines whether or not the scene node is linked to a prefab.
         bool IsLinkedToPrefab() const;
+
+        /// Links the component to a prefab.
+        void LinkToPrefab(const char* prefabRelativePath, uint64_t id);
+
+        /// Unlinkes the component from the prefab.
+        void UnlinkFromPrefab();
 
 
 
@@ -289,7 +295,7 @@ namespace GTEngine
         GTCore::String prefabRelativePath;
 
         /// The index of the node in the prefab. If this is 0, it is the root.
-        size_t prefabIndex;
+        uint64_t prefabID;
 
 
 

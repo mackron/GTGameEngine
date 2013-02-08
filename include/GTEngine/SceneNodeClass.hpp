@@ -19,10 +19,14 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        SceneNodeClass();
+        SceneNodeClass(const char* absolutePath, const char* relativePath);
         
         /// Destructor.
         ~SceneNodeClass();
+
+
+        /// Retrieves the relative path of the prefab.
+        const char* GetRelativePath() const;
 
 
         /// Sets the class to that of the given node and it's children.
@@ -38,6 +42,44 @@ namespace GTEngine
         const GTCore::Map<uint64_t, uint64_t> & GetHierarchy() const { return this->hierarchy; }
 
 
+        /// Retrieves a serializer by it's ID.
+        ///
+        /// @param id [in] The ID of the serializer to retrieve.
+        GTCore::BasicSerializer* GetSerializerByID(uint64_t id);
+
+        /// Retrieves the ID of the root item.
+        uint64_t GetRootID() const;
+
+
+        /// Clears the prefab leaving it completely empty.
+        ///
+        /// @remarks
+        ///     This does not clear the value for creating unique IDs.
+        void Clear();
+
+        /// Recursively adds the given scene node and it's children.
+        ///
+        /// @param sceneNode   [in] The scene node to add.
+        /// @param parentIndex [in] The index of the parent in the hierarchy. Set to 0 if the node does not have a parent.
+        void AddSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID);
+
+        /// Adds the given scene node, but does not add it's children.
+        ///
+        /// @param sceneNode [in] A reference to the scene node to add.
+        /// @param id        [in] The local ID to associate the scene node with in the prefab.
+        /// @param parentID  [in] The local ID of the parent scene node.
+        ///
+        /// @return The local ID of the new scene node.
+        ///
+        /// @remarks
+        ///     If parentID is 0, it assumes that it is the root node.
+        uint64_t AddSingleSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID);
+
+
+        /// Retrieves the IDs of the children of the given node.
+        void GetChildIDs(uint64_t parentID, GTCore::Vector<uint64_t> &childIDs);
+
+
 
         ////////////////////////////////////////////
         // Serialization.
@@ -48,25 +90,18 @@ namespace GTEngine
         /// Deserializes the scene node class.
         bool Deserialize(GTCore::Deserializer &deserializer);
 
-
-
-    private:
-        
-        /// Clears the prefab leaving it completely empty.
-        void Clear();
-
-        /// Recursively adds the given scene node and it's children.
-        ///
-        /// @param sceneNode   [in] The scene node to add.
-        /// @param parentIndex [in] The index of the parent in the hierarchy. Set to 0 if the node does not have a parent.
-        void AddSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID);
+        /// A helper for serializing the prefab to the file.
+        bool WriteToFile();
 
 
 
     private:
 
-        /// The serialized data of every scene node.
-        //GTCore::Vector<GTCore::BasicSerializer*> serializers;
+        /// The absolute path of the prefab.
+        GTCore::String absolutePath;
+
+        /// The relative path of the prefab.
+        GTCore::String relativePath;
 
         /// The serialized data of every scene node, mapped to a persistent ID.
         GTCore::Map<uint64_t, GTCore::BasicSerializer*> serializers;
