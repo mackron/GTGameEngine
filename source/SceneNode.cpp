@@ -1173,7 +1173,7 @@ namespace GTEngine
         serializer.Write(componentSerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void SceneNode::Deserialize(GTCore::Deserializer &deserializer)
+    void SceneNode::Deserialize(GTCore::Deserializer &deserializer, unsigned int flags)
     {
         GTCore::String newName;
         auto wasStatic  = this->IsStatic();
@@ -1193,7 +1193,14 @@ namespace GTEngine
                 {
                 case 1:
                     {
-                        deserializer.Read(this->uniqueID);
+                        uint64_t newID;
+                        deserializer.Read(newID);
+
+                        if ((flags & NoID) == 0)
+                        {
+                            this->uniqueID = newID;
+                        }
+
                         deserializer.Read(newName);
                         deserializer.Read(reinterpret_cast<uint32_t &>(this->flags));
 
