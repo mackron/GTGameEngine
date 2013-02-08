@@ -28,12 +28,14 @@ namespace GTEngine
         {
             Item()
                 : info(),
+                  relativePath(), absolutePath(),
                   parent(nullptr), children()
             {
             }
 
             Item(const GTCore::IO::FileInfo &infoIn, Item* parent)
                 : info(infoIn),
+                  relativePath(), absolutePath(),
                   parent(parent), children()
             {
             }
@@ -84,9 +86,29 @@ namespace GTEngine
                 }
             }
 
+            /// Retrieves the absolute directory of the top level root item.
+            const GTCore::String & GetRootDirectory()
+            {
+                if (this->parent != nullptr && this->parent->parent == nullptr)
+                {
+                    return this->parent->info.absolutePath;
+                }
+                else
+                {
+                    return this->parent->GetRootDirectory();
+                }
+            }
+
 
             /// The file info.
             GTCore::IO::FileInfo info;
+
+            /// The relative path.
+            GTCore::String relativePath;
+
+            /// The absolute path.
+            GTCore::String absolutePath;
+
 
             /// A pointer to the parent item. Can be null.
             Item* parent;
