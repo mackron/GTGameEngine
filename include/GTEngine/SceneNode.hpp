@@ -731,7 +731,7 @@ namespace GTEngine
         ///     This will not deserialize children. That should be done at a higher level.
         ///     @par
         ///     This is the opposite of Serialize(), so for any rule that applies to Serialize(), it will also apply here.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTCore::Deserializer &deserializer, unsigned int flags = 0);
 
 
         /// Disables serialization of the scene node when serialized from a scene.
