@@ -289,6 +289,8 @@
 		<Unit filename="../../../include/GTEngine/SceneCullingManager.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneEventHandler.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNode.hpp" />
+		<Unit filename="../../../include/GTEngine/SceneNodeClass.hpp" />
+		<Unit filename="../../../include/GTEngine/SceneNodeClassLibrary.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNodeFactory.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNodeMap.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneObject.hpp" />
@@ -461,6 +463,8 @@
 		<Unit filename="../../../source/SceneCullingDbvtPolicy.cpp" />
 		<Unit filename="../../../source/SceneEventHandler.cpp" />
 		<Unit filename="../../../source/SceneNode.cpp" />
+		<Unit filename="../../../source/SceneNodeClass.cpp" />
+		<Unit filename="../../../source/SceneNodeClassLibrary.cpp" />
 		<Unit filename="../../../source/SceneNodeFactory.cpp" />
 		<Unit filename="../../../source/SceneNodeMap.cpp" />
 		<Unit filename="../../../source/SceneObject.cpp" />
