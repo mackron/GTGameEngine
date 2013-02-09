@@ -383,6 +383,15 @@ namespace GTEngine
         /// Determines whether or not a descendant scene node is linked to a different prefab.
         bool IsDescendantLinkedToDifferentPrefab(SceneNode &sceneNode) const;
 
+        /// Updates every scene node linked to the given prefab.
+        void UpdateAllSceneNodesLinkedToPrefab(const char* prefabRelativePath);
+
+        /// Updates every scene node that is linked any prefab.
+        void UpdateAllSceneNodesLinkedToPrefabs();
+
+        /// Retrieves the relative paths of every prefab that is referenced by the scene.
+        void GetAllReferencedPrefabs(GTCore::Vector<GTCore::String> &prefabRelativePaths);
+
 
     private:
 
