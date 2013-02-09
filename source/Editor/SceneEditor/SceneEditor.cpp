@@ -1549,6 +1549,9 @@ namespace GTEngine
             {
                 // The new scene nodes to be added after the main iteration. The key is the node in question and the value is the parent.
                 GTCore::Map<SceneNode*, SceneNode*> newSceneNodes;
+                
+                // The scene nodes to remove after the main iteration.
+                GTCore::Vector<SceneNode*> sceneNodesToRemove;
 
 
                 size_t sceneNodeCount = this->scene.GetSceneNodeCount();
@@ -1607,14 +1610,29 @@ namespace GTEngine
                                 }
                                 else
                                 {
-                                    // The scene node is no longer referenced in the prefab, so it needs to be unlinked, but not deleted.
-                                    metadata->UnlinkFromPrefab();
+                                    // The scene node is no longer referenced in the prefab. If the node has children that are not part of the prefab, we just
+                                    // want to unlink it from the prefab. Otherwise, we want to delete it.
+                                    if (this->IsDescendantLinkedToDifferentPrefab(*sceneNode))
+                                    {
+                                        metadata->UnlinkFromPrefab();
+                                    }
+                                    else
+                                    {
+                                        sceneNodesToRemove.PushBack(sceneNode);
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
+
+
+                // Now we can delete the old nodes and add the new ones. We'll do the delete's first.
+                for (size_t i = 0; i < sceneNodesToRemove.count; ++i)
+                {
+                    this->scene.RemoveSceneNode(*sceneNodesToRemove[i]);
+                }
 
                 // Now we need to go ahead and link the scene nodes together. Just linking will cause the child to be added to the scene like normal.
                 for (size_t i = 0; i < newSceneNodes.count; ++i)
@@ -2239,6 +2257,34 @@ namespace GTEngine
                 }
             }
         }
+    }
+
+    bool SceneEditor::IsDescendantLinkedToDifferentPrefab(SceneNode &sceneNode) const
+    {
+        auto metadata = sceneNode.GetComponent<EditorMetadataComponent>();
+        assert(metadata != nullptr);
+        {
+            for (auto childNode = sceneNode.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
+            {
+                auto childMetadata = childNode->GetComponent<EditorMetadataComponent>();
+                assert(childMetadata != nullptr);
+                {
+                    if (!GTCore::Strings::Equal<false>(metadata->GetPrefabRelativePath(), childMetadata->GetPrefabRelativePath()))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        if (this->IsDescendantLinkedToDifferentPrefab(*childNode))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
 

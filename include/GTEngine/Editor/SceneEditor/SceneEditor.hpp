@@ -380,6 +380,9 @@ namespace GTEngine
         ///     This does not link the new nodes to the parent. Needs to be done at a higher level.
         void CreateMissingChildPrefabSceneNodes(SceneNodeClass &prefab, const SceneNode &sceneNode, uint64_t sceneNodePrefabID, GTCore::Vector<SceneNode*> &newSceneNodes);
 
+        /// Determines whether or not a descendant scene node is linked to a different prefab.
+        bool IsDescendantLinkedToDifferentPrefab(SceneNode &sceneNode) const;
+
 
     private:
 
