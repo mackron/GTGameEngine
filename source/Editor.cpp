@@ -290,6 +290,7 @@ namespace GTEngine
                 case AssetType_Material:
                 case AssetType_Sound:
                 case AssetType_ParticleEffect:
+                case AssetType_Prefab:
 
                 case AssetType_None:
                 default:
