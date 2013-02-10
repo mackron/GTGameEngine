@@ -98,7 +98,9 @@
 					<Add library="z" />
 					<Add library="luajit-5.1" />
 					<Add library="pcre" />
+					<Add library="pthread" />
 					<Add library="openal" />
+					<Add library="Xxf86vm" />
 					<Add library="X11" />
 					<Add library="GL" />
 					<Add library="Xcursor" />
