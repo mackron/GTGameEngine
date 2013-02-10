@@ -102,8 +102,8 @@
 					<Add library="openal" />
 					<Add library="Xxf86vm" />
 					<Add library="X11" />
-					<Add library="GL" />
 					<Add library="Xcursor" />
+					<Add library="dl" />
 				</Linker>
 			</Target>
 			<Target title="release-linux-gcc">
@@ -136,8 +136,8 @@
 					<Add library="pcre" />
 					<Add library="openal" />
 					<Add library="X11" />
-					<Add library="GL" />
 					<Add library="Xcursor" />
+					<Add library="dl" />
 				</Linker>
 			</Target>
 			<Target title="debug-linux-gcc-x64">
@@ -169,8 +169,8 @@
 					<Add library="pcre" />
 					<Add library="openal" />
 					<Add library="X11" />
-					<Add library="GL" />
 					<Add library="Xcursor" />
+					<Add library="dl" />
 				</Linker>
 			</Target>
 			<Target title="release-linux-gcc-x64">
@@ -203,8 +203,8 @@
 					<Add library="pcre" />
 					<Add library="openal" />
 					<Add library="X11" />
-					<Add library="GL" />
 					<Add library="Xcursor" />
+					<Add library="dl" />
 				</Linker>
 			</Target>
 			<Target title="debug-windows-clang">
