@@ -78,6 +78,10 @@ namespace GTEngine
         {
             return new SpriteComponent(hostSceneNode);
         }
+        else if (GTCore::Strings::Equal(componentName, ScriptComponent::Name))
+        {
+            return new ScriptComponent(hostSceneNode);
+        }
         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
         {
             return new EditorMetadataComponent(hostSceneNode);
