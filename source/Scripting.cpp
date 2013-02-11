@@ -32,6 +32,7 @@ namespace GTEngine
                 "GTEngine.System.DirectionalLightComponent = {};"
                 "GTEngine.System.AmbientLightComponent     = {};"
                 "GTEngine.System.DynamicsComponent         = {};"
+                "GTEngine.System.ScriptComponent           = {};"
                 "GTEngine.System.EditorMetadataComponent   = {};"
                 "GTEngine.System.SceneNode                 = {};"
                 "GTEngine.System.Scene                     = {};"
@@ -62,6 +63,7 @@ namespace GTEngine
                     script.SetTableValue(-1, "DirectionalLight",  DirectionalLightComponent::Name);
                     script.SetTableValue(-1, "AmbientLight",      AmbientLightComponent::Name);
                     script.SetTableValue(-1, "Dynamics",          DynamicsComponent::Name);
+                    script.SetTableValue(-1, "Script",            ScriptComponent::Name);
                     script.SetTableValue(-1, "EditorMetadata",    EditorMetadataComponent::Name);
                 }
                 script.SetTableValue(-3);
@@ -540,6 +542,19 @@ namespace GTEngine
 
                 "function GTEngine.DynamicsComponent:SetCapsuleCollisionShapeSize(index, radius, height)"
                 "    return GTEngine.System.DynamicsComponent.SetCapsuleCollisionShapeSize(self._internalPtr, index, radius, height);"
+                "end;"
+
+
+
+                // ScriptComponent
+                "GTEngine.ScriptComponent = {};"
+                "GTEngine.ScriptComponent.__index = GTEngine.ScriptComponent;"
+
+                "function GTEngine.ScriptComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.ScriptComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
                 "end;"
 
 
@@ -1439,6 +1454,10 @@ namespace GTEngine
                         {
                             PushComponent(script, "DynamicsComponent", sceneNode->AddComponent<DynamicsComponent>());
                         }
+                        else if (GTCore::Strings::Equal(componentName, ScriptComponent::Name))
+                        {
+                            PushComponent(script, "ScriptComponent", sceneNode->AddComponent<ScriptComponent>());
+                        }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
                             PushComponent(script, "EditorMetadataComponent", sceneNode->AddComponent<EditorMetadataComponent>());
@@ -1485,6 +1504,10 @@ namespace GTEngine
                         else if (GTCore::Strings::Equal(componentName, DynamicsComponent::Name))
                         {
                             PushComponent(script, "DynamicsComponent", sceneNode->GetComponent<DynamicsComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, ScriptComponent::Name))
+                        {
+                            PushComponent(script, "ScriptComponent", sceneNode->GetComponent<ScriptComponent>());
                         }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
