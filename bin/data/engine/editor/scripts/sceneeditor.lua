@@ -308,6 +308,8 @@ function Editor.SceneEditor.CreateComponentPanel(parentPanel, componentID)
         element:DynamicsComponentPanel();
     --elseif componentID == GTEngine.Components.Proximity then
     --    element:ProximityComponentPanel();
+    elseif componentID == GTEngine.Components.Script then
+        element:ScriptComponentPanel();
     elseif componentID == GTEngine.Components.EditorMetadata then 
         element:EditorMetadataComponentPanel();
     else
@@ -1144,6 +1146,27 @@ function GTGUI.Element:ProximityComponentPanel()
 end
 
 
+function GTGUI.Element:ScriptComponentPanel()
+    self:PanelGroupBox("Script", true);
+    
+    self.CurrentNode      = nil;
+    self.CurrentComponent = nil;
+    self.IsUpdating       = false;
+    
+    function self:Update(node)
+        self.CurrentNode      = node;
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.Script);
+        self.IsUpdating       = true;
+        
+        
+        
+        self.IsUpdating       = false;
+    end
+    
+    return self;
+end
+
+
 function GTGUI.Element:EditorMetadataComponentPanel()
     self:PanelGroupBox("Editor Metadata");
     
@@ -1488,6 +1511,12 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
         self:OnSceneNodeChanged();
     end);
     
+    self.NewComponentMenu:AppendNewItem("Script"):OnPressed(function()
+        self.CurrentSceneNode:AddComponent(GTEngine.Components.Script);
+        
+        self:UpdateComponentPanels();
+        self:OnSceneNodeChanged();
+    end);
     
     
     
