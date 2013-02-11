@@ -138,6 +138,8 @@
 					<Add library="X11" />
 					<Add library="Xcursor" />
 					<Add library="dl" />
+					<Add library="pthread" />
+					<Add library="Xxf86vm" />
 				</Linker>
 			</Target>
 			<Target title="debug-linux-gcc-x64">
@@ -171,6 +173,8 @@
 					<Add library="X11" />
 					<Add library="Xcursor" />
 					<Add library="dl" />
+					<Add library="pthread" />
+					<Add library="Xxf86vm" />
 				</Linker>
 			</Target>
 			<Target title="release-linux-gcc-x64">
@@ -205,6 +209,8 @@
 					<Add library="X11" />
 					<Add library="Xcursor" />
 					<Add library="dl" />
+					<Add library="pthread" />
+					<Add library="Xxf86vm" />
 				</Linker>
 			</Target>
 			<Target title="debug-windows-clang">
