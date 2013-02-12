@@ -342,7 +342,7 @@ namespace GTEngine
             uint64_t uniqueID = node.GetID();
             if (uniqueID == 0)
             {
-                uniqueID = ++this->nextSceneNodeID;
+                uniqueID = this->GenerateSceneNodeID();
                 node.SetID(uniqueID);
             }
             else
