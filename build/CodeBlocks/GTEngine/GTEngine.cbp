@@ -348,6 +348,7 @@
 		<Unit filename="../../../source/Components/OccluderComponent.cpp" />
 		<Unit filename="../../../source/Components/PointToPointConstraintComponent.cpp" />
 		<Unit filename="../../../source/Components/ProximityComponent.cpp" />
+		<Unit filename="../../../source/Components/ScriptComponent.cpp" />
 		<Unit filename="../../../source/Components/SpriteComponent.cpp" />
 		<Unit filename="../../../source/ConvexHull.cpp" />
 		<Unit filename="../../../source/DataFilesWatcher.cpp" />
