@@ -56,6 +56,9 @@
     #pragma GCC diagnostic ignored "-Weffc++"
     #pragma GCC diagnostic ignored "-Wtype-limits"
     #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+    #if defined(__clang__)
+        #pragma GCC diagnostic ignored "-Wcast-align"
+    #endif
 #endif
 
 namespace HACD
