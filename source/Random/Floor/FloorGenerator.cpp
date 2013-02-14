@@ -186,13 +186,13 @@ namespace GTEngine
                 int lobbyWidth  = this->random.Next(static_cast<int>(properties.minLobbyWidth),  static_cast<int>(properties.maxLobbyWidth));
                 int lobbyHeight = this->random.Next(static_cast<int>(properties.minLobbyHeight), static_cast<int>(properties.maxLobbyHeight));
 
-                int lobbyLeft;
-                int lobbyTop;
-                int lobbyRight; (void)lobbyRight;
-                int lobbyBottom;
-
                 if (right == definition.GetLeft() || left == definition.GetRight())
                 {
+                    int lobbyLeft;
+                    int lobbyTop;
+                    int lobbyRight; (void)lobbyRight;
+                    int lobbyBottom;
+                
                     if (right == definition.GetLeft())
                     {
                         // The side room is on the left, so we create the lobby on the left side.
