@@ -6,6 +6,11 @@
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <gtgl/gtgl.h>
 
+#if defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wunreachable-code"
+#endif
+
 namespace GTEngine
 {
     inline GLenum ToOpenGLTexture2DTarget(Texture2DTarget target)
@@ -355,5 +360,10 @@ namespace GTEngine
         return GL_KEEP;
     }
 }
+
+
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #endif
