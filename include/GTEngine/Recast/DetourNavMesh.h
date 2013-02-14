@@ -590,6 +590,12 @@ dtNavMesh* dtAllocNavMesh();
 ///  @ingroup detour
 void dtFreeNavMesh(dtNavMesh* navmesh);
 
+
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
+
 #endif // DETOURNAVMESH_H
 
 ///////////////////////////////////////////////////////////////////////////
@@ -686,7 +692,3 @@ For a properly built navigation mesh, vertex A will always be within the bounds 
 Vertex B is not required to be within the bounds of the mesh.
 
 */
-
-#if defined(__GNUC__)
-    #pragma GCC diagnostic pop
-#endif

@@ -51,7 +51,7 @@ inline int hashPos2(int x, int y, int n)
 
 
 dtProximityGrid::dtProximityGrid() :
-	m_maxItems(0),
+	/*m_maxItems(0),*/
 	m_cellSize(0),
 	m_pool(0),
 	m_poolHead(0),

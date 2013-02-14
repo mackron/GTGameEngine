@@ -424,10 +424,10 @@ inline unsigned int dtIlog2(unsigned int v)
 {
 	unsigned int r;
 	unsigned int shift;
-	r = (v > 0xffff) << 4; v >>= r;
-	shift = (v > 0xff) << 3; v >>= shift; r |= shift;
-	shift = (v > 0xf) << 2; v >>= shift; r |= shift;
-	shift = (v > 0x3) << 1; v >>= shift; r |= shift;
+	r     = static_cast<unsigned int>((v > 0xffff) << 4); v >>= r;
+	shift = static_cast<unsigned int>((v > 0xff)   << 3); v >>= shift; r |= shift;
+	shift = static_cast<unsigned int>((v > 0xf)    << 2); v >>= shift; r |= shift;
+	shift = static_cast<unsigned int>((v > 0x3)    << 1); v >>= shift; r |= shift;
 	r |= (v >> 1);
 	return r;
 }

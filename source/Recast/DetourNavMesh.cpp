@@ -32,6 +32,10 @@
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wsign-conversion"
     #pragma GCC diagnostic ignored "-Weffc++"
+    
+    #if defined(__clang__)
+        #pragma GCC diagnostic ignored "-Wcast-align"
+    #endif
 #endif
 
 
