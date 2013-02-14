@@ -179,6 +179,10 @@ namespace GTEngine
     GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_TextureCube, ShaderParameterType_TextureCube, TextureCube);
 
 
+#if defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wunreachable-code"
+#endif
 
     /// Creates a copy of the given material property. Delete the property with 'delete'.
     inline ShaderParameter* CopyShaderParameter(const ShaderParameter* propToCopy)
@@ -258,6 +262,10 @@ namespace GTEngine
 
         return newProp;
     }
+    
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 };
 
 #endif
