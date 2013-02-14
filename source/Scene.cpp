@@ -130,7 +130,7 @@ namespace GTEngine
             this->m_collisionFilterMask  = callback.collisionMask;
         }
 
-        virtual bool needsCollision(btBroadphaseProxy *proxy0) const
+        virtual bool needsCollision(btBroadphaseProxy* proxy0) const
 		{
             auto collisionObject = static_cast<btCollisionObject*>(proxy0->m_clientObject);
             assert(collisionObject != nullptr);
