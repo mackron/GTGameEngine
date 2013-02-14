@@ -8,6 +8,10 @@
     //#pragma GCC diagnostic ignored "-Wstrict-aliasing"
     #pragma GCC diagnostic ignored "-Winline"
     #pragma GCC diagnostic ignored "-Weffc++"
+    
+    #if defined(__clang__)
+        #pragma GCC diagnostic ignored "-Wunused-parameter"
+    #endif
 #endif
 #define GLM_FORCE_ONLY_XYZW
 #define GLM_FORCE_SSE2
