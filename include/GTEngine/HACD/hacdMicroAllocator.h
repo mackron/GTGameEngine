@@ -206,8 +206,9 @@ void performUnitTests(void);
 
 }; // end of namespace
 
-#endif
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
+#endif
+
 #endif
