@@ -487,10 +487,10 @@ namespace GTEngine
         float translateSnapSize;
 
         /// the size of a snapping segment for rotations.
-        float rotateSnapSize;
+        //float rotateSnapSize;
 
         /// The size of a snapping segment for scale.
-        float scaleSnapSize;
+        //float scaleSnapSize;
             
 
         /// Keeps track of whether or not an object was transformed with the gizmo.

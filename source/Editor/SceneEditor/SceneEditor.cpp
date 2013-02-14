@@ -14,6 +14,12 @@
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4355)   // 'this' used in initialise list.
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic push
+    
+    #if defined(__clang__)
+        #pragma GCC diagnostic ignored "-Wcast-align"
+    #endif
 #endif
 
 namespace GTEngine
@@ -29,7 +35,7 @@ namespace GTEngine
           transformGizmo(), gizmoDragAxis(1.0f, 0.0f, 0.0f), gizmoDragFactor(1.0f, 0.0f),
           gizmoDragMode(GizmoDragMode_None), gizmoTransformMode(GizmoTransformMode_Translate), gizmoTransformSpace(GizmoTransformSpace_Global),
           snapTranslation(), snapAngle(0.0f), snapScale(), isSnapping(false),
-          translateSnapSize(0.25f), rotateSnapSize(5.625f), scaleSnapSize(0.25f),
+          translateSnapSize(0.25f),/* rotateSnapSize(5.625f), scaleSnapSize(0.25f),*/
           transformedObjectWithGizmo(false),
           isDeserializing(false),
           GUI()
@@ -1750,6 +1756,13 @@ namespace GTEngine
         this->transformGizmo.SetScale(gizmoScale);
     }
 
+
+
+#if defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wunreachable-code"
+#endif
+
     void SceneEditor::ShowGizmoHandles()
     {
         switch (this->gizmoTransformMode)
@@ -1809,12 +1822,15 @@ namespace GTEngine
                 break;
             }
 
-        default:
-            {
-                break;
-            }
+        default: break;
         }
     }
+    
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
+    
+    
 
     void SceneEditor::UpdateGizmo()
     {
