@@ -20,13 +20,13 @@
 #define DETOURPROXIMITYGRID_H
 
 #if defined(__GNUC__)
-    #pragma GCC diagnostic pop
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Weffc++"
 #endif
 
 class dtProximityGrid
 {
-	int m_maxItems;
+	//int m_maxItems;
 	float m_cellSize;
 	float m_invCellSize;
 	

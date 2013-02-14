@@ -479,8 +479,9 @@ dtNavMeshQuery* dtAllocNavMeshQuery();
 /// @ingroup detour
 void dtFreeNavMeshQuery(dtNavMeshQuery* query);
 
-#endif // DETOURNAVMESHQUERY_H
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif
+
+#endif // DETOURNAVMESHQUERY_H

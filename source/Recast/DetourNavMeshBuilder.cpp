@@ -29,6 +29,9 @@
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wsign-conversion"
+    #if defined(__clang__)
+        #pragma GCC diagnostic ignored "-Wcast-align"
+    #endif
 #endif
 
 static unsigned short MESH_NULL_IDX = 0xffff;

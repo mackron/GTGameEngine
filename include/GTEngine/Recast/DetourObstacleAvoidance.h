@@ -157,8 +157,8 @@ dtObstacleAvoidanceQuery* dtAllocObstacleAvoidanceQuery();
 void dtFreeObstacleAvoidanceQuery(dtObstacleAvoidanceQuery* ptr);
 
 
-#endif // DETOUROBSTACLEAVOIDANCE_H
-
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif
+
+#endif // DETOUROBSTACLEAVOIDANCE_H
