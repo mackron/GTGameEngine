@@ -178,12 +178,12 @@ namespace GTEngine
         /// Serializes the scene object.
         ///
         /// @param serializer [in] The serializer to write the data to.
-        virtual void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTCore::Serializer &serializer) const;
 
         /// Deserializes the scene object.
         ///
         /// @param deserializer [in] The deserializer to read the data from.
-        virtual void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTCore::Deserializer &deserializer);
 
 
 
