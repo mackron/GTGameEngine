@@ -316,7 +316,7 @@ namespace GTEngine
                 {
                     if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
                     {
-                        this->camera.MoveUp(-mouseOffsetY * moveSpeed);
+                        this->camera.MoveUp(  -mouseOffsetY * moveSpeed);
                         this->camera.MoveRight(mouseOffsetX * moveSpeed);
                     }
                     else
