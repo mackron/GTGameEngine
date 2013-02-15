@@ -294,6 +294,10 @@ namespace GTEngine
 
             // Now we execute the commands.
             restoreCommands.Execute(this->GetScene());
+
+
+            // The staging area needs to be cleared.
+            this->stagingArea.Clear();
         }
         if (reenableStaging) { this->GetScene().EnableStateStackStaging(); }
     }
