@@ -312,7 +312,8 @@ namespace GTEngine
         // commands like normal, making sure we keep the most up-to-date serialized data. If we're going backwards, we want to invert
         // the operations (insert = delete, delete = insert and update = most recent).
         //
-        // What we'll do is add the commands with a null serializer and then once they're all added, we'll find the most recent serializers.
+        // What we'll do is add the commands with a null serializer and then once they're all added, we'll find the most recent
+        // serializers. The same thing for parents and the hierarchy.
         if (newFrameIndex > oldFrameIndex)
         {
             // Moving forwards.
@@ -324,19 +325,20 @@ namespace GTEngine
                     auto &inserts   = frame->GetInserts();
                     auto &deletes   = frame->GetDeletes();
                     auto &updates   = frame->GetUpdates();
-                    auto &hierarchy = frame->GetHierarchy();
+                    //auto &hierarchy = frame->GetHierarchy();
 
                     for (size_t i = 0; i < inserts.count; ++i)
                     {
                         uint64_t sceneNodeID       = inserts.buffer[i]->key;
                         uint64_t parentSceneNodeID = 0;
 
+                        /*
                         auto iParentID = hierarchy.Find(sceneNodeID);
                         if (iParentID != nullptr)
                         {
                             parentSceneNodeID = iParentID->value;
                         }
-
+                        */
 
                         commands.AddInsert(sceneNodeID, parentSceneNodeID, nullptr);
                     }
@@ -346,12 +348,13 @@ namespace GTEngine
                         uint64_t sceneNodeID       = deletes.buffer[i]->key;
                         uint64_t parentSceneNodeID = 0;
 
+                        /*
                         auto iParentID = hierarchy.Find(sceneNodeID);
                         if (iParentID != nullptr)
                         {
                             parentSceneNodeID = iParentID->value;
                         }
-
+                        */
 
                         commands.AddDelete(sceneNodeID, parentSceneNodeID, nullptr);
                     }
@@ -361,12 +364,13 @@ namespace GTEngine
                         uint64_t sceneNodeID       = updates.buffer[i]->key;
                         uint64_t parentSceneNodeID = 0;
 
+                        /*
                         auto iParentID = hierarchy.Find(sceneNodeID);
                         if (iParentID != nullptr)
                         {
                             parentSceneNodeID = iParentID->value;
                         }
-
+                        */
 
                         commands.AddUpdate(sceneNodeID, parentSceneNodeID, nullptr);
                     }
@@ -384,19 +388,20 @@ namespace GTEngine
                     auto &inserts   = frame->GetInserts();
                     auto &deletes   = frame->GetDeletes();
                     auto &updates   = frame->GetUpdates();
-                    auto &hierarchy = frame->GetHierarchy();
+                    //auto &hierarchy = frame->GetHierarchy();
 
                     for (size_t i = 0; i < inserts.count; ++i)
                     {
                         uint64_t sceneNodeID       = inserts.buffer[i]->key;
                         uint64_t parentSceneNodeID = 0;
 
+                        /*
                         auto iParentID = hierarchy.Find(sceneNodeID);
                         if (iParentID != nullptr)
                         {
                             parentSceneNodeID = iParentID->value;
                         }
-
+                        */
 
                         commands.AddDelete(sceneNodeID, parentSceneNodeID, nullptr);
                     }
@@ -406,12 +411,13 @@ namespace GTEngine
                         uint64_t sceneNodeID       = deletes.buffer[i]->key;
                         uint64_t parentSceneNodeID = 0;
 
+                        /*
                         auto iParentID = hierarchy.Find(sceneNodeID);
                         if (iParentID != nullptr)
                         {
                             parentSceneNodeID = iParentID->value;
                         }
-
+                        */
 
                         commands.AddInsert(sceneNodeID, parentSceneNodeID, nullptr);
                     }
@@ -421,12 +427,13 @@ namespace GTEngine
                         uint64_t sceneNodeID       = updates.buffer[i]->key;
                         uint64_t parentSceneNodeID = 0;
 
+                        /*
                         auto iParentID = hierarchy.Find(sceneNodeID);
                         if (iParentID != nullptr)
                         {
                             parentSceneNodeID = iParentID->value;
                         }
-
+                        */
 
                         commands.AddUpdate(sceneNodeID, parentSceneNodeID, nullptr);
                     }
@@ -437,6 +444,7 @@ namespace GTEngine
 
         // And now we need to update to the most recent serializers.
         commands.UpdateToMostRecentSerializers(*this, newFrameIndex);
+        commands.UpdateToMostRecentHierarchy(  *this, newFrameIndex);
     }
 
 
