@@ -17,6 +17,7 @@
 #include "SceneStateStack.hpp"
 #include "SceneNodeClass.hpp"
 #include <GTCore/SortedVector.hpp>
+#include <GTCore/Script.hpp>
 
 
 /// Contact test callbacks.
@@ -424,6 +425,18 @@ namespace GTEngine
         /// @param eventHandler [in] A reference to the event handler to detach.
         void DetachEventHandler(SceneEventHandler &eventHandler);
 
+
+
+        /// Registers the scene to the given script.
+        ///
+        /// @param script [in] A reference to the script to register the scene with.
+        ///
+        /// @remarks
+        ///     It is up to the user to make sure the scene is unregistered before destroying the script. Use Scene::UnregisterFromScript() to do this.
+        void RegisterToScript(GTCore::Script &script);
+
+        /// Unregisters the scene from the script it is currently registered to.
+        void UnregisterFromScript();
         
 
 
@@ -880,6 +893,9 @@ namespace GTEngine
         /// Keeps track of whether or not staging should be enabled on the state stack.
         bool isStateStackStagingEnabled;
 
+
+        /// A pointer to the script the scene is current registered to.
+        GTCore::Script* registeredScript;
 
 
     private:    // No copying.

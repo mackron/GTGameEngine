@@ -21,6 +21,18 @@ namespace GTEngine
         bool LoadGTEngineScriptLibrary(GTCore::Script &script);
 
 
+        /// Registers a scene to the given script.
+        ///
+        /// @param script [in] A reference to the script object to register the scene with.
+        /// @param scene  [in] A reference to the scene to register.
+        bool RegisterScene(GTCore::Script &script, Scene &scene);
+
+        /// Unregisters the given scene from the given script.
+        ///
+        /// @param script [in] A reference to the script object to unregister the scene from.
+        /// @param scene  [in] A reference to the scene to unregister.
+        void UnregisterScene(GTCore::Script &script, Scene &scene);
+
 
         namespace FFI
         {
