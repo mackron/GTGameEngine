@@ -5,12 +5,23 @@
 namespace GTEngine
 {
     SceneEditorSceneUpdateManager::SceneEditorSceneUpdateManager(const SceneNode &cameraNodeIn)
-        : DefaultSceneUpdateManager(), cameraNode(cameraNodeIn)
+        : DefaultSceneUpdateManager(), cameraNode(cameraNodeIn), isEnabled(false)
     {
     }
 
     SceneEditorSceneUpdateManager::~SceneEditorSceneUpdateManager()
     {
+    }
+
+
+    void SceneEditorSceneUpdateManager::Enable()
+    {
+        this->isEnabled = true;
+    }
+
+    void SceneEditorSceneUpdateManager::Disable()
+    {
+        this->isEnabled = false;
     }
 
 
@@ -35,6 +46,9 @@ namespace GTEngine
             }
         }
 
-        DefaultSceneUpdateManager::StepSceneNode(node, deltaTimeInSeconds);
+        if (this->isEnabled)
+        {
+            DefaultSceneUpdateManager::StepSceneNode(node, deltaTimeInSeconds);
+        }
     }
 }

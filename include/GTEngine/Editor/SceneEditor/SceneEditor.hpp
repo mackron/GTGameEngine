@@ -49,6 +49,16 @@ namespace GTEngine
         const SceneNode & GetCameraSceneNode() const { return this->camera; }
 
 
+        /// Starts playing the game.
+        void StartPlaying();
+
+        /// Stops playing the game.
+        void StopPlaying();
+
+        /// Determines whether or not the game is playing.
+        bool IsPlaying() const;
+
+
         /// Enables physics simulation of the entire scene.
         void EnablePhysicsSimulation();
 
@@ -377,6 +387,9 @@ namespace GTEngine
         SceneNode & CopySceneNodeAndChildren(SceneNode &nodeToCopy, SceneNode* parentNode);
 
 
+        /// Updates the icon on the "Play" button.
+        void UpdatePlayButtonIcon();
+
         /// Updates the icon on the Physics button.
         void UpdatePhysicsButtonIcon();
 
@@ -436,6 +449,9 @@ namespace GTEngine
 
         /// The list of selected nodes.
         GTCore::Vector<uint64_t> selectedNodes;
+
+        /// The list of selected nodes before playing. This is used to reselect the nodes when playing is stopped.
+        GTCore::Vector<uint64_t> selectedNodesBeforePlaying;
 
         /// The list of selected nodes before doing the physics simulation.
         GTCore::Vector<uint64_t> selectedNodesBeforePhysicsSimulation;
@@ -513,6 +529,10 @@ namespace GTEngine
 
         /// Keeps track of whether or not we are changing the scene via the state stack.
         bool isUpdatingFromStateStack;
+
+
+        /// Keeps track of whether or not the game is playing.
+        bool isPlaying;
 
 
         /// Structure containing the GUI elements of the editor.

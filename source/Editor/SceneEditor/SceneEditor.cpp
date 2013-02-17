@@ -30,7 +30,7 @@ namespace GTEngine
           updateManager(camera), physicsManager(), cullingManager(),
           scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
           viewportEventHandler(ownerEditor.GetGame(), viewport),
-          selectedNodes(), selectedNodesBeforePhysicsSimulation(),
+          selectedNodes(), selectedNodesBeforePlaying(), selectedNodesBeforePhysicsSimulation(),
           pickingWorld(),
           transformGizmo(), gizmoDragAxis(1.0f, 0.0f, 0.0f), gizmoDragFactor(1.0f, 0.0f),
           gizmoDragMode(GizmoDragMode_None), gizmoTransformMode(GizmoTransformMode_Translate), gizmoTransformSpace(GizmoTransformSpace_Global),
@@ -38,6 +38,7 @@ namespace GTEngine
           translateSnapSize(0.25f),/* rotateSnapSize(5.625f), scaleSnapSize(0.25f),*/
           transformedObjectWithGizmo(false),
           isDeserializing(false), isUpdatingFromStateStack(false),
+          isPlaying(false),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
@@ -183,6 +184,55 @@ namespace GTEngine
         this->cameraXRotation = xRotation;
         this->cameraYRotation = yRotation;
         this->ApplyCameraRotation();
+    }
+
+
+
+    void SceneEditor::StartPlaying()
+    {
+        if (!this->IsPlaying())
+        {
+            this->isPlaying                  = true;
+            this->selectedNodesBeforePlaying = this->selectedNodes;
+
+            this->updateManager.Enable();
+
+            this->physicsManager.EnableSimulation();
+            this->physicsManager.ActivateAllRigidBodies();
+
+            this->UpdatePlayButtonIcon();
+        }
+    }
+
+    void SceneEditor::StopPlaying()
+    {
+        if (this->IsPlaying())
+        {
+            this->isUpdatingFromStateStack = true;
+            {
+                this->isPlaying = false;
+
+
+                this->updateManager.Disable();
+                this->physicsManager.DisableSimulation();
+
+
+                // To restore, all we need to do is revert the staging area.
+                this->scene.RevertStateStackStagingArea();
+
+                // We want to revert the selections, but we don't want to stage these on the state stack.
+                this->DeselectAll(SelectionOption_NoStateStaging);
+                this->SelectSceneNodes(this->selectedNodesBeforePlaying, SelectionOption_NoStateStaging);
+
+                this->UpdatePlayButtonIcon();
+            }
+            this->isUpdatingFromStateStack = false;
+        }
+    }
+
+    bool SceneEditor::IsPlaying() const
+    {
+        return this->isPlaying;
     }
 
 
@@ -2086,6 +2136,27 @@ namespace GTEngine
         return *newNode;
     }
 
+
+    void SceneEditor::UpdatePlayButtonIcon()
+    {
+        if (this->GUI.Main != nullptr)
+        {
+            auto &script = this->GetScript();
+
+            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            assert(script.IsTable(-1));
+            {
+                script.Push("UpdatePlayButtonIcon");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // <-- 'self'.
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+    }
 
     void SceneEditor::UpdatePhysicsButtonIcon()
     {

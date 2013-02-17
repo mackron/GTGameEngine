@@ -19,6 +19,16 @@ namespace GTEngine
         ~SceneEditorSceneUpdateManager();
 
 
+        /// Enables physics simulation.
+        void Enable();
+
+        /// Disable physics simulation.
+        void Disable();
+
+        /// Determines whether or not the physics simulation is enabled.
+        bool IsEnabled() const { return this->isEnabled; }
+
+
         /// DefaultSceneUpdateManager::Step()
         void StepSceneNode(SceneNode &node, double deltaTimeInSeconds);
 
@@ -27,6 +37,9 @@ namespace GTEngine
 
         /// The camera node. We will use this for orientating sprites.
         const SceneNode &cameraNode;
+
+        /// Keeps track of whether or not updating is enabled.
+        bool isEnabled;
 
 
     private:    // No copying.
