@@ -911,6 +911,22 @@ namespace GTEngine
     }
 
 
+    void Scene::StageInsertOnStateStack(uint64_t sceneNodeID)
+    {
+        this->stateStack.StageInsert(sceneNodeID);
+    }
+
+    void Scene::StageDeleteOnStateStack(uint64_t sceneNodeID)
+    {
+        this->stateStack.StageDelete(sceneNodeID);
+    }
+
+    void Scene::StageUpdateOnStateStack(uint64_t sceneNodeID)
+    {
+        this->stateStack.StageUpdate(sceneNodeID);
+    }
+
+
 
 
 
