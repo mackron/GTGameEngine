@@ -66,6 +66,16 @@ namespace GTEngine
 
         ///////////////////////////////////////////////////
         // Selections
+        //
+        // When selecting a scene node, various options can be specified to control particular operations. Instead of passing
+        // a bunch of booleans, we'll instead use flags. The available flags are specified in the SelectionOptions enum.
+
+        enum SelectionOptions
+        {
+            SelectionOption_NoScriptNotify = (1 << 1),
+            SelectionOption_Force          = (1 << 2),
+            SelectionOption_NoStateStaging = (1 << 3)
+        };
 
         /// Attempts to select a gizmo with the mouse.
         ///
@@ -76,7 +86,7 @@ namespace GTEngine
         void DoMouseSelection();
 
         /// Deselects everything.
-        void DeselectAll(bool dontPostBackNotification = false);
+        void DeselectAll(unsigned int options);
 
         /// Determines whether or not the given node is selected.
         ///
@@ -95,22 +105,22 @@ namespace GTEngine
         ///
         /// @param node  [in] The node to select.
         /// @param force [in] Normally the scene node will not go through a full selection process if it is already marked as selected - this allows that operato to be forced, which is required sometimes.
-        void SelectSceneNode(SceneNode &node, bool force = false, bool dontPostBackNotification = false);
+        void SelectSceneNode(SceneNode &node, unsigned int options);
 
         /// Selects the given scene nodes.
         ///
         /// @param sceneNodeIDs [in] The IDs of the scene nodes to select.
-        void SelectSceneNodes(const GTCore::Vector<uint64_t> &selectedNodeIDs);
+        void SelectSceneNodes(const GTCore::Vector<uint64_t> &selectedNodeIDs, unsigned int options);
 
         /// Deselects the given scene node.
         ///
         /// @param node [in] The node to deselect.
-        void DeselectSceneNode(SceneNode &node, bool force = false, bool dontPostBackNotification = false);
+        void DeselectSceneNode(SceneNode &node, unsigned int options);
 
         /// Recursively deselects the given scene node and it's children.
         ///
         /// @param node [in] A reference to the root scene node to deselect.
-        void DeselectSceneNodeAndChildren(SceneNode &node, bool dontPostBackNotifications = false);
+        void DeselectSceneNodeAndChildren(SceneNode &node, unsigned int options);
 
         /// Retrieves the center point of the selected nodes.
         glm::vec3 GetSelectionCenterPoint() const;
@@ -356,7 +366,7 @@ namespace GTEngine
         ///     nodes retrieved in the first pass and selects them.
         ///     @par
         ///     This method needs to be called whenever the state of the scene has changed so that the correct objects are selected.
-        void ReselectSceneNodes();
+        void ReselectSceneNodes(unsigned int options);
 
         /// Recursively copies the given node and selects the copy.
         ///
@@ -500,6 +510,9 @@ namespace GTEngine
         /// Keeps track of whether or not we're deserializing. We use this to control whether or not the scene should be marked as modified and stack
         /// frames committed.
         bool isDeserializing;
+
+        /// Keeps track of whether or not we are changing the scene via the state stack.
+        bool isUpdatingFromStateStack;
 
 
         /// Structure containing the GUI elements of the editor.

@@ -1646,11 +1646,10 @@ end
 
 
 function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
-    self.TreeView      = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-hierarchy-treeview' style='' />");
-    self.ContextMenu   = GTGUI.Server.New("<div                                        styleclass='menu'                            style='z-index:100; positioning:absolute; visible:false' />");
-    self.SceneNodes    = {}
-    self.SelectedNodes = {}
-    self.SceneEditor   = sceneEditor;
+    self.TreeView    = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-hierarchy-treeview' style='' />");
+    self.ContextMenu = GTGUI.Server.New("<div                                        styleclass='menu'                            style='z-index:100; positioning:absolute; visible:false' />");
+    self.SceneNodes  = {}
+    self.SceneEditor = sceneEditor;
     
     
     
@@ -1721,41 +1720,16 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
     
     -- Sets the selected items to those of the given scene node ids. Deselects anything not in the list.
     function self:SetSelectedItemsBySceneNodeIDs(sceneNodeIDs)
-        local nodesToDeselect  = {};
-        local nodesToSelect    = {};
+        -- We're going to use a simple technique here where we just deselect everything and then reselect. Simple, intuitive and fast enough.
         
+        -- 1) Deselect Everything.
+        self.TreeView:DeselectAllItems(true);        -- 'true' = block OnDeselected events.
+        
+        -- 2) Reselect.
         for i,sceneNodeID in ipairs(sceneNodeIDs) do
-            if table.indexof(self.SelectedNodes, sceneNodeID) == nil then
-                nodesToSelect[#nodesToSelect + 1] = sceneNodeID;
-            end
-        end
-        
-        for i,sceneNodeID in ipairs(self.SelectedNodes) do
-            if table.indexof(sceneNodeIDs, sceneNodeID) == nil then
-                nodesToDeselect[#nodesToDeselect + 1] = sceneNodeID;
-            end
-        end
-        
-        
-        -- We will deselect the appropriate nodes first.
-        for i,sceneNodeID in ipairs(nodesToDeselect) do
             local treeViewItem = self.SceneNodes[sceneNodeID];
             if treeViewItem ~= nil then
-                treeViewItem:Deselect(true);                                -- 'true' = block event (don't post the event).
-                self.SceneEditor:DeselectSceneNodeByID(sceneNodeID, true);  -- 'true' = don't post a notification back to the scripting environment.
-            end
-        end
-        
-        -- Now select.
-        self.SelectedNodes = {};
-        
-        for i,sceneNodeID in ipairs(nodesToSelect) do
-            local treeViewItem = self.SceneNodes[sceneNodeID];
-            if treeViewItem ~= nil then
-                treeViewItem:Select(true);                                -- 'true' = block event (don't post the event).
-                self.SceneEditor:SelectSceneNodeByID(sceneNodeID, true);  -- 'true' = don't post a notification back to the scripting environment.
-                
-                self.SelectedNodes[#self.SelectedNodes + 1] = sceneNodeID;
+                treeViewItem:Select(true);      -- 'true' = block OnSelected events.
             end
         end
     end
@@ -1843,6 +1817,12 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
         end
         
         
+        -- We'll select the item (blocking the OnSelected event) if the scene node is marked as selected.
+        if self.SceneEditor:IsSceneNodeSelectedByID(sceneNodeID) then
+            item:Select(true);      -- 'true' will block the OnSelected event which we don't want.
+        end
+        
+        
         -- We need to make sure children are also added.
         local children = GTEngine.System.SceneNode.GetChildrenIDs(sceneNodePtr);
         if children ~= nil then
@@ -1868,7 +1848,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             end
         end
     
-        self.TreeView:RemoveItem(self.SceneNodes[sceneNodeID]);
+        self.TreeView:RemoveItem(self.SceneNodes[sceneNodeID], true);       -- 'true' means to block the OnDeselected message.
         self.SceneNodes[sceneNodeID] = nil;
     end
     
@@ -2127,9 +2107,12 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         end
     end
     
-    
     function self:GetSelectedSceneNodeIDs()
         return GTEngine.System.SceneEditor.GetSelectedSceneNodeIDs(self._internalPtr);
+    end
+    
+    function self:IsSceneNodeSelectedByID(sceneNodeID)
+        return GTEngine.System.SceneEditor.IsSceneNodeSelectedByID(self._internalPtr, sceneNodeID);
     end
     
     

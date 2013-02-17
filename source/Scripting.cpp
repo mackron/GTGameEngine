@@ -1069,6 +1069,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetSelectedSceneNodeCount",           FFI::SystemFFI::SceneEditorFFI::GetSelectedSceneNodeCount);
                         script.SetTableFunction(-1, "GetFirstSelectedSceneNodePtr",        FFI::SystemFFI::SceneEditorFFI::GetFirstSelectedSceneNodePtr);
                         script.SetTableFunction(-1, "GetSelectedSceneNodeIDs",             FFI::SystemFFI::SceneEditorFFI::GetSelectedSceneNodeIDs);
+                        script.SetTableFunction(-1, "IsSceneNodeSelectedByID",             FFI::SystemFFI::SceneEditorFFI::IsSceneNodeSelectedByID);
                         script.SetTableFunction(-1, "TryGizmoMouseSelect",                 FFI::SystemFFI::SceneEditorFFI::TryGizmoMouseSelect);
                         script.SetTableFunction(-1, "DoMouseSelection",                    FFI::SystemFFI::SceneEditorFFI::DoMouseSelection);
                         script.SetTableFunction(-1, "RemoveSelectedSceneNodes",            FFI::SystemFFI::SceneEditorFFI::RemoveSelectedSceneNodes);
@@ -3727,7 +3728,7 @@ namespace GTEngine
                         auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                         if (sceneEditor != nullptr)
                         {
-                            sceneEditor->DeselectAll();
+                            sceneEditor->DeselectAll(0);
                         }
 
                         return 0;
@@ -3741,8 +3742,13 @@ namespace GTEngine
                             auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
                             if (sceneNode != nullptr)
                             {
-                                bool dontPostBackNotification = script.ToBoolean(3);
-                                sceneEditor->SelectSceneNode(*sceneNode, false, dontPostBackNotification);
+                                unsigned int selectionOptions = 0;
+                                if (script.ToBoolean(3))
+                                {
+                                    selectionOptions |= SceneEditor::SelectionOption_NoScriptNotify;
+                                }
+
+                                sceneEditor->SelectSceneNode(*sceneNode, selectionOptions);
                             }
                         }
 
@@ -3757,8 +3763,13 @@ namespace GTEngine
                             auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
                             if (sceneNode != nullptr)
                             {
-                                bool dontPostBackNotification = script.ToBoolean(3);
-                                sceneEditor->DeselectSceneNode(*sceneNode, false, dontPostBackNotification);
+                                unsigned int selectionOptions = 0;
+                                if (script.ToBoolean(3))
+                                {
+                                    selectionOptions |= SceneEditor::SelectionOption_NoScriptNotify;
+                                }
+
+                                sceneEditor->DeselectSceneNode(*sceneNode, selectionOptions);
                             }
                         }
 
@@ -3815,6 +3826,29 @@ namespace GTEngine
                         else
                         {
                             script.PushNil();
+                        }
+
+                        return 1;
+                    }
+
+                    int IsSceneNodeSelectedByID(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            auto sceneNode = sceneEditor->GetSceneNodeByID(static_cast<uint64_t>(script.ToInteger(2)));
+                            if (sceneNode != nullptr)
+                            {
+                                script.Push(sceneEditor->IsSceneNodeSelected(*sceneNode));
+                            }
+                            else
+                            {
+                                script.Push(false);
+                            }
+                        }
+                        else
+                        {
+                            script.Push(false);
                         }
 
                         return 1;

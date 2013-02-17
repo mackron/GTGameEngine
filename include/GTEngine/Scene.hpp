@@ -489,6 +489,18 @@ namespace GTEngine
         void RevertStateStackStagingArea();
 
 
+        /// Stages an insert command to the state stack's staging area.
+        void StageInsertOnStateStack(uint64_t sceneNodeID);
+        void StageInsertOnStateStack(SceneNode &sceneNode) { this->StageInsertOnStateStack(sceneNode.GetID()); }
+        
+        /// Stages a delete command to the state stack's staging area.
+        void StageDeleteOnStateStack(uint64_t sceneNodeID);
+        void StageDeleteOnStateStack(SceneNode &sceneNode) { this->StageDeleteOnStateStack(sceneNode.GetID()); }
+
+        /// Stages an update command to the state stack's staging area.
+        void StageUpdateOnStateStack(uint64_t sceneNodeID);
+        void StageUpdateOnStateStack(SceneNode &sceneNode) { this->StageUpdateOnStateStack(sceneNode.GetID()); }
+
 
 
     // Collision Tests.

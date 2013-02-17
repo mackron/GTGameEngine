@@ -37,7 +37,7 @@ namespace GTEngine
           snapTranslation(), snapAngle(0.0f), snapScale(), isSnapping(false),
           translateSnapSize(0.25f),/* rotateSnapSize(5.625f), scaleSnapSize(0.25f),*/
           transformedObjectWithGizmo(false),
-          isDeserializing(false),
+          isDeserializing(false), isUpdatingFromStateStack(false),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
@@ -202,17 +202,21 @@ namespace GTEngine
     {
         if (this->IsPhysicsSimulationEnabled())
         {
-            this->physicsManager.DisableSimulation();
+            this->isUpdatingFromStateStack = true;
+            {
+                this->physicsManager.DisableSimulation();
 
 
-            // To restore, all we need to do is revert the staging area.
-            this->scene.RevertStateStackStagingArea();
+                // To restore, all we need to do is revert the staging area.
+                this->scene.RevertStateStackStagingArea();
 
-            // We want to revert the selections, too.
-            this->DeselectAll();
-            this->SelectSceneNodes(this->selectedNodesBeforePhysicsSimulation);
+                // We want to revert the selections, but we don't want to stage these on the state stack.
+                this->DeselectAll(SelectionOption_NoStateStaging);
+                this->SelectSceneNodes(this->selectedNodesBeforePhysicsSimulation, SelectionOption_NoStateStaging);
 
-            this->UpdatePhysicsButtonIcon();
+                this->UpdatePhysicsButtonIcon();
+            }
+            this->isUpdatingFromStateStack = false;
         }
     }
 
@@ -380,11 +384,11 @@ namespace GTEngine
                     {
                         if (this->IsSceneNodeSelected(selectedNode))
                         {
-                            this->DeselectSceneNode(selectedNode);
+                            this->DeselectSceneNode(selectedNode, 0);
                         }
                         else
                         {
-                            this->SelectSceneNode(selectedNode);
+                            this->SelectSceneNode(selectedNode, 0);
                         }
                     }
                     else
@@ -392,27 +396,27 @@ namespace GTEngine
                         // If the node is already the selected one, we don't do anything.
                         if (!(this->selectedNodes.count == 1 && this->selectedNodes[0] == selectedNode.GetID()))
                         {
-                            this->DeselectAll();
-                            this->SelectSceneNode(selectedNode);
+                            this->DeselectAll(0);
+                            this->SelectSceneNode(selectedNode, 0);
                         }
                     }
                 }
             }
             else
             {
-                this->DeselectAll();
+                this->DeselectAll(0);
             }
         }
     }
 
-    void SceneEditor::DeselectAll(bool dontPostBackNotification)
+    void SceneEditor::DeselectAll(unsigned int options)
     {
         while (this->selectedNodes.count > 0)
         {
             auto node = this->GetSceneNodeByID(this->selectedNodes[0]);
             assert(node != nullptr);
             {
-                this->DeselectSceneNode(*node, false, true);
+                this->DeselectSceneNode(*node, options | SelectionOption_NoScriptNotify);
             }
         }
 
@@ -437,7 +441,7 @@ namespace GTEngine
 
 
         // We need to let the scripting environment know about this change.
-        if (!dontPostBackNotification)
+        if ((options & SelectionOption_NoScriptNotify) == 0)
         {
             this->PostOnSelectionChangedEventToScript();
         }
@@ -478,9 +482,9 @@ namespace GTEngine
         return false;
     }
 
-    void SceneEditor::SelectSceneNode(SceneNode &node, bool force, bool dontPostBackNotification)
+    void SceneEditor::SelectSceneNode(SceneNode &node, unsigned int options)
     {
-        if (force || !this->IsSceneNodeSelected(node))
+        if ((options & SelectionOption_Force) || !this->IsSceneNodeSelected(node))
         {
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata != nullptr)
@@ -493,7 +497,7 @@ namespace GTEngine
                 }
 
                 // The scripting environment needs to be aware of this change.
-                if (!dontPostBackNotification)
+                if (!(options & SelectionOption_NoScriptNotify))
                 {
                     this->PostOnSelectionChangedEventToScript();
                 }
@@ -501,27 +505,39 @@ namespace GTEngine
 
                 // With a change in selection, we will need to update the position of the gizmos.
                 this->ShowTransformGizmo();
+
+
+                // We want to add this node to the staging area as an update command. We don't want to do this if we're in the middle of
+                // updating the scene from the state stack.
+                if (!(options & SelectionOption_NoStateStaging) && !this->isUpdatingFromStateStack)
+                {
+                    this->scene.StageUpdateOnStateStack(node);
+                }
             }
         }
     }
 
-    void SceneEditor::SelectSceneNodes(const GTCore::Vector<uint64_t> &selectedNodeIDs)
+    void SceneEditor::SelectSceneNodes(const GTCore::Vector<uint64_t> &selectedNodeIDs, unsigned int options)
     {
         for (size_t i = 0; i < selectedNodeIDs.count; ++i)
         {
             auto node = this->GetSceneNodeByID(selectedNodeIDs[i]);
             assert(node != nullptr);
             {
-                this->SelectSceneNode(*node, false, true);
+                this->SelectSceneNode(*node, options | SelectionOption_NoScriptNotify);
             }
         }
 
-        this->PostOnSelectionChangedEventToScript();
+
+        if (!(options & SelectionOption_NoScriptNotify))
+        {
+            this->PostOnSelectionChangedEventToScript();
+        }
     }
 
-    void SceneEditor::DeselectSceneNode(SceneNode &node, bool force, bool dontPostBackNotification)
+    void SceneEditor::DeselectSceneNode(SceneNode &node, unsigned int options)
     {
-        if (force || this->IsSceneNodeSelected(node))
+        if ((options & SelectionOption_Force) || this->IsSceneNodeSelected(node))
         {
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata != nullptr)
@@ -532,7 +548,7 @@ namespace GTEngine
                 this->selectedNodes.RemoveFirstOccuranceOf(node.GetID());
 
                 // The scripting environment needs to be aware of this change.
-                if (!dontPostBackNotification)
+                if (!(options & SelectionOption_NoScriptNotify))
                 {
                     this->PostOnSelectionChangedEventToScript();
                 }
@@ -547,21 +563,28 @@ namespace GTEngine
                 {
                     this->RepositionGizmo();
                 }
+
+
+                // We want to add this node to the staging area as an update command.
+                if (!(options & SelectionOption_NoStateStaging))
+                {
+                    this->scene.StageUpdateOnStateStack(node);
+                }
             }
         }
     }
 
-    void SceneEditor::DeselectSceneNodeAndChildren(SceneNode &node, bool dontPostBackNotification)
+    void SceneEditor::DeselectSceneNodeAndChildren(SceneNode &node, unsigned int options)
     {
-        this->DeselectSceneNode(node, false, false);
+        this->DeselectSceneNode(node, options | SelectionOption_NoScriptNotify);
 
         for (auto childNode = node.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
         {
-            this->DeselectSceneNodeAndChildren(*childNode, false);
+            this->DeselectSceneNodeAndChildren(*childNode, options | SelectionOption_NoScriptNotify);
         }
 
 
-        if (!dontPostBackNotification)
+        if (!(options & SelectionOption_NoScriptNotify))
         {
             this->PostOnSelectionChangedEventToScript();
         }
@@ -693,7 +716,7 @@ namespace GTEngine
 
 
             // We want to select the new nodes, so we're going to deselect everything at this point.
-            this->DeselectAll(true);
+            this->DeselectAll(SelectionOption_NoScriptNotify);
 
 
 
@@ -722,10 +745,10 @@ namespace GTEngine
 
     SceneNode & SceneEditor::DuplicateSceneNode(SceneNode &sceneNodeToDuplicate)
     {
-        this->DeselectAll(true);        // <-- True means to block notifications to the scripting environment.
+        this->DeselectAll(SelectionOption_NoScriptNotify);
 
         auto &newNode = this->CopySceneNodeAndChildren(sceneNodeToDuplicate, sceneNodeToDuplicate.GetParent());
-        this->SelectSceneNode(newNode, true);
+        this->SelectSceneNode(newNode, SelectionOption_Force);
 
         return newNode;
     }
@@ -736,18 +759,22 @@ namespace GTEngine
         // Don't bother doing anything if we're already at the start of the current branch.
         if (this->scene.GetStateStackCurrentFrameIndex() > 0)
         {
-            // If the physics simulation is running, it needs to be stopped first.
-            this->DisablePhysicsSimulation();
+            this->isUpdatingFromStateStack = true;
+            {
+                // If the physics simulation is running, it needs to be stopped first.
+                this->DisablePhysicsSimulation();
 
 
-            // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
-            this->DeselectAll();
+                // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
+                this->DeselectAll(SelectionOption_NoScriptNotify | SelectionOption_NoStateStaging);
 
-            this->scene.SeekStateStack(-1);
-            this->MarkAsModified();
+                this->scene.SeekStateStack(-1);
+                this->MarkAsModified();
 
-            // All nodes need to be reselected.
-            this->ReselectSceneNodes();
+                // All nodes need to be reselected.
+                this->ReselectSceneNodes(SelectionOption_NoStateStaging);
+            }
+            this->isUpdatingFromStateStack = false;
         }
     }
 
@@ -755,18 +782,22 @@ namespace GTEngine
     {
         if (this->scene.GetStateStackCurrentFrameIndex() < this->scene.GetStateStackMaxFrameIndex())
         {
-            // If the physics simulation is running, it needs to be stopped first.
-            this->DisablePhysicsSimulation();
+            this->isUpdatingFromStateStack = true;
+            {
+                // If the physics simulation is running, it needs to be stopped first.
+                this->DisablePhysicsSimulation();
 
 
-            // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
-            this->DeselectAll();
+                // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
+                this->DeselectAll(SelectionOption_NoScriptNotify | SelectionOption_NoStateStaging);
 
-            this->scene.SeekStateStack(+1);
-            this->MarkAsModified();
+                this->scene.SeekStateStack(+1);
+                this->MarkAsModified();
 
-            // All nodes need to be reselected.
-            this->ReselectSceneNodes();
+                // All nodes need to be reselected.
+                this->ReselectSceneNodes(SelectionOption_NoStateStaging);
+            }
+            this->isUpdatingFromStateStack = false;
         }
     }
 
@@ -793,15 +824,9 @@ namespace GTEngine
                 this->MapSceneNodeToPrefab(*rootSceneNode, *prefab, rootSceneNodeIndex);
 
 
-
-
-                // We now need to map our scene node to the component. This is recursive.
-                //uint64_t prefabSceneNodeID = prefab->GetRootID();
-                //this->MapSceneNodeToPrefab(*rootSceneNode, relativePath, prefabSceneNodeID);
-
-                // We also want to recursively deselect the scene nodes. We don't post notifications to the editor about this. The reason we do this is
-                // because the metadata component may have left it marked as selected, which we don't want.
-                this->DeselectSceneNodeAndChildren(*rootSceneNode, true);
+                // We also want to recursively deselect the scene nodes. The reason we do this is because the metadata component may have
+                // left it marked as selected, which we don't want. We don't post notifications to the editor about this.
+                this->DeselectSceneNodeAndChildren(*rootSceneNode, SelectionOption_NoScriptNotify);
 
 
                 // We don't need the prefab anymore, so we can unacquire.
@@ -945,7 +970,7 @@ namespace GTEngine
                 // Select the scene node if it's marked as such.
                 if (metadata->IsSelected())
                 {
-                    this->SelectSceneNode(node, true, true);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
+                    this->SelectSceneNode(node, SelectionOption_NoScriptNotify | SelectionOption_Force);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
                 }
             }
         }
@@ -970,7 +995,7 @@ namespace GTEngine
 
 
                 // We need to make sure scene nodes are deseleted when they are removed from the scene.
-                this->DeselectSceneNode(node);
+                this->DeselectSceneNode(node, 0);
 
 
                 // We need to let the editor know about this. It will need to do things like remove it from the hierarchy explorer.
@@ -1984,7 +2009,7 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::ReselectSceneNodes()
+    void SceneEditor::ReselectSceneNodes(unsigned int options)
     {
         // Grab the nodes marked as selected.
         GTCore::Vector<SceneNode*> nodesForReselection;
@@ -2004,7 +2029,7 @@ namespace GTEngine
                     }
 
                     // We always want to do this regardless of whether or not the scene node is marked as selected in the metadata.
-                    this->DeselectSceneNode(*sceneNode);
+                    this->DeselectSceneNode(*sceneNode, options | SelectionOption_NoScriptNotify | SelectionOption_Force);
                 }
             }
         }
@@ -2016,8 +2041,15 @@ namespace GTEngine
             auto sceneNode = nodesForReselection[i];
             assert(sceneNode != nullptr);
             {
-                this->SelectSceneNode(*sceneNode, true);
+                this->SelectSceneNode(*sceneNode, options | SelectionOption_NoScriptNotify | SelectionOption_Force);
             }
+        }
+
+
+        // The scripting environment needs to know about a change in selection.
+        if (!(options & SelectionOption_NoScriptNotify))
+        {
+            this->PostOnSelectionChangedEventToScript();
         }
     }
 
@@ -2040,7 +2072,7 @@ namespace GTEngine
         }
 
         // Node needs to be selected, but we don't want to notify the editor yet (we'll do it in one go at a higher level).
-        this->SelectSceneNode(*newNode, false, true);
+        this->SelectSceneNode(*newNode, SelectionOption_NoScriptNotify);
 
 
 
@@ -2236,7 +2268,7 @@ namespace GTEngine
                             if (serializer != nullptr)
                             {
                                 bool wasSelected = this->IsSceneNodeSelected(*sceneNode);
-                                this->DeselectSceneNode(*sceneNode, true, true);
+                                this->DeselectSceneNode(*sceneNode, SelectionOption_NoScriptNotify | SelectionOption_Force);
 
                                 // It's the same node, but it needs to be updated. We maintain the transformation. Not quite sure yet how I want to allow
                                 // other attributes to be maintained.
@@ -2258,7 +2290,7 @@ namespace GTEngine
                                 // We will want to reselect if we were previously selected.
                                 if (wasSelected)
                                 {
-                                    this->SelectSceneNode(*sceneNode, true, true);
+                                    this->SelectSceneNode(*sceneNode, SelectionOption_NoScriptNotify | SelectionOption_Force);
                                 }
 
 

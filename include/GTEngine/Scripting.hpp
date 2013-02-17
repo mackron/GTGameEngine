@@ -1152,13 +1152,18 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the scene editor.
                     int GetFirstSelectedSceneNodePtr(GTCore::Script &script);
 
-
                     /// Retrieves an array containing the selected scene node IDs.
                     ///
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
                     int GetSelectedSceneNodeIDs(GTCore::Script &script);
 
+                    /// Determines if the given scene node is selected.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    ///     Argument 2: The ID of the scene node.
+                    int IsSceneNodeSelectedByID(GTCore::Script &script);
 
 
                     /// Attempts to select a gizmo with the mouse.
