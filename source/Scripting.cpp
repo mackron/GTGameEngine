@@ -41,8 +41,10 @@ namespace GTEngine
                 "GTEngine.System.ModelEditor               = {};"
                 "GTEngine.System.SceneEditor               = {};"
 
-                "GTEngine.Renderer = {};"
-                "GTEngine.Audio    = {};"
+                "GTEngine.Renderer                         = {};"
+                "GTEngine.Audio                            = {};"
+
+                "GTEngine.RegisteredScenes                 = {};"
             );
 
 
@@ -1122,6 +1124,76 @@ namespace GTEngine
             script.Pop(1);
 
             return successful;
+        }
+
+
+        bool RegisterScene(GTCore::Script &script, Scene &scene)
+        {
+            // We map Lua Scene objects to the C++ pointer counterparts. We store this in GTEngine.RegisteredScenes.
+
+            script.GetGlobal("GTEngine");
+            assert(script.IsTable(-1));
+            {
+                script.Push("RegisteredScenes");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    // Key (C++ pointer).
+                    script.Push(&scene);
+
+                    // Value (Lua object).
+                    script.Push("Scene");
+                    script.GetTableValue(-4);       // <-- GTEngine
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("Create");
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.PushValue(-2);       // Argument 1: GTEngine.Scene.
+                            script.Push(&scene);        // Argument 2: The C++ pointer.
+
+                            script.Call(2, 1);          // 1 return value: The Lua Scene object.
+
+                            // We need to move the return value so that it's in the correct position after all of the pops below.
+                            script.InsertIntoStack(-2);
+                        }
+                    }
+                    script.Pop(1);
+
+                    assert(script.IsPointer(-2));
+                    assert(script.IsTable(-1));
+                    {
+                        // The key and value are in place, so now we just want to set it.
+                        script.SetTableValue(-3);
+                    }
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
+
+
+            return true;
+        }
+
+        void UnregisterScene(GTCore::Script &script, Scene &scene)
+        {
+            // For now we'll just set the value in GTEngine.RegisteredScenes to nil, but this might need improving later on.
+
+            script.GetGlobal("GTEngine");
+            assert(script.IsTable(-1));
+            {
+                script.Push("RegisteredScenes");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    script.Push(&scene);        // Key   - C++ pointer.
+                    script.PushNil();           // Value - Lua object, or in this case nil so that it's removed.
+                    script.SetTableValue(-3);
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
         }
 
 

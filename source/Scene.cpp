@@ -7,6 +7,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/GarbageCollector.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/Scripting.hpp>
 #include <GTCore/ToString.hpp>
 
 #if defined(_MSC_VER)
@@ -258,7 +259,8 @@ namespace GTEngine
           viewports(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
           navigationMesh(),
           eventHandlers(),
-          stateStack(*this), isStateStackStagingEnabled(true)
+          stateStack(*this), isStateStackStagingEnabled(true),
+          registeredScript(nullptr)
     {
     }
 
@@ -270,7 +272,8 @@ namespace GTEngine
           viewports(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
           navigationMesh(),
           eventHandlers(),
-          stateStack(*this), isStateStackStagingEnabled(true)
+          stateStack(*this), isStateStackStagingEnabled(true),
+          registeredScript(nullptr)
     {
     }
 
@@ -808,6 +811,35 @@ namespace GTEngine
     void Scene::DetachEventHandler(SceneEventHandler &eventHandler)
     {
         this->eventHandlers.RemoveFirstOccuranceOf(&eventHandler);
+    }
+
+
+
+    void Scene::RegisterToScript(GTCore::Script &script)
+    {
+        if (this->registeredScript != &script)
+        {
+            // If we are already registered to a different script we'll need to unregister.
+            if (this->registeredScript != nullptr)
+            {
+                this->UnregisterFromScript();
+            }
+
+
+            if (Scripting::RegisterScene(script, *this))
+            {
+                this->registeredScript = &script;
+            }
+        }
+    }
+
+    void Scene::UnregisterFromScript()
+    {
+        if (this->registeredScript != nullptr)
+        {
+            Scripting::UnregisterScene(*this->registeredScript, *this);
+            this->registeredScript = nullptr;
+        }
     }
 
 
