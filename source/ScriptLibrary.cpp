@@ -41,7 +41,7 @@ namespace GTEngine
     /////////////////////////////////////////////////
     // Acquire/Unacquire
 
-    ScriptDefinition* ScriptLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
+    ScriptDefinition* ScriptLibrary::Acquire(const char* fileName, const char* makeRelativeTo, bool silenceMissingFileWarning)
     {
         GTCore::String relativePath(fileName);
 
@@ -76,7 +76,10 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::PostError("Can not find file: %s", fileName);
+                    if (!silenceMissingFileWarning)
+                    {
+                        GTEngine::PostError("Can not find file: %s", fileName);
+                    }
                 }
             }
             else
@@ -89,7 +92,10 @@ namespace GTEngine
         }
         else
         {
-            GTEngine::PostError("Can not find file: %s", fileName);
+            if (!silenceMissingFileWarning)
+            {
+                GTEngine::PostError("Can not find file: %s", fileName);
+            }
         }
 
         return nullptr;

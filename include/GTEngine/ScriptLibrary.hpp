@@ -41,7 +41,7 @@ namespace GTEngine
         ///     @par
         ///     All resources must have a relative path somewhere. If it doesn't, there will be errors with serialization. Thus,
         ///     this will return null if 'fileName' is absolute and 'makeRelativeTo' is null.
-        static ScriptDefinition* Acquire(const char* fileName, const char* makeRelativeTo = nullptr);
+        static ScriptDefinition* Acquire(const char* fileName, const char* makeRelativeTo = nullptr, bool silenceMissingFileWarning = false);
 
         /// Unacquires a script definition that was first acquired by Acquire().
         ///

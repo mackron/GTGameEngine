@@ -27,7 +27,7 @@ namespace GTEngine
         {
             // If we get here it means the script does not already exist and needs to be added. Note that we want to add these even
             // if we get a null pointer. We do this so the names remain persistant for things like editting tools.
-            auto definition = GTEngine::ScriptLibrary::Acquire(relativePath);
+            auto definition = GTEngine::ScriptLibrary::Acquire(relativePath, nullptr, true);
             this->scripts.PushBack(definition);
 
             this->OnChanged();
