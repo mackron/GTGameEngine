@@ -347,6 +347,25 @@ new-component-menu-item:pushed
 }
 
 
+new-script-button
+{
+    width:  auto
+    height: auto
+    
+    text-color: #888
+}
+
+new-script-button:hovered
+{
+    text-color: #aaa
+}
+
+new-script-button:pushed
+{
+    text-color: #ccc
+}
+
+
 
 physics-button-container
 {

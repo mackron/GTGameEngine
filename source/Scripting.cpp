@@ -571,6 +571,26 @@ namespace GTEngine
                 "    return new;"
                 "end;"
 
+                "function GTEngine.ScriptComponent:AddScript(relativePath)"
+                "    GTEngine.System.ScriptComponent.AddScript(self._internalPtr, relativePath);"
+                "end;"
+
+                "function GTEngine.ScriptComponent:RemoveScriptByRelativePath(relativePath)"
+                "    GTEngine.System.ScriptComponent.RemoveScriptByRelativePath(self._internalPtr, relativePath);"
+                "end;"
+
+                "function GTEngine.ScriptComponent:RemoveScriptByIndex(index)"
+                "    GTEngine.System.ScriptComponent.RemoveScriptByIndex(self._internalPtr, index);"
+                "end;"
+
+                "function GTEngine.ScriptComponent:ReloadScript(index, newRelativePath)"
+                "    GTEngine.System.ScriptComponent.ReloadScript(self._internalPtr, index, newRelativePath);"
+                "end;"
+
+                "function GTEngine.ScriptComponent:GetScriptFilePaths()"
+                "    return GTEngine.System.ScriptComponent.GetScriptFilePaths(self._internalPtr);"
+                "end;"
+
 
 
                 // EditorMetadataComponent
@@ -659,18 +679,18 @@ namespace GTEngine
 
 
                 "function GTEngine.SceneNode:RegisterScriptComponent()"
-                "    local scriptComponent = self:GetComponent(GTEngine.Components.ScriptComponent);"
+                "    local scriptComponent = self:GetComponent(GTEngine.Components.Script);"
                 "    if scriptComponent ~= nil then"
                 "        local scriptFilePaths = scriptComponent:GetScriptFilePaths();"
                 "        for i,scriptPath in ipairs(scriptFilePaths) do"
-                "            self:LinkToScript(GTEngine.SceneNodeScripts[scriptPath]);"
+                "            self:LinkToScript(GTEngine.ScriptDefinitions[scriptPath]);"
                 "        end;"
                 "    end;"
                 "end;"
 
                 "function GTEngine.SceneNode:LinkToScript(script)"
                 "    if script ~= nil then"
-                "        for key,value in script do"
+                "        for key,value in pairs(script) do"
                 "            if not GTEngine.IsSceneNodeEventHandler(key) then"
                 "                self[key] = value;"
                 "            else"
@@ -686,7 +706,7 @@ namespace GTEngine
                 "            self._eventHandlers[name] = {};"
                 ""
                 "            self[name] = function(self, ...)"
-                "                for i,eventHandler in self._eventHandlers[name] do"
+                "                for i,eventHandler in pairs(self._eventHandlers[name]) do"
                 "                    eventHandler(self, ...);"
                 "                end;"
                 "            end;"
@@ -1113,6 +1133,18 @@ namespace GTEngine
                     script.Pop(1);
 
 
+                    script.Push("ScriptComponent");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "AddScript",                    FFI::SystemFFI::ScriptComponentFFI::AddScript);
+                        script.SetTableFunction(-1, "RemoveScriptByRelativePath",   FFI::SystemFFI::ScriptComponentFFI::RemoveScriptByRelativePath);
+                        script.SetTableFunction(-1, "RemoveScriptByIndex",          FFI::SystemFFI::ScriptComponentFFI::RemoveScriptByIndex);
+                        script.SetTableFunction(-1, "ReloadScript",                 FFI::SystemFFI::ScriptComponentFFI::ReloadScript);
+                        script.SetTableFunction(-1, "GetScriptFilePaths",           FFI::SystemFFI::ScriptComponentFFI::GetScriptFilePaths);
+                    }
+                    script.Pop(1);
+
 
                     script.Push("EditorMetadataComponent");
                     script.GetTableValue(-2);
@@ -1312,10 +1344,14 @@ namespace GTEngine
                     if (script.IsTable(-1))                         // <-- Don't want to use an assert here. It's a valid case for this to not exist. In this case, we just ignore.
                     {
                         script.Push("InstantiateSceneNode");
-                        script.Push(-2);                                    // <-- 'self'
-                        script.Push(static_cast<int>(sceneNode.GetID()));   // <-- 'sceneNodeID'
-                        script.Push(&sceneNode);                            // <-- 'sceneNodePtr'
-                        script.Call(3, 0);
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.PushValue(-2);                               // <-- 'self'
+                            script.Push(static_cast<int>(sceneNode.GetID()));   // <-- 'sceneNodeID'
+                            script.Push(&sceneNode);                            // <-- 'sceneNodePtr'
+                            script.Call(3, 0);
+                        }
                     }
                     script.Pop(1);
                 }
@@ -1339,9 +1375,13 @@ namespace GTEngine
                     if (script.IsTable(-1))                         // <-- Don't want to use an assert here. It's a valid case for this to not exist. In this case, we just ignore.
                     {
                         script.Push("UninstantiateSceneNode");
-                        script.Push(-2);                                    // <-- 'self'
-                        script.Push(static_cast<int>(sceneNode.GetID()));   // <-- 'sceneNodeID'
-                        script.Call(2, 0);
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.PushValue(-2);                               // <-- 'self'
+                            script.Push(static_cast<int>(sceneNode.GetID()));   // <-- 'sceneNodeID'
+                            script.Call(2, 0);
+                        }
                     }
                     script.Pop(1);
                 }
@@ -1364,11 +1404,15 @@ namespace GTEngine
                     if (script.IsTable(-1))                         // <-- Don't want to use an assert here. It's a valid case for this to not exist. In this case, we just ignore.
                     {
                         script.Push("GetSceneNodeByID");
-                        script.Push(-2);                                    // <-- 'self'
-                        script.Push(static_cast<int>(sceneNode.GetID()));   // <-- 'sceneNodeID'
-                        script.Call(2, 1);
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.PushValue(-2);                               // <-- 'self'
+                            script.Push(static_cast<int>(sceneNode.GetID()));   // <-- 'sceneNodeID'
+                            script.Call(2, 1);
 
-                        script.InsertIntoStack(-4);
+                            script.InsertIntoStack(-4);
+                        }
                     }
                     script.Pop(1);
                 }
@@ -1391,7 +1435,7 @@ namespace GTEngine
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
-                    script.Push(-2);                        // <-- 'self'
+                    script.PushValue(-2);                   // <-- 'self'
                     script.Push(deltaTimeInSeconds);        // <-- 'deltaTimeInSeconds'
                     script.Call(2, 0);
                 }
@@ -3766,6 +3810,51 @@ namespace GTEngine
                 // GTEngine.System.ScriptComponent
                 namespace ScriptComponentFFI
                 {
+                    int AddScript(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->AddScript(script.ToString(2));
+                        }
+
+                        return 0;
+                    }
+
+                    int RemoveScriptByRelativePath(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->RemoveScript(script.ToString(2));
+                        }
+
+                        return 0;
+                    }
+
+                    int RemoveScriptByIndex(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->RemoveScriptByIndex(static_cast<size_t>(script.ToInteger(2) - 1));                   // <-- Subract 1 because Lua is 1 based.
+                        }
+
+                        return 0;
+                    }
+
+                    int ReloadScript(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->ReloadScript(static_cast<size_t>(script.ToInteger(2) - 1), script.ToString(3));      // <-- Subtract 1 because Lua is 1 based.
+                        }
+
+                        return 0;
+                    }
+
+
                     int GetScriptFilePaths(GTCore::Script &script)
                     {
                         script.PushNewTable();
@@ -3777,7 +3866,8 @@ namespace GTEngine
 
                             for (size_t i = 0; i < fileCount; ++i)
                             {
-                                script.SetTableValue(-1, static_cast<int>(i + 1), component->GetScriptRelativePathByIndex(i));      // <-- i + 1 because Lua is 1-based.
+                                auto relativePath = component->GetScriptRelativePathByIndex(i);
+                                script.SetTableValue(-1, static_cast<int>(i + 1), (relativePath != nullptr) ? relativePath : "");      // <-- i + 1 because Lua is 1-based.
                             }
                         }
 

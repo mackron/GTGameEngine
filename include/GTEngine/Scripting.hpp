@@ -1064,6 +1064,35 @@ namespace GTEngine
 
                 namespace ScriptComponentFFI
                 {
+                    /// Adds a script file to the component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The relative path of the script file being added.
+                    int AddScript(GTCore::Script &script);
+
+                    /// Removes a script file from the component by it's relative path.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The relative path of the script file being removed.
+                    int RemoveScriptByRelativePath(GTCore::Script &script);
+
+                    /// Removes a script file by it's index.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The index of the script being removed.
+                    int RemoveScriptByIndex(GTCore::Script &script);
+
+                    /// Reloads a script at the given index with a new file.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The index of the script being reloaded.
+                    ///     Argument 3: The relative path of the new script.
+                    int ReloadScript(GTCore::Script &script);
+
                     /// Retrieves the names of the script files the given script component uses.
                     ///
                     /// @remarks
