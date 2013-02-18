@@ -25,9 +25,13 @@ namespace GTEngine
         /// Retrieves the relative path.
         const char* GetRelativePath() const;
 
-
         /// Retrieves the script string.
         const char* GetScriptString() const;
+
+
+
+        /// Determines if the script has an OnUpdate command.
+        bool HasOnUpdate() const;
 
 
 
@@ -42,7 +46,9 @@ namespace GTEngine
         /// The script string.
         GTCore::String scriptString;
 
-
+        
+        /// Keeps track of whether or not this definition has an OnUpdate event handler.
+        bool hasOnUpdate;
     };
 }
 
