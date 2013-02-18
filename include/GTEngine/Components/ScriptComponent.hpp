@@ -33,6 +33,11 @@ namespace GTEngine
         /// @param relativePath [in] The relative path of the file to remove.
         void RemoveScript(const char* relativePath);
 
+        /// Removes a script by it's index.
+        ///
+        /// @param index [in] The index of the script to remove.
+        void RemoveScriptByIndex(size_t index);
+
 
 
         /// Retrieves the number of scripts used by this component.
