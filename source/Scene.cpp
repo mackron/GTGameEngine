@@ -2011,6 +2011,21 @@ namespace GTEngine
                     this->physicsManager.AddGhostObject(proximityComponent.GetGhostObject(), proximityComponent.GetCollisionGroup(), proximityComponent.GetCollisionMask());
                 }
             }
+            else
+            {
+                if (GTCore::Strings::Equal(component.GetName(), ScriptComponent::Name))
+                {
+                    // In this case of a script, there's a chance that it won't want to be updated anymore or vice versa. We can get around this easily
+                    // enough by just removing and re-adding it.
+
+                    this->updateManager.RemoveObject(node);
+
+                    if (this->updateManager.NeedsUpdate(node))
+                    {
+                        this->updateManager.AddObject(node);
+                    }
+                }
+            }
         }
 
 
