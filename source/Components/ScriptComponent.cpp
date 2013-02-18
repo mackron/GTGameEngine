@@ -29,6 +29,8 @@ namespace GTEngine
             // if we get a null pointer. We do this so the names remain persistant for things like editting tools.
             auto definition = GTEngine::ScriptLibrary::Acquire(relativePath);
             this->scripts.PushBack(definition);
+
+            this->OnChanged();
         }
 
         return definition;
@@ -40,8 +42,7 @@ namespace GTEngine
         auto definition = this->GetScriptDefinitionByRelativePath(relativePath, index);
         if (definition != nullptr)
         {
-            ScriptLibrary::Unacquire(definition);
-            this->scripts.Remove(index);
+            this->RemoveScriptByIndex(index);
         }
     }
 
@@ -54,6 +55,8 @@ namespace GTEngine
         }
 
         this->scripts.Remove(index);
+
+        this->OnChanged();
     }
 
 
@@ -106,12 +109,22 @@ namespace GTEngine
 
     const char* ScriptComponent::GetScriptAbsolutePathByIndex(size_t index) const
     {
-        return this->scripts[index]->GetAbsolutePath();
+        if (this->scripts[index] != nullptr)
+        {
+            return this->scripts[index]->GetAbsolutePath();
+        }
+
+        return nullptr;
     }
 
     const char* ScriptComponent::GetScriptRelativePathByIndex(size_t index) const
     {
-        return this->scripts[index]->GetRelativePath();
+        if (this->scripts[index] != nullptr)
+        {
+            return this->scripts[index]->GetRelativePath();
+        }
+
+        return nullptr;
     }
 
 
