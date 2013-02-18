@@ -70,6 +70,25 @@ namespace GTEngine
 
 
 
+    bool ScriptComponent::HasOnUpdate() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts.buffer[i]->value;
+            assert(script != nullptr);
+            {
+                if (script->HasOnUpdate())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 

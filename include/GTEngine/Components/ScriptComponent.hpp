@@ -50,6 +50,13 @@ namespace GTEngine
 
 
 
+        /// Determines if any of the attached scripts has an OnUpdate event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs an OnUpdate event posted to the scene node.
+        bool HasOnUpdate() const;
+
+
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
 
