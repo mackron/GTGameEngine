@@ -1265,6 +1265,60 @@ namespace GTEngine
             script.Pop(1);
         }
 
+        void InstantiateSceneNode(GTCore::Script &script, SceneNode &sceneNode)
+        {
+            // We need to find the scene in GTEngine.RegisteredScenes which will be keyed by the scene. We then want to call InstantiateSceneNode() on it.
+            script.GetGlobal("GTEngine");
+            assert(script.IsTable(-1));
+            {
+                script.Push("RegisteredScenes");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    script.Push(sceneNode.GetScene());
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))                         // <-- Don't want to use an assert here. It's a valid case for this to not exist. In this case, we just ignore.
+                    {
+                        script.Push("InstantiateSceneNode");
+                        script.Push(-2);                                    // <-- 'self'
+                        script.Push(static_cast<int>(sceneNode.GetID()));   // <-- 'sceneNodeID'
+                        script.Push(&sceneNode);                            // <-- 'sceneNodePtr'
+                        script.Call(3, 0);
+                    }
+                    script.Pop(1);
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
+        }
+
+        void UninstantiateSceneNode(GTCore::Script &script, SceneNode &sceneNode)
+        {
+            // We need to find the scene in GTEngine.RegisteredScenes which will be keyed by the scene. We then want to call InstantiateSceneNode() on it.
+            script.GetGlobal("GTEngine");
+            assert(script.IsTable(-1));
+            {
+                script.Push("RegisteredScenes");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    script.Push(sceneNode.GetScene());
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))                         // <-- Don't want to use an assert here. It's a valid case for this to not exist. In this case, we just ignore.
+                    {
+                        script.Push("UninstantiateSceneNode");
+                        script.Push(-2);                                    // <-- 'self'
+                        script.Push(static_cast<int>(sceneNode.GetID()));   // <-- 'sceneNodeID'
+                        script.Call(2, 0);
+                    }
+                    script.Pop(1);
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
+        }
+
+
 
         bool LoadScriptDefinition(GTCore::Script &script, const char* scriptRelativePath, const char* scriptString)
         {
