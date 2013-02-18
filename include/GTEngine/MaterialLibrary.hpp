@@ -99,6 +99,7 @@ namespace GTEngine
 
 
         /// Deletes a material created with Create().
+        ///
         /// @param materialToDelete [in] A pointer to the material being deleted.
         static void Delete(Material* materialToDelete);
     };
