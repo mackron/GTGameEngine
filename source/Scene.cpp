@@ -1862,6 +1862,18 @@ namespace GTEngine
                         Log("Warning: Attempting to add a point-to-point constraint component without attachments. Ignoring.");
                     }
                 }
+                else
+                {
+                    if (GTCore::Strings::Equal(component.GetName(), ScriptComponent::Name))
+                    {
+                        this->updateManager.RemoveObject(node);
+
+                        if (this->updateManager.NeedsUpdate(node))
+                        {
+                            this->updateManager.AddObject(node);
+                        }
+                    }
+                }
             }
         }
 
@@ -1927,6 +1939,19 @@ namespace GTEngine
                 else if (GTCore::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
                 {
                     this->physicsManager.RemoveConstraint(*static_cast<PointToPointConstraintComponent &>(component).GetConstraint());
+                }
+                else
+                {
+                    if (GTCore::Strings::Equal(component.GetName(), ScriptComponent::Name))
+                    {
+                        // We do this exactly the same as when the script component is changed.
+                        this->updateManager.RemoveObject(node);
+
+                        if (this->updateManager.NeedsUpdate(node))
+                        {
+                            this->updateManager.AddObject(node);
+                        }
+                    }
                 }
             }
         }
