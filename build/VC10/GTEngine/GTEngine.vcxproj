@@ -338,6 +338,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\ScriptDefinition.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ScriptLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ScriptVariable.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ScriptVariableTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Serialization.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp" />
@@ -512,6 +514,7 @@
     <ClCompile Include="..\..\..\source\ScriptDefinition.cpp" />
     <ClCompile Include="..\..\..\source\Scripting.cpp" />
     <ClCompile Include="..\..\..\source\ScriptLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\ScriptVariable.cpp" />
     <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameter.cpp" />
     <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp" />
