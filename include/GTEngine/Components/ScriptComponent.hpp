@@ -57,6 +57,10 @@ namespace GTEngine
         bool HasOnUpdate() const;
 
 
+        /// Clears the component of all scripts.
+        void Clear();
+
+
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
 

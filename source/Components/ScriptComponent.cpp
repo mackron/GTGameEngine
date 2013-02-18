@@ -3,6 +3,7 @@
 #include <GTEngine/Components/ScriptComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -15,6 +16,7 @@ namespace GTEngine
 
     ScriptComponent::~ScriptComponent()
     {
+        this->Clear();
     }
 
 
@@ -42,7 +44,7 @@ namespace GTEngine
         auto iScript = this->scripts.Find(relativePath);
         if (iScript != nullptr)
         {
-            GTEngine::ScriptLibrary::Unacquire(iScript->value);
+            ScriptLibrary::Unacquire(iScript->value);
             this->scripts.RemoveByIndex(iScript->index);
         }
     }
@@ -88,17 +90,81 @@ namespace GTEngine
     }
 
 
+    void ScriptComponent::Clear()
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            ScriptLibrary::Unacquire(this->scripts.buffer[i]->value);
+        }
+        this->scripts.Clear();
+    }
+
+
 
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
     void ScriptComponent::Serialize(GTCore::Serializer &serializer) const
     {
-        (void)serializer;
+        // We will use an intermediary serializer like normal. All we need to save is the relative paths of the scripts we're using.
+        GTCore::BasicSerializer intermediarySerializer;
+        intermediarySerializer.Write(static_cast<uint32_t>(this->scripts.count));
+        
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts.buffer[i]->value;
+            if (script != nullptr)
+            {
+                intermediarySerializer.Write(script->GetRelativePath());
+            }
+        }
+
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_ScriptComponent_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void ScriptComponent::Deserialize(GTCore::Deserializer &deserializer)
     {
-        (void)deserializer;
+        // We want to clear everything before adding deserializing.
+        this->Clear();
+
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+        assert(header.id == Serialization::ChunkID_ScriptComponent_Main);
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    uint32_t scriptCount;
+                    deserializer.Read(scriptCount);
+
+                    for (uint32_t i = 0; i < scriptCount; ++i)
+                    {
+                        GTCore::String relativePath;
+                        deserializer.Read(relativePath);
+
+                        this->AddScript(relativePath.c_str());
+                    }
+
+                    break;
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing ScriptComponent. Main chunk has an unsupported version (%d).", header.version);
+
+                    deserializer.Seek(header.sizeInBytes);
+                    break;
+                }
+            }
+        }
     }
 }
