@@ -22,18 +22,13 @@ namespace GTEngine
 
     ScriptDefinition* ScriptComponent::AddScript(const char* relativePath)
     {
-        auto iScript = this->scripts.Find(relativePath);
-        if (iScript != nullptr)
+        auto definition = this->GetScriptDefinitionByRelativePath(relativePath);
+        if (definition == nullptr)
         {
-            return iScript->value;
-        }
-
-
-        // If we get here it means the script does not already exist and needs to be added.
-        auto definition = GTEngine::ScriptLibrary::Acquire(relativePath);
-        if (definition != nullptr)
-        {
-            this->scripts.Add(relativePath, definition);
+            // If we get here it means the script does not already exist and needs to be added. Note that we want to add these even
+            // if we get a null pointer. We do this so the names remain persistant for things like editting tools.
+            auto definition = GTEngine::ScriptLibrary::Acquire(relativePath);
+            this->scripts.PushBack(definition);
         }
 
         return definition;
@@ -41,11 +36,12 @@ namespace GTEngine
 
     void ScriptComponent::RemoveScript(const char* relativePath)
     {
-        auto iScript = this->scripts.Find(relativePath);
-        if (iScript != nullptr)
+        size_t index;
+        auto definition = this->GetScriptDefinitionByRelativePath(relativePath, index);
+        if (definition != nullptr)
         {
-            ScriptLibrary::Unacquire(iScript->value);
-            this->scripts.RemoveByIndex(iScript->index);
+            ScriptLibrary::Unacquire(definition);
+            this->scripts.Remove(index);
         }
     }
 
@@ -57,17 +53,54 @@ namespace GTEngine
 
     ScriptDefinition* ScriptComponent::GetScriptDefinitionByIndex(size_t index) const
     {
-        return this->scripts.buffer[index]->value;
+        return this->scripts[index];
     }
+
+    ScriptDefinition* ScriptComponent::GetScriptDefinitionByAbsolutePath(const char* absolutePath, size_t &indexOut)
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto definition = this->scripts[i];
+            assert(definition != nullptr);
+            {
+                if (GTCore::Strings::Equal(definition->GetAbsolutePath(), absolutePath))
+                {
+                    indexOut = i;
+                    return definition;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    ScriptDefinition* ScriptComponent::GetScriptDefinitionByRelativePath(const char* relativePath, size_t &indexOut)
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto definition = this->scripts[i];
+            assert(definition != nullptr);
+            {
+                if (GTCore::Strings::Equal(definition->GetRelativePath(), relativePath))
+                {
+                    indexOut = i;
+                    return definition;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
 
     const char* ScriptComponent::GetScriptAbsolutePathByIndex(size_t index) const
     {
-        return this->scripts.buffer[index]->value->GetAbsolutePath();
+        return this->scripts[index]->GetAbsolutePath();
     }
 
     const char* ScriptComponent::GetScriptRelativePathByIndex(size_t index) const
     {
-        return this->scripts.buffer[index]->value->GetRelativePath();
+        return this->scripts[index]->GetRelativePath();
     }
 
 
@@ -76,7 +109,7 @@ namespace GTEngine
     {
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
-            auto script = this->scripts.buffer[i]->value;
+            auto script = this->scripts[i];
             assert(script != nullptr);
             {
                 if (script->HasOnUpdate())
@@ -94,7 +127,7 @@ namespace GTEngine
     {
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
-            ScriptLibrary::Unacquire(this->scripts.buffer[i]->value);
+            ScriptLibrary::Unacquire(this->scripts[i]);
         }
         this->scripts.Clear();
     }
@@ -112,7 +145,7 @@ namespace GTEngine
         
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
-            auto script = this->scripts.buffer[i]->value;
+            auto script = this->scripts[i];
             if (script != nullptr)
             {
                 intermediarySerializer.Write(script->GetRelativePath());

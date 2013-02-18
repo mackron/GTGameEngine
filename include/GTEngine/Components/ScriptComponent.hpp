@@ -5,7 +5,7 @@
 
 #include "../Component.hpp"
 #include "../ScriptDefinition.hpp"
-#include <GTCore/Dictionary.hpp>
+#include <GTCore/Vector.hpp>
 
 namespace GTEngine
 {
@@ -34,6 +34,7 @@ namespace GTEngine
         void RemoveScript(const char* relativePath);
 
 
+
         /// Retrieves the number of scripts used by this component.
         size_t GetScriptCount() const;
 
@@ -41,6 +42,25 @@ namespace GTEngine
         ///
         /// @param index [in] The index of the script definition to retrieve.
         ScriptDefinition* GetScriptDefinitionByIndex(size_t index) const;
+
+
+        /// Retrieves the definition of the script by the absolute path.
+        ScriptDefinition* GetScriptDefinitionByAbsolutePath(const char* absolutePath, size_t &indexOut);
+        ScriptDefinition* GetScriptDefinitionByAbsolutePath(const char* absolutePath)
+        {
+            size_t devnull;
+            return this->GetScriptDefinitionByAbsolutePath(absolutePath, devnull);
+        }
+
+        /// Retrieves the definition of the script by the relative path.
+        ScriptDefinition* GetScriptDefinitionByRelativePath(const char* relativePath, size_t &indexOut);
+        ScriptDefinition* GetScriptDefinitionByRelativePath(const char* relativePath)
+        {
+            size_t devnull;
+            return this->GetScriptDefinitionByRelativePath(relativePath, devnull);
+        }
+
+        
 
         /// Retrieves the absolute path of the script at the given index.
         const char* GetScriptAbsolutePathByIndex(size_t index) const;
@@ -74,8 +94,8 @@ namespace GTEngine
 
     private:
 
-        /// The list of scripts attached to the component, keyed by the relative path
-        GTCore::Dictionary<ScriptDefinition*> scripts;
+        /// The list of scripts attached to the component.
+        GTCore::Vector<ScriptDefinition*> scripts;
 
 
 
