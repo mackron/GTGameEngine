@@ -51,6 +51,30 @@ namespace GTEngine
         ///     This is only performed if the owner scene is registered.
         void UninstantiateSceneNode(GTCore::Script &script, SceneNode &sceneNode);
 
+        /// Pushes a scene node object to the top of the stack.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param sceneNode [in] A reference to the scene node whose Lua counterpart is being pushed.
+        ///
+        /// @remarks
+        ///     The scene node must be instantiated on a registered scene for this to work.
+        ///     @par
+        ///     The scene node will need to be popped when no longer needed.
+        ///     @par
+        ///     This function asserts that the scene node has an OnUpdate function.
+        void PushSceneNode(GTCore::Script &script, SceneNode &sceneNode);
+
+
+        /// Calls the OnUpdate event on the given scene node.
+        ///
+        /// @param script             [in] A reference to the main script object.
+        /// @param sceneNode          [in] A reference to the scene node having it's event called.
+        /// @param deltaTimeInSeconds [in] The time since the last update. Used for time-based operations.
+        ///
+        /// @remarks
+        ///     The scene node must be instantiated on a registered scene for this to work.
+        void PostSceneNodeEvent_OnUpdate(GTCore::Script &script, SceneNode &sceneNode, double deltaTimeInSeconds);
+
 
 
         ///////////////////////////////////////////////////////////////
@@ -107,6 +131,13 @@ namespace GTEngine
             ///     Argument 2: The path to make the absolute path relative to.
             ///     Argument 3: A pointer to the scene node to create the prefrab file from.
             int CreatePrefab(GTCore::Script &script);
+
+
+            /// Determines if the given string is the name of a supported scene node event handler.
+            ///
+            /// @remarks
+            ///     Argument 1: The name of the event handler to check.
+            int IsSceneNodeEventHandler(GTCore::Script &script);
 
 
 

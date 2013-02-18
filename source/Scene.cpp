@@ -1396,12 +1396,9 @@ namespace GTEngine
 
 
         // We need to add the node to the update manager.
-        if ((node.GetFlags() & SceneNode::NoUpdate) == 0)
+        if (this->updateManager.NeedsUpdate(node))
         {
-            if (this->updateManager.NeedsUpdate(node))
-            {
-                this->updateManager.AddObject(node);
-            }
+            this->updateManager.AddObject(node);
         }
 
 

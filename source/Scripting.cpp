@@ -47,6 +47,16 @@ namespace GTEngine
 
                 "GTEngine.RegisteredScenes                 = {};"
                 "GTEngine.ScriptDefinitions                = {};"
+
+
+                "GTEngine.SceneNodeEventHandlers = "
+                "{"
+                "    'OnUpdate',"
+                "};"
+
+                "function GTEngine.IsSceneNodeEventHandler(name)"
+                "    return table.indexof(GTEngine.SceneNodeEventHandlers, name) ~= nil;"
+                "end;"
             );
 
 
@@ -635,6 +645,8 @@ namespace GTEngine
                 "            new._deleteInternalPtr = false;"
                 "        end"
                 ""
+                "        new._eventHandlers = {};"
+                ""
                 "        new:RegisterScriptComponent();"
                 "    return new;"
                 "end;"
@@ -659,8 +671,28 @@ namespace GTEngine
                 "function GTEngine.SceneNode:LinkToScript(script)"
                 "    if script ~= nil then"
                 "        for key,value in script do"
-                "            self[key] = value;"
+                "            if not GTEngine.IsSceneNodeEventHandler(key) then"
+                "                self[key] = value;"
+                "            else"
+                "                self:RegisterEventHandler(key, value);"
+                "            end;"
                 "        end;"
+                "    end;"
+                "end;"
+
+                "function GTEngine.SceneNode:RegisterEventHandler(name, value)"
+                "    if name ~= nil and value ~= nil then"
+                "        if self._eventHandlers[name] == nil then"
+                "            self._eventHandlers[name] = {};"
+                ""
+                "            self[name] = function(self, ...)"
+                "                for i,eventHandler in self._eventHandlers[name] do"
+                "                    eventHandler(self, ...);"
+                "                end;"
+                "            end;"
+                "        end;"
+                ""
+                "        self._eventHandlers[name][#self._eventHandlers[name] + 1] = value;" 
                 "    end;"
                 "end;"
 
@@ -1314,6 +1346,55 @@ namespace GTEngine
                     script.Pop(1);
                 }
                 script.Pop(1);
+            }
+            script.Pop(1);
+        }
+
+        void PushSceneNode(GTCore::Script &script, SceneNode &sceneNode)
+        {
+            script.GetGlobal("GTEngine");
+            assert(script.IsTable(-1));
+            {
+                script.Push("RegisteredScenes");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    script.Push(sceneNode.GetScene());
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))                         // <-- Don't want to use an assert here. It's a valid case for this to not exist. In this case, we just ignore.
+                    {
+                        script.Push("GetSceneNodeByID");
+                        script.Push(-2);                                    // <-- 'self'
+                        script.Push(static_cast<int>(sceneNode.GetID()));   // <-- 'sceneNodeID'
+                        script.Call(2, 1);
+
+                        script.InsertIntoStack(-4);
+                    }
+                    script.Pop(1);
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
+
+            assert(script.IsTable(-1));
+        }
+
+        void PostSceneNodeEvent_OnUpdate(GTCore::Script &script, SceneNode &sceneNode, double deltaTimeInSeconds)
+        {
+            // First we push the scene node.
+            Scripting::PushSceneNode(script, sceneNode);
+
+            // Now we just call OnUpdate on it.
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnUpdate");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Push(-2);                        // <-- 'self'
+                    script.Push(deltaTimeInSeconds);        // <-- 'deltaTimeInSeconds'
+                    script.Call(2, 0);
+                }
             }
             script.Pop(1);
         }
