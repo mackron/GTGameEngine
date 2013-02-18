@@ -45,6 +45,17 @@ namespace GTEngine
         }
     }
 
+    void ScriptComponent::RemoveScriptByIndex(size_t index)
+    {
+        auto definition = this->scripts[index];
+        if (definition != nullptr)
+        {
+            ScriptLibrary::Unacquire(definition);
+        }
+
+        this->scripts.Remove(index);
+    }
+
 
     size_t ScriptComponent::GetScriptCount() const
     {
@@ -61,7 +72,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto definition = this->scripts[i];
-            assert(definition != nullptr);
+            if (definition != nullptr)
             {
                 if (GTCore::Strings::Equal(definition->GetAbsolutePath(), absolutePath))
                 {
@@ -79,7 +90,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto definition = this->scripts[i];
-            assert(definition != nullptr);
+            if (definition != nullptr)
             {
                 if (GTCore::Strings::Equal(definition->GetRelativePath(), relativePath))
                 {
@@ -110,7 +121,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            assert(script != nullptr);
+            if (script != nullptr)
             {
                 if (script->HasOnUpdate())
                 {
@@ -149,6 +160,10 @@ namespace GTEngine
             if (script != nullptr)
             {
                 intermediarySerializer.Write(script->GetRelativePath());
+            }
+            else
+            {
+                intermediarySerializer.WriteString("");
             }
         }
 
