@@ -2,6 +2,7 @@
 
 #include <GTEngine/DefaultSceneUpdateManager.hpp>
 #include <GTEngine/SceneNode.hpp>
+#include <GTEngine/Scripting.hpp>
 
 namespace GTEngine
 {
@@ -25,7 +26,15 @@ namespace GTEngine
             // If we are a scene node, we want to ignore those with the SceneNode::NoUpdate flag.
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                return (static_cast<SceneNode&>(object).GetFlags() & SceneNode::NoUpdate) == 0;
+                auto &node = static_cast<SceneNode &>(object);
+                
+                auto scriptComponent = node.GetComponent<ScriptComponent>();
+                if (scriptComponent != nullptr && scriptComponent->HasOnUpdate())
+                {
+                    return true;
+                }
+
+                return !(node.GetFlags() & SceneNode::NoUpdate);
             }
 
             return true;
@@ -55,7 +64,7 @@ namespace GTEngine
             {
             case SceneObjectType_SceneNode:
                 {
-                    this->StepSceneNode(static_cast<SceneNode&>(*object), deltaTimeInSeconds);
+                    this->StepSceneNode(static_cast<SceneNode &>(*object), deltaTimeInSeconds);
                     break;
                 }
 
@@ -90,5 +99,17 @@ namespace GTEngine
 
         // Now we just let the scene node itself know about it.
         node.OnUpdate(deltaTimeInSeconds);
+
+
+        // Now we want to update on the scripting environment.
+        auto registeredScript = node.GetScene()->GetRegisteredScript();
+        if (registeredScript != nullptr)
+        {
+            auto scriptComponent = node.GetComponent<ScriptComponent>();
+            if (scriptComponent != nullptr && scriptComponent->HasOnUpdate())
+            {
+                Scripting::PostSceneNodeEvent_OnUpdate(*registeredScript, node, deltaTimeInSeconds);
+            }
+        }
     }
 }

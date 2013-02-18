@@ -437,6 +437,9 @@ namespace GTEngine
 
         /// Unregisters the scene from the script it is currently registered to.
         void UnregisterFromScript();
+
+        /// Retrieves a pointer ot the script that this scene is current registered to, if any.
+        GTCore::Script* GetRegisteredScript() const { return this->registeredScript; }
         
 
 
