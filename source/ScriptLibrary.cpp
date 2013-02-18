@@ -30,6 +30,11 @@ namespace GTEngine
 
     void ScriptLibrary::Shutdown()
     {
+        for (size_t i = 0; i < LoadedDefinitions.count; ++i)
+        {
+            delete LoadedDefinitions.buffer[i]->value.first;
+        }
+        LoadedDefinitions.Clear();
     }
 
 
@@ -115,5 +120,49 @@ namespace GTEngine
                 }
             }
         }
+    }
+
+    bool ScriptLibrary::IsLoaded(const char* fileName, const char* makeRelativeTo)
+    {
+        GTCore::String relativePath(fileName);
+
+        if (GTCore::Path::IsAbsolute(fileName))
+        {
+            if (makeRelativeTo != nullptr)
+            {
+                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+            }
+            else
+            {
+                GTEngine::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                return nullptr;
+            }
+        }
+
+
+        // We key the definitions by their absolute path, so we'll need to retrieve that.
+        GTCore::String absolutePath;
+        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        {
+            return LoadedDefinitions.Exists(absolutePath.c_str());
+        }
+        
+        return false;
+    }
+
+
+
+
+    /////////////////////////////////////////////////
+    // Iteration
+
+    size_t ScriptLibrary::GetLoadedDefinitionCount()
+    {
+        return LoadedDefinitions.count;
+    }
+
+    const ScriptDefinition* ScriptLibrary::GetLoadedDefinitionByIndex(size_t index)
+    {
+        return LoadedDefinitions.buffer[index]->value.first;
     }
 }

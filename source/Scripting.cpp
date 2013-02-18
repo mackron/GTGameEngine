@@ -7,6 +7,7 @@
 #include <GTEngine/IO.hpp>
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/SceneNodeClassLibrary.hpp>
+#include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Physics/CollisionShapeTypes.hpp>
 
 #include <GTCore/Path.hpp>
@@ -45,6 +46,7 @@ namespace GTEngine
                 "GTEngine.Audio                            = {};"
 
                 "GTEngine.RegisteredScenes                 = {};"
+                "GTEngine.ScriptDefinitions                = {};"
             );
 
 
@@ -632,6 +634,8 @@ namespace GTEngine
                 "            new._internalPtr       = internalPtr;"
                 "            new._deleteInternalPtr = false;"
                 "        end"
+                ""
+                "        new:RegisterScriptComponent();"
                 "    return new;"
                 "end;"
 
@@ -640,6 +644,26 @@ namespace GTEngine
                 "        GTEngine.System.SceneNode.Delete(self._internalPtr);"
                 "    end;"
                 "end;"
+
+
+                "function GTEngine.SceneNode:RegisterScriptComponent()"
+                "    local scriptComponent = self:GetComponent(GTEngine.Components.ScriptComponent);"
+                "    if scriptComponent ~= nil then"
+                "        local scriptFilePaths = scriptComponent:GetScriptFilePaths();"
+                "        for i,scriptPath in ipairs(scriptFilePaths) do"
+                "            self:LinkToScript(GTEngine.SceneNodeScripts[scriptPath]);"
+                "        end;"
+                "    end;"
+                "end;"
+
+                "function GTEngine.SceneNode:LinkToScript(script)"
+                "    if script ~= nil then"
+                "        for key,value in script do"
+                "            self[key] = value;"
+                "        end;"
+                "    end;"
+                "end;"
+
 
 
                 "function GTEngine.SceneNode:GetID()"
@@ -764,6 +788,9 @@ namespace GTEngine
                 "    local new = {};"
                 "    setmetatable(new, GTEngine.Scene);"
                 "        new._internalPtr = internalPtr;"
+                "        new._sceneNodes  = {};"
+                ""
+                "        new:InstantiateSceneNodesWithScriptComponents();"
                 "    return new;"
                 "end;"
 
@@ -774,6 +801,42 @@ namespace GTEngine
 
                 "function GTEngine.Scene:RemoveSceneNode(sceneNode)"
                 "    GTEngine.System.Scene.RemoveSceneNode(self._internalPtr, sceneNode._internalPtr);"
+                "end;"
+
+                "function GTEngine.Scene:GetSceneNodePtrs()"
+                "    return GTEngine.System.Scene.GetSceneNodePtrs(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.Scene:InstantiateSceneNodesWithScriptComponents()"
+                "    local sceneNodes = self:GetSceneNodePtrs();"
+                "    for sceneNodeID,sceneNodePtr in pairs(sceneNodes) do"
+                "        local scriptComponent = GTEngine.System.SceneNode.GetComponent(sceneNodePtr, GTEngine.Components.Script);"
+                "        if scriptComponent ~= nil then"
+                "            self:InstantiateSceneNode(sceneNodeID, sceneNodePtr);"
+                "        end;"
+                "    end;"
+                "end;"
+
+                "function GTEngine.Scene:InstantiateSceneNode(sceneNodeID, sceneNodePtr)"
+                "    local sceneNode = self._sceneNodes[sceneNodeID];"
+                "    if sceneNode == nil then"
+                "        if sceneNodePtr == nil then sceneNodePtr = GTEngine.System.Scene.GetSceneNodePtrByID(sceneNodeID) end;"
+                "        if sceneNodePtr ~= nil then"
+                "            sceneNode = GTEngine.SceneNode:Create(sceneNodePtr);"
+                "            self._sceneNodes[sceneNodeID] = sceneNode;"
+                "        end;"
+                "    end;"
+                ""
+                "    return sceneNode;"
+                "end;"
+
+                "function GTEngine.Scene:UninstantiateSceneNode(sceneNodeID)"
+                "    self._sceneNodes[sceneNodeID] = nil;"
+                "end;"
+
+                "function GTEngine.Scene:GetSceneNodeByID(sceneNodeID)"
+                "    return self:InstantiateSceneNode(sceneNodeID);"
                 "end;"
 
 
@@ -866,6 +929,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "AddSceneNode",       FFI::SystemFFI::SceneFFI::AddSceneNode);
                         script.SetTableFunction(-1, "RemoveSceneNode",    FFI::SystemFFI::SceneFFI::RemoveSceneNode);
                         script.SetTableFunction(-1, "CreateNewSceneNode", FFI::SystemFFI::SceneFFI::CreateNewSceneNode);
+                        script.SetTableFunction(-1, "GetSceneNodePtrs",   FFI::SystemFFI::SceneFFI::GetSceneNodePtrs);
                     }
                     script.Pop(1);
 
@@ -1200,6 +1264,86 @@ namespace GTEngine
             }
             script.Pop(1);
         }
+
+
+        bool LoadScriptDefinition(GTCore::Script &script, const char* scriptRelativePath, const char* scriptString)
+        {
+            // We actually want to do this as a text script for now.
+            GTCore::Strings::List<char> fullScriptString;
+            fullScriptString.Append("GTEngine.__CreateScriptClass = function()");
+            fullScriptString.Append("    local self = {}");
+            fullScriptString.Append("    "); fullScriptString.Append(scriptString);
+            fullScriptString.Append("    return self;");
+            fullScriptString.Append("end;");
+            fullScriptString.Append("GTEngine.ScriptDefinitions['"); fullScriptString.Append(scriptRelativePath); fullScriptString.Append("'] = GTEngine.__CreateScriptClass();");
+
+            return script.Execute(fullScriptString.c_str());
+        }
+
+        void UnloadScriptDefinition(GTCore::Script &script, const char* scriptRelativePath)
+        {
+            script.GetGlobal("GTEngine");
+            assert(script.IsTable(-1));
+            {
+                script.Push("ScriptDefinitions");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    script.Push(scriptRelativePath);    // Key   - The file path.
+                    script.PushNil();                   // Value - Lua object, or in this case nil so that it's removed.
+                    script.SetTableValue(-3);
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
+        }
+
+        void SyncScriptDefinitionsWithLibrary(GTCore::Script &script)
+        {
+            script.GetGlobal("GTEngine");
+            assert(script.IsTable(-1));
+            {
+                script.Push("ScriptDefinitions");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    // 1) Find the definitions to remove.
+                    GTCore::Vector<GTCore::String> definitionsToRemove;
+
+                    for (script.PushNil(); script.Next(-2); script.Pop(1))
+                    {
+                        auto relativePath = script.ToString(-2);
+                        if (!ScriptLibrary::IsLoaded(relativePath))
+                        {
+                            definitionsToRemove.PushBack(relativePath);
+                        }
+                    }
+
+                    // 2) Remove applicable definitions.
+                    for (size_t i = 0; i < definitionsToRemove.count; ++i)
+                    {
+                        script.Push(definitionsToRemove[i].c_str());
+                        script.PushNil();
+                        script.SetTableValue(-3);
+                    }
+
+
+                    // 3) Update existing definitions and add new definitions.
+                    size_t definitionCount = ScriptLibrary::GetLoadedDefinitionCount();
+                    for (size_t i = 0; i < definitionCount; ++i)
+                    {
+                        auto definition = ScriptLibrary::GetLoadedDefinitionByIndex(i);
+                        assert(definition != nullptr);
+                        {
+                            Scripting::LoadScriptDefinition(script, definition->GetRelativePath(), definition->GetScriptString());
+                        }
+                    }
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
+        }
+
 
 
 
@@ -1956,6 +2100,28 @@ namespace GTEngine
                         else
                         {
                             script.PushNil();
+                        }
+
+                        return 1;
+                    }
+
+
+                    int GetSceneNodePtrs(GTCore::Script &script)
+                    {
+                        script.PushNewTable();
+
+                        auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                        if (scene != nullptr)
+                        {
+                            size_t sceneNodeCount = scene->GetSceneNodeCount();
+                            for (size_t i = 0; i < sceneNodeCount; ++i)
+                            {
+                                auto sceneNode = scene->GetSceneNodeByIndex(i);
+                                assert(sceneNode != nullptr);
+                                {
+                                    script.SetTableValue(-1, static_cast<int>(sceneNode->GetID()), sceneNode);
+                                }
+                            }
                         }
 
                         return 1;
@@ -3454,6 +3620,30 @@ namespace GTEngine
                         else
                         {
                             script.Push(false);
+                        }
+
+                        return 1;
+                    }
+                }
+
+
+                //////////////////////////////////////////////////
+                // GTEngine.System.ScriptComponent
+                namespace ScriptComponentFFI
+                {
+                    int GetScriptFilePaths(GTCore::Script &script)
+                    {
+                        script.PushNewTable();
+
+                        auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t fileCount = component->GetScriptCount();
+
+                            for (size_t i = 0; i < fileCount; ++i)
+                            {
+                                script.SetTableValue(-1, static_cast<int>(i + 1), component->GetScriptRelativePathByIndex(i));      // <-- i + 1 because Lua is 1-based.
+                            }
                         }
 
                         return 1;

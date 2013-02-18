@@ -34,6 +34,33 @@ namespace GTEngine
         void UnregisterScene(GTCore::Script &script, Scene &scene);
 
 
+
+        ///////////////////////////////////////////////////////////////
+        // Script Definitions
+
+        /// Loads a scene node script, replacing the old one if it exists.
+        ///
+        /// @param script             [in] A reference to the script to load the scene node script into.
+        /// @param scriptRelativePath [in] The relative path of the script.
+        /// @param scriptString       [in] The actual script content.
+        bool LoadScriptDefinition(GTCore::Script &script, const char* scriptRelativePath, const char* scriptString);
+
+        /// Unloads a scene node script.
+        ///
+        /// @param script             [in] A reference to the script to unload the scene node script from.
+        /// @param scriptRelativePath [in] The relative path of the script to unload.
+        void UnloadScriptDefinition(GTCore::Script &script, const char* scriptRelativePath);
+
+        /// Synchronizes the script definitions with the script library.
+        ///
+        /// @remarks
+        ///     This will unload any no-longer-loaded definitions, load newly loaded ones and refresh existing ones.
+        ///     @par
+        ///     This does not update any scene nodes connected to the applicable definitions.
+        void SyncScriptDefinitionsWithLibrary(GTCore::Script &script);
+
+
+
         namespace FFI
         {
             /// Retrieves the executable directory.
@@ -361,6 +388,14 @@ namespace GTEngine
                     ///     Argument 1: The internal pointer to the scene that is having the scene node added to it.
                     ///     Return:     The internal pointer to the new scene node.
                     int CreateNewSceneNode(GTCore::Script &script);
+
+
+                    /// Retrieves a table containing pointers to every scene node in the scene. The key is the scene node ID and value is the C++ pointer.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene.
+                    ///     Return:     An ID/Pointer map of every scene node in the scene.
+                    int GetSceneNodePtrs(GTCore::Script &script);
                 }
 
 
@@ -977,6 +1012,15 @@ namespace GTEngine
                     int SetCapsuleCollisionShapeSize(GTCore::Script &script);
                 }
 
+
+                namespace ScriptComponentFFI
+                {
+                    /// Retrieves the names of the script files the given script component uses.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetScriptFilePaths(GTCore::Script &script);
+                }
 
 
                 namespace EditorMetadataComponentFFI
