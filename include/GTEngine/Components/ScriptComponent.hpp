@@ -38,6 +38,12 @@ namespace GTEngine
         /// @param index [in] The index of the script to remove.
         void RemoveScriptByIndex(size_t index);
 
+        /// Reloads a script at the given index.
+        ///
+        /// @param index           [in] The index of the item being reloaded.
+        /// @param newRelativePath [in] The relative path of the new script.
+        ScriptDefinition* ReloadScript(size_t index, const char* newRelativePath);
+
 
 
         /// Retrieves the number of scripts used by this component.

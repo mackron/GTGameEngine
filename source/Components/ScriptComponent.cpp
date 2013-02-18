@@ -59,6 +59,27 @@ namespace GTEngine
         this->OnChanged();
     }
 
+    ScriptDefinition* ScriptComponent::ReloadScript(size_t index, const char* newRelativePath)
+    {
+        if (this->scripts[index] != nullptr)
+        {
+            if (!GTCore::Strings::Equal(this->scripts[index]->GetRelativePath(), newRelativePath))
+            {
+                ScriptLibrary::Unacquire(this->scripts[index]);
+            }
+            else
+            {
+                // It's the same file. Don't want to do anything.
+                return this->scripts[index];
+            }
+        }
+
+        this->scripts[index] = ScriptLibrary::Acquire(newRelativePath, nullptr, true);
+        this->OnChanged();
+
+        return this->scripts[index];
+    }
+
 
     size_t ScriptComponent::GetScriptCount() const
     {
@@ -172,7 +193,7 @@ namespace GTEngine
             auto script = this->scripts[i];
             if (script != nullptr)
             {
-                intermediarySerializer.Write(script->GetRelativePath());
+                intermediarySerializer.WriteString(script->GetRelativePath());
             }
             else
             {
@@ -210,7 +231,7 @@ namespace GTEngine
                     for (uint32_t i = 0; i < scriptCount; ++i)
                     {
                         GTCore::String relativePath;
-                        deserializer.Read(relativePath);
+                        deserializer.ReadString(relativePath);
 
                         this->AddScript(relativePath.c_str());
                     }

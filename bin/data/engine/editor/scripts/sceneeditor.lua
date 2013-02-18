@@ -1148,16 +1148,130 @@ end
 
 function GTGUI.Element:ScriptComponentPanel()
     self:PanelGroupBox("Script", true);
+    self.ScriptsContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass=''                  style='' />");
+    self.NewScriptButton  = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='new-script-button' style='' />");
+    self.ScriptPanels     = {};
     
     self.CurrentNode      = nil;
     self.CurrentComponent = nil;
     self.IsUpdating       = false;
+    
+    
+    self.NewScriptButton:Button("+ New Script"):OnPressed(function()
+        self:AddScript(name);
+    end);
+    
+    
+    function self:AddScript(name)
+        local new = GTGUI.Server.New("<div parentid='" .. self.ScriptsContainer:GetID() .. "' styleclass='' style='margin-bottom:4px;' />");
+        
+        new.Header          = GTGUI.Server.New("<div parentid='" .. new:GetID()        .. "' styleclass=''                           style='child-plane:horizontal; flex-child-width:true; vertical-align:center;' />");
+        new.FilePathTextBox = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass='textbox'                    style='width:100%;' />");
+        new.CloseButton     = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass='panel-groupbox-title-cross' style='margin-left:4px;' />");
+        
+        new.FilePathTextBox:SetText(name);
+        
+        new.FilePathTextBox:OnKeyPressed(function(data)
+            if data.key == GTGUI.Keys.Enter then
+                self:ReloadScript(new);
+            end
+        end);
+        
+        new.FilePathTextBox:OnDrop(function(data)
+            if data.droppedElement.isAsset then
+                new.FilePathTextBox:SetText(data.droppedElement.path);
+                self:ReloadScript(new);
+            end
+        end);
+        
+        
+        new.CloseButton:OnPressed(function()
+            self:RemoveScript(new);
+        end);
+        
+        
+        self.ScriptPanels[#self.ScriptPanels + 1] = new;
+        
+        
+        -- If we're not updating we want to add the script to the component itself.
+        if not self.IsUpdating then
+            self.CurrentComponent:AddScript(name);
+            self.ParentPanel:OnSceneNodeChanged();
+        end
+    end
+    
+    
+    function self:RemoveScript(panelToRemove)
+        for i,panel in ipairs(self.ScriptPanels) do
+            if panel == panelToRemove then
+                self:RemoveScriptByIndex(i);
+                return;
+            end
+        end
+    end
+    
+    function self:RemoveScriptByRelativePath(relativePath)
+        for i,panel in ipairs(self.ScriptPanels) do
+            if panel.RelativePath == relativePath then
+                self:RemoveScriptByIndex(i);
+                return;
+            end
+        end
+    end
+    
+    function self:RemoveScriptByIndex(index)
+        local panel = self.ScriptPanels[index];
+        if panel ~= nil then
+            table.remove(self.ScriptPanels, index);
+            
+        
+            -- If we're not updating we want to remove the script the component itself.
+            if not self.IsUpdating then
+                self.CurrentComponent:RemoveScriptByIndex(index);
+                self.ParentPanel:OnSceneNodeChanged();
+            end
+        
+        
+            -- And now we can remove the panel completely.
+            GTGUI.Server.DeleteElement(panel);
+        end
+    end
+    
+    function self:RemoveAllScripts()
+        for i,panel in ipairs(self.ScriptPanels) do
+            GTGUI.Server.DeleteElement(panel);
+        end
+        
+        self.ScriptPanels = {};
+    end
+    
+    
+    function self:ReloadScript(panelToReloadFrom)
+        for i,panel in ipairs(self.ScriptPanels) do
+            if panel == panelToReloadFrom then
+                self:ReloadScriptByIndex(i, panelToReloadFrom.FilePathTextBox:GetText());
+                break;
+            end
+        end
+    end
+    
+    function self:ReloadScriptByIndex(index, newRelativePath)
+        self.CurrentComponent:ReloadScript(index, newRelativePath);
+        self.ParentPanel:OnSceneNodeChanged();
+    end
+    
     
     function self:Update(node)
         self.CurrentNode      = node;
         self.CurrentComponent = node:GetComponent(GTEngine.Components.Script);
         self.IsUpdating       = true;
         
+        
+        self:RemoveAllScripts();
+        
+        for i,scriptRelativePath in ipairs(self.CurrentComponent:GetScriptFilePaths()) do
+            self:AddScript(scriptRelativePath);
+        end
         
         
         self.IsUpdating       = false;
