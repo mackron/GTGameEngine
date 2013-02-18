@@ -1413,6 +1413,13 @@ namespace GTEngine
         }
 
 
+        // If the scene is registered to a script and the new scene node has a script component, we need to instantiate the scene node on the script side. If we
+        // don't do this straight away, we'll run into problems when posting events to the scene node's script.
+        if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
+        {
+            Scripting::InstantiateSceneNode(*this->registeredScript, node);
+        }
+
 
         // Event handlers need to know.
         this->PostEvent_OnObjectAdded(node);
@@ -1441,9 +1448,15 @@ namespace GTEngine
         }
 
 
+        // The scene node will need to be uninstantiated if the scene is registered to a script.
+        if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
+        {
+            Scripting::UninstantiateSceneNode(*this->registeredScript, node);
+        }
+
+
         // The node must be removed from the update manager.
         this->updateManager.RemoveObject(node);
-
 
         // Event handlers need to know.
         this->PostEvent_OnObjectRemoved(node);

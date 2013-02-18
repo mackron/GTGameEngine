@@ -33,6 +33,24 @@ namespace GTEngine
         /// @param scene  [in] A reference to the scene to unregister.
         void UnregisterScene(GTCore::Script &script, Scene &scene);
 
+        /// Instantiates a scene node on it's owner scene.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param sceneNode [in] A reference to the scene node being instantiated.
+        ///
+        /// @remarks
+        ///     This is only performed if the owner scene is registered.
+        void InstantiateSceneNode(GTCore::Script &script, SceneNode &sceneNode);
+
+        /// Uninstantiates the given scene node.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param sceneNode [in] A reference to the scene node being uninstantiated.
+        ///
+        /// @remarks
+        ///     This is only performed if the owner scene is registered.
+        void UninstantiateSceneNode(GTCore::Script &script, SceneNode &sceneNode);
+
 
 
         ///////////////////////////////////////////////////////////////
