@@ -10,7 +10,7 @@ namespace GTEngine
     GTENGINE_IMPL_COMPONENT(ScriptComponent, "Script");
 
     ScriptComponent::ScriptComponent(SceneNode &node)
-        : Component(node), scripts()
+        : Component(node), scripts(), hasOnStartupBeenCalled(false)
     {
     }
 
@@ -167,6 +167,40 @@ namespace GTEngine
         return false;
     }
 
+    bool ScriptComponent::HasOnStartup() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnStartup())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnShutdown() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnShutdown())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     void ScriptComponent::Clear()
     {
@@ -175,6 +209,22 @@ namespace GTEngine
             ScriptLibrary::Unacquire(this->scripts[i]);
         }
         this->scripts.Clear();
+    }
+
+
+    void ScriptComponent::MarkOnStartupAsCalled()
+    {
+        this->hasOnStartupBeenCalled = true;
+    }
+
+    void ScriptComponent::UnmarkOnStartupAsCalled()
+    {
+        this->hasOnStartupBeenCalled = false;
+    }
+
+    bool ScriptComponent::HasOnStartupBeenCalled() const
+    {
+        return this->hasOnStartupBeenCalled;
     }
 
 

@@ -1421,6 +1421,10 @@ namespace GTEngine
         if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
         {
             Scripting::InstantiateSceneNode(*this->registeredScript, node);
+
+            // We now need to post an OnStartup event if applicable. All scene nodes should have 1 OnStartup and 1 OnShutdown called for each time they are part
+            // of the scene.
+            this->PostSceneNodeScriptEvent_OnStartup(node);
         }
 
 
@@ -1435,6 +1439,10 @@ namespace GTEngine
         {
             this->stateStack.StageDelete(node.GetID());
         }
+
+
+        // We now need to post the OnShutdown event if applicable.
+        this->PostSceneNodeScriptEvent_OnShutdown(node);
 
 
         // What we're now going to do is call this->OnSceneNodeComponentRemoved() for every component. This allows us to avoid a lot of annoying code duplication.
@@ -2009,6 +2017,66 @@ namespace GTEngine
 
         // The event handler needs to know about this.
         this->PostEvent_OnSceneNodeComponentChanged(node, component);
+    }
+
+
+    void Scene::PostSceneNodeScriptEvent_OnStartup()
+    {
+        if (this->registeredScript != nullptr)
+        {
+            size_t sceneNodeCount = this->sceneNodes.GetCount();
+            for (size_t i = 0; i < sceneNodeCount; ++i)
+            {
+                auto sceneNode = this->sceneNodes.GetSceneNodeAtIndex(i);
+                assert(sceneNode != nullptr);
+                {
+                    this->PostSceneNodeScriptEvent_OnStartup(*sceneNode);
+                }
+            }
+        }
+    }
+
+    void Scene::PostSceneNodeScriptEvent_OnStartup(SceneNode &sceneNode)
+    {
+        if (this->registeredScript != nullptr)
+        {
+            auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
+            if (scriptComponent != nullptr && scriptComponent->HasOnStartup() && !scriptComponent->HasOnStartupBeenCalled())
+            {
+                Scripting::PostSceneNodeEvent_OnStartup(*this->registeredScript, sceneNode);
+                scriptComponent->MarkOnStartupAsCalled();
+            }
+        }
+    }
+
+
+    void Scene::PostSceneNodeScriptEvent_OnShutdown()
+    {
+        if (this->registeredScript != nullptr)
+        {
+            size_t sceneNodeCount = this->sceneNodes.GetCount();
+            for (size_t i = 0; i < sceneNodeCount; ++i)
+            {
+                auto sceneNode = this->sceneNodes.GetSceneNodeAtIndex(i);
+                assert(sceneNode != nullptr);
+                {
+                    this->PostSceneNodeScriptEvent_OnShutdown(*sceneNode);
+                }
+            }
+        }
+    }
+
+    void Scene::PostSceneNodeScriptEvent_OnShutdown(SceneNode &sceneNode)
+    {
+        if (this->registeredScript != nullptr)
+        {
+            auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
+            if (scriptComponent != nullptr && scriptComponent->HasOnShutdown() && scriptComponent->HasOnStartupBeenCalled())
+            {
+                Scripting::PostSceneNodeEvent_OnShutdown(*this->registeredScript, sceneNode);
+                scriptComponent->UnmarkOnStartupAsCalled();
+            }
+        }
     }
 
 

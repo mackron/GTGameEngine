@@ -204,7 +204,8 @@ namespace GTEngine
             this->scene.RegisterToScript(this->GetScript());
 
 
-            // TODO: We'll need to post events such as OnStartup().
+            // We'll call OnStartup on all scene nodes here.
+            this->scene.PostSceneNodeScriptEvent_OnStartup();
 
 
             this->updateManager.Enable();
@@ -222,7 +223,8 @@ namespace GTEngine
         {
             this->isUpdatingFromStateStack = true;
             {
-                // TODO: We'll need to post events such as OnShutdown().
+                // We'll call OnShutdown on all scene nodes here.
+                this->scene.PostSceneNodeScriptEvent_OnShutdown();
 
 
                 // The scene needs to be unregistered.

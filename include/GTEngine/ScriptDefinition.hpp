@@ -30,8 +30,14 @@ namespace GTEngine
 
 
 
-        /// Determines if the script has an OnUpdate command.
+        /// Determines if the script has an OnUpdate event handler.
         bool HasOnUpdate() const;
+
+        /// Determines if the script has an OnStartup event handler.
+        bool HasOnStartup() const;
+
+        /// Determines if the script has an OnShutdown event handler.
+        bool HasOnShutdown() const;
 
 
 
@@ -49,6 +55,12 @@ namespace GTEngine
         
         /// Keeps track of whether or not this definition has an OnUpdate event handler.
         bool hasOnUpdate;
+
+        /// Keeps track of whether or not this definition has an OnStartup event handler.
+        bool hasOnStartup;
+
+        /// Keeps track of whether or not this definition has an OnShutdown event handler.
+        bool hasOnShutdown;
     };
 }
 

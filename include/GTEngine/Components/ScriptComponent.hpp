@@ -87,9 +87,31 @@ namespace GTEngine
         ///     This is used to help the owner scene decide whether or not the scene node needs an OnUpdate event posted to the scene node.
         bool HasOnUpdate() const;
 
+        /// Determines if any of the attached scripts has an OnStartup event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnStartup() const;
+
+        /// Determines if any of the attached scripts has an OnStartup event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnShutdown() const;
+
 
         /// Clears the component of all scripts.
         void Clear();
+
+
+        /// Sets the internal flag keeping track of whether of not the OnStartup event has been called.
+        void MarkOnStartupAsCalled();
+
+        /// Unsets the internal flag keeping track of whether or not the OnStartup event has been called.
+        void UnmarkOnStartupAsCalled();
+
+        /// Determines whether or not the internal flag keeping track of whether or not the OnStartup event has been called is set.
+        bool HasOnStartupBeenCalled() const;
 
 
         ///////////////////////////////////////////////////////
@@ -107,6 +129,11 @@ namespace GTEngine
 
         /// The list of scripts attached to the component.
         GTCore::Vector<ScriptDefinition*> scripts;
+
+        /// This keeps track of whether or not the OnStartup event has been called. When OnStartup is called, this will be set to true. When
+        /// OnShutdown has been called, it will revert back to false. We use this for keeping track of whether or not OnStartup and OnShutdown
+        /// events should be called in certain situations. We only ever want one OnShutdown for every OnStartup and vice versa.
+        bool hasOnStartupBeenCalled;
 
 
 

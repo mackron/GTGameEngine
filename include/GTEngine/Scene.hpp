@@ -756,6 +756,23 @@ namespace GTEngine
 
 
 
+
+        /// Posts the OnStatup event to all scene nodes with script components that define that event.
+        ///
+        /// @remarks
+        ///     This only works if the scene is registered to a script.
+        void PostSceneNodeScriptEvent_OnStartup();
+        void PostSceneNodeScriptEvent_OnStartup(SceneNode &sceneNode);
+
+        /// Posts the OnStatup event to all scene nodes with script components that define that event.
+        ///
+        /// @remarks
+        ///     This only works if the scene is registered to a script.
+        void PostSceneNodeScriptEvent_OnShutdown();
+        void PostSceneNodeScriptEvent_OnShutdown(SceneNode &sceneNode);
+
+
+
     private:
 
 
