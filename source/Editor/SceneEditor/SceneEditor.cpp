@@ -6,6 +6,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/SceneNodeClassLibrary.hpp>
 #include <GTEngine/IO.hpp>
+#include <GTEngine/Scripting.hpp>
 #include <GTCore/Serializer.hpp>
 #include <GTCore/Deserializer.hpp>
 #include <GTCore/Path.hpp>
@@ -195,6 +196,17 @@ namespace GTEngine
             this->isPlaying                  = true;
             this->selectedNodesBeforePlaying = this->selectedNodes;
 
+
+            // We want to make sure the scripting environment is synced up with the script library just in case anything has changed.
+            Scripting::SyncScriptDefinitionsWithLibrary(this->GetScript());
+
+            // The scene needs to be registered.
+            this->scene.RegisterToScript(this->GetScript());
+
+
+            // TODO: We'll need to post events such as OnStartup().
+
+
             this->updateManager.Enable();
 
             this->physicsManager.EnableSimulation();
@@ -210,6 +222,13 @@ namespace GTEngine
         {
             this->isUpdatingFromStateStack = true;
             {
+                // TODO: We'll need to post events such as OnShutdown().
+
+
+                // The scene needs to be unregistered.
+                this->scene.UnregisterFromScript();
+
+
                 this->isPlaying = false;
 
 

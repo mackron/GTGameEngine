@@ -7,6 +7,7 @@ namespace GTEngine
     ScriptDefinition::ScriptDefinition(const char* absolutePathIn, const char* relativePathIn, const char* scriptStringIn)
         : absolutePath(absolutePathIn), relativePath(relativePathIn), scriptString(scriptStringIn)
     {
+        // We need to do a parse over the script and retrieve it's public variables.
     }
 
     ScriptDefinition::~ScriptDefinition()

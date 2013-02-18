@@ -47,6 +47,28 @@ namespace GTEngine
         ///
         /// @param scriptDefinitionToUnacquire [in] A pointer to the script definition to unacquire.
         static void Unacquire(const ScriptDefinition* scriptDefinitionToUnacquire);
+
+        /// Determines whether or not the given definition is currently loaded (currently acquired at least once).
+        ///
+        /// @param fileName       [in] The file name of the script being loaded, relative to the data directory.
+        /// @param makeRelativeTo [in] If 'fileName' is absolute, this will be used to turn it into a relative path.
+        ///
+        /// @remarks
+        ///     All resources must have a relative path somewhere. If it doesn't, there will be errors with serialization. Thus,
+        ///     this will return null if 'fileName' is absolute and 'makeRelativeTo' is null.
+        static bool IsLoaded(const char* fileName, const char* makeRelativeTo = nullptr);
+
+
+        /////////////////////////////////////////////////
+        // Iteration
+
+        /// Retrieves the number of the loaded definitions. This is used for iteration in conjunction with GetLoadedDefinitionByIndex().
+        static size_t GetLoadedDefinitionCount();
+
+        /// Retrieves a pointer to the loaded definition at the given index.
+        ///
+        /// @param index [in] The index of the definition to retrieve.
+        static const ScriptDefinition* GetLoadedDefinitionByIndex(size_t index);
     };
 }
 
