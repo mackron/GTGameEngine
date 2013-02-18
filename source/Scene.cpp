@@ -279,6 +279,12 @@ namespace GTEngine
 
     Scene::~Scene()
     {
+        if (this->registeredScript != nullptr)
+        {
+            Scripting::UnregisterScene(*this->registeredScript, *this);
+        }
+
+
         this->RemoveAllViewports();
         this->RemoveAllObjects();
 
