@@ -58,10 +58,10 @@ namespace GTEngine
         auto definition = this->scripts[index];
         if (definition != nullptr)
         {
-            ScriptLibrary::Unacquire(definition);
-
             // We need to remove the variables defined in the definition being removed.
             this->RemovePublicVariables(*definition);
+
+            ScriptLibrary::Unacquire(definition);
         }
 
 
@@ -76,10 +76,10 @@ namespace GTEngine
         {
             if (!GTCore::Strings::Equal(this->scripts[index]->GetRelativePath(), newRelativePath))
             {
-                ScriptLibrary::Unacquire(this->scripts[index]);
-
                 // Public variables from this definition need to be removed.
                 this->RemovePublicVariables(*this->scripts[index]);
+
+                ScriptLibrary::Unacquire(this->scripts[index]);
             }
             else
             {
