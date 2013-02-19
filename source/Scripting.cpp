@@ -111,6 +111,7 @@ namespace GTEngine
                     script.SetTableValue(-1, "Vec2",    ScriptVariableType_Vec2);
                     script.SetTableValue(-1, "Vec3",    ScriptVariableType_Vec3);
                     script.SetTableValue(-1, "Vec4",    ScriptVariableType_Vec4);
+                    script.SetTableValue(-1, "Boolean", ScriptVariableType_Boolean);
                     script.SetTableValue(-1, "String",  ScriptVariableType_String);
                     script.SetTableValue(-1, "Prefab",  ScriptVariableType_Prefab);
                 }
@@ -4037,21 +4038,50 @@ namespace GTEngine
 
                                     case ScriptVariableType_Vec3:
                                         {
+                                            auto variableVec3 = static_cast<ScriptVariable_Vec3*>(variable);
+
+                                            script.Push(variable->GetName());
+                                            script.PushNewTable();
+                                            script.SetTableValue(-1, "x", variableVec3->GetX());
+                                            script.SetTableValue(-1, "y", variableVec3->GetY());
+                                            script.SetTableValue(-1, "z", variableVec3->GetZ());
+
+                                            script.SetTableValue(-3);
+
                                             break;
                                         }
 
                                     case ScriptVariableType_Vec4:
                                         {
+                                            auto variableVec4 = static_cast<ScriptVariable_Vec4*>(variable);
+
+                                            script.Push(variable->GetName());
+                                            script.PushNewTable();
+                                            script.SetTableValue(-1, "x", variableVec4->GetX());
+                                            script.SetTableValue(-1, "y", variableVec4->GetY());
+                                            script.SetTableValue(-1, "z", variableVec4->GetZ());
+                                            script.SetTableValue(-1, "w", variableVec4->GetW());
+
+                                            script.SetTableValue(-3);
+
+                                            break;
+                                        }
+
+                                    case ScriptVariableType_Boolean:
+                                        {
+                                            script.SetTableValue(-1, variable->GetName(), static_cast<ScriptVariable_Boolean*>(variable)->GetValue());
                                             break;
                                         }
 
                                     case ScriptVariableType_String:
                                         {
+                                            script.SetTableValue(-1, variable->GetName(), static_cast<ScriptVariable_String*>(variable)->GetValue());
                                             break;
                                         }
 
                                     case ScriptVariableType_Prefab:
                                         {
+                                            script.SetTableValue(-1, variable->GetName(), static_cast<ScriptVariable_Prefab*>(variable)->GetValue());
                                             break;
                                         }
 
@@ -4093,25 +4123,44 @@ namespace GTEngine
 
                                 case ScriptVariableType_Vec3:
                                     {
-                                        script.PushNil();
+                                        auto variableVec3 = static_cast<ScriptVariable_Vec3*>(variable);
+                                        
+                                        script.PushNewTable();
+                                        script.SetTableValue(-1, "x", variableVec3->GetX());
+                                        script.SetTableValue(-1, "y", variableVec3->GetY());
+                                        script.SetTableValue(-1, "z", variableVec3->GetZ());
+
                                         break;
                                     }
 
                                 case ScriptVariableType_Vec4:
                                     {
-                                        script.PushNil();
+                                        auto variableVec4 = static_cast<ScriptVariable_Vec4*>(variable);
+                                        
+                                        script.PushNewTable();
+                                        script.SetTableValue(-1, "x", variableVec4->GetX());
+                                        script.SetTableValue(-1, "y", variableVec4->GetY());
+                                        script.SetTableValue(-1, "z", variableVec4->GetZ());
+                                        script.SetTableValue(-1, "w", variableVec4->GetW());
+
+                                        break;
+                                    }
+
+                                case ScriptVariableType_Boolean:
+                                    {
+                                        script.Push(static_cast<ScriptVariable_Boolean*>(variable)->GetValue());
                                         break;
                                     }
 
                                 case ScriptVariableType_String:
                                     {
-                                        script.PushNil();
+                                        script.Push(static_cast<ScriptVariable_String*>(variable)->GetValue());
                                         break;
                                     }
 
                                 case ScriptVariableType_Prefab:
                                     {
-                                        script.PushNil();
+                                        script.Push(static_cast<ScriptVariable_Prefab*>(variable)->GetValue());
                                         break;
                                     }
 
@@ -4210,6 +4259,10 @@ namespace GTEngine
                                 {
                                     component->SetPublicVariableValue(script.ToString(2), values.buffer[0]->value, values.buffer[1]->value, values.buffer[2]->value, values.buffer[3]->value);
                                 }
+                            }
+                            else if (script.IsBoolean(3))
+                            {
+                                component->SetPublicVariableValue(script.ToString(2), script.ToBoolean(3));
                             }
                             else if (script.IsString(3))
                             {

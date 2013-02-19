@@ -307,10 +307,12 @@ namespace GTEngine
                 }
                 else if (variable->GetType() == ScriptVariableType_Vec3)
                 {
+                    static_cast<ScriptVariable_Vec3*>(variable)->SetValue(x, x, x);
                     this->OnChanged();
                 }
                 else if (variable->GetType() == ScriptVariableType_Vec4)
                 {
+                    static_cast<ScriptVariable_Vec4*>(variable)->SetValue(x, x, x, x);
                     this->OnChanged();
                 }
             }
@@ -337,12 +339,10 @@ namespace GTEngine
         {
             if (variable->GetType() == ScriptVariableType_Vec3)
             {
+                static_cast<ScriptVariable_Vec3*>(variable)->SetValue(x, y, z);
+                this->OnChanged();
             }
         }
-
-        (void)x;
-        (void)y;
-        (void)z;
     }
 
     void ScriptComponent::SetPublicVariableValue(const char* variableName, double x, double y, double z, double w)
@@ -352,13 +352,23 @@ namespace GTEngine
         {
             if (variable->GetType() == ScriptVariableType_Vec4)
             {
+                static_cast<ScriptVariable_Vec4*>(variable)->SetValue(x, y, z, w);
+                this->OnChanged();
             }
         }
+    }
 
-        (void)x;
-        (void)y;
-        (void)z;
-        (void)w;
+    void ScriptComponent::SetPublicVariableValue(const char* variableName, bool value)
+    {
+        auto variable = this->GetPublicVariableByName(variableName);
+        if (variable != nullptr)
+        {
+            if (variable->GetType() == ScriptVariableType_Boolean)
+            {
+                static_cast<ScriptVariable_Boolean*>(variable)->SetValue(value);
+                this->OnChanged();
+            }
+        }
     }
 
     void ScriptComponent::SetPublicVariableValue(const char* variableName, const char* value)
@@ -368,13 +378,15 @@ namespace GTEngine
         {
             if (variable->GetType() == ScriptVariableType_String)
             {
+                static_cast<ScriptVariable_String*>(variable)->SetValue(value);
+                this->OnChanged();
             }
             else if (variable->GetType() == ScriptVariableType_Prefab)
             {
+                static_cast<ScriptVariable_Prefab*>(variable)->SetValue(value);
+                this->OnChanged();
             }
         }
-
-        (void)value;
     }
 
 
@@ -427,26 +439,49 @@ namespace GTEngine
 
                 case ScriptVariableType_Vec2:
                     {
+                        auto variableVec2 = static_cast<ScriptVariable_Vec2*>(variable);
+                        intermediarySerializer.Write(variableVec2->GetX());
+                        intermediarySerializer.Write(variableVec2->GetY());
+                        
                         break;
                     }
 
                 case ScriptVariableType_Vec3:
                     {
+                        auto variableVec3 = static_cast<ScriptVariable_Vec3*>(variable);
+                        intermediarySerializer.Write(variableVec3->GetX());
+                        intermediarySerializer.Write(variableVec3->GetY());
+                        intermediarySerializer.Write(variableVec3->GetZ());
+
                         break;
                     }
 
                 case ScriptVariableType_Vec4:
                     {
+                        auto variableVec4 = static_cast<ScriptVariable_Vec4*>(variable);
+                        intermediarySerializer.Write(variableVec4->GetX());
+                        intermediarySerializer.Write(variableVec4->GetY());
+                        intermediarySerializer.Write(variableVec4->GetZ());
+                        intermediarySerializer.Write(variableVec4->GetW());
+
+                        break;
+                    }
+
+                case ScriptVariableType_Boolean:
+                    {
+                        intermediarySerializer.Write(static_cast<ScriptVariable_Boolean*>(variable)->GetValue());
                         break;
                     }
 
                 case ScriptVariableType_String:
                     {
+                        intermediarySerializer.WriteString(static_cast<ScriptVariable_String*>(variable)->GetValue());
                         break;
                     }
 
                 case ScriptVariableType_Prefab:
                     {
+                        intermediarySerializer.WriteString(static_cast<ScriptVariable_Prefab*>(variable)->GetValue());
                         break;
                     }
 
@@ -522,26 +557,103 @@ namespace GTEngine
 
                         case ScriptVariableType_Vec2:
                             {
+                                double x;
+                                double y;
+                                deserializer.Read(x);
+                                deserializer.Read(y);
+
+                                auto variable = this->GetPublicVariableByName(name.c_str());
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Vec2)
+                                {
+                                    static_cast<ScriptVariable_Vec2*>(variable)->SetValue(x, y);
+                                }
+
+
                                 break;
                             }
 
                         case ScriptVariableType_Vec3:
                             {
+                                double x;
+                                double y;
+                                double z;
+                                deserializer.Read(x);
+                                deserializer.Read(y);
+                                deserializer.Read(z);
+
+                                auto variable = this->GetPublicVariableByName(name.c_str());
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Vec3)
+                                {
+                                    static_cast<ScriptVariable_Vec3*>(variable)->SetValue(x, y, z);
+                                }
+
+
                                 break;
                             }
 
                         case ScriptVariableType_Vec4:
                             {
+                                double x;
+                                double y;
+                                double z;
+                                double w;
+                                deserializer.Read(x);
+                                deserializer.Read(y);
+                                deserializer.Read(z);
+                                deserializer.Read(w);
+
+                                auto variable = this->GetPublicVariableByName(name.c_str());
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Vec4)
+                                {
+                                    static_cast<ScriptVariable_Vec4*>(variable)->SetValue(x, y, z, w);
+                                }
+
+
+                                break;
+                            }
+
+                        case ScriptVariableType_Boolean:
+                            {
+                                bool value;
+                                deserializer.Read(value);
+
+                                auto variable = this->GetPublicVariableByName(name.c_str());
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Boolean)
+                                {
+                                    static_cast<ScriptVariable_Boolean*>(variable)->SetValue(value);
+                                }
+
+
                                 break;
                             }
 
                         case ScriptVariableType_String:
                             {
+                                GTCore::String value;
+                                deserializer.ReadString(value);
+
+                                auto variable = this->GetPublicVariableByName(name.c_str());
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_String)
+                                {
+                                    static_cast<ScriptVariable_String*>(variable)->SetValue(value.c_str());
+                                }
+
+
                                 break;
                             }
 
                         case ScriptVariableType_Prefab:
                             {
+                                GTCore::String value;
+                                deserializer.ReadString(value);
+
+                                auto variable = this->GetPublicVariableByName(name.c_str());
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Prefab)
+                                {
+                                    static_cast<ScriptVariable_Prefab*>(variable)->SetValue(value.c_str());
+                                }
+
+
                                 break;
                             }
 

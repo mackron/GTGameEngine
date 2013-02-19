@@ -181,22 +181,27 @@ namespace GTEngine
 
         case ScriptVariableType_Vec3:
             {
-                return nullptr;
+                return new ScriptVariable_Vec3(static_cast<const ScriptVariable_Vec3 &>(variableToCopy));
             }
 
         case ScriptVariableType_Vec4:
             {
-                return nullptr;
+                return new ScriptVariable_Vec4(static_cast<const ScriptVariable_Vec4 &>(variableToCopy));
+            }
+
+        case ScriptVariableType_Boolean:
+            {
+                return new ScriptVariable_Boolean(static_cast<const ScriptVariable_Boolean &>(variableToCopy));
             }
 
         case ScriptVariableType_String:
             {
-                return nullptr;
+                return new ScriptVariable_String(static_cast<const ScriptVariable_String &>(variableToCopy));
             }
         
         case ScriptVariableType_Prefab:
             {
-                return nullptr;
+                return new ScriptVariable_Prefab(static_cast<const ScriptVariable_Prefab &>(variableToCopy));
             }
 
 

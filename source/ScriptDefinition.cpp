@@ -115,21 +115,159 @@ namespace GTEngine
 
                         case ScriptVariableType_Vec3:
                             {
+                                auto variableVec3 = static_cast<ScriptVariable_Vec3*>(variable);
+
+                                if (tempScript.IsNumber(-1))
+                                {
+                                    double value = tempScript.ToDouble(-2);
+                                    variableVec3->SetValue(value, value, value);
+                                }
+                                else if (tempScript.IsTable(-1))
+                                {
+                                    for (tempScript.PushNil(); tempScript.Next(-2); tempScript.Pop(1))
+                                    {
+                                        if (tempScript.IsNumber(-1))
+                                        {
+                                            double value = tempScript.ToDouble(-1);
+
+                                            if (tempScript.IsNumber(-2))
+                                            {
+                                                auto key = tempScript.ToInteger(-2);
+
+                                                if (key == 1)
+                                                {
+                                                    variableVec3->SetX(value);
+                                                }
+                                                else if (key == 2)
+                                                {
+                                                    variableVec3->SetY(value);
+                                                }
+                                                else if (key == 3)
+                                                {
+                                                    variableVec3->SetZ(value);
+                                                }
+                                            }
+                                            else if (tempScript.IsString(-2))
+                                            {
+                                                auto key = tempScript.ToString(-2);
+
+                                                if (GTCore::Strings::Equal<false>(key, "x"))
+                                                {
+                                                    variableVec3->SetX(value);
+                                                }
+                                                else if (GTCore::Strings::Equal<false>(key, "y"))
+                                                {
+                                                    variableVec3->SetY(value);
+                                                }
+                                                else if (GTCore::Strings::Equal<false>(key, "z"))
+                                                {
+                                                    variableVec3->SetZ(value);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
                                 break;
                             }
 
                         case ScriptVariableType_Vec4:
                             {
+                                auto variableVec4 = static_cast<ScriptVariable_Vec4*>(variable);
+
+                                if (tempScript.IsNumber(-1))
+                                {
+                                    double value = tempScript.ToDouble(-2);
+                                    variableVec4->SetValue(value, value, value, value);
+                                }
+                                else if (tempScript.IsTable(-1))
+                                {
+                                    for (tempScript.PushNil(); tempScript.Next(-2); tempScript.Pop(1))
+                                    {
+                                        if (tempScript.IsNumber(-1))
+                                        {
+                                            double value = tempScript.ToDouble(-1);
+
+                                            if (tempScript.IsNumber(-2))
+                                            {
+                                                auto key = tempScript.ToInteger(-2);
+
+                                                if (key == 1)
+                                                {
+                                                    variableVec4->SetX(value);
+                                                }
+                                                else if (key == 2)
+                                                {
+                                                    variableVec4->SetY(value);
+                                                }
+                                                else if (key == 3)
+                                                {
+                                                    variableVec4->SetZ(value);
+                                                }
+                                                else if (key == 4)
+                                                {
+                                                    variableVec4->SetW(value);
+                                                }
+                                            }
+                                            else if (tempScript.IsString(-2))
+                                            {
+                                                auto key = tempScript.ToString(-2);
+
+                                                if (GTCore::Strings::Equal<false>(key, "x"))
+                                                {
+                                                    variableVec4->SetX(value);
+                                                }
+                                                else if (GTCore::Strings::Equal<false>(key, "y"))
+                                                {
+                                                    variableVec4->SetY(value);
+                                                }
+                                                else if (GTCore::Strings::Equal<false>(key, "z"))
+                                                {
+                                                    variableVec4->SetZ(value);
+                                                }
+                                                else if (GTCore::Strings::Equal<false>(key, "w"))
+                                                {
+                                                    variableVec4->SetW(value);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                break;
+                            }
+
+                        case ScriptVariableType_Boolean:
+                            {
+                                if (tempScript.IsBoolean(-1))
+                                {
+                                    static_cast<ScriptVariable_Boolean*>(variable)->SetValue(tempScript.ToBoolean(-1));
+                                }
+                                else if (tempScript.IsNumber(-1))
+                                {
+                                    static_cast<ScriptVariable_Boolean*>(variable)->SetValue(tempScript.ToInteger(-1) != 0);
+                                }
+
                                 break;
                             }
 
                         case ScriptVariableType_String:
                             {
+                                if (tempScript.IsString(-1))
+                                {
+                                    static_cast<ScriptVariable_String*>(variable)->SetValue(tempScript.ToString(-1));
+                                }
+
                                 break;
                             }
 
                         case ScriptVariableType_Prefab:
                             {
+                                if (tempScript.IsString(-1))
+                                {
+                                    static_cast<ScriptVariable_Prefab*>(variable)->SetValue(tempScript.ToString(-1));
+                                }
+
                                 break;
                             }
 
@@ -278,15 +416,23 @@ namespace GTEngine
                                     }
                                     else if (GTCore::Strings::Equal("vec3", typeStart, typeEnd - typeStart))
                                     {
+                                        this->publicVariables.PushBack(new ScriptVariable_Vec3(variableName.c_str()));
                                     }
                                     else if (GTCore::Strings::Equal("vec4", typeStart, typeEnd - typeStart))
                                     {
+                                        this->publicVariables.PushBack(new ScriptVariable_Vec4(variableName.c_str()));
+                                    }
+                                    else if (GTCore::Strings::Equal("bool", typeStart, typeEnd - typeStart))
+                                    {
+                                        this->publicVariables.PushBack(new ScriptVariable_Boolean(variableName.c_str()));
                                     }
                                     else if (GTCore::Strings::Equal("string", typeStart, typeEnd - typeStart))
                                     {
+                                        this->publicVariables.PushBack(new ScriptVariable_String(variableName.c_str()));
                                     }
                                     else if (GTCore::Strings::Equal("prefab", typeStart, typeEnd - typeStart))
                                     {
+                                        this->publicVariables.PushBack(new ScriptVariable_Prefab(variableName.c_str()));
                                     }
                                 }
                             }

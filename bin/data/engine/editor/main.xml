@@ -41,6 +41,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
 <script url="scripts/vector2-input.lua" />
 <script url="scripts/vector3-input.lua" />
+<script url="scripts/vector4-input.lua" />
 
 <script url="scripts/editor-main.lua"   />
 
