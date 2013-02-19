@@ -1146,6 +1146,31 @@ function GTGUI.Element:ProximityComponentPanel()
 end
 
 
+function GTGUI.Element:ScriptVariableContainer(name, component)
+    self.Component = component;
+    self.Name      = name;
+    
+    self.NameLabel = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='' style='' />");
+    self.NameLabel:SetText(name);
+    
+    
+    function self:OnValueChanged(arg1)
+        self.Callbacks:BindOrCall("OnValueChanged", arg1);
+    end
+end
+
+function GTGUI.Element:ScriptVariableContainer_Number(name, component)
+    self:ScriptVariableContainer(name, component);
+    
+    self.ValueTextBox = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:72px' />");
+    self.ValueTextBox:SetText(tostring(component:GetPublicVariableValue(name)));
+    
+    self.ValueTextBox:OnTextChanged(function()
+        self.Component:SetPublicVariableValue(self.Name, tonumber(self.ValueTextBox:GetText()));
+        self:OnValueChanged();
+    end);
+end
+
 function GTGUI.Element:ScriptComponentPanel()
     self:PanelGroupBox("Script", true);
     self.ScriptsContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass=''                  style='' />");
@@ -1165,9 +1190,11 @@ function GTGUI.Element:ScriptComponentPanel()
     function self:AddScript(name)
         local new = GTGUI.Server.New("<div parentid='" .. self.ScriptsContainer:GetID() .. "' styleclass='' style='margin-bottom:4px;' />");
         
-        new.Header          = GTGUI.Server.New("<div parentid='" .. new:GetID()        .. "' styleclass=''                           style='child-plane:horizontal; flex-child-width:true; vertical-align:center;' />");
-        new.FilePathTextBox = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass='textbox'                    style='width:100%;' />");
-        new.CloseButton     = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass='panel-groupbox-title-cross' style='margin-left:4px;' />");
+        ---------------------------------
+        -- Header
+        new.Header             = GTGUI.Server.New("<div parentid='" .. new:GetID()        .. "' styleclass=''                           style='child-plane:horizontal; flex-child-width:true; vertical-align:center;' />");
+        new.FilePathTextBox    = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass='textbox'                    style='width:100%;' />");
+        new.CloseButton        = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass='panel-groupbox-title-cross' style='margin-left:4px;' />");
         
         new.FilePathTextBox:SetText(name);
         
@@ -1190,6 +1217,7 @@ function GTGUI.Element:ScriptComponentPanel()
         end);
         
         
+
         self.ScriptPanels[#self.ScriptPanels + 1] = new;
         
         
@@ -1197,6 +1225,34 @@ function GTGUI.Element:ScriptComponentPanel()
         if not self.IsUpdating then
             self.CurrentComponent:AddScript(name);
             self.ParentPanel:OnSceneNodeChanged();
+        end
+        
+        
+        ---------------------------------
+        -- Variables.
+        --
+        -- These need to be done after adding the script to the component.
+        new.VariablesContainer = GTGUI.Server.New("<div parentid='" .. new:GetID() .. "' styleclass='' style='' />");
+        new.Variables          = {};
+        
+        -- We need to grab the names and types of the public variables in the given script.
+        local publicVariableNamesAndTypes = self.CurrentComponent:GetPublicVariableNamesAndTypesByIndex(#self.ScriptPanels);
+        for i,nameAndType in ipairs(publicVariableNamesAndTypes) do
+            if nameAndType.type ~= GTEngine.ScriptVariableTypes.Unknown and nameAndType.type ~= GTEngine.ScriptVariableTypes.None then
+                local variableContainer = GTGUI.Server.New("<div parentid='" .. new.VariablesContainer:GetID() .. "' styleclass='script-variable-container' style='' />");
+            
+                if     nameAndType.type == GTEngine.ScriptVariableTypes.Number then variableContainer:ScriptVariableContainer_Number(nameAndType.name, self.CurrentComponent);
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec2   then
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec3   then
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec4   then
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.String then
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Prefab then
+                end
+                
+                variableContainer:OnValueChanged(function()
+                    self.ParentPanel:OnSceneNodeChanged();
+                end);
+            end
         end
     end
     
@@ -1277,6 +1333,7 @@ function GTGUI.Element:ScriptComponentPanel()
         self.IsUpdating       = false;
     end
     
+
     return self;
 end
 

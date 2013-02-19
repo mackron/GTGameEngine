@@ -275,6 +275,65 @@ namespace GTEngine
     }
 
 
+    void ScriptComponent::SetPublicVariableValue(const char* variableName, double x)
+    {
+        auto variable = this->GetPublicVariableByName(variableName);
+        if (variable != nullptr)
+        {
+            if (variable->GetType() == ScriptVariableType_Number)
+            {
+                static_cast<ScriptVariable_Number*>(variable)->SetValue(x);
+                this->OnChanged();
+            }
+            else
+            {
+                // TODO: Implement these conditions!
+
+                // Also valid for vector types in which case we'll set every component to this value.
+                if (variable->GetType() == ScriptVariableType_Vec2)
+                {
+                }
+                else if (variable->GetType() == ScriptVariableType_Vec3)
+                {
+                }
+                else if (variable->GetType() == ScriptVariableType_Vec4)
+                {
+                }
+            }
+        }
+    }
+
+    void ScriptComponent::SetPublicVariableValue(const char* variableName, double x, double y)
+    {
+        (void)variableName;
+        (void)x;
+        (void)y;
+    }
+
+    void ScriptComponent::SetPublicVariableValue(const char* variableName, double x, double y, double z)
+    {
+        (void)variableName;
+        (void)x;
+        (void)y;
+        (void)z;
+    }
+
+    void ScriptComponent::SetPublicVariableValue(const char* variableName, double x, double y, double z, double w)
+    {
+        (void)variableName;
+        (void)x;
+        (void)y;
+        (void)z;
+        (void)w;
+    }
+
+    void ScriptComponent::SetPublicVariableValue(const char* variableName, const char* value)
+    {
+        (void)variableName;
+        (void)value;
+    }
+
+
 
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.

@@ -366,6 +366,17 @@ new-script-button:pushed
 }
 
 
+script-variable-container
+{
+    child-plane:      horizontal
+    vertical-align:   center
+    horizontal-align: right
+    text-color:       #999
+    padding:          4px;
+    flex-child-width: true
+}
+
+
 
 physics-button-container
 {

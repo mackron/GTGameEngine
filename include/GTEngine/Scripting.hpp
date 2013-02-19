@@ -1125,6 +1125,23 @@ namespace GTEngine
                     ///
                     ///     The return value is an array of {name, type} types.
                     int GetPublicVariableNamesAndTypesByIndex(GTCore::Script &script);
+
+                    /// Retrieves the value of the public variable with the given name.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The name of the variable whose value is being retrieved.
+                    int GetPublicVariableValue(GTCore::Script &script);
+
+                    /// Sets the value of the public variable with the given name.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The name of the variable whose value is being set.
+                    ///     Argument 3: The value to assign to the variable.
+                    ///
+                    ///     If the value is an unsupported type, nothing will be changed.
+                    int SetPublicVariableValue(GTCore::Script &script);
                 }
 
 
