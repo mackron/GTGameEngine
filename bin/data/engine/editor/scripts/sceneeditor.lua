@@ -1201,6 +1201,7 @@ function GTGUI.Element:ScriptComponentPanel()
         new.FilePathTextBox:OnKeyPressed(function(data)
             if data.key == GTGUI.Keys.Enter then
                 self:ReloadScript(new);
+                self:ReloadVariables(new);
             end
         end);
         
@@ -1208,6 +1209,7 @@ function GTGUI.Element:ScriptComponentPanel()
             if data.droppedElement.isAsset then
                 new.FilePathTextBox:SetText(data.droppedElement.path);
                 self:ReloadScript(new);
+                self:ReloadVariables(new);
             end
         end);
         
@@ -1235,25 +1237,8 @@ function GTGUI.Element:ScriptComponentPanel()
         new.VariablesContainer = GTGUI.Server.New("<div parentid='" .. new:GetID() .. "' styleclass='' style='' />");
         new.Variables          = {};
         
-        -- We need to grab the names and types of the public variables in the given script.
-        local publicVariableNamesAndTypes = self.CurrentComponent:GetPublicVariableNamesAndTypesByIndex(#self.ScriptPanels);
-        for i,nameAndType in ipairs(publicVariableNamesAndTypes) do
-            if nameAndType.type ~= GTEngine.ScriptVariableTypes.Unknown and nameAndType.type ~= GTEngine.ScriptVariableTypes.None then
-                local variableContainer = GTGUI.Server.New("<div parentid='" .. new.VariablesContainer:GetID() .. "' styleclass='script-variable-container' style='' />");
-            
-                if     nameAndType.type == GTEngine.ScriptVariableTypes.Number then variableContainer:ScriptVariableContainer_Number(nameAndType.name, self.CurrentComponent);
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec2   then
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec3   then
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec4   then
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.String then
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Prefab then
-                end
-                
-                variableContainer:OnValueChanged(function()
-                    self.ParentPanel:OnSceneNodeChanged();
-                end);
-            end
-        end
+        -- We initialize the variables by just "reloading" them.
+        self:ReloadVariables(new);
     end
     
     
@@ -1314,6 +1299,32 @@ function GTGUI.Element:ScriptComponentPanel()
     function self:ReloadScriptByIndex(index, newRelativePath)
         self.CurrentComponent:ReloadScript(index, newRelativePath);
         self.ParentPanel:OnSceneNodeChanged();
+    end
+    
+    
+    function self:ReloadVariables(panel)
+        panel.VariablesContainer:DeleteAllChildren();
+        panel.Variables = {};
+    
+        -- We need to grab the names and types of the public variables in the given script.
+        local publicVariableNamesAndTypes = self.CurrentComponent:GetPublicVariableNamesAndTypesByIndex(#self.ScriptPanels);
+        for i,nameAndType in ipairs(publicVariableNamesAndTypes) do
+            if nameAndType.type ~= GTEngine.ScriptVariableTypes.Unknown and nameAndType.type ~= GTEngine.ScriptVariableTypes.None then
+                local variableContainer = GTGUI.Server.New("<div parentid='" .. panel.VariablesContainer:GetID() .. "' styleclass='script-variable-container' style='' />");
+            
+                if     nameAndType.type == GTEngine.ScriptVariableTypes.Number then variableContainer:ScriptVariableContainer_Number(nameAndType.name, self.CurrentComponent);
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec2   then
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec3   then
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec4   then
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.String then
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Prefab then
+                end
+                
+                variableContainer:OnValueChanged(function()
+                    self.ParentPanel:OnSceneNodeChanged();
+                end);
+            end
+        end
     end
     
     
