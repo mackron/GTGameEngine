@@ -349,20 +349,27 @@ new-component-menu-item:pushed
 
 new-script-button
 {
-    width:  auto
-    height: auto
+    width:                  auto
+    height:                 auto
     
-    text-color: #888
+    font-style:             bold
+    text-color:             std-text-color
+    background-image-color: std-text-color
+    
+    child-plane:            horizontal
+    vertical-align:         center
 }
 
 new-script-button:hovered
 {
-    text-color: #aaa
+    text-color:             #ccc
+    background-image-color: #ccc
 }
 
 new-script-button:pushed
 {
-    text-color: #ccc
+    text-color:             #eee
+    background-image-color: #eee
 }
 
 
