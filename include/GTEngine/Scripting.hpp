@@ -1116,6 +1116,15 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the component.
                     int GetScriptFilePaths(GTCore::Script &script);
+
+                    /// Retrieves an array containing the names and types of the public variables of the script definition at the given index.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The index of the script definition whose public variables are being retried.
+                    ///
+                    ///     The return value is an array of {name, type} types.
+                    int GetPublicVariableNamesAndTypesByIndex(GTCore::Script &script);
                 }
 
 

@@ -101,6 +101,20 @@ namespace GTEngine
                     script.SetTableValue(-1, "ModelConvexHulls", CollisionShapeType_ModelConvexHulls);       // A special type representing the case when the convex hulls from the model is being used.
                 }
                 script.SetTableValue(-3);
+
+                script.Push("ScriptVariableTypes");
+                script.PushNewTable();
+                {
+                    script.SetTableValue(-1, "Unknown", ScriptVariableType_Unknown);
+                    script.SetTableValue(-1, "None",    ScriptVariableType_None);
+                    script.SetTableValue(-1, "Number",  ScriptVariableType_Number);
+                    script.SetTableValue(-1, "Vec2",    ScriptVariableType_Vec2);
+                    script.SetTableValue(-1, "Vec3",    ScriptVariableType_Vec3);
+                    script.SetTableValue(-1, "Vec4",    ScriptVariableType_Vec4);
+                    script.SetTableValue(-1, "String",  ScriptVariableType_String);
+                    script.SetTableValue(-1, "Prefab",  ScriptVariableType_Prefab);
+                }
+                script.SetTableValue(-3);
             }
             script.Pop(1);
 
@@ -591,6 +605,10 @@ namespace GTEngine
 
                 "function GTEngine.ScriptComponent:GetScriptFilePaths()"
                 "    return GTEngine.System.ScriptComponent.GetScriptFilePaths(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ScriptComponent:GetPublicVariableNamesAndTypesByIndex(index)"
+                "    return GTEngine.System.ScriptComponent.GetPublicVariableNamesAndTypesByIndex(self._internalPtr, index);"
                 "end;"
 
 
@@ -1139,11 +1157,12 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "AddScript",                    FFI::SystemFFI::ScriptComponentFFI::AddScript);
-                        script.SetTableFunction(-1, "RemoveScriptByRelativePath",   FFI::SystemFFI::ScriptComponentFFI::RemoveScriptByRelativePath);
-                        script.SetTableFunction(-1, "RemoveScriptByIndex",          FFI::SystemFFI::ScriptComponentFFI::RemoveScriptByIndex);
-                        script.SetTableFunction(-1, "ReloadScript",                 FFI::SystemFFI::ScriptComponentFFI::ReloadScript);
-                        script.SetTableFunction(-1, "GetScriptFilePaths",           FFI::SystemFFI::ScriptComponentFFI::GetScriptFilePaths);
+                        script.SetTableFunction(-1, "AddScript",                                FFI::SystemFFI::ScriptComponentFFI::AddScript);
+                        script.SetTableFunction(-1, "RemoveScriptByRelativePath",               FFI::SystemFFI::ScriptComponentFFI::RemoveScriptByRelativePath);
+                        script.SetTableFunction(-1, "RemoveScriptByIndex",                      FFI::SystemFFI::ScriptComponentFFI::RemoveScriptByIndex);
+                        script.SetTableFunction(-1, "ReloadScript",                             FFI::SystemFFI::ScriptComponentFFI::ReloadScript);
+                        script.SetTableFunction(-1, "GetScriptFilePaths",                       FFI::SystemFFI::ScriptComponentFFI::GetScriptFilePaths);
+                        script.SetTableFunction(-1, "GetPublicVariableNamesAndTypesByIndex",    FFI::SystemFFI::ScriptComponentFFI::GetPublicVariableNamesAndTypesByIndex);
                     }
                     script.Pop(1);
 
@@ -3902,6 +3921,36 @@ namespace GTEngine
                             {
                                 auto relativePath = component->GetScriptRelativePathByIndex(i);
                                 script.SetTableValue(-1, static_cast<int>(i + 1), (relativePath != nullptr) ? relativePath : "");      // <-- i + 1 because Lua is 1-based.
+                            }
+                        }
+
+                        return 1;
+                    }
+
+                    int GetPublicVariableNamesAndTypesByIndex(GTCore::Script &script)
+                    {
+                        script.PushNewTable();
+
+                        auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto definition = component->GetScriptDefinitionByIndex(static_cast<size_t>(script.ToInteger(2) - 1));  // <-- minus 1 because Lua is 1-based.
+                            if (definition != nullptr)
+                            {
+                                size_t variableCount = definition->GetPublicVariableCount();
+                                for (size_t i = 0; i < variableCount; ++i)
+                                {
+                                    auto variable = definition->GetPublicVariableByIndex(i);
+                                    assert(variable != nullptr);
+                                    {
+                                        script.Push(static_cast<int>(i + 1));       // <-- The index/key. +1 because Lua is 1 based.
+                                        script.PushNewTable();
+                                        script.SetTableValue(-1, "name", variable->GetName());
+                                        script.SetTableValue(-1, "type", static_cast<int>(variable->GetType()));
+
+                                        script.SetTableValue(-3);
+                                    }
+                                }
                             }
                         }
 
