@@ -1186,7 +1186,10 @@ function GTGUI.Element:ScriptComponentPanel()
     self.IsUpdating       = false;
     
     
-    self.NewScriptButton:Button("+ New Script"):OnPressed(function()
+    GTGUI.Server.New("<div parentid='" .. self.NewScriptButton:GetID() .. "' styleclass='' style='transparent-mouse-input:true; width:16px; height:16px; background-image:std-plus; background-image-color:inherit' />");
+    GTGUI.Server.New("<div parentid='" .. self.NewScriptButton:GetID() .. "' styleclass='' style='transparent-mouse-input:true; width:auto;'>New Script</div>");
+    
+    self.NewScriptButton:OnPressed(function()
         self:AddScript(name);
     end);
     
