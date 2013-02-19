@@ -4,8 +4,8 @@
 
 namespace GTEngine
 {
-    ScriptVariable::ScriptVariable(ScriptVariableType typeIn)
-        : type(typeIn)
+    ScriptVariable::ScriptVariable(ScriptVariableType typeIn, const char* nameIn)
+        : type(typeIn), name(nameIn)
     {
     }
 
@@ -17,5 +17,24 @@ namespace GTEngine
     ScriptVariableType ScriptVariable::GetType() const
     {
         return this->type;
+    }
+
+    const char* ScriptVariable::GetName() const
+    {
+        return this->name.c_str();
+    }
+
+
+
+    /////////////////////////////////////
+    // Number
+
+    ScriptVariable_Number::ScriptVariable_Number(const char* name)
+        : ScriptVariable(ScriptVariableType_Number, name)
+    {
+    }
+
+    ScriptVariable_Number::~ScriptVariable_Number()
+    {
     }
 }

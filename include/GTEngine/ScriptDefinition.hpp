@@ -3,7 +3,9 @@
 #ifndef __GTEngine_ScriptDefinition_hpp_
 #define __GTEngine_ScriptDefinition_hpp_
 
+#include "ScriptVariable.hpp"
 #include <GTCore/String.hpp>
+#include <GTCore/Vector.hpp>
 
 namespace GTEngine
 {
@@ -43,6 +45,18 @@ namespace GTEngine
 
     private:
 
+        /// Clears the public variables.
+        void ClearPublicVariables();
+
+        /// Parses the given script and fills the list of public variables with initial values.
+        ///
+        /// @remarks
+        ///     This will clear the public variables.
+        void ParseForPublicVariables();
+
+
+    private:
+
         /// The absolute path of the script.
         GTCore::String absolutePath;
 
@@ -61,6 +75,10 @@ namespace GTEngine
 
         /// Keeps track of whether or not this definition has an OnShutdown event handler.
         bool hasOnShutdown;
+
+
+        /// The list of public variables, in the order they are defined (hopefully).
+        GTCore::Vector<ScriptVariable*> publicVariables;
     };
 }
 
