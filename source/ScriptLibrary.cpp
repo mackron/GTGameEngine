@@ -156,6 +156,52 @@ namespace GTEngine
         return false;
     }
 
+    bool ScriptLibrary::Reload(const char* fileName, const char* makeRelativeTo)
+    {
+        GTCore::String relativePath(fileName);
+
+        if (GTCore::Path::IsAbsolute(fileName))
+        {
+            if (makeRelativeTo != nullptr)
+            {
+                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+            }
+            else
+            {
+                GTEngine::PostError("Attempting to reload a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                return false;
+            }
+        }
+
+
+        // We key the definitions by their absolute path, so we'll need to retrieve that.
+        GTCore::String absolutePath;
+        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        {
+            auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
+            if (iDefinition != nullptr)
+            {
+                auto definition = iDefinition->value.first;
+                assert(definition != nullptr);
+                {
+                    // This next part is easy. We just destruct and reconstruct, while leaving the pointer as-is. It's important that we keep the same pointer because
+                    // other objects may be referencing it.
+                    GTCore::String scriptString;
+                    if (GTCore::IO::OpenAndReadTextFile(absolutePath.c_str(), scriptString))
+                    {
+                        definition->~ScriptDefinition();
+                        new (definition) ScriptDefinition(absolutePath.c_str(), relativePath.c_str(), scriptString.c_str());
+
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // We fall through to here if we fail to reload for any reason.
+        return false;
+    }
+
 
 
 
