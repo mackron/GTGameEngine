@@ -131,6 +131,16 @@ namespace GTEngine
         }
 
 
+        /// Set the value of a public variable.
+        ///
+        /// @param name [in] The name of the variable being set.
+        void SetPublicVariableValue(const char* variableName, double x);
+        void SetPublicVariableValue(const char* variableName, double x, double y);
+        void SetPublicVariableValue(const char* variableName, double x, double y, double z);
+        void SetPublicVariableValue(const char* variableName, double x, double y, double z, double w);
+        void SetPublicVariableValue(const char* variableName, const char* value);
+
+
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
 

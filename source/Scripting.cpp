@@ -611,6 +611,14 @@ namespace GTEngine
                 "    return GTEngine.System.ScriptComponent.GetPublicVariableNamesAndTypesByIndex(self._internalPtr, index);"
                 "end;"
 
+                "function GTEngine.ScriptComponent:GetPublicVariableValue(name)"
+                "    return GTEngine.System.ScriptComponent.GetPublicVariableValue(self._internalPtr, name);"
+                "end;"
+
+                "function GTEngine.ScriptComponent:SetPublicVariableValue(name, value)"
+                "    return GTEngine.System.ScriptComponent.SetPublicVariableValue(self._internalPtr, name, value);"
+                "end;"
+
 
 
                 // EditorMetadataComponent
@@ -1163,6 +1171,8 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ReloadScript",                             FFI::SystemFFI::ScriptComponentFFI::ReloadScript);
                         script.SetTableFunction(-1, "GetScriptFilePaths",                       FFI::SystemFFI::ScriptComponentFFI::GetScriptFilePaths);
                         script.SetTableFunction(-1, "GetPublicVariableNamesAndTypesByIndex",    FFI::SystemFFI::ScriptComponentFFI::GetPublicVariableNamesAndTypesByIndex);
+                        script.SetTableFunction(-1, "GetPublicVariableValue",                   FFI::SystemFFI::ScriptComponentFFI::GetPublicVariableValue);
+                        script.SetTableFunction(-1, "SetPublicVariableValue",                   FFI::SystemFFI::ScriptComponentFFI::SetPublicVariableValue);
                     }
                     script.Pop(1);
 
@@ -3955,6 +3965,98 @@ namespace GTEngine
                         }
 
                         return 1;
+                    }
+
+                    int GetPublicVariableValue(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto variable = component->GetPublicVariableByName(script.ToString(2));
+                            if (variable != nullptr)
+                            {
+                                switch (variable->GetType())
+                                {
+                                case ScriptVariableType_Number:
+                                    {
+                                        script.Push(static_cast<ScriptVariable_Number*>(variable)->GetValue());
+                                        break;
+                                    }
+
+                                case ScriptVariableType_Vec2:
+                                    {
+                                        script.PushNil();
+                                        break;
+                                    }
+
+                                case ScriptVariableType_Vec3:
+                                    {
+                                        script.PushNil();
+                                        break;
+                                    }
+
+                                case ScriptVariableType_Vec4:
+                                    {
+                                        script.PushNil();
+                                        break;
+                                    }
+
+                                case ScriptVariableType_String:
+                                    {
+                                        script.PushNil();
+                                        break;
+                                    }
+
+                                case ScriptVariableType_Prefab:
+                                    {
+                                        script.PushNil();
+                                        break;
+                                    }
+
+
+                                default:
+                                    {
+                                        script.PushNil();
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                script.PushNil();
+                            }
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+
+                        return 1;
+                    }
+
+
+                    int SetPublicVariableValue(GTCore::Script &script)
+                    {
+                        auto component = static_cast<ScriptComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            if (script.IsNumber(3))
+                            {
+                                component->SetPublicVariableValue(script.ToString(2), script.ToDouble(3));
+                            }
+                            else if (script.IsTable(3))
+                            {
+                                // TODO: Implement this!
+
+                                // Value could be a vector type. We'll need to look at the contents of the table to determine the type.
+                            }
+                            else if (script.IsString(3))
+                            {
+                                component->SetPublicVariableValue(script.ToString(2), script.ToString(3));
+                            }
+                        }
+
+                        return 0;
                     }
                 }
 
