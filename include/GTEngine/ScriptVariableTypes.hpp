@@ -14,6 +14,7 @@ namespace GTEngine
         ScriptVariableType_Vec2,
         ScriptVariableType_Vec3,
         ScriptVariableType_Vec4,
+        ScriptVariableType_Boolean,
         ScriptVariableType_String,
         ScriptVariableType_Prefab,
     };

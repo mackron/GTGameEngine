@@ -302,12 +302,16 @@ namespace GTEngine
                 // Also valid for vector types in which case we'll set every component to this value.
                 if (variable->GetType() == ScriptVariableType_Vec2)
                 {
+                    static_cast<ScriptVariable_Vec2*>(variable)->SetValue(x, x);
+                    this->OnChanged();
                 }
                 else if (variable->GetType() == ScriptVariableType_Vec3)
                 {
+                    this->OnChanged();
                 }
                 else if (variable->GetType() == ScriptVariableType_Vec4)
                 {
+                    this->OnChanged();
                 }
             }
         }
@@ -315,14 +319,27 @@ namespace GTEngine
 
     void ScriptComponent::SetPublicVariableValue(const char* variableName, double x, double y)
     {
-        (void)variableName;
-        (void)x;
-        (void)y;
+        auto variable = this->GetPublicVariableByName(variableName);
+        if (variable != nullptr)
+        {
+            if (variable->GetType() == ScriptVariableType_Vec2)
+            {
+                static_cast<ScriptVariable_Vec2*>(variable)->SetValue(x, y);
+                this->OnChanged();
+            }
+        }
     }
 
     void ScriptComponent::SetPublicVariableValue(const char* variableName, double x, double y, double z)
     {
-        (void)variableName;
+        auto variable = this->GetPublicVariableByName(variableName);
+        if (variable != nullptr)
+        {
+            if (variable->GetType() == ScriptVariableType_Vec3)
+            {
+            }
+        }
+
         (void)x;
         (void)y;
         (void)z;
@@ -330,7 +347,14 @@ namespace GTEngine
 
     void ScriptComponent::SetPublicVariableValue(const char* variableName, double x, double y, double z, double w)
     {
-        (void)variableName;
+        auto variable = this->GetPublicVariableByName(variableName);
+        if (variable != nullptr)
+        {
+            if (variable->GetType() == ScriptVariableType_Vec4)
+            {
+            }
+        }
+
         (void)x;
         (void)y;
         (void)z;
@@ -339,7 +363,17 @@ namespace GTEngine
 
     void ScriptComponent::SetPublicVariableValue(const char* variableName, const char* value)
     {
-        (void)variableName;
+        auto variable = this->GetPublicVariableByName(variableName);
+        if (variable != nullptr)
+        {
+            if (variable->GetType() == ScriptVariableType_String)
+            {
+            }
+            else if (variable->GetType() == ScriptVariableType_Prefab)
+            {
+            }
+        }
+
         (void)value;
     }
 

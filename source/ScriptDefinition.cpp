@@ -65,6 +65,51 @@ namespace GTEngine
 
                         case ScriptVariableType_Vec2:
                             {
+                                auto variableVec2 = static_cast<ScriptVariable_Vec2*>(variable);
+
+                                if (tempScript.IsNumber(-1))
+                                {
+                                    double value = tempScript.ToDouble(-2);
+                                    variableVec2->SetValue(value, value);
+                                }
+                                else if (tempScript.IsTable(-1))
+                                {
+                                    for (tempScript.PushNil(); tempScript.Next(-2); tempScript.Pop(1))
+                                    {
+                                        if (tempScript.IsNumber(-1))
+                                        {
+                                            double value = tempScript.ToDouble(-1);
+
+                                            if (tempScript.IsNumber(-2))
+                                            {
+                                                auto key = tempScript.ToInteger(-2);
+
+                                                if (key == 1)
+                                                {
+                                                    variableVec2->SetX(value);
+                                                }
+                                                else if (key == 2)
+                                                {
+                                                    variableVec2->SetY(value);
+                                                }
+                                            }
+                                            else if (tempScript.IsString(-2))
+                                            {
+                                                auto key = tempScript.ToString(-2);
+
+                                                if (GTCore::Strings::Equal<false>(key, "x"))
+                                                {
+                                                    variableVec2->SetX(value);
+                                                }
+                                                else if (GTCore::Strings::Equal<false>(key, "y"))
+                                                {
+                                                    variableVec2->SetY(value);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
                                 break;
                             }
 
@@ -224,10 +269,11 @@ namespace GTEngine
                                     {
                                         this->publicVariables.PushBack(new ScriptVariable_Number(variableName.c_str()));
                                     }
-                                    /*else if (GTCore::Strings::Equal("vec2", typeStart, typeEnd - typeStart))
+                                    else if (GTCore::Strings::Equal("vec2", typeStart, typeEnd - typeStart))
                                     {
+                                        this->publicVariables.PushBack(new ScriptVariable_Vec2(variableName.c_str()));
                                     }
-                                    else if (GTCore::Strings::Equal("vec3", typeStart, typeEnd - typeStart))
+                                    /*else if (GTCore::Strings::Equal("vec3", typeStart, typeEnd - typeStart))
                                     {
                                     }
                                     else if (GTCore::Strings::Equal("vec4", typeStart, typeEnd - typeStart))
