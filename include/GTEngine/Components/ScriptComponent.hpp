@@ -114,6 +114,23 @@ namespace GTEngine
         bool HasOnStartupBeenCalled() const;
 
 
+
+        /// Retrieves a pointer to a public variable by it's name.
+        ///
+        /// @param name [in] The name of the variable to retrieve.
+        ///
+        /// @remarks
+        ///     This will return null if the variable does not exist.
+        ///     @par
+        ///     This runs in O(n) time.
+        ScriptVariable* GetPublicVariableByName(const char* name, size_t &indexOut) const;
+        ScriptVariable* GetPublicVariableByName(const char* name) const
+        {
+            size_t devnull;
+            return this->GetPublicVariableByName(name, devnull);
+        }
+
+
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
 
@@ -127,14 +144,35 @@ namespace GTEngine
 
     private:
 
+        /// Merges the variables from the given script definition into our own.
+        void MergePublicVariables(ScriptDefinition &definition);
+
+        /// Removes the public variables from the given script definition.
+        void RemovePublicVariables(ScriptDefinition &definition);
+
+        /// Removes a public variable by it's name.
+        void RemovePublicVariableByName(const char* name);
+
+        /// Removes a public variable by it's index.
+        void RemovePublicVariableByIndex(size_t index);
+
+        /// Determines if the given variable exists in a definition other than the one specified.
+        bool DoesPublicVariableExistInOtherDefinition(const char* name, ScriptDefinition &definitionToExclude);
+
+
+    private:
+
         /// The list of scripts attached to the component.
         GTCore::Vector<ScriptDefinition*> scripts;
+
+        /// We keep a list of every public variable here. We keep these separate from the definitions because we want to allow these to have
+        /// their own values.
+        GTCore::Vector<ScriptVariable*> publicVariables;
 
         /// This keeps track of whether or not the OnStartup event has been called. When OnStartup is called, this will be set to true. When
         /// OnShutdown has been called, it will revert back to false. We use this for keeping track of whether or not OnStartup and OnShutdown
         /// events should be called in certain situations. We only ever want one OnShutdown for every OnStartup and vice versa.
         bool hasOnStartupBeenCalled;
-
 
 
     GTENGINE_DECL_COMPONENT_END()

@@ -30,6 +30,9 @@ namespace GTEngine
             auto definition = GTEngine::ScriptLibrary::Acquire(relativePath, nullptr, true);
             this->scripts.PushBack(definition);
 
+            // We need to merge the variables from the new definition into our own.
+            this->MergePublicVariables(*definition);
+
             this->OnChanged();
         }
 
@@ -52,7 +55,11 @@ namespace GTEngine
         if (definition != nullptr)
         {
             ScriptLibrary::Unacquire(definition);
+
+            // We need to remove the variables defined in the definition being removed.
+            this->RemovePublicVariables(*definition);
         }
+
 
         this->scripts.Remove(index);
 
@@ -66,6 +73,9 @@ namespace GTEngine
             if (!GTCore::Strings::Equal(this->scripts[index]->GetRelativePath(), newRelativePath))
             {
                 ScriptLibrary::Unacquire(this->scripts[index]);
+
+                // Public variables from this definition need to be removed.
+                this->RemovePublicVariables(*this->scripts[index]);
             }
             else
             {
@@ -75,6 +85,13 @@ namespace GTEngine
         }
 
         this->scripts[index] = ScriptLibrary::Acquire(newRelativePath, nullptr, true);
+
+        // Variables from the new definition need to be merged.
+        if (this->scripts[index] != nullptr)
+        {
+            this->MergePublicVariables(*this->scripts[index]);
+        }
+
         this->OnChanged();
 
         return this->scripts[index];
@@ -209,6 +226,13 @@ namespace GTEngine
             ScriptLibrary::Unacquire(this->scripts[i]);
         }
         this->scripts.Clear();
+
+
+        for (size_t i = 0; i < this->publicVariables.count; ++i)
+        {
+            delete this->publicVariables[i];
+        }
+        this->publicVariables.Clear();
     }
 
 
@@ -225,6 +249,25 @@ namespace GTEngine
     bool ScriptComponent::HasOnStartupBeenCalled() const
     {
         return this->hasOnStartupBeenCalled;
+    }
+
+
+    ScriptVariable* ScriptComponent::GetPublicVariableByName(const char* name, size_t &indexOut) const
+    {
+        for (size_t i = 0; i < this->publicVariables.count; ++i)
+        {
+            auto variable = this->publicVariables[i];
+            assert(variable != nullptr);
+            {
+                if (GTCore::Strings::Equal(variable->GetName(), name))
+                {
+                    indexOut = i;
+                    return variable;
+                }
+            }
+        }
+
+        return nullptr;
     }
 
 
@@ -298,5 +341,79 @@ namespace GTEngine
                 }
             }
         }
+    }
+
+
+
+    ///////////////////////////////////////////////
+    // Private
+
+    void ScriptComponent::MergePublicVariables(ScriptDefinition &definition)
+    {
+        // If a variable of the same name already exists, we leave it be. Otherwise, we just copy it.
+        size_t variableCount = definition.GetPublicVariableCount();
+        for (size_t i = 0; i < variableCount; ++i)
+        {
+            auto variable = definition.GetPublicVariableByIndex(i);
+            assert(variable != nullptr);
+            {
+                if (this->GetPublicVariableByName(variable->GetName()) == nullptr)
+                {
+                    this->publicVariables.PushBack(ScriptVariable::CreateCopy(*variable));
+                }
+            }
+        }
+    }
+
+    void ScriptComponent::RemovePublicVariables(ScriptDefinition &definition)
+    {
+        // When removing these variables, we want to make sure it's not actually used in another definition. If so, we leave it be.
+        size_t variableCount = definition.GetPublicVariableCount();
+        for (size_t i = 0; i < variableCount; ++i)
+        {
+            auto variable = definition.GetPublicVariableByIndex(i);
+            assert(variable != nullptr);
+            {
+                if (!this->DoesPublicVariableExistInOtherDefinition(variable->GetName(), definition))
+                {
+                    this->RemovePublicVariableByName(variable->GetName());
+                }
+            }
+        }
+    }
+
+    void ScriptComponent::RemovePublicVariableByName(const char* name)
+    {
+        size_t index;
+        if (this->GetPublicVariableByName(name, index) != nullptr)
+        {
+            this->RemovePublicVariableByIndex(index);
+        }
+    }
+
+    void ScriptComponent::RemovePublicVariableByIndex(size_t index)
+    {
+        delete this->publicVariables[index];
+        this->publicVariables.Remove(index);
+    }
+
+    bool ScriptComponent::DoesPublicVariableExistInOtherDefinition(const char* name, ScriptDefinition &definitionToExclude)
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            assert(script != nullptr);
+            {
+                if (script != &definitionToExclude)
+                {
+                    if (script->GetPublicVariableByName(name) != nullptr)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
