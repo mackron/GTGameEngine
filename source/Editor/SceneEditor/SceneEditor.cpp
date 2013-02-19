@@ -1425,9 +1425,6 @@ namespace GTEngine
 
                 if (this->IsDraggingGizmo())
                 {
-                    // TODO: If the parent of a node being processed here is selected, we don't actually want to do anything with it, unless it is ignoring
-                    //       the parents transformation.
-
                     if (mouseOffsetX != 0.0f || mouseOffsetY != 0.0f)
                     {
                         this->transformedObjectWithGizmo = true;
