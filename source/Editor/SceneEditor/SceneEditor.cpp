@@ -832,8 +832,15 @@ namespace GTEngine
         {
             this->isUpdatingFromStateStack = true;
             {
-                // If the physics simulation is running, it needs to be stopped first.
-                this->DisablePhysicsSimulation();
+                // If the physics simulation is running or the game is playing, it needs to be stopped first.
+                if (this->IsPlaying())
+                {
+                    this->StopPlaying();
+                }
+                else if (this->IsPhysicsSimulationEnabled())
+                {
+                    this->DisablePhysicsSimulation();
+                }
 
 
                 // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
@@ -855,8 +862,15 @@ namespace GTEngine
         {
             this->isUpdatingFromStateStack = true;
             {
-                // If the physics simulation is running, it needs to be stopped first.
-                this->DisablePhysicsSimulation();
+                // If the physics simulation is running or the game is playing, it needs to be stopped first.
+                if (this->IsPlaying())
+                {
+                    this->StopPlaying();
+                }
+                else if (this->IsPhysicsSimulationEnabled())
+                {
+                    this->DisablePhysicsSimulation();
+                }
 
 
                 // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
@@ -1369,8 +1383,15 @@ namespace GTEngine
         FILE* file = GTCore::IO::Open(this->GetAbsolutePath(), GTCore::IO::OpenMode::Write);
         if (file != nullptr)
         {
-            // The physics simulation must be disable first!
-            this->DisablePhysicsSimulation();
+            // If the physics simulation is running or the game is playing, it needs to be stopped first.
+            if (this->IsPlaying())
+            {
+                this->StopPlaying();
+            }
+            else if (this->IsPhysicsSimulationEnabled())
+            {
+                this->DisablePhysicsSimulation();
+            }
 
 
             GTCore::FileSerializer serializer(file);
