@@ -1150,8 +1150,12 @@ function GTGUI.Element:ScriptVariableContainer(name, component)
     self.Component = component;
     self.Name      = name;
     
-    self.NameLabel = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='' style='' />");
-    self.NameLabel:SetText(name);
+    self.NameValueContainer = GTGUI.Server.New("<div parentid='" .. self:GetID()                    .. "' styleclass='' style='child-plane:horizontal; flex-child-width:true; vertical-align:center;' />");
+    self.NameContainer      = GTGUI.Server.New("<div parentid='" .. self.NameValueContainer:GetID() .. "' styleclass='' style='width:auto; vertical-align:center; padding-right:4px;' />");
+    self.ValueContainer     = GTGUI.Server.New("<div parentid='" .. self.NameValueContainer:GetID() .. "' styleclass='' style='width:100%; vertical-align:center; horizontal-align:right;' />");
+    
+    self.NameLabel = GTGUI.Server.New("<div parentid='" .. self.NameContainer:GetID() .. "' styleclass='' style='width:auto;' />");
+    self.NameLabel:SetText(name .. ":");
     
     
     function self:OnValueChanged(arg1)
@@ -1162,7 +1166,7 @@ end
 function GTGUI.Element:ScriptVariableContainer_Number(name, component)
     self:ScriptVariableContainer(name, component);
     
-    self.ValueTextBox = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:72px' />");
+    self.ValueTextBox = GTGUI.Server.New("<div parentid='" .. self.ValueContainer:GetID() .. "' styleclass='textbox' style='width:100%; max-width:72px' />");
     self.ValueTextBox:SetText(tostring(component:GetPublicVariableValue(name)));
     
     self.ValueTextBox:OnTextChanged(function()
