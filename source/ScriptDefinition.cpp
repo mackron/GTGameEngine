@@ -248,12 +248,15 @@ namespace GTEngine
                 {
                     auto typeStart = lineStart + markerStringLengthInTs;
                     auto typeEnd   = GTCore::Strings::FindFirst(typeStart, lineEnd - typeStart, "]]", 2);
-
-                    if (typeEnd != nullptr && lineEnd > typeEnd + 2)
+                    auto markerEnd = typeEnd;
+                    
+                    if (markerEnd != nullptr && lineEnd > markerEnd + 2)
                     {
+                        typeEnd = GTCore::Strings::TrimEnd(typeStart, typeEnd - typeStart);
+
                         // We use a simple tokenizer to grab the name. It should be the first token, and should begin with "self.". We start this after the
                         // metadata marker ("--[[public:<type>]]"). The +2 simply moves the string past the "]]"
-                        GTCore::Strings::Tokenizer token(typeEnd + 2);
+                        GTCore::Strings::Tokenizer token(markerEnd + 2);
                         if (token)
                         {
                             if ((token.end - token.start) > selfStringLengthInTs)
@@ -273,7 +276,7 @@ namespace GTEngine
                                     {
                                         this->publicVariables.PushBack(new ScriptVariable_Vec2(variableName.c_str()));
                                     }
-                                    /*else if (GTCore::Strings::Equal("vec3", typeStart, typeEnd - typeStart))
+                                    else if (GTCore::Strings::Equal("vec3", typeStart, typeEnd - typeStart))
                                     {
                                     }
                                     else if (GTCore::Strings::Equal("vec4", typeStart, typeEnd - typeStart))
@@ -284,7 +287,7 @@ namespace GTEngine
                                     }
                                     else if (GTCore::Strings::Equal("prefab", typeStart, typeEnd - typeStart))
                                     {
-                                    }*/
+                                    }
                                 }
                             }
                         }
