@@ -1175,6 +1175,18 @@ function GTGUI.Element:ScriptVariableContainer_Number(name, component)
     end);
 end
 
+function GTGUI.Element:ScriptVariableContainer_Vec2(name, component)
+    self:ScriptVariableContainer(name, component);
+    
+    self.ValueInput = GTGUI.Server.New("<div parentid='" .. self.ValueContainer:GetID() .. "' styleclass='vector-input' style='width:100%; max-width:146px' />");
+    self.ValueInput:Vector2Input():SetFromXYTable(component:GetPublicVariableValue(name));
+    
+    self.ValueInput:OnValueChanged(function()
+        self.Component:SetPublicVariableValue(self.Name, self.ValueInput:GetXYTable());
+        self:OnValueChanged();
+    end);
+end
+
 function GTGUI.Element:ScriptComponentPanel()
     self:PanelGroupBox("Script", true);
     self.ScriptsContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass=''                  style='' />");
@@ -1241,7 +1253,7 @@ function GTGUI.Element:ScriptComponentPanel()
         -- Variables.
         --
         -- These need to be done after adding the script to the component.
-        new.VariablesContainer = GTGUI.Server.New("<div parentid='" .. new:GetID() .. "' styleclass='' style='' />");
+        new.VariablesContainer = GTGUI.Server.New("<div parentid='" .. new:GetID() .. "' styleclass='' style='padding:4px; padding-left:8px; padding-right:0px;' />");
         new.Variables          = {};
         
         -- We initialize the variables by just "reloading" them.
@@ -1320,7 +1332,7 @@ function GTGUI.Element:ScriptComponentPanel()
                 local variableContainer = GTGUI.Server.New("<div parentid='" .. panel.VariablesContainer:GetID() .. "' styleclass='script-variable-container' style='' />");
             
                 if     nameAndType.type == GTEngine.ScriptVariableTypes.Number then variableContainer:ScriptVariableContainer_Number(nameAndType.name, self.CurrentComponent);
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec2   then
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec2   then variableContainer:ScriptVariableContainer_Vec2(  nameAndType.name, self.CurrentComponent);
                 elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec3   then
                 elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec4   then
                 elseif nameAndType.type == GTEngine.ScriptVariableTypes.String then

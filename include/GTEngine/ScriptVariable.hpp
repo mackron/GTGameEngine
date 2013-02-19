@@ -88,6 +88,54 @@ namespace GTEngine
         /// The value.
         double value;
     };
+
+
+    /// Vec2 script variable.
+    class ScriptVariable_Vec2 : public ScriptVariable
+    {
+    public:
+
+        /// Constructor.
+        ScriptVariable_Vec2(const char* name);
+
+        /// Copy constructor.
+        ScriptVariable_Vec2(const ScriptVariable_Vec2 &other);
+
+
+        /// Destructor.
+        ~ScriptVariable_Vec2();
+
+
+        /// Retrieves the X value.
+        double GetX() const { return this->x; }
+
+        /// Retrieves the Y value.
+        double GetY() const { return this->y; }
+
+
+        /// Sets the X value.
+        void SetX(double newX) { this->x = newX; }
+
+        /// Sets the Y value.
+        void SetY(double newY) { this->y = newY; }
+
+        /// Sets the value of the variable.
+        void SetValue(double newX, double newY)
+        {
+            this->SetX(newX);
+            this->SetY(newY);
+        }
+
+
+
+    private:
+
+        /// The x value.
+        double x;
+
+        /// The y value.
+        double y;
+    };
 }
 
 #endif

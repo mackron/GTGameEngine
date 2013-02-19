@@ -50,7 +50,22 @@ namespace GTEngine
     }
 
 
+    /////////////////////////////////////
+    // Vec2
 
+    ScriptVariable_Vec2::ScriptVariable_Vec2(const char* name)
+        : ScriptVariable(ScriptVariableType_Vec2, name), x(0.0), y(0.0)
+    {
+    }
+
+    ScriptVariable_Vec2::ScriptVariable_Vec2(const ScriptVariable_Vec2 &other)
+        : ScriptVariable(other), x(other.GetX()), y(other.GetY())
+    {
+    }
+
+    ScriptVariable_Vec2::~ScriptVariable_Vec2()
+    {
+    }
 
 
 
@@ -71,7 +86,7 @@ namespace GTEngine
 
         case ScriptVariableType_Vec2:
             {
-                return nullptr;
+                return new ScriptVariable_Vec2(static_cast<const ScriptVariable_Vec2 &>(variableToCopy));
             }
 
         case ScriptVariableType_Vec3:

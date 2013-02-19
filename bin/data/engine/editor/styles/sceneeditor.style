@@ -379,7 +379,7 @@ script-variable-container
     vertical-align:   center
     horizontal-align: right
     text-color:       #999
-    padding:          4px;
+    padding:          0px 2px;
     flex-child-width: true
 }
 
@@ -436,12 +436,11 @@ physics-button-text
 
 
 
-
-vector3-container
+vector-container
 {
 }
 
-vector3-label
+vector-label
 {
     width:          auto
     text-color:     std-text-color
@@ -449,9 +448,24 @@ vector3-label
     margin-right:   8px
 }
 
-vector3-input
+vector-input
 {
     horizontal-align: right
     child-plane:      horizontal
     flex-child-width: true
 }
+
+
+vector3-container includes vector-container
+{
+}
+
+vector3-label includes vector-label
+{
+}
+
+vector3-input includes vector-input
+{
+}
+
+

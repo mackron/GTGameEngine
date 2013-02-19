@@ -4023,6 +4023,15 @@ namespace GTEngine
 
                                     case ScriptVariableType_Vec2:
                                         {
+                                            auto variableVec2 = static_cast<ScriptVariable_Vec2*>(variable);
+
+                                            script.Push(variable->GetName());
+                                            script.PushNewTable();
+                                            script.SetTableValue(-1, "x", variableVec2->GetX());
+                                            script.SetTableValue(-1, "y", variableVec2->GetY());
+
+                                            script.SetTableValue(-3);
+
                                             break;
                                         }
 
@@ -4073,7 +4082,12 @@ namespace GTEngine
 
                                 case ScriptVariableType_Vec2:
                                     {
-                                        script.PushNil();
+                                        auto variableVec2 = static_cast<ScriptVariable_Vec2*>(variable);
+                                        
+                                        script.PushNewTable();
+                                        script.SetTableValue(-1, "x", variableVec2->GetX());
+                                        script.SetTableValue(-1, "y", variableVec2->GetY());
+
                                         break;
                                     }
 
@@ -4134,9 +4148,68 @@ namespace GTEngine
                             }
                             else if (script.IsTable(3))
                             {
-                                // TODO: Implement this!
-
                                 // Value could be a vector type. We'll need to look at the contents of the table to determine the type.
+                                GTCore::Map<int, double> values;
+
+                                int i = 0;
+                                script.PushNil();
+                                while(i < 4 && script.Next(-2))
+                                {
+                                    if (script.IsNumber(-1))
+                                    {
+                                        int mapIndex = -1;
+                                        if (script.IsNumber(-2))
+                                        {
+                                            auto key = script.ToInteger(-2);
+                                            if (key >= 0 && key <= 3)
+                                            {
+                                                mapIndex = key;
+                                            }
+                                        }
+                                        else if (script.IsString(-2))
+                                        {
+                                            auto key = script.ToString(-2);
+                                            if (GTCore::Strings::Equal<false>(key, "x"))
+                                            {
+                                                mapIndex = 0;
+                                            }
+                                            else if (GTCore::Strings::Equal<false>(key, "y"))
+                                            {
+                                                mapIndex = 1;
+                                            }
+                                            else if (GTCore::Strings::Equal<false>(key, "z"))
+                                            {
+                                                mapIndex = 2;
+                                            }
+                                            else if (GTCore::Strings::Equal<false>(key, "w"))
+                                            {
+                                                mapIndex = 3;
+                                            }
+                                        }
+
+
+                                        if (mapIndex >= 0 && mapIndex <= 3)
+                                        {
+                                            values.Add(mapIndex, script.ToDouble(-1));
+                                        }
+                                    }
+
+                                    ++i;
+                                    script.Pop(1);
+                                }
+
+                                if (values.count == 2)
+                                {
+                                    component->SetPublicVariableValue(script.ToString(2), values.buffer[0]->value, values.buffer[1]->value);
+                                }
+                                else if (values.count == 3)
+                                {
+                                    component->SetPublicVariableValue(script.ToString(2), values.buffer[0]->value, values.buffer[1]->value, values.buffer[2]->value);
+                                }
+                                else if (values.count >= 4)
+                                {
+                                    component->SetPublicVariableValue(script.ToString(2), values.buffer[0]->value, values.buffer[1]->value, values.buffer[2]->value, values.buffer[3]->value);
+                                }
                             }
                             else if (script.IsString(3))
                             {

@@ -1,38 +1,36 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
-function GTGUI.Element:Vector3Input()
+function GTGUI.Element:Vector2Input()
     self.X = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:2px;' />");
-    self.Y = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:2px;' />");
-    self.Z = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:0px;' />");
+    self.Y = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%;' />");
     
-    self.BlockSetFromXYZ     = false;
+    self.BlockSetFromXY      = false;
     self.BlockOnValueChanged = false;
     
-    function self:SetFromXYZ(x, y, z)
-        if not self.BlockSetFromXYZ then
+    function self:SetFromXY(x, y)
+        if not self.BlockSetFromXY then
             if x == -0.0 then x = 0.0 end;
             if y == -0.0 then y = 0.0 end;
-            if z == -0.0 then z = 0.0 end;
 
             self.BlockOnValueChanged = true;
             self.X:SetText(string.format("%.4f", x));
             self.Y:SetText(string.format("%.4f", y));
-            self.Z:SetText(string.format("%.4f", z));
             self.BlockOnValueChanged = false;
         end
     end
     
-    function self:SetFromXYZTable(value)
-        self:SetFromXYZ(value.x, value.y, value.z);
+    function self:SetFromXYTable(value)
+        self:SetFromXY(value.x, value.y);
     end
     
-    function self:GetXYZ()
-        return tonumber(self.X:GetText()) or 0.0, tonumber(self.Y:GetText()) or 0.0, tonumber(self.Z:GetText()) or 0.0;
+    
+    function self:GetXY()
+        return tonumber(self.X:GetText()) or 0.0, tonumber(self.Y:GetText()) or 0.0;
     end
     
-    function self:GetXYZTable()
-        local xValue, yValue, zValue = self:GetXYZ();
-        return {x = xValue, y = yValue, z = zValue};
+    function self:GetXYTable()
+        local xValue, yValue = self:GetXY();
+        return {x = xValue, y = yValue};
     end
     
     
@@ -44,15 +42,14 @@ function GTGUI.Element:Vector3Input()
     -- of OnValueChanged() events.
     function OnTextChangedHandler()
         if not self.BlockOnValueChanged then
-            self.BlockSetFromXYZ = true;
-            self:OnValueChanged(self:GetXYZTable());
-            self.BlockSetFromXYZ = false;
+            self.BlockSetFromXY = true;
+            self:OnValueChanged(self:GetXYTable());
+            self.BlockSetFromXY = false;
         end
     end
 
     self.X:OnTextChanged(OnTextChangedHandler);
     self.Y:OnTextChanged(OnTextChangedHandler);
-    self.Z:OnTextChanged(OnTextChangedHandler);
     
     
     
@@ -66,15 +63,6 @@ function GTGUI.Element:Vector3Input()
     end);
     
     self.Y:OnKeyDown(function(data)
-        if data.key == GTCore.Keys.Tab then
-            self.Z:Focus();
-            self.Z:SelectAllText();
-            
-            return false;
-        end
-    end);
-    
-    self.Z:OnKeyDown(function(data)
         if data.key == GTCore.Keys.Tab then
             self.X:Focus();
             self.X:SelectAllText();
