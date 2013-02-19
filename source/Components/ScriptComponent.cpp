@@ -30,8 +30,12 @@ namespace GTEngine
             auto definition = GTEngine::ScriptLibrary::Acquire(relativePath, nullptr, true);
             this->scripts.PushBack(definition);
 
-            // We need to merge the variables from the new definition into our own.
-            this->MergePublicVariables(*definition);
+            // We need to merge the variables from the new definition into our own. The definition is allowed to be null here, so
+            // that'll also need to be checked.
+            if (definition != nullptr)
+            {
+                this->MergePublicVariables(*definition);
+            }
 
             this->OnChanged();
         }
@@ -279,6 +283,9 @@ namespace GTEngine
     {
         // We will use an intermediary serializer like normal. All we need to save is the relative paths of the scripts we're using.
         GTCore::BasicSerializer intermediarySerializer;
+
+        
+        // Script paths.
         intermediarySerializer.Write(static_cast<uint32_t>(this->scripts.count));
         
         for (size_t i = 0; i < this->scripts.count; ++i)
@@ -291,6 +298,58 @@ namespace GTEngine
             else
             {
                 intermediarySerializer.WriteString("");
+            }
+        }
+
+
+        // Public variables.
+        intermediarySerializer.Write(static_cast<uint32_t>(this->publicVariables.count));
+
+        for (size_t i = 0; i < this->publicVariables.count; ++i)
+        {
+            auto variable = this->publicVariables[i];
+            assert(variable != nullptr);
+            {
+                intermediarySerializer.Write(static_cast<uint32_t>(variable->GetType()));
+                intermediarySerializer.WriteString(variable->GetName());
+
+                // Data is saved different for the different types.
+                switch (variable->GetType())
+                {
+                case ScriptVariableType_Number:
+                    {
+                        intermediarySerializer.Write(static_cast<ScriptVariable_Number*>(variable)->GetValue());
+                        break;
+                    }
+
+                case ScriptVariableType_Vec2:
+                    {
+                        break;
+                    }
+
+                case ScriptVariableType_Vec3:
+                    {
+                        break;
+                    }
+
+                case ScriptVariableType_Vec4:
+                    {
+                        break;
+                    }
+
+                case ScriptVariableType_String:
+                    {
+                        break;
+                    }
+
+                case ScriptVariableType_Prefab:
+                    {
+                        break;
+                    }
+
+
+                default: break;
+                }
             }
         }
 
@@ -328,6 +387,64 @@ namespace GTEngine
 
                         this->AddScript(relativePath.c_str());
                     }
+
+
+                    uint32_t variableCount;
+                    deserializer.Read(variableCount);
+
+                    for (uint32_t i = 0; i < variableCount; ++i)
+                    {
+                        uint32_t type;
+                        deserializer.Read(type);
+
+                        GTCore::String name;
+                        deserializer.ReadString(name);
+
+
+                        switch (type)
+                        {
+                        case ScriptVariableType_Number:
+                            {
+                                double value;
+                                deserializer.Read(value);
+
+                                auto variable = new ScriptVariable_Number(name.c_str());
+                                variable->SetValue(value);
+
+                                this->publicVariables.PushBack(variable);
+
+                                break;
+                            }
+
+                        case ScriptVariableType_Vec2:
+                            {
+                                break;
+                            }
+
+                        case ScriptVariableType_Vec3:
+                            {
+                                break;
+                            }
+
+                        case ScriptVariableType_Vec4:
+                            {
+                                break;
+                            }
+
+                        case ScriptVariableType_String:
+                            {
+                                break;
+                            }
+
+                        case ScriptVariableType_Prefab:
+                            {
+                                break;
+                            }
+
+                        default: break;
+                        }
+                    }
+
 
                     break;
                 }
