@@ -2061,6 +2061,7 @@ namespace GTEngine
                     // If we're registered to a script we will need to update the public variables to those defined in the component.
                     if (this->registeredScript != nullptr)
                     {
+                        Scripting::UpdatePublicVariables(*this->registeredScript, node);
                     }
                 }
             }

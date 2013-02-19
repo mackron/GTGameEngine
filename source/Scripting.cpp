@@ -1437,6 +1437,22 @@ namespace GTEngine
             script.Pop(1);
         }
 
+        void UpdatePublicVariables(GTCore::Script &script, SceneNode &sceneNode)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("UpdatePublicVariables");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);                   // <-- 'self'
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
         void PushSceneNode(GTCore::Script &script, SceneNode &sceneNode)
         {
             script.GetGlobal("GTEngine");
