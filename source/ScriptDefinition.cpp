@@ -45,6 +45,53 @@ namespace GTEngine
                         this->hasOnShutdown = true;
                     }
                 }
+                else
+                {
+                    // If it's a public variable, we want to set the variable of that variable to that defined in the script.
+                    auto variable = this->GetPublicVariableByName(name);
+                    if (variable != nullptr)
+                    {
+                        switch (variable->GetType())
+                        {
+                        case ScriptVariableType_Number:
+                            {
+                                if (tempScript.IsNumber(-1))
+                                {
+                                    static_cast<ScriptVariable_Number*>(variable)->SetValue(tempScript.ToDouble(-1));
+                                }
+
+                                break;
+                            }
+
+                        case ScriptVariableType_Vec2:
+                            {
+                                break;
+                            }
+
+                        case ScriptVariableType_Vec3:
+                            {
+                                break;
+                            }
+
+                        case ScriptVariableType_Vec4:
+                            {
+                                break;
+                            }
+
+                        case ScriptVariableType_String:
+                            {
+                                break;
+                            }
+
+                        case ScriptVariableType_Prefab:
+                            {
+                                break;
+                            }
+
+                        default: break;
+                        }
+                    }
+                }
             }
         }
         tempScript.Pop(1);
@@ -88,6 +135,23 @@ namespace GTEngine
         return this->hasOnShutdown;
     }
 
+
+    ScriptVariable* ScriptDefinition::GetPublicVariableByName(const char* variableName) const
+    {
+        for (size_t i = 0; i < this->publicVariables.count; ++i)
+        {
+            auto variable = this->publicVariables[i];
+            assert(variable != nullptr);
+            {
+                if (GTCore::Strings::Equal(variable->GetName(), variableName))
+                {
+                    return variable;
+                }
+            }
+        }
+
+        return nullptr;
+    }
 
 
 
