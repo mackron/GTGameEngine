@@ -115,6 +115,15 @@ namespace GTEngine
 
 
 
+        /// Retrieves the number of public variables.
+        size_t GetPublicVariableCount() const;
+
+        /// Retrieves a public variable by it's index.
+        ///
+        /// @param index [in] The index of the variable to retrieve.
+        ScriptVariable* GetPublicVariableByIndex(size_t index) const;
+
+
         /// Retrieves a pointer to a public variable by it's name.
         ///
         /// @param name [in] The name of the variable to retrieve.

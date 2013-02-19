@@ -1872,6 +1872,13 @@ namespace GTEngine
                         {
                             this->updateManager.AddObject(node);
                         }
+
+
+                        // The scene node needs to be instantiated in the scripting environment.
+                        if (this->registeredScript != nullptr)
+                        {
+                            Scripting::InstantiateSceneNode(*this->registeredScript, node);
+                        }
                     }
                 }
             }
@@ -2048,6 +2055,12 @@ namespace GTEngine
                     if (this->updateManager.NeedsUpdate(node))
                     {
                         this->updateManager.AddObject(node);
+                    }
+
+
+                    // If we're registered to a script we will need to update the public variables to those defined in the component.
+                    if (this->registeredScript != nullptr)
+                    {
                     }
                 }
             }
