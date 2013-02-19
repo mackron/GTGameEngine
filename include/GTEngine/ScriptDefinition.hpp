@@ -42,6 +42,13 @@ namespace GTEngine
         bool HasOnShutdown() const;
 
 
+        /// Retrieves a pointer to the public variable object by it's name.
+        ///
+        /// @remarks
+        ///     This runs in O(n) time.
+        ScriptVariable* GetPublicVariableByName(const char* variableName) const;
+
+
 
     private:
 
