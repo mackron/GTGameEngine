@@ -18,6 +18,10 @@ namespace GTEngine
         /// Constructor.
         ScriptVariable(ScriptVariableType type, const char* name);
 
+        /// Copy constructor.
+        ScriptVariable(const ScriptVariable &other);
+
+
         /// Destructor.
         virtual ~ScriptVariable();
 
@@ -27,6 +31,21 @@ namespace GTEngine
 
         /// Retrieves the name of the variable.
         const char* GetName() const;
+
+
+
+        
+        ////////////////////////////////////////////////////
+        // Statics
+
+        /// Static function for creating a copy of the given variable.
+        ///
+        /// @param variableToCopy [in] A reference to the variable to copy.
+        ///
+        /// @remarks
+        ///     This is allocated with 'new'. Delete with 'delete'.
+        static ScriptVariable* CreateCopy(const ScriptVariable &variable);
+
 
 
 
@@ -47,6 +66,10 @@ namespace GTEngine
 
         /// Constructor.
         ScriptVariable_Number(const char* name);
+
+        /// Copy constructor.
+        ScriptVariable_Number(const ScriptVariable_Number &other);
+
 
         /// Destructor.
         ~ScriptVariable_Number();

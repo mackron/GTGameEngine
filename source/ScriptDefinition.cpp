@@ -136,6 +136,17 @@ namespace GTEngine
     }
 
 
+
+    size_t ScriptDefinition::GetPublicVariableCount() const
+    {
+        return this->publicVariables.count;
+    }
+
+    ScriptVariable* ScriptDefinition::GetPublicVariableByIndex(size_t index)
+    {
+        return this->publicVariables[index];
+    }
+
     ScriptVariable* ScriptDefinition::GetPublicVariableByName(const char* variableName) const
     {
         for (size_t i = 0; i < this->publicVariables.count; ++i)

@@ -42,6 +42,14 @@ namespace GTEngine
         bool HasOnShutdown() const;
 
 
+        /// Retrieves the number of public variables.
+        size_t GetPublicVariableCount() const;
+
+        /// Retrieves a public variable by it's index.
+        ///
+        /// @param index [in] The index of the public variable to retrieve.
+        ScriptVariable* GetPublicVariableByIndex(size_t index);
+
         /// Retrieves a pointer to the public variable object by it's name.
         ///
         /// @remarks

@@ -9,6 +9,12 @@ namespace GTEngine
     {
     }
 
+    ScriptVariable::ScriptVariable(const ScriptVariable &other)
+        : type(other.GetType()), name(other.GetName())
+    {
+    }
+
+
     ScriptVariable::~ScriptVariable()
     {
     }
@@ -34,7 +40,65 @@ namespace GTEngine
     {
     }
 
+    ScriptVariable_Number::ScriptVariable_Number(const ScriptVariable_Number &other)
+        : ScriptVariable(other), value(other.GetValue())
+    {
+    }
+
     ScriptVariable_Number::~ScriptVariable_Number()
     {
+    }
+
+
+
+
+
+
+
+
+
+    /////////////////////////////////////
+    // Statics
+
+    ScriptVariable* ScriptVariable::CreateCopy(const ScriptVariable &variableToCopy)
+    {
+        switch (variableToCopy.GetType())
+        {
+        case ScriptVariableType_Number:
+            {
+                return new ScriptVariable_Number(static_cast<const ScriptVariable_Number &>(variableToCopy));
+            }
+
+        case ScriptVariableType_Vec2:
+            {
+                return nullptr;
+            }
+
+        case ScriptVariableType_Vec3:
+            {
+                return nullptr;
+            }
+
+        case ScriptVariableType_Vec4:
+            {
+                return nullptr;
+            }
+
+        case ScriptVariableType_String:
+            {
+                return nullptr;
+            }
+        
+        case ScriptVariableType_Prefab:
+            {
+                return nullptr;
+            }
+
+
+        default: break;
+        }
+
+
+        return nullptr;
     }
 }
