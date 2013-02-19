@@ -2,6 +2,8 @@
 
 #include <GTEngine/ScriptDefinition.hpp>
 #include <GTCore/Script.hpp>
+#include <GTCore/Strings/LineIterator.hpp>
+#include <GTCore/Strings/Tokenizer.hpp>
 
 namespace GTEngine
 {
@@ -10,7 +12,7 @@ namespace GTEngine
           hasOnUpdate(false), hasOnStartup(false), hasOnShutdown(false)
     {
         // We need to do a parse over the script and retrieve it's public variables.
-
+        this->ParseForPublicVariables();
 
 
         // We now need to determine if various events are defined in the script. To do this, we'll need to parse it. For now what we'll do
@@ -50,6 +52,7 @@ namespace GTEngine
 
     ScriptDefinition::~ScriptDefinition()
     {
+        this->ClearPublicVariables();
     }
 
 
@@ -83,5 +86,92 @@ namespace GTEngine
     bool ScriptDefinition::HasOnShutdown() const
     {
         return this->hasOnShutdown;
+    }
+
+
+
+
+    //////////////////////////////////////////////
+    // Private
+
+    void ScriptDefinition::ClearPublicVariables()
+    {
+        for (size_t i = 0; i < this->publicVariables.count; ++i)
+        {
+            delete this->publicVariables[i];
+        }
+        this->publicVariables.Clear();
+    }
+
+    void ScriptDefinition::ParseForPublicVariables()
+    {
+        this->ClearPublicVariables();
+
+        auto markerString           = "--[[public:";
+        auto markerStringLengthInTs = GTCore::Strings::SizeInTs(markerString);
+
+        auto selfString             = "self.";
+        auto selfStringLengthInTs   = GTCore::Strings::SizeInTs(selfString);
+
+
+        // We just iterate over line by line and check for a "--[[public:" string.
+        GTCore::Strings::LineIterator line(this->scriptString.c_str());
+        while (line)
+        {
+            auto lineStart      = GTCore::Strings::TrimStart(line.start, line.end - line.start);
+            auto lineEnd        = line.end;
+            auto lineLengthInTs = lineEnd - lineStart;
+
+            if (lineLengthInTs > markerStringLengthInTs)
+            {
+                if (GTCore::Strings::Equal(markerString, lineStart, markerStringLengthInTs))
+                {
+                    auto typeStart = lineStart + markerStringLengthInTs;
+                    auto typeEnd   = GTCore::Strings::FindFirst(typeStart, lineEnd - typeStart, "]]", 2);
+
+                    if (typeEnd != nullptr && lineEnd > typeEnd + 2)
+                    {
+                        // We use a simple tokenizer to grab the name. It should be the first token, and should begin with "self.". We start this after the
+                        // metadata marker ("--[[public:<type>]]"). The +2 simply moves the string past the "]]"
+                        GTCore::Strings::Tokenizer token(typeEnd + 2);
+                        if (token)
+                        {
+                            if ((token.end - token.start) > selfStringLengthInTs)
+                            {
+                                if (GTCore::Strings::Equal(selfString, token.start, selfStringLengthInTs))
+                                {
+                                    // We'll have a name. We can now construct the variable.
+                                    auto nameStart = token.start + selfStringLengthInTs;
+                                    auto nameEnd   = token.end;
+                                    GTCore::String variableName(nameStart, nameEnd - nameStart);
+                                    
+                                    if (GTCore::Strings::Equal("number", typeStart, typeEnd - typeStart))
+                                    {
+                                        this->publicVariables.PushBack(new ScriptVariable_Number(variableName.c_str()));
+                                    }
+                                    /*else if (GTCore::Strings::Equal("vec2", typeStart, typeEnd - typeStart))
+                                    {
+                                    }
+                                    else if (GTCore::Strings::Equal("vec3", typeStart, typeEnd - typeStart))
+                                    {
+                                    }
+                                    else if (GTCore::Strings::Equal("vec4", typeStart, typeEnd - typeStart))
+                                    {
+                                    }
+                                    else if (GTCore::Strings::Equal("string", typeStart, typeEnd - typeStart))
+                                    {
+                                    }
+                                    else if (GTCore::Strings::Equal("prefab", typeStart, typeEnd - typeStart))
+                                    {
+                                    }*/
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            ++line;
+        }
     }
 }
