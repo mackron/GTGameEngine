@@ -256,6 +256,16 @@ namespace GTEngine
     }
 
 
+    size_t ScriptComponent::GetPublicVariableCount() const
+    {
+        return this->publicVariables.count;
+    }
+
+    ScriptVariable* ScriptComponent::GetPublicVariableByIndex(size_t index) const
+    {
+        return this->publicVariables[index];
+    }
+
     ScriptVariable* ScriptComponent::GetPublicVariableByName(const char* name, size_t &indexOut) const
     {
         for (size_t i = 0; i < this->publicVariables.count; ++i)
@@ -467,10 +477,11 @@ namespace GTEngine
                                 double value;
                                 deserializer.Read(value);
 
-                                auto variable = new ScriptVariable_Number(name.c_str());
-                                variable->SetValue(value);
-
-                                this->publicVariables.PushBack(variable);
+                                auto variable = this->GetPublicVariableByName(name.c_str());
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Number)
+                                {
+                                    static_cast<ScriptVariable_Number*>(variable)->SetValue(value);
+                                }
 
                                 break;
                             }

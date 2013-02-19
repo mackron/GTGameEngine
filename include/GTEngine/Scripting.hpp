@@ -1126,6 +1126,15 @@ namespace GTEngine
                     ///     The return value is an array of {name, type} types.
                     int GetPublicVariableNamesAndTypesByIndex(GTCore::Script &script);
 
+
+                    /// Retrieves the names and values of every public variable.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///
+                    ///     The returned table is keyed by the name. Note that this is out of order.
+                    int GetPublicVariableNamesAndValues(GTCore::Script &script);
+
                     /// Retrieves the value of the public variable with the given name.
                     ///
                     /// @remarks

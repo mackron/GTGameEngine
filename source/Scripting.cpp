@@ -611,6 +611,10 @@ namespace GTEngine
                 "    return GTEngine.System.ScriptComponent.GetPublicVariableNamesAndTypesByIndex(self._internalPtr, index);"
                 "end;"
 
+                "function GTEngine.ScriptComponent:GetPublicVariableNamesAndValues()"
+                "    return GTEngine.System.ScriptComponent.GetPublicVariableNamesAndValues(self._internalPtr);"
+                "end;"
+                
                 "function GTEngine.ScriptComponent:GetPublicVariableValue(name)"
                 "    return GTEngine.System.ScriptComponent.GetPublicVariableValue(self._internalPtr, name);"
                 "end;"
@@ -712,6 +716,7 @@ namespace GTEngine
                 "        local scriptFilePaths = scriptComponent:GetScriptFilePaths();"
                 "        for i,scriptPath in ipairs(scriptFilePaths) do"
                 "            self:LinkToScript(GTEngine.ScriptDefinitions[scriptPath]);"
+                "            self:UpdatePublicVariables();"
                 "        end;"
                 "    end;"
                 "end;"
@@ -724,6 +729,16 @@ namespace GTEngine
                 "            else"
                 "                self:RegisterEventHandler(key, value);"
                 "            end;"
+                "        end;"
+                "    end;"
+                "end;"
+
+                "function GTEngine.SceneNode:UpdatePublicVariables(scriptComponent)"
+                "    if scriptComponent == nil then scriptComponent = self:GetComponent(GTEngine.Components.Script) end;"
+                "    if scriptComponent ~= nil then"
+                "        local variables = scriptComponent:GetPublicVariableNamesAndValues();"
+                "        for name,value in pairs(variables) do"
+                "            self[name] = value;"
                 "        end;"
                 "    end;"
                 "end;"
@@ -1171,6 +1186,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ReloadScript",                             FFI::SystemFFI::ScriptComponentFFI::ReloadScript);
                         script.SetTableFunction(-1, "GetScriptFilePaths",                       FFI::SystemFFI::ScriptComponentFFI::GetScriptFilePaths);
                         script.SetTableFunction(-1, "GetPublicVariableNamesAndTypesByIndex",    FFI::SystemFFI::ScriptComponentFFI::GetPublicVariableNamesAndTypesByIndex);
+                        script.SetTableFunction(-1, "GetPublicVariableNamesAndValues",          FFI::SystemFFI::ScriptComponentFFI::GetPublicVariableNamesAndValues);
                         script.SetTableFunction(-1, "GetPublicVariableValue",                   FFI::SystemFFI::ScriptComponentFFI::GetPublicVariableValue);
                         script.SetTableFunction(-1, "SetPublicVariableValue",                   FFI::SystemFFI::ScriptComponentFFI::SetPublicVariableValue);
                     }
@@ -3959,6 +3975,62 @@ namespace GTEngine
                                         script.SetTableValue(-1, "type", static_cast<int>(variable->GetType()));
 
                                         script.SetTableValue(-3);
+                                    }
+                                }
+                            }
+                        }
+
+                        return 1;
+                    }
+
+
+                    int GetPublicVariableNamesAndValues(GTCore::Script &script)
+                    {
+                        script.PushNewTable();
+
+                        auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t variableCount = component->GetPublicVariableCount();
+                            for (size_t i = 0; i < variableCount; ++i)
+                            {
+                                auto variable = component->GetPublicVariableByIndex(i);
+                                assert(variable != nullptr);
+                                {
+                                    switch (variable->GetType())
+                                    {
+                                    case ScriptVariableType_Number:
+                                        {
+                                            script.SetTableValue(-1, variable->GetName(), static_cast<ScriptVariable_Number*>(variable)->GetValue());
+                                            break;
+                                        }
+
+                                    case ScriptVariableType_Vec2:
+                                        {
+                                            break;
+                                        }
+
+                                    case ScriptVariableType_Vec3:
+                                        {
+                                            break;
+                                        }
+
+                                    case ScriptVariableType_Vec4:
+                                        {
+                                            break;
+                                        }
+
+                                    case ScriptVariableType_String:
+                                        {
+                                            break;
+                                        }
+
+                                    case ScriptVariableType_Prefab:
+                                        {
+                                            break;
+                                        }
+
+                                    default: break;
                                     }
                                 }
                             }
