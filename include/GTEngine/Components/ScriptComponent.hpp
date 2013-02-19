@@ -147,6 +147,7 @@ namespace GTEngine
         void SetPublicVariableValue(const char* variableName, double x, double y);
         void SetPublicVariableValue(const char* variableName, double x, double y, double z);
         void SetPublicVariableValue(const char* variableName, double x, double y, double z, double w);
+        void SetPublicVariableValue(const char* variableName, bool value);
         void SetPublicVariableValue(const char* variableName, const char* value);
 
 
