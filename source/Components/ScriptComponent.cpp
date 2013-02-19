@@ -60,7 +60,6 @@ namespace GTEngine
         {
             // We need to remove the variables defined in the definition being removed.
             this->RemovePublicVariables(*definition);
-
             ScriptLibrary::Unacquire(definition);
         }
 
@@ -72,18 +71,30 @@ namespace GTEngine
 
     ScriptDefinition* ScriptComponent::ReloadScript(size_t index, const char* newRelativePath)
     {
+        if (newRelativePath == nullptr)
+        {
+            if (this->scripts[index] != nullptr)
+            {
+                newRelativePath = this->scripts[index]->GetRelativePath();
+            }
+        }
+
+
         if (this->scripts[index] != nullptr)
         {
             if (!GTCore::Strings::Equal(this->scripts[index]->GetRelativePath(), newRelativePath))
             {
                 // Public variables from this definition need to be removed.
                 this->RemovePublicVariables(*this->scripts[index]);
-
                 ScriptLibrary::Unacquire(this->scripts[index]);
             }
             else
             {
-                // It's the same file. Don't want to do anything.
+                // It's the same file. We don't actually want to re-acquire anything here because we want to keep the same pointer, but we do
+                // want to re-merge the public variables. We then need to get rid of any unused ones.
+                this->MergePublicVariables(*this->scripts[index]);
+                this->RemoveUnusedPublicVariables();
+
                 return this->scripts[index];
             }
         }
@@ -730,6 +741,26 @@ namespace GTEngine
         this->publicVariables.Remove(index);
     }
 
+    void ScriptComponent::RemoveUnusedPublicVariables()
+    {
+        for (size_t i = 0; i < this->publicVariables.count; )
+        {
+            auto variable = this->publicVariables[i];
+            assert(variable != nullptr);
+            {
+                if (!this->DoesPublicVariableExistInAnyDefinition(variable->GetName()))
+                {
+                    delete this->publicVariables[i];
+                    this->publicVariables.Remove(i);
+                }
+                else
+                {
+                    ++i;
+                }
+            }
+        }
+    }
+
     bool ScriptComponent::DoesPublicVariableExistInOtherDefinition(const char* name, ScriptDefinition &definitionToExclude)
     {
         for (size_t i = 0; i < this->scripts.count; ++i)
@@ -743,6 +774,23 @@ namespace GTEngine
                     {
                         return true;
                     }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::DoesPublicVariableExistInAnyDefinition(const char* name)
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            assert(script != nullptr);
+            {
+                if (script->GetPublicVariableByName(name) != nullptr)
+                {
+                    return true;
                 }
             }
         }

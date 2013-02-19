@@ -41,8 +41,8 @@ namespace GTEngine
         /// Reloads a script at the given index.
         ///
         /// @param index           [in] The index of the item being reloaded.
-        /// @param newRelativePath [in] The relative path of the new script.
-        ScriptDefinition* ReloadScript(size_t index, const char* newRelativePath);
+        /// @param newRelativePath [in] The relative path of the new script. Can be null, in which case the existing script is just reloaded.
+        ScriptDefinition* ReloadScript(size_t index, const char* newRelativePath = nullptr);
 
 
 
@@ -176,8 +176,14 @@ namespace GTEngine
         /// Removes a public variable by it's index.
         void RemovePublicVariableByIndex(size_t index);
 
+        /// Removes all public variables that are no longer contained in the attached scripts.
+        void RemoveUnusedPublicVariables();
+
         /// Determines if the given variable exists in a definition other than the one specified.
         bool DoesPublicVariableExistInOtherDefinition(const char* name, ScriptDefinition &definitionToExclude);
+
+        /// Determiens if the given variables exists in any attached definition.
+        bool DoesPublicVariableExistInAnyDefinition(const char* name);
 
 
     private:
