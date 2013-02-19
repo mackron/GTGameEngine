@@ -12,6 +12,7 @@
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
+#include <GTEngine/ScriptLibrary.hpp>
 #include <GTCore/System.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
 #include <GTCore/String.hpp>
@@ -516,6 +517,9 @@ namespace GTEngine
             }
             else
             {
+                // It might be a script file. We'll try reloading.
+                ScriptLibrary::Reload(item.relativePath.c_str());
+
                 // If we have a script file we will reload it if applicable.
                 if (this->IsScriptAutoReloadEnabled())
                 {
