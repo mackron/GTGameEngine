@@ -113,6 +113,24 @@ namespace GTEngine
         ///     The scene node must be instantiated on a registered scene for this to work.
         void PostSceneNodeEvent_OnShutdown(GTCore::Script &script, SceneNode &sceneNode);
 
+        /// Calls the OnShow event on the given scene node.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param sceneNode [in] A reference to the scene node having it's event called.
+        ///
+        /// @remarks
+        ///     The scene node must be instantiated on a registered scene for this to work.
+        void PostSceneNodeEvent_OnShow(GTCore::Script &script, SceneNode &sceneNode);
+
+        /// Calls the OnHide event on the given scene node.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param sceneNode [in] A reference to the scene node having it's event called.
+        ///
+        /// @remarks
+        ///     The scene node must be instantiated on a registered scene for this to work.
+        void PostSceneNodeEvent_OnHide(GTCore::Script &script, SceneNode &sceneNode);
+
 
 
         ///////////////////////////////////////////////////////////////

@@ -41,6 +41,12 @@ namespace GTEngine
         /// Determines if the script has an OnShutdown event handler.
         bool HasOnShutdown() const;
 
+        /// Determines if the script has an OnShow event handler.
+        bool HasOnShow() const;
+
+        /// Determines if the script has an OnHide event handler.
+        bool HasOnHide() const;
+
 
         /// Retrieves the number of public variables.
         size_t GetPublicVariableCount() const;
@@ -90,6 +96,12 @@ namespace GTEngine
 
         /// Keeps track of whether or not this definition has an OnShutdown event handler.
         bool hasOnShutdown;
+
+        /// Keeps track of whether or not this definition has an OnShow event handler.
+        bool hasOnShow;
+
+        /// Keeps track of whether or not this definition has an OnHide event handler.
+        bool hasOnHide;
 
 
         /// The list of public variables, in the order they are defined (hopefully).

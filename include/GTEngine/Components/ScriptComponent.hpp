@@ -99,6 +99,18 @@ namespace GTEngine
         ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
         bool HasOnShutdown() const;
 
+        /// Determines if any of the attached scripts has an OnShow event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnShow() const;
+
+        /// Determines if any of the attached scripts has an OnShow event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnHide() const;
+
 
         /// Clears the component of all scripts.
         void Clear();

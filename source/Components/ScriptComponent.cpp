@@ -233,6 +233,40 @@ namespace GTEngine
         return false;
     }
 
+    bool ScriptComponent::HasOnShow() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnShow())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnHide() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnHide())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     void ScriptComponent::Clear()
     {

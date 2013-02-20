@@ -2211,13 +2211,6 @@ namespace GTEngine
         }
     }
 
-    void Scene::PostEvent_OnSceneNodeHide(SceneNode &node)
-    {
-        for (size_t i = 0; i < this->eventHandlers.count; ++i)
-        {
-            this->eventHandlers[i]->OnSceneNodeHide(node);
-        }
-    }
 
     void Scene::PostEvent_OnSceneNodeShow(SceneNode &node)
     {
@@ -2225,7 +2218,35 @@ namespace GTEngine
         {
             this->eventHandlers[i]->OnSceneNodeShow(node);
         }
+
+        if (this->registeredScript != nullptr)
+        {
+            auto scriptComponent = node.GetComponent<ScriptComponent>();
+            if (scriptComponent != nullptr && scriptComponent->HasOnShow())
+            {
+                Scripting::PostSceneNodeEvent_OnShow(*this->registeredScript, node);
+            }
+        }
     }
+
+    void Scene::PostEvent_OnSceneNodeHide(SceneNode &node)
+    {
+        for (size_t i = 0; i < this->eventHandlers.count; ++i)
+        {
+            this->eventHandlers[i]->OnSceneNodeHide(node);
+        }
+
+        if (this->registeredScript != nullptr)
+        {
+            auto scriptComponent = node.GetComponent<ScriptComponent>();
+            if (scriptComponent != nullptr && scriptComponent->HasOnHide())
+            {
+                Scripting::PostSceneNodeEvent_OnHide(*this->registeredScript, node);
+            }
+        }
+    }
+
+    
 
     void Scene::PostEvent_OnSceneNodeComponentAdded(SceneNode &node, Component &component)
     {
