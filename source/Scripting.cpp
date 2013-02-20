@@ -698,7 +698,8 @@ namespace GTEngine
                 "            new._deleteInternalPtr = false;"
                 "        end"
                 ""
-                "        new._eventHandlers = {};"
+                "        new._eventHandlers   = {};"
+                "        new._scriptVariables = {};"
                 ""
                 "        new:RegisterScriptComponent();"
                 "    return new;"
@@ -712,6 +713,10 @@ namespace GTEngine
 
 
                 "function GTEngine.SceneNode:RegisterScriptComponent()"
+                "    local prevScriptVariables = self._scriptVariables;"
+                "    self._eventHandlers   = {};"
+                "    self._scriptVariables = {};"
+                ""
                 "    local scriptComponent = self:GetComponent(GTEngine.Components.Script);"
                 "    if scriptComponent ~= nil then"
                 "        local scriptFilePaths = scriptComponent:GetScriptFilePaths();"
@@ -720,6 +725,8 @@ namespace GTEngine
                 "            self:UpdatePublicVariables();"
                 "        end;"
                 "    end;"
+                ""
+                "    self:RemoveUnusedScriptVariables(prevScriptVariables);"
                 "end;"
 
                 "function GTEngine.SceneNode:LinkToScript(script)"
@@ -727,6 +734,7 @@ namespace GTEngine
                 "        for key,value in pairs(script) do"
                 "            if not GTEngine.IsSceneNodeEventHandler(key) then"
                 "                self[key] = value;"
+                "                self._scriptVariables[#self._scriptVariables + 1] = key;"
                 "            else"
                 "                self:RegisterEventHandler(key, value);"
                 "            end;"
@@ -757,6 +765,14 @@ namespace GTEngine
                 "        end;"
                 ""
                 "        self._eventHandlers[name][#self._eventHandlers[name] + 1] = value;" 
+                "    end;"
+                "end;"
+
+                "function GTEngine.SceneNode:RemoveUnusedScriptVariables(prevScriptVariables)"
+                "    for i,variableName in ipairs(prevScriptVariables) do"
+                "        if table.indexof(self._scriptVariables, variableName) == nil then"
+                "            self[variableName] = nil;"
+                "        end;"
                 "    end;"
                 "end;"
 
@@ -1444,6 +1460,22 @@ namespace GTEngine
             assert(script.IsTable(-1));
             {
                 script.Push("UpdatePublicVariables");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);                   // <-- 'self'
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void RegisterScriptComponent(GTCore::Script &script, SceneNode &sceneNode)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("RegisterScriptComponent");
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
