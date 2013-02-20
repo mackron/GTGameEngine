@@ -1606,6 +1606,23 @@ namespace GTEngine
 
 
             this->scene.Update(deltaTimeInSeconds);
+
+
+            // If we're playing and have only a single selected node and it has a script component, we want to update the GUI to show those values.
+            if (this->IsPlaying())
+            {
+                if (this->selectedNodes.count == 1)
+                {
+                    auto selectedNode = this->GetSceneNodeByID(this->selectedNodes[0]);
+                    assert(selectedNode != nullptr);
+                    {
+                        if (selectedNode->HasComponent<ScriptComponent>())
+                        {
+                            this->UpdateSelecteSceneNodeScriptPropertiesGUI();
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -2106,6 +2123,24 @@ namespace GTEngine
                 }
             }
         }
+    }
+
+    void SceneEditor::UpdateSelecteSceneNodeScriptPropertiesGUI()
+    {
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("UpdateScriptProperties");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // <-- 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
     }
 
 
