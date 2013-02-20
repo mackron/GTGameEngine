@@ -54,6 +54,8 @@ namespace GTEngine
                 "    'OnUpdate',"
                 "    'OnStartup',"
                 "    'OnShutdown',"
+                "    'OnShow',"
+                "    'OnHide',"
                 "};"
 
                 "function GTEngine.IsSceneNodeEventHandler(name)"
@@ -1561,6 +1563,38 @@ namespace GTEngine
             assert(script.IsTable(-1));
             {
                 script.Push("OnShutdown");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);                   // <-- 'self'
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PostSceneNodeEvent_OnShow(GTCore::Script &script, SceneNode &sceneNode)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnShow");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);                   // <-- 'self'
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PostSceneNodeEvent_OnHide(GTCore::Script &script, SceneNode &sceneNode)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnHide");
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {

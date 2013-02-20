@@ -9,7 +9,7 @@ namespace GTEngine
 {
     ScriptDefinition::ScriptDefinition(const char* absolutePathIn, const char* relativePathIn, const char* scriptStringIn)
         : absolutePath(absolutePathIn), relativePath(relativePathIn), scriptString(scriptStringIn),
-          hasOnUpdate(false), hasOnStartup(false), hasOnShutdown(false)
+          hasOnUpdate(false), hasOnStartup(false), hasOnShutdown(false), hasOnShow(false), hasOnHide(false)
     {
         // We need to do a parse over the script and retrieve it's public variables.
         this->ParseForPublicVariables();
@@ -43,6 +43,14 @@ namespace GTEngine
                     else if (GTCore::Strings::Equal(name, "OnShutdown"))
                     {
                         this->hasOnShutdown = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnShow"))
+                    {
+                        this->hasOnShow = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnHide"))
+                    {
+                        this->hasOnHide = true;
                     }
                 }
                 else
@@ -316,6 +324,16 @@ namespace GTEngine
     bool ScriptDefinition::HasOnShutdown() const
     {
         return this->hasOnShutdown;
+    }
+
+    bool ScriptDefinition::HasOnShow() const
+    {
+        return this->hasOnShow;
+    }
+
+    bool ScriptDefinition::HasOnHide() const
+    {
+        return this->hasOnHide;
     }
 
 
