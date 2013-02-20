@@ -304,6 +304,10 @@
 		<Unit filename="../../../include/GTEngine/SceneStateStackStagingArea.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneUpdateManager.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneViewport.hpp" />
+		<Unit filename="../../../include/GTEngine/ScriptDefinition.hpp" />
+		<Unit filename="../../../include/GTEngine/ScriptLibrary.hpp" />
+		<Unit filename="../../../include/GTEngine/ScriptVariable.hpp" />
+		<Unit filename="../../../include/GTEngine/ScriptVariableTypes.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting.hpp" />
 		<Unit filename="../../../include/GTEngine/Serialization.hpp" />
 		<Unit filename="../../../include/GTEngine/ShaderLibrary.hpp" />
@@ -476,6 +480,9 @@
 		<Unit filename="../../../source/SceneStateStackRestoreCommands.cpp" />
 		<Unit filename="../../../source/SceneStateStackStagingArea.cpp" />
 		<Unit filename="../../../source/SceneViewport.cpp" />
+		<Unit filename="../../../source/ScriptDefinition.cpp" />
+		<Unit filename="../../../source/ScriptLibrary.cpp" />
+		<Unit filename="../../../source/ScriptVariable.cpp" />
 		<Unit filename="../../../source/Scripting.cpp" />
 		<Unit filename="../../../source/ShaderLibrary.cpp" />
 		<Unit filename="../../../source/ShaderParameter.cpp" />
