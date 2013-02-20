@@ -10,7 +10,7 @@ namespace GTEngine
     GTENGINE_IMPL_COMPONENT(ScriptComponent, "Script");
 
     ScriptComponent::ScriptComponent(SceneNode &node)
-        : Component(node), scripts(), hasOnStartupBeenCalled(false)
+        : Component(node), scripts(), publicVariables(), hasOnStartupBeenCalled(false)
     {
     }
 
@@ -530,7 +530,7 @@ namespace GTEngine
                         break;
                     }
 
-
+                case ScriptVariableType_Unknown:
                 default: break;
                 }
             }

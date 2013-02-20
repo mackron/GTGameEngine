@@ -36,7 +36,7 @@ namespace GTEngine
     // Number
 
     ScriptVariable_Number::ScriptVariable_Number(const char* name)
-        : ScriptVariable(ScriptVariableType_Number, name)
+        : ScriptVariable(ScriptVariableType_Number, name), value(0.0)
     {
     }
 
@@ -90,7 +90,7 @@ namespace GTEngine
     // Vec4
 
     ScriptVariable_Vec4::ScriptVariable_Vec4(const char* name)
-        : ScriptVariable(ScriptVariableType_Vec4, name), x(0.0), y(0.0), z(0.0)
+        : ScriptVariable(ScriptVariableType_Vec4, name), x(0.0), y(0.0), z(0.0), w(0.0)
     {
     }
 
@@ -204,7 +204,7 @@ namespace GTEngine
                 return new ScriptVariable_Prefab(static_cast<const ScriptVariable_Prefab &>(variableToCopy));
             }
 
-
+        case ScriptVariableType_Unknown:
         default: break;
         }
 
