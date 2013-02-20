@@ -4151,6 +4151,7 @@ namespace GTEngine
                                             break;
                                         }
 
+                                    case ScriptVariableType_Unknown:
                                     default: break;
                                     }
                                 }
@@ -4231,6 +4232,7 @@ namespace GTEngine
                                     }
 
 
+                                case ScriptVariableType_Unknown:
                                 default:
                                     {
                                         script.PushNil();

@@ -9,7 +9,8 @@ namespace GTEngine
 {
     ScriptDefinition::ScriptDefinition(const char* absolutePathIn, const char* relativePathIn, const char* scriptStringIn)
         : absolutePath(absolutePathIn), relativePath(relativePathIn), scriptString(scriptStringIn),
-          hasOnUpdate(false), hasOnStartup(false), hasOnShutdown(false), hasOnShow(false), hasOnHide(false)
+          hasOnUpdate(false), hasOnStartup(false), hasOnShutdown(false), hasOnShow(false), hasOnHide(false),
+          publicVariables()
     {
         // We need to do a parse over the script and retrieve it's public variables.
         this->ParseForPublicVariables();
@@ -279,6 +280,7 @@ namespace GTEngine
                                 break;
                             }
 
+                        case ScriptVariableType_Unknown:
                         default: break;
                         }
                     }
