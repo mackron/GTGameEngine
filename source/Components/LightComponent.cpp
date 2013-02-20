@@ -2,6 +2,7 @@
 
 #include <GTEngine/Components/LightComponent.hpp>
 #include <GTEngine/Scene.hpp>
+#include <GTEngine/Logging.hpp>
 
 // Lighting utils.
 namespace GTEngine
@@ -63,25 +64,60 @@ namespace GTEngine
         this->OnChanged();
     }
 
-
     void PointLightComponent::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(this->colour);
-        serializer.Write(this->constantAttenuation);
-        serializer.Write(this->linearAttenuation);
-        serializer.Write(this->quadraticAttenuation);
-        serializer.Write(this->castShadows);
+        GTCore::BasicSerializer intermediarySerializer;
+        intermediarySerializer.Write(this->colour);
+        intermediarySerializer.Write(this->constantAttenuation);
+        intermediarySerializer.Write(this->linearAttenuation);
+        intermediarySerializer.Write(this->quadraticAttenuation);
+        intermediarySerializer.Write(this->castShadows);
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_PointLightComponent_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void PointLightComponent::Deserialize(GTCore::Deserializer &deserializer)
     {
-        deserializer.Read(this->colour);
-        deserializer.Read(this->constantAttenuation);
-        deserializer.Read(this->linearAttenuation);
-        deserializer.Read(this->quadraticAttenuation);
-        deserializer.Read(this->castShadows);
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+        if (header.id == Serialization::ChunkID_PointLightComponent_Main)
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    deserializer.Read(this->colour);
+                    deserializer.Read(this->constantAttenuation);
+                    deserializer.Read(this->linearAttenuation);
+                    deserializer.Read(this->quadraticAttenuation);
+                    deserializer.Read(this->castShadows);
 
-        this->OnChanged();
+                    this->OnChanged();
+                    break;
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing PointLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
+
+                    deserializer.Seek(header.sizeInBytes);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            GTEngine::Log("Error deserializing PointLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
+
+            deserializer.Seek(header.sizeInBytes);
+        }
     }
 }
 
@@ -152,26 +188,62 @@ namespace GTEngine
 
     void SpotLightComponent::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(this->innerAngle);
-        serializer.Write(this->outerAngle);
-        serializer.Write(this->colour);
-        serializer.Write(this->constantAttenuation);
-        serializer.Write(this->linearAttenuation);
-        serializer.Write(this->quadraticAttenuation);
-        serializer.Write(this->castShadows);
+        GTCore::BasicSerializer intermediarySerializer;
+        intermediarySerializer.Write(this->innerAngle);
+        intermediarySerializer.Write(this->outerAngle);
+        intermediarySerializer.Write(this->colour);
+        intermediarySerializer.Write(this->constantAttenuation);
+        intermediarySerializer.Write(this->linearAttenuation);
+        intermediarySerializer.Write(this->quadraticAttenuation);
+        intermediarySerializer.Write(this->castShadows);
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_SpotLightComponent_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void SpotLightComponent::Deserialize(GTCore::Deserializer &deserializer)
     {
-        deserializer.Read(this->innerAngle);
-        deserializer.Read(this->outerAngle);
-        deserializer.Read(this->colour);
-        deserializer.Read(this->constantAttenuation);
-        deserializer.Read(this->linearAttenuation);
-        deserializer.Read(this->quadraticAttenuation);
-        deserializer.Read(this->castShadows);
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+        if (header.id == Serialization::ChunkID_SpotLightComponent_Main)
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    deserializer.Read(this->innerAngle);
+                    deserializer.Read(this->outerAngle);
+                    deserializer.Read(this->colour);
+                    deserializer.Read(this->constantAttenuation);
+                    deserializer.Read(this->linearAttenuation);
+                    deserializer.Read(this->quadraticAttenuation);
+                    deserializer.Read(this->castShadows);
 
-        this->OnChanged();
+                    this->OnChanged();
+                    break;
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing SpotLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
+
+                    deserializer.Seek(header.sizeInBytes);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            GTEngine::Log("Error deserializing SpotLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
+
+            deserializer.Seek(header.sizeInBytes);
+        }
     }
 }
 
@@ -212,16 +284,52 @@ namespace GTEngine
 
     void DirectionalLightComponent::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(this->colour);
-        serializer.Write(this->castShadows);
+        GTCore::BasicSerializer intermediarySerializer;
+        intermediarySerializer.Write(this->colour);
+        intermediarySerializer.Write(this->castShadows);
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_DirectionalLightComponent_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void DirectionalLightComponent::Deserialize(GTCore::Deserializer &deserializer)
     {
-        deserializer.Read(this->colour);
-        deserializer.Read(this->castShadows);
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+        if (header.id == Serialization::ChunkID_DirectionalLightComponent_Main)
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    deserializer.Read(this->colour);
+                    deserializer.Read(this->castShadows);
 
-        this->OnChanged();
+                    this->OnChanged();
+                    break;
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing DirectionalLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
+
+                    deserializer.Seek(header.sizeInBytes);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            GTEngine::Log("Error deserializing DirectionalLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
+
+            deserializer.Seek(header.sizeInBytes);
+        }
     }
 }
 
@@ -246,13 +354,49 @@ namespace GTEngine
 
     void AmbientLightComponent::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(this->colour);
+        GTCore::BasicSerializer intermediarySerializer;
+        intermediarySerializer.Write(this->colour);
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_AmbientLightComponent_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void AmbientLightComponent::Deserialize(GTCore::Deserializer &deserializer)
     {
-        deserializer.Read(this->colour);
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+        if (header.id == Serialization::ChunkID_AmbientLightComponent_Main)
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    deserializer.Read(this->colour);
 
-        this->OnChanged();
+                    this->OnChanged();
+                    break;
+                }
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing AmbientLightComponent. Main chunk has an unsupported version (%d). Skipping.", header.version);
+
+                    deserializer.Seek(header.sizeInBytes);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            GTEngine::Log("Error deserializing AmbientLightComponent. Unknown Chunk ID (%d). Skipping.", header.id);
+
+            deserializer.Seek(header.sizeInBytes);
+        }
     }
 }
