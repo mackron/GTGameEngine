@@ -5,6 +5,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/SceneNodeClassLibrary.hpp>
+#include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/Scripting.hpp>
 #include <GTCore/Serializer.hpp>
@@ -2505,6 +2506,22 @@ namespace GTEngine
 
     void SceneEditor::UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath)
     {
+        // If the scene is registered to the script we're going to reload the definition.
+        if (this->scene.GetRegisteredScript() != nullptr)
+        {
+            if (ScriptLibrary::IsLoaded(scriptRelativePath))
+            {
+                auto definition = ScriptLibrary::Acquire(scriptRelativePath);
+                assert(definition != nullptr);
+                {
+                    Scripting::LoadScriptDefinition(*this->scene.GetRegisteredScript(), scriptRelativePath, definition->GetScriptString());
+                }
+                ScriptLibrary::Unacquire(definition);
+            }
+        }
+
+
+
         // If the selected node is linked to the given script, we'll need to let the scripting environment know about it.
         bool notifyScriptingEnvironment = false;
 
@@ -2527,6 +2544,14 @@ namespace GTEngine
                             if (GTCore::Strings::Equal(script->GetRelativePath(), scriptRelativePath))
                             {
                                 scriptComponent->ReloadScript(iScript);
+
+                                // After the script component itself has been reloaded we want to update the Lua object as well if the scene is currently registered.
+                                if (this->scene.GetRegisteredScript() != nullptr)
+                                {
+                                    Scripting::RegisterScriptComponent(*this->scene.GetRegisteredScript(), *sceneNode);
+                                }
+
+
 
                                 // The scripting environment might need to know about this.
                                 if (this->selectedNodes.count == 1 && this->selectedNodes[0] == sceneNode->GetID())

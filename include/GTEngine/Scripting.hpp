@@ -60,6 +60,17 @@ namespace GTEngine
         ///     This is only performed if the owner scene is registered and the given scene node has a script component.
         void UpdatePublicVariables(GTCore::Script &script, SceneNode &sceneNode);
 
+        /// Updates the Lua representation of a registered scene node so that it is synced with the current state of the attached script component.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param sceneNode [in] A reference to the scene node whose public variables are being updated.
+        ///
+        /// @remarks
+        ///     This is only performed if the owner scene is registered and the given scene node has a script component.
+        ///     @par
+        ///     This does not change the state of any variables.
+        void RegisterScriptComponent(GTCore::Script &script, SceneNode &sceneNode);
+
         /// Pushes a scene node object to the top of the stack.
         ///
         /// @param script    [in] A reference to the main script object.
