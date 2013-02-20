@@ -1,6 +1,9 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Editor/TextEditor/TextEditor.hpp>
+#include <GTEngine/Editor.hpp>
+#include <GTEngine/Game.hpp>
+#include <GTCore/Path.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -89,6 +92,17 @@ namespace GTEngine
         if (wasSaved)
         {
             this->UnmarkAsModified();
+
+            // If the file was a script file, we want to do an immediate check for modifications so that any open scene editors can see
+            // the changes seemlessly.
+            if (GTCore::Strings::Equal<false>(GTCore::Path::Extension(this->GetRelativePath()), "lua")    ||
+                GTCore::Strings::Equal<false>(GTCore::Path::Extension(this->GetRelativePath()), "script") ||
+                GTCore::Strings::Equal<false>(GTCore::Path::Extension(this->GetRelativePath()), "gtscript"))
+            {
+                auto &dataFilesWatcher = this->GetOwnerEditor().GetGame().GetDataFilesWatcher();
+                dataFilesWatcher.CheckForChanges(false);
+                dataFilesWatcher.DispatchEvents();
+            }
         }
 
         return wasSaved;

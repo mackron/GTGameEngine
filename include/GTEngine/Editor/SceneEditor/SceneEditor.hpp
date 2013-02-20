@@ -415,6 +415,9 @@ namespace GTEngine
         /// Retrieves the relative paths of every prefab that is referenced by the scene.
         void GetAllReferencedPrefabs(GTCore::Vector<GTCore::String> &prefabRelativePaths);
 
+        /// Updates every scene node linked to the given script.
+        void UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath);
+
 
     private:
 

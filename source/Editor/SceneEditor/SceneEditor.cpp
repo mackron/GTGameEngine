@@ -1665,6 +1665,16 @@ namespace GTEngine
         {
             this->UpdateAllSceneNodesLinkedToPrefab(item.relativePath.c_str());
         }
+        else
+        {
+            // It might be a script file.
+            if (GTCore::Strings::Equal<false>(GTCore::Path::Extension(item.relativePath.c_str()), "lua")    ||
+                GTCore::Strings::Equal<false>(GTCore::Path::Extension(item.relativePath.c_str()), "script") ||
+                GTCore::Strings::Equal<false>(GTCore::Path::Extension(item.relativePath.c_str()), "gtscript"))
+            {
+                this->UpdateAllSceneNodesLinkedToScript(item.relativePath.c_str());
+            }
+        }
     }
 
 
@@ -2490,6 +2500,54 @@ namespace GTEngine
                     }
                 }
             }
+        }
+    }
+
+    void SceneEditor::UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath)
+    {
+        // If the selected node is linked to the given script, we'll need to let the scripting environment know about it.
+        bool notifyScriptingEnvironment = false;
+
+
+        size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+
+        for (size_t i = 0; i < sceneNodeCount; ++i)
+        {
+            auto sceneNode = this->scene.GetSceneNodeByIndex(i);
+            assert(sceneNode != nullptr);
+            {
+                auto scriptComponent = sceneNode->GetComponent<ScriptComponent>();
+                if (scriptComponent != nullptr)
+                {
+                    for (size_t iScript = 0; iScript < scriptComponent->GetScriptCount(); ++iScript)
+                    {
+                        auto script = scriptComponent->GetScriptDefinitionByIndex(iScript);
+                        assert(script != nullptr);
+                        {
+                            if (GTCore::Strings::Equal(script->GetRelativePath(), scriptRelativePath))
+                            {
+                                scriptComponent->ReloadScript(iScript);
+
+                                // The scripting environment might need to know about this.
+                                if (this->selectedNodes.count == 1 && this->selectedNodes[0] == sceneNode->GetID())
+                                {
+                                    notifyScriptingEnvironment = true;
+                                }
+                                
+                                // We can break from the iScript loop because we should not logically have a script of the same name.
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // The more correct way of doing this would be just to updating the Script panel, but we'll just post an OnSelectionChanged event for now.
+        if (notifyScriptingEnvironment)
+        {
+            this->PostOnSelectionChangedEventToScript();
         }
     }
 }
