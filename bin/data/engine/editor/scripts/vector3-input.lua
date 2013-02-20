@@ -5,21 +5,37 @@ function GTGUI.Element:Vector3Input()
     self.Y = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:2px;' />");
     self.Z = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='textbox' style='width:32%; margin-right:0px;' />");
     
-    self.BlockSetFromXYZ     = false;
-    self.BlockOnValueChanged = false;
+    self.X:NumberTextBox():UseFloatFormat();
+    self.Y:NumberTextBox():UseFloatFormat();
+    self.Z:NumberTextBox():UseFloatFormat();
+    
+
+    function self:GetX()
+        return self.X:GetValue();
+    end
+    function self:GetY()
+        return self.Y:GetValue();
+    end
+    function self:GetZ()
+        return self.Z:GetValue();
+    end
+    
+    
+    function self:SetX(value)
+        self.X:SetValue(value);
+    end
+    function self:SetY(value)
+        self.Y:SetValue(value);
+    end
+    function self:SetZ(value)
+        self.Z:SetValue(value);
+    end
+    
     
     function self:SetFromXYZ(x, y, z)
-        if not self.BlockSetFromXYZ then
-            if x == -0.0 then x = 0.0 end;
-            if y == -0.0 then y = 0.0 end;
-            if z == -0.0 then z = 0.0 end;
-
-            self.BlockOnValueChanged = true;
-            self.X:SetText(string.format("%.4f", x));
-            self.Y:SetText(string.format("%.4f", y));
-            self.Z:SetText(string.format("%.4f", z));
-            self.BlockOnValueChanged = false;
-        end
+        self:SetX(x);
+        self:SetY(y);
+        self:SetZ(z);
     end
     
     function self:SetFromXYZTable(value)
@@ -27,27 +43,18 @@ function GTGUI.Element:Vector3Input()
     end
     
     function self:GetXYZ()
-        return tonumber(self.X:GetText()) or 0.0, tonumber(self.Y:GetText()) or 0.0, tonumber(self.Z:GetText()) or 0.0;
+        return self:GetX(), self:GetY(), self:GetZ();
+        --return tonumber(self.X:GetText()) or 0.0, tonumber(self.Y:GetText()) or 0.0, tonumber(self.Z:GetText()) or 0.0;
     end
     
     function self:GetXYZTable()
-        local xValue, yValue, zValue = self:GetXYZ();
-        return {x = xValue, y = yValue, z = zValue};
+        return {x = self:GetX(), y = self:GetY(), z = self:GetZ()};
     end
     
     
-    -- This function is called when one of the text boxes has changed. We use the same event handler for all three.
-    --
-    -- When the text of one of these elements changes, we will post an event back to the engine to have it update the position of the
-    -- object. The problem with this, is that when the position of the selected object changes via other means, these text boxes will
-    -- be updated. We end up with a sort of cylclic dependency. What we do to resolve is block calls to SetFromXYZ() during processing
-    -- of OnValueChanged() events.
+
     function OnTextChangedHandler()
-        if not self.BlockOnValueChanged then
-            self.BlockSetFromXYZ = true;
-            self:OnValueChanged(self:GetXYZTable());
-            self.BlockSetFromXYZ = false;
-        end
+        self:OnValueChanged(self:GetXYZTable());
     end
 
     self.X:OnTextChanged(OnTextChangedHandler);
