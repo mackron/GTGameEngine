@@ -3724,118 +3724,115 @@ namespace GTEngine
                         auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                         if (component != nullptr)
                         {
-                            int shapeIndex = script.ToInteger(2) - 1;   // Lua is 1 based, so we subtract 1.
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);   // Lua is 1 based, so we subtract 1.
+                            auto & shape      = component->GetCollisionShapeAtIndex(shapeIndex);
 
-                            auto shape = component->GetCollisionShapeAtIndex(static_cast<size_t>(shapeIndex));
-                            if (shape != nullptr)
+                            script.PushNewTable();
                             {
-                                script.PushNewTable();
+                                if (component->IsUsingConvexHullsFromModel())
                                 {
-                                    if (component->IsUsingConvexHullsFromModel())
+                                    script.SetTableValue(-1, "type", CollisionShapeType_ModelConvexHulls);
+                                }
+                                else
+                                {
+                                    CollisionShapeType type = GetCollisionShapeType(shape);
+
+                                    // Start with the type.
+                                    script.SetTableValue(-1, "type", type);
+
+                                    // Now the shape offset.
+                                    auto &offset = component->GetCollisionShape().getChildTransform(shapeIndex).getOrigin();
+
+                                    script.SetTableValue(-1, "offsetX", offset.getX());
+                                    script.SetTableValue(-1, "offsetY", offset.getY());
+                                    script.SetTableValue(-1, "offsetZ", offset.getZ());
+
+                                    // We now need to do shape-specific properties.
+                                    switch (type)
                                     {
-                                        script.SetTableValue(-1, "type", CollisionShapeType_ModelConvexHulls);
-                                    }
-                                    else
-                                    {
-                                        CollisionShapeType type = GetCollisionShapeType(shape);
-
-                                        // Start with the type.
-                                        script.SetTableValue(-1, "type", type);
-
-                                        // Now the shape offset.
-                                        auto &offset = component->GetCollisionShape().getChildTransform(shapeIndex).getOrigin();
-
-                                        script.SetTableValue(-1, "offsetX", offset.getX());
-                                        script.SetTableValue(-1, "offsetY", offset.getY());
-                                        script.SetTableValue(-1, "offsetZ", offset.getZ());
-
-                                        // We now need to do shape-specific properties.
-                                        switch (type)
+                                    case CollisionShapeType_Box:
                                         {
-                                        case CollisionShapeType_Box:
-                                            {
-                                                auto box = static_cast<btBoxShape*>(shape);
+                                            auto &box = static_cast<const btBoxShape &>(shape);
 
-                                                btVector3 halfExtents = box->getHalfExtentsWithMargin() / box->getLocalScaling();
+                                            btVector3 halfExtents = box.getHalfExtentsWithMargin() / box.getLocalScaling();
 
-                                                script.SetTableValue(-1, "halfX", halfExtents.getX());
-                                                script.SetTableValue(-1, "halfY", halfExtents.getY());
-                                                script.SetTableValue(-1, "halfZ", halfExtents.getZ());
+                                            script.SetTableValue(-1, "halfX", halfExtents.getX());
+                                            script.SetTableValue(-1, "halfY", halfExtents.getY());
+                                            script.SetTableValue(-1, "halfZ", halfExtents.getZ());
 
-                                                break;
-                                            }
-
-                                        case CollisionShapeType_Sphere:
-                                            {
-                                                auto sphere = static_cast<btSphereShape*>(shape);
-
-                                                script.SetTableValue(-1, "radius", sphere->getRadius() / sphere->getLocalScaling().getX());
-
-                                                break;
-                                            }
-
-                                        case CollisionShapeType_Ellipsoid:
-                                            {
-                                                auto ellipsoid = static_cast<btEllipsoidShape*>(shape);
-
-                                                btVector3 margin(ellipsoid->getMargin(), ellipsoid->getMargin(), ellipsoid->getMargin());
-                                                btVector3 radius = (ellipsoid->getImplicitShapeDimensions() + margin) / ellipsoid->getLocalScaling();
-
-                                                script.SetTableValue(-1, "radiusX", radius.getX());
-                                                script.SetTableValue(-1, "radiusY", radius.getY());
-                                                script.SetTableValue(-1, "radiusZ", radius.getZ());
-
-                                                break;
-                                            }
-
-                                        case CollisionShapeType_CylinderX:
-                                        case CollisionShapeType_CylinderY:
-                                        case CollisionShapeType_CylinderZ:
-                                            {
-                                                auto cylinder = static_cast<btCylinderShape*>(shape);
-
-                                                btVector3 halfExtents = cylinder->getHalfExtentsWithMargin() / cylinder->getLocalScaling();
-
-                                                script.SetTableValue(-1, "halfX", halfExtents.getX());
-                                                script.SetTableValue(-1, "halfY", halfExtents.getY());
-                                                script.SetTableValue(-1, "halfZ", halfExtents.getZ());
-
-                                                break;
-                                            }
-
-                                        case CollisionShapeType_CapsuleX:
-                                        case CollisionShapeType_CapsuleY:
-                                        case CollisionShapeType_CapsuleZ:
-                                            {
-                                                auto capsule = static_cast<btCapsuleShape*>(shape);
-
-                                                uint32_t upAxis     = static_cast<uint32_t>(capsule->getUpAxis());
-                                                uint32_t radiusAxis = (upAxis + 2) % 3;
-
-                                                script.SetTableValue(-1, "radius", capsule->getRadius()            / capsule->getLocalScaling()[radiusAxis]);
-                                                script.SetTableValue(-1, "height", capsule->getHalfHeight() * 2.0f / capsule->getLocalScaling()[upAxis]);
-
-                                                break;
-                                            }
-
-                                        case CollisionShapeType_ConvexHull:
-                                            {
-                                                break;
-                                            }
-
-                                        case CollisionShapeType_ModelConvexHulls:
-                                            {
-                                                break;
-                                            }
-
-                                        case CollisionShapeType_None:
-                                        default: break;
+                                            break;
                                         }
+
+                                    case CollisionShapeType_Sphere:
+                                        {
+                                            auto &sphere = static_cast<const btSphereShape &>(shape);
+
+                                            script.SetTableValue(-1, "radius", sphere.getRadius() / sphere.getLocalScaling().getX());
+
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_Ellipsoid:
+                                        {
+                                            auto &ellipsoid = static_cast<const btEllipsoidShape &>(shape);
+
+                                            btVector3 margin(ellipsoid.getMargin(), ellipsoid.getMargin(), ellipsoid.getMargin());
+                                            btVector3 radius = (ellipsoid.getImplicitShapeDimensions() + margin) / ellipsoid.getLocalScaling();
+
+                                            script.SetTableValue(-1, "radiusX", radius.getX());
+                                            script.SetTableValue(-1, "radiusY", radius.getY());
+                                            script.SetTableValue(-1, "radiusZ", radius.getZ());
+
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_CylinderX:
+                                    case CollisionShapeType_CylinderY:
+                                    case CollisionShapeType_CylinderZ:
+                                        {
+                                            auto &cylinder = static_cast<const btCylinderShape &>(shape);
+
+                                            btVector3 halfExtents = cylinder.getHalfExtentsWithMargin() / cylinder.getLocalScaling();
+
+                                            script.SetTableValue(-1, "halfX", halfExtents.getX());
+                                            script.SetTableValue(-1, "halfY", halfExtents.getY());
+                                            script.SetTableValue(-1, "halfZ", halfExtents.getZ());
+
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_CapsuleX:
+                                    case CollisionShapeType_CapsuleY:
+                                    case CollisionShapeType_CapsuleZ:
+                                        {
+                                            auto &capsule = static_cast<const btCapsuleShape &>(shape);
+
+                                            uint32_t upAxis     = static_cast<uint32_t>(capsule.getUpAxis());
+                                            uint32_t radiusAxis = (upAxis + 2) % 3;
+
+                                            script.SetTableValue(-1, "radius", capsule.getRadius()            / capsule.getLocalScaling()[radiusAxis]);
+                                            script.SetTableValue(-1, "height", capsule.getHalfHeight() * 2.0f / capsule.getLocalScaling()[upAxis]);
+
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_ConvexHull:
+                                        {
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_ModelConvexHulls:
+                                        {
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_None:
+                                    default: break;
                                     }
                                 }
-
-                                return 1;
                             }
+
+                            return 1;
                         }
 
                         return 0;

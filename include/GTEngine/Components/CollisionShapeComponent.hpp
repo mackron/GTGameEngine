@@ -25,11 +25,29 @@ namespace GTEngine
         virtual ~CollisionShapeComponent();
 
 
+        /// Retrieves a reference to the main collision shape.
+              btCompoundShape & GetCollisionShape()       { return this->collisionShape; }
+        const btCompoundShape & GetCollisionShape() const { return this->collisionShape; }
+
+
+        /// Retrieves the number of shapes attached to the main shape.
+        size_t GetCollisionShapeCount() const;
+
+        /// Retrieves a pointer to the shape at the given index.
+        ///
+        /// @param index [in] The index of the shape to retrieve.
+        ///
+        /// @remarks
+        ///     This method asserts that the index is valid and the shape is non-null. If this is not the case, it probably means a bug.
+              btCollisionShape & GetCollisionShapeAtIndex(size_t index);
+        const btCollisionShape & GetCollisionShapeAtIndex(size_t index) const;
 
 
 
+    protected:
 
-    private:
+        /// The collision shape. This is always a compound shape.
+        btCompoundShape collisionShape;
     };
 }
 
