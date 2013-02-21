@@ -2,6 +2,7 @@
 
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/Scripting.hpp>
 #include <GTCore/IO.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Dictionary.hpp>
@@ -17,6 +18,8 @@ namespace GTEngine
     /// The list of loaded classes, indexed by the absolute path.
     static GTCore::Dictionary<ScriptDefinitionReference> LoadedDefinitions;
 
+    /// A pointer to the working script. This is instantiated in Startup() and deleted in Shutdown().
+    static GTCore::Script* WorkingScript = nullptr;
 
 
 
@@ -25,6 +28,13 @@ namespace GTEngine
 
     bool ScriptLibrary::Startup()
     {
+        WorkingScript = new GTCore::Script;
+        if (!Scripting::LoadExtendedMathLibrary(*WorkingScript))
+        {
+            delete WorkingScript;
+            return false;
+        }
+
         return true;
     }
 
@@ -35,6 +45,10 @@ namespace GTEngine
             delete LoadedDefinitions.buffer[i]->value.first;
         }
         LoadedDefinitions.Clear();
+
+
+        delete WorkingScript;
+        WorkingScript = nullptr;
     }
 
 
@@ -216,5 +230,17 @@ namespace GTEngine
     const ScriptDefinition* ScriptLibrary::GetLoadedDefinitionByIndex(size_t index)
     {
         return LoadedDefinitions.buffer[index]->value.first;
+    }
+
+
+
+
+    /////////////////////////////////////////////////
+    // Misc.
+
+    GTCore::Script & ScriptLibrary::GetWorkingScript()
+    {
+        assert(WorkingScript != nullptr);
+        return *WorkingScript;
     }
 }
