@@ -513,6 +513,7 @@
     <ClCompile Include="..\..\..\source\SceneViewport.cpp" />
     <ClCompile Include="..\..\..\source\ScriptDefinition.cpp" />
     <ClCompile Include="..\..\..\source\Scripting.cpp" />
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Math.cpp" />
     <ClCompile Include="..\..\..\source\ScriptLibrary.cpp" />
     <ClCompile Include="..\..\..\source\ScriptVariable.cpp" />
     <ClCompile Include="..\..\..\source\ShaderLibrary.cpp" />

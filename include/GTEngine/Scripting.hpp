@@ -20,6 +20,16 @@ namespace GTEngine
         ///     This only loads the content in the GTEngine namespace/table. This will NOT load any game-specific functionality.
         bool LoadGTEngineScriptLibrary(GTCore::Script &script);
 
+        /// Loads the extended math library into the given script.
+        ///
+        /// @param script [in] The script to load the math library into.
+        ///
+        /// @return True if the library is loaded successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This will load the library into the global 'math' table. This will not override existing functions.
+        bool LoadExtendedMathLibrary(GTCore::Script &script);
+
 
         /// Registers a scene to the given script.
         ///
