@@ -746,6 +746,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\ScriptVariableTypes.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\CollisionShapeComponent.hpp">
+      <Filter>include\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1248,6 +1251,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Math.cpp">
       <Filter>source\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\CollisionShapeComponent.cpp">
+      <Filter>source\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
