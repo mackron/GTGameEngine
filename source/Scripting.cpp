@@ -19,7 +19,7 @@ namespace GTEngine
     {
         bool LoadGTEngineScriptLibrary(GTCore::Script &script)
         {
-            bool successful = true;
+            bool successful = LoadExtendedMathLibrary(script);
 
             successful = successful && script.Execute
             (

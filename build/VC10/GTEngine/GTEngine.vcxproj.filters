@@ -156,6 +156,9 @@
     <Filter Include="include\Editor\ParticleEditor">
       <UniqueIdentifier>{9561ecb4-3e5c-4b6c-ad2d-d36ecf896052}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Scripting">
+      <UniqueIdentifier>{3d65def6-a3c5-4d08-99db-f01d36558573}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -1242,6 +1245,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\ScriptVariable.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Math.cpp">
+      <Filter>source\Scripting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
