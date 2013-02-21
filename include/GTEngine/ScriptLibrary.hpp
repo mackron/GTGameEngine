@@ -4,6 +4,7 @@
 #define __GTEngine_ScriptLibrary_hpp_
 
 #include "ScriptDefinition.hpp"
+#include <GTCore/Script.hpp>
 
 namespace GTEngine
 {
@@ -81,6 +82,17 @@ namespace GTEngine
         ///
         /// @param index [in] The index of the definition to retrieve.
         static const ScriptDefinition* GetLoadedDefinitionByIndex(size_t index);
+
+
+
+        /////////////////////////////////////////////////
+        // Misc.
+
+        /// Retrieves a reference to a script object that can be used for doing various work like script checking and loading.
+        ///
+        /// @remarks
+        ///     This script does not contain any high-level script functionality.
+        static GTCore::Script & GetWorkingScript();
     };
 }
 

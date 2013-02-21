@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/ScriptDefinition.hpp>
+#include <GTEngine/ScriptLibrary.hpp>
 #include <GTCore/Script.hpp>
 #include <GTCore/Strings/LineIterator.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
@@ -16,22 +17,32 @@ namespace GTEngine
         this->ParseForPublicVariables();
 
 
+        // The script library will contain a working script object for loading stuff like this.
+        auto &workingScript = ScriptLibrary::GetWorkingScript();
+
+
         // We now need to determine if various events are defined in the script. To do this, we'll need to parse it. For now what we'll do
         // it just load it up in a temporary script and then see if we can find functions with the applicable names.
         //
         // We're also going to use this for retrieving the default value of variables.
-        GTCore::Script tempScript;
-        tempScript.Execute("self = {}");
-        tempScript.Execute(scriptStringIn);
+        
+        // self = {}
+        workingScript.PushNewTable();
+        workingScript.SetGlobal("self");
 
-        tempScript.GetGlobal("self");
-        assert(tempScript.IsTable(-1));
+        // This executes the script exactly as it was given.
+        workingScript.Execute(scriptStringIn);
+
+
+        // Here is where we look at the content of the script.
+        workingScript.GetGlobal("self");
+        assert(workingScript.IsTable(-1));
         {
-            for (tempScript.PushNil(); tempScript.Next(-2); tempScript.Pop(1))
+            for (workingScript.PushNil(); workingScript.Next(-2); workingScript.Pop(1))
             {
-                auto name = tempScript.ToString(-2);
+                auto name = workingScript.ToString(-2);
 
-                if (tempScript.IsFunction(-1))
+                if (workingScript.IsFunction(-1))
                 {
                     if (GTCore::Strings::Equal(name, "OnUpdate"))
                     {
@@ -64,9 +75,9 @@ namespace GTEngine
                         {
                         case ScriptVariableType_Number:
                             {
-                                if (tempScript.IsNumber(-1))
+                                if (workingScript.IsNumber(-1))
                                 {
-                                    static_cast<ScriptVariable_Number*>(variable)->SetValue(tempScript.ToDouble(-1));
+                                    static_cast<ScriptVariable_Number*>(variable)->SetValue(workingScript.ToDouble(-1));
                                 }
 
                                 break;
@@ -76,22 +87,22 @@ namespace GTEngine
                             {
                                 auto variableVec2 = static_cast<ScriptVariable_Vec2*>(variable);
 
-                                if (tempScript.IsNumber(-1))
+                                if (workingScript.IsNumber(-1))
                                 {
-                                    double value = tempScript.ToDouble(-2);
+                                    double value = workingScript.ToDouble(-2);
                                     variableVec2->SetValue(value, value);
                                 }
-                                else if (tempScript.IsTable(-1))
+                                else if (workingScript.IsTable(-1))
                                 {
-                                    for (tempScript.PushNil(); tempScript.Next(-2); tempScript.Pop(1))
+                                    for (workingScript.PushNil(); workingScript.Next(-2); workingScript.Pop(1))
                                     {
-                                        if (tempScript.IsNumber(-1))
+                                        if (workingScript.IsNumber(-1))
                                         {
-                                            double value = tempScript.ToDouble(-1);
+                                            double value = workingScript.ToDouble(-1);
 
-                                            if (tempScript.IsNumber(-2))
+                                            if (workingScript.IsNumber(-2))
                                             {
-                                                auto key = tempScript.ToInteger(-2);
+                                                auto key = workingScript.ToInteger(-2);
 
                                                 if (key == 1)
                                                 {
@@ -102,9 +113,9 @@ namespace GTEngine
                                                     variableVec2->SetY(value);
                                                 }
                                             }
-                                            else if (tempScript.IsString(-2))
+                                            else if (workingScript.IsString(-2))
                                             {
-                                                auto key = tempScript.ToString(-2);
+                                                auto key = workingScript.ToString(-2);
 
                                                 if (GTCore::Strings::Equal<false>(key, "x"))
                                                 {
@@ -126,22 +137,22 @@ namespace GTEngine
                             {
                                 auto variableVec3 = static_cast<ScriptVariable_Vec3*>(variable);
 
-                                if (tempScript.IsNumber(-1))
+                                if (workingScript.IsNumber(-1))
                                 {
-                                    double value = tempScript.ToDouble(-2);
+                                    double value = workingScript.ToDouble(-2);
                                     variableVec3->SetValue(value, value, value);
                                 }
-                                else if (tempScript.IsTable(-1))
+                                else if (workingScript.IsTable(-1))
                                 {
-                                    for (tempScript.PushNil(); tempScript.Next(-2); tempScript.Pop(1))
+                                    for (workingScript.PushNil(); workingScript.Next(-2); workingScript.Pop(1))
                                     {
-                                        if (tempScript.IsNumber(-1))
+                                        if (workingScript.IsNumber(-1))
                                         {
-                                            double value = tempScript.ToDouble(-1);
+                                            double value = workingScript.ToDouble(-1);
 
-                                            if (tempScript.IsNumber(-2))
+                                            if (workingScript.IsNumber(-2))
                                             {
-                                                auto key = tempScript.ToInteger(-2);
+                                                auto key = workingScript.ToInteger(-2);
 
                                                 if (key == 1)
                                                 {
@@ -156,9 +167,9 @@ namespace GTEngine
                                                     variableVec3->SetZ(value);
                                                 }
                                             }
-                                            else if (tempScript.IsString(-2))
+                                            else if (workingScript.IsString(-2))
                                             {
-                                                auto key = tempScript.ToString(-2);
+                                                auto key = workingScript.ToString(-2);
 
                                                 if (GTCore::Strings::Equal<false>(key, "x"))
                                                 {
@@ -184,22 +195,22 @@ namespace GTEngine
                             {
                                 auto variableVec4 = static_cast<ScriptVariable_Vec4*>(variable);
 
-                                if (tempScript.IsNumber(-1))
+                                if (workingScript.IsNumber(-1))
                                 {
-                                    double value = tempScript.ToDouble(-2);
+                                    double value = workingScript.ToDouble(-2);
                                     variableVec4->SetValue(value, value, value, value);
                                 }
-                                else if (tempScript.IsTable(-1))
+                                else if (workingScript.IsTable(-1))
                                 {
-                                    for (tempScript.PushNil(); tempScript.Next(-2); tempScript.Pop(1))
+                                    for (workingScript.PushNil(); workingScript.Next(-2); workingScript.Pop(1))
                                     {
-                                        if (tempScript.IsNumber(-1))
+                                        if (workingScript.IsNumber(-1))
                                         {
-                                            double value = tempScript.ToDouble(-1);
+                                            double value = workingScript.ToDouble(-1);
 
-                                            if (tempScript.IsNumber(-2))
+                                            if (workingScript.IsNumber(-2))
                                             {
-                                                auto key = tempScript.ToInteger(-2);
+                                                auto key = workingScript.ToInteger(-2);
 
                                                 if (key == 1)
                                                 {
@@ -218,9 +229,9 @@ namespace GTEngine
                                                     variableVec4->SetW(value);
                                                 }
                                             }
-                                            else if (tempScript.IsString(-2))
+                                            else if (workingScript.IsString(-2))
                                             {
-                                                auto key = tempScript.ToString(-2);
+                                                auto key = workingScript.ToString(-2);
 
                                                 if (GTCore::Strings::Equal<false>(key, "x"))
                                                 {
@@ -248,13 +259,13 @@ namespace GTEngine
 
                         case ScriptVariableType_Boolean:
                             {
-                                if (tempScript.IsBoolean(-1))
+                                if (workingScript.IsBoolean(-1))
                                 {
-                                    static_cast<ScriptVariable_Boolean*>(variable)->SetValue(tempScript.ToBoolean(-1));
+                                    static_cast<ScriptVariable_Boolean*>(variable)->SetValue(workingScript.ToBoolean(-1));
                                 }
-                                else if (tempScript.IsNumber(-1))
+                                else if (workingScript.IsNumber(-1))
                                 {
-                                    static_cast<ScriptVariable_Boolean*>(variable)->SetValue(tempScript.ToInteger(-1) != 0);
+                                    static_cast<ScriptVariable_Boolean*>(variable)->SetValue(workingScript.ToInteger(-1) != 0);
                                 }
 
                                 break;
@@ -262,9 +273,9 @@ namespace GTEngine
 
                         case ScriptVariableType_String:
                             {
-                                if (tempScript.IsString(-1))
+                                if (workingScript.IsString(-1))
                                 {
-                                    static_cast<ScriptVariable_String*>(variable)->SetValue(tempScript.ToString(-1));
+                                    static_cast<ScriptVariable_String*>(variable)->SetValue(workingScript.ToString(-1));
                                 }
 
                                 break;
@@ -272,9 +283,9 @@ namespace GTEngine
 
                         case ScriptVariableType_Prefab:
                             {
-                                if (tempScript.IsString(-1))
+                                if (workingScript.IsString(-1))
                                 {
-                                    static_cast<ScriptVariable_Prefab*>(variable)->SetValue(tempScript.ToString(-1));
+                                    static_cast<ScriptVariable_Prefab*>(variable)->SetValue(workingScript.ToString(-1));
                                 }
 
                                 break;
@@ -287,7 +298,7 @@ namespace GTEngine
                 }
             }
         }
-        tempScript.Pop(1);
+        workingScript.Pop(1);
     }
 
     ScriptDefinition::~ScriptDefinition()
