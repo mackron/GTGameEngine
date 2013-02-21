@@ -179,6 +179,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\CollisionGroups.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Component.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\CameraComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\CollisionShapeComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ConeTwistConstraintComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\DynamicsComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\EditorMetadataComponent.hpp" />
@@ -373,6 +374,7 @@
     <ClCompile Include="..\..\..\source\Bone.cpp" />
     <ClCompile Include="..\..\..\source\Component.cpp" />
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Components\CollisionShapeComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ConeTwistConstraintComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\DynamicsComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\EditorMetadataComponent.cpp" />
