@@ -5,10 +5,10 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT(ProximityComponent, "Proximity");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(ProximityComponent, "Proximity");
 
     ProximityComponent::ProximityComponent(SceneNode &node)
-        : Component(node), ghostObject(), collisionShape(nullptr), collisionGroup(1), collisionMask(-1)
+        : CollisionShapeComponent(node), ghostObject(), collisionShape(nullptr), collisionGroup(1), collisionMask(-1)
     {
         this->ghostObject.setUserPointer(&node);
     }

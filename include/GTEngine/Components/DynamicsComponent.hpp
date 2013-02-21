@@ -3,11 +3,8 @@
 #ifndef __GTEngine_DynamicsComponent_hpp_
 #define __GTEngine_DynamicsComponent_hpp_
 
-#include "../Component.hpp"
-#include "../Physics.hpp"
-#include "../VertexArrayLibrary.hpp"
-#include "../ConvexHull.hpp"
-#include "../Serialization.hpp"
+#include "CollisionShapeComponent.hpp"
+#include "../VertexArrayLibrary.hpp"        // TODO: Check if we can remove this.
 #include <GTCore/Vector.hpp>
 
 namespace GTEngine
@@ -15,7 +12,8 @@ namespace GTEngine
     /// Class representing a dynamics component.
     ///
     /// The dynamics component is used to do collision detection and physics. 
-    GTENGINE_DECL_COMPONENT_START(DynamicsComponent)
+    class DynamicsComponent : public GTEngine::CollisionShapeComponent
+    {
     public:
 
         /// Constructor.
@@ -384,7 +382,9 @@ namespace GTEngine
 
 
 
-    GTENGINE_DECL_COMPONENT_END()
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(DynamicsComponent)
+    };
 }
 
 #endif
