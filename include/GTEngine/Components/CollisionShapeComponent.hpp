@@ -4,6 +4,8 @@
 #define __GTEngine_CollisionShapeComponent_hpp_
 
 #include "../Component.hpp"
+#include "../Physics.hpp"
+#include "../ConvexHull.hpp"
 
 namespace GTEngine
 {

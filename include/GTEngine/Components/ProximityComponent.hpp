@@ -3,8 +3,7 @@
 #ifndef __GTEngine_ProximityComponent_hpp_
 #define __GTEngine_ProximityComponent_hpp_
 
-#include "../Component.hpp"
-#include "../Physics.hpp"
+#include "CollisionShapeComponent.hpp"
 
 namespace GTEngine
 {
@@ -12,7 +11,8 @@ namespace GTEngine
     ///
     /// This component does not do any dynamics operations such as collision response and physics simulation. It is used only for checking
     /// whether or not objects are in proximity to other objects.
-    GTENGINE_DECL_COMPONENT_START(ProximityComponent)
+    class ProximityComponent : public GTEngine::CollisionShapeComponent
+    {
     public:
 
         /// Constructor.
@@ -134,8 +134,12 @@ namespace GTEngine
         short collisionMask;
 
 
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(ProximityComponent)
+
+
     friend class Iterator;
-    GTENGINE_DECL_COMPONENT_END()
+    };
 }
 
 #endif

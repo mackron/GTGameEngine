@@ -14,10 +14,10 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT(DynamicsComponent, "Dynamics");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(DynamicsComponent, "Dynamics");
 
     DynamicsComponent::DynamicsComponent(SceneNode &node)
-        : Component(node),
+        : CollisionShapeComponent(node),
           collisionShape(new btCompoundShape(true)),
           motionState(node),
           rigidBody(new RigidBody(0.0f, *collisionShape, &motionState)),
