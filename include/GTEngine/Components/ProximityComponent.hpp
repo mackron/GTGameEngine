@@ -124,7 +124,7 @@ namespace GTEngine
 
         /// The collision shape we're using. This starts life as an empty shape. When the first collision shape is added it is turned into
         /// a compound shape. We need to use a compound shape in order to get offsets working properly.
-        btCollisionShape* collisionShape;
+        //btCollisionShape* collisionShape;
 
 
         /// The collision group the scene node is part of. This is set with SetCollisionFilter(). Defaults to 1.
@@ -135,10 +135,8 @@ namespace GTEngine
 
 
 
+        friend class Iterator;
         GTENGINE_DECL_COMPONENT_ATTRIBS(ProximityComponent)
-
-
-    friend class Iterator;
     };
 }
 

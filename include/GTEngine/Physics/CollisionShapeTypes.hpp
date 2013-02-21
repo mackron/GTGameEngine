@@ -92,6 +92,11 @@ namespace GTEngine
 
         return CollisionShapeType_None;
     }
+
+    inline CollisionShapeType GetCollisionShapeType(const btCollisionShape &shape)
+    {
+        return GetCollisionShapeType(&shape);
+    }
 }
 
 #endif

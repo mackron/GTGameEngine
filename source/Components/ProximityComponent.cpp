@@ -8,7 +8,7 @@ namespace GTEngine
     GTENGINE_IMPL_COMPONENT_ATTRIBS(ProximityComponent, "Proximity");
 
     ProximityComponent::ProximityComponent(SceneNode &node)
-        : CollisionShapeComponent(node), ghostObject(), collisionShape(nullptr), collisionGroup(1), collisionMask(-1)
+        : CollisionShapeComponent(node), ghostObject(), collisionGroup(1), collisionMask(-1)
     {
         this->ghostObject.setUserPointer(&node);
     }
@@ -20,8 +20,6 @@ namespace GTEngine
         {
             world->RemoveGhostObject(this->ghostObject);
         }
-
-        delete this->collisionShape;
     }
 
     void ProximityComponent::SetBoxShape(float halfX, float halfY, float halfZ)
@@ -62,23 +60,20 @@ namespace GTEngine
 
     void ProximityComponent::ApplyScaling(float x, float y, float z)
     {
-        if (this->collisionShape != nullptr)
+        // The geometry is changing, thus we need to remove the body from the world and re-add it after the changes.
+        auto world = this->ghostObject.GetWorld();
+        if (world != nullptr)
         {
-            // The geometry is changing, thus we need to remove the body from the world and re-add it after the changes.
-            auto world = this->ghostObject.GetWorld();
-            if (world != nullptr)
-            {
-                world->RemoveGhostObject(this->ghostObject);
-            }
+            world->RemoveGhostObject(this->ghostObject);
+        }
 
-            // Now we simply apply the scaling to the shape.
-            this->collisionShape->setLocalScaling(btVector3(x, y, z));
+        // Now we simply apply the scaling to the shape.
+        this->collisionShape.setLocalScaling(btVector3(x, y, z));
 
-            // Now we need to re-add the body.
-            if (world != nullptr)
-            {
-                world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
-            }
+        // Now we need to re-add the body.
+        if (world != nullptr)
+        {
+            world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
         }
     }
 
@@ -97,6 +92,7 @@ namespace GTEngine
 
     void ProximityComponent::SetShape(btCollisionShape* newShape)
     {
+        /*
         auto oldShape = this->collisionShape;
         this->collisionShape = newShape;
 
@@ -114,6 +110,32 @@ namespace GTEngine
         }
 
         delete oldShape;
+        */
+
+
+        // TODO: Fix this up. Temp.
+
+
+        auto oldShape = this->collisionShape.getChildShape(0);
+        
+        auto world = this->ghostObject.GetWorld();
+        if (world != nullptr)
+        {
+            world->RemoveGhostObject(this->ghostObject);
+        }
+        
+        
+        this->collisionShape.removeChildShapeByIndex(0);
+        this->collisionShape.addChildShape(btTransform::getIdentity(), newShape);
+
+
+        if (world != nullptr)
+        {
+            world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
+        }
+
+        delete oldShape;
+
 
 
         this->OnChanged();

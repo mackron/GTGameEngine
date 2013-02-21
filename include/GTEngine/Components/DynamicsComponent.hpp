@@ -82,13 +82,13 @@ namespace GTEngine
 
 
         /// Retrieves the number of collision shapes current attached to the component.
-        size_t GetCollisionShapeCount() const { return static_cast<size_t>(this->collisionShape->getNumChildShapes()); }
+        //size_t GetCollisionShapeCount() const { return static_cast<size_t>(this->collisionShape->getNumChildShapes()); }
 
         /// Retrieves a pointer to the shape at the given index.
         ///
         /// @param index [in] The index of the shape to retrieve.
-              btCollisionShape* GetCollisionShapeAtIndex(size_t index);
-        const btCollisionShape* GetCollisionShapeAtIndex(size_t index) const;
+        //      btCollisionShape* GetCollisionShapeAtIndex(size_t index);
+        //const btCollisionShape* GetCollisionShapeAtIndex(size_t index) const;
 
 
         /// Determines whether or not the convex hulls of a model is being used for the collision shape.
@@ -323,7 +323,7 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the collision shape.
-        btCompoundShape & GetCollisionShape() { return *this->collisionShape; }
+        //btCompoundShape & GetCollisionShape() { return *this->collisionShape; }
 
 
 
@@ -352,7 +352,7 @@ namespace GTEngine
 
         /// The collision shape we're using. This starts life as an empty shape. When the first collision shape is added it is turned into
         /// a compound shape. We need to use a compound shape in order to get offsets working properly.
-        btCompoundShape* collisionShape;
+        //btCompoundShape* collisionShape;
 
         /// The motion state of the body. This will be different depending on whether or not the rigid body is kinematic.
         SceneNodeMotionState motionState;
