@@ -267,6 +267,74 @@ namespace GTEngine
         return false;
     }
 
+    bool ScriptComponent::HasOnObjectEnter() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnObjectEnter())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnEnterObject() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnEnterObject())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnObjectLeave() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnObjectLeave())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnLeaveObject() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnLeaveObject())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     void ScriptComponent::Clear()
     {

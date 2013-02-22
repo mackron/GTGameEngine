@@ -47,6 +47,10 @@ namespace GTEngine
                 "    'OnShutdown',"
                 "    'OnShow',"
                 "    'OnHide',"
+                "    'OnObjectEnter',"
+                "    'OnEnterObject',"
+                "    'OnObjectLeave',"
+                "    'OnLeaveObject'"
                 "};"
 
                 "function GTEngine.IsSceneNodeEventHandler(name)"
@@ -1753,6 +1757,74 @@ namespace GTEngine
                 {
                     script.PushValue(-2);                   // <-- 'self'
                     script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PostSceneNodeEvent_OnObjectEnter(GTCore::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnObjectEnter");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);                               // <-- 'self'
+                    Scripting::PushSceneNode(script, otherSceneNode);   // <-- 'otherSceneNode'
+                    script.Call(2, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PostSceneNodeEvent_OnEnterObject(GTCore::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnEnterObject");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);                               // <-- 'self'
+                    Scripting::PushSceneNode(script, otherSceneNode);   // <-- 'otherSceneNode'
+                    script.Call(2, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PostSceneNodeEvent_OnObjectLeave(GTCore::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnObjectLeave");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);                               // <-- 'self'
+                    Scripting::PushSceneNode(script, otherSceneNode);   // <-- 'otherSceneNode'
+                    script.Call(2, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PostSceneNodeEvent_OnLeaveObject(GTCore::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnLeaveObject");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);                               // <-- 'self'
+                    Scripting::PushSceneNode(script, otherSceneNode);   // <-- 'otherSceneNode'
+                    script.Call(2, 0);
                 }
             }
             script.Pop(1);

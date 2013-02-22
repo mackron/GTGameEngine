@@ -61,7 +61,7 @@ namespace GTEngine
 
         if (world != nullptr)
         {
-            this->world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
+            world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
         }
 
 

@@ -111,6 +111,31 @@ namespace GTEngine
         ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
         bool HasOnHide() const;
 
+        /// Determines if any of the attached scripts has an OnObjectEnter event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnObjectEnter() const;
+
+        /// Determines if any of the attached scripts has an OnEnterObject event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnEnterObject() const;
+
+        /// Determines if any of the attached scripts has an OnObjectLeave event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnObjectLeave() const;
+
+        /// Determines if any of the attached scripts has an OnLeaveObject event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnLeaveObject() const;
+
+
 
         /// Clears the component of all scripts.
         void Clear();

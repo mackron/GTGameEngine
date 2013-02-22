@@ -47,6 +47,18 @@ namespace GTEngine
         /// Determines if the script has an OnHide event handler.
         bool HasOnHide() const;
 
+        /// Determines if the script has an OnObjectEnter event handler.
+        bool HasOnObjectEnter() const;
+
+        /// Determines if the script has an OnEnterObject event handler.
+        bool HasOnEnterObject() const;
+
+        /// Determines if the script has an OnObjectLeave event handler.
+        bool HasOnObjectLeave() const;
+
+        /// Determines if the script has an OnLeaveObject event handler.
+        bool HasOnLeaveObject() const;
+
 
         /// Retrieves the number of public variables.
         size_t GetPublicVariableCount() const;
@@ -102,6 +114,18 @@ namespace GTEngine
 
         /// Keeps track of whether or not this definition has an OnHide event handler.
         bool hasOnHide;
+
+        /// Keeps track of whether or not this definition has an OnObjectEnter event handler.
+        bool hasOnObjectEnter;
+
+        /// Keeps track of whether or not this definition has an OnEnterObject event handler.
+        bool hasOnEnterObject;
+
+        /// Keeps track of whether or not this definition has an OnObjectLeave event handler.
+        bool hasOnObjectLeave;
+
+        /// Keeps track of whether or not this definition has an OnLeaveObject event handler.
+        bool hasOnLeaveObject;
 
 
         /// The list of public variables, in the order they are defined (hopefully).
