@@ -10,6 +10,7 @@ namespace GTEngine
     ProximityComponent::ProximityComponent(SceneNode &node)
         : CollisionShapeComponent(node), ghostObject()
     {
+        this->ghostObject.setCollisionShape(&this->collisionShape);
         this->ghostObject.setUserPointer(&node);
     }
 
@@ -48,6 +49,7 @@ namespace GTEngine
         {
             world->RemoveGhostObject(this->ghostObject);
         }
+
 
         // First we deserialize the collision shapes.
         CollisionShapeComponent::Deserialize(deserializer);
