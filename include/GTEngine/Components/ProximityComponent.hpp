@@ -22,50 +22,24 @@ namespace GTEngine
         ~ProximityComponent();
 
 
-        /// Sets the collision shape to a box.
-        void SetBoxShape(float halfX, float halfY, float halfZ);
-        void SetBoxShape(const glm::vec3 halfSize) { this->SetBoxShape(halfSize.x, halfSize.y, halfSize.z); }
-        
-        /// Adds a sphere collision shape.
-        void SetSphereShape(float radius);
-
-        /// Adds an elipsoid collision shape.
-        void SetEllipsoidShape(float radiusX, float radiusY, float radiusZ);
-        void SetEllipsoidShape(const glm::vec3 halfRadius) { this->SetEllipsoidShape(halfRadius.x, halfRadius.y, halfRadius.z); }
-
-
-
         /// Retrieves a reference to the internal ghost object.
               GhostObject & GetGhostObject()       { return this->ghostObject; }
         const GhostObject & GetGhostObject() const { return this->ghostObject; }
 
 
-        /// Sets the collision group and masks to use with the scene node.
-        /// @param group [in] The collision group(s) this scene node is part of.
-        /// @param mask  [in] A mask of collision groups that this scene node will collide with.
-        ///
-        /// @remarks
-        ///     Note that changing the collision filter requires that the internal dynamics objects are removed from the internal dynamics world
-        ///     and then re-added. Thus, don't call this method too frequently.
-        void SetCollisionFilter(short group, short mask);
-
-        /// Retrieves the collision group as specified in SetCollisionFilter().
-        short GetCollisionGroup() const { return this->collisionGroup; }
-        
-        /// Retrieves the collision mask as specified in SetCollisionFilter().
-        short GetCollisionMask() const { return this->collisionMask; }
-
-
-        /// Applies a scale to the rigid body.
-        void ApplyScaling(float x, float y, float z);
-        void ApplyScaling(const glm::vec3 &scale) { this->ApplyScaling(scale.x, scale.y, scale.z); }
-
-        
-        /// Applies the scene node's scaling.
-        void ApplySceneNodeScaling();
-
         /// Applies the scene node's transform.
         void ApplySceneNodeTransformation();
+
+
+
+        ///////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Component::Serialize()
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Component::Deserialize()
+        void Deserialize(GTCore::Deserializer &deserializer);
 
 
 
@@ -113,8 +87,14 @@ namespace GTEngine
 
     private:
 
-        /// Helper method for setting the shape of the ghost object.
-        void SetShape(btCollisionShape* newShape);
+        /////////////////////////////////////////////////
+        // CollisionShapeComponent Events.
+
+        /// CollisionShapeComponent::OnPreCollisionShapeChanged().
+        void OnPreCollisionShapeChanged();
+
+        /// CollisionShapeComponent::OnPostColliisonShapeChanged().
+        void OnPostCollisionShapeChanged();
         
 
     private:
@@ -122,16 +102,9 @@ namespace GTEngine
         /// The ghost object we'll be using for proximity detection.
         GhostObject ghostObject;
 
-        /// The collision shape we're using. This starts life as an empty shape. When the first collision shape is added it is turned into
-        /// a compound shape. We need to use a compound shape in order to get offsets working properly.
-        //btCollisionShape* collisionShape;
-
-
-        /// The collision group the scene node is part of. This is set with SetCollisionFilter(). Defaults to 1.
-        short collisionGroup;
-
-        /// The collision mask for controlling the collision groups the scene node can collide with. This is set with SetCollisionFilter(). Defaults to -1 (collides with everything).
-        short collisionMask;
+        /// A very temporary pointer that keeps track of the world the rigid body is contained in. This is used for when the rigid body
+        /// needs to be removed from and then re-added to the world.
+        GTEngine::DynamicsWorld* world;
 
 
 

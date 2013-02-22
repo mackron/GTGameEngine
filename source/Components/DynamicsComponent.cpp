@@ -22,9 +22,7 @@ namespace GTEngine
           rigidBody(new RigidBody(0.0f, collisionShape, &motionState)),
           mass(0.0f),
           isKinematic(false),
-          useWithNavigationMesh(true),
-          usingConvexHullsOfModel(false),
-          collisionGroup(1), collisionMask(-1)
+          useWithNavigationMesh(true)
     {
         this->rigidBody->setUserPointer(&node);
     }
@@ -41,201 +39,6 @@ namespace GTEngine
         // We will delete the physics objects last.
         delete this->rigidBody;
     }
-
-    void DynamicsComponent::AddBoxCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
-    {
-        this->AddCollisionShape(new btBoxShape(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
-    }
-
-    void DynamicsComponent::AddSphereCollisionShape(float radius, float offsetX, float offsetY, float offsetZ)
-    {
-        this->AddCollisionShape(new btSphereShape(radius), offsetX, offsetY, offsetZ);
-    }
-
-    void DynamicsComponent::AddEllipsoidCollisionShape(float radiusX, float radiusY, float radiusZ, float offsetX, float offsetY, float offsetZ)
-    {
-        this->AddCollisionShape(new btEllipsoidShape(btVector3(radiusX, radiusY, radiusZ)), offsetX, offsetY, offsetZ);
-    }
-
-
-    void DynamicsComponent::AddCylinderXCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
-    {
-        this->AddCollisionShape(new btCylinderShapeX(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
-    }
-    void DynamicsComponent::AddCylinderYCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
-    {
-        this->AddCollisionShape(new btCylinderShape(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
-    }
-    void DynamicsComponent::AddCylinderZCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
-    {
-        this->AddCollisionShape(new btCylinderShapeZ(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
-    }
-
-
-    void DynamicsComponent::AddCapsuleXCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
-    {
-        this->AddCollisionShape(new btCapsuleShapeX(radius, length), offsetX, offsetY, offsetZ);
-    }
-    void DynamicsComponent::AddCapsuleYCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
-    {
-        this->AddCollisionShape(new btCapsuleShape(radius, length), offsetX, offsetY, offsetZ);
-    }
-    void DynamicsComponent::AddCapsuleZCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
-    {
-        this->AddCollisionShape(new btCapsuleShapeZ(radius, length), offsetX, offsetY, offsetZ);
-    }
-
-
-    void DynamicsComponent::AddStaticPlaneShape(float a, float b, float c, float d)
-    {
-        this->AddCollisionShape(new btStaticPlaneShape(btVector3(a, b, c), d), 0.0f, 0.0f, 0.0f);
-    }
-
-
-    void DynamicsComponent::AddConvexHullShape(const float* points, size_t pointCount, size_t stride, float margin)
-    {
-        auto shape = new btConvexHullShape(static_cast<const btScalar*>(points), pointCount, stride);
-        shape->setMargin(margin);
-
-        this->AddCollisionShape(shape, 0.0f, 0.0f, 0.0f);
-    }
-
-    void DynamicsComponent::AddConvexHullShape(const ConvexHull &convexHull, float margin)
-    {
-        this->AddConvexHullShape(convexHull.GetVertices(), convexHull.GetVertexCount(), sizeof(glm::vec3), margin);
-    }
-
-
-    void DynamicsComponent::SetCollisionShapesToModelConvexHulls(const Model &model, float margin)
-    {
-        this->RemoveAllCollisionShapes();
-
-
-        auto &definition = model.GetDefinition();
-
-        // Unintuitively, we're not actually going to use AddConvexHullShape() here. Instead, we're going to go a little lower-level here
-        // to avoid some unnecessary calculations.
-
-        auto world = this->rigidBody->GetWorld();
-        if (world != nullptr)
-        {
-            world->RemoveRigidBody(*this->rigidBody);
-        }
-
-
-        for (size_t i = 0; i < definition.convexHulls.count; ++i)
-        {
-            auto hull = definition.convexHulls[i];
-            assert(hull != nullptr);
-
-            auto shape = new btConvexHullShape(static_cast<const btScalar*>(hull->GetVertices()), hull->GetVertexCount(), 12);
-            shape->setMargin(margin);
-
-            // All we need to do is add the new shape to the compound shape...
-            this->collisionShape.addChildShape(btTransform::getIdentity(), shape);
-        }
-
-
-        // We need to make sure the shape is scaled correctly.
-        glm::vec3 nodeScale = glm::max(glm::vec3(0.0001f), this->node.GetWorldScale());
-        this->collisionShape.setLocalScaling(btVector3(nodeScale.x, nodeScale.y, nodeScale.z));
-
-        // We should also update the mass, not that it would matter. We will do it for correctness.
-        this->UpdateMass();
-
-        // Now the rigid body needs to be re-added.
-        if (world != nullptr)
-        {
-            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-        }
-
-
-        this->usingConvexHullsOfModel = true;
-
-
-        this->OnChanged();
-    }
-
-    void DynamicsComponent::SetCollisionShapesToModelConvexHulls(float margin)
-    {
-        auto modelComponent = this->node.GetComponent<ModelComponent>();
-        if (modelComponent != nullptr)
-        {
-            auto model = modelComponent->GetModel();
-            if (model != nullptr)
-            {
-                this->SetCollisionShapesToModelConvexHulls(*model, margin);
-            }
-        }
-    }
-
-
-    void DynamicsComponent::RemoveAllCollisionShapes()
-    {
-        // Since the shapes are being changed we need to remove the rigid body from the world first.
-        auto world = this->rigidBody->GetWorld();
-        if (world != nullptr)
-        {
-            world->RemoveRigidBody(*this->rigidBody);
-        }
-
-
-        // All children need to be removed from the shape.
-        while (this->collisionShape.getNumChildShapes() > 0)
-        {
-            auto child = this->collisionShape.getChildShape(0);
-            this->collisionShape.removeChildShapeByIndex(0);
-
-            delete child;
-        }
-
-
-        // We should also update the mass, not that it would matter. We will do it for correctness.
-        this->UpdateMass();
-
-        // Now the rigid body needs to be re-added.
-        if (world != nullptr)
-        {
-            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-        }
-
-
-        this->usingConvexHullsOfModel = false;
-
-
-        this->OnChanged();
-    }
-
-    void DynamicsComponent::RemoveCollisionShapeAtIndex(size_t index)
-    {
-        // Since the shapes are being changed we need to remove the rigid body from the world first.
-        auto world = this->rigidBody->GetWorld();
-        if (world != nullptr)
-        {
-            world->RemoveRigidBody(*this->rigidBody);
-        }
-
-
-        // All children need to be removed from the shape.
-        this->collisionShape.removeChildShapeByIndex(static_cast<int>(index));
-
-
-        // We should also update the mass, not that it would matter. We will do it for correctness.
-        this->UpdateMass();
-
-        // Now the rigid body needs to be re-added.
-        if (world != nullptr)
-        {
-            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-        }
-
-
-        this->usingConvexHullsOfModel = false;
-
-
-        this->OnChanged();
-    }
-
 
 
     void DynamicsComponent::SetMass(float newMass)
@@ -344,58 +147,7 @@ namespace GTEngine
     }
 
 
-    void DynamicsComponent::SetCollisionFilter(short group, short mask)
-    {
-        if (this->collisionGroup != group || this->collisionMask != mask)
-        {
-            this->collisionGroup = group;
-            this->collisionMask  = mask;
-
-            // The body needs to be removed and re-added to it's world for changes to take effect.
-            auto world = this->rigidBody->GetWorld();
-            if (world != nullptr)
-            {
-                world->RemoveRigidBody(*this->rigidBody);
-                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-            }
-
-            this->OnChanged();
-        }
-    }
-
-
-    void DynamicsComponent::ApplyScaling(float x, float y, float z)
-    {
-        // The geometry is changing, thus we need to remove the body from the world and re-add it after the changes.
-        auto world = this->rigidBody->GetWorld();
-        if (world != nullptr)
-        {
-            world->RemoveRigidBody(*this->rigidBody);
-        }
-
-        x = GTCore::Max(x, 0.0001f);
-        y = GTCore::Max(y, 0.0001f);
-        z = GTCore::Max(z, 0.0001f);
-
-        // Now we simply apply the scaling to the shape.
-        this->collisionShape.setLocalScaling(btVector3(x, y, z));
-
-
-        // With a change in the geometry, we need to update the mass.
-        this->UpdateMass();
-
-        // Now we need to re-add the body.
-        if (world != nullptr)
-        {
-            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-        }
-    }
-
-
-    void DynamicsComponent::ApplySceneNodeScaling()
-    {
-        this->ApplyScaling(this->node.GetWorldScale());
-    }
+    
 
     void DynamicsComponent::ApplySceneNodeTransformation()
     {
@@ -557,391 +309,18 @@ namespace GTEngine
     }
 
 
-    VertexArray* DynamicsComponent::CreateCollisionShapeMesh(bool applyNodeTransform) const
-    {
-        int shapeCount = this->collisionShape.getNumChildShapes();
-
-        // The way we do things is we first build vertex arrays for each individual shape. We that combine them all into a single
-        // vertex array to produce the final array.
-        GTCore::Vector<VertexArray*> shapeGeometry(shapeCount);
-
-        for (int i = 0; i < shapeCount; ++i)
-        {
-            auto shape = this->collisionShape.getChildShape(i);
-            assert(shape != nullptr);
-
-            auto va = VertexArrayLibrary::CreateFromShape(*shape);
-            if (va != nullptr)
-            {
-                va->ApplyTransform(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
-                shapeGeometry.PushBack(va);
-            }
-        }
-
-        // At this point we will have a list of vertex arrays for each shape. We need to combine them into a single vertex array.
-        if (shapeGeometry.count > 0)
-        {
-            // TODO:
-            //
-            // If later one we decide to return a format other than P3, we can do an optimization where we just return shapeGeometry[0] in cases where there is only
-            // a single vertex array.
-
-            // Need to combine.
-            auto combined = VertexArrayLibrary::CreateCombined(shapeGeometry.buffer, shapeGeometry.count, VertexFormat::P3);
-            assert(combined != nullptr);
-
-            // We need to ensure the temp vertex arrays are deleted...
-            for (size_t i = 0; i < shapeGeometry.count; ++i)
-            {
-                delete shapeGeometry[i];
-            }
-
-            if (applyNodeTransform)
-            {
-                combined->ApplyTransform(this->node.GetWorldTransform());
-            }
-            else
-            {
-                // We still need to apply the scaling in any case.
-                combined->ApplyTransform(glm::scale(this->node.GetWorldScale()));
-            }
-
-            // Here we optimize the vertex array to remove duplicate values.
-            combined->Optimize();
-
-            return combined;
-        }
-
-        return nullptr;
-    }
-
-
-    void DynamicsComponent::SetCollisionShapeOffset(size_t index, float offsetX, float offsetY, float offsetZ)
-    {
-        // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
-        // when we're finished with the modifications.
-        auto world = this->rigidBody->GetWorld();
-        if (world != nullptr)
-        {
-            world->RemoveRigidBody(*this->rigidBody);
-        }
-
-
-        btTransform newTransform;
-        newTransform.setIdentity();
-        newTransform.setOrigin(btVector3(offsetX, offsetY, offsetZ));
-
-        this->collisionShape.updateChildTransform(index, newTransform);
-
-
-        // With a change in the shape, we also need to update the mass.
-        this->UpdateMass();
-
-        // Now we need to re-add the rigid body to the world, if it has one.
-        if (world != nullptr)
-        {
-            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-        }
-
-
-        this->OnChanged();
-    }
-
-
-    bool DynamicsComponent::SetBoxCollisionShapeHalfExtents(size_t index, float halfX, float halfY, float halfZ)
-    {
-        if (GetCollisionShapeType(this->collisionShape.getChildShape(index)) == CollisionShapeType_Box)
-        {
-            // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
-            // when we're finished with the modifications.
-            auto world = this->rigidBody->GetWorld();
-            if (world != nullptr)
-            {
-                world->RemoveRigidBody(*this->rigidBody);
-            }
-
-
-            auto shape = static_cast<btBoxShape*>(this->collisionShape.getChildShape(index));
-
-
-            // And this is how we are going to change the extents... Can't find a better way to do this
-            shape->~btBoxShape();
-            new (shape) btBoxShape(btVector3(halfX, halfY, halfZ));
-
-
-            // We need to call this in order to get everything looking correct.
-            this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
-
-
-            // With a change in the shape, we also need to update the mass.
-            this->UpdateMass();
-
-            // Now we need to re-add the rigid body to the world, if it has one.
-            if (world != nullptr)
-            {
-                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-            }
-
-
-            this->OnChanged();
-
-
-            return true;
-        }
-
-        return false;
-    }
-
-    bool DynamicsComponent::SetSphereCollisionShapeRadius(size_t index, float radius)
-    {
-        if (GetCollisionShapeType(this->collisionShape.getChildShape(index)) == CollisionShapeType_Sphere)
-        {
-            // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
-            // when we're finished with the modifications.
-            auto world = this->rigidBody->GetWorld();
-            if (world != nullptr)
-            {
-                world->RemoveRigidBody(*this->rigidBody);
-            }
-
-
-            auto shape = static_cast<btSphereShape*>(this->collisionShape.getChildShape(index));
-
-
-            // And this is how we are going to change the extents... Can't find a better way to do this
-            shape->~btSphereShape();
-            new (shape) btSphereShape(radius);
-
-
-            // We need to call this in order to get everything looking correct.
-            this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
-
-
-            // With a change in the shape, we also need to update the mass.
-            this->UpdateMass();
-
-            // Now we need to re-add the rigid body to the world, if it has one.
-            if (world != nullptr)
-            {
-                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-            }
-
-
-            this->OnChanged();
-
-
-            return true;
-        }
-
-        return false;
-    }
-
-    bool DynamicsComponent::SetEllipsoidCollisionShapeRadius(size_t index, float radiusX, float radiusY, float radiusZ)
-    {
-        if (GetCollisionShapeType(this->collisionShape.getChildShape(index)) == CollisionShapeType_Ellipsoid)
-        {
-            // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
-            // when we're finished with the modifications.
-            auto world = this->rigidBody->GetWorld();
-            if (world != nullptr)
-            {
-                world->RemoveRigidBody(*this->rigidBody);
-            }
-
-
-            auto shape = static_cast<btEllipsoidShape*>(this->collisionShape.getChildShape(index));
-
-
-            // And this is how we are going to change the extents... Can't find a better way to do this
-            shape->~btEllipsoidShape();
-            new (shape) btEllipsoidShape(btVector3(radiusX, radiusY, radiusZ));
-
-
-            // We need to call this in order to get everything looking correct.
-            this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
-
-
-            // With a change in the shape, we also need to update the mass.
-            this->UpdateMass();
-
-            // Now we need to re-add the rigid body to the world, if it has one.
-            if (world != nullptr)
-            {
-                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-            }
-
-
-            this->OnChanged();
-
-
-            return true;
-        }
-
-        return false;
-    }
-
-    bool DynamicsComponent::SetCylinderCollisionShapeHalfExtents(size_t index, float halfX, float halfY, float halfZ)
-    {
-        auto type = GetCollisionShapeType(this->collisionShape.getChildShape(index));
-
-        if (type == CollisionShapeType_CylinderX || type == CollisionShapeType_CylinderY || type == CollisionShapeType_CylinderZ)
-        {
-            // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
-            // when we're finished with the modifications.
-            auto world = this->rigidBody->GetWorld();
-            if (world != nullptr)
-            {
-                world->RemoveRigidBody(*this->rigidBody);
-            }
-
-
-            if (type == CollisionShapeType_CylinderX)
-            {
-                auto shape = static_cast<btCylinderShapeX*>(this->collisionShape.getChildShape(index));
-
-                // And this is how we are going to change the extents... Can't find a better way to do this
-                shape->~btCylinderShapeX();
-                new (shape) btCylinderShapeX(btVector3(halfX, halfY, halfZ));
-            }
-            else if (type == CollisionShapeType_CylinderY)
-            {
-                auto shape = static_cast<btCylinderShape*>(this->collisionShape.getChildShape(index));
-
-                // And this is how we are going to change the extents... Can't find a better way to do this
-                shape->~btCylinderShape();
-                new (shape) btCylinderShape(btVector3(halfX, halfY, halfZ));
-            }
-            else if (type == CollisionShapeType_CylinderZ)
-            {
-                auto shape = static_cast<btCylinderShapeZ*>(this->collisionShape.getChildShape(index));
-
-                // And this is how we are going to change the extents... Can't find a better way to do this
-                shape->~btCylinderShapeZ();
-                new (shape) btCylinderShapeZ(btVector3(halfX, halfY, halfZ));
-            }
-
-
-            // We need to call this in order to get everything looking correct.
-            this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
-
-
-            // With a change in the shape, we also need to update the mass.
-            this->UpdateMass();
-
-            // Now we need to re-add the rigid body to the world, if it has one.
-            if (world != nullptr)
-            {
-                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-            }
-
-
-            this->OnChanged();
-
-
-            return true;
-        }
-
-        return false;
-    }
-
-    bool DynamicsComponent::SetCapsuleCollisionShapeSize(size_t index, float radius, float height)
-    {
-        auto type = GetCollisionShapeType(this->collisionShape.getChildShape(index));
-
-        if (type == CollisionShapeType_CapsuleX || type == CollisionShapeType_CapsuleY || type == CollisionShapeType_CapsuleZ)
-        {
-            // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
-            // when we're finished with the modifications.
-            auto world = this->rigidBody->GetWorld();
-            if (world != nullptr)
-            {
-                world->RemoveRigidBody(*this->rigidBody);
-            }
-
-
-            if (type == CollisionShapeType_CapsuleX)
-            {
-                auto shape = static_cast<btCapsuleShapeX*>(this->collisionShape.getChildShape(index));
-
-                // And this is how we are going to change the extents... Can't find a better way to do this
-                shape->~btCapsuleShapeX();
-                new (shape) btCapsuleShapeX(radius, height);
-            }
-            else if (type == CollisionShapeType_CapsuleY)
-            {
-                auto shape = static_cast<btCapsuleShape*>(this->collisionShape.getChildShape(index));
-
-                // And this is how we are going to change the extents... Can't find a better way to do this
-                shape->~btCapsuleShape();
-                new (shape) btCapsuleShape(radius, height);
-            }
-            else if (type == CollisionShapeType_CapsuleZ)
-            {
-                auto shape = static_cast<btCapsuleShapeZ*>(this->collisionShape.getChildShape(index));
-
-                // And this is how we are going to change the extents... Can't find a better way to do this
-                shape->~btCapsuleShapeZ();
-                new (shape) btCapsuleShapeZ(radius, height);
-            }
-
-
-            // We need to call this in order to get everything looking correct.
-            this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
-
-
-            // With a change in the shape, we also need to update the mass.
-            this->UpdateMass();
-
-            // Now we need to re-add the rigid body to the world, if it has one.
-            if (world != nullptr)
-            {
-                world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-            }
-
-
-            this->OnChanged();
-
-
-            return true;
-        }
-
-        return false;
-    }
-
-
 
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
     void DynamicsComponent::Serialize(GTCore::Serializer &serializer) const
     {
-        // We will use the same chunk system here like usual. We have a "general" chunk that will hold basic info such as the mass
-        // and collision filters.
-        //
-        // For everything Bullet related, we want to ensure we save floats and not btScalars. The reason for this is that Bullet can
-        // be built so that btScalar is a double. We want these to be compatible between 32- and 64-bit builds.
+        // The collision shapes need to be serialized first.
+        CollisionShapeComponent::Serialize(serializer);
 
+        // Now we write our own details, including rigid body properties.
         Serialization::ChunkHeader header;
         header.id          = Serialization::ChunkID_DynamicsComponent_Main;
-        header.version     = 1;
-        header.sizeInBytes =
-            sizeof(bool)                  +     // <-- Is deactivation enabled?
-            sizeof(bool)                  +     // <-- Is navigation mesh generation enabled?
-            sizeof(short) + sizeof(short) +     // <-- Collision filter.
-            sizeof(uint32_t);
-
-        serializer.Write(header);
-        {
-            serializer.Write(this->IsDeactivationEnabled());
-            serializer.Write(this->IsNavigationMeshGenerationEnabled());
-            serializer.Write(this->collisionGroup);
-            serializer.Write(this->collisionMask);
-            serializer.Write(static_cast<uint32_t>(this->GetCollisionShapeCount()));
-        }
-
-
-        // Now we need to write rigid body chunk, which simply contains information about the current state of the rigid body, not including collision shapes.
-        header.id          = Serialization::ChunkID_DynamicsComponent_RigidBody;
         header.version     = 1;
         header.sizeInBytes =
             sizeof(float)                 +     // <-- Mass
@@ -953,7 +332,9 @@ namespace GTEngine
             sizeof(glm::vec3)             +     // <-- Linear factor
             sizeof(glm::vec3)             +     // <-- Angular factor
             sizeof(glm::vec3)             +     // <-- Gravity
-            sizeof(bool);                       // <-- Is Kinematic?
+            sizeof(bool)                  +     // <-- Is Kinematic?
+            sizeof(bool)                  +     // <-- Is deactivation enabled?
+            sizeof(bool);                       // <-- Is navigation mesh generation enabled?
 
         serializer.Write(header);
         {
@@ -968,155 +349,8 @@ namespace GTEngine
             serializer.Write(this->GetAngularFactor());
             serializer.Write(this->GetGravity());
             serializer.Write(this->IsKinematic());
-        }
-
-
-        // We do a single chunk for each attached shape. The idea behind this system is that adding new shapes won't cause any
-        // disturbances to anything else.
-        for (size_t i = 0; i < this->GetCollisionShapeCount(); ++i)
-        {
-            auto &shape = this->GetCollisionShapeAtIndex(i);
-
-            switch (GetCollisionShapeType(shape))
-            {
-            case CollisionShapeType_Box:
-                {
-                    auto &box = static_cast<const btBoxShape &>(shape);
-
-                    header.id          = Serialization::ChunkID_DynamicsComponent_BoxShape;
-                    header.version     = 1;
-                    header.sizeInBytes =
-                        sizeof(glm::vec3) +     // <-- Half extents
-                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
-
-                    serializer.Write(header);
-                    serializer.Write(ToGLMVector3(box.getHalfExtentsWithMargin() / box.getLocalScaling()));
-                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
-
-
-                    break;
-                }
-
-            case CollisionShapeType_Sphere:
-                {
-                    auto &sphere = static_cast<const btSphereShape &>(shape);
-
-                    header.id          = Serialization::ChunkID_DynamicsComponent_SphereShape;
-                    header.version     = 1;
-                    header.sizeInBytes =
-                        sizeof(float) +         // <-- Radius.
-                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
-
-                    serializer.Write(header);
-                    serializer.Write(static_cast<float>(sphere.getRadius() / sphere.getLocalScaling().getX()));
-                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
-
-                    break;
-                }
-
-            case CollisionShapeType_Ellipsoid:
-                {
-                    auto &ellipsoid = static_cast<const btEllipsoidShape &>(shape);
-
-                    btVector3 margin(ellipsoid.getMargin(), ellipsoid.getMargin(), ellipsoid.getMargin());
-
-                    header.id          = Serialization::ChunkID_DynamicsComponent_EllipsoidShape;
-                    header.version     = 1;
-                    header.sizeInBytes =
-                        sizeof(glm::vec3) +     // <-- Half extents
-                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
-
-                    serializer.Write(header);
-                    serializer.Write(ToGLMVector3((ellipsoid.getImplicitShapeDimensions() + margin) / ellipsoid.getLocalScaling()));
-                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
-
-                    break;
-                }
-
-            case CollisionShapeType_CylinderX:
-            case CollisionShapeType_CylinderY:
-            case CollisionShapeType_CylinderZ:
-                {
-                    auto &cylinder = static_cast<const btCylinderShape &>(shape);
-
-                    uint32_t upAxis = static_cast<uint32_t>(cylinder.getUpAxis());
-
-                    header.id          = Serialization::ChunkID_DynamicsComponent_CylinderShape;
-                    header.version     = 1;
-                    header.sizeInBytes =
-                        sizeof(uint32_t)  +     // <-- Axis - 0 = X, 1 = Y, 2 = Z
-                        sizeof(glm::vec3) +     // <-- Half extents
-                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
-
-                    serializer.Write(header);
-                    serializer.Write(upAxis);
-                    serializer.Write(ToGLMVector3(cylinder.getHalfExtentsWithMargin() / cylinder.getLocalScaling()));
-                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
-
-                    break;
-                }
-
-            case CollisionShapeType_CapsuleX:
-            case CollisionShapeType_CapsuleY:
-            case CollisionShapeType_CapsuleZ:
-                {
-                    auto &capsule = static_cast<const btCapsuleShape &>(shape);
-
-                    uint32_t upAxis     = static_cast<uint32_t>(capsule.getUpAxis());
-                    uint32_t radiusAxis = (upAxis + 2) % 3;
-
-                    header.id          = Serialization::ChunkID_DynamicsComponent_CapsuleShape;
-                    header.version     = 1;
-                    header.sizeInBytes =
-                        sizeof(uint32_t) +      // <-- Axis - 0 = X, 1 = Y, 2 = Z
-                        sizeof(float)    +      // <-- Radius
-                        sizeof(float)    +      // <-- Height
-                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
-
-                    serializer.Write(header);
-                    serializer.Write(upAxis);
-                    serializer.Write(static_cast<float>(capsule.getRadius()     / capsule.getLocalScaling()[radiusAxis]));
-                    serializer.Write(static_cast<float>(capsule.getHalfHeight() / capsule.getLocalScaling()[upAxis]));
-                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
-
-                    break;
-                }
-
-            case CollisionShapeType_ConvexHull:
-                {
-                    auto &convexHull = static_cast<const btConvexHullShape &>(shape);
-
-                    header.id          = Serialization::ChunkID_DynamicsComponent_ConvexHullShape;
-                    header.version     = 1;
-                    header.sizeInBytes =
-                        sizeof(uint32_t)  +                                     // <-- Vertex count.
-                        sizeof(glm::vec3) * convexHull.getNumVertices() +      // <-- Each vertex.
-                        sizeof(float);                                          // <-- Margin. Important for convex hulls.
-
-                    serializer.Write(header);
-                    serializer.Write(static_cast<uint32_t>(convexHull.getNumVertices()));
-
-                    for (int iVertex = 0; iVertex < convexHull.getNumVertices(); ++iVertex)
-                    {
-                        btVector3 vertex;
-                        convexHull.getVertex(iVertex, vertex);
-
-                        // We want this unscaled.
-                        vertex = vertex / convexHull.getLocalScaling();
-
-                        serializer.Write(ToGLMVector3(vertex));
-                    }
-
-                    serializer.Write(static_cast<float>(convexHull.getMargin()));
-
-                    break;
-                }
-
-
-            case CollisionShapeType_ModelConvexHulls:
-            case CollisionShapeType_None:
-            default: break;
-            }
+            serializer.Write(this->IsDeactivationEnabled());
+            serializer.Write(this->IsNavigationMeshGenerationEnabled());
         }
     }
 
@@ -1124,13 +358,16 @@ namespace GTEngine
     {
         // When deserializing, it's much, much more efficient to first remove the object from the existing scene, change the settings, and then
         // re-add it than it is to call each individual method. Thus, that's what we're doing here.
+        auto world = this->rigidBody->GetWorld();
+        if (world != nullptr)
+        {
+            world->RemoveRigidBody(*this->rigidBody);
+        }
 
 
-        bool      isDeactivationEnabled      = false;
-        bool      isNavMeshGenerationEnabled = false;
-        short     newCollisionGroup          = this->collisionGroup;
-        short     newCollisionMask           = this->collisionMask;
-        uint32_t  shapeCount                 = 0;
+        // The first thing to deserialize is the collision shape component
+        CollisionShapeComponent::Deserialize(deserializer);
+
 
         float     newMass                    = this->mass;
         float     newFriction                = this->GetFriction();
@@ -1143,97 +380,45 @@ namespace GTEngine
         glm::vec3 newAngularFactor           = this->GetAngularFactor();
         glm::vec3 newGravity                 = this->GetGravity();
         bool      newIsKinematic             = this->IsKinematic();
+        bool      isDeactivationEnabled      = this->IsDeactivationEnabled();
+        bool      isNavMeshGenerationEnabled = this->IsNavigationMeshGenerationEnabled();
 
-
-        // Before deserializing, we need to revert the scaling back to 1.0, 1.0, 1.0f. If we don't do this, the scale won't be
-        // be set correctly because of the way the shapes are used.
-        this->ApplyScaling(1.0f, 1.0f, 1.0f);
 
 
         // First chunk is general info.
         Serialization::ChunkHeader header;
         deserializer.Read(header);
-
-        switch (header.version)
+        if (header.id == Serialization::ChunkID_DynamicsComponent_Main)
         {
-        case 1:
+            switch (header.version)
             {
-                deserializer.Read(isDeactivationEnabled);
-                deserializer.Read(isNavMeshGenerationEnabled);
-                deserializer.Read(newCollisionGroup);
-                deserializer.Read(newCollisionMask);
-                deserializer.Read(shapeCount);
+                case 1:
+                {
+                    deserializer.Read(newMass);
+                    deserializer.Read(newFriction);
+                    deserializer.Read(newRestitution);
+                    deserializer.Read(newLinearDamping);
+                    deserializer.Read(newAngularDamping);
+                    deserializer.Read(newLinearVelocity);
+                    deserializer.Read(newAngularVelocity);
+                    deserializer.Read(newLinearFactor);
+                    deserializer.Read(newAngularFactor);
+                    deserializer.Read(newGravity);
+                    deserializer.Read(newIsKinematic);
+                    deserializer.Read(isDeactivationEnabled);
+                    deserializer.Read(isNavMeshGenerationEnabled);
 
-                break;
-            }
+                    break;
+                }
 
-        default:
-            {
-                GTEngine::Log("DynamicsComponent deserialization error. The 'general info' chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
-                break;
-            }
-        }
-
-
-        // The next chunk should be the rigid body info.
-        deserializer.Read(header);
-
-        switch (header.version)
-        {
-            case 1:
-            {
-                deserializer.Read(newMass);
-                deserializer.Read(newFriction);
-                deserializer.Read(newRestitution);
-                deserializer.Read(newLinearDamping);
-                deserializer.Read(newAngularDamping);
-                deserializer.Read(newLinearVelocity);
-                deserializer.Read(newAngularVelocity);
-                deserializer.Read(newLinearFactor);
-                deserializer.Read(newAngularFactor);
-                deserializer.Read(newGravity);
-                deserializer.Read(newIsKinematic);
-
-                break;
-            }
-
-        default:
-            {
-                GTEngine::Log("DynamicsComponent deserialization error. The 'rigid body' chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
-                break;
+            default:
+                {
+                    GTEngine::Log("DynamicsComponent deserialization error. The main chunk version (%d) is unsupported. Deserialization will continue, but do not expect stability!", header.version);
+                    break;
+                }
             }
         }
 
-
-        // At this point we'll have everything except our shapes. What we want to do is remove the rigid body, change the settings, and then
-        // re-add it to the scene.
-        auto world = this->rigidBody->GetWorld();
-        if (world != nullptr)
-        {
-            world->RemoveRigidBody(*this->rigidBody);
-        }
-
-
-        if (isDeactivationEnabled)
-        {
-            this->EnableDeactivation();
-        }
-        else
-        {
-            this->DisableDeactivation();
-        }
-
-        if (isNavMeshGenerationEnabled)
-        {
-            this->EnableNavigationMeshGeneration();
-        }
-        else
-        {
-            this->DisableNavigationMeshGeneration();
-        }
-
-        this->collisionGroup = newCollisionGroup;
-        this->collisionMask  = newCollisionMask;
 
 
         this->mass = newMass;
@@ -1261,231 +446,24 @@ namespace GTEngine
         }
 
 
-        // Now we need to load the shapes. The old shapes need to be removed.
-        while (this->collisionShape.getNumChildShapes() > 0)
-        {
-            auto child = this->collisionShape.getChildShape(0);
-            this->collisionShape.removeChildShapeByIndex(0);
 
-            delete child;
+        if (isDeactivationEnabled)
+        {
+            this->EnableDeactivation();
+        }
+        else
+        {
+            this->DisableDeactivation();
         }
 
-        for (uint32_t iShape = 0; iShape < shapeCount; ++iShape)
+        if (isNavMeshGenerationEnabled)
         {
-            deserializer.Read(header);
-
-            switch (header.id)
-            {
-            case Serialization::ChunkID_DynamicsComponent_BoxShape:
-                {
-                    switch (header.version)
-                    {
-                    case 1:
-                        {
-                            glm::vec3 halfExtents;
-                            glm::mat4 transform;
-
-                            deserializer.Read(halfExtents);
-                            deserializer.Read(transform);
-
-                            this->collisionShape.addChildShape(ToBulletTransform(transform), new btBoxShape(ToBulletVector3(halfExtents)));
-
-                            break;
-                        }
-
-                    default:
-                        {
-                            GTEngine::Log("Error deserializing dynamics component. Box shape chunk version (%d) is unknown.", header.version);
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-            case Serialization::ChunkID_DynamicsComponent_SphereShape:
-                {
-                    switch (header.version)
-                    {
-                    case 1:
-                        {
-                            float     radius;
-                            glm::mat4 transform;
-
-                            deserializer.Read(radius);
-                            deserializer.Read(transform);
-
-                            this->collisionShape.addChildShape(ToBulletTransform(transform), new btSphereShape(radius));
-
-                            break;
-                        }
-
-                    default:
-                        {
-                            GTEngine::Log("Error deserializing dynamics component. Sphere shape chunk version (%d) is unknown.", header.version);
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-            case Serialization::ChunkID_DynamicsComponent_EllipsoidShape:
-                {
-                    switch (header.version)
-                    {
-                    case 1:
-                        {
-                            glm::vec3 halfExtents;
-                            glm::mat4 transform;
-
-                            deserializer.Read(halfExtents);
-                            deserializer.Read(transform);
-
-                            this->collisionShape.addChildShape(ToBulletTransform(transform), new btEllipsoidShape(ToBulletVector3(halfExtents)));
-
-                            break;
-                        }
-
-                    default:
-                        {
-                            GTEngine::Log("Error deserializing dynamics component. Ellipsoid shape chunk version (%d) is unknown.", header.version);
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-            case Serialization::ChunkID_DynamicsComponent_CylinderShape:
-                {
-                    switch (header.version)
-                    {
-                    case 1:
-                        {
-                            uint32_t  upAxis;
-                            glm::vec3 halfExtents;
-                            glm::mat4 transform;
-
-                            deserializer.Read(upAxis);
-                            deserializer.Read(halfExtents);
-                            deserializer.Read(transform);
-
-                            if (upAxis == 0)
-                            {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCylinderShapeX(ToBulletVector3(halfExtents)));
-                            }
-                            else if (upAxis == 1)
-                            {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCylinderShape(ToBulletVector3(halfExtents)));
-                            }
-                            else
-                            {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCylinderShapeZ(ToBulletVector3(halfExtents)));
-                            }
-
-                            break;
-                        }
-
-                    default:
-                        {
-                            GTEngine::Log("Error deserializing dynamics component. Box shape chunk version (%d) is unknown.", header.version);
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-            case Serialization::ChunkID_DynamicsComponent_CapsuleShape:
-                {
-                    switch (header.version)
-                    {
-                    case 1:
-                        {
-                            uint32_t upAxis;
-                            float    radius;
-                            float    height;
-                            glm::mat4 transform;
-
-                            deserializer.Read(upAxis);
-                            deserializer.Read(radius);
-                            deserializer.Read(height);
-                            deserializer.Read(transform);
-
-                            if (upAxis == 0)
-                            {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCapsuleShapeX(radius, height));
-                            }
-                            else if (upAxis == 1)
-                            {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCapsuleShape(radius, height));
-                            }
-                            else
-                            {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCapsuleShapeZ(radius, height));
-                            }
-
-                            break;
-                        }
-
-                    default:
-                        {
-                            GTEngine::Log("Error deserializing dynamics component. Box shape chunk version (%d) is unknown.", header.version);
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-
-            case Serialization::ChunkID_DynamicsComponent_ConvexHullShape:
-                {
-                    switch (header.version)
-                    {
-                    case 1:
-                        {
-                            uint32_t                  vertexCount;
-                            GTCore::Vector<glm::vec3> vertices;
-                            float                     margin;
-
-                            deserializer.Read(vertexCount);
-
-                            vertices.Reserve(vertexCount);
-                            vertices.count = vertexCount;
-                            deserializer.Read(vertices.buffer, vertexCount * sizeof(glm::vec3));
-
-                            deserializer.Read(margin);
-
-
-                            this->collisionShape.addChildShape(btTransform::getIdentity(), new btConvexHullShape(&vertices[0].x, vertexCount, 12));
-
-
-                            break;
-                        }
-
-                    default:
-                        {
-                            GTEngine::Log("Error deserializing dynamics component. Box shape chunk version (%d) is unknown.", header.version);
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-
-            default:
-                {
-                    // Skip over unknown chunks.
-                    deserializer.Seek(header.sizeInBytes);
-                    break;
-                }
-            }
+            this->EnableNavigationMeshGeneration();
         }
-
-
+        else
+        {
+            this->DisableNavigationMeshGeneration();
+        }
 
 
 
@@ -1495,7 +473,6 @@ namespace GTEngine
 
         // The mass needs to be updated.
         this->UpdateMass();
-
 
 
 
@@ -1510,37 +487,8 @@ namespace GTEngine
     }
 
 
-
-    void DynamicsComponent::AddCollisionShape(btCollisionShape* shape, float offsetX, float offsetY, float offsetZ)
-    {
-        // When changing a collision shape, we always want to first remove the rigid body from it's world. We then re-add the body
-        // when we're finished with the modifications.
-        auto world = this->rigidBody->GetWorld();
-        if (world != nullptr)
-        {
-            world->RemoveRigidBody(*this->rigidBody);
-        }
-
-        // All we need to do is add the new shape to the compound shape...
-        this->collisionShape.addChildShape(btTransform(btMatrix3x3::getIdentity(), btVector3(offsetX, offsetY, offsetZ)), shape);
-
-        // We need to make sure the shape is scaled correctly.
-        glm::vec3 nodeScale = glm::max(glm::vec3(0.0001f), this->node.GetWorldScale());
-        this->collisionShape.setLocalScaling(btVector3(nodeScale.x, nodeScale.y, nodeScale.z));
-
-
-        // With a change in the shape, we also need to update the mass.
-        this->UpdateMass();
-
-        // Now we need to re-add the rigid body to the world, if it has one.
-        if (world != nullptr)
-        {
-            world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
-        }
-
-
-        this->OnChanged();
-    }
+    //////////////////////////////////////////////////////////
+    // Private
 
     void DynamicsComponent::UpdateMass()
     {
@@ -1580,5 +528,28 @@ namespace GTEngine
         {
             world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
+    }
+
+    void DynamicsComponent::OnPreCollisionShapeChanged()
+    {
+        this->world = this->rigidBody->GetWorld();
+        if (this->world != nullptr)
+        {
+            world->RemoveRigidBody(*this->rigidBody);
+        }
+    }
+
+    void DynamicsComponent::OnPostCollisionShapeChanged()
+    {
+        // With a change in the shape, we also need to update the mass.
+        this->UpdateMass();
+
+        // Now we need to re-add the rigid body to the world, if it has one.
+        if (this->world != nullptr)
+        {
+            this->world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
+        }
+
+        this->world = nullptr;
     }
 }
