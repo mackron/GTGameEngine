@@ -57,84 +57,86 @@ namespace GTEngine
         // Nothing/Null/Unknown/Terminator.
         //
         // A chunk of this type is really good for marking the end of a group of chunks. It can operate in a similar way to a null terminator in a string.
-        static const uint32_t ChunkID_Null                                  = CHUNK_ID(0x00000000U);
+        static const uint32_t ChunkID_Null                                    = CHUNK_ID(0x00000000U);
         
 
         /////////////////////////////////////////////////////
         // Scenes
 
         // Scene
-        static const uint32_t ChunkID_Scene_Info                            = CHUNK_ID(0x00000001U);
-        static const uint32_t ChunkID_Scene_Nodes                           = CHUNK_ID(0x00000002U);
-        static const uint32_t ChunkID_Scene_NodesHierarchy                  = CHUNK_ID(0x00000003U);
-        static const uint32_t ChunkID_Scene_EditorMetadata                  = CHUNK_ID(0x0000000FU);
+        static const uint32_t ChunkID_Scene_Info                              = CHUNK_ID(0x00000001U);
+        static const uint32_t ChunkID_Scene_Nodes                             = CHUNK_ID(0x00000002U);
+        static const uint32_t ChunkID_Scene_NodesHierarchy                    = CHUNK_ID(0x00000003U);
+        static const uint32_t ChunkID_Scene_EditorMetadata                    = CHUNK_ID(0x0000000FU);
 
         // SceneObject
-        static const uint32_t ChunkID_SceneObject                           = CHUNK_ID(0x00000010U);
+        static const uint32_t ChunkID_SceneObject                             = CHUNK_ID(0x00000010U);
 
         // SceneNode
-        static const uint32_t ChunkID_SceneNode_General                     = CHUNK_ID(0x00000020U);
-        static const uint32_t ChunkID_SceneNode_Components                  = CHUNK_ID(0x00000021U);
+        static const uint32_t ChunkID_SceneNode_General                       = CHUNK_ID(0x00000020U);
+        static const uint32_t ChunkID_SceneNode_Components                    = CHUNK_ID(0x00000021U);
 
 
         /////////////////////////////////////////////////////
         // Components
 
         // ModelComponent
-        static const uint32_t ChunkID_ModelComponent_Main                   = CHUNK_ID(0x00000100U);
+        static const uint32_t ChunkID_ModelComponent_Main                     = CHUNK_ID(0x00000100U);
 
         // CameraComponent
-        static const uint32_t ChunkID_CameraComponent_Main                  = CHUNK_ID(0x00000110U);
+        static const uint32_t ChunkID_CameraComponent_Main                    = CHUNK_ID(0x00000110U);
 
         // PointLightComponent
-        static const uint32_t ChunkID_PointLightComponent_Main              = CHUNK_ID(0x00000120U);
+        static const uint32_t ChunkID_PointLightComponent_Main                = CHUNK_ID(0x00000120U);
 
         // SpotLightComponent
-        static const uint32_t ChunkID_SpotLightComponent_Main               = CHUNK_ID(0x00000130U);
+        static const uint32_t ChunkID_SpotLightComponent_Main                 = CHUNK_ID(0x00000130U);
 
         // DirectionalLightComponent
-        static const uint32_t ChunkID_DirectionalLightComponent_Main        = CHUNK_ID(0x00000140U);
+        static const uint32_t ChunkID_DirectionalLightComponent_Main          = CHUNK_ID(0x00000140U);
 
         // AmbientLightComponent
-        static const uint32_t ChunkID_AmbientLightComponent_Main            = CHUNK_ID(0x00000150U);
+        static const uint32_t ChunkID_AmbientLightComponent_Main              = CHUNK_ID(0x00000150U);
+
+        // CollisionShapeComponent
+        static const uint32_t ChunkID_CollisionShapeComponent_Main            = CHUNK_ID(0x00000160U);
+        static const uint32_t ChunkID_CollisionShapeComponent_BoxShape        = CHUNK_ID(0x00000161U);
+        static const uint32_t ChunkID_CollisionShapeComponent_SphereShape     = CHUNK_ID(0x00000162U);
+        static const uint32_t ChunkID_CollisionShapeComponent_EllipsoidShape  = CHUNK_ID(0x00000163U);
+        static const uint32_t ChunkID_CollisionShapeComponent_CylinderShape   = CHUNK_ID(0x00000164U);
+        static const uint32_t ChunkID_CollisionShapeComponent_CapsuleShape    = CHUNK_ID(0x00000165U);
+        static const uint32_t ChunkID_CollisionShapeComponent_ConvexHullShape = CHUNK_ID(0x00000166U);
 
         // DynamicsComponent
-        static const uint32_t ChunkID_DynamicsComponent_Main                = CHUNK_ID(0x00000160U);
-        static const uint32_t ChunkID_DynamicsComponent_RigidBody           = CHUNK_ID(0x00000161U);
-        static const uint32_t ChunkID_DynamicsComponent_BoxShape            = CHUNK_ID(0x00000162U);
-        static const uint32_t ChunkID_DynamicsComponent_SphereShape         = CHUNK_ID(0x00000163U);
-        static const uint32_t ChunkID_DynamicsComponent_EllipsoidShape      = CHUNK_ID(0x00000164U);
-        static const uint32_t ChunkID_DynamicsComponent_CylinderShape       = CHUNK_ID(0x00000165U);
-        static const uint32_t ChunkID_DynamicsComponent_CapsuleShape        = CHUNK_ID(0x00000166U);
-        static const uint32_t ChunkID_DynamicsComponent_ConvexHullShape     = CHUNK_ID(0x00000167U);
+        static const uint32_t ChunkID_DynamicsComponent_Main                  = CHUNK_ID(0x00000170U);
+
+        // ProximityComponent
+        static const uint32_t ChunkID_ProximityComponent_Main                 = CHUNK_ID(0x00000180U);
 
         // GenericConstraintComponent
-        static const uint32_t ChunkID_GenericConstraintComponent_Main       = CHUNK_ID(0x00000170U);
+        static const uint32_t ChunkID_GenericConstraintComponent_Main         = CHUNK_ID(0x00000190U);
 
         // PointToPointConstraintComponent
-        static const uint32_t ChunkID_PointToPointConstraintComponent_Main  = CHUNK_ID(0x00000180U);
+        static const uint32_t ChunkID_PointToPointConstraintComponent_Main    = CHUNK_ID(0x000001A0U);
 
         // ConeTwistConstraintComponent.
-        static const uint32_t ChunkID_ConeTwistConstraintComponent_Main     = CHUNK_ID(0x00000190U);
+        static const uint32_t ChunkID_ConeTwistConstraintComponent_Main       = CHUNK_ID(0x000001B0U);
 
         // --- Leave a bit of space for future constraints types ---
 
-        // ProximityComponent
-        static const uint32_t ChunkID_ProximityComponent_Main               = CHUNK_ID(0x00000200U);
-
         // OccluderComonent
-        static const uint32_t ChunkID_OccluderComponent_Main                = CHUNK_ID(0x00000210U);
+        static const uint32_t ChunkID_OccluderComponent_Main                  = CHUNK_ID(0x00000200U);
 
         // SpriteComponent
-        static const uint32_t ChunkID_SpriteComponent_Main                  = CHUNK_ID(0x00000220U);
+        static const uint32_t ChunkID_SpriteComponent_Main                    = CHUNK_ID(0x00000210U);
 
         // ScriptComponent
-        static const uint32_t ChunkID_ScriptComponent_Main                  = CHUNK_ID(0x00000230U);
+        static const uint32_t ChunkID_ScriptComponent_Main                    = CHUNK_ID(0x00000220U);
 
         // --- Leave a bit of space for future non-editor component types ---
 
         // EditorMetadataComponent.
-        static const uint32_t ChunkID_EditorMetadataComponent_Main          = CHUNK_ID(0x000004F0U);
+        static const uint32_t ChunkID_EditorMetadataComponent_Main            = CHUNK_ID(0x000004F0U);
 
 
 
@@ -142,39 +144,39 @@ namespace GTEngine
         // Assets/Resources
 
         // Model
-        static const uint32_t ChunkID_Model_Main                            = CHUNK_ID(0x00000500U);
-        static const uint32_t ChunkID_Model_Meshes                          = CHUNK_ID(0x00000501U);
-        static const uint32_t ChunkID_Model_Bones                           = CHUNK_ID(0x00000502U);
-        static const uint32_t ChunkID_Model_Animation                       = CHUNK_ID(0x00000503U);
+        static const uint32_t ChunkID_Model_Main                              = CHUNK_ID(0x00000500U);
+        static const uint32_t ChunkID_Model_Meshes                            = CHUNK_ID(0x00000501U);
+        static const uint32_t ChunkID_Model_Bones                             = CHUNK_ID(0x00000502U);
+        static const uint32_t ChunkID_Model_Animation                         = CHUNK_ID(0x00000503U);
 
         // Material
-        static const uint32_t ChunkID_Material_Main                         = CHUNK_ID(0x00000510U);
-        static const uint32_t ChunkID_Material_Parameters                   = CHUNK_ID(0x00000511U);
+        static const uint32_t ChunkID_Material_Main                           = CHUNK_ID(0x00000510U);
+        static const uint32_t ChunkID_Material_Parameters                     = CHUNK_ID(0x00000511U);
 
 
         /////////////////////////////////////////////////////
         // Scene State Stack
 
-        static const uint32_t ChunkID_SceneStateStack                       = CHUNK_ID(0x00000800U);
-        static const uint32_t ChunkID_SceneStateStackBranch                 = CHUNK_ID(0x00000801U);
-        static const uint32_t ChunkID_SceneStateStackFrame                  = CHUNK_ID(0x00000802U);
-        static const uint32_t ChunkID_SceneStateStackStagingArea            = CHUNK_ID(0x00000803U);
+        static const uint32_t ChunkID_SceneStateStack                         = CHUNK_ID(0x00000800U);
+        static const uint32_t ChunkID_SceneStateStackBranch                   = CHUNK_ID(0x00000801U);
+        static const uint32_t ChunkID_SceneStateStackFrame                    = CHUNK_ID(0x00000802U);
+        static const uint32_t ChunkID_SceneStateStackStagingArea              = CHUNK_ID(0x00000803U);
 
 
 
         /////////////////////////////////////////////////////
         // Misc. Objects
 
-        static const uint32_t ChunkID_Mesh_Material                         = CHUNK_ID(0x00001000U);
-        static const uint32_t ChunkID_Mesh_Geometry                         = CHUNK_ID(0x00001001U);
-        static const uint32_t ChunkID_VertexArray_Info                      = CHUNK_ID(0x00001010U);
-        static const uint32_t ChunkID_VertexArray_Vertices                  = CHUNK_ID(0x00001011U);
-        static const uint32_t ChunkID_VertexArray_Indices                   = CHUNK_ID(0x00001012U);
-        static const uint32_t ChunkID_ShaderParameters                      = CHUNK_ID(0x00001013U);
-        static const uint32_t ChunkID_Animation_Main                        = CHUNK_ID(0x00001014U);
-        static const uint32_t ChunkID_Animation_PlaybackState               = CHUNK_ID(0x00001015U);
-        static const uint32_t ChunkID_AnimationKeyFrameQueue                = CHUNK_ID(0x00001016U);
-        static const uint32_t ChunkID_SceneNodeClass                        = CHUNK_ID(0x00001017U);
+        static const uint32_t ChunkID_Mesh_Material                           = CHUNK_ID(0x00001000U);
+        static const uint32_t ChunkID_Mesh_Geometry                           = CHUNK_ID(0x00001001U);
+        static const uint32_t ChunkID_VertexArray_Info                        = CHUNK_ID(0x00001010U);
+        static const uint32_t ChunkID_VertexArray_Vertices                    = CHUNK_ID(0x00001011U);
+        static const uint32_t ChunkID_VertexArray_Indices                     = CHUNK_ID(0x00001012U);
+        static const uint32_t ChunkID_ShaderParameters                        = CHUNK_ID(0x00001013U);
+        static const uint32_t ChunkID_Animation_Main                          = CHUNK_ID(0x00001014U);
+        static const uint32_t ChunkID_Animation_PlaybackState                 = CHUNK_ID(0x00001015U);
+        static const uint32_t ChunkID_AnimationKeyFrameQueue                  = CHUNK_ID(0x00001016U);
+        static const uint32_t ChunkID_SceneNodeClass                          = CHUNK_ID(0x00001017U);
 
     }
 }

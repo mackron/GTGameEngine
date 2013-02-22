@@ -1,12 +1,17 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Components/CollisionShapeComponent.hpp>
+#include <GTEngine/SceneNode.hpp>
+#include <GTEngine/Logging.hpp>
+#include <GTEngine/Errors.hpp>
 
 namespace GTEngine
 {
     CollisionShapeComponent::CollisionShapeComponent(SceneNode &node)
         : Component(node),
-          collisionShape(true)
+          collisionShape(true),
+          collisionGroup(1), collisionMask(-1),
+          usingConvexHullsOfModel(false)
     {
     }
 
@@ -21,6 +26,343 @@ namespace GTEngine
             delete child;
         }
     }
+
+
+
+    void CollisionShapeComponent::AddBoxCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btBoxShape(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
+    }
+
+    void CollisionShapeComponent::AddSphereCollisionShape(float radius, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btSphereShape(radius), offsetX, offsetY, offsetZ);
+    }
+
+    void CollisionShapeComponent::AddEllipsoidCollisionShape(float radiusX, float radiusY, float radiusZ, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btEllipsoidShape(btVector3(radiusX, radiusY, radiusZ)), offsetX, offsetY, offsetZ);
+    }
+
+
+    void CollisionShapeComponent::AddCylinderXCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCylinderShapeX(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
+    }
+    void CollisionShapeComponent::AddCylinderYCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCylinderShape(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
+    }
+    void CollisionShapeComponent::AddCylinderZCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCylinderShapeZ(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
+    }
+
+
+    void CollisionShapeComponent::AddCapsuleXCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCapsuleShapeX(radius, length), offsetX, offsetY, offsetZ);
+    }
+    void CollisionShapeComponent::AddCapsuleYCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCapsuleShape(radius, length), offsetX, offsetY, offsetZ);
+    }
+    void CollisionShapeComponent::AddCapsuleZCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
+    {
+        this->AddCollisionShape(new btCapsuleShapeZ(radius, length), offsetX, offsetY, offsetZ);
+    }
+
+
+    void CollisionShapeComponent::AddStaticPlaneShape(float a, float b, float c, float d)
+    {
+        this->AddCollisionShape(new btStaticPlaneShape(btVector3(a, b, c), d), 0.0f, 0.0f, 0.0f);
+    }
+
+
+    void CollisionShapeComponent::AddConvexHullShape(const float* points, size_t pointCount, size_t stride, float margin)
+    {
+        auto shape = new btConvexHullShape(static_cast<const btScalar*>(points), pointCount, stride);
+        shape->setMargin(margin);
+
+        this->AddCollisionShape(shape, 0.0f, 0.0f, 0.0f);
+    }
+
+    void CollisionShapeComponent::AddConvexHullShape(const ConvexHull &convexHull, float margin)
+    {
+        this->AddConvexHullShape(convexHull.GetVertices(), convexHull.GetVertexCount(), sizeof(glm::vec3), margin);
+    }
+
+
+    void CollisionShapeComponent::SetCollisionShapesToModelConvexHulls(const Model &model, float margin)
+    {
+        this->OnPreCollisionShapeChanged();
+        {
+            this->RemoveAllCollisionShapes(false);      // <-- 'false' prevents events from getting posted.
+            auto &definition = model.GetDefinition();
+
+            // Unintuitively, we're not actually going to use AddConvexHullShape() here. Instead, we're going to go a little lower-level here
+            // to avoid some unnecessary calculations.
+
+            for (size_t i = 0; i < definition.convexHulls.count; ++i)
+            {
+                auto hull = definition.convexHulls[i];
+                assert(hull != nullptr);
+
+                auto shape = new btConvexHullShape(static_cast<const btScalar*>(hull->GetVertices()), hull->GetVertexCount(), 12);
+                shape->setMargin(margin);
+
+                // All we need to do is add the new shape to the compound shape...
+                this->collisionShape.addChildShape(btTransform::getIdentity(), shape);
+            }
+
+
+            // We need to make sure the shape is scaled correctly.
+            glm::vec3 nodeScale = glm::max(glm::vec3(0.0001f), this->node.GetWorldScale());
+            this->collisionShape.setLocalScaling(btVector3(nodeScale.x, nodeScale.y, nodeScale.z));
+
+
+            this->usingConvexHullsOfModel = true;
+        }
+        this->OnPostCollisionShapeChanged();
+        this->OnChanged();
+    }
+
+    void CollisionShapeComponent::SetCollisionShapesToModelConvexHulls(float margin)
+    {
+        auto modelComponent = this->node.GetComponent<ModelComponent>();
+        if (modelComponent != nullptr)
+        {
+            auto model = modelComponent->GetModel();
+            if (model != nullptr)
+            {
+                this->SetCollisionShapesToModelConvexHulls(*model, margin);
+            }
+        }
+    }
+
+
+    void CollisionShapeComponent::RemoveAllCollisionShapes(bool postEvent)
+    {
+        if (postEvent) this->OnPreCollisionShapeChanged();
+        {
+            // All children need to be removed from the shape.
+            while (this->collisionShape.getNumChildShapes() > 0)
+            {
+                auto child = this->collisionShape.getChildShape(0);
+                this->collisionShape.removeChildShapeByIndex(0);
+
+                delete child;
+            }
+
+            this->usingConvexHullsOfModel = false;
+        }
+        if (postEvent) this->OnPostCollisionShapeChanged();
+        if (postEvent) this->OnChanged();
+    }
+
+    void CollisionShapeComponent::RemoveCollisionShapeAtIndex(size_t index)
+    {
+        this->OnPreCollisionShapeChanged();
+        {
+            // All children need to be removed from the shape.
+            this->collisionShape.removeChildShapeByIndex(static_cast<int>(index));
+            this->usingConvexHullsOfModel = false;
+        }
+        this->OnPostCollisionShapeChanged();
+        this->OnChanged();
+    }
+
+
+
+
+    void CollisionShapeComponent::SetCollisionShapeOffset(size_t index, float offsetX, float offsetY, float offsetZ)
+    {
+        this->OnPreCollisionShapeChanged();
+        {
+            btTransform newTransform;
+            newTransform.setIdentity();
+            newTransform.setOrigin(btVector3(offsetX, offsetY, offsetZ));
+
+            this->collisionShape.updateChildTransform(index, newTransform);
+        }
+        this->OnPostCollisionShapeChanged();
+        this->OnChanged();
+    }
+
+
+    bool CollisionShapeComponent::SetBoxCollisionShapeHalfExtents(size_t index, float halfX, float halfY, float halfZ)
+    {
+        if (GetCollisionShapeType(this->collisionShape.getChildShape(index)) == CollisionShapeType_Box)
+        {
+            this->OnPreCollisionShapeChanged();
+            {
+                auto shape = static_cast<btBoxShape*>(this->collisionShape.getChildShape(index));
+
+                // And this is how we are going to change the extents... Can't find a better way to do this
+                shape->~btBoxShape();
+                new (shape) btBoxShape(btVector3(halfX, halfY, halfZ));
+
+
+                // We need to call this in order to get everything looking correct.
+                this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
+            }
+            this->OnPostCollisionShapeChanged();
+            this->OnChanged();
+
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CollisionShapeComponent::SetSphereCollisionShapeRadius(size_t index, float radius)
+    {
+        if (GetCollisionShapeType(this->collisionShape.getChildShape(index)) == CollisionShapeType_Sphere)
+        {
+            this->OnPreCollisionShapeChanged();
+            {
+                auto shape = static_cast<btSphereShape*>(this->collisionShape.getChildShape(index));
+
+                // And this is how we are going to change the extents... Can't find a better way to do this
+                shape->~btSphereShape();
+                new (shape) btSphereShape(radius);
+
+
+                // We need to call this in order to get everything looking correct.
+                this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
+            }
+            this->OnPostCollisionShapeChanged();
+            this->OnChanged();
+
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CollisionShapeComponent::SetEllipsoidCollisionShapeRadius(size_t index, float radiusX, float radiusY, float radiusZ)
+    {
+        if (GetCollisionShapeType(this->collisionShape.getChildShape(index)) == CollisionShapeType_Ellipsoid)
+        {
+            this->OnPreCollisionShapeChanged();
+            {
+                auto shape = static_cast<btEllipsoidShape*>(this->collisionShape.getChildShape(index));
+
+                // And this is how we are going to change the extents... Can't find a better way to do this
+                shape->~btEllipsoidShape();
+                new (shape) btEllipsoidShape(btVector3(radiusX, radiusY, radiusZ));
+
+
+                // We need to call this in order to get everything looking correct.
+                this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
+            }
+            this->OnPostCollisionShapeChanged();
+            this->OnChanged();
+
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CollisionShapeComponent::SetCylinderCollisionShapeHalfExtents(size_t index, float halfX, float halfY, float halfZ)
+    {
+        auto type = GetCollisionShapeType(this->collisionShape.getChildShape(index));
+
+        if (type == CollisionShapeType_CylinderX || type == CollisionShapeType_CylinderY || type == CollisionShapeType_CylinderZ)
+        {
+            this->OnPreCollisionShapeChanged();
+            {
+                if (type == CollisionShapeType_CylinderX)
+                {
+                    auto shape = static_cast<btCylinderShapeX*>(this->collisionShape.getChildShape(index));
+
+                    // And this is how we are going to change the extents... Can't find a better way to do this
+                    shape->~btCylinderShapeX();
+                    new (shape) btCylinderShapeX(btVector3(halfX, halfY, halfZ));
+                }
+                else if (type == CollisionShapeType_CylinderY)
+                {
+                    auto shape = static_cast<btCylinderShape*>(this->collisionShape.getChildShape(index));
+
+                    // And this is how we are going to change the extents... Can't find a better way to do this
+                    shape->~btCylinderShape();
+                    new (shape) btCylinderShape(btVector3(halfX, halfY, halfZ));
+                }
+                else if (type == CollisionShapeType_CylinderZ)
+                {
+                    auto shape = static_cast<btCylinderShapeZ*>(this->collisionShape.getChildShape(index));
+
+                    // And this is how we are going to change the extents... Can't find a better way to do this
+                    shape->~btCylinderShapeZ();
+                    new (shape) btCylinderShapeZ(btVector3(halfX, halfY, halfZ));
+                }
+
+
+                // We need to call this in order to get everything looking correct.
+                this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
+            }
+            this->OnPostCollisionShapeChanged();
+            this->OnChanged();
+
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CollisionShapeComponent::SetCapsuleCollisionShapeSize(size_t index, float radius, float height)
+    {
+        auto type = GetCollisionShapeType(this->collisionShape.getChildShape(index));
+
+        if (type == CollisionShapeType_CapsuleX || type == CollisionShapeType_CapsuleY || type == CollisionShapeType_CapsuleZ)
+        {
+            this->OnPreCollisionShapeChanged();
+            {
+                if (type == CollisionShapeType_CapsuleX)
+                {
+                    auto shape = static_cast<btCapsuleShapeX*>(this->collisionShape.getChildShape(index));
+
+                    // And this is how we are going to change the extents... Can't find a better way to do this
+                    shape->~btCapsuleShapeX();
+                    new (shape) btCapsuleShapeX(radius, height);
+                }
+                else if (type == CollisionShapeType_CapsuleY)
+                {
+                    auto shape = static_cast<btCapsuleShape*>(this->collisionShape.getChildShape(index));
+
+                    // And this is how we are going to change the extents... Can't find a better way to do this
+                    shape->~btCapsuleShape();
+                    new (shape) btCapsuleShape(radius, height);
+                }
+                else if (type == CollisionShapeType_CapsuleZ)
+                {
+                    auto shape = static_cast<btCapsuleShapeZ*>(this->collisionShape.getChildShape(index));
+
+                    // And this is how we are going to change the extents... Can't find a better way to do this
+                    shape->~btCapsuleShapeZ();
+                    new (shape) btCapsuleShapeZ(radius, height);
+                }
+
+
+                // We need to call this in order to get everything looking correct.
+                this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
+            }
+            this->OnPostCollisionShapeChanged();
+            this->OnChanged();
+
+
+            return true;
+        }
+
+        return false;
+    }
+
+
 
 
     size_t CollisionShapeComponent::GetCollisionShapeCount() const
@@ -54,5 +396,579 @@ namespace GTEngine
     }
 
 
+    void CollisionShapeComponent::SetCollisionFilter(short group, short mask)
+    {
+        if (this->collisionGroup != group || this->collisionMask != mask)
+        {
+            this->OnPreCollisionShapeChanged();
+            {
+                this->collisionGroup = group;
+                this->collisionMask  = mask;
+            }
+            this->OnPostCollisionShapeChanged();
+            this->OnChanged();
+        }
+    }
 
+
+    void CollisionShapeComponent::ApplyScaling(float x, float y, float z)
+    {
+        this->OnPreCollisionShapeChanged();
+        {
+            x = GTCore::Max(x, 0.0001f);
+            y = GTCore::Max(y, 0.0001f);
+            z = GTCore::Max(z, 0.0001f);
+
+            // Now we simply apply the scaling to the shape.
+            this->collisionShape.setLocalScaling(btVector3(x, y, z));
+        }
+        this->OnPostCollisionShapeChanged();
+    }
+
+    void CollisionShapeComponent::ApplySceneNodeScaling()
+    {
+        this->ApplyScaling(this->node.GetWorldScale());
+    }
+
+
+
+    VertexArray* CollisionShapeComponent::CreateCollisionShapeMesh(bool applyNodeTransform) const
+    {
+        int shapeCount = this->collisionShape.getNumChildShapes();
+
+        // The way we do things is we first build vertex arrays for each individual shape. We that combine them all into a single
+        // vertex array to produce the final array.
+        GTCore::Vector<VertexArray*> shapeGeometry(shapeCount);
+
+        for (int i = 0; i < shapeCount; ++i)
+        {
+            auto shape = this->collisionShape.getChildShape(i);
+            assert(shape != nullptr);
+
+            auto va = VertexArrayLibrary::CreateFromShape(*shape);
+            if (va != nullptr)
+            {
+                va->ApplyTransform(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+                shapeGeometry.PushBack(va);
+            }
+        }
+
+        // At this point we will have a list of vertex arrays for each shape. We need to combine them into a single vertex array.
+        if (shapeGeometry.count > 0)
+        {
+            // TODO:
+            //
+            // If later one we decide to return a format other than P3, we can do an optimization where we just return shapeGeometry[0] in cases where there is only
+            // a single vertex array.
+
+            // Need to combine.
+            auto combined = VertexArrayLibrary::CreateCombined(shapeGeometry.buffer, shapeGeometry.count, VertexFormat::P3);
+            assert(combined != nullptr);
+
+            // We need to ensure the temp vertex arrays are deleted...
+            for (size_t i = 0; i < shapeGeometry.count; ++i)
+            {
+                delete shapeGeometry[i];
+            }
+
+            if (applyNodeTransform)
+            {
+                combined->ApplyTransform(this->node.GetWorldTransform());
+            }
+            else
+            {
+                // We still need to apply the scaling in any case.
+                combined->ApplyTransform(glm::scale(this->node.GetWorldScale()));
+            }
+
+            // Here we optimize the vertex array to remove duplicate values.
+            combined->Optimize();
+
+            return combined;
+        }
+
+        return nullptr;
+    }
+
+
+
+    ///////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void CollisionShapeComponent::Serialize(GTCore::Serializer &serializer) const
+    {
+        // We'll need to use an intermediary serializer for getting accurate sizes.
+        GTCore::BasicSerializer intermediarySerializer;
+        intermediarySerializer.Write(static_cast<uint32_t>(this->GetCollisionShapeCount()));
+        intermediarySerializer.Write(static_cast<uint32_t>(this->collisionGroup));
+        intermediarySerializer.Write(static_cast<uint32_t>(this->collisionMask));
+        intermediarySerializer.Write(this->usingConvexHullsOfModel);
+        
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_CollisionShapeComponent_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
+
+
+
+        for (size_t i = 0; i < this->GetCollisionShapeCount(); ++i)
+        {
+            auto &shape = this->GetCollisionShapeAtIndex(i);
+
+            switch (GetCollisionShapeType(shape))
+            {
+            case CollisionShapeType_Box:
+                {
+                    auto &box = static_cast<const btBoxShape &>(shape);
+
+                    header.id          = Serialization::ChunkID_CollisionShapeComponent_BoxShape;
+                    header.version     = 1;
+                    header.sizeInBytes =
+                        sizeof(glm::vec3) +     // <-- Half extents
+                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+
+                    serializer.Write(header);
+                    serializer.Write(ToGLMVector3(box.getHalfExtentsWithMargin() / box.getLocalScaling()));
+                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+
+
+                    break;
+                }
+
+            case CollisionShapeType_Sphere:
+                {
+                    auto &sphere = static_cast<const btSphereShape &>(shape);
+
+                    header.id          = Serialization::ChunkID_CollisionShapeComponent_SphereShape;
+                    header.version     = 1;
+                    header.sizeInBytes =
+                        sizeof(float) +         // <-- Radius.
+                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+
+                    serializer.Write(header);
+                    serializer.Write(static_cast<float>(sphere.getRadius() / sphere.getLocalScaling().getX()));
+                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+
+                    break;
+                }
+
+            case CollisionShapeType_Ellipsoid:
+                {
+                    auto &ellipsoid = static_cast<const btEllipsoidShape &>(shape);
+
+                    btVector3 margin(ellipsoid.getMargin(), ellipsoid.getMargin(), ellipsoid.getMargin());
+
+                    header.id          = Serialization::ChunkID_CollisionShapeComponent_EllipsoidShape;
+                    header.version     = 1;
+                    header.sizeInBytes =
+                        sizeof(glm::vec3) +     // <-- Half extents
+                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+
+                    serializer.Write(header);
+                    serializer.Write(ToGLMVector3((ellipsoid.getImplicitShapeDimensions() + margin) / ellipsoid.getLocalScaling()));
+                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+
+                    break;
+                }
+
+            case CollisionShapeType_CylinderX:
+            case CollisionShapeType_CylinderY:
+            case CollisionShapeType_CylinderZ:
+                {
+                    auto &cylinder = static_cast<const btCylinderShape &>(shape);
+
+                    uint32_t upAxis = static_cast<uint32_t>(cylinder.getUpAxis());
+
+                    header.id          = Serialization::ChunkID_CollisionShapeComponent_CylinderShape;
+                    header.version     = 1;
+                    header.sizeInBytes =
+                        sizeof(uint32_t)  +     // <-- Axis - 0 = X, 1 = Y, 2 = Z
+                        sizeof(glm::vec3) +     // <-- Half extents
+                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+
+                    serializer.Write(header);
+                    serializer.Write(upAxis);
+                    serializer.Write(ToGLMVector3(cylinder.getHalfExtentsWithMargin() / cylinder.getLocalScaling()));
+                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+
+                    break;
+                }
+
+            case CollisionShapeType_CapsuleX:
+            case CollisionShapeType_CapsuleY:
+            case CollisionShapeType_CapsuleZ:
+                {
+                    auto &capsule = static_cast<const btCapsuleShape &>(shape);
+
+                    uint32_t upAxis     = static_cast<uint32_t>(capsule.getUpAxis());
+                    uint32_t radiusAxis = (upAxis + 2) % 3;
+
+                    header.id          = Serialization::ChunkID_CollisionShapeComponent_CapsuleShape;
+                    header.version     = 1;
+                    header.sizeInBytes =
+                        sizeof(uint32_t) +      // <-- Axis - 0 = X, 1 = Y, 2 = Z
+                        sizeof(float)    +      // <-- Radius
+                        sizeof(float)    +      // <-- Height
+                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+
+                    serializer.Write(header);
+                    serializer.Write(upAxis);
+                    serializer.Write(static_cast<float>(capsule.getRadius()     / capsule.getLocalScaling()[radiusAxis]));
+                    serializer.Write(static_cast<float>(capsule.getHalfHeight() / capsule.getLocalScaling()[upAxis]));
+                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+
+                    break;
+                }
+
+            case CollisionShapeType_ConvexHull:
+                {
+                    auto &convexHull = static_cast<const btConvexHullShape &>(shape);
+
+                    header.id          = Serialization::ChunkID_CollisionShapeComponent_ConvexHullShape;
+                    header.version     = 1;
+                    header.sizeInBytes =
+                        sizeof(uint32_t)  +                                     // <-- Vertex count.
+                        sizeof(glm::vec3) * convexHull.getNumVertices() +      // <-- Each vertex.
+                        sizeof(float);                                          // <-- Margin. Important for convex hulls.
+
+                    serializer.Write(header);
+                    serializer.Write(static_cast<uint32_t>(convexHull.getNumVertices()));
+
+                    for (int iVertex = 0; iVertex < convexHull.getNumVertices(); ++iVertex)
+                    {
+                        btVector3 vertex;
+                        convexHull.getVertex(iVertex, vertex);
+
+                        // We want this unscaled.
+                        vertex = vertex / convexHull.getLocalScaling();
+
+                        serializer.Write(ToGLMVector3(vertex));
+                    }
+
+                    serializer.Write(static_cast<float>(convexHull.getMargin()));
+
+                    break;
+                }
+
+
+            case CollisionShapeType_ModelConvexHulls:
+            case CollisionShapeType_None:
+            default: break;
+            }
+        }
+    }
+
+    void CollisionShapeComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        // Before deserializing, we need to revert the scaling back to 1.0, 1.0, 1.0f. If we don't do this, the scale won't be
+        // be set correctly because of the way the shapes are used.
+        this->ApplyScaling(1.0f, 1.0f, 1.0f);
+
+
+
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+
+        uint32_t deserializedShapeCount;
+        uint32_t deserializedCollisionGroup;
+        uint32_t deserializedCollisionMask;
+        bool     deserializedUsingConvexHullsOfModel;
+
+        // The first chunk must the main one. It will contain the shape count.
+        if (header.id == Serialization::ChunkID_CollisionShapeComponent_Main)
+        {
+            switch (header.version)
+            {
+            case 1:
+                {
+                    deserializer.Read(deserializedShapeCount);
+                    deserializer.Read(deserializedCollisionGroup);
+                    deserializer.Read(deserializedCollisionMask);
+                    deserializer.Read(deserializedUsingConvexHullsOfModel);
+
+                    break;
+                }
+
+
+            default:
+                {
+                    GTEngine::PostError("Error deserializing  CollisionShapeComponent. Main chunk version (%d) is unknown. This chunk has been skipped. Nothing has been modified.", header.version);
+
+                    deserializer.Seek(header.sizeInBytes);
+                    return;
+                }
+            }
+        }
+        else
+        {
+            GTEngine::PostError("Error deserializing CollisionShapeComponent. The first chunk must the main chunk, but instead it is (%d). This chunk has been skipped. Nothing has been modified.", header.id);
+
+            deserializer.Seek(header.sizeInBytes);
+            return;
+        }
+
+
+
+        // The next chunks will be the shapes. The old shapes need to be removed.
+        while (this->collisionShape.getNumChildShapes() > 0)
+        {
+            auto child = this->collisionShape.getChildShape(0);
+            this->collisionShape.removeChildShapeByIndex(0);
+
+            delete child;
+        }
+
+
+        for (uint32_t i = 0; i < deserializedShapeCount; ++i)
+        {
+            deserializer.Read(header);
+
+            switch (header.id)
+            {
+            case Serialization::ChunkID_CollisionShapeComponent_BoxShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            glm::vec3 halfExtents;
+                            glm::mat4 transform;
+
+                            deserializer.Read(halfExtents);
+                            deserializer.Read(transform);
+
+                            this->collisionShape.addChildShape(ToBulletTransform(transform), new btBoxShape(ToBulletVector3(halfExtents)));
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+
+                            deserializer.Seek(header.sizeInBytes);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_CollisionShapeComponent_SphereShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            float     radius;
+                            glm::mat4 transform;
+
+                            deserializer.Read(radius);
+                            deserializer.Read(transform);
+
+                            this->collisionShape.addChildShape(ToBulletTransform(transform), new btSphereShape(radius));
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing CollisionShapeComponent. Sphere shape chunk version (%d) is unknown. Skipping.", header.version);
+
+                            deserializer.Seek(header.sizeInBytes);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_CollisionShapeComponent_EllipsoidShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            glm::vec3 halfExtents;
+                            glm::mat4 transform;
+
+                            deserializer.Read(halfExtents);
+                            deserializer.Read(transform);
+
+                            this->collisionShape.addChildShape(ToBulletTransform(transform), new btEllipsoidShape(ToBulletVector3(halfExtents)));
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing CollisionShapeComponent. Ellipsoid shape chunk version (%d) is unknown. Skipping.", header.version);
+
+                            deserializer.Seek(header.sizeInBytes);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_CollisionShapeComponent_CylinderShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            uint32_t  upAxis;
+                            glm::vec3 halfExtents;
+                            glm::mat4 transform;
+
+                            deserializer.Read(upAxis);
+                            deserializer.Read(halfExtents);
+                            deserializer.Read(transform);
+
+                            if (upAxis == 0)
+                            {
+                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCylinderShapeX(ToBulletVector3(halfExtents)));
+                            }
+                            else if (upAxis == 1)
+                            {
+                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCylinderShape(ToBulletVector3(halfExtents)));
+                            }
+                            else
+                            {
+                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCylinderShapeZ(ToBulletVector3(halfExtents)));
+                            }
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+
+                            deserializer.Seek(header.sizeInBytes);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_CollisionShapeComponent_CapsuleShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            uint32_t upAxis;
+                            float    radius;
+                            float    height;
+                            glm::mat4 transform;
+
+                            deserializer.Read(upAxis);
+                            deserializer.Read(radius);
+                            deserializer.Read(height);
+                            deserializer.Read(transform);
+
+                            if (upAxis == 0)
+                            {
+                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCapsuleShapeX(radius, height));
+                            }
+                            else if (upAxis == 1)
+                            {
+                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCapsuleShape(radius, height));
+                            }
+                            else
+                            {
+                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCapsuleShapeZ(radius, height));
+                            }
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+
+                            deserializer.Seek(header.sizeInBytes);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+
+            case Serialization::ChunkID_CollisionShapeComponent_ConvexHullShape:
+                {
+                    switch (header.version)
+                    {
+                    case 1:
+                        {
+                            uint32_t                  vertexCount;
+                            GTCore::Vector<glm::vec3> vertices;
+                            float                     margin;
+
+                            deserializer.Read(vertexCount);
+
+                            vertices.Reserve(vertexCount);
+                            vertices.count = vertexCount;
+                            deserializer.Read(vertices.buffer, vertexCount * sizeof(glm::vec3));
+
+                            deserializer.Read(margin);
+
+
+                            this->collisionShape.addChildShape(btTransform::getIdentity(), new btConvexHullShape(&vertices[0].x, vertexCount, 12));
+
+
+                            break;
+                        }
+
+                    default:
+                        {
+                            GTEngine::Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+
+                            deserializer.Seek(header.sizeInBytes);
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+
+
+            default:
+                {
+                    GTEngine::Log("Error deserializing CollisionShapeComponent. Unknown shape chunk (%d). Skipping.", header.id);
+
+                    deserializer.Seek(header.sizeInBytes);
+                    break;
+                }
+            }
+        }
+    }
+
+
+
+    //////////////////////////////////////////////////
+    // Private
+
+    void CollisionShapeComponent::AddCollisionShape(btCollisionShape* shape, float offsetX, float offsetY, float offsetZ)
+    {
+        this->OnPreCollisionShapeChanged();
+        {
+            // All we need to do is add the new shape to the compound shape...
+            this->collisionShape.addChildShape(btTransform(btMatrix3x3::getIdentity(), btVector3(offsetX, offsetY, offsetZ)), shape);
+
+            // We need to make sure the shape is scaled correctly.
+            glm::vec3 nodeScale = glm::max(glm::vec3(0.0001f), this->node.GetWorldScale());
+            this->collisionShape.setLocalScaling(btVector3(nodeScale.x, nodeScale.y, nodeScale.z));
+        }
+        this->OnPostCollisionShapeChanged();
+        this->OnChanged();
+    }
 }

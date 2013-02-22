@@ -8,7 +8,7 @@ namespace GTEngine
     GTENGINE_IMPL_COMPONENT_ATTRIBS(ProximityComponent, "Proximity");
 
     ProximityComponent::ProximityComponent(SceneNode &node)
-        : CollisionShapeComponent(node), ghostObject(), collisionGroup(1), collisionMask(-1)
+        : CollisionShapeComponent(node), ghostObject()
     {
         this->ghostObject.setUserPointer(&node);
     }
@@ -22,66 +22,7 @@ namespace GTEngine
         }
     }
 
-    void ProximityComponent::SetBoxShape(float halfX, float halfY, float halfZ)
-    {
-        this->SetShape(new btBoxShape(btVector3(halfX, halfY, halfZ)));
-    }
-
-    void ProximityComponent::SetSphereShape(float radius)
-    {
-        this->SetShape(new btSphereShape(radius));
-    }
-
-    void ProximityComponent::SetEllipsoidShape(float radiusX, float radiusY, float radiusZ)
-    {
-        this->SetShape(new btEllipsoidShape(btVector3(radiusX, radiusY, radiusZ)));
-    }
-
     
-    void ProximityComponent::SetCollisionFilter(short group, short mask)
-    {
-        if (this->collisionGroup != group || this->collisionMask != mask)
-        {
-            this->collisionGroup = group;
-            this->collisionMask  = mask;
-
-            // The body needs to be removed and re-added to it's world for changes to take effect.
-            auto world = this->ghostObject.GetWorld();
-            if (world != nullptr)
-            {
-                world->RemoveGhostObject(this->ghostObject);
-                world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
-            }
-
-            this->OnChanged();
-        }
-    }
-
-
-    void ProximityComponent::ApplyScaling(float x, float y, float z)
-    {
-        // The geometry is changing, thus we need to remove the body from the world and re-add it after the changes.
-        auto world = this->ghostObject.GetWorld();
-        if (world != nullptr)
-        {
-            world->RemoveGhostObject(this->ghostObject);
-        }
-
-        // Now we simply apply the scaling to the shape.
-        this->collisionShape.setLocalScaling(btVector3(x, y, z));
-
-        // Now we need to re-add the body.
-        if (world != nullptr)
-        {
-            world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
-        }
-    }
-
-    void ProximityComponent::ApplySceneNodeScaling()
-    {
-        this->ApplyScaling(this->node.GetWorldScale());
-    }
-
     void ProximityComponent::ApplySceneNodeTransformation()
     {
         btTransform transform;
@@ -90,55 +31,63 @@ namespace GTEngine
     }
 
 
-    void ProximityComponent::SetShape(btCollisionShape* newShape)
+
+    ///////////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void ProximityComponent::Serialize(GTCore::Serializer &serializer) const
     {
-        /*
-        auto oldShape = this->collisionShape;
-        this->collisionShape = newShape;
+        // All we actually want to write is the collision shapes.
+        CollisionShapeComponent::Serialize(serializer);
+    }
 
+    void ProximityComponent::Deserialize(GTCore::Deserializer &deserializer)
+    {
         auto world = this->ghostObject.GetWorld();
         if (world != nullptr)
         {
             world->RemoveGhostObject(this->ghostObject);
         }
 
-        this->ghostObject.setCollisionShape(newShape);
+        // First we deserialize the collision shapes.
+        CollisionShapeComponent::Deserialize(deserializer);
 
-        if (world != nullptr)
-        {
-            world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
-        }
-
-        delete oldShape;
-        */
-
-
-        // TODO: Fix this up. Temp.
-
-
-        auto oldShape = this->collisionShape.getChildShape(0);
-        
-        auto world = this->ghostObject.GetWorld();
-        if (world != nullptr)
-        {
-            world->RemoveGhostObject(this->ghostObject);
-        }
-        
-        
-        this->collisionShape.removeChildShapeByIndex(0);
-        this->collisionShape.addChildShape(btTransform::getIdentity(), newShape);
+        // Now we just need to update the scale and transformation based on the scene node.
+        this->ApplySceneNodeScaling();
+        this->ApplySceneNodeTransformation();
 
 
         if (world != nullptr)
         {
-            world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
+            this->world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
         }
-
-        delete oldShape;
-
 
 
         this->OnChanged();
+    }
+
+
+
+    //////////////////////////////////////////
+    // Private
+
+    void ProximityComponent::OnPreCollisionShapeChanged()
+    {
+        this->world = this->ghostObject.GetWorld();
+        if (this->world != nullptr)
+        {
+            this->world->RemoveGhostObject(this->ghostObject);
+        }
+    }
+
+    void ProximityComponent::OnPostCollisionShapeChanged()
+    {
+        if (this->world != nullptr)
+        {
+            this->world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
+        }
+
+        this->world = nullptr;
     }
 }
 
