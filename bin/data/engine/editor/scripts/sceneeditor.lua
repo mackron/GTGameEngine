@@ -306,8 +306,8 @@ function Editor.SceneEditor.CreateComponentPanel(parentPanel, componentID)
         element:AmbientLightComponentPanel();
     elseif componentID == GTEngine.Components.Dynamics then
         element:DynamicsComponentPanel();
-    --elseif componentID == GTEngine.Components.Proximity then
-    --    element:ProximityComponentPanel();
+    elseif componentID == GTEngine.Components.Proximity then
+        element:ProximityComponentPanel();
     elseif componentID == GTEngine.Components.Script then
         element:ScriptComponentPanel();
     elseif componentID == GTEngine.Components.EditorMetadata then 
@@ -828,36 +828,19 @@ function GTGUI.Element:AmbientLightComponentPanel()
     return self;
 end
 
-function GTGUI.Element:DynamicsComponentPanel()
-    self:PanelGroupBox("Dynamics", true);
-    
-    -- Mass
-    self.IsKinematic   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:0px;' />");
-    
-    self.MassContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()          .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
-    self.MassLeft      = GTGUI.Server.New("<div parentid='" .. self.MassContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
-    self.MassRight     = GTGUI.Server.New("<div parentid='" .. self.MassContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
-    
-    self.MassLabel     = GTGUI.Server.New("<div parentid='" .. self.MassLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Mass (0 = Static):</div>");
-    self.MassInput     = GTGUI.Server.New("<div parentid='" .. self.MassRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
 
+function GTGUI.Element:CollisionShapesPanel()
+    self.Component = nil;
+
+    self.CollisionShapesContainer      = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' />");
+    self.CollisionShapePanels          = {};
     
-    -- Collision Shapes
-    
-    self.CollisionShapesTitle     = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='width:100%; text-color:#bbb; margin-top:8px; flex-child-width:true; child-plane:horizontal; vertical-align:center;' />");
-    self.CollisionShapesLeft      = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
-    self.CollisionShapesLabel     = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:auto; text-color:#777; margin:4px 0px; vertical-align:center;'>Collision Shapes</div>");
-    self.CollisionShapesRight     = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
-    self.CollisionShapesContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' />");
-    self.CollisionShapePanels = {};
-    
-    self.NewCollisionShapeContainer    = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                       .. "' styleclass='collision-shape-panel-new'       style='' />");
+    self.NewCollisionShapeContainer    = GTGUI.Server.New("<div parentid='" .. self:GetID()                            .. "' styleclass='collision-shape-panel-new'       style='' />");
     self.NewCollisionShapeIcon         = GTGUI.Server.New("<div parentid='" .. self.NewCollisionShapeContainer:GetID() .. "' styleclass='collision-shape-panel-new-icon'  style='' />");
     self.NewCollisionShapeLabel        = GTGUI.Server.New("<div parentid='" .. self.NewCollisionShapeContainer:GetID() .. "' styleclass='collision-shape-panel-new-label' style=''>Add Shape</div>");
     self.NewCollisionShapeBottomBorder = GTGUI.Server.New("<div parentid='" .. self.NewCollisionShapeContainer:GetID() .. "' styleclass='collision-shape-panel-new-bottom-border' />");
     
-    self.NewCollisionShapeMenu         = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                       .. "' styleclass='collision-shape-panel-new-menu'  style='visible:false;' />");
-    
+    self.NewCollisionShapeMenu         = GTGUI.Server.New("<div parentid='" .. self:GetID()                            .. "' styleclass='collision-shape-panel-new-menu'  style='visible:false;' />");
     
     self.NewCollisionShapeContainer:OnLMBDown(function()
         if not self.NewCollisionShapeContainer.IsOpen then
@@ -878,87 +861,225 @@ function GTGUI.Element:DynamicsComponentPanel()
     self.NewCollisionShapeMenu:NewCollisionShapeMenu();
     
     self.NewCollisionShapeMenu:AppendNewItem("Box"):OnPressed(function()
-        if self.CurrentComponent ~= nil then
-            self.CurrentComponent:AddBoxCollisionShape(0.5, 0.5, 0.5);
-            self:UpdateCollisionShapes();
+        if self.Component ~= nil then
+            self.Component:AddBoxCollisionShape(0.5, 0.5, 0.5);
+            self:Update(self.Component);
             
-            self.ParentPanel:OnSceneNodeChanged();
+            self:OnShapesChanged();
         end
     end);
     
     self.NewCollisionShapeMenu:AppendNewItem("Sphere (Does not scale. Try Ellipsoid.)"):OnPressed(function()
-        if self.CurrentComponent ~= nil then
-            self.CurrentComponent:AddSphereCollisionShape(1.0);
-            self:UpdateCollisionShapes();
+        if self.Component ~= nil then
+            self.Component:AddSphereCollisionShape(1.0);
+            self:Update(self.Component);
             
-            self.ParentPanel:OnSceneNodeChanged();
+            self:OnShapesChanged();
         end
     end);
 
     self.NewCollisionShapeMenu:AppendNewItem("Ellipsoid"):OnPressed(function()
-        if self.CurrentComponent ~= nil then
-            self.CurrentComponent:AddEllipsoidCollisionShape(1.0, 1.0, 1.0);
-            self:UpdateCollisionShapes();
+        if self.Component ~= nil then
+            self.Component:AddEllipsoidCollisionShape(1.0, 1.0, 1.0);
+            self:Update(self.Component);
             
-            self.ParentPanel:OnSceneNodeChanged();
+            self:OnShapesChanged();
         end
     end);
     
     self.NewCollisionShapeMenu:AppendNewItem("Cylinder X"):OnPressed(function()
-        if self.CurrentComponent ~= nil then
-            self.CurrentComponent:AddCylinderXCollisionShape(1.0, 0.5, 0.5);
-            self:UpdateCollisionShapes();
+        if self.Component ~= nil then
+            self.Component:AddCylinderXCollisionShape(1.0, 0.5, 0.5);
+            self:Update(self.Component);
             
-            self.ParentPanel:OnSceneNodeChanged();
+            self:OnShapesChanged();
         end
     end);
     
     self.NewCollisionShapeMenu:AppendNewItem("Cylinder Y"):OnPressed(function()
-        if self.CurrentComponent ~= nil then
-            self.CurrentComponent:AddCylinderYCollisionShape(0.0, 1.5, 0.5);
-            self:UpdateCollisionShapes();
+        if self.Component ~= nil then
+            self.Component:AddCylinderYCollisionShape(0.0, 1.5, 0.5);
+            self:Update(self.Component);
             
-            self.ParentPanel:OnSceneNodeChanged();
+            self:OnShapesChanged();
         end
     end);
     
     self.NewCollisionShapeMenu:AppendNewItem("Cylinder Z"):OnPressed(function()
-        if self.CurrentComponent ~= nil then
-            self.CurrentComponent:AddCylinderZCollisionShape(0.0, 0.5, 1.5);
-            self:UpdateCollisionShapes();
+        if self.Component ~= nil then
+            self.Component:AddCylinderZCollisionShape(0.0, 0.5, 1.5);
+            self:Update(self.Component);
             
-            self.ParentPanel:OnSceneNodeChanged();
+            self:OnShapesChanged();
         end
     end);
     
     self.NewCollisionShapeMenu:AppendNewItem("Capsule X"):OnPressed(function()
-        if self.CurrentComponent ~= nil then
-            self.CurrentComponent:AddCapsuleXCollisionShape(0.5, 1.0);
-            self:UpdateCollisionShapes();
+        if self.Component ~= nil then
+            self.Component:AddCapsuleXCollisionShape(0.5, 1.0);
+            self:Update(self.Component);
             
-            self.ParentPanel:OnSceneNodeChanged();
+            self:OnShapesChanged();
         end
     end);
     
     self.NewCollisionShapeMenu:AppendNewItem("Capsule Y"):OnPressed(function()
-        if self.CurrentComponent ~= nil then
-            self.CurrentComponent:AddCapsuleYCollisionShape(0.5, 1.0);
-            self:UpdateCollisionShapes();
+        if self.Component ~= nil then
+            self.Component:AddCapsuleYCollisionShape(0.5, 1.0);
+            self:Update(self.Component);
             
-            self.ParentPanel:OnSceneNodeChanged();
+            self:OnShapesChanged();
         end
     end);
     
     self.NewCollisionShapeMenu:AppendNewItem("Capsule Z"):OnPressed(function()
-        if self.CurrentComponent ~= nil then
-            self.CurrentComponent:AddCapsuleZCollisionShape(0.5, 1.0);
-            self:UpdateCollisionShapes();
+        if self.Component ~= nil then
+            self.Component:AddCapsuleZCollisionShape(0.5, 1.0);
+            self:Update(self.Component);
             
-            self.ParentPanel:OnSceneNodeChanged();
+            self:OnShapesChanged();
         end
     end);
     
     
+
+    function self:Update(component)
+        self.Component = component;
+        
+        -- We need to clear the panels.
+        self:Clear();
+        
+        -- Now we need to iterate over and create the panels for each shape.
+        local shapeCount = self.Component:GetCollisionShapeCount();
+        if shapeCount > 0 then
+            for i=1,shapeCount do
+                local shape = self.Component:GetCollisionShapeAtIndex(i);
+                if shape then
+                    local panel = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesContainer:GetID() .. "' styleclass='collision-shape-panel' />");
+
+                    if     shape.type == GTEngine.CollisionShapeTypes.Box              then
+                        panel:CollisionShapePanel_Box():Update(shape);
+                        panel:OnExtentsChanged(function(data)
+                            self.Component:SetBoxCollisionShapeHalfExtents(i, data.x * 0.5, data.y * 0.5, data.z * 0.5);
+                            self:OnShapesChanged();
+                        end);
+                    elseif shape.type == GTEngine.CollisionShapeTypes.Sphere           then
+                        panel:CollisionShapePanel_Sphere():Update(shape);
+                        panel:OnRadiusChanged(function(data)
+                            self.Component:SetSphereCollisionShapeRadius(i, data.radius);
+                            self:OnShapesChanged();
+                        end);
+                    elseif shape.type == GTEngine.CollisionShapeTypes.Ellipsoid        then
+                        panel:CollisionShapePanel_Ellipsoid():Update(shape);
+                        panel:OnRadiusChanged(function(data)
+                            self.Component:SetEllipsoidCollisionShapeRadius(i, data.x, data.y, data.z);
+                            self:OnShapesChanged();
+                        end);
+                    elseif shape.type == GTEngine.CollisionShapeTypes.CylinderX        then
+                        panel:CollisionShapePanel_CylinderX():Update(shape);
+                        panel:OnExtentsChanged(function(data)
+                            self.Component:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
+                            self:OnShapesChanged();
+                        end);
+                    elseif shape.type == GTEngine.CollisionShapeTypes.CylinderY        then
+                        panel:CollisionShapePanel_CylinderY():Update(shape);
+                        panel:OnExtentsChanged(function(data)
+                            self.Component:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
+                            self:OnShapesChanged();
+                        end);
+                    elseif shape.type == GTEngine.CollisionShapeTypes.CylinderZ        then
+                        panel:CollisionShapePanel_CylinderZ():Update(shape);
+                        panel:OnExtentsChanged(function(data)
+                            self.Component:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
+                            self:OnShapesChanged();
+                        end);
+                    elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleX         then
+                        panel:CollisionShapePanel_CapsuleX():Update(shape);
+                        panel:OnSizeChanged(function(data)
+                            self.Component:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
+                            self:OnShapesChanged();
+                        end);
+                    elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleY         then
+                        panel:CollisionShapePanel_CapsuleY():Update(shape);
+                        panel:OnSizeChanged(function(data)
+                            self.Component:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
+                            self:OnShapesChanged();
+                        end);
+                    elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleZ         then
+                        panel:CollisionShapePanel_CapsuleZ():Update(shape);
+                        panel:OnSizeChanged(function(data)
+                            self.Component:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
+                            self:OnShapesChanged();
+                        end);
+                    elseif shape.type == GTEngine.CollisionShapeTypes.ConvexHull       then
+                        panel:CollisionShapePanel_ConvexHull():Update(shape);
+                    elseif shape.type == GTEngine.CollisionShapeTypes.ModelConvexHulls then
+                        panel:CollisionShapePanel_ModelConvexHulls():Update(shape);
+                    end
+                
+                    panel:OnDelete(function()
+                        self.Component:RemoveCollisionShapeAtIndex(i);
+                        self:Update(self.Component);
+                        self:OnShapesChanged();
+                    end);
+                    
+                    panel:OnOffsetChanged(function(data)
+                        if not self.IsUpdating then
+                            self.Component:SetCollisionShapeOffset(i, data.x, data.y, data.z);
+                            self:OnShapesChanged();
+                        end
+                    end);
+            
+                    self.CollisionShapePanels[#self.CollisionShapePanels + 1] = panel;
+                end
+            end
+        end
+    end
+    
+    
+    function self:Clear()
+        for i,value in ipairs(self.CollisionShapePanels) do
+            GTGUI.Server.DeleteElement(value);
+        end
+        
+        self.CollisionShapePanels = {};
+    end
+    
+    
+    
+    -- Event called when the shapes are changed in some way. The editor needs to know about this so it can setup undo/redo points.
+    function self:OnShapesChanged(arg1)
+        self.Callbacks:BindOrCall("OnShapesChanged", arg1);
+    end
+end
+
+function GTGUI.Element:DynamicsComponentPanel()
+    self:PanelGroupBox("Dynamics", true);
+    
+    -- Mass
+    self.IsKinematic   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:0px;' />");
+    
+    self.MassContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()          .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
+    self.MassLeft      = GTGUI.Server.New("<div parentid='" .. self.MassContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
+    self.MassRight     = GTGUI.Server.New("<div parentid='" .. self.MassContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
+    
+    self.MassLabel     = GTGUI.Server.New("<div parentid='" .. self.MassLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Mass (0 = Static):</div>");
+    self.MassInput     = GTGUI.Server.New("<div parentid='" .. self.MassRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
+
+    
+    -- Collision Shapes
+    
+    self.CollisionShapesTitle = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='width:100%; text-color:#bbb; margin-top:8px; flex-child-width:true; child-plane:horizontal; vertical-align:center;' />");
+    self.CollisionShapesLeft  = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
+    self.CollisionShapesLabel = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:auto; text-color:#777; margin:4px 0px; vertical-align:center;'>Collision Shapes</div>");
+    self.CollisionShapesRight = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
+    
+    self.CollisionShapes = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' />");
+    self.CollisionShapes:CollisionShapesPanel();
+    
+    self.CollisionShapes:OnShapesChanged(function()
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
     
     
     self.CurrentNode      = nil;
@@ -1017,103 +1138,11 @@ function GTGUI.Element:DynamicsComponentPanel()
             self.MassInput:SetText(string.format("%.4f", self.CurrentComponent:GetMass()));
             
             -- Collision shapes need to be updated.
-            self:UpdateCollisionShapes();
+            self.CollisionShapes:Update(self.CurrentComponent);
         end
         
         self.IsUpdating = false;
     end
-    
-    function self:UpdateCollisionShapes()
-        -- First we clear the old ones.
-        self:ClearCollisionShapes();
-        
-        -- Now we need to iterate over and create the panels for each shape.
-        local shapeCount = self.CurrentComponent:GetCollisionShapeCount();
-        if shapeCount > 0 then
-            for i=1,shapeCount do
-                local shape = self.CurrentComponent:GetCollisionShapeAtIndex(i);
-                if shape then
-                    local panel = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesContainer:GetID() .. "' styleclass='collision-shape-panel' />");
-
-                    if     shape.type == GTEngine.CollisionShapeTypes.Box              then
-                        panel:CollisionShapePanel_Box():Update(shape);
-                        panel:OnExtentsChanged(function(data)
-                            self.CurrentComponent:SetBoxCollisionShapeHalfExtents(i, data.x * 0.5, data.y * 0.5, data.z * 0.5);
-                            self.ParentPanel:OnSceneNodeChanged();
-                        end);
-                    elseif shape.type == GTEngine.CollisionShapeTypes.Sphere           then
-                        panel:CollisionShapePanel_Sphere():Update(shape);
-                        panel:OnRadiusChanged(function(data)
-                            self.CurrentComponent:SetSphereCollisionShapeRadius(i, data.radius);
-                            self.ParentPanel:OnSceneNodeChanged();
-                        end);
-                    elseif shape.type == GTEngine.CollisionShapeTypes.Ellipsoid        then
-                        panel:CollisionShapePanel_Ellipsoid():Update(shape);
-                        panel:OnRadiusChanged(function(data)
-                            self.CurrentComponent:SetEllipsoidCollisionShapeRadius(i, data.x, data.y, data.z);
-                            self.ParentPanel:OnSceneNodeChanged();
-                        end);
-                    elseif shape.type == GTEngine.CollisionShapeTypes.CylinderX        then
-                        panel:CollisionShapePanel_CylinderX():Update(shape);
-                        panel:OnExtentsChanged(function(data)
-                            self.CurrentComponent:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
-                            self.ParentPanel:OnSceneNodeChanged();
-                        end);
-                    elseif shape.type == GTEngine.CollisionShapeTypes.CylinderY        then
-                        panel:CollisionShapePanel_CylinderY():Update(shape);
-                        panel:OnExtentsChanged(function(data)
-                            self.CurrentComponent:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
-                            self.ParentPanel:OnSceneNodeChanged();
-                        end);
-                    elseif shape.type == GTEngine.CollisionShapeTypes.CylinderZ        then
-                        panel:CollisionShapePanel_CylinderZ():Update(shape);
-                        panel:OnExtentsChanged(function(data)
-                            self.CurrentComponent:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
-                            self.ParentPanel:OnSceneNodeChanged();
-                        end);
-                    elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleX         then
-                        panel:CollisionShapePanel_CapsuleX():Update(shape);
-                        panel:OnSizeChanged(function(data)
-                            self.CurrentComponent:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
-                            self.ParentPanel:OnSceneNodeChanged();
-                        end);
-                    elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleY         then
-                        panel:CollisionShapePanel_CapsuleY():Update(shape);
-                        panel:OnSizeChanged(function(data)
-                            self.CurrentComponent:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
-                            self.ParentPanel:OnSceneNodeChanged();
-                        end);
-                    elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleZ         then
-                        panel:CollisionShapePanel_CapsuleZ():Update(shape);
-                        panel:OnSizeChanged(function(data)
-                            self.CurrentComponent:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
-                            self.ParentPanel:OnSceneNodeChanged();
-                        end);
-                    elseif shape.type == GTEngine.CollisionShapeTypes.ConvexHull       then
-                        panel:CollisionShapePanel_ConvexHull():Update(shape);
-                    elseif shape.type == GTEngine.CollisionShapeTypes.ModelConvexHulls then
-                        panel:CollisionShapePanel_ModelConvexHulls():Update(shape);
-                    end
-                
-                    panel:OnDelete(function()
-                        self.CurrentComponent:RemoveCollisionShapeAtIndex(i);
-                        self:UpdateCollisionShapes();
-                        self.ParentPanel:OnSceneNodeChanged();
-                    end);
-                    
-                    panel:OnOffsetChanged(function(data)
-                        if not self.IsUpdating then
-                            self.CurrentComponent:SetCollisionShapeOffset(i, data.x, data.y, data.z);
-                            self.ParentPanel:OnSceneNodeChanged();
-                        end
-                    end);
-            
-                    self.CollisionShapePanels[#self.CollisionShapePanels + 1] = panel;
-                end
-            end
-        end
-    end
-    
     
     
     function self:ApplyMass()
@@ -1123,23 +1152,42 @@ function GTGUI.Element:DynamicsComponentPanel()
         end
     end
     
-    function self:ClearCollisionShapes()
-        for i,value in ipairs(self.CollisionShapePanels) do
-            GTGUI.Server.DeleteElement(value);
-        end
-        
-        self.CollisionShapePanels = {};
-    end
-    
-    
-    
+
     return self;
 end
 
 function GTGUI.Element:ProximityComponentPanel()
     self:PanelGroupBox("Proximity", true);
     
+    -- Shapes
+    self.CollisionShapesTitle = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='width:100%; text-color:#bbb; margin-top:0px; flex-child-width:true; child-plane:horizontal; vertical-align:center;' />");
+    self.CollisionShapesLeft  = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
+    self.CollisionShapesLabel = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:auto; text-color:#777; margin:4px 0px; vertical-align:center;'>Shapes</div>");
+    self.CollisionShapesRight = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
+    
+    self.CollisionShapes = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' />");
+    self.CollisionShapes:CollisionShapesPanel();
+    
+    self.CollisionShapes:OnShapesChanged(function()
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
+    
+    
+    self.CurrentNode      = nil;
+    self.CurrentComponent = nil;
+    self.IsUpdating       = false;
+    
+    
     function self:Update(node)
+        self.CurrentNode      = node;
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.Proximity);
+        self.IsUpdating       = true;
+        
+        if self.CurrentComponent ~= nil then
+            self.CollisionShapes:Update(self.CurrentComponent);
+        end
+        
+        self.IsUpdating = false;
     end
     
     return self;
@@ -1849,6 +1897,13 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
     
     self.NewComponentMenu:AppendNewItem("Dynamics (Collision and Physics)"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.Dynamics);
+        
+        self:UpdateComponentPanels();
+        self:OnSceneNodeChanged();
+    end);
+    
+    self.NewComponentMenu:AppendNewItem("Proximity"):OnPressed(function()
+        self.CurrentSceneNode:AddComponent(GTEngine.Components.Proximity);
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();

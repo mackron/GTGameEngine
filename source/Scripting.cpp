@@ -23,30 +23,21 @@ namespace GTEngine
 
             successful = successful && script.Execute
             (
-                "GTEngine          = {};"
+                "GTEngine                    = {};"
 
-                "GTEngine.System   = {};"
-                "GTEngine.System.ModelComponent            = {};"
-                "GTEngine.System.CameraComponent           = {};"
-                "GTEngine.System.PointLightComponent       = {};"
-                "GTEngine.System.SpotLightComponent        = {};"
-                "GTEngine.System.DirectionalLightComponent = {};"
-                "GTEngine.System.AmbientLightComponent     = {};"
-                "GTEngine.System.DynamicsComponent         = {};"
-                "GTEngine.System.ScriptComponent           = {};"
-                "GTEngine.System.EditorMetadataComponent   = {};"
-                "GTEngine.System.SceneNode                 = {};"
-                "GTEngine.System.Scene                     = {};"
+                "GTEngine.System             = {};"
+                "GTEngine.System.SceneNode   = {};"
+                "GTEngine.System.Scene       = {};"
 
-                "GTEngine.System.SubEditor                 = {};"
-                "GTEngine.System.ModelEditor               = {};"
-                "GTEngine.System.SceneEditor               = {};"
+                "GTEngine.System.SubEditor   = {};"
+                "GTEngine.System.ModelEditor = {};"
+                "GTEngine.System.SceneEditor = {};"
 
-                "GTEngine.Renderer                         = {};"
-                "GTEngine.Audio                            = {};"
+                "GTEngine.Renderer           = {};"
+                "GTEngine.Audio              = {};"
 
-                "GTEngine.RegisteredScenes                 = {};"
-                "GTEngine.ScriptDefinitions                = {};"
+                "GTEngine.RegisteredScenes   = {};"
+                "GTEngine.ScriptDefinitions  = {};"
 
 
                 "GTEngine.SceneNodeEventHandlers = "
@@ -81,6 +72,7 @@ namespace GTEngine
                     script.SetTableValue(-1, "DirectionalLight",  DirectionalLightComponent::Name);
                     script.SetTableValue(-1, "AmbientLight",      AmbientLightComponent::Name);
                     script.SetTableValue(-1, "Dynamics",          DynamicsComponent::Name);
+                    script.SetTableValue(-1, "Proximity",         ProximityComponent::Name);
                     script.SetTableValue(-1, "Script",            ScriptComponent::Name);
                     script.SetTableValue(-1, "EditorMetadata",    EditorMetadataComponent::Name);
                 }
@@ -120,6 +112,15 @@ namespace GTEngine
                 script.SetTableValue(-3);
             }
             script.Pop(1);
+
+
+            // Create the GTEngine.System.<Component> tables.
+            successful = successful && script.Execute
+            (
+                "for key,value in pairs(GTEngine.Components) do"
+                "    GTEngine.System[value .. 'Component'] = {};"
+                "end;"
+            );
 
 
             successful = successful && script.Execute
@@ -575,6 +576,123 @@ namespace GTEngine
 
                 "function GTEngine.DynamicsComponent:SetCapsuleCollisionShapeSize(index, radius, height)"
                 "    return GTEngine.System.DynamicsComponent.SetCapsuleCollisionShapeSize(self._internalPtr, index, radius, height);"
+                "end;"
+
+
+
+                // ProximityComponent
+                "GTEngine.ProximityComponent = {};"
+                "GTEngine.ProximityComponent.__index = GTEngine.ProximityComponent;"
+
+                "function GTEngine.ProximityComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.ProximityComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
+                "end;"
+
+                "function GTEngine.ProximityComponent:SetCollisionFilter(group, mask)"
+                "    GTEngine.System.ProximityComponent.SetCollisionFilter(self._internalPtr, group, mask);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:GetCollisionGroup()"
+                "    return GTEngine.System.ProximityComponent.GetCollisionGroup(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:GetCollisionMask()"
+                "    return GTEngine.System.ProximityComponent.GetCollisionMask(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.ProximityComponent:AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.AddBoxCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:AddSphereCollisionShape(radius, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.AddSphereCollisionShape(self._internalPtr, radius, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:AddEllipsoidCollisionShape(radiusX, radiusY, radiusZ, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.AddEllipsoidCollisionShape(self._internalPtr, radiusX, radiusY, radiusZ, offsetX, offsetY, offsetZ);"
+                "end;"
+
+
+                "function GTEngine.ProximityComponent:AddCylinderXCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.AddCylinderXCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:AddCylinderYCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.AddCylinderYCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:AddCylinderZCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.AddCylinderZCollisionShape(self._internalPtr, halfX, halfY, halfZ, offsetX, offsetY, offsetZ);"
+                "end;"
+
+
+                "function GTEngine.ProximityComponent:AddCapsuleXCollisionShape(radius, length, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.AddCapsuleXCollisionShape(self._internalPtr, radius, length, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:AddCapsuleYCollisionShape(radius, length, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.AddCapsuleYCollisionShape(self._internalPtr, radius, length, offsetX, offsetY, offsetZ);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:AddCapsuleZCollisionShape(radius, length, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.AddCapsuleZCollisionShape(self._internalPtr, radius, length, offsetX, offsetY, offsetZ);"
+                "end;"
+
+
+                "function GTEngine.ProximityComponent:AddConvexHullCollisionShapesFromModelComponent(margin)"
+                "    GTEngine.System.ProximityComponent.AddConvexHullCollisionShapesFromModelComponent(self._internalPtr, margin);"
+                "end;"
+
+
+                "function GTEngine.ProximityComponent:RemoveAllCollisionShapes()"
+                "    GTEngine.System.ProximityComponent.RemoveAllCollisionShapes(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:RemoveCollisionShapeAtIndex(index)"
+                "    GTEngine.System.ProximityComponent.RemoveCollisionShapeAtIndex(self._internalPtr, index);"
+                "end;"
+
+
+                "function GTEngine.ProximityComponent:GetCollisionShapeCount()"
+                "    return GTEngine.System.ProximityComponent.GetCollisionShapeCount(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:GetCollisionShapeAtIndex(index)"
+                "    return GTEngine.System.ProximityComponent.GetCollisionShapeAtIndex(self._internalPtr, index);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:IsUsingConvexHullsFromModel()"
+                "    return GTEngine.System.ProximityComponent.IsUsingConvexHullsFromModel(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.ProximityComponent:SetCollisionShapeOffset(index, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.SetCollisionShapeOffset(self._internalPtr, index, offsetX, offsetY, offsetZ);"
+                "end;"
+
+
+                "function GTEngine.ProximityComponent:SetBoxCollisionShapeHalfExtents(index, halfX, halfY, halfZ)"
+                "    return GTEngine.System.ProximityComponent.SetBoxCollisionShapeHalfExtents(self._internalPtr, index, halfX, halfY, halfZ);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:SetSphereCollisionShapeRadius(index, radius)"
+                "    return GTEngine.System.ProximityComponent.SetSphereCollisionShapeRadius(self._internalPtr, index, radius);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:SetEllipsoidCollisionShapeRadius(index, radiusX, radiusY, radiusZ)"
+                "    return GTEngine.System.ProximityComponent.SetEllipsoidCollisionShapeRadius(self._internalPtr, index, radiusX, radiusY, radiusZ);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:SetCylinderCollisionShapeHalfExtents(index, halfX, halfY, halfZ)"
+                "    return GTEngine.System.ProximityComponent.SetCylinderCollisionShapeHalfExtents(self._internalPtr, index, halfX, halfY, halfZ);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:SetCapsuleCollisionShapeSize(index, radius, height)"
+                "    return GTEngine.System.ProximityComponent.SetCapsuleCollisionShapeSize(self._internalPtr, index, radius, height);"
                 "end;"
 
 
@@ -1139,9 +1257,6 @@ namespace GTEngine
                         script.SetTableFunction(-1, "SetDamping",                                     FFI::SystemFFI::DynamicsComponentFFI::SetDamping);
                         script.SetTableFunction(-1, "GetLinearDamping",                               FFI::SystemFFI::DynamicsComponentFFI::GetLinearDamping);
                         script.SetTableFunction(-1, "GetAngularDamping",                              FFI::SystemFFI::DynamicsComponentFFI::GetAngularDamping);
-                        script.SetTableFunction(-1, "SetCollisionFilter",                             FFI::SystemFFI::DynamicsComponentFFI::SetCollisionFilter);
-                        script.SetTableFunction(-1, "GetCollisionGroup",                              FFI::SystemFFI::DynamicsComponentFFI::GetCollisionGroup);
-                        script.SetTableFunction(-1, "GetCollisionMask",                               FFI::SystemFFI::DynamicsComponentFFI::GetCollisionMask);
 
                         script.SetTableFunction(-1, "SetLinearVelocity",                              FFI::SystemFFI::DynamicsComponentFFI::SetLinearVelocity);
                         script.SetTableFunction(-1, "GetLinearVelocity",                              FFI::SystemFFI::DynamicsComponentFFI::GetLinearVelocity);
@@ -1170,6 +1285,11 @@ namespace GTEngine
                         script.SetTableFunction(-1, "DisableNavigationMeshGeneration",                FFI::SystemFFI::DynamicsComponentFFI::DisableNavigationMeshGeneration);
                         script.SetTableFunction(-1, "IsNavigationMeshGenerationEnabled",              FFI::SystemFFI::DynamicsComponentFFI::IsNavigationMeshGenerationEnabled);
 
+
+                        script.SetTableFunction(-1, "SetCollisionFilter",                             FFI::SystemFFI::DynamicsComponentFFI::SetCollisionFilter);
+                        script.SetTableFunction(-1, "GetCollisionGroup",                              FFI::SystemFFI::DynamicsComponentFFI::GetCollisionGroup);
+                        script.SetTableFunction(-1, "GetCollisionMask",                               FFI::SystemFFI::DynamicsComponentFFI::GetCollisionMask);
+
                         script.SetTableFunction(-1, "AddBoxCollisionShape",                           FFI::SystemFFI::DynamicsComponentFFI::AddBoxCollisionShape);
                         script.SetTableFunction(-1, "AddSphereCollisionShape",                        FFI::SystemFFI::DynamicsComponentFFI::AddSphereCollisionShape);
                         script.SetTableFunction(-1, "AddEllipsoidCollisionShape",                     FFI::SystemFFI::DynamicsComponentFFI::AddEllipsoidCollisionShape);
@@ -1191,6 +1311,39 @@ namespace GTEngine
                         script.SetTableFunction(-1, "SetEllipsoidCollisionShapeRadius",               FFI::SystemFFI::DynamicsComponentFFI::SetEllipsoidCollisionShapeRadius);
                         script.SetTableFunction(-1, "SetCylinderCollisionShapeHalfExtents",           FFI::SystemFFI::DynamicsComponentFFI::SetCylinderCollisionShapeHalfExtents);
                         script.SetTableFunction(-1, "SetCapsuleCollisionShapeSize",                   FFI::SystemFFI::DynamicsComponentFFI::SetCapsuleCollisionShapeSize);
+                    }
+                    script.Pop(1);
+
+
+                    script.Push("ProximityComponent");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "SetCollisionFilter",                             FFI::SystemFFI::ProximityComponentFFI::SetCollisionFilter);
+                        script.SetTableFunction(-1, "GetCollisionGroup",                              FFI::SystemFFI::ProximityComponentFFI::GetCollisionGroup);
+                        script.SetTableFunction(-1, "GetCollisionMask",                               FFI::SystemFFI::ProximityComponentFFI::GetCollisionMask);
+
+                        script.SetTableFunction(-1, "AddBoxCollisionShape",                           FFI::SystemFFI::ProximityComponentFFI::AddBoxCollisionShape);
+                        script.SetTableFunction(-1, "AddSphereCollisionShape",                        FFI::SystemFFI::ProximityComponentFFI::AddSphereCollisionShape);
+                        script.SetTableFunction(-1, "AddEllipsoidCollisionShape",                     FFI::SystemFFI::ProximityComponentFFI::AddEllipsoidCollisionShape);
+                        script.SetTableFunction(-1, "AddCylinderXCollisionShape",                     FFI::SystemFFI::ProximityComponentFFI::AddCylinderXCollisionShape);
+                        script.SetTableFunction(-1, "AddCylinderYCollisionShape",                     FFI::SystemFFI::ProximityComponentFFI::AddCylinderYCollisionShape);
+                        script.SetTableFunction(-1, "AddCylinderZCollisionShape",                     FFI::SystemFFI::ProximityComponentFFI::AddCylinderZCollisionShape);
+                        script.SetTableFunction(-1, "AddCapsuleXCollisionShape",                      FFI::SystemFFI::ProximityComponentFFI::AddCapsuleXCollisionShape);
+                        script.SetTableFunction(-1, "AddCapsuleYCollisionShape",                      FFI::SystemFFI::ProximityComponentFFI::AddCapsuleYCollisionShape);
+                        script.SetTableFunction(-1, "AddCapsuleZCollisionShape",                      FFI::SystemFFI::ProximityComponentFFI::AddCapsuleZCollisionShape);
+                        script.SetTableFunction(-1, "SetCollisionShapesToModelConvexHulls",           FFI::SystemFFI::ProximityComponentFFI::SetCollisionShapesToModelConvexHulls);
+                        script.SetTableFunction(-1, "RemoveAllCollisionShapes",                       FFI::SystemFFI::ProximityComponentFFI::RemoveAllCollisionShapes);
+                        script.SetTableFunction(-1, "RemoveCollisionShapeAtIndex",                    FFI::SystemFFI::ProximityComponentFFI::RemoveCollisionShapeAtIndex);
+                        script.SetTableFunction(-1, "GetCollisionShapeCount",                         FFI::SystemFFI::ProximityComponentFFI::GetCollisionShapeCount);
+                        script.SetTableFunction(-1, "GetCollisionShapeAtIndex",                       FFI::SystemFFI::ProximityComponentFFI::GetCollisionShapeAtIndex);
+                        script.SetTableFunction(-1, "IsUsingConvexHullsFromModel",                    FFI::SystemFFI::ProximityComponentFFI::IsUsingConvexHullsFromModel);
+                        script.SetTableFunction(-1, "SetCollisionShapeOffset",                        FFI::SystemFFI::ProximityComponentFFI::SetCollisionShapeOffset);
+                        script.SetTableFunction(-1, "SetBoxCollisionShapeHalfExtents",                FFI::SystemFFI::ProximityComponentFFI::SetBoxCollisionShapeHalfExtents);
+                        script.SetTableFunction(-1, "SetSphereCollisionShapeRadius",                  FFI::SystemFFI::ProximityComponentFFI::SetSphereCollisionShapeRadius);
+                        script.SetTableFunction(-1, "SetEllipsoidCollisionShapeRadius",               FFI::SystemFFI::ProximityComponentFFI::SetEllipsoidCollisionShapeRadius);
+                        script.SetTableFunction(-1, "SetCylinderCollisionShapeHalfExtents",           FFI::SystemFFI::ProximityComponentFFI::SetCylinderCollisionShapeHalfExtents);
+                        script.SetTableFunction(-1, "SetCapsuleCollisionShapeSize",                   FFI::SystemFFI::ProximityComponentFFI::SetCapsuleCollisionShapeSize);
                     }
                     script.Pop(1);
 
@@ -2017,6 +2170,10 @@ namespace GTEngine
                         {
                             PushComponent(script, "DynamicsComponent", sceneNode->AddComponent<DynamicsComponent>());
                         }
+                        else if (GTCore::Strings::Equal(componentName, ProximityComponent::Name))
+                        {
+                            PushComponent(script, "ProximityComponent", sceneNode->AddComponent<ProximityComponent>());
+                        }
                         else if (GTCore::Strings::Equal(componentName, ScriptComponent::Name))
                         {
                             PushComponent(script, "ScriptComponent", sceneNode->AddComponent<ScriptComponent>());
@@ -2067,6 +2224,10 @@ namespace GTEngine
                         else if (GTCore::Strings::Equal(componentName, DynamicsComponent::Name))
                         {
                             PushComponent(script, "DynamicsComponent", sceneNode->GetComponent<DynamicsComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, ProximityComponent::Name))
+                        {
+                            PushComponent(script, "ProximityComponent", sceneNode->GetComponent<ProximityComponent>());
                         }
                         else if (GTCore::Strings::Equal(componentName, ScriptComponent::Name))
                         {
@@ -3034,6 +3195,498 @@ namespace GTEngine
                 }
 
 
+                //////////////////////////////////////////////////
+                // GTEngine.System.CollisionShapeComponent
+                namespace CollisionShapeComponentFFI
+                {
+                    int SetCollisionFilter(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetCollisionFilter(static_cast<short>(script.ToInteger(2)), static_cast<short>(script.ToInteger(3)));
+                        }
+
+                        return 0;
+                    }
+
+                    int GetCollisionGroup(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(static_cast<int>(component->GetCollisionGroup()));
+                        }
+                        else
+                        {
+                            script.Push(1);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetCollisionMask(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(static_cast<int>(component->GetCollisionMask()));
+                        }
+                        else
+                        {
+                            script.Push(static_cast<int>(-1));
+                        }
+
+                        return 1;
+                    }
+
+
+                    int AddBoxShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float halfX   = script.ToFloat(2);
+                            float halfY   = script.ToFloat(3);
+                            float halfZ   = script.ToFloat(4);
+                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+
+                            component->AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddSphereShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float radius  = script.ToFloat(2);
+                            float offsetX = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                            float offsetY = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                            float offsetZ = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+
+                            component->AddSphereCollisionShape(radius, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddEllipsoidShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float radiusX = script.ToFloat(2);
+                            float radiusY = script.ToFloat(3);
+                            float radiusZ = script.ToFloat(4);
+                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+
+                            component->AddEllipsoidCollisionShape(radiusX, radiusY, radiusZ, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCylinderXShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float halfX   = script.ToFloat(2);
+                            float halfY   = script.ToFloat(3);
+                            float halfZ   = script.ToFloat(4);
+                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+
+                            component->AddCylinderXCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCylinderYShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float halfX   = script.ToFloat(2);
+                            float halfY   = script.ToFloat(3);
+                            float halfZ   = script.ToFloat(4);
+                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+
+                            component->AddCylinderYCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCylinderZShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float halfX   = script.ToFloat(2);
+                            float halfY   = script.ToFloat(3);
+                            float halfZ   = script.ToFloat(4);
+                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+
+                            component->AddCylinderZCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCapsuleXShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float radius  = script.ToFloat(2);
+                            float length  = script.ToFloat(3);
+                            float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                            float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+
+                            component->AddCapsuleXCollisionShape(radius, length, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCapsuleYShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float radius  = script.ToFloat(2);
+                            float length  = script.ToFloat(3);
+                            float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                            float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+
+                            component->AddCapsuleYCollisionShape(radius, length, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int AddCapsuleZShape(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            float radius  = script.ToFloat(2);
+                            float length  = script.ToFloat(3);
+                            float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                            float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+
+                            component->AddCapsuleZCollisionShape(radius, length, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+                    int SetCollisionShapesToModelConvexHulls(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetCollisionShapesToModelConvexHulls(script.ToFloat(2));
+                        }
+
+                        return 0;
+                    }
+
+                    int RemoveAllShapes(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->RemoveAllCollisionShapes();
+                        }
+
+                        return 0;
+                    }
+
+                    int RemoveShapeAtIndex(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->RemoveCollisionShapeAtIndex(static_cast<size_t>(script.ToInteger(2) - 1));    // Minus 1 because Lua is 1 based.
+                        }
+
+                        return 0;
+                    }
+
+                    int GetShapeCount(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(static_cast<int>(component->GetCollisionShapeCount()));
+                        }
+
+                        return 1;
+                    }
+
+                    int GetShapeAtIndex(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);   // Lua is 1 based, so we subtract 1.
+                            auto & shape      = component->GetCollisionShapeAtIndex(shapeIndex);
+
+                            script.PushNewTable();
+                            {
+                                if (component->IsUsingConvexHullsFromModel())
+                                {
+                                    script.SetTableValue(-1, "type", CollisionShapeType_ModelConvexHulls);
+                                }
+                                else
+                                {
+                                    CollisionShapeType type = GetCollisionShapeType(shape);
+
+                                    // Start with the type.
+                                    script.SetTableValue(-1, "type", type);
+
+                                    // Now the shape offset.
+                                    auto &offset = component->GetCollisionShape().getChildTransform(shapeIndex).getOrigin();
+
+                                    script.SetTableValue(-1, "offsetX", offset.getX());
+                                    script.SetTableValue(-1, "offsetY", offset.getY());
+                                    script.SetTableValue(-1, "offsetZ", offset.getZ());
+
+                                    // We now need to do shape-specific properties.
+                                    switch (type)
+                                    {
+                                    case CollisionShapeType_Box:
+                                        {
+                                            auto &box = static_cast<const btBoxShape &>(shape);
+
+                                            btVector3 halfExtents = box.getHalfExtentsWithMargin() / box.getLocalScaling();
+
+                                            script.SetTableValue(-1, "halfX", halfExtents.getX());
+                                            script.SetTableValue(-1, "halfY", halfExtents.getY());
+                                            script.SetTableValue(-1, "halfZ", halfExtents.getZ());
+
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_Sphere:
+                                        {
+                                            auto &sphere = static_cast<const btSphereShape &>(shape);
+
+                                            script.SetTableValue(-1, "radius", sphere.getRadius() / sphere.getLocalScaling().getX());
+
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_Ellipsoid:
+                                        {
+                                            auto &ellipsoid = static_cast<const btEllipsoidShape &>(shape);
+
+                                            btVector3 margin(ellipsoid.getMargin(), ellipsoid.getMargin(), ellipsoid.getMargin());
+                                            btVector3 radius = (ellipsoid.getImplicitShapeDimensions() + margin) / ellipsoid.getLocalScaling();
+
+                                            script.SetTableValue(-1, "radiusX", radius.getX());
+                                            script.SetTableValue(-1, "radiusY", radius.getY());
+                                            script.SetTableValue(-1, "radiusZ", radius.getZ());
+
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_CylinderX:
+                                    case CollisionShapeType_CylinderY:
+                                    case CollisionShapeType_CylinderZ:
+                                        {
+                                            auto &cylinder = static_cast<const btCylinderShape &>(shape);
+
+                                            btVector3 halfExtents = cylinder.getHalfExtentsWithMargin() / cylinder.getLocalScaling();
+
+                                            script.SetTableValue(-1, "halfX", halfExtents.getX());
+                                            script.SetTableValue(-1, "halfY", halfExtents.getY());
+                                            script.SetTableValue(-1, "halfZ", halfExtents.getZ());
+
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_CapsuleX:
+                                    case CollisionShapeType_CapsuleY:
+                                    case CollisionShapeType_CapsuleZ:
+                                        {
+                                            auto &capsule = static_cast<const btCapsuleShape &>(shape);
+
+                                            uint32_t upAxis     = static_cast<uint32_t>(capsule.getUpAxis());
+                                            uint32_t radiusAxis = (upAxis + 2) % 3;
+
+                                            script.SetTableValue(-1, "radius", capsule.getRadius()            / capsule.getLocalScaling()[radiusAxis]);
+                                            script.SetTableValue(-1, "height", capsule.getHalfHeight() * 2.0f / capsule.getLocalScaling()[upAxis]);
+
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_ConvexHull:
+                                        {
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_ModelConvexHulls:
+                                        {
+                                            break;
+                                        }
+
+                                    case CollisionShapeType_None:
+                                    default: break;
+                                    }
+                                }
+                            }
+
+                            return 1;
+                        }
+
+                        return 0;
+                    }
+
+                    int IsUsingConvexHullsFromModel(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(static_cast<int>(component->IsUsingConvexHullsFromModel()));
+                        }
+
+                        return 1;
+                    }
+
+                    int SetShapeOffset(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2)) - 1;        // Minus 1 because Lua is 1 based.
+                            float  offsetX    = script.ToFloat(3);
+                            float  offsetY    = script.ToFloat(4);
+                            float  offsetZ    = script.ToFloat(5);
+
+                            component->SetCollisionShapeOffset(shapeIndex, offsetX, offsetY, offsetZ);
+                        }
+
+                        return 0;
+                    }
+
+
+                    int SetBoxShapeHalfExtents(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                            float  halfX      = script.ToFloat(3);
+                            float  halfY      = script.ToFloat(4);
+                            float  halfZ      = script.ToFloat(5);
+
+                            script.Push(component->SetBoxCollisionShapeHalfExtents(shapeIndex, halfX, halfY, halfZ));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetSphereShapeRadius(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                            float  radius     = script.ToFloat(3);
+
+                            script.Push(component->SetSphereCollisionShapeRadius(shapeIndex, radius));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetEllipsoidShapeRadius(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                            float  radiusX    = script.ToFloat(3);
+                            float  radiusY    = script.ToFloat(4);
+                            float  radiusZ    = script.ToFloat(5);
+
+                            script.Push(component->SetEllipsoidCollisionShapeRadius(shapeIndex, radiusX, radiusY, radiusZ));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetCylinderShapeHalfExtents(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                            float  halfX      = script.ToFloat(3);
+                            float  halfY      = script.ToFloat(4);
+                            float  halfZ      = script.ToFloat(5);
+
+                            script.Push(component->SetCylinderCollisionShapeHalfExtents(shapeIndex, halfX, halfY, halfZ));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetCapsuleShapeSize(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                            float  radius     = script.ToFloat(3);
+                            float  height     = script.ToFloat(4);
+
+                            script.Push(component->SetCapsuleCollisionShapeSize(shapeIndex, radius, height));
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+                }
+
 
                 //////////////////////////////////////////////////
                 // GTEngine.System.DynamicsComponent
@@ -3193,47 +3846,6 @@ namespace GTEngine
                         return 1;
                     }
 
-
-                    int SetCollisionFilter(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            component->SetDamping(static_cast<short>(script.ToInteger(2)), static_cast<short>(script.ToInteger(3)));
-                        }
-
-                        return 0;
-                    }
-
-                    int GetCollisionGroup(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            script.Push(static_cast<int>(component->GetCollisionGroup()));
-                        }
-                        else
-                        {
-                            script.Push(1);
-                        }
-
-                        return 1;
-                    }
-
-                    int GetCollisionMask(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            script.Push(static_cast<int>(component->GetCollisionMask()));
-                        }
-                        else
-                        {
-                            script.Push(static_cast<int>(-1));
-                        }
-
-                        return 1;
-                    }
 
 
                     int SetLinearVelocity(GTCore::Script &script)
@@ -3518,449 +4130,254 @@ namespace GTEngine
                     }
 
 
+
+                    int SetCollisionFilter(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::SetCollisionFilter(script);
+                    }
+
+                    int GetCollisionGroup(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::GetCollisionGroup(script);
+                    }
+
+                    int GetCollisionMask(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::GetCollisionMask(script);
+                    }
+
+
                     int AddBoxCollisionShape(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float halfX   = script.ToFloat(2);
-                            float halfY   = script.ToFloat(3);
-                            float halfZ   = script.ToFloat(4);
-                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
-
-                            component->AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::AddBoxShape(script);
                     }
 
                     int AddSphereCollisionShape(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float radius  = script.ToFloat(2);
-                            float offsetX = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
-                            float offsetY = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
-                            float offsetZ = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-
-                            component->AddSphereCollisionShape(radius, offsetX, offsetY, offsetZ);
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::AddSphereShape(script);
                     }
 
                     int AddEllipsoidCollisionShape(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float radiusX = script.ToFloat(2);
-                            float radiusY = script.ToFloat(3);
-                            float radiusZ = script.ToFloat(4);
-                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
-
-                            component->AddEllipsoidCollisionShape(radiusX, radiusY, radiusZ, offsetX, offsetY, offsetZ);
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::AddEllipsoidShape(script);
                     }
 
                     int AddCylinderXCollisionShape(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float halfX   = script.ToFloat(2);
-                            float halfY   = script.ToFloat(3);
-                            float halfZ   = script.ToFloat(4);
-                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
-
-                            component->AddCylinderXCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::AddCylinderXShape(script);
                     }
 
                     int AddCylinderYCollisionShape(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float halfX   = script.ToFloat(2);
-                            float halfY   = script.ToFloat(3);
-                            float halfZ   = script.ToFloat(4);
-                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
-
-                            component->AddCylinderYCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::AddCylinderYShape(script);
                     }
 
                     int AddCylinderZCollisionShape(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float halfX   = script.ToFloat(2);
-                            float halfY   = script.ToFloat(3);
-                            float halfZ   = script.ToFloat(4);
-                            float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-                            float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
-
-                            component->AddCylinderZCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::AddCylinderZShape(script);
                     }
 
                     int AddCapsuleXCollisionShape(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float radius  = script.ToFloat(2);
-                            float length  = script.ToFloat(3);
-                            float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
-                            float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-
-                            component->AddCapsuleXCollisionShape(radius, length, offsetX, offsetY, offsetZ);
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::AddCapsuleXShape(script);
                     }
 
                     int AddCapsuleYCollisionShape(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float radius  = script.ToFloat(2);
-                            float length  = script.ToFloat(3);
-                            float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
-                            float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-
-                            component->AddCapsuleYCollisionShape(radius, length, offsetX, offsetY, offsetZ);
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::AddCapsuleYShape(script);
                     }
 
                     int AddCapsuleZCollisionShape(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float radius  = script.ToFloat(2);
-                            float length  = script.ToFloat(3);
-                            float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
-                            float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-
-                            component->AddCapsuleZCollisionShape(radius, length, offsetX, offsetY, offsetZ);
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::AddCapsuleZShape(script);
                     }
 
                     int SetCollisionShapesToModelConvexHulls(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            component->SetCollisionShapesToModelConvexHulls(script.ToFloat(2));
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::SetCollisionShapesToModelConvexHulls(script);
                     }
 
                     int RemoveAllCollisionShapes(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            component->RemoveAllCollisionShapes();
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::RemoveAllShapes(script);
                     }
 
                     int RemoveCollisionShapeAtIndex(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            component->RemoveCollisionShapeAtIndex(static_cast<size_t>(script.ToInteger(2) - 1));    // Minus 1 because Lua is 1 based.
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::RemoveShapeAtIndex(script);
                     }
 
                     int GetCollisionShapeCount(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            script.Push(static_cast<int>(component->GetCollisionShapeCount()));
-                        }
-
-                        return 1;
+                        return CollisionShapeComponentFFI::GetShapeCount(script);
                     }
 
                     int GetCollisionShapeAtIndex(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);   // Lua is 1 based, so we subtract 1.
-                            auto & shape      = component->GetCollisionShapeAtIndex(shapeIndex);
-
-                            script.PushNewTable();
-                            {
-                                if (component->IsUsingConvexHullsFromModel())
-                                {
-                                    script.SetTableValue(-1, "type", CollisionShapeType_ModelConvexHulls);
-                                }
-                                else
-                                {
-                                    CollisionShapeType type = GetCollisionShapeType(shape);
-
-                                    // Start with the type.
-                                    script.SetTableValue(-1, "type", type);
-
-                                    // Now the shape offset.
-                                    auto &offset = component->GetCollisionShape().getChildTransform(shapeIndex).getOrigin();
-
-                                    script.SetTableValue(-1, "offsetX", offset.getX());
-                                    script.SetTableValue(-1, "offsetY", offset.getY());
-                                    script.SetTableValue(-1, "offsetZ", offset.getZ());
-
-                                    // We now need to do shape-specific properties.
-                                    switch (type)
-                                    {
-                                    case CollisionShapeType_Box:
-                                        {
-                                            auto &box = static_cast<const btBoxShape &>(shape);
-
-                                            btVector3 halfExtents = box.getHalfExtentsWithMargin() / box.getLocalScaling();
-
-                                            script.SetTableValue(-1, "halfX", halfExtents.getX());
-                                            script.SetTableValue(-1, "halfY", halfExtents.getY());
-                                            script.SetTableValue(-1, "halfZ", halfExtents.getZ());
-
-                                            break;
-                                        }
-
-                                    case CollisionShapeType_Sphere:
-                                        {
-                                            auto &sphere = static_cast<const btSphereShape &>(shape);
-
-                                            script.SetTableValue(-1, "radius", sphere.getRadius() / sphere.getLocalScaling().getX());
-
-                                            break;
-                                        }
-
-                                    case CollisionShapeType_Ellipsoid:
-                                        {
-                                            auto &ellipsoid = static_cast<const btEllipsoidShape &>(shape);
-
-                                            btVector3 margin(ellipsoid.getMargin(), ellipsoid.getMargin(), ellipsoid.getMargin());
-                                            btVector3 radius = (ellipsoid.getImplicitShapeDimensions() + margin) / ellipsoid.getLocalScaling();
-
-                                            script.SetTableValue(-1, "radiusX", radius.getX());
-                                            script.SetTableValue(-1, "radiusY", radius.getY());
-                                            script.SetTableValue(-1, "radiusZ", radius.getZ());
-
-                                            break;
-                                        }
-
-                                    case CollisionShapeType_CylinderX:
-                                    case CollisionShapeType_CylinderY:
-                                    case CollisionShapeType_CylinderZ:
-                                        {
-                                            auto &cylinder = static_cast<const btCylinderShape &>(shape);
-
-                                            btVector3 halfExtents = cylinder.getHalfExtentsWithMargin() / cylinder.getLocalScaling();
-
-                                            script.SetTableValue(-1, "halfX", halfExtents.getX());
-                                            script.SetTableValue(-1, "halfY", halfExtents.getY());
-                                            script.SetTableValue(-1, "halfZ", halfExtents.getZ());
-
-                                            break;
-                                        }
-
-                                    case CollisionShapeType_CapsuleX:
-                                    case CollisionShapeType_CapsuleY:
-                                    case CollisionShapeType_CapsuleZ:
-                                        {
-                                            auto &capsule = static_cast<const btCapsuleShape &>(shape);
-
-                                            uint32_t upAxis     = static_cast<uint32_t>(capsule.getUpAxis());
-                                            uint32_t radiusAxis = (upAxis + 2) % 3;
-
-                                            script.SetTableValue(-1, "radius", capsule.getRadius()            / capsule.getLocalScaling()[radiusAxis]);
-                                            script.SetTableValue(-1, "height", capsule.getHalfHeight() * 2.0f / capsule.getLocalScaling()[upAxis]);
-
-                                            break;
-                                        }
-
-                                    case CollisionShapeType_ConvexHull:
-                                        {
-                                            break;
-                                        }
-
-                                    case CollisionShapeType_ModelConvexHulls:
-                                        {
-                                            break;
-                                        }
-
-                                    case CollisionShapeType_None:
-                                    default: break;
-                                    }
-                                }
-                            }
-
-                            return 1;
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::GetShapeAtIndex(script);
                     }
 
                     int IsUsingConvexHullsFromModel(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            script.Push(static_cast<int>(component->IsUsingConvexHullsFromModel()));
-                        }
-
-                        return 1;
+                        return CollisionShapeComponentFFI::IsUsingConvexHullsFromModel(script);
                     }
 
                     int SetCollisionShapeOffset(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2)) - 1;        // Minus 1 because Lua is 1 based.
-                            float  offsetX    = script.ToFloat(3);
-                            float  offsetY    = script.ToFloat(4);
-                            float  offsetZ    = script.ToFloat(5);
-
-                            component->SetCollisionShapeOffset(shapeIndex, offsetX, offsetY, offsetZ);
-                        }
-
-                        return 0;
+                        return CollisionShapeComponentFFI::SetShapeOffset(script);
                     }
 
 
                     int SetBoxCollisionShapeHalfExtents(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
-                            float  halfX      = script.ToFloat(3);
-                            float  halfY      = script.ToFloat(4);
-                            float  halfZ      = script.ToFloat(5);
-
-                            script.Push(component->SetBoxCollisionShapeHalfExtents(shapeIndex, halfX, halfY, halfZ));
-                        }
-                        else
-                        {
-                            script.Push(false);
-                        }
-
-                        return 1;
+                        return CollisionShapeComponentFFI::SetBoxShapeHalfExtents(script);
                     }
 
                     int SetSphereCollisionShapeRadius(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
-                            float  radius     = script.ToFloat(3);
-
-                            script.Push(component->SetSphereCollisionShapeRadius(shapeIndex, radius));
-                        }
-                        else
-                        {
-                            script.Push(false);
-                        }
-
-                        return 1;
+                        return CollisionShapeComponentFFI::SetSphereShapeRadius(script);
                     }
 
                     int SetEllipsoidCollisionShapeRadius(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
-                            float  radiusX    = script.ToFloat(3);
-                            float  radiusY    = script.ToFloat(4);
-                            float  radiusZ    = script.ToFloat(5);
-
-                            script.Push(component->SetEllipsoidCollisionShapeRadius(shapeIndex, radiusX, radiusY, radiusZ));
-                        }
-                        else
-                        {
-                            script.Push(false);
-                        }
-
-                        return 1;
+                        return CollisionShapeComponentFFI::SetEllipsoidShapeRadius(script);
                     }
 
                     int SetCylinderCollisionShapeHalfExtents(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
-                            float  halfX      = script.ToFloat(3);
-                            float  halfY      = script.ToFloat(4);
-                            float  halfZ      = script.ToFloat(5);
-
-                            script.Push(component->SetCylinderCollisionShapeHalfExtents(shapeIndex, halfX, halfY, halfZ));
-                        }
-                        else
-                        {
-                            script.Push(false);
-                        }
-
-                        return 1;
+                        return CollisionShapeComponentFFI::SetCylinderShapeHalfExtents(script);
                     }
 
                     int SetCapsuleCollisionShapeSize(GTCore::Script &script)
                     {
-                        auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
-                            float  radius     = script.ToFloat(3);
-                            float  height     = script.ToFloat(4);
+                        return CollisionShapeComponentFFI::SetCapsuleShapeSize(script);
+                    }
+                }
 
-                            script.Push(component->SetCapsuleCollisionShapeSize(shapeIndex, radius, height));
-                        }
-                        else
-                        {
-                            script.Push(false);
-                        }
+                //////////////////////////////////////////////////
+                // GTEngine.System.ProximityComponent
+                namespace ProximityComponentFFI
+                {
+                    int SetCollisionFilter(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::SetCollisionFilter(script);
+                    }
 
-                        return 1;
+                    int GetCollisionGroup(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::GetCollisionGroup(script);
+                    }
+
+                    int GetCollisionMask(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::GetCollisionMask(script);
+                    }
+
+
+                    int AddBoxCollisionShape(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::AddBoxShape(script);
+                    }
+
+                    int AddSphereCollisionShape(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::AddSphereShape(script);
+                    }
+
+                    int AddEllipsoidCollisionShape(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::AddEllipsoidShape(script);
+                    }
+
+                    int AddCylinderXCollisionShape(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::AddCylinderXShape(script);
+                    }
+
+                    int AddCylinderYCollisionShape(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::AddCylinderYShape(script);
+                    }
+
+                    int AddCylinderZCollisionShape(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::AddCylinderZShape(script);
+                    }
+
+                    int AddCapsuleXCollisionShape(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::AddCapsuleXShape(script);
+                    }
+
+                    int AddCapsuleYCollisionShape(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::AddCapsuleYShape(script);
+                    }
+
+                    int AddCapsuleZCollisionShape(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::AddCapsuleZShape(script);
+                    }
+
+                    int SetCollisionShapesToModelConvexHulls(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::SetCollisionShapesToModelConvexHulls(script);
+                    }
+
+                    int RemoveAllCollisionShapes(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::RemoveAllShapes(script);
+                    }
+
+                    int RemoveCollisionShapeAtIndex(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::RemoveShapeAtIndex(script);
+                    }
+
+                    int GetCollisionShapeCount(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::GetShapeCount(script);
+                    }
+
+                    int GetCollisionShapeAtIndex(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::GetShapeAtIndex(script);
+                    }
+
+                    int IsUsingConvexHullsFromModel(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::IsUsingConvexHullsFromModel(script);
+                    }
+
+                    int SetCollisionShapeOffset(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::SetShapeOffset(script);
+                    }
+
+
+                    int SetBoxCollisionShapeHalfExtents(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::SetBoxShapeHalfExtents(script);
+                    }
+
+                    int SetSphereCollisionShapeRadius(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::SetSphereShapeRadius(script);
+                    }
+
+                    int SetEllipsoidCollisionShapeRadius(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::SetEllipsoidShapeRadius(script);
+                    }
+
+                    int SetCylinderCollisionShapeHalfExtents(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::SetCylinderShapeHalfExtents(script);
+                    }
+
+                    int SetCapsuleCollisionShapeSize(GTCore::Script &script)
+                    {
+                        return CollisionShapeComponentFFI::SetCapsuleShapeSize(script);
                     }
                 }
 
