@@ -11,6 +11,7 @@ namespace GTEngine
     ScriptDefinition::ScriptDefinition(const char* absolutePathIn, const char* relativePathIn, const char* scriptStringIn)
         : absolutePath(absolutePathIn), relativePath(relativePathIn), scriptString(scriptStringIn),
           hasOnUpdate(false), hasOnStartup(false), hasOnShutdown(false), hasOnShow(false), hasOnHide(false),
+          hasOnObjectEnter(false), hasOnEnterObject(false), hasOnObjectLeave(false), hasOnLeaveObject(false),
           publicVariables()
     {
         // We need to do a parse over the script and retrieve it's public variables.
@@ -63,6 +64,22 @@ namespace GTEngine
                     else if (GTCore::Strings::Equal(name, "OnHide"))
                     {
                         this->hasOnHide = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnEnterObject"))
+                    {
+                        this->hasOnEnterObject = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnObjectEnter"))
+                    {
+                        this->hasOnObjectEnter = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnLeaveObject"))
+                    {
+                        this->hasOnLeaveObject = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnObjectLeave"))
+                    {
+                        this->hasOnObjectLeave = true;
                     }
                 }
                 else
@@ -348,6 +365,27 @@ namespace GTEngine
     {
         return this->hasOnHide;
     }
+
+    bool ScriptDefinition::HasOnObjectEnter() const
+    {
+        return this->hasOnObjectEnter;
+    }
+
+    bool ScriptDefinition::HasOnEnterObject() const
+    {
+        return this->hasOnEnterObject;
+    }
+
+    bool ScriptDefinition::HasOnObjectLeave() const
+    {
+        return this->hasOnObjectLeave;
+    }
+
+    bool ScriptDefinition::HasOnLeaveObject() const
+    {
+        return this->hasOnLeaveObject;
+    }
+
 
 
 
