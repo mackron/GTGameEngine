@@ -897,6 +897,9 @@ namespace GTEngine
         /// The list of scene nodes created by the scene.
         GTCore::SortedVector<uint64_t> sceneNodesCreatedByScene;
 
+        /// The list of scene nodes with proximity components. We keep track of this so we can do OnObjectEnter, etc checks. We map the IDs to a pointer to the proximity component.
+        GTCore::Map<uint64_t, ProximityComponent*> sceneNodesWithProximityComponents;
+
 
 
         /// The navigation mesh for doing navigation paths.

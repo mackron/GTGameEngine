@@ -4,6 +4,7 @@
 #define __GTEngine_ProximityComponent_hpp_
 
 #include "CollisionShapeComponent.hpp"
+#include <GTCore/SortedVector.hpp>
 
 namespace GTEngine
 {
@@ -29,6 +30,17 @@ namespace GTEngine
 
         /// Applies the scene node's transform.
         void ApplySceneNodeTransformation();
+
+
+        /// Retrieves the list of IDs of scene nodes that are currently sitting inside the volume of this component.
+        const GTCore::SortedVector<uint64_t> & GetSceneNodesInsideVolume() const { return this->sceneNodesInsideVolume; }
+
+        
+        /// Performs a complete check of scene nodes that are contained inside the volume.
+        ///
+        /// @param sceneNodesEntered [out] A reference to the vector that will receive the ID's of the scene nodes that have just entered the volume.
+        /// @param sceneNodesLeft    [out] A reference to the vector that will receive the ID's of the scene nodes that have just left the volume.
+        void UpdateContainment(GTCore::Vector<uint64_t> &sceneNodesEntered, GTCore::Vector<uint64_t> &sceneNodesLeft);
 
 
 
@@ -106,6 +118,9 @@ namespace GTEngine
         /// needs to be removed from and then re-added to the world.
         GTEngine::DynamicsWorld* world;
 
+
+        /// The IDs of the scene nodes that are currently inside the volume of the component.
+        GTCore::SortedVector<uint64_t> sceneNodesInsideVolume;
 
 
         friend class Iterator;
