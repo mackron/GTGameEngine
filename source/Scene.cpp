@@ -674,6 +674,87 @@ namespace GTEngine
         }
 
 
+        // We now want to check proximity components.
+        for (size_t i = 0; i < this->sceneNodesWithProximityComponents.count; ++i)
+        {
+            auto proximityComponent = this->sceneNodesWithProximityComponents.buffer[i]->value;
+            assert(proximityComponent != nullptr);
+            {
+                auto sceneNode = &proximityComponent->GetNode();
+
+                GTCore::Vector<uint64_t> sceneNodesEntered;
+                GTCore::Vector<uint64_t> sceneNodesLeft;
+                proximityComponent->UpdateContainment(sceneNodesEntered, sceneNodesLeft);
+
+                for (size_t iEntered = 0; iEntered < sceneNodesEntered.count; ++iEntered)
+                {
+                    auto enteredSceneNode = this->GetSceneNodeByID(sceneNodesEntered[iEntered]);
+                    assert(enteredSceneNode != nullptr);
+                    {
+                        // TODO: Call the C++ events.
+
+                        // If we're linked to a script we'll need to notify the script about this.
+                        if (this->registeredScript != nullptr)
+                        {
+                            // OnObjectEnter().
+                            auto scriptComponent = sceneNode->GetComponent<ScriptComponent>();
+                            if (scriptComponent != nullptr)
+                            {
+                                if (scriptComponent->HasOnObjectEnter())
+                                {
+                                    Scripting::PostSceneNodeEvent_OnObjectEnter(*this->registeredScript, *sceneNode, *enteredSceneNode);
+                                }
+                            }
+
+                            // OnEnterObject().
+                            scriptComponent = enteredSceneNode->GetComponent<ScriptComponent>();
+                            if (scriptComponent != nullptr)
+                            {
+                                if (scriptComponent->HasOnEnterObject())
+                                {
+                                    Scripting::PostSceneNodeEvent_OnEnterObject(*this->registeredScript, *enteredSceneNode, *sceneNode);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (size_t iLeft = 0; iLeft < sceneNodesLeft.count; ++iLeft)
+                {
+                    auto leftSceneNode = this->GetSceneNodeByID(sceneNodesLeft[iLeft]);
+                    assert(leftSceneNode != nullptr);
+                    {
+                        // TODO: Call the C++ events.
+
+                        // If we're linked to a script we'll need to notify the script about this.
+                        if (this->registeredScript != nullptr)
+                        {
+                            // OnObjectLeave().
+                            auto scriptComponent = sceneNode->GetComponent<ScriptComponent>();
+                            if (scriptComponent != nullptr)
+                            {
+                                if (scriptComponent->HasOnObjectLeave())
+                                {
+                                    Scripting::PostSceneNodeEvent_OnObjectLeave(*this->registeredScript, *sceneNode, *leftSceneNode);
+                                }
+                            }
+
+                            // OnLeaveObject().
+                            scriptComponent = leftSceneNode->GetComponent<ScriptComponent>();
+                            if (scriptComponent != nullptr)
+                            {
+                                if (scriptComponent->HasOnLeaveObject())
+                                {
+                                    Scripting::PostSceneNodeEvent_OnLeaveObject(*this->registeredScript, *leftSceneNode, *sceneNode);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
         // Now we need to render.
         this->renderer->Begin(*this);
         {
@@ -1823,6 +1904,10 @@ namespace GTEngine
                         Log("Warning: Attempting to add a proximity component without a collision shape. Ignoring.");
                     }
                 }
+
+
+                // We want to the scene to know about this scene node.
+                this->sceneNodesWithProximityComponents.Add(node.GetID(), &proximityComponent);
             }
             else
             {
@@ -1933,6 +2018,9 @@ namespace GTEngine
             else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
                 this->physicsManager.RemoveGhostObject(static_cast<ProximityComponent &>(component).GetGhostObject());
+
+                // We want to the scene to know about this change.
+                this->sceneNodesWithProximityComponents.RemoveByKey(node.GetID());
             }
             else
             {

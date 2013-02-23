@@ -32,6 +32,43 @@ namespace GTEngine
     }
 
 
+    void ProximityComponent::UpdateContainment(GTCore::Vector<uint64_t> &sceneNodesEntered, GTCore::Vector<uint64_t> &sceneNodesLeft)
+    {
+        GTCore::SortedVector<uint64_t> sceneNodesLeaving(this->sceneNodesInsideVolume);
+
+        ProximityComponent::Iterator i(*this);
+        while (i)
+        {
+            if (i.otherNode != &this->GetNode())
+            {
+                assert(i.otherNode != nullptr);
+                {
+                    auto otherNodeID = i.otherNode->GetID();
+
+                    if (!this->sceneNodesInsideVolume.Exists(otherNodeID))
+                    {
+                        this->sceneNodesInsideVolume.Insert(otherNodeID);
+                        sceneNodesEntered.PushBack(otherNodeID);
+                    }
+                    else
+                    {
+                        sceneNodesLeaving.RemoveFirstOccuranceOf(otherNodeID);
+                    }
+                }
+            }
+
+            ++i;
+        }
+
+
+        // At this point we'll have a list of nodes that have left the volume. We need to copies these over to 'sceneNodesLeft'.
+        for (size_t i = 0; i < sceneNodesLeaving.count; ++i)
+        {
+            sceneNodesLeft.PushBack(sceneNodesLeaving[i]);
+            this->sceneNodesInsideVolume.RemoveFirstOccuranceOf(sceneNodesLeaving[i]);
+        }
+    }
+
 
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.

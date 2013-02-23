@@ -1057,7 +1057,7 @@ namespace GTEngine
                 "function GTEngine.Scene:InstantiateSceneNode(sceneNodeID, sceneNodePtr)"
                 "    local sceneNode = self._sceneNodes[sceneNodeID];"
                 "    if sceneNode == nil then"
-                "        if sceneNodePtr == nil then sceneNodePtr = GTEngine.System.Scene.GetSceneNodePtrByID(sceneNodeID) end;"
+                "        if sceneNodePtr == nil then sceneNodePtr = self:GetSceneNodePtrByID(sceneNodeID) end;"
                 "        if sceneNodePtr ~= nil then"
                 "            sceneNode = GTEngine.SceneNode:Create(sceneNodePtr);"
                 "            self._sceneNodes[sceneNodeID] = sceneNode;"
@@ -1073,6 +1073,10 @@ namespace GTEngine
 
                 "function GTEngine.Scene:GetSceneNodeByID(sceneNodeID)"
                 "    return self:InstantiateSceneNode(sceneNodeID);"
+                "end;"
+
+                "function GTEngine.Scene:GetSceneNodePtrByID(sceneNodeID)"
+                "    return GTEngine.System.Scene.GetSceneNodePtrByID(self._internalPtr, sceneNodeID);"
                 "end;"
 
 
@@ -1162,10 +1166,11 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "AddSceneNode",       FFI::SystemFFI::SceneFFI::AddSceneNode);
-                        script.SetTableFunction(-1, "RemoveSceneNode",    FFI::SystemFFI::SceneFFI::RemoveSceneNode);
-                        script.SetTableFunction(-1, "CreateNewSceneNode", FFI::SystemFFI::SceneFFI::CreateNewSceneNode);
-                        script.SetTableFunction(-1, "GetSceneNodePtrs",   FFI::SystemFFI::SceneFFI::GetSceneNodePtrs);
+                        script.SetTableFunction(-1, "AddSceneNode",        FFI::SystemFFI::SceneFFI::AddSceneNode);
+                        script.SetTableFunction(-1, "RemoveSceneNode",     FFI::SystemFFI::SceneFFI::RemoveSceneNode);
+                        script.SetTableFunction(-1, "CreateNewSceneNode",  FFI::SystemFFI::SceneFFI::CreateNewSceneNode);
+                        script.SetTableFunction(-1, "GetSceneNodePtrs",    FFI::SystemFFI::SceneFFI::GetSceneNodePtrs);
+                        script.SetTableFunction(-1, "GetSceneNodePtrByID", FFI::SystemFFI::SceneFFI::GetSceneNodePtrByID);
                     }
                     script.Pop(1);
 
@@ -2696,6 +2701,22 @@ namespace GTEngine
                                     script.SetTableValue(-1, static_cast<int>(sceneNode->GetID()), sceneNode);
                                 }
                             }
+                        }
+
+                        return 1;
+                    }
+
+
+                    int GetSceneNodePtrByID(GTCore::Script &script)
+                    {
+                        auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                        if (scene != nullptr)
+                        {
+                            script.Push(scene->GetSceneNodeByID(static_cast<uint64_t>(script.ToInteger(2))));
+                        }
+                        else
+                        {
+                            script.PushNil();
                         }
 
                         return 1;

@@ -548,6 +548,14 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the scene.
                     ///     Return:     An ID/Pointer map of every scene node in the scene.
                     int GetSceneNodePtrs(GTCore::Script &script);
+
+
+                    /// Retrieves the C++ pointer of the scene node with the given ID.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene.
+                    ///     Argument 2: The scene node ID.
+                    int GetSceneNodePtrByID(GTCore::Script &script);
                 }
 
 
