@@ -961,6 +961,10 @@ namespace GTEngine
     {
         this->OnPreCollisionShapeChanged();
         {
+            // Before adding the shape, we need to temporarily reset the scale back to 1,1,1. If we don't do this, the child shape will
+            // not have the correct scale applied to it when we update the scale properly.
+            this->collisionShape.setLocalScaling(btVector3(1.0f, 1.0f, 1.0f));
+
             // All we need to do is add the new shape to the compound shape...
             this->collisionShape.addChildShape(btTransform(btMatrix3x3::getIdentity(), btVector3(offsetX, offsetY, offsetZ)), shape);
 
