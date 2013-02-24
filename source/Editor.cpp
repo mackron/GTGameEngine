@@ -52,7 +52,7 @@ namespace GTEngine
                 this->GUI.Editor_FPS              = guiServer.GetElementByID("Editor_FPS");
 
                 // We need to grab the GUI elements for the menu buttons.
-                script.GetGlobal("Editor_MenuBar");
+                script.Get("GTGUI.Server.GetElementByID('Editor_MenuBar')");
                 assert(script.IsTable(-1));
                 {
                     script.Push("File");
@@ -434,7 +434,7 @@ namespace GTEngine
                 // we'll end up getting stuck recursively. To prevent this, we simple pass 'true' to the second argument of ActivateTab().
                 auto &script = this->GetGame().GetScript();
 
-                script.GetGlobal("Editor_TabBar");
+                script.Get("GTGUI.Server.GetElementByID('Editor_TabBar')");
                 assert(script.IsTable(-1));
                 {
                     script.Push("ActivateTab");

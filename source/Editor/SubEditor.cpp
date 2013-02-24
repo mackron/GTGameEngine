@@ -25,7 +25,7 @@ namespace GTEngine
         auto &gui    = this->GetGUI();
         auto &script = this->GetScript();
         
-        script.GetGlobal("Editor_TabBar");
+        script.Get("GTGUI.Server.GetElementByID('Editor_TabBar')");
         assert(script.IsTable(-1));
         {
             script.Push("AddTab");
@@ -76,7 +76,7 @@ namespace GTEngine
         {
             auto &script = this->GetScript();
 
-            script.GetGlobal("Editor_TabBar");
+            script.Get("GTGUI.Server.GetElementByID('Editor_TabBar')");
             assert(script.IsTable(-1));
             {
                 script.Push("RemoveTab");
