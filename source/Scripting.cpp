@@ -21,8 +21,104 @@ namespace GTEngine
         {
             bool successful = LoadExtendedMathLibrary(script);
 
+
+            // GTEngine table.
+            script.PushNewTable();
+            {
+                ///////////////////////////////////////////////////
+                // GTEngine.System
+                script.Push("System");
+                script.PushNewTable();
+                {
+                    script.Push("SceneNode");
+                    script.PushNewTable();
+                    {
+                    }
+                    script.SetTableValue(-3);
+
+                    script.Push("Scene");
+                    script.PushNewTable();
+                    {
+                    }
+                    script.SetTableValue(-3);
+
+
+                    script.Push("SubEditor");
+                    script.PushNewTable();
+                    {
+                    }
+                    script.SetTableValue(-3);
+
+                    script.Push("ModelEditor");
+                    script.PushNewTable();
+                    {
+                    }
+                    script.SetTableValue(-3);
+
+                    script.Push("SceneEditor");
+                    script.PushNewTable();
+                    {
+                    }
+                    script.SetTableValue(-3);
+                }
+                script.SetTableValue(-3);
+
+
+                ///////////////////////////////////////////////////
+                // GTEngine.Renderer
+                
+                script.Push("Renderer");
+                script.PushNewTable();
+                {
+                }
+                script.SetTableValue(-3);
+
+
+
+                ///////////////////////////////////////////////////
+                // GTEngine.Audio
+
+                script.Push("Audio");
+                script.PushNewTable();
+                {
+                }
+                script.SetTableValue(-3);
+
+
+
+                ///////////////////////////////////////////////////
+                // GTEngine.<Misc>
+
+                script.Push("RegisteredScenes");
+                script.PushNewTable();
+                script.SetTableValue(-3);
+
+                script.Push("ScriptDefinitions");
+                script.PushNewTable();
+                script.SetTableValue(-3);
+
+
+                script.Push("SceneNodeEventHandlers");
+                script.PushNewTable();
+                {
+                    script.SetTableValue(-1, 1, "OnUpdate");
+                    script.SetTableValue(-1, 2, "OnStartup");
+                    script.SetTableValue(-1, 3, "OnShutdown");
+                    script.SetTableValue(-1, 4, "OnShow");
+                    script.SetTableValue(-1, 5, "OnHide");
+                    script.SetTableValue(-1, 6, "OnObjectEnter");
+                    script.SetTableValue(-1, 7, "OnEnterObject");
+                    script.SetTableValue(-1, 8, "OnObjectLeave");
+                    script.SetTableValue(-1, 9, "OnLeaveObject");
+                }
+                script.SetTableValue(-3);
+            }
+            script.SetGlobal("GTEngine");
+
+
             successful = successful && script.Execute
             (
+#if 0
                 "GTEngine                    = {};"
 
                 "GTEngine.System             = {};"
@@ -52,6 +148,7 @@ namespace GTEngine
                 "    'OnObjectLeave',"
                 "    'OnLeaveObject'"
                 "};"
+#endif
 
                 "function GTEngine.IsSceneNodeEventHandler(name)"
                 "    return table.indexof(GTEngine.SceneNodeEventHandlers, name) ~= nil;"
