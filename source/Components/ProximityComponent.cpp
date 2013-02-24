@@ -8,7 +8,7 @@ namespace GTEngine
     GTENGINE_IMPL_COMPONENT_ATTRIBS(ProximityComponent, "Proximity");
 
     ProximityComponent::ProximityComponent(SceneNode &node)
-        : CollisionShapeComponent(node), ghostObject()
+        : CollisionShapeComponent(node), ghostObject(), world(nullptr), sceneNodesInsideVolume()
     {
         this->ghostObject.setCollisionShape(&this->collisionShape);
         this->ghostObject.setUserPointer(&node);
