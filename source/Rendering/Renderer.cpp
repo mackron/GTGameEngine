@@ -352,8 +352,6 @@ namespace GTEngine
                 Renderer::BackRCQueue  = new RCQueue;
                 Renderer::FrontRCQueue = new RCQueue;
 
-                // We need a GUI renderer.
-                GUIRenderer::Initialise();
 
                 // Now we'll set some defaults.
                 Renderer::EnableDepthTest();

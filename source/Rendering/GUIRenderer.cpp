@@ -28,6 +28,10 @@ namespace GTEngine
     Texture2D* GUIWhiteTexture = nullptr;
 
 
+    /// The main shader.
+    Shader* MainShader = nullptr;
+
+
     /// The projection matrix to use when drawing the GUI.
     glm::mat4 GUIProjection;
 
@@ -41,6 +45,9 @@ namespace GTEngine
         // the presence of an alpha channel in determining whether or not to enable transparency.
         const uint8_t whiteTexel[3] = {0xFF, 0xFF, 0xFF};
         GUIWhiteTexture = new Texture2D(1, 1, GTImage::ImageFormat_RGB8, &whiteTexel);
+
+        // We need to create the main shader.
+        MainShader = ShaderLibrary::GetGUIShader();
     }
 
     void GUIRenderer::Uninitialise()
@@ -57,36 +64,38 @@ namespace GTEngine
 
     void GUIRenderer::DrawGUI(const GTGUI::Server &server)
     {
-        // We'll set the projection matrix based on the server's working area. GTGUI uses a top-down projection, so we construct
-        // our projection matrix to match.
-        unsigned int viewportWidth, viewportHeight;
-        server.GetViewportSize(viewportWidth, viewportHeight);
-        if (viewportWidth != GUIViewportWidth || viewportHeight != GUIViewportHeight)
+        assert(MainShader != nullptr);
         {
-            GUIViewportWidth  = viewportWidth;
-            GUIViewportHeight = viewportHeight;
-            GUIProjection     = glm::ortho(0.0f, static_cast<float>(GUIViewportWidth), static_cast<float>(GUIViewportHeight), 0.0f, 0.0f, -1.0f);
-        }
+            // We'll set the projection matrix based on the server's working area. GTGUI uses a top-down projection, so we construct
+            // our projection matrix to match.
+            unsigned int viewportWidth, viewportHeight;
+            server.GetViewportSize(viewportWidth, viewportHeight);
+            if (viewportWidth != GUIViewportWidth || viewportHeight != GUIViewportHeight)
+            {
+                GUIViewportWidth  = viewportWidth;
+                GUIViewportHeight = viewportHeight;
+                GUIProjection     = glm::ortho(0.0f, static_cast<float>(GUIViewportWidth), static_cast<float>(GUIViewportHeight), 0.0f, 0.0f, -1.0f);
+            }
         
-        Renderer::SetViewport(0, 0, viewportWidth, viewportHeight);
+            Renderer::SetViewport(0, 0, viewportWidth, viewportHeight);
 
-        Renderer::EnableScissorTest();
-        Renderer::DisableDepthTest();
-        Renderer::DisableDepthWrites();
+            Renderer::EnableScissorTest();
+            Renderer::DisableDepthTest();
+            Renderer::DisableDepthWrites();
 
-        // Here we set a few shader parameters that only need to be set once. We need to do this for all shaders. Cases like this is where a
-        // uniform buffer would come in real handy. I must look into that...
-        auto drawShader = ShaderLibrary::GetGUIShader();
-        drawShader->SetParameter("Projection", GUIProjection);
+            // Here we set a few shader parameters that only need to be set once. We need to do this for all shaders. Cases like this is where a
+            // uniform buffer would come in real handy. I must look into that...
+            MainShader->SetParameter("Projection", GUIProjection);
 
 
-        server.ExecuteFrontRCQueue();
+            server.ExecuteFrontRCQueue();
 
-        // Here we reset the applicable properties.
-        Renderer::DisableScissorTest();
-        Renderer::DisableBlending();
-        Renderer::EnableDepthTest();
-        Renderer::EnableDepthWrites();
+            // Here we reset the applicable properties.
+            Renderer::DisableScissorTest();
+            Renderer::DisableBlending();
+            Renderer::EnableDepthTest();
+            Renderer::EnableDepthWrites();
+        }
     }
 
     void GUIRenderer::EnableGUIState()
@@ -115,7 +124,7 @@ void GTGUI::RCDraw::Execute()
 {
     auto texture = GTEngine::GUIRenderer_AcquireTexture2DFromImage(this->image);
 
-    GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetGUIShader());
+    GTEngine::Renderer::SetShader(GTEngine::MainShader);
     GTEngine::Renderer::SetShaderParameter("Offset",  this->offsetX, this->offsetY);
     GTEngine::Renderer::SetShaderParameter("Texture", texture);
 
