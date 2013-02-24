@@ -50,6 +50,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
 <script>
 <![CDATA[
+    local CommandTextBox = GTGUI.Server.GetElementByID("CommandTextBox");
+
     CommandTextBox:OnKeyDown(function(data)
         if data.key == 13 then                  -- Enter key
             if not Game.ExecuteScript(CommandTextBox:GetText()) then
@@ -71,6 +73,11 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <!-- Model Editor Dialog Box -->
 <script>
 <![CDATA[
+    local EditorMain          = GTGUI.Server.GetElementByID("EditorMain");
+    local Editor_MenuBar      = GTGUI.Server.GetElementByID("Editor_MenuBar");
+    local Editor_DataExplorer = GTGUI.Server.GetElementByID("Editor_DataExplorer");
+    local Editor_TabBar       = GTGUI.Server.GetElementByID("Editor_TabBar");
+
 
     function Editor.ShowSaveFileDialog(absolutePath)
         Editor.ShowYesNoCancelDialog("Save '" .. GTCore.IO.GetFileNameFromPath(absolutePath) .. "'?", function(result)
