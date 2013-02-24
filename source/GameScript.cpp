@@ -26,8 +26,35 @@ namespace GTEngine
     bool GameScript::Startup()
     {
         // First we load the GTEngine scripting stuff.
-        bool success = Scripting::LoadGTEngineScriptLibrary(*this);
+        if (Scripting::LoadGTEngineScriptLibrary(*this) && Scripting::LoadGameLibrary(*this, this->game))
+        {
+            // Here we load the data directories from the application config. We need to do this so that the editor has access to them. Might also come
+            // in handy for game code, too. Who knows.
+            this->GetGlobal("Directories");
+            if (this->IsTable(-1))
+            {
+                this->Push("Data");
+                this->GetTableValue(-2);
+                if (this->IsTable(-1))
+                {
+                    auto &dataDirectories = ApplicationConfig::GetDataDirectories();
+                    for (size_t iDirectory = 0; iDirectory < dataDirectories.count; ++iDirectory)
+                    {
+                        this->SetTableValue(-1, iDirectory + 1, dataDirectories[iDirectory].c_str());
+                    }
+                }
+                this->Pop(1);
+            }
+            this->Pop(1);
 
+
+            return true;
+        }
+        
+        return false;
+
+
+#if 0
         // The first thing we want to do is load some defaults.
         success = success && this->Execute
         (
@@ -153,29 +180,13 @@ namespace GTEngine
             "Editor = {};"
         );
 
-        // Here we load the data directories from the application config. We need to do this so that the editor has access to them. Might also come
-        // in handy for game code, too. Who knows.
-        this->GetGlobal("Directories");
-        if (this->IsTable(-1))
-        {
-            this->Push("Data");
-            this->GetTableValue(-2);
-            if (this->IsTable(-1))
-            {
-                auto &dataDirectories = ApplicationConfig::GetDataDirectories();
-                for (size_t iDirectory = 0; iDirectory < dataDirectories.count; ++iDirectory)
-                {
-                    this->SetTableValue(-1, iDirectory + 1, dataDirectories[iDirectory].c_str());
-                }
-            }
-            this->Pop(1);
-        }
-        this->Pop(1);
+
 
         // Here is where we register the foreign function interface.
         success = success && this->RegisterFFI();
 
         return success;
+#endif
     }
 
 
@@ -205,7 +216,26 @@ namespace GTEngine
 
         return false;
     }
+
+
+
+    //////////////////////////////////////////////////////
+    // ErrorHandler
+
+    GameScript::ErrorHandler::ErrorHandler(GameScript &scriptIn)
+        : script(scriptIn)
+    {
+    }
+
+    void GameScript::ErrorHandler::OnError(GTCore::Script &, const char* message)
+    {
+        this->script.SetLastError(message);
+        PostError("Script Error: %s", message);
+    }
 }
+
+
+#if 0
 
 ///////////////////////////////////////////////////////////
 // FFI
@@ -389,25 +419,9 @@ namespace GTEngine
 
         return true;
     }
-
-
-
-
-
-    //////////////////////////////////////////////////////
-    // ErrorHandler
-
-    GameScript::ErrorHandler::ErrorHandler(GameScript &scriptIn)
-        : script(scriptIn)
-    {
-    }
-
-    void GameScript::ErrorHandler::OnError(GTCore::Script &, const char* message)
-    {
-        this->script.SetLastError(message);
-        PostError("Script Error: %s", message);
-    }
 }
+
+#endif
 
 
 #if defined(_MSC_VER)

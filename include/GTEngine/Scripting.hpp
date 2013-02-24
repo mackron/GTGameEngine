@@ -30,6 +30,18 @@ namespace GTEngine
         ///     This will load the library into the global 'math' table. This will not override existing functions.
         bool LoadExtendedMathLibrary(GTCore::Script &script);
 
+        /// Loads the Game script library.
+        ///
+        /// @param script [in] The script to load the Game library into.
+        /// @param game   [in] A reference to the game object.
+        ///
+        /// @return True if the library is loaded successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This will create the global Game object.
+        bool LoadGameLibrary(GTCore::Script &script, Game &game);
+
+
 
         /// Registers a scene to the given script.
         ///
@@ -241,6 +253,78 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: The name of the event handler to check.
             int IsSceneNodeEventHandler(GTCore::Script &script);
+
+
+
+            namespace GameFFI
+            {
+                /// Closes the game.
+                int Close(GTCore::Script &script);
+
+                /// Pauses the game.
+                int Pause(GTCore::Script &script);
+
+                /// Resumes the game.
+                int Resume(GTCore::Script &script);
+
+                /// Enables fullscreen mode.
+                int EnableFullscreen(GTCore::Script &script);
+
+                /// Disable fullscreen mode.
+                int DisableFullscreen(GTCore::Script &script);
+
+
+                /// Shows the debugging information.
+                int ShowDebug(GTCore::Script &script);
+
+                /// Hides the debugging information.
+                int HideDebug(GTCore::Script &script);
+
+                /// Determines if the given key is down.
+                ///
+                /// @remarks
+                ///     Argument 1: The key code of the key to check.
+                int IsKeyDown(GTCore::Script &script);
+
+                /// Determines if the given mouse button is down.
+                ///
+                /// @remarks
+                ///     Argument 1: the mouse button to check.
+                int IsMouseButtonDown(GTCore::Script &script);
+
+                /// Captures the mouse.
+                int CaptureMouse(GTCore::Script &script);
+
+                /// Releases the mouse.
+                int ReleaseMouse(GTCore::Script &script);
+
+
+                /// Scans the data files for changes and posts the relevant events.
+                ///
+                /// @remarks
+                ///     This happens immediately and synchronously.
+                int ScanDataFilesForChanges(GTCore::Script &script);
+
+
+
+                // TODO: Move these to GTEngine.
+
+                /// Executes the script defined in the given file.
+                ///
+                /// @remarks
+                ///     Argument 1: The name of the script file to load and execute.
+                int ExecuteFile(GTCore::Script &script);
+
+                /// Executes the given script text.
+                ///
+                /// @remarks
+                ///     Argument 1: The script text to execute.
+                int ExecuteScript(GTCore::Script &script);
+
+                /// Retrieves the last script error.
+                int GetLastScriptError(GTCore::Script &script);
+
+            }
 
 
 

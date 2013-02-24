@@ -318,6 +318,7 @@ namespace GTEngine
         /// The scripting FFI.
         struct FFI
         {
+            static Game   & GetGame(GTCore::Script &script);
             static Editor & GetEditor(GTCore::Script &script);
 
             static int Open(GTCore::Script &script);
