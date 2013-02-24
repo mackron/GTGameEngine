@@ -2326,9 +2326,9 @@ end
 function GTGUI.Element:SceneEditor(_internalPtr)
     self:SubEditor();
 
-    self.Viewport          = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-viewport' style='' />");
-    self.Panel             = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-panel'    style='' />");
-    self.ContextMenu       = GTGUI.Server.New("<div                                   styleclass='menu'                  style='z-index:100; positioning:absolute; visible:false' />");
+    self.Viewport          = GTGUI.Server.New("<div parentid='" .. self:GetID()               .. "' styleclass='scene-editor-viewport'    style='' />");
+    self.Panel             = GTGUI.Server.New("<div parentid='" .. self:GetID()               .. "' styleclass='scene-editor-panel'       style='' />");
+    self.ContextMenu       = GTGUI.Server.New("<div                                                 styleclass='menu'                     style='z-index:100; positioning:absolute; visible:false' />");
     
     self.PlayButton        = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()       .. "' styleclass='physics-button-container' style='' />");
     self.PlayButtonIcon    = GTGUI.Server.New("<div parentid='" .. self.PlayButton:GetID()    .. "' styleclass='physics-button-icon'      style='' />");
@@ -2355,20 +2355,11 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.Panel:SceneEditorPanel(self);
     self.PropertiesPanel = self.Panel.PropertiesPanel;
     self.HierarchyPanel  = self.Panel.HierarchyPanel;
-    
-    
-    
-    --self.PropertiesPanel:SceneEditorPropertiesPanel();
-    
-    --self.PropertiesPanel:OnSceneNodeChanged(function()
-    --    self:CommitStateStackFrame()
-    --end);
-    
-    
+
     
     self.ContextMenu:Menu();
     self.ContextMenu:EnableDefaultEvents();
-    
+
     self.ContextMenu:AppendItem("Add Cube"):OnPressed(function()
         local newNode = self.Scene:CreateNewSceneNode();
         newNode:SetName("Cube");
@@ -2856,7 +2847,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     -- We're going to hide the panels by default since nothing is selected right now.
     self:HidePropertyPanels("Nothing Selected");
-    
     
     return self;
 end
