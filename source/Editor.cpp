@@ -923,21 +923,31 @@ namespace GTEngine
 
     /////////////////////////////////////////////
     // FFI.
+    Game & Editor::FFI::GetGame(GTCore::Script &script)
+    {
+        script.GetGlobal("__GamePtr");
+        auto game = static_cast<Game*>(script.ToPointer(-1));
+        script.Pop(1);
+
+        assert(game != nullptr);
+        return *game;
+    }
+
     Editor & Editor::FFI::GetEditor(GTCore::Script &script)
     {
-        return GameScript::FFI::GetGameObject(script).GetEditor();
+        return GetGame(script).GetEditor();
     }
 
 
     int Editor::FFI::Open(GTCore::Script &script)
     {
-        GameScript::FFI::GetGameObject(script).OpenEditor();
+        GetGame(script).OpenEditor();
         return 0;
     }
 
     int Editor::FFI::Close(GTCore::Script &script)
     {
-        GameScript::FFI::GetGameObject(script).CloseEditor();
+        GetGame(script).CloseEditor();
         return 0;
     }
 

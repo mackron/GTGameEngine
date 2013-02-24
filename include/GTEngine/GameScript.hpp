@@ -67,17 +67,17 @@ namespace GTEngine
         /////////////////////////////////////////////
         // Public FFI functions.
 
-        struct FFI
-        {
+        //struct FFI
+        //{
             /// A helper for retrieving the Game instance from the script.
-            static Game & GetGameObject(GTCore::Script &script);
-        };
+            //static Game & GetGameObject(GTCore::Script &script);
+        //};
 
 
     private:
 
         /// Private function for registering the foreign-function interface.
-        bool RegisterFFI();
+        //bool RegisterFFI();
 
 
     private:

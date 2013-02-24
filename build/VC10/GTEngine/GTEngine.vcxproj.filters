@@ -1255,6 +1255,9 @@
     <ClCompile Include="..\..\..\source\Components\CollisionShapeComponent.cpp">
       <Filter>source\Components</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Game.cpp">
+      <Filter>source\Scripting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\engine\editor\combobox.xml">
