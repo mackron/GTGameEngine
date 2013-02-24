@@ -12,6 +12,8 @@ namespace GTEngine
         : absolutePath(absolutePathIn), relativePath(relativePathIn), scriptString(scriptStringIn),
           hasOnUpdate(false), hasOnStartup(false), hasOnShutdown(false), hasOnShow(false), hasOnHide(false),
           hasOnObjectEnter(false), hasOnEnterObject(false), hasOnObjectLeave(false), hasOnLeaveObject(false),
+          hasOnMouseMove(false), hasOnMouseWheel(false), hasOnMouseButtonDown(false), hasOnMouseButtonUp(false), hasOnMouseButtonDoubleClick(false),
+          hasOnKeyPressed(false), hasOnKeyReleased(false),
           publicVariables()
     {
         // We need to do a parse over the script and retrieve it's public variables.
@@ -80,6 +82,34 @@ namespace GTEngine
                     else if (GTCore::Strings::Equal(name, "OnObjectLeave"))
                     {
                         this->hasOnObjectLeave = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnMouseMove"))
+                    {
+                        this->hasOnMouseMove = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnMouseWheel"))
+                    {
+                        this->hasOnMouseWheel = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnMouseButtonDown"))
+                    {
+                        this->hasOnMouseButtonDown = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnMouseButtonUp"))
+                    {
+                        this->hasOnMouseButtonUp = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnMouseButtonDoubleClick"))
+                    {
+                        this->hasOnMouseButtonDoubleClick = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnKeyPressed"))
+                    {
+                        this->hasOnKeyPressed = true;
+                    }
+                    else if (GTCore::Strings::Equal(name, "OnKeyReleased"))
+                    {
+                        this->hasOnKeyReleased = true;
                     }
                 }
                 else
@@ -384,6 +414,41 @@ namespace GTEngine
     bool ScriptDefinition::HasOnLeaveObject() const
     {
         return this->hasOnLeaveObject;
+    }
+
+    bool ScriptDefinition::HasOnMouseMove() const
+    {
+        return this->hasOnMouseMove;
+    }
+
+    bool ScriptDefinition::HasOnMouseWheel() const
+    {
+        return this->hasOnMouseWheel;
+    }
+
+    bool ScriptDefinition::HasOnMouseButtonDown() const
+    {
+        return this->hasOnMouseButtonDown;
+    }
+
+    bool ScriptDefinition::HasOnMouseButtonUp() const
+    {
+        return this->hasOnMouseButtonUp;
+    }
+
+    bool ScriptDefinition::HasOnMouseButtonDoubleClick() const
+    {
+        return this->hasOnMouseButtonDoubleClick;
+    }
+
+    bool ScriptDefinition::HasOnKeyPressed() const
+    {
+        return this->hasOnKeyPressed;
+    }
+
+    bool ScriptDefinition::HasOnKeyReleased() const
+    {
+        return this->hasOnKeyReleased;
     }
 
 

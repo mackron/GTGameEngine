@@ -59,6 +59,28 @@ namespace GTEngine
         /// Determines if the script has an OnLeaveObject event handler.
         bool HasOnLeaveObject() const;
 
+        /// Determines if the script has an OnMouseMove event handler.
+        bool HasOnMouseMove() const;
+
+        /// Determines if the script has an OnMouseWheel event handler.
+        bool HasOnMouseWheel() const;
+
+        /// Determines if the script has an OnMouseButtonDown event handler.
+        bool HasOnMouseButtonDown() const;
+
+        /// Determines if the script has an OnMouseButtonUp event handler.
+        bool HasOnMouseButtonUp() const;
+
+        /// Determines if the script has an OnMouseButtonDoubleClick event handler.
+        bool HasOnMouseButtonDoubleClick() const;
+
+        /// Determines if the script has an OnKeyPressed event handler.
+        bool HasOnKeyPressed() const;
+
+        /// Determines if the script has an OnKeyReleased event handler.
+        bool HasOnKeyReleased() const;
+
+
 
         /// Retrieves the number of public variables.
         size_t GetPublicVariableCount() const;
@@ -126,6 +148,27 @@ namespace GTEngine
 
         /// Keeps track of whether or not this definition has an OnLeaveObject event handler.
         bool hasOnLeaveObject;
+
+        /// Keeps track of whether of not this definition has an OnMouseMove event handler.
+        bool hasOnMouseMove;
+
+        /// Keeps track of whether of not this definition has an OnMouseWheel event handler.
+        bool hasOnMouseWheel;
+
+        /// Keeps track of whether of not this definition has an OnMouseButtonDown event handler.
+        bool hasOnMouseButtonDown;
+
+        /// Keeps track of whether of not this definition has an OnMouseButtonUp event handler.
+        bool hasOnMouseButtonUp;
+
+        /// Keeps track of whether of not this definition has an OnMouseButtonDoubleClick event handler.
+        bool hasOnMouseButtonDoubleClick;
+
+        /// Keeps track of whether of not this definition has an OnKeyPressed event handler.
+        bool hasOnKeyPressed;
+
+        /// Keeps track of whether of not this definition has an OnKeyReleased event handler.
+        bool hasOnKeyReleased;
 
 
         /// The list of public variables, in the order they are defined (hopefully).
