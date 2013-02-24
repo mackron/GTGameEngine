@@ -10,6 +10,11 @@ namespace GTEngine
         : commands()
     {
     }
+
+    RCQueue::~RCQueue()
+    {
+    }
+
     
     void RCQueue::Append(RenderCommand &cmd)
     {
@@ -93,10 +98,14 @@ namespace GTEngine
 
     bool SynchronizedRCQueue::IsEmpty() const
     {
+        bool result;
+        
         this->lock.Lock();
         {
-            return RCQueue::IsEmpty();
+            result = RCQueue::IsEmpty();
         }
         this->lock.Unlock();
+
+        return result;
     }
 }

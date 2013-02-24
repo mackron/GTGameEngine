@@ -21,6 +21,10 @@ namespace GTEngine
         /// Constructor.
         RCQueue();
 
+        /// Destructor.
+        virtual ~RCQueue();
+
+
         /// Appends a single draw call to the end of the cache.
         ///
         /// @param cmd [in] The command to append to the queue.
