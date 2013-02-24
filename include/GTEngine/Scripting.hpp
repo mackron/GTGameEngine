@@ -191,6 +191,58 @@ namespace GTEngine
         
 
 
+        /// Post a global MouseMove event to everything relevant.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param mousePosX [in] The x mouse position.
+        /// @param mousePosY [in] The y mouse position.
+        void PostEvent_OnMouseMove(GTCore::Script &script, int mousePosX, int mousePosY);
+
+        /// Post a global MouseWheel event to everything relevant.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param mousePosX [in] The x mouse position.
+        /// @param mousePosY [in] The y mouse position.
+        /// @param delta     [in] The scroll delta.
+        void PostEvent_OnMouseWheel(GTCore::Script &script, int mousePosX, int mousePosY, int delta);
+
+        /// Post a global MouseButtonDown event to everything relevant.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param mousePosX [in] The x mouse position.
+        /// @param mousePosY [in] The y mouse position.
+        /// @param button    [in] The button code.
+        void PostEvent_OnMouseButtonDown(GTCore::Script &script, int mousePosX, int mousePosY, GTCore::MouseButton button);
+
+        /// Post a global MouseButtonUp event to everything relevant.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param mousePosX [in] The x mouse position.
+        /// @param mousePosY [in] The y mouse position.
+        /// @param button    [in] The button code.
+        void PostEvent_OnMouseButtonUp(GTCore::Script &script, int mousePosX, int mousePosY, GTCore::MouseButton button);
+
+        /// Post a global MouseButtonDoubleClick event to everything relevant.
+        ///
+        /// @param script    [in] A reference to the main script object.
+        /// @param mousePosX [in] The x mouse position.
+        /// @param mousePosY [in] The y mouse position.
+        /// @param button    [in] The button code.
+        void PostEvent_OnMouseButtonDoubleClick(GTCore::Script &script, int mousePosX, int mousePosY, GTCore::MouseButton button);
+
+        /// Post a global KeyPressed event to everything relevant.
+        ///
+        /// @param script [in] A reference to the main script object.
+        /// @param key    [in] The key code.
+        void PostEvent_OnKeyPressed(GTCore::Script &script, GTCore::Key key);
+
+        /// Post a global KeyReleased event to everything relevant.
+        ///
+        /// @param script [in] A reference to the main script object.
+        /// @param key    [in] The key code.
+        void PostEvent_OnKeyReleased(GTCore::Script &script, GTCore::Key key);
+
+
 
         ///////////////////////////////////////////////////////////////
         // Script Definitions

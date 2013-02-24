@@ -13,6 +13,7 @@
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
+#include <GTEngine/Scripting.hpp>
 #include <GTCore/System.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
 #include <GTCore/String.hpp>
@@ -1413,185 +1414,37 @@ namespace GTEngine
 
     void Game::PostScriptEvent_OnMouseMove(const GameEvent &e)
     {
-        this->script.GetGlobal("Game");
-        assert(this->script.IsTable(-1));
-        {
-            this->script.Push("OnMouseMove");
-            this->script.GetTableValue(-2);
-            assert(this->script.IsFunction(-1));
-            {
-                this->script.PushNewTable();
-
-                this->script.Push("x");
-                this->script.Push(static_cast<int>(e.mousemove.x));
-                this->script.SetTableValue(-3);
-
-                this->script.Push("y");
-                this->script.Push(static_cast<int>(e.mousemove.y));
-                this->script.SetTableValue(-3);
-
-                this->script.Call(1, 0);
-            }
-        }
-        this->script.Pop(1);
+        Scripting::PostEvent_OnMouseMove(this->script, e.mousemove.x, e.mousemove.y);
     }
 
     void Game::PostScriptEvent_OnMouseWheel(const GameEvent &e)
     {
-        this->script.GetGlobal("Game");
-        assert(this->script.IsTable(-1));
-        {
-            this->script.Push("OnMouseWheel");
-            this->script.GetTableValue(-2);
-            assert(this->script.IsFunction(-1));
-            {
-                this->script.PushNewTable();
-
-                this->script.Push("x");
-                this->script.Push(static_cast<int>(e.mousewheel.x));
-                this->script.SetTableValue(-3);
-
-                this->script.Push("y");
-                this->script.Push(static_cast<int>(e.mousewheel.y));
-                this->script.SetTableValue(-3);
-
-                this->script.Push("delta");
-                this->script.Push(static_cast<int>(e.mousewheel.delta));
-                this->script.SetTableValue(-3);
-
-                this->script.Call(1, 0);
-            }
-        }
-        this->script.Pop(1);
+        Scripting::PostEvent_OnMouseWheel(this->script, e.mousewheel.x, e.mousewheel.y, e.mousewheel.delta);
     }
 
     void Game::PostScriptEvent_OnMouseButtonDown(const GameEvent &e)
     {
-        this->script.GetGlobal("Game");
-        assert(this->script.IsTable(-1));
-        {
-            this->script.Push("OnMouseButtonDown");
-            this->script.GetTableValue(-2);
-            assert(this->script.IsFunction(-1));
-            {
-                this->script.PushNewTable();
-
-                this->script.Push("x");
-                this->script.Push(static_cast<int>(e.mousedown.x));
-                this->script.SetTableValue(-3);
-
-                this->script.Push("y");
-                this->script.Push(static_cast<int>(e.mousedown.y));
-                this->script.SetTableValue(-3);
-
-                this->script.Push("button");
-                this->script.Push(static_cast<int>(e.mousedown.button));
-                this->script.SetTableValue(-3);
-
-                this->script.Call(1, 0);
-            }
-        }
-        this->script.Pop(1);
+        Scripting::PostEvent_OnMouseButtonDown(this->script, e.mousedown.x, e.mousedown.y, e.mousedown.button);
     }
 
     void Game::PostScriptEvent_OnMouseButtonUp(const GameEvent &e)
     {
-        this->script.GetGlobal("Game");
-        assert(this->script.IsTable(-1));
-        {
-            this->script.Push("OnMouseButtonUp");
-            this->script.GetTableValue(-2);
-            assert(this->script.IsFunction(-1));
-            {
-                this->script.PushNewTable();
-
-                this->script.Push("x");
-                this->script.Push(static_cast<int>(e.mouseup.x));
-                this->script.SetTableValue(-3);
-
-                this->script.Push("y");
-                this->script.Push(static_cast<int>(e.mouseup.y));
-                this->script.SetTableValue(-3);
-
-                this->script.Push("button");
-                this->script.Push(static_cast<int>(e.mouseup.button));
-                this->script.SetTableValue(-3);
-
-                this->script.Call(1, 0);
-            }
-        }
-        this->script.Pop(1);
+        Scripting::PostEvent_OnMouseButtonUp(this->script, e.mouseup.x, e.mouseup.y, e.mouseup.button);
     }
 
     void Game::PostScriptEvent_OnMouseButtonDoubleClick(const GameEvent &e)
     {
-        this->script.GetGlobal("Game");
-        assert(this->script.IsTable(-1));
-        {
-            this->script.Push("OnMouseButtonDoubleClick");
-            this->script.GetTableValue(-2);
-            assert(this->script.IsFunction(-1));
-            {
-                this->script.PushNewTable();
-
-                this->script.Push("x");
-                this->script.Push(static_cast<int>(e.mousedoubleclick.x));
-                this->script.SetTableValue(-3);
-
-                this->script.Push("y");
-                this->script.Push(static_cast<int>(e.mousedoubleclick.y));
-                this->script.SetTableValue(-3);
-
-                this->script.Push("button");
-                this->script.Push(static_cast<int>(e.mousedoubleclick.button));
-                this->script.SetTableValue(-3);
-
-                this->script.Call(1, 0);
-            }
-        }
-        this->script.Pop(1);
+        Scripting::PostEvent_OnMouseButtonDoubleClick(this->script, e.mousedoubleclick.x, e.mousedoubleclick.y, e.mousedoubleclick.button);
     }
 
     void Game::PostScriptEvent_OnKeyPressed(const GameEvent &e)
     {
-        this->script.GetGlobal("Game");
-        assert(this->script.IsTable(-1));
-        {
-            this->script.Push("OnKeyPressed");
-            this->script.GetTableValue(-2);
-            assert(this->script.IsFunction(-1));
-            {
-                this->script.PushNewTable();
-
-                this->script.Push("key");
-                this->script.Push(static_cast<int>(e.keypressed.key));
-                this->script.SetTableValue(-3);
-
-                this->script.Call(1, 0);
-            }
-        }
-        this->script.Pop(1);
+        Scripting::PostEvent_OnKeyPressed(this->script, e.keypressed.key);
     }
 
     void Game::PostScriptEvent_OnKeyReleased(const GameEvent &e)
     {
-        this->script.GetGlobal("Game");
-        assert(this->script.IsTable(-1));
-        {
-            this->script.Push("OnKeyReleased");
-            this->script.GetTableValue(-2);
-            assert(this->script.IsFunction(-1));
-            {
-                this->script.PushNewTable();
-
-                this->script.Push("key");
-                this->script.Push(static_cast<int>(e.keyreleased.key));
-                this->script.SetTableValue(-3);
-
-                this->script.Call(1, 0);
-            }
-        }
-        this->script.Pop(1);
+        Scripting::PostEvent_OnKeyReleased(this->script, e.keyreleased.key);
     }
 
     void Game::PostScriptEvent_OnKeyDown(const GameEvent &e)

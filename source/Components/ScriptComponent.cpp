@@ -336,6 +336,126 @@ namespace GTEngine
     }
 
 
+    bool ScriptComponent::HasOnMouseMove() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnMouseMove())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnMouseWheel() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnMouseWheel())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnMouseButtonDown() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnMouseButtonDown())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnMouseButtonUp() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnMouseButtonUp())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnMouseButtonDoubleClick() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnMouseButtonDoubleClick())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnKeyPressed() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnKeyPressed())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnKeyReleased() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            if (script != nullptr)
+            {
+                if (script->HasOnKeyReleased())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
     void ScriptComponent::Clear()
     {
         for (size_t i = 0; i < this->scripts.count; ++i)

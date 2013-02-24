@@ -135,6 +135,48 @@ namespace GTEngine
         ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
         bool HasOnLeaveObject() const;
 
+        /// Determines if any of the attached scripts has an OnMouseMove event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnMouseMove() const;
+
+        /// Determines if any of the attached scripts has an OnMouseWheel event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnMouseWheel() const;
+
+        /// Determines if any of the attached scripts has an OnMouseButtonDown event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnMouseButtonDown() const;
+
+        /// Determines if any of the attached scripts has an OnMouseButtonUp event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnMouseButtonUp() const;
+
+        /// Determines if any of the attached scripts has an OnMouseButtonDoubleClick event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnMouseButtonDoubleClick() const;
+
+        /// Determines if any of the attached scripts has an OnKeyPressed event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnKeyPressed() const;
+
+        /// Determines if any of the attached scripts has an OnKeyReleased event handler.
+        ///
+        /// @remarks
+        ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
+        bool HasOnKeyReleased() const;
+
 
 
         /// Clears the component of all scripts.
