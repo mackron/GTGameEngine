@@ -110,6 +110,70 @@ namespace GTEngine
 
 
                 ///////////////////////////////////////////////////
+                // GTEngine.Components
+
+                script.Push("Components");
+                script.PushNewTable();
+                {
+                    script.SetTableValue(-1, "Model",             ModelComponent::Name);
+                    script.SetTableValue(-1, "Camera",            CameraComponent::Name);
+                    script.SetTableValue(-1, "PointLight",        PointLightComponent::Name);
+                    script.SetTableValue(-1, "SpotLight",         SpotLightComponent::Name);
+                    script.SetTableValue(-1, "DirectionalLight",  DirectionalLightComponent::Name);
+                    script.SetTableValue(-1, "AmbientLight",      AmbientLightComponent::Name);
+                    script.SetTableValue(-1, "Dynamics",          DynamicsComponent::Name);
+                    script.SetTableValue(-1, "Proximity",         ProximityComponent::Name);
+                    script.SetTableValue(-1, "Script",            ScriptComponent::Name);
+                    script.SetTableValue(-1, "EditorMetadata",    EditorMetadataComponent::Name);
+                }
+                script.SetTableValue(-3);
+
+
+
+                ///////////////////////////////////////////////////
+                // GTEngine.CollisionShapeTypes
+
+                script.Push("CollisionShapeTypes");
+                script.PushNewTable();
+                {
+                    script.SetTableValue(-1, "None",             CollisionShapeType_None);
+                    script.SetTableValue(-1, "Box",              CollisionShapeType_Box);
+                    script.SetTableValue(-1, "Sphere",           CollisionShapeType_Sphere);
+                    script.SetTableValue(-1, "Ellipsoid",        CollisionShapeType_Ellipsoid);
+                    script.SetTableValue(-1, "CylinderX",        CollisionShapeType_CylinderX);
+                    script.SetTableValue(-1, "CylinderY",        CollisionShapeType_CylinderY);
+                    script.SetTableValue(-1, "CylinderZ",        CollisionShapeType_CylinderZ);
+                    script.SetTableValue(-1, "CapsuleX",         CollisionShapeType_CapsuleX);
+                    script.SetTableValue(-1, "CapsuleY",         CollisionShapeType_CapsuleY);
+                    script.SetTableValue(-1, "CapsuleZ",         CollisionShapeType_CapsuleZ);
+                    script.SetTableValue(-1, "ConvexHull",       CollisionShapeType_ConvexHull);
+                    script.SetTableValue(-1, "ModelConvexHulls", CollisionShapeType_ModelConvexHulls);       // A special type representing the case when the convex hulls from the model is being used.
+                }
+                script.SetTableValue(-3);
+
+
+
+                ///////////////////////////////////////////////////
+                // GTEngine.ScriptVariableTypes
+
+                script.Push("ScriptVariableTypes");
+                script.PushNewTable();
+                {
+                    script.SetTableValue(-1, "Unknown", ScriptVariableType_Unknown);
+                    script.SetTableValue(-1, "None",    ScriptVariableType_None);
+                    script.SetTableValue(-1, "Number",  ScriptVariableType_Number);
+                    script.SetTableValue(-1, "Vec2",    ScriptVariableType_Vec2);
+                    script.SetTableValue(-1, "Vec3",    ScriptVariableType_Vec3);
+                    script.SetTableValue(-1, "Vec4",    ScriptVariableType_Vec4);
+                    script.SetTableValue(-1, "Boolean", ScriptVariableType_Boolean);
+                    script.SetTableValue(-1, "String",  ScriptVariableType_String);
+                    script.SetTableValue(-1, "Prefab",  ScriptVariableType_Prefab);
+                }
+                script.SetTableValue(-3);
+
+
+
+                ///////////////////////////////////////////////////
                 // GTEngine.<Misc>
 
                 script.Push("RegisteredScenes");
@@ -139,72 +203,13 @@ namespace GTEngine
             script.SetGlobal("GTEngine");
 
 
+            // A helper for checking if a string is the name of an event handler.
             successful = successful && script.Execute
             (
                 "function GTEngine.IsSceneNodeEventHandler(name)"
                 "    return table.indexof(GTEngine.SceneNodeEventHandlers, name) ~= nil;"
                 "end;"
             );
-
-
-            // Components
-            //
-            // Component script objects are actually very temporary. They are only used to give an interface to allow the internal representation to be modified. When a component is retrieved
-            // from a scene node, it will actually create a whole new instantiation of the object.
-            script.GetGlobal("GTEngine");
-            assert(script.IsTable(-1));
-            {
-                script.Push("Components");
-                script.PushNewTable();
-                {
-                    script.SetTableValue(-1, "Model",             ModelComponent::Name);
-                    script.SetTableValue(-1, "Camera",            CameraComponent::Name);
-                    script.SetTableValue(-1, "PointLight",        PointLightComponent::Name);
-                    script.SetTableValue(-1, "SpotLight",         SpotLightComponent::Name);
-                    script.SetTableValue(-1, "DirectionalLight",  DirectionalLightComponent::Name);
-                    script.SetTableValue(-1, "AmbientLight",      AmbientLightComponent::Name);
-                    script.SetTableValue(-1, "Dynamics",          DynamicsComponent::Name);
-                    script.SetTableValue(-1, "Proximity",         ProximityComponent::Name);
-                    script.SetTableValue(-1, "Script",            ScriptComponent::Name);
-                    script.SetTableValue(-1, "EditorMetadata",    EditorMetadataComponent::Name);
-                }
-                script.SetTableValue(-3);
-
-                script.Push("CollisionShapeTypes");
-                script.PushNewTable();
-                {
-                    script.SetTableValue(-1, "None",             CollisionShapeType_None);
-                    script.SetTableValue(-1, "Box",              CollisionShapeType_Box);
-                    script.SetTableValue(-1, "Sphere",           CollisionShapeType_Sphere);
-                    script.SetTableValue(-1, "Ellipsoid",        CollisionShapeType_Ellipsoid);
-                    script.SetTableValue(-1, "CylinderX",        CollisionShapeType_CylinderX);
-                    script.SetTableValue(-1, "CylinderY",        CollisionShapeType_CylinderY);
-                    script.SetTableValue(-1, "CylinderZ",        CollisionShapeType_CylinderZ);
-                    script.SetTableValue(-1, "CapsuleX",         CollisionShapeType_CapsuleX);
-                    script.SetTableValue(-1, "CapsuleY",         CollisionShapeType_CapsuleY);
-                    script.SetTableValue(-1, "CapsuleZ",         CollisionShapeType_CapsuleZ);
-                    script.SetTableValue(-1, "ConvexHull",       CollisionShapeType_ConvexHull);
-                    script.SetTableValue(-1, "ModelConvexHulls", CollisionShapeType_ModelConvexHulls);       // A special type representing the case when the convex hulls from the model is being used.
-                }
-                script.SetTableValue(-3);
-
-                script.Push("ScriptVariableTypes");
-                script.PushNewTable();
-                {
-                    script.SetTableValue(-1, "Unknown", ScriptVariableType_Unknown);
-                    script.SetTableValue(-1, "None",    ScriptVariableType_None);
-                    script.SetTableValue(-1, "Number",  ScriptVariableType_Number);
-                    script.SetTableValue(-1, "Vec2",    ScriptVariableType_Vec2);
-                    script.SetTableValue(-1, "Vec3",    ScriptVariableType_Vec3);
-                    script.SetTableValue(-1, "Vec4",    ScriptVariableType_Vec4);
-                    script.SetTableValue(-1, "Boolean", ScriptVariableType_Boolean);
-                    script.SetTableValue(-1, "String",  ScriptVariableType_String);
-                    script.SetTableValue(-1, "Prefab",  ScriptVariableType_Prefab);
-                }
-                script.SetTableValue(-3);
-            }
-            script.Pop(1);
-
 
             // Create the GTEngine.System.<Component> tables.
             successful = successful && script.Execute
