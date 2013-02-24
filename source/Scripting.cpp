@@ -32,33 +32,23 @@ namespace GTEngine
                 {
                     script.Push("SceneNode");
                     script.PushNewTable();
-                    {
-                    }
                     script.SetTableValue(-3);
 
                     script.Push("Scene");
                     script.PushNewTable();
-                    {
-                    }
                     script.SetTableValue(-3);
 
 
                     script.Push("SubEditor");
                     script.PushNewTable();
-                    {
-                    }
                     script.SetTableValue(-3);
 
                     script.Push("ModelEditor");
                     script.PushNewTable();
-                    {
-                    }
                     script.SetTableValue(-3);
 
                     script.Push("SceneEditor");
                     script.PushNewTable();
-                    {
-                    }
                     script.SetTableValue(-3);
                 }
                 script.SetTableValue(-3);
@@ -92,8 +82,6 @@ namespace GTEngine
                 
                 script.Push("Renderer");
                 script.PushNewTable();
-                {
-                }
                 script.SetTableValue(-3);
 
 
@@ -103,8 +91,6 @@ namespace GTEngine
 
                 script.Push("Audio");
                 script.PushNewTable();
-                {
-                }
                 script.SetTableValue(-3);
 
 
