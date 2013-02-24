@@ -41,4 +41,62 @@ namespace GTEngine
         // which is enough to clear the buffer. We would otherwise use this->commands.Clear();
         this->commands.count = 0;
     }
+
+
+
+
+
+
+    ////////////////////////////////////////////
+    // SynchronizedRCQueue
+
+    SynchronizedRCQueue::SynchronizedRCQueue()
+        : RCQueue(), lock()
+    {
+    }
+
+    void SynchronizedRCQueue::Append(RenderCommand &cmd)
+    {
+        this->lock.Lock();
+        {
+            RCQueue::Append(cmd);
+        }
+        this->lock.Unlock();
+    }
+
+    void SynchronizedRCQueue::Append(const RCQueue &other)
+    {
+        this->lock.Lock();
+        {
+            RCQueue::Append(other);
+        }
+        this->lock.Unlock();
+    }
+
+    void SynchronizedRCQueue::Execute()
+    {
+        this->lock.Lock();
+        {
+            RCQueue::Execute();
+        }
+        this->lock.Unlock();
+    }
+
+    void SynchronizedRCQueue::Clear()
+    {
+        this->lock.Lock();
+        {
+            RCQueue::Clear();
+        }
+        this->lock.Unlock();
+    }
+
+    bool SynchronizedRCQueue::IsEmpty() const
+    {
+        this->lock.Lock();
+        {
+            return RCQueue::IsEmpty();
+        }
+        this->lock.Unlock();
+    }
 }

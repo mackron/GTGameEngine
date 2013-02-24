@@ -4,6 +4,7 @@
 #define __GTEngine_RCQueue_hpp_
 
 #include <GTCore/Vector.hpp>
+#include <GTCore/Threading/Mutex.hpp>
 
 namespace GTEngine
 {
@@ -62,6 +63,43 @@ namespace GTEngine
     private:    // No copying.
         RCQueue(const RCQueue &);
         RCQueue & operator=(const RCQueue &);
+    };
+
+
+    /// Same as RCQueue, except everything is synchronized.
+    class SynchronizedRCQueue : public RCQueue
+    {
+    public:
+
+        /// Constructor.
+        SynchronizedRCQueue();
+
+
+        /// RCQueue::Append(RenderCommand &)
+        void Append(RenderCommand &cmd);
+
+        /// RCQueue::Append(const RCQueue &other)
+        void Append(const RCQueue &other);
+
+        /// RCQueue::Execute()
+        void Execute();
+
+        /// RCQueue::Clear()
+        void Clear();
+
+        /// RCQueue::IsEmpty()
+        bool IsEmpty() const;
+
+
+    private:
+
+        /// The synchronization lock.
+        mutable GTCore::Mutex lock;
+
+
+    private:    // No copying.
+        SynchronizedRCQueue(const SynchronizedRCQueue &);
+        SynchronizedRCQueue & operator=(const SynchronizedRCQueue &);
     };
 }
 
