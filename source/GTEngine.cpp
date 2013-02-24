@@ -134,6 +134,12 @@ namespace GTEngine
         FontManager::Startup();
 
 
+        // We want to initialise the GUI renderer after the library. This way we can guarantee we have access to shaders.
+        Log("Initializing GUI Renderer...");
+        GUIRenderer::Initialise();
+
+
+
         return true;
     }
 
