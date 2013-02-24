@@ -151,6 +151,7 @@
 		<Unit filename="../../../include/GTEngine/CollisionGroups.hpp" />
 		<Unit filename="../../../include/GTEngine/Component.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/CameraComponent.hpp" />
+		<Unit filename="../../../include/GTEngine/Components/CollisionShapeComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/ConeTwistConstraintComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/DynamicsComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/EditorMetadataComponent.hpp" />
@@ -343,6 +344,7 @@
 		<Unit filename="../../../source/CPUVertexShader_Skinning.cpp" />
 		<Unit filename="../../../source/Component.cpp" />
 		<Unit filename="../../../source/Components/CameraComponent.cpp" />
+		<Unit filename="../../../source/Components/CollisionShapeComponent.cpp" />
 		<Unit filename="../../../source/Components/ConeTwistConstraintComponent.cpp" />
 		<Unit filename="../../../source/Components/DynamicsComponent.cpp" />
 		<Unit filename="../../../source/Components/EditorMetadataComponent.cpp" />
@@ -484,6 +486,8 @@
 		<Unit filename="../../../source/ScriptLibrary.cpp" />
 		<Unit filename="../../../source/ScriptVariable.cpp" />
 		<Unit filename="../../../source/Scripting.cpp" />
+		<Unit filename="../../../source/Scripting/Scripting_Game.cpp" />
+		<Unit filename="../../../source/Scripting/Scripting_Math.cpp" />
 		<Unit filename="../../../source/ShaderLibrary.cpp" />
 		<Unit filename="../../../source/ShaderParameter.cpp" />
 		<Unit filename="../../../source/ShaderParameterCache.cpp" />
