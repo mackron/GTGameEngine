@@ -92,6 +92,10 @@ namespace GTEngine
         static void MarkForCollection(SceneRenderer* renderer, int counter = 1) { if (renderer != nullptr) MarkForCollection(*renderer, counter); }
 
 
+
+        /// Collects everything.
+        static void CollectAll();
+
         
     // Collecting.
     public:

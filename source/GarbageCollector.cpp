@@ -242,4 +242,16 @@ namespace GTEngine
             }
         }
     }
+
+
+
+    void GarbageCollector::CollectAll()
+    {
+        GarbageCollector::CollectTexture2Ds();
+        GarbageCollector::CollectShaders();
+        GarbageCollector::CollectFramebuffers();
+        GarbageCollector::CollectVertexArrays();
+        GarbageCollector::CollectBones();
+        GarbageCollector::CollectSceneRenderers();
+    }
 }

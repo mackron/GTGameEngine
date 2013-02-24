@@ -29,12 +29,13 @@ namespace GTEngine
         struct MaterialMetadata
         {
             MaterialMetadata()
-                : materialPassShader(nullptr), materialPassRCs()
+                : materialDefinition(nullptr), materialPassShader(nullptr), materialPassRCs()
             {
             }
 
-            Shader* materialPassShader;         ///< The shader for the material pass.
-            RCQueue materialPassRCs;            ///< The render commands for meshes using this material in the material pass.
+            MaterialDefinition* materialDefinition;     ///< The material definition this metadata is associated with.
+            Shader*             materialPassShader;     ///< The shader for the material pass.
+            RCQueue             materialPassRCs;        ///< The render commands for meshes using this material in the material pass.
 
         private:    // No copying
             MaterialMetadata(const MaterialMetadata &);

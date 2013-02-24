@@ -56,6 +56,11 @@ namespace GTEngine
         /// @return A pointer to the metadata associated with the key or null if there is no metadata for that key.
         void* GetMetadata(size_t key);
 
+        /// Removes a metadata value.
+        ///
+        /// @param key [in] The key of the metadata to remove.
+        void RemoveMetadata(size_t key);
+
 
 
         /// Determines whether or not the material is refractive.
@@ -189,6 +194,11 @@ namespace GTEngine
         ///
         /// @return A pointer to the metadata associated with the key or null if there is no metadata for that key.
         void* GetMetadata(size_t key);
+
+        /// Removes a metadata value.
+        ///
+        /// @param key [in] The key of the metadata to remove.
+        void RemoveMetadata(size_t key);
 
 
 

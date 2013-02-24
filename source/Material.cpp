@@ -398,6 +398,11 @@ namespace GTEngine
 
         return nullptr;
     }
+
+    void MaterialDefinition::RemoveMetadata(size_t key)
+    {
+        this->metadata.RemoveByKey(key);
+    }
 }
 
 namespace GTEngine
@@ -416,6 +421,7 @@ namespace GTEngine
         this->parameters.Clear();
     }
 
+
     void Material::SetMetadata(size_t key, void* data)
     {
         this->metadata.Add(key, data);
@@ -430,6 +436,11 @@ namespace GTEngine
         }
 
         return nullptr;
+    }
+
+    void Material::RemoveMetadata(size_t key)
+    {
+        this->metadata.RemoveByKey(key);
     }
 
 

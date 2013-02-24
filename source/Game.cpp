@@ -901,7 +901,6 @@ namespace GTEngine
             this->EndFrame();       // <-- blocks until all threads are finished.
 
 
-
             // Here we need to update the profiler.
             if (this->profiler.IsEnabled())
             {
@@ -939,10 +938,7 @@ namespace GTEngine
     void Game::EndFrame() // [Main Thread]
     {
         // We need to collect garbage.
-        GarbageCollector::CollectTexture2Ds();
-        GarbageCollector::CollectShaders();
-        GarbageCollector::CollectFramebuffers();
-        GarbageCollector::CollectVertexArrays();
+        GarbageCollector::CollectAll();
 
         // First we need to block until all threads have finished executing...
         this->updateThread->Wait();

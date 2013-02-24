@@ -364,10 +364,18 @@ namespace GTEngine
             delete shaders.buffer[i]->value;
         }
 
+        
         /// We need to make sure any existing material metadata is removed for tidyness.
         while (this->materialMetadatas.root != nullptr)
         {
-            delete this->materialMetadatas.root->value;
+            auto metadata = this->materialMetadatas.root->value;
+            assert(metadata                     != nullptr);
+            assert(metadata->materialDefinition != nullptr);
+            {
+                metadata->materialDefinition->RemoveMetadata(reinterpret_cast<size_t>(this));
+                delete metadata;
+            }
+
             this->materialMetadatas.RemoveRoot();
         }
 
@@ -1543,6 +1551,7 @@ namespace GTEngine
         if (metadata == nullptr)
         {
             metadata = new MaterialMetadata;
+            metadata->materialDefinition = &definition;
             definition.SetMetadata(reinterpret_cast<size_t>(this), metadata);
 
             this->materialMetadatas.Append(metadata);
