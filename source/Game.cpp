@@ -110,9 +110,9 @@ namespace GTEngine
     {
         if (this->window != nullptr)
         {
-            // We use Display.Width and Display.Height in determining this.
-            int width  = this->script.GetInteger("Display.Width");
-            int height = this->script.GetInteger("Display.Height");
+            // We use GTEngine.Display.Width and GTEngine.Display.Height in determining this.
+            int width  = this->script.GetInteger("GTEngine.Display.Width");
+            int height = this->script.GetInteger("GTEngine.Display.Height");
 
             this->window->EnableFullscreen(static_cast<unsigned int>(width), static_cast<unsigned int>(height));
             Renderer::SetCurrentWindow(this->window);
@@ -141,9 +141,9 @@ namespace GTEngine
 
     void Game::RefreshDisplay()
     {
-        this->GetWindow()->SetSize(this->GetScript().GetInteger("Display.Width"), this->GetScript().GetInteger("Display.Height"));
+        this->GetWindow()->SetSize(this->GetScript().GetInteger("GTEngine.Display.Width"), this->GetScript().GetInteger("GTEngine.Display.Height"));
 
-        if (this->GetScript().GetBoolean("Display.Fullscreen"))
+        if (this->GetScript().GetBoolean("GTEngine.Display.Fullscreen"))
         {
             this->EnableFullscreen();
         }
@@ -702,7 +702,7 @@ namespace GTEngine
             }
 
             // Here we will set the default anistropy for textures via the texture library.
-            Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("Display.Textures.Anisotropy")));
+            Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("GTEngine.Display.Textures.Anisotropy")));
 
 
             // First we need a window. Note that we don't show it straight away.
@@ -717,7 +717,7 @@ namespace GTEngine
                 // We'll want to set a few window properties before showing it... We want to show the window relatively early to make
                 // the game feel a little bit more speedy, even though it's not really.
                 this->window->SetTitle("GTEngine Game");
-                this->window->SetSize(this->script.GetInteger("Display.Width"), this->script.GetInteger("Display.Height"));
+                this->window->SetSize(this->script.GetInteger("GTEngine.Display.Width"), this->script.GetInteger("GTEngine.Display.Height"));
 
                 // Now we can set the window's event handler and show it.
                 this->window->SetEventHandler(this->windowEventHandler);

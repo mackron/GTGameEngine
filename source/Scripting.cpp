@@ -64,6 +64,29 @@ namespace GTEngine
                 script.SetTableValue(-3);
 
 
+
+                ///////////////////////////////////////////////////
+                // GTEngine.Display
+                
+                script.Push("Display");
+                script.PushNewTable();
+                {
+                    script.SetTableValue(-1, "Width",      1280);
+                    script.SetTableValue(-1, "Height",     720);
+                    script.SetTableValue(-1, "Fullscreen", false);
+
+
+                    script.Push("Textures");
+                    script.PushNewTable();
+                    {
+                        script.SetTableValue(-1, "Anisotropy", 16);
+                    }
+                    script.SetTableValue(-3);
+                }
+                script.SetTableValue(-3);
+
+
+
                 ///////////////////////////////////////////////////
                 // GTEngine.Renderer
                 
@@ -118,38 +141,6 @@ namespace GTEngine
 
             successful = successful && script.Execute
             (
-#if 0
-                "GTEngine                    = {};"
-
-                "GTEngine.System             = {};"
-                "GTEngine.System.SceneNode   = {};"
-                "GTEngine.System.Scene       = {};"
-
-                "GTEngine.System.SubEditor   = {};"
-                "GTEngine.System.ModelEditor = {};"
-                "GTEngine.System.SceneEditor = {};"
-
-                "GTEngine.Renderer           = {};"
-                "GTEngine.Audio              = {};"
-
-                "GTEngine.RegisteredScenes   = {};"
-                "GTEngine.ScriptDefinitions  = {};"
-
-
-                "GTEngine.SceneNodeEventHandlers = "
-                "{"
-                "    'OnUpdate',"
-                "    'OnStartup',"
-                "    'OnShutdown',"
-                "    'OnShow',"
-                "    'OnHide',"
-                "    'OnObjectEnter',"
-                "    'OnEnterObject',"
-                "    'OnObjectLeave',"
-                "    'OnLeaveObject'"
-                "};"
-#endif
-
                 "function GTEngine.IsSceneNodeEventHandler(name)"
                 "    return table.indexof(GTEngine.SceneNodeEventHandlers, name) ~= nil;"
                 "end;"
