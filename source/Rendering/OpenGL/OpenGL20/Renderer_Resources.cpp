@@ -642,8 +642,8 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    /// The RC queues for resource events.
-    static RCQueue ResourceRCQueues[2];
+    /// The RC queues for resource events. These need to be synchronized so that resources can be created from any thread.
+    static SynchronizedRCQueue ResourceRCQueues[2];
 
     static RCCache<RCOnTexture2DCreated>                      RCCache_OnTexture2DCreated[2];
     static RCCache<RCOnTexture2DDeleted>                      RCCache_OnTexture2DDeleted[2];
