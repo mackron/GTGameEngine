@@ -20,6 +20,7 @@ namespace GTEngine
         : CollisionShapeComponent(node),
           motionState(node),
           rigidBody(new RigidBody(0.0f, collisionShape, &motionState)),
+          world(nullptr),
           mass(0.0f),
           isKinematic(false),
           useWithNavigationMesh(true)
