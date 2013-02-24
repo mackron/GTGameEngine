@@ -50,7 +50,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <!-- In this section, the Editor table is created from the C++ code. Thus, ensure it is not re-created here. -->
 <script>
 <![CDATA[
-    local CommandTextBox = GTGUI.Server.GetElementByID("CommandTextBox");
+    local CommandTextBox  = GTGUI.Server.GetElementByID("CommandTextBox");
+    local CommandErrorBox = GTGUI.Server.GetElementByID("CommandErrorBox");
 
     CommandTextBox:OnKeyDown(function(data)
         if data.key == 13 then                  -- Enter key
