@@ -196,7 +196,10 @@ namespace GTEngine
         {
             if (this->IsPaused())
             {
-                this->scene.Resume();
+                this->updateManager.Enable();
+                this->physicsManager.EnableSimulation();
+
+                //this->scene.Resume();
             }
             else
             {
@@ -232,7 +235,10 @@ namespace GTEngine
         {
             this->isPaused = true;
 
-            this->scene.Pause();
+            //this->scene.Pause();
+            this->updateManager.Disable();
+            this->physicsManager.DisableSimulation();
+
             this->UpdatePlaybackControls();
         }
     }
@@ -253,7 +259,7 @@ namespace GTEngine
                 // If the scene was paused it needs to be resumed.
                 if (this->isPaused)
                 {
-                    this->scene.Resume();
+                    //this->scene.Resume();
                 }
 
                 this->isPlaying = false;
