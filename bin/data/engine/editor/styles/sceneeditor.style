@@ -385,6 +385,54 @@ script-variable-container
 
 
 
+playback-container
+{
+    width:       auto
+    height:      auto
+    child-plane: horizontal
+}
+
+playback-button
+{
+    width:                  26px
+    height:                 22px
+    border:                 1px #555
+    background-image-color: #aaa
+}
+
+playback-button:hovered
+{
+    background-image-color: #ccc
+}
+
+playback-button:pushed
+{
+    background-image-color: #eee
+}
+
+play-button includes playback-button
+{
+    background-image: std-arrow-right-medium
+}
+
+pause-button includes playback-button
+{
+    background-image: std-pause-12x12
+}
+
+stop-button includes playback-button
+{
+    background-image: std-square-12x12
+    border-left:      none
+}
+
+stop-button:disabled
+{
+    background-image-color: #444
+}
+
+
+
 physics-button-container
 {
     width:          auto

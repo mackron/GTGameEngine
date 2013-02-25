@@ -40,7 +40,7 @@ namespace GTEngine
           translateSnapSize(0.25f),/* rotateSnapSize(5.625f), scaleSnapSize(0.25f),*/
           transformedObjectWithGizmo(false),
           isDeserializing(false), isUpdatingFromStateStack(false),
-          isPlaying(false),
+          isPlaying(false), isPaused(false),
           GUI()
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
@@ -192,29 +192,48 @@ namespace GTEngine
 
     void SceneEditor::StartPlaying()
     {
-        if (!this->IsPlaying())
+        if (!this->IsPlaying() || this->IsPaused())
         {
-            this->isPlaying                  = true;
-            this->selectedNodesBeforePlaying = this->selectedNodes;
+            if (this->IsPaused())
+            {
+                this->scene.Resume();
+            }
+            else
+            {
+                this->isPlaying                  = true;
+                this->selectedNodesBeforePlaying = this->selectedNodes;
 
 
-            // We want to make sure the scripting environment is synced up with the script library just in case anything has changed.
-            Scripting::SyncScriptDefinitionsWithLibrary(this->GetScript());
+                // We want to make sure the scripting environment is synced up with the script library just in case anything has changed.
+                Scripting::SyncScriptDefinitionsWithLibrary(this->GetScript());
 
-            // The scene needs to be registered.
-            this->scene.RegisterToScript(this->GetScript());
-
-
-            // We'll call OnStartup on all scene nodes here.
-            this->scene.PostSceneNodeScriptEvent_OnStartup();
+                // The scene needs to be registered.
+                this->scene.RegisterToScript(this->GetScript());
 
 
-            this->updateManager.Enable();
+                // We'll call OnStartup on all scene nodes here.
+                this->scene.PostSceneNodeScriptEvent_OnStartup();
 
-            this->physicsManager.EnableSimulation();
-            this->physicsManager.ActivateAllRigidBodies();
 
-            this->UpdatePlayButtonIcon();
+                this->updateManager.Enable();
+
+                this->physicsManager.EnableSimulation();
+                this->physicsManager.ActivateAllRigidBodies();
+            }
+
+            this->isPaused = false;
+            this->UpdatePlaybackControls();
+        }
+    }
+
+    void SceneEditor::PausePlaying()
+    {
+        if (this->IsPlaying() && !this->IsPaused())
+        {
+            this->isPaused = true;
+
+            this->scene.Pause();
+            this->UpdatePlaybackControls();
         }
     }
 
@@ -231,8 +250,14 @@ namespace GTEngine
                 // The scene needs to be unregistered.
                 this->scene.UnregisterFromScript();
 
+                // If the scene was paused it needs to be resumed.
+                if (this->isPaused)
+                {
+                    this->scene.Resume();
+                }
 
                 this->isPlaying = false;
+                this->isPaused  = false;
 
 
                 this->updateManager.Disable();
@@ -246,7 +271,7 @@ namespace GTEngine
                 this->DeselectAll(SelectionOption_NoStateStaging);
                 this->SelectSceneNodes(this->selectedNodesBeforePlaying, SelectionOption_NoStateStaging);
 
-                this->UpdatePlayButtonIcon();
+                this->UpdatePlaybackControls();
             }
             this->isUpdatingFromStateStack = false;
         }
@@ -255,6 +280,11 @@ namespace GTEngine
     bool SceneEditor::IsPlaying() const
     {
         return this->isPlaying;
+    }
+
+    bool SceneEditor::IsPaused() const
+    {
+        return this->isPaused;
     }
 
 
@@ -2222,6 +2252,7 @@ namespace GTEngine
     }
 
 
+    /*
     void SceneEditor::UpdatePlayButtonIcon()
     {
         if (this->GUI.Main != nullptr)
@@ -2232,6 +2263,28 @@ namespace GTEngine
             assert(script.IsTable(-1));
             {
                 script.Push("UpdatePlayButtonIcon");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // <-- 'self'.
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+    }
+    */
+
+    void SceneEditor::UpdatePlaybackControls()
+    {
+        if (this->GUI.Main != nullptr)
+        {
+            auto &script = this->GetScript();
+
+            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            assert(script.IsTable(-1));
+            {
+                script.Push("UpdatePlaybackControls");
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
