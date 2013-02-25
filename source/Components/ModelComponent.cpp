@@ -7,7 +7,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT(ModelComponent, "Model");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(ModelComponent, "Model");
 
     ModelComponent::ModelComponent(SceneNode &node)
         : Component(node), model(nullptr),

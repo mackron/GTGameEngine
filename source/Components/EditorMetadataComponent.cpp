@@ -9,7 +9,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT(EditorMetadataComponent, "EditorMetadata");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(EditorMetadataComponent, "EditorMetadata");
 
     EditorMetadataComponent::EditorMetadataComponent(SceneNode &node)
         : Component(node),

@@ -5,7 +5,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT(OccluderComponent, "Occluder");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(OccluderComponent, "Occluder");
 
     OccluderComponent::OccluderComponent(SceneNode &node)
         : Component(node), collisionObject(), collisionShape(nullptr)

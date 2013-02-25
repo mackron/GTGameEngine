@@ -5,7 +5,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT(ConeTwistConstraintComponent, "ConeTwistConstraint");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(ConeTwistConstraintComponent, "ConeTwistConstraint");
 
     ConeTwistConstraintComponent::ConeTwistConstraintComponent(SceneNode &node)
         : Component(node),

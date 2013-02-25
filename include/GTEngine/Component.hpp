@@ -5,26 +5,6 @@
 
 #include <GTEngine/Serialization.hpp>
 
-#define GTENGINE_DECL_COMPONENT_START(className) \
-    class className : public GTEngine::Component \
-    { \
-    public: \
-        static const char* const Name; \
-        const char* GetName() const \
-        { \
-            return className::Name; \
-        } \
-    private: \
-        className(const className &);   \
-        className & operator=(const className &);
-
-#define GTENGINE_DECL_COMPONENT_END() \
-    };
-
-#define GTENGINE_IMPL_COMPONENT(className, name) \
-    const char* const className::Name = name;
-
-
 
 #define GTENGINE_IMPL_COMPONENT_ATTRIBS(className, name) \
     const char* const className::Name = name;

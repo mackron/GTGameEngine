@@ -8,7 +8,8 @@
 
 namespace GTEngine
 {
-    GTENGINE_DECL_COMPONENT_START(SpriteComponent)
+    class SpriteComponent : public Component
+    {
     public:
 
         /// Constructor.
@@ -28,7 +29,9 @@ namespace GTEngine
         /// The texture of the sprite.
         Texture2D *texture;
 
-    GTENGINE_DECL_COMPONENT_END()
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(SpriteComponent)
+    };
 }
 
 #endif

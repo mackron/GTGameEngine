@@ -13,7 +13,8 @@ namespace GTEngine
     /// The engine uses the physics engine internally for doing occlusion culling. Thus, this component uses a collision object as it's main attribute. Unlike
     /// DynamicsComponent, OccluderComponent can only have a single box shape attached. This is due to occluders never really being made up of anything other
     /// than very simple primitives, for efficiency.
-    GTENGINE_DECL_COMPONENT_START(OccluderComponent)
+    class OccluderComponent : public Component
+    {
     public:
 
         /// Constructor.
@@ -47,7 +48,9 @@ namespace GTEngine
         btBoxShape* collisionShape;
 
 
-    GTENGINE_DECL_COMPONENT_END()
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(OccluderComponent)
+    };
 }
 
 

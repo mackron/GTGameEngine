@@ -9,7 +9,8 @@
 /// PointLight.
 namespace GTEngine
 {
-    GTENGINE_DECL_COMPONENT_START(PointLightComponent)
+    class PointLightComponent : public Component
+    {
     public:
         
         /// Constructor.
@@ -84,7 +85,10 @@ namespace GTEngine
         /// Keeps track of whether or not the light should cast shadows.
         bool castShadows;
 
-    GTENGINE_DECL_COMPONENT_END()
+
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(PointLightComponent)
+    };
 }
 
 
@@ -94,7 +98,8 @@ namespace GTEngine
 /// SpotLight.
 namespace GTEngine
 {
-    GTENGINE_DECL_COMPONENT_START(SpotLightComponent)
+    class SpotLightComponent : public Component
+    {
     public:
         
         /// Constructor.
@@ -187,7 +192,10 @@ namespace GTEngine
         /// Keeps track of whether or not the light casts shadows.
         bool castShadows;
 
-    GTENGINE_DECL_COMPONENT_END()
+
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(SpotLightComponent)
+    };
 }
 
 
@@ -195,7 +203,8 @@ namespace GTEngine
 // DirectionalLight
 namespace GTEngine
 {
-    GTENGINE_DECL_COMPONENT_START(DirectionalLightComponent)
+    class DirectionalLightComponent : public Component
+    {
     public:
         
         /// Constructor.
@@ -246,7 +255,10 @@ namespace GTEngine
         bool castShadows;
 
 
-    GTENGINE_DECL_COMPONENT_END()
+
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(DirectionalLightComponent)
+    };
 }
 
 
@@ -254,7 +266,8 @@ namespace GTEngine
 // DirectionalLight
 namespace GTEngine
 {
-    GTENGINE_DECL_COMPONENT_START(AmbientLightComponent)
+    class AmbientLightComponent : public Component
+    {
     public:
         
         /// Constructor.
@@ -285,7 +298,10 @@ namespace GTEngine
         /// The colour of the light. No alpha.
         glm::vec3 colour;
 
-    GTENGINE_DECL_COMPONENT_END()
+
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(AmbientLightComponent)
+    };
 }
 
 

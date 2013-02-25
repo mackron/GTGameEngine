@@ -5,7 +5,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT(CameraComponent, "Camera");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(CameraComponent, "Camera");
 
     CameraComponent::CameraComponent(SceneNode &node)
         : Component(node), projection(),

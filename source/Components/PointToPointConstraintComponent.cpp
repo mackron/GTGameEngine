@@ -5,7 +5,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT(PointToPointConstraintComponent, "PointToPointConstraint");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(PointToPointConstraintComponent, "PointToPointConstraint");
 
     PointToPointConstraintComponent::PointToPointConstraintComponent(SceneNode &node)
         : Component(node),
