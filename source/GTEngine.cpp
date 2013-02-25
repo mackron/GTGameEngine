@@ -159,6 +159,8 @@ namespace GTEngine
         // Font manager.
         FontManager::Shutdown();
 
+        GarbageCollector::CollectSceneRenderers(true);
+
         // We kill our libraries before the major sub-systems.
         ModelLibrary::Shutdown();
         VertexArrayLibrary::Shutdown();
