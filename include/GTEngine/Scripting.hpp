@@ -692,6 +692,13 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the scene.
                     ///     Argument 2: The scene node ID.
                     int GetSceneNodePtrByID(GTCore::Script &script);
+
+
+                    /// Determines if the scene is paused.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene.
+                    int IsPaused(GTCore::Script &script);
                 }
 
 

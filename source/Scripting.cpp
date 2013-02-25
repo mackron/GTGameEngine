@@ -1229,45 +1229,64 @@ namespace GTEngine
 
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnMouseMove(mousePosX, mousePosY)"
-                "    for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseMove) do"
-                "        sceneNode:OnMouseMove(mousePosX, mousePosY);"
+                "    if not self:IsPaused() then"
+                "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseMove) do"
+                "            sceneNode:OnMouseMove(mousePosX, mousePosY);"
+                "        end;"
                 "    end;"
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnMouseWheel(mousePosX, mousePosY, delta)"
-                "    for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseWheel) do"
-                "        sceneNode:OnMouseWheel(mousePosX, mousePosY, delta);"
+                "    if not self:IsPaused() then"
+                "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseWheel) do"
+                "            sceneNode:OnMouseWheel(mousePosX, mousePosY, delta);"
+                "        end;"
                 "    end;"
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnMouseButtonDown(mousePosX, mousePosY, button)"
-                "    for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseButtonDown) do"
-                "        sceneNode:OnMouseButtonDown(mousePosX, mousePosY, button);"
+                "    if not self:IsPaused() then"
+                "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseButtonDown) do"
+                "            sceneNode:OnMouseButtonDown(mousePosX, mousePosY, button);"
+                "        end;"
                 "    end;"
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnMouseButtonUp(mousePosX, mousePosY, button)"
-                "    for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseButtonUp) do"
-                "        sceneNode:OnMouseButtonUp(mousePosX, mousePosY, button);"
+                "    if not self:IsPaused() then"
+                "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseButtonUp) do"
+                "            sceneNode:OnMouseButtonUp(mousePosX, mousePosY, button);"
+                "        end;"
                 "    end;"
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnMouseButtonDoubleClick(mousePosX, mousePosY, button)"
-                "    for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseButtonDoubleClick) do"
-                "        sceneNode:OnMouseButtonDoubleClick(mousePosX, mousePosY, button);"
+                "    if not self:IsPaused() then"
+                "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseButtonDoubleClick) do"
+                "            sceneNode:OnMouseButtonDoubleClick(mousePosX, mousePosY, button);"
+                "        end;"
                 "    end;"
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnKeyPressed(key)"
-                "    for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnKeyPressed) do"
-                "        sceneNode:OnKeyPressed(key);"
+                "    if not self:IsPaused() then"
+                "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnKeyPressed) do"
+                "            sceneNode:OnKeyPressed(key);"
+                "        end;"
                 "    end;"
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnKeyReleased(key)"
-                "    for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnKeyReleased) do"
-                "        sceneNode:OnKeyReleased(key);"
+                "    if not self:IsPaused() then"
+                "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnKeyReleased) do"
+                "            sceneNode:OnKeyReleased(key);"
+                "        end;"
                 "    end;"
+                "end;"
+
+
+                "function GTEngine.Scene:IsPaused()"
+                "    return GTEngine.System.Scene.IsPaused(self._internalPtr);"
                 "end;"
 
 
@@ -1351,6 +1370,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "CreateNewSceneNode",  FFI::SystemFFI::SceneFFI::CreateNewSceneNode);
                         script.SetTableFunction(-1, "GetSceneNodePtrs",    FFI::SystemFFI::SceneFFI::GetSceneNodePtrs);
                         script.SetTableFunction(-1, "GetSceneNodePtrByID", FFI::SystemFFI::SceneFFI::GetSceneNodePtrByID);
+                        script.SetTableFunction(-1, "IsPaused",            FFI::SystemFFI::SceneFFI::IsPaused);
                     }
                     script.Pop(1);
 
@@ -3300,6 +3320,22 @@ namespace GTEngine
                         else
                         {
                             script.PushNil();
+                        }
+
+                        return 1;
+                    }
+
+
+                    int IsPaused(GTCore::Script &script)
+                    {
+                        auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                        if (scene != nullptr)
+                        {
+                            script.Push(scene->IsPaused());
+                        }
+                        else
+                        {
+                            script.Push(false);
                         }
 
                         return 1;
