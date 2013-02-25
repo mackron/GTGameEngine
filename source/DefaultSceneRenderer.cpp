@@ -306,10 +306,6 @@ namespace GTEngine
         this->Shaders.Compositor_FinalOutput         = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_Compositor_FinalOutput");
         this->Shaders.MaterialPass_ClearBackground   = ShaderLibrary::Acquire("Engine_FullscreenQuad_VS",  "Engine_MaterialPass_ClearBackground");
 
-        this->Shaders.Lighting_D1->SetParameter("ShadowMap", &this->shadowMap);
-        this->Shaders.Lighting_P1->SetParameter("ShadowMap", &this->pointLightShadowMap);
-        this->Shaders.Lighting_S1->SetParameter("ShadowMap", &this->shadowMap);
-
 
 
         // Now we need to load the wireframe material.
@@ -1269,6 +1265,8 @@ namespace GTEngine
 
                 rcSetShader.SetParameter("InverseViewMatrix",         glm::inverse(cameraView));
                 rcSetShader.SetParameter("LightProjectionViewMatrix", lightProjection * lightView);
+
+                rcSetShader.SetParameter("ShadowMap",                 &this->shadowMap);
             }
 
 
@@ -1328,6 +1326,8 @@ namespace GTEngine
                 rcSetShader.SetParameter("PLight0_PositionWS",           component->GetNode().GetWorldPosition());
 
                 rcSetShader.SetParameter("InverseViewMatrix",            glm::inverse(cameraView));
+
+                rcSetShader.SetParameter("ShadowMap",                    &this->pointLightShadowMap);
             }
 
 
@@ -1402,6 +1402,9 @@ namespace GTEngine
 
                 rcSetShader.SetParameter("InverseViewMatrix",         glm::inverse(cameraView));
                 rcSetShader.SetParameter("LightProjectionViewMatrix", lightProjection * lightView);
+
+
+                rcSetShader.SetParameter("ShadowMap",                 &this->shadowMap);
             }
 
 
