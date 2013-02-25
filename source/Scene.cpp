@@ -722,7 +722,7 @@ namespace GTEngine
                 for (size_t iLeft = 0; iLeft < sceneNodesLeft.count; ++iLeft)
                 {
                     auto leftSceneNode = this->GetSceneNodeByID(sceneNodesLeft[iLeft]);
-                    assert(leftSceneNode != nullptr);
+                    if (leftSceneNode != nullptr)       // <-- Don't want an assert because there is a situation where the node might have been deleted, in which case this will be null. 
                     {
                         // TODO: Call the C++ events.
 
