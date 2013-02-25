@@ -42,6 +42,12 @@ namespace GTEngine
 
     void GarbageCollector::Shutdown()
     {
+        while (GarbageSceneRenderers.root != nullptr)
+        {
+            delete GarbageSceneRenderers.root->value.object;
+            GarbageSceneRenderers.RemoveRoot();
+        }
+
         while (GarbageTexture2Ds.root != nullptr)
         {
             delete GarbageTexture2Ds.root->value.object;
@@ -70,12 +76,6 @@ namespace GTEngine
         {
             delete GarbageBones.root->value.object;
             GarbageBones.RemoveRoot();
-        }
-
-        while (GarbageSceneRenderers.root != nullptr)
-        {
-            delete GarbageSceneRenderers.root->value.object;
-            GarbageSceneRenderers.RemoveRoot();
         }
     }
 
@@ -221,12 +221,12 @@ namespace GTEngine
         }
     }
 
-    void GarbageCollector::CollectSceneRenderers()
+    void GarbageCollector::CollectSceneRenderers(bool force)
     {
         for (auto i = GarbageSceneRenderers.root; i != nullptr; )
         {
             auto &gcitem = i->value;
-            if (gcitem.counter == 0)
+            if (gcitem.counter == 0 || force)
             {
                 delete gcitem.object;
 

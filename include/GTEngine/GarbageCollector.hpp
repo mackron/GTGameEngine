@@ -116,7 +116,7 @@ namespace GTEngine
         static void CollectBones();
 
         /// Collects garbage scene renderers.
-        static void CollectSceneRenderers();
+        static void CollectSceneRenderers(bool force = false);
     };
 }
 
