@@ -8,7 +8,8 @@
 
 namespace GTEngine
 {
-    GTENGINE_DECL_COMPONENT_START(ModelComponent)
+    class ModelComponent : public Component
+    {
     public:
 
         ModelComponent(SceneNode &node);
@@ -122,7 +123,9 @@ namespace GTEngine
         uint32_t flags;
 
 
-    GTENGINE_DECL_COMPONENT_END()
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(ModelComponent)
+    };
 }
 
 #endif

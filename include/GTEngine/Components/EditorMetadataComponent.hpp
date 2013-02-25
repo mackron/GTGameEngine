@@ -10,7 +10,8 @@
 
 namespace GTEngine
 {
-    GTENGINE_DECL_COMPONENT_START(EditorMetadataComponent)
+    class EditorMetadataComponent : public Component
+    {
     public:
 
         /// Enumerator for constrolling how the custom model should be transformed.
@@ -299,7 +300,9 @@ namespace GTEngine
 
 
 
-    GTENGINE_DECL_COMPONENT_END()
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(EditorMetadataComponent)
+    };
 }
 
 #endif

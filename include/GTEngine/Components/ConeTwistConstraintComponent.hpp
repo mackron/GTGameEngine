@@ -10,7 +10,8 @@
 namespace GTEngine
 {
     /// Component class for a cone twist phsics constraint.
-    GTENGINE_DECL_COMPONENT_START(ConeTwistConstraintComponent)
+    class ConeTwistConstraintComponent : public Component
+    {
     public:
 
         /// Constructor.
@@ -48,8 +49,10 @@ namespace GTEngine
         /// to dynamically delete and re-create the constraint when the attachments are changed.
         ConeTwistConstraint* constraint;
 
-        
-    GTENGINE_DECL_COMPONENT_END()
+     
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(ConeTwistConstraintComponent)
+    };
 }
 
 #endif

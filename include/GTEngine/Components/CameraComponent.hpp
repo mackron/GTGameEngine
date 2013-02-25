@@ -13,7 +13,8 @@ namespace GTEngine
     *
     *   A node that is used as a camera must have a camera component attached.
     */
-    GTENGINE_DECL_COMPONENT_START(CameraComponent)
+    class CameraComponent : public Component
+    {
     public:
 
         /// Constructor.
@@ -74,7 +75,10 @@ namespace GTEngine
         float zNear;    /// The near clipping plane.
         float zFar;     /// The far clipping plane.
 
-    GTENGINE_DECL_COMPONENT_END()
+
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(CameraComponent)
+    };
 }
 
 

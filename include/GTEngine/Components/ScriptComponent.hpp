@@ -9,7 +9,8 @@
 
 namespace GTEngine
 {
-    GTENGINE_DECL_COMPONENT_START(ScriptComponent)
+    class ScriptComponent : public Component
+    {
     public:
 
         /// Constructor.
@@ -280,7 +281,9 @@ namespace GTEngine
         bool hasOnStartupBeenCalled;
 
 
-    GTENGINE_DECL_COMPONENT_END()
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(ScriptComponent)
+    };
 }
 
 #endif

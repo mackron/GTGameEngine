@@ -4,7 +4,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT(SpriteComponent, "Sprite")
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(SpriteComponent, "Sprite")
 
     SpriteComponent::SpriteComponent(SceneNode &node)
         : Component(node), texture(nullptr)

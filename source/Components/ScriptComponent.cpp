@@ -7,7 +7,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT(ScriptComponent, "Script");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(ScriptComponent, "Script");
 
     ScriptComponent::ScriptComponent(SceneNode &node)
         : Component(node), scripts(), publicVariables(), hasOnStartupBeenCalled(false)

@@ -10,7 +10,8 @@
 namespace GTEngine
 {
     /// Component class for a generic 6 DOF phsics constraint.
-    GTENGINE_DECL_COMPONENT_START(GenericConstraintComponent)
+    class GenericConstraintComponent : public Component
+    {
     public:
 
         /// Constructor.
@@ -57,8 +58,10 @@ namespace GTEngine
         /// to dynamically delete and re-create the constraint when the attachments are changed.
         GenericConstraint* constraint;
 
-        
-    GTENGINE_DECL_COMPONENT_END()
+      
+
+        GTENGINE_DECL_COMPONENT_ATTRIBS(GenericConstraintComponent)
+    };
 }
 
 #endif
