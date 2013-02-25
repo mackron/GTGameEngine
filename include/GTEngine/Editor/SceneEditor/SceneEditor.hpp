@@ -52,11 +52,17 @@ namespace GTEngine
         /// Starts playing the game.
         void StartPlaying();
 
+        /// Pauses playing the game.
+        void PausePlaying();
+
         /// Stops playing the game.
         void StopPlaying();
 
         /// Determines whether or not the game is playing.
         bool IsPlaying() const;
+
+        /// Determines whether or not the game is paused.
+        bool IsPaused() const;
 
 
         /// Enables physics simulation of the entire scene.
@@ -391,7 +397,8 @@ namespace GTEngine
 
 
         /// Updates the icon on the "Play" button.
-        void UpdatePlayButtonIcon();
+        //void UpdatePlayButtonIcon();
+        void UpdatePlaybackControls();
 
         /// Updates the icon on the Physics button.
         void UpdatePhysicsButtonIcon();
@@ -539,6 +546,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not the game is playing.
         bool isPlaying;
+
+        /// Keeps track of whether or not the game is paused.
+        bool isPaused;
 
 
         /// Structure containing the GUI elements of the editor.

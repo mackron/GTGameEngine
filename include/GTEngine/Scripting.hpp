@@ -2046,6 +2046,12 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the scene editor.
                     int StartPlaying(GTCore::Script &script);
 
+                    /// Pauses the game.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int PausePlaying(GTCore::Script &script);
+
                     /// Stops the game.
                     ///
                     /// @remarks
@@ -2057,6 +2063,12 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene editor.
                     int IsPlaying(GTCore::Script &script);
+
+                    /// Determines whether or not the game is paused.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int IsPaused(GTCore::Script &script);
 
 
                     /// Enables physics simulation.

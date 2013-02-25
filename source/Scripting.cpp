@@ -1624,8 +1624,10 @@ namespace GTEngine
                         script.SetTableFunction(-1, "IsGizmoInGlobalSpace",                FFI::SystemFFI::SceneEditorFFI::IsGizmoInGlobalSpace);
 
                         script.SetTableFunction(-1, "StartPlaying",                        FFI::SystemFFI::SceneEditorFFI::StartPlaying);
+                        script.SetTableFunction(-1, "PausePlaying",                        FFI::SystemFFI::SceneEditorFFI::PausePlaying);
                         script.SetTableFunction(-1, "StopPlaying",                         FFI::SystemFFI::SceneEditorFFI::StopPlaying);
                         script.SetTableFunction(-1, "IsPlaying",                           FFI::SystemFFI::SceneEditorFFI::IsPlaying);
+                        script.SetTableFunction(-1, "IsPaused",                            FFI::SystemFFI::SceneEditorFFI::IsPaused);
 
                         script.SetTableFunction(-1, "EnablePhysicsSimulation",             FFI::SystemFFI::SceneEditorFFI::EnablePhysicsSimulation);
                         script.SetTableFunction(-1, "DisablePhysicsSimulation",            FFI::SystemFFI::SceneEditorFFI::DisablePhysicsSimulation);
@@ -6088,6 +6090,17 @@ namespace GTEngine
                         return 0;
                     }
 
+                    int PausePlaying(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->PausePlaying();
+                        }
+
+                        return 0;
+                    }
+
                     int StopPlaying(GTCore::Script &script)
                     {
                         auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
@@ -6105,6 +6118,21 @@ namespace GTEngine
                         if (sceneEditor != nullptr)
                         {
                             script.Push(sceneEditor->IsPlaying());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+                    int IsPaused(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->IsPaused());
                         }
                         else
                         {

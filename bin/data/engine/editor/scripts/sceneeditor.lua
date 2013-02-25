@@ -2326,17 +2326,17 @@ end
 function GTGUI.Element:SceneEditor(_internalPtr)
     self:SubEditor();
 
-    self.Viewport          = GTGUI.Server.New("<div parentid='" .. self:GetID()               .. "' styleclass='scene-editor-viewport'    style='' />");
-    self.Panel             = GTGUI.Server.New("<div parentid='" .. self:GetID()               .. "' styleclass='scene-editor-panel'       style='' />");
-    self.ContextMenu       = GTGUI.Server.New("<div                                                 styleclass='menu'                     style='z-index:100; positioning:absolute; visible:false' />");
+    self.Viewport          = GTGUI.Server.New("<div parentid='" .. self:GetID()                   .. "' styleclass='scene-editor-viewport'    style='' />");
+    self.Panel             = GTGUI.Server.New("<div parentid='" .. self:GetID()                   .. "' styleclass='scene-editor-panel'       style='' />");
+    self.ContextMenu       = GTGUI.Server.New("<div                                                     styleclass='menu'                     style='z-index:100; positioning:absolute; visible:false' />");
     
-    self.PlayButton        = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()       .. "' styleclass='physics-button-container' style='' />");
-    self.PlayButtonIcon    = GTGUI.Server.New("<div parentid='" .. self.PlayButton:GetID()    .. "' styleclass='physics-button-icon'      style='' />");
-    self.PlayButtonText    = GTGUI.Server.New("<div parentid='" .. self.PlayButton:GetID()    .. "' styleclass='physics-button-text'      style=''>Play</div>");
+    self.PlaybackContainer = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()           .. "' styleclass='playback-container' />");
+    self.PlayPauseButton   = GTGUI.Server.New("<div parentid='" .. self.PlaybackContainer:GetID() .. "' styleclass='play-button' />");
+    self.StopButton        = GTGUI.Server.New("<div parentid='" .. self.PlaybackContainer:GetID() .. "' styleclass='stop-button' style='enabled:false;' />");
     
-    self.PhysicsButton     = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()       .. "' styleclass='physics-button-container' style='' />");
-    self.PhysicsButtonIcon = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID() .. "' styleclass='physics-button-icon'      style='' />");
-    self.PhysicsButtonText = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID() .. "' styleclass='physics-button-text'      style=''>Physics</div>");
+    self.PhysicsButton     = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()           .. "' styleclass='physics-button-container' style='' />");
+    self.PhysicsButtonIcon = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID()     .. "' styleclass='physics-button-icon'      style='' />");
+    self.PhysicsButtonText = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID()     .. "' styleclass='physics-button-text'      style=''>Physics</div>");
     
     
     
@@ -2435,13 +2435,34 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     
     
-    self.PlayButton:OnPressed(function()
-        if GTEngine.System.SceneEditor.IsPlaying(self._internalPtr) then
-            GTEngine.System.SceneEditor.StopPlaying(self._internalPtr);
-        else
+    self.PlayPauseButton:OnPressed(function()
+        if not GTEngine.System.SceneEditor.IsPlaying(self._internalPtr) or GTEngine.System.SceneEditor.IsPaused(self._internalPtr) then
             GTEngine.System.SceneEditor.StartPlaying(self._internalPtr);
+        else
+            GTEngine.System.SceneEditor.PausePlaying(self._internalPtr);
         end
     end);
+    
+    self.StopButton:OnPressed(function()
+        GTEngine.System.SceneEditor.StopPlaying(self._internalPtr);
+    end);
+    
+    -- Updates the playback control buttons.
+    function self:UpdatePlaybackControls()
+        if not GTEngine.System.SceneEditor.IsPlaying(self._internalPtr) or GTEngine.System.SceneEditor.IsPaused(self._internalPtr) then
+            self.PlayPauseButton:DetachStyleClass("pause-button");
+            self.PlayPauseButton:AttachStyleClass("play-button");
+        else
+            self.PlayPauseButton:DetachStyleClass("play-button");
+            self.PlayPauseButton:AttachStyleClass("pause-button");
+        end
+        
+        if GTEngine.System.SceneEditor.IsPlaying(self._internalPtr) then
+            self.StopButton:Enable();
+        else
+            self.StopButton:Disable();
+        end
+    end
     
     -- Updates the "Play" button icon to show the correct icon based on whether or not the game is playing. This is never
     -- actually called from the scripting environment, and instead is called from the C++ side.
