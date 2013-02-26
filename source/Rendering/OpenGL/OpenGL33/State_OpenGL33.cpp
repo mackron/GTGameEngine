@@ -13,14 +13,60 @@ namespace GTEngine
           enabledStates(COLOUR_WRITES_BIT | DEPTH_WRITES_BIT | DEPTH_TEST_BIT | FACE_CULLING_BIT),
           stencilMask(-1),
           currentRCClear(nullptr), currentRCSetGlobalState(nullptr),
-          currentTextureObjects(), currentProgramObjects(), currentVertexArrayObjects(), currentBufferObjects(), currentFramebufferObjects(),
-          deletedTextureObjects(), deletedProgramObjects(), deletedVertexArrayObjects(), deletedBufferObjects(), deletedFramebufferObjects()
+          instantiatedTextureObjects(), instantiatedProgramObjects(), instantiatedVertexArrayObjects(), instantiatedBufferObjects(), instantiatedFramebufferObjects(),
+          deletedTextureObjects(),      deletedProgramObjects(),      deletedVertexArrayObjects(),      deletedBufferObjects(),      deletedFramebufferObjects()
     {
     }
 
     State_OpenGL33::~State_OpenGL33()
     {
         this->ClearDeletedOpenGLObjects();
+    }
+
+
+    void State_OpenGL33::MarkTextureObjectAsDeleted(GLuint* textureObject)
+    {
+        assert(this->instantiatedTextureObjects.Exists(textureObject));
+        {
+            this->instantiatedTextureObjects.RemoveFirstOccuranceOf(textureObject);
+            this->deletedTextureObjects.PushBack(textureObject);
+        }
+    }
+
+    void State_OpenGL33::MarkProgramObjectAsDeleted(GLuint* programObject)
+    {
+        assert(this->instantiatedProgramObjects.Exists(programObject));
+        {
+            this->instantiatedProgramObjects.RemoveFirstOccuranceOf(programObject);
+            this->deletedProgramObjects.PushBack(programObject);
+        }
+    }
+
+    void State_OpenGL33::MarkVertexArrayObjectAsDeleted(GLuint* vertexArrayObject)
+    {
+        assert(this->instantiatedVertexArrayObjects.Exists(vertexArrayObject));
+        {
+            this->instantiatedVertexArrayObjects.RemoveFirstOccuranceOf(vertexArrayObject);
+            this->deletedVertexArrayObjects.PushBack(vertexArrayObject);
+        }
+    }
+
+    void State_OpenGL33::MarkBufferObjectAsDeleted(GLuint* bufferObject)
+    {
+        assert(this->instantiatedBufferObjects.Exists(bufferObject));
+        {
+            this->instantiatedBufferObjects.RemoveFirstOccuranceOf(bufferObject);
+            this->deletedBufferObjects.PushBack(bufferObject);
+        }
+    }
+
+    void State_OpenGL33::MarkFramebufferObjectAsDeleted(GLuint* framebufferObject)
+    {
+        assert(this->instantiatedFramebufferObjects.Exists(framebufferObject));
+        {
+            this->instantiatedFramebufferObjects.RemoveFirstOccuranceOf(framebufferObject);
+            this->deletedFramebufferObjects.PushBack(framebufferObject);
+        }
     }
 
 
