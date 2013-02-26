@@ -159,6 +159,9 @@
     <Filter Include="source\Scripting">
       <UniqueIdentifier>{3d65def6-a3c5-4d08-99db-f01d36558573}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Rendering\OpenGL\OpenGL33">
+      <UniqueIdentifier>{31bc8600-c0b2-4301-a7ec-d9e12782b992}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -749,6 +752,15 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\CollisionShapeComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer2.hpp">
+      <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\RendererCaps.hpp">
+      <Filter>source\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.hpp">
+      <Filter>source\Rendering\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1257,6 +1269,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Game.cpp">
       <Filter>source\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Renderer2.cpp">
+      <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Renderer_OpenGL33.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.cpp">
+      <Filter>source\Rendering\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

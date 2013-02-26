@@ -309,6 +309,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFaceCulling.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFramebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer2.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\ShaderStages.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Texture2D.hpp" />
@@ -356,6 +357,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\RendererCaps.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -485,13 +488,16 @@
     <ClCompile Include="..\..\..\source\Recast\RecastRegion.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\OpenGL20.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\Renderer_Resources.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Renderer_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCSetFaceCulling.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCSetFramebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\Renderer2.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Shader.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Texture2D.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\TextureCube.cpp" />
