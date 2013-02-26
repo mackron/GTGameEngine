@@ -3,8 +3,9 @@
 #ifndef __GTEngine_Rendering_State_OpenGL33_hpp_
 #define __GTEngine_Rendering_State_OpenGL33_hpp_
 
-#include "RCClear.hpp"
 #include "RCSetGlobalState.hpp"
+#include "RCClear.hpp"
+#include "RCDraw.hpp"
 #include "RCCreateVertexArray.hpp"
 #include "RCDeleteVertexArray.hpp"
 
@@ -46,8 +47,9 @@ namespace GTEngine
 
         
         // Pointers to the current render command for a particular operation. When null, a new one needs to be created and set.
-        RCClear*          currentRCClear;
         RCSetGlobalState* currentRCSetGlobalState;
+        RCClear*          currentRCClear;
+        RCDraw*           currentRCDraw;
 
 
 

@@ -23,13 +23,13 @@ namespace GTEngine
 
 
         /// Retrieves a pointer to the main OpenGL VAO object.
-        GLuint* GetOpenGLObjectPtr() { return this->objectGL; }
+        GLuint* GetOpenGLObjectPtr() const { return this->objectGL; }
 
         /// Retrieves a pointer to the OpenGL object containing the vertex data.
-        GLuint* GetOpenGLVertexObjectPtr() { return this->vertexObjectGL; }
+        GLuint* GetOpenGLVertexObjectPtr() const { return this->vertexObjectGL; }
 
         /// Retrieves a pointer to the OpenGL object containing the index data.
-        GLuint* GetOpenGLIndexObjectPtr() { return this->indexObjectGL; }
+        GLuint* GetOpenGLIndexObjectPtr() const { return this->indexObjectGL; }
 
 
 

@@ -12,7 +12,7 @@ namespace GTEngine
           currentFBO(nullptr),
           enabledStates(COLOUR_WRITES_BIT | DEPTH_WRITES_BIT | DEPTH_TEST_BIT | FACE_CULLING_BIT),
           stencilMask(-1),
-          currentRCClear(nullptr), currentRCSetGlobalState(nullptr),
+          currentRCSetGlobalState(nullptr), currentRCClear(nullptr), currentRCDraw(nullptr),
           instantiatedTextureObjects(), instantiatedProgramObjects(), instantiatedVertexArrayObjects(), instantiatedBufferObjects(), instantiatedFramebufferObjects(),
           deletedTextureObjects(),      deletedProgramObjects(),      deletedVertexArrayObjects(),      deletedBufferObjects(),      deletedFramebufferObjects()
     {
