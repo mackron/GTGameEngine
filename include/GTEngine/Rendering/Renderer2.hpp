@@ -224,6 +224,7 @@ namespace GTEngine
         static void SetClearStencil(int stencil);
 
 
+
         ///////////////////////////
         // Drawing
 
@@ -248,6 +249,42 @@ namespace GTEngine
         /// @param format   [in] The format of the vertex data.
         /// @param mode     [in] The primitives to draw (triangles or lines).
         static void Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode = DrawMode_Triangles);
+
+
+
+        ///////////////////////////
+        // Resources
+        //
+        // Everything here is synchronized and can be called on any thread. The objects themselves will not be created until the next time
+        // ExecuteCallCache() is called. Objects can be deleted at any time from any thread.
+        //
+        // The functions for creating and deleteing resources are slightly different to the rest. When ExecuteCallCache() is called, the
+        // creation functions will be called first and deletion functions will be called last. This ensures all resources stay alive for
+        // at least one frame. A side affect does occur, though. With anything that is bound such as programs and framebuffers, you can not
+        // rely on a Delete function for unbinding - it must be unbound manually.
+
+        /// Creates a vertex array.
+        ///
+        /// @param usage  [in] The usage type of the vertex array (static or dynamic).
+        /// @param format [in] The format of the vertices.
+        ///
+        /// @return A pointer to the new vertex array.
+        static VertexArray* CreateVertexArray(VertexArrayUsage usage, const VertexFormat &format);
+
+        /// Deletes a vertex array created by CreateVertexArray().
+        ///
+        /// @param vertexArrayToDelete [in] A pointer to the vertex array to delete.
+        static void DeleteVertexArray(VertexArray* vertexArrayToDelete);
+
+        /// Updates the given vertex array's vertex data on the rendering side.
+        ///
+        /// @param vertexArray [in] A reference to the vertex array whose index data is being updated.
+        static void UpdateVertexArrayVertexData(VertexArray &vertexArray);
+
+        /// Updates the given vertex array's index data on the rendering side.
+        ///
+        /// @param vertexArray [in] A reference to the vertex array whose index data is being updated.
+        static void UpdateVertexArrayIndexData(VertexArray &vertexArray);
 
 
 

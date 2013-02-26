@@ -15,16 +15,6 @@ namespace GTEngine
         Renderer::OnVertexArrayCreated(*this);
     }
 
-    VertexArray::VertexArray(GTCore::Deserializer &deserializer)
-        : usage(VertexArrayUsage_Static), format(),
-          vertices(nullptr), vertexCount(0), indices(nullptr), indexCount(0),
-          verticesMapped(false), indicesMapped(false),
-          rendererData(nullptr)
-    {
-        Renderer::OnVertexArrayCreated(*this);
-        this->Deserialize(deserializer);
-    }
-
     VertexArray::~VertexArray()
     {
         delete [] this->vertices;
@@ -61,6 +51,8 @@ namespace GTEngine
 
 
         Renderer::OnVertexArrayVertexDataChanged(*this);
+        
+        this->OnVertexDataChanged();
     }
 
     void VertexArray::SetIndexData(const unsigned int *indices, size_t indexCount)
@@ -83,9 +75,11 @@ namespace GTEngine
 
 
         Renderer::OnVertexArrayIndexDataChanged(*this);
+
+        this->OnIndexDataChanged();
     }
 
-    float * VertexArray::MapVertexData()
+    float* VertexArray::MapVertexData()
     {
         if (!this->verticesMapped)
         {
@@ -104,10 +98,12 @@ namespace GTEngine
             this->verticesMapped = false;
 
             Renderer::OnVertexArrayVertexDataChanged(*this);
+
+            this->OnVertexDataChanged();
         }
     }
 
-    unsigned int * VertexArray::MapIndexData()
+    unsigned int* VertexArray::MapIndexData()
     {
         if (!this->indicesMapped)
         {
@@ -126,6 +122,8 @@ namespace GTEngine
             this->indicesMapped = false;
 
             Renderer::OnVertexArrayIndexDataChanged(*this);
+
+            this->OnIndexDataChanged();
         }
     }
 
@@ -271,6 +269,9 @@ namespace GTEngine
 
         Renderer::OnVertexArrayVertexDataChanged(*this);
         Renderer::OnVertexArrayIndexDataChanged(*this);
+
+        this->OnVertexDataChanged();
+        this->OnIndexDataChanged();
     }
 }
 

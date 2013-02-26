@@ -360,8 +360,11 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\CapabilityBits.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCClear.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateVertexArray.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteVertexArray.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetGlobalState.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\VertexArray_OpenGL33.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\RendererCaps.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp" />
   </ItemGroup>
@@ -496,9 +499,12 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\OpenGL20.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\Renderer_Resources.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCClear.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateVertexArray.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteVertexArray.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetGlobalState.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Renderer_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\VertexArray_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCSetFaceCulling.cpp" />

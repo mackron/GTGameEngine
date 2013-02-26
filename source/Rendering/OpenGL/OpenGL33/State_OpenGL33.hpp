@@ -5,9 +5,15 @@
 
 #include "RCClear.hpp"
 #include "RCSetGlobalState.hpp"
+#include "RCCreateVertexArray.hpp"
+#include "RCDeleteVertexArray.hpp"
+
 #include "../CapabilityBits.hpp"
+
 #include <gtgl/gtgl.h>
 #include <cstdint>
+
+#include <GTCore/Vector.hpp>
 
 namespace GTEngine
 {
@@ -45,14 +51,52 @@ namespace GTEngine
 
 
 
+        /// The list of currently instantiated textures. This includes all texture types.
+        GTCore::Vector<GLuint*> currentTextureObjects;
+
+        /// The list of currently instantiated shader programs.
+        GTCore::Vector<GLuint*> currentProgramObjects;
+
+        /// The list of currently instantiated VAO's.
+        GTCore::Vector<GLuint*> currentVertexArrayObjects;
+
+        /// The list of currently instantiated buffer objects.
+        GTCore::Vector<GLuint*> currentBufferObjects;
+
+        /// The list of currently instantiated framebuffer objects.
+        GTCore::Vector<GLuint*> currentFramebufferObjects;
+        
+
+        /// The list texture objects that need to be deleted.
+        GTCore::Vector<GLuint*> deletedTextureObjects;
+
+        /// The list of shader programs that need to be deleted.
+        GTCore::Vector<GLuint*> deletedProgramObjects;
+
+        /// The list of VAO's that need to be deleted.
+        GTCore::Vector<GLuint*> deletedVertexArrayObjects;
+
+        /// The list of buffer objects that need to be deleted.
+        GTCore::Vector<GLuint*> deletedBufferObjects;
+
+        /// The list of framebuffer objects that need to be deleted.
+        GTCore::Vector<GLuint*> deletedFramebufferObjects;
+
+
+
         /// Constructor.
         State_OpenGL33();
 
-        /// Copy constructor.
-        State_OpenGL33(const State_OpenGL33 &other);
+        /// Destructor.
+        ~State_OpenGL33();
 
-        /// Assignment operator.
-        State_OpenGL33 & operator=(const State_OpenGL33 &other);
+        /// Clears (deletes) OpenGL objects that have been marked for deletion.
+        void ClearDeletedOpenGLObjects();
+
+
+    private:    // No copying.
+        State_OpenGL33(const State_OpenGL33 &);
+        State_OpenGL33 & operator=(const State_OpenGL33 &);
     };
 }
 
