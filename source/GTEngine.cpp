@@ -89,6 +89,13 @@ namespace GTEngine
         Log("Starting Rendering Sub-System...");
         if (Renderer::Startup())
         {
+            /* Uncomment this when the new renderer is in place.
+            Log("Renderer Caps:");
+            Log("    Max Colour Attachments: %d", Renderer2::MaxColourAttachments);
+            Log("    Max Draw Buffers:       %d", Renderer2::MaxDrawBuffers);
+            Log("    Max Texture Units:      %d", Renderer2::MaxTextureUnits);
+            */
+
             Log("Loading Shaders...");
             ShaderLibrary::LoadFromDirectory("engine/shaders/glsl");
             ShaderLibrary::LoadFromDirectory("shaders/glsl");

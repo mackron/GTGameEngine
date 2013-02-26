@@ -21,6 +21,7 @@
 #endif
 
 #include "OpenGL/TypeConversion.hpp"
+#include "OpenGL/Debugging_OpenGL.hpp"
 
 
 // OpenGL Utilities
@@ -275,16 +276,6 @@ namespace GTEngine
         RendererEventHandlerLock.Unlock();
     }
 }
-
-// Renderer support functions.
-namespace GTEngine
-{
-    void OpenGLDebugMessageHandler(const char* message)
-    {
-        GTEngine::Log("%s", message);
-    }
-}
-
 
 
 namespace GTEngine
