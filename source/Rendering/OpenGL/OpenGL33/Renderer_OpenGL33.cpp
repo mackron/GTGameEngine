@@ -4,6 +4,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Rendering/RCQueue.hpp>
+#include <GTEngine/Rendering/RCCache.hpp>
 
 #include <gtgl/gtgl.h>
 
@@ -16,6 +17,43 @@
 
 #include "../RendererCaps.hpp"
 #include "../Debugging_OpenGL.hpp"
+#include "../OpenGL33/State_OpenGL33.hpp"
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// This is a general explanation on how the caching system works.
+//
+// Conceptually, the idea is that each individual call has it's own cachable version. In reality this is too inefficient because there exists
+// overhead when performing the actual caching. Instead, calls are batched based on their general type. For example, many state changes don't
+// affect other state changes. Thus, state changes can often be performed in any order. If two state changes occur straight after each other,
+// they can be batched into a single call instead of being separated into separate calls.
+//
+// Here are the different categories of calls.
+//      Basic State Changes (glClearColor, glEnable/glDisable, etc)
+//      Texture Binding
+//      Texture State Changes
+//      Buffer Binding
+//      Buffer State Changes
+//      Shader Binding
+//      Shader State Chagnes
+//      Drawing (glClear, glDrawElements, etc)
+//
+// You will see how many categories don't actually affect each other. For example, texture bindings will never be affected by basic state
+// changes. What we do is keep track of a pointer to a cached call that can be used for a call that falls into that same category. When that
+// pointer is null, we just create a new cached call. It will be set to null when another call is performed where it can not longer be used
+// with batching.
+//
+// The state of the renderer is only relevant for the construction of the cached calls. When calls are actually getting executed, they won't
+// ever care about state. Thus, we use a State object that will contain the state at the time in which a cached call is created. This state
+// object is used in determine when a particular operation actually needs to be performed. For example, if the current texture is the same as
+// the one getting bound, it'll just skip over the call.
+//
+// The aforementioned state object will also contain pointers to the different cached calls where an individual call can be cached. These
+// pointers will be cleared to null when the call caches are swapped. When the pointers a null, it means the call can not be batched and a
+// new call will need to be created and cached.
+
+
 
 
 namespace GTEngine
@@ -32,12 +70,31 @@ namespace GTEngine
     /// The hardware capabilities. This is initialised at startup.
     static RendererCaps_OpenGL RendererCaps;
 
+    /// The current state.
+    static State_OpenGL33 State;
+
 
     /// The two call caches. The back call back is identified with BackCallCacheIndex.
     static RCQueue CallCaches[2];
 
     /// The index identifying the back call cache.
     static unsigned int BackCallCacheIndex = 0;
+
+
+    /// The caches for individual commands. There are two of each - one for the back and one for the front.
+    static struct _RCCaches
+    {
+        RCCache<RCClear>          RCClearCache;
+        RCCache<RCSetGlobalState> RCSetGlobalStateCache;
+
+
+        void Clear()
+        {
+            this->RCClearCache.Reset();
+            this->RCSetGlobalStateCache.Reset();
+        }
+
+    }RCCaches[2];
 
 
 
@@ -89,13 +146,13 @@ namespace GTEngine
 
 
                 // Now we'll set some defaults.
-                glEnable(GL_DEPTH_TEST);
                 glDepthFunc(GL_LEQUAL);
+                glEnable(GL_DEPTH_TEST);
                 glEnable(GL_CULL_FACE);
 
                 // TODO: Check if we need these texture enables by default. Should the shader control these when they are bound?
-                glEnable(GL_TEXTURE_2D);
-                glEnable(GL_TEXTURE_CUBE_MAP);
+                //glEnable(GL_TEXTURE_2D);
+                //glEnable(GL_TEXTURE_CUBE_MAP);
                 
 
                 // We're going to initialise the X11 sub-system from here.
@@ -194,6 +251,9 @@ namespace GTEngine
 
         // 2) Clear the new back cache in preparation for filling by another thread.
         CallCaches[BackCallCacheIndex].Clear();
+
+        // 3) Clear the sub-caches.
+        RCCaches[BackCallCacheIndex].Clear();
     }
 
     void Renderer2::ExecuteCallCache()
@@ -209,11 +269,136 @@ namespace GTEngine
 
 
 
+
     /////////////////////////////////////////////////////////////
     // Cached Calls
 
+    #define UPDATE_CURRENT_RC(renderCommandName) \
+        if (State.current##renderCommandName == nullptr) \
+        { \
+            State.current##renderCommandName = &RCCaches[BackCallCacheIndex].renderCommandName##Cache.Acquire(); \
+            CallCaches[BackCallCacheIndex].Append(*State.current##renderCommandName); \
+        }
 
 
+    ///////////////////////////
+    // Simple State Changes
+
+    void Renderer2::SetViewport(int x, int y, unsigned int width, unsigned int height)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetViewport(x, y, width, height);
+        }
+
+
+        State.currentRCClear = nullptr;
+    }
+
+    void Renderer2::SetScissor(int x, int y, unsigned int width, unsigned int height)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetScissor(x, y, width, height);
+        }
+
+
+        State.currentRCClear = nullptr;
+    }
+
+
+    void Renderer2::SetClearColour(float r, float g, float b, float a)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetClearColour(r, g, b, a);
+        }
+
+
+        State.currentRCClear = nullptr;
+    }
+
+    void Renderer2::SetClearDepth(float depth)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetClearDepth(depth);
+        }
+
+
+        State.currentRCClear = nullptr;
+    }
+
+    void Renderer2::SetClearStencil(int stencil)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetClearStencil(stencil);
+        }
+
+
+        State.currentRCClear = nullptr;
+    }
+
+
+    ///////////////////////////
+    // Drawing
+
+    void Renderer2::Clear(unsigned int bufferMask)
+    {
+        UPDATE_CURRENT_RC(RCClear);
+        assert(State.currentRCClear != nullptr);
+        {
+            GLbitfield glmask = 0;
+
+            if (bufferMask & BufferType_Colour)
+            {
+                glmask |= GL_COLOR_BUFFER_BIT;
+            }
+            if (bufferMask & BufferType_Depth)
+            {
+                glmask |= GL_DEPTH_BUFFER_BIT;
+            }
+            if (bufferMask & BufferType_Stencil)
+            {
+                glmask |= GL_STENCIL_BUFFER_BIT;
+            }
+
+            State.currentRCClear->Clear(glmask);
+        }
+
+
+        State.currentRCSetGlobalState = nullptr;
+    }
+
+    void Renderer2::Draw(const VertexArray &vertexArray, DrawMode mode)
+    {
+        //UPDATE_CURRENT_RC(RCDrawVertexArray);
+        //assert(State.currentRCDrawVertexArray != nullptr);
+        //{
+        //}
+
+
+        State.currentRCClear          = nullptr;
+        State.currentRCSetGlobalState = nullptr;
+    }
+
+    void Renderer2::Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
+    {
+        //UPDATE_CURRENT_RC(RCDrawVertexArray);
+        //assert(State.currentRCDrawVertexArray != nullptr);
+        //{
+        //}
+
+
+        State.currentRCClear          = nullptr;
+        State.currentRCSetGlobalState = nullptr;
+    }
 
 
 
