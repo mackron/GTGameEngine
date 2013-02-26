@@ -52,19 +52,19 @@ namespace GTEngine
 
 
         /// The list of currently instantiated textures. This includes all texture types.
-        GTCore::Vector<GLuint*> currentTextureObjects;
+        GTCore::Vector<GLuint*> instantiatedTextureObjects;
 
         /// The list of currently instantiated shader programs.
-        GTCore::Vector<GLuint*> currentProgramObjects;
+        GTCore::Vector<GLuint*> instantiatedProgramObjects;
 
         /// The list of currently instantiated VAO's.
-        GTCore::Vector<GLuint*> currentVertexArrayObjects;
+        GTCore::Vector<GLuint*> instantiatedVertexArrayObjects;
 
         /// The list of currently instantiated buffer objects.
-        GTCore::Vector<GLuint*> currentBufferObjects;
+        GTCore::Vector<GLuint*> instantiatedBufferObjects;
 
         /// The list of currently instantiated framebuffer objects.
-        GTCore::Vector<GLuint*> currentFramebufferObjects;
+        GTCore::Vector<GLuint*> instantiatedFramebufferObjects;
         
 
         /// The list texture objects that need to be deleted.
@@ -89,6 +89,23 @@ namespace GTEngine
 
         /// Destructor.
         ~State_OpenGL33();
+
+        
+        /// Marks a texture as deleted.
+        void MarkTextureObjectAsDeleted(GLuint* textureObject);
+
+        /// Marks a shader program as deleted.
+        void MarkProgramObjectAsDeleted(GLuint* programObject);
+
+        /// Marks a vertex array as deleted.
+        void MarkVertexArrayObjectAsDeleted(GLuint* vertexArrayObject);
+
+        /// Marks a buffer object as deleted.
+        void MarkBufferObjectAsDeleted(GLuint* bufferObject);
+
+        /// Marks a framebuffer object as deleted.
+        void MarkFramebufferObjectAsDeleted(GLuint* framebufferObject);
+
 
         /// Clears (deletes) OpenGL objects that have been marked for deletion.
         void ClearDeletedOpenGLObjects();

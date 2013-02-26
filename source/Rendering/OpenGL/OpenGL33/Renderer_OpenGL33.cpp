@@ -453,8 +453,8 @@ namespace GTEngine
         //}
 
 
-        State.currentRCClear          = nullptr;
-        State.currentRCSetGlobalState = nullptr;
+        //State.currentRCClear          = nullptr;
+        //State.currentRCSetGlobalState = nullptr;
     }
 
 
@@ -464,14 +464,14 @@ namespace GTEngine
 
     VertexArray* Renderer2::CreateVertexArray(VertexArrayUsage usage, const VertexFormat &format)
     {
-        State.currentVertexArrayObjects.PushBack(new GLuint(0));
-        GLuint* vertexArrayObject  = State.currentVertexArrayObjects.GetBack();
+        State.instantiatedVertexArrayObjects.PushBack(new GLuint(0));
+        GLuint* vertexArrayObject  = State.instantiatedVertexArrayObjects.GetBack();
 
-        State.currentBufferObjects.PushBack(new GLuint(0));
-        GLuint* vertexBufferObject = State.currentBufferObjects.GetBack();
+        State.instantiatedBufferObjects.PushBack(new GLuint(0));
+        GLuint* vertexBufferObject = State.instantiatedBufferObjects.GetBack();
 
-        State.currentBufferObjects.PushBack(new GLuint(0));
-        GLuint* indexBufferObject  = State.currentBufferObjects.GetBack();
+        State.instantiatedBufferObjects.PushBack(new GLuint(0));
+        GLuint* indexBufferObject  = State.instantiatedBufferObjects.GetBack();
 
 
         ResourceCreationLock.Lock();
@@ -515,14 +515,9 @@ namespace GTEngine
 
 
                 // The objects need to be marked for deletion, but not actually deleted yet.
-                State.currentVertexArrayObjects.RemoveFirstOccuranceOf(vertexArrayObject);
-                State.deletedVertexArrayObjects.PushBack(vertexArrayObject);
-
-                State.currentBufferObjects.RemoveFirstOccuranceOf(vertexBufferObject);
-                State.deletedBufferObjects.PushBack(vertexBufferObject);
-
-                State.currentBufferObjects.RemoveFirstOccuranceOf(indexBufferObject);
-                State.deletedBufferObjects.PushBack(indexBufferObject);
+                State.MarkVertexArrayObjectAsDeleted(vertexArrayObject);
+                State.MarkBufferObjectAsDeleted(vertexBufferObject);
+                State.MarkBufferObjectAsDeleted(indexBufferObject);
             }
 
 
