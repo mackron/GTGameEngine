@@ -248,7 +248,7 @@ namespace GTEngine
         /// @param indices  [in] A pointer to the buffer containing the index data.
         /// @param format   [in] The format of the vertex data.
         /// @param mode     [in] The primitives to draw (triangles or lines).
-        static void Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode = DrawMode_Triangles);
+        //static void Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode = DrawMode_Triangles);
 
 
 
@@ -276,15 +276,31 @@ namespace GTEngine
         /// @param vertexArrayToDelete [in] A pointer to the vertex array to delete.
         static void DeleteVertexArray(VertexArray* vertexArrayToDelete);
 
-        /// Updates the given vertex array's vertex data on the rendering side.
+        /// Sets the vertex data of the given vertex array.
         ///
-        /// @param vertexArray [in] A reference to the vertex array whose index data is being updated.
-        static void UpdateVertexArrayVertexData(VertexArray &vertexArray);
+        /// @param vertexArray [in] A reference to the vertex array whose having it's data set.
+        /// @param vertices    [in] A pointer to the buffer containing the vertex data.
+        /// @param vertexCount [in] The number of vertices defined in the buffer.
+        ///
+        /// @remarks
+        ///     The vertex format and usage is defined by vertex array.
+        ///     @par
+        ///     If the vertex array is set to keep a local copy, it will be copied over at this point.
+        ///     @par
+        ///     This function will create a copy of the data, so it is safe to delete the data immediately after this call.
+        static void SetVertexArrayVertexData(VertexArray &vertex, const float* vertices, size_t vertexCount);
 
-        /// Updates the given vertex array's index data on the rendering side.
+        /// Sets the index data of the given vertex array.
         ///
-        /// @param vertexArray [in] A reference to the vertex array whose index data is being updated.
-        static void UpdateVertexArrayIndexData(VertexArray &vertexArray);
+        /// @param vertexArray [in] A reference to the vertex array whose having it's data set.
+        /// @param indices     [in] A pointer to the buffer containing the indices.
+        /// @param indexCount  [in] The number of indices defined in the buffer.
+        ///
+        /// @remarks
+        ///     If the vertex array is set to keep a local copy, it will be copied over at this point.
+        ///     @par
+        ///     This function will create a copy of the data, so it is safe to delete the data immediately after this call.
+        static void SetVertexArrayIndexData(VertexArray &vertex, const unsigned int* indices, size_t indexCount);
 
 
 

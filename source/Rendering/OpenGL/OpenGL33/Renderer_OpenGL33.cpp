@@ -18,6 +18,7 @@
 
 #include "../RendererCaps.hpp"
 #include "../Debugging_OpenGL.hpp"
+#include "../TypeConversion.hpp"
 #include "State_OpenGL33.hpp"
 #include "VertexArray_OpenGL33.hpp"
 
@@ -99,9 +100,9 @@ namespace GTEngine
     /// The caches for individual commands. There are two of each - one for the back and one for the front.
     static struct _RCCaches
     {
-        RCCache<RCClear>          RCClearCache;
         RCCache<RCSetGlobalState> RCSetGlobalStateCache;
-
+        RCCache<RCClear>          RCClearCache;
+        RCCache<RCDraw>           RCDrawCache;
 
         // Create and Delete RCs.
         RCCache<RCCreateVertexArray> RCCreateVertexArrayCache;
@@ -110,8 +111,9 @@ namespace GTEngine
 
         void Clear()
         {
-            this->RCClearCache.Reset();
             this->RCSetGlobalStateCache.Reset();
+            this->RCClearCache.Reset();
+            this->RCDrawCache.Reset();
 
             
             ResourceCreationLock.Lock();
@@ -435,16 +437,22 @@ namespace GTEngine
 
     void Renderer2::Draw(const VertexArray &vertexArray, DrawMode mode)
     {
-        //UPDATE_CURRENT_RC(RCDrawVertexArray);
-        //assert(State.currentRCDrawVertexArray != nullptr);
-        //{
-        //}
+        UPDATE_CURRENT_RC(RCDraw);
+        assert(State.currentRCDraw != nullptr);
+        {
+            auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
+            {
+                State.currentRCDraw->Draw(vertexArrayGL33.GetOpenGLObjectPtr(), ToOpenGLDrawMode(mode), vertexArrayGL33.GetIndexCount());
+            }
+        }
 
 
-        State.currentRCClear          = nullptr;
         State.currentRCSetGlobalState = nullptr;
+        State.currentRCClear          = nullptr;
+        State.currentRCDraw           = nullptr;
     }
 
+    /*
     void Renderer2::Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
     {
         //UPDATE_CURRENT_RC(RCDrawVertexArray);
@@ -456,6 +464,7 @@ namespace GTEngine
         //State.currentRCClear          = nullptr;
         //State.currentRCSetGlobalState = nullptr;
     }
+    */
 
 
 

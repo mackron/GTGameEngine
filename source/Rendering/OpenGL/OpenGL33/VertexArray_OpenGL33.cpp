@@ -23,11 +23,9 @@ namespace GTEngine
 
     void VertexArray_OpenGL33::OnVertexDataChanged()
     {
-        Renderer2::UpdateVertexArrayVertexData(*this);
     }
 
     void VertexArray_OpenGL33::OnIndexDataChanged()
     {
-        Renderer2::UpdateVertexArrayIndexData(*this);
     }
 }
