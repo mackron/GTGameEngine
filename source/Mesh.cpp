@@ -223,7 +223,11 @@ namespace GTEngine
                                 GarbageCollector::MarkForCollection(this->geometry);
                             }
 
-                            this->SetGeometry(new VertexArray(deserializer));
+
+                            auto newVA = new VertexArray(VertexArrayUsage_Static, VertexFormat());
+                            newVA->Deserialize(deserializer);
+
+                            this->SetGeometry(newVA);
                             this->deleteGeometry = true;
 
                             break;

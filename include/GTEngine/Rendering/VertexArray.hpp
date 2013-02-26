@@ -34,120 +34,106 @@ namespace GTEngine
     {
     public:
 
-        /**
-        *   \brief  Constructor.
-        */
+        /// Constructor.
         VertexArray(VertexArrayUsage usage, const VertexFormat &format);
 
-        /// Constructor.
-        VertexArray(GTCore::Deserializer &deserializer);
+        /// Destructor.
+        virtual ~VertexArray();
+
+        /// Sets the data of the vertex array.
+        ///
+        /// @param  vertices    [in] A pointer to the buffer containing the vertex data.
+        /// @param  vertexCount [in] The number of vertices. This is NOT the number of floats in 'vertices', but the number of vertices in the array. Must be larger than 0.
+        /// @param  indices     [in] A pointer to the buffer containing the indices.
+        /// @param  indexCount  [in] The number of indices in the vertex array. Must be larger than 0.
+        ///
+        /// @remarks
+        ///     This method asserts that vertex and index data pointers are not mapped.
+        void SetData(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount);
+
+        /// Sets the vertex data of the vertex array.
+        ///
+        /// @param  vertices    [in] A pointer to the buffer containing the vertex data.
+        /// @param  vertexCount [in] The number of vertices. This is NOT the number of floats in 'vertices', but the number of vertices in the array. Must be larger than 0.
+        ///
+        /// @remarks
+        ///     This method asserts that the existing vertex data is not mapped.
+        ///     @par
+        ///     Use SetIndexData() to set the indices.
+        void SetVertexData(const float* vertices, size_t vertexCount);
+
+        /// Sets the index data of the vertex array.
+        ///
+        /// @param  indices     [in] A pointer to the buffer containing the indices.
+        /// @param  indexCount  [in] The number of indices in the vertex array. Must be larger than 0.
+        ///
+        /// @remarks
+        ///     This method asserts that the existing index data is not mapped.
+        ///     @par
+        ///     Use SetVertexData() to set the vertices.
+        void SetIndexData(const unsigned int* indices, size_t indexCount);
 
 
-        /**
-        *   \brief  Destructor.
-        */
-        ~VertexArray();
+        /// Retrieves a constant pointer to the vertex data.
+        ///
+        /// remarks
+        ///     Use this method for read-only access to the vertex data. If the data needs to be modified, use MapVertexData()/UnmapVertexData() or SetVertexData().
+        inline const float* GetVertexDataPtr() const { return this->vertices; }
 
-        /**
-        *   \brief                   Sets the data of the vertex array.
-        *   \param  vertices    [in] A pointer to the buffer containing the vertex data.
-        *   \param  vertexCount [in] The number of vertices. This is NOT the number of floats in 'vertices', but the number of vertices in the array. Must be larger than 0.
-        *   \param  indices     [in] A pointer to the buffer containing the indices.
-        *   \param  indexCount  [in] The number of indices in the vertex array. Must be larger than 0.
-        *
-        *   \remarks
-        *       This method asserts that vertex and index data pointers are not mapped.
-        */
-        void SetData(const float *vertices, size_t vertexCount, const unsigned int *indices, size_t indexCount);
-        void SetVertexData(const float *vertices, size_t vertexCount);
-        void SetIndexData(const unsigned int *indices, size_t indexCount);
-
-
-        /**
-        *   \brief  Retrieves a constant pointer to the vertex data.
-        *
-        *   \remarks
-        *       Use this method for read-only access to the vertex data. If the data needs to be modified, use MapVertexData()/UnmapVertexData() or SetVertexData().
-        */
-        inline const float * GetVertexDataPtr() const { return this->vertices; }
-
-        /**
-        *   \brief  Retrieves the number of vertices in the vertex array.
-        */
+        /// Retrieves the number of vertices in the vertex array.
         inline size_t GetVertexCount() const { return this->vertexCount; }
 
-        /**
-        *   \brief  Retrieves a constant pointer to the index data.
-        *
-        *   \remarks
-        *       Use this method for read-only access to the index data. If the data needs to be modified, use MapIndexData()/UnmapIndexData() or SetIndexData().
-        */
-        inline const unsigned int * GetIndexDataPtr() const { return this->indices; }
+        /// Retrieves a constant pointer to the index data.
+        ///
+        /// @remarks
+        ///     Use this method for read-only access to the index data. If the data needs to be modified, use MapIndexData()/UnmapIndexData() or SetIndexData().
+        inline const unsigned int* GetIndexDataPtr() const { return this->indices; }
 
-        /**
-        *   \brief  Retrieves the number of indices in the vertex array.
-        */
+        /// Retrieves the number of indices in the vertex array.
         inline size_t GetIndexCount() const { return this->indexCount; }
 
 
-        /**
-        *   \brief  Returns a writable pointer to the vertex data. Returns nullptr if the data is already mapped.
-        *
-        *   \remarks
-        *       The data must be unmapped with UnmapVertexData() once the application is finished with the pointer.
-        *       \par
-        *       An application can first allocate the memory using SetVertexData() with a null pointer. Then it can use MapVertexData() if appropriate.
-        */
+        /// Returns a writable pointer to the vertex data. Returns nullptr if the data is already mapped.
+        ///
+        /// @remarks
+        ///     The data must be unmapped with UnmapVertexData() once the application is finished with the pointer.
+        ///     @par
+        ///     An application can first allocate the memory using SetVertexData() with a null pointer. Then it can use MapVertexData() if appropriate.
         float* MapVertexData();
 
-        /**
-        *   \brief  Unmaps the vertex data.
-        */
+        /// Unmaps the vertex data.
         void UnmapVertexData();
 
-        /**
-        *   \brief  Returns a writable pointer to the index data. Returns nullptr if the data is already mapped.
-        *
-        *   \remarks
-        *       The data must be unmapped with UnmapIndexData() once the application is finished with the pointer.
-        *       \par
-        *       An application can first allocate the memory using SetIndexData() with a null pointer. Then it can use MapIndexData() if appropriate.
-        */
+        /// Returns a writable pointer to the index data. Returns nullptr if the data is already mapped.
+        ///
+        /// @remarks
+        ///     The data must be unmapped with UnmapIndexData() once the application is finished with the pointer.
+        ///     @par
+        ///     An application can first allocate the memory using SetIndexData() with a null pointer. Then it can use MapIndexData() if appropriate.
         unsigned int* MapIndexData();
 
-        /**
-        *   \brief  Unmaps the vertex data.
-        */
+        /// Unmaps the vertex data.
         void UnmapIndexData();
 
 
 
-
-        /**
-        *   \brief  Retrieves the vertex format of this array.
-        */
+        /// Retrieves the vertex format of this array.
         inline const VertexFormat & GetFormat() const { return this->format; }
 
-        /**
-        *   \brief  Retrieves the usage of this array.
-        */
+        /// Retrieves the usage of this array.
         inline VertexArrayUsage GetUsage() const { return this->usage; }
 
-        /**
-        *   \brief  Retrieves a pointer to the internal renderer data.
-        *
-        *   \remarks
-        *       This should only be used by the renderer.
-        */
-        inline const void * GetRendererData() const { return this->rendererData; }
-        inline       void * GetRendererData()       { return this->rendererData; }
+        /// Retrieves a pointer to the internal renderer data.
+        ///
+        /// @remarks
+        ///     This should only be used by the renderer.
+        inline const void* GetRendererData() const { return this->rendererData; }
+        inline       void* GetRendererData()       { return this->rendererData; }
 
-        /**
-        *   \brief  Sets the pointer to the internal renderer data.
-        *
-        *   \remarks
-        *       This does not deallocate the previous renderer data. That is the responsibility of the renderer itself.
-        */
+        /// Sets the pointer to the internal renderer data.
+        ///
+        /// @remarks
+        ///     This does not deallocate the previous renderer data. That is the responsibility of the renderer itself.
         inline void SetRendererData(void *rendererData) const { this->rendererData = rendererData; }
 
 
@@ -165,6 +151,21 @@ namespace GTEngine
         /// @param deserializer [in] A reference to the deserializer to read from.
         void Deserialize(GTCore::Deserializer &deserializer);
 
+
+
+    protected:
+
+        ///////////////////////////////////////////////////////
+        // Events.
+        //
+        // These events are called so that derived classes can know when data has changed. Typically, a function on the renderer will need to be called
+        // that updates the renderer-side object.
+
+        /// Called when vertex data has changed.
+        virtual void OnVertexDataChanged() {};
+
+        /// Called when the index data has changed.
+        virtual void OnIndexDataChanged() {};
 
 
 
@@ -189,7 +190,7 @@ namespace GTEngine
         void CalculateAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax);
 
 
-    private:
+    protected:
 
         /// The usage of the vertex array.
         VertexArrayUsage usage;

@@ -12,24 +12,48 @@ namespace GTEngine
           currentFBO(nullptr),
           enabledStates(COLOUR_WRITES_BIT | DEPTH_WRITES_BIT | DEPTH_TEST_BIT | FACE_CULLING_BIT),
           stencilMask(-1),
-          currentRCClear(nullptr), currentRCSetGlobalState(nullptr)
+          currentRCClear(nullptr), currentRCSetGlobalState(nullptr),
+          currentTextureObjects(), currentProgramObjects(), currentVertexArrayObjects(), currentBufferObjects(), currentFramebufferObjects(),
+          deletedTextureObjects(), deletedProgramObjects(), deletedVertexArrayObjects(), deletedBufferObjects(), deletedFramebufferObjects()
     {
     }
 
-    State_OpenGL33::State_OpenGL33(const State_OpenGL33 &other)
-        : currentTexture1D(other.currentTexture1D), currentTexture2D(other.currentTexture2D), currentTexture3D(other.currentTexture3D), currentTextureCube(other.currentTextureCube),
-          currentProgram(other.currentProgram),
-          currentVAO(other.currentVAO),
-          currentFBO(other.currentFBO),
-          enabledStates(other.enabledStates),
-          stencilMask(other.stencilMask),
-          currentRCClear(other.currentRCClear), currentRCSetGlobalState(nullptr)
+    State_OpenGL33::~State_OpenGL33()
     {
+        this->ClearDeletedOpenGLObjects();
     }
 
-    State_OpenGL33 & State_OpenGL33::operator=(const State_OpenGL33 &other)
+
+    void State_OpenGL33::ClearDeletedOpenGLObjects()
     {
-        new (this) State_OpenGL33(other);
-        return *this;
+        for (size_t i = 0; i < this->deletedTextureObjects.count; ++i)
+        {
+            delete this->deletedTextureObjects[i];
+        }
+        this->deletedTextureObjects.Clear();
+
+        for (size_t i = 0; i < this->deletedProgramObjects.count; ++i)
+        {
+            delete this->deletedProgramObjects[i];
+        }
+        this->deletedProgramObjects.Clear();
+
+        for (size_t i = 0; i < this->deletedVertexArrayObjects.count; ++i)
+        {
+            delete this->deletedVertexArrayObjects[i];
+        }
+        this->deletedVertexArrayObjects.Clear();
+
+        for (size_t i = 0; i < this->deletedBufferObjects.count; ++i)
+        {
+            delete this->deletedBufferObjects[i];
+        }
+        this->deletedBufferObjects.Clear();
+
+        for (size_t i = 0; i < this->deletedFramebufferObjects.count; ++i)
+        {
+            delete this->deletedFramebufferObjects[i];
+        }
+        this->deletedFramebufferObjects.Clear();
     }
 }

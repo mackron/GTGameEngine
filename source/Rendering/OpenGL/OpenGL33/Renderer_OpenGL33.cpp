@@ -6,6 +6,7 @@
 #include <GTEngine/Rendering/RCQueue.hpp>
 #include <GTEngine/Rendering/RCCache.hpp>
 
+
 #include <gtgl/gtgl.h>
 
 #if defined(GTCORE_PLATFORM_WINDOWS)
@@ -17,7 +18,8 @@
 
 #include "../RendererCaps.hpp"
 #include "../Debugging_OpenGL.hpp"
-#include "../OpenGL33/State_OpenGL33.hpp"
+#include "State_OpenGL33.hpp"
+#include "VertexArray_OpenGL33.hpp"
 
 
 
@@ -77,8 +79,21 @@ namespace GTEngine
     /// The two call caches. The back call back is identified with BackCallCacheIndex.
     static RCQueue CallCaches[2];
 
+    /// The two call caches for creating resources.
+    static RCQueue ResourceCreationCallCaches[2];
+
+    /// The two call caches for deleting resources.
+    static RCQueue ResourceDeletionCallCaches[2];
+
     /// The index identifying the back call cache.
     static unsigned int BackCallCacheIndex = 0;
+
+
+    /// The mutex for synching applicable resource creation operations.
+    static GTCore::Mutex ResourceCreationLock;
+
+    /// The mutex for synching applicable resource deletion operations.
+    static GTCore::Mutex ResourceDeletionLock;
 
 
     /// The caches for individual commands. There are two of each - one for the back and one for the front.
@@ -88,10 +103,29 @@ namespace GTEngine
         RCCache<RCSetGlobalState> RCSetGlobalStateCache;
 
 
+        // Create and Delete RCs.
+        RCCache<RCCreateVertexArray> RCCreateVertexArrayCache;
+        RCCache<RCDeleteVertexArray> RCDeleteVertexArrayCache;
+
+
         void Clear()
         {
             this->RCClearCache.Reset();
             this->RCSetGlobalStateCache.Reset();
+
+            
+            ResourceCreationLock.Lock();
+            {
+                this->RCCreateVertexArrayCache.Reset();
+            }
+            ResourceCreationLock.Unlock();
+
+
+            ResourceDeletionLock.Lock();
+            {
+                this->RCDeleteVertexArrayCache.Reset();
+            }
+            ResourceDeletionLock.Unlock();
         }
 
     }RCCaches[2];
@@ -182,6 +216,11 @@ namespace GTEngine
             CallCaches[0].Clear();
             CallCaches[1].Clear();
 
+            ResourceCreationCallCaches[0].Clear();
+            ResourceCreationCallCaches[1].Clear();
+            ResourceDeletionCallCaches[0].Clear();
+            ResourceDeletionCallCaches[1].Clear();
+
             // GTGL needs to be shutdown.
             gtglShutdown();
             OpenGLContext = nullptr;
@@ -249,16 +288,34 @@ namespace GTEngine
         // 1) Swap the back call cache index.
         BackCallCacheIndex = !BackCallCacheIndex;
 
-        // 2) Clear the new back cache in preparation for filling by another thread.
+        // 2) Clear the new back cache in preparation for filling by another thread. Note how we don't clear the resource creation and deletion
+        //    call caches here. The reason is because they are cleared in ExecuteCallCache(). 
         CallCaches[BackCallCacheIndex].Clear();
 
         // 3) Clear the sub-caches.
         RCCaches[BackCallCacheIndex].Clear();
+
+
+        // 4) Cleanup deleted objects.
+        State.ClearDeletedOpenGLObjects();
     }
 
     void Renderer2::ExecuteCallCache()
     {
+        // 1) Create resources. We want to lock and clear this all at the same time.
+        ResourceCreationLock.Lock();
+        ResourceCreationCallCaches[!BackCallCacheIndex].Execute();
+        ResourceCreationCallCaches[!BackCallCacheIndex].Clear();
+        ResourceCreationLock.Unlock();
+
+        // 2) Normal calls.
         CallCaches[!BackCallCacheIndex].Execute();
+
+        // 3) Delete resources. We want to lock, execute and clear this all at the same time.
+        ResourceDeletionLock.Lock();
+        ResourceDeletionCallCaches[!BackCallCacheIndex].Execute();
+        ResourceDeletionCallCaches[!BackCallCacheIndex].Clear();
+        ResourceDeletionLock.Unlock();
     }
 
     void Renderer2::SwapBuffers()
@@ -398,6 +455,80 @@ namespace GTEngine
 
         State.currentRCClear          = nullptr;
         State.currentRCSetGlobalState = nullptr;
+    }
+
+
+
+    ///////////////////////////
+    // Resources
+
+    VertexArray* Renderer2::CreateVertexArray(VertexArrayUsage usage, const VertexFormat &format)
+    {
+        State.currentVertexArrayObjects.PushBack(new GLuint(0));
+        GLuint* vertexArrayObject  = State.currentVertexArrayObjects.GetBack();
+
+        State.currentBufferObjects.PushBack(new GLuint(0));
+        GLuint* vertexBufferObject = State.currentBufferObjects.GetBack();
+
+        State.currentBufferObjects.PushBack(new GLuint(0));
+        GLuint* indexBufferObject  = State.currentBufferObjects.GetBack();
+
+
+        ResourceCreationLock.Lock();
+        {
+            auto &command = RCCaches[BackCallCacheIndex].RCCreateVertexArrayCache.Acquire();
+            command.CreateVertexArray(vertexArrayObject, vertexBufferObject, indexBufferObject, format);
+
+            ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
+        }
+        ResourceCreationLock.Unlock();
+
+
+
+
+        return new VertexArray_OpenGL33(usage, format, vertexArrayObject, vertexBufferObject, indexBufferObject);
+    }
+
+    void Renderer2::DeleteVertexArray(VertexArray* vertexArrayToDelete)
+    {
+        auto vertexArrayToDeleteGL33 = static_cast<VertexArray_OpenGL33*>(vertexArrayToDelete);
+        if (vertexArrayToDeleteGL33 != nullptr)
+        {
+            // The OpenGL objects need to be marked for deletion.
+            GLuint* vertexArrayObject  = vertexArrayToDeleteGL33->GetOpenGLObjectPtr();
+            GLuint* vertexBufferObject = vertexArrayToDeleteGL33->GetOpenGLVertexObjectPtr();
+            GLuint* indexBufferObject  = vertexArrayToDeleteGL33->GetOpenGLIndexObjectPtr();
+
+            assert(vertexArrayObject  != nullptr);
+            assert(vertexBufferObject != nullptr);
+            assert(indexBufferObject  != nullptr);
+            {
+                ResourceDeletionLock.Lock();
+                {
+                    auto &command = RCCaches[BackCallCacheIndex].RCDeleteVertexArrayCache.Acquire();
+                    command.DeleteVertexArray(vertexArrayObject, vertexBufferObject, indexBufferObject);
+
+                    ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
+                }
+                ResourceDeletionLock.Unlock();
+
+
+
+                // The objects need to be marked for deletion, but not actually deleted yet.
+                State.currentVertexArrayObjects.RemoveFirstOccuranceOf(vertexArrayObject);
+                State.deletedVertexArrayObjects.PushBack(vertexArrayObject);
+
+                State.currentBufferObjects.RemoveFirstOccuranceOf(vertexBufferObject);
+                State.deletedBufferObjects.PushBack(vertexBufferObject);
+
+                State.currentBufferObjects.RemoveFirstOccuranceOf(indexBufferObject);
+                State.deletedBufferObjects.PushBack(indexBufferObject);
+            }
+
+
+            // We can safely delete the main object at this point.
+            delete vertexArrayToDelete;
+        }
     }
 
 
