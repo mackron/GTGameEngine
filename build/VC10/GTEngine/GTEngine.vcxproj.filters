@@ -761,6 +761,18 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.hpp">
       <Filter>source\Rendering\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCClear.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetGlobalState.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\CapabilityBits.hpp">
+      <Filter>source\Rendering\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1278,6 +1290,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.cpp">
       <Filter>source\Rendering\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCClear.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetGlobalState.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

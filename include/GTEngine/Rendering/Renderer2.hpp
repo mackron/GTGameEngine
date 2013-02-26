@@ -4,9 +4,87 @@
 #define __GTEngine_Renderer2_hpp_
 
 #include <GTCore/Window.hpp>
+#include <GTEngine/Rendering/Texture2D.hpp>
+#include <GTEngine/Rendering/TextureCube.hpp>
+#include <GTEngine/Rendering/Shader.hpp>
+#include <GTEngine/Rendering/VertexArray.hpp>
+#include <GTEngine/Rendering/Framebuffer.hpp>
+#include <GTEngine/Rendering/DrawModes.hpp>
 
 namespace GTEngine
 {
+    enum BufferTypes
+    {
+        BufferType_Colour  = (1 << 1),
+        BufferType_Depth   = (1 << 2),
+        BufferType_Stencil = (1 << 3)
+    };
+
+    enum RendererFunction
+    {
+        RendererFunction_Never,
+        RendererFunction_Less,
+        RendererFunction_Equal,
+        RendererFunction_LEqual,
+        RendererFunction_Greater,
+        RendererFunction_NotEqual,
+        RendererFunction_GEqual,
+        RendererFunction_Always,
+    };
+
+    enum BlendFunc
+    {
+        BlendFunc_Zero,
+        BlendFunc_One,
+
+        BlendFunc_SourceColour,
+        BlendFunc_OneMinusSourceColour,
+        BlendFunc_SourceAlpha,
+        BlendFunc_OneMinusSourceAlpha,
+
+        BlendFunc_DestColour,
+        BlendFunc_OneMinusDestColour,
+        BlendFunc_DestAlpha,
+        BlendFunc_OneMinusDestAlpha,
+
+        BlendFunc_ConstantColour,
+        BlendFunc_OneMinusConstantColour,
+        BlendFunc_ConstantAlpha,
+        BlendFunc_OneMinusConstantAlpha,
+
+        BlendFunc_SourceAlphaSaturate,
+    };
+
+    enum BlendEquation
+    {
+        BlendEquation_Add,
+        BlendEquation_Subtract,
+        BlendEquation_ReverseSubtract,
+        BlendEquation_Min,
+        BlendEquation_Max
+    };
+
+    enum StencilOp
+    {
+        StencilOp_Keep,
+        StencilOp_Zero,
+        StencilOp_Replace,
+        StencilOp_Increment,
+        StencilOp_IncrementWrap,
+        StencilOp_Decrement,
+        StencilOp_DecrementWrap,
+        StencilOp_Invert
+    };
+
+    enum PolygonMode
+    {
+        PolygonMode_Fill,
+        PolygonMode_Line,
+        PolygonMode_Point
+    };
+
+
+
     /// Static class for performing rendering operations.
     ///
     /// This is built as a static class to make things a bit easier to use. To switch implementations (OpenGL 3.3, D3D10, etc), just build
@@ -33,6 +111,10 @@ namespace GTEngine
     ///     ExecuteCachedCalls()
     ///     SwapBuffers()
     ///     WaitForUpdateThread()
+    ///
+    ///
+    /// To simplify and encourage one-way throughput of the renderer, there is no way to retrieve the current state via the public API. This
+    /// should be done at a higher level.
     class Renderer2
     {
     public:
@@ -104,7 +186,68 @@ namespace GTEngine
         // This section contains the main rendering functions. These are not called immediately, but instead are cached until the next call to
         // ExecuteCallCache().
 
+        ///////////////////////////
+        // Simple State Changes
 
+        /// Sets the viewport.
+        ///
+        /// @param x      [in] The x position in pixels.
+        /// @param y      [in] The y position in pixels.
+        /// @param width  [in] The width of the viewport.
+        /// @param height [in] The height of the viewport.
+        static void SetViewport(int x, int y, unsigned int width, unsigned int height);
+
+        /// Sets the scissor rectangle.
+        ///
+        /// @param x      [in] The x position in pixels.
+        /// @param y      [in] The y position in pixels.
+        /// @param width  [in] The width of the scissor rectangle.
+        /// @param height [in] The height of the scissor rectangle.
+        static void SetScissor(int x, int y, unsigned int width, unsigned int height);
+
+        /// Sets the clear colour for when Clear() is called with BufferType_Colour.
+        ///
+        /// @param r [in] The red component.
+        /// @param g [in] The green component.
+        /// @param b [in] The blue component.
+        /// @param a [in] The alpha component.
+        static void SetClearColour(float r, float g, float b, float a);
+
+        /// Sets the clear depth for when Clear() is called with BufferType_Depth.
+        ///
+        /// @param depth [in] The depth value to apply when clearing the depth buffer.
+        static void SetClearDepth(float depth);
+
+        /// Sets the stencil value to apply when Clear() is called with BufferType_Stencil.
+        ///
+        /// @param stencil [in] The stencil value to apply when clearing the stencil buffer.
+        static void SetClearStencil(int stencil);
+
+
+        ///////////////////////////
+        // Drawing
+
+        /// Clears the back buffer.
+        ///
+        /// @param bufferMask [in] A bitfield specifying which buffers to clear.
+        ///
+        /// @remarks
+        ///     'bufferMask' should be bitwise-or'd with BufferType_Colour, BufferType_Depth and BufferType_Stencil.
+        static void Clear(unsigned int bufferMask);
+
+        /// Draws the elements defined in the given vertex array.
+        ///
+        /// @param vertexArray [in] A reference to the vertex array to draw.
+        /// @param mode        [in] The primitives to draw (triangles or lines).
+        static void Draw(const VertexArray &vertexArray, DrawMode mode = DrawMode_Triangles);
+        
+        /// Draws the elements defined in the given vertex data.
+        ///
+        /// @param vertices [in] A pointer to the vertex data.
+        /// @param indices  [in] A pointer to the buffer containing the index data.
+        /// @param format   [in] The format of the vertex data.
+        /// @param mode     [in] The primitives to draw (triangles or lines).
+        static void Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode = DrawMode_Triangles);
 
 
 
@@ -138,19 +281,6 @@ namespace GTEngine
         ///
         /// @return The maximum number of texture units that can be used simultaneously.
         static unsigned int GetMaxTextureUnits();
-
-
-
-
-
-        /////////////////////////////////////////////////////////////
-        // Variables
-
-        // TODO: Check to see if we can get rid of this variable.
-        /// The index being used to identify the back call-cache.
-        ///
-        /// This is actually a carry-over from the previous renderer and may be made private later on.
-        //size_t BackCallCacheIndex = 0;
     };
 }
 
