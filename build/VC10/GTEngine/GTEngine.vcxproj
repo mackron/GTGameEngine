@@ -372,6 +372,7 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteVertexArray.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDraw.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetGlobalState.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetTextureState.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetVertexArrayState.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Texture2D_OpenGL33.hpp" />
@@ -516,6 +517,7 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteVertexArray.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDraw.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetGlobalState.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetTextureState.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetVertexArrayState.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Renderer_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.cpp" />

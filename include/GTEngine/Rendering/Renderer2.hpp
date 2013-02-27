@@ -245,6 +245,15 @@ namespace GTEngine
         /// @param textureToDelete [in] A pointer to the texture to delete.
         static void DeleteTexture2D(Texture2D* textureToDelete);
 
+        /// Pushes the image data of the given 1D texture to the renderer.
+        ///
+        /// @param texture [in] A reference to the texture whose data is being pushed.
+        /// @param mipmap  [in] The index of the mipmap whose data is being set. Set to -1 (default) to push every mipmap.
+        ///
+        /// @remarks
+        ///     This will immediately make a copy of the data, so it is safe to delete the local copy is needed.
+        //static void PushTexture1DData(const Texture1D &texture, int mipmap = -1);
+
         /// Pushes the image data of the given 2D texture to the renderer.
         ///
         /// @param texture [in] A reference to the texture whose data is being pushed.
@@ -253,6 +262,59 @@ namespace GTEngine
         /// @remarks
         ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
         static void PushTexture2DData(const Texture2D &texture, int mipmap = -1);
+
+        /// Pushes the image data of the given 3D texture to the renderer.
+        ///
+        /// @param texture [in] A reference to the texture whose data is being pushed.
+        /// @param mipmap  [in] The index of the mipmap whose data is being set. Set to -1 (default) to push every mipmap.
+        ///
+        /// @remarks
+        ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
+        //static void PushTexture3DData(const Texture3D &texture, int mipmap = -1);
+
+        /// Pushes the image data of the given cube map to the renderer.
+        ///
+        /// @param texture [in] A reference to the texture whose data is being pushed.
+        /// @param mipmap  [in] The index of the mipmap whose data is being set. Set to -1 (default) to push every mipmap.
+        ///
+        /// @remarks
+        ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
+        //static void PushTextureCubeData(const TextureCube &texture, int mipmap = -1);
+
+        /// Sets the minification and magnification filter of the given texture.
+        ///
+        /// @param texture       [in] A reference to the texture whose filter is being set.
+        /// @param minification  [in] The minification filter to use with the texture.
+        /// @param magnification [in] The magnification filter to use with the texture.
+        static void SetTexture2DFilter(const Texture2D &texture, TextureFilter minification, TextureFilter magnification);
+
+        /// Sets the level of anisotropic filter to use with the given texture.
+        ///
+        /// @param texture    [in] A reference to the texture.
+        /// @param anisotropy [in] The level of anisotropic filter to use with the texture.
+        static void SetTexture2DAnisotropy(const Texture2D &texture, unsigned int anisotropy);
+
+        /// Sets the wrapping mode to use with the given texture.
+        ///
+        /// @param texture  [in] A reference to the texture.
+        /// @param wrapMode [in] The wrapping mode to use with the given texture.
+        static void SetTexture2DWrapMode(const Texture2D &texture, TextureWrapMode wrapMode);
+
+        /// Sets the mipmap range to use with the given texture.
+        ///
+        /// @param texture   [in] A reference to the texture whose mipmapping range is being set.
+        /// @param baseLevel [in] The base mipmap level to use with the texture.
+        /// @param maxLevel  [in] The max mipmap level to use with the texture.
+        static void SetTexture2DMipmapLevels(const Texture2D &texture, unsigned int baseLevel, unsigned int maxLevel);
+
+        /// Generates mipmaps for the given texture.
+        ///
+        /// @param texture [in] A reference to the texture whose mipmaps are being generation.
+        ///
+        /// @remarks
+        ///     This does not modify the client-side texture data. If the texture data is needed on the client side, you will need to do manualy
+        ///     mipmap generation.
+        static void GenerateTexture2DMipmaps(const Texture2D &texture);
 
 
 
