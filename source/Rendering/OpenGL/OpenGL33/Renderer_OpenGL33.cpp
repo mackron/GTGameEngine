@@ -100,22 +100,29 @@ namespace GTEngine
     /// The caches for individual commands. There are two of each - one for the back and one for the front.
     static struct _RCCaches
     {
-        RCCache<RCSetGlobalState> RCSetGlobalStateCache;
-        RCCache<RCClear>          RCClearCache;
-        RCCache<RCDraw>           RCDrawCache;
+        // State RCs.
+        RCCache<RCSetGlobalState>      RCSetGlobalStateCache;
+        RCCache<RCSetVertexArrayState> RCSetVertexArrayStateCache;
+
+        // Drawing RCs.
+        RCCache<RCClear>               RCClearCache;
+        RCCache<RCDraw>                RCDrawCache;
 
         // Create and Delete RCs.
-        RCCache<RCCreateVertexArray> RCCreateVertexArrayCache;
-        RCCache<RCDeleteVertexArray> RCDeleteVertexArrayCache;
+        RCCache<RCCreateVertexArray>   RCCreateVertexArrayCache;
+        RCCache<RCDeleteVertexArray>   RCDeleteVertexArrayCache;
 
 
         void Clear()
         {
             this->RCSetGlobalStateCache.Reset();
+            this->RCSetVertexArrayStateCache.Reset();
+
+
             this->RCClearCache.Reset();
             this->RCDrawCache.Reset();
-
             
+
             ResourceCreationLock.Lock();
             {
                 this->RCCreateVertexArrayCache.Reset();
@@ -535,6 +542,72 @@ namespace GTEngine
         }
     }
 
+    void Renderer2::PushVertexArrayVertexData(const VertexArray &vertexArray)
+    {
+        auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
+        {
+            GLuint* vertexArrayObject = vertexArrayGL33.GetOpenGLObjectPtr();
+            assert(vertexArrayObject != nullptr);
+            {
+                if (State.currentRCSetVertexArrayState == nullptr || State.currentRCSetVertexArrayState->GetVertexArrayObject() != vertexArrayObject)
+                {
+                    State.currentRCSetVertexArrayState = &RCCaches[BackCallCacheIndex].RCSetVertexArrayStateCache.Acquire();
+                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetVertexArrayState);
+                }
+
+
+                assert(State.currentRCSetVertexArrayState != nullptr);
+                {
+                    State.currentRCSetVertexArrayState->SetVertexData(vertexArrayObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                }
+            }
+        }
+    }
+
+    void Renderer2::PushVertexArrayIndexData(const VertexArray &vertexArray)
+    {
+        auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
+        {
+            GLuint* vertexArrayObject = vertexArrayGL33.GetOpenGLObjectPtr();
+            assert(vertexArrayObject != nullptr);
+            {
+                if (State.currentRCSetVertexArrayState == nullptr || State.currentRCSetVertexArrayState->GetVertexArrayObject() != vertexArrayObject)
+                {
+                    State.currentRCSetVertexArrayState = &RCCaches[BackCallCacheIndex].RCSetVertexArrayStateCache.Acquire();
+                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetVertexArrayState);
+                }
+
+
+                assert(State.currentRCSetVertexArrayState != nullptr);
+                {
+                    State.currentRCSetVertexArrayState->SetIndexData(vertexArrayObject, vertexArray.GetIndexDataPtr(), vertexArray.GetIndexCount(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                }
+            }
+        }
+    }
+
+    void Renderer2::PushVertexArrayData(const VertexArray &vertexArray)
+    {
+        auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
+        {
+            GLuint* vertexArrayObject = vertexArrayGL33.GetOpenGLObjectPtr();
+            assert(vertexArrayObject != nullptr);
+            {
+                if (State.currentRCSetVertexArrayState == nullptr || State.currentRCSetVertexArrayState->GetVertexArrayObject() != vertexArrayObject)
+                {
+                    State.currentRCSetVertexArrayState = &RCCaches[BackCallCacheIndex].RCSetVertexArrayStateCache.Acquire();
+                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetVertexArrayState);
+                }
+
+
+                assert(State.currentRCSetVertexArrayState != nullptr);
+                {
+                    State.currentRCSetVertexArrayState->SetVertexData(vertexArrayObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                    State.currentRCSetVertexArrayState->SetIndexData( vertexArrayObject, vertexArray.GetIndexDataPtr(),  vertexArray.GetIndexCount(),  ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                }
+            }
+        }
+    }
 
 
     /////////////////////////////////////////////////////////////
