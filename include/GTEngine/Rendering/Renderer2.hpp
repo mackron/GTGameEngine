@@ -4,87 +4,16 @@
 #define __GTEngine_Renderer2_hpp_
 
 #include <GTCore/Window.hpp>
-#include <GTEngine/Rendering/Texture2D.hpp>
-#include <GTEngine/Rendering/TextureCube.hpp>
-#include <GTEngine/Rendering/Shader.hpp>
-#include <GTEngine/Rendering/VertexArray.hpp>
-#include <GTEngine/Rendering/Framebuffer.hpp>
-#include <GTEngine/Rendering/DrawModes.hpp>
+#include "Texture2D.hpp"
+#include "TextureCube.hpp"
+#include "Shader.hpp"
+#include "VertexArray.hpp"
+#include "Framebuffer.hpp"
+#include "DrawModes.hpp"
+#include "BufferTypes.hpp"
 
 namespace GTEngine
 {
-    enum BufferTypes
-    {
-        BufferType_Colour  = (1 << 1),
-        BufferType_Depth   = (1 << 2),
-        BufferType_Stencil = (1 << 3)
-    };
-
-    enum RendererFunction
-    {
-        RendererFunction_Never,
-        RendererFunction_Less,
-        RendererFunction_Equal,
-        RendererFunction_LEqual,
-        RendererFunction_Greater,
-        RendererFunction_NotEqual,
-        RendererFunction_GEqual,
-        RendererFunction_Always,
-    };
-
-    enum BlendFunc
-    {
-        BlendFunc_Zero,
-        BlendFunc_One,
-
-        BlendFunc_SourceColour,
-        BlendFunc_OneMinusSourceColour,
-        BlendFunc_SourceAlpha,
-        BlendFunc_OneMinusSourceAlpha,
-
-        BlendFunc_DestColour,
-        BlendFunc_OneMinusDestColour,
-        BlendFunc_DestAlpha,
-        BlendFunc_OneMinusDestAlpha,
-
-        BlendFunc_ConstantColour,
-        BlendFunc_OneMinusConstantColour,
-        BlendFunc_ConstantAlpha,
-        BlendFunc_OneMinusConstantAlpha,
-
-        BlendFunc_SourceAlphaSaturate,
-    };
-
-    enum BlendEquation
-    {
-        BlendEquation_Add,
-        BlendEquation_Subtract,
-        BlendEquation_ReverseSubtract,
-        BlendEquation_Min,
-        BlendEquation_Max
-    };
-
-    enum StencilOp
-    {
-        StencilOp_Keep,
-        StencilOp_Zero,
-        StencilOp_Replace,
-        StencilOp_Increment,
-        StencilOp_IncrementWrap,
-        StencilOp_Decrement,
-        StencilOp_DecrementWrap,
-        StencilOp_Invert
-    };
-
-    enum PolygonMode
-    {
-        PolygonMode_Fill,
-        PolygonMode_Line,
-        PolygonMode_Point
-    };
-
-
-
     /// Static class for performing rendering operations.
     ///
     /// This is built as a static class to make things a bit easier to use. To switch implementations (OpenGL 3.3, D3D10, etc), just build
