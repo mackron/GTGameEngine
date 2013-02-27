@@ -19,7 +19,7 @@ namespace GTEngine
 
     void RCSetVertexArrayState::SetVertexData(GLuint* vertexArrayObjectIn, const float* vertices, size_t vertexCount, size_t vertexSizeInBytes, GLenum usage)
     {
-        assert(this->vertexArrayObject != vertexArrayObjectIn || this->vertexArrayObject == nullptr);
+        assert(this->vertexArrayObject == nullptr || this->vertexArrayObject != vertexArrayObjectIn);
         {
             free(this->vertexData.vertices);
 
@@ -38,7 +38,7 @@ namespace GTEngine
 
     void RCSetVertexArrayState::SetIndexData(GLuint* vertexArrayObjectIn, const unsigned int* indices, size_t indexCount, GLenum usage)
     {
-        assert(this->vertexArrayObject != vertexArrayObjectIn || this->vertexArrayObject == nullptr);
+        assert(this->vertexArrayObject == nullptr || this->vertexArrayObject != vertexArrayObjectIn);
         {
             free(this->indexData.indices);
 
