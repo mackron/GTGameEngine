@@ -298,10 +298,14 @@
     <ClInclude Include="..\..\..\include\GTEngine\Recast\RecastAlloc.h" />
     <ClInclude Include="..\..\..\include\GTEngine\Recast\RecastAssert.h" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\BlendEquations.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\BlendFunctions.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\BufferTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\OpenGL\OpenGL20.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\PolygonModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCQueue.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommand.hpp" />
@@ -310,8 +314,10 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFramebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer2.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RendererFunctions.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\ShaderStages.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\StencilOperations.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Texture2D.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureCube.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexArray.hpp" />

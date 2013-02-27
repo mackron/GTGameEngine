@@ -10,6 +10,11 @@
 #include "Shader.hpp"
 #include "VertexArray.hpp"
 #include "DrawModes.hpp"
+#include "BlendEquations.hpp"
+#include "BlendFunctions.hpp"
+#include "PolygonModes.hpp"
+#include "RendererFunctions.hpp"
+#include "StencilOperations.hpp"
 #include "../Math.hpp"
 
 #include <GTCore/Window.hpp>
@@ -24,69 +29,6 @@ namespace GTEngine
     static const unsigned int ColourBuffer  = 0x01;
     static const unsigned int DepthBuffer   = 0x02;
     static const unsigned int StencilBuffer = 0x04;
-
-    enum RendererFunction
-    {
-        RendererFunction_Never,
-        RendererFunction_Less,
-        RendererFunction_Equal,
-        RendererFunction_LEqual,
-        RendererFunction_Greater,
-        RendererFunction_NotEqual,
-        RendererFunction_GEqual,
-        RendererFunction_Always,
-    };
-
-    enum BlendFunc
-    {
-        BlendFunc_Zero,
-        BlendFunc_One,
-
-        BlendFunc_SourceColour,
-        BlendFunc_OneMinusSourceColour,
-        BlendFunc_SourceAlpha,
-        BlendFunc_OneMinusSourceAlpha,
-
-        BlendFunc_DestColour,
-        BlendFunc_OneMinusDestColour,
-        BlendFunc_DestAlpha,
-        BlendFunc_OneMinusDestAlpha,
-
-        BlendFunc_ConstantColour,
-        BlendFunc_OneMinusConstantColour,
-        BlendFunc_ConstantAlpha,
-        BlendFunc_OneMinusConstantAlpha,
-
-        BlendFunc_SourceAlphaSaturate,
-    };
-
-    enum BlendEquation
-    {
-        BlendEquation_Add,
-        BlendEquation_Subtract,
-        BlendEquation_ReverseSubtract,
-        BlendEquation_Min,
-        BlendEquation_Max
-    };
-
-    enum StencilOp
-    {
-        StencilOp_Keep,
-        StencilOp_Zero,
-        StencilOp_Replace,
-        StencilOp_Increment,
-        StencilOp_IncrementWrap,
-        StencilOp_Decrement,
-        StencilOp_DecrementWrap,
-        StencilOp_Invert
-    };
-
-    enum PolygonMode
-    {
-        PolygonMode_Fill,
-        PolygonMode_Line,
-        PolygonMode_Point
-    };
 
 
     // TODO: Consider removing this. No longer needed, I think.
