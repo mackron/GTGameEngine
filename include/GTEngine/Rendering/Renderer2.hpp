@@ -231,6 +231,32 @@ namespace GTEngine
 
 
 
+        /// Creates a 2D texture.
+        ///
+        /// @return A pointer to the new 2D texture.
+        ///
+        /// @remarks
+        ///     The returned texture will be completely empty. You can set the data on the returned object and then push that data to the
+        ///     renderer with PushTexture2DData().
+        static Texture2D* CreateTexture2D();
+
+        /// Deletes a 2D texture created with CreateTexture2D().
+        ///
+        /// @param textureToDelete [in] A pointer to the texture to delete.
+        static void DeleteTexture2D(Texture2D* textureToDelete);
+
+        /// Pushes the image data of the given 2D texture to the renderer.
+        ///
+        /// @param texture [in] A reference to the texture whose data is being pushed.
+        /// @param mipmap  [in] The index of the mipmap whose data is being set. Set to -1 (default) to push every mipmap.
+        ///
+        /// @remarks
+        ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
+        static void PushTexture2DData(const Texture2D &texture, int mipmap = -1);
+
+
+
+
         /////////////////////////////////////////////////////////////
         // Support Queries
         //
