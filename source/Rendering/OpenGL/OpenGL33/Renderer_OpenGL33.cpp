@@ -21,6 +21,7 @@
 #include "../TypeConversion.hpp"
 #include "State_OpenGL33.hpp"
 #include "VertexArray_OpenGL33.hpp"
+#include "Texture2D_OpenGL33.hpp"
 
 
 
@@ -111,6 +112,8 @@ namespace GTEngine
         // Create and Delete RCs.
         RCCache<RCCreateVertexArray>   RCCreateVertexArrayCache;
         RCCache<RCDeleteVertexArray>   RCDeleteVertexArrayCache;
+        RCCache<RCCreateTexture>       RCCreateTextureCache;
+        RCCache<RCDeleteTexture>       RCDeleteTextureCache;
 
 
         void Clear()
@@ -126,6 +129,7 @@ namespace GTEngine
             ResourceCreationLock.Lock();
             {
                 this->RCCreateVertexArrayCache.Reset();
+                this->RCCreateTextureCache.Reset();
             }
             ResourceCreationLock.Unlock();
 
@@ -133,6 +137,7 @@ namespace GTEngine
             ResourceDeletionLock.Lock();
             {
                 this->RCDeleteVertexArrayCache.Reset();
+                this->RCDeleteTextureCache.Reset();
             }
             ResourceDeletionLock.Unlock();
         }
@@ -454,24 +459,11 @@ namespace GTEngine
         }
 
 
-        State.currentRCSetGlobalState = nullptr;
-        State.currentRCClear          = nullptr;
-        State.currentRCDraw           = nullptr;
+        State.currentRCSetGlobalState      = nullptr;
+        State.currentRCSetVertexArrayState = nullptr;
+        State.currentRCClear               = nullptr;
+        State.currentRCDraw                = nullptr;
     }
-
-    /*
-    void Renderer2::Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
-    {
-        //UPDATE_CURRENT_RC(RCDrawVertexArray);
-        //assert(State.currentRCDrawVertexArray != nullptr);
-        //{
-        //}
-
-
-        //State.currentRCClear          = nullptr;
-        //State.currentRCSetGlobalState = nullptr;
-    }
-    */
 
 
 
@@ -608,6 +600,60 @@ namespace GTEngine
             }
         }
     }
+
+
+
+    Texture2D* Renderer2::CreateTexture2D()
+    {
+        State.instantiatedTextureObjects.PushBack(new GLuint(0));
+        GLuint* textureObject  = State.instantiatedTextureObjects.GetBack();
+
+
+        ResourceCreationLock.Lock();
+        {
+            auto &command = RCCaches[BackCallCacheIndex].RCCreateTextureCache.Acquire();
+            command.CreateTexture(textureObject);
+
+            ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
+        }
+        ResourceCreationLock.Unlock();
+
+
+
+        return new Texture2D_OpenGL33(textureObject);
+    }
+
+    void Renderer2::DeleteTexture2D(Texture2D* textureToDelete)
+    {
+        auto textureToDeleteGL33 = static_cast<Texture2D_OpenGL33*>(textureToDelete);
+        if (textureToDeleteGL33 != nullptr)
+        {
+            // The OpenGL object needs to be marked for deletion.
+            GLuint* textureObject = textureToDeleteGL33->GetOpenGLObjectPtr();
+
+            assert(textureObject  != nullptr);
+            {
+                ResourceDeletionLock.Lock();
+                {
+                    auto &command = RCCaches[BackCallCacheIndex].RCDeleteTextureCache.Acquire();
+                    command.DeleteTexture(textureObject);
+
+                    ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
+                }
+                ResourceDeletionLock.Unlock();
+
+
+
+                // The objects need to be marked for deletion, but not actually deleted yet.
+                State.MarkVertexArrayObjectAsDeleted(textureObject);
+            }
+
+
+            // We can safely delete the main object at this point.
+            delete textureToDelete;
+        }
+    }
+
 
 
     /////////////////////////////////////////////////////////////

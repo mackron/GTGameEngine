@@ -9,6 +9,8 @@
 #include "RCCreateVertexArray.hpp"
 #include "RCDeleteVertexArray.hpp"
 #include "RCSetVertexArrayState.hpp"
+#include "RCCreateTexture.hpp"
+#include "RCDeleteTexture.hpp"
 
 #include "../CapabilityBits.hpp"
 
