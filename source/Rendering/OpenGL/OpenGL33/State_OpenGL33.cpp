@@ -6,13 +6,13 @@
 namespace GTEngine
 {
     State_OpenGL33::State_OpenGL33()
-        : currentTexture1D(nullptr), currentTexture2D(nullptr), currentTexture3D(nullptr), currentTextureCube(nullptr),
-          currentProgram(nullptr),
-          currentVAO(nullptr),
-          currentFBO(nullptr),
+        : //currentTexture1D(nullptr), currentTexture2D(nullptr), currentTexture3D(nullptr), currentTextureCube(nullptr),
+          //currentProgram(nullptr),
+          //currentVAO(nullptr),
+          //currentFBO(nullptr),
           enabledStates(COLOUR_WRITES_BIT | DEPTH_WRITES_BIT | DEPTH_TEST_BIT | FACE_CULLING_BIT),
           stencilMask(-1),
-          currentRCSetGlobalState(nullptr), currentRCClear(nullptr), currentRCDraw(nullptr),
+          currentRCSetGlobalState(nullptr), currentRCClear(nullptr), currentRCDraw(nullptr), currentRCSetVertexArrayState(nullptr),
           instantiatedTextureObjects(), instantiatedProgramObjects(), instantiatedVertexArrayObjects(), instantiatedBufferObjects(), instantiatedFramebufferObjects(),
           deletedTextureObjects(),      deletedProgramObjects(),      deletedVertexArrayObjects(),      deletedBufferObjects(),      deletedFramebufferObjects()
     {

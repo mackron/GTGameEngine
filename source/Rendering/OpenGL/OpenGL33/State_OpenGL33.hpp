@@ -8,6 +8,7 @@
 #include "RCDraw.hpp"
 #include "RCCreateVertexArray.hpp"
 #include "RCDeleteVertexArray.hpp"
+#include "RCSetVertexArrayState.hpp"
 
 #include "../CapabilityBits.hpp"
 
@@ -30,13 +31,13 @@ namespace GTEngine
         //
         // For bindings we actually store pointers to the OpenGL objects. The reason for this is that we may need to call glGen*()
         // somewhere in the pipeline. glGen*() will need to reference a variable that was declared at a higher level.
-        GLuint* currentTexture1D;
-        GLuint* currentTexture2D;
-        GLuint* currentTexture3D;
-        GLuint* currentTextureCube;
-        GLuint* currentProgram;
-        GLuint* currentVAO;
-        GLuint* currentFBO;
+        //GLuint* currentTexture1D;
+        //GLuint* currentTexture2D;
+        //GLuint* currentTexture3D;
+        //GLuint* currentTextureCube;
+        //GLuint* currentProgram;
+        //GLuint* currentVAO;
+        //GLuint* currentFBO;
 
         /// Enabled states. If the bit is set, it's enabled.
         uint32_t enabledStates;
@@ -47,9 +48,11 @@ namespace GTEngine
 
         
         // Pointers to the current render command for a particular operation. When null, a new one needs to be created and set.
-        RCSetGlobalState* currentRCSetGlobalState;
-        RCClear*          currentRCClear;
-        RCDraw*           currentRCDraw;
+        RCSetGlobalState*      currentRCSetGlobalState;
+        RCClear*               currentRCClear;
+        RCDraw*                currentRCDraw;
+        RCSetVertexArrayState* currentRCSetVertexArrayState;
+
 
 
 

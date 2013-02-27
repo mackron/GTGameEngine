@@ -29,15 +29,27 @@ namespace GTEngine
         // 2) Bind the vertex array object.
         glBindVertexArray(*this->vertexArrayObject);
 
+
         // 3) Bind the vertex and index arrays.
         glBindBuffer(GL_ARRAY_BUFFER,         *this->vertexBufferObject);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *this->indexBufferObject);
 
+
         // 4) Enable the vertex attributes supplied by 'format'.
-        size_t formatArraySize = format.GetAttributeCount();
-        for (size_t i = 0; i < formatArraySize; ++i)
+        size_t  formatArraySize   = format.GetAttributeCount();
+        GLsizei formatSizeInBytes = static_cast<GLsizei>(format.GetSizeInBytes());
+        int     offset = 0;
+
+        for (size_t i = 0; i < formatArraySize; i += 2)
         {
-            glEnableVertexAttribArray(static_cast<GLuint>(format[i]));
+            GLuint  attribIndex = static_cast<GLuint>(format[i]);
+            GLint   attribSize  = static_cast<GLint>( format[i + 1]);
+
+            glEnableVertexAttribArray(attribIndex);
+            glVertexAttribPointer(attribIndex, attribSize, GL_FLOAT, GL_FALSE, formatSizeInBytes, reinterpret_cast<const GLvoid*>(offset));
+
+            // The offset must be set AFTER glVertexAttribPointer().
+            offset += attribSize;
         }
 
 

@@ -276,31 +276,29 @@ namespace GTEngine
         /// @param vertexArrayToDelete [in] A pointer to the vertex array to delete.
         static void DeleteVertexArray(VertexArray* vertexArrayToDelete);
 
-        /// Sets the vertex data of the given vertex array.
+        /// Pushes the vertex data of the given vertex array to the renderer.
         ///
-        /// @param vertexArray [in] A reference to the vertex array whose having it's data set.
-        /// @param vertices    [in] A pointer to the buffer containing the vertex data.
-        /// @param vertexCount [in] The number of vertices defined in the buffer.
+        /// @param vertexArray [in] A reference to the vertex array whose data is getting pushed to the renderer.
         ///
         /// @remarks
-        ///     The vertex format and usage is defined by vertex array.
-        ///     @par
-        ///     If the vertex array is set to keep a local copy, it will be copied over at this point.
-        ///     @par
-        ///     This function will create a copy of the data, so it is safe to delete the data immediately after this call.
-        static void SetVertexArrayVertexData(VertexArray &vertex, const float* vertices, size_t vertexCount);
+        ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
+        static void PushVertexArrayVertexData(const VertexArray &vertexArray);
 
-        /// Sets the index data of the given vertex array.
+        /// Pushes the index data of the given vertex array to the renderer.
         ///
-        /// @param vertexArray [in] A reference to the vertex array whose having it's data set.
-        /// @param indices     [in] A pointer to the buffer containing the indices.
-        /// @param indexCount  [in] The number of indices defined in the buffer.
+        /// @param vertexArray [in] A reference to the vertex array whose data is getting pushed to the renderer.
         ///
         /// @remarks
-        ///     If the vertex array is set to keep a local copy, it will be copied over at this point.
-        ///     @par
-        ///     This function will create a copy of the data, so it is safe to delete the data immediately after this call.
-        static void SetVertexArrayIndexData(VertexArray &vertex, const unsigned int* indices, size_t indexCount);
+        ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
+        static void PushVertexArrayIndexData(const VertexArray &vertexArray);
+
+        /// Pushes both the vertex and index data of the given vertex array to the renderer.
+        ///
+        /// @param vertexArray [in] A reference to the vertex array whose data is getting pushed to the renderer.
+        ///
+        /// @remarks
+        ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
+        static void PushVertexArrayData(const VertexArray &vertexArray);
 
 
 

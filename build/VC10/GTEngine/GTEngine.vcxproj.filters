@@ -785,6 +785,9 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDraw.hpp">
       <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetVertexArrayState.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1322,6 +1325,9 @@
       <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDraw.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetVertexArrayState.cpp">
       <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
   </ItemGroup>
