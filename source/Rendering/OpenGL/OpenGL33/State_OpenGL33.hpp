@@ -12,6 +12,8 @@
 #include "RCCreateTexture.hpp"
 #include "RCDeleteTexture.hpp"
 #include "RCSetTextureState.hpp"
+#include "RCCreateShader.hpp"
+#include "RCDeleteShader.hpp"
 
 #include "../CapabilityBits.hpp"
 

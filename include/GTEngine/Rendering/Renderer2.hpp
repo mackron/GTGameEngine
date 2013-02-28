@@ -279,7 +279,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
-        //static void PushTextureCubeData(const TextureCube &texture, int mipmap = -1);
+        static void PushTextureCubeData(const TextureCube &texture, int mipmap = -1);
 
         /// Sets the minification and magnification filter of the given texture.
         ///
@@ -315,6 +315,40 @@ namespace GTEngine
         ///     This does not modify the client-side texture data. If the texture data is needed on the client side, you will need to do manualy
         ///     mipmap generation.
         static void GenerateTexture2DMipmaps(const Texture2D &texture);
+
+
+
+
+        /// Creates a shader.
+        ///
+        /// @param vertexShaderSource   [in] The vertex shader source.
+        /// @param fragmentShaderSource [in] The fragment shader source.
+        /// @param geometryShaderSource [in] The geometry shader source.
+        ///
+        /// @remarks
+        ///     Shaders are monolithic OpenGL style.
+        ///     @par
+        ///     The shader code will not be compiled until ExecuteCallCache() is called.
+        ///     @par
+        ///     The shader strings will be copied immediately so it is safe to delete the strings immediately after this function returns.
+        static Shader* CreateShader(const char* vertexShaderSource, const char* fragmentShaderSource, const char* geometryShaderSource = nullptr);
+
+        /// Deletes a shader created with CreateShader().
+        ///
+        /// @param shaderToDelete [in] The shader to delete.
+        static void DeleteShader(Shader* shaderToDelete);
+
+
+        /// Pushes the pending properties of the given shader to the renderer.
+        ///
+        /// @param shader [in] The shader whose pending properties are being pushed.
+        ///
+        /// @remarks
+        ///     It is the responsibility of the client to clear pending properties where appropriate. Typically, the pending properties should
+        ///     be cleared straight after this call. This function will immediately make a copy of the properties so it is safe to clear straight
+        ///     away after this function returned.
+        static void PushShaderPendingProperties(const Shader &shader);
+
 
 
 

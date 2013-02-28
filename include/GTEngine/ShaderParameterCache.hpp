@@ -26,13 +26,21 @@ namespace GTEngine
 
         /// Setters.
         void Set(const char* name, float x);
-        
-        void Set(const char* name, const glm::vec2 &v);
-        void Set(const char* name, const glm::vec3 &v);
-        void Set(const char* name, const glm::vec4 &v);
         void Set(const char* name, float x, float y)                   { this->Set(name, glm::vec2(x, y)); }
         void Set(const char* name, float x, float y, float z)          { this->Set(name, glm::vec3(x, y, z)); }
         void Set(const char* name, float x, float y, float z, float w) { this->Set(name, glm::vec4(x, y, z, w)); }
+        void Set(const char* name, const glm::vec2 &v);
+        void Set(const char* name, const glm::vec3 &v);
+        void Set(const char* name, const glm::vec4 &v);
+
+        void Set(const char* name, int x);
+        void Set(const char* name, int x, int y)               { this->Set(name, glm::vec2(x, y)); }
+        void Set(const char* name, int x, int y, int z)        { this->Set(name, glm::vec3(x, y, z)); }
+        void Set(const char* name, int x, int y, int z, int w) { this->Set(name, glm::vec4(x, y, z, w)); }
+        void Set(const char* name, const glm::ivec2 &v);
+        void Set(const char* name, const glm::ivec3 &v);
+        void Set(const char* name, const glm::ivec4 &v);
+
 
         void Set(const char* name, const glm::mat2 &v);
         void Set(const char* name, const glm::mat3 &v);

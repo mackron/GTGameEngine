@@ -24,7 +24,6 @@ namespace GTEngine
     {
         this->SetGeneric<ShaderParameter_Float>(name, value);
     }
-
     void ShaderParameterCache::Set(const char* name, const glm::vec2 &value)
     {
         this->SetGeneric<ShaderParameter_Float2>(name, value);
@@ -37,6 +36,25 @@ namespace GTEngine
     {
         this->SetGeneric<ShaderParameter_Float4>(name, value);
     }
+
+
+    void ShaderParameterCache::Set(const char* name, int value)
+    {
+        this->SetGeneric<ShaderParameter_Integer>(name, value);
+    }
+    void ShaderParameterCache::Set(const char* name, const glm::ivec2 &value)
+    {
+        this->SetGeneric<ShaderParameter_Integer2>(name, value);
+    }
+    void ShaderParameterCache::Set(const char* name, const glm::ivec3 &value)
+    {
+        this->SetGeneric<ShaderParameter_Integer3>(name, value);
+    }
+    void ShaderParameterCache::Set(const char* name, const glm::ivec4 &value)
+    {
+        this->SetGeneric<ShaderParameter_Integer4>(name, value);
+    }
+
 
     void ShaderParameterCache::Set(const char* name, const glm::mat2 &value)
     {

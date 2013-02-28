@@ -5,8 +5,8 @@
 
 namespace GTEngine
 {
-    Shader::Shader(const char* vertexSource, const char* fragmentSource)
-        : vertexSource(vertexSource), fragmentSource(fragmentSource),
+    Shader::Shader(const char* vertexSourceIn, const char* fragmentSourceIn, const char* geometrySourceIn)
+        : vertexSource(vertexSourceIn), fragmentSource(fragmentSourceIn), geometrySource(geometrySourceIn),
           pendingParameters(),
           rendererData(nullptr),
           currentTextures()

@@ -16,6 +16,12 @@ namespace GTEngine
     GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Float2);
     GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Float3);
     GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Float4);
+
+    GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Integer);
+    GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Integer2);
+    GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Integer3);
+    GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Integer4);
+
     GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Float2x2);
     GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Float3x3);
     GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Float4x4);
