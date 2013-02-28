@@ -827,6 +827,12 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Shader_OpenGL33.hpp">
       <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetShaderState.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\ShaderState_OpenGL33.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1388,6 +1394,12 @@
       <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Shader_OpenGL33.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetShaderState.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\ShaderState_OpenGL33.cpp">
       <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
   </ItemGroup>

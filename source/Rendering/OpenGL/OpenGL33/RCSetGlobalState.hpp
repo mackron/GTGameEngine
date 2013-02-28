@@ -7,6 +7,8 @@
 #include <gtgl/gtgl.h>
 #include <cstdint>
 
+#include "ShaderState_OpenGL33.hpp"
+
 namespace GTEngine
 {
     /// Render command for clearing the buffers/
@@ -33,6 +35,10 @@ namespace GTEngine
 
         /// Renderer::SetClearStencil()
         void SetClearStencil(GLint stencil);
+
+
+        /// Renderer::SetCurrentShader()
+        void SetCurrentShader(ShaderState_OpenGL33 *programState);
 
 
         /// Renderer::Enable*()
@@ -108,6 +114,14 @@ namespace GTEngine
             GLint stencil;
 
         }clearStencilParams;
+
+
+        /// glUseProgram parameters
+        struct
+        {
+            ShaderState_OpenGL33* programState;
+
+        }currentShaderParams;
 
 
         /// glEnable caps.

@@ -6,17 +6,17 @@
 namespace GTEngine
 {
     RCDeleteShader::RCDeleteShader()
-        : programObject(nullptr)
+        : programState(nullptr)
     {
     }
 
-    void RCDeleteShader::DeleteShader(GLuint* programObjectIn)
+    void RCDeleteShader::DeleteShader(ShaderState_OpenGL33* programStateIn)
     {
-        this->programObject = programObjectIn;
+        this->programState = programStateIn;
     }
 
     void RCDeleteShader::Execute()
     {
-        glDeleteProgram(*this->programObject);
+        glDeleteProgram(this->programState->programObject);
     }
 }

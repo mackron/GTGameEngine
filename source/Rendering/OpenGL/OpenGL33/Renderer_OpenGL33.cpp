@@ -106,6 +106,7 @@ namespace GTEngine
         RCCache<RCSetGlobalState>      RCSetGlobalStateCache;
         RCCache<RCSetVertexArrayState> RCSetVertexArrayStateCache;
         RCCache<RCSetTextureState>     RCSetTextureStateCache;
+        RCCache<RCSetShaderState>      RCSetShaderStateCache;
 
         // Drawing RCs.
         RCCache<RCClear>               RCClearCache;
@@ -125,6 +126,7 @@ namespace GTEngine
             this->RCSetGlobalStateCache.Reset();
             this->RCSetVertexArrayStateCache.Reset();
             this->RCSetTextureStateCache.Reset();
+            this->RCSetShaderStateCache.Reset();
 
 
             this->RCClearCache.Reset();
@@ -205,10 +207,6 @@ namespace GTEngine
                 glEnable(GL_DEPTH_TEST);
                 glEnable(GL_CULL_FACE);
 
-                // TODO: Check if we need these texture enables by default. Should the shader control these when they are bound?
-                //glEnable(GL_TEXTURE_2D);
-                //glEnable(GL_TEXTURE_CUBE_MAP);
-                
 
                 // We're going to initialise the X11 sub-system from here.
             #ifdef GTGL_GLX
@@ -325,7 +323,7 @@ namespace GTEngine
         State.currentRCSetGlobalState      = nullptr;
         State.currentRCSetVertexArrayState = nullptr;
         State.currentRCSetTextureState     = nullptr;
-        //State.currentRCSetShaderState      = nullptr;
+        State.currentRCSetShaderState      = nullptr;
         //State.currentRCSetFramebufferState = nullptr;
         State.currentRCClear               = nullptr;
         State.currentRCDraw                = nullptr;
@@ -367,6 +365,7 @@ namespace GTEngine
             State.current##renderCommandName = &RCCaches[BackCallCacheIndex].renderCommandName##Cache.Acquire(); \
             CallCaches[BackCallCacheIndex].Append(*State.current##renderCommandName); \
         }
+
 
 
     ///////////////////////////
@@ -434,6 +433,21 @@ namespace GTEngine
     }
 
 
+    void Renderer2::SetCurrentShader(Shader &programToMakeCurrent)
+    {
+        auto programStateToMakeCurrent = static_cast<Shader_OpenGL33 &>(programToMakeCurrent).GetOpenGLState();
+        if (programStateToMakeCurrent != State.currentProgramState)
+        {
+            UPDATE_CURRENT_RC(RCSetGlobalState);
+            assert(State.currentRCSetGlobalState != nullptr);
+            {
+                State.currentRCSetGlobalState->SetCurrentShader(programStateToMakeCurrent);
+                State.currentProgramState = programStateToMakeCurrent;
+            }
+        }
+    }
+
+
     ///////////////////////////
     // Drawing
 
@@ -479,7 +493,7 @@ namespace GTEngine
         State.currentRCSetGlobalState      = nullptr;
         State.currentRCSetVertexArrayState = nullptr;
         State.currentRCSetTextureState     = nullptr;
-        //State.currentRCSetShaderState      = nullptr;
+        State.currentRCSetShaderState      = nullptr;
         //State.currentRCSetFramebufferState = nullptr;
         State.currentRCClear               = nullptr;
         State.currentRCDraw                = nullptr;
@@ -846,14 +860,14 @@ namespace GTEngine
 
     Shader* Renderer2::CreateShader(const char* vertexShaderSource, const char* fragmentShaderSource, const char* geometryShaderSource)
     {
-        State.instantiatedTextureObjects.PushBack(new GLuint(0));
-        GLuint* textureObject  = State.instantiatedTextureObjects.GetBack();
+        State.instantiatedProgramObjects.PushBack(new ShaderState_OpenGL33);
+        auto programState = State.instantiatedProgramObjects.GetBack();
 
 
         ResourceCreationLock.Lock();
         {
-            auto &command = RCCaches[BackCallCacheIndex].RCCreateTextureCache.Acquire();
-            command.CreateTexture(textureObject);
+            auto &command = RCCaches[BackCallCacheIndex].RCCreateShaderCache.Acquire();
+            command.CreateShader(programState, vertexShaderSource, fragmentShaderSource, geometryShaderSource);
 
             ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
         }
@@ -861,7 +875,7 @@ namespace GTEngine
 
 
 
-        return new Shader_OpenGL33(textureObject, vertexShaderSource, fragmentShaderSource, geometryShaderSource);
+        return new Shader_OpenGL33(programState, vertexShaderSource, fragmentShaderSource, geometryShaderSource);
     }
 
     void Renderer2::DeleteShader(Shader* shaderToDelete)
@@ -870,14 +884,14 @@ namespace GTEngine
         if (shaderToDeleteGL33 != nullptr)
         {
             // The OpenGL object needs to be marked for deletion.
-            GLuint* shaderObject = shaderToDeleteGL33->GetOpenGLObjectPtr();
+            auto programState = shaderToDeleteGL33->GetOpenGLState();
 
-            assert(shaderObject  != nullptr);
+            assert(programState  != nullptr);
             {
                 ResourceDeletionLock.Lock();
                 {
                     auto &command = RCCaches[BackCallCacheIndex].RCDeleteShaderCache.Acquire();
-                    command.DeleteShader(shaderObject);
+                    command.DeleteShader(programState);
 
                     ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
                 }
@@ -886,7 +900,7 @@ namespace GTEngine
 
 
                 // The objects need to be marked for deletion, but not actually deleted yet.
-                State.MarkProgramObjectAsDeleted(shaderObject);
+                State.MarkProgramObjectAsDeleted(programState);
             }
 
 
@@ -900,10 +914,10 @@ namespace GTEngine
     {
         auto &shaderGL33 = static_cast<const Shader_OpenGL33 &>(shader);
         {
-            GLuint* programObject = shaderGL33.GetOpenGLObjectPtr();
-            assert(programObject != nullptr);
+            auto programState = shaderGL33.GetOpenGLState();
+            assert(programState != nullptr);
             {
-                if (State.currentRCSetShaderState == nullptr || State.currentRCSetShaderState->GetProgramObject() != programObject)
+                if (State.currentRCSetShaderState == nullptr || State.currentRCSetShaderState->GetProgramState() != programState)
                 {
                     State.currentRCSetShaderState = &RCCaches[BackCallCacheIndex].RCSetShaderStateCache.Acquire();
                     CallCaches[BackCallCacheIndex].Append(*State.currentRCSetShaderState);
@@ -912,6 +926,88 @@ namespace GTEngine
 
                 assert(State.currentRCSetShaderState != nullptr);
                 {
+                    State.currentRCSetShaderState->SetCurrentProgramState(State.currentProgramState);
+
+
+                    auto &pendingParameters = shaderGL33.GetPendingParameters();
+                    for (size_t i = 0; i < pendingParameters.count; ++i)
+                    {
+                        auto parameterName = pendingParameters.buffer[i]->key;
+                        auto parameter     = pendingParameters.buffer[i]->value;
+
+                        assert(parameterName != nullptr);
+                        assert(parameter     != nullptr);
+                        {
+                            if (parameter->type == ShaderParameterType_Texture1D)
+                            {
+                            }
+                            else if (parameter->type == ShaderParameterType_Texture2D)
+                            {
+                                auto texture = static_cast<Texture2D_OpenGL33*>(static_cast<ShaderParameter_Texture2D*>(parameter)->value);
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, texture->GetOpenGLObjectPtr(), texture->GetTarget());
+                                }
+                            }
+                            else if (parameter->type == ShaderParameterType_Texture3D)
+                            {
+                            }
+                            else if (parameter->type == ShaderParameterType_TextureCube)
+                            {
+                                //auto texture = static_cast<Texture2D_OpenGL33*>(static_cast<ShaderParameter_Texture2D*>(parameter)->value);
+                                //{
+                                //    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, texture->GetOpenGLObjectPtr(), texture->GetTarget());
+                                //}
+                            }
+                            else
+                            {
+                                // It's a basic type.
+                                if (parameter->type == ShaderParameterType_Float)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float*>(parameter)->value);
+                                }
+                                else if (parameter->type == ShaderParameterType_Float2)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float2*>(parameter)->value);
+                                }
+                                else if (parameter->type == ShaderParameterType_Float3)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float3*>(parameter)->value);
+                                }
+                                else if (parameter->type == ShaderParameterType_Float4)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float4*>(parameter)->value);
+                                }
+                                else if (parameter->type == ShaderParameterType_Integer)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Integer*>(parameter)->value);
+                                }
+                                else if (parameter->type == ShaderParameterType_Integer2)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Integer2*>(parameter)->value);
+                                }
+                                else if (parameter->type == ShaderParameterType_Integer3)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Integer3*>(parameter)->value);
+                                }
+                                else if (parameter->type == ShaderParameterType_Integer4)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Integer4*>(parameter)->value);
+                                }
+                                else if (parameter->type == ShaderParameterType_Float2x2)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float2x2*>(parameter)->value);
+                                }
+                                else if (parameter->type == ShaderParameterType_Float3x3)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float3x3*>(parameter)->value);
+                                }
+                                else if (parameter->type == ShaderParameterType_Float4x4)
+                                {
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float4x4*>(parameter)->value);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

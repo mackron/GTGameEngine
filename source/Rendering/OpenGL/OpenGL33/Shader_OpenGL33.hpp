@@ -6,6 +6,8 @@
 #include <GTEngine/Rendering/Shader.hpp>
 #include <gtgl/gtgl.h>
 
+#include "ShaderState_OpenGL33.hpp"
+
 namespace GTEngine
 {
     class Shader_OpenGL33 : public Shader
@@ -13,20 +15,20 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        Shader_OpenGL33(GLuint* objectGLIn, const char* vertexShader, const char* fragmentShader, const char* geometryShader);
+        Shader_OpenGL33(ShaderState_OpenGL33* stateGLIn, const char* vertexShader, const char* fragmentShader, const char* geometryShader);
 
         /// Destructor.
         ~Shader_OpenGL33();
 
 
-        /// Retrieves a pointer to the OpenGL program object.
-        GLuint* GetOpenGLObjectPtr() const;
+        /// Retrieves a pointer to the OpenGL33 shader program state.
+        ShaderState_OpenGL33* GetOpenGLState() const;
 
 
     private:
 
         /// A pointer to the OpenGL object.
-        GLuint* objectGL;
+        ShaderState_OpenGL33* stateGL;
     };
 }
 

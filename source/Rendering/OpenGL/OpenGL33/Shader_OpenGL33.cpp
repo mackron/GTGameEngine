@@ -4,8 +4,8 @@
 
 namespace GTEngine
 {
-    Shader_OpenGL33::Shader_OpenGL33(GLuint* objectGLIn, const char* vertexShader, const char* fragmentShader, const char* geometryShader)
-        : Shader(vertexShader, fragmentShader, geometryShader), objectGL(objectGLIn)
+    Shader_OpenGL33::Shader_OpenGL33(ShaderState_OpenGL33* stateGLIn, const char* vertexShader, const char* fragmentShader, const char* geometryShader)
+        : Shader(vertexShader, fragmentShader, geometryShader), stateGL(stateGLIn)
     {
     }
 
@@ -14,8 +14,8 @@ namespace GTEngine
     }
 
 
-    GLuint* Shader_OpenGL33::GetOpenGLObjectPtr() const
+    ShaderState_OpenGL33* Shader_OpenGL33::GetOpenGLState() const
     {
-        return this->objectGL;
+        return this->stateGL;
     }
 }
