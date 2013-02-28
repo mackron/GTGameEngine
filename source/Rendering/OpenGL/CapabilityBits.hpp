@@ -12,10 +12,6 @@
 #define POLYGON_OFFSET_FILL_BIT     (1 << 7)
 #define POLYGON_OFFSET_LINE_BIT     (1 << 8)
 #define POLYGON_OFFSET_POINT_BIT    (1 << 9)
-#define TEXTURE1D_BIT               (1 << 10)
-#define TEXTURE2D_BIT               (1 << 11)
-#define TEXTURE3D_BIT               (1 << 12)
-#define TEXTURECUBE_BIT             (1 << 13)
-#define FACE_CULLING_BIT            (1 << 14)
+#define FACE_CULLING_BIT            (1 << 10)
 
 #endif

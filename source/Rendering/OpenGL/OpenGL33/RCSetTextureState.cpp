@@ -22,14 +22,15 @@ namespace GTEngine
     RCSetTextureState::RCSetTextureState()
         : operationBitfield(0),
           textureObject(nullptr), target(),
-          mipmapDatas(), filters(), anisotropy(), wrapMode()
+          mipmapDatas(), filters(), anisotropy(), wrapMode(),
+          currentProgramState(nullptr)
     {
     }
 
 
     void RCSetTextureState::SetTexture1DData(GLuint* textureObjectIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes)
     {
-        assert(this->textureObject == nullptr || (this->textureObject != textureObjectIn && this->target != targetIn));
+        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
             TextureData mipmapData;
             mipmapData.internalFormat = ToOpenGLInternalFormat(format);
@@ -65,7 +66,7 @@ namespace GTEngine
 
     void RCSetTextureState::SetTexture2DData(GLuint* textureObjectIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes)
     {
-        assert(this->textureObject == nullptr || (this->textureObject != textureObjectIn && this->target != targetIn));
+        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
             TextureData mipmapData;
             mipmapData.internalFormat = ToOpenGLInternalFormat(format);
@@ -95,13 +96,13 @@ namespace GTEngine
             this->textureObject = textureObjectIn;
             this->target        = targetIn;
 
-            this->operationBitfield |= SET_DATA_1D_BIT;
+            this->operationBitfield |= SET_DATA_2D_BIT;
         }
     }
 
     void RCSetTextureState::SetTexture3DData(GLuint* textureObjectIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes)
     {
-        assert(this->textureObject == nullptr || (this->textureObject != textureObjectIn && this->target != targetIn));
+        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
             TextureData mipmapData;
             mipmapData.internalFormat = ToOpenGLInternalFormat(format);
@@ -131,14 +132,14 @@ namespace GTEngine
             this->textureObject = textureObjectIn;
             this->target        = targetIn;
 
-            this->operationBitfield |= SET_DATA_1D_BIT;
+            this->operationBitfield |= SET_DATA_3D_BIT;
         }
     }
 
 
     void RCSetTextureState::SetTexture2DFilter(GLuint* textureObjectIn, GLenum targetIn, GLint minification, GLint magnification)
     {
-        assert(this->textureObject == nullptr || (this->textureObject != textureObjectIn && this->target != targetIn));
+        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
             this->filters.minification  = minification;
             this->filters.magnification = magnification;
@@ -153,7 +154,7 @@ namespace GTEngine
 
     void RCSetTextureState::SetTexture2DAnisotropy(GLuint* textureObjectIn, GLenum targetIn, GLint anisotropyIn)
     {
-        assert(this->textureObject == nullptr || (this->textureObject != textureObjectIn && this->target != targetIn));
+        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
             this->anisotropy = anisotropyIn;
 
@@ -167,7 +168,7 @@ namespace GTEngine
 
     void RCSetTextureState::SetTexture2DWrapMode(GLuint* textureObjectIn, GLenum targetIn, GLint wrapModeIn)
     {
-        assert(this->textureObject == nullptr || (this->textureObject != textureObjectIn && this->target != targetIn));
+        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
             this->wrapMode = wrapModeIn;
 
@@ -181,7 +182,7 @@ namespace GTEngine
 
     void RCSetTextureState::SetTexture2DMipmapLevels(GLuint* textureObjectIn, GLenum targetIn, GLint baseLevel, GLint maxLevel)
     {
-        assert(this->textureObject == nullptr || (this->textureObject != textureObjectIn && this->target != targetIn));
+        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
             this->mipmapLevels.baseLevel = baseLevel;
             this->mipmapLevels.maxLevel  = maxLevel;
@@ -196,7 +197,7 @@ namespace GTEngine
 
     void RCSetTextureState::GenerateTexture2DMipmaps(GLuint* textureObjectIn, GLenum targetIn)
     {
-        assert(this->textureObject == nullptr || (this->textureObject != textureObjectIn && this->target != targetIn));
+        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
             this->textureObject = textureObjectIn;
             this->target        = targetIn;
@@ -204,13 +205,63 @@ namespace GTEngine
             this->operationBitfield |= GENERATE_MIPMAPS_BIT;
         }
     }
+
+
+    GLuint* RCSetTextureState::GetTextureObject()
+    {
+        return this->textureObject;
+    }
+
+    GLenum RCSetTextureState::GetTarget()
+    {
+        return this->target;
+    }
+
+    void RCSetTextureState::SetCurrentProgramState(ShaderState_OpenGL33* currentProgramStateIn)
+    {
+        this->currentProgramState = currentProgramStateIn;
+    }
     
 
     void RCSetTextureState::Execute()
     {
         assert(this->textureObject != nullptr);
         {
-            glBindTexture(*this->textureObject, this->target);
+            // We may need to restore the texture binding at the end of this. To keep things simple, we're going to just use glGetIntegerv().
+            GLint previousTextureObject = 0;
+
+            if (this->target == GL_TEXTURE_1D)
+            {
+                glGetIntegerv(GL_TEXTURE_BINDING_1D, &previousTextureObject);
+            }
+            else if (this->target == GL_TEXTURE_2D)
+            {
+                glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTextureObject);
+            }
+            else if (this->target == GL_TEXTURE_3D)
+            {
+                glGetIntegerv(GL_TEXTURE_BINDING_3D, &previousTextureObject);
+            }
+            else if (this->target == GL_TEXTURE_CUBE_MAP || (this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z))
+            {
+                glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &previousTextureObject);
+            }
+            else if (this->target == GL_TEXTURE_RECTANGLE)
+            {
+                glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &previousTextureObject);
+            }
+
+
+            // If the target is cube map face, the binding target needs to be GL_TEXTURE_CUBE_MAP.
+            if (this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)
+            {
+                glBindTexture(GL_TEXTURE_CUBE_MAP, *this->textureObject);
+            }
+            else
+            {
+                glBindTexture(this->target, *this->textureObject);
+            }
+
 
             if ((this->operationBitfield & SET_DATA_1D_BIT))
             {
@@ -269,36 +320,65 @@ namespace GTEngine
 
             if ((this->operationBitfield & SET_FILTERS_BIT))
             {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, this->filters.minification);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, this->filters.magnification);
+                assert(!(this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z));
+                {
+                    glTexParameteri(this->target, GL_TEXTURE_MIN_FILTER, this->filters.minification);
+                    glTexParameteri(this->target, GL_TEXTURE_MAG_FILTER, this->filters.magnification);
+                }
             }
 
             if ((this->operationBitfield & SET_ANISOTROPY_BIT))
             {
-                if (GTGL_EXT_texture_filter_anisotropic)
+                assert(!(this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z));
                 {
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+                    if (GTGL_EXT_texture_filter_anisotropic)
+                    {
+                        glTexParameteri(this->target, GL_TEXTURE_MAX_ANISOTROPY_EXT, this->anisotropy);
+                    }
                 }
             }
 
             if ((this->operationBitfield & SET_WRAP_MODE_1D_BIT))
             {
-                glTexParameteri(this->target, GL_TEXTURE_WRAP_S, this->wrapMode);
+                assert(!(this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z));
+                {
+                    glTexParameteri(this->target, GL_TEXTURE_WRAP_S, this->wrapMode);
+                }
             }
             if ((this->operationBitfield & SET_WRAP_MODE_2D_BIT))
             {
-                glTexParameteri(this->target, GL_TEXTURE_WRAP_S, this->wrapMode);
-                glTexParameteri(this->target, GL_TEXTURE_WRAP_T, this->wrapMode);
+                assert(!(this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z));
+                {
+                    glTexParameteri(this->target, GL_TEXTURE_WRAP_S, this->wrapMode);
+                    glTexParameteri(this->target, GL_TEXTURE_WRAP_T, this->wrapMode);
+                }
             }
             if ((this->operationBitfield & SET_WRAP_MODE_2D_BIT))
             {
-                glTexParameteri(this->target, GL_TEXTURE_WRAP_S, this->wrapMode);
-                glTexParameteri(this->target, GL_TEXTURE_WRAP_T, this->wrapMode);
+                assert(!(this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z));
+                {
+                    glTexParameteri(this->target, GL_TEXTURE_WRAP_S, this->wrapMode);
+                    glTexParameteri(this->target, GL_TEXTURE_WRAP_T, this->wrapMode);
+                }
             }
 
             if ((this->operationBitfield & GENERATE_MIPMAPS_BIT))
             {
-                glGenerateMipmap(this->target);
+                assert(!(this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z));
+                {
+                    glGenerateMipmap(this->target);
+                }
+            }
+
+
+            // We need to restore the texture binding. If the target is cube map face, the binding target needs to be GL_TEXTURE_CUBE_MAP.
+            if (this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)
+            {
+                glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<GLuint>(previousTextureObject));
+            }
+            else
+            {
+                glBindTexture(this->target, static_cast<GLuint>(previousTextureObject));
             }
         }
     }

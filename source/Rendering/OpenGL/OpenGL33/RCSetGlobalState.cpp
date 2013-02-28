@@ -7,13 +7,14 @@
 
 namespace GTEngine
 {
-    #define VIEWPORT_BIT        (1 << 1)
-    #define SCISSOR_BIT         (1 << 2)
-    #define CLEAR_COLOUR_BIT    (1 << 3)
-    #define CLEAR_DEPTH_BIT     (1 << 4)
-    #define CLEAR_STENCIL_BIT   (1 << 5)
-    #define ENABLE_BIT          (1 << 6)
-    #define DISABLE_BIT         (1 << 7)
+    #define VIEWPORT_BIT            (1 << 1)
+    #define SCISSOR_BIT             (1 << 2)
+    #define CLEAR_COLOUR_BIT        (1 << 3)
+    #define CLEAR_DEPTH_BIT         (1 << 4)
+    #define CLEAR_STENCIL_BIT       (1 << 5)
+    #define SET_CURRENT_SHADER_BIT  (1 << 6)
+    #define ENABLE_BIT              (1 << 7)
+    #define DISABLE_BIT             (1 << 8)
 
 
     RCSetGlobalState::RCSetGlobalState()
@@ -70,6 +71,14 @@ namespace GTEngine
     }
 
 
+    void RCSetGlobalState::SetCurrentShader(ShaderState_OpenGL33* programState)
+    {
+        this->currentShaderParams.programState = programState;
+
+        this->operationBitfield |= SET_CURRENT_SHADER_BIT;
+    }
+
+
     void RCSetGlobalState::Enable(GLenum cap)
     {
         if (cap == GL_SCISSOR_TEST)
@@ -106,26 +115,6 @@ namespace GTEngine
         {
             this->enableParams.caps  |=  POLYGON_OFFSET_POINT_BIT;
             this->disableParams.caps &= ~POLYGON_OFFSET_POINT_BIT;
-        }
-        else if (cap == GL_TEXTURE_1D)
-        {
-            this->enableParams.caps  |=  TEXTURE1D_BIT;
-            this->disableParams.caps &= ~TEXTURE1D_BIT;
-        }
-        else if (cap == GL_TEXTURE_2D)
-        {
-            this->enableParams.caps  |=  TEXTURE2D_BIT;
-            this->disableParams.caps &= ~TEXTURE2D_BIT;
-        }
-        else if (cap == GL_TEXTURE_3D)
-        {
-            this->enableParams.caps  |=  TEXTURE3D_BIT;
-            this->disableParams.caps &= ~TEXTURE3D_BIT;
-        }
-        else if (cap == GL_TEXTURE_CUBE_MAP)
-        {
-            this->enableParams.caps  |=  TEXTURECUBE_BIT;
-            this->disableParams.caps &= ~TEXTURECUBE_BIT;
         }
         else if (cap == GL_CULL_FACE)
         {
@@ -173,26 +162,6 @@ namespace GTEngine
             this->disableParams.caps |=  POLYGON_OFFSET_POINT_BIT;
             this->enableParams.caps  &= ~POLYGON_OFFSET_POINT_BIT;
         }
-        else if (cap == GL_TEXTURE_1D)
-        {
-            this->disableParams.caps |=  TEXTURE1D_BIT;
-            this->enableParams.caps  &= ~TEXTURE1D_BIT;
-        }
-        else if (cap == GL_TEXTURE_2D)
-        {
-            this->disableParams.caps |=  TEXTURE2D_BIT;
-            this->enableParams.caps  &= ~TEXTURE2D_BIT;
-        }
-        else if (cap == GL_TEXTURE_3D)
-        {
-            this->disableParams.caps |=  TEXTURE3D_BIT;
-            this->enableParams.caps  &= ~TEXTURE3D_BIT;
-        }
-        else if (cap == GL_TEXTURE_CUBE_MAP)
-        {
-            this->disableParams.caps |=  TEXTURECUBE_BIT;
-            this->enableParams.caps  &= ~TEXTURECUBE_BIT;
-        }
         else if (cap == GL_CULL_FACE)
         {
             this->disableParams.caps |=  FACE_CULLING_BIT;
@@ -239,6 +208,39 @@ namespace GTEngine
             glScissor(this->scissorParams.x, this->scissorParams.y, this->scissorParams.width, this->scissorParams.height);
         }
 
+        if ((this->operationBitfield & CLEAR_COLOUR_BIT))
+        {
+            glClearColor(this->clearColorParams.r, this->clearColorParams.g, this->clearColorParams.b, this->clearColorParams.a);
+        }
+
+        if ((this->operationBitfield & CLEAR_DEPTH_BIT))
+        {
+            glClearDepth(this->clearDepthParams.depth);
+        }
+
+        if ((this->operationBitfield & CLEAR_STENCIL_BIT))
+        {
+            glClearStencil(this->clearStencilParams.stencil);
+        }
+
+
+        if ((this->operationBitfield & SET_CURRENT_SHADER_BIT))
+        {
+            // 1) Bind the program.
+            glUseProgram(this->currentShaderParams.programState->programObject);
+
+            // 2) Bind textures.
+            auto &textures = this->currentShaderParams.programState->textures;
+            for (size_t i = 0; i < textures.count; ++i)
+            {
+                auto &texture = textures.buffer[i]->value;
+
+                glActiveTexture(GL_TEXTURE0 + texture.textureUnit);
+                glBindTexture(texture.textureTarget, *texture.textureObject);
+            }
+        }
+
+
         if ((this->operationBitfield & ENABLE_BIT))
         {
             if ((this->enableParams.caps & GL_SCISSOR_TEST))
@@ -276,22 +278,6 @@ namespace GTEngine
             if ((this->enableParams.caps & POLYGON_OFFSET_POINT_BIT))
             {
                 glEnable(GL_POLYGON_OFFSET_POINT);
-            }
-            if ((this->enableParams.caps & TEXTURE1D_BIT))
-            {
-                glEnable(GL_TEXTURE_1D);
-            }
-            if ((this->enableParams.caps & TEXTURE2D_BIT))
-            {
-                glEnable(GL_TEXTURE_2D);
-            }
-            if ((this->enableParams.caps & TEXTURE3D_BIT))
-            {
-                glEnable(GL_TEXTURE_3D);
-            }
-            if ((this->enableParams.caps & TEXTURECUBE_BIT))
-            {
-                glEnable(GL_TEXTURE_CUBE_MAP);
             }
             if ((this->enableParams.caps & FACE_CULLING_BIT))
             {
@@ -336,22 +322,6 @@ namespace GTEngine
             if ((this->enableParams.caps & POLYGON_OFFSET_POINT_BIT))
             {
                 glDisable(GL_POLYGON_OFFSET_POINT);
-            }
-            if ((this->enableParams.caps & TEXTURE1D_BIT))
-            {
-                glDisable(GL_TEXTURE_1D);
-            }
-            if ((this->enableParams.caps & TEXTURE2D_BIT))
-            {
-                glDisable(GL_TEXTURE_2D);
-            }
-            if ((this->enableParams.caps & TEXTURE3D_BIT))
-            {
-                glDisable(GL_TEXTURE_3D);
-            }
-            if ((this->enableParams.caps & TEXTURECUBE_BIT))
-            {
-                glDisable(GL_TEXTURE_CUBE_MAP);
             }
             if ((this->enableParams.caps & FACE_CULLING_BIT))
             {

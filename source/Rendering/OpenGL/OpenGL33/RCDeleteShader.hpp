@@ -6,6 +6,8 @@
 #include <GTEngine/Rendering/RenderCommand.hpp>
 #include <gtgl/gtgl.h>
 
+#include "ShaderState_OpenGL33.hpp"
+
 namespace GTEngine
 {
     /// Render command for clearing the buffers/
@@ -18,7 +20,7 @@ namespace GTEngine
 
 
         /// Renderer::DeleteShader()
-        void DeleteShader(GLuint* programObject);
+        void DeleteShader(ShaderState_OpenGL33* programState);
 
 
         /// RenderCommand::Execute()
@@ -28,7 +30,7 @@ namespace GTEngine
     private:
 
         /// A pointer to the OpenGL shader program object.
-        GLuint* programObject;
+        ShaderState_OpenGL33* programState;
 
 
 

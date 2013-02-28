@@ -9,6 +9,8 @@
 #include <gtgl/gtgl.h>
 #include <cstdint>
 
+#include "ShaderState_OpenGL33.hpp"
+
 namespace GTEngine
 {
     /// Render command for clearing the buffers/
@@ -53,6 +55,9 @@ namespace GTEngine
         /// Retrieves the target (texture type) of the state being set.
         GLenum GetTarget();
 
+
+        /// Sets the state of the current shader.
+        void SetCurrentProgramState(ShaderState_OpenGL33* currentProgramState);
 
 
         /// RenderCommand::Execute()
@@ -110,6 +115,11 @@ namespace GTEngine
             GLint maxLevel;
 
         }mipmapLevels;
+
+
+
+        /// A pointer to the state of the current shader.
+        ShaderState_OpenGL33* currentProgramState;
 
 
 

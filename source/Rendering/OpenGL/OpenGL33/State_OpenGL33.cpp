@@ -30,7 +30,7 @@ namespace GTEngine
         }
     }
 
-    void State_OpenGL33::MarkProgramObjectAsDeleted(GLuint* programObject)
+    void State_OpenGL33::MarkProgramObjectAsDeleted(ShaderState_OpenGL33* programObject)
     {
         assert(this->instantiatedProgramObjects.Exists(programObject));
         {

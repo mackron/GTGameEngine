@@ -14,8 +14,10 @@
 #include "RCSetTextureState.hpp"
 #include "RCCreateShader.hpp"
 #include "RCDeleteShader.hpp"
+#include "RCSetShaderState.hpp"
 
 #include "../CapabilityBits.hpp"
+#include "ShaderState_OpenGL33.hpp"
 
 #include <gtgl/gtgl.h>
 #include <cstdint>
@@ -31,6 +33,10 @@ namespace GTEngine
     {
     public:
 
+        /// The state of the current shader program.
+        ShaderState_OpenGL33* currentProgramState;
+
+
         /// Enabled states. If the bit is set, it's enabled.
         uint32_t enabledStates;
 
@@ -43,6 +49,7 @@ namespace GTEngine
         RCSetGlobalState*      currentRCSetGlobalState;
         RCSetVertexArrayState* currentRCSetVertexArrayState;
         RCSetTextureState*     currentRCSetTextureState;
+        RCSetShaderState*      currentRCSetShaderState;
         RCClear*               currentRCClear;
         RCDraw*                currentRCDraw;
 
@@ -52,7 +59,7 @@ namespace GTEngine
         GTCore::Vector<GLuint*> instantiatedTextureObjects;
 
         /// The list of currently instantiated shader programs.
-        GTCore::Vector<GLuint*> instantiatedProgramObjects;
+        GTCore::Vector<ShaderState_OpenGL33*> instantiatedProgramObjects;
 
         /// The list of currently instantiated VAO's.
         GTCore::Vector<GLuint*> instantiatedVertexArrayObjects;
@@ -68,7 +75,7 @@ namespace GTEngine
         GTCore::Vector<GLuint*> deletedTextureObjects;
 
         /// The list of shader programs that need to be deleted.
-        GTCore::Vector<GLuint*> deletedProgramObjects;
+        GTCore::Vector<ShaderState_OpenGL33*> deletedProgramObjects;
 
         /// The list of VAO's that need to be deleted.
         GTCore::Vector<GLuint*> deletedVertexArrayObjects;
@@ -92,7 +99,7 @@ namespace GTEngine
         void MarkTextureObjectAsDeleted(GLuint* textureObject);
 
         /// Marks a shader program as deleted.
-        void MarkProgramObjectAsDeleted(GLuint* programObject);
+        void MarkProgramObjectAsDeleted(ShaderState_OpenGL33* programObject);
 
         /// Marks a vertex array as deleted.
         void MarkVertexArrayObjectAsDeleted(GLuint* vertexArrayObject);

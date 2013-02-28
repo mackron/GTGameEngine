@@ -77,7 +77,8 @@ namespace GTEngine
         /// Retrieves the internal list of pending parameters.
         ///
         /// @return A reference to the internal list of rendering parameters waiting to be set.
-        GTCore::Dictionary<ShaderParameter*> & GetPendingParameters() { return this->pendingParameters.GetParameters(); }
+              GTCore::Dictionary<ShaderParameter*> & GetPendingParameters()       { return this->pendingParameters.GetParameters(); }
+        const GTCore::Dictionary<ShaderParameter*> & GetPendingParameters() const { return this->pendingParameters.GetParameters(); }
 
         /// Clears the pending parameters.
         void ClearPendingParameters();

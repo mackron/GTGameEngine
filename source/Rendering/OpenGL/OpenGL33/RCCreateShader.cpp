@@ -7,14 +7,14 @@
 namespace GTEngine
 {
     RCCreateShader::RCCreateShader()
-        : programObject(nullptr), vertexShaderSource(), fragmentShaderSource(), geometryShaderSource()
+        : programState(nullptr), vertexShaderSource(), fragmentShaderSource(), geometryShaderSource()
     {
     }
 
 
-    void RCCreateShader::CreateShader(GLuint* programObject, const char* vertexShaderSourceIn, const char* fragmentShaderSourceIn, const char* geometryShaderSourceIn)
+    void RCCreateShader::CreateShader(ShaderState_OpenGL33* programStateIn, const char* vertexShaderSourceIn, const char* fragmentShaderSourceIn, const char* geometryShaderSourceIn)
     {
-        this->programObject = programObject;
+        this->programState = programStateIn;
 
         this->vertexShaderSource   = vertexShaderSourceIn;
         this->fragmentShaderSource = fragmentShaderSourceIn;
@@ -39,7 +39,7 @@ namespace GTEngine
 
 
         // 2) Link the program.
-        *this->programObject = this->LinkProgram(vertexShaderObject, fragmentShaderObject, geometryShaderObject);
+        this->programState->programObject = this->LinkProgram(vertexShaderObject, fragmentShaderObject, geometryShaderObject);
 
 
 
@@ -110,39 +110,39 @@ namespace GTEngine
     GLuint RCCreateShader::LinkProgram(GLuint vertexShader, GLuint fragmentShader, GLuint geometryShader)
     {
         // We'll need a program object.
-        GLuint programObject = glCreateProgram();
+        GLuint programState = glCreateProgram();
 
 
         // We need to have concretely defined vertex attributes for OpenGL 2.0 GLSL since we don't really have much control of vertex attributes
         // from inside the shader code. Thus, we're going to have to use hard coded attributes names. Later on we might make this configurable
         // via the shader library or a config file.
-        glBindAttribLocation(programObject, 0, "VertexInput_Position");
-        glBindAttribLocation(programObject, 1, "VertexInput_TexCoord");
-        glBindAttribLocation(programObject, 2, "VertexInput_Normal");
-        glBindAttribLocation(programObject, 3, "VertexInput_Tangent");
-        glBindAttribLocation(programObject, 4, "VertexInput_Bitangent");
-        glBindAttribLocation(programObject, 5, "VertexInput_Colour");
+        glBindAttribLocation(programState, 0, "VertexInput_Position");
+        glBindAttribLocation(programState, 1, "VertexInput_TexCoord");
+        glBindAttribLocation(programState, 2, "VertexInput_Normal");
+        glBindAttribLocation(programState, 3, "VertexInput_Tangent");
+        glBindAttribLocation(programState, 4, "VertexInput_Bitangent");
+        glBindAttribLocation(programState, 5, "VertexInput_Colour");
 
 
         // Finally we reattach the shaders, link the program and check for errors.
-        if (vertexShader   != 0) glAttachShader(programObject, vertexShader);
-        if (fragmentShader != 0) glAttachShader(programObject, fragmentShader);
-        if (geometryShader != 0) glAttachShader(programObject, geometryShader);
+        if (vertexShader   != 0) glAttachShader(programState, vertexShader);
+        if (fragmentShader != 0) glAttachShader(programState, fragmentShader);
+        if (geometryShader != 0) glAttachShader(programState, geometryShader);
 
-        glLinkProgram(programObject);
+        glLinkProgram(programState);
 
 
         // Check for link errors.
         GLint linkStatus;
-        glGetProgramiv(programObject, GL_LINK_STATUS, &linkStatus);
+        glGetProgramiv(programState, GL_LINK_STATUS, &linkStatus);
 
         if (linkStatus == GL_FALSE)
         {
             GLint logLength;
-            glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &logLength);
+            glGetProgramiv(programState, GL_INFO_LOG_LENGTH, &logLength);
 
             auto log = static_cast<char*>(malloc(logLength));
-            glGetProgramInfoLog(programObject, logLength, nullptr, log);
+            glGetProgramInfoLog(programState, logLength, nullptr, log);
 
             GTEngine::Log("--- Program Link Status ---\n%s", log);
 

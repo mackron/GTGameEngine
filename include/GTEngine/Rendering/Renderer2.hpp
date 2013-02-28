@@ -153,6 +153,15 @@ namespace GTEngine
         static void SetClearStencil(int stencil);
 
 
+        /// Sets the current shader.
+        ///
+        /// @param shaderToMakeCurrent [in] A reference to the shader to make current.
+        ///
+        /// @remarks
+        ///     This will bind any referenced textures to their respective units.
+        static void SetCurrentShader(Shader &shaderToMakeCurrent);
+
+
 
         ///////////////////////////
         // Drawing

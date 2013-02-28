@@ -7,6 +7,8 @@
 #include <GTCore/String.hpp>
 #include <gtgl/gtgl.h>
 
+#include "ShaderState_OpenGL33.hpp"
+
 namespace GTEngine
 {
     /// Render command for clearing the buffers.
@@ -19,7 +21,7 @@ namespace GTEngine
 
         
         /// Renderer::CreateShader().
-        void CreateShader(GLuint* objectGL, const char* vertexShaderSourceIn, const char* fragmentSourceSourceIn, const char* geometryShaderSourceIn);
+        void CreateShader(ShaderState_OpenGL33* programState, const char* vertexShaderSourceIn, const char* fragmentSourceSourceIn, const char* geometryShaderSourceIn);
 
 
 
@@ -49,7 +51,7 @@ namespace GTEngine
     private:
 
         /// A pointer to the program object.
-        GLuint* programObject;
+        ShaderState_OpenGL33* programState;
 
 
         /// The vertex shader source.
