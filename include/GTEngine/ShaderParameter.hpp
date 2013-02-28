@@ -133,6 +133,11 @@ namespace GTEngine
         ShaderParameterType_Float3,
         ShaderParameterType_Float4,
 
+        ShaderParameterType_Integer,
+        ShaderParameterType_Integer2,
+        ShaderParameterType_Integer3,
+        ShaderParameterType_Integer4,
+
         ShaderParameterType_Float2x2,
         ShaderParameterType_Float3x3,
         ShaderParameterType_Float4x4,
@@ -169,6 +174,12 @@ namespace GTEngine
     GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float2,   ShaderParameterType_Float2,   glm::vec2);
     GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float3,   ShaderParameterType_Float3,   glm::vec3);
     GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float4,   ShaderParameterType_Float4,   glm::vec4);
+
+    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Integer,  ShaderParameterType_Integer,  int);
+    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Integer2, ShaderParameterType_Integer2, glm::ivec2);
+    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Integer3, ShaderParameterType_Integer3, glm::ivec3);
+    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Integer4, ShaderParameterType_Integer4, glm::ivec4);
+
     GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float2x2, ShaderParameterType_Float2x2, glm::mat2);
     GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float3x3, ShaderParameterType_Float3x3, glm::mat3);
     GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float4x4, ShaderParameterType_Float4x4, glm::mat4);
@@ -211,6 +222,28 @@ namespace GTEngine
         case ShaderParameterType_Float4:
             {
                 newProp = new ShaderParameter_Float4(propToCopy);
+                break;
+            }
+
+
+        case ShaderParameterType_Integer:
+            {
+                newProp = new ShaderParameter_Integer(propToCopy);
+                break;
+            }
+        case ShaderParameterType_Integer2:
+            {
+                newProp = new ShaderParameter_Integer2(propToCopy);
+                break;
+            }
+        case ShaderParameterType_Integer3:
+            {
+                newProp = new ShaderParameter_Integer3(propToCopy);
+                break;
+            }
+        case ShaderParameterType_Integer4:
+            {
+                newProp = new ShaderParameter_Integer4(propToCopy);
                 break;
             }
 

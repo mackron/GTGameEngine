@@ -22,6 +22,7 @@
 #include "State_OpenGL33.hpp"
 #include "VertexArray_OpenGL33.hpp"
 #include "Texture2D_OpenGL33.hpp"
+#include "Shader_OpenGL33.hpp"
 
 
 
@@ -115,6 +116,8 @@ namespace GTEngine
         RCCache<RCDeleteVertexArray>   RCDeleteVertexArrayCache;
         RCCache<RCCreateTexture>       RCCreateTextureCache;
         RCCache<RCDeleteTexture>       RCDeleteTextureCache;
+        RCCache<RCCreateShader>        RCCreateShaderCache;
+        RCCache<RCDeleteShader>        RCDeleteShaderCache;
 
 
         void Clear()
@@ -132,6 +135,7 @@ namespace GTEngine
             {
                 this->RCCreateVertexArrayCache.Reset();
                 this->RCCreateTextureCache.Reset();
+                this->RCCreateShaderCache.Reset();
             }
             ResourceCreationLock.Unlock();
 
@@ -140,6 +144,7 @@ namespace GTEngine
             {
                 this->RCDeleteVertexArrayCache.Reset();
                 this->RCDeleteTextureCache.Reset();
+                this->RCDeleteShaderCache.Reset();
             }
             ResourceDeletionLock.Unlock();
         }
@@ -660,7 +665,7 @@ namespace GTEngine
 
 
                 // The objects need to be marked for deletion, but not actually deleted yet.
-                State.MarkVertexArrayObjectAsDeleted(textureObject);
+                State.MarkTextureObjectAsDeleted(textureObject);
             }
 
 
@@ -709,6 +714,18 @@ namespace GTEngine
             }
         }
     }
+
+    void Renderer2::PushTextureCubeData(const TextureCube &texture, int mipmapIndex)
+    {
+        // This can, and should be optimized.
+        PushTexture2DData(*texture.PositiveX, mipmapIndex);
+        PushTexture2DData(*texture.NegativeX, mipmapIndex);
+        PushTexture2DData(*texture.PositiveY, mipmapIndex);
+        PushTexture2DData(*texture.NegativeY, mipmapIndex);
+        PushTexture2DData(*texture.PositiveZ, mipmapIndex);
+        PushTexture2DData(*texture.NegativeZ, mipmapIndex);
+    }
+
 
     void Renderer2::SetTexture2DFilter(const Texture2D &texture, TextureFilter minification, TextureFilter magnification)
     {
@@ -824,6 +841,82 @@ namespace GTEngine
             }
         }
     }
+
+
+
+    Shader* Renderer2::CreateShader(const char* vertexShaderSource, const char* fragmentShaderSource, const char* geometryShaderSource)
+    {
+        State.instantiatedTextureObjects.PushBack(new GLuint(0));
+        GLuint* textureObject  = State.instantiatedTextureObjects.GetBack();
+
+
+        ResourceCreationLock.Lock();
+        {
+            auto &command = RCCaches[BackCallCacheIndex].RCCreateTextureCache.Acquire();
+            command.CreateTexture(textureObject);
+
+            ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
+        }
+        ResourceCreationLock.Unlock();
+
+
+
+        return new Shader_OpenGL33(textureObject, vertexShaderSource, fragmentShaderSource, geometryShaderSource);
+    }
+
+    void Renderer2::DeleteShader(Shader* shaderToDelete)
+    {
+        auto shaderToDeleteGL33 = static_cast<Shader_OpenGL33*>(shaderToDelete);
+        if (shaderToDeleteGL33 != nullptr)
+        {
+            // The OpenGL object needs to be marked for deletion.
+            GLuint* shaderObject = shaderToDeleteGL33->GetOpenGLObjectPtr();
+
+            assert(shaderObject  != nullptr);
+            {
+                ResourceDeletionLock.Lock();
+                {
+                    auto &command = RCCaches[BackCallCacheIndex].RCDeleteShaderCache.Acquire();
+                    command.DeleteShader(shaderObject);
+
+                    ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
+                }
+                ResourceDeletionLock.Unlock();
+
+
+
+                // The objects need to be marked for deletion, but not actually deleted yet.
+                State.MarkProgramObjectAsDeleted(shaderObject);
+            }
+
+
+            // We can safely delete the main object at this point.
+            delete shaderToDelete;
+        }
+    }
+
+
+    void Renderer2::PushShaderPendingProperties(const Shader &shader)
+    {
+        auto &shaderGL33 = static_cast<const Shader_OpenGL33 &>(shader);
+        {
+            GLuint* programObject = shaderGL33.GetOpenGLObjectPtr();
+            assert(programObject != nullptr);
+            {
+                if (State.currentRCSetShaderState == nullptr || State.currentRCSetShaderState->GetProgramObject() != programObject)
+                {
+                    State.currentRCSetShaderState = &RCCaches[BackCallCacheIndex].RCSetShaderStateCache.Acquire();
+                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetShaderState);
+                }
+
+
+                assert(State.currentRCSetShaderState != nullptr);
+                {
+                }
+            }
+        }
+    }
+
 
 
     /////////////////////////////////////////////////////////////

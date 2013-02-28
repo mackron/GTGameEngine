@@ -403,6 +403,10 @@ namespace GTEngine
         static void SetShaderParameter(const char *paramName, float x, float y);
         static void SetShaderParameter(const char *paramName, float x, float y, float z);
         static void SetShaderParameter(const char *paramName, float x, float y, float z, float w);
+        static void SetShaderParameter(const char *paramName, int x);
+        static void SetShaderParameter(const char *paramName, int x, int y);
+        static void SetShaderParameter(const char *paramName, int x, int y, int z);
+        static void SetShaderParameter(const char *paramName, int x, int y, int z, int w);
         static void SetShaderParameter(const char *paramName, const glm::mat2 &value);
         static void SetShaderParameter(const char *paramName, const glm::mat3 &value);
         static void SetShaderParameter(const char *paramName, const glm::mat4 &value);
@@ -416,6 +420,19 @@ namespace GTEngine
             SetShaderParameter(paramName, value.x, value.y, value.z);
         }
         static void SetShaderParameter(const char *paramName, const glm::vec4 &value)
+        {
+            SetShaderParameter(paramName, value.x, value.y, value.z, value.w);
+        }
+
+        static inline void SetShaderParameter(const char *paramName, const glm::ivec2 &value)
+        {
+            SetShaderParameter(paramName, value.x, value.y);
+        }
+        static void SetShaderParameter(const char *paramName, const glm::ivec3 &value)
+        {
+            SetShaderParameter(paramName, value.x, value.y, value.z);
+        }
+        static void SetShaderParameter(const char *paramName, const glm::ivec4 &value)
         {
             SetShaderParameter(paramName, value.x, value.y, value.z, value.w);
         }

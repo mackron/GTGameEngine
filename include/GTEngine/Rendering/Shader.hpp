@@ -34,7 +34,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        Shader(const char* vertexSource, const char* fragmentSource);
+        Shader(const char* vertexSource, const char* fragmentSource, const char* geometryShader = nullptr);         // <-- TODO: Remove the default argument. Used only for compatibility with the old renderer.
 
         /// Destructor.
         ~Shader();
@@ -43,6 +43,7 @@ namespace GTEngine
         /// Retrieves the shader source string.
         const char* GetVertexSource()   const { return this->vertexSource.c_str();   }
         const char* GetFragmentSource() const { return this->fragmentSource.c_str(); }
+        const char* GetGeometrySource() const { return this->geometrySource.c_str(); }
 
 
         
@@ -74,6 +75,7 @@ namespace GTEngine
         void SetRendererData(void* rendererData) { this->rendererData = rendererData; }
 
         /// Retrieves the internal list of pending parameters.
+        ///
         /// @return A reference to the internal list of rendering parameters waiting to be set.
         GTCore::Dictionary<ShaderParameter*> & GetPendingParameters() { return this->pendingParameters.GetParameters(); }
 
@@ -98,6 +100,7 @@ namespace GTEngine
         /// The source of the shader.
         GTCore::String vertexSource;
         GTCore::String fragmentSource;
+        GTCore::String geometrySource;
 
         /// The parameters that are waiting to be set on the shader. This will be cleared when the shader is made current on the renderer.
         ShaderParameterCache pendingParameters;

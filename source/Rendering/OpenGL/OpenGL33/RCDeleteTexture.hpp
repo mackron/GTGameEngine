@@ -17,7 +17,7 @@ namespace GTEngine
         RCDeleteTexture();
 
 
-        /// Renderer::CreateVertexArray()
+        /// Renderer::DeleteTexture()
         void DeleteTexture(GLuint* textureObject);
 
 
