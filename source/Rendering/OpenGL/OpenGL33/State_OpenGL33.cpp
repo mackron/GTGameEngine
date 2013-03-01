@@ -6,9 +6,10 @@
 namespace GTEngine
 {
     State_OpenGL33::State_OpenGL33()
-        : enabledStates(COLOUR_WRITES_BIT | DEPTH_WRITES_BIT | DEPTH_TEST_BIT | FACE_CULLING_BIT),
+        : currentProgramState(nullptr), currentFramebuffer(nullptr),
+          enabledStates(COLOUR_WRITES_BIT | DEPTH_WRITES_BIT | DEPTH_TEST_BIT | FACE_CULLING_BIT),
           stencilMask(-1),
-          currentRCSetGlobalState(nullptr), currentRCSetVertexArrayState(nullptr), currentRCSetTextureState(nullptr),
+          currentRCSetGlobalState(nullptr), currentRCSetVertexArrayState(nullptr), currentRCSetTextureState(nullptr), currentRCSetShaderState(nullptr), currentRCSetFramebufferState(nullptr),
           currentRCClear(nullptr), currentRCDraw(nullptr),
           instantiatedTextureObjects(), instantiatedProgramObjects(), instantiatedVertexArrayObjects(), instantiatedBufferObjects(), instantiatedFramebufferObjects(),
           deletedTextureObjects(),      deletedProgramObjects(),      deletedVertexArrayObjects(),      deletedBufferObjects(),      deletedFramebufferObjects()
@@ -77,6 +78,12 @@ namespace GTEngine
 
         for (size_t i = 0; i < this->deletedProgramObjects.count; ++i)
         {
+            // If the program is the current one, we'll just set it to null.
+            if (this->deletedProgramObjects[i] == this->currentProgramState)
+            {
+                this->currentProgramState = nullptr;
+            }
+
             delete this->deletedProgramObjects[i];
         }
         this->deletedProgramObjects.Clear();
@@ -95,6 +102,12 @@ namespace GTEngine
 
         for (size_t i = 0; i < this->deletedFramebufferObjects.count; ++i)
         {
+            // If the framebuffer is the current one, we'll just set it to null.
+            if (this->deletedFramebufferObjects[i] == this->currentFramebuffer)
+            {
+                this->currentFramebuffer = nullptr;
+            }
+
             delete this->deletedFramebufferObjects[i];
         }
         this->deletedFramebufferObjects.Clear();

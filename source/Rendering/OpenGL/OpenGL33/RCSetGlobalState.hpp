@@ -40,6 +40,9 @@ namespace GTEngine
         /// Renderer::SetCurrentShader()
         void SetCurrentShader(ShaderState_OpenGL33 *programState);
 
+        /// Renderer::SetCurrentFramebuffer()
+        void SetCurrentFramebuffer(GLuint* framebufferObject);
+
 
         /// Renderer::Enable*()
         void Enable(GLenum cap);
@@ -122,6 +125,13 @@ namespace GTEngine
             ShaderState_OpenGL33* programState;
 
         }currentShaderParams;
+
+        /// glBindFramebuffer parameter.
+        struct
+        {
+            GLuint* framebufferObject;
+
+        }currentFramebufferParams;
 
 
         /// glEnable caps.

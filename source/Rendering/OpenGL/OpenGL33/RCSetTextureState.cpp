@@ -22,8 +22,7 @@ namespace GTEngine
     RCSetTextureState::RCSetTextureState()
         : operationBitfield(0),
           textureObject(nullptr), target(),
-          mipmapDatas(), filters(), anisotropy(), wrapMode(),
-          currentProgramState(nullptr)
+          mipmapDatas(), filters(), anisotropy(), wrapMode()
     {
     }
 
@@ -217,10 +216,6 @@ namespace GTEngine
         return this->target;
     }
 
-    void RCSetTextureState::SetCurrentProgramState(ShaderState_OpenGL33* currentProgramStateIn)
-    {
-        this->currentProgramState = currentProgramStateIn;
-    }
     
 
     void RCSetTextureState::Execute()

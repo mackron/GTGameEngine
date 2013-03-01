@@ -108,6 +108,7 @@ namespace GTEngine
         RCCache<RCSetVertexArrayState> RCSetVertexArrayStateCache;
         RCCache<RCSetTextureState>     RCSetTextureStateCache;
         RCCache<RCSetShaderState>      RCSetShaderStateCache;
+        RCCache<RCSetFramebufferState> RCSetFramebufferStateCache;
 
         // Drawing RCs.
         RCCache<RCClear>               RCClearCache;
@@ -130,6 +131,7 @@ namespace GTEngine
             this->RCSetVertexArrayStateCache.Reset();
             this->RCSetTextureStateCache.Reset();
             this->RCSetShaderStateCache.Reset();
+            this->RCSetFramebufferStateCache.Reset();
 
 
             this->RCClearCache.Reset();
@@ -329,7 +331,7 @@ namespace GTEngine
         State.currentRCSetVertexArrayState = nullptr;
         State.currentRCSetTextureState     = nullptr;
         State.currentRCSetShaderState      = nullptr;
-        //State.currentRCSetFramebufferState = nullptr;
+        State.currentRCSetFramebufferState = nullptr;
         State.currentRCClear               = nullptr;
         State.currentRCDraw                = nullptr;
     }
@@ -438,16 +440,38 @@ namespace GTEngine
     }
 
 
-    void Renderer2::SetCurrentShader(Shader &programToMakeCurrent)
+    void Renderer2::SetCurrentShader(Shader* programToMakeCurrent)
     {
-        auto programStateToMakeCurrent = static_cast<Shader_OpenGL33 &>(programToMakeCurrent).GetOpenGLState();
-        if (programStateToMakeCurrent != State.currentProgramState)
+        if (programToMakeCurrent != nullptr)
+        {
+            auto programStateToMakeCurrent = static_cast<Shader_OpenGL33*>(programToMakeCurrent)->GetOpenGLState();
+            if (programStateToMakeCurrent != State.currentProgramState)
+            {
+                UPDATE_CURRENT_RC(RCSetGlobalState);
+                assert(State.currentRCSetGlobalState != nullptr);
+                {
+                    State.currentRCSetGlobalState->SetCurrentShader(programStateToMakeCurrent);
+                    State.currentProgramState = programStateToMakeCurrent;
+                }
+            }
+        }
+    }
+
+    void Renderer2::SetCurrentFramebuffer(Framebuffer* framebufferToMakeCurrent)
+    {
+        GLuint* framebufferObjectGL = nullptr;
+        if (framebufferToMakeCurrent != nullptr)
+        {
+            framebufferObjectGL = static_cast<Framebuffer_OpenGL33*>(framebufferToMakeCurrent)->GetOpenGLObjectPtr();
+        }
+
+        if (framebufferObjectGL != State.currentFramebuffer)
         {
             UPDATE_CURRENT_RC(RCSetGlobalState);
             assert(State.currentRCSetGlobalState != nullptr);
             {
-                State.currentRCSetGlobalState->SetCurrentShader(programStateToMakeCurrent);
-                State.currentProgramState = programStateToMakeCurrent;
+                State.currentRCSetGlobalState->SetCurrentFramebuffer(framebufferObjectGL);
+                State.currentFramebuffer = framebufferObjectGL;
             }
         }
     }
@@ -480,7 +504,8 @@ namespace GTEngine
         }
 
 
-        State.currentRCSetGlobalState = nullptr;
+        State.currentRCSetGlobalState      = nullptr;
+        State.currentRCSetFramebufferState = nullptr;
     }
 
     void Renderer2::Draw(const VertexArray &vertexArray, DrawMode mode)
@@ -499,7 +524,7 @@ namespace GTEngine
         State.currentRCSetVertexArrayState = nullptr;
         State.currentRCSetTextureState     = nullptr;
         State.currentRCSetShaderState      = nullptr;
-        //State.currentRCSetFramebufferState = nullptr;
+        State.currentRCSetFramebufferState = nullptr;
         State.currentRCClear               = nullptr;
         State.currentRCDraw                = nullptr;
     }

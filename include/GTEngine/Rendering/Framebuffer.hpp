@@ -122,7 +122,7 @@ namespace GTEngine
         Texture2D* depthStencilAttachment;
 
         /// Keeps track of the maximum number of colour attachments supported by the renderer.
-        size_t maxColourAttachments;
+        //size_t maxColourAttachments;
 
         /// A pointer to renderer-specific data.
         void* rendererData;

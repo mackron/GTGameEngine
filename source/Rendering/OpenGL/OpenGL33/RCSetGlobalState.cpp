@@ -7,20 +7,22 @@
 
 namespace GTEngine
 {
-    #define VIEWPORT_BIT            (1 << 1)
-    #define SCISSOR_BIT             (1 << 2)
-    #define CLEAR_COLOUR_BIT        (1 << 3)
-    #define CLEAR_DEPTH_BIT         (1 << 4)
-    #define CLEAR_STENCIL_BIT       (1 << 5)
-    #define SET_CURRENT_SHADER_BIT  (1 << 6)
-    #define ENABLE_BIT              (1 << 7)
-    #define DISABLE_BIT             (1 << 8)
+    #define VIEWPORT_BIT                    (1 << 1)
+    #define SCISSOR_BIT                     (1 << 2)
+    #define CLEAR_COLOUR_BIT                (1 << 3)
+    #define CLEAR_DEPTH_BIT                 (1 << 4)
+    #define CLEAR_STENCIL_BIT               (1 << 5)
+    #define SET_CURRENT_SHADER_BIT          (1 << 6)
+    #define SET_CURRENT_FRAMEBUFFER_BIT     (1 << 7)
+    #define ENABLE_BIT                      (1 << 8)
+    #define DISABLE_BIT                     (1 << 9)
 
 
     RCSetGlobalState::RCSetGlobalState()
         : operationBitfield(0),
           viewportParams(), scissorParams(),
           clearColorParams(), clearDepthParams(), clearStencilParams(),
+          currentShaderParams(), currentFramebufferParams(),
           enableParams(), disableParams()
     {
     }
@@ -76,6 +78,13 @@ namespace GTEngine
         this->currentShaderParams.programState = programState;
 
         this->operationBitfield |= SET_CURRENT_SHADER_BIT;
+    }
+
+    void RCSetGlobalState::SetCurrentFramebuffer(GLuint* framebufferObject)
+    {
+        this->currentFramebufferParams.framebufferObject = framebufferObject;
+
+        this->operationBitfield |= SET_CURRENT_FRAMEBUFFER_BIT;
     }
 
 
@@ -238,6 +247,11 @@ namespace GTEngine
                 glActiveTexture(GL_TEXTURE0 + texture.textureUnit);
                 glBindTexture(texture.textureTarget, *texture.textureObject);
             }
+        }
+
+        if ((this->operationBitfield & SET_CURRENT_FRAMEBUFFER_BIT))
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, *this->currentFramebufferParams.framebufferObject);
         }
 
 

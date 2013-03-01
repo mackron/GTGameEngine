@@ -56,10 +56,6 @@ namespace GTEngine
         GLenum GetTarget();
 
 
-        /// Sets the state of the current shader.
-        void SetCurrentProgramState(ShaderState_OpenGL33* currentProgramState);
-
-
         /// RenderCommand::Execute()
         void Execute();
 
@@ -115,11 +111,6 @@ namespace GTEngine
             GLint maxLevel;
 
         }mipmapLevels;
-
-
-
-        /// A pointer to the state of the current shader.
-        ShaderState_OpenGL33* currentProgramState;
 
 
 

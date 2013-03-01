@@ -155,11 +155,21 @@ namespace GTEngine
 
         /// Sets the current shader.
         ///
-        /// @param shaderToMakeCurrent [in] A reference to the shader to make current.
+        /// @param shaderToMakeCurrent [in] A pointer to the shader to make current.
         ///
         /// @remarks
         ///     This will bind any referenced textures to their respective units.
-        static void SetCurrentShader(Shader &shaderToMakeCurrent);
+        ///     @par
+        ///     The given shader should not be null. We use a pointer here to keep it consistent with SetCurrentFramebuffer().
+        static void SetCurrentShader(Shader* shaderToMakeCurrent);
+
+        /// Sets the current framebuffer.
+        ///
+        /// @param framebufferToMakeCurrent [in] A pointer to the framebuffer to make current.
+        ///
+        /// @remarks
+        ///     If the given framebuffer is null rendering operations will be performed on the main framebuffer.
+        static void SetCurrentFramebuffer(Framebuffer* framebufferToMakeCurrent);
 
 
 
