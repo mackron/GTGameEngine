@@ -12,8 +12,7 @@ namespace GTEngine
 
     RCSetShaderState::RCSetShaderState()
         : operationBitfield(0),
-          programState(nullptr), basicParametersToSet(), textureParametersToSet(),
-          currentProgramState(nullptr)
+          programState(nullptr), basicParametersToSet(), textureParametersToSet()
     {
     }
 
@@ -176,11 +175,6 @@ namespace GTEngine
         return this->programState;
     }
 
-    //void RCSetShaderState::SetCurrentProgramState(ShaderState_OpenGL33* currentProgramStateIn)
-    //{
-    //    this->currentProgramState = currentProgramStateIn;
-    //}
-
 
     void RCSetShaderState::Execute()
     {
@@ -191,7 +185,7 @@ namespace GTEngine
             GLint previousCurrentProgram;
             glGetIntegerv(GL_CURRENT_PROGRAM, &previousCurrentProgram);
 
-            if (previousCurrentProgram != this->programState->programObject)
+            if (static_cast<GLuint>(previousCurrentProgram) != this->programState->programObject)
             {
                 glUseProgram(this->programState->programObject);
             }
@@ -294,7 +288,7 @@ namespace GTEngine
 
 
                     // If this program state is the current one, we'll need to bind the texture straight away.
-                    if (previousCurrentProgram == this->programState->programObject)
+                    if (static_cast<GLuint>(previousCurrentProgram) == this->programState->programObject)
                     {
                         glActiveTexture(GL_TEXTURE0 + parameter.textureUnit);
                         glBindTexture(parameter.textureTarget, *parameter.textureObject);
@@ -307,9 +301,9 @@ namespace GTEngine
 
 
             // Need to rebind the previous program because it's important that we maintain the integrity of the global state.
-            if (previousCurrentProgram != this->programState->programObject)
+            if (static_cast<GLuint>(previousCurrentProgram) != this->programState->programObject)
             {
-                glUseProgram(previousCurrentProgram);
+                glUseProgram(static_cast<GLuint>(previousCurrentProgram));
             }
         }
     }
