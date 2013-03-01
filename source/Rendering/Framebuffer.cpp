@@ -7,14 +7,13 @@ namespace GTEngine
 {
     Framebuffer::Framebuffer()
         : colourAttachments(nullptr), depthStencilAttachment(nullptr),
-          maxColourAttachments(Renderer::GetMaxColourAttachments()),
           rendererData(nullptr)
     {
         // We need to allocate the array of colour attachments. These need to be initialised to null.
-        this->colourAttachments = new Texture2D*[this->maxColourAttachments];
+        this->colourAttachments = new Texture2D*[Renderer::GetMaxColourAttachments()];
 
         // All colour attachments needs to start life as nullptr.
-        for (size_t i = 0; i < this->maxColourAttachments; ++i)
+        for (size_t i = 0; i < Renderer::GetMaxColourAttachments(); ++i)
         {
             this->colourAttachments[i] = nullptr;
         }
@@ -26,7 +25,7 @@ namespace GTEngine
     Framebuffer::~Framebuffer()
     {
         // First we need to detach everything. We do not want to delete the attachments, just detach.
-        for (size_t i = 0; i < this->maxColourAttachments; ++i)
+        for (size_t i = 0; i < Renderer::GetMaxColourAttachments(); ++i)
         {
             this->DetachColourBuffer(i);
         }
@@ -42,7 +41,7 @@ namespace GTEngine
 
     bool Framebuffer::AttachColourBuffer(Texture2D *buffer, size_t index, bool immediateRendererUpdate)
     {
-        if (index < this->maxColourAttachments)
+        if (index < Renderer::GetMaxColourAttachments())
         {
             if (this->colourAttachments[index] != buffer)
             {
@@ -79,7 +78,7 @@ namespace GTEngine
 
     void Framebuffer::DetachColourBuffer(size_t index, bool immediateRendererUpdate)
     {
-        if (index < this->maxColourAttachments)
+        if (index < Renderer::GetMaxColourAttachments())
         {
             if (this->colourAttachments[index] != nullptr)
             {
@@ -104,7 +103,7 @@ namespace GTEngine
 
     void Framebuffer::DetachBuffer(Texture2D* buffer)
     {
-        for (size_t i = 0; i < this->maxColourAttachments; ++i)
+        for (size_t i = 0; i < Renderer::GetMaxColourAttachments(); ++i)
         {
             if (this->colourAttachments[i] == buffer)
             {
@@ -120,7 +119,7 @@ namespace GTEngine
 
     void Framebuffer::DetachAllBuffers()
     {
-        for (size_t i = 0; i < this->maxColourAttachments; ++i)
+        for (size_t i = 0; i < Renderer::GetMaxColourAttachments(); ++i)
         {
             this->DetachColourBuffer(i);
         }
@@ -130,7 +129,7 @@ namespace GTEngine
 
     Texture2D * Framebuffer::GetColourBuffer(size_t index)
     {
-        if (index < this->maxColourAttachments)
+        if (index < Renderer::GetMaxColourAttachments())
         {
             return this->colourAttachments[index];
         }

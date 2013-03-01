@@ -376,6 +376,7 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteTexture.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteVertexArray.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDraw.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetFramebufferState.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetGlobalState.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetShaderState.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetTextureState.hpp" />
@@ -529,6 +530,7 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteTexture.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteVertexArray.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDraw.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetFramebufferState.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetGlobalState.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetShaderState.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetTextureState.cpp" />

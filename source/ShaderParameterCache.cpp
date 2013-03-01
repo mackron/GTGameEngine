@@ -190,6 +190,31 @@ namespace GTEngine
                 }
 
 
+            case ShaderParameterType_Integer:
+                {
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Integer*>(parameter)->value);
+                    break;
+                }
+
+            case ShaderParameterType_Integer2:
+                {
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Integer2*>(parameter)->value);
+                    break;
+                }
+
+            case ShaderParameterType_Integer3:
+                {
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Integer3*>(parameter)->value);
+                    break;
+                }
+
+            case ShaderParameterType_Integer4:
+                {
+                    intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Integer4*>(parameter)->value);
+                    break;
+                }
+
+
             case ShaderParameterType_Float2x2:
                 {
                     intermediarySerializer.Write(reinterpret_cast<ShaderParameter_Float2x2*>(parameter)->value);
@@ -293,6 +318,47 @@ namespace GTEngine
                 case ShaderParameterType_Float4:
                     {
                         glm::vec4 value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
+                    }
+
+
+                case ShaderParameterType_Integer:
+                    {
+                        int value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
+                    }
+
+                case ShaderParameterType_Integer2:
+                    {
+                        glm::ivec2 value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
+                    }
+
+                case ShaderParameterType_Integer3:
+                    {
+                        glm::ivec3 value;
+                        deserializer.Read(value);
+
+                        this->Set(name.c_str(), value);
+
+                        break;
+                    }
+
+                case ShaderParameterType_Integer4:
+                    {
+                        glm::ivec4 value;
                         deserializer.Read(value);
 
                         this->Set(name.c_str(), value);

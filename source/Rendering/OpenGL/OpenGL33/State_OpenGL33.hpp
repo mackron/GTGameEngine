@@ -17,6 +17,7 @@
 #include "RCSetShaderState.hpp"
 #include "RCCreateFramebuffer.hpp"
 #include "RCDeleteFramebuffer.hpp"
+#include "RCSetFramebufferState.hpp"
 
 #include "../CapabilityBits.hpp"
 #include "ShaderState_OpenGL33.hpp"
@@ -38,6 +39,9 @@ namespace GTEngine
         /// The state of the current shader program.
         ShaderState_OpenGL33* currentProgramState;
 
+        /// A pointer to the OpenGL object of the current framebuffer.
+        GLuint* currentFramebuffer;
+
 
         /// Enabled states. If the bit is set, it's enabled.
         uint32_t enabledStates;
@@ -52,6 +56,7 @@ namespace GTEngine
         RCSetVertexArrayState* currentRCSetVertexArrayState;
         RCSetTextureState*     currentRCSetTextureState;
         RCSetShaderState*      currentRCSetShaderState;
+        RCSetFramebufferState* currentRCSetFramebufferState;
         RCClear*               currentRCClear;
         RCDraw*                currentRCDraw;
 
