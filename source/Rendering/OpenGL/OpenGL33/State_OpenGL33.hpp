@@ -15,6 +15,8 @@
 #include "RCCreateShader.hpp"
 #include "RCDeleteShader.hpp"
 #include "RCSetShaderState.hpp"
+#include "RCCreateFramebuffer.hpp"
+#include "RCDeleteFramebuffer.hpp"
 
 #include "../CapabilityBits.hpp"
 #include "ShaderState_OpenGL33.hpp"

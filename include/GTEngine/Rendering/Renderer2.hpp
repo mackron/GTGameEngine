@@ -361,6 +361,23 @@ namespace GTEngine
 
 
 
+        /// Creates an empty framebuffer object.
+        ///
+        /// @return A pointer to the new framebuffer object.
+        ///
+        /// @remarks
+        ///     The returned framebuffer will be completely empty.
+        static Framebuffer* CreateFramebuffer();
+
+        /// Deletes a framebuffer that was created with CreateFramebuffer().
+        ///
+        /// @param framebufferToDelete [in] The framebuffer to delete.
+        static void DeleteFramebuffer(Framebuffer* framebufferToDelete);
+
+
+
+
+
 
         /////////////////////////////////////////////////////////////
         // Support Queries

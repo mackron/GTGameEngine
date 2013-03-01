@@ -23,6 +23,7 @@
 #include "VertexArray_OpenGL33.hpp"
 #include "Texture2D_OpenGL33.hpp"
 #include "Shader_OpenGL33.hpp"
+#include "Framebuffer_OpenGL33.hpp"
 
 
 
@@ -119,6 +120,8 @@ namespace GTEngine
         RCCache<RCDeleteTexture>       RCDeleteTextureCache;
         RCCache<RCCreateShader>        RCCreateShaderCache;
         RCCache<RCDeleteShader>        RCDeleteShaderCache;
+        RCCache<RCCreateFramebuffer>   RCCreateFramebufferCache;
+        RCCache<RCDeleteFramebuffer>   RCDeleteFramebufferCache;
 
 
         void Clear()
@@ -138,6 +141,7 @@ namespace GTEngine
                 this->RCCreateVertexArrayCache.Reset();
                 this->RCCreateTextureCache.Reset();
                 this->RCCreateShaderCache.Reset();
+                this->RCCreateFramebufferCache.Reset();
             }
             ResourceCreationLock.Unlock();
 
@@ -147,6 +151,7 @@ namespace GTEngine
                 this->RCDeleteVertexArrayCache.Reset();
                 this->RCDeleteTextureCache.Reset();
                 this->RCDeleteShaderCache.Reset();
+                this->RCDeleteFramebufferCache.Reset();
             }
             ResourceDeletionLock.Unlock();
         }
@@ -926,9 +931,6 @@ namespace GTEngine
 
                 assert(State.currentRCSetShaderState != nullptr);
                 {
-                    State.currentRCSetShaderState->SetCurrentProgramState(State.currentProgramState);
-
-
                     auto &pendingParameters = shaderGL33.GetPendingParameters();
                     for (size_t i = 0; i < pendingParameters.count; ++i)
                     {
@@ -1012,6 +1014,61 @@ namespace GTEngine
             }
         }
     }
+
+
+
+    Framebuffer* Renderer2::CreateFramebuffer()
+    {
+        State.instantiatedFramebufferObjects.PushBack(new GLuint(0));
+        auto framebufferObject = State.instantiatedFramebufferObjects.GetBack();
+
+
+        ResourceCreationLock.Lock();
+        {
+            auto &command = RCCaches[BackCallCacheIndex].RCCreateFramebufferCache.Acquire();
+            command.CreateFramebuffer(framebufferObject);
+
+            ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
+        }
+        ResourceCreationLock.Unlock();
+
+
+
+        return new Framebuffer_OpenGL33(framebufferObject);
+    }
+
+    void Renderer2::DeleteFramebuffer(Framebuffer* framebufferToDelete)
+    {
+        auto framebufferToDeleteGL33 = static_cast<Framebuffer_OpenGL33*>(framebufferToDelete);
+        if (framebufferToDeleteGL33 != nullptr)
+        {
+            // The OpenGL object needs to be marked for deletion.
+            auto framebufferObject = framebufferToDeleteGL33->GetOpenGLObjectPtr();
+
+            assert(framebufferObject  != nullptr);
+            {
+                ResourceDeletionLock.Lock();
+                {
+                    auto &command = RCCaches[BackCallCacheIndex].RCDeleteFramebufferCache.Acquire();
+                    command.DeleteFramebuffer(framebufferObject);
+
+                    ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
+                }
+                ResourceDeletionLock.Unlock();
+
+
+
+                // The objects need to be marked for deletion, but not actually deleted yet.
+                State.MarkFramebufferObjectAsDeleted(framebufferObject);
+            }
+
+
+            // We can safely delete the main object at this point.
+            delete framebufferToDeleteGL33;
+        }
+    }
+
+
 
 
 
