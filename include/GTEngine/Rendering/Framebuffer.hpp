@@ -3,6 +3,7 @@
 #ifndef __GTEngine_Framebuffer_hpp_
 #define __GTEngine_Framebuffer_hpp_
 
+#include <GTCore/Map.hpp>
 #include <cstddef>
 
 namespace GTEngine
@@ -74,6 +75,10 @@ namespace GTEngine
         ///     This is slower than the non-generic versions.
         void DetachBuffer(Texture2D *buffer);
 
+        /// Detaches all colour buffers.
+        void DetachAllColourBuffers();
+
+
 
         /// Detaches every buffer.
         void DetachAllBuffers();
@@ -116,15 +121,15 @@ namespace GTEngine
 
     private:
 
+        /// The current colour attachments. This is keyed by their index.
+        GTCore::Map<unsigned int, Texture2D*> colourAttachments;
+
         /// There can be multiple colour textures. We use an array here that will be allocated the number of colour attachments
         /// supported by the renderer.
-        Texture2D** colourAttachments;
+        //Texture2D** colourAttachments;
 
         /// There can only be one depth/stencil texture.
         Texture2D* depthStencilAttachment;
-
-        /// Keeps track of the maximum number of colour attachments supported by the renderer.
-        //size_t maxColourAttachments;
 
         /// A pointer to renderer-specific data.
         void* rendererData;
