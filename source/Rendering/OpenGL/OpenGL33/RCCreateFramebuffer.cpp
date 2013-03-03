@@ -2,24 +2,23 @@
 
 #include "RCCreateFramebuffer.hpp"
 #include <GTEngine/Logging.hpp>
-#include <gtgl/gtgl.h>
 
 namespace GTEngine
 {
     RCCreateFramebuffer::RCCreateFramebuffer()
-        : framebufferObject(nullptr)
+        : framebufferState(nullptr)
     {
     }
 
 
-    void RCCreateFramebuffer::CreateFramebuffer(GLuint* framebufferObjectIn)
+    void RCCreateFramebuffer::CreateFramebuffer(FramebufferState_OpenGL33* framebufferStateIn)
     {
-        this->framebufferObject = framebufferObjectIn;
+        this->framebufferState = framebufferStateIn;
     }
 
 
     void RCCreateFramebuffer::Execute()
     {
-        glGenFramebuffers(1, this->framebufferObject);
+        glGenFramebuffers(1, &this->framebufferState->framebufferObject);
     }
 }

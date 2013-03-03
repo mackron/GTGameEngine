@@ -80,9 +80,9 @@ namespace GTEngine
         this->operationBitfield |= SET_CURRENT_SHADER_BIT;
     }
 
-    void RCSetGlobalState::SetCurrentFramebuffer(GLuint* framebufferObject)
+    void RCSetGlobalState::SetCurrentFramebuffer(FramebufferState_OpenGL33* framebufferState)
     {
-        this->currentFramebufferParams.framebufferObject = framebufferObject;
+        this->currentFramebufferParams.framebufferState = framebufferState;
 
         this->operationBitfield |= SET_CURRENT_FRAMEBUFFER_BIT;
     }
@@ -251,7 +251,7 @@ namespace GTEngine
 
         if ((this->operationBitfield & SET_CURRENT_FRAMEBUFFER_BIT))
         {
-            glBindFramebuffer(GL_FRAMEBUFFER, *this->currentFramebufferParams.framebufferObject);
+            glBindFramebuffer(GL_FRAMEBUFFER, this->currentFramebufferParams.framebufferState->framebufferObject);
         }
 
 

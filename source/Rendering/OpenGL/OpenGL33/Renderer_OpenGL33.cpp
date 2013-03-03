@@ -459,19 +459,19 @@ namespace GTEngine
 
     void Renderer2::SetCurrentFramebuffer(Framebuffer* framebufferToMakeCurrent)
     {
-        GLuint* framebufferObjectGL = nullptr;
+        FramebufferState_OpenGL33* framebufferState = nullptr;
         if (framebufferToMakeCurrent != nullptr)
         {
-            framebufferObjectGL = static_cast<Framebuffer_OpenGL33*>(framebufferToMakeCurrent)->GetOpenGLObjectPtr();
+            framebufferState = static_cast<Framebuffer_OpenGL33*>(framebufferToMakeCurrent)->GetOpenGLState();
         }
 
-        if (framebufferObjectGL != State.currentFramebuffer)
+        if (framebufferState != State.currentFramebufferState)
         {
             UPDATE_CURRENT_RC(RCSetGlobalState);
             assert(State.currentRCSetGlobalState != nullptr);
             {
-                State.currentRCSetGlobalState->SetCurrentFramebuffer(framebufferObjectGL);
-                State.currentFramebuffer = framebufferObjectGL;
+                State.currentRCSetGlobalState->SetCurrentFramebuffer(framebufferState);
+                State.currentFramebufferState = framebufferState;
             }
         }
     }
@@ -1044,14 +1044,14 @@ namespace GTEngine
 
     Framebuffer* Renderer2::CreateFramebuffer()
     {
-        State.instantiatedFramebufferObjects.PushBack(new GLuint(0));
-        auto framebufferObject = State.instantiatedFramebufferObjects.GetBack();
+        State.instantiatedFramebufferObjects.PushBack(new FramebufferState_OpenGL33);
+        auto framebufferState = State.instantiatedFramebufferObjects.GetBack();
 
 
         ResourceCreationLock.Lock();
         {
             auto &command = RCCaches[BackCallCacheIndex].RCCreateFramebufferCache.Acquire();
-            command.CreateFramebuffer(framebufferObject);
+            command.CreateFramebuffer(framebufferState);
 
             ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
         }
@@ -1059,7 +1059,7 @@ namespace GTEngine
 
 
 
-        return new Framebuffer_OpenGL33(framebufferObject);
+        return new Framebuffer_OpenGL33(framebufferState);
     }
 
     void Renderer2::DeleteFramebuffer(Framebuffer* framebufferToDelete)
@@ -1068,14 +1068,14 @@ namespace GTEngine
         if (framebufferToDeleteGL33 != nullptr)
         {
             // The OpenGL object needs to be marked for deletion.
-            auto framebufferObject = framebufferToDeleteGL33->GetOpenGLObjectPtr();
+            auto framebufferState = framebufferToDeleteGL33->GetOpenGLState();
 
-            assert(framebufferObject  != nullptr);
+            assert(framebufferState  != nullptr);
             {
                 ResourceDeletionLock.Lock();
                 {
                     auto &command = RCCaches[BackCallCacheIndex].RCDeleteFramebufferCache.Acquire();
-                    command.DeleteFramebuffer(framebufferObject);
+                    command.DeleteFramebuffer(framebufferState);
 
                     ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
                 }
@@ -1084,7 +1084,7 @@ namespace GTEngine
 
 
                 // The objects need to be marked for deletion, but not actually deleted yet.
-                State.MarkFramebufferObjectAsDeleted(framebufferObject);
+                State.MarkFramebufferObjectAsDeleted(framebufferState);
             }
 
 
@@ -1093,6 +1093,28 @@ namespace GTEngine
         }
     }
 
+
+    void Renderer2::PushAttachments(const Framebuffer &framebuffer)
+    {
+        auto &framebufferGL33 = static_cast<const Framebuffer_OpenGL33 &>(framebuffer);
+        {
+            auto framebufferState = framebufferGL33.GetOpenGLState();
+            assert(framebufferState != nullptr);
+            {
+                if (State.currentRCSetFramebufferState == nullptr || State.currentRCSetFramebufferState->GetFramebufferState() != framebufferState)
+                {
+                    State.currentRCSetFramebufferState = &RCCaches[BackCallCacheIndex].RCSetFramebufferStateCache.Acquire();
+                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetFramebufferState);
+                }
+
+
+                assert(State.currentRCSetShaderState != nullptr);
+                {
+
+                }
+            }
+        }
+    }
 
 
 

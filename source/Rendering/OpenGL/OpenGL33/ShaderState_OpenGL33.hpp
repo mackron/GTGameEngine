@@ -35,6 +35,14 @@ namespace GTEngine
 
         /// The list of texture parameters currently set on the shader. Keyed by the name of the texture.
         GTCore::Dictionary<TextureParameter> textures;
+
+
+        
+        /// Constructor.
+        ShaderState_OpenGL33()
+            : programObject(0), textures()
+        {
+        }
     };
 }
 

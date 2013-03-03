@@ -4,7 +4,7 @@
 #define __GTEngine_Rendering_OpenGL33_RCDeleteFramebuffer_hpp_
 
 #include <GTEngine/Rendering/RenderCommand.hpp>
-#include <gtgl/gtgl.h>
+#include "FramebufferState_OpenGL33.hpp"
 
 namespace GTEngine
 {
@@ -18,7 +18,7 @@ namespace GTEngine
 
 
         /// Renderer::DeleteFramebuffer()
-        void DeleteFramebuffer(GLuint* framebufferObjectIn);
+        void DeleteFramebuffer(FramebufferState_OpenGL33* framebufferStateIn);
 
 
         /// RenderCommand::Execute()
@@ -28,7 +28,7 @@ namespace GTEngine
     private:
 
         /// A pointer to the OpenGL shader program object.
-        GLuint* framebufferObject;
+        FramebufferState_OpenGL33* framebufferState;
 
 
 

@@ -21,6 +21,7 @@
 
 #include "../CapabilityBits.hpp"
 #include "ShaderState_OpenGL33.hpp"
+#include "FramebufferState_OpenGL33.hpp"
 
 #include <gtgl/gtgl.h>
 #include <cstdint>
@@ -40,7 +41,7 @@ namespace GTEngine
         ShaderState_OpenGL33* currentProgramState;
 
         /// A pointer to the OpenGL object of the current framebuffer.
-        GLuint* currentFramebuffer;
+        FramebufferState_OpenGL33* currentFramebufferState;
 
 
         /// Enabled states. If the bit is set, it's enabled.
@@ -75,7 +76,7 @@ namespace GTEngine
         GTCore::Vector<GLuint*> instantiatedBufferObjects;
 
         /// The list of currently instantiated framebuffer objects.
-        GTCore::Vector<GLuint*> instantiatedFramebufferObjects;
+        GTCore::Vector<FramebufferState_OpenGL33*> instantiatedFramebufferObjects;
         
 
         /// The list texture objects that need to be deleted.
@@ -91,7 +92,7 @@ namespace GTEngine
         GTCore::Vector<GLuint*> deletedBufferObjects;
 
         /// The list of framebuffer objects that need to be deleted.
-        GTCore::Vector<GLuint*> deletedFramebufferObjects;
+        GTCore::Vector<FramebufferState_OpenGL33*> deletedFramebufferObjects;
 
 
 
@@ -115,7 +116,7 @@ namespace GTEngine
         void MarkBufferObjectAsDeleted(GLuint* bufferObject);
 
         /// Marks a framebuffer object as deleted.
-        void MarkFramebufferObjectAsDeleted(GLuint* framebufferObject);
+        void MarkFramebufferObjectAsDeleted(FramebufferState_OpenGL33* framebufferObject);
 
 
         /// Clears (deletes) OpenGL objects that have been marked for deletion.

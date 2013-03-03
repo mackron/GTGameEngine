@@ -82,10 +82,12 @@ namespace GTEngine
         /// Retrieves a colour buffer attachment.
         ///
         /// @param index [in] The index of the colour buffer to attach.
-        Texture2D* GetColourBuffer(size_t index);
+              Texture2D* GetColourBuffer(size_t index);
+        const Texture2D* GetColourBuffer(size_t index) const;
 
         /// Retrieves the depth/stencil attachment.
-        Texture2D* GetDepthStencilBuffer();
+              Texture2D* GetDepthStencilBuffer();
+        const Texture2D* GetDepthStencilBuffer() const;
 
 
         /// Checks whether or not the framebuffer is valid.

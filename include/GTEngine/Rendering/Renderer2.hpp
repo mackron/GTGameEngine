@@ -357,7 +357,6 @@ namespace GTEngine
         /// @param shaderToDelete [in] The shader to delete.
         static void DeleteShader(Shader* shaderToDelete);
 
-
         /// Pushes the pending properties of the given shader to the renderer.
         ///
         /// @param shader [in] The shader whose pending properties are being pushed.
@@ -384,7 +383,10 @@ namespace GTEngine
         /// @param framebufferToDelete [in] The framebuffer to delete.
         static void DeleteFramebuffer(Framebuffer* framebufferToDelete);
 
-
+        /// Pushes the attached buffers of the given framebuffer to the renderer.
+        ///
+        /// @param framebuffer [in] The framebuffer whose attachments are being pushed.
+        static void PushAttachments(const Framebuffer &framebuffer);
 
 
 
