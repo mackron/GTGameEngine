@@ -4,8 +4,8 @@
 
 namespace GTEngine
 {
-    Framebuffer_OpenGL33::Framebuffer_OpenGL33(GLuint* objectGLIn)
-        : Framebuffer(), objectGL(objectGLIn)
+    Framebuffer_OpenGL33::Framebuffer_OpenGL33(FramebufferState_OpenGL33* stateGLIn)
+        : Framebuffer(), stateGL(stateGLIn)
     {
     }
 
@@ -14,8 +14,8 @@ namespace GTEngine
     }
 
 
-    GLuint* Framebuffer_OpenGL33::GetOpenGLObjectPtr()
+    FramebufferState_OpenGL33* Framebuffer_OpenGL33::GetOpenGLState() const
     {
-        return this->objectGL;
+        return this->stateGL;
     }
 }

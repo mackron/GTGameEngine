@@ -8,6 +8,7 @@
 #include <cstdint>
 
 #include "ShaderState_OpenGL33.hpp"
+#include "FramebufferState_OpenGL33.hpp"
 
 namespace GTEngine
 {
@@ -38,10 +39,10 @@ namespace GTEngine
 
 
         /// Renderer::SetCurrentShader()
-        void SetCurrentShader(ShaderState_OpenGL33 *programState);
+        void SetCurrentShader(ShaderState_OpenGL33* programState);
 
         /// Renderer::SetCurrentFramebuffer()
-        void SetCurrentFramebuffer(GLuint* framebufferObject);
+        void SetCurrentFramebuffer(FramebufferState_OpenGL33* framebufferObject);
 
 
         /// Renderer::Enable*()
@@ -129,7 +130,7 @@ namespace GTEngine
         /// glBindFramebuffer parameter.
         struct
         {
-            GLuint* framebufferObject;
+            FramebufferState_OpenGL33* framebufferState;
 
         }currentFramebufferParams;
 

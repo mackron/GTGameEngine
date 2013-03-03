@@ -4,7 +4,7 @@
 #define __GTEngine_Rendering_Framebuffer_OpenGL33_hpp_
 
 #include <GTEngine/Rendering/Framebuffer.hpp>
-#include <gtgl/gtgl.h>
+#include "FramebufferState_OpenGL33.hpp"
 
 namespace GTEngine
 {
@@ -13,14 +13,14 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        Framebuffer_OpenGL33(GLuint* objectGLIn);
+        Framebuffer_OpenGL33(FramebufferState_OpenGL33* stateGLIn);
 
         /// Destructor.
         ~Framebuffer_OpenGL33();
 
         
-        /// Retrieves a pointer to the OpenGL object.
-        GLuint* GetOpenGLObjectPtr();
+        /// Retrieves a pointer to the OpenGL state.
+        FramebufferState_OpenGL33* GetOpenGLState() const;
 
 
 
@@ -28,7 +28,7 @@ namespace GTEngine
     private:
 
         /// A pointer to the OpenGL framebuffer object.
-        GLuint* objectGL;
+        FramebufferState_OpenGL33* stateGL;
     };
 }
 

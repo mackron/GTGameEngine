@@ -6,7 +6,7 @@
 namespace GTEngine
 {
     State_OpenGL33::State_OpenGL33()
-        : currentProgramState(nullptr), currentFramebuffer(nullptr),
+        : currentProgramState(nullptr), currentFramebufferState(nullptr),
           enabledStates(COLOUR_WRITES_BIT | DEPTH_WRITES_BIT | DEPTH_TEST_BIT | FACE_CULLING_BIT),
           stencilMask(-1),
           currentRCSetGlobalState(nullptr), currentRCSetVertexArrayState(nullptr), currentRCSetTextureState(nullptr), currentRCSetShaderState(nullptr), currentRCSetFramebufferState(nullptr),
@@ -58,7 +58,7 @@ namespace GTEngine
         }
     }
 
-    void State_OpenGL33::MarkFramebufferObjectAsDeleted(GLuint* framebufferObject)
+    void State_OpenGL33::MarkFramebufferObjectAsDeleted(FramebufferState_OpenGL33* framebufferObject)
     {
         assert(this->instantiatedFramebufferObjects.Exists(framebufferObject));
         {
@@ -103,9 +103,9 @@ namespace GTEngine
         for (size_t i = 0; i < this->deletedFramebufferObjects.count; ++i)
         {
             // If the framebuffer is the current one, we'll just set it to null.
-            if (this->deletedFramebufferObjects[i] == this->currentFramebuffer)
+            if (this->deletedFramebufferObjects[i] == this->currentFramebufferState)
             {
-                this->currentFramebuffer = nullptr;
+                this->currentFramebufferState = nullptr;
             }
 
             delete this->deletedFramebufferObjects[i];

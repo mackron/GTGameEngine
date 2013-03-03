@@ -4,7 +4,7 @@
 #define __GTEngine_Rendering_OpenGL33_RCCreateFramebuffer_hpp_
 
 #include <GTEngine/Rendering/RenderCommand.hpp>
-#include <gtgl/gtgl.h>
+#include "FramebufferState_OpenGL33.hpp"
 
 namespace GTEngine
 {
@@ -18,7 +18,7 @@ namespace GTEngine
 
         
         /// Renderer::CreateFramebuffer().
-        void CreateFramebuffer(GLuint* framebufferObjectIn);
+        void CreateFramebuffer(FramebufferState_OpenGL33* framebufferStateIn);
 
 
 
@@ -30,7 +30,7 @@ namespace GTEngine
     private:
 
         /// A pointer to the program object.
-        GLuint* framebufferObject;
+        FramebufferState_OpenGL33* framebufferState;
 
 
     private:    // No copying.

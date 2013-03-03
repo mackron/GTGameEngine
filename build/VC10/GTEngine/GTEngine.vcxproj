@@ -365,6 +365,7 @@
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\CapabilityBits.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\FramebufferState_OpenGL33.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Framebuffer_OpenGL33.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCClear.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateFramebuffer.hpp" />
@@ -519,6 +520,7 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\OpenGL20.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\Renderer_Resources.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\FramebufferState_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Framebuffer_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCClear.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateFramebuffer.cpp" />

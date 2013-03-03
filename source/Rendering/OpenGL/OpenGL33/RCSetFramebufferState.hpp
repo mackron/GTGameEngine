@@ -4,7 +4,7 @@
 #define __GTEngine_Rendering_OpenGL33_RCSetFramebufferState_hpp_
 
 #include <GTEngine/Rendering/RenderCommand.hpp>
-#include <gtgl/gtgl.h>
+#include "FramebufferState_OpenGL33.hpp"
 #include <cstdint>
 
 namespace GTEngine
@@ -20,7 +20,7 @@ namespace GTEngine
 
 
         /// Retrieves the program object whose state is being set.
-        GLuint* GetFramebufferObject();
+        FramebufferState_OpenGL33* GetFramebufferState();
 
 
 
@@ -36,7 +36,7 @@ namespace GTEngine
 
 
         /// A pointer to the OpenGL framebuffer object.
-        GLuint* framebufferObject;
+        FramebufferState_OpenGL33* framebufferState;
 
 
 

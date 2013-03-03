@@ -127,6 +127,7 @@ namespace GTEngine
         this->DetachDepthStencilBuffer();
     }
 
+
     Texture2D * Framebuffer::GetColourBuffer(size_t index)
     {
         if (index < Renderer::GetMaxColourAttachments())
@@ -137,7 +138,23 @@ namespace GTEngine
         return nullptr;
     }
 
+    const Texture2D * Framebuffer::GetColourBuffer(size_t index) const
+    {
+        if (index < Renderer::GetMaxColourAttachments())
+        {
+            return this->colourAttachments[index];
+        }
+
+        return nullptr;
+    }
+
+
     Texture2D * Framebuffer::GetDepthStencilBuffer()
+    {
+        return this->depthStencilAttachment;
+    }
+
+    const Texture2D * Framebuffer::GetDepthStencilBuffer() const
     {
         return this->depthStencilAttachment;
     }

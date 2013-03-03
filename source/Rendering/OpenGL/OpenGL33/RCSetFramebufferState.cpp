@@ -8,20 +8,20 @@ namespace GTEngine
 {
     RCSetFramebufferState::RCSetFramebufferState()
         : operationBitfield(0),
-          framebufferObject(nullptr)
+          framebufferState(nullptr)
     {
     }
 
 
-    GLuint* RCSetFramebufferState::GetFramebufferObject()
+    FramebufferState_OpenGL33* RCSetFramebufferState::GetFramebufferState()
     {
-        return this->framebufferObject;
+        return this->framebufferState;
     }
 
 
     void RCSetFramebufferState::Execute()
     {
-        assert(this->framebufferObject != nullptr);
+        assert(this->framebufferState != nullptr);
         {
         }
     }

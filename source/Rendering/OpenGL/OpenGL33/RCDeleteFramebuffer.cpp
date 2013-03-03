@@ -1,22 +1,21 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include "RCDeleteFramebuffer.hpp"
-#include <gtgl/gtgl.h>
 
 namespace GTEngine
 {
     RCDeleteFramebuffer::RCDeleteFramebuffer()
-        : framebufferObject(nullptr)
+        : framebufferState(nullptr)
     {
     }
 
-    void RCDeleteFramebuffer::DeleteFramebuffer(GLuint* framebufferObjectIn)
+    void RCDeleteFramebuffer::DeleteFramebuffer(FramebufferState_OpenGL33* framebufferStateIn)
     {
-        this->framebufferObject = framebufferObjectIn;
+        this->framebufferState = framebufferStateIn;
     }
 
     void RCDeleteFramebuffer::Execute()
     {
-        glDeleteFramebuffers(1, this->framebufferObject);
+        glDeleteFramebuffers(1, &this->framebufferState->framebufferObject);
     }
 }
