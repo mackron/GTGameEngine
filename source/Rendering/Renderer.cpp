@@ -1047,8 +1047,8 @@ namespace GTEngine
                     {
                         //if (texture2D->GetTarget() == Texture2DTarget_Default)
                         {
-                            glEnable(GL_TEXTURE_2D);
-                            glBindTexture(GL_TEXTURE_2D, static_cast<OpenGL20::Texture2D*>(texture2D->GetRendererData())->object);
+                            //glEnable(GL_TEXTURE_2D);
+                            //glBindTexture(GL_TEXTURE_2D, static_cast<OpenGL20::Texture2D*>(texture2D->GetRendererData())->object);
                         }
                         //else
                         //{

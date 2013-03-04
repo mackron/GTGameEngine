@@ -11,6 +11,7 @@ namespace GTEngine
 {
     void OpenGL20::BindTexture(GTEngine::Texture2D &texture)
     {
+#if 0
         auto textureData = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
         assert(textureData != nullptr);
 
@@ -18,10 +19,12 @@ namespace GTEngine
         {
             glBindTexture(GL_TEXTURE_2D, textureData->object);
         }
+#endif
     }
 
     void OpenGL20::BindTexture(GTEngine::Texture2D* texture)
     {
+#if 0
         if (texture != nullptr)
         {
             OpenGL20::BindTexture(*texture);
@@ -30,14 +33,17 @@ namespace GTEngine
         {
             glBindTexture(GL_TEXTURE_2D, 0);
         }
+#endif
     }
 
     void OpenGL20::BindTexture(GTEngine::TextureCube &texture)
     {
+#if 0
         auto textureData = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
         assert(textureData != nullptr);
 
         glBindTexture(GL_TEXTURE_CUBE_MAP, textureData->object);
+#endif
     }
 
     void OpenGL20::BindTexture(GTEngine::TextureCube* texture)

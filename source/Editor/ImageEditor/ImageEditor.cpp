@@ -33,11 +33,12 @@ namespace GTEngine
         /// The vertex array in the viewports event handler needs to be deleted.
         Renderer2::DeleteVertexArray(this->viewportEventHandler.vertexArray);
 
-
-        this->GetGUI().DeleteElement(this->viewportElement);
-
         // The image needs to be unacquired.
         Texture2DLibrary::Unacquire(this->image);
+
+
+        // We created the viewport element in the constructor so it needs to be deleted here.
+        this->GetGUI().DeleteElement(this->viewportElement);
     }
 
 
