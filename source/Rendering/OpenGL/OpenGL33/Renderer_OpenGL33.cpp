@@ -903,10 +903,9 @@ namespace GTEngine
         {
             auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
             {
-                State.currentRCDraw->Draw(vertexArrayGL33.GetOpenGLObjectPtr(), ToOpenGLDrawMode(mode), vertexArrayGL33.GetIndexCount());
+                State.currentRCDraw->Draw(vertexArrayGL33.GetOpenGLObjectPtr(), vertexArrayGL33.GetOpenGLVertexObjectPtr(), ToOpenGLDrawMode(mode), vertexArrayGL33.GetIndexCount());
             }
         }
-
 
         State.currentRCSetGlobalState      = nullptr;
         State.currentRCSetVertexArrayState = nullptr;
@@ -990,8 +989,11 @@ namespace GTEngine
     {
         auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
         {
-            GLuint* vertexArrayObject = vertexArrayGL33.GetOpenGLObjectPtr();
-            assert(vertexArrayObject != nullptr);
+            GLuint* vertexArrayObject  = vertexArrayGL33.GetOpenGLObjectPtr();
+            GLuint* vertexBufferObject = vertexArrayGL33.GetOpenGLVertexObjectPtr();
+
+            assert(vertexArrayObject  != nullptr);
+            assert(vertexBufferObject != nullptr);
             {
                 if (State.currentRCSetVertexArrayState == nullptr || State.currentRCSetVertexArrayState->GetVertexArrayObject() != vertexArrayObject)
                 {
@@ -1002,7 +1004,7 @@ namespace GTEngine
 
                 assert(State.currentRCSetVertexArrayState != nullptr);
                 {
-                    State.currentRCSetVertexArrayState->SetVertexData(vertexArrayObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                    State.currentRCSetVertexArrayState->SetVertexData(vertexArrayObject, vertexBufferObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
                 }
             }
         }
@@ -1034,8 +1036,11 @@ namespace GTEngine
     {
         auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
         {
-            GLuint* vertexArrayObject = vertexArrayGL33.GetOpenGLObjectPtr();
-            assert(vertexArrayObject != nullptr);
+            GLuint* vertexArrayObject  = vertexArrayGL33.GetOpenGLObjectPtr();
+            GLuint* vertexBufferObject = vertexArrayGL33.GetOpenGLVertexObjectPtr();
+
+            assert(vertexArrayObject  != nullptr);
+            assert(vertexBufferObject != nullptr);
             {
                 if (State.currentRCSetVertexArrayState == nullptr || State.currentRCSetVertexArrayState->GetVertexArrayObject() != vertexArrayObject)
                 {
@@ -1046,7 +1051,7 @@ namespace GTEngine
 
                 assert(State.currentRCSetVertexArrayState != nullptr);
                 {
-                    State.currentRCSetVertexArrayState->SetVertexData(vertexArrayObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                    State.currentRCSetVertexArrayState->SetVertexData(vertexArrayObject, vertexBufferObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
                     State.currentRCSetVertexArrayState->SetIndexData( vertexArrayObject, vertexArray.GetIndexDataPtr(),  vertexArray.GetIndexCount(),  ToOpenGLBufferUsage(vertexArray.GetUsage()));
                 }
             }

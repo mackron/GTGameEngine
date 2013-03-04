@@ -12,12 +12,12 @@ namespace GTEngine
 
     RCSetVertexArrayState::RCSetVertexArrayState()
         : operationBitfield(0),
-          vertexArrayObject(nullptr),
+          vertexArrayObject(nullptr), vertexBufferObject(nullptr),
           vertexData(), indexData()
     {
     }
 
-    void RCSetVertexArrayState::SetVertexData(GLuint* vertexArrayObjectIn, const float* vertices, size_t vertexCount, size_t vertexSizeInBytes, GLenum usage)
+    void RCSetVertexArrayState::SetVertexData(GLuint* vertexArrayObjectIn, GLuint* vertexBufferObjectIn, const float* vertices, size_t vertexCount, size_t vertexSizeInBytes, GLenum usage)
     {
         assert(this->vertexArrayObject == nullptr || this->vertexArrayObject == vertexArrayObjectIn);
         {
@@ -32,6 +32,7 @@ namespace GTEngine
 
 
             this->vertexArrayObject  = vertexArrayObjectIn;
+            this->vertexBufferObject = vertexBufferObjectIn;
             this->operationBitfield |= VERTEX_DATA_BIT;
         }
     }
@@ -65,18 +66,49 @@ namespace GTEngine
     {
         assert(this->vertexArrayObject != nullptr);
         {
-            glBindVertexArray(*this->vertexArrayObject);
+            // We need to maintain the integrity of the global state, so we'll have to grab the previous vertex array binding.
+            GLint previousCurrentVAO;
+            glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previousCurrentVAO);
+
+            if (static_cast<GLuint>(previousCurrentVAO) != *this->vertexArrayObject)
+            {
+                glBindVertexArray(*this->vertexArrayObject);
+            }
+
 
             if ((this->operationBitfield & VERTEX_DATA_BIT))
             {
+                // Unfortunately GL_ARRAY_BUFFER is not stored in the VAO state so we need to bind it here. As usual, the global state needs to remain in tact.
+                GLint previousCurrentVertexArray;
+                glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &previousCurrentVertexArray);
+
+                if (static_cast<GLuint>(previousCurrentVertexArray) != *this->vertexBufferObject)
+                {
+                    glBindBuffer(GL_ARRAY_BUFFER, *this->vertexBufferObject);
+                }
+
+
                 glBufferData(GL_ARRAY_BUFFER, this->vertexData.count * this->vertexData.vertexSizeInBytes, this->vertexData.vertices, this->vertexData.usage);
                 free(this->vertexData.vertices);
+
+
+                if (static_cast<GLuint>(previousCurrentVertexArray) != *this->vertexBufferObject)
+                {
+                    glBindBuffer(GL_ARRAY_BUFFER, static_cast<GLuint>(previousCurrentVertexArray));
+                }
             }
 
             if ((this->operationBitfield & INDEX_DATA_BIT))
             {
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indexData.count * sizeof(unsigned int), this->indexData.indices, this->indexData.usage);
                 free(this->indexData.indices);
+            }
+
+
+            // Global state needs to be restored.
+            if (static_cast<GLuint>(previousCurrentVAO) != *this->vertexArrayObject)
+            {
+                glBindVertexArray(static_cast<GLuint>(previousCurrentVAO));
             }
         }
     }

@@ -17,7 +17,7 @@ namespace GTEngine
         RCDraw();
 
         /// Renderer::Clear()
-        void Draw(GLuint* vertexArrayObjectIn, GLenum drawModeIn, GLsizei indexCountIn);
+        void Draw(GLuint* vertexArrayObjectIn, GLuint* vertexBufferObjectIn, GLenum drawModeIn, GLsizei indexCountIn);
 
 
 
@@ -29,6 +29,9 @@ namespace GTEngine
 
         /// The vertex array object.
         GLuint* vertexArrayObject;
+
+        /// The vertex buffer object bound to GL_ARRAY_BUFFER. For some insane reason this is not part of VAO state so it also needs to be bound...
+        GLuint* vertexBufferObject;
 
         /// The draw mode.
         GLenum drawMode;

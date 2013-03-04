@@ -32,7 +32,6 @@
     
     void main()
     {
-        //ColourOut0 = vec4(1.0, 1.0, 1.0, 1.0);
         ColourOut0 = texture2D(Texture, VertexOutput_TexCoord) * VertexOutput_Colour;
     }
 </shader>

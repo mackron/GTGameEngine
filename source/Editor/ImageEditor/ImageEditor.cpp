@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Editor/ImageEditor/ImageEditor.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/Rendering/Renderer2.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 
 #if defined(_MSC_VER)
@@ -30,6 +30,10 @@ namespace GTEngine
 
     ImageEditor::~ImageEditor()
     {
+        /// The vertex array in the viewports event handler needs to be deleted.
+        Renderer2::DeleteVertexArray(this->viewportEventHandler.vertexArray);
+
+
         this->GetGUI().DeleteElement(this->viewportElement);
 
         // The image needs to be unacquired.
@@ -64,54 +68,78 @@ namespace GTEngine
 
     void ImageEditor::ViewportEventHandler::OnDraw(GTGUI::Element &element)
     {
-        auto image = this->ownerEditor.GetImage();
-        if (image != nullptr)
+        if (this->vertexArray == nullptr)
         {
-            Renderer::SetShader(GTEngine::ShaderLibrary::GetTextured2DQuadShader());
-            Renderer::SetShaderParameter("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
-            Renderer::SetShaderParameter("Texture",    image);
-            
+            this->vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P2T2);
 
-            unsigned int imageWidth  = image->GetWidth();
-            unsigned int imageHeight = image->GetHeight();
-
-            GTGUI::Rect viewportRect;
-            element.GetAbsoluteRect(viewportRect);
-
-            float viewportWidth  = static_cast<float>(viewportRect.right  - viewportRect.left);
-            float viewportHeight = static_cast<float>(viewportRect.bottom - viewportRect.top);
-
-            float zoom = this->ownerEditor.GetZoom();
-
-            float quadLeft   = (viewportWidth  * 0.5f) - (imageWidth  * 0.5f * zoom) + viewportRect.left;
-            float quadRight  = (viewportWidth  * 0.5f) + (imageWidth  * 0.5f * zoom) + viewportRect.left;
-            float quadTop    = (viewportHeight * 0.5f) - (imageHeight * 0.5f * zoom) + viewportRect.top;
-            float quadBottom = (viewportHeight * 0.5f) + (imageHeight * 0.5f * zoom) + viewportRect.top;
-
-
-
-            float quadVertices[] =
-            {
-                quadLeft,  quadBottom,
-                0.0f,      0.0f,
-
-                quadRight, quadBottom,
-                1.0f,      0.0f,
-
-                quadRight, quadTop,
-                1.0f,      1.0f,
-
-                quadLeft,  quadTop,
-                0.0f,      1.0f
-            };
-
-            unsigned int quadIndices[] =
+            unsigned int indices[] =
             {
                 0, 1, 2,
                 2, 3, 0,
             };
+            this->vertexArray->SetIndexData(indices, 6);
 
-            Renderer::Draw(quadVertices, quadIndices, 6, VertexFormat::P2T2);
+            Renderer2::PushVertexArrayIndexData(*this->vertexArray);
+        }
+
+
+        assert(this->vertexArray != nullptr);
+        {
+            auto image = this->ownerEditor.GetImage();
+            if (image != nullptr)
+            {
+                auto shader = GTEngine::ShaderLibrary::GetTextured2DQuadShader();
+                assert(shader != nullptr);
+                {
+                    Renderer2::SetCurrentShader(shader);
+
+                    shader->SetParameter("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
+                    shader->SetParameter("Texture",    image);
+                    {
+                        Renderer2::PushShaderPendingProperties(*shader);
+                    }
+                    shader->ClearPendingParameters();
+
+            
+
+                    unsigned int imageWidth  = image->GetWidth();
+                    unsigned int imageHeight = image->GetHeight();
+
+                    GTGUI::Rect viewportRect;
+                    element.GetAbsoluteRect(viewportRect);
+
+                    float viewportWidth  = static_cast<float>(viewportRect.right  - viewportRect.left);
+                    float viewportHeight = static_cast<float>(viewportRect.bottom - viewportRect.top);
+
+                    float zoom = this->ownerEditor.GetZoom();
+
+                    float quadLeft   = (viewportWidth  * 0.5f) - (imageWidth  * 0.5f * zoom) + viewportRect.left;
+                    float quadRight  = (viewportWidth  * 0.5f) + (imageWidth  * 0.5f * zoom) + viewportRect.left;
+                    float quadTop    = (viewportHeight * 0.5f) - (imageHeight * 0.5f * zoom) + viewportRect.top;
+                    float quadBottom = (viewportHeight * 0.5f) + (imageHeight * 0.5f * zoom) + viewportRect.top;
+
+
+
+                    float quadVertices[] =
+                    {
+                        quadLeft,  quadBottom,
+                        0.0f,      0.0f,
+
+                        quadRight, quadBottom,
+                        1.0f,      0.0f,
+
+                        quadRight, quadTop,
+                        1.0f,      1.0f,
+
+                        quadLeft,  quadTop,
+                        0.0f,      1.0f
+                    };
+                    this->vertexArray->SetVertexData(quadVertices, 4);
+
+                    Renderer2::PushVertexArrayVertexData(*this->vertexArray);
+                    Renderer2::Draw(*this->vertexArray);
+                }
+            }
         }
     }
 

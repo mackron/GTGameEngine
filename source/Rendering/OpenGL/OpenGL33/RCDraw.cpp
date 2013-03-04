@@ -6,21 +6,25 @@
 namespace GTEngine
 {
     RCDraw::RCDraw()
-        : vertexArrayObject(nullptr), drawMode(0), indexCount(0)
+        : vertexArrayObject(nullptr), vertexBufferObject(nullptr), drawMode(0), indexCount(0)
     {
     }
 
-    void RCDraw::Draw(GLuint* vertexArrayObjectIn, GLenum drawModeIn, GLsizei indexCountIn)
+    void RCDraw::Draw(GLuint* vertexArrayObjectIn, GLuint* vertexBufferObjectIn, GLenum drawModeIn, GLsizei indexCountIn)
     {
-        this->vertexArrayObject = vertexArrayObjectIn;
-        this->drawMode          = drawModeIn;
-        this->indexCount        = indexCountIn;
+        this->vertexArrayObject  = vertexArrayObjectIn;
+        this->vertexBufferObject = vertexBufferObjectIn;
+        this->drawMode           = drawModeIn;
+        this->indexCount         = indexCountIn;
     }
 
     void RCDraw::Execute()
     {
+        // NOTE: It's OK to break global state with this call. It's considered and handled by the renderer.
+
         // 1) Bind the vertex array.
         glBindVertexArray(*this->vertexArrayObject);
+        glBindBuffer(GL_ARRAY_BUFFER, *this->vertexBufferObject);
 
         // 2) Draw.
         glDrawElements(this->drawMode, this->indexCount, GL_UNSIGNED_INT, 0);

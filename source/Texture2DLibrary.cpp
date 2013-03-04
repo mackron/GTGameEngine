@@ -88,10 +88,14 @@ namespace GTEngine
                 GTImage::Image image(absFileName.c_str());
                 if (image.IsLinkedToFile())
                 {
+                    image.PullAllMipmaps();     // <-- This loads the image data.
+
+
                     auto newTexture = Renderer2::CreateTexture2D();
                     newTexture->SetData(image.GetWidth(), image.GetHeight(), image.GetFormat(), image.GetBaseMipmapData());
 
                     Renderer2::PushTexture2DData(*newTexture);
+                    Renderer2::GenerateTexture2DMipmaps(*newTexture);
                     Renderer2::SetTexture2DFilter(*newTexture, DefaultMinFilter, DefaultMagFilter);
                     Renderer2::SetTexture2DAnisotropy(*newTexture, DefaultAnisotropy);
 
