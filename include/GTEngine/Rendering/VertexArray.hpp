@@ -209,9 +209,6 @@ namespace GTEngine
     private:    // No copying.
         VertexArray(const VertexArray &);
         VertexArray & operator=(const VertexArray &);
-
-
-    friend class Renderer;      // TODO: Remove this when the new renderer is in place proper.
     };
 }
 

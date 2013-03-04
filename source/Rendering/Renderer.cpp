@@ -1061,8 +1061,8 @@ namespace GTEngine
                     auto textureCube = static_cast<TextureCube*>(attachment.texture);
                     if (textureCube != nullptr)
                     {
-                        glEnable(GL_TEXTURE_CUBE_MAP);
-                        glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<OpenGL20::TextureCube*>(textureCube->GetRendererData())->object);
+                        //glEnable(GL_TEXTURE_CUBE_MAP);
+                        //glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<OpenGL20::TextureCube*>(textureCube->GetRendererData())->object);
                     }
                 }
             }
