@@ -64,11 +64,40 @@ namespace GTEngine
 
 
 
+    unsigned int Texture2D::GetWidth() const
+    {
+        return GTImage::Image::GetWidth();
+    }
+
+    unsigned int Texture2D::GetHeight() const
+    {
+        return GTImage::Image::GetHeight();
+    }
+
+    GTImage::ImageFormat Texture2D::GetFormat() const
+    {
+        return GTImage::Image::GetFormat();
+    }
+
+
+    size_t Texture2D::GetMipmapCount() const
+    {
+        return GTImage::Image::GetMipmapCount();
+    }
+
+    const GTImage::Mipmap & Texture2D::GetMipmap(size_t index) const
+    {
+        return GTImage::Image::GetMipmap(index);
+    }
+
+
+
+
     void Texture2D::DeleteLocalData()
     {
         for (size_t i = 0; i < this->GetMipmapCount(); ++i)
         {
-            this->GetMipmap(i).DeleteLocalData();
+            GTImage::Image::GetMipmap(i).DeleteLocalData();
         }
     }
 
