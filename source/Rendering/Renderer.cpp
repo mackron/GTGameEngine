@@ -543,7 +543,7 @@ namespace GTEngine
         OpenGL20::EnableVertexFormat(vertexArray->GetFormat(), nullptr);
 
         // Now that everything has been enabled/disabled, we draw the elements.
-        glDrawElements(ToOpenGLDrawMode(mode), static_cast<const OpenGL20::VertexArray*>(vertexArray->GetRendererData())->indexCount, GL_UNSIGNED_INT, 0);
+        //glDrawElements(ToOpenGLDrawMode(mode), static_cast<const OpenGL20::VertexArray*>(vertexArray->GetRendererData())->indexCount, GL_UNSIGNED_INT, 0);
     }
 
     void Renderer::Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode)

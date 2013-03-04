@@ -70,6 +70,7 @@ namespace GTEngine
 
     void OpenGL20::BindVertexArray(const GTEngine::VertexArray* vertexArray)
     {
+#if 0
         if (vertexArray != nullptr)
         {
             if (vertexArray != BoundVertexArray || CurrentGLVertexBufferObject == 0 || CurrentGLIndexBufferObject == 0)
@@ -108,6 +109,7 @@ namespace GTEngine
 
 
         BoundVertexArray = vertexArray;
+#endif
     }
 
     void OpenGL20::BindVertexArray(const GTEngine::VertexArray &vertexArray)

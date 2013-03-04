@@ -48,6 +48,9 @@ namespace GTEngine
         static VertexArray* CreateBox(const btVector3 &halfExtents) { return CreateBox(halfExtents.x(), halfExtents.y(), halfExtents.z()); }
 
 
+
+
+
         ////////////////////////////////////////////////////////////////
         // Convex Hulls
 

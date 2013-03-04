@@ -9,8 +9,7 @@ namespace GTEngine
     VertexArray::VertexArray(VertexArrayUsage usage, const VertexFormat &format)
         : usage(usage), format(format),
           vertices(nullptr), vertexCount(0), indices(nullptr), indexCount(0),
-          verticesMapped(false), indicesMapped(false),
-          rendererData(nullptr)
+          verticesMapped(false), indicesMapped(false)
     {
     }
 
