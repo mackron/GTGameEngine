@@ -320,6 +320,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\StencilOperations.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Texture2D.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureCube.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureFilters.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureWrapModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexArray.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexAttributes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexFormat.hpp" />
