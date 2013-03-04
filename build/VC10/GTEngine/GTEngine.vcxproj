@@ -386,6 +386,7 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Shader_OpenGL33.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Texture2D_OpenGL33.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureCube_OpenGL33.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\VertexArray_OpenGL33.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\RendererCaps.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp" />
@@ -542,6 +543,7 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Shader_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Texture2D_OpenGL33.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureCube_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\VertexArray_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp" />

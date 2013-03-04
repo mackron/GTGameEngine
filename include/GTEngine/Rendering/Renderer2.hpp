@@ -250,19 +250,21 @@ namespace GTEngine
 
 
 
-        /// Creates a 2D texture.
+        /// Creates a texture.
         ///
-        /// @return A pointer to the new 2D texture.
+        /// @return A pointer to the new texture.
         ///
         /// @remarks
         ///     The returned texture will be completely empty. You can set the data on the returned object and then push that data to the
         ///     renderer with PushTexture2DData().
         static Texture2D* CreateTexture2D();
+        static TextureCube* CreateTextureCube();
 
-        /// Deletes a 2D texture created with CreateTexture2D().
+        /// Deletes a texture created with CreateTexture*().
         ///
         /// @param textureToDelete [in] A pointer to the texture to delete.
         static void DeleteTexture2D(Texture2D* textureToDelete);
+        static void DeleteTextureCube(TextureCube* textureToDelete);
 
         /// Pushes the image data of the given 1D texture to the renderer.
         ///
@@ -306,12 +308,14 @@ namespace GTEngine
         /// @param minification  [in] The minification filter to use with the texture.
         /// @param magnification [in] The magnification filter to use with the texture.
         static void SetTexture2DFilter(const Texture2D &texture, TextureFilter minification, TextureFilter magnification);
+        static void SetTextureCubeFilter(const TextureCube &texture, TextureFilter minification, TextureFilter magnification);
 
         /// Sets the level of anisotropic filter to use with the given texture.
         ///
         /// @param texture    [in] A reference to the texture.
         /// @param anisotropy [in] The level of anisotropic filter to use with the texture.
         static void SetTexture2DAnisotropy(const Texture2D &texture, unsigned int anisotropy);
+        static void SetTextureCubeAnisotropy(const TextureCube &texture, unsigned int anisotropy);
 
         /// Sets the wrapping mode to use with the given texture.
         ///
@@ -325,6 +329,7 @@ namespace GTEngine
         /// @param baseLevel [in] The base mipmap level to use with the texture.
         /// @param maxLevel  [in] The max mipmap level to use with the texture.
         static void SetTexture2DMipmapLevels(const Texture2D &texture, unsigned int baseLevel, unsigned int maxLevel);
+        static void SetTextureCubeMipmapLevels(const TextureCube &texture, unsigned int baseLevel, unsigned int maxLevel);
 
         /// Generates mipmaps for the given texture.
         ///
@@ -334,6 +339,7 @@ namespace GTEngine
         ///     This does not modify the client-side texture data. If the texture data is needed on the client side, you will need to do manualy
         ///     mipmap generation.
         static void GenerateTexture2DMipmaps(const Texture2D &texture);
+        static void GenerateTextureCubeMipmaps(const TextureCube &texture);
 
 
 
