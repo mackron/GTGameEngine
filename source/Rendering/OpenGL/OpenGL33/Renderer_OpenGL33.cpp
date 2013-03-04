@@ -478,6 +478,393 @@ namespace GTEngine
     }
 
 
+
+    void Renderer2::EnableScissorTest()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->Enable(GL_SCISSOR_TEST);
+        }
+
+        State.currentRCClear = nullptr;
+    }
+
+    void Renderer2::DisableScissorTest()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->Disable(GL_SCISSOR_TEST);
+        }
+
+        State.currentRCClear = nullptr;
+    }
+
+
+    void Renderer2::EnableBlending()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->Enable(GL_BLEND);
+        }
+    }
+
+    void Renderer2::DisableBlending()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->Disable(GL_BLEND);
+        }
+    }
+
+    void Renderer2::SetBlendFunction(BlendFunc sfactor, BlendFunc dfactor)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetBlendFunction(ToOpenGLBlendFunc(sfactor), ToOpenGLBlendFunc(dfactor));
+        }
+    }
+
+    void Renderer2::SetBlendEquation(BlendEquation equation)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetBlendEquation(ToOpenGLBlendEquation(equation));
+        }
+    }
+
+
+    void Renderer2::EnableAlphaTest()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->Enable(GL_ALPHA_TEST);
+        }
+    }
+
+    void Renderer2::DisableAlphaTest()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->Disable(GL_ALPHA_TEST);
+        }
+    }
+
+    void Renderer2::SetAlphaTestFunction(RendererFunction function, float ref)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetAlphaTestFunction(ToOpenGLFunc(function), static_cast<GLclampf>(ref));
+        }
+    }
+
+
+    void Renderer2::EnableColourWrites()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->EnableColourWrites();
+        }
+
+        State.currentRCClear = nullptr;
+    }
+
+    void Renderer2::DisableColourWrites()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->DisableColourWrites();
+        }
+
+        State.currentRCClear = nullptr;
+    }
+
+    void Renderer2::EnableDepthWrites()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->EnableDepthWrites();
+        }
+
+        State.currentRCClear = nullptr;
+    }
+
+    void Renderer2::DisableDepthWrites()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->DisableDepthWrites();
+        }
+
+        State.currentRCClear = nullptr;
+    }
+
+    
+    void Renderer2::EnableDepthTest()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->Enable(GL_DEPTH_TEST);
+        }
+    }
+
+    void Renderer2::DisableDepthTest()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->Disable(GL_DEPTH_TEST);
+        }
+    }
+
+    void Renderer2::SetDepthFunction(RendererFunction function)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetDepthFunction(function);
+        }
+    }
+
+
+
+    void Renderer2::EnableStencilTest()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->Enable(GL_STENCIL_TEST);
+        }
+    }
+
+    void Renderer2::DisableStencilTest()
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->Disable(GL_STENCIL_TEST);
+        }
+    }
+
+    void Renderer2::SetStencilMaskSeparate(bool frontFace, bool backFace, unsigned int mask)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            GLenum face;
+            if (frontFace && backFace)
+            {
+                face = GL_FRONT_AND_BACK;
+            }
+            else
+            {
+                if (frontFace)
+                {
+                    face = GL_FRONT;
+                }
+                else
+                {
+                    face = GL_BACK;
+                }
+            }
+
+            State.currentRCSetGlobalState->SetStencilMask(face, static_cast<GLuint>(mask));
+        }
+    }
+
+    void Renderer2::SetStencilFuncSeparate(bool frontFace, bool backFace, RendererFunction func, int ref, unsigned int mask)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            GLenum face;
+            if (frontFace && backFace)
+            {
+                face = GL_FRONT_AND_BACK;
+            }
+            else
+            {
+                if (frontFace)
+                {
+                    face = GL_FRONT;
+                }
+                else
+                {
+                    face = GL_BACK;
+                }
+            }
+
+            State.currentRCSetGlobalState->SetStencilFunc(face, ToOpenGLFunc(func), static_cast<GLint>(ref), static_cast<GLuint>(mask));
+        }
+    }
+
+    void Renderer2::SetStencilOpSeparate(bool frontFace, bool backFace, StencilOp stencilFail, StencilOp depthFail, StencilOp pass)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            GLenum face;
+            if (frontFace && backFace)
+            {
+                face = GL_FRONT_AND_BACK;
+            }
+            else
+            {
+                if (frontFace)
+                {
+                    face = GL_FRONT;
+                }
+                else
+                {
+                    face = GL_BACK;
+                }
+            }
+
+            State.currentRCSetGlobalState->SetStencilOp(face, ToOpenGLStencilOp(stencilFail), ToOpenGLStencilOp(depthFail), ToOpenGLStencilOp(pass));
+        }
+    }
+
+
+
+    void Renderer2::SetFaceCulling(bool cullFront, bool cullBack)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            GLenum face = GL_NONE;
+            if (cullFront && cullBack)
+            {
+                face = GL_FRONT_AND_BACK;
+            }
+            else
+            {
+                if (cullFront)
+                {
+                    face = GL_FRONT;
+                }
+                else
+                {
+                    face = GL_BACK;
+                }
+            }
+
+            State.currentRCSetGlobalState->SetFaceCulling(face);
+        }
+    }
+
+
+    void Renderer2::EnablePolygonOffset(PolygonMode mode)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            GLenum modeGL;
+            if (mode == PolygonMode_Fill)
+            {
+                modeGL = GL_POLYGON_OFFSET_FILL;
+            }
+            else if (mode == PolygonMode_Line)
+            {
+                modeGL = GL_POLYGON_OFFSET_LINE;
+            }
+            else
+            {
+                modeGL = GL_POLYGON_OFFSET_POINT;
+            }
+
+            State.currentRCSetGlobalState->Enable(modeGL);
+        }
+    }
+
+    void Renderer2::DisablePolygonOffset(PolygonMode mode)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            GLenum modeGL;
+            if (mode == PolygonMode_Fill)
+            {
+                modeGL = GL_POLYGON_OFFSET_FILL;
+            }
+            else if (mode == PolygonMode_Line)
+            {
+                modeGL = GL_POLYGON_OFFSET_LINE;
+            }
+            else
+            {
+                modeGL = GL_POLYGON_OFFSET_POINT;
+            }
+
+            State.currentRCSetGlobalState->Disable(modeGL);
+        }
+    }
+
+    void Renderer2::SetPolygonMode(bool frontFaces, bool backFaces, PolygonMode mode)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            GLenum faceGL;
+            if (frontFaces && backFaces)
+            {
+                faceGL = GL_FRONT_AND_BACK;
+            }
+            else
+            {
+                if (frontFaces)
+                {
+                    faceGL = GL_FRONT;
+                }
+                else
+                {
+                    faceGL = GL_BACK;
+                }
+            }
+
+
+            GLenum modeGL;
+            if (mode == PolygonMode_Fill)
+            {
+                modeGL = GL_FILL;
+            }
+            else if (mode == PolygonMode_Line)
+            {
+                modeGL = GL_LINE;
+            }
+            else
+            {
+                assert(mode == PolygonMode_Point);
+                modeGL = GL_LINE;
+            }
+
+            State.currentRCSetGlobalState->SetPolygonMode(faceGL, modeGL);
+        }
+    }
+
+    void Renderer2::SetPolygonOffset(float factor, float units)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetPolygonOffset(static_cast<GLfloat>(factor), static_cast<GLfloat>(units));
+        }
+    }
+
+
+
     ///////////////////////////
     // Drawing
 
