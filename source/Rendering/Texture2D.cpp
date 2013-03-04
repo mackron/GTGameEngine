@@ -39,28 +39,6 @@ namespace GTEngine
         this->SetData(width, height, format, data);
     }
 
-    Texture2D::Texture2D(const char* absolutePath, const char* relativePathIn)
-        : GTImage::Image(absolutePath), relativePath(relativePathIn),
-          target(Texture2DTarget_Default),
-          minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
-          anisotropy(1), wrapMode(TextureWrapMode_Repeat),
-          framebuffers(), shaders(),
-          rendererData(nullptr), refCount(1), keepClientSideData(false)
-    {
-        //Renderer::OnTexture2DCreated(*this);
-
-        if (Renderer::HasFlippedTextures())
-        {
-            this->FlipVertically();
-        }
-
-
-        // This pulls every mipmap from the image file.
-        this->PullAllMipmaps();
-        this->GenerateMipmaps();
-    }
-
-
     Texture2D::~Texture2D()
     {
         // The texture needs to be detached from all framebuffers.

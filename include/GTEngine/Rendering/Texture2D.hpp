@@ -65,7 +65,6 @@ namespace GTEngine
         /// Constructor.
         Texture2D(Texture2DTarget target = Texture2DTarget_Default);
         Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data = nullptr);
-        Texture2D(const char* absolutePath, const char* relativePath);
 
         /// Destructor.
         ~Texture2D();
