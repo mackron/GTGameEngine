@@ -3,35 +3,15 @@
 #ifndef __GTEngine_Texture2D_hpp_
 #define __GTEngine_Texture2D_hpp_
 
+#include "TextureFilters.hpp"
+#include "TextureWrapModes.hpp"
 #include <GTImage/Image.hpp>
 #include <GTCore/Map.hpp>
 
 namespace GTEngine
 {
-    enum TextureFilter
-    {
-        TextureFilter_Nearest = 1,
-        TextureFilter_Linear,
-
-        TextureFilter_NearestNearest,
-        TextureFilter_NearestLinear,
-        TextureFilter_LinearNearest,
-        TextureFilter_LinearLinear,
-
-        TextureFilter_Point = TextureFilter_Nearest
-    };
-
-    enum TextureWrapMode
-    {
-        TextureWrapMode_Repeat,
-        TextureWrapMode_Clamp,
-        TextureWrapMode_ClampToEdge,
-    };
-
-
     class Framebuffer;
     class Shader;
-
 
     /**
     *   \brief  Class representing a 2D texture.
