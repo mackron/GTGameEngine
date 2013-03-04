@@ -3,6 +3,7 @@
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
+#include <GTEngine/Rendering/Renderer2.hpp>
 #include <GTCore/IO.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Dictionary.hpp>
@@ -626,7 +627,7 @@ namespace GTEngine
 // Shader object retrieval.
 namespace GTEngine
 {
-    static Shader* GUIDrawShader        = nullptr;
+    static Shader* GUIShader            = nullptr;
     static Shader* FullscreenQuadShader = nullptr;
     static Shader* Textured2DQuadShader = nullptr;
     static Shader* ColouredBGQuadShader = nullptr;
@@ -635,12 +636,12 @@ namespace GTEngine
 
     Shader* ShaderLibrary::GetGUIShader()
     {
-        if (GUIDrawShader == nullptr)
+        if (GUIShader == nullptr)
         {
-            GUIDrawShader = new Shader(ShaderLibrary::GetShaderString("Engine_GUI_VS"), ShaderLibrary::GetShaderString("Engine_GUI_FS"));
+            GUIShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("Engine_GUI_VS"), ShaderLibrary::GetShaderString("Engine_GUI_FS"), nullptr);
         }
 
-        return GUIDrawShader;
+        return GUIShader;
     }
 
     Shader* ShaderLibrary::GetFullscreenQuadShader()
@@ -700,14 +701,14 @@ namespace GTEngine
 {
     void ShaderLibrary::Shutdown()
     {
-        delete GUIDrawShader;
+        Renderer2::DeleteShader(GUIShader);
         delete FullscreenQuadShader;
         delete Textured2DQuadShader;
         delete ColouredBGQuadShader;
         delete LineShader;
         delete DepthClearShader;
 
-        GUIDrawShader        = nullptr;
+        GUIShader            = nullptr;
         FullscreenQuadShader = nullptr;
         Textured2DQuadShader = nullptr;
         ColouredBGQuadShader = nullptr;

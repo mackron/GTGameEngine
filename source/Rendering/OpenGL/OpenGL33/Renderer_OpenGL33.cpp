@@ -1246,7 +1246,7 @@ namespace GTEngine
                     {
                         for (size_t i = 0; i < texture.GetMipmapCount(); ++i)
                         {
-                            auto mipmap = texture.GetMipmap(mipmapIndex);
+                            auto mipmap = texture.GetMipmap(i);
                             if (mipmap.data != nullptr)
                             {
                                 State.currentRCSetTextureState->SetTexture2DData(textureObject, textureTarget, static_cast<int>(i), mipmap.format, mipmap.width, mipmap.height, mipmap.data, mipmap.GetDataSizeInBytes());
@@ -1440,7 +1440,7 @@ namespace GTEngine
                             {
                                 auto texture = static_cast<Texture2D_OpenGL33*>(static_cast<ShaderParameter_Texture2D*>(parameter)->value);
                                 {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, texture->GetOpenGLObjectPtr(), texture->GetTarget());
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, texture->GetOpenGLObjectPtr(), ToOpenGLTexture2DTarget(texture->GetTarget()));
                                 }
                             }
                             else if (parameter->type == ShaderParameterType_Texture3D)

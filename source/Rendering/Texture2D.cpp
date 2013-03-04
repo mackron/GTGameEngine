@@ -13,7 +13,7 @@ namespace GTEngine
           framebuffers(), shaders(),
           rendererData(nullptr), refCount(1), keepClientSideData(false)
     {
-        Renderer::OnTexture2DCreated(*this);
+        //Renderer::OnTexture2DCreated(*this);
 
         if (Renderer::HasFlippedTextures())
         {
@@ -29,7 +29,7 @@ namespace GTEngine
           framebuffers(), shaders(),
           rendererData(nullptr), refCount(1), keepClientSideData(false)
     {
-        Renderer::OnTexture2DCreated(*this);
+        //Renderer::OnTexture2DCreated(*this);
 
         if (Renderer::HasFlippedTextures())
         {
@@ -47,7 +47,7 @@ namespace GTEngine
           framebuffers(), shaders(),
           rendererData(nullptr), refCount(1), keepClientSideData(false)
     {
-        Renderer::OnTexture2DCreated(*this);
+        //Renderer::OnTexture2DCreated(*this);
 
         if (Renderer::HasFlippedTextures())
         {
@@ -76,7 +76,7 @@ namespace GTEngine
             this->shaders.RemoveRoot();
         }
 
-        Renderer::OnTexture2DDeleted(*this);
+        //Renderer::OnTexture2DDeleted(*this);
     }
 
 
@@ -102,7 +102,7 @@ namespace GTEngine
         if (this->minFilter != newFilter)
         {
             this->minFilter = newFilter;
-            Renderer::OnTexture2DMinificationFilterChanged(*this);
+            //Renderer::OnTexture2DMinificationFilterChanged(*this);
         }
     }
 
@@ -111,7 +111,7 @@ namespace GTEngine
         if (this->magFilter != newFilter)
         {
             this->magFilter = newFilter;
-            Renderer::OnTexture2DMagnificationFilterChanged(*this);
+            //Renderer::OnTexture2DMagnificationFilterChanged(*this);
         }
     }
 
@@ -131,7 +131,7 @@ namespace GTEngine
         if (this->anisotropy != newAnisotropy)
         {
             this->anisotropy = newAnisotropy;
-            Renderer::OnTexture2DAnisotropyChanged(*this);
+            //Renderer::OnTexture2DAnisotropyChanged(*this);
         }
     }
 
@@ -143,12 +143,23 @@ namespace GTEngine
     void Texture2D::SetWrapMode(TextureWrapMode wrapMode)
     {
         this->wrapMode = wrapMode;
-        Renderer::OnTexture2DWrapModeChanged(*this);
+        //Renderer::OnTexture2DWrapModeChanged(*this);
     }
+
+
+    void Texture2D::DeleteLocalData()
+    {
+        for (size_t i = 0; i < this->GetMipmapCount(); ++i)
+        {
+            this->GetMipmap(i).DeleteLocalData();
+        }
+    }
+
+
 
     void Texture2D::OnMipmapCreated(unsigned int mipmapIndex)
     {
-        Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
+        //Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
     }
 
     void Texture2D::OnMipmapDeleted(unsigned int mipmapIndex)
@@ -160,7 +171,7 @@ namespace GTEngine
 
     void Texture2D::OnMipmapChanged(unsigned int mipmapIndex)
     {
-        Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
+        //Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
     }
 
 

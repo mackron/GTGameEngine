@@ -12,7 +12,7 @@
 #include "DataFilesWatcher.hpp"
 #include "GameState.hpp"
 #include "Profiler.hpp"
-#include "Rendering/RenderCommands/RCSetFramebuffer.hpp"
+#include "Rendering/DefaultGUIRenderer.hpp"
 #include <GTCore/Threading.hpp>
 #include <GTCore/Timing.hpp>
 #include <GTType/FontServer.hpp>
@@ -629,12 +629,17 @@ namespace GTEngine
         /// The generic font we'll use for basically everything.
         GTType::Font* defaultFont;
 
+
         /// The GUI of this game. There is only a single GUI for every game. A game should dynamically show and hide root elements
         /// to show different GUI's for different game states.
         GTGUI::Server gui;
 
         /// The event handler for the GUI.
         GUIEventHandler guiEventHandler;
+
+        /// The GUI renderer.
+        DefaultGUIRenderer guiRenderer;
+
 
         /// Whether or not the game is paused. A paused game will continue to render, but scene nodes and animations will not tick.
         bool paused;

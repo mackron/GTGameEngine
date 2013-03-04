@@ -7,7 +7,7 @@
 #include <GTEngine/GarbageCollector.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/Rendering/Renderer2.hpp>
 #include <GTEngine/Audio.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/ModelLibrary.hpp>
@@ -37,7 +37,7 @@ namespace GTEngine
           updateThread(nullptr), updateJob(*this),
           deltaTimeInSeconds(0.0), totalRunninTimeInSeconds(0.0), updateTimer(),
           fontServer("var/fonts.cache"), defaultFont(nullptr),
-          gui(&script, &fontServer), guiEventHandler(*this),
+          gui(&script, &fontServer), guiEventHandler(*this), guiRenderer(),
           paused(false), focused(true),
           isCursorVisible(true),
           isAutoScriptReloadEnabled(false),
@@ -55,6 +55,7 @@ namespace GTEngine
           profilerToggleKey(GTCore::Keys::F11),
           editorToggleKeyCombination(GTCore::Keys::Shift, GTCore::Keys::Tab)
     {
+        this->gui.SetRenderer(this->guiRenderer);
     }
 
     Game::~Game()
@@ -116,7 +117,7 @@ namespace GTEngine
             int height = this->script.GetInteger("GTEngine.Display.Height");
 
             this->window->EnableFullscreen(static_cast<unsigned int>(width), static_cast<unsigned int>(height));
-            Renderer::SetCurrentWindow(this->window);
+            Renderer2::SetCurrentWindow(this->window);
         }
     }
 
@@ -125,7 +126,7 @@ namespace GTEngine
         if (this->window != nullptr)
         {
             this->window->DisableFullscreen();
-            Renderer::SetCurrentWindow(this->window);
+            Renderer2::SetCurrentWindow(this->window);
         }
     }
 
@@ -707,7 +708,7 @@ namespace GTEngine
 
 
             // First we need a window. Note that we don't show it straight away.
-            this->window = Renderer::CreateGameWindow();
+            this->window = Renderer2::CreateWindow();
             if (this->window != nullptr)
             {
                 // We'll need to grab the update thread object. We grab this from the thread cache which will have been initialised
@@ -983,7 +984,7 @@ namespace GTEngine
         }
 
 
-        // We will step the GUI after updating the game.
+        // We will step the GUI after updating the game. This will call rendering functions.
         this->StepGUI(deltaTimeInSeconds);
 
 
@@ -1011,18 +1012,19 @@ namespace GTEngine
         this->OnDraw();
         //this->script.Execute("Game.OnDraw();");
 
-        Renderer::ExecuteFrontRCQueue();
+        //Renderer::ExecuteFrontRCQueue();
+        Renderer2::ExecuteCallCache();
 
         this->OnPostDraw();
         //this->script.Execute("Game.OnPostDraw();");
 
 
         // We draw the GUI on top of everything else...
-        Renderer::SetFramebuffer(nullptr);
-        Renderer::DrawGUI(this->gui);
+        //Renderer::SetFramebuffer(nullptr);
+        //Renderer::DrawGUI(this->gui);
 
 
-        Renderer::SwapBuffers();
+        Renderer2::SwapBuffers();
 
 
         if (this->profiler.IsEnabled())
@@ -1031,13 +1033,16 @@ namespace GTEngine
         }
     }
 
-    void Game::SwapRCQueues()
+    void Game::SwapRCQueues()           // TODO: Consider renaming this to SwapCallCaches() to match the new renderer.
     {
+        Renderer2::SwapCallCaches();
+
+
         // First the renderer...
-        Renderer::SwapRCQueues();
+        //Renderer::SwapRCQueues();
 
         // Now the GUI...
-        this->gui.SwapRCQueues();
+        //this->gui.SwapRCQueues();
     }
 
 

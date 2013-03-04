@@ -301,6 +301,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\BlendEquations.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\BlendFunctions.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\BufferTypes.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DefaultGUIRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp" />
@@ -516,6 +517,7 @@
     <ClCompile Include="..\..\..\source\Recast\RecastMeshDetail.cpp" />
     <ClCompile Include="..\..\..\source\Recast\RecastRasterization.cpp" />
     <ClCompile Include="..\..\..\source\Recast\RecastRegion.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\DefaultGUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.cpp" />

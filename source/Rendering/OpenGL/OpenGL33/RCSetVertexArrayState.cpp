@@ -54,6 +54,13 @@ namespace GTEngine
         }
     }
 
+
+    GLuint* RCSetVertexArrayState::GetVertexArrayObject()
+    {
+        return this->vertexArrayObject;
+    }
+
+
     void RCSetVertexArrayState::Execute()
     {
         assert(this->vertexArrayObject != nullptr);

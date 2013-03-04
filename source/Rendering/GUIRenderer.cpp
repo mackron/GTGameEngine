@@ -88,7 +88,7 @@ namespace GTEngine
             MainShader->SetParameter("Projection", GUIProjection);
 
 
-            server.ExecuteFrontRCQueue();
+            //server.ExecuteFrontRCQueue();
 
             // Here we reset the applicable properties.
             Renderer::DisableScissorTest();
@@ -108,6 +108,7 @@ namespace GTEngine
     }
 }
 
+#if 0
 // These are GTGUI rendering command implementations.
 void GTGUI::RCSetScissorRect::Execute()
 {
@@ -171,3 +172,4 @@ namespace GTEngine
         }
     }
 }
+#endif
