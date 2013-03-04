@@ -62,12 +62,6 @@ namespace GTEngine
             Renderer2::PushShaderPendingProperties(*this->shader);
         }
         this->shader->ClearPendingParameters();
-
-
-        // TODO: Remove this!
-        Renderer2::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
-        Renderer2::SetClearDepth(1.0f);
-        Renderer2::Clear(BufferType_Colour | BufferType_Depth);
     }
 
     void DefaultGUIRenderer::End()
