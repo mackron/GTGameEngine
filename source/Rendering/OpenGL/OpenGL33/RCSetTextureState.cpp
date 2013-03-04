@@ -39,8 +39,15 @@ namespace GTEngine
             mipmapData.height         = 0;
             mipmapData.depth          = 0;
 
-            mipmapData.data = static_cast<GLvoid*>(malloc(dataSizeInBytes));
-            memcpy(mipmapData.data, data, dataSizeInBytes);
+            if (data != nullptr && dataSizeInBytes > 0)
+            {
+                mipmapData.data = static_cast<GLvoid*>(malloc(dataSizeInBytes));
+                memcpy(mipmapData.data, data, dataSizeInBytes);
+            }
+            else
+            {
+                mipmapData.data = nullptr;
+            }
 
 
             // The old mipmap data will need to be deleted, if any.
@@ -75,8 +82,15 @@ namespace GTEngine
             mipmapData.height         = height;
             mipmapData.depth          = 0;
 
-            mipmapData.data = static_cast<GLvoid*>(malloc(dataSizeInBytes));
-            memcpy(mipmapData.data, data, dataSizeInBytes);
+            if (data != nullptr && dataSizeInBytes > 0)
+            {
+                mipmapData.data = static_cast<GLvoid*>(malloc(dataSizeInBytes));
+                memcpy(mipmapData.data, data, dataSizeInBytes);
+            }
+            else
+            {
+                mipmapData.data = nullptr;
+            }
 
 
             // The old mipmap data will need to be deleted, if any.
@@ -111,8 +125,15 @@ namespace GTEngine
             mipmapData.height         = height;
             mipmapData.depth          = depth;
 
-            mipmapData.data = static_cast<GLvoid*>(malloc(dataSizeInBytes));
-            memcpy(mipmapData.data, data, dataSizeInBytes);
+            if (data != nullptr && dataSizeInBytes > 0)
+            {
+                mipmapData.data = static_cast<GLvoid*>(malloc(dataSizeInBytes));
+                memcpy(mipmapData.data, data, dataSizeInBytes);
+            }
+            else
+            {
+                mipmapData.data = nullptr;
+            }
 
 
             // The old mipmap data will need to be deleted, if any.
