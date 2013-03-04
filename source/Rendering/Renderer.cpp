@@ -1045,15 +1045,15 @@ namespace GTEngine
                     auto texture2D = static_cast<Texture2D*>(attachment.texture);
                     if (texture2D != nullptr)
                     {
-                        if (texture2D->GetTarget() == Texture2DTarget_Default)
+                        //if (texture2D->GetTarget() == Texture2DTarget_Default)
                         {
                             glEnable(GL_TEXTURE_2D);
                             glBindTexture(GL_TEXTURE_2D, static_cast<OpenGL20::Texture2D*>(texture2D->GetRendererData())->object);
                         }
-                        else
-                        {
+                        //else
+                        //{
                             // We can't bind a cube map face as a texture2D.
-                        }
+                        //}
                     }
                 }
                 else if (attachment.type == ShaderParameterType_TextureCube)

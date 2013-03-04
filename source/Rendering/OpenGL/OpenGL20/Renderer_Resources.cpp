@@ -36,7 +36,7 @@ namespace GTEngine
 
             // If we're a face on a cube map we don't actually want to create any texture objects. Instead, we can assert that the currently bound texture
             // is the cube map object.
-            if (target == Texture2DTarget_Default)
+            if (target == GL_TEXTURE_2D)
             {
                 glGenTextures(1, &this->texture->object);
                 glBindTexture(GL_TEXTURE_2D, texture->object);
@@ -66,7 +66,7 @@ namespace GTEngine
         }
 
         OpenGL20::Texture2D* texture;
-        Texture2DTarget target;
+        GLenum target;
 
         GLint minFilter;
         GLint magFilter;
@@ -82,7 +82,7 @@ namespace GTEngine
             assert(texture != nullptr);
 
             // We don't delete any objects if we're a cube map face.
-            if (this->target == Texture2DTarget_Default)
+            if (this->target == GL_TEXTURE_2D)
             {
                 glDeleteTextures(1, &this->texture->object);
             }
@@ -91,7 +91,7 @@ namespace GTEngine
         }
 
         OpenGL20::Texture2D* texture;
-        Texture2DTarget target;
+        GLenum target;
     };
 
     struct RCOnTexture2DMipmapChanged : public GTEngine::RenderCommand
@@ -100,7 +100,7 @@ namespace GTEngine
         {
             assert(this->texture != nullptr);
 
-            if (this->target == Texture2DTarget_Default)
+            if (this->target == GL_TEXTURE_2D)
             {
                 glBindTexture(GL_TEXTURE_2D, this->texture->object);
 
@@ -119,7 +119,7 @@ namespace GTEngine
 
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             {
-                glTexImage2D(ToOpenGLTexture2DTarget(this->target), this->mipmap, this->internalFormat, this->width, this->height, 0, this->format, this->type, this->data);
+                glTexImage2D(GL_TEXTURE_2D, this->mipmap, this->internalFormat, this->width, this->height, 0, this->format, this->type, this->data);
             }
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
@@ -129,7 +129,7 @@ namespace GTEngine
         }
 
         OpenGL20::Texture2D* texture;
-        Texture2DTarget target;
+        GLenum target;
 
         GLint mipmap;
 
@@ -595,7 +595,7 @@ namespace GTEngine
         OpenGL20::Framebuffer* framebuffer;
         OpenGL20::Texture2D*   texture;
         size_t                 attachmentIndex;
-        Texture2DTarget        textureTarget;
+        GLenum                 textureTarget;
     };
 
 

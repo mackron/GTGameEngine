@@ -4,8 +4,8 @@
 
 namespace GTEngine
 {
-    TextureCube_OpenGL33::TextureCube_OpenGL33(GLuint* objectGLIn)
-        : objectGL(objectGLIn)
+    TextureCube_OpenGL33::TextureCube_OpenGL33(GLuint* objectGLIn, Texture2D* positiveX, Texture2D* negativeX, Texture2D* positiveY, Texture2D* negativeY, Texture2D* positiveZ, Texture2D* negativeZ)
+        : TextureCube(positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ), objectGL(objectGLIn)
     {
     }
 

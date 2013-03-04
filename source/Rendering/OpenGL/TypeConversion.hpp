@@ -13,24 +13,6 @@
 
 namespace GTEngine
 {
-    inline GLenum ToOpenGLTexture2DTarget(Texture2DTarget target)
-    {
-        switch (target)
-        {
-        case Texture2DTarget_Default:           return GL_TEXTURE_2D;
-        case Texture2DTarget_Cube_PositiveX:    return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-        case Texture2DTarget_Cube_NegativeX:    return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
-        case Texture2DTarget_Cube_PositiveY:    return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
-        case Texture2DTarget_Cube_NegativeY:    return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
-        case Texture2DTarget_Cube_PositiveZ:    return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
-        case Texture2DTarget_Cube_NegativeZ:    return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
-
-        default: break;
-        }
-
-        return GL_TEXTURE_2D;
-    }
-
     inline GLint ToOpenGLTextureFilter(TextureFilter filter)
     {
         switch (filter)

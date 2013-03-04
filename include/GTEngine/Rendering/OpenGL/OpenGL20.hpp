@@ -56,7 +56,7 @@ namespace GTEngine
         /// @param colourBuffer      [in] The colour to attach to the framebuffer.
         /// @param colourBufferIndex [in] The index of the colour buffer to attach the colour buffer to.
         /// @param textureTarget     [in] The texture target, such as GL_TEXTURE_2D.
-        static void SetFramebufferColourBuffer(GLuint colourBuffer, size_t colourBufferIndex, Texture2DTarget textureTarget);
+        static void SetFramebufferColourBuffer(GLuint colourBuffer, size_t colourBufferIndex, GLenum textureTarget);
 
         /// Sets the depth buffer on the given framebuffer.
         ///
