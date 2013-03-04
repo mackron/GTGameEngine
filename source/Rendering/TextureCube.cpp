@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Rendering/TextureCube.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/Rendering/Renderer2.hpp>
 
 namespace GTEngine
 {
@@ -12,14 +12,20 @@ namespace GTEngine
           minFilter(TextureFilter_Linear), magFilter(TextureFilter_Linear), anisotropy(1),
           rendererData(nullptr), shaders()
     {
-        Renderer::OnTextureCubeCreated(*this);
+        // TODO: Perhaps these textures should be created via the renderer and then sent in via the constructor? Also, the target should be part of the OpenGL-specific stuff.
+        this->PositiveX = Renderer2::CreateTexture2D();
+        this->NegativeX = Renderer2::CreateTexture2D();
+        this->PositiveY = Renderer2::CreateTexture2D();
+        this->NegativeY = Renderer2::CreateTexture2D();
+        this->PositiveZ = Renderer2::CreateTexture2D();
+        this->NegativeZ = Renderer2::CreateTexture2D();
 
-        this->PositiveX = new Texture2D(Texture2DTarget_Cube_PositiveX);
-        this->NegativeX = new Texture2D(Texture2DTarget_Cube_NegativeX);
-        this->PositiveY = new Texture2D(Texture2DTarget_Cube_PositiveY);
-        this->NegativeY = new Texture2D(Texture2DTarget_Cube_NegativeY);
-        this->PositiveZ = new Texture2D(Texture2DTarget_Cube_PositiveZ);
-        this->NegativeZ = new Texture2D(Texture2DTarget_Cube_NegativeZ);
+        this->PositiveX->SetTarget(Texture2DTarget_Cube_PositiveX);
+        this->NegativeX->SetTarget(Texture2DTarget_Cube_NegativeX);
+        this->PositiveY->SetTarget(Texture2DTarget_Cube_PositiveY);
+        this->NegativeY->SetTarget(Texture2DTarget_Cube_NegativeY);
+        this->PositiveZ->SetTarget(Texture2DTarget_Cube_PositiveZ);
+        this->NegativeZ->SetTarget(Texture2DTarget_Cube_NegativeZ);
     }
 
     TextureCube::~TextureCube()
@@ -31,14 +37,12 @@ namespace GTEngine
             this->shaders.RemoveRoot();
         }
 
-        delete this->PositiveX;
-        delete this->NegativeX;
-        delete this->PositiveY;
-        delete this->NegativeY;
-        delete this->PositiveZ;
-        delete this->NegativeZ;
-
-        Renderer::OnTextureCubeDeleted(*this);
+        Renderer2::DeleteTexture2D(this->PositiveX);
+        Renderer2::DeleteTexture2D(this->NegativeX);
+        Renderer2::DeleteTexture2D(this->PositiveY);
+        Renderer2::DeleteTexture2D(this->NegativeY);
+        Renderer2::DeleteTexture2D(this->PositiveZ);
+        Renderer2::DeleteTexture2D(this->NegativeZ);
     }
 
 
@@ -48,7 +52,6 @@ namespace GTEngine
         if (this->minFilter != newFilter)
         {
             this->minFilter = newFilter;
-            Renderer::OnTextureCubeMinificationFilterChanged(*this);
         }
     }
 
@@ -57,7 +60,6 @@ namespace GTEngine
         if (this->magFilter != newFilter)
         {
             this->magFilter = newFilter;
-            Renderer::OnTextureCubeMagnificationFilterChanged(*this);
         }
     }
 
@@ -77,7 +79,6 @@ namespace GTEngine
         if (this->anisotropy != newAnisotropy)
         {
             this->anisotropy = newAnisotropy;
-            Renderer::OnTextureCubeAnisotropyChanged(*this);
         }
     }
 

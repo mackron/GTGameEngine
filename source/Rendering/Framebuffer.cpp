@@ -9,19 +9,15 @@ namespace GTEngine
         : colourAttachments(), depthStencilAttachment(nullptr),
           rendererData(nullptr)
     {
-        Renderer::OnFramebufferCreated(*this);
     }
 
     Framebuffer::~Framebuffer()
     {
         // First we need to detach everything. We do not want to delete the attachments, just detach.
         this->DetachAllBuffers();
-
-        // Only after the attachments have been detached should we collect.
-        Renderer::OnFramebufferDeleted(*this);
     }
 
-    bool Framebuffer::AttachColourBuffer(Texture2D *buffer, unsigned int index, bool immediateRendererUpdate)
+    bool Framebuffer::AttachColourBuffer(Texture2D *buffer, unsigned int index)
     {
         assert(buffer != nullptr);      // <-- Should use DetachColourBuffer() to remove a buffer. Will probably turn this argument into a reference instead of a pointer.
 
@@ -32,9 +28,6 @@ namespace GTEngine
             {
                 if (iColourAttachment->value != buffer)
                 {
-                    // The old attachment needs to be detached.
-                    Renderer::OnColourBufferDetached(*this, index, immediateRendererUpdate);        // TODO: Remove this when the new renderer is complete.
-
                     assert(iColourAttachment->value != nullptr);
                     {
                         iColourAttachment->value->OnDetachFromFramebuffer(this);
@@ -49,8 +42,6 @@ namespace GTEngine
                 buffer->OnAttachToFramebuffer(this);
             }
 
-            Renderer::OnColourBufferAttached(*this, index, immediateRendererUpdate);        // TODO: Delete this when the new renderer is complete.
-
 
             return true;
         }
@@ -58,7 +49,7 @@ namespace GTEngine
         return false;
     }
 
-    bool Framebuffer::AttachDepthStencilBuffer(Texture2D *buffer, bool immediateRendererUpdate)
+    bool Framebuffer::AttachDepthStencilBuffer(Texture2D *buffer)
     {
         assert(buffer != nullptr);      // <-- Should use DetachDepthStencilBuffer() to remove a buffer. Will probably turn this argument into a reference instead of a pointer.
 
@@ -66,40 +57,33 @@ namespace GTEngine
         {
             if (this->depthStencilAttachment != nullptr)
             {
-                Renderer::OnDepthStencilBufferDetached(*this, immediateRendererUpdate);     // TODO: Remove this when the new renderer is complete.
                 this->depthStencilAttachment->OnDetachFromFramebuffer(this);
             }
                 
             this->depthStencilAttachment = buffer;
             this->depthStencilAttachment->OnAttachToFramebuffer(this);
-
-            Renderer::OnDepthStencilBufferAttached(*this, immediateRendererUpdate);     // TODO: Remove this when the new renderer is complete.
         }
 
         return true;
     }
 
-    void Framebuffer::DetachColourBuffer(size_t index, bool immediateRendererUpdate)
+    void Framebuffer::DetachColourBuffer(size_t index)
     {
         if (index < Renderer::GetMaxColourAttachments())
         {
             auto iColourAttachment = this->colourAttachments.Find(index);
             if (iColourAttachment != nullptr)
             {
-                Renderer::OnColourBufferDetached(*this, index, immediateRendererUpdate);
-
                 iColourAttachment->value->OnDetachFromFramebuffer(this);
                 this->colourAttachments.RemoveByIndex(iColourAttachment->index);
             }
         }
     }
 
-    void Framebuffer::DetachDepthStencilBuffer(bool immediateRendererUpdate)
+    void Framebuffer::DetachDepthStencilBuffer()
     {
         if (this->depthStencilAttachment != nullptr)
         {
-            Renderer::OnDepthStencilBufferDetached(*this, immediateRendererUpdate);
-
             this->depthStencilAttachment->OnDetachFromFramebuffer(this);
             this->depthStencilAttachment = nullptr;
         }
@@ -175,11 +159,5 @@ namespace GTEngine
     const Texture2D * Framebuffer::GetDepthStencilBuffer() const
     {
         return this->depthStencilAttachment;
-    }
-
-
-    void Framebuffer::CheckStatus()
-    {
-        Renderer::OnCheckFramebuffer(*this);
     }
 }

@@ -107,6 +107,12 @@ namespace GTEngine
         ///     The texture target basically defines the usage of the texture.
         Texture2DTarget GetTarget() const { return this->target; }
 
+        /// Sets the target.
+        ///
+        /// @remarks
+        ///     This is mainly used for distringuishing between normal 2D texture and cube map faces.
+        void SetTarget(Texture2DTarget newTarget) { this->target = newTarget; }
+
 
         /// Sets the minification filter.
         ///
