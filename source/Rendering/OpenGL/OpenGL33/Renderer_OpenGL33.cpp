@@ -1257,19 +1257,13 @@ namespace GTEngine
                         for (size_t i = 0; i < texture.GetMipmapCount(); ++i)
                         {
                             auto mipmap = texture.GetMipmap(i);
-                            if (mipmap.data != nullptr)
-                            {
-                                State.currentRCSetTextureState->SetTexture2DData(textureObject, textureTarget, static_cast<int>(i), mipmap.format, mipmap.width, mipmap.height, mipmap.data, mipmap.GetDataSizeInBytes());
-                            }
+                            State.currentRCSetTextureState->SetTexture2DData(textureObject, textureTarget, static_cast<int>(i), mipmap.format, mipmap.width, mipmap.height, mipmap.data, mipmap.GetDataSizeInBytes());
                         }
                     }
                     else
                     {
                         auto mipmap = texture.GetMipmap(mipmapIndex);
-                        if (mipmap.data != nullptr)
-                        {
-                            State.currentRCSetTextureState->SetTexture2DData(textureObject, textureTarget, mipmapIndex, mipmap.format, mipmap.width, mipmap.height, mipmap.data, mipmap.GetDataSizeInBytes());
-                        }
+                        State.currentRCSetTextureState->SetTexture2DData(textureObject, textureTarget, mipmapIndex, mipmap.format, mipmap.width, mipmap.height, mipmap.data, mipmap.GetDataSizeInBytes());
                     }
                 }
             }
