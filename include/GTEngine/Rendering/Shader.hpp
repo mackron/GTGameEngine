@@ -64,16 +64,6 @@ namespace GTEngine
     // The methods below should only be called by the renderer and it's support functions.
     public:
 
-        /// Retrieves a pointer to the internal renderer data.
-              void* GetRendererData()       { return this->rendererData; }
-        const void* GetRendererData() const { return this->rendererData; }
-
-        /// Sets the pointer to the internal renderer data.
-        ///
-        /// @remarks
-        ///     This does not deallocate the previous renderer data. That is the responsibility of the caller.
-        void SetRendererData(void* rendererData) { this->rendererData = rendererData; }
-
         /// Retrieves the internal list of pending parameters.
         ///
         /// @return A reference to the internal list of rendering parameters waiting to be set.
@@ -106,10 +96,6 @@ namespace GTEngine
         /// The parameters that are waiting to be set on the shader. This will be cleared when the shader is made current on the renderer.
         ShaderParameterCache pendingParameters;
 
-        /// A pointer to renderer-specific data.
-        void* rendererData;
-
-
 
 
         // We need to keep track of the textures that are being used by the shader so we can bind the appropriately.
@@ -133,9 +119,6 @@ namespace GTEngine
     private:    // No copying.
         Shader(const Shader &);
         Shader & operator=(const Shader &);
-
-
-    friend class Renderer;
     };
 }
 

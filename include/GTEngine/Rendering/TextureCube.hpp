@@ -95,10 +95,6 @@ namespace GTEngine
         /// The level of aniostropic filtering to use with the image. Defaults to 1.
         unsigned int anisotropy;
 
-        /// The renderer will need to store it's own properties about the texture. This pointer can be used by the renderer
-        /// to hold a pointer to some renderer-specific data.
-        void* rendererData;
-
         /// The list of shaders that this texture is attached to.
         GTCore::List<Shader*> shaders;
         

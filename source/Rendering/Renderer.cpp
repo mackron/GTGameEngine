@@ -991,7 +991,7 @@ namespace GTEngine
     {
         if (shader != nullptr)
         {
-            glUseProgram(static_cast<OpenGL20::Shader*>(shader->GetRendererData())->program);
+            //glUseProgram(static_cast<OpenGL20::Shader*>(shader->GetRendererData())->program);
             RendererState.CurrentShader = shader;
 
             Renderer::BindCurrentShaderTextures();
@@ -1029,6 +1029,7 @@ namespace GTEngine
 
     void Renderer::BindCurrentShaderTextures()
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr)
         {
@@ -1067,11 +1068,13 @@ namespace GTEngine
                 }
             }
         }
+        */
     }
 
 
     void Renderer::SetShaderParameter(const char* paramName, Texture2D* value)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
@@ -1116,10 +1119,12 @@ namespace GTEngine
                 value->OnAttachToShader(*RendererState.CurrentShader);
             }
         }
+        */
     }
 
     void Renderer::SetShaderParameter(const char* paramName, TextureCube* value)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
@@ -1166,113 +1171,136 @@ namespace GTEngine
                 value->OnAttachToShader(*RendererState.CurrentShader);
             }
         }
+        */
     }
 
 
 
     void Renderer::SetShaderParameter(const char *paramName, float x)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLuint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform1f(location, x);
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform2f(location, x, y);
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y, float z)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform3f(location, x, y, z);
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, float x, float y, float z, float w)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform4f(location, x, y, z, w);
         }
+        */
     }
 
 
     void Renderer::SetShaderParameter(const char *paramName, int x)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLuint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform1i(location, x);
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, int x, int y)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform2i(location, x, y);
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, int x, int y, int z)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform3i(location, x, y, z);
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, int x, int y, int z, int w)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniform4i(location, x, y, z, w);
         }
+        */
     }
 
 
     // Column-major for matrices.
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat2 &value)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniformMatrix2fv(location, 1, false, &value[0][0]);
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat3 &value)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniformMatrix3fv(location, 1, false, &value[0][0]);
         }
+        */
     }
     void Renderer::SetShaderParameter(const char *paramName, const glm::mat4 &value)
     {
+        /*
         auto rendererData = static_cast<OpenGL20::Shader*>(RendererState.CurrentShader->GetRendererData());
         if (rendererData != nullptr && rendererData->program != 0)
         {
             GLint location = glGetUniformLocation(rendererData->program, paramName);
             glUniformMatrix4fv(location, 1, false, &value[0][0]);
         }
+        */
     }
 
 
