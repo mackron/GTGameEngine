@@ -86,7 +86,7 @@ namespace GTEngine
 
         /// Retrieves a colour buffer attachment.
         ///
-        /// @param index [in] The index of the colour buffer to attach.
+        /// @param index [in] The index of the colour buffer to retrieve.
               Texture2D* GetColourBuffer(size_t index);
         const Texture2D* GetColourBuffer(size_t index) const;
 
@@ -102,6 +102,13 @@ namespace GTEngine
         ///     @par
         ///     An error will be logged if the framebuffer is invalid. This method is designed for debugging, mostly.
         void CheckStatus();
+
+
+        /// Retrieves a direct reference to the internal map of colour attachments.
+        ///
+        /// @remarks
+        ///     This is mainly for use by renderers.
+        const GTCore::Map<unsigned int, Texture2D*> & GetAttachedColourBuffers() const { return this->colourAttachments; }
 
 
 
