@@ -1110,7 +1110,30 @@ namespace GTEngine
 
                 assert(State.currentRCSetShaderState != nullptr);
                 {
+                    // We just notify the render command of the currently attached buffers. It will detach and switch stuff around appropriately when it's
+                    // executed. We can't know at this point which attachments should be attached or detached because the server-side state may be in the
+                    // middle of changing on another thread.
 
+                    // Colour Buffers.
+                    auto &colourAttachments = framebufferGL33.GetAttachedColourBuffers();
+                    for (size_t i = 0; i < colourAttachments.count; ++i)
+                    {
+                        auto index   = static_cast<GLuint>(colourAttachments.buffer[i]->key);
+                        auto texture = static_cast<Texture2D_OpenGL33*>(colourAttachments.buffer[i]->value);
+
+                        assert(texture != nullptr);
+                        {
+                            State.currentRCSetFramebufferState->SetAttachedBuffer(GL_COLOR_ATTACHMENT0_EXT + index, texture->GetTarget(), texture->GetOpenGLObjectPtr());
+                        }
+                    }
+
+                    // Depth/Stencil.
+                    auto depthStencilAttachment = static_cast<const Texture2D_OpenGL33*>(framebufferGL33.GetDepthStencilBuffer());
+                    if (depthStencilAttachment != nullptr)
+                    {
+                        State.currentRCSetFramebufferState->SetAttachedBuffer(GL_DEPTH_ATTACHMENT_EXT,   depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLObjectPtr());
+                        State.currentRCSetFramebufferState->SetAttachedBuffer(GL_STENCIL_ATTACHMENT_EXT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLObjectPtr());
+                    }
                 }
             }
         }

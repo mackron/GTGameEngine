@@ -21,30 +21,25 @@ namespace GTEngine
 
 
         /// Structure containing information about a colour buffer attached to the framebuffer.
-        struct AttachedColourBuffer
+        struct Attachment
         {
             /// The index this colour buffer is attached to.
-            GLuint index;
+            GLenum attachmentPoint;
 
             /// The texture target.
-            GLenum target;
+            GLenum textureTarget;
 
             /// A pointer to the OpenGL texture object.
             GLuint* textureObject;
         };
 
-        /// The map containing the attached colour buffers. This is keyed by the index.
-        GTCore::Map<GLuint, AttachedColourBuffer> attachedColourBuffers;
-
-
-        /// A pointer to the texture being used as the depth/stencil attachment.
-        GLuint* depthStencilTextureObject;
-
+        /// The map containing the attached colour buffers. This is keyed by the attachment point.
+        GTCore::Map<GLenum, Attachment> attachments;
 
 
         /// Constructor.
         FramebufferState_OpenGL33()
-            : framebufferObject(0), attachedColourBuffers(), depthStencilTextureObject(nullptr)
+            : framebufferObject(0), attachments()
         {
         }
     };

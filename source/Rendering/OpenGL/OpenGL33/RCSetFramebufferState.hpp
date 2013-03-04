@@ -5,6 +5,7 @@
 
 #include <GTEngine/Rendering/RenderCommand.hpp>
 #include "FramebufferState_OpenGL33.hpp"
+#include <GTCore/Map.hpp>
 #include <cstdint>
 
 namespace GTEngine
@@ -17,6 +18,16 @@ namespace GTEngine
         /// Constructor.
         RCSetFramebufferState();
 
+
+        /// Marks an attachment as needing to be set.
+        ///
+        /// @param attachmentPoint [in] The attachment point to attach the buffer at.
+        /// @param textureTarget   [in] The texture target.
+        /// @param textureObject   [in] A pointer to the texture object to attach. Should not be null.
+        ///
+        /// @remarks
+        ///     This should be called for every currently attached buffer. Old buffers that are not longer used will be automatically detached.
+        void SetAttachedBuffer(GLenum attachmentPoint, GLenum textureTarget, GLuint* textureObject);
 
 
         /// Retrieves the program object whose state is being set.
@@ -37,6 +48,10 @@ namespace GTEngine
 
         /// A pointer to the OpenGL framebuffer object.
         FramebufferState_OpenGL33* framebufferState;
+
+
+        /// The list of attachments. We use a map here just to make it easier to overwrite existing attachments. Keyed by the attachment point.
+        GTCore::Map<GLenum, FramebufferState_OpenGL33::Attachment> attachments;
 
 
 
