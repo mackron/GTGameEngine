@@ -10,7 +10,7 @@ namespace GTEngine
           PositiveY(positiveY), NegativeY(negativeY),
           PositiveZ(positiveZ), NegativeZ(negativeZ),
           minFilter(TextureFilter_Linear), magFilter(TextureFilter_Linear), anisotropy(1),
-          rendererData(nullptr), shaders()
+          shaders()
     {
     }
 

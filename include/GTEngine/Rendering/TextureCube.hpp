@@ -61,20 +61,6 @@ namespace GTEngine
 
     public:
 
-        /// Retrieves a pointer to the internal renderer data.
-        ///
-        /// @remarks
-        ///     This should only be used by the renderer.
-              void* GetRendererData()       { return this->rendererData; }
-        const void* GetRendererData() const { return this->rendererData; }
-
-
-        /// Sets the pointer to the internal renderer data.
-        ///
-        /// @remarks
-        ///     This does not deallocate the previous renderer data. That is the responsibility of the renderer itself.
-        void SetRendererData(void* rendererData) { this->rendererData = rendererData; }
-
 
         /// Called when the texture is attached to a shader.
         void OnAttachToShader(Shader &shader);
