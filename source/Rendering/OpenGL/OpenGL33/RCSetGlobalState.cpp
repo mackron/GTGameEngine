@@ -14,8 +14,19 @@ namespace GTEngine
     #define CLEAR_STENCIL_BIT               (1 << 5)
     #define SET_CURRENT_SHADER_BIT          (1 << 6)
     #define SET_CURRENT_FRAMEBUFFER_BIT     (1 << 7)
-    #define ENABLE_BIT                      (1 << 8)
-    #define DISABLE_BIT                     (1 << 9)
+    #define SET_BLEND_FUNCTION_BIT          (1 << 8)
+    #define SET_BLEND_EQUATION_BIT          (1 << 9)
+    #define SET_ALPHA_FUNCTION_BIT          (1 << 10)
+    #define SET_DEPTH_FUNCTION_BIT          (1 << 11)
+    #define SET_STENCIL_MASK_BIT            (1 << 12)
+    #define SET_STENCIL_FUNC_BIT            (1 << 13)
+    #define SET_STENCIL_OP_BIT              (1 << 14)
+    #define SET_FACE_CULLING_BIT            (1 << 15)
+    #define SET_POLYGON_MODE_BIT            (1 << 16)
+    #define SET_POLYGON_OFFSET_BIT          (1 << 17)
+    #define ENABLE_BIT                      (1 << 18)
+    #define DISABLE_BIT                     (1 << 19)
+    
 
 
     RCSetGlobalState::RCSetGlobalState()
@@ -85,6 +96,94 @@ namespace GTEngine
         this->currentFramebufferParams.framebufferState = framebufferState;
 
         this->operationBitfield |= SET_CURRENT_FRAMEBUFFER_BIT;
+    }
+
+
+    void RCSetGlobalState::SetBlendFunction(GLenum sfactor, GLenum dfactor)
+    {
+        this->blendFuncParams.sfactor = sfactor;
+        this->blendFuncParams.dfactor = dfactor;
+
+        this->operationBitfield |= SET_BLEND_FUNCTION_BIT;
+    }
+
+    void RCSetGlobalState::SetBlendEquation(GLenum mode)
+    {
+        this->blendEquationParams.mode = mode;
+
+        this->operationBitfield |= SET_BLEND_EQUATION_BIT;
+    }
+
+    
+    void RCSetGlobalState::SetAlphaTestFunction(GLenum func, GLclampf ref)
+    {
+        this->alphaFuncParams.func = func;
+        this->alphaFuncParams.ref  = ref;
+
+        this->operationBitfield |= SET_ALPHA_FUNCTION_BIT;
+    }
+
+
+    void RCSetGlobalState::SetDepthFunction(GLenum func)
+    {
+        this->depthFuncParams.func = func;
+
+        this->operationBitfield |= SET_DEPTH_FUNCTION_BIT;
+    }
+
+
+    void RCSetGlobalState::SetStencilMask(GLenum face, GLuint mask)
+    {
+        this->stencilMaskParams.face = face;
+        this->stencilMaskParams.mask = mask;
+
+        this->operationBitfield |= SET_STENCIL_MASK_BIT;
+    }
+
+    void RCSetGlobalState::SetStencilFunc(GLenum face, GLenum func, GLint ref, GLuint mask)
+    {
+        this->stencilFuncParams.face = face;
+        this->stencilFuncParams.func = func;
+        this->stencilFuncParams.ref  = ref;
+        this->stencilFuncParams.mask = mask;
+
+        this->operationBitfield |= SET_STENCIL_FUNC_BIT;
+    }
+
+    void RCSetGlobalState::SetStencilOp(GLenum face, GLenum stencilFail, GLenum depthFail, GLenum pass)
+    {
+        this->stencilOpParams.face        = face;
+        this->stencilOpParams.stencilFail = stencilFail;
+        this->stencilOpParams.depthFail   = depthFail;
+        this->stencilOpParams.pass        = pass;
+
+        this->operationBitfield |= SET_STENCIL_OP_BIT;
+    }
+
+
+
+    void RCSetGlobalState::SetFaceCulling(GLenum face)
+    {
+        this->cullFaceParams.face = face;
+
+        this->operationBitfield |= SET_FACE_CULLING_BIT;
+    }
+
+
+    void RCSetGlobalState::SetPolygonMode(GLenum face, GLenum mode)
+    {
+        this->polygonModeParams.face = face;
+        this->polygonModeParams.mode = mode;
+
+        this->operationBitfield |= SET_POLYGON_MODE_BIT;
+    }
+
+    void RCSetGlobalState::SetPolygonOffset(GLfloat factor, GLfloat units)
+    {
+        this->polygonOffsetParams.factor = factor;
+        this->polygonOffsetParams.units  = units;
+
+        this->operationBitfield |= SET_POLYGON_OFFSET_BIT;
     }
 
 
@@ -204,7 +303,7 @@ namespace GTEngine
         this->enableParams.caps  &= ~DEPTH_WRITES_BIT;
     }
 
-
+    
     void RCSetGlobalState::Execute()
     {
         if ((this->operationBitfield & VIEWPORT_BIT))
@@ -252,6 +351,70 @@ namespace GTEngine
         if ((this->operationBitfield & SET_CURRENT_FRAMEBUFFER_BIT))
         {
             glBindFramebuffer(GL_FRAMEBUFFER, this->currentFramebufferParams.framebufferState->framebufferObject);
+        }
+
+
+        if ((this->operationBitfield & SET_BLEND_FUNCTION_BIT))
+        {
+            glBlendFunc(this->blendFuncParams.sfactor, this->blendFuncParams.dfactor);
+        }
+
+        if ((this->operationBitfield & SET_BLEND_EQUATION_BIT))
+        {
+            glBlendEquation(this->blendEquationParams.mode);
+        }
+
+
+        if ((this->operationBitfield & SET_ALPHA_FUNCTION_BIT))
+        {
+            glAlphaFunc(this->alphaFuncParams.func, this->alphaFuncParams.ref);
+        }
+
+
+        if ((this->operationBitfield & SET_DEPTH_FUNCTION_BIT))
+        {
+            glDepthFunc(this->depthFuncParams.func);
+        }
+
+
+        if ((this->operationBitfield & SET_STENCIL_MASK_BIT))
+        {
+            glStencilMaskSeparate(this->stencilMaskParams.face, this->stencilMaskParams.mask);
+        }
+
+        if ((this->operationBitfield & SET_STENCIL_FUNC_BIT))
+        {
+            glStencilFuncSeparate(this->stencilFuncParams.face, this->stencilFuncParams.func, this->stencilFuncParams.ref, this->stencilFuncParams.mask);
+        }
+
+        if ((this->operationBitfield & SET_STENCIL_OP_BIT))
+        {
+            glStencilOpSeparate(this->stencilOpParams.face, this->stencilOpParams.stencilFail, this->stencilOpParams.depthFail, this->stencilOpParams.pass);
+        }
+
+
+        if ((this->operationBitfield & SET_FACE_CULLING_BIT))
+        {
+            if (this->cullFaceParams.face == GL_NONE)
+            {
+                glDisable(GL_CULL_FACE);
+            }
+            else
+            {
+                glEnable(GL_CULL_FACE);
+                glCullFace(this->cullFaceParams.face);
+            }
+        }
+
+
+        if ((this->operationBitfield & SET_POLYGON_MODE_BIT))
+        {
+            glPolygonMode(this->polygonModeParams.face, this->polygonModeParams.mode);
+        }
+
+        if ((this->operationBitfield & SET_POLYGON_OFFSET_BIT))
+        {
+            glPolygonOffset(this->polygonOffsetParams.factor, this->polygonOffsetParams.units);
         }
 
 

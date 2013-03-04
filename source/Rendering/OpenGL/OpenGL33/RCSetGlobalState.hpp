@@ -45,6 +45,42 @@ namespace GTEngine
         void SetCurrentFramebuffer(FramebufferState_OpenGL33* framebufferObject);
 
 
+        /// Renderer::SetBlendFunction()
+        void SetBlendFunction(GLenum sfactor, GLenum dfactor);
+
+        /// Renderer::SetBlendEquation()
+        void SetBlendEquation(GLenum mode);
+
+
+        /// Renderer::SetAlphaTestFunction()
+        void SetAlphaTestFunction(GLenum func, GLclampf ref);
+
+
+        /// Renderer::SetDepthFunction()
+        void SetDepthFunction(GLenum func);
+
+
+        /// Renderer::SetStencilMask()
+        void SetStencilMask(GLenum face, GLuint mask);
+
+        /// Renderer::SetStencilFunc()
+        void SetStencilFunc(GLenum face, GLenum func, GLint ref, GLuint mask);
+
+        /// Renderer::SetStencilOp()
+        void SetStencilOp(GLenum face, GLenum stencilFail, GLenum depthFail, GLenum pass);
+
+
+        /// Renderer::SetFaceCulling()
+        void SetFaceCulling(GLenum face);
+
+
+        /// Renderer::SetPolygonMode()
+        void SetPolygonMode(GLenum face, GLenum mode);
+
+        /// Renderer::SetPolygonOffset()
+        void SetPolygonOffset(GLfloat factor, GLfloat units);
+
+
         /// Renderer::Enable*()
         void Enable(GLenum cap);
 
@@ -135,6 +171,93 @@ namespace GTEngine
         }currentFramebufferParams;
 
 
+        /// glBlendFunc parameters.
+        struct
+        {
+            GLenum sfactor;
+            GLenum dfactor;
+
+        }blendFuncParams;
+
+        /// glBlendEquation parameters.
+        struct
+        {
+            GLenum mode;
+
+        }blendEquationParams;
+
+
+        /// glAlphaFunc parameters.
+        struct
+        {
+            GLenum   func;
+            GLclampf ref;
+
+        }alphaFuncParams;
+
+
+        /// glDepthFunc parameters.
+        struct
+        {
+            GLenum func;
+
+        }depthFuncParams;
+
+
+        /// glStencilMaskSeparate params.
+        struct
+        {
+            GLenum face;
+            GLuint mask;
+
+        }stencilMaskParams;
+
+        /// glStencilFuncSeparate params.
+        struct
+        {
+            GLenum face;
+            GLenum func;
+            GLint  ref;
+            GLuint mask;
+
+        }stencilFuncParams;
+
+        /// glStencilOpSeparate params.
+        struct
+        {
+            GLenum face;
+            GLenum stencilFail;
+            GLenum depthFail;
+            GLenum pass;
+
+        }stencilOpParams;
+
+
+        /// glCullFace params.
+        struct
+        {
+            GLenum face;
+
+        }cullFaceParams;
+
+
+        /// glPolygonMode params.
+        struct
+        {
+            GLenum face;
+            GLenum mode;
+
+        }polygonModeParams;
+
+        /// glPolygonOffset params.
+        struct
+        {
+            GLfloat factor;
+            GLfloat units;
+
+        }polygonOffsetParams;
+
+
         /// glEnable caps.
         struct
         {
@@ -148,8 +271,6 @@ namespace GTEngine
             uint32_t caps;
 
         }disableParams;
-
-
 
 
 

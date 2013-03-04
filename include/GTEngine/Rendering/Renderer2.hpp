@@ -11,6 +11,11 @@
 #include "Framebuffer.hpp"
 #include "DrawModes.hpp"
 #include "BufferTypes.hpp"
+#include "BlendFunctions.hpp"
+#include "BlendEquations.hpp"
+#include "RendererFunctions.hpp"
+#include "StencilOperations.hpp"
+#include "PolygonModes.hpp"
 
 namespace GTEngine
 {
@@ -116,7 +121,7 @@ namespace GTEngine
         // ExecuteCallCache().
 
         ///////////////////////////
-        // Simple State Changes
+        // Global State Changes
 
         /// Sets the viewport.
         ///
@@ -170,6 +175,136 @@ namespace GTEngine
         /// @remarks
         ///     If the given framebuffer is null rendering operations will be performed on the main framebuffer.
         static void SetCurrentFramebuffer(Framebuffer* framebufferToMakeCurrent);
+
+
+        /// Enables scissor testing.
+        static void EnableScissorTest();
+
+        /// Disables scissor testing.
+        static void DisableScissorTest();
+
+
+        /// Enables blending.
+        static void EnableBlending();
+
+        /// Disables blending.
+        static void DisableBlending();
+
+        /// Sets the blending function.
+        static void SetBlendFunction(BlendFunc sourceFactor, BlendFunc destFactor);
+
+        /// Sets the blending equation.
+        static void SetBlendEquation(BlendEquation equation);
+
+
+        /// Enables alpha testing.
+        static void EnableAlphaTest();
+
+        /// Disables alpha testing.
+        static void DisableAlphaTest();
+
+        /// Sets the alpha testing function.
+        ///
+        /// @param function [in] The new alpha test function.
+        /// @param ref      [in] The reference value that incoming alpha values are compared to
+        ///
+        /// @remarks
+        ///     The default value is AlphaTestFunc_Always.
+        static void SetAlphaTestFunction(RendererFunction function, float ref);
+
+
+        /// Enables colour writing.
+        static void EnableColourWrites();
+
+        /// Disables colour writing.
+        static void DisableColourWrites();
+
+        /// Enables depth writing.
+        static void EnableDepthWrites();
+
+        /// Disables depth writing.
+        static void DisableDepthWrites();
+
+        
+
+
+        /// Enables depth testing.
+        static void EnableDepthTest();
+
+        /// Disables depth testing.
+        static void DisableDepthTest();
+
+        /// Sets the function to use with depth testing.
+        ///
+        /// @param function [in] The new depth function.
+        static void SetDepthFunction(RendererFunction function);
+
+
+        /// Enables stencil testing.
+        static void EnableStencilTest();
+
+        /// Disables stencil testing.
+        static void DisableStencilTest();
+
+        /// Sets the stencil mask.
+        static void SetStencilMaskSeparate(bool frontFace, bool backFace, unsigned int mask);
+
+        /// Sets the stencil function and reference value to use with stencil testing for the given faces.
+        ///
+        /// @param frontFace [in] Whether or not the function for the front face is updated.
+        /// @param backFace  [in] Whether or not the function for the back face is updated.
+        /// @param func      [in] The function to use with stencil testing.
+        /// @param ref       [in] The reference value.
+        /// @param mask      [in] Specifies a mask that is ANDed with both the reference value and the stored stencil value when the test is done.
+        static void SetStencilFuncSeparate(bool frontFace, bool backFace, RendererFunction func, int ref, unsigned int mask);
+
+        /// Sets the action to take during stencil testing for the given faces.
+        ///
+        /// @param frontFace   [in] Whether or not the action for the front face is updated.
+        /// @param backFace    [in] Whether or not the action for the back face is updated.
+        /// @param stencilFail [in] The action to take when the stencil test fails.
+        /// @param depthFail   [in] The action to take when the depth test fails.
+        /// @param pass        [in] The action to take when both the depth and stenil tests pass.
+        static void SetStencilOpSeparate(bool frontFace, bool backFace, StencilOp stencilFail, StencilOp depthFail, StencilOp pass);
+
+
+        // Stencil Helpers.
+        static void SetStencilMask(unsigned int mask)                                        { SetStencilMaskSeparate(true, true, mask); }
+        static void SetStencilFunc(RendererFunction func, int ref, unsigned int mask)        { SetStencilFuncSeparate(true, true, func, ref, mask); }
+        static void SetStencilOp(StencilOp stencilFail, StencilOp depthFail, StencilOp pass) { SetStencilOpSeparate(true, true, stencilFail, depthFail, pass); }
+        
+
+
+
+        /// Sets the face culling mode.
+        ///
+        /// @param  cullFront [in] Specifies whether or not front faces should be culled. A value of true will cull.
+        /// @param  cullBack  [in] Specifies whether or not back faces should be culled. A value of true will cull.
+        static void SetFaceCulling(bool cullFront, bool cullBack);
+
+
+
+        /// Enables polygon offset for the given polygon mode.
+        ///
+        /// @param mode [in] The polygon mode where polygon offset is being enabled.
+        static void EnablePolygonOffset(PolygonMode mode);
+
+        /// Disables polygon offset for the given polygon mode.
+        ///
+        /// @param mode [in] The polygon mode where polygon offset is being disabled.
+        static void DisablePolygonOffset(PolygonMode mode);
+
+        /// Sets the polygon mode (fill, wireframe or points).
+        ///
+        /// @param mode [in] The polygond mode to use.
+        static void SetPolygonMode(bool frontFaces, bool backFaces, PolygonMode mode);
+
+        /// Sets the polygon offset.
+        ///
+        /// @param factor [in] Scale factor.
+        /// @param units  [in] A value to use for doing a constant scale factor.
+        static void SetPolygonOffset(float factor, float units);
+
 
 
 
