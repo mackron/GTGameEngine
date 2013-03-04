@@ -4,8 +4,6 @@
 #define __GTEngine_Rendering_hpp_
 
 #include "Rendering/Renderer.hpp"
-#include "Rendering/GUIRenderer.hpp"
-
 #include "Rendering/Renderer2.hpp"
 
 #endif

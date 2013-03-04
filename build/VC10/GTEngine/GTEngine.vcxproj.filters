@@ -248,9 +248,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp">
-      <Filter>include\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
@@ -890,9 +887,6 @@
       <Filter>source\Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp">
-      <Filter>source\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp">
       <Filter>source\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp">
