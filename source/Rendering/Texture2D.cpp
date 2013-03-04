@@ -7,10 +7,8 @@ namespace GTEngine
 {
     Texture2D::Texture2D()
         : GTImage::Image(), relativePath(),
-          minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
-          anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
-          rendererData(nullptr), refCount(1), keepClientSideData(false)
+          refCount(1)
     {
         if (Renderer::HasFlippedTextures())
         {
@@ -20,10 +18,8 @@ namespace GTEngine
 
     Texture2D::Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data)
         : GTImage::Image(), relativePath(),
-          minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
-          anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
-          rendererData(nullptr), refCount(1), keepClientSideData(false)
+          refCount(1)
     {
         if (Renderer::HasFlippedTextures())
         {
@@ -67,51 +63,6 @@ namespace GTEngine
     }
 
 
-    void Texture2D::SetMinificationFilter(TextureFilter newFilter)
-    {
-        if (this->minFilter != newFilter)
-        {
-            this->minFilter = newFilter;
-        }
-    }
-
-    void Texture2D::SetMagnificationFilter(TextureFilter newFilter)
-    {
-        if (this->magFilter != newFilter)
-        {
-            this->magFilter = newFilter;
-        }
-    }
-
-    TextureFilter Texture2D::GetMinificationFilter() const
-    {
-        return this->minFilter;
-    }
-
-    TextureFilter Texture2D::GetMagnificationFilter() const
-    {
-        return this->magFilter;
-    }
-
-
-    void Texture2D::SetAnisotropy(unsigned int newAnisotropy)
-    {
-        if (this->anisotropy != newAnisotropy)
-        {
-            this->anisotropy = newAnisotropy;
-        }
-    }
-
-    unsigned int Texture2D::GetAnisotropy() const
-    {
-        return this->anisotropy;
-    }
-
-    void Texture2D::SetWrapMode(TextureWrapMode wrapMode)
-    {
-        this->wrapMode = wrapMode;
-    }
-
 
     void Texture2D::DeleteLocalData()
     {
@@ -121,19 +72,6 @@ namespace GTEngine
         }
     }
 
-
-
-    void Texture2D::OnMipmapCreated(unsigned int mipmapIndex)
-    {
-    }
-
-    void Texture2D::OnMipmapDeleted(unsigned int mipmapIndex)
-    {
-    }
-
-    void Texture2D::OnMipmapChanged(unsigned int mipmapIndex)
-    {
-    }
 
 
     void Texture2D::OnAttachToFramebuffer(Framebuffer *framebuffer)

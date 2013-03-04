@@ -253,6 +253,7 @@ namespace GTEngine
                     this->linearDepthBuffer  = new GTEngine::Texture2D(width, height, GTImage::ImageFormat_RGBA8);
                 }
 
+                /*
                 this->finalOutput->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
                 this->lightingBuffer0->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
                 this->lightingBuffer1->SetFilter(GTEngine::TextureFilter_Nearest, GTEngine::TextureFilter_Nearest);
@@ -264,7 +265,7 @@ namespace GTEngine
 
                 this->finalOutput->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
                 this->opaqueColourBuffer->SetWrapMode(GTEngine::TextureWrapMode_ClampToEdge);
-
+                */
 
                 this->AttachDepthStencilBuffer(this->depthStencil);
                 this->AttachColourBuffer(this->finalOutput,        0);

@@ -8,9 +8,6 @@
 
 namespace GTEngine
 {
-    class Framebuffer;
-    class Shader;
-
     enum TextureFilter
     {
         TextureFilter_Nearest = 1,
@@ -30,6 +27,10 @@ namespace GTEngine
         TextureWrapMode_Clamp,
         TextureWrapMode_ClampToEdge,
     };
+
+
+    class Framebuffer;
+    class Shader;
 
 
     /**
@@ -92,70 +93,7 @@ namespace GTEngine
         void Resize(unsigned int width, unsigned int height);
 
 
-        /// Sets the minification filter.
-        ///
-        /// @param newFilter [in] The new minification filter.
-        void SetMinificationFilter(TextureFilter newFilter);
-
-        /// Sets the magnification filter.
-        ///
-        /// @param newFilter [in] The new magnification filter.
-        void SetMagnificationFilter(TextureFilter newFilter);
-
-        /// Retrieves the minification filter.
-        TextureFilter GetMinificationFilter() const;
-
-        /// Retrieves the magnification filter.
-        TextureFilter GetMagnificationFilter() const;
-
-
-        /// Helper method for setting both the minification and magnification filter.
-        ///
-        /// @param newMinFilter [in] The new minification filter.
-        /// @param newMagFilter [in] The new magnification filter.
-        void SetFilter(TextureFilter newMinFilter, TextureFilter newMagFilter)
-        {
-            this->SetMinificationFilter(newMinFilter);
-            this->SetMagnificationFilter(newMagFilter);
-        }
-
-
-
-        /// Sets the level of anisotropic filtering to use with this texture.
-        /// @param newAnisotropy [in] The new level of anisotropic filtering to use. This is clamped against the renderers maxiumum.
-        void SetAnisotropy(unsigned int newAnisotropy);
-
-        /// Retrieves the level of anisotropic filtering being used with this texture.
-        unsigned int GetAnisotropy() const;
-
-
-        /// Sets the wrapping mode (repeat, clamp, etc).
-        void SetWrapMode(TextureWrapMode wrapMode);
-
-        /// Retrieves the wrapping mode.
-        TextureWrapMode GetWrapMode() const { return this->wrapMode; }
-
-
-        /// Retrieves a pointer to the internal renderer data.
-        ///
-        /// @remarks
-        ///     This should only be used by the renderer.
-              void* GetRendererData()       { return this->rendererData; }
-        const void* GetRendererData() const { return this->rendererData; }
-
-        /// Sets the pointer to the internal renderer data.
-        ///
-        /// @remarks
-        ///     This does not deallocate the previous renderer data. That is the responsibility of the renderer itself.
-        void SetRendererData(void *rendererData) { this->rendererData = rendererData; }
-
-
-        /// Sets whether or not client-side image data should be kept after syncing with the renderer.
-        void KeepClientSideData(bool keepClientSideData) { this->keepClientSideData = keepClientSideData; }
-
-        /// Determines whether or not client-side data should be kept after syncing with the renderer.
-        bool KeepClientSideData() const { return this->keepClientSideData; }
-
+        
 
         /// Determines whether or not the texture is attached to a framebuffer.
         bool IsAttachedToFramebuffer() const { return this->framebuffers.root != nullptr; }
@@ -164,13 +102,6 @@ namespace GTEngine
         /// Deletes the image data, but maintains the other properties.
         void DeleteLocalData();
 
-
-
-    private:    // GTImage Image events.
-
-        void OnMipmapCreated(unsigned int mipmapIndex);
-        void OnMipmapDeleted(unsigned int mipmapIndex);
-        void OnMipmapChanged(unsigned int mipmapIndex);
 
 
     private:    // Called internally by GTEngine
@@ -195,19 +126,6 @@ namespace GTEngine
         GTCore::String relativePath;
 
 
-        /// The current minification filter.
-        TextureFilter minFilter;
-
-        /// The current magnification filter.
-        TextureFilter magFilter;
-
-        /// The level of aniostropic filtering to use with the image. Defaults to 1.
-        unsigned int anisotropy;
-
-        /// The wrapping mode.
-        TextureWrapMode wrapMode;
-
-
         /// The list of framebuffers that this texture is attached to.
         GTCore::List<Framebuffer*> framebuffers;
 
@@ -215,15 +133,9 @@ namespace GTEngine
         GTCore::List<Shader*> shaders;
 
 
-        /// The renderer will need to store it's own properties about the texture. This pointer can be used by the renderer
-        /// to hold a pointer to some renderer-specific data.
-        void* rendererData;
-
         /// We store a reference count which will be used by the Texture2DLibrary. Initializes to 1.
         mutable int refCount;
 
-        /// Keeps track of whether or not the client-side texture data should be kept after it has been synced with the renderer. Defaults to false.
-        bool keepClientSideData;
 
 
 
