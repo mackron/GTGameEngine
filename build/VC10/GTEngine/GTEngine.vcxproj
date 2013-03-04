@@ -304,7 +304,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DefaultGUIRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\GUIRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\OpenGL\OpenGL20.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\PolygonModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp" />
@@ -519,7 +518,6 @@
     <ClCompile Include="..\..\..\source\Recast\RecastRegion.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\DefaultGUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\GUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\OpenGL20.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\Renderer_Resources.cpp" />

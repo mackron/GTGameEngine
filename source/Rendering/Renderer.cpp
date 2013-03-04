@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTEngine/Rendering/GUIRenderer.hpp>
 #include <GTEngine/Rendering/VertexAttributes.hpp>
 #include <GTEngine/Rendering/OpenGL/OpenGL20.hpp>
 #include <GTEngine/ShaderParameter.hpp>
@@ -372,9 +371,6 @@ namespace GTEngine
     {
         if (IsRendererInitialised)
         {
-            // We'll shutdown the GUI renderer first since it will need to delete texture objects and whatnot.
-            GUIRenderer::Uninitialise();
-
             // There may be a bunch of resource commands that will be deleting resource objects. We need to make sure these are executed. To do this, we just
             // do a fake buffer swap and then execute the front buffer.
             Renderer::BackIndex = !Renderer::BackIndex;
@@ -1319,12 +1315,6 @@ namespace GTEngine
         }
     }
 
-
-
-    void Renderer::DrawGUI(const GTGUI::Server &gui)
-    {
-        GUIRenderer::DrawGUI(gui);
-    }
 
 
     void Renderer::FramebufferBlit(Framebuffer* sourceFramebuffer, unsigned int sourceWidth, unsigned int sourceHeight,

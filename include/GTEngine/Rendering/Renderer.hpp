@@ -473,12 +473,6 @@ namespace GTEngine
 
 
 
-        /**
-        *   \brief  Draws a 2D GUI.
-        */
-        static void DrawGUI(const GTGUI::Server &gui);
-
-
         /// Performs a framebuffer blit.
         ///
         /// @remarks
