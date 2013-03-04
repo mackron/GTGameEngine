@@ -31,17 +31,6 @@ namespace GTEngine
         TextureWrapMode_ClampToEdge,
     };
 
-    enum Texture2DTarget
-    {
-        Texture2DTarget_Default,                ///< Normal 2D texture.
-
-        Texture2DTarget_Cube_PositiveX,         ///< Positive X cube map face.
-        Texture2DTarget_Cube_NegativeX,         ///< Negative X cube map face.
-        Texture2DTarget_Cube_PositiveY,         ///< Positive Y cube map face.
-        Texture2DTarget_Cube_NegativeY,         ///< Negative Y cube map face.
-        Texture2DTarget_Cube_PositiveZ,         ///< Positive Z cube map face.
-        Texture2DTarget_Cube_NegativeZ,         ///< Negative Z cube map face.
-    };
 
     /**
     *   \brief  Class representing a 2D texture.
@@ -62,8 +51,10 @@ namespace GTEngine
     {
     public:
 
+        /// Default constructor.
+        Texture2D();
+
         /// Constructor.
-        Texture2D(Texture2DTarget target = Texture2DTarget_Default);
         Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data = nullptr);
 
         /// Destructor.
@@ -99,19 +90,6 @@ namespace GTEngine
         /// @remarks
         ///     Any existing data will be deleted and made undefined. This should only really be used for things like framebuffer attachments. Consider SetData(), also.
         void Resize(unsigned int width, unsigned int height);
-
-
-        /// Retrieves the target.
-        ///
-        /// @remarks
-        ///     The texture target basically defines the usage of the texture.
-        Texture2DTarget GetTarget() const { return this->target; }
-
-        /// Sets the target.
-        ///
-        /// @remarks
-        ///     This is mainly used for distringuishing between normal 2D texture and cube map faces.
-        void SetTarget(Texture2DTarget newTarget) { this->target = newTarget; }
 
 
         /// Sets the minification filter.
@@ -215,9 +193,6 @@ namespace GTEngine
 
         /// The relative path of the texture.
         GTCore::String relativePath;
-
-        /// The target. Basically, this just specifies the usage of the texture 2D, such as whether or not it's being used in a cube map or whatnot.
-        Texture2DTarget target;
 
 
         /// The current minification filter.

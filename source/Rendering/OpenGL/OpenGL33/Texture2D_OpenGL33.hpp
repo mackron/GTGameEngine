@@ -13,7 +13,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        Texture2D_OpenGL33(GLuint* objectGLIn);
+        Texture2D_OpenGL33(GLuint* objectGLIn, GLenum targetIn);
 
         /// Destructor.
         ~Texture2D_OpenGL33();
@@ -22,11 +22,18 @@ namespace GTEngine
         /// Retrieves a pointer to the OpenGL object.
         GLuint* GetOpenGLObjectPtr() const;
 
+        /// Retrieves the target.
+        GLenum GetTarget() const;
+
+
 
     private:
 
         /// A pointer to the OpenGL object.
         GLuint* objectGL;
+
+        /// The target.
+        GLenum target;
     };
 }
 

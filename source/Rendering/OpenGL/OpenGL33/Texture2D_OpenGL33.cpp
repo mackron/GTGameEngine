@@ -4,8 +4,8 @@
 
 namespace GTEngine
 {
-    Texture2D_OpenGL33::Texture2D_OpenGL33(GLuint* objectGLIn)
-        : objectGL(objectGLIn)
+    Texture2D_OpenGL33::Texture2D_OpenGL33(GLuint* objectGLIn, GLenum targetIn)
+        : objectGL(objectGLIn), target(targetIn)
     {
     }
 
@@ -17,5 +17,10 @@ namespace GTEngine
     GLuint* Texture2D_OpenGL33::GetOpenGLObjectPtr() const
     {
         return this->objectGL;
+    }
+
+    GLenum Texture2D_OpenGL33::GetTarget() const
+    {
+        return this->target;
     }
 }

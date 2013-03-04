@@ -1098,7 +1098,7 @@ namespace GTEngine
     {
         assert(textureObject != nullptr);
         {
-            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject && State.currentRCSetTextureState->GetTarget() != textureTarget))
+            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject || State.currentRCSetTextureState->GetTarget() != textureTarget))
             {
                 State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
                 CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
@@ -1116,7 +1116,7 @@ namespace GTEngine
     {
         assert(textureObject != nullptr);
         {
-            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject && State.currentRCSetTextureState->GetTarget() != textureTarget))
+            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject || State.currentRCSetTextureState->GetTarget() != textureTarget))
             {
                 State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
                 CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
@@ -1134,7 +1134,7 @@ namespace GTEngine
     {
         assert(textureObject != nullptr);
         {
-            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject && State.currentRCSetTextureState->GetTarget() != textureTarget))
+            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject || State.currentRCSetTextureState->GetTarget() != textureTarget))
             {
                 State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
                 CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
@@ -1152,7 +1152,7 @@ namespace GTEngine
     {
         assert(textureObject != nullptr);
         {
-            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject && State.currentRCSetTextureState->GetTarget() != textureTarget))
+            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject || State.currentRCSetTextureState->GetTarget() != textureTarget))
             {
                 State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
                 CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
@@ -1170,7 +1170,7 @@ namespace GTEngine
     {
         assert(textureObject != nullptr);
         {
-            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject && State.currentRCSetTextureState->GetTarget() != textureTarget))
+            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject || State.currentRCSetTextureState->GetTarget() != textureTarget))
             {
                 State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
                 CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
@@ -1189,12 +1189,19 @@ namespace GTEngine
 
     Texture2D* Renderer2::CreateTexture2D()
     {
-        return new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture());
+        return new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_2D);
     }
 
     TextureCube* Renderer2::CreateTextureCube()
     {
-        return new TextureCube_OpenGL33(Renderer_CreateOpenGL33Texture());
+        auto positiveX = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_POSITIVE_X);
+        auto negativeX = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
+        auto positiveY = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
+        auto negativeY = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
+        auto positiveZ = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
+        auto negativeZ = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+
+        return new TextureCube_OpenGL33(Renderer_CreateOpenGL33Texture(), positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ);
     }
 
 
@@ -1229,11 +1236,11 @@ namespace GTEngine
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
-            GLenum  textureTarget = ToOpenGLTexture2DTarget(textureGL33.GetTarget());
+            GLenum  textureTarget = textureGL33.GetTarget();
             GLuint* textureObject = textureGL33.GetOpenGLObjectPtr();
             assert(textureObject != nullptr);
             {
-                if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject && State.currentRCSetTextureState->GetTarget() != textureTarget))
+                if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject || State.currentRCSetTextureState->GetTarget() != textureTarget))
                 {
                     State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
                     CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
@@ -1282,7 +1289,7 @@ namespace GTEngine
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
-            Renderer_SetOpenGL33TextureFilter(ToOpenGLTexture2DTarget(textureGL33.GetTarget()), textureGL33.GetOpenGLObjectPtr(), minification, magnification);
+            Renderer_SetOpenGL33TextureFilter(textureGL33.GetTarget(), textureGL33.GetOpenGLObjectPtr(), minification, magnification);
         }
     }
 
@@ -1299,7 +1306,7 @@ namespace GTEngine
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
-            Renderer_SetOpenGL33TextureAnisotropy(ToOpenGLTexture2DTarget(textureGL33.GetTarget()), textureGL33.GetOpenGLObjectPtr(), anisotropy);
+            Renderer_SetOpenGL33TextureAnisotropy(textureGL33.GetTarget(), textureGL33.GetOpenGLObjectPtr(), anisotropy);
         }
     }
 
@@ -1316,7 +1323,7 @@ namespace GTEngine
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
-            Renderer_SetOpenGL33TextureWrapMode(ToOpenGLTexture2DTarget(textureGL33.GetTarget()), textureGL33.GetOpenGLObjectPtr(), wrapMode);
+            Renderer_SetOpenGL33TextureWrapMode(textureGL33.GetTarget(), textureGL33.GetOpenGLObjectPtr(), wrapMode);
         }
     }
 
@@ -1325,7 +1332,7 @@ namespace GTEngine
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
-            Renderer_SetOpenGL33TextureMipmapLevels(ToOpenGLTexture2DTarget(textureGL33.GetTarget()), textureGL33.GetOpenGLObjectPtr(), baseLevel, maxLevel);
+            Renderer_SetOpenGL33TextureMipmapLevels(textureGL33.GetTarget(), textureGL33.GetOpenGLObjectPtr(), baseLevel, maxLevel);
         }
     }
 
@@ -1342,7 +1349,7 @@ namespace GTEngine
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
-            Renderer_GenerateOpenGL33TextureMipmaps(ToOpenGLTexture2DTarget(textureGL33.GetTarget()), textureGL33.GetOpenGLObjectPtr());
+            Renderer_GenerateOpenGL33TextureMipmaps(textureGL33.GetTarget(), textureGL33.GetOpenGLObjectPtr());
         }
     }
 
@@ -1440,7 +1447,7 @@ namespace GTEngine
                             {
                                 auto texture = static_cast<Texture2D_OpenGL33*>(static_cast<ShaderParameter_Texture2D*>(parameter)->value);
                                 {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, texture->GetOpenGLObjectPtr(), ToOpenGLTexture2DTarget(texture->GetTarget()));
+                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, texture->GetOpenGLObjectPtr(), texture->GetTarget());
                                 }
                             }
                             else if (parameter->type == ShaderParameterType_Texture3D)

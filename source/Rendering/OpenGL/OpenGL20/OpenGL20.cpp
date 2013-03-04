@@ -14,7 +14,7 @@ namespace GTEngine
         auto textureData = static_cast<OpenGL20::Texture2D*>(texture.GetRendererData());
         assert(textureData != nullptr);
 
-        if (texture.GetTarget() == Texture2DTarget_Default)
+        //if (texture.GetTarget() == Texture2DTarget_Default)
         {
             glBindTexture(GL_TEXTURE_2D, textureData->object);
         }
@@ -177,9 +177,9 @@ namespace GTEngine
 
 
 
-    void OpenGL20::SetFramebufferColourBuffer(GLuint colourBuffer, size_t colourBufferIndex, Texture2DTarget textureTarget)
+    void OpenGL20::SetFramebufferColourBuffer(GLuint colourBuffer, size_t colourBufferIndex, GLenum textureTarget)
     {
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + colourBufferIndex, ToOpenGLTexture2DTarget(textureTarget), colourBuffer, 0);
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + colourBufferIndex, textureTarget, colourBuffer, 0);
     }
 
     void OpenGL20::SetFramebufferDepthBuffer(GLuint buffer)

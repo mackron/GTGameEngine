@@ -5,27 +5,13 @@
 
 namespace GTEngine
 {
-    TextureCube::TextureCube()
-        : PositiveX(), NegativeX(),
-          PositiveY(), NegativeY(),
-          PositiveZ(), NegativeZ(),
+    TextureCube::TextureCube(Texture2D* positiveX, Texture2D* negativeX, Texture2D* positiveY, Texture2D* negativeY, Texture2D* positiveZ, Texture2D* negativeZ)
+        : PositiveX(positiveX), NegativeX(negativeX),
+          PositiveY(positiveY), NegativeY(negativeY),
+          PositiveZ(positiveZ), NegativeZ(negativeZ),
           minFilter(TextureFilter_Linear), magFilter(TextureFilter_Linear), anisotropy(1),
           rendererData(nullptr), shaders()
     {
-        // TODO: Perhaps these textures should be created via the renderer and then sent in via the constructor? Also, the target should be part of the OpenGL-specific stuff.
-        this->PositiveX = Renderer2::CreateTexture2D();
-        this->NegativeX = Renderer2::CreateTexture2D();
-        this->PositiveY = Renderer2::CreateTexture2D();
-        this->NegativeY = Renderer2::CreateTexture2D();
-        this->PositiveZ = Renderer2::CreateTexture2D();
-        this->NegativeZ = Renderer2::CreateTexture2D();
-
-        this->PositiveX->SetTarget(Texture2DTarget_Cube_PositiveX);
-        this->NegativeX->SetTarget(Texture2DTarget_Cube_NegativeX);
-        this->PositiveY->SetTarget(Texture2DTarget_Cube_PositiveY);
-        this->NegativeY->SetTarget(Texture2DTarget_Cube_NegativeY);
-        this->PositiveZ->SetTarget(Texture2DTarget_Cube_PositiveZ);
-        this->NegativeZ->SetTarget(Texture2DTarget_Cube_NegativeZ);
     }
 
     TextureCube::~TextureCube()
@@ -36,13 +22,6 @@ namespace GTEngine
             this->shaders.root->value->OnTextureDeleted(this);
             this->shaders.RemoveRoot();
         }
-
-        Renderer2::DeleteTexture2D(this->PositiveX);
-        Renderer2::DeleteTexture2D(this->NegativeX);
-        Renderer2::DeleteTexture2D(this->PositiveY);
-        Renderer2::DeleteTexture2D(this->NegativeY);
-        Renderer2::DeleteTexture2D(this->PositiveZ);
-        Renderer2::DeleteTexture2D(this->NegativeZ);
     }
 
 

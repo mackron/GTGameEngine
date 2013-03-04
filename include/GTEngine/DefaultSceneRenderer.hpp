@@ -875,10 +875,10 @@ namespace GTEngine
 
 
         // Builds the shadow map of the given directional light.
-        void LightingPass_BuildShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::mat4 &projection, const glm::mat4 &view);
+        //void LightingPass_BuildShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::mat4 &projection, const glm::mat4 &view);
 
         // Builds the shadow map of the given point light.
-        void LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::vec3 &position, float radius);
+        //void LightingPass_BuildPointLightShadowMap(Scene &scene, DefaultSceneRenderer::Framebuffer &mainFramebuffer, const glm::vec3 &position, float radius);
 
 
 
@@ -936,13 +936,13 @@ namespace GTEngine
         {
             _Shaders()
                 : Lighting_NoShadow_A1(nullptr),
-                  Lighting_NoShadow_D1(nullptr), Lighting_D1(nullptr),
-                  Lighting_NoShadow_P1(nullptr), Lighting_P1(nullptr),
-                  Lighting_NoShadow_S1(nullptr), Lighting_S1(nullptr),
-                  Lighting_NoShadow_D1_Trans(nullptr), Lighting_D1_Trans(nullptr),
-                  Lighting_NoShadow_P1_Trans(nullptr), Lighting_P1_Trans(nullptr),
-                  Lighting_NoShadow_S1_Trans(nullptr), Lighting_S1_Trans(nullptr),
-                  Lighting_ShadowMap(nullptr), Lighting_PointLightShadowMap(nullptr),
+                  Lighting_NoShadow_D1(nullptr), /*Lighting_D1(nullptr),*/
+                  Lighting_NoShadow_P1(nullptr),/* Lighting_P1(nullptr),*/
+                  Lighting_NoShadow_S1(nullptr), /*Lighting_S1(nullptr),*/
+                  Lighting_NoShadow_D1_Trans(nullptr), /*Lighting_D1_Trans(nullptr),*/
+                  Lighting_NoShadow_P1_Trans(nullptr),/* Lighting_P1_Trans(nullptr),*/
+                  Lighting_NoShadow_S1_Trans(nullptr), /*Lighting_S1_Trans(nullptr),*/
+                  /*Lighting_ShadowMap(nullptr), Lighting_PointLightShadowMap(nullptr),*/
                   Lighting_ColourClear(nullptr),
                   Compositor_DiffuseOnly(nullptr), Compositor_NormalsOnly(nullptr), Compositor_DiffuseLightingOnly(nullptr),
                   Compositor_OpaqueFinalOutput(nullptr), Compositor_FinalOutput(nullptr),
@@ -969,7 +969,7 @@ namespace GTEngine
             Shader* Lighting_S1_Trans;
 
             Shader* Lighting_ShadowMap;
-            Shader* Lighting_PointLightShadowMap;
+            //Shader* Lighting_PointLightShadowMap;
             Shader* Lighting_ColourClear;
 
             Shader* Compositor_DiffuseOnly;
@@ -996,23 +996,23 @@ namespace GTEngine
 
 
         /// The normal shadow map for lights requiring only a single 2D texture.
-        Texture2D shadowMap;
+        //Texture2D shadowMap;
 
         /// The depth buffer for the normal shadow map.
-        Texture2D shadowMapDepthBuffer;
+        //Texture2D shadowMapDepthBuffer;
 
         /// The framebuffer to use for normal shadow maps.
-        GTEngine::Framebuffer shadowMapFramebuffer;
+        //GTEngine::Framebuffer shadowMapFramebuffer;
 
 
         /// The cube map to use for point lights.
-        TextureCube pointLightShadowMap;
+        //TextureCube pointLightShadowMap;
 
         /// The depth buffer for the point light shadow map framebuffer.
-        Texture2D pointLightShadowMapDepthBuffer;
+        //Texture2D pointLightShadowMapDepthBuffer;
 
         /// The framebuffer to use for point light shadow maps.
-        GTEngine::Framebuffer pointLightShadowMapFramebuffer;
+        //GTEngine::Framebuffer pointLightShadowMapFramebuffer;
 
 
 

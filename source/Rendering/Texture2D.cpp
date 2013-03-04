@@ -5,16 +5,13 @@
 
 namespace GTEngine
 {
-    Texture2D::Texture2D(Texture2DTarget target)
+    Texture2D::Texture2D()
         : GTImage::Image(), relativePath(),
-          target(target),
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
           rendererData(nullptr), refCount(1), keepClientSideData(false)
     {
-        //Renderer::OnTexture2DCreated(*this);
-
         if (Renderer::HasFlippedTextures())
         {
             this->FlipVertically();
@@ -23,7 +20,6 @@ namespace GTEngine
 
     Texture2D::Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data)
         : GTImage::Image(), relativePath(),
-          target(Texture2DTarget_Default),
           minFilter(TextureFilter_LinearLinear), magFilter(TextureFilter_Linear),
           anisotropy(1), wrapMode(TextureWrapMode_Repeat),
           framebuffers(), shaders(),
