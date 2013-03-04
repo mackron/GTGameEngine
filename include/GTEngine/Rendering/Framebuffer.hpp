@@ -111,20 +111,6 @@ namespace GTEngine
 
 
 
-    // The methods below should only be called by the renderer and it's support functions.
-    public:
-
-        /// Retrieves a pointer to the internal renderer data.
-        const void* GetRendererData() const { return this->rendererData; }
-              void* GetRendererData()       { return this->rendererData; }
-
-        /// Sets the pointer to the internal renderer data. This should only be called by the renderer and it's support functions.
-        ///
-        /// @remarks
-        ///     This does not delete the previous renderer data. That is the responsibility of the caller.
-        void SetRendererData(void* rendererData) { this->rendererData = rendererData; }
-
-
     private:
 
         /// The current colour attachments. This is keyed by their index.
@@ -133,15 +119,10 @@ namespace GTEngine
         /// There can only be one depth/stencil texture.
         Texture2D* depthStencilAttachment;
 
-        /// A pointer to renderer-specific data.
-        void* rendererData;
-
 
     private:    // No copying.
         Framebuffer(const Framebuffer &);
         Framebuffer & operator=(const Framebuffer &);
-
-    friend class Renderer;
     };
 }
 

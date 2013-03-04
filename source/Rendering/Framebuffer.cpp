@@ -6,8 +6,7 @@
 namespace GTEngine
 {
     Framebuffer::Framebuffer()
-        : colourAttachments(), depthStencilAttachment(nullptr),
-          rendererData(nullptr)
+        : colourAttachments(), depthStencilAttachment(nullptr)
     {
     }
 

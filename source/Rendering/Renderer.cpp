@@ -958,6 +958,7 @@ namespace GTEngine
 
     void Renderer::SetFramebuffer(Framebuffer* framebuffer)
     {
+        /*
         if (GTGL_EXT_framebuffer_object)
         {
             if (framebuffer != nullptr)
@@ -978,8 +979,7 @@ namespace GTEngine
         {
             GTEngine::PostError("Renderer::SetFramebuffer() - GL_EXT_framebuffer_object is not supported. Can not use framebuffer objects.");
         }
-
-        return;
+        */
     }
 
     Shader * Renderer::GetCurrentShader()
@@ -1346,6 +1346,7 @@ namespace GTEngine
     void Renderer::FramebufferBlit(Framebuffer* sourceFramebuffer, unsigned int sourceWidth, unsigned int sourceHeight,
                                    Framebuffer* destFramebuffer,   unsigned int destWidth,   unsigned int destHeight)
     {
+        /*
         auto sourceGL = sourceFramebuffer != nullptr ? static_cast<OpenGL20::Framebuffer*>(sourceFramebuffer->GetRendererData()) : nullptr;
         auto destGL   = destFramebuffer   != nullptr ? static_cast<OpenGL20::Framebuffer*>(  destFramebuffer->GetRendererData()) : nullptr;
 
@@ -1353,6 +1354,7 @@ namespace GTEngine
         glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, destGL   ?   destGL->object : 0);
 
         glBlitFramebufferEXT(0, 0, static_cast<GLint>(sourceWidth), static_cast<GLint>(sourceHeight), 0, 0, static_cast<GLint>(destWidth), static_cast<GLint>(destHeight), GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        */
     }
 
 
