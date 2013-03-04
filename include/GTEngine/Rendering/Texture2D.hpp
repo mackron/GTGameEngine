@@ -178,6 +178,9 @@ namespace GTEngine
         bool IsAttachedToFramebuffer() const { return this->framebuffers.root != nullptr; }
 
 
+        /// Deletes the image data, but maintains the other properties.
+        void DeleteLocalData();
+
 
 
     private:    // GTImage Image events.

@@ -87,14 +87,12 @@ namespace GTEngine
 
         // With the log file created, we can startup all of our other sub-systems.
         Log("Starting Rendering Sub-System...");
-        if (Renderer::Startup())
+        if (Renderer2::Startup())
         {
-            /* Uncomment this when the new renderer is in place.
             Log("Renderer Caps:");
-            Log("    Max Colour Attachments: %d", Renderer2::MaxColourAttachments);
-            Log("    Max Draw Buffers:       %d", Renderer2::MaxDrawBuffers);
-            Log("    Max Texture Units:      %d", Renderer2::MaxTextureUnits);
-            */
+            Log("    Max Colour Attachments: %d", Renderer2::GetMaxColourAttachments());
+            Log("    Max Draw Buffers:       %d", Renderer2::GetMaxDrawBuffers());
+            Log("    Max Texture Units:      %d", Renderer2::GetMaxTextureUnits());
 
             Log("Loading Shaders...");
             ShaderLibrary::LoadFromDirectory("engine/shaders/glsl");
@@ -183,8 +181,13 @@ namespace GTEngine
 
 
         // We shutdown major sub-systems before logging. This allows us to log shutdown info.
-        Renderer::Shutdown();
+        Renderer2::Shutdown();
         AudioComposer::Shutdown();
+
+
+        // TODO: This is temp until the new GUI renderer is in place. This is only done to make it easier to catch memory leaks.
+        GUIRenderer::Uninitialise();
+
 
         // Now we can shutdown the minor sub-systems, remembering to do logging last.
         Logging::Shutdown();

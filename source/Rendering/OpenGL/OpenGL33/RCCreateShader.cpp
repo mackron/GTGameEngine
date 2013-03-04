@@ -110,46 +110,49 @@ namespace GTEngine
     GLuint RCCreateShader::LinkProgram(GLuint vertexShader, GLuint fragmentShader, GLuint geometryShader)
     {
         // We'll need a program object.
-        GLuint programState = glCreateProgram();
+        GLuint program = glCreateProgram();
 
 
         // We need to have concretely defined vertex attributes for OpenGL 2.0 GLSL since we don't really have much control of vertex attributes
         // from inside the shader code. Thus, we're going to have to use hard coded attributes names. Later on we might make this configurable
         // via the shader library or a config file.
-        glBindAttribLocation(programState, 0, "VertexInput_Position");
-        glBindAttribLocation(programState, 1, "VertexInput_TexCoord");
-        glBindAttribLocation(programState, 2, "VertexInput_Normal");
-        glBindAttribLocation(programState, 3, "VertexInput_Tangent");
-        glBindAttribLocation(programState, 4, "VertexInput_Bitangent");
-        glBindAttribLocation(programState, 5, "VertexInput_Colour");
+        glBindAttribLocation(program, 0, "VertexInput_Position");
+        glBindAttribLocation(program, 1, "VertexInput_TexCoord");
+        glBindAttribLocation(program, 2, "VertexInput_Normal");
+        glBindAttribLocation(program, 3, "VertexInput_Tangent");
+        glBindAttribLocation(program, 4, "VertexInput_Bitangent");
+        glBindAttribLocation(program, 5, "VertexInput_Colour");
 
 
         // Finally we reattach the shaders, link the program and check for errors.
-        if (vertexShader   != 0) glAttachShader(programState, vertexShader);
-        if (fragmentShader != 0) glAttachShader(programState, fragmentShader);
-        if (geometryShader != 0) glAttachShader(programState, geometryShader);
+        if (vertexShader   != 0) glAttachShader(program, vertexShader);
+        if (fragmentShader != 0) glAttachShader(program, fragmentShader);
+        if (geometryShader != 0) glAttachShader(program, geometryShader);
 
-        glLinkProgram(programState);
+        glLinkProgram(program);
 
 
         // Check for link errors.
         GLint linkStatus;
-        glGetProgramiv(programState, GL_LINK_STATUS, &linkStatus);
+        glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
 
         if (linkStatus == GL_FALSE)
         {
             GLint logLength;
-            glGetProgramiv(programState, GL_INFO_LOG_LENGTH, &logLength);
+            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
 
             auto log = static_cast<char*>(malloc(logLength));
-            glGetProgramInfoLog(programState, logLength, nullptr, log);
+            glGetProgramInfoLog(program, logLength, nullptr, log);
 
             GTEngine::Log("--- Program Link Status ---\n%s", log);
 
             free(log);
-            return false;
+
+            glDeleteProgram(program);
+            program = 0;
         }
 
-        return true;
+
+        return program;
     }
 }

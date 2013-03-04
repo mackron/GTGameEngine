@@ -49,7 +49,7 @@ namespace GTEngine
             glVertexAttribPointer(attribIndex, attribSize, GL_FLOAT, GL_FALSE, formatSizeInBytes, reinterpret_cast<const GLvoid*>(offset));
 
             // The offset must be set AFTER glVertexAttribPointer().
-            offset += attribSize;
+            offset += attribSize * sizeof(float);
         }
 
 
