@@ -123,19 +123,6 @@ namespace GTEngine
         /// Retrieves the usage of this array.
         inline VertexArrayUsage GetUsage() const { return this->usage; }
 
-        /// Retrieves a pointer to the internal renderer data.
-        ///
-        /// @remarks
-        ///     This should only be used by the renderer.
-        inline const void* GetRendererData() const { return this->rendererData; }
-        inline       void* GetRendererData()       { return this->rendererData; }
-
-        /// Sets the pointer to the internal renderer data.
-        ///
-        /// @remarks
-        ///     This does not deallocate the previous renderer data. That is the responsibility of the renderer itself.
-        inline void SetRendererData(void *rendererData) const { this->rendererData = rendererData; }
-
 
 
         ///////////////////////////////////////////////////////
@@ -217,10 +204,6 @@ namespace GTEngine
         /// Keeps track of whether or not the index data is currently mapped.
         bool indicesMapped;
 
-        /// The renderer will need to store it's own properties about the vertex array. This pointer can be used by the renderer
-        /// to hold a pointer to some renderer-specific data.
-        mutable void* rendererData;
-
 
 
     private:    // No copying.
@@ -228,7 +211,7 @@ namespace GTEngine
         VertexArray & operator=(const VertexArray &);
 
 
-    friend class Renderer;
+    friend class Renderer;      // TODO: Remove this when the new renderer is in place proper.
     };
 }
 
