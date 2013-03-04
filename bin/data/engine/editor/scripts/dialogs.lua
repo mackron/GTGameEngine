@@ -20,9 +20,40 @@ Editor.NewFileDialogResult =
 -- Keeps track of whether or not the Yes/No/Cancel dialog has been initialised.
 Editor.AreDialogsInitialised = false;
 
+
+-- The dialog box components.
+YesNoCancelDialog           = nil;
+YesNoCancelDialog_TextBox   = nil;
+YesNoCancelDialog_Yes       = nil;
+YesNoCancelDialog_No        = nil;
+YesNoCancelDialog_Cancel    = nil;
+
+NewFileDialog               = nil;
+NewFileDialog_NameTextBox   = nil;
+NewFileDialog_TextBox       = nil;
+NewFileDialog_Create        = nil;
+NewFileDialog_Cancel        = nil;
+NewFileDialog_StatusTextBox = nil;
+
+
+
 -- Initialises the dialog boxes, if needed.
 function Editor.InitialiseDialogs()
     if Editor.AreDialogsInitialised == false then
+        YesNoCancelDialog           = GTGUI.Server.GetElementByID("YesNoCancelDialog");
+        YesNoCancelDialog_TextBox   = GTGUI.Server.GetElementByID("YesNoCancelDialog_TextBox");
+        YesNoCancelDialog_Yes       = GTGUI.Server.GetElementByID("YesNoCancelDialog_Yes");
+        YesNoCancelDialog_No        = GTGUI.Server.GetElementByID("YesNoCancelDialog_No");
+        YesNoCancelDialog_Cancel    = GTGUI.Server.GetElementByID("YesNoCancelDialog_Cancel");
+        
+        NewFileDialog               = GTGUI.Server.GetElementByID("NewFileDialog");
+        NewFileDialog_NameTextBox   = GTGUI.Server.GetElementByID("NewFileDialog_NameTextBox");
+        NewFileDialog_TextBox       = GTGUI.Server.GetElementByID("NewFileDialog_TextBox");
+        NewFileDialog_Create        = GTGUI.Server.GetElementByID("NewFileDialog_Create");
+        NewFileDialog_Cancel        = GTGUI.Server.GetElementByID("NewFileDialog_Cancel");
+        NewFileDialog_StatusTextBox = GTGUI.Server.GetElementByID("NewFileDialog_StatusTextBox");
+        
+        
         -- Yes/No/Cancel
         YesNoCancelDialog_Yes:Button("Yes"):OnPressed(function()
             YesNoCancelDialog:Hide();
