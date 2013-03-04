@@ -5,6 +5,7 @@
 
 #include "../SubEditor.hpp"
 #include "../../Texture2DLibrary.hpp"
+#include "../../Rendering/VertexArray.hpp"
 
 namespace GTEngine
 {
@@ -57,7 +58,7 @@ namespace GTEngine
         {
             /// Constructor.
             ViewportEventHandler(ImageEditor &ownerEditorIn)
-                : ownerEditor(ownerEditorIn)
+                : ownerEditor(ownerEditorIn), vertexArray(nullptr)
             {
             }
 
@@ -74,11 +75,15 @@ namespace GTEngine
             /// The editor that owns this viewport.
             ImageEditor &ownerEditor;
 
+            /// The vertex array for drawing the quad.
+            VertexArray* vertexArray;
+
 
         private:    // No copying.
             ViewportEventHandler(const ViewportEventHandler &);
             ViewportEventHandler & operator=(const ViewportEventHandler &);
 
+        friend class ImageEditor;
         }viewportEventHandler;
 
 

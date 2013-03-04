@@ -89,6 +89,9 @@ namespace GTEngine
     {
         auto texture = this->AcquireTexture2DFromImage(image);
 
+        // The shader needs to be make current in case an OnDraw event handler changes it. Setting uniforms is slightly more efficient if we bind it first.
+        Renderer2::SetCurrentShader(this->shader);
+
         this->shader->SetParameter("Offset",  offsetX, offsetY);
         this->shader->SetParameter("Texture", texture);
         {

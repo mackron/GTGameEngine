@@ -420,7 +420,7 @@ namespace GTEngine
 
         if ((this->operationBitfield & ENABLE_BIT))
         {
-            if ((this->enableParams.caps & GL_SCISSOR_TEST))
+            if ((this->enableParams.caps & SCISSOR_TEST_BIT))
             {
                 glEnable(GL_SCISSOR_TEST);
             }
@@ -464,43 +464,43 @@ namespace GTEngine
 
         if ((this->operationBitfield & DISABLE_BIT))
         {
-            if ((this->enableParams.caps & GL_SCISSOR_TEST))
+            if ((this->disableParams.caps & SCISSOR_TEST_BIT))
             {
                 glDisable(GL_SCISSOR_TEST);
             }
-            if ((this->enableParams.caps & BLENDING_BIT))
+            if ((this->disableParams.caps & BLENDING_BIT))
             {
                 glDisable(GL_BLEND);
             }
-            if ((this->enableParams.caps & ALPHA_TEST_BIT))
+            if ((this->disableParams.caps & ALPHA_TEST_BIT))
             {
                 glDisable(GL_ALPHA_TEST);
             }
-            if ((this->enableParams.caps & COLOUR_WRITES_BIT))
+            if ((this->disableParams.caps & COLOUR_WRITES_BIT))
             {
                 glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
             }
-            if ((this->enableParams.caps & DEPTH_WRITES_BIT))
+            if ((this->disableParams.caps & DEPTH_WRITES_BIT))
             {
                 glDepthMask(GL_FALSE);
             }
-            if ((this->enableParams.caps & DEPTH_TEST_BIT))
+            if ((this->disableParams.caps & DEPTH_TEST_BIT))
             {
                 glDisable(GL_DEPTH_TEST);
             }
-            if ((this->enableParams.caps & POLYGON_OFFSET_FILL_BIT))
+            if ((this->disableParams.caps & POLYGON_OFFSET_FILL_BIT))
             {
                 glDisable(GL_POLYGON_OFFSET_FILL);
             }
-            if ((this->enableParams.caps & POLYGON_OFFSET_LINE_BIT))
+            if ((this->disableParams.caps & POLYGON_OFFSET_LINE_BIT))
             {
                 glDisable(GL_POLYGON_OFFSET_LINE);
             }
-            if ((this->enableParams.caps & POLYGON_OFFSET_POINT_BIT))
+            if ((this->disableParams.caps & POLYGON_OFFSET_POINT_BIT))
             {
                 glDisable(GL_POLYGON_OFFSET_POINT);
             }
-            if ((this->enableParams.caps & FACE_CULLING_BIT))
+            if ((this->disableParams.caps & FACE_CULLING_BIT))
             {
                 glDisable(GL_CULL_FACE);
             }
