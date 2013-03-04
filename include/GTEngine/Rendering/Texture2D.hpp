@@ -48,7 +48,7 @@ namespace GTEngine
     *   A texture is constructed of mipmaps. When setting data, you actually set the data of each mipmap. The
     *   GenerateMipmaps() method can be used to generate mipmaps from the base mipmap.
     */
-    class Texture2D : public GTImage::Image
+    class Texture2D : private GTImage::Image
     {
     public:
 
@@ -92,6 +92,25 @@ namespace GTEngine
         ///     Any existing data will be deleted and made undefined. This should only really be used for things like framebuffer attachments. Consider SetData(), also.
         void Resize(unsigned int width, unsigned int height);
 
+
+        /// Retrieves the width of the texture.
+        unsigned int GetWidth() const;
+
+        /// Retrieves the height of the texture.
+        unsigned int GetHeight() const;
+
+        /// Retrieves the format of the image data.
+        GTImage::ImageFormat GetFormat() const;
+
+
+
+        /// Retrieves the number of mipmaps making up this texture.
+        size_t GetMipmapCount() const;
+
+        /// Retrieves the mipmap at the given index.
+        ///
+        /// @param index [in] The index of the mipmap to retrieve.
+        const GTImage::Mipmap & GetMipmap(size_t index) const;
 
         
 

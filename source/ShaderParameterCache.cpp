@@ -236,7 +236,7 @@ namespace GTEngine
 
             case ShaderParameterType_Texture2D:
                 {
-                    if (reinterpret_cast<ShaderParameter_Texture2D*>(parameter)->value->GetLinkedFileName() != nullptr)
+                    if (reinterpret_cast<ShaderParameter_Texture2D*>(parameter)->value->GetRelativePath() != nullptr)
                     {
                         intermediarySerializer.WriteString(reinterpret_cast<ShaderParameter_Texture2D*>(parameter)->value->GetRelativePath());
                     }
