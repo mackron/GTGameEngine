@@ -123,19 +123,32 @@ namespace GTEngine
 
 
 
-    private:    // Called internally by GTEngine
+        /////////////////////////////////////////////////////////////////////////
+        // The methods below should not be called directly. Used internally.
 
         /// Called when the texture is attached to a framebuffer.
+        ///
+        /// @remarks
+        ///     Do not call this directly. Used internally.
         void OnAttachToFramebuffer(Framebuffer* framebuffer);
 
         /// Called when the texture is detached from a framebuffer.
+        ///
+        /// @remarks
+        ///     Do not call this directly. Used internally.
         void OnDetachFromFramebuffer(Framebuffer* framebuffer);
 
 
         /// Called when the texture is attached to a shader.
+        ///
+        /// @remarks
+        ///     Do not call this directly. Used internally.
         void OnAttachToShader(Shader &shader);
 
         /// Called when the texture is detached from a shader.
+        ///
+        /// @remarks
+        ///     Do not call this directly. Used internally.
         void OnDetachFromShader(Shader &shader);
 
 
@@ -153,8 +166,7 @@ namespace GTEngine
 
 
         /// We store a reference count which will be used by the Texture2DLibrary. Initializes to 1.
-        mutable int refCount;
-
+        mutable int refCount;   // TODO: Move this over to Texture2DLibrary. Makes no sense to have this here.
 
 
 
@@ -163,11 +175,7 @@ namespace GTEngine
         Texture2D & operator=(const Texture2D &);
 
 
-
-    friend class Renderer;
-    friend class Framebuffer;
-    friend class Shader;
-    friend class Texture2DLibrary;
+    friend class Texture2DLibrary;  // TODO: Remove this when 'refCount' is removed.
     };
 }
 
