@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Components/SpriteComponent.hpp>
+#include <GTEngine/Texture2DLibrary.hpp>
 
 namespace GTEngine
 {
@@ -18,9 +19,10 @@ namespace GTEngine
 
     Texture2D* SpriteComponent::SetTexture(const char* filename)
     {
-        delete this->texture;
-        this->texture = new Texture2D(filename, filename);
+        Texture2DLibrary::Unacquire(this->texture);
+        this->texture = Texture2DLibrary::Acquire(filename);
 
+        
         this->OnChanged();
 
         return this->texture;

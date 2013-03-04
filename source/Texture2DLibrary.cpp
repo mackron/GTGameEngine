@@ -3,6 +3,7 @@
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
+#include <GTEngine/Rendering/Renderer2.hpp>
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/Path.hpp>
 
@@ -11,18 +12,9 @@
 // Engine textures.
 namespace GTEngine
 {
-    static Texture2D* Black1x1Texture = nullptr;
+    
 
-    Texture2D* Texture2DLibrary::Get1x1BlackTexture()
-    {
-        if (Black1x1Texture == nullptr)
-        {
-            uint32_t texel = 0xFF000000;
-            Black1x1Texture = new Texture2D(1, 1, GTImage::ImageFormat_RGBA8, &texel);
-        }
-
-        return Black1x1Texture;
-    }
+    
 }
 
 
@@ -40,10 +32,15 @@ namespace GTEngine
 
     /// The default magnification filter to apply to textures.
     static TextureFilter DefaultMagFilter = TextureFilter_Linear;
-}
 
-namespace GTEngine
-{
+
+    // Global Textures.
+    static Texture2D* Black1x1Texture = nullptr;
+
+
+    /////////////////////////////////////////////////////
+    // Startup/Shutdown
+
     bool Texture2DLibrary::Startup()
     {
         return true;
@@ -54,19 +51,16 @@ namespace GTEngine
         // Textures need to be deleted.
         for (size_t i = 0; i < LoadedTextures.count; ++i)
         {
-            delete LoadedTextures.buffer[i]->value;
+            Renderer2::DeleteTexture2D(LoadedTextures.buffer[i]->value);
         }
         LoadedTextures.Clear();
 
 
-        delete Black1x1Texture;
+        Renderer2::DeleteTexture2D(Black1x1Texture);
         Black1x1Texture = nullptr;
     }
-}
 
 
-namespace GTEngine
-{
     Texture2D* Texture2DLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
     {
         GTCore::String relativePath(fileName);
@@ -91,21 +85,27 @@ namespace GTEngine
             auto iTexture = LoadedTextures.Find(absFileName.c_str());
             if (iTexture == nullptr)
             {
-                auto newTexture = new Texture2D(absFileName.c_str(), relativePath.c_str());
-                if (newTexture->IsLinkedToFile())
+                GTImage::Image image(absFileName.c_str());
+                if (image.IsLinkedToFile())
                 {
-                    newTexture->SetFilter(DefaultMinFilter, DefaultMagFilter);
-                    newTexture->SetAnisotropy(DefaultAnisotropy);
+                    auto newTexture = Renderer2::CreateTexture2D();
+                    newTexture->SetData(image.GetWidth(), image.GetHeight(), image.GetFormat(), image.GetBaseMipmapData());
+
+                    Renderer2::PushTexture2DData(*newTexture);
+                    Renderer2::SetTexture2DFilter(*newTexture, DefaultMinFilter, DefaultMagFilter);
+                    Renderer2::SetTexture2DAnisotropy(*newTexture, DefaultAnisotropy);
+
+
+                    // Local data should be cleared since it won't be needed now. The renderer will have made a copy of the data, so it's safe to delete now.
+                    newTexture->DeleteLocalData();
+
 
                     LoadedTextures.Add(absFileName.c_str(), newTexture);
-
                     return newTexture;
                 }
                 else
                 {
                     GTEngine::PostError("Can not find file: %s", fileName);
-
-                    delete newTexture;
                     return nullptr;
                 }
             }
@@ -130,7 +130,7 @@ namespace GTEngine
         return texture;
     }
 
-    void Texture2DLibrary::Unacquire(const Texture2D* texture)
+    void Texture2DLibrary::Unacquire(Texture2D* texture)
     {
         if (texture != nullptr)
         {
@@ -146,7 +146,7 @@ namespace GTEngine
                     }
                 }
 
-                delete texture;
+                Renderer2::DeleteTexture2D(texture);
             }
             else
             {
@@ -165,19 +165,48 @@ namespace GTEngine
             {
                 auto texture = iTexture->value;
                 assert(texture != nullptr);
+                {
+                    GTImage::Image image(absFileName.c_str());
+                    if (image.IsLinkedToFile())
+                    {
+                        texture->SetData(image.GetWidth(), image.GetHeight(), image.GetFormat(), image.GetBaseMipmapData());
+                        Renderer2::PushTexture2DData(*texture);
+                        Renderer2::GenerateTexture2DMipmaps(*texture);
 
-                texture->LinkToFile(absFileName.c_str());
-                texture->PullAllMipmaps();
+                        // The local data should be deleted to save on some memory.
+                        texture->DeleteLocalData();
+                    }
+                }
             }
         }
 
         return false;
     }
-}
 
 
-namespace GTEngine
-{
+
+    /////////////////////////////////////////////////////
+    // System/Engine textures.
+
+    Texture2D* Texture2DLibrary::Get1x1BlackTexture()
+    {
+        if (Black1x1Texture == nullptr)
+        {
+            uint32_t texel = 0xFF000000;
+            Black1x1Texture = Renderer2::CreateTexture2D();
+
+            Black1x1Texture->SetData(1, 1, GTImage::ImageFormat_RGBA8, &texel);
+            Renderer2::PushTexture2DData(*Black1x1Texture);
+        }
+
+        return Black1x1Texture;
+    }
+
+
+
+    /////////////////////////////////////////////////////
+    // Misc.
+
     void Texture2DLibrary::SetDefaultAnisotropy(unsigned int defaultAnisotropy)
     {
         DefaultAnisotropy = defaultAnisotropy;
