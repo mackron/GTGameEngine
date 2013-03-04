@@ -10,9 +10,7 @@ namespace GTEngine
           pendingParameters(),
           rendererData(nullptr),
           currentTextures()
-          //currentTexture2Ds(), currentTextureCubes()
     {
-        //Renderer::OnShaderCreated(*this);
     }
 
     Shader::~Shader()
@@ -50,8 +48,6 @@ namespace GTEngine
                 }
             }
         }
-
-        //Renderer::OnShaderDeleted(*this);
     }
 
     

@@ -12,15 +12,12 @@ namespace GTEngine
           verticesMapped(false), indicesMapped(false),
           rendererData(nullptr)
     {
-        //Renderer::OnVertexArrayCreated(*this);
     }
 
     VertexArray::~VertexArray()
     {
         delete [] this->vertices;
         delete [] this->indices;
-
-        //Renderer::OnVertexArrayDeleted(*this);
     }
 
     void VertexArray::SetData(const float *vertices, size_t vertexCount, const unsigned int *indices, size_t indexCount)
@@ -49,8 +46,6 @@ namespace GTEngine
             }
         }
 
-
-        //Renderer::OnVertexArrayVertexDataChanged(*this);
         
         this->OnVertexDataChanged();
     }
@@ -74,8 +69,6 @@ namespace GTEngine
         }
 
 
-        //Renderer::OnVertexArrayIndexDataChanged(*this);
-
         this->OnIndexDataChanged();
     }
 
@@ -96,9 +89,6 @@ namespace GTEngine
         if (this->verticesMapped)
         {
             this->verticesMapped = false;
-
-            //Renderer::OnVertexArrayVertexDataChanged(*this);
-
             this->OnVertexDataChanged();
         }
     }
@@ -120,9 +110,6 @@ namespace GTEngine
         if (this->indicesMapped)
         {
             this->indicesMapped = false;
-
-            //Renderer::OnVertexArrayIndexDataChanged(*this);
-
             this->OnIndexDataChanged();
         }
     }
@@ -266,9 +253,6 @@ namespace GTEngine
             }
         }
 
-
-        //Renderer::OnVertexArrayVertexDataChanged(*this);
-        //Renderer::OnVertexArrayIndexDataChanged(*this);
 
         this->OnVertexDataChanged();
         this->OnIndexDataChanged();

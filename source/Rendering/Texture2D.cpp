@@ -29,8 +29,6 @@ namespace GTEngine
           framebuffers(), shaders(),
           rendererData(nullptr), refCount(1), keepClientSideData(false)
     {
-        //Renderer::OnTexture2DCreated(*this);
-
         if (Renderer::HasFlippedTextures())
         {
             this->FlipVertically();
@@ -53,8 +51,6 @@ namespace GTEngine
             this->shaders.root->value->OnTextureDeleted(this);
             this->shaders.RemoveRoot();
         }
-
-        //Renderer::OnTexture2DDeleted(*this);
     }
 
 
@@ -80,7 +76,6 @@ namespace GTEngine
         if (this->minFilter != newFilter)
         {
             this->minFilter = newFilter;
-            //Renderer::OnTexture2DMinificationFilterChanged(*this);
         }
     }
 
@@ -89,7 +84,6 @@ namespace GTEngine
         if (this->magFilter != newFilter)
         {
             this->magFilter = newFilter;
-            //Renderer::OnTexture2DMagnificationFilterChanged(*this);
         }
     }
 
@@ -109,7 +103,6 @@ namespace GTEngine
         if (this->anisotropy != newAnisotropy)
         {
             this->anisotropy = newAnisotropy;
-            //Renderer::OnTexture2DAnisotropyChanged(*this);
         }
     }
 
@@ -121,7 +114,6 @@ namespace GTEngine
     void Texture2D::SetWrapMode(TextureWrapMode wrapMode)
     {
         this->wrapMode = wrapMode;
-        //Renderer::OnTexture2DWrapModeChanged(*this);
     }
 
 
@@ -137,19 +129,14 @@ namespace GTEngine
 
     void Texture2D::OnMipmapCreated(unsigned int mipmapIndex)
     {
-        //Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
     }
 
     void Texture2D::OnMipmapDeleted(unsigned int mipmapIndex)
     {
-        (void)mipmapIndex;
-
-        //Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
     }
 
     void Texture2D::OnMipmapChanged(unsigned int mipmapIndex)
     {
-        //Renderer::OnTexture2DMipmapChanged(*this, mipmapIndex);
     }
 
 

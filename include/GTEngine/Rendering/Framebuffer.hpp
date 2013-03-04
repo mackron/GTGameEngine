@@ -39,7 +39,6 @@ namespace GTEngine
         /// Attaches a colour buffer to the framebuffer.
         ///
         /// @param buffer                  [in] The colour buffer to attach to the framebuffer. The buffer is always a texture.
-        /// @param index                   [in] The index to attach the colour buffer to. Must be in the range [0, Renderer::GetMaxColourAttachments)
         /// @param immediateRendererUpdate [in] Whether or not the renderer-side state should be updated immediately.
         ///
         /// @return True if the colour buffer was attached successfully; false otherwise.
@@ -48,7 +47,7 @@ namespace GTEngine
         ///     This function can still return true if the hardware doesn't support the current structure of the framebuffer. This can
         ///     only be detected after the framebuffer has been made current on the renderer. Do not rely on the return value in
         ///     determining whether or not the framebuffer is valid.
-        bool AttachColourBuffer(Texture2D* buffer, size_t index, bool immediateRendererUpdate = false);
+        bool AttachColourBuffer(Texture2D* buffer, size_t index);
 
         /// Attaches a depth/stencil buffer to the framebuffer.
         ///
@@ -56,18 +55,18 @@ namespace GTEngine
         /// @param immediateRendererUpdate [in] Whether or not the renderer-side state should be updated immediately.
         ///
         /// @return Always returns true. We return a boolean to keep it consistent with AttachColourBuffer(), which requires a boolean return value.
-        bool AttachDepthStencilBuffer(Texture2D* buffer, bool immediateRendererUpdate = false);
+        bool AttachDepthStencilBuffer(Texture2D* buffer);
 
         /// Detaches the colour buffer at the given index.
         ///
         /// @param index [in]                   The index of the colour buffer to detach.
         /// @param immediateRendererUpdate [in] Whether or not the renderer-side state should be updated immediately.
-        void DetachColourBuffer(size_t index, bool immediateRendererUpdate = false);
+        void DetachColourBuffer(size_t index);
 
         /// Detaches the depth/stencil attachment, if it has one.
         ///
         /// @param immediateRendererUpdate [in] Whether or not the renderer-side state should be updated immediately.
-        void DetachDepthStencilBuffer(bool immediateRendererUpdate = false);
+        void DetachDepthStencilBuffer();
 
         /// Generically detaches a buffer based on it's object pointer.
         ///
@@ -130,10 +129,6 @@ namespace GTEngine
 
         /// The current colour attachments. This is keyed by their index.
         GTCore::Map<unsigned int, Texture2D*> colourAttachments;
-
-        /// There can be multiple colour textures. We use an array here that will be allocated the number of colour attachments
-        /// supported by the renderer.
-        //Texture2D** colourAttachments;
 
         /// There can only be one depth/stencil texture.
         Texture2D* depthStencilAttachment;

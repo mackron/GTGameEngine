@@ -194,7 +194,6 @@ namespace GTEngine
     void Renderer::ExecuteFrontRCQueue()
     {
         // We execute the resources render commands before everything else.
-        Renderer::ExecuteFrontResourceRCQueue();
         Renderer::FrontRCQueue->Execute();
     }
 
@@ -374,7 +373,6 @@ namespace GTEngine
             // There may be a bunch of resource commands that will be deleting resource objects. We need to make sure these are executed. To do this, we just
             // do a fake buffer swap and then execute the front buffer.
             Renderer::BackIndex = !Renderer::BackIndex;
-            Renderer::ExecuteFrontResourceRCQueue();
 
 
             delete Renderer::BackRCQueue;
@@ -1287,7 +1285,7 @@ namespace GTEngine
     {
         if (RendererState.CurrentFramebuffer != nullptr)
         {
-            RendererState.CurrentFramebuffer->AttachColourBuffer(&colourBuffer, colourBufferIndex, true);
+            RendererState.CurrentFramebuffer->AttachColourBuffer(&colourBuffer, colourBufferIndex);
         }
     }
 
@@ -1295,7 +1293,7 @@ namespace GTEngine
     {
         if (RendererState.CurrentFramebuffer != nullptr)
         {
-            RendererState.CurrentFramebuffer->DetachColourBuffer(colourBufferIndex, true);
+            RendererState.CurrentFramebuffer->DetachColourBuffer(colourBufferIndex);
         }
     }
 
@@ -1303,7 +1301,7 @@ namespace GTEngine
     {
         if (RendererState.CurrentFramebuffer != nullptr)
         {
-            RendererState.CurrentFramebuffer->AttachDepthStencilBuffer(&depthStencilBuffer, true);
+            RendererState.CurrentFramebuffer->AttachDepthStencilBuffer(&depthStencilBuffer);
         }
     }
 
@@ -1311,7 +1309,7 @@ namespace GTEngine
     {
         if (RendererState.CurrentFramebuffer != nullptr)
         {
-            RendererState.CurrentFramebuffer->DetachDepthStencilBuffer(true);
+            RendererState.CurrentFramebuffer->DetachDepthStencilBuffer();
         }
     }
 
