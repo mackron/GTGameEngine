@@ -136,7 +136,7 @@ namespace GTEngine
     }
 
 
-    void RCSetTextureState::SetTexture2DFilter(GLuint* textureObjectIn, GLenum targetIn, GLint minification, GLint magnification)
+    void RCSetTextureState::SetTextureFilter(GLuint* textureObjectIn, GLenum targetIn, GLint minification, GLint magnification)
     {
         assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
@@ -151,7 +151,7 @@ namespace GTEngine
         }
     }
 
-    void RCSetTextureState::SetTexture2DAnisotropy(GLuint* textureObjectIn, GLenum targetIn, GLint anisotropyIn)
+    void RCSetTextureState::SetTextureAnisotropy(GLuint* textureObjectIn, GLenum targetIn, GLint anisotropyIn)
     {
         assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
@@ -165,7 +165,7 @@ namespace GTEngine
         }
     }
 
-    void RCSetTextureState::SetTexture2DWrapMode(GLuint* textureObjectIn, GLenum targetIn, GLint wrapModeIn)
+    void RCSetTextureState::SetTextureWrapMode(GLuint* textureObjectIn, GLenum targetIn, GLint wrapModeIn)
     {
         assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
@@ -179,7 +179,7 @@ namespace GTEngine
         }
     }
 
-    void RCSetTextureState::SetTexture2DMipmapLevels(GLuint* textureObjectIn, GLenum targetIn, GLint baseLevel, GLint maxLevel)
+    void RCSetTextureState::SetTextureMipmapLevels(GLuint* textureObjectIn, GLenum targetIn, GLint baseLevel, GLint maxLevel)
     {
         assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {
@@ -194,7 +194,7 @@ namespace GTEngine
         }
     }
 
-    void RCSetTextureState::GenerateTexture2DMipmaps(GLuint* textureObjectIn, GLenum targetIn)
+    void RCSetTextureState::GenerateTextureMipmaps(GLuint* textureObjectIn, GLenum targetIn)
     {
         assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn));
         {

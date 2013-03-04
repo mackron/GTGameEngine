@@ -32,20 +32,20 @@ namespace GTEngine
         void SetTexture3DData(GLuint* textureObject, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes);
 
 
-        /// Renderer::SetTexture2DFilter().
-        void SetTexture2DFilter(GLuint* textureObject, GLenum target, GLint minification, GLint magnification);
+        /// Renderer::SetTexture*Filter().
+        void SetTextureFilter(GLuint* textureObject, GLenum target, GLint minification, GLint magnification);
 
-        /// Renderer::SetTexture2DAnisotropy().
-        void SetTexture2DAnisotropy(GLuint* textureObject, GLenum target, GLint anisotropy);
+        /// Renderer::SetTexture*Anisotropy().
+        void SetTextureAnisotropy(GLuint* textureObject, GLenum target, GLint anisotropy);
 
-        /// Renderer::SetTexture2DWrapMode().
-        void SetTexture2DWrapMode(GLuint* textureObject, GLenum target, GLint wrapMode);
+        /// Renderer::SetTexture*WrapMode().
+        void SetTextureWrapMode(GLuint* textureObject, GLenum target, GLint wrapMode);
 
-        /// Renderer::SetTexture2DMipmapLevels().
-        void SetTexture2DMipmapLevels(GLuint* textureObject, GLenum target, GLint baseLevel, GLint maxLevel);
+        /// Renderer::SetTexture*MipmapLevels().
+        void SetTextureMipmapLevels(GLuint* textureObject, GLenum target, GLint baseLevel, GLint maxLevel);
 
-        /// Renderer::SetTexture2DGenerateMipmaps().
-        void GenerateTexture2DMipmaps(GLuint* textureObject, GLenum target);
+        /// Renderer::SetTexture*GenerateMipmaps().
+        void GenerateTextureMipmaps(GLuint* textureObject, GLenum target);
 
 
 
