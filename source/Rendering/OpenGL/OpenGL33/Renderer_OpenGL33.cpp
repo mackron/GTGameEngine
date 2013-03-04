@@ -37,13 +37,11 @@
 // they can be batched into a single call instead of being separated into separate calls.
 //
 // Here are the different categories of calls.
-//      Basic State Changes (glClearColor, glEnable/glDisable, etc)
-//      Texture Binding
-//      Texture State Changes
-//      Buffer Binding
-//      Buffer State Changes
-//      Shader Binding
-//      Shader State Chagnes
+//      Global State (glClearColor, glEnable/glDisable, bindings, etc)
+//      Texture State
+//      Buffer State
+//      Shader State
+//      Framebuffer State
 //      Drawing (glClear, glDrawElements, etc)
 //
 // You will see how many categories don't actually affect each other. For example, texture bindings will never be affected by basic state
