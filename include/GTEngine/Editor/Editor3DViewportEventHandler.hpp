@@ -4,6 +4,7 @@
 #define __GTEngine_Editor3DViewportEventHandler_hpp_
 
 #include <GTGUI/ElementEventHandler.hpp>
+#include "../Rendering/VertexArray.hpp"
 
 namespace GTEngine
 {
@@ -75,6 +76,9 @@ namespace GTEngine
         /// The mouse position on the y axis.
         int mousePosY;
 
+
+        /// The vertex array for drawing the quad.
+        VertexArray* vertexArray;
 
 
     private:    // No copying.

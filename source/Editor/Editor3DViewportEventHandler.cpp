@@ -9,7 +9,8 @@ namespace GTEngine
 {
     Editor3DViewportEventHandler::Editor3DViewportEventHandler(Game &game, SceneViewport &viewport)
         : game(game), viewport(viewport),
-          mousePosX(0), mousePosY(0)
+          mousePosX(0), mousePosY(0),
+          vertexArray(Renderer2::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P2T2))
     {
     }
 
@@ -34,41 +35,56 @@ namespace GTEngine
     {
         auto colourBuffer = this->viewport.GetColourBuffer();
 
-        GTEngine::Renderer::SetShader(GTEngine::ShaderLibrary::GetTextured2DQuadShader());
-        GTEngine::Renderer::SetShaderParameter("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
-        GTEngine::Renderer::SetShaderParameter("Texture",    colourBuffer);
-
-        GTGUI::Rect viewportRect;
-        element.GetAbsoluteRect(viewportRect);
-
-        float quadLeft   = static_cast<float>(viewportRect.left);
-        float quadRight  = static_cast<float>(viewportRect.right);
-        float quadTop    = static_cast<float>(viewportRect.top);
-        float quadBottom = static_cast<float>(viewportRect.bottom);
-
-        // All we do is draw a quad over the viewport area.
-        float quadVertices[] =
+        auto shader = GTEngine::ShaderLibrary::GetTextured2DQuadShader();
+        assert(shader != nullptr);
         {
-            quadLeft,  quadBottom,
-            0.0f,      0.0f,
+            Renderer2::SetCurrentShader(shader);
 
-            quadRight, quadBottom,
-            1.0f,      0.0f,
+            shader->SetParameter("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
+            shader->SetParameter("Texture",    colourBuffer);
+            {
+                Renderer2::PushShaderPendingProperties(*shader);
+            }
+            shader->ClearPendingParameters();
 
-            quadRight, quadTop,
-            1.0f,      1.0f,
+            
+            GTGUI::Rect viewportRect;
+            element.GetAbsoluteRect(viewportRect);
 
-            quadLeft,  quadTop,
-            0.0f,      1.0f
-        };
+            float quadLeft   = static_cast<float>(viewportRect.left);
+            float quadRight  = static_cast<float>(viewportRect.right);
+            float quadTop    = static_cast<float>(viewportRect.top);
+            float quadBottom = static_cast<float>(viewportRect.bottom);
 
-        unsigned int quadIndices[] =
-        {
-            0, 1, 2,
-            2, 3, 0,
-        };
 
-        GTEngine::Renderer::Draw(quadVertices, quadIndices, 6, GTEngine::VertexFormat::P2T2);
+
+            float quadVertices[] =
+            {
+                quadLeft,  quadBottom,
+                0.0f,      0.0f,
+
+                quadRight, quadBottom,
+                1.0f,      0.0f,
+
+                quadRight, quadTop,
+                1.0f,      1.0f,
+
+                quadLeft,  quadTop,
+                0.0f,      1.0f
+            };
+
+            unsigned int quadIndices[] =
+            {
+                0, 1, 2,
+                2, 3, 0,
+            };
+
+            this->vertexArray->SetData(quadVertices, 4, quadIndices, 6);
+
+
+            Renderer2::PushVertexArrayData(*this->vertexArray);
+            Renderer2::Draw(*this->vertexArray);
+        }
     }
 
     void Editor3DViewportEventHandler::OnLMBDown(GTGUI::Element &, int, int)
