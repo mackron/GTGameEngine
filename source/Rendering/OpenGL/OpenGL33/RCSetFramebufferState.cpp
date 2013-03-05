@@ -16,16 +16,20 @@ namespace GTEngine
     }
 
 
-    void RCSetFramebufferState::SetAttachedBuffer(GLenum attachmentPoint, GLenum textureTarget, GLuint* textureObject)
+    void RCSetFramebufferState::SetAttachedBuffer(FramebufferState_OpenGL33* framebufferStateIn, GLenum attachmentPoint, GLenum textureTarget, GLuint* textureObject)
     {
-        FramebufferState_OpenGL33::Attachment attachment;
-        attachment.attachmentPoint = attachmentPoint;
-        attachment.textureTarget   = textureTarget;
-        attachment.textureObject   = textureObject;
+        assert(framebufferStateIn != nullptr && (this->framebufferState == nullptr || this->framebufferState == framebufferStateIn));
+        {
+            FramebufferState_OpenGL33::Attachment attachment;
+            attachment.attachmentPoint = attachmentPoint;
+            attachment.textureTarget   = textureTarget;
+            attachment.textureObject   = textureObject;
 
-        this->attachments.Add(attachmentPoint, attachment);
+            this->attachments.Add(attachmentPoint, attachment);
 
-        this->operationBitfield |= SET_ATTACHMENTS_BIT;
+            this->framebufferState   = framebufferStateIn;
+            this->operationBitfield |= SET_ATTACHMENTS_BIT;
+        }
     }
 
 

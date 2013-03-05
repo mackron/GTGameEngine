@@ -10,7 +10,7 @@
 #include "DefaultSceneUpdateManager.hpp"
 #include "DefaultScenePhysicsManager.hpp"
 #include "DefaultSceneCullingManager.hpp"
-#include "DefaultSceneRenderer.hpp"
+#include "DefaultSceneRenderer2.hpp"
 #include "NavigationMesh.hpp"
 #include "Serialization.hpp"
 #include "SceneNodeMap.hpp"

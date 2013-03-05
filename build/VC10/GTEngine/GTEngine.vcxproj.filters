@@ -857,6 +857,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureWrapModes.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer2.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1443,6 +1446,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\DefaultGUIRenderer.cpp">
       <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer2.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

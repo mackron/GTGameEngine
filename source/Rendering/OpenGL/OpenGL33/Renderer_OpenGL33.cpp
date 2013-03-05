@@ -862,6 +862,18 @@ namespace GTEngine
     }
 
 
+    void Renderer2::SetDrawBuffers(size_t count, int* buffers)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetDrawBuffers(count, buffers);
+        }
+
+        State.currentRCClear = nullptr;
+    }
+
+
 
     ///////////////////////////
     // Drawing
@@ -1580,7 +1592,7 @@ namespace GTEngine
                 }
 
 
-                assert(State.currentRCSetShaderState != nullptr);
+                assert(State.currentRCSetFramebufferState != nullptr);
                 {
                     // We just notify the render command of the currently attached buffers. It will detach and switch stuff around appropriately when it's
                     // executed. We can't know at this point which attachments should be attached or detached because the server-side state may be in the
@@ -1595,7 +1607,7 @@ namespace GTEngine
 
                         assert(texture != nullptr);
                         {
-                            State.currentRCSetFramebufferState->SetAttachedBuffer(GL_COLOR_ATTACHMENT0_EXT + index, texture->GetTarget(), texture->GetOpenGLObjectPtr());
+                            State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_COLOR_ATTACHMENT0_EXT + index, texture->GetTarget(), texture->GetOpenGLObjectPtr());
                         }
                     }
 
@@ -1603,8 +1615,8 @@ namespace GTEngine
                     auto depthStencilAttachment = static_cast<const Texture2D_OpenGL33*>(framebufferGL33.GetDepthStencilBuffer());
                     if (depthStencilAttachment != nullptr)
                     {
-                        State.currentRCSetFramebufferState->SetAttachedBuffer(GL_DEPTH_ATTACHMENT_EXT,   depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLObjectPtr());
-                        State.currentRCSetFramebufferState->SetAttachedBuffer(GL_STENCIL_ATTACHMENT_EXT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLObjectPtr());
+                        State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_DEPTH_ATTACHMENT_EXT,   depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLObjectPtr());
+                        State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_STENCIL_ATTACHMENT_EXT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLObjectPtr());
                     }
                 }
             }

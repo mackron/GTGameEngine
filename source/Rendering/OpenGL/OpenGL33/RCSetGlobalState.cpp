@@ -24,8 +24,9 @@ namespace GTEngine
     #define SET_FACE_CULLING_BIT            (1 << 15)
     #define SET_POLYGON_MODE_BIT            (1 << 16)
     #define SET_POLYGON_OFFSET_BIT          (1 << 17)
-    #define ENABLE_BIT                      (1 << 18)
-    #define DISABLE_BIT                     (1 << 19)
+    #define SET_DRAW_BUFFERS_BIT            (1 << 18)
+    #define ENABLE_BIT                      (1 << 19)
+    #define DISABLE_BIT                     (1 << 20)
     
 
 
@@ -34,6 +35,7 @@ namespace GTEngine
           viewportParams(), scissorParams(),
           clearColorParams(), clearDepthParams(), clearStencilParams(),
           currentShaderParams(), currentFramebufferParams(),
+          drawBuffersParams(),
           enableParams(), disableParams()
     {
     }
@@ -184,6 +186,18 @@ namespace GTEngine
         this->polygonOffsetParams.units  = units;
 
         this->operationBitfield |= SET_POLYGON_OFFSET_BIT;
+    }
+
+
+    void RCSetGlobalState::SetDrawBuffers(size_t count, int* buffers)
+    {
+        for (size_t i = 0; i < count; ++i)
+        {
+            this->drawBuffersParams.buffers.Clear();
+            this->drawBuffersParams.buffers.PushBack(GL_COLOR_ATTACHMENT0_EXT + buffers[i]);
+        }
+
+        this->operationBitfield |= SET_DRAW_BUFFERS_BIT;
     }
 
 
@@ -350,7 +364,14 @@ namespace GTEngine
 
         if ((this->operationBitfield & SET_CURRENT_FRAMEBUFFER_BIT))
         {
-            glBindFramebuffer(GL_FRAMEBUFFER, this->currentFramebufferParams.framebufferState->framebufferObject);
+            if (this->currentFramebufferParams.framebufferState != nullptr)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, this->currentFramebufferParams.framebufferState->framebufferObject);
+            }
+            else
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            }
         }
 
 
@@ -415,6 +436,12 @@ namespace GTEngine
         if ((this->operationBitfield & SET_POLYGON_OFFSET_BIT))
         {
             glPolygonOffset(this->polygonOffsetParams.factor, this->polygonOffsetParams.units);
+        }
+
+
+        if ((this->operationBitfield & SET_DRAW_BUFFERS_BIT))
+        {
+            glDrawBuffers(static_cast<GLsizei>(this->drawBuffersParams.buffers.count), this->drawBuffersParams.buffers.buffer);
         }
 
 

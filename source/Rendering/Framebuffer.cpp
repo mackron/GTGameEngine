@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Rendering/Framebuffer.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/Rendering/Renderer2.hpp>
 
 namespace GTEngine
 {
@@ -20,7 +20,7 @@ namespace GTEngine
     {
         assert(buffer != nullptr);      // <-- Should use DetachColourBuffer() to remove a buffer. Will probably turn this argument into a reference instead of a pointer.
 
-        if (index < Renderer::GetMaxColourAttachments())
+        if (index < Renderer2::GetMaxColourAttachments())
         {
             auto iColourAttachment = this->colourAttachments.Find(index);
             if (iColourAttachment != nullptr)
@@ -68,7 +68,7 @@ namespace GTEngine
 
     void Framebuffer::DetachColourBuffer(size_t index)
     {
-        if (index < Renderer::GetMaxColourAttachments())
+        if (index < Renderer2::GetMaxColourAttachments())
         {
             auto iColourAttachment = this->colourAttachments.Find(index);
             if (iColourAttachment != nullptr)

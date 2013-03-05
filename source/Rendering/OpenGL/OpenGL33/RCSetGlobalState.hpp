@@ -4,6 +4,7 @@
 #define __GTEngine_Rendering_OpenGL33_RCSetGlobalState_hpp_
 
 #include <GTEngine/Rendering/RenderCommand.hpp>
+#include <GTCore/Vector.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 
@@ -79,6 +80,10 @@ namespace GTEngine
 
         /// Renderer::SetPolygonOffset()
         void SetPolygonOffset(GLfloat factor, GLfloat units);
+
+
+        /// Renderer::SetDrawBuffers()
+        void SetDrawBuffers(size_t count, int* buffers);
 
 
         /// Renderer::Enable*()
@@ -256,6 +261,14 @@ namespace GTEngine
             GLfloat units;
 
         }polygonOffsetParams;
+
+
+        /// glDrawBuffers params.
+        struct
+        {
+            GTCore::Vector<GLenum> buffers;
+
+        }drawBuffersParams;
 
 
         /// glEnable caps.

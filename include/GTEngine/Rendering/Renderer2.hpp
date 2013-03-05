@@ -306,6 +306,12 @@ namespace GTEngine
         static void SetPolygonOffset(float factor, float units);
 
 
+        /// Sets the indices of the colour attachments to use as the render targets for future drawing operations.
+        ///
+        /// @param count  [in] The number of buffers to use.
+        /// @param buffer [in] The indices of the colour buffers to use.
+        static void SetDrawBuffers(size_t count, int* buffers);
+
 
 
         ///////////////////////////
