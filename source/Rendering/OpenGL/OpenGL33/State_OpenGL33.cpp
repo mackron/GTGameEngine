@@ -12,12 +12,15 @@ namespace GTEngine
           currentRCSetGlobalState(nullptr), currentRCSetVertexArrayState(nullptr), currentRCSetTextureState(nullptr), currentRCSetShaderState(nullptr), currentRCSetFramebufferState(nullptr),
           currentRCClear(nullptr), currentRCDraw(nullptr),
           instantiatedTextureObjects(), instantiatedProgramObjects(), instantiatedVertexArrayObjects(), instantiatedBufferObjects(), instantiatedFramebufferObjects(),
-          deletedTextureObjects(),      deletedProgramObjects(),      deletedVertexArrayObjects(),      deletedBufferObjects(),      deletedFramebufferObjects()
+          deletedTextureObjects(),      deletedProgramObjects(),      deletedVertexArrayObjects(),      deletedBufferObjects(),      deletedFramebufferObjects(),
+          backIndex(0)
     {
     }
 
     State_OpenGL33::~State_OpenGL33()
     {
+        // We call this twice just to make sure both the back and front buffers are cleared correctly.
+        this->ClearDeletedOpenGLObjects();
         this->ClearDeletedOpenGLObjects();
     }
 
@@ -27,7 +30,7 @@ namespace GTEngine
         assert(this->instantiatedTextureObjects.Exists(textureObject));
         {
             this->instantiatedTextureObjects.RemoveFirstOccuranceOf(textureObject);
-            this->deletedTextureObjects.PushBack(textureObject);
+            this->deletedTextureObjects[this->backIndex].PushBack(textureObject);
         }
     }
 
@@ -36,7 +39,7 @@ namespace GTEngine
         assert(this->instantiatedProgramObjects.Exists(programObject));
         {
             this->instantiatedProgramObjects.RemoveFirstOccuranceOf(programObject);
-            this->deletedProgramObjects.PushBack(programObject);
+            this->deletedProgramObjects[this->backIndex].PushBack(programObject);
         }
     }
 
@@ -45,7 +48,7 @@ namespace GTEngine
         assert(this->instantiatedVertexArrayObjects.Exists(vertexArrayObject));
         {
             this->instantiatedVertexArrayObjects.RemoveFirstOccuranceOf(vertexArrayObject);
-            this->deletedVertexArrayObjects.PushBack(vertexArrayObject);
+            this->deletedVertexArrayObjects[this->backIndex].PushBack(vertexArrayObject);
         }
     }
 
@@ -54,7 +57,7 @@ namespace GTEngine
         assert(this->instantiatedBufferObjects.Exists(bufferObject));
         {
             this->instantiatedBufferObjects.RemoveFirstOccuranceOf(bufferObject);
-            this->deletedBufferObjects.PushBack(bufferObject);
+            this->deletedBufferObjects[this->backIndex].PushBack(bufferObject);
         }
     }
 
@@ -63,53 +66,71 @@ namespace GTEngine
         assert(this->instantiatedFramebufferObjects.Exists(framebufferObject));
         {
             this->instantiatedFramebufferObjects.RemoveFirstOccuranceOf(framebufferObject);
-            this->deletedFramebufferObjects.PushBack(framebufferObject);
+            this->deletedFramebufferObjects[this->backIndex].PushBack(framebufferObject);
         }
     }
 
 
     void State_OpenGL33::ClearDeletedOpenGLObjects()
     {
-        for (size_t i = 0; i < this->deletedTextureObjects.count; ++i)
+        // Textures.
+        for (size_t i = 0; i < this->deletedTextureObjects[!this->backIndex].count; ++i)
         {
-            delete this->deletedTextureObjects[i];
+            delete this->deletedTextureObjects[!this->backIndex][i];
         }
-        this->deletedTextureObjects.Clear();
+        this->deletedTextureObjects[!this->backIndex].Clear();
 
-        for (size_t i = 0; i < this->deletedProgramObjects.count; ++i)
+
+
+        // Programs.
+        for (size_t i = 0; i < this->deletedProgramObjects[!this->backIndex].count; ++i)
         {
             // If the program is the current one, we'll just set it to null.
-            if (this->deletedProgramObjects[i] == this->currentProgramState)
+            if (this->deletedProgramObjects[!this->backIndex][i] == this->currentProgramState)
             {
                 this->currentProgramState = nullptr;
             }
 
-            delete this->deletedProgramObjects[i];
+            delete this->deletedProgramObjects[!this->backIndex][i];
         }
-        this->deletedProgramObjects.Clear();
+        this->deletedProgramObjects[!this->backIndex].Clear();
 
-        for (size_t i = 0; i < this->deletedVertexArrayObjects.count; ++i)
+
+
+        // Vertex arrays.
+        for (size_t i = 0; i < this->deletedVertexArrayObjects[!this->backIndex].count; ++i)
         {
-            delete this->deletedVertexArrayObjects[i];
+            delete this->deletedVertexArrayObjects[!this->backIndex][i];
         }
-        this->deletedVertexArrayObjects.Clear();
+        this->deletedVertexArrayObjects[!this->backIndex].Clear();
 
-        for (size_t i = 0; i < this->deletedBufferObjects.count; ++i)
+
+
+        // Buffers.
+        for (size_t i = 0; i < this->deletedBufferObjects[!this->backIndex].count; ++i)
         {
-            delete this->deletedBufferObjects[i];
+            delete this->deletedBufferObjects[!this->backIndex][i];
         }
-        this->deletedBufferObjects.Clear();
+        this->deletedBufferObjects[!this->backIndex].Clear();
 
-        for (size_t i = 0; i < this->deletedFramebufferObjects.count; ++i)
+
+
+        // Framebuffers.
+        for (size_t i = 0; i < this->deletedFramebufferObjects[!this->backIndex].count; ++i)
         {
             // If the framebuffer is the current one, we'll just set it to null.
-            if (this->deletedFramebufferObjects[i] == this->currentFramebufferState)
+            if (this->deletedFramebufferObjects[!this->backIndex][i] == this->currentFramebufferState)
             {
                 this->currentFramebufferState = nullptr;
             }
 
-            delete this->deletedFramebufferObjects[i];
+            delete this->deletedFramebufferObjects[!this->backIndex][i];
         }
-        this->deletedFramebufferObjects.Clear();
+        this->deletedFramebufferObjects[!this->backIndex].Clear();
+
+
+
+        // We need to swap the back index now.
+        this->backIndex = !this->backIndex;
     }
 }

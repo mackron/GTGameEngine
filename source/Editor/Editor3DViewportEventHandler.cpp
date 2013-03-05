@@ -16,6 +16,7 @@ namespace GTEngine
 
     Editor3DViewportEventHandler::~Editor3DViewportEventHandler()
     {
+        Renderer2::DeleteVertexArray(this->vertexArray);
     }
 
 

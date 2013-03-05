@@ -80,19 +80,23 @@ namespace GTEngine
         
 
         /// The list texture objects that need to be deleted.
-        GTCore::Vector<GLuint*> deletedTextureObjects;
+        GTCore::Vector<GLuint*> deletedTextureObjects[2];
 
         /// The list of shader programs that need to be deleted.
-        GTCore::Vector<ShaderState_OpenGL33*> deletedProgramObjects;
+        GTCore::Vector<ShaderState_OpenGL33*> deletedProgramObjects[2];
 
         /// The list of VAO's that need to be deleted.
-        GTCore::Vector<GLuint*> deletedVertexArrayObjects;
+        GTCore::Vector<GLuint*> deletedVertexArrayObjects[2];
 
         /// The list of buffer objects that need to be deleted.
-        GTCore::Vector<GLuint*> deletedBufferObjects;
+        GTCore::Vector<GLuint*> deletedBufferObjects[2];
 
         /// The list of framebuffer objects that need to be deleted.
-        GTCore::Vector<FramebufferState_OpenGL33*> deletedFramebufferObjects;
+        GTCore::Vector<FramebufferState_OpenGL33*> deletedFramebufferObjects[2];
+
+
+        /// The index of the back index. This is needed in determining which list to delete resource from.
+        int backIndex;
 
 
 
