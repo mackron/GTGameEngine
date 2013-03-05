@@ -128,6 +128,8 @@ namespace GTEngine
         Renderer2::DeleteTexture2D(framebufferToDelete->colourOutputBuffer);
         
         Renderer2::DeleteFramebuffer(framebufferToDelete->framebuffer);
+
+        delete framebufferToDelete;
     }
 
     DefaultSceneRendererFramebuffer* DefaultSceneRenderer2::GetViewportFramebuffer(SceneViewport &viewport)
