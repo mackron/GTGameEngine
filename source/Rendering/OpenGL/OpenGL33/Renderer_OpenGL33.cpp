@@ -191,6 +191,9 @@ namespace GTEngine
 
                 Log("OpenGL Extensions:");
                 Log("    ARB_ES2_compatibility:              %s", GTGL_ARB_ES2_compatibility              ? "yes" : "no");
+                Log("    ARB_get_program_binary:             %s", GTGL_ARB_get_program_binary             ? "yes" : "no");
+                Log("    ARB_separate_shader_objects:        %s", GTGL_ARB_separate_shader_objects        ? "yes" : "no");
+                Log("    ARB_shader_subroutine:              %s", GTGL_ARB_shader_subroutine              ? "yes" : "no");
                 Log("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
                 Log("    EXT_texture_filter_anisotropic:     %s", GTGL_EXT_texture_filter_anisotropic     ? "yes" : "no");
                 Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
