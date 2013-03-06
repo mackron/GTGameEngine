@@ -674,6 +674,13 @@ namespace GTEngine
         }
 
 
+        // Now we need to do culling. We do a cull for every viewport.
+        for (size_t i = 0; i < this->viewports.count; ++i)
+        {
+        }
+        
+
+
         // We now want to check proximity components.
         for (size_t i = 0; i < this->sceneNodesWithProximityComponents.count; ++i)
         {
@@ -758,12 +765,13 @@ namespace GTEngine
         // Now we need to render.
         this->renderer->Begin(*this);
         {
-            for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
+            for (size_t i = 0; i < this->viewports.count; ++i)
             {
-                auto viewport = iViewport->value;
+                auto viewport = this->viewports[i];
                 assert(viewport != nullptr);
-
-                this->renderer->RenderViewport(*this, *viewport);
+                {
+                    this->renderer->RenderViewport(*this, *viewport);
+                }
             }
         }
         this->renderer->End(*this);
@@ -817,7 +825,7 @@ namespace GTEngine
         }
 
         this->renderer->AddViewport(viewport);
-        this->viewports.Append(&viewport);
+        this->viewports.PushBack(&viewport);
 
         viewport.SetScene(this);
     }
@@ -829,7 +837,7 @@ namespace GTEngine
         if (viewport.GetScene() == this)
         {
             this->renderer->RemoveViewport(viewport);
-            this->viewports.Remove(this->viewports.Find(&viewport));
+            this->viewports.RemoveFirstOccuranceOf(&viewport);
 
             viewport.SetScene(nullptr);
         }
@@ -839,12 +847,15 @@ namespace GTEngine
     {
         assert(this->renderer != nullptr);
 
-        for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
+        for (size_t i = 0; i < this->viewports.count; ++i)
         {
-            this->renderer->RemoveViewport(*iViewport->value);
-            iViewport->value->SetScene(nullptr);
+            auto viewport = this->viewports[i];
+            assert(viewport != nullptr);
+            {
+                this->renderer->RemoveViewport(*viewport);
+                viewport->SetScene(nullptr);
+            }
         }
-
         this->viewports.Clear();
     }
 
@@ -861,11 +872,14 @@ namespace GTEngine
     {
         assert(this->renderer != nullptr);
 
-        // We need to remove all of the viewports from the renderer.
-        for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
+        // We need to remove all of the viewports from the old renderer.
+        for (size_t i = 0; i < this->viewports.count; ++i)
         {
-            assert(iViewport->value != nullptr);
-            this->renderer->RemoveViewport(*iViewport->value);
+            auto viewport = this->viewports[i];
+            assert(viewport != nullptr);
+            {
+                this->renderer->RemoveViewport(*viewport);
+            }
         }
 
         if (this->deleteRenderer)
@@ -879,10 +893,14 @@ namespace GTEngine
 
 
         // With the new renderer set, we now need to let it know about our existing viewports.
-        for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
+        //for (auto iViewport = this->viewports.root; iViewport != nullptr; iViewport = iViewport->next)
+        for (size_t i = 0; i < this->viewports.count; ++i)
         {
-            assert(iViewport->value != nullptr);
-            this->renderer->AddViewport(*iViewport->value);
+            auto viewport = this->viewports[i];
+            assert(viewport != nullptr);
+            {
+                this->renderer->AddViewport(*viewport);
+            }
         }
     }
 
