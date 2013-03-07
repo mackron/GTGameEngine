@@ -95,6 +95,13 @@ namespace GTEngine
         GTCore::Vector<FramebufferState_OpenGL33*> deletedFramebufferObjects[2];
 
 
+        /// The current swap interval.
+        int swapInterval;
+
+        /// Keeps track of whether or not the swap interval needs to be updated.
+        bool swapIntervalNeedsUpdate;
+
+
         /// The index of the back index. This is needed in determining which list to delete resource from.
         int backIndex;
 
