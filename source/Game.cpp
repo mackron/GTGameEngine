@@ -1012,18 +1012,13 @@ namespace GTEngine
         this->OnDraw();
         //this->script.Execute("Game.OnDraw();");
 
-        //Renderer::ExecuteFrontRCQueue();
         Renderer2::ExecuteCallCache();
 
         this->OnPostDraw();
         //this->script.Execute("Game.OnPostDraw();");
 
 
-        // We draw the GUI on top of everything else...
-        //Renderer::SetFramebuffer(nullptr);
-        //Renderer::DrawGUI(this->gui);
-
-
+        // At this point we can finally swap the buffers.
         Renderer2::SwapBuffers();
 
 

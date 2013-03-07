@@ -1017,7 +1017,7 @@ namespace GTEngine
                 assert(iParam        != nullptr);
                 assert(iParam->value != nullptr);
 
-                iParam->value->SetOnCurrentShader(iParam->key);
+                //iParam->value->SetOnCurrentShader(iParam->key);
             }
 
 

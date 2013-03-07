@@ -1847,7 +1847,7 @@ namespace GTEngine
             auto iParamName  = this->parameters.GetNameByIndex(i);
             auto iParamValue = this->parameters.GetByIndex(i);
 
-            iParamValue->SetOnCurrentShader(iParamName);
+            //iParamValue->SetOnCurrentShader(iParamName);
         }
     }
 
@@ -1869,7 +1869,7 @@ namespace GTEngine
                 auto iParamName  = this->materialParameters.GetNameByIndex(i);
                 auto iParamValue = this->materialParameters.GetByIndex(i);
 
-                iParamValue->SetOnCurrentShader(iParamName);
+                //iParamValue->SetOnCurrentShader(iParamName);
             }
 
             this->doingMaterialPass = false;
