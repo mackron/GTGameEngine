@@ -13,6 +13,7 @@ namespace GTEngine
           currentRCClear(nullptr), currentRCDraw(nullptr),
           instantiatedTextureObjects(), instantiatedProgramObjects(), instantiatedVertexArrayObjects(), instantiatedBufferObjects(), instantiatedFramebufferObjects(),
           deletedTextureObjects(),      deletedProgramObjects(),      deletedVertexArrayObjects(),      deletedBufferObjects(),      deletedFramebufferObjects(),
+          swapInterval(1), swapIntervalNeedsUpdate(false),
           backIndex(0)
     {
     }

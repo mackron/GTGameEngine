@@ -358,6 +358,12 @@ namespace GTEngine
 
     void Renderer2::SwapBuffers()
     {
+        if (State.swapIntervalNeedsUpdate)
+        {
+            gtglSwapInterval(State.swapInterval);
+            State.swapIntervalNeedsUpdate = false;
+        }
+
         gtglSwapBuffers();
     }
 
@@ -874,6 +880,13 @@ namespace GTEngine
         }
 
         State.currentRCClear = nullptr;
+    }
+
+
+    void Renderer2::SetSwapInterval(int interval)
+    {
+        State.swapInterval            = interval;
+        State.swapIntervalNeedsUpdate = true;
     }
 
 

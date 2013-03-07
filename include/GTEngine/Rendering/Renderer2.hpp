@@ -315,6 +315,15 @@ namespace GTEngine
         static void SetDrawBuffers(size_t count, int* buffers);
 
 
+        /// Sets the swap interval (controls v-sync).
+        ///
+        /// @param  interval [in] The swap interval to use. 0 means v-sync is disabled, 1 means v-sync is enabled.
+        ///
+        /// @remarks
+        ///     The interval can also be set to -1, in which case it will use synchronization but will tear on late frames.
+        static void SetSwapInterval(int interval);
+
+
 
         ///////////////////////////
         // Drawing
