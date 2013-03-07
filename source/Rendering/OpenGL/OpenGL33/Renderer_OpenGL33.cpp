@@ -636,7 +636,7 @@ namespace GTEngine
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
         {
-            State.currentRCSetGlobalState->SetDepthFunction(function);
+            State.currentRCSetGlobalState->SetDepthFunction(ToOpenGLFunc(function));
         }
     }
 
@@ -911,13 +911,24 @@ namespace GTEngine
 
     void Renderer2::Draw(const VertexArray &vertexArray, DrawMode mode)
     {
+        auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
+
+        // If the vertex array needs anything updated, do so now.
+        if (vertexArrayGL33.DoesVertexDataNeedUpdating())
+        {
+            Renderer2::PushVertexArrayVertexData(vertexArray);
+        }
+        if (vertexArrayGL33.DoesIndexDataNeedUpdating())
+        {
+            Renderer2::PushVertexArrayIndexData(vertexArray);
+        }
+
+
+
         UPDATE_CURRENT_RC(RCDraw);
         assert(State.currentRCDraw != nullptr);
         {
-            auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
-            {
-                State.currentRCDraw->Draw(vertexArrayGL33.GetOpenGLObjectPtr(), vertexArrayGL33.GetOpenGLVertexObjectPtr(), ToOpenGLDrawMode(mode), vertexArrayGL33.GetIndexCount());
-            }
+            State.currentRCDraw->Draw(vertexArrayGL33.GetOpenGLObjectPtr(), vertexArrayGL33.GetOpenGLVertexObjectPtr(), ToOpenGLDrawMode(mode), vertexArrayGL33.GetIndexCount());
         }
 
         State.currentRCSetGlobalState      = nullptr;
@@ -1018,6 +1029,7 @@ namespace GTEngine
                 assert(State.currentRCSetVertexArrayState != nullptr);
                 {
                     State.currentRCSetVertexArrayState->SetVertexData(vertexArrayObject, vertexBufferObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                    vertexArrayGL33.MarkVertexDataAsUpdated();
                 }
             }
         }
@@ -1040,6 +1052,7 @@ namespace GTEngine
                 assert(State.currentRCSetVertexArrayState != nullptr);
                 {
                     State.currentRCSetVertexArrayState->SetIndexData(vertexArrayObject, vertexArray.GetIndexDataPtr(), vertexArray.GetIndexCount(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                    vertexArrayGL33.MarkIndexDataAsUpdated();
                 }
             }
         }
@@ -1066,6 +1079,9 @@ namespace GTEngine
                 {
                     State.currentRCSetVertexArrayState->SetVertexData(vertexArrayObject, vertexBufferObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
                     State.currentRCSetVertexArrayState->SetIndexData( vertexArrayObject, vertexArray.GetIndexDataPtr(),  vertexArray.GetIndexCount(),  ToOpenGLBufferUsage(vertexArray.GetUsage()));
+
+                    vertexArrayGL33.MarkVertexDataAsUpdated();
+                    vertexArrayGL33.MarkIndexDataAsUpdated();
                 }
             }
         }

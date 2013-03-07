@@ -1,12 +1,13 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/VertexArrayFactory.hpp>
+#include <GTEngine/Rendering/Renderer2.hpp>
 
 namespace GTEngine
 {
     VertexArray * VertexArrayFactory::CreateWireframeFromAABB(const btAABB &aabb)
     {
-        VertexArray * va = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        VertexArray * va = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
 
         float vertices[] =
         {
@@ -48,7 +49,7 @@ namespace GTEngine
 
     VertexArray * VertexArrayFactory::CreatePlaneXZ(float width, float height, VertexFormat &format)
     {
-        auto va = new VertexArray(VertexArrayUsage_Static, format);
+        auto va = Renderer2::CreateVertexArray(VertexArrayUsage_Static, format);
 
         auto vertexSize     = format.GetSize();
         auto positionOffset = format.GetAttributeOffset(VertexAttribs::Position);
@@ -106,7 +107,7 @@ namespace GTEngine
 
     VertexArray * VertexArrayFactory::CreatePlaneXY(float width, float height, VertexFormat &format)
     {
-        auto va = new VertexArray(VertexArrayUsage_Static, format);
+        auto va = Renderer2::CreateVertexArray(VertexArrayUsage_Static, format);
 
         auto vertexSize     = format.GetSize();
         auto positionOffset = format.GetAttributeOffset(VertexAttribs::Position);

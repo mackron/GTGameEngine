@@ -424,7 +424,7 @@ namespace GTEngine
                     0, 3
                 };
 
-                this->directionArrowVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+                this->directionArrowVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
                 this->directionArrowVA->SetData(&vertices[0].x, 4, indices, 6);
 
                 this->directionArrowModel->AttachMesh(this->directionArrowVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
@@ -439,7 +439,7 @@ namespace GTEngine
     void EditorMetadataComponent::HideDirectionArrow()
     {
         ModelLibrary::Delete(this->directionArrowModel);
-        GarbageCollector::MarkForCollection(this->directionArrowVA);
+        Renderer2::DeleteVertexArray(this->directionArrowVA);
 
         this->directionArrowModel = nullptr;
         this->directionArrowVA    = nullptr;

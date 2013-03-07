@@ -4,7 +4,10 @@
 #define __GTEngine_DefaultSceneRenderer2_hpp_
 
 #include "SceneRenderer.hpp"
+#include "Scene.hpp"
+#include "MaterialLibrary.hpp"
 #include "Rendering/Renderer2.hpp"
+
 #include <GTCore/Map.hpp>
 
 namespace GTEngine
@@ -20,9 +23,167 @@ namespace GTEngine
         /// The depth/stencil buffer.
         Texture2D* depthStencilBuffer;
 
-        /// The main colour output buffer.
+        /// The main colour output buffer (RGBA16F).
         Texture2D* colourOutputBuffer;
+
+
+        /// The first lighting accumulation buffer. RGBA16F. Stores diffuse RGB. A is unused right now.
+        Texture2D* lightingBuffer0;
+
+        /// The second light accumulation buffer. RGBA16F. Stores specular RGB. A is unused right now.
+        Texture2D* lightingBuffer1;
+
+
+        /// The width of the framebuffer.
+        unsigned int width;
+
+        /// The height of the framebuffer.
+        unsigned int height;
+
+
+        /// Resizes all of the attachments on the framebuffer.
+        void Resize(unsigned int newWidth, unsigned int newHeight)
+        {
+            this->width  = newWidth;
+            this->height = newHeight;
+
+            this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            this->colourOutputBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
+            this->lightingBuffer0->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
+            this->lightingBuffer1->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
+
+            Renderer2::PushTexture2DData(*this->depthStencilBuffer);
+            Renderer2::PushTexture2DData(*this->colourOutputBuffer);
+            Renderer2::PushTexture2DData(*this->lightingBuffer0);
+            Renderer2::PushTexture2DData(*this->lightingBuffer1);
+        }
     };
+
+
+    /// Structure containing the shaders associated with a material.
+    struct DefaultSceneRendererMaterialShaders
+    {
+        DefaultSceneRendererMaterialShaders()
+            : ambientLightShader(nullptr),
+              materialShader(nullptr)
+        {
+        }
+
+        ~DefaultSceneRendererMaterialShaders()
+        {
+            Renderer2::DeleteShader(this->ambientLightShader);
+            Renderer2::DeleteShader(this->materialShader);
+        }
+
+
+        /// The shader to use when doing an ambient light pass.
+        Shader* ambientLightShader;
+
+        /// The shader to use when doing the material pass.
+        Shader* materialShader;
+    };
+
+
+    /// Structure representing a mesh object.
+    struct DefaultSceneRendererMeshObject
+    {
+        /// The mesh.
+        Mesh* mesh;
+
+        /// The transformation to apply to the mesh when rendering.
+        glm::mat4 transform;
+    };
+
+    /// Structure representing an ambient light object.
+    struct DefaultSceneRendererAmbientLightObject
+    {
+        /// The colour of the light.
+        glm::vec3 colour;
+    };
+
+    /// Structure representing a directional light object.
+    struct DefaultSceneRendererDirectionalLightObject
+    {
+        /// The colour of the light.
+        glm::vec3 colour;
+
+        /// The directional of the light.
+        glm::vec3 direction;
+    };
+
+
+    /// Callback class that will be used when querying the visible objects.
+    class DefaultSceneRendererVisibleObjects : public SceneCullingManager::VisibilityCallback
+    {
+    public:
+
+        /// Constructor.
+        DefaultSceneRendererVisibleObjects(SceneViewport &viewport);
+
+        /// Destructor.
+        virtual ~DefaultSceneRendererVisibleObjects();
+
+
+        ////////////////////////////////////////////
+        // Virtual Implementations.
+
+        /// SceneCullingManager::VisibilityCallback::ProcessObjectModel().
+        void ProcessObjectModel(SceneObject &object);
+
+        /// SceneCullingManager::VisibilityCallback::ProcessObjectPointLight().
+        void ProcessObjectPointLight(SceneObject &object);
+
+        /// SceneCullingManager::VisibilityCallback::ProcessObjectSpotLight().
+        void ProcessObjectSpotLight(SceneObject &object);
+
+        /// SceneCullingManager::VisibilityCallback::ProcessObjectAmbientLight().
+        void ProcessObjectAmbientLight(SceneObject &object);
+
+        /// SceneCullingManager::VisibilityCallback::ProcessObjectDirectionalLight().
+        void ProcessObjectDirectionalLight(SceneObject &object);
+
+
+
+        /// Performs an optimization step that arranges everything in a way where the renderer can be a bit more efficient.
+        void PostProcess();
+
+
+
+        //////////////////////////////////////
+        // Member Variables.
+
+        /// The list of opaque mesh objects, sorted by material definition.
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMeshObject>*> opaqueObjects;
+
+        /// The list of alpha-transparent objects, sorted by material definition. This needs to be separate from refractive transparent objects.
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMeshObject>*> alphaTransparentObjects;
+
+        /// The list of refractive-transparent objects, sorted by material definition.
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMeshObject>*> refractiveTransparentObjects;
+
+
+        /// The list of ambient lights.
+        GTCore::Vector<DefaultSceneRendererAmbientLightObject> ambientLights;
+
+        /// The list of directional lights.
+        GTCore::Vector<DefaultSceneRendererDirectionalLightObject> directionalLights;
+
+
+        /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess().
+        GTCore::Vector<Mesh*> meshesToAnimate;
+
+
+        /// The projection matrix.
+        glm::mat4 projectionMatrix;
+
+        /// The view matrix.
+        glm::mat4 viewMatrix;
+
+        /// The projection * view matrix.
+        glm::mat4 projectionViewMatrix;
+    };
+
+
 
 
     /// Class representing the default scene renderer.
@@ -35,6 +196,7 @@ namespace GTEngine
 
         /// Destructor.
         virtual ~DefaultSceneRenderer2();
+
 
 
         ////////////////////////////////////////////////////////////////
@@ -59,6 +221,16 @@ namespace GTEngine
         void OnViewportResized(SceneViewport &viewport);
 
 
+
+        ////////////////////////////////////////////////////////////////
+        // Event Handlers from MaterialLibrary.
+
+        /// Called when a material definition is deleted.
+        void OnDeleteMaterialDefinition(MaterialDefinition &definition);
+
+
+
+
     private:
 
         /// Creates a new framebuffer of the given dimensions.
@@ -79,12 +251,85 @@ namespace GTEngine
 
 
 
+        /////////////////////////
+        // Rendering.
+
+        /// Renders the opaque pass.
+        void RenderOpaquePass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+
+        /// Renders the alpha transparency pass.
+        void RenderAlphaTransparentPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+
+        /// Renders the refractive transparent pass.
+        void RenderRefractiveTransparentPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+
+
+        /////////////////////////
+        // Materials.
+
+        /// Retrieves the shaders of the given material.
+        ///
+        /// @param material [in] A reference to the material whose shaders are being retrieved.
+        ///
+        /// @remarks
+        ///     If the structure has not yet been created, it will be created here. Note, this will not create the individual shaders. This will be handled by
+        ///     the method responsible for retrieving those specific shaders.
+        DefaultSceneRendererMaterialShaders* GetMaterialShaders(Material &material);
+
+        /// Retrieves the shader to use for the ambient light pass.
+        ///
+        /// @param material [in] A reference to the material whose shader is being retrieved.
+        Shader* GetMaterialAmbientLightShader(Material &material);
+
+        /// Retrieves the material shader of the given material.
+        ///
+        /// @param material [in] A reference to the material whose material shader is being retrieved.
+        Shader* GetMaterialMaterialShader(Material &material);
+
+
+
     private:
 
         /// The framebuffers for each attached viewport. Keyed by the viewport.
         GTCore::Map<SceneViewport*, DefaultSceneRendererFramebuffer*> viewportFramebuffers;
 
+        /// Keeps track of the material shaders that need to be deleted. Keyed by the material definition.
+        GTCore::Map<MaterialDefinition*, DefaultSceneRendererMaterialShaders*> materialShadersToDelete;
 
+        /// The shader to use with the depth pre-pass.
+        Shader* depthPassShader;
+
+
+
+        /// Material Library Event Handler.
+        class MaterialLibraryEventHandler : public MaterialLibrary::EventHandler
+        {
+        public:
+
+            /// Constructor.
+            MaterialLibraryEventHandler(DefaultSceneRenderer2 &rendererIn)
+                : renderer(rendererIn)
+            {
+            }
+
+
+            /// MaterialLibrary::EventHandler::OnDeleteMaterialDefinition().
+            void OnDeleteMaterialDefinition(MaterialDefinition &definition)
+            {
+                renderer.OnDeleteMaterialDefinition(definition);
+            }
+
+
+
+            /// A reference to the renderer that owns this event handler.
+            DefaultSceneRenderer2 &renderer;
+
+
+        private:    // No copying.
+            MaterialLibraryEventHandler(const MaterialLibraryEventHandler &);
+            MaterialLibraryEventHandler & operator=(const MaterialLibraryEventHandler &);
+
+        }materialLibraryEventHandler;
     };
 }
 

@@ -162,6 +162,8 @@ namespace GTEngine
                     parameter.textureTarget = textureTarget;
                     parameter.textureUnit   = static_cast<GLint>(programStateIn->textures.count);
                     this->textureParametersToSet.Add(name, parameter);
+
+                    programStateIn->textures.Add(name, parameter);
                 }
 
                 this->programState = programStateIn;

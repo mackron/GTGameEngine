@@ -57,6 +57,16 @@ namespace GTEngine
             ///
             /// @param material [in] A reference to the material that is about to be deleted.
             virtual void OnDeleteMaterial(Material &) {}
+
+            /// Called just after a material definition is created for the first time.
+            ///
+            /// @param definition [in] A reference to the material definition that was just created.
+            virtual void OnCreateMaterialDefinition(MaterialDefinition &) {}
+
+            /// Called just before a material definition is deleted.
+            ///
+            /// @param definition [in] A reference to the material definition that is about to be deleted.
+            virtual void OnDeleteMaterialDefinition(MaterialDefinition &) {}
         };
 
 

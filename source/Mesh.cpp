@@ -128,6 +128,12 @@ namespace GTEngine
         }
     }
 
+    bool Mesh::IsAnimated() const
+    {
+        return this->skinningData != nullptr;
+    }
+
+
 
     void Mesh::Serialize(GTCore::Serializer &serializer, bool serializeGeometry) const
     {
@@ -220,11 +226,11 @@ namespace GTEngine
                         {
                             if (this->deleteGeometry)
                             {
-                                GarbageCollector::MarkForCollection(this->geometry);
+                                Renderer2::DeleteVertexArray(this->geometry);
                             }
 
 
-                            auto newVA = new VertexArray(VertexArrayUsage_Static, VertexFormat());
+                            auto newVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat());
                             newVA->Deserialize(deserializer);
 
                             this->SetGeometry(newVA);
