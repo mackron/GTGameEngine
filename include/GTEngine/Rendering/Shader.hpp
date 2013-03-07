@@ -18,18 +18,8 @@ namespace GTEngine
     ///
     /// The source of a shader is defined at construction time. It can not be changed after construction.
     ///
-    /// There are two ways of setting shader parameters. Each tecnique has slightly different details that
-    /// applications needs to be aware of.
-    ///
-    /// The first way of setting parameters is via the shader object itself. With this technique, you simply
-    /// use a method such as <code>someShader->SetParameter("SomeParam", SomeFloat4)</code>. The important
-    /// detail here is that the parameter won't actually be set until the shader is made current. It is OK
-    /// to set parameters with this technique on a thread other than the rendering thread, but it is not
-    /// thread-safe. Care needs to be taken to ensure parameters are not being set during Renderer::SetShader().
-    ///
-    /// The second way of setting parameters is via the renderer itself using Renderer::SetParameter(). With
-    /// this technique, the parameter is set on the shader that was made current with the last call to
-    /// Renderer::SetShader(). With this technique, the parameter is set immediately and directly.
+    /// Shader parameters are set on the shader itself and then pushed to the renderer. When the properties after been pushed, they should
+    /// usually be cleared with ClearPendingParameters().
     class Shader
     {
     public:

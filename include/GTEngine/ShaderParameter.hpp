@@ -167,7 +167,7 @@ namespace GTEngine
 
         /// Virtual method for applying the value onto the current shader. Use Renderer::SetShaderParameter(). This method
         /// is intended to be called from the rendering thread.
-        virtual void SetOnCurrentShader(const char* name) const = 0;
+        //virtual void SetOnCurrentShader(const char* name) const = 0;
     };
 
     GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float,    ShaderParameterType_Float,    float);

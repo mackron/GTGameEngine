@@ -1,7 +1,9 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
+/*
 #include <GTEngine/ShaderParameter.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
+
 
 #define GTENGINE_SHADERPARAMETER_IMPL(typeName) \
     void typeName::SetOnCurrentShader(const char* name) const \
@@ -30,3 +32,4 @@ namespace GTEngine
     //GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_Texture3D);
     GTENGINE_SHADERPARAMETER_IMPL(ShaderParameter_TextureCube);
 }
+*/

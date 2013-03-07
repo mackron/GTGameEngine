@@ -394,9 +394,6 @@ namespace GTEngine
 
         /**
         *   \brief  Called on the rendering thread after the main rendering commands have been drawn, and just before swapping the buffers.
-        *
-        *   \remarks
-        *       This is a good time to render a GUI with Renderer::DrawGUI().
         */
         virtual void OnPostDraw();
 

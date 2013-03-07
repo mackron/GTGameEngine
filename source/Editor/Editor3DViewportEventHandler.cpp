@@ -82,8 +82,6 @@ namespace GTEngine
 
             this->vertexArray->SetData(quadVertices, 4, quadIndices, 6);
 
-
-            Renderer2::PushVertexArrayData(*this->vertexArray);
             Renderer2::Draw(*this->vertexArray);
         }
     }

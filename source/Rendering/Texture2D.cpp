@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Rendering/Texture2D.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/Rendering/Renderer2.hpp>
 
 namespace GTEngine
 {
@@ -10,7 +10,7 @@ namespace GTEngine
           framebuffers(), shaders(),
           refCount(1)
     {
-        if (Renderer::HasFlippedTextures())
+        if (Renderer2::HasFlippedTextures())
         {
             this->FlipVertically();
         }
@@ -21,7 +21,7 @@ namespace GTEngine
           framebuffers(), shaders(),
           refCount(1)
     {
-        if (Renderer::HasFlippedTextures())
+        if (Renderer2::HasFlippedTextures())
         {
             this->FlipVertically();
         }
