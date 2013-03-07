@@ -23,8 +23,15 @@ namespace GTEngine
         {
             free(this->vertexData.vertices);
 
-            this->vertexData.vertices = static_cast<float*>(malloc(vertexCount * vertexSizeInBytes));
-            memcpy(this->vertexData.vertices, vertices, vertexCount * vertexSizeInBytes);
+            if (vertices != nullptr)
+            {
+                this->vertexData.vertices = static_cast<float*>(malloc(vertexCount * vertexSizeInBytes));
+                memcpy(this->vertexData.vertices, vertices, vertexCount * vertexSizeInBytes);
+            }
+            else
+            {
+                this->vertexData.vertices = nullptr;
+            }
 
             this->vertexData.count             = vertexCount;
             this->vertexData.vertexSizeInBytes = vertexSizeInBytes;
@@ -43,8 +50,15 @@ namespace GTEngine
         {
             free(this->indexData.indices);
 
-            this->indexData.indices = static_cast<unsigned int*>(malloc(indexCount * sizeof(unsigned int)));
-            memcpy(this->indexData.indices, indices, indexCount * sizeof(unsigned int));
+            if (indices != nullptr)
+            {
+                this->indexData.indices = static_cast<unsigned int*>(malloc(indexCount * sizeof(unsigned int)));
+                memcpy(this->indexData.indices, indices, indexCount * sizeof(unsigned int));
+            }
+            else
+            {
+                this->indexData.indices = nullptr;
+            }
 
             this->indexData.count = indexCount;
             this->indexData.usage = usage;

@@ -466,9 +466,7 @@ namespace GTEngine
         void GetWorldTransformComponents(glm::vec3 &position, glm::quat &orientation, glm::vec3 &scale) const;
 
 
-        /**
-        *   \brief  Calculates a transformation matrix for this object, in world space.
-        */
+        /// Calculates a transformation matrix for this object, in world space.
         glm::mat4 GetWorldTransform() const;
 
         /// Retrieves the world transform, not including the scale.

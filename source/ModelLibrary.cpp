@@ -293,7 +293,7 @@ namespace GTEngine
             {
                 auto format = VertexFormat::P3T2N3T3B3;
 
-                auto va = new VertexArray(VertexArrayUsage_Static, format);
+                auto va = Renderer2::CreateVertexArray(VertexArrayUsage_Static, format);
                 va->SetData(nullptr, mesh->mNumVertices, nullptr, mesh->mNumFaces * 3);
 
                 auto vertexData = va->MapVertexData();
@@ -1360,7 +1360,7 @@ namespace GTEngine
                         {
                             // Geometry.
                             {
-                                auto va = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3T3B3);
+                                auto va = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3T3B3);
 
                                 // Vertices.
                                 uint32_t vertexCount;

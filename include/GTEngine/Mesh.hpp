@@ -3,13 +3,12 @@
 #ifndef __GTEngine_Mesh_hpp_
 #define __GTEngine_Mesh_hpp_
 
-#include "Rendering/VertexArray.hpp"
 #include "Material.hpp"
 #include "Math.hpp"
 #include "SkinningVertexAttribute.hpp"
 #include "GarbageCollector.hpp"
 #include "Serialization.hpp"
-#include "Rendering/DrawModes.hpp"
+#include "Rendering/Renderer2.hpp"
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -18,6 +17,8 @@
 
 namespace GTEngine
 {
+    // TODO: Look into why there is two vertex arrays here. May be able to remove one now with the new renderer.
+    
     /// Structure containing the skinning information of a mesh.
     struct MeshSkinningData
     {
@@ -35,19 +36,22 @@ namespace GTEngine
         /// Destructor.
         ~MeshSkinningData()
         {
+            Renderer2::DeleteVertexArray(this->skinnedGeometry[0]);
+            Renderer2::DeleteVertexArray(this->skinnedGeometry[1]);
+
             // Important to use the garbage collector here.
-            GarbageCollector::MarkForCollection(this->skinnedGeometry[0]);
-            GarbageCollector::MarkForCollection(this->skinnedGeometry[1]);
+            //GarbageCollector::MarkForCollection(this->skinnedGeometry[0]);
+            //GarbageCollector::MarkForCollection(this->skinnedGeometry[1]);
         }
 
         /// Allocates the vertex arrays for the animated geometry.
         void AllocateAnimatedGeometryArrays(const VertexArray &source)
         {
-            delete this->skinnedGeometry[0];
-            delete this->skinnedGeometry[1];
+            Renderer2::DeleteVertexArray(this->skinnedGeometry[0]);
+            Renderer2::DeleteVertexArray(this->skinnedGeometry[1]);
 
-            this->skinnedGeometry[0] = new VertexArray(VertexArrayUsage_Stream, source.GetFormat());
-            this->skinnedGeometry[1] = new VertexArray(VertexArrayUsage_Stream, source.GetFormat());
+            this->skinnedGeometry[0] = Renderer2::CreateVertexArray(VertexArrayUsage_Stream, source.GetFormat());
+            this->skinnedGeometry[1] = Renderer2::CreateVertexArray(VertexArrayUsage_Stream, source.GetFormat());
 
             this->skinnedGeometry[0]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
             this->skinnedGeometry[1]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
@@ -167,19 +171,15 @@ namespace GTEngine
         bool GenerateTangentsAndBitangents();
 
 
-        /// Builds a tri-mesh collision shape based on this mesh.
-        /// @param scale [in] The scale to apply to the mesh when generating the shape.
-        ///
-        /// @remarks
-        ///     Deletes the returned shape with 'delete'.
-        //btGImpactMeshShape* BuildCollisionShape(const glm::vec3 &scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
-
-        /// Fills the given vertex array will a skinned version of the base geometry using the current state of the mesh's bones.
+        /// Fills the given vertex array with a skinned version of the base geometry using the current state of the mesh's bones.
         ///
         /// @remarks
         ///     This method asserts that <destination> is already pre-allocated.
         void ApplySkinning();
+
+        /// Determines whether or not the mesh is animated.
+        bool IsAnimated() const;
 
 
 

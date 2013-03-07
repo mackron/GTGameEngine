@@ -12,6 +12,7 @@ namespace GTEngine
 {
     class Texture2D;
     class TextureCube;
+    class Material;
 
     /// Class representing a shader.
     ///
@@ -61,6 +62,14 @@ namespace GTEngine
         void SetParameter(const char* name, float x, float y, float z, float w) { this->SetParameter(name, glm::vec4(x, y, z, w)); }
 
 
+        /// Sets the parameters defined by the given material.
+        void SetParametersFromMaterial(Material &material);
+
+
+        /// Clears the pending parameters.
+        void ClearPendingParameters();
+
+
     // The methods below should only be called by the renderer and it's support functions.
     public:
 
@@ -70,8 +79,7 @@ namespace GTEngine
               GTCore::Dictionary<ShaderParameter*> & GetPendingParameters()       { return this->pendingParameters.GetParameters(); }
         const GTCore::Dictionary<ShaderParameter*> & GetPendingParameters() const { return this->pendingParameters.GetParameters(); }
 
-        /// Clears the pending parameters.
-        void ClearPendingParameters();
+        
 
 
 

@@ -21,16 +21,16 @@ namespace GTEngine
 
     TransformGizmo::~TransformGizmo()
     {
-        GarbageCollector::MarkForCollection(this->arrowLineVA);
-        GarbageCollector::MarkForCollection(this->arrowHeadVA);
+        Renderer2::DeleteVertexArray(this->arrowLineVA);
+        Renderer2::DeleteVertexArray(this->arrowHeadVA);
 
-        GarbageCollector::MarkForCollection(this->xCircleVA);
-        GarbageCollector::MarkForCollection(this->yCircleVA);
-        GarbageCollector::MarkForCollection(this->zCircleVA);
-        GarbageCollector::MarkForCollection(this->cameraFacingCircleVA);
+        Renderer2::DeleteVertexArray(this->xCircleVA);
+        Renderer2::DeleteVertexArray(this->yCircleVA);
+        Renderer2::DeleteVertexArray(this->zCircleVA);
+        Renderer2::DeleteVertexArray(this->cameraFacingCircleVA);
 
-        GarbageCollector::MarkForCollection(this->scaleLineVA);
-        GarbageCollector::MarkForCollection(this->scaleHeadVA);
+        Renderer2::DeleteVertexArray(this->scaleLineVA);
+        Renderer2::DeleteVertexArray(this->scaleHeadVA);
     }
 
 
@@ -38,8 +38,8 @@ namespace GTEngine
     {
         /////////////////////////////////////////
         // Arrow Mesh
-        this->arrowLineVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
-        this->arrowHeadVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->arrowLineVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->arrowHeadVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
 
         // Arrow line.
         glm::vec3 arrowLineVertices[2] =
@@ -122,24 +122,24 @@ namespace GTEngine
         }
 
 
-        this->xCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->xCircleVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
         this->xCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
 
-        this->yCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->yCircleVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
         this->yCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
 
-        this->zCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->zCircleVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
         this->zCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
 
-        this->cameraFacingCircleVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->cameraFacingCircleVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
         this->cameraFacingCircleVA->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
 
 
 
         /////////////////////////////////////////
         // Scale Handle Mesh
-        this->scaleLineVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
-        this->scaleHeadVA = new VertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->scaleLineVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->scaleHeadVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
 
         // Scale line.
         glm::vec3 scaleLineVertices[2] =

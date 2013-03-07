@@ -1,9 +1,9 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
-
 #include <GTEngine/Components/CollisionShapeComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
+#undef max
 
 namespace GTEngine
 {

@@ -191,9 +191,10 @@ namespace GTEngine
 
     void RCSetGlobalState::SetDrawBuffers(size_t count, int* buffers)
     {
+        this->drawBuffersParams.buffers.Clear();
+
         for (size_t i = 0; i < count; ++i)
         {
-            this->drawBuffersParams.buffers.Clear();
             this->drawBuffersParams.buffers.PushBack(GL_COLOR_ATTACHMENT0_EXT + buffers[i]);
         }
 

@@ -35,6 +35,23 @@ namespace GTEngine
         }
     }
 
+    /// Helper function for calling the OnCreateMaterialDefinition() event.
+    void MaterialLibrary_OnCreateMaterialDefinition(MaterialDefinition &definition)
+    {
+        for (size_t i = 0; i < EventHandlers.count; ++i)
+        {
+            EventHandlers[i]->OnCreateMaterialDefinition(definition);
+        }
+    }
+
+    /// Helper function for calling the OnDeleteMaterialDefinition() event.
+    void MaterialLibrary_OnDeleteMaterialDefinition(MaterialDefinition &definition)
+    {
+        for (size_t i = 0; i < EventHandlers.count; ++i)
+        {
+            EventHandlers[i]->OnDeleteMaterialDefinition(definition);
+        }
+    }
 
 
 
@@ -45,15 +62,26 @@ namespace GTEngine
 
     void MaterialLibrary::Shutdown()
     {
-        for (size_t i = 0; i < MaterialDefinitions.count; ++i)
-        {
-            delete MaterialDefinitions.buffer[i]->value;
-        }
-
         while (LoadedMaterials.root != nullptr)
         {
-            delete LoadedMaterials.root->value;
+            auto material = LoadedMaterials.root->value;
+            assert(material != nullptr);
+            {
+                MaterialLibrary_OnDeleteMaterial(*material);
+                delete material;
+            }
+
             LoadedMaterials.RemoveRoot();
+        }
+
+        for (size_t i = 0; i < MaterialDefinitions.count; ++i)
+        {
+            auto definition = MaterialDefinitions.buffer[i]->value;
+            assert(definition != nullptr);
+            {
+                MaterialLibrary_OnDeleteMaterialDefinition(*definition);
+                delete definition;
+            }
         }
     }
 
@@ -88,6 +116,7 @@ namespace GTEngine
             if (definition->LoadFromFile(fileName))
             {
                 MaterialDefinitions.Add(fileName, definition);
+                MaterialLibrary_OnCreateMaterialDefinition(*definition);
             }
             else
             {

@@ -674,13 +674,6 @@ namespace GTEngine
         }
 
 
-        // Now we need to do culling. We do a cull for every viewport.
-        for (size_t i = 0; i < this->viewports.count; ++i)
-        {
-        }
-        
-
-
         // We now want to check proximity components.
         for (size_t i = 0; i < this->sceneNodesWithProximityComponents.count; ++i)
         {

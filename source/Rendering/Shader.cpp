@@ -2,6 +2,7 @@
 
 #include <GTEngine/Rendering/Shader.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/Material.hpp>
 
 namespace GTEngine
 {
@@ -49,7 +50,14 @@ namespace GTEngine
         }
     }
 
-    
+    void Shader::SetParametersFromMaterial(Material &material)
+    {
+        auto &materialParameters = material.GetParameters();
+        for (size_t i = 0; i < materialParameters.count; ++i)
+        {
+            this->pendingParameters.Set(materialParameters.buffer[i]->key, materialParameters.buffer[i]->value);
+        }
+    }
 
     void Shader::ClearPendingParameters()
     {

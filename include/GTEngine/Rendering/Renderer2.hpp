@@ -17,6 +17,8 @@
 #include "StencilOperations.hpp"
 #include "PolygonModes.hpp"
 
+#undef CreateWindow
+
 namespace GTEngine
 {
     /// Static class for performing rendering operations.

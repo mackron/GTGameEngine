@@ -32,6 +32,20 @@ namespace GTEngine
         GLuint* GetOpenGLIndexObjectPtr() const { return this->indexObjectGL; }
 
 
+        /// Determines whether or not the vertex data needs updating.
+        bool DoesVertexDataNeedUpdating() const { return this->vertexDataNeedsUpdating; }
+
+        /// Determines whether or not the index data needs updating.
+        bool DoesIndexDataNeedUpdating() const { return this->indexDataNeedsUpdating; }
+
+
+        /// Marks the vertex data as updated.
+        void MarkVertexDataAsUpdated() const { this->vertexDataNeedsUpdating = false; }
+
+        /// Marks the index data as updated.
+        void MarkIndexDataAsUpdated() const { this->indexDataNeedsUpdating = false; }
+
+
 
     private:
 
@@ -55,6 +69,12 @@ namespace GTEngine
 
         /// A pointer to the OpenGL object container the index VBO object.
         GLuint* indexObjectGL;
+
+        /// Keeps track of whether or not the vertex data needs updating on the renderer.
+        mutable bool vertexDataNeedsUpdating;
+
+        /// Keeps track of whether or not the index data needs updating on the renderer.
+        mutable bool indexDataNeedsUpdating;
     };
 }
 

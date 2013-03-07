@@ -7,7 +7,8 @@ namespace GTEngine
 {
     VertexArray_OpenGL33::VertexArray_OpenGL33(VertexArrayUsage usage, const VertexFormat &format, GLuint* objectGLIn, GLuint* vertexObjectIn, GLuint* indexObjectIn)
         : VertexArray(usage, format),
-          objectGL(objectGLIn), vertexObjectGL(vertexObjectIn), indexObjectGL(indexObjectIn)
+          objectGL(objectGLIn), vertexObjectGL(vertexObjectIn), indexObjectGL(indexObjectIn),
+          vertexDataNeedsUpdating(false), indexDataNeedsUpdating(false)
     {
     }
 
@@ -23,9 +24,11 @@ namespace GTEngine
 
     void VertexArray_OpenGL33::OnVertexDataChanged()
     {
+        this->vertexDataNeedsUpdating = true;
     }
 
     void VertexArray_OpenGL33::OnIndexDataChanged()
     {
+        this->indexDataNeedsUpdating = true;
     }
 }
