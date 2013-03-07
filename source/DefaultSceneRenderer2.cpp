@@ -204,7 +204,7 @@ namespace GTEngine
     // DefaultSceneRenderer
 
     DefaultSceneRenderer2::DefaultSceneRenderer2()
-        : viewportFramebuffers(), depthPassShader(nullptr), materialLibraryEventHandler(*this)
+        : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), materialLibraryEventHandler(*this)
     {
         this->depthPassShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
 

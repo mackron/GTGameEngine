@@ -34,6 +34,11 @@ namespace GTEngine
 
         /// The target.
         GLenum target;
+        
+        
+    private:    // No copying.
+        Texture2D_OpenGL33(const Texture2D_OpenGL33 &);
+        Texture2D_OpenGL33 & operator=(const Texture2D_OpenGL33 &);
     };
 }
 

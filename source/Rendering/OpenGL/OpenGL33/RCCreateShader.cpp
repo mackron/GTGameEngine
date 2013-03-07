@@ -76,7 +76,7 @@ namespace GTEngine
             GLint logLength;
             glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &logLength);
 
-            auto log = static_cast<char*>(malloc(logLength));
+            auto log = static_cast<char*>(malloc(static_cast<size_t>(logLength)));
             glGetShaderInfoLog(shaderObject, logLength, nullptr, log);
 
 
@@ -141,7 +141,7 @@ namespace GTEngine
             GLint logLength;
             glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
 
-            auto log = static_cast<char*>(malloc(logLength));
+            auto log = static_cast<char*>(malloc(static_cast<size_t>(logLength)));
             glGetProgramInfoLog(program, logLength, nullptr, log);
 
             GTEngine::Log("--- Program Link Status ---\n%s", log);

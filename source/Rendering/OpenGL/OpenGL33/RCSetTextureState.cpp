@@ -22,14 +22,15 @@ namespace GTEngine
     RCSetTextureState::RCSetTextureState()
         : operationBitfield(0),
           textureObject(nullptr), target(),
-          mipmapDatas(), filters(), anisotropy(), wrapMode()
+          mipmapDatas(), filters(), anisotropy(), wrapMode(),
+          mipmapLevels()
     {
     }
 
 
     void RCSetTextureState::SetTexture1DData(GLuint* textureObjectIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes)
     {
-        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn) && textureObjectIn != nullptr);
+        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
         {
             TextureData mipmapData;
             mipmapData.internalFormat = ToOpenGLInternalFormat(format);
@@ -72,7 +73,7 @@ namespace GTEngine
 
     void RCSetTextureState::SetTexture2DData(GLuint* textureObjectIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes)
     {
-        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn) && textureObjectIn != nullptr);
+        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
         {
             TextureData mipmapData;
             mipmapData.internalFormat = ToOpenGLInternalFormat(format);
@@ -115,7 +116,7 @@ namespace GTEngine
 
     void RCSetTextureState::SetTexture3DData(GLuint* textureObjectIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes)
     {
-        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn) && textureObjectIn != nullptr);
+        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
         {
             TextureData mipmapData;
             mipmapData.internalFormat = ToOpenGLInternalFormat(format);
@@ -159,7 +160,7 @@ namespace GTEngine
 
     void RCSetTextureState::SetTextureFilter(GLuint* textureObjectIn, GLenum targetIn, GLint minification, GLint magnification)
     {
-        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn) && textureObjectIn != nullptr);
+        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
         {
             this->filters.minification  = minification;
             this->filters.magnification = magnification;
@@ -174,7 +175,7 @@ namespace GTEngine
 
     void RCSetTextureState::SetTextureAnisotropy(GLuint* textureObjectIn, GLenum targetIn, GLint anisotropyIn)
     {
-        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn) && textureObjectIn != nullptr);
+        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
         {
             this->anisotropy = anisotropyIn;
 
@@ -188,7 +189,7 @@ namespace GTEngine
 
     void RCSetTextureState::SetTextureWrapMode(GLuint* textureObjectIn, GLenum targetIn, GLint wrapModeIn)
     {
-        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn) && textureObjectIn != nullptr);
+        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
         {
             this->wrapMode = wrapModeIn;
 
@@ -202,7 +203,7 @@ namespace GTEngine
 
     void RCSetTextureState::SetTextureMipmapLevels(GLuint* textureObjectIn, GLenum targetIn, GLint baseLevel, GLint maxLevel)
     {
-        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn) && textureObjectIn != nullptr);
+        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
         {
             this->mipmapLevels.baseLevel = baseLevel;
             this->mipmapLevels.maxLevel  = maxLevel;
@@ -217,7 +218,7 @@ namespace GTEngine
 
     void RCSetTextureState::GenerateTextureMipmaps(GLuint* textureObjectIn, GLenum targetIn)
     {
-        assert(this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn) && textureObjectIn != nullptr);
+        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
         {
             this->textureObject = textureObjectIn;
             this->target        = targetIn;

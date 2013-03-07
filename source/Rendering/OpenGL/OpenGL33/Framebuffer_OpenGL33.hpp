@@ -29,6 +29,12 @@ namespace GTEngine
 
         /// A pointer to the OpenGL framebuffer object.
         FramebufferState_OpenGL33* stateGL;
+        
+        
+        
+    private:    // No copying.
+        Framebuffer_OpenGL33(const Framebuffer_OpenGL33 &);
+        Framebuffer_OpenGL33 & operator=(const Framebuffer_OpenGL33 &);
     };
 }
 
