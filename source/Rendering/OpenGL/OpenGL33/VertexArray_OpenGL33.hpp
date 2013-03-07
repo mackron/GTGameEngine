@@ -75,6 +75,11 @@ namespace GTEngine
 
         /// Keeps track of whether or not the index data needs updating on the renderer.
         mutable bool indexDataNeedsUpdating;
+        
+        
+    private:    // No copying.
+        VertexArray_OpenGL33(const VertexArray_OpenGL33 &);
+        VertexArray_OpenGL33 & operator=(const VertexArray_OpenGL33 &);
     };
 }
 

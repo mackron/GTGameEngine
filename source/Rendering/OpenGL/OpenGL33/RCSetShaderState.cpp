@@ -277,6 +277,13 @@ namespace GTEngine
                                 glUniformMatrix4fv(glGetUniformLocation(this->programState->programObject, parameterName), 1, GL_FALSE, &static_cast<ShaderParameter_Float4x4*>(parameter)->value[0][0]);
                                 break;
                             }
+                            
+                            
+                        case ShaderParameterType_Texture1D:
+                        case ShaderParameterType_Texture2D:
+                        case ShaderParameterType_Texture3D:
+                        case ShaderParameterType_TextureCube:
+                        default: break;
                         }
                     }
                 }

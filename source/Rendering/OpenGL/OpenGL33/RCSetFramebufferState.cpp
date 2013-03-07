@@ -11,7 +11,8 @@ namespace GTEngine
 
     RCSetFramebufferState::RCSetFramebufferState()
         : operationBitfield(0),
-          framebufferState(nullptr)
+          framebufferState(nullptr),
+          attachments()
     {
     }
 

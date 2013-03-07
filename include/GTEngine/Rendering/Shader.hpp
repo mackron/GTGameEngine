@@ -38,7 +38,7 @@ namespace GTEngine
         Shader(const char* vertexSource, const char* fragmentSource, const char* geometryShader = nullptr);         // <-- TODO: Remove the default argument. Used only for compatibility with the old renderer.
 
         /// Destructor.
-        ~Shader();
+        virtual ~Shader();
 
 
         /// Retrieves the shader source string.

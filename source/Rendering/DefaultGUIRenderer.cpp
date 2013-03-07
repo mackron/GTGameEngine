@@ -9,8 +9,10 @@
 namespace GTEngine
 {
     DefaultGUIRenderer::DefaultGUIRenderer()
-        : shader(ShaderLibrary::GetGUIShader()), vertexArray(Renderer2::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P2T2C4)),
-          viewportWidth(0), viewportHeight(0), projection(0)
+        : shader(ShaderLibrary::GetGUIShader()),
+          viewportWidth(0), viewportHeight(0), projection(0),
+          textures(),
+          vertexArray(Renderer2::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P2T2C4))
     {
         assert(shader      != nullptr);
         assert(vertexArray != nullptr);
@@ -107,7 +109,6 @@ namespace GTEngine
         // We're going to do something a little inefficient here until we can improve it later. We'll use a single vertex array and update the data for every
         // call to this function.
         this->vertexArray->SetData(vertices, vertexCount, indices, indexCount);
-        //Renderer2::PushVertexArrayData(*this->vertexArray);
         Renderer2::Draw(*vertexArray);
     }
 

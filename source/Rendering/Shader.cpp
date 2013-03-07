@@ -39,6 +39,10 @@ namespace GTEngine
                 case ShaderParameterType_Float2:
                 case ShaderParameterType_Float3:
                 case ShaderParameterType_Float4:
+                case ShaderParameterType_Integer:
+                case ShaderParameterType_Integer2:
+                case ShaderParameterType_Integer3:
+                case ShaderParameterType_Integer4:
                 case ShaderParameterType_Float2x2:
                 case ShaderParameterType_Float3x3:
                 case ShaderParameterType_Float4x4:

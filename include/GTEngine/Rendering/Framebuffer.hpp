@@ -47,7 +47,7 @@ namespace GTEngine
         ///     This function can still return true if the hardware doesn't support the current structure of the framebuffer. This can
         ///     only be detected after the framebuffer has been made current on the renderer. Do not rely on the return value in
         ///     determining whether or not the framebuffer is valid.
-        bool AttachColourBuffer(Texture2D* buffer, size_t index);
+        bool AttachColourBuffer(Texture2D* buffer, unsigned int index);
 
         /// Attaches a depth/stencil buffer to the framebuffer.
         ///

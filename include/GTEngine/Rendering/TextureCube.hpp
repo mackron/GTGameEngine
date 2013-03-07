@@ -16,7 +16,7 @@ namespace GTEngine
         TextureCube(Texture2D* positiveX, Texture2D* negativeX, Texture2D* positiveY, Texture2D* negativeY, Texture2D* positiveZ, Texture2D* negativeZ);
 
         /// Destructor.
-        ~TextureCube();
+        virtual ~TextureCube();
 
 
 

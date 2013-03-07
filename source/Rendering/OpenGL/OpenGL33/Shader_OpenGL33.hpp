@@ -29,6 +29,12 @@ namespace GTEngine
 
         /// A pointer to the OpenGL object.
         ShaderState_OpenGL33* stateGL;
+        
+        
+        
+    private:    // No copying.
+        Shader_OpenGL33(const Shader_OpenGL33 &);
+        Shader_OpenGL33 & operator=(const Shader_OpenGL33 &);
     };
 }
 

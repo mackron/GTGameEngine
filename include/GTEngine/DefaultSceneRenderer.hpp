@@ -956,20 +956,20 @@ namespace GTEngine
             Shader* Lighting_NoShadow_A1;
 
             Shader* Lighting_NoShadow_D1;
-            Shader* Lighting_D1;
+            //Shader* Lighting_D1;
             Shader* Lighting_NoShadow_P1;
-            Shader* Lighting_P1;
+            //Shader* Lighting_P1;
             Shader* Lighting_NoShadow_S1;
-            Shader* Lighting_S1;
+            //Shader* Lighting_S1;
 
             Shader* Lighting_NoShadow_D1_Trans;
-            Shader* Lighting_D1_Trans;
+            //Shader* Lighting_D1_Trans;
             Shader* Lighting_NoShadow_P1_Trans;
-            Shader* Lighting_P1_Trans;
+            //Shader* Lighting_P1_Trans;
             Shader* Lighting_NoShadow_S1_Trans;
-            Shader* Lighting_S1_Trans;
+            //Shader* Lighting_S1_Trans;
 
-            Shader* Lighting_ShadowMap;
+            //Shader* Lighting_ShadowMap;
             //Shader* Lighting_PointLightShadowMap;
             Shader* Lighting_ColourClear;
 

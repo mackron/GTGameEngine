@@ -333,20 +333,20 @@ namespace GTEngine
         // Shaders need to be unacquired
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_A1);
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_D1);
-        ShaderLibrary::Unacquire(Shaders.Lighting_D1);
+        //ShaderLibrary::Unacquire(Shaders.Lighting_D1);
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_P1);
-        ShaderLibrary::Unacquire(Shaders.Lighting_P1);
+        //ShaderLibrary::Unacquire(Shaders.Lighting_P1);
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_S1);
-        ShaderLibrary::Unacquire(Shaders.Lighting_S1);
+        //ShaderLibrary::Unacquire(Shaders.Lighting_S1);
 
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_D1_Trans);
-        ShaderLibrary::Unacquire(Shaders.Lighting_D1_Trans);
+        //ShaderLibrary::Unacquire(Shaders.Lighting_D1_Trans);
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_P1_Trans);
-        ShaderLibrary::Unacquire(Shaders.Lighting_P1_Trans);
+        //ShaderLibrary::Unacquire(Shaders.Lighting_P1_Trans);
         ShaderLibrary::Unacquire(Shaders.Lighting_NoShadow_S1_Trans);
-        ShaderLibrary::Unacquire(Shaders.Lighting_S1_Trans);
+        //ShaderLibrary::Unacquire(Shaders.Lighting_S1_Trans);
 
-        ShaderLibrary::Unacquire(Shaders.Lighting_ShadowMap);
+        //ShaderLibrary::Unacquire(Shaders.Lighting_ShadowMap);
         //ShaderLibrary::Unacquire(Shaders.Lighting_PointLightShadowMap);
         ShaderLibrary::Unacquire(Shaders.Lighting_ColourClear);
         ShaderLibrary::Unacquire(Shaders.Compositor_DiffuseOnly);

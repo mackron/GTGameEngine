@@ -81,6 +81,11 @@ namespace GTEngine
 
         /// The shader to use when doing the material pass.
         Shader* materialShader;
+        
+        
+    private:    // No copying.
+        DefaultSceneRendererMaterialShaders(const DefaultSceneRendererMaterialShaders &);
+        DefaultSceneRendererMaterialShaders & operator=(const DefaultSceneRendererMaterialShaders &);
     };
 
 
@@ -181,6 +186,11 @@ namespace GTEngine
 
         /// The projection * view matrix.
         glm::mat4 projectionViewMatrix;
+        
+        
+    private:    // No copying
+        DefaultSceneRendererVisibleObjects(const DefaultSceneRendererVisibleObjects &);
+        DefaultSceneRendererVisibleObjects & operator=(const DefaultSceneRendererVisibleObjects &);
     };
 
 
@@ -330,6 +340,11 @@ namespace GTEngine
             MaterialLibraryEventHandler & operator=(const MaterialLibraryEventHandler &);
 
         }materialLibraryEventHandler;
+        
+        
+    private:    // No copying.
+        DefaultSceneRenderer2(const DefaultSceneRenderer2 &);
+        DefaultSceneRenderer2 & operator=(const DefaultSceneRenderer2 &);
     };
 }
 

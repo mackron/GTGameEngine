@@ -27,6 +27,11 @@ namespace GTEngine
 
         /// A pointer to the OpenGL object.
         GLuint* objectGL;
+        
+        
+    private:    // No copying.
+        TextureCube_OpenGL33(const TextureCube_OpenGL33 &);
+        TextureCube_OpenGL33 & operator=(const TextureCube_OpenGL33 &);
     };
 }
 

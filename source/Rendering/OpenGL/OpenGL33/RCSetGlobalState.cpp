@@ -35,6 +35,12 @@ namespace GTEngine
           viewportParams(), scissorParams(),
           clearColorParams(), clearDepthParams(), clearStencilParams(),
           currentShaderParams(), currentFramebufferParams(),
+          blendFuncParams(), blendEquationParams(),
+          alphaFuncParams(),
+          depthFuncParams(),
+          stencilMaskParams(), stencilFuncParams(), stencilOpParams(),
+          cullFaceParams(),
+          polygonModeParams(), polygonOffsetParams(),
           drawBuffersParams(),
           enableParams(), disableParams()
     {

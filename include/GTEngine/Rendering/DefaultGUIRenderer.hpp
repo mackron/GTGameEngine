@@ -58,6 +58,11 @@ namespace GTEngine
 
         /// The main vertex array.
         VertexArray* vertexArray;
+        
+        
+    private:    // No copying.
+        DefaultGUIRenderer(const DefaultGUIRenderer &);
+        DefaultGUIRenderer & operator=(const DefaultGUIRenderer &);
     };
 }
 
