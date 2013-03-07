@@ -124,7 +124,7 @@ namespace GTEngine
         RCCache<RCDeleteFramebuffer>   RCDeleteFramebufferCache;
 
 
-        void Clear()
+        void Clear(bool clearResources = false)
         {
             this->RCSetGlobalStateCache.Reset();
             this->RCSetVertexArrayStateCache.Reset();
@@ -137,24 +137,27 @@ namespace GTEngine
             this->RCDrawCache.Reset();
             
 
-            ResourceCreationLock.Lock();
+            if (clearResources)
             {
-                this->RCCreateVertexArrayCache.Reset();
-                this->RCCreateTextureCache.Reset();
-                this->RCCreateShaderCache.Reset();
-                this->RCCreateFramebufferCache.Reset();
-            }
-            ResourceCreationLock.Unlock();
+                ResourceCreationLock.Lock();
+                {
+                    this->RCCreateVertexArrayCache.Reset();
+                    this->RCCreateTextureCache.Reset();
+                    this->RCCreateShaderCache.Reset();
+                    this->RCCreateFramebufferCache.Reset();
+                }
+                ResourceCreationLock.Unlock();
 
 
-            ResourceDeletionLock.Lock();
-            {
-                this->RCDeleteVertexArrayCache.Reset();
-                this->RCDeleteTextureCache.Reset();
-                this->RCDeleteShaderCache.Reset();
-                this->RCDeleteFramebufferCache.Reset();
+                ResourceDeletionLock.Lock();
+                {
+                    this->RCDeleteVertexArrayCache.Reset();
+                    this->RCDeleteTextureCache.Reset();
+                    this->RCDeleteShaderCache.Reset();
+                    this->RCDeleteFramebufferCache.Reset();
+                }
+                ResourceDeletionLock.Unlock();
             }
-            ResourceDeletionLock.Unlock();
         }
 
     }RCCaches[2];
@@ -320,6 +323,16 @@ namespace GTEngine
         //    call caches here. The reason is because they are cleared in ExecuteCallCache(). 
         CallCaches[BackCallCacheIndex].Clear();
 
+        ResourceCreationLock.Lock();
+        ResourceCreationCallCaches[BackCallCacheIndex].Clear();
+        ResourceCreationLock.Unlock();
+
+        ResourceDeletionLock.Lock();
+        ResourceDeletionCallCaches[BackCallCacheIndex].Clear();
+        ResourceDeletionLock.Unlock();
+
+
+
         // 3) Clear the sub-caches.
         RCCaches[BackCallCacheIndex].Clear();
 
@@ -343,7 +356,7 @@ namespace GTEngine
         // 1) Create resources. We want to lock and clear this all at the same time.
         ResourceCreationLock.Lock();
         ResourceCreationCallCaches[!BackCallCacheIndex].Execute();
-        ResourceCreationCallCaches[!BackCallCacheIndex].Clear();
+        //ResourceCreationCallCaches[!BackCallCacheIndex].Clear();
         ResourceCreationLock.Unlock();
 
         // 2) Normal calls.
@@ -352,7 +365,7 @@ namespace GTEngine
         // 3) Delete resources. We want to lock, execute and clear this all at the same time.
         ResourceDeletionLock.Lock();
         ResourceDeletionCallCaches[!BackCallCacheIndex].Execute();
-        ResourceDeletionCallCaches[!BackCallCacheIndex].Clear();
+        //ResourceDeletionCallCaches[!BackCallCacheIndex].Clear();
         ResourceDeletionLock.Unlock();
     }
 
