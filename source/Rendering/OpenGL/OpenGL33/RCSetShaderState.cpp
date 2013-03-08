@@ -149,11 +149,11 @@ namespace GTEngine
                 auto iExistingTextureParameter = programStateIn->textures.Find(name);
                 if (iExistingTextureParameter != nullptr)
                 {
-                    if (iExistingTextureParameter->value.textureObject != textureObject)
-                    {
-                        iExistingTextureParameter->value.textureObject = textureObject;
-                        this->textureParametersToSet.Add(name, iExistingTextureParameter->value);
-                    }
+                    // It would be nice to only set the texture if it's different to what's currently bound, but the problem is that because the actual binding
+                    // is determined by another thread we can't do a reliable check here. Thus, we're just going to set it regardless. Might be something worth
+                    // looking into.
+                    iExistingTextureParameter->value.textureObject = textureObject;
+                    this->textureParametersToSet.Add(name, iExistingTextureParameter->value);
                 }
                 else
                 {
