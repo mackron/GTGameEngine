@@ -298,6 +298,9 @@ namespace GTEngine
                         {
                             setBinding = true;
                             iExistingParameter->value.textureObject = parameter.textureObject;
+
+                            parameter.textureUnit     = iExistingParameter->value.textureUnit;
+                            parameter.uniformLocation = iExistingParameter->value.uniformLocation;
                         }
                     }
                     else
