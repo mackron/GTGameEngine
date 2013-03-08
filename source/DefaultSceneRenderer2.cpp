@@ -259,8 +259,8 @@ namespace GTEngine
         auto framebuffer = this->GetViewportFramebuffer(viewport);
         assert(framebuffer != nullptr);
         {
-            //Renderer2::SetCurrentFramebuffer(framebuffer->framebuffer);
-            //Renderer2::SetViewport(0, 0, framebuffer->width, framebuffer->height);
+            Renderer2::SetCurrentFramebuffer(framebuffer->framebuffer);
+            Renderer2::SetViewport(0, 0, framebuffer->width, framebuffer->height);
 
             //int drawBuffers[] = {0};
             //Renderer2::SetDrawBuffers(1, drawBuffers);
@@ -278,7 +278,7 @@ namespace GTEngine
 
 
         // 2) The opaque pass.
-        //this->RenderOpaquePass(scene, framebuffer, visibleObjects);
+        this->RenderOpaquePass(scene, framebuffer, visibleObjects);
 
         // 3) The alpha transparent pass (for things like sprites and particle effects).
         //this->RenderAlphaTransparentPass(scene, framebuffer);
@@ -408,7 +408,6 @@ namespace GTEngine
     {
         (void)scene;
 
-        /*
         // Lighting buffers need to be cleared to black. This will be the first clear, so we'll also clear the depth/stencil buffer here.
         int lightingBuffers[] = {1, 2};
         Renderer2::SetDrawBuffers(2, lightingBuffers);
@@ -417,8 +416,7 @@ namespace GTEngine
         Renderer2::SetClearDepth(1.0f);
         Renderer2::SetClearStencil(0);
         Renderer2::Clear(BufferType_Colour | BufferType_Depth | BufferType_Stencil);
-        */
-        /*
+
         // First Pass: Depth Pre-Pass.
         //
         // This is needed so that blending works correctly. An optimization could be that when there is a full-scene light, skip this
@@ -456,9 +454,8 @@ namespace GTEngine
 
         Renderer2::EnableColourWrites();
         Renderer2::DisableDepthWrites();        // <-- Depth writing is not needed now that the depth pre-pass is done.
-        */
+
         
-        /*
         // Second Pass: Lighting.
         //
         // We use additive blending here.
@@ -518,7 +515,6 @@ namespace GTEngine
         {
             ++iDirectionalLight;
         }
-        
 
 
         // Third Pass: Materials.
@@ -572,7 +568,6 @@ namespace GTEngine
                 }
             }
         }
-        */
     }
 
     void DefaultSceneRenderer2::RenderAlphaTransparentPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)

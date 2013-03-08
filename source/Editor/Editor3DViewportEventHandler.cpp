@@ -41,7 +41,6 @@ namespace GTEngine
         {
             Renderer2::SetCurrentShader(shader);
 
-            /*
             shader->SetParameter("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
             shader->SetParameter("Texture",    colourBuffer);
             {
@@ -84,7 +83,6 @@ namespace GTEngine
             this->vertexArray->SetData(quadVertices, 4, quadIndices, 6);
 
             Renderer2::Draw(*this->vertexArray);
-            */
         }
     }
 
