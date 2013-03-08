@@ -93,10 +93,10 @@ namespace GTEngine
             if ((this->operationBitfield & VERTEX_DATA_BIT))
             {
                 // Unfortunately GL_ARRAY_BUFFER is not stored in the VAO state so we need to bind it here. As usual, the global state needs to remain in tact.
-                GLint previousCurrentVertexArray;
-                glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &previousCurrentVertexArray);
+                GLint previousCurrentVertexBuffer;
+                glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &previousCurrentVertexBuffer);
 
-                if (static_cast<GLuint>(previousCurrentVertexArray) != *this->vertexBufferObject)
+                if (static_cast<GLuint>(previousCurrentVertexBuffer) != *this->vertexBufferObject)
                 {
                     glBindBuffer(GL_ARRAY_BUFFER, *this->vertexBufferObject);
                 }
@@ -106,9 +106,9 @@ namespace GTEngine
                 free(this->vertexData.vertices);
 
 
-                if (static_cast<GLuint>(previousCurrentVertexArray) != *this->vertexBufferObject)
+                if (static_cast<GLuint>(previousCurrentVertexBuffer) != *this->vertexBufferObject)
                 {
-                    glBindBuffer(GL_ARRAY_BUFFER, static_cast<GLuint>(previousCurrentVertexArray));
+                    glBindBuffer(GL_ARRAY_BUFFER, static_cast<GLuint>(previousCurrentVertexBuffer));
                 }
             }
 

@@ -378,6 +378,9 @@ namespace GTEngine
             else
             {
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+                GLenum backBuffer = GL_BACK;
+                glDrawBuffers(1, &backBuffer);
             }
         }
 
