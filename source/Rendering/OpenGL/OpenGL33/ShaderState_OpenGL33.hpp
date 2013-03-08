@@ -31,6 +31,9 @@ namespace GTEngine
 
             /// The texture unit to bind the texture on.
             GLint textureUnit;
+
+            /// The uniform location.
+            GLint uniformLocation;
         };
 
         /// The list of texture parameters currently set on the shader. Keyed by the name of the texture.
