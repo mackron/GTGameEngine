@@ -145,26 +145,10 @@ namespace GTEngine
         {
             assert(this->programState == nullptr || this->programState == programStateIn);
             {
-                // We need to check for an existing state for this parameter.
-                auto iExistingTextureParameter = programStateIn->textures.Find(name);
-                if (iExistingTextureParameter != nullptr)
-                {
-                    // It would be nice to only set the texture if it's different to what's currently bound, but the problem is that because the actual binding
-                    // is determined by another thread we can't do a reliable check here. Thus, we're just going to set it regardless. Might be something worth
-                    // looking into.
-                    iExistingTextureParameter->value.textureObject = textureObject;
-                    this->textureParametersToSet.Add(name, iExistingTextureParameter->value);
-                }
-                else
-                {
-                    ShaderState_OpenGL33::TextureParameter parameter;
-                    parameter.textureObject = textureObject;
-                    parameter.textureTarget = textureTarget;
-                    parameter.textureUnit   = static_cast<GLint>(programStateIn->textures.count);
-                    this->textureParametersToSet.Add(name, parameter);
-
-                    programStateIn->textures.Add(name, parameter);
-                }
+                ShaderState_OpenGL33::TextureParameter parameter;
+                parameter.textureObject = textureObject;
+                parameter.textureTarget = textureTarget;
+                this->textureParametersToSet.Add(name, parameter);
 
                 this->programState = programStateIn;
                 this->operationBitfield |= SET_TEXTURE_PARAMETER_BIT;
@@ -296,15 +280,47 @@ namespace GTEngine
                     auto  parameterName = this->textureParametersToSet.buffer[i]->key;
                     auto &parameter     = this->textureParametersToSet.buffer[i]->value;
 
+                    bool setUniform = true;
+                    bool setBinding = true;
+
+                    // We need to check if the shader state has the texture already set.
+                    auto iExistingParameter = this->programState->textures.Find(parameterName);
+                    if (iExistingParameter != nullptr)
+                    {
+                        // The parameter already exists. The uniform does not need to be set, but the texture binding might.
+                        setUniform = false;
+
+                        if (iExistingParameter->value.textureObject == parameter.textureObject)
+                        {
+                            setBinding = false;
+                        }
+                        else
+                        {
+                            setBinding = true;
+                            iExistingParameter->value.textureObject = parameter.textureObject;
+                        }
+                    }
+                    else
+                    {
+                        // The parameter has not been set before. We need to set the uniform and bind.
+                        parameter.textureUnit     = static_cast<GLint>(this->programState->textures.count);
+                        parameter.uniformLocation = glGetUniformLocation(this->programState->programObject, parameterName);
+                        this->programState->textures.Add(parameterName, parameter);
+                    }
+
+
 
                     // If this program state is the current one, we'll need to bind the texture straight away.
-                    if (static_cast<GLuint>(previousCurrentProgram) == this->programState->programObject)
+                    if (static_cast<GLuint>(previousCurrentProgram) == this->programState->programObject && setBinding)
                     {
                         glActiveTexture(GL_TEXTURE0 + parameter.textureUnit);
                         glBindTexture(parameter.textureTarget, *parameter.textureObject);
                     }
 
-                    glUniform1i(glGetUniformLocation(this->programState->programObject, parameterName), parameter.textureUnit);
+                    if (setUniform)
+                    {
+                        glUniform1i(parameter.uniformLocation, parameter.textureUnit);
+                    }
                 }
             }
 

@@ -60,13 +60,18 @@ namespace GTEngine
                 // do the detachments first.
 
                 // 1) Detach.
-                for (size_t i = 0; i < this->framebufferState->attachments.count; ++i)
+                for (size_t i = 0; i < this->framebufferState->attachments.count; )
                 {
                     auto &attachmentToRemove = this->framebufferState->attachments.buffer[i]->value;
 
                     if (!this->attachments.Exists(attachmentToRemove.attachmentPoint))
                     {
                         glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, attachmentToRemove.attachmentPoint, attachmentToRemove.textureTarget, 0, 0);
+                        this->framebufferState->attachments.RemoveByIndex(i);
+                    }
+                    else
+                    {
+                        ++i;
                     }
                 }
 
@@ -77,6 +82,7 @@ namespace GTEngine
                     auto &attachmentToAdd = this->attachments.buffer[i]->value;
 
                     glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, attachmentToAdd.attachmentPoint, attachmentToAdd.textureTarget, *attachmentToAdd.textureObject, 0);
+                    this->framebufferState->attachments.Add(attachmentToAdd.attachmentPoint, attachmentToAdd);
                 }
             }
 
