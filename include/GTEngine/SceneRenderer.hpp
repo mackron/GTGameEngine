@@ -7,6 +7,38 @@
 
 namespace GTEngine
 {
+    /// Structure representing a mesh that can be attached to a scene renderer outside of those defined by the scene.
+    ///
+    /// @remarks
+    ///     This structure is intended to be used to allow meshes to be displayed outside of those defined by the scene. This is useful
+    ///     for editting and debugging tools.
+    ///
+    ///     This object is made up of a single vertex array, materia and transformation matrix. Any of these properties can be updated
+    ///     at any time. A renderer will reference the object directly when rendering and will handle the state of the material, etc
+    ///     every frame. It is up to the user to make sure the material is valid, but the pointer to the vertex array should not be
+    ///     changed, but should instead have it's data modified when needed.
+    ///
+    ///     Renderers are not expected to render these objects as efficiently as possible - they are not intended to be used in speed
+    ///     critical situations, but instead for things like editting and debugging tools. For maximum speed, use proper scene nodes.
+    struct SceneRendererMesh
+    {
+        SceneRendererMesh()
+            : vertexArray(nullptr), material(nullptr), transform()
+        {
+        }
+
+
+        /// The vertex array containing the mesh data.
+        VertexArray* vertexArray;
+
+        /// The material to draw the vertex array with.
+        Material* material;
+
+        /// The transformation matrix to apply to the mesh.s
+        glm::mat4 transform;
+    };
+
+
     /// Class responsible for the rendering a scene.
     class SceneRenderer
     {
@@ -58,6 +90,35 @@ namespace GTEngine
         /// @remarks
         ///     This function is needed so that the renderer can resize the internal framebuffers and whatnot.
         virtual void OnViewportResized(SceneViewport &viewport) = 0;
+
+
+        /// Adds the given mesh to the scene.
+        ///
+        /// @param meshToAdd [in] A pointer to the mesh to add.
+        ///
+        /// @remarks
+        ///     This method is intended to be used to allow meshes to be drawn outside of those defined by the scene. Use this for debugging and editting tools.
+        ///     @par
+        ///     It is the responsibility of the caller to manage the given object. The object can be modified directly. Renderers will handle the object on a
+        ///     per-frame basis. It is not expected that renderers draw these external meshes at full speed. Instead, these meshes should be used for editting
+        ///     and debugging tools.
+        virtual void AddExternalMesh(SceneRendererMesh &meshToAdd)
+        {
+            (void)meshToAdd;
+        }
+
+        /// Removes the given external mesh that was previously added with AddExternalMesh().
+        ///
+        /// @param meshToRemove [in] A reference to the mesh to remove.
+        virtual void RemoveExternalMesh(SceneRendererMesh &meshToRemove)
+        {
+            (void)meshToRemove;
+        }
+
+
+        
+
+
 
 
         /// Enables background colour clearing.

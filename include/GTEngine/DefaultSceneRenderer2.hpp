@@ -102,15 +102,6 @@ namespace GTEngine
     };
 
 
-    /// Structure representing a mesh object.
-    struct DefaultSceneRendererMeshObject
-    {
-        /// The mesh.
-        Mesh* mesh;
-
-        /// The transformation to apply to the mesh when rendering.
-        glm::mat4 transform;
-    };
 
     /// Structure representing an ambient light object.
     struct DefaultSceneRendererAmbientLightObject
@@ -209,6 +200,10 @@ namespace GTEngine
 
 
 
+        /// Adds the given mesh.
+        void AddMesh(Mesh &mesh, const glm::mat4 &transform);
+        void AddMesh(SceneRendererMesh &mesh);
+
         /// Performs an optimization step that arranges everything in a way where the renderer can be a bit more efficient.
         void PostProcess();
 
@@ -218,13 +213,13 @@ namespace GTEngine
         // Member Variables.
 
         /// The list of opaque mesh objects, sorted by material definition.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMeshObject>*> opaqueObjects;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> opaqueObjects;
 
         /// The list of alpha-transparent objects, sorted by material definition. This needs to be separate from refractive transparent objects.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMeshObject>*> alphaTransparentObjects;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> alphaTransparentObjects;
 
         /// The list of refractive-transparent objects, sorted by material definition.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMeshObject>*> refractiveTransparentObjects;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> refractiveTransparentObjects;
 
 
         /// The list of ambient lights.
@@ -240,8 +235,8 @@ namespace GTEngine
         GTCore::Vector<DefaultSceneRendererSpotLightObject> spotLights;
 
 
-        /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess().
-        GTCore::Vector<Mesh*> meshesToAnimate;
+        /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess(). The value is the transformation.
+        GTCore::Map<Mesh*, glm::mat4> meshesToAnimate;
 
 
         /// The projection matrix.
@@ -295,6 +290,12 @@ namespace GTEngine
 
         /// SceneRenderer::OnViewportResized()
         void OnViewportResized(SceneViewport &viewport);
+
+        /// SceneRenderer::AddExternalMesh()
+        void AddExternalMesh(SceneRendererMesh &meshToAdd);
+
+        /// SceneRenderer::RemoveExternalMesh()
+        void RemoveExternalMesh(SceneRendererMesh &meshToRemove);
 
 
 
@@ -409,8 +410,11 @@ namespace GTEngine
         /// The shader to use with the depth pre-pass.
         Shader* depthPassShader;
 
+        /// The list of external meshes.
+        GTCore::Vector<SceneRendererMesh*> externalMeshes;
 
 
+        
         /// Material Library Event Handler.
         class MaterialLibraryEventHandler : public MaterialLibrary::EventHandler
         {

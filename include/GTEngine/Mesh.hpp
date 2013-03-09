@@ -28,33 +28,23 @@ namespace GTEngine
               skinningVertexAttributes(skinningVertexAttributesIn),
               skinnedGeometry()
         {
-            skinnedGeometry[0] = nullptr;      // <-- AllocateAnimatedGeometryArrays() deletes these before setting the new data. Thus, initting to null is required.
-            skinnedGeometry[1] = nullptr;      // <-- as above
+            skinnedGeometry = nullptr;      // <-- AllocateAnimatedGeometryArrays() deletes this before setting the new data. Thus, initializing to null is required.
             this->AllocateAnimatedGeometryArrays(source);
         }
 
         /// Destructor.
         ~MeshSkinningData()
         {
-            Renderer2::DeleteVertexArray(this->skinnedGeometry[0]);
-            Renderer2::DeleteVertexArray(this->skinnedGeometry[1]);
-
-            // Important to use the garbage collector here.
-            //GarbageCollector::MarkForCollection(this->skinnedGeometry[0]);
-            //GarbageCollector::MarkForCollection(this->skinnedGeometry[1]);
+            Renderer2::DeleteVertexArray(this->skinnedGeometry);
         }
 
         /// Allocates the vertex arrays for the animated geometry.
         void AllocateAnimatedGeometryArrays(const VertexArray &source)
         {
-            Renderer2::DeleteVertexArray(this->skinnedGeometry[0]);
-            Renderer2::DeleteVertexArray(this->skinnedGeometry[1]);
+            Renderer2::DeleteVertexArray(this->skinnedGeometry);
 
-            this->skinnedGeometry[0] = Renderer2::CreateVertexArray(VertexArrayUsage_Stream, source.GetFormat());
-            this->skinnedGeometry[1] = Renderer2::CreateVertexArray(VertexArrayUsage_Stream, source.GetFormat());
-
-            this->skinnedGeometry[0]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
-            this->skinnedGeometry[1]->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
+            this->skinnedGeometry = Renderer2::CreateVertexArray(VertexArrayUsage_Stream, source.GetFormat());
+            this->skinnedGeometry->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
         }
 
 
@@ -64,12 +54,8 @@ namespace GTEngine
         /// A pointer to the buffer containing the skinning vertex attributes for the CPU skinning shader.
         const SkinningVertexAttribute* skinningVertexAttributes;
 
-        /// As a mesh is animated, it needs to store it's own local copy of the animated data (each mesh can be in a different animated
-        /// state). Since one of these buffers will be used on the rendering thread, we'll need a separate one for the update thread.
-        /// Thus, we store two copies of the buffers.
-        ///
-        /// TODO: Look into changing this with a cache or something. Storing copies of the buffers for each mesh may be too expensive.
-        VertexArray* skinnedGeometry[2];
+        /// As a mesh is animated, it needs to store it's own local copy of the animated data because each mesh can be in a different animated state.
+        VertexArray* skinnedGeometry;
 
 
     private:    // No copying.

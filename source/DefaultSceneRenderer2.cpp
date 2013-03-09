@@ -64,69 +64,25 @@ namespace GTEngine
                     auto model = modelComponent->GetModel();
                     if (model != nullptr)                           // <-- Is allowed to be null. Perhaps due to a bad path?
                     {
-                        glm::mat4 transform = sceneNode.GetWorldTransform();
-
                         for (size_t i = 0; i < model->meshes.count; ++i)
                         {
                             auto mesh = model->meshes[i];
                             assert(mesh != nullptr);
                             {
-                                // The mesh will not be drawn at all if it has not material. This material is allowed to be null.
-                                auto material = mesh->GetMaterial();
-                                if (material != nullptr)
+                                glm::mat4 transform = sceneNode.GetWorldTransform();
+
+                                // If the mesh needs to be animated we don't want to add the mesh straight away. Instead we want to wait until
+                                // after it's been animated. If it's not animated, we just add it straight away.
+                                if (model->IsAnimating() && mesh->IsAnimated())
                                 {
-                                    GTCore::Vector<DefaultSceneRendererMeshObject>* objectList = nullptr;
-
-                                    auto &materialDefinition = material->GetDefinition();
-                                    if (material->IsRefractive())
+                                    if (!this->meshesToAnimate.Exists(mesh))
                                     {
-                                        auto iObjectList = this->refractiveTransparentObjects.Find(&materialDefinition);
-                                        if (iObjectList != nullptr)
-                                        {
-                                            objectList = iObjectList->value;
-                                        }
-                                        else
-                                        {
-                                            objectList = new GTCore::Vector<DefaultSceneRendererMeshObject>;
-                                            this->refractiveTransparentObjects.Add(&materialDefinition, objectList);
-                                        }
+                                        this->meshesToAnimate.Add(mesh, transform);
                                     }
-                                    //else if (material->IsAlphaTransparent())
-                                    //{
-                                    //}
-                                    else    // Opaque
-                                    {
-                                        auto iObjectList = this->opaqueObjects.Find(&materialDefinition);
-                                        if (iObjectList != nullptr)
-                                        {
-                                            objectList = iObjectList->value;
-                                        }
-                                        else
-                                        {
-                                            objectList = new GTCore::Vector<DefaultSceneRendererMeshObject>(100);
-                                            this->opaqueObjects.Add(&materialDefinition, objectList);
-                                        }
-                                    }
-
-                                    assert(objectList != nullptr);
-                                    {
-                                        DefaultSceneRendererMeshObject object;
-                                        object.mesh      = mesh;
-                                        object.transform = transform;
-
-                                        objectList->PushBack(object);
-                                    }
-
-
-
-                                    // If the mesh needs to be animated, mark it as such.
-                                    if (model->IsAnimating() && mesh->IsAnimated())
-                                    {
-                                        if (!this->meshesToAnimate.Exists(mesh))
-                                        {
-                                            this->meshesToAnimate.PushBack(mesh);
-                                        }
-                                    }
+                                }
+                                else
+                                {
+                                    this->AddMesh(*mesh, transform);
                                 }
                             }
                         }
@@ -221,15 +177,73 @@ namespace GTEngine
     }
 
 
+
+    void DefaultSceneRendererVisibleObjects::AddMesh(Mesh &mesh, const glm::mat4 &transform)
+    {
+        SceneRendererMesh object;
+        object.vertexArray = mesh.GetSkinnedGeometry();
+        object.material    = mesh.GetMaterial();
+        object.transform   = transform;
+        this->AddMesh(object);
+    }
+
+    void DefaultSceneRendererVisibleObjects::AddMesh(SceneRendererMesh &mesh)
+    {
+        if (mesh.material != nullptr)
+        {
+            GTCore::Vector<SceneRendererMesh>* objectList = nullptr;
+
+            auto &materialDefinition = mesh.material->GetDefinition();
+            if (mesh.material->IsRefractive())
+            {
+                auto iObjectList = this->refractiveTransparentObjects.Find(&materialDefinition);
+                if (iObjectList != nullptr)
+                {
+                    objectList = iObjectList->value;
+                }
+                else
+                {
+                    objectList = new GTCore::Vector<SceneRendererMesh>;
+                    this->refractiveTransparentObjects.Add(&materialDefinition, objectList);
+                }
+            }
+            //else if (material->IsAlphaTransparent())
+            //{
+            //}
+            else    // Opaque
+            {
+                auto iObjectList = this->opaqueObjects.Find(&materialDefinition);
+                if (iObjectList != nullptr)
+                {
+                    objectList = iObjectList->value;
+                }
+                else
+                {
+                    objectList = new GTCore::Vector<SceneRendererMesh>(100);
+                    this->opaqueObjects.Add(&materialDefinition, objectList);
+                }
+            }
+
+            assert(objectList != nullptr);
+            {
+                objectList->PushBack(mesh);
+            }
+        }
+    }
+
     void DefaultSceneRendererVisibleObjects::PostProcess()
     {
         // Apply skinning.
         for (size_t i = 0; i < this->meshesToAnimate.count; ++i)
         {
-            auto mesh = this->meshesToAnimate[i];
+            auto mesh       = this->meshesToAnimate.buffer[i]->key;
+            auto &transform = this->meshesToAnimate.buffer[i]->value;
             assert(mesh != nullptr);
             {
                 mesh->ApplySkinning();
+
+                // Here is where we need to add the mesh.
+                this->AddMesh(*mesh, transform);
             }
         }
     }
@@ -241,7 +255,8 @@ namespace GTEngine
     // DefaultSceneRenderer
 
     DefaultSceneRenderer2::DefaultSceneRenderer2()
-        : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), materialLibraryEventHandler(*this)
+        : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
+          materialLibraryEventHandler(*this)
     {
         this->depthPassShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
 
@@ -287,8 +302,17 @@ namespace GTEngine
         // 0) Retrieve visible objects.
         DefaultSceneRendererVisibleObjects visibleObjects(viewport);
         scene.QueryVisibleObjects(viewport.GetMVPMatrix(), visibleObjects);
-
         visibleObjects.PostProcess();
+
+        // All external meshes are considered visible. Not going to do any frustum culling here.
+        for (size_t i = 0; i < this->externalMeshes.count; ++i)
+        {
+            auto externalMesh = this->externalMeshes[i];
+            assert(externalMesh != nullptr);
+            {
+                visibleObjects.AddMesh(*externalMesh);
+            }
+        }
 
 
 
@@ -359,6 +383,20 @@ namespace GTEngine
         {
             framebuffer->Resize(viewport.GetWidth(), viewport.GetHeight());
         }
+    }
+
+
+    void DefaultSceneRenderer2::AddExternalMesh(SceneRendererMesh &meshToAdd)
+    {
+        if (!this->externalMeshes.Exists(&meshToAdd))
+        {
+            this->externalMeshes.PushBack(&meshToAdd);
+        }
+    }
+
+    void DefaultSceneRenderer2::RemoveExternalMesh(SceneRendererMesh &meshToRemove)
+    {
+        this->externalMeshes.RemoveFirstOccuranceOf(&meshToRemove);
     }
 
 
@@ -495,7 +533,7 @@ namespace GTEngine
 
 
                             // Draw.
-                            Renderer2::Draw(*object.mesh->GetGeometry());
+                            Renderer2::Draw(*object.vertexArray);
                         }
                     }
                 }
@@ -593,7 +631,7 @@ namespace GTEngine
                 {
                     auto &object = objectList->Get(iObject);
                     {
-                        auto material = object.mesh->GetMaterial();
+                        auto material = object.material;
                         assert(material != nullptr);
                         {
                             // Shader Setup.
@@ -619,7 +657,7 @@ namespace GTEngine
                             }
 
                             // Draw.
-                            Renderer2::Draw(*object.mesh->GetGeometry());
+                            Renderer2::Draw(*object.vertexArray);
                         }
                     }
                 }
@@ -640,7 +678,7 @@ namespace GTEngine
                 {
                     auto &object = objectList->Get(iObject);
                     {
-                        auto material = object.mesh->GetMaterial();
+                        auto material = object.material;
                         assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
                         {
                             // Setup Shader.
@@ -666,7 +704,7 @@ namespace GTEngine
 
 
                             // Draw.
-                            Renderer2::Draw(*object.mesh->GetGeometry());
+                            Renderer2::Draw(*object.vertexArray);
                         }
                     }
                 }
@@ -687,7 +725,7 @@ namespace GTEngine
                 {
                     auto &object = objectList->Get(iObject);
                     {
-                        auto material = object.mesh->GetMaterial();
+                        auto material = object.material;
                         assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
                         {
                             // Setup Shader.
@@ -714,7 +752,7 @@ namespace GTEngine
 
 
                             // Draw.
-                            Renderer2::Draw(*object.mesh->GetGeometry());
+                            Renderer2::Draw(*object.vertexArray);
                         }
                     }
                 }
@@ -735,7 +773,7 @@ namespace GTEngine
                 {
                     auto &object = objectList->Get(iObject);
                     {
-                        auto material = object.mesh->GetMaterial();
+                        auto material = object.material;
                         assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
                         {
                             // Setup Shader.
@@ -765,7 +803,7 @@ namespace GTEngine
 
 
                             // Draw.
-                            Renderer2::Draw(*object.mesh->GetGeometry());
+                            Renderer2::Draw(*object.vertexArray);
                         }
                     }
                 }
@@ -786,7 +824,7 @@ namespace GTEngine
                 {
                     auto &object = objectList->Get(iObject);
                     {
-                        auto material = object.mesh->GetMaterial();
+                        auto material = object.material;
                         assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
                         {
                             // Setup Shader.
@@ -819,7 +857,7 @@ namespace GTEngine
 
 
                             // Draw.
-                            Renderer2::Draw(*object.mesh->GetGeometry());
+                            Renderer2::Draw(*object.vertexArray);
                         }
                     }
                 }
