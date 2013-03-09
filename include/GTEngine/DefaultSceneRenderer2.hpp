@@ -66,6 +66,8 @@ namespace GTEngine
         DefaultSceneRendererMaterialShaders()
             : ambientLightShader(nullptr),
               directionalLightShader(nullptr),
+              pointLightShader(nullptr),
+              spotLightShader(nullptr),
               materialShader(nullptr)
         {
         }
@@ -83,6 +85,12 @@ namespace GTEngine
 
         /// The shader to use when doing a directional light pass.
         Shader* directionalLightShader;
+
+        /// The shader to use when doing a point light pass.
+        Shader* pointLightShader;
+
+        /// The shader to use when doing a spot light pass.
+        Shader* spotLightShader;
 
         /// The shader to use when doing the material pass.
         Shader* materialShader;
@@ -119,6 +127,53 @@ namespace GTEngine
 
         /// The directional of the light.
         glm::vec3 direction;
+    };
+
+    /// Structure representing a point light object.
+    struct DefaultSceneRendererPointLightObject
+    {
+        /// The colour of the light.
+        glm::vec3 colour;
+
+        /// The position of the light.
+        glm::vec3 position;
+
+        /// The constant attenuation.
+        float constantAttenuation;
+
+        /// The linear attenuation.
+        float linearAttenuation;
+
+        /// The quadratic attenuation.
+        float quadraticAttenuation;
+    };
+
+    /// Structure representing a spot light object.
+    struct DefaultSceneRendererSpotLightObject
+    {
+        /// The colour of the light.
+        glm::vec3 colour;
+
+        /// The position of the light.
+        glm::vec3 position;
+
+        /// The direction of the light.
+        glm::vec3 direction;
+
+        /// The constant attenuation.
+        float constantAttenuation;
+
+        /// The linear attenuation.
+        float linearAttenuation;
+
+        /// The quadratic attenuation.
+        float quadraticAttenuation;
+
+        /// The inner radius of the light.
+        float innerAngle;
+
+        /// The outer radius of the light.
+        float outerAngle;
     };
 
 
@@ -177,6 +232,12 @@ namespace GTEngine
 
         /// The list of directional lights.
         GTCore::Vector<DefaultSceneRendererDirectionalLightObject> directionalLights;
+
+        /// The list of point lights.
+        GTCore::Vector<DefaultSceneRendererPointLightObject> pointLights;
+
+        /// The list of spot lights.
+        GTCore::Vector<DefaultSceneRendererSpotLightObject> spotLights;
 
 
         /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess().
@@ -275,8 +336,20 @@ namespace GTEngine
         /// Renders the opaque lighting pass.
         void RenderOpaqueLightingPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
+        /// Renders the opaque material pass.
+        void RenderOpaqueMaterialPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+
         /// Performs an ambient lighting pass in the opaque pass.
-        void RenderOpaqueAmbientLightingPass(const DefaultSceneRendererAmbientLightObject &light, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+        void RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
+        
+        /// Performs a directional lighting pass in the opaque pass.
+        void RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
+
+        /// Performs a point lighting pass in the opaque pass.
+        void RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
+
+        /// Performs a spot lighting pass in the opaque pass.
+        void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
 
         /// Renders the alpha transparency pass.
@@ -307,6 +380,16 @@ namespace GTEngine
         ///
         /// @param material [in] A reference to the material whose shader is being retrieved.
         Shader* GetMaterialDirectionalLightShader(Material &materail);
+
+        /// Retrieves the shader to use for the point light pass.
+        ///
+        /// @param material [in] A reference to the material whose shader is being retrieved.
+        Shader* GetMaterialPointLightShader(Material &materail);
+
+        /// Retrieves the shader to use for the directional light pass.
+        ///
+        /// @param material [in] A reference to the material whose shader is being retrieved.
+        Shader* GetMaterialSpotLightShader(Material &materail);
 
         /// Retrieves the material shader of the given material.
         ///
