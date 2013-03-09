@@ -78,7 +78,7 @@ namespace GTEngine
     {
         if (this->skinningData != nullptr && this->hasAnimated)
         {
-            return this->skinningData->skinnedGeometry[Renderer::BackIndex];
+            return this->skinningData->skinnedGeometry;
         }
         else
         {
