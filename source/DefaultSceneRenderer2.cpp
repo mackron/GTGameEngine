@@ -406,115 +406,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer2::RenderOpaquePass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
-        (void)scene;
-
-        // Lighting buffers need to be cleared to black. This will be the first clear, so we'll also clear the depth/stencil buffer here.
-        int lightingBuffers[] = {1, 2};
-        Renderer2::SetDrawBuffers(2, lightingBuffers);
-
-        Renderer2::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
-        Renderer2::SetClearDepth(1.0f);
-        Renderer2::SetClearStencil(0);
-        Renderer2::Clear(BufferType_Colour | BufferType_Depth | BufferType_Stencil);
-
-        // First Pass: Depth Pre-Pass.
-        //
-        // This is needed so that blending works correctly. An optimization could be that when there is a full-scene light, skip this
-        // pass and instead just disable blending for the first full-scene light. Will experiment with this later.
-        Renderer2::DisableColourWrites();
-        Renderer2::DisableBlending();
-        Renderer2::EnableDepthWrites();
-        Renderer2::EnableDepthTest();
-        Renderer2::SetDepthFunction(RendererFunction_LEqual);
-        Renderer2::SetCurrentShader(this->depthPassShader);
-        
-        for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
-        {
-            auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
-            assert(objectList != nullptr);
-            {
-                for (size_t iObject = 0; iObject < objectList->count; ++iObject)
-                {
-                    auto &object = objectList->Get(iObject);
-                    {
-                        // Shader Properties.
-                        this->depthPassShader->SetParameter("PVMMatrix", object.transform);
-                        {
-                            Renderer2::PushShaderPendingProperties(*this->depthPassShader);
-                        }
-                        this->depthPassShader->ClearPendingParameters();
-
-
-                        // Draw.
-                        Renderer2::Draw(*object.mesh->GetGeometry());
-                    }
-                }
-            }
-        }
-
-        Renderer2::EnableColourWrites();
-        Renderer2::DisableDepthWrites();        // <-- Depth writing is not needed now that the depth pre-pass is done.
-
-        
-        // Second Pass: Lighting.
-        //
-        // We use additive blending here.
-        Renderer2::EnableBlending();
-        Renderer2::SetBlendEquation(BlendEquation_Add);
-        Renderer2::SetBlendFunction(BlendFunc_One, BlendFunc_One);
-
-        size_t iAmbientLight     = 0;
-        size_t iDirectionalLight = 0;
-
-        while (iAmbientLight < visibleObjects.ambientLights.count)
-        {
-            auto &light = visibleObjects.ambientLights[iAmbientLight];
-
-            for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
-            {
-                auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
-                assert(objectList != nullptr);
-                {
-                    for (size_t iObject = 0; iObject < objectList->count; ++iObject)
-                    {
-                        auto &object = objectList->Get(iObject);
-                        {
-                            auto material = object.mesh->GetMaterial();
-                            assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
-                            {
-                                // Setup Shader.
-                                auto shader = this->GetMaterialAmbientLightShader(*material);
-                                assert(shader != nullptr);
-                                {
-                                    Renderer2::SetCurrentShader(shader);
-
-                                    shader->SetParametersFromMaterial(*material);
-                                    shader->SetParameter("NormalMatrix", glm::inverse(glm::transpose(glm::mat3(visibleObjects.viewMatrix * object.transform))));
-                                    shader->SetParameter("PVMMatrix",    visibleObjects.projectionViewMatrix * object.transform);
-                                    shader->SetParameter("Colour",       light.colour);
-                                    {
-                                        Renderer2::PushShaderPendingProperties(*shader);
-                                    }
-                                    shader->ClearPendingParameters();
-                                }
-
-
-                                // Draw.
-                                Renderer2::Draw(*object.mesh->GetGeometry());
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            ++iAmbientLight;
-        }
-
-        while (iDirectionalLight < visibleObjects.directionalLights.count)
-        {
-            ++iDirectionalLight;
-        }
+        this->RenderOpaqueLightingPass(scene, framebuffer, visibleObjects);
 
 
         // Third Pass: Materials.
@@ -526,6 +418,13 @@ namespace GTEngine
 
         int outputBuffer[] = {0};
         Renderer2::SetDrawBuffers(1, outputBuffer);
+
+        if (this->IsBackgroundColourClearingEnabled())
+        {
+            auto &colour = this->GetBackgroundClearColour();
+            Renderer2::SetClearColour(colour.x, colour.y, colour.z, 1.0f);
+            Renderer2::Clear(BufferType_Colour);
+        }
 
         for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
         {
@@ -569,6 +468,202 @@ namespace GTEngine
             }
         }
     }
+
+    void DefaultSceneRenderer2::RenderOpaqueLightingPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    {
+        (void)scene;
+
+
+        // The lighting buffers must be cleared to black. Also need to clear the depth/stencil buffer.
+        int lightingBuffers[] = {1, 2};
+        Renderer2::SetDrawBuffers(2, lightingBuffers);
+
+        Renderer2::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
+        Renderer2::SetClearDepth(1.0f);
+        Renderer2::SetClearStencil(0);
+        Renderer2::Clear(BufferType_Colour | BufferType_Depth | BufferType_Stencil);
+
+        Renderer2::DisableBlending();
+        Renderer2::EnableDepthWrites();
+        Renderer2::EnableDepthTest();
+        Renderer2::SetDepthFunction(RendererFunction_LEqual);
+
+
+        size_t ambientLightsRemaining     = visibleObjects.ambientLights.count;
+        size_t directionalLightsRemaining = visibleObjects.directionalLights.count;
+
+        if (ambientLightsRemaining + directionalLightsRemaining == 0)
+        {
+            // We need to do a depth pre-pass.
+            Renderer2::DisableColourWrites();
+        
+            for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
+            {
+                auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
+                assert(objectList != nullptr);
+                {
+                    for (size_t iObject = 0; iObject < objectList->count; ++iObject)
+                    {
+                        auto &object = objectList->Get(iObject);
+                        {
+                            // Shader Properties.
+                            this->depthPassShader->SetParameter("PVMMatrix", object.transform);
+                            {
+                                Renderer2::PushShaderPendingProperties(*this->depthPassShader);
+                            }
+                            this->depthPassShader->ClearPendingParameters();
+
+
+                            // Draw.
+                            Renderer2::Draw(*object.mesh->GetGeometry());
+                        }
+                    }
+                }
+            }
+
+            Renderer2::EnableColourWrites();
+        }
+        else
+        {
+            Renderer2::EnableColourWrites();
+            
+
+            // There is no need for a depth pre-pass, so we'll just render the first light directly.
+            if (ambientLightsRemaining > 0)
+            {
+                this->RenderOpaqueAmbientLightingPass(visibleObjects.ambientLights[ambientLightsRemaining - 1], framebuffer, visibleObjects);
+                ambientLightsRemaining -= 1;
+            }
+            else
+            {
+                assert(directionalLightsRemaining > 0);
+                {
+                    directionalLightsRemaining -= 1;
+                }
+            }
+        }
+
+
+        // Depth is laid down. No need to write.
+        Renderer2::DisableDepthWrites();
+
+        
+        // Second Pass: Lighting.
+        //
+        // We use additive blending here.
+        Renderer2::EnableBlending();
+        Renderer2::SetBlendEquation(BlendEquation_Add);
+        Renderer2::SetBlendFunction(BlendFunc_One, BlendFunc_One);
+
+        // Ambient Lights.
+        while (ambientLightsRemaining > 0)
+        {
+            auto &light = visibleObjects.ambientLights[ambientLightsRemaining - 1];
+            this->RenderOpaqueAmbientLightingPass(light, framebuffer, visibleObjects);
+
+            ambientLightsRemaining -= 1;
+        }
+
+
+        // Directional Lights.
+        while (directionalLightsRemaining > 0)
+        {
+            auto &light = visibleObjects.directionalLights[directionalLightsRemaining - 1];
+
+            for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
+            {
+                auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
+                assert(objectList != nullptr);
+                {
+                    for (size_t iObject = 0; iObject < objectList->count; ++iObject)
+                    {
+                        auto &object = objectList->Get(iObject);
+                        {
+                            auto material = object.mesh->GetMaterial();
+                            assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
+                            {
+                                // Setup Shader.
+                                auto shader = this->GetMaterialDirectionalLightShader(*material);
+                                assert(shader != nullptr);
+                                {
+                                    glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * object.transform;
+                                    glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                                    Renderer2::SetCurrentShader(shader);
+
+                                    shader->SetParametersFromMaterial(*material);
+                                    shader->SetParameter("PVMMatrix",       visibleObjects.projectionViewMatrix * object.transform);
+                                    shader->SetParameter("ViewModelMatrix", viewModelMatrix);
+                                    shader->SetParameter("NormalMatrix",    normalMatrix);
+                                    shader->SetParameter("Colour",          light.colour);
+                                    shader->SetParameter("Direction",       glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light.direction));
+                                    {
+                                        Renderer2::PushShaderPendingProperties(*shader);
+                                    }
+                                    shader->ClearPendingParameters();
+                                }
+
+
+                                // Draw.
+                                Renderer2::Draw(*object.mesh->GetGeometry());
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            directionalLightsRemaining -= 1;
+        }
+    }
+
+    void DefaultSceneRenderer2::RenderOpaqueAmbientLightingPass(const DefaultSceneRendererAmbientLightObject &light, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    {
+        for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
+        {
+            auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
+            assert(objectList != nullptr);
+            {
+                for (size_t iObject = 0; iObject < objectList->count; ++iObject)
+                {
+                    auto &object = objectList->Get(iObject);
+                    {
+                        auto material = object.mesh->GetMaterial();
+                        assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
+                        {
+                            // Setup Shader.
+                            auto shader = this->GetMaterialAmbientLightShader(*material);
+                            assert(shader != nullptr);
+                            {
+                                glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * object.transform;
+                                glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                                Renderer2::SetCurrentShader(shader);
+
+                                shader->SetParametersFromMaterial(*material);
+                                shader->SetParameter("PVMMatrix",       visibleObjects.projectionViewMatrix * object.transform);
+                                shader->SetParameter("ViewModelMatrix", viewModelMatrix);
+                                shader->SetParameter("NormalMatrix",    normalMatrix);
+                                shader->SetParameter("Colour",          light.colour);
+                                {
+                                    Renderer2::PushShaderPendingProperties(*shader);
+                                }
+                                shader->ClearPendingParameters();
+                            }
+
+
+                            // Draw.
+                            Renderer2::Draw(*object.mesh->GetGeometry());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
 
     void DefaultSceneRenderer2::RenderAlphaTransparentPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
@@ -628,6 +723,29 @@ namespace GTEngine
             }
 
             return shaders->ambientLightShader;
+        }
+    }
+
+    Shader* DefaultSceneRenderer2::GetMaterialDirectionalLightShader(Material &material)
+    {
+        auto shaders = this->GetMaterialShaders(material);
+        assert(shaders != nullptr);
+        {
+            if (shaders->directionalLightShader == nullptr)
+            {
+                /// The shader has not yet been created, so it needs to be.
+                GTCore::Strings::List<char> vertexSource;
+                vertexSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_LightingVS"));
+
+                GTCore::Strings::List<char> fragmentSource;
+                fragmentSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_LightingFS"));
+                fragmentSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DirectionalLight"));
+                fragmentSource.Append(ShaderLibrary::GetShaderString(material.GetNormalShaderID()));
+
+                shaders->directionalLightShader = Renderer2::CreateShader(vertexSource.c_str(), fragmentSource.c_str(), nullptr);
+            }
+
+            return shaders->directionalLightShader;
         }
     }
 

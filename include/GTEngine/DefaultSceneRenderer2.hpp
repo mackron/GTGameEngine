@@ -65,6 +65,7 @@ namespace GTEngine
     {
         DefaultSceneRendererMaterialShaders()
             : ambientLightShader(nullptr),
+              directionalLightShader(nullptr),
               materialShader(nullptr)
         {
         }
@@ -72,12 +73,16 @@ namespace GTEngine
         ~DefaultSceneRendererMaterialShaders()
         {
             Renderer2::DeleteShader(this->ambientLightShader);
+            Renderer2::DeleteShader(this->directionalLightShader);
             Renderer2::DeleteShader(this->materialShader);
         }
 
 
         /// The shader to use when doing an ambient light pass.
         Shader* ambientLightShader;
+
+        /// The shader to use when doing a directional light pass.
+        Shader* directionalLightShader;
 
         /// The shader to use when doing the material pass.
         Shader* materialShader;
@@ -267,6 +272,13 @@ namespace GTEngine
         /// Renders the opaque pass.
         void RenderOpaquePass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
+        /// Renders the opaque lighting pass.
+        void RenderOpaqueLightingPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+
+        /// Performs an ambient lighting pass in the opaque pass.
+        void RenderOpaqueAmbientLightingPass(const DefaultSceneRendererAmbientLightObject &light, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+
+
         /// Renders the alpha transparency pass.
         void RenderAlphaTransparentPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
@@ -290,6 +302,11 @@ namespace GTEngine
         ///
         /// @param material [in] A reference to the material whose shader is being retrieved.
         Shader* GetMaterialAmbientLightShader(Material &material);
+
+        /// Retrieves the shader to use for the directional light pass.
+        ///
+        /// @param material [in] A reference to the material whose shader is being retrieved.
+        Shader* GetMaterialDirectionalLightShader(Material &materail);
 
         /// Retrieves the material shader of the given material.
         ///
