@@ -408,7 +408,7 @@ namespace GTEngine
 namespace GTEngine
 {
     Material::Material(const MaterialDefinition &definition)
-        : definition(definition), parameters(), metadata()
+        : definition(definition), parameters()
     {
         for (size_t i = 0; i < definition.defaultParams.GetCount(); ++i)
         {
@@ -420,29 +420,6 @@ namespace GTEngine
     {
         this->parameters.Clear();
     }
-
-
-    void Material::SetMetadata(size_t key, void* data)
-    {
-        this->metadata.Add(key, data);
-    }
-
-    void* Material::GetMetadata(size_t key)
-    {
-        auto iData = this->metadata.Find(key);
-        if (iData != nullptr)
-        {
-            return iData->value;
-        }
-
-        return nullptr;
-    }
-
-    void Material::RemoveMetadata(size_t key)
-    {
-        this->metadata.RemoveByKey(key);
-    }
-
 
 
     void Material::Serialize(GTCore::Serializer &serializer) const
