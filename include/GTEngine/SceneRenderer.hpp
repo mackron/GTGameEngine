@@ -102,18 +102,12 @@ namespace GTEngine
         ///     It is the responsibility of the caller to manage the given object. The object can be modified directly. Renderers will handle the object on a
         ///     per-frame basis. It is not expected that renderers draw these external meshes at full speed. Instead, these meshes should be used for editting
         ///     and debugging tools.
-        virtual void AddExternalMesh(SceneRendererMesh &meshToAdd)
-        {
-            (void)meshToAdd;
-        }
+        virtual void AddExternalMesh(const SceneRendererMesh &meshToAdd);
 
         /// Removes the given external mesh that was previously added with AddExternalMesh().
         ///
         /// @param meshToRemove [in] A reference to the mesh to remove.
-        virtual void RemoveExternalMesh(SceneRendererMesh &meshToRemove)
-        {
-            (void)meshToRemove;
-        }
+        virtual void RemoveExternalMesh(const SceneRendererMesh &meshToRemove);
 
 
         

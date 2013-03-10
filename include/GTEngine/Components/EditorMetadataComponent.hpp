@@ -7,6 +7,8 @@
 #include "../Math.hpp"
 #include "../Physics.hpp"
 #include "../CollisionGroups.hpp"
+#include "../SceneRenderer.hpp"
+#include "../SceneNodeEventHandler.hpp"
 
 namespace GTEngine
 {
@@ -140,11 +142,14 @@ namespace GTEngine
         ///     True if the sprite is being shown.
         bool IsUsingSprite() const;
 
+        /// Retrieves a reference to the sprite mesh.
+        const SceneRendererMesh & GetSpriteMesh() const { return this->spriteMesh; }
+
         /// Retrieves a pointer to model of the sprite.
         ///
         /// @return
         ///     A pointer to the model that should be used to draw the sprite, or null if the component is not using a sprite.
-        const Model* GetSpriteModel() const;
+        //const Model* GetSpriteModel() const;
 
         /// Retrieves a pointer to the picking collision object of the sprite.
         ///
@@ -156,11 +161,15 @@ namespace GTEngine
         const char* GetSpriteTexturePath() const;
 
 
-        /// TEMP: Sets the transformation of the sprite.
-        void SetSpriteTransform(const glm::mat4 &spriteTransformIn) { this->spriteTransform = spriteTransformIn; }
+        /// Updates the sprites transform based on the given camera.
+        void UpdateSpriteTransform(const SceneNode &cameraNode);
 
-        /// TEMP: Retrieves the transformation of the sprite.
-        const glm::mat4 & GetSpriteTransform() const { return this->spriteTransform; }
+
+        /// Sets the transformation of the sprite.
+        //void SetSpriteTransform(const glm::mat4 &spriteTransformIn) { this->spriteTransform = spriteTransformIn; }
+
+        /// Retrieves the transformation of the sprite.
+        //const glm::mat4 & GetSpriteTransform() const { return this->spriteTransform; }
 
 
 
@@ -206,6 +215,16 @@ namespace GTEngine
         /// Unlinkes the component from the prefab.
         void UnlinkFromPrefab();
 
+
+
+        ////////////////////////////////////////////////////////
+        // Events.
+
+        /// Called when the scene node has been transformed (not scaled).
+        void OnSceneNodeTransform();
+
+        /// Called when the scene node has been scaled.
+        void OnSceneNodeScale();
 
 
 
@@ -269,7 +288,7 @@ namespace GTEngine
 
 
         /// The model to use for the sprite. This is always memory managed by the component itself.
-        Model* spriteModel;
+        //Model* spriteModel;
 
         /// The collision object to use for the sprite. We use a pointer here because most objects won't actually be using sprites, thus we can save a bit of memory with them.
         CollisionObject* spritePickingCollisionObject;
@@ -280,8 +299,16 @@ namespace GTEngine
         /// The path of the texture to use for the sprite.
         GTCore::String spriteTexturePath;
 
+        /// A pointer to the texture being used with the sprite.
+        Texture2D* spriteTexture;
+
+        /// The sprite scene renderer mesh object.
+        SceneRendererMesh spriteMesh;
+
+
         /// TEMP: The sprite transformation.
-        glm::mat4 spriteTransform;
+        //glm::mat4 spriteTransform;
+
 
 
         /// The model to use for the direction arrow.
@@ -299,6 +326,20 @@ namespace GTEngine
         uint64_t prefabID;
 
 
+
+        /// The event handler to attach to the scene node. Needed to intercept transformations so the transform of external meshes can be updated.
+        class SceneNodeEventHandler : public GTEngine::SceneNodeEventHandler
+        {
+        public:
+
+            /// Called when the scene node is translated or rotated.
+            void OnTransform(SceneNode &node);
+
+            /// Called when the scene node is scaled.
+            void OnScale(SceneNode &node);
+
+
+        }sceneNodeEventHandler;
 
 
         GTENGINE_DECL_COMPONENT_ATTRIBS(EditorMetadataComponent)

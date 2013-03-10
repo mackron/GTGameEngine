@@ -1084,6 +1084,15 @@ namespace GTEngine
                     }
                 }
 
+                if (metadata->IsUsingSprite())
+                {
+                    auto scene = node.GetScene();
+                    assert(scene != nullptr);
+                    {
+                        scene->GetRenderer().AddExternalMesh(metadata->GetSpriteMesh());
+                    }
+                }
+
 
                 // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
                 this->PostOnSceneNodeAddedToScript(node);
@@ -1274,8 +1283,21 @@ namespace GTEngine
 
     void SceneEditor::OnSceneNodeComponentAdded(SceneNode &node, Component &component)
     {
-        (void)node;
-        (void)component;
+        if (GTCore::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
+        {
+            auto &metadata = static_cast<EditorMetadataComponent &>(component);
+
+            auto scene = node.GetScene();
+            assert(scene != nullptr);
+            {
+                auto &renderer = scene->GetRenderer();
+
+                if (metadata.IsUsingSprite())
+                {
+                    renderer.AddExternalMesh(metadata.GetSpriteMesh());
+                }
+            }
+        }
     }
 
     void SceneEditor::OnSceneNodeComponentRemoved(SceneNode &node, Component &component)
@@ -1283,13 +1305,22 @@ namespace GTEngine
         auto metadata = node.GetComponent<EditorMetadataComponent>();
         assert(metadata != nullptr);
         {
-            if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+            if (GTCore::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
+            {
+                auto scene = node.GetScene();
+                assert(scene != nullptr);
+                {
+                    scene->GetRenderer().RemoveExternalMesh(metadata->GetSpriteMesh());
+                }
+            }
+            else if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
             {
                 if (metadata->UseModelForPickingShape())
                 {
                     metadata->ClearPickingCollisionShape();
                 }
             }
+
         }
     }
 
@@ -1331,6 +1362,23 @@ namespace GTEngine
                 if (metadata.IsUsingSprite() && metadata.GetSpritePickingCollisionObject() != nullptr)
                 {
                     this->pickingWorld.AddCollisionObject(*metadata.GetSpritePickingCollisionObject(), metadata.GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                }
+            }
+
+
+            // Sprite.
+            auto scene = node.GetScene();
+            assert(scene != nullptr);
+            {
+                auto &renderer = scene->GetRenderer();
+
+                if (metadata.IsUsingSprite())
+                {
+                    renderer.AddExternalMesh(metadata.GetSpriteMesh());
+                }
+                else
+                {
+                    renderer.RemoveExternalMesh(metadata.GetSpriteMesh());
                 }
             }
         }

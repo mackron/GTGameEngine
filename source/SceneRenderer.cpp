@@ -14,6 +14,17 @@ namespace GTEngine
     }
 
 
+
+    void SceneRenderer::AddExternalMesh(const SceneRendererMesh &)
+    {
+    }
+
+    void SceneRenderer::RemoveExternalMesh(const SceneRendererMesh &)
+    {
+    }
+
+
+
     void SceneRenderer::EnableBackgroundColourClearing(float r, float g, float b)
     {
         this->isColourClearingEnabled = true;

@@ -16,11 +16,15 @@ namespace GTEngine
           alwaysShowOnTop(false), useModelForPickingShape(true), isSystemNode(false),
           isSelected(false), selectionWireframeColour(1.0f, 0.75f, 0.5f),
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
-          spriteModel(nullptr), spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTransform(),
+          spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTexture(nullptr), spriteMesh(),
           directionArrowModel(nullptr), directionArrowVA(nullptr),
-          prefabRelativePath(), prefabID(0)
+          prefabRelativePath(), prefabID(0),
+          sceneNodeEventHandler()
     {
         pickingCollisionObject.setUserPointer(this);
+
+        // Need an event handler for transformations.
+        node.AttachEventHandler(this->sceneNodeEventHandler);
     }
 
     EditorMetadataComponent::~EditorMetadataComponent()
@@ -279,43 +283,74 @@ namespace GTEngine
 
     void EditorMetadataComponent::ShowSprite(const char* texturePath, const glm::vec3 &colour)
     {
-        if (this->spriteModel == nullptr)       // <-- No need to re-create the model if we already have one.
+        // Vertex Array.
+        if (this->spriteMesh.vertexArray == nullptr)
         {
-            this->spriteModel = ModelLibrary::CreatePlaneXY(0.5f, 0.5f);
-            assert(this->spriteModel != nullptr);
-            assert(this->spriteModel->meshes.count == 1);
+            this->spriteMesh.vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2);
+
+            // X/Y plane facing +Z.
+            float vertices[] =
             {
-                this->spriteModel->meshes[0]->SetMaterial("engine/materials/editor-sprite.material");
+                -0.25f, -0.25f, 0.0f,
+                 0.0f,   0.0f,
 
-                assert(this->spritePickingCollisionShape  == nullptr);
-                assert(this->spritePickingCollisionObject == nullptr);
-                {
-                    this->spritePickingCollisionShape = new btBoxShape(btVector3(0.25f, 0.25f, 0.0f));
+                 0.25f, -0.25f, 0.0f,
+                 1.0f,   0.0f,
 
-                    this->spritePickingCollisionObject = new CollisionObject;
-                    this->spritePickingCollisionObject->setUserPointer(this);
-                    this->spritePickingCollisionObject->setCollisionShape(this->spritePickingCollisionShape);
+                 0.25f,  0.25f, 0.0f,
+                 1.0f,   1.0f,
+
+                -0.25f,  0.25f, 0.0f,
+                 0.0f,   1.0f,
+            };
+
+            unsigned int indices[] = 
+            {
+                0, 1, 2,
+                2, 3, 0
+            };
+
+            this->spriteMesh.vertexArray->SetData(vertices, 4, indices, 6);
 
 
-                    this->ApplyTransformToSprite();
-                    this->ApplyScaleToSprite();
-                }
+            // Picking Shapes.
+            assert(this->spritePickingCollisionShape  == nullptr);
+            assert(this->spritePickingCollisionObject == nullptr);
+            {
+                this->spritePickingCollisionShape = new btBoxShape(btVector3(0.25f, 0.25f, 0.0f));
+
+                this->spritePickingCollisionObject = new CollisionObject;
+                this->spritePickingCollisionObject->setUserPointer(this);
+                this->spritePickingCollisionObject->setCollisionShape(this->spritePickingCollisionShape);
             }
         }
 
 
-        assert(this->spriteModel != nullptr);
-        assert(this->spriteModel->meshes.count == 1);
-        assert(this->spriteModel->meshes[0]->GetMaterial() != nullptr);
+        // Material.
+        if (this->spriteMesh.material == nullptr)
         {
-            this->spriteModel->meshes[0]->GetMaterial()->SetParameter("SpriteTexture", Texture2DLibrary::Acquire(texturePath));
-            this->spriteModel->meshes[0]->GetMaterial()->SetParameter("SpriteColour",  colour);
+            this->spriteMesh.material = MaterialLibrary::Create("engine/materials/editor-sprite.material");
         }
+
+        auto newSpriteTexture = Texture2DLibrary::Acquire(texturePath);
+        if (newSpriteTexture != this->spriteTexture)
+        {
+            Texture2DLibrary::Unacquire(this->spriteTexture);
+            this->spriteTexture = newSpriteTexture;
+
+            this->spriteMesh.material->SetParameter("SpriteTexture", this->spriteTexture);
+        }
+
+        this->spriteMesh.material->SetParameter("SpriteColour",  colour);
+
+
+        // Transform.
+        this->ApplyTransformToSprite();
+        this->ApplyScaleToSprite();
+
 
 
         this->spriteTexturePath = texturePath;
-
-
         this->OnChanged();
     }
 
@@ -328,15 +363,15 @@ namespace GTEngine
     {
         delete this->spritePickingCollisionObject;      // <-- the destructor will remove it from the scene.
         delete this->spritePickingCollisionShape;
-        ModelLibrary::Delete(this->spriteModel);
+        Renderer2::DeleteVertexArray(this->spriteMesh.vertexArray);
+
 
         this->spritePickingCollisionObject = nullptr;
         this->spritePickingCollisionShape  = nullptr;
-        this->spriteModel                  = nullptr;
+        this->spriteMesh.vertexArray       = nullptr;
+
 
         this->spriteTexturePath = "";
-
-
         this->OnChanged();
     }
 
@@ -345,7 +380,7 @@ namespace GTEngine
         if (this->spritePickingCollisionShape != nullptr && this->spritePickingCollisionObject != nullptr)
         {
             btTransform transform;
-            transform.setFromOpenGLMatrix(&this->spriteTransform[0][0]);
+            transform.setFromOpenGLMatrix(&this->spriteMesh.transform[0][0]);
             this->spritePickingCollisionObject->setWorldTransform(transform);
 
 
@@ -373,20 +408,16 @@ namespace GTEngine
 
             if (world != nullptr)
             {
-                world->AddCollisionObject(*this->spritePickingCollisionObject);
+                world->AddCollisionObject(*this->spritePickingCollisionObject, this->pickingCollisionGroup, CollisionGroups::EditorSelectionRay);
             }
         }
     }
 
     bool EditorMetadataComponent::IsUsingSprite() const
     {
-        return this->spriteModel != nullptr;
+        return this->spriteMesh.vertexArray != nullptr;
     }
 
-    const Model* EditorMetadataComponent::GetSpriteModel() const
-    {
-        return this->spriteModel;
-    }
 
     CollisionObject* EditorMetadataComponent::GetSpritePickingCollisionObject()
     {
@@ -396,6 +427,17 @@ namespace GTEngine
     const char* EditorMetadataComponent::GetSpriteTexturePath() const
     {
         return this->spriteTexturePath.c_str();
+    }
+
+    void EditorMetadataComponent::UpdateSpriteTransform(const SceneNode &cameraNode)
+    {
+        // The sprite mesh will be facing +Z. We just set the orientation to that of the camera and the position and scale to that of the sprite.
+        this->spriteMesh.transform    = glm::mat4_cast(cameraNode.GetWorldOrientation());
+        this->spriteMesh.transform[3] = glm::vec4(this->node.GetWorldPosition(), 1.0f);
+        this->spriteMesh.transform   *= glm::scale(this->node.GetWorldScale());
+
+        this->ApplyTransformToSprite();
+        this->ApplyScaleToSprite();
     }
 
 
@@ -495,6 +537,21 @@ namespace GTEngine
     {
         this->prefabRelativePath = "";
         this->prefabID           = 0;
+    }
+
+
+
+    ////////////////////////////////////////////////////////
+    // Events
+
+    void EditorMetadataComponent::OnSceneNodeTransform()
+    {
+        // The transform of the external meshes needs to be updated.
+    }
+
+    void EditorMetadataComponent::OnSceneNodeScale()
+    {
+        // We just do a full OnSceneNodeTransform() here. That will handle scaling for us.
     }
 
 
@@ -625,9 +682,9 @@ namespace GTEngine
             }
             else if (this->pickingCollisionShapeType == PickingCollisionShapeType_Torus)
             {
-                // We will be re-using a single cylinder shape here, so we only want to delete the first one.
                 auto compoundShape = static_cast<btCompoundShape*>(this->pickingCollisionShape);
 
+                // We will be re-using a single cylinder shape here, so we only want to delete the first one.
                 if (compoundShape->getNumChildShapes() > 0)
                 {
                     delete compoundShape->getChildShape(0);
@@ -641,6 +698,29 @@ namespace GTEngine
 
 
             this->pickingCollisionObject.setCollisionShape(nullptr);
+        }
+    }
+
+
+
+    ///////////////////////////////////////////////
+    // SceneNodeEventHandler
+
+    void EditorMetadataComponent::SceneNodeEventHandler::OnTransform(SceneNode &node)
+    {
+        auto editorMetadata = node.GetComponent<EditorMetadataComponent>();
+        assert(editorMetadata != nullptr);
+        {
+            editorMetadata->OnSceneNodeTransform();
+        }
+    }
+
+    void EditorMetadataComponent::SceneNodeEventHandler::OnScale(SceneNode &node)
+    {
+        auto editorMetadata = node.GetComponent<EditorMetadataComponent>();
+        assert(editorMetadata != nullptr);
+        {
+            editorMetadata->OnSceneNodeScale();
         }
     }
 }
