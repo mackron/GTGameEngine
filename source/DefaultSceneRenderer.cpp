@@ -43,11 +43,13 @@ namespace GTEngine
 
                 if (node.HasComponent<EditorMetadataComponent>())
                 {
-                    if (/*node.GetComponent<EditorMetadataComponent>()->GetSpriteModel()         != nullptr ||*/
+                    /*
+                    if (node.GetComponent<EditorMetadataComponent>()->GetSpriteModel()         != nullptr ||
                         node.GetComponent<EditorMetadataComponent>()->GetDirectionArrowModel() != nullptr)
                     {
                         this->layerState.editorModels.Insert(&node);
                     }
+                    */
                 }
             }
         }
@@ -65,11 +67,13 @@ namespace GTEngine
 
                 if (node.HasComponent<EditorMetadataComponent>())
                 {
-                    if (/*node.GetComponent<EditorMetadataComponent>()->GetSpriteModel()         != nullptr ||*/
+                    /*
+                    if (node.GetComponent<EditorMetadataComponent>()->GetSpriteModel()         != nullptr ||
                         node.GetComponent<EditorMetadataComponent>()->GetDirectionArrowModel() != nullptr)
                     {
                         this->layerState.editorModels.Insert(&node);
                     }
+                    */
                 }
             }
         }
@@ -93,11 +97,13 @@ namespace GTEngine
 
                 if (node.HasComponent<EditorMetadataComponent>())
                 {
-                    if (/*node.GetComponent<EditorMetadataComponent>()->GetSpriteModel()         != nullptr ||*/
+                    /*
+                    if (node.GetComponent<EditorMetadataComponent>()->GetSpriteModel()         != nullptr ||
                         node.GetComponent<EditorMetadataComponent>()->GetDirectionArrowModel() != nullptr)
                     {
                         this->layerState.editorModels.Insert(&node);
                     }
+                    */
                 }
             }
         }
@@ -121,11 +127,13 @@ namespace GTEngine
 
                 if (node.HasComponent<EditorMetadataComponent>())
                 {
-                    if (/*node.GetComponent<EditorMetadataComponent>()->GetSpriteModel()         != nullptr ||*/
+                    /*
+                    if (node.GetComponent<EditorMetadataComponent>()->GetSpriteModel()         != nullptr ||
                         node.GetComponent<EditorMetadataComponent>()->GetDirectionArrowModel() != nullptr)
                     {
                         this->layerState.editorModels.Insert(&node);
                     }
+                    */
                 }
             }
         }
@@ -149,11 +157,13 @@ namespace GTEngine
 
                 if (node.HasComponent<EditorMetadataComponent>())
                 {
-                    if (/*node.GetComponent<EditorMetadataComponent>()->GetSpriteModel()         != nullptr ||*/
+                    /*
+                    if (node.GetComponent<EditorMetadataComponent>()->GetSpriteModel()         != nullptr ||
                         node.GetComponent<EditorMetadataComponent>()->GetDirectionArrowModel() != nullptr)
                     {
                         this->layerState.editorModels.Insert(&node);
                     }
+                    */
                 }
             }
         }
@@ -890,6 +900,7 @@ namespace GTEngine
                         }
                         */
 
+                        /*
                         auto model = metadata->GetDirectionArrowModel();
                         if (model != nullptr)
                         {
@@ -945,6 +956,7 @@ namespace GTEngine
                                 }
                             }
                         }
+                        */
                     }
                 }
 

@@ -182,7 +182,7 @@ namespace GTEngine
     {
         SceneRendererMesh object;
         object.vertexArray = mesh.GetSkinnedGeometry();
-        object.drawMode    = DrawMode_Triangles;                // <-- Should probably make this a propery of Mesh at some point to allow wireframe meshes (lines).
+        object.drawMode    = mesh.GetDrawMode();
         object.material    = mesh.GetMaterial();
         object.transform   = transform;
         this->AddMesh(object);

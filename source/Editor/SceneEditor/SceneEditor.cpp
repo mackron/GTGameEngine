@@ -1093,6 +1093,15 @@ namespace GTEngine
                     }
                 }
 
+                if (metadata->IsShowingDirectionArrow())
+                {
+                    auto scene = node.GetScene();
+                    assert(scene != nullptr);
+                    {
+                        scene->GetRenderer().AddExternalMesh(metadata->GetDirectionArrowMesh());
+                    }
+                }
+
 
                 // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
                 this->PostOnSceneNodeAddedToScript(node);
@@ -1251,6 +1260,24 @@ namespace GTEngine
                     this->pickingWorld.RemoveCollisionObject(*metadata->GetSpritePickingCollisionObject());
                 }
             }
+
+
+            // External Meshes.
+            auto scene = node.GetScene();
+            assert(scene != nullptr);
+            {
+                // Sprite.
+                if (metadata->IsUsingSprite())
+                {
+                    scene->GetRenderer().RemoveExternalMesh(metadata->GetSpriteMesh());
+                }
+
+                // Direction Arrow.
+                if (metadata->IsShowingDirectionArrow())
+                {
+                    scene->GetRenderer().RemoveExternalMesh(metadata->GetDirectionArrowMesh());
+                }
+            }
         }
     }
 
@@ -1276,6 +1303,24 @@ namespace GTEngine
                 {
                     metadata->GetSpritePickingCollisionObject()->setWorldTransform(transform);
                     this->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                }
+            }
+
+
+            // External Meshes.
+            auto scene = node.GetScene();
+            assert(scene != nullptr);
+            {
+                // Sprite.
+                if (metadata->IsUsingSprite())
+                {
+                    scene->GetRenderer().AddExternalMesh(metadata->GetSpriteMesh());
+                }
+
+                // Direction Arrow.
+                if (metadata->IsShowingDirectionArrow())
+                {
+                    scene->GetRenderer().AddExternalMesh(metadata->GetDirectionArrowMesh());
                 }
             }
         }
@@ -1311,6 +1356,7 @@ namespace GTEngine
                 assert(scene != nullptr);
                 {
                     scene->GetRenderer().RemoveExternalMesh(metadata->GetSpriteMesh());
+                    scene->GetRenderer().RemoveExternalMesh(metadata->GetDirectionArrowMesh());
                 }
             }
             else if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
@@ -1320,7 +1366,6 @@ namespace GTEngine
                     metadata->ClearPickingCollisionShape();
                 }
             }
-
         }
     }
 
@@ -1366,12 +1411,13 @@ namespace GTEngine
             }
 
 
-            // Sprite.
+            // External Meshes.
             auto scene = node.GetScene();
             assert(scene != nullptr);
             {
                 auto &renderer = scene->GetRenderer();
 
+                // Sprite.
                 if (metadata.IsUsingSprite())
                 {
                     renderer.AddExternalMesh(metadata.GetSpriteMesh());
@@ -1379,6 +1425,16 @@ namespace GTEngine
                 else
                 {
                     renderer.RemoveExternalMesh(metadata.GetSpriteMesh());
+                }
+
+                // Direction Arrow.
+                if (metadata.IsShowingDirectionArrow())
+                {
+                    renderer.AddExternalMesh(metadata.GetDirectionArrowMesh());
+                }
+                else
+                {
+                    renderer.RemoveExternalMesh(metadata.GetDirectionArrowMesh());
                 }
             }
         }
