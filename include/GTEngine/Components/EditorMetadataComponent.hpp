@@ -145,8 +145,6 @@ namespace GTEngine
         /// Retrieves a reference to the sprite mesh.
         const SceneRendererMesh & GetSpriteMesh() const { return this->spriteMesh; }
 
-
-
         /// Retrieves a pointer to the picking collision object of the sprite.
         ///
         /// @return
@@ -174,11 +172,11 @@ namespace GTEngine
         /// Determines whether or not the direction arrow is being shown.
         bool IsShowingDirectionArrow() const;
 
-        /// Retrieves a pointer to the model of the direction arrow.
-        ///
-        /// @remarks
-        ///     A pointer to the model of the direction arrow, or null if it isn't being shown.
-        const Model* GetDirectionArrowModel() const;
+        /// Retrieves a reference to the direction arrow mesh.
+        const SceneRendererMesh & GetDirectionArrowMesh() const { return this->directionArrowMesh; }
+
+        /// Updates the transform of the direction arrow based on the owner scene node.
+        void UpdateDirectionArrowTransform();
 
 
 
@@ -292,14 +290,8 @@ namespace GTEngine
         SceneRendererMesh spriteMesh;
 
 
-
-
-        /// The model to use for the direction arrow.
-        Model* directionArrowModel;
-
-        /// The vertex array to use for the direction arrow.
-        VertexArray* directionArrowVA;
-
+        /// The direction arrow mesh object that'll be added to the scene.
+        SceneRendererMesh directionArrowMesh;
 
 
         /// The name of the prefab the scene node is part of. If this is empty, it means it is not linked to a prefab.
