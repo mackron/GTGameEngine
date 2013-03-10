@@ -145,11 +145,7 @@ namespace GTEngine
         /// Retrieves a reference to the sprite mesh.
         const SceneRendererMesh & GetSpriteMesh() const { return this->spriteMesh; }
 
-        /// Retrieves a pointer to model of the sprite.
-        ///
-        /// @return
-        ///     A pointer to the model that should be used to draw the sprite, or null if the component is not using a sprite.
-        //const Model* GetSpriteModel() const;
+
 
         /// Retrieves a pointer to the picking collision object of the sprite.
         ///
@@ -163,14 +159,6 @@ namespace GTEngine
 
         /// Updates the sprites transform based on the given camera.
         void UpdateSpriteTransform(const SceneNode &cameraNode);
-
-
-        /// Sets the transformation of the sprite.
-        //void SetSpriteTransform(const glm::mat4 &spriteTransformIn) { this->spriteTransform = spriteTransformIn; }
-
-        /// Retrieves the transformation of the sprite.
-        //const glm::mat4 & GetSpriteTransform() const { return this->spriteTransform; }
-
 
 
 
@@ -287,8 +275,6 @@ namespace GTEngine
         short pickingCollisionGroup;
 
 
-        /// The model to use for the sprite. This is always memory managed by the component itself.
-        //Model* spriteModel;
 
         /// The collision object to use for the sprite. We use a pointer here because most objects won't actually be using sprites, thus we can save a bit of memory with them.
         CollisionObject* spritePickingCollisionObject;
@@ -305,9 +291,6 @@ namespace GTEngine
         /// The sprite scene renderer mesh object.
         SceneRendererMesh spriteMesh;
 
-
-        /// TEMP: The sprite transformation.
-        //glm::mat4 spriteTransform;
 
 
 
