@@ -182,6 +182,7 @@ namespace GTEngine
     {
         SceneRendererMesh object;
         object.vertexArray = mesh.GetSkinnedGeometry();
+        object.drawMode    = DrawMode_Triangles;                // <-- Should probably make this a propery of Mesh at some point to allow wireframe meshes (lines).
         object.material    = mesh.GetMaterial();
         object.transform   = transform;
         this->AddMesh(object);
@@ -339,7 +340,7 @@ namespace GTEngine
 
 
         // 2) The opaque pass.
-        this->RenderOpaquePass(scene, framebuffer, visibleObjects);
+        this->RenderOpaquePass(framebuffer, visibleObjects);
 
         // 3) The alpha transparent pass (for things like sprites and particle effects).
         //this->RenderAlphaTransparentPass(scene, framebuffer);
@@ -479,15 +480,15 @@ namespace GTEngine
     ///////////////////////
     // Rendering.
 
-    void DefaultSceneRenderer2::RenderOpaquePass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer2::RenderOpaquePass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
-        this->RenderOpaqueLightingPass(scene, framebuffer, visibleObjects);
-        this->RenderOpaqueMaterialPass(scene, framebuffer, visibleObjects);
+        this->RenderOpaqueLightingPass(framebuffer, visibleObjects);
+        this->RenderOpaqueMaterialPass(framebuffer, visibleObjects);
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueLightingPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer2::RenderOpaqueLightingPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
-        (void)scene;
+        (void)framebuffer;
 
 
         // The lighting buffers must be cleared to black. Also need to clear the depth/stencil buffer.
@@ -603,10 +604,8 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueMaterialPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer2::RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
-        (void)scene;
-
         // This pass draws the objects like normal and grab the lighting information from the lighting buffers.
         Renderer2::DisableBlending();
         Renderer2::SetDepthFunction(RendererFunction_Equal);
@@ -657,7 +656,7 @@ namespace GTEngine
                             }
 
                             // Draw.
-                            Renderer2::Draw(*object.vertexArray);
+                            Renderer2::Draw(*object.vertexArray, object.drawMode);
                         }
                     }
                 }
@@ -704,7 +703,7 @@ namespace GTEngine
 
 
                             // Draw.
-                            Renderer2::Draw(*object.vertexArray);
+                            Renderer2::Draw(*object.vertexArray, object.drawMode);
                         }
                     }
                 }
@@ -752,7 +751,7 @@ namespace GTEngine
 
 
                             // Draw.
-                            Renderer2::Draw(*object.vertexArray);
+                            Renderer2::Draw(*object.vertexArray, object.drawMode);
                         }
                     }
                 }
@@ -803,7 +802,7 @@ namespace GTEngine
 
 
                             // Draw.
-                            Renderer2::Draw(*object.vertexArray);
+                            Renderer2::Draw(*object.vertexArray, object.drawMode);
                         }
                     }
                 }
@@ -857,7 +856,7 @@ namespace GTEngine
 
 
                             // Draw.
-                            Renderer2::Draw(*object.vertexArray);
+                            Renderer2::Draw(*object.vertexArray, object.drawMode);
                         }
                     }
                 }
