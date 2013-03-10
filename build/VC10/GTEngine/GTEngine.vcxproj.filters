@@ -860,6 +860,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer2.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeEventHandler.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1448,6 +1451,9 @@
       <Filter>source\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer2.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneNodeEventHandler.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

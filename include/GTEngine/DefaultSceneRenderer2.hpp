@@ -202,7 +202,7 @@ namespace GTEngine
 
         /// Adds the given mesh.
         void AddMesh(Mesh &mesh, const glm::mat4 &transform);
-        void AddMesh(SceneRendererMesh &mesh);
+        void AddMesh(const SceneRendererMesh &mesh);
 
         /// Performs an optimization step that arranges everything in a way where the renderer can be a bit more efficient.
         void PostProcess();
@@ -292,10 +292,10 @@ namespace GTEngine
         void OnViewportResized(SceneViewport &viewport);
 
         /// SceneRenderer::AddExternalMesh()
-        void AddExternalMesh(SceneRendererMesh &meshToAdd);
+        void AddExternalMesh(const SceneRendererMesh &meshToAdd);
 
         /// SceneRenderer::RemoveExternalMesh()
-        void RemoveExternalMesh(SceneRendererMesh &meshToRemove);
+        void RemoveExternalMesh(const SceneRendererMesh &meshToRemove);
 
 
 
@@ -411,7 +411,7 @@ namespace GTEngine
         Shader* depthPassShader;
 
         /// The list of external meshes.
-        GTCore::Vector<SceneRendererMesh*> externalMeshes;
+        GTCore::Vector<const SceneRendererMesh*> externalMeshes;
 
 
         

@@ -187,7 +187,7 @@ namespace GTEngine
         this->AddMesh(object);
     }
 
-    void DefaultSceneRendererVisibleObjects::AddMesh(SceneRendererMesh &mesh)
+    void DefaultSceneRendererVisibleObjects::AddMesh(const SceneRendererMesh &mesh)
     {
         if (mesh.material != nullptr)
         {
@@ -386,7 +386,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer2::AddExternalMesh(SceneRendererMesh &meshToAdd)
+    void DefaultSceneRenderer2::AddExternalMesh(const SceneRendererMesh &meshToAdd)
     {
         if (!this->externalMeshes.Exists(&meshToAdd))
         {
@@ -394,7 +394,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RemoveExternalMesh(SceneRendererMesh &meshToRemove)
+    void DefaultSceneRenderer2::RemoveExternalMesh(const SceneRendererMesh &meshToRemove)
     {
         this->externalMeshes.RemoveFirstOccuranceOf(&meshToRemove);
     }
