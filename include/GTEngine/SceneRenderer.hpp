@@ -4,6 +4,7 @@
 #define __GTEngine_SceneRenderer_hpp_
 
 #include "SceneViewport.hpp"
+#include "Rendering/DrawModes.hpp"
 
 namespace GTEngine
 {
@@ -23,13 +24,16 @@ namespace GTEngine
     struct SceneRendererMesh
     {
         SceneRendererMesh()
-            : vertexArray(nullptr), material(nullptr), transform()
+            : vertexArray(nullptr), drawMode(DrawMode_Triangles), material(nullptr), transform()
         {
         }
 
 
         /// The vertex array containing the mesh data.
         VertexArray* vertexArray;
+
+        /// The drawing mode to use when rendering the mesh (triangles or lines).
+        DrawMode drawMode;
 
         /// The material to draw the vertex array with.
         Material* material;
