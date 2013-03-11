@@ -625,6 +625,7 @@ namespace GTEngine
 
         // Depth is laid down. No need to write.
         Renderer2::DisableDepthWrites();
+        Renderer2::SetDepthFunction(RendererFunction_Equal);
 
         // We use additive blending here.
         Renderer2::EnableBlending();
@@ -670,7 +671,7 @@ namespace GTEngine
     {
         // This pass draws the objects like normal and grab the lighting information from the lighting buffers.
         Renderer2::DisableBlending();
-        Renderer2::SetDepthFunction(RendererFunction_Equal);
+        
 
         int outputBuffer[] = {0};
         Renderer2::SetDrawBuffers(1, outputBuffer);
