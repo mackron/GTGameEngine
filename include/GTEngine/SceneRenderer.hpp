@@ -24,7 +24,7 @@ namespace GTEngine
     struct SceneRendererMesh
     {
         SceneRendererMesh()
-            : vertexArray(nullptr), drawMode(DrawMode_Triangles), material(nullptr), transform()
+            : vertexArray(nullptr), drawMode(DrawMode_Triangles), material(nullptr), transform(), flags(0)
         {
         }
 
@@ -38,8 +38,20 @@ namespace GTEngine
         /// The material to draw the vertex array with.
         Material* material;
 
-        /// The transformation matrix to apply to the mesh.s
+        /// The transformation matrix to apply to the mesh.
         glm::mat4 transform;
+
+        /// Rendering flags. The default is all unset.
+        uint32_t flags;
+
+
+        /// Enumerator for the various rendering options.
+        enum Options
+        {
+            DrawLast     = (1 << 1),
+            NoDepthTest  = (1 << 2),
+            NoDepthWrite = (1 << 3),
+        };
     };
 
 
