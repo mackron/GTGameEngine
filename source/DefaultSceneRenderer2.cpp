@@ -15,7 +15,8 @@ namespace GTEngine
     // DefaultSceneRendererVisibleObjects
 
     DefaultSceneRendererVisibleObjects::DefaultSceneRendererVisibleObjects(SceneViewport &viewport)
-        : opaqueObjects(), alphaTransparentObjects(), refractiveTransparentObjects(),
+        : opaqueObjects(),     alphaTransparentObjects(),     refractiveTransparentObjects(),
+          opaqueObjectsLast(), alphaTransparentObjectsLast(), refractiveTransparentObjectsLast(),
           ambientLights(), directionalLights(), pointLights(), spotLights(),
           meshesToAnimate(),
           projectionMatrix(), viewMatrix(), projectionViewMatrix()
@@ -48,6 +49,23 @@ namespace GTEngine
         for (size_t i = 0; i < this->refractiveTransparentObjects.count; ++i)
         {
             delete this->refractiveTransparentObjects.buffer[i]->value;
+        }
+
+
+
+        for (size_t i = 0; i < this->opaqueObjectsLast.count; ++i)
+        {
+            delete this->opaqueObjectsLast.buffer[i]->value;
+        }
+
+        for (size_t i = 0; i < this->alphaTransparentObjectsLast.count; ++i)
+        {
+            delete this->alphaTransparentObjectsLast.buffer[i]->value;
+        }
+        
+        for (size_t i = 0; i < this->refractiveTransparentObjectsLast.count; ++i)
+        {
+            delete this->refractiveTransparentObjectsLast.buffer[i]->value;
         }
     }
 
@@ -197,15 +215,31 @@ namespace GTEngine
             auto &materialDefinition = mesh.material->GetDefinition();
             if (mesh.material->IsRefractive())
             {
-                auto iObjectList = this->refractiveTransparentObjects.Find(&materialDefinition);
-                if (iObjectList != nullptr)
+                if (!(mesh.flags & SceneRendererMesh::DrawLast))
                 {
-                    objectList = iObjectList->value;
+                    auto iObjectList = this->refractiveTransparentObjects.Find(&materialDefinition);
+                    if (iObjectList != nullptr)
+                    {
+                        objectList = iObjectList->value;
+                    }
+                    else
+                    {
+                        objectList = new GTCore::Vector<SceneRendererMesh>;
+                        this->refractiveTransparentObjects.Add(&materialDefinition, objectList);
+                    }
                 }
                 else
                 {
-                    objectList = new GTCore::Vector<SceneRendererMesh>;
-                    this->refractiveTransparentObjects.Add(&materialDefinition, objectList);
+                    auto iObjectList = this->refractiveTransparentObjectsLast.Find(&materialDefinition);
+                    if (iObjectList != nullptr)
+                    {
+                        objectList = iObjectList->value;
+                    }
+                    else
+                    {
+                        objectList = new GTCore::Vector<SceneRendererMesh>;
+                        this->refractiveTransparentObjectsLast.Add(&materialDefinition, objectList);
+                    }
                 }
             }
             //else if (material->IsAlphaTransparent())
@@ -213,15 +247,31 @@ namespace GTEngine
             //}
             else    // Opaque
             {
-                auto iObjectList = this->opaqueObjects.Find(&materialDefinition);
-                if (iObjectList != nullptr)
+                if (!(mesh.flags & SceneRendererMesh::DrawLast))
                 {
-                    objectList = iObjectList->value;
+                    auto iObjectList = this->opaqueObjects.Find(&materialDefinition);
+                    if (iObjectList != nullptr)
+                    {
+                        objectList = iObjectList->value;
+                    }
+                    else
+                    {
+                        objectList = new GTCore::Vector<SceneRendererMesh>(100);
+                        this->opaqueObjects.Add(&materialDefinition, objectList);
+                    }
                 }
                 else
                 {
-                    objectList = new GTCore::Vector<SceneRendererMesh>(100);
-                    this->opaqueObjects.Add(&materialDefinition, objectList);
+                    auto iObjectList = this->opaqueObjectsLast.Find(&materialDefinition);
+                    if (iObjectList != nullptr)
+                    {
+                        objectList = iObjectList->value;
+                    }
+                    else
+                    {
+                        objectList = new GTCore::Vector<SceneRendererMesh>(100);
+                        this->opaqueObjectsLast.Add(&materialDefinition, objectList);
+                    }
                 }
             }
 
@@ -303,8 +353,7 @@ namespace GTEngine
         // 0) Retrieve visible objects.
         DefaultSceneRendererVisibleObjects visibleObjects(viewport);
         scene.QueryVisibleObjects(viewport.GetMVPMatrix(), visibleObjects);
-        visibleObjects.PostProcess();
-
+        
         // All external meshes are considered visible. Not going to do any frustum culling here.
         for (size_t i = 0; i < this->externalMeshes.count; ++i)
         {
@@ -314,6 +363,9 @@ namespace GTEngine
                 visibleObjects.AddMesh(*externalMesh);
             }
         }
+
+        // Post-processing needs to be done after everything has been added.
+        visibleObjects.PostProcess();
 
 
 
@@ -486,6 +538,68 @@ namespace GTEngine
         this->RenderOpaqueMaterialPass(framebuffer, visibleObjects);
     }
 
+    void DefaultSceneRenderer2::RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    {
+        // We need to do a depth pre-pass.
+        Renderer2::DisableColourWrites();
+
+        // Shader needs to be made current, once.
+        Renderer2::SetCurrentShader(this->depthPassShader);
+
+
+        // First.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderDepthPass(framebuffer, visibleObjects, *meshList);
+            }
+        }
+
+
+        // Last
+        for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjectsLast.count; ++iObjectList)
+        {
+            auto meshList = visibleObjects.opaqueObjectsLast.buffer[iObjectList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderDepthPass(framebuffer, visibleObjects, *meshList);
+            }
+        }
+
+
+        Renderer2::EnableColourWrites();
+    }
+
+    void DefaultSceneRenderer2::RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    {
+        (void)framebuffer;
+
+        for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
+        {
+            auto &mesh = meshes.Get(iMesh);
+            {
+                // Shader Properties.
+                this->depthPassShader->SetParameter("PVMMatrix", visibleObjects.projectionViewMatrix * mesh.transform);
+                {
+                    Renderer2::PushShaderPendingProperties(*this->depthPassShader);
+                }
+                this->depthPassShader->ClearPendingParameters();
+
+                // Draw.
+                if ((mesh.flags & SceneRendererMesh::NoDepthTest))  Renderer2::DisableDepthTest();
+                if ((mesh.flags & SceneRendererMesh::NoDepthWrite)) Renderer2::DisableDepthWrites();
+                {
+                    Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                }
+                if ((mesh.flags & SceneRendererMesh::NoDepthTest))  Renderer2::EnableDepthTest();
+                if ((mesh.flags & SceneRendererMesh::NoDepthWrite)) Renderer2::EnableDepthWrites();
+            }
+        }
+    }
+
+
     void DefaultSceneRenderer2::RenderOpaqueLightingPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         (void)framebuffer;
@@ -505,75 +619,23 @@ namespace GTEngine
         Renderer2::EnableDepthTest();
         Renderer2::SetDepthFunction(RendererFunction_LEqual);
 
-
-        size_t ambientLightsRemaining     = visibleObjects.ambientLights.count;
-        size_t directionalLightsRemaining = visibleObjects.directionalLights.count;
-        size_t pointLightsRemaining       = visibleObjects.pointLights.count;
-        size_t spotLightsRemaining        = visibleObjects.spotLights.count;
-
-        if (ambientLightsRemaining + directionalLightsRemaining == 0)
-        {
-            // We need to do a depth pre-pass.
-            Renderer2::DisableColourWrites();
-        
-            for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
-            {
-                auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
-                assert(objectList != nullptr);
-                {
-                    for (size_t iObject = 0; iObject < objectList->count; ++iObject)
-                    {
-                        auto &object = objectList->Get(iObject);
-                        {
-                            // Shader Properties.
-                            this->depthPassShader->SetParameter("PVMMatrix", object.transform);
-                            {
-                                Renderer2::PushShaderPendingProperties(*this->depthPassShader);
-                            }
-                            this->depthPassShader->ClearPendingParameters();
-
-
-                            // Draw.
-                            Renderer2::Draw(*object.vertexArray);
-                        }
-                    }
-                }
-            }
-
-            Renderer2::EnableColourWrites();
-        }
-        else
-        {
-            Renderer2::EnableColourWrites();
-            
-
-            // There is no need for a depth pre-pass, so we'll just render the first light directly.
-            if (ambientLightsRemaining > 0)
-            {
-                this->RenderOpaqueAmbientLightingPass(ambientLightsRemaining - 1, visibleObjects);
-                ambientLightsRemaining -= 1;
-            }
-            else
-            {
-                assert(directionalLightsRemaining > 0);
-                {
-                    this->RenderOpaqueDirectionalLightingPass(directionalLightsRemaining - 1, visibleObjects);
-                    directionalLightsRemaining -= 1;
-                }
-            }
-        }
+        // Depth Pass first.
+        this->RenderDepthPass(framebuffer, visibleObjects);
 
 
         // Depth is laid down. No need to write.
         Renderer2::DisableDepthWrites();
 
-        
-
-
         // We use additive blending here.
         Renderer2::EnableBlending();
         Renderer2::SetBlendEquation(BlendEquation_Add);
         Renderer2::SetBlendFunction(BlendFunc_One, BlendFunc_One);
+
+
+        size_t ambientLightsRemaining     = visibleObjects.ambientLights.count;
+        size_t directionalLightsRemaining = visibleObjects.directionalLights.count;
+        size_t pointLightsRemaining       = visibleObjects.pointLights.count;
+        size_t spotLightsRemaining        = visibleObjects.spotLights.count;
 
         // Ambient Lights.
         while (ambientLightsRemaining > 0)
@@ -609,7 +671,6 @@ namespace GTEngine
         // This pass draws the objects like normal and grab the lighting information from the lighting buffers.
         Renderer2::DisableBlending();
         Renderer2::SetDepthFunction(RendererFunction_Equal);
-        Renderer2::EnableDepthTest();
 
         int outputBuffer[] = {0};
         Renderer2::SetDrawBuffers(1, outputBuffer);
@@ -621,244 +682,352 @@ namespace GTEngine
             Renderer2::Clear(BufferType_Colour);
         }
 
-        for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
+
+        // First.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
         {
-            auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
-            assert(objectList != nullptr);
+            auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
             {
-                for (size_t iObject = 0; iObject < objectList->count; ++iObject)
+                this->RenderOpaqueMaterialPass(framebuffer, visibleObjects, *meshList);
+            }
+        }
+        
+        // Last.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjectsLast.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjectsLast.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaqueMaterialPass(framebuffer, visibleObjects, *meshList);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer2::RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    {
+        for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
+        {
+            auto &mesh = meshes.Get(iMesh);
+            {
+                auto material = mesh.material;
+                assert(material != nullptr);
                 {
-                    auto &object = objectList->Get(iObject);
+                    // Shader Setup.
+                    auto shader = this->GetMaterialMaterialShader(*material);
+                    assert(shader != nullptr);
                     {
-                        auto material = object.material;
-                        assert(material != nullptr);
+                        glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                        glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                        Renderer2::SetCurrentShader(shader);
+
+                        shader->SetParametersFromMaterial(*material);
+                        shader->SetParameter("ViewModelMatrix",  viewModelMatrix);
+                        shader->SetParameter("NormalMatrix",     normalMatrix);
+                        shader->SetParameter("PVMMatrix",        visibleObjects.projectionViewMatrix * mesh.transform);
+                        shader->SetParameter("DiffuseLighting",  framebuffer->lightingBuffer0);
+                        shader->SetParameter("SpecularLighting", framebuffer->lightingBuffer1);
                         {
-                            // Shader Setup.
-                            auto shader = this->GetMaterialMaterialShader(*material);
-                            assert(shader != nullptr);
-                            {
-                                glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * object.transform;
-                                glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
-
-
-                                Renderer2::SetCurrentShader(shader);
-
-                                shader->SetParametersFromMaterial(*material);
-                                shader->SetParameter("ViewModelMatrix",  viewModelMatrix);
-                                shader->SetParameter("NormalMatrix",     normalMatrix);
-                                shader->SetParameter("PVMMatrix",        visibleObjects.projectionViewMatrix * object.transform);
-                                shader->SetParameter("DiffuseLighting",  framebuffer->lightingBuffer0);
-                                shader->SetParameter("SpecularLighting", framebuffer->lightingBuffer1);
-                                {
-                                    Renderer2::PushShaderPendingProperties(*shader);
-                                }
-                                shader->ClearPendingParameters();
-                            }
-
-                            // Draw.
-                            Renderer2::Draw(*object.vertexArray, object.drawMode);
+                            Renderer2::PushShaderPendingProperties(*shader);
                         }
+                        shader->ClearPendingParameters();
                     }
+
+                    // Draw.
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                    {
+                        Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                    }
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
                 }
             }
         }
     }
+
+    
+
 
     void DefaultSceneRenderer2::RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
+        // First.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaqueAmbientLightingPass(lightIndex, visibleObjects, *meshList);
+            }
+        }
+
+        // Last.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjectsLast.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjectsLast.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaqueAmbientLightingPass(lightIndex, visibleObjects, *meshList);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer2::RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    {
         auto &light = visibleObjects.ambientLights[lightIndex];
 
-        for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
+        for (size_t iObject = 0; iObject < meshes.count; ++iObject)
         {
-            auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
-            assert(objectList != nullptr);
+            auto &mesh = meshes.Get(iObject);
             {
-                for (size_t iObject = 0; iObject < objectList->count; ++iObject)
+                auto material = mesh.material;
+                assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
                 {
-                    auto &object = objectList->Get(iObject);
+                    // Setup Shader.
+                    auto shader = this->GetMaterialAmbientLightShader(*material);
+                    assert(shader != nullptr);
                     {
-                        auto material = object.material;
-                        assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
+                        glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                        glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                        Renderer2::SetCurrentShader(shader);
+
+                        shader->SetParametersFromMaterial(*material);
+                        shader->SetParameter("PVMMatrix",       visibleObjects.projectionViewMatrix * mesh.transform);
+                        shader->SetParameter("ViewModelMatrix", viewModelMatrix);
+                        shader->SetParameter("NormalMatrix",    normalMatrix);
+                        shader->SetParameter("Colour",          light.colour);
                         {
-                            // Setup Shader.
-                            auto shader = this->GetMaterialAmbientLightShader(*material);
-                            assert(shader != nullptr);
-                            {
-                                glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * object.transform;
-                                glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
-
-
-                                Renderer2::SetCurrentShader(shader);
-
-                                shader->SetParametersFromMaterial(*material);
-                                shader->SetParameter("PVMMatrix",       visibleObjects.projectionViewMatrix * object.transform);
-                                shader->SetParameter("ViewModelMatrix", viewModelMatrix);
-                                shader->SetParameter("NormalMatrix",    normalMatrix);
-                                shader->SetParameter("Colour",          light.colour);
-                                {
-                                    Renderer2::PushShaderPendingProperties(*shader);
-                                }
-                                shader->ClearPendingParameters();
-                            }
-
-
-                            // Draw.
-                            Renderer2::Draw(*object.vertexArray, object.drawMode);
+                            Renderer2::PushShaderPendingProperties(*shader);
                         }
+                        shader->ClearPendingParameters();
                     }
+
+
+                    // Draw.
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                    {
+                        Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                    }
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
                 }
             }
         }
     }
+
+
 
     void DefaultSceneRenderer2::RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
+        // First.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaqueDirectionalLightingPass(lightIndex, visibleObjects, *meshList);
+            }
+        }
+
+        // Last.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjectsLast.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjectsLast.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaqueDirectionalLightingPass(lightIndex, visibleObjects, *meshList);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer2::RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    {
         auto &light = visibleObjects.directionalLights[lightIndex];
 
-        for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
+        for (size_t iObject = 0; iObject < meshes.count; ++iObject)
         {
-            auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
-            assert(objectList != nullptr);
+            auto &mesh = meshes.Get(iObject);
             {
-                for (size_t iObject = 0; iObject < objectList->count; ++iObject)
+                auto material = mesh.material;
+                assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
                 {
-                    auto &object = objectList->Get(iObject);
+                    // Setup Shader.
+                    auto shader = this->GetMaterialDirectionalLightShader(*material);
+                    assert(shader != nullptr);
                     {
-                        auto material = object.material;
-                        assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
+                        glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                        glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                        Renderer2::SetCurrentShader(shader);
+
+                        shader->SetParametersFromMaterial(*material);
+                        shader->SetParameter("PVMMatrix",       visibleObjects.projectionViewMatrix * mesh.transform);
+                        shader->SetParameter("ViewModelMatrix", viewModelMatrix);
+                        shader->SetParameter("NormalMatrix",    normalMatrix);
+                        shader->SetParameter("Colour",          light.colour);
+                        shader->SetParameter("Direction",       glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light.direction));
                         {
-                            // Setup Shader.
-                            auto shader = this->GetMaterialDirectionalLightShader(*material);
-                            assert(shader != nullptr);
-                            {
-                                glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * object.transform;
-                                glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
-
-
-                                Renderer2::SetCurrentShader(shader);
-
-                                shader->SetParametersFromMaterial(*material);
-                                shader->SetParameter("PVMMatrix",       visibleObjects.projectionViewMatrix * object.transform);
-                                shader->SetParameter("ViewModelMatrix", viewModelMatrix);
-                                shader->SetParameter("NormalMatrix",    normalMatrix);
-                                shader->SetParameter("Colour",          light.colour);
-                                shader->SetParameter("Direction",       glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light.direction));
-                                {
-                                    Renderer2::PushShaderPendingProperties(*shader);
-                                }
-                                shader->ClearPendingParameters();
-                            }
-
-
-                            // Draw.
-                            Renderer2::Draw(*object.vertexArray, object.drawMode);
+                            Renderer2::PushShaderPendingProperties(*shader);
                         }
+                        shader->ClearPendingParameters();
                     }
+
+
+                    // Draw.
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                    {
+                        Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                    }
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
                 }
             }
         }
     }
+
 
     void DefaultSceneRenderer2::RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
+        // First.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaquePointLightingPass(lightIndex, visibleObjects, *meshList);
+            }
+        }
+
+        // Last.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjectsLast.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjectsLast.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaquePointLightingPass(lightIndex, visibleObjects, *meshList);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer2::RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    {
         auto &light = visibleObjects.pointLights[lightIndex];
 
-        for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
+        for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
         {
-            auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
-            assert(objectList != nullptr);
+            auto &mesh = meshes.Get(iMesh);
             {
-                for (size_t iObject = 0; iObject < objectList->count; ++iObject)
+                auto material = mesh.material;
+                assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
                 {
-                    auto &object = objectList->Get(iObject);
+                    // Setup Shader.
+                    auto shader = this->GetMaterialPointLightShader(*material);
+                    assert(shader != nullptr);
                     {
-                        auto material = object.material;
-                        assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
+                        glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                        glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                        Renderer2::SetCurrentShader(shader);
+
+                        shader->SetParametersFromMaterial(*material);
+                        shader->SetParameter("PVMMatrix",            visibleObjects.projectionViewMatrix * mesh.transform);
+                        shader->SetParameter("ViewModelMatrix",      viewModelMatrix);
+                        shader->SetParameter("NormalMatrix",         normalMatrix);
+                        shader->SetParameter("Colour",               light.colour);
+                        shader->SetParameter("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light.position, 1.0f)));
+                        shader->SetParameter("ConstantAttenuation",  light.constantAttenuation);
+                        shader->SetParameter("LinearAttenuation",    light.linearAttenuation);
+                        shader->SetParameter("QuadraticAttenuation", light.quadraticAttenuation);
                         {
-                            // Setup Shader.
-                            auto shader = this->GetMaterialPointLightShader(*material);
-                            assert(shader != nullptr);
-                            {
-                                glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * object.transform;
-                                glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
-
-
-                                Renderer2::SetCurrentShader(shader);
-
-                                shader->SetParametersFromMaterial(*material);
-                                shader->SetParameter("PVMMatrix",            visibleObjects.projectionViewMatrix * object.transform);
-                                shader->SetParameter("ViewModelMatrix",      viewModelMatrix);
-                                shader->SetParameter("NormalMatrix",         normalMatrix);
-                                shader->SetParameter("Colour",               light.colour);
-                                shader->SetParameter("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light.position, 1.0f)));
-                                shader->SetParameter("ConstantAttenuation",  light.constantAttenuation);
-                                shader->SetParameter("LinearAttenuation",    light.linearAttenuation);
-                                shader->SetParameter("QuadraticAttenuation", light.quadraticAttenuation);
-                                {
-                                    Renderer2::PushShaderPendingProperties(*shader);
-                                }
-                                shader->ClearPendingParameters();
-                            }
-
-
-                            // Draw.
-                            Renderer2::Draw(*object.vertexArray, object.drawMode);
+                            Renderer2::PushShaderPendingProperties(*shader);
                         }
+                        shader->ClearPendingParameters();
                     }
+
+
+                    // Draw.
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                    {
+                        Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                    }
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
                 }
             }
         }
     }
 
+
     void DefaultSceneRenderer2::RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    {
+        // First.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaqueSpotLightingPass(lightIndex, visibleObjects, *meshList);
+            }
+        }
+
+        // Last.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjectsLast.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjectsLast.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaqueSpotLightingPass(lightIndex, visibleObjects, *meshList);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer2::RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
     {
         auto &light = visibleObjects.spotLights[lightIndex];
 
-        for (size_t iObjectList = 0; iObjectList < visibleObjects.opaqueObjects.count; ++iObjectList)
+        for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
         {
-            auto objectList = visibleObjects.opaqueObjects.buffer[iObjectList]->value;
-            assert(objectList != nullptr);
+            auto &mesh = meshes.Get(iMesh);
             {
-                for (size_t iObject = 0; iObject < objectList->count; ++iObject)
+                auto material = mesh.material;
+                assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
                 {
-                    auto &object = objectList->Get(iObject);
+                    // Setup Shader.
+                    auto shader = this->GetMaterialSpotLightShader(*material);
+                    assert(shader != nullptr);
                     {
-                        auto material = object.material;
-                        assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
+                        glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                        glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                        Renderer2::SetCurrentShader(shader);
+
+                        shader->SetParametersFromMaterial(*material);
+                        shader->SetParameter("PVMMatrix",            visibleObjects.projectionViewMatrix * mesh.transform);
+                        shader->SetParameter("ViewModelMatrix",      viewModelMatrix);
+                        shader->SetParameter("NormalMatrix",         normalMatrix);
+                        shader->SetParameter("Colour",               light.colour);
+                        shader->SetParameter("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light.position, 1.0f)));
+                        shader->SetParameter("Direction",            glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light.direction));
+                        shader->SetParameter("ConstantAttenuation",  light.constantAttenuation);
+                        shader->SetParameter("LinearAttenuation",    light.linearAttenuation);
+                        shader->SetParameter("QuadraticAttenuation", light.quadraticAttenuation);
+                        shader->SetParameter("CosAngleInner",        glm::cos(glm::radians(light.innerAngle)));
+                        shader->SetParameter("CosAngleOuter",        glm::cos(glm::radians(light.outerAngle)));
                         {
-                            // Setup Shader.
-                            auto shader = this->GetMaterialSpotLightShader(*material);
-                            assert(shader != nullptr);
-                            {
-                                glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * object.transform;
-                                glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
-
-
-                                Renderer2::SetCurrentShader(shader);
-
-                                shader->SetParametersFromMaterial(*material);
-                                shader->SetParameter("PVMMatrix",            visibleObjects.projectionViewMatrix * object.transform);
-                                shader->SetParameter("ViewModelMatrix",      viewModelMatrix);
-                                shader->SetParameter("NormalMatrix",         normalMatrix);
-                                shader->SetParameter("Colour",               light.colour);
-                                shader->SetParameter("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light.position, 1.0f)));
-                                shader->SetParameter("Direction",            glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light.direction));
-                                shader->SetParameter("ConstantAttenuation",  light.constantAttenuation);
-                                shader->SetParameter("LinearAttenuation",    light.linearAttenuation);
-                                shader->SetParameter("QuadraticAttenuation", light.quadraticAttenuation);
-                                shader->SetParameter("CosAngleInner",        glm::cos(glm::radians(light.innerAngle)));
-                                shader->SetParameter("CosAngleOuter",        glm::cos(glm::radians(light.outerAngle)));
-                                {
-                                    Renderer2::PushShaderPendingProperties(*shader);
-                                }
-                                shader->ClearPendingParameters();
-                            }
-
-
-                            // Draw.
-                            Renderer2::Draw(*object.vertexArray, object.drawMode);
+                            Renderer2::PushShaderPendingProperties(*shader);
                         }
+                        shader->ClearPendingParameters();
                     }
+
+
+                    // Draw.
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                    {
+                        Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                    }
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
                 }
             }
         }

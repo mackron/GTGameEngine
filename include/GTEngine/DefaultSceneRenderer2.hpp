@@ -222,6 +222,18 @@ namespace GTEngine
         GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> refractiveTransparentObjects;
 
 
+        /// The list of opaque mesh objects that should be drawn last.
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> opaqueObjectsLast;
+
+        /// The list of blended-transparent objects that should be drawn last.
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> alphaTransparentObjectsLast;
+
+        /// The list of refractive-transparent objects that should be drawn last.
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> refractiveTransparentObjectsLast;
+
+
+
+
         /// The list of ambient lights.
         GTCore::Vector<DefaultSceneRendererAmbientLightObject> ambientLights;
 
@@ -334,23 +346,35 @@ namespace GTEngine
         /// Renders the opaque pass.
         void RenderOpaquePass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
+        /// Renders the depth pre-pass.
+        ///
+        /// @remarks
+        ///     This method assumes the renderer state has been set beforehand.
+        void RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+        void RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+
         /// Renders the opaque lighting pass.
         void RenderOpaqueLightingPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
         /// Renders the opaque material pass.
         void RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+        void RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
 
         /// Performs an ambient lighting pass in the opaque pass.
         void RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
+        void RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
         
         /// Performs a directional lighting pass in the opaque pass.
         void RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
+        void RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
 
         /// Performs a point lighting pass in the opaque pass.
         void RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
+        void RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
 
         /// Performs a spot lighting pass in the opaque pass.
         void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
+        void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
 
 
         /// Renders the alpha transparency pass.
