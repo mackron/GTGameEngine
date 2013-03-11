@@ -562,7 +562,6 @@ namespace GTEngine
 
     void EditorMetadataComponent::OnSceneNodeScale()
     {
-        // We just do a full OnSceneNodeTransform() here. That will handle scaling for us.
     }
 
 
