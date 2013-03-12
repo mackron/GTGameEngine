@@ -89,6 +89,7 @@ namespace GTEngine
         const SceneNode & GetCameraFacingCircleSceneNode() const { return this->cameraFacingCircleSceneNode; }
 
 
+        /*
         /// Retrieves a reference to the x axis arrow scene node.
               SceneNode & GetXScaleSceneNode()       { return this->xScaleSceneNode; }
         const SceneNode & GetXScaleSceneNode() const { return this->xScaleSceneNode; }
@@ -100,7 +101,7 @@ namespace GTEngine
         /// Retrieves a reference to the z axis arrow scene node.
               SceneNode & GetZScaleSceneNode()       { return this->zScaleSceneNode; }
         const SceneNode & GetZScaleSceneNode() const { return this->zScaleSceneNode; }
-
+        */
 
 
 
@@ -189,7 +190,7 @@ namespace GTEngine
 
 
             /// Constructor.
-            Handle(HandleType type, uint32_t axis, const glm::vec3 &baseColour);
+            Handle(HandleType type, uint32_t axis);
 
             /// Destructor.
             virtual ~Handle();
@@ -209,7 +210,7 @@ namespace GTEngine
         };
 
 
-        /// Structure representing an arrow mesh.
+        /// Structure representing a translation arrow.
         struct TranslateHandle : public Handle
         {
             /// The local orientation of the handle.
@@ -230,7 +231,7 @@ namespace GTEngine
 
 
             /// Constructor.
-            TranslateHandle(HandleAxis axis, const glm::vec3 &colour);
+            TranslateHandle(HandleAxis axis);
 
             /// Destructor.
             ~TranslateHandle();
@@ -250,6 +251,51 @@ namespace GTEngine
             /// Hides the handle.
             void Hide(SceneRenderer &renderer, CollisionWorld &pickingWorld);
         };
+
+
+
+        /// Structure representing a scale handle
+        struct ScaleHandle : public Handle
+        {
+            /// The local orientation of the handle.
+            glm::mat3 localOrientation;
+
+            /// The mesh for the arrow head.
+            SceneRendererMesh headMesh;
+
+            /// The mesh for the arrow line.
+            SceneRendererMesh lineMesh;
+
+            /// The collision shape of the handle. An offset is applied, so we need to use a compound shape.
+            btCompoundShape pickingShape;
+
+            /// The forward vector.
+            glm::vec3 forwardVector;
+
+
+
+            /// Constructor.
+            ScaleHandle(HandleAxis axis);
+
+            /// Destructor.
+            ~ScaleHandle();
+
+
+            /// Handle::GetForwardVector().
+            glm::vec3 GetForwardVector() const;
+
+
+            /// Updates the transform of the mesh.
+            void UpdateTransform(const glm::vec3 &position, const glm::quat &orientation, const glm::vec3 &scale);
+
+
+            /// Shows the handle.
+            void Show(SceneRenderer &renderer, CollisionWorld &pickingWorld);
+
+            /// Hides the handle.
+            void Hide(SceneRenderer &renderer, CollisionWorld &pickingWorld);
+        };
+
 
 
 
@@ -301,13 +347,13 @@ namespace GTEngine
         SceneNode cameraFacingCircleSceneNode;
 
         /// The scene node for the x axis scale handle.
-        SceneNode xScaleSceneNode;
+        //SceneNode xScaleSceneNode;
 
         /// The scene node for the y axis scale handle.
-        SceneNode yScaleSceneNode;
+        //SceneNode yScaleSceneNode;
 
         /// The scene node for the z axis scale handle.
-        SceneNode zScaleSceneNode;
+        //SceneNode zScaleSceneNode;
 
 
         /// The model to use for the x axis arrow.
@@ -332,27 +378,38 @@ namespace GTEngine
         Model cameraFacingCircleModel;
 
         /// The model to use for the x axis scale handle.
-        Model xScaleModel;
+        //Model xScaleModel;
 
         /// The model to use for the y axis scale handle.
-        Model yScaleModel;
+        //Model yScaleModel;
 
         /// The model to use for the z axis scale handle.
-        Model zScaleModel;
+        //Model zScaleModel;
 
 
 
         
 
 
-        /// The mesh representing the x translation arrow.
-        TranslateHandle xArrowMesh;
+        /// The x translation handle.
+        TranslateHandle xTranslateHandle;
 
-        /// The mesh representing the y translation arrow.
-        TranslateHandle yArrowMesh;
+        /// The y translation handle.
+        TranslateHandle yTranslateHandle;
 
-        /// The mesh representing the z translation arrow.
-        TranslateHandle zArrowMesh;
+        /// The z translation handle.
+        TranslateHandle zTranslateHandle;
+
+
+
+        /// The x scale handle.
+        ScaleHandle xScaleHandle;
+
+        /// The y scale handle.
+        ScaleHandle yScaleHandle;
+
+        /// The z scale handle.
+        ScaleHandle zScaleHandle;
 
 
 
@@ -378,10 +435,10 @@ namespace GTEngine
 
 
         /// The geometry of the line part of the scale handle.
-        VertexArray* scaleLineVA;
+        //VertexArray* scaleLineVA;
 
         /// the geometry of the head part of the scale handle.
-        VertexArray* scaleHeadVA;
+        //VertexArray* scaleHeadVA;
 
 
     private:    // No copying.
