@@ -26,6 +26,28 @@
 
 namespace GTEngine
 {
+    // Structure containing metadata to attach to picking objects.
+    struct PickingShapeMetadata
+    {
+        /// A pointer to the editor metadata component, if any. Can be null.
+        EditorMetadataComponent* editorMetadata;
+
+        /// A pointer to the gizmo handle, if any.
+        //TransformGizmo::Handle* gizmoHandle;
+
+
+
+        /// Constructor.
+        PickingShapeMetadata()
+            : editorMetadata(nullptr)//, gizmoHandle(nullptr)
+        {
+        }
+    };
+
+
+
+    //////////////////////////////////////////////
+    // Scene Editor
     SceneEditor::SceneEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           viewport(), camera(), cameraXRotation(0.0f), cameraYRotation(0.0f),
@@ -368,12 +390,63 @@ namespace GTEngine
             this->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
             if (rayTestCallback.hasHit())
             {
-                auto metadata = static_cast<EditorMetadataComponent*>(rayTestCallback.m_collisionObject->getUserPointer());
-                assert(metadata != nullptr);
+                auto handle = static_cast<TransformGizmo::Handle*>(rayTestCallback.m_collisionObject->getUserPointer());
+                assert(handle != nullptr);
                 {
-                    auto &selectedNode = metadata->GetNode();
+                    if ((handle->axis & TransformGizmo::HandleAxis_X))
+                    {
+                        this->gizmoDragAxis = glm::vec3(1.0f, 0.0f, 0.0f);
+                    }
+                    else if ((handle->axis & TransformGizmo::HandleAxis_Y))
+                    {
+                        this->gizmoDragAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+                    }
+                    else if ((handle->axis & TransformGizmo::HandleAxis_Z))
+                    {
+                        this->gizmoDragAxis = glm::vec3(0.0f, 0.0f, 1.0f);
+                    }
+
+                    if (handle->type == TransformGizmo::HandleType_Translate)
+                    {
+                        this->gizmoDragMode = GizmoDragMode_Translate;
+                    }
+                    else if (handle->type == TransformGizmo::HandleType_Rotate)
+                    {
+                        this->gizmoDragMode = GizmoDragMode_Rotate;
+                    }
+                    else if (handle->type == TransformGizmo::HandleType_Scale)
+                    {
+                        this->gizmoDragMode = GizmoDragMode_Scale;
+                    }
+
+
+                    // The mouse dragging has a different level of influence depending on the direction of the axis. We need to calculate that now. We project two points - the
+                    // center of the gizmo and the end point of the selected axis. From that we can get a normalised direction vector and use that as the influence.
+                    glm::vec3 gizmoWorldPos        = this->transformGizmo.GetPosition();
+                    glm::vec3 gizmoCenterWindowPos = this->viewport.Project(gizmoWorldPos);
+                    glm::vec3 axisTipWindowPos     = this->viewport.Project(gizmoWorldPos + (handle->GetForwardVector() * this->transformGizmo.GetScale()));
+
+                    this->gizmoDragFactor = glm::vec2(axisTipWindowPos - gizmoCenterWindowPos);
+                    if (glm::dot(this->gizmoDragFactor, this->gizmoDragFactor) > 0.0f)
+                    {
+                        this->gizmoDragFactor = glm::normalize(this->gizmoDragFactor);
+                    }
+                    else
+                    {
+                        this->gizmoDragFactor.x = 1.0f;
+                        this->gizmoDragFactor.y = 0.0f;
+                    }
+
+
+                    handle->SetColour(glm::vec3(1.0f, 1.0f, 1.0f));
+
+
+
+
+                    //auto &selectedNode = metadata->GetNode();
 
                     // Arrows
+                    /*
                     if (&selectedNode == &this->transformGizmo.GetXArrowSceneNode())
                     {
                         this->gizmoDragAxis    = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -446,6 +519,7 @@ namespace GTEngine
 
 
                     this->transformGizmo.ChangeAxisColour(selectedNode, 1.0f, 1.0f, 1.0f);
+                    */
                 }
 
                 return true;
@@ -1867,7 +1941,7 @@ namespace GTEngine
             this->scene.AddSceneNode(this->camera);
 
             this->transformGizmo.Initialise();
-            this->transformGizmo.Hide();
+            this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
             this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
         }
     }
@@ -1912,7 +1986,7 @@ namespace GTEngine
         this->scene.DisableStateStackStaging();
         this->isDeserializing = true;
         {
-            this->transformGizmo.Hide();
+            this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
 
 
             // With pre-deserialization done, we can now do a full deserialization of the scene.
@@ -2009,13 +2083,13 @@ namespace GTEngine
 
     void SceneEditor::ShowTransformGizmo()
     {
-        this->transformGizmo.Show();
+        this->transformGizmo.Show(this->scene.GetRenderer(), this->pickingWorld);
         this->UpdateGizmo();
     }
 
     void SceneEditor::HideGizmo()
     {
-        this->transformGizmo.Hide();
+        this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
     }
 
     void SceneEditor::RepositionGizmo()
@@ -2051,56 +2125,19 @@ namespace GTEngine
         {
         case GizmoTransformMode_Translate:
             {
-                this->transformGizmo.GetXArrowSceneNode().Show();
-                this->transformGizmo.GetYArrowSceneNode().Show();
-                this->transformGizmo.GetZArrowSceneNode().Show();
-
-                this->transformGizmo.GetCameraFacingCircleSceneNode().Hide();
-                this->transformGizmo.GetXCircleSceneNode().Hide();
-                this->transformGizmo.GetYCircleSceneNode().Hide();
-                this->transformGizmo.GetZCircleSceneNode().Hide();
-
-                this->transformGizmo.GetXScaleSceneNode().Hide();
-                this->transformGizmo.GetYScaleSceneNode().Hide();
-                this->transformGizmo.GetZScaleSceneNode().Hide();
-
-
+                this->transformGizmo.ShowTranslationHandles(this->scene.GetRenderer(), this->pickingWorld);
                 break;
             }
 
         case GizmoTransformMode_Rotate:
             {
-                this->transformGizmo.GetXArrowSceneNode().Hide();
-                this->transformGizmo.GetYArrowSceneNode().Hide();
-                this->transformGizmo.GetZArrowSceneNode().Hide();
-
-                this->transformGizmo.GetCameraFacingCircleSceneNode().Show();
-                this->transformGizmo.GetXCircleSceneNode().Show();
-                this->transformGizmo.GetYCircleSceneNode().Show();
-                this->transformGizmo.GetZCircleSceneNode().Show();
-
-                this->transformGizmo.GetXScaleSceneNode().Hide();
-                this->transformGizmo.GetYScaleSceneNode().Hide();
-                this->transformGizmo.GetZScaleSceneNode().Hide();
-
+                this->transformGizmo.ShowRotationHandles(this->scene.GetRenderer(), this->pickingWorld);
                 break;
             }
 
         case GizmoTransformMode_Scale:
             {
-                this->transformGizmo.GetXArrowSceneNode().Hide();
-                this->transformGizmo.GetYArrowSceneNode().Hide();
-                this->transformGizmo.GetZArrowSceneNode().Hide();
-
-                this->transformGizmo.GetCameraFacingCircleSceneNode().Hide();
-                this->transformGizmo.GetXCircleSceneNode().Hide();
-                this->transformGizmo.GetYCircleSceneNode().Hide();
-                this->transformGizmo.GetZCircleSceneNode().Hide();
-
-                this->transformGizmo.GetXScaleSceneNode().Show();
-                this->transformGizmo.GetYScaleSceneNode().Show();
-                this->transformGizmo.GetZScaleSceneNode().Show();
-
+                this->transformGizmo.ShowScaleHandles(this->scene.GetRenderer(), this->pickingWorld);
                 break;
             }
 
