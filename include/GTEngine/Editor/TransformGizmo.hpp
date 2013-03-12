@@ -50,22 +50,26 @@ namespace GTEngine
         const glm::vec3 & GetScale() const;
 
 
+        /// Updates the transform of every gizmo.
+        void UpdateHandleTransforms();
+
+
 
         /// Retrieves a reference the main scene node.
               SceneNode & GetSceneNode()       { return this->sceneNode; }
         const SceneNode & GetSceneNode() const { return this->sceneNode; }
 
         /// Retrieves a reference to the x axis arrow scene node.
-              SceneNode & GetXArrowSceneNode()       { return this->xArrowSceneNode; }
-        const SceneNode & GetXArrowSceneNode() const { return this->xArrowSceneNode; }
+        //      SceneNode & GetXArrowSceneNode()       { return this->xArrowSceneNode; }
+        //const SceneNode & GetXArrowSceneNode() const { return this->xArrowSceneNode; }
 
         /// Retrieves a reference to the y axis arrow scene node.
-              SceneNode & GetYArrowSceneNode()       { return this->yArrowSceneNode; }
-        const SceneNode & GetYArrowSceneNode() const { return this->yArrowSceneNode; }
+        //      SceneNode & GetYArrowSceneNode()       { return this->yArrowSceneNode; }
+        //const SceneNode & GetYArrowSceneNode() const { return this->yArrowSceneNode; }
 
         /// Retrieves a reference to the z axis arrow scene node.
-              SceneNode & GetZArrowSceneNode()       { return this->zArrowSceneNode; }
-        const SceneNode & GetZArrowSceneNode() const { return this->zArrowSceneNode; }
+        //      SceneNode & GetZArrowSceneNode()       { return this->zArrowSceneNode; }
+        //const SceneNode & GetZArrowSceneNode() const { return this->zArrowSceneNode; }
 
 
         /// Retrieves a reference to the y axis circle scene node.
@@ -101,10 +105,21 @@ namespace GTEngine
 
 
         /// Shows the gizmo.
-        void Show();
+        void Show(SceneRenderer &renderer, CollisionWorld &pickingWorld);
 
         /// Hides the gizmo.
-        void Hide();
+        void Hide(SceneRenderer &renderer, CollisionWorld &pickingWorld);
+
+
+        /// Shows the translation handles and hides the others.
+        void ShowTranslationHandles(SceneRenderer &renderer, CollisionWorld &pickingWorld);
+
+        /// Shows the rotation handles and hides the others.
+        void ShowRotationHandles(SceneRenderer &renderer, CollisionWorld &pickingWorld);
+
+        /// Shows the scale handles and hides the others.
+        void ShowScaleHandles(SceneRenderer &renderer, CollisionWorld &pickingWorld);
+
 
 
         /// Restores the colours of the gizmo axes to their defaults.
@@ -129,19 +144,149 @@ namespace GTEngine
 
 
 
+
+    public:
+
+        /// Enumerator for the different types of handles (translation, rotation, scale).
+        enum HandleType
+        {
+            HandleType_Translate,
+            HandleType_Rotate,
+            HandleType_Scale
+        };
+
+        /// Enumerator for the different axes a handle operates on. This can be used in a bit field to allow a
+        /// handle to operate on multiple axes.
+        enum HandleAxis
+        {
+            HandleAxis_X           = (1 << 1),
+            HandleAxis_Y           = (1 << 2),
+            HandleAxis_Z           = (1 << 3),
+            HandleAxis_FrontFacing = (1 << 4)
+        };
+
+
+        /// Base structure reprsenting the mesh of a handle.
+        struct Handle
+        {
+            /// The type of the handle. Needed for casting.
+            HandleType type;
+
+            /// The axes the handle operates on.
+            uint32_t axis;
+
+            /// The material to use with the handle.
+            Material* material;
+
+            /// The base colour of the handle (usually red, green or blue). Used to restore the colour after it's changed.
+            glm::vec3 baseColour;
+
+            /// The picking object. The shape will be defined and set by sub-classes.
+            CollisionObject pickingObject;
+
+            
+            
+
+
+            /// Constructor.
+            Handle(HandleType type, uint32_t axis, const glm::vec3 &baseColour);
+
+            /// Destructor.
+            virtual ~Handle();
+
+
+            /// Sets the colour of the handle.
+            ///
+            /// @remarks
+            ///     Restore the colour with RestoreColour().
+            void SetColour(const glm::vec3 &colour);
+
+            /// Restores the colour to the base colour.
+            void RestoreBaseColour();
+
+            /// Virtual method for retrieving the forward vector.
+            virtual glm::vec3 GetForwardVector() const { return glm::vec3(0.0f, 0.0f, 0.0f); }
+        };
+
+
+        /// Structure representing an arrow mesh.
+        struct TranslateHandle : public Handle
+        {
+            /// The local orientation of the handle.
+            glm::mat3 localOrientation;
+
+            /// The mesh for the arrow head.
+            SceneRendererMesh headMesh;
+
+            /// The mesh for the arrow line.
+            SceneRendererMesh lineMesh;
+
+            /// The collision shape of the handle. An offset is applied, so we need to use a compound shape.
+            btCompoundShape pickingShape;
+
+            /// The forward vector.
+            glm::vec3 forwardVector;
+
+
+
+            /// Constructor.
+            TranslateHandle(HandleAxis axis, const glm::vec3 &colour);
+
+            /// Destructor.
+            ~TranslateHandle();
+
+
+            /// Handle::GetForwardVector().
+            glm::vec3 GetForwardVector() const;
+
+
+            /// Updates the transform of the mesh.
+            void UpdateTransform(const glm::vec3 &position, const glm::quat &orientation, const glm::vec3 &scale);
+
+
+            /// Shows the handle.
+            void Show(SceneRenderer &renderer, CollisionWorld &pickingWorld);
+
+            /// Hides the handle.
+            void Hide(SceneRenderer &renderer, CollisionWorld &pickingWorld);
+        };
+
+
+
     private:
+
+        /// The position of the gizmo.
+        glm::vec3 position;
+
+        /// The orientation of the gizmo.
+        glm::quat orientation;
+
+        /// The scale of the gizmo.
+        glm::vec3 scale;
+
+
+        /// Keeps track of whether or not the translation handles are showing.
+        bool showingTranslationHandles;
+
+        /// Keeps track of whether or not the rotation handles are showing.
+        bool showingRotationHandles;
+
+        /// Keeps track of whether or not the scale handles are showing.
+        bool showingScaleHandles;
+
+
 
         /// The main scene node.
         SceneNode sceneNode;
 
         /// The scene node for the x axis arrow.
-        SceneNode xArrowSceneNode;
+        //SceneNode xArrowSceneNode;
 
         /// The scene node for the y axis arrow.
-        SceneNode yArrowSceneNode;
+        //SceneNode yArrowSceneNode;
 
         /// The scene node for the z axis arrow.
-        SceneNode zArrowSceneNode;
+        //SceneNode zArrowSceneNode;
 
         /// The scene node for the x axis circle.
         SceneNode xCircleSceneNode;
@@ -166,13 +311,13 @@ namespace GTEngine
 
 
         /// The model to use for the x axis arrow.
-        Model xArrowModel;
+        //Model xArrowModel;
 
         /// The model to use for the y axis arrow.
-        Model yArrowModel;
+        //Model yArrowModel;
 
         /// The model to use for the z axis arrow.
-        Model zArrowModel;
+        //Model zArrowModel;
 
         /// The model to use for the x axis circle.
         Model xCircleModel;
@@ -196,11 +341,27 @@ namespace GTEngine
         Model zScaleModel;
 
 
+
+        
+
+
+        /// The mesh representing the x translation arrow.
+        TranslateHandle xArrowMesh;
+
+        /// The mesh representing the y translation arrow.
+        TranslateHandle yArrowMesh;
+
+        /// The mesh representing the z translation arrow.
+        TranslateHandle zArrowMesh;
+
+
+
+
         /// The geometry of the line part of the arrow models' mesh.
-        VertexArray* arrowLineVA;
+        //VertexArray* arrowLineVA;
 
         /// The geometry of the head part of the arrow models' mesh.
-        VertexArray* arrowHeadVA;
+        //VertexArray* arrowHeadVA;
 
 
         /// The geometry of the x axis circle mesh.

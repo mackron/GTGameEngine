@@ -1,19 +1,22 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Editor/TransformGizmo.hpp>
-#include <GTEngine/ModelLibrary.hpp>
+#include <GTEngine/ModelLibrary.hpp>            // <-- Can delete this.
+#include <GTEngine/MaterialLibrary.hpp>
 
 namespace GTEngine
 {
     TransformGizmo::TransformGizmo()
-        : sceneNode(),
-          xArrowSceneNode(),  yArrowSceneNode(),  zArrowSceneNode(),
+        : position(), orientation(), scale(1.0f, 1.0f, 1.0f),
+          sceneNode(),
+          //xArrowSceneNode(),  yArrowSceneNode(),  zArrowSceneNode(),
           xCircleSceneNode(), yCircleSceneNode(), zCircleSceneNode(), cameraFacingCircleSceneNode(),
           xScaleSceneNode(),  yScaleSceneNode(),  zScaleSceneNode(),
-          xArrowModel(),      yArrowModel(),      zArrowModel(),
+          //xArrowModel(),      yArrowModel(),      zArrowModel(),
           xCircleModel(),     yCircleModel(),     zCircleModel(),     cameraFacingCircleModel(),
           xScaleModel(),      yScaleModel(),      zScaleModel(),
-          arrowLineVA(nullptr), arrowHeadVA(nullptr),
+          xArrowMesh(HandleAxis_X, glm::vec3(1.0f, 0.0f, 0.0f)), yArrowMesh(HandleAxis_Y, glm::vec3(0.0f, 1.0f, 0.0f)), zArrowMesh(HandleAxis_Z, glm::vec3(0.0f, 0.0f, 1.0f)),
+          //arrowLineVA(nullptr), arrowHeadVA(nullptr),
           xCircleVA(nullptr), yCircleVA(nullptr), zCircleVA(nullptr), cameraFacingCircleVA(nullptr),
           scaleLineVA(nullptr), scaleHeadVA(nullptr)
     {
@@ -21,8 +24,8 @@ namespace GTEngine
 
     TransformGizmo::~TransformGizmo()
     {
-        Renderer2::DeleteVertexArray(this->arrowLineVA);
-        Renderer2::DeleteVertexArray(this->arrowHeadVA);
+        //Renderer2::DeleteVertexArray(this->arrowLineVA);
+        //Renderer2::DeleteVertexArray(this->arrowHeadVA);
 
         Renderer2::DeleteVertexArray(this->xCircleVA);
         Renderer2::DeleteVertexArray(this->yCircleVA);
@@ -36,6 +39,7 @@ namespace GTEngine
 
     void TransformGizmo::Initialise()
     {
+        /*
         /////////////////////////////////////////
         // Arrow Mesh
         this->arrowLineVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
@@ -92,7 +96,7 @@ namespace GTEngine
 
         this->arrowLineVA->SetData(&arrowLineVertices[0].x, 2, arrowLineIndices, 2);
         this->arrowHeadVA->SetData(&arrowHeadVertices[0].x, arrowHeadVertices.count, &arrowHeadIndices[0], arrowHeadIndices.count);
-
+        */
 
 
 
@@ -204,12 +208,12 @@ namespace GTEngine
 
 
 
-        this->xArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
-        this->xArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
-        this->yArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
-        this->yArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
-        this->zArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
-        this->zArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
+        //this->xArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        //this->xArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
+        //this->yArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        //this->yArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
+        //this->zArrowModel.AttachMesh(arrowLineVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
+        //this->zArrowModel.AttachMesh(arrowHeadVA, "engine/materials/simple-emissive.material");
 
         this->xCircleModel.AttachMesh(this->xCircleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
         this->yCircleModel.AttachMesh(this->yCircleVA, "engine/materials/simple-emissive.material", DrawMode_Lines);
@@ -226,9 +230,9 @@ namespace GTEngine
 
 
         // All of the arrow scene nodes use the same model, only we orientate them to point in a particular direction. By default, it's pointing down -Z.
-        this->xArrowSceneNode.RotateY(-90.0f);
-        this->yArrowSceneNode.RotateX( 90.0f);
-        this->zArrowSceneNode.RotateX( 180.0f);
+        //this->xArrowSceneNode.RotateY(-90.0f);
+        //this->yArrowSceneNode.RotateX( 90.0f);
+        //this->zArrowSceneNode.RotateX( 180.0f);
 
         this->xCircleSceneNode.RotateY(-90.0f);
         this->yCircleSceneNode.RotateX( 90.0f);
@@ -240,9 +244,9 @@ namespace GTEngine
 
 
 
-        this->xArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->xArrowModel);
-        this->yArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->yArrowModel);
-        this->zArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->zArrowModel);
+        //this->xArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->xArrowModel);
+        //this->yArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->yArrowModel);
+        //this->zArrowSceneNode.AddComponent<ModelComponent>()->SetModel(this->zArrowModel);
 
         this->xCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->xCircleModel);
         this->yCircleSceneNode.AddComponent<ModelComponent>()->SetModel(this->yCircleModel);
@@ -255,9 +259,9 @@ namespace GTEngine
 
 
 
-        this->xArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
-        this->yArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
-        this->zArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+        //this->xArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+        //this->yArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
+        //this->zArrowSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
 
         this->xCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
         this->yCircleSceneNode.GetComponent<ModelComponent>()->DisableShadowCasting();
@@ -274,6 +278,7 @@ namespace GTEngine
         auto metadata = this->sceneNode.AddComponent<EditorMetadataComponent>();
         metadata->IsSystemNode(true);
 
+        /*
         metadata = this->xArrowSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
         metadata->SetAlwaysShowOnTop(true);
@@ -291,7 +296,7 @@ namespace GTEngine
         metadata->SetAlwaysShowOnTop(true);
         metadata->UseModelForPickingShape(false);
         metadata->IsSystemNode(true);
-
+        */
 
         metadata = this->xCircleSceneNode.AddComponent<EditorMetadataComponent>();
         metadata->SetPickingCollisionGroup(CollisionGroups::EditorGizmo);
@@ -341,9 +346,9 @@ namespace GTEngine
 
 
 
-        this->sceneNode.AttachChild(this->xArrowSceneNode);
-        this->sceneNode.AttachChild(this->yArrowSceneNode);
-        this->sceneNode.AttachChild(this->zArrowSceneNode);
+        //this->sceneNode.AttachChild(this->xArrowSceneNode);
+        //this->sceneNode.AttachChild(this->yArrowSceneNode);
+        //this->sceneNode.AttachChild(this->zArrowSceneNode);
 
         this->sceneNode.AttachChild(this->cameraFacingCircleSceneNode);
         this->sceneNode.AttachChild(this->xCircleSceneNode);
@@ -366,9 +371,9 @@ namespace GTEngine
 
         // We will give these scene nodes names to make debugging a bit easier.
         this->sceneNode.SetName("TransformGizmo");
-        this->xArrowSceneNode.SetName("TransformGizmo_xArrowSceneNode");
-        this->yArrowSceneNode.SetName("TransformGizmo_yArrowSceneNode");
-        this->zArrowSceneNode.SetName("TransformGizmo_zArrowSceneNode");
+        //this->xArrowSceneNode.SetName("TransformGizmo_xArrowSceneNode");
+        //this->yArrowSceneNode.SetName("TransformGizmo_yArrowSceneNode");
+        //this->zArrowSceneNode.SetName("TransformGizmo_zArrowSceneNode");
         this->xCircleSceneNode.SetName("TransformGizmo_xCircleSceneNode");
         this->yCircleSceneNode.SetName("TransformGizmo_yCircleSceneNode");
         this->zCircleSceneNode.SetName("TransformGizmo_zCircleSceneNode");
@@ -378,19 +383,26 @@ namespace GTEngine
     }
 
 
-    void TransformGizmo::SetPosition(const glm::vec3 &position)
+    void TransformGizmo::SetPosition(const glm::vec3 &newPosition)
     {
-        this->sceneNode.SetPosition(position);
+        this->position = newPosition;
+        this->UpdateHandleTransforms();
+
+        this->sceneNode.SetPosition(newPosition);
     }
 
     const glm::vec3 & TransformGizmo::GetPosition() const
     {
-        return this->sceneNode.GetPosition();
+        //return this->sceneNode.GetPosition();
+        return this->position;
     }
 
 
     void TransformGizmo::SetRotation(const glm::quat &rotation, const SceneNode &cameraNode)
     {
+        this->orientation = rotation;
+        this->UpdateHandleTransforms();
+
         this->sceneNode.SetWorldOrientation(rotation);
 
         // We need to update the geometry of the circles so that only the pieces that are actually facing the camera are shown.
@@ -404,37 +416,139 @@ namespace GTEngine
     }
 
 
-    void TransformGizmo::SetScale(const glm::vec3 &scale)
+    void TransformGizmo::SetScale(const glm::vec3 &newScale)
     {
-        this->sceneNode.SetScale(scale);
-        this->UpdatePickingVolumes();
+        this->scale = newScale;
+        this->UpdateHandleTransforms();
+
+
+        //this->sceneNode.SetScale(scale);
+        //this->UpdatePickingVolumes();
     }
 
     const glm::vec3 & TransformGizmo::GetScale() const
     {
-        return this->sceneNode.GetScale();
+        //return this->sceneNode.GetScale();
+        return this->scale;
     }
 
 
-    void TransformGizmo::Show()
+
+    void TransformGizmo::UpdateHandleTransforms()
     {
+        this->xArrowMesh.UpdateTransform(this->position, this->orientation, this->scale);
+        this->yArrowMesh.UpdateTransform(this->position, this->orientation, this->scale);
+        this->zArrowMesh.UpdateTransform(this->position, this->orientation, this->scale);
+
+        // TODO: Rotation and scale.
+    }
+
+
+    void TransformGizmo::Show(SceneRenderer &renderer, CollisionWorld &pickingWorld)
+    {
+        if (this->showingTranslationHandles)
+        {
+            this->ShowTranslationHandles(renderer, pickingWorld);
+        }
+        else if (this->showingRotationHandles)
+        {
+            this->ShowRotationHandles(renderer, pickingWorld);
+        }
+        else if (this->showingScaleHandles)
+        {
+            this->ShowScaleHandles(renderer, pickingWorld);
+        }
+
+
         this->sceneNode.Show();
     }
 
-    void TransformGizmo::Hide()
+    void TransformGizmo::Hide(SceneRenderer &renderer, CollisionWorld &pickingWorld)
     {
+        this->xArrowMesh.Hide(renderer, pickingWorld);
+        this->yArrowMesh.Hide(renderer, pickingWorld);
+        this->zArrowMesh.Hide(renderer, pickingWorld);
+
         this->sceneNode.Hide();
+    }
+
+
+    void TransformGizmo::ShowTranslationHandles(SceneRenderer &renderer, CollisionWorld &pickingWorld)
+    {
+        this->xArrowMesh.Show(renderer, pickingWorld);
+        this->yArrowMesh.Show(renderer, pickingWorld);
+        this->zArrowMesh.Show(renderer, pickingWorld);
+
+        this->xCircleSceneNode.Hide();
+        this->yCircleSceneNode.Hide();
+        this->zCircleSceneNode.Hide();
+        this->cameraFacingCircleSceneNode.Hide();
+
+        this->xScaleSceneNode.Hide();
+        this->yScaleSceneNode.Hide();
+        this->zScaleSceneNode.Hide();
+
+
+        this->showingTranslationHandles = true;
+        this->showingRotationHandles    = false;
+        this->showingScaleHandles       = false;
+    }
+
+    void TransformGizmo::ShowRotationHandles(SceneRenderer &renderer, CollisionWorld &pickingWorld)
+    {
+        this->xArrowMesh.Hide(renderer, pickingWorld);
+        this->yArrowMesh.Hide(renderer, pickingWorld);
+        this->zArrowMesh.Hide(renderer, pickingWorld);
+
+        this->xCircleSceneNode.Show();
+        this->yCircleSceneNode.Show();
+        this->zCircleSceneNode.Show();
+        this->cameraFacingCircleSceneNode.Show();
+
+        this->xScaleSceneNode.Hide();
+        this->yScaleSceneNode.Hide();
+        this->zScaleSceneNode.Hide();
+
+
+        this->showingTranslationHandles = false;
+        this->showingRotationHandles    = true;
+        this->showingScaleHandles       = false;
+    }
+
+    void TransformGizmo::ShowScaleHandles(SceneRenderer &renderer, CollisionWorld &pickingWorld)
+    {
+        this->xArrowMesh.Hide(renderer, pickingWorld);
+        this->yArrowMesh.Hide(renderer, pickingWorld);
+        this->zArrowMesh.Hide(renderer, pickingWorld);
+
+        this->xCircleSceneNode.Hide();
+        this->yCircleSceneNode.Hide();
+        this->zCircleSceneNode.Hide();
+        this->cameraFacingCircleSceneNode.Hide();
+
+        this->xScaleSceneNode.Show();
+        this->yScaleSceneNode.Show();
+        this->zScaleSceneNode.Show();
+
+
+        this->showingTranslationHandles = false;
+        this->showingRotationHandles    = false;
+        this->showingScaleHandles       = true;
     }
 
 
     void TransformGizmo::RestoreColours()
     {
-        this->xArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
-        this->xArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
-        this->yArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
-        this->yArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
-        this->zArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
-        this->zArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
+        //this->xArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
+        //this->xArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 1.0f, 0.0f, 0.0f);
+        //this->yArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
+        //this->yArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 1.0f, 0.0f);
+        //this->zArrowModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
+        //this->zArrowModel.meshes[1]->GetMaterial()->SetParameter("EmissiveColour", 0.0f, 0.0f, 1.0f);
+
+        this->xArrowMesh.RestoreBaseColour();
+        this->yArrowMesh.RestoreBaseColour();
+        this->zArrowMesh.RestoreBaseColour();
 
         this->xCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 1.0f,  0.35f, 0.35f);
         this->yCircleModel.meshes[0]->GetMaterial()->SetParameter("EmissiveColour", 0.35f, 1.0f,  0.35f);
@@ -451,7 +565,7 @@ namespace GTEngine
 
     void TransformGizmo::ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b)
     {
-        assert(&axisSceneNode == &this->xArrowSceneNode  || &axisSceneNode == &this->yArrowSceneNode  || &axisSceneNode == &this->zArrowSceneNode  ||
+        assert(/*&axisSceneNode == &this->xArrowSceneNode  || &axisSceneNode == &this->yArrowSceneNode  || &axisSceneNode == &this->zArrowSceneNode  ||*/
                &axisSceneNode == &this->xCircleSceneNode || &axisSceneNode == &this->yCircleSceneNode || &axisSceneNode == &this->zCircleSceneNode ||
                &axisSceneNode == &this->xScaleSceneNode  || &axisSceneNode == &this->yScaleSceneNode  || &axisSceneNode == &this->zScaleSceneNode);
         {
@@ -486,7 +600,7 @@ namespace GTEngine
         offset.y = 0.0f;
         offset.z = -halfExtents.z;
 
-
+        /*
         auto metadata = this->xArrowSceneNode.GetComponent<EditorMetadataComponent>();
         if (metadata != nullptr)
         {
@@ -504,9 +618,10 @@ namespace GTEngine
         {
             metadata->SetPickingCollisionShapeToBox(halfExtents, offset);
         }
+        */
 
 
-        metadata = this->xScaleSceneNode.GetComponent<EditorMetadataComponent>();
+        auto metadata = this->xScaleSceneNode.GetComponent<EditorMetadataComponent>();
         if (metadata != nullptr)
         {
             metadata->SetPickingCollisionShapeToBox(halfExtents, offset);
@@ -599,5 +714,238 @@ namespace GTEngine
                 vertexArray->SetIndexData(&circleIndices[0], circleIndices.count);
             }
         }
+    }
+
+
+
+    ////////////////////////////////////////////////////
+    // HandleMesh
+
+    TransformGizmo::Handle::Handle(HandleType typeIn, uint32_t axisIn, const glm::vec3 &baseColourIn)
+        : type(typeIn), axis(axisIn), material(MaterialLibrary::Create("engine/materials/simple-emissive.material")), baseColour(baseColourIn), pickingObject()
+    {
+        this->SetColour(baseColourIn);
+
+        // We assign a pointer to 'this' as the user pointer in the picking object. This will allow editting tools to retrieve the handle so it
+        // know what to do.
+        this->pickingObject.setUserPointer(this);
+    }
+
+    TransformGizmo::Handle::~Handle()
+    {
+        MaterialLibrary::Delete(this->material);
+    }
+
+
+    void TransformGizmo::Handle::SetColour(const glm::vec3 &colour)
+    {
+        this->material->SetParameter("EmissiveColour", colour);
+    }
+
+    void TransformGizmo::Handle::RestoreBaseColour()
+    {
+        this->SetColour(this->baseColour);
+    }
+
+
+
+
+    ////////////////////////////////////////////////////
+    // ArrowHandle
+
+    TransformGizmo::TranslateHandle::TranslateHandle(HandleAxis axis, const glm::vec3 &baseColour)
+        : Handle(HandleType_Translate, axis, baseColour), localOrientation(), headMesh(), lineMesh(), pickingShape()
+    {
+        switch (axis)
+        {
+        case HandleAxis_X: this->localOrientation = glm::mat3_cast(glm::angleAxis(-90.0f,  glm::vec3(0.0f, 1.0f, 0.0f))); break;
+        case HandleAxis_Y: this->localOrientation = glm::mat3_cast(glm::angleAxis( 90.0f,  glm::vec3(1.0f, 0.0f, 0.0f))); break;
+        case HandleAxis_Z: this->localOrientation = glm::mat3_cast(glm::angleAxis( 180.0f, glm::vec3(1.0f, 0.0f, 0.0f))); break;
+
+        case HandleAxis_FrontFacing:
+        default:
+            {
+                assert(false);
+                break;
+            }
+        }
+
+
+
+        this->headMesh.vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->lineMesh.vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+
+
+        // Head.
+        float        arrowHeadLength       = 0.3f;
+        float        arrowHeadRadius       = 0.075f;
+        unsigned int arrowHeadSegments     = 16;
+        float        arrowHeadSegmentAngle = glm::radians(360.0f / static_cast<float>(arrowHeadSegments));
+
+        GTCore::Vector<glm::vec3>    arrowHeadVertices;
+        GTCore::Vector<unsigned int> arrowHeadIndices;
+
+        arrowHeadVertices.PushBack(this->localOrientation * glm::vec3(0.0f, 0.0f, -1.0f));                       // First vertex is the point.
+        arrowHeadVertices.PushBack(this->localOrientation * glm::vec3(0.0f, 0.0f, -1.0f + arrowHeadLength));     // Second vertex is the center of the base.
+
+        // Now we do the base vertices. There will be arrowHeadSegments vertices on the base.
+        for (unsigned int i = 0; i < arrowHeadSegments; ++i)
+        {
+            glm::vec3 position;
+
+            position.x = std::cos(arrowHeadSegmentAngle * i) * arrowHeadRadius;
+            position.y = std::sin(arrowHeadSegmentAngle * i) * arrowHeadRadius;
+            position.z = -1.0f + arrowHeadLength;
+
+            arrowHeadVertices.PushBack(this->localOrientation * position);
+        }
+
+        // At this point we'll have all of the arrow head vertices setup. We now need to do the indices. We'll start with the base
+        unsigned int pointIndex          = 0;
+        unsigned int baseCenterIndex     = 1;
+        unsigned int firstOuterBaseIndex = 2;
+
+        for (unsigned int i = 0; i < arrowHeadSegments; ++i)
+        {
+            arrowHeadIndices.PushBack(baseCenterIndex);
+            arrowHeadIndices.PushBack(firstOuterBaseIndex + i);
+            arrowHeadIndices.PushBack(firstOuterBaseIndex + ((i + 1) % arrowHeadSegments));
+
+            arrowHeadIndices.PushBack(pointIndex);
+            arrowHeadIndices.PushBack(firstOuterBaseIndex + ((i + 1) % arrowHeadSegments));
+            arrowHeadIndices.PushBack(firstOuterBaseIndex + i);
+        }
+
+        // Now we just set the data in the vertex array.
+        this->headMesh.vertexArray->SetData(&arrowHeadVertices[0].x, arrowHeadVertices.count, &arrowHeadIndices[0], arrowHeadIndices.count);
+
+
+        // Line.
+        glm::vec3 arrowLineVertices[2] =
+        {
+            glm::vec3(this->localOrientation * glm::vec3(0.0f, 0.0f,  0.0f)),
+            glm::vec3(this->localOrientation * glm::vec3(0.0f, 0.0f, -1.0f))
+        };
+        unsigned int arrowLineIndices[2] = {0, 1};
+
+        this->lineMesh.vertexArray->SetData(&arrowLineVertices[0].x, 2, arrowLineIndices, 2);
+        this->lineMesh.drawMode = DrawMode_Lines;
+
+
+        // Need to draw this on top of everything else.
+        this->headMesh.flags = this->lineMesh.flags = SceneRendererMesh::DrawLast | SceneRendererMesh::NoDepthTest | SceneRendererMesh::NoDepthWrite;
+
+
+
+
+        // Materials.
+        this->headMesh.material = this->material;
+        this->lineMesh.material = this->material;
+
+
+
+
+        // Picking.
+        this->pickingShape.addChildShape(btTransform::getIdentity(), new btBoxShape(btVector3(1.0f, 1.0f, 1.0f)));
+        this->pickingObject.setCollisionShape(&this->pickingShape);
+    }
+
+    TransformGizmo::TranslateHandle::~TranslateHandle()
+    {
+        Renderer2::DeleteVertexArray(this->headMesh.vertexArray);
+        Renderer2::DeleteVertexArray(this->lineMesh.vertexArray);
+    }
+
+
+    glm::vec3 TransformGizmo::TranslateHandle::GetForwardVector() const
+    {
+        return this->forwardVector;
+    }
+
+
+    void TransformGizmo::TranslateHandle::UpdateTransform(const glm::vec3 &position, const glm::quat &orientation, const glm::vec3 &scale)
+    {
+        // Updates mesh transform.
+        glm::mat4 transform;
+        Math::CalculateTransformMatrix(position, orientation, scale, transform);
+
+        this->headMesh.transform = transform;
+        this->lineMesh.transform = transform;
+
+
+
+        // Update forward vector.
+        this->forwardVector = glm::normalize(orientation * (this->localOrientation * glm::vec3(0.0f, 0.0f, -1.0f)));
+
+
+
+        // Update picking volumes.
+        auto pickingWorld = this->pickingObject.GetWorld();
+        if (pickingWorld != nullptr)
+        {
+            pickingWorld->RemoveCollisionObject(this->pickingObject);
+        }
+
+
+        // Scale.
+        assert(this->pickingShape.getNumChildShapes() == 1);
+        {
+            btVector3 halfExtents;
+            halfExtents.setX(0.075f * scale.x);
+            halfExtents.setY(0.075f * scale.y);
+            halfExtents.setZ(0.5f   * scale.z);
+
+
+            auto boxShape = static_cast<btBoxShape*>(this->pickingShape.getChildShape(0));
+            assert(boxShape != nullptr);
+            {
+                boxShape->setImplicitShapeDimensions(halfExtents);
+            }
+
+
+            btMatrix3x3 basis;
+            basis.setFromOpenGLSubMatrix(&glm::mat4(this->localOrientation)[0][0]);
+
+            btVector3 offset;
+            offset.setX(0.0f);
+            offset.setY(0.0f);
+            offset.setZ(-halfExtents.z());
+            offset = basis * offset;
+
+            // The box shape needs to have an offset applied.
+            btTransform transform;
+            transform.setBasis(basis);
+            transform.setOrigin(offset);
+
+            this->pickingShape.updateChildTransform(0, transform);
+        }
+
+
+        // Position/Rotation.
+        btTransform bulletTransform;
+        Math::CalculateTransformMatrix(position, orientation, bulletTransform);
+        this->pickingObject.setWorldTransform(bulletTransform);
+
+        if (pickingWorld != nullptr)
+        {
+            pickingWorld->AddCollisionObject(this->pickingObject, CollisionGroups::EditorGizmo, CollisionGroups::EditorSelectionRay);
+        }
+    }
+
+
+    void TransformGizmo::TranslateHandle::Show(SceneRenderer &renderer, CollisionWorld &pickingWorld)
+    {
+        renderer.AddExternalMesh(this->headMesh);
+        renderer.AddExternalMesh(this->lineMesh);
+
+        pickingWorld.AddCollisionObject(this->pickingObject, CollisionGroups::EditorGizmo, CollisionGroups::EditorSelectionRay);
+    }
+
+    void TransformGizmo::TranslateHandle::Hide(SceneRenderer &renderer, CollisionWorld &pickingWorld)
+    {
+        renderer.RemoveExternalMesh(this->headMesh);
+        renderer.RemoveExternalMesh(this->lineMesh);
+
+        pickingWorld.RemoveCollisionObject(this->pickingObject);
     }
 }

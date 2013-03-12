@@ -344,6 +344,7 @@ namespace GTEngine
         this->spriteMesh.material->SetParameter("SpriteColour",  colour);
 
 
+
         // Transform.
         this->ApplyTransformToSprite();
         this->ApplyScaleToSprite();
