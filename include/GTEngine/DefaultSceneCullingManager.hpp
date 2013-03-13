@@ -353,6 +353,18 @@ namespace GTEngine
 
             ~SpotLightMetadata()
             {
+                // Delete the cone shape.
+                assert(this->collisionShape->getNumChildShapes() == 1);
+                {
+                    auto childShape = this->collisionShape->getChildShape(0);
+                    assert(childShape != nullptr);
+                    {
+                        delete childShape;
+                        this->collisionShape->removeChildShapeByIndex(0);
+                    }
+                }
+
+
                 delete this->collisionObject;
                 delete this->collisionShape;
             }
