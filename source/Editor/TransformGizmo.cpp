@@ -250,7 +250,7 @@ namespace GTEngine
     // TranslateHandle
 
     TransformGizmo::TranslateHandle::TranslateHandle(HandleAxis axis)
-        : Handle(HandleType_Translate, axis), localOrientation(), headMesh(), lineMesh(), pickingShape()
+        : Handle(HandleType_Translate, axis), localOrientation(), headMesh(), lineMesh(), pickingShape(), pickingShapeBox(btVector3(1.0f, 1.0f, 1.0f))
     {
         switch (axis)
         {
@@ -342,7 +342,7 @@ namespace GTEngine
 
 
         // Picking.
-        this->pickingShape.addChildShape(btTransform::getIdentity(), new btBoxShape(btVector3(1.0f, 1.0f, 1.0f)));
+        this->pickingShape.addChildShape(btTransform::getIdentity(), &this->pickingShapeBox);
         this->pickingObject.setCollisionShape(&this->pickingShape);
     }
 
@@ -392,11 +392,9 @@ namespace GTEngine
             halfExtents.setZ(0.5f   * scale.z);
 
 
-            auto boxShape = static_cast<btBoxShape*>(this->pickingShape.getChildShape(0));
-            assert(boxShape != nullptr);
-            {
-                boxShape->setImplicitShapeDimensions(halfExtents);
-            }
+            // We set the shape dimensions explicitly because Bullet does weird things with scaling. In particular, if the scale is set to 0,0,0 the
+            // next scaling operations won't work properly.
+            this->pickingShapeBox.setImplicitShapeDimensions(halfExtents);
 
 
             btMatrix3x3 basis;
@@ -508,7 +506,6 @@ namespace GTEngine
 
 
         // Picking.
-        this->pickingShape.addChildShape(btTransform::getIdentity(), new btBoxShape(btVector3(1.0f, 1.0f, 1.0f)));
         this->pickingObject.setCollisionShape(&this->pickingShape);
     }
 
@@ -670,7 +667,7 @@ namespace GTEngine
     // ScaleHandle
 
     TransformGizmo::ScaleHandle::ScaleHandle(HandleAxis axis)
-        : Handle(HandleType_Scale, axis), localOrientation(), headMesh(), lineMesh(), pickingShape()
+        : Handle(HandleType_Scale, axis), localOrientation(), headMesh(), lineMesh(), pickingShape(), pickingShapeBox(btVector3(1.0f, 1.0f, 1.0f))
     {
         switch (axis)
         {
@@ -767,7 +764,7 @@ namespace GTEngine
 
 
         // Picking.
-        this->pickingShape.addChildShape(btTransform::getIdentity(), new btBoxShape(btVector3(1.0f, 1.0f, 1.0f)));
+        this->pickingShape.addChildShape(btTransform::getIdentity(), &this->pickingShapeBox);
         this->pickingObject.setCollisionShape(&this->pickingShape);
     }
 
@@ -817,11 +814,9 @@ namespace GTEngine
             halfExtents.setZ(0.5f   * scale.z);
 
 
-            auto boxShape = static_cast<btBoxShape*>(this->pickingShape.getChildShape(0));
-            assert(boxShape != nullptr);
-            {
-                boxShape->setImplicitShapeDimensions(halfExtents);
-            }
+            // We set the shape dimensions explicitly because Bullet does weird things with scaling. In particular, if the scale is set to 0,0,0 the
+            // next scaling operations won't work properly.
+            this->pickingShapeBox.setImplicitShapeDimensions(halfExtents);
 
 
             btMatrix3x3 basis;
