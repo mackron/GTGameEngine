@@ -25,7 +25,7 @@ namespace GTEngine
 
 
         /// Sets the position of the gizmo.
-        void SetPosition(const glm::vec3 &position);
+        void SetPosition(const glm::vec3 &position, const SceneNode &cameraNode);
 
         /// Retrieves the position of the gizmo.
         const glm::vec3 & GetPosition() const;
@@ -44,14 +44,14 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will also update the picking shape.
-        void SetScale(const glm::vec3 &scale);
+        void SetScale(const glm::vec3 &scale, const SceneNode &cameraNode);
 
         /// Retrieves the scale of the gizmo.
         const glm::vec3 & GetScale() const;
 
 
         /// Updates the transform of every gizmo.
-        void UpdateHandleTransforms();
+        void UpdateHandleTransforms(const SceneNode &cameraNode);
 
 
 
@@ -72,6 +72,7 @@ namespace GTEngine
         //const SceneNode & GetZArrowSceneNode() const { return this->zArrowSceneNode; }
 
 
+        /*
         /// Retrieves a reference to the y axis circle scene node.
               SceneNode & GetXCircleSceneNode()       { return this->xCircleSceneNode; }
         const SceneNode & GetXCircleSceneNode() const { return this->xCircleSceneNode; }
@@ -87,7 +88,7 @@ namespace GTEngine
         /// Retrieves a reference to the y axis circle scene node.
               SceneNode & GetCameraFacingCircleSceneNode()       { return this->cameraFacingCircleSceneNode; }
         const SceneNode & GetCameraFacingCircleSceneNode() const { return this->cameraFacingCircleSceneNode; }
-
+        */
 
         /*
         /// Retrieves a reference to the x axis arrow scene node.
@@ -141,7 +142,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not change the vertices, only the indices.
-        void UpdateCircleVertexArray(VertexArray* vertexArray, const SceneNode &circleNode, const SceneNode &cameraNode);
+        //void UpdateCircleVertexArray(VertexArray* vertexArray, const SceneNode &circleNode, const SceneNode &cameraNode);
 
 
 
@@ -253,6 +254,47 @@ namespace GTEngine
         };
 
 
+        /// Structure representing a rotation handle.
+        struct RotateHandle : public Handle
+        {
+            /// The local orientation of the handle.
+            glm::mat3 localOrientation;
+
+            /// The circle mesh.
+            SceneRendererMesh mesh;
+
+            /// The collision shape of the handle. An offset is applied, so we need to use a compound shape.
+            btCompoundShape pickingShape;
+
+            /// The capsule shape to use for each segment of the picking shape. The picking shape is a torus made up of these shapes in a compound shape.
+            btCapsuleShape pickingShapeSegment;
+
+            /// The forward vector.
+            glm::vec3 forwardVector;
+
+
+            /// Constructor.
+            RotateHandle(HandleAxis axis);
+
+            /// Destructor.
+            ~RotateHandle();
+
+
+            /// Handle::GetForwardVector().
+            glm::vec3 GetForwardVector() const;
+
+
+            /// Updates the transform of the mesh.
+            void UpdateTransform(const glm::vec3 &position, const glm::quat &orientation, const glm::vec3 &scale, const glm::mat4 &viewMatrix);
+
+
+            /// Shows the handle.
+            void Show(SceneRenderer &renderer, CollisionWorld &pickingWorld);
+
+            /// Hides the handle.
+            void Hide(SceneRenderer &renderer, CollisionWorld &pickingWorld);
+        };
+
 
         /// Structure representing a scale handle
         struct ScaleHandle : public Handle
@@ -335,16 +377,16 @@ namespace GTEngine
         //SceneNode zArrowSceneNode;
 
         /// The scene node for the x axis circle.
-        SceneNode xCircleSceneNode;
+        //SceneNode xCircleSceneNode;
 
         /// The scene node for the y axis circle.
-        SceneNode yCircleSceneNode;
+        //SceneNode yCircleSceneNode;
 
         /// The scene node for the z axis circle.
-        SceneNode zCircleSceneNode;
+        //SceneNode zCircleSceneNode;
 
         /// The scene node for the camera-facing circle.
-        SceneNode cameraFacingCircleSceneNode;
+        //SceneNode cameraFacingCircleSceneNode;
 
         /// The scene node for the x axis scale handle.
         //SceneNode xScaleSceneNode;
@@ -366,16 +408,16 @@ namespace GTEngine
         //Model zArrowModel;
 
         /// The model to use for the x axis circle.
-        Model xCircleModel;
+        //Model xCircleModel;
 
         /// The model to use for the y axis circle.
-        Model yCircleModel;
+        //Model yCircleModel;
 
         /// The model to use for the z axis circle.
-        Model zCircleModel;
+        //Model zCircleModel;
 
         /// The model to use for the camera-facing circle.
-        Model cameraFacingCircleModel;
+        //Model cameraFacingCircleModel;
 
         /// The model to use for the x axis scale handle.
         //Model xScaleModel;
@@ -401,6 +443,18 @@ namespace GTEngine
         TranslateHandle zTranslateHandle;
 
 
+        /// The x rotation handle.
+        RotateHandle xRotateHandle;
+
+        /// The y rotation handle.
+        RotateHandle yRotateHandle;
+
+        /// The z rotation handle.
+        RotateHandle zRotateHandle;
+
+        /// The front-facing rotation handle.
+        RotateHandle cameraFacingRotateHandle;
+
 
         /// The x scale handle.
         ScaleHandle xScaleHandle;
@@ -422,16 +476,16 @@ namespace GTEngine
 
 
         /// The geometry of the x axis circle mesh.
-        VertexArray* xCircleVA;
+        //VertexArray* xCircleVA;
 
         /// The geometry of the y axis circle mesh.
-        VertexArray* yCircleVA;
+        //VertexArray* yCircleVA;
 
         /// The geometry of the z axis circle mesh.
-        VertexArray* zCircleVA;
+        //VertexArray* zCircleVA;
 
         /// The geometry of the camera-facing circle mesh.
-        VertexArray* cameraFacingCircleVA;
+        //VertexArray* cameraFacingCircleVA;
 
 
         /// The geometry of the line part of the scale handle.
