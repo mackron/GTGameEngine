@@ -8,7 +8,8 @@ namespace GTEngine
 {
     TransformGizmo::TransformGizmo()
         : position(), orientation(), scale(1.0f, 1.0f, 1.0f),
-          sceneNode(),
+          isVisible(false), showingTranslationHandles(false), showingRotationHandles(false), showingScaleHandles(false),
+          //sceneNode(),
           //xArrowSceneNode(),  yArrowSceneNode(),  zArrowSceneNode(),
           //xCircleSceneNode(), yCircleSceneNode(), zCircleSceneNode(), cameraFacingCircleSceneNode(),
           //xScaleSceneNode(),  yScaleSceneNode(),  zScaleSceneNode(),
@@ -290,8 +291,8 @@ namespace GTEngine
 
 
 
-        auto metadata = this->sceneNode.AddComponent<EditorMetadataComponent>();
-        metadata->IsSystemNode(true);
+        //auto metadata = this->sceneNode.AddComponent<EditorMetadataComponent>();
+        //metadata->IsSystemNode(true);
 
         /*
         metadata = this->xArrowSceneNode.AddComponent<EditorMetadataComponent>();
@@ -379,18 +380,18 @@ namespace GTEngine
         this->sceneNode.AttachChild(this->zScaleSceneNode);
         */
 
-        this->UpdatePickingVolumes();
+        //this->UpdatePickingVolumes();
         this->RestoreColours();
 
 
         // We don't want to do serialization and state stack staging here.
-        this->sceneNode.DisableSerialization();
-        this->sceneNode.DisableStateStackStaging();
+        //this->sceneNode.DisableSerialization();
+        //this->sceneNode.DisableStateStackStaging();
 
 
 
         // We will give these scene nodes names to make debugging a bit easier.
-        this->sceneNode.SetName("TransformGizmo");
+        //this->sceneNode.SetName("TransformGizmo");
         //this->xArrowSceneNode.SetName("TransformGizmo_xArrowSceneNode");
         //this->yArrowSceneNode.SetName("TransformGizmo_yArrowSceneNode");
         //this->zArrowSceneNode.SetName("TransformGizmo_zArrowSceneNode");
@@ -408,7 +409,7 @@ namespace GTEngine
         this->position = newPosition;
         this->UpdateHandleTransforms(cameraNode);
 
-        this->sceneNode.SetPosition(newPosition);
+        //this->sceneNode.SetPosition(newPosition);
     }
 
     const glm::vec3 & TransformGizmo::GetPosition() const
@@ -423,7 +424,7 @@ namespace GTEngine
         this->orientation = rotation;
         this->UpdateHandleTransforms(cameraNode);
 
-        this->sceneNode.SetWorldOrientation(rotation);
+        //this->sceneNode.SetWorldOrientation(rotation);
 
         // We need to update the geometry of the circles so that only the pieces that are actually facing the camera are shown.
         //this->UpdateCircleVertexArray(this->xCircleVA, this->xCircleSceneNode, cameraNode);
@@ -479,6 +480,8 @@ namespace GTEngine
 
     void TransformGizmo::Show(SceneRenderer &renderer, CollisionWorld &pickingWorld)
     {
+        this->isVisible = true;
+
         if (this->showingTranslationHandles)
         {
             this->ShowTranslationHandles(renderer, pickingWorld);
@@ -493,11 +496,13 @@ namespace GTEngine
         }
 
 
-        this->sceneNode.Show();
+        //this->sceneNode.Show();
     }
 
     void TransformGizmo::Hide(SceneRenderer &renderer, CollisionWorld &pickingWorld)
     {
+        this->isVisible = false;
+
         this->xTranslateHandle.Hide(renderer, pickingWorld);
         this->yTranslateHandle.Hide(renderer, pickingWorld);
         this->zTranslateHandle.Hide(renderer, pickingWorld);
@@ -511,7 +516,9 @@ namespace GTEngine
         this->yScaleHandle.Hide(renderer, pickingWorld);
         this->zScaleHandle.Hide(renderer, pickingWorld);
 
-        this->sceneNode.Hide();
+        // Important: Don't modify the 'this->showing*Handles' members.
+
+        //this->sceneNode.Hide();
     }
 
 
@@ -616,6 +623,7 @@ namespace GTEngine
         */
     }
 
+#if 0
     void TransformGizmo::ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b)
     {
         /*
@@ -720,6 +728,7 @@ namespace GTEngine
         }
         */
     }
+#endif
 
 
 #if 0
@@ -1156,62 +1165,65 @@ namespace GTEngine
 
 
 
-        // Update picking volumes.
-        auto pickingWorld = this->pickingObject.GetWorld();
-        if (pickingWorld != nullptr)
+        // Update picking volumes. Only do this for the non-forward-facing handles.
+        if (!(this->axis & HandleAxis_FrontFacing))
         {
-            pickingWorld->RemoveCollisionObject(this->pickingObject);
-        }
-
-
-        // Shapes are going to be completely recreated.
-        while (this->pickingShape.getNumChildShapes() > 0)
-        {
-            auto shape = this->pickingShape.getChildShape(0);
-            assert(shape != nullptr);
+            auto pickingWorld = this->pickingObject.GetWorld();
+            if (pickingWorld != nullptr)
             {
-                this->pickingShape.removeChildShapeByIndex(0);
+                pickingWorld->RemoveCollisionObject(this->pickingObject);
             }
-        }
-
-        float        outerRadius   = 1.0f * scale.y;              // 1.0 is the radius of the circles.
-        float        innerRadius   = 0.1f * scale.y;              // This is the radius of the geometry making up the ring.
-        unsigned int subdivisions  = 32;
-
-        float        segmentLength = 2.0f * SIMD_PI * outerRadius / static_cast<float>(subdivisions);
-        float        segmentAngle  = 2.0f * SIMD_PI               / static_cast<float>(subdivisions);
-
-        this->pickingShapeSegment.~btCapsuleShape();
-        new (&this->pickingShapeSegment) btCapsuleShape(innerRadius, segmentLength);
-
-        btTransform segmentTransform;
-        for (unsigned int i = 0; i < subdivisions; ++i)
-        {
-            float angle = segmentAngle * static_cast<float>(i);
-
-            btVector3 position;
-            position.setX(std::cos(angle) * outerRadius);
-            position.setY(std::sin(angle) * outerRadius);
-            position.setZ(0.0f);
-
-            btQuaternion rotation(btVector3(0.0f, 0.0f, -1.0f), angle);
-
-            segmentTransform.setIdentity();
-            segmentTransform.setOrigin(position);
-            segmentTransform.setRotation(rotation);
-            this->pickingShape.addChildShape(segmentTransform, &this->pickingShapeSegment);
-        }
 
 
+            // Shapes are going to be completely recreated.
+            while (this->pickingShape.getNumChildShapes() > 0)
+            {
+                auto shape = this->pickingShape.getChildShape(0);
+                assert(shape != nullptr);
+                {
+                    this->pickingShape.removeChildShapeByIndex(0);
+                }
+            }
 
-        // Position/Rotation.
-        btTransform bulletTransform;
-        Math::CalculateTransformMatrix(position, orientation * glm::quat_cast(this->localOrientation), bulletTransform);
-        this->pickingObject.setWorldTransform(bulletTransform);
+            float        outerRadius   = 1.0f * scale.y;              // 1.0 is the radius of the circles.
+            float        innerRadius   = 0.1f * scale.y;              // This is the radius of the geometry making up the ring.
+            unsigned int subdivisions  = 32;
 
-        if (pickingWorld != nullptr)
-        {
-            pickingWorld->AddCollisionObject(this->pickingObject, CollisionGroups::EditorGizmo, CollisionGroups::EditorSelectionRay);
+            float        segmentLength = 2.0f * SIMD_PI * outerRadius / static_cast<float>(subdivisions);
+            float        segmentAngle  = 2.0f * SIMD_PI               / static_cast<float>(subdivisions);
+
+            this->pickingShapeSegment.~btCapsuleShape();
+            new (&this->pickingShapeSegment) btCapsuleShape(innerRadius, segmentLength);
+
+            btTransform segmentTransform;
+            for (unsigned int i = 0; i < subdivisions; ++i)
+            {
+                float angle = segmentAngle * static_cast<float>(i);
+
+                btVector3 position;
+                position.setX(std::cos(angle) * outerRadius);
+                position.setY(std::sin(angle) * outerRadius);
+                position.setZ(0.0f);
+
+                btQuaternion rotation(btVector3(0.0f, 0.0f, -1.0f), angle);
+
+                segmentTransform.setIdentity();
+                segmentTransform.setOrigin(position);
+                segmentTransform.setRotation(rotation);
+                this->pickingShape.addChildShape(segmentTransform, &this->pickingShapeSegment);
+            }
+
+
+
+            // Position/Rotation.
+            btTransform bulletTransform;
+            Math::CalculateTransformMatrix(position, orientation * glm::quat_cast(this->localOrientation), bulletTransform);
+            this->pickingObject.setWorldTransform(bulletTransform);
+
+            if (pickingWorld != nullptr)
+            {
+                pickingWorld->AddCollisionObject(this->pickingObject, CollisionGroups::EditorGizmo, CollisionGroups::EditorSelectionRay);
+            }
         }
     }
 
@@ -1220,14 +1232,22 @@ namespace GTEngine
     {
         renderer.AddExternalMesh(this->mesh);
 
-        pickingWorld.AddCollisionObject(this->pickingObject, CollisionGroups::EditorGizmo, CollisionGroups::EditorSelectionRay);
+        // We don't want to add a picking object for the front-facing handles.
+        if (!(this->axis & HandleAxis_FrontFacing))
+        {
+            pickingWorld.AddCollisionObject(this->pickingObject, CollisionGroups::EditorGizmo, CollisionGroups::EditorSelectionRay);
+        }
     }
 
     void TransformGizmo::RotateHandle::Hide(SceneRenderer &renderer, CollisionWorld &pickingWorld)
     {
         renderer.RemoveExternalMesh(this->mesh);
 
-        pickingWorld.RemoveCollisionObject(this->pickingObject);
+        // We didn't add a picking object for the front-facing handles.
+        if (!(this->axis & HandleAxis_FrontFacing))
+        {
+            pickingWorld.RemoveCollisionObject(this->pickingObject);
+        }
     }
 
 

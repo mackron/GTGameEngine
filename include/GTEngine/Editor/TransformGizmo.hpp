@@ -56,8 +56,8 @@ namespace GTEngine
 
 
         /// Retrieves a reference the main scene node.
-              SceneNode & GetSceneNode()       { return this->sceneNode; }
-        const SceneNode & GetSceneNode() const { return this->sceneNode; }
+        //      SceneNode & GetSceneNode()       { return this->sceneNode; }
+        //const SceneNode & GetSceneNode() const { return this->sceneNode; }
 
         /// Retrieves a reference to the x axis arrow scene node.
         //      SceneNode & GetXArrowSceneNode()       { return this->xArrowSceneNode; }
@@ -123,6 +123,10 @@ namespace GTEngine
         void ShowScaleHandles(SceneRenderer &renderer, CollisionWorld &pickingWorld);
 
 
+        /// Determines if the transform gizmo is visible.
+        bool IsVisible() const { return this->isVisible; }
+
+
 
         /// Restores the colours of the gizmo axes to their defaults.
         void RestoreColours();
@@ -130,13 +134,13 @@ namespace GTEngine
         /// Changes the colour of the given scene node.
         ///
         /// @param axisSceneNode [in] A reference to the scene node of the axis whose colour is being changed.
-        void ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b);
+        //void ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b);
 
 
     private:
 
         /// Updates the picking volumes of the arrows.
-        void UpdatePickingVolumes();
+        //void UpdatePickingVolumes();
 
         /// Updates the vertex arrays of the given circles so that only the front facing lines are shown.
         ///
@@ -353,6 +357,9 @@ namespace GTEngine
         glm::vec3 scale;
 
 
+        /// Keeps track of whether or not the gizmo itself is visible.
+        bool isVisible;
+
         /// Keeps track of whether or not the translation handles are showing.
         bool showingTranslationHandles;
 
@@ -365,7 +372,7 @@ namespace GTEngine
 
 
         /// The main scene node.
-        SceneNode sceneNode;
+        //SceneNode sceneNode;
 
         /// The scene node for the x axis arrow.
         //SceneNode xArrowSceneNode;

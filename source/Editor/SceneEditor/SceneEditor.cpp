@@ -1811,7 +1811,7 @@ namespace GTEngine
 
                     this->ApplyCameraRotation();
 
-                    if (this->transformGizmo.GetSceneNode().IsVisible())
+                    if (transformGizmo.IsVisible())
                     {
                         this->transformGizmo.SetRotation(this->GetGizmoRotation(), this->camera);
                     }
@@ -1941,8 +1941,8 @@ namespace GTEngine
             this->scene.AddSceneNode(this->camera);
 
             this->transformGizmo.Initialise();
-            this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
-            this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
+            //this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
+            //this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
         }
     }
 
@@ -2030,8 +2030,8 @@ namespace GTEngine
 
 
             // The deserializer will clear the scene, so we'll need to re-add the camera and gizmo.
-            this->scene.AddSceneNode(this->camera);
-            this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
+            this->scene.AddSceneNode(this->camera);     // TODO: Keep this separate from the scene. Problem is detecting movements to give the gizmo a chance to update it's size.
+            //this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
 
             this->UpdateGizmo();
 
