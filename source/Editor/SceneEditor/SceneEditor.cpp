@@ -1938,11 +1938,8 @@ namespace GTEngine
             this->scene.AddViewport(this->viewport);
             this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
 
+            // TODO: Need to keep the camera node outside the scene. Makes scene node management easier.
             this->scene.AddSceneNode(this->camera);
-
-            this->transformGizmo.Initialise();
-            //this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
-            //this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
         }
     }
 
@@ -2029,10 +2026,10 @@ namespace GTEngine
             }
 
 
-            // The deserializer will clear the scene, so we'll need to re-add the camera and gizmo.
-            this->scene.AddSceneNode(this->camera);     // TODO: Keep this separate from the scene. Problem is detecting movements to give the gizmo a chance to update it's size.
-            //this->scene.AddSceneNode(this->transformGizmo.GetSceneNode());
+            // TODO: Keep this separate from the scene. Problem is detecting movements to give the gizmo a chance to update it's size.
+            this->scene.AddSceneNode(this->camera);
 
+            // Gizmo should be updated now.
             this->UpdateGizmo();
 
 

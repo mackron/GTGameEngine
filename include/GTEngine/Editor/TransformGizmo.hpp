@@ -19,10 +19,6 @@ namespace GTEngine
         ~TransformGizmo();
 
 
-        /// Initialises the gizmo.
-        void Initialise();
-
-
 
         /// Sets the position of the gizmo.
         void SetPosition(const glm::vec3 &position, const SceneNode &cameraNode);
@@ -370,76 +366,6 @@ namespace GTEngine
         bool showingScaleHandles;
 
 
-
-        /// The main scene node.
-        //SceneNode sceneNode;
-
-        /// The scene node for the x axis arrow.
-        //SceneNode xArrowSceneNode;
-
-        /// The scene node for the y axis arrow.
-        //SceneNode yArrowSceneNode;
-
-        /// The scene node for the z axis arrow.
-        //SceneNode zArrowSceneNode;
-
-        /// The scene node for the x axis circle.
-        //SceneNode xCircleSceneNode;
-
-        /// The scene node for the y axis circle.
-        //SceneNode yCircleSceneNode;
-
-        /// The scene node for the z axis circle.
-        //SceneNode zCircleSceneNode;
-
-        /// The scene node for the camera-facing circle.
-        //SceneNode cameraFacingCircleSceneNode;
-
-        /// The scene node for the x axis scale handle.
-        //SceneNode xScaleSceneNode;
-
-        /// The scene node for the y axis scale handle.
-        //SceneNode yScaleSceneNode;
-
-        /// The scene node for the z axis scale handle.
-        //SceneNode zScaleSceneNode;
-
-
-        /// The model to use for the x axis arrow.
-        //Model xArrowModel;
-
-        /// The model to use for the y axis arrow.
-        //Model yArrowModel;
-
-        /// The model to use for the z axis arrow.
-        //Model zArrowModel;
-
-        /// The model to use for the x axis circle.
-        //Model xCircleModel;
-
-        /// The model to use for the y axis circle.
-        //Model yCircleModel;
-
-        /// The model to use for the z axis circle.
-        //Model zCircleModel;
-
-        /// The model to use for the camera-facing circle.
-        //Model cameraFacingCircleModel;
-
-        /// The model to use for the x axis scale handle.
-        //Model xScaleModel;
-
-        /// The model to use for the y axis scale handle.
-        //Model yScaleModel;
-
-        /// The model to use for the z axis scale handle.
-        //Model zScaleModel;
-
-
-
-        
-
-
         /// The x translation handle.
         TranslateHandle xTranslateHandle;
 
@@ -472,34 +398,6 @@ namespace GTEngine
         /// The z scale handle.
         ScaleHandle zScaleHandle;
 
-
-
-
-        /// The geometry of the line part of the arrow models' mesh.
-        //VertexArray* arrowLineVA;
-
-        /// The geometry of the head part of the arrow models' mesh.
-        //VertexArray* arrowHeadVA;
-
-
-        /// The geometry of the x axis circle mesh.
-        //VertexArray* xCircleVA;
-
-        /// The geometry of the y axis circle mesh.
-        //VertexArray* yCircleVA;
-
-        /// The geometry of the z axis circle mesh.
-        //VertexArray* zCircleVA;
-
-        /// The geometry of the camera-facing circle mesh.
-        //VertexArray* cameraFacingCircleVA;
-
-
-        /// The geometry of the line part of the scale handle.
-        //VertexArray* scaleLineVA;
-
-        /// the geometry of the head part of the scale handle.
-        //VertexArray* scaleHeadVA;
 
 
     private:    // No copying.
