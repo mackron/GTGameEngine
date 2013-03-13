@@ -76,6 +76,8 @@ namespace GTEngine
         {
             Renderer2::DeleteShader(this->ambientLightShader);
             Renderer2::DeleteShader(this->directionalLightShader);
+            Renderer2::DeleteShader(this->pointLightShader);
+            Renderer2::DeleteShader(this->spotLightShader);
             Renderer2::DeleteShader(this->materialShader);
         }
 
