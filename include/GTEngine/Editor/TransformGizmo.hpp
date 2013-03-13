@@ -226,6 +226,9 @@ namespace GTEngine
             /// The collision shape of the handle. An offset is applied, so we need to use a compound shape.
             btCompoundShape pickingShape;
 
+            /// The box collision shape to as the main shape. This is attached to the compound shape so that an offset can be applied.
+            btBoxShape pickingShapeBox;
+
             /// The forward vector.
             glm::vec3 forwardVector;
 
@@ -310,6 +313,9 @@ namespace GTEngine
 
             /// The collision shape of the handle. An offset is applied, so we need to use a compound shape.
             btCompoundShape pickingShape;
+
+            /// The box collision shape to as the main shape. This is attached to the compound shape so that an offset can be applied.
+            btBoxShape pickingShapeBox;
 
             /// The forward vector.
             glm::vec3 forwardVector;
