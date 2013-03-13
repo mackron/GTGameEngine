@@ -427,13 +427,13 @@ namespace GTEngine
         /// Determines whether or not the node has the component as specified by 'T'.
         ///
         /// @return True if the scene node has the component; false otherwise.
-        inline bool HasComponent(const char *componentName)
+        inline bool HasComponent(const char *componentName) const
         {
             return this->GetComponentByName(componentName) != nullptr;
         }
 
         template <typename T>
-        bool HasComponent()
+        bool HasComponent() const
         {
             return this->HasComponent(T::Name);
         }
@@ -811,7 +811,7 @@ namespace GTEngine
     template <> inline       ModelComponent* SceneNode::GetComponent<ModelComponent>()       { return this->modelComponent; }
     template <> inline const ModelComponent* SceneNode::GetComponent<ModelComponent>() const { return this->modelComponent; }
 
-    template <> inline bool SceneNode::HasComponent<ModelComponent>()
+    template <> inline bool SceneNode::HasComponent<ModelComponent>() const
     {
         return this->modelComponent != nullptr;
     }
@@ -822,7 +822,7 @@ namespace GTEngine
     template <> inline       PointLightComponent* SceneNode::GetComponent<PointLightComponent>()       { return this->pointLightComponent; }
     template <> inline const PointLightComponent* SceneNode::GetComponent<PointLightComponent>() const { return this->pointLightComponent; }
 
-    template <> inline bool SceneNode::HasComponent<PointLightComponent>()
+    template <> inline bool SceneNode::HasComponent<PointLightComponent>() const
     {
         return this->pointLightComponent != nullptr;
     }
@@ -833,7 +833,7 @@ namespace GTEngine
     template <> inline       SpotLightComponent* SceneNode::GetComponent<SpotLightComponent>()       { return this->spotLightComponent; }
     template <> inline const SpotLightComponent* SceneNode::GetComponent<SpotLightComponent>() const { return this->spotLightComponent; }
 
-    template <> inline bool SceneNode::HasComponent<SpotLightComponent>()
+    template <> inline bool SceneNode::HasComponent<SpotLightComponent>() const
     {
         return this->spotLightComponent != nullptr;
     }
@@ -844,7 +844,7 @@ namespace GTEngine
     template <> inline       EditorMetadataComponent* SceneNode::GetComponent<EditorMetadataComponent>()       { return this->editorMetadataComponent; }
     template <> inline const EditorMetadataComponent* SceneNode::GetComponent<EditorMetadataComponent>() const { return this->editorMetadataComponent; }
 
-    template <> inline bool SceneNode::HasComponent<EditorMetadataComponent>()
+    template <> inline bool SceneNode::HasComponent<EditorMetadataComponent>() const
     {
         return this->editorMetadataComponent != nullptr;
     }

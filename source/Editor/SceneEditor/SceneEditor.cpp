@@ -2094,7 +2094,7 @@ namespace GTEngine
 
     void SceneEditor::RepositionGizmo()
     {
-        this->transformGizmo.SetPosition(this->GetSelectionCenterPoint());
+        this->transformGizmo.SetPosition(this->GetSelectionCenterPoint(), this->camera);
         this->transformGizmo.SetRotation(this->GetGizmoRotation(), this->camera);
     }
 
@@ -2109,7 +2109,7 @@ namespace GTEngine
         windowPos.y += 64.0f;
 
         glm::vec3 gizmoScale(glm::distance(this->viewport.Unproject(windowPos), gizmoPosition));
-        this->transformGizmo.SetScale(gizmoScale);
+        this->transformGizmo.SetScale(gizmoScale, this->camera);
     }
 
 

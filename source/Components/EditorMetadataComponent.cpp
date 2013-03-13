@@ -192,7 +192,6 @@ namespace GTEngine
 
         btCapsuleShape* cylinderShape = new btCapsuleShape(innerRadius, segmentLength);
 
-
         btTransform transform;
         for (unsigned int i = 0; i < subdivisions; ++i)
         {
