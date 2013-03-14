@@ -35,7 +35,7 @@
     
     void main()
     {
-        gl_Position = PVMMatrix       * vec4(VertexInput_Position, 1.0);
+        gl_Position = PVMMatrix * vec4(VertexInput_Position, 1.0);
         ShadowCoord = gl_Position;
     }
 ]]>
@@ -53,10 +53,11 @@
     void main()
     {
         float depth = ShadowCoord.z / ShadowCoord.w;
-        float dx    = dFdx(depth);
-        float dy    = dFdy(depth);
+        //float dx    = dFdx(depth);
+        //float dy    = dFdy(depth);
         
-        ColourOut = vec4(depth, (depth * depth) + (0.25 * ((dx * dx) + (dy * dy))), 0.0, 1.0);
+        //ColourOut = vec4(depth, (depth * depth) + (0.25 * ((dx * dx) + (dy * dy))), 0.0, 1.0);
+        ColourOut = vec4(depth, depth * depth, 0.0, 1.0);
     }
 ]]>
 </shader>
@@ -208,6 +209,7 @@
 ]]>
 </shader>
 
+
 <shader id="DefaultSceneRenderer_DirectionalLight">
 <![CDATA[
     uniform vec3 Colour;
@@ -225,6 +227,69 @@
 
         diffuseOut  += Colour * diffuse;
         specularOut += Colour * specular;
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_ShadowDirectionalLight">
+<![CDATA[
+    uniform vec3 Colour;
+    uniform vec3 Position;
+    uniform vec3 Direction;
+    
+    
+    uniform sampler2D ShadowMap;
+    
+    float linstep(float low, float high, float v)
+    {
+        return clamp((v - low) / (high - low), 0.0, 1.0);
+    }
+    
+    
+    float CalculateShadowBasic(vec2 shadowUV, float fragmentDepth)
+    {
+        float bias        = 0.00001;
+        float shadowDepth = texture2D(ShadowMap, shadowUV).r + bias;
+
+        return step(fragmentDepth, shadowDepth);
+    }
+    
+    float CalculateShadowVSM(vec2 shadowUV, float fragmentDepth)
+    {
+        float bias     = 0.00075;
+        vec2  moments  = texture2D(ShadowMap, shadowUV).xy;
+        float variance = moments.y - (moments.x * moments.x);
+        float d        = fragmentDepth - moments.x;
+        float p        = smoothstep(fragmentDepth - bias, fragmentDepth, moments.x);
+        float pMax     = linstep(0.2, 1.0, variance / (variance + (d * d)));
+        
+        return clamp(max(p, pMax), 0.0, 1.0);
+    }
+    
+    float CalculateShadow()
+    {
+        vec3  shadowCoord   = VertexOutput_PositionLS.xyz / VertexOutput_PositionLS.w;
+        vec2  shadowUV      = shadowCoord.xy * 0.5 + 0.5;
+        float fragmentDepth = shadowCoord.z;
+    
+    
+        //return CalculateShadowBasic(shadowUV, fragmentDepth);
+        return CalculateShadowVSM(shadowUV, fragmentDepth);
+    }
+    
+    
+    void DoLighting(in vec3 normal, out vec3 diffuseOut, out vec3 specularOut)
+    {
+        vec3 N = normal;
+        vec3 L = -Direction;
+        vec3 H = normalize(L - normalize(VertexOutput_PositionVS.xyz));
+    
+        float diffuse  = DiffuseFactor(N, L);
+        float specular = SpecularFactor(N, H, 64.0f);
+        float shadow   = CalculateShadow();
+
+        diffuseOut  += Colour * diffuse  * shadow;
+        specularOut += Colour * specular * shadow;
     }
 ]]>
 </shader>
