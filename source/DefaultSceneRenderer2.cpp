@@ -68,7 +68,7 @@ namespace GTEngine
           opaqueObjects(),     alphaTransparentObjects(),     refractiveTransparentObjects(),
           opaqueObjectsLast(), alphaTransparentObjectsLast(), refractiveTransparentObjectsLast(),
           ambientLights(), directionalLights(), pointLights(), spotLights(),
-          /*shadowDirectionalLights(), shadowPointLights(), */shadowSpotLights(),
+          /*shadowDirectionalLights(),*/ shadowPointLights(), shadowSpotLights(),
           meshesToAnimate(),
           projectionMatrix(), viewMatrix(), projectionViewMatrix()
     {
@@ -146,12 +146,12 @@ namespace GTEngine
         {
             delete this->shadowDirectionalLights[i];
         }
+        */
 
         for (size_t i = 0; i < this->shadowPointLights.count; ++i)
         {
             delete this->shadowPointLights[i];
         }
-        */
 
         for (size_t i = 0; i < this->shadowSpotLights.count; ++i)
         {
@@ -218,8 +218,8 @@ namespace GTEngine
                     }
                     else
                     {
-                        light = new SceneRendererPointLight;        // TODO: Change this to DefaultSceneRendererShadowPointLight later.
-                        this->pointLights.PushBack(light);          // TODO: Change this to shadowPointLights later.
+                        light = new DefaultSceneRendererShadowPointLight;
+                        this->shadowPointLights.PushBack(static_cast<DefaultSceneRendererShadowPointLight*>(light));
                     }
 
                     light->colour               = lightComponent->GetColour();
@@ -423,6 +423,28 @@ namespace GTEngine
 
 
         // Shadow-Casting Point Lights.
+        for (size_t i = 0; i < this->shadowPointLights.count; ++i)
+        {
+            auto light = this->shadowPointLights[i];
+            assert(light != nullptr);
+            {
+                // We need to do 6 queries here - one for each face.
+                light->projection    = glm::perspective(90.0f, 1.0f, 0.1f, Math::Lighting::ApproximateAttenuationRadius(light->constantAttenuation, light->linearAttenuation, light->quadraticAttenuation));
+                light->positiveXView = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
+                light->negativeXView = glm::mat4_cast(glm::inverse(glm::angleAxis(+90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
+                light->positiveYView = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f, glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-light->position);
+                light->negativeYView = glm::mat4_cast(glm::inverse(glm::angleAxis(+90.0f, glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-light->position);
+                light->positiveZView = glm::mat4_cast(glm::inverse(glm::angleAxis(  0.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
+                light->negativeZView = glm::mat4_cast(glm::inverse(glm::angleAxis(180.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
+
+                scene.QueryVisibleObjects(light->projection * light->positiveXView, light->containedMeshesPositiveX);
+                scene.QueryVisibleObjects(light->projection * light->negativeXView, light->containedMeshesNegativeX);
+                scene.QueryVisibleObjects(light->projection * light->positiveYView, light->containedMeshesPositiveY);
+                scene.QueryVisibleObjects(light->projection * light->negativeYView, light->containedMeshesNegativeY);
+                scene.QueryVisibleObjects(light->projection * light->positiveZView, light->containedMeshesPositiveZ);
+                scene.QueryVisibleObjects(light->projection * light->negativeZView, light->containedMeshesNegativeZ);
+            }
+        }
 
 
         // Shadow-Casting Spot Lights.
@@ -460,11 +482,13 @@ namespace GTEngine
 
     DefaultSceneRenderer2::DefaultSceneRenderer2()
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
-          shadowMapFramebuffer(), shadowMapShader(nullptr),
+          shadowMapFramebuffer(), shadowMapShader(nullptr), pointShadowMapFramebuffer(512, 512), pointShadowMapShader(nullptr),
+          fullscreenTriangleVA(nullptr),
           materialLibraryEventHandler(*this)
     {
-        this->depthPassShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
-        this->shadowMapShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapFS"));
+        this->depthPassShader      = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"),      ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
+        this->shadowMapShader      = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapVS"),      ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapFS"));
+        this->pointShadowMapShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapFS"));
 
 
         // Shadow Map Framebuffer.
@@ -476,13 +500,37 @@ namespace GTEngine
         this->shadowMapFramebuffer.Resize(512, 512);        // TODO: Make these a configurable variable.
 
         // Now we can setup the filtering and attach the textures to the framebuffer itself.
-        Renderer2::SetTexture2DFilter(  *this->shadowMapFramebuffer.colourBuffer, TextureFilter_LinearLinear, TextureFilter_LinearLinear);
+        Renderer2::SetTexture2DFilter(  *this->shadowMapFramebuffer.colourBuffer, TextureFilter_LinearLinear, TextureFilter_Linear);
         Renderer2::SetTexture2DWrapMode(*this->shadowMapFramebuffer.colourBuffer, TextureWrapMode_ClampToEdge);
 
         this->shadowMapFramebuffer.framebuffer->AttachDepthStencilBuffer(this->shadowMapFramebuffer.depthStencilBuffer);
         this->shadowMapFramebuffer.framebuffer->AttachColourBuffer(this->shadowMapFramebuffer.colourBuffer, 0);
 
         Renderer2::PushAttachments(*this->shadowMapFramebuffer.framebuffer);
+
+
+
+        /// Fullscreen Triangle Vertex Array.
+        this->fullscreenTriangleVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2);
+        
+        float triangleVertices[] =
+        {
+            -3.0f, -1.0f, 0.0f,
+            -1.0f,  0.0f,
+
+             1.0f, -1.0f, 0.0f,
+             1.0f,  0.0f,
+
+             1.0f,  3.0f, 0.0f,
+             1.0f,  2.0f,
+        };
+
+        unsigned int triangleIndices[] =
+        {
+            0, 1, 2
+        };
+
+        this->fullscreenTriangleVA->SetData(triangleVertices, 3, triangleIndices, 3);
 
 
 
@@ -508,6 +556,8 @@ namespace GTEngine
                 delete materialShaders;
             }
         }
+
+        Renderer2::DeleteVertexArray(this->fullscreenTriangleVA);
 
         MaterialLibrary::RemoveEventHandler(this->materialLibraryEventHandler);
     }
@@ -842,24 +892,22 @@ namespace GTEngine
 
         /// Shadow-Casting Spot Lights.
         //size_t shadowDirectionalLightsRemaining = visibleObjects.shadowDirectionalLights.count;
-        //size_t shadowPointLightsRemaining       = visibleObjects.shadowPointLights.count;
+        size_t shadowPointLightsRemaining       = visibleObjects.shadowPointLights.count;
         size_t shadowSpotLightsRemaining        = visibleObjects.shadowSpotLights.count;
 
         /*
         while (shadowDirectionalLightsRemaining > 0)
         {
-            this->RenderOpaqueShadowDirectionalLightingPass(shadowDirectionalLightsRemaining - 1, visibleObjects);
+            this->RenderOpaqueShadowDirectionalLightingPass(shadowDirectionalLightsRemaining - 1, visibleObjects, framebuffer);
             shadowDirectionalLightsRemaining -= 1;
         }
         */
 
-        /*
         while (shadowPointLightsRemaining > 0)
         {
-            this->RenderOpaqueShadowPointLightingPass(shadowPointLightsRemaining - 1, visibleObjects);
+            this->RenderOpaqueShadowPointLightingPass(shadowPointLightsRemaining - 1, visibleObjects, framebuffer);
             shadowPointLightsRemaining -= 1;
         }
-        */
         
         while (shadowSpotLightsRemaining > 0)
         {
@@ -1165,6 +1213,155 @@ namespace GTEngine
             }
         }
     }
+
+
+
+    void DefaultSceneRenderer2::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
+    {
+        // We first need to build the shadow map.
+        Renderer2::DisableBlending();
+        Renderer2::EnableDepthWrites();
+        Renderer2::SetDepthFunction(RendererFunction_LEqual);
+        
+        Renderer2::SetCurrentFramebuffer(this->pointShadowMapFramebuffer.framebuffer);
+        Renderer2::SetCurrentShader(this->pointShadowMapShader);
+        Renderer2::SetViewport(0, 0, this->pointShadowMapFramebuffer.width, this->pointShadowMapFramebuffer.height);
+
+        
+        auto light = visibleObjects.shadowPointLights[lightIndex];
+        assert(light != nullptr);
+        {
+            this->RenderPointShapowMapFace(*light, light->positiveXView, 0, light->containedMeshesPositiveX.meshes);
+            this->RenderPointShapowMapFace(*light, light->negativeXView, 1, light->containedMeshesNegativeX.meshes);
+            this->RenderPointShapowMapFace(*light, light->positiveYView, 2, light->containedMeshesPositiveY.meshes);
+            this->RenderPointShapowMapFace(*light, light->negativeYView, 3, light->containedMeshesNegativeY.meshes);
+            this->RenderPointShapowMapFace(*light, light->positiveZView, 4, light->containedMeshesPositiveZ.meshes);
+            this->RenderPointShapowMapFace(*light, light->negativeZView, 5, light->containedMeshesNegativeZ.meshes);
+        }
+
+
+
+        // With the shadow map done, we now need to go back to the main framebuffer.
+        Renderer2::SetCurrentFramebuffer(mainFramebuffer->framebuffer);
+
+        int lightingBuffers[] = {1, 2};
+        Renderer2::SetDrawBuffers(2, lightingBuffers);
+        Renderer2::SetViewport(0, 0, mainFramebuffer->width, mainFramebuffer->height);
+        Renderer2::EnableBlending();
+        Renderer2::DisableDepthWrites();
+        Renderer2::SetDepthFunction(RendererFunction_Equal);
+
+
+
+        // First.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaqueShadowPointLightingPass(lightIndex, visibleObjects, *meshList);
+            }
+        }
+
+        // Last.
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjectsLast.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjectsLast.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                this->RenderOpaqueShadowPointLightingPass(lightIndex, visibleObjects, *meshList);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer2::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    {
+        auto light = visibleObjects.shadowPointLights[lightIndex];
+        assert(light != nullptr);
+        {
+            for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
+            {
+                auto &mesh = meshes.Get(iMesh);
+                {
+                    auto material = mesh.material;
+                    assert(material != nullptr);                    // <-- This is asserted because it should never be placed into this list in the first place if it is null.
+                    {
+                        // Setup Shader.
+                        auto shader = this->GetMaterialShadowPointLightShader(*material);
+                        assert(shader != nullptr);
+                        {
+                            glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                            glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                            Renderer2::SetCurrentShader(shader);
+
+                            shader->SetParametersFromMaterial(*material);
+                            shader->SetParameter("PVMMatrix",            visibleObjects.projectionViewMatrix * mesh.transform);
+                            shader->SetParameter("ViewModelMatrix",      viewModelMatrix);
+                            shader->SetParameter("ModelMatrix",          mesh.transform);
+                            shader->SetParameter("NormalMatrix",         normalMatrix);
+                            shader->SetParameter("Colour",               light->colour);
+                            shader->SetParameter("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                            shader->SetParameter("ConstantAttenuation",  light->constantAttenuation);
+                            shader->SetParameter("LinearAttenuation",    light->linearAttenuation);
+                            shader->SetParameter("QuadraticAttenuation", light->quadraticAttenuation);
+                            shader->SetParameter("ShadowMap",            this->pointShadowMapFramebuffer.colourBuffer);
+                            shader->SetParameter("PositionWS",           light->position);
+                            {
+                                Renderer2::PushShaderPendingProperties(*shader);
+                            }
+                            shader->ClearPendingParameters();
+                        }
+
+
+                        // Draw.
+                        if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                        {
+                            Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                        }
+                        if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+                    }
+                }
+            }
+        }
+    }
+
+    void DefaultSceneRenderer2::RenderPointShapowMapFace(const DefaultSceneRendererShadowPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<SceneRendererMesh> &meshes)
+    {
+        // The draw buffer needs to be set. The appropriate framebuffer will have already been set.
+        Renderer2::SetDrawBuffers(1, &faceIndex);
+        
+        // We need to clear both depth and colour. The colour needs to be cleared to the radius of the light.
+        float radius = Math::Lighting::ApproximateAttenuationRadius(light.constantAttenuation, light.linearAttenuation, light.quadraticAttenuation);
+        Renderer2::SetClearColour(radius, radius * radius, 0.0f, 1.0f);
+        Renderer2::SetClearDepth(1.0f);
+        Renderer2::Clear(BufferType_Colour | BufferType_Depth);
+
+
+
+        glm::mat4 projectionView = light.projection * faceViewMatrix;
+
+        for (size_t i = 0; i < meshes.count; ++i)
+        {
+            auto &mesh = meshes[i];
+            assert(mesh.vertexArray != nullptr);
+            {
+                // Shader setup.
+                this->pointShadowMapShader->SetParameter("PVMMatrix",       projectionView * mesh.transform);
+                this->pointShadowMapShader->SetParameter("ViewModelMatrix", faceViewMatrix * mesh.transform);
+                {
+                    Renderer2::PushShaderPendingProperties(*this->pointShadowMapShader);
+                }
+                this->pointShadowMapShader->ClearPendingParameters();
+
+
+                // Draw.
+                Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+            }
+        }
+    }
+
 
 
     void DefaultSceneRenderer2::RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
@@ -1516,12 +1713,36 @@ namespace GTEngine
     }
 
 
+
+    Shader* DefaultSceneRenderer2::GetMaterialShadowPointLightShader(Material &material)
+    {
+        auto shaders = this->GetMaterialShaders(material);
+        assert(shaders != nullptr);
+        {
+            if (shaders->shadowPointLightShader == nullptr)
+            {
+                /// The shader has not yet been created, so it needs to be.
+                GTCore::Strings::List<char> vertexSource;
+                vertexSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_LightingVS"));
+
+                GTCore::Strings::List<char> fragmentSource;
+                fragmentSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_LightingFS"));
+                fragmentSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowPointLight"));
+                fragmentSource.Append(ShaderLibrary::GetShaderString(material.GetNormalShaderID()));
+
+                shaders->shadowPointLightShader = Renderer2::CreateShader(vertexSource.c_str(), fragmentSource.c_str(), nullptr);
+            }
+
+            return shaders->shadowPointLightShader;
+        }
+    }
+
     Shader* DefaultSceneRenderer2::GetMaterialShadowSpotLightShader(Material &material)
     {
         auto shaders = this->GetMaterialShaders(material);
         assert(shaders != nullptr);
         {
-            if (shaders->spotLightShader == nullptr)
+            if (shaders->shadowSpotLightShader == nullptr)
             {
                 /// The shader has not yet been created, so it needs to be.
                 GTCore::Strings::List<char> vertexSource;
@@ -1532,10 +1753,10 @@ namespace GTEngine
                 fragmentSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowSpotLight"));
                 fragmentSource.Append(ShaderLibrary::GetShaderString(material.GetNormalShaderID()));
 
-                shaders->spotLightShader = Renderer2::CreateShader(vertexSource.c_str(), fragmentSource.c_str(), nullptr);
+                shaders->shadowSpotLightShader = Renderer2::CreateShader(vertexSource.c_str(), fragmentSource.c_str(), nullptr);
             }
 
-            return shaders->spotLightShader;
+            return shaders->shadowSpotLightShader;
         }
     }
 

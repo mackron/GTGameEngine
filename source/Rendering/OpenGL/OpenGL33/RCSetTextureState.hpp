@@ -31,6 +31,12 @@ namespace GTEngine
         /// Renderer::PushTexture3DData().
         void SetTexture3DData(GLuint* textureObject, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes);
 
+        /// Renderer::PushTextureCubeData().
+        void SetTextureCubeData(GLuint* textureObject, GTImage::ImageFormat format, unsigned int width, unsigned int height, size_t dataSizeInBytes,
+            const void* positiveXData, const void* negativeXData,
+            const void* positiveYData, const void* negativeYData,
+            const void* positiveZData, const void* negativeZData);
+
 
         /// Renderer::SetTexture*Filter().
         void SetTextureFilter(GLuint* textureObject, GLenum target, GLint minification, GLint magnification);
@@ -73,7 +79,7 @@ namespace GTEngine
         GLenum target;
 
 
-        /// The vertex data to set.
+        /// The texture data to set. This does not do cube maps.
         struct TextureData
         {
             GLint   internalFormat;
@@ -87,6 +93,26 @@ namespace GTEngine
 
         /// The map of TextureData objects for each mipmap whose data is getting set. The key is the mipmap level.
         GTCore::Map<GLint, TextureData> mipmapDatas;
+
+
+
+        /// The cube map texture data.
+        struct CubeMapTextureData
+        {
+            GLint   internalFormat;
+            GLenum  format;
+            GLenum  type;
+            GLsizei width;
+            GLsizei height;
+            GLvoid* positiveXData;
+            GLvoid* negativeXData;
+            GLvoid* positiveYData;
+            GLvoid* negativeYData;
+            GLvoid* positiveZData;
+            GLvoid* negativeZData;
+
+        }cubeMapData;
+
 
 
 

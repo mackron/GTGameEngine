@@ -1208,6 +1208,14 @@ namespace GTEngine
                 }
 
 
+                auto scene = node.GetScene();
+                assert(scene != nullptr);
+                {
+                    scene->GetRenderer().RemoveExternalMesh(metadata->GetSpriteMesh());
+                    scene->GetRenderer().RemoveExternalMesh(metadata->GetDirectionArrowMesh());
+                }
+
+
                 // We need to make sure scene nodes are deseleted when they are removed from the scene.
                 this->DeselectSceneNode(node, 0);
 

@@ -448,11 +448,12 @@ namespace GTEngine
         /// Pushes the image data of the given cube map to the renderer.
         ///
         /// @param texture [in] A reference to the texture whose data is being pushed.
-        /// @param mipmap  [in] The index of the mipmap whose data is being set. Set to -1 (default) to push every mipmap.
         ///
         /// @remarks
         ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
-        static void PushTextureCubeData(const TextureCube &texture, int mipmap = -1);
+        ///     @par
+        ///     Currently, only the base mipmap level can be updated manually. Mipmaps can be generated with Renderer::GenerateTextureCubeMipmaps().
+        static void PushTextureCubeData(const TextureCube &texture);
 
         /// Sets the minification and magnification filter of the given texture.
         ///
@@ -474,6 +475,7 @@ namespace GTEngine
         /// @param texture  [in] A reference to the texture.
         /// @param wrapMode [in] The wrapping mode to use with the given texture.
         static void SetTexture2DWrapMode(const Texture2D &texture, TextureWrapMode wrapMode);
+        static void SetTextureCubeWrapMode(const TextureCube &texture, TextureWrapMode wrapMode);
 
         /// Sets the mipmap range to use with the given texture.
         ///

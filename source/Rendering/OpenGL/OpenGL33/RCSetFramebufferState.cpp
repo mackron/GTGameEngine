@@ -66,7 +66,7 @@ namespace GTEngine
 
                     if (!this->attachments.Exists(attachmentToRemove.attachmentPoint))
                     {
-                        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, attachmentToRemove.attachmentPoint, attachmentToRemove.textureTarget, 0, 0);
+                        glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, attachmentToRemove.attachmentPoint, attachmentToRemove.textureTarget, 0, 0);
                         this->framebufferState->attachments.RemoveByIndex(i);
                     }
                     else
@@ -81,7 +81,7 @@ namespace GTEngine
                 {
                     auto &attachmentToAdd = this->attachments.buffer[i]->value;
 
-                    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, attachmentToAdd.attachmentPoint, attachmentToAdd.textureTarget, *attachmentToAdd.textureObject, 0);
+                    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, attachmentToAdd.attachmentPoint, attachmentToAdd.textureTarget, *attachmentToAdd.textureObject, 0);
                     this->framebufferState->attachments.Add(attachmentToAdd.attachmentPoint, attachmentToAdd);
                 }
             }
