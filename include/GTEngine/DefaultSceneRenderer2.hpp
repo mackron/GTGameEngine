@@ -263,6 +263,18 @@ namespace GTEngine
     };
 
 
+    /// Structure representing a shadow-casting directional light.
+    struct DefaultSceneRendererShadowDirectionalLight : public SceneRendererDirectionalLight
+    {
+        /// A list of meshes to draw when building the shadow map.
+        DefaultSceneRendererShadowObjects containedMeshes;
+
+        /// The projection matrix to use when building the shadow map.
+        glm::mat4 projection;
+
+        /// The view matrix to use when building the shadow map.
+        glm::mat4 view;
+    };
 
     /// Structure representing a shadow-casting point light.
     struct DefaultSceneRendererShadowPointLight : public SceneRendererPointLight
@@ -408,6 +420,7 @@ namespace GTEngine
 
 
         /// The list of shadow-casting directional lights.
+        GTCore::Vector<DefaultSceneRendererShadowDirectionalLight*> shadowDirectionalLights;
 
         /// The list of shadow-casting point lights.
         GTCore::Vector<DefaultSceneRendererShadowPointLight*> shadowPointLights;
@@ -551,6 +564,10 @@ namespace GTEngine
         void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
 
 
+        /// Performs a shadow-casting directional lighting pass in the opaque pass.
+        void RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
+        void RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+
         /// Performs a shadow-casting point lighting pass in the opaque pass.
         void RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
         void RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
@@ -600,6 +617,11 @@ namespace GTEngine
         /// @param material [in] A reference to the material whose shader is being retrieved.
         Shader* GetMaterialSpotLightShader(Material &materail);
 
+
+        /// Retrieves the shader to use for the shadow directional light pass.
+        ///
+        /// @param material [in] A reference to the material whose shader is being retrieved.
+        Shader* GetMaterialShadowDirectionalLightShader(Material &materail);
 
         /// Retrieves the shader to use for the shadow point light pass.
         ///

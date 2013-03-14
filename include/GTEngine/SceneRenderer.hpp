@@ -68,8 +68,18 @@ namespace GTEngine
         /// The colour of the light.
         glm::vec3 colour;
 
+        /// The position of the light.
+        glm::vec3 position;
+
         /// The directional of the light.
-        glm::vec3 direction;
+        glm::quat orientation;
+
+
+        /// Helper method for calculating the forward vector.
+        glm::vec3 GetForwardVector() const
+        {
+            return this->orientation * glm::vec3(0.0f, 0.0f, -1.0f);
+        }
     };
 
     /// Structure representing a point light object.
