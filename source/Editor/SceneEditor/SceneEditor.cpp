@@ -1156,25 +1156,28 @@ namespace GTEngine
                     {
                         this->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                     }
-                }
 
-                if (metadata->IsUsingSprite())
-                {
-                    auto scene = node.GetScene();
-                    assert(scene != nullptr);
+
+                    if (metadata->IsUsingSprite())
                     {
-                        scene->GetRenderer().AddExternalMesh(metadata->GetSpriteMesh());
+                        auto scene = node.GetScene();
+                        assert(scene != nullptr);
+                        {
+                            scene->GetRenderer().AddExternalMesh(metadata->GetSpriteMesh());
+                        }
+                    }
+
+                    if (metadata->IsShowingDirectionArrow())
+                    {
+                        auto scene = node.GetScene();
+                        assert(scene != nullptr);
+                        {
+                            scene->GetRenderer().AddExternalMesh(metadata->GetDirectionArrowMesh());
+                        }
                     }
                 }
 
-                if (metadata->IsShowingDirectionArrow())
-                {
-                    auto scene = node.GetScene();
-                    assert(scene != nullptr);
-                    {
-                        scene->GetRenderer().AddExternalMesh(metadata->GetDirectionArrowMesh());
-                    }
-                }
+                
 
 
                 // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
