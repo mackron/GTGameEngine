@@ -218,6 +218,7 @@ namespace GTEngine
                 glDepthFunc(GL_LEQUAL);
                 glEnable(GL_DEPTH_TEST);
                 glEnable(GL_CULL_FACE);
+                //glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 
                 // We're going to initialise the X11 sub-system from here.
@@ -1254,14 +1255,17 @@ namespace GTEngine
 
     TextureCube* Renderer2::CreateTextureCube()
     {
-        auto positiveX = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_POSITIVE_X);
-        auto negativeX = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
-        auto positiveY = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
-        auto negativeY = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
-        auto positiveZ = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
-        auto negativeZ = new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+        // The texture object for each of the faces is actually the main cube map object.
+        GLuint* objectGL = Renderer_CreateOpenGL33Texture();
 
-        return new TextureCube_OpenGL33(Renderer_CreateOpenGL33Texture(), positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ);
+        auto positiveX = new Texture2D_OpenGL33(objectGL, GL_TEXTURE_CUBE_MAP_POSITIVE_X);
+        auto negativeX = new Texture2D_OpenGL33(objectGL, GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
+        auto positiveY = new Texture2D_OpenGL33(objectGL, GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
+        auto negativeY = new Texture2D_OpenGL33(objectGL, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
+        auto positiveZ = new Texture2D_OpenGL33(objectGL, GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
+        auto negativeZ = new Texture2D_OpenGL33(objectGL, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+
+        return new TextureCube_OpenGL33(objectGL, positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ);
     }
 
 
@@ -1313,13 +1317,13 @@ namespace GTEngine
                     {
                         for (size_t i = 0; i < texture.GetMipmapCount(); ++i)
                         {
-                            auto mipmap = texture.GetMipmap(i);
+                            auto &mipmap = texture.GetMipmap(i);
                             State.currentRCSetTextureState->SetTexture2DData(textureObject, textureTarget, static_cast<int>(i), mipmap.format, mipmap.width, mipmap.height, mipmap.data, mipmap.GetDataSizeInBytes());
                         }
                     }
                     else
                     {
-                        auto mipmap = texture.GetMipmap(mipmapIndex);
+                        auto &mipmap = texture.GetMipmap(mipmapIndex);
                         State.currentRCSetTextureState->SetTexture2DData(textureObject, textureTarget, mipmapIndex, mipmap.format, mipmap.width, mipmap.height, mipmap.data, mipmap.GetDataSizeInBytes());
                     }
                 }
@@ -1327,15 +1331,43 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::PushTextureCubeData(const TextureCube &texture, int mipmapIndex)
+    void Renderer2::PushTextureCubeData(const TextureCube &texture)
     {
-        // This can, and should be optimized.
-        PushTexture2DData(*texture.PositiveX, mipmapIndex);
-        PushTexture2DData(*texture.NegativeX, mipmapIndex);
-        PushTexture2DData(*texture.PositiveY, mipmapIndex);
-        PushTexture2DData(*texture.NegativeY, mipmapIndex);
-        PushTexture2DData(*texture.PositiveZ, mipmapIndex);
-        PushTexture2DData(*texture.NegativeZ, mipmapIndex);
+        auto &textureGL33 = static_cast<const TextureCube_OpenGL33 &>(texture);
+        {
+            GLenum  textureTarget = GL_TEXTURE_CUBE_MAP;
+            GLuint* textureObject = textureGL33.GetOpenGLObjectPtr();
+
+            assert(textureObject != nullptr);
+            {
+                if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureObject() != textureObject || State.currentRCSetTextureState->GetTarget() != textureTarget))
+                {
+                    State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
+                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
+                }
+
+                
+                assert(State.currentRCSetTextureState != nullptr);
+                {
+                    auto &positiveX = static_cast<const Texture2D_OpenGL33*>(texture.PositiveX)->GetMipmap(0);
+                    auto &negativeX = static_cast<const Texture2D_OpenGL33*>(texture.NegativeX)->GetMipmap(0);
+                    auto &positiveY = static_cast<const Texture2D_OpenGL33*>(texture.PositiveY)->GetMipmap(0);
+                    auto &negativeY = static_cast<const Texture2D_OpenGL33*>(texture.NegativeY)->GetMipmap(0);
+                    auto &positiveZ = static_cast<const Texture2D_OpenGL33*>(texture.PositiveZ)->GetMipmap(0);
+                    auto &negativeZ = static_cast<const Texture2D_OpenGL33*>(texture.NegativeZ)->GetMipmap(0);
+
+                    auto width           = positiveX.width;
+                    auto height          = positiveX.height;
+                    auto format          = positiveX.format;
+                    auto dataSizeInBytes = positiveX.GetDataSizeInBytes();
+
+                    State.currentRCSetTextureState->SetTextureCubeData(textureObject, format, width, height, dataSizeInBytes,
+                        positiveX.data, negativeX.data,
+                        positiveY.data, negativeY.data,
+                        positiveZ.data, negativeZ.data);
+                }
+            }
+        }
     }
 
 
@@ -1378,6 +1410,14 @@ namespace GTEngine
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
             Renderer_SetOpenGL33TextureWrapMode(textureGL33.GetTarget(), textureGL33.GetOpenGLObjectPtr(), wrapMode);
+        }
+    }
+
+    void Renderer2::SetTextureCubeWrapMode(const TextureCube &texture, TextureWrapMode wrapMode)
+    {
+        auto &textureGL33 = static_cast<const TextureCube_OpenGL33 &>(texture);
+        {
+            Renderer_SetOpenGL33TextureWrapMode(GL_TEXTURE_CUBE_MAP, textureGL33.GetOpenGLObjectPtr(), wrapMode);
         }
     }
 
@@ -1476,6 +1516,12 @@ namespace GTEngine
             auto programState = shaderGL33.GetOpenGLState();
             assert(programState != nullptr);
             {
+                if (shaderGL33.GetPendingParameters().count == 0)
+                {
+                    GTEngine::Log("Rendering Performance Warning: Attempting to push pending shader properties when there are not properties to push.");
+                }
+
+
                 if (State.currentRCSetShaderState == nullptr || State.currentRCSetShaderState->GetProgramState() != programState)
                 {
                     State.currentRCSetShaderState = &RCCaches[BackCallCacheIndex].RCSetShaderStateCache.Acquire();

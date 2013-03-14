@@ -19,122 +19,155 @@ namespace GTEngine
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, x);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, x);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x, float y)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, x, y);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, x, y);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x, float y, float z)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, x, y, z);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, x, y, z);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x, float y, float z, float w)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, x, y, z, w);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, x, y, z, w);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, x);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, x);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x, int y)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, x, y);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, x, y);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x, int y, int z)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, x, y, z);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, x, y, z);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x, int y, int z, int w)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, x, y, z, w);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, x, y, z, w);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::mat2x2 &value)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, value);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, value);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::mat3x3 &value)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, value);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, value);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 
     void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::mat4x4 &value)
     {
-        assert(this->programState == nullptr || this->programState == programStateIn);
+        assert(programStateIn != nullptr);
         {
-            this->basicParametersToSet.Set(name, value);
+            assert(this->programState == nullptr || this->programState == programStateIn);
+            {
+                this->basicParametersToSet.Set(name, value);
 
-            this->programState = programStateIn;
-            this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+                this->programState = programStateIn;
+                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
+            }
         }
     }
 

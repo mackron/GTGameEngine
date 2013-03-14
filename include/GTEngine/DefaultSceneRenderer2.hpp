@@ -70,7 +70,7 @@ namespace GTEngine
         /// The depth/stencil buffer.
         Texture2D* depthStencilBuffer;
 
-        /// The main colour output buffer (RG16F)
+        /// The main colour output buffer (RG32F)
         Texture2D* colourBuffer;
 
 
@@ -92,6 +92,77 @@ namespace GTEngine
 
             Renderer2::PushTexture2DData(*this->depthStencilBuffer);
             Renderer2::PushTexture2DData(*this->colourBuffer);
+        }
+    };
+
+    /// The framebuffer for point light shadow maps.
+    struct DefaultSceneRendererPointShadowFramebuffer
+    {
+        /// Constructor.
+        DefaultSceneRendererPointShadowFramebuffer(unsigned int widthIn, unsigned int heightIn)
+            : framebuffer(nullptr), depthStencilBuffer(nullptr), colourBuffer(nullptr),
+              width(widthIn), height(heightIn)
+        {
+            this->framebuffer        = Renderer2::CreateFramebuffer();
+            this->depthStencilBuffer = Renderer2::CreateTexture2D();
+            this->colourBuffer       = Renderer2::CreateTextureCube();
+
+            // We just call Resize() to get the data setup.
+            this->Resize(widthIn, heightIn);
+
+
+            // Filters.
+            Renderer2::SetTextureCubeFilter(*this->colourBuffer, TextureFilter_Linear, TextureFilter_Linear);
+            Renderer2::SetTextureCubeWrapMode(*this->colourBuffer, TextureWrapMode_ClampToEdge);
+            
+
+            // Attach.
+            this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
+            this->framebuffer->AttachColourBuffer(this->colourBuffer->PositiveX, 0);
+            this->framebuffer->AttachColourBuffer(this->colourBuffer->NegativeX, 1);
+            this->framebuffer->AttachColourBuffer(this->colourBuffer->PositiveY, 2);
+            this->framebuffer->AttachColourBuffer(this->colourBuffer->NegativeY, 3);
+            this->framebuffer->AttachColourBuffer(this->colourBuffer->PositiveZ, 4);
+            this->framebuffer->AttachColourBuffer(this->colourBuffer->NegativeZ, 5);
+
+            Renderer2::PushAttachments(*this->framebuffer);
+        }
+
+
+
+        /// A pointer to the main framebuffer.
+        Framebuffer* framebuffer;
+
+        /// The depth/stencil buffer. This is cleared and reused for each face.
+        Texture2D* depthStencilBuffer;
+
+        /// The cube map that will contain the shadow information. RG32F.
+        TextureCube* colourBuffer;
+
+
+        /// The width of each face of the framebuffer.
+        unsigned int width;
+
+        /// The height of each face of the framebuffer.
+        unsigned int height;
+
+
+        /// Resizes the attachments on the framebuffer.
+        void Resize(unsigned int newWidth, unsigned int newHeight)
+        {
+            this->width  = newWidth;
+            this->height = newHeight;
+
+            this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            this->colourBuffer->PositiveX->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
+            this->colourBuffer->NegativeX->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
+            this->colourBuffer->PositiveY->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
+            this->colourBuffer->NegativeY->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
+            this->colourBuffer->PositiveZ->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
+            this->colourBuffer->NegativeZ->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
+
+            Renderer2::PushTexture2DData(*this->depthStencilBuffer, 0);
+            Renderer2::PushTextureCubeData(*this->colourBuffer);
         }
     };
 
@@ -192,6 +263,50 @@ namespace GTEngine
     };
 
 
+
+    /// Structure representing a shadow-casting point light.
+    struct DefaultSceneRendererShadowPointLight : public SceneRendererPointLight
+    {
+        /// The list of meshes to draw when doing the positive X face.
+        DefaultSceneRendererShadowObjects containedMeshesPositiveX;
+
+        /// The list of meshes to draw when doing the negative X face.
+        DefaultSceneRendererShadowObjects containedMeshesNegativeX;
+
+        /// The list of meshes to draw when doing the positive Y face.
+        DefaultSceneRendererShadowObjects containedMeshesPositiveY;
+
+        /// The list of meshes to draw when doing the negative Y face.
+        DefaultSceneRendererShadowObjects containedMeshesNegativeY;
+
+        /// The list of meshes to draw when doing the positive Z face.
+        DefaultSceneRendererShadowObjects containedMeshesPositiveZ;
+
+        /// The list of meshes to draw when doing the negative Z face.
+        DefaultSceneRendererShadowObjects containedMeshesNegativeZ;
+
+
+        /// The projection matrix.
+        glm::mat4 projection;
+
+        /// The positive X view matrix.
+        glm::mat4 positiveXView;
+
+        /// The negative X view matrix.
+        glm::mat4 negativeXView;
+
+        /// The positive Y view matrix.
+        glm::mat4 positiveYView;
+
+        /// The negative Y view matrix.
+        glm::mat4 negativeYView;
+
+        /// The positive Z view matrix.
+        glm::mat4 positiveZView;
+
+        /// The negative Z view matrix.
+        glm::mat4 negativeZView;
+    };
 
     /// Structure representing a shadow-casting spot light. The main difference between this and the normal one is that we have a list
     /// of meshes that need to be drawn when drawing the shadow map.
@@ -295,6 +410,7 @@ namespace GTEngine
         /// The list of shadow-casting directional lights.
 
         /// The list of shadow-casting point lights.
+        GTCore::Vector<DefaultSceneRendererShadowPointLight*> shadowPointLights;
 
         /// The list of shadow-casting spot lights.
         GTCore::Vector<DefaultSceneRendererShadowSpotLight*> shadowSpotLights;
@@ -435,6 +551,11 @@ namespace GTEngine
         void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
 
 
+        /// Performs a shadow-casting point lighting pass in the opaque pass.
+        void RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
+        void RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+        void RenderPointShapowMapFace(const DefaultSceneRendererShadowPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<SceneRendererMesh> &meshes);
+
         /// Performs a shadow-casting spot lighting pass in the opaque pass.
         void RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
         void RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
@@ -480,6 +601,11 @@ namespace GTEngine
         Shader* GetMaterialSpotLightShader(Material &materail);
 
 
+        /// Retrieves the shader to use for the shadow point light pass.
+        ///
+        /// @param material [in] A reference to the material whose shader is being retrieved.
+        Shader* GetMaterialShadowPointLightShader(Material &materail);
+
         /// Retrieves the shader to use for the shadow spot light pass.
         ///
         /// @param material [in] A reference to the material whose shader is being retrieved.
@@ -513,6 +639,16 @@ namespace GTEngine
 
         /// The shader to use when building shadow maps.
         Shader* shadowMapShader;
+
+        /// The framebuffer for drawing point light shadow maps.
+        DefaultSceneRendererPointShadowFramebuffer pointShadowMapFramebuffer;
+
+        /// The shader to use when building point light shadow maps.
+        Shader* pointShadowMapShader;
+
+
+        /// Vertex array for drawing a full screen triangle. This is in P3T2 format. The z coordinate is at 0.
+        VertexArray* fullscreenTriangleVA;
 
 
         
