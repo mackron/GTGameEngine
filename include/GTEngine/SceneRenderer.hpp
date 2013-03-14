@@ -55,6 +55,81 @@ namespace GTEngine
     };
 
 
+    /// Structure representing an ambient light object.
+    struct SceneRendererAmbientLight
+    {
+        /// The colour of the light.
+        glm::vec3 colour;
+    };
+
+    /// Structure representing a directional light object.
+    struct SceneRendererDirectionalLight
+    {
+        /// The colour of the light.
+        glm::vec3 colour;
+
+        /// The directional of the light.
+        glm::vec3 direction;
+    };
+
+    /// Structure representing a point light object.
+    struct SceneRendererPointLight
+    {
+        /// The colour of the light.
+        glm::vec3 colour;
+
+        /// The position of the light.
+        glm::vec3 position;
+
+        /// The constant attenuation.
+        float constantAttenuation;
+
+        /// The linear attenuation.
+        float linearAttenuation;
+
+        /// The quadratic attenuation.
+        float quadraticAttenuation;
+    };
+
+    /// Structure representing a spot light object.
+    struct SceneRendererSpotLight
+    {
+        /// The colour of the light.
+        glm::vec3 colour;
+
+        /// The position of the light.
+        glm::vec3 position;
+
+        /// The orientation of the light.
+        glm::quat orientation;
+
+        /// The constant attenuation.
+        float constantAttenuation;
+
+        /// The linear attenuation.
+        float linearAttenuation;
+
+        /// The quadratic attenuation.
+        float quadraticAttenuation;
+
+        /// The inner radius of the light.
+        float innerAngle;
+
+        /// The outer radius of the light.
+        float outerAngle;
+
+
+
+        /// Helper method for calculating the forward vector.
+        glm::vec3 GetForwardVector() const
+        {
+            return this->orientation * glm::vec3(0.0f, 0.0f, -1.0f);
+        }
+    };
+
+
+
+
     /// Class responsible for the rendering a scene.
     class SceneRenderer
     {

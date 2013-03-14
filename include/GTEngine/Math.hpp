@@ -121,6 +121,24 @@ namespace GTEngine
             /// @return True if the AABB is inside the frustum planes.
             bool ContainsAABB(const Plane frustumPlanes[6], const AABB &aabb);
         }
+
+
+        /// Math functions for lighting.
+        namespace Lighting
+        {
+            /// Retrieves the approximate radius of a light based on the given attenuation factors.
+            template <typename T>
+            T ApproximateAttenuationRadius(T c, T l, T q)
+            {
+                // If 'q' is 0.0, we'll end up with a division by 0 bug. In this case, we'll replace it with a tiny value for approximation.
+                if (q == T(0.0))
+                {
+                    q = T(0.000001);
+                }
+
+                return (-l + sqrt(l * l - T(4.0) * (c - T(1000.0)) * q)) / (T(2.0) * q);      // <-- <c - 100.0f> was previously <c - 1000.0f>. Might need to keep experimenting here.
+            }
+        }
     }
 }
 
