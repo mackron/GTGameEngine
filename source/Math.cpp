@@ -91,15 +91,10 @@ namespace GTEngine
 
             return orientation;
         }
-    }
-}
 
 
-// Trajectory.
-namespace GTEngine
-{
-    namespace Math
-    {
+
+        /// Trajectory.
         namespace Trajectory
         {
             float LaunchAngle(float x, float y, float g, float v)
@@ -141,15 +136,10 @@ namespace GTEngine
                 return y0 + (x * glm::tan(a)) - ((g * x2) / (2.0f * vcosa2));
             }
         }
-    }
-}
 
 
-/// Frustum
-namespace GTEngine
-{
-    namespace Math
-    {
+
+        /// Frustum
         namespace Frustum
         {
             bool ContainsPoint(const Plane planes[6], const glm::vec3 &point)

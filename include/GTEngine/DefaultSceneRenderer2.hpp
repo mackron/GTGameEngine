@@ -9,6 +9,7 @@
 #include "Rendering/Renderer2.hpp"
 
 #include <GTCore/Map.hpp>
+#include <utility>
 
 namespace GTEngine
 {
@@ -60,6 +61,42 @@ namespace GTEngine
     };
 
 
+    /// The framebuffer for shadow maps.
+    struct DefaultSceneRendererShadowFramebuffer
+    {
+        /// A pointer to the main framebuffer object.
+        Framebuffer* framebuffer;
+
+        /// The depth/stencil buffer.
+        Texture2D* depthStencilBuffer;
+
+        /// The main colour output buffer (RG16F)
+        Texture2D* colourBuffer;
+
+
+        /// The width of the framebuffer.
+        unsigned int width;
+
+        /// The height of the framebuffer.
+        unsigned int height;
+
+
+        /// Resizes the attachments on the framebuffer.
+        void Resize(unsigned int newWidth, unsigned int newHeight)
+        {
+            this->width  = newWidth;
+            this->height = newHeight;
+
+            this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            this->colourBuffer->SetData(      newWidth, newHeight, GTImage::ImageFormat_RG32F);
+
+            Renderer2::PushTexture2DData(*this->depthStencilBuffer);
+            Renderer2::PushTexture2DData(*this->colourBuffer);
+        }
+    };
+
+
+
     /// Structure containing the shaders associated with a material.
     struct DefaultSceneRendererMaterialShaders
     {
@@ -68,6 +105,9 @@ namespace GTEngine
               directionalLightShader(nullptr),
               pointLightShader(nullptr),
               spotLightShader(nullptr),
+              shadowDirectionalLightShader(nullptr),
+              shadowPointLightShader(nullptr),
+              shadowSpotLightShader(nullptr),
               materialShader(nullptr)
         {
         }
@@ -78,6 +118,9 @@ namespace GTEngine
             Renderer2::DeleteShader(this->directionalLightShader);
             Renderer2::DeleteShader(this->pointLightShader);
             Renderer2::DeleteShader(this->spotLightShader);
+            Renderer2::DeleteShader(this->shadowDirectionalLightShader);
+            Renderer2::DeleteShader(this->shadowPointLightShader);
+            Renderer2::DeleteShader(this->shadowSpotLightShader);
             Renderer2::DeleteShader(this->materialShader);
         }
 
@@ -94,6 +137,17 @@ namespace GTEngine
         /// The shader to use when doing a spot light pass.
         Shader* spotLightShader;
 
+
+        /// The shader to use when doing a shadow directional light pass.
+        Shader* shadowDirectionalLightShader;
+
+        /// The shader to use when doing a shadow point light pass.
+        Shader* shadowPointLightShader;
+
+        /// The shader to use when doing a shadow spot light pass.
+        Shader* shadowSpotLightShader;
+
+
         /// The shader to use when doing the material pass.
         Shader* materialShader;
         
@@ -105,69 +159,54 @@ namespace GTEngine
 
 
 
-    /// Structure representing an ambient light object.
-    struct DefaultSceneRendererAmbientLightObject
+    /// Callback class that will be used when querying the visible objects in a lights view frustum.
+    class DefaultSceneRendererShadowObjects : public SceneCullingManager::VisibilityCallback
     {
-        /// The colour of the light.
-        glm::vec3 colour;
+    public:
+
+        /// Constructor.
+        DefaultSceneRendererShadowObjects();
+
+        /// Destructor.
+        ~DefaultSceneRendererShadowObjects();
+
+
+        ////////////////////////////////////////////
+        // Virtual Implementations.
+
+        /// SceneCullingManager::VisibilityCallback::ProcessObjectModel().
+        void ProcessObjectModel(SceneObject &object);
+
+
+
+        //////////////////////////////////////
+        // Member Variables.
+
+        /// The list of meshes.
+        GTCore::Vector<SceneRendererMesh> meshes;
+
+
+    private:
+        DefaultSceneRendererShadowObjects(const DefaultSceneRendererShadowObjects &);
+        DefaultSceneRendererShadowObjects & operator=(const DefaultSceneRendererShadowObjects &);
     };
 
-    /// Structure representing a directional light object.
-    struct DefaultSceneRendererDirectionalLightObject
-    {
-        /// The colour of the light.
-        glm::vec3 colour;
 
-        /// The directional of the light.
-        glm::vec3 direction;
+
+    /// Structure representing a shadow-casting spot light. The main difference between this and the normal one is that we have a list
+    /// of meshes that need to be drawn when drawing the shadow map.
+    struct DefaultSceneRendererShadowSpotLight : public SceneRendererSpotLight
+    {
+        /// A list of meshes to draw when building the shadow map.
+        DefaultSceneRendererShadowObjects containedMeshes;
+
+        /// The projection matrix to use when building the shadow map.
+        glm::mat4 projection;
+
+        /// The view matrix to use when building the shadow map.
+        glm::mat4 view;
     };
 
-    /// Structure representing a point light object.
-    struct DefaultSceneRendererPointLightObject
-    {
-        /// The colour of the light.
-        glm::vec3 colour;
-
-        /// The position of the light.
-        glm::vec3 position;
-
-        /// The constant attenuation.
-        float constantAttenuation;
-
-        /// The linear attenuation.
-        float linearAttenuation;
-
-        /// The quadratic attenuation.
-        float quadraticAttenuation;
-    };
-
-    /// Structure representing a spot light object.
-    struct DefaultSceneRendererSpotLightObject
-    {
-        /// The colour of the light.
-        glm::vec3 colour;
-
-        /// The position of the light.
-        glm::vec3 position;
-
-        /// The direction of the light.
-        glm::vec3 direction;
-
-        /// The constant attenuation.
-        float constantAttenuation;
-
-        /// The linear attenuation.
-        float linearAttenuation;
-
-        /// The quadratic attenuation.
-        float quadraticAttenuation;
-
-        /// The inner radius of the light.
-        float innerAngle;
-
-        /// The outer radius of the light.
-        float outerAngle;
-    };
 
 
     /// Callback class that will be used when querying the visible objects.
@@ -176,7 +215,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        DefaultSceneRendererVisibleObjects(SceneViewport &viewport);
+        DefaultSceneRendererVisibleObjects(Scene &scene, SceneViewport &viewport);
 
         /// Destructor.
         virtual ~DefaultSceneRendererVisibleObjects();
@@ -214,6 +253,10 @@ namespace GTEngine
         //////////////////////////////////////
         // Member Variables.
 
+        /// A reference to the scene this container is associated with.
+        Scene &scene;
+
+
         /// The list of opaque mesh objects, sorted by material definition.
         GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> opaqueObjects;
 
@@ -237,16 +280,25 @@ namespace GTEngine
 
 
         /// The list of ambient lights.
-        GTCore::Vector<DefaultSceneRendererAmbientLightObject> ambientLights;
+        GTCore::Vector<SceneRendererAmbientLight*> ambientLights;
 
         /// The list of directional lights.
-        GTCore::Vector<DefaultSceneRendererDirectionalLightObject> directionalLights;
+        GTCore::Vector<SceneRendererDirectionalLight*> directionalLights;
 
         /// The list of point lights.
-        GTCore::Vector<DefaultSceneRendererPointLightObject> pointLights;
+        GTCore::Vector<SceneRendererPointLight*> pointLights;
 
         /// The list of spot lights.
-        GTCore::Vector<DefaultSceneRendererSpotLightObject> spotLights;
+        GTCore::Vector<SceneRendererSpotLight*> spotLights;
+
+
+        /// The list of shadow-casting directional lights.
+
+        /// The list of shadow-casting point lights.
+
+        /// The list of shadow-casting spot lights.
+        GTCore::Vector<DefaultSceneRendererShadowSpotLight*> shadowSpotLights;
+
 
 
         /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess(). The value is the transformation.
@@ -267,6 +319,10 @@ namespace GTEngine
         DefaultSceneRendererVisibleObjects(const DefaultSceneRendererVisibleObjects &);
         DefaultSceneRendererVisibleObjects & operator=(const DefaultSceneRendererVisibleObjects &);
     };
+
+
+    
+
 
 
 
@@ -379,6 +435,11 @@ namespace GTEngine
         void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
 
 
+        /// Performs a shadow-casting spot lighting pass in the opaque pass.
+        void RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
+        void RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+
+
         /// Renders the alpha transparency pass.
         void RenderAlphaTransparentPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
@@ -413,10 +474,17 @@ namespace GTEngine
         /// @param material [in] A reference to the material whose shader is being retrieved.
         Shader* GetMaterialPointLightShader(Material &materail);
 
-        /// Retrieves the shader to use for the directional light pass.
+        /// Retrieves the shader to use for the spot light pass.
         ///
         /// @param material [in] A reference to the material whose shader is being retrieved.
         Shader* GetMaterialSpotLightShader(Material &materail);
+
+
+        /// Retrieves the shader to use for the shadow spot light pass.
+        ///
+        /// @param material [in] A reference to the material whose shader is being retrieved.
+        Shader* GetMaterialShadowSpotLightShader(Material &materail);
+
 
         /// Retrieves the material shader of the given material.
         ///
@@ -438,6 +506,13 @@ namespace GTEngine
 
         /// The list of external meshes.
         GTCore::Vector<const SceneRendererMesh*> externalMeshes;
+
+
+        /// The framebuffer for drawing shadow maps.
+        DefaultSceneRendererShadowFramebuffer shadowMapFramebuffer;
+
+        /// The shader to use when building shadow maps.
+        Shader* shadowMapShader;
 
 
         

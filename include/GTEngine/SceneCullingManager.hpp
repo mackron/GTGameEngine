@@ -31,28 +31,43 @@ namespace GTEngine
             /// Called when the model of the given object is processed by ProcessVisibleObjects().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectModel(SceneObject &object) = 0;
+            virtual void ProcessObjectModel(SceneObject &object)
+            {
+                (void)object;
+            }
 
             /// Called when the point light of the given object is processed by ProcessVisibleObjects().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectPointLight(SceneObject &object) = 0;
+            virtual void ProcessObjectPointLight(SceneObject &object)
+            {
+                (void)object;
+            }
 
             /// Called when the spot light of the given object is processed by ProcessVisibleObjects().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectSpotLight(SceneObject &object) = 0;
+            virtual void ProcessObjectSpotLight(SceneObject &object)
+            {
+                (void)object;
+            }
 
 
             /// Called when the ambient light of the given object is processed by ProcessVisibleObjects().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectAmbientLight(SceneObject &object) = 0;
+            virtual void ProcessObjectAmbientLight(SceneObject &object)
+            {
+                (void)object;
+            }
 
             /// Called when the directional light of the given object is processed by ProcessVisibleObjects().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectDirectionalLight(SceneObject &object) = 0;
+            virtual void ProcessObjectDirectionalLight(SceneObject &object)
+            {
+                (void)object;
+            }
         };
 
 
