@@ -4,7 +4,6 @@
 #include <GTEngine/FontManager.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTEngine/GarbageCollector.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Rendering/Renderer2.hpp>
@@ -939,9 +938,6 @@ namespace GTEngine
 
     void Game::EndFrame() // [Main Thread]
     {
-        // We need to collect garbage.
-        GarbageCollector::CollectAll();
-
         // First we need to block until all threads have finished executing...
         this->updateThread->Wait();
 

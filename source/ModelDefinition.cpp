@@ -2,7 +2,6 @@
 
 #include <GTEngine/ModelDefinition.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/GarbageCollector.hpp>
 
 namespace GTEngine
 {

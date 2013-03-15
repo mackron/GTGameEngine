@@ -227,7 +227,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\GameState.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameUpdateJob.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameWindowEventHandler.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\GarbageCollector.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GTEngine.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GUIEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdCircularList.h" />
@@ -455,7 +454,6 @@
     <ClCompile Include="..\..\..\source\GameState.cpp" />
     <ClCompile Include="..\..\..\source\GameUpdateJob.cpp" />
     <ClCompile Include="..\..\..\source\GameWindowEventHandler.cpp" />
-    <ClCompile Include="..\..\..\source\GarbageCollector.cpp" />
     <ClCompile Include="..\..\..\source\GTEngine.cpp" />
     <ClCompile Include="..\..\..\source\GUIEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\HACD\hacdGraph.cpp" />

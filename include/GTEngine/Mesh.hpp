@@ -6,7 +6,6 @@
 #include "Material.hpp"
 #include "Math.hpp"
 #include "SkinningVertexAttribute.hpp"
-#include "GarbageCollector.hpp"
 #include "Serialization.hpp"
 #include "Rendering/Renderer2.hpp"
 
@@ -17,8 +16,6 @@
 
 namespace GTEngine
 {
-    // TODO: Look into why there is two vertex arrays here. May be able to remove one now with the new renderer.
-    
     /// Structure containing the skinning information of a mesh.
     struct MeshSkinningData
     {
