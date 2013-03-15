@@ -498,7 +498,7 @@ namespace GTEngine
 
     DefaultSceneRenderer2::DefaultSceneRenderer2()
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
-          shadowMapFramebuffer(), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
+          shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
           fullscreenTriangleVA(nullptr), finalCompositionShader(nullptr),
           materialLibraryEventHandler(*this)
     {
@@ -509,22 +509,6 @@ namespace GTEngine
         this->bloomShader            = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_BloomFS"));
 
 
-        // Shadow Map Framebuffer.
-        this->shadowMapFramebuffer.framebuffer        = Renderer2::CreateFramebuffer();
-        this->shadowMapFramebuffer.depthStencilBuffer = Renderer2::CreateTexture2D();
-        this->shadowMapFramebuffer.colourBuffer       = Renderer2::CreateTexture2D();
-
-        // We just resize to setup the texture formats and whatnot.
-        this->shadowMapFramebuffer.Resize(512, 512);        // TODO: Make these a configurable variable.
-
-        // Now we can setup the filtering and attach the textures to the framebuffer itself.
-        Renderer2::SetTexture2DFilter(  *this->shadowMapFramebuffer.colourBuffer, TextureFilter_LinearLinear, TextureFilter_Linear);
-        Renderer2::SetTexture2DWrapMode(*this->shadowMapFramebuffer.colourBuffer, TextureWrapMode_ClampToEdge);
-
-        this->shadowMapFramebuffer.framebuffer->AttachDepthStencilBuffer(this->shadowMapFramebuffer.depthStencilBuffer);
-        this->shadowMapFramebuffer.framebuffer->AttachColourBuffer(this->shadowMapFramebuffer.colourBuffer, 0);
-
-        Renderer2::PushAttachments(*this->shadowMapFramebuffer.framebuffer);
 
 
 
