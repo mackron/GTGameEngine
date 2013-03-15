@@ -549,6 +549,7 @@ namespace GTEngine
         Renderer2::DeleteShader(this->shadowMapShader);
         Renderer2::DeleteShader(this->pointShadowMapShader);
         Renderer2::DeleteShader(this->finalCompositionShaderHDR);
+        Renderer2::DeleteShader(this->finalCompositionShaderHDRNoBloom);
         Renderer2::DeleteShader(this->finalCompositionShaderLDR);
         Renderer2::DeleteShader(this->bloomShader);
 
