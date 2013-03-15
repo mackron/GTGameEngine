@@ -64,10 +64,10 @@ namespace GTEngine
 
             
             this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
-            this->colourBuffer->SetData(      newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
-            this->lightingBuffer0->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
-            this->lightingBuffer1->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
-            this->finalColourBuffer->SetData( newWidth, newHeight, GTImage::ImageFormat_RGBA8);
+            this->colourBuffer->SetData(      newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->lightingBuffer0->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->lightingBuffer1->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->finalColourBuffer->SetData( newWidth, newHeight, GTImage::ImageFormat_RGB8);
 
             Renderer2::PushTexture2DData(*this->depthStencilBuffer);
             Renderer2::PushTexture2DData(*this->colourBuffer);
@@ -79,7 +79,7 @@ namespace GTEngine
 
             unsigned int bloomWidth  = GTCore::Max(1U, newWidth  / 1);
             unsigned int bloomHeight = GTCore::Max(1U, newHeight / 1);
-            this->bloomBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGBA16F);
+            this->bloomBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGB16F);
 
             Renderer2::PushTexture2DData(*this->bloomBuffer);
         }
@@ -151,6 +151,14 @@ namespace GTEngine
             this->framebuffer->AttachColourBuffer(this->colourBuffer->NegativeZ, 5);
 
             Renderer2::PushAttachments(*this->framebuffer);
+        }
+
+        /// Destructor.
+        ~DefaultSceneRendererPointShadowFramebuffer()
+        {
+            Renderer2::DeleteTextureCube(this->colourBuffer);
+            Renderer2::DeleteTexture2D(this->depthStencilBuffer);
+            Renderer2::DeleteFramebuffer(this->framebuffer);
         }
 
 
