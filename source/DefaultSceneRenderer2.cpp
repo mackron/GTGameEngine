@@ -728,17 +728,19 @@ namespace GTEngine
         newFramebuffer->framebuffer        = Renderer2::CreateFramebuffer();
         newFramebuffer->depthStencilBuffer = Renderer2::CreateTexture2D();
         newFramebuffer->colourBuffer       = Renderer2::CreateTexture2D();
-        newFramebuffer->bloomBuffer        = Renderer2::CreateTexture2D();
         newFramebuffer->lightingBuffer0    = Renderer2::CreateTexture2D();
         newFramebuffer->lightingBuffer1    = Renderer2::CreateTexture2D();
         newFramebuffer->finalColourBuffer  = Renderer2::CreateTexture2D();
+
+        newFramebuffer->bloomFramebuffer   = Renderer2::CreateFramebuffer();
+        newFramebuffer->bloomBuffer        = Renderer2::CreateTexture2D();
 
         // Sizes and formats need to be set. All we need to do is call the Resize() method.
         newFramebuffer->Resize(width, height);
 
 
         // Filters.
-        Renderer2::SetTexture2DFilter(*newFramebuffer->colourBuffer,      TextureFilter_LinearNearest, TextureFilter_Linear);
+        Renderer2::SetTexture2DFilter(*newFramebuffer->colourBuffer,      TextureFilter_NearestNearest, TextureFilter_Nearest);
         Renderer2::SetTexture2DFilter(*newFramebuffer->bloomBuffer,       TextureFilter_LinearNearest, TextureFilter_Linear);
         Renderer2::SetTexture2DFilter(*newFramebuffer->lightingBuffer0,   TextureFilter_Nearest,       TextureFilter_Nearest);
         Renderer2::SetTexture2DFilter(*newFramebuffer->lightingBuffer1  , TextureFilter_Nearest,       TextureFilter_Nearest);
@@ -746,18 +748,20 @@ namespace GTEngine
 
         // Wrap Modes.
         Renderer2::SetTexture2DWrapMode(*newFramebuffer->colourBuffer, TextureWrapMode_ClampToEdge);
+        Renderer2::SetTexture2DWrapMode(*newFramebuffer->bloomBuffer,  TextureWrapMode_ClampToEdge);
 
 
         // Attach to the main framebuffer.
         newFramebuffer->framebuffer->AttachDepthStencilBuffer(newFramebuffer->depthStencilBuffer);
         newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->colourBuffer,      0);
-        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->bloomBuffer,       1);
         newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->lightingBuffer0,   2);
         newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->lightingBuffer1,   3);
         newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->finalColourBuffer, 4);
-        
-
         Renderer2::PushAttachments(*newFramebuffer->framebuffer);
+
+        newFramebuffer->bloomFramebuffer->AttachColourBuffer(newFramebuffer->bloomBuffer, 0);
+        Renderer2::PushAttachments(*newFramebuffer->bloomFramebuffer);
+        
 
 
         return newFramebuffer;
@@ -773,6 +777,7 @@ namespace GTEngine
         Renderer2::DeleteTexture2D(framebufferToDelete->finalColourBuffer);
         
         Renderer2::DeleteFramebuffer(framebufferToDelete->framebuffer);
+        Renderer2::DeleteFramebuffer(framebufferToDelete->bloomFramebuffer);
 
         delete framebufferToDelete;
     }
@@ -1765,14 +1770,17 @@ namespace GTEngine
         this->RenderBloomMap(framebuffer);
 
 
-
         // 0) Generate mipmaps on the colour buffer.
         Renderer2::GenerateTexture2DMipmaps(*framebuffer->colourBuffer);
 
 
         // 1) Setup.
+        Renderer2::SetCurrentFramebuffer(framebuffer->framebuffer);
+
         int finalOutputBufferIndex = 4;
         Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);
+
+        Renderer2::SetViewport(0, 0, framebuffer->finalColourBuffer->GetWidth(), framebuffer->finalColourBuffer->GetHeight());
 
 
         // 2) Draw a fullscreen triangle using the composition shader.
@@ -1780,7 +1788,7 @@ namespace GTEngine
         this->finalCompositionShader->SetParameter("ColourBuffer", framebuffer->colourBuffer);
         this->finalCompositionShader->SetParameter("BloomBuffer",  framebuffer->bloomBuffer);
         this->finalCompositionShader->SetParameter("Exposure",     1.0f);
-        this->finalCompositionShader->SetParameter("BloomFactor",  0.25f);
+        this->finalCompositionShader->SetParameter("BloomFactor",  1.0f);
         {
             Renderer2::PushShaderPendingProperties(*this->finalCompositionShader);
         }
@@ -1793,13 +1801,21 @@ namespace GTEngine
     void DefaultSceneRenderer2::RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer)
     {
         // 1) Setup.
-        int finalOutputBufferIndex = 1;
-        Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);
+        Renderer2::SetCurrentFramebuffer(framebuffer->bloomFramebuffer);
+
+        int bufferIndex = 0;
+        Renderer2::SetDrawBuffers(1, &bufferIndex);
 
         Renderer2::DisableDepthTest();
         Renderer2::DisableDepthWrites();
         Renderer2::DisableStencilTest();
         Renderer2::DisableBlending();
+        Renderer2::DisableScissorTest();
+
+        Renderer2::SetViewport(0, 0, framebuffer->bloomBuffer->GetWidth(), framebuffer->bloomBuffer->GetHeight());
+
+        Renderer2::SetClearColour(0.0f, 0.0f, 0.0f, 0.0f);
+        Renderer2::Clear(BufferType_Colour);
 
 
         // 2) Draw a fullscreen triangle using the composition shader.

@@ -21,14 +21,14 @@ namespace GTEngine
         /// A pointer to main framebuffer object.
         Framebuffer* framebuffer;
 
+        
         /// The depth/stencil buffer.
         Texture2D* depthStencilBuffer;
 
         /// The main colour buffer (RGBA16F). This is the HDR buffer.
         Texture2D* colourBuffer;
 
-        /// The bloom colour buffer. RGBA16F.
-        Texture2D* bloomBuffer;
+        
 
 
         /// The first lighting accumulation buffer. RGBA16F. Stores diffuse RGB. A is unused right now.
@@ -40,6 +40,13 @@ namespace GTEngine
 
         /// The final colour output buffer. This is the LDR buffer that will have the final image applied. RGBA8.
         Texture2D* finalColourBuffer;
+
+
+        /// A pointer to the framebuffer object to use for bloom. We use a separate object so we can do a half-sized bloom map for efficiency.
+        Framebuffer* bloomFramebuffer;
+
+        /// The bloom colour buffer. RGBA16F.
+        Texture2D* bloomBuffer;
 
 
         /// The width of the framebuffer.
@@ -55,19 +62,26 @@ namespace GTEngine
             this->width  = newWidth;
             this->height = newHeight;
 
+            
             this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
             this->colourBuffer->SetData(      newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
-            this->bloomBuffer->SetData(       newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
             this->lightingBuffer0->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
             this->lightingBuffer1->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
             this->finalColourBuffer->SetData( newWidth, newHeight, GTImage::ImageFormat_RGBA8);
 
             Renderer2::PushTexture2DData(*this->depthStencilBuffer);
             Renderer2::PushTexture2DData(*this->colourBuffer);
-            Renderer2::PushTexture2DData(*this->bloomBuffer);
             Renderer2::PushTexture2DData(*this->lightingBuffer0);
             Renderer2::PushTexture2DData(*this->lightingBuffer1);
             Renderer2::PushTexture2DData(*this->finalColourBuffer);
+
+
+
+            unsigned int bloomWidth  = GTCore::Max(1U, newWidth  / 1);
+            unsigned int bloomHeight = GTCore::Max(1U, newHeight / 1);
+            this->bloomBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGBA16F);
+
+            Renderer2::PushTexture2DData(*this->bloomBuffer);
         }
     };
 
