@@ -499,16 +499,17 @@ namespace GTEngine
     DefaultSceneRenderer2::DefaultSceneRenderer2()
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
           shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
-          fullscreenTriangleVA(nullptr), finalCompositionShader(nullptr),
+          fullscreenTriangleVA(nullptr), finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
+          isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(0.25f),
           materialLibraryEventHandler(*this)
     {
-        this->depthPassShader        = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
-        this->shadowMapShader        = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapFS"));
-        this->pointShadowMapShader   = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapVS"),   ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapFS"));
-        this->finalCompositionShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionFS"));
-        this->bloomShader            = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_BloomFS"));
-
-
+        this->depthPassShader                  = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
+        this->shadowMapShader                  = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapFS"));
+        this->pointShadowMapShader             = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapVS"),   ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapFS"));
+        this->finalCompositionShaderHDR        = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionHDRFS"));
+        this->finalCompositionShaderHDRNoBloom = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionHDRNoBloomFS"));
+        this->finalCompositionShaderLDR        = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionLDRFS"));
+        this->bloomShader                      = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_BloomFS"));
 
 
 
@@ -547,7 +548,8 @@ namespace GTEngine
         Renderer2::DeleteShader(this->depthPassShader);
         Renderer2::DeleteShader(this->shadowMapShader);
         Renderer2::DeleteShader(this->pointShadowMapShader);
-        Renderer2::DeleteShader(this->finalCompositionShader);
+        Renderer2::DeleteShader(this->finalCompositionShaderHDR);
+        Renderer2::DeleteShader(this->finalCompositionShaderLDR);
         Renderer2::DeleteShader(this->bloomShader);
 
         for (size_t i = 0; i < this->materialShadersToDelete.count; ++i)
@@ -686,6 +688,64 @@ namespace GTEngine
     {
         this->externalMeshes.RemoveFirstOccuranceOf(&meshToRemove);
     }
+
+
+    ////////////////////////////////////////////////////////////////
+    // Settings.
+
+    void DefaultSceneRenderer2::EnableHDR()
+    {
+        this->isHDREnabled = true;
+    }
+
+    void DefaultSceneRenderer2::DisableHDR()
+    {
+        this->isHDREnabled = false;
+    }
+
+    bool DefaultSceneRenderer2::IsHDREnabled() const
+    {
+        return this->isHDREnabled;
+    }
+
+
+    void DefaultSceneRenderer2::EnableBloom()
+    {
+        this->isBloomEnabled = true;
+    }
+
+    void DefaultSceneRenderer2::DisableBloom()
+    {
+        this->isBloomEnabled = false;
+    }
+
+    bool DefaultSceneRenderer2::IsBloomEnabled() const
+    {
+        return this->isBloomEnabled;
+    }
+
+
+    void DefaultSceneRenderer2::SetHDRExposure(float newExposure)
+    {
+        this->hdrExposure = newExposure;
+    }
+
+    float DefaultSceneRenderer2::GetHDRExposure() const
+    {
+        return this->hdrExposure;
+    }
+
+
+    void DefaultSceneRenderer2::SetBloomFactor(float newBloomFactor)
+    {
+        this->bloomFactor = newBloomFactor;
+    }
+
+    float DefaultSceneRenderer2::GetBloomFactor() const
+    {
+        return this->bloomFactor;
+    }
+
 
 
     ////////////////////////////////////////////////////////////////
@@ -1750,59 +1810,98 @@ namespace GTEngine
 
     void DefaultSceneRenderer2::RenderFinalComposition(DefaultSceneRendererFramebuffer* framebuffer)
     {
-        // Bloom buffer needs to be build. This will set some shader state for us.
-        this->RenderBloomMap(framebuffer);
-
-
-        // 0) Generate mipmaps on the colour buffer.
-        Renderer2::GenerateTexture2DMipmaps(*framebuffer->colourBuffer);
-
-
-        // 1) Setup.
-        Renderer2::SetCurrentFramebuffer(framebuffer->framebuffer);
-
-        int finalOutputBufferIndex = 4;
-        Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);
-
-        Renderer2::SetViewport(0, 0, framebuffer->finalColourBuffer->GetWidth(), framebuffer->finalColourBuffer->GetHeight());
-
-
-        // 2) Draw a fullscreen triangle using the composition shader.
-        Renderer2::SetCurrentShader(this->finalCompositionShader);
-        this->finalCompositionShader->SetParameter("ColourBuffer", framebuffer->colourBuffer);
-        this->finalCompositionShader->SetParameter("BloomBuffer",  framebuffer->bloomBuffer);
-        this->finalCompositionShader->SetParameter("Exposure",     1.0f);
-        this->finalCompositionShader->SetParameter("BloomFactor",  1.0f);
-        {
-            Renderer2::PushShaderPendingProperties(*this->finalCompositionShader);
-        }
-        this->finalCompositionShader->ClearPendingParameters();
-
-
-        Renderer2::Draw(*this->fullscreenTriangleVA);
-    }
-
-    void DefaultSceneRenderer2::RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer)
-    {
-        // 1) Setup.
-        Renderer2::SetCurrentFramebuffer(framebuffer->bloomFramebuffer);
-
-        int bufferIndex = 0;
-        Renderer2::SetDrawBuffers(1, &bufferIndex);
-
         Renderer2::DisableDepthTest();
         Renderer2::DisableDepthWrites();
         Renderer2::DisableStencilTest();
         Renderer2::DisableBlending();
         Renderer2::DisableScissorTest();
 
+
+        if (this->IsHDREnabled())
+        {
+            // Might need a bloom buffer.
+            if (this->IsBloomEnabled())
+            {
+                this->RenderBloomMap(framebuffer);
+            }
+
+
+            // HDR requires luminosity. We downsample the colour buffer to 1x1 to get this. Mipmap generation will do it for us.
+            Renderer2::SetTexture2DFilter(*framebuffer->colourBuffer, TextureFilter_NearestNearest, TextureFilter_Nearest);
+            Renderer2::GenerateTexture2DMipmaps(*framebuffer->colourBuffer);
+
+
+            // Framebuffer Setup.
+            int finalOutputBufferIndex = 4;
+
+            Renderer2::SetCurrentFramebuffer(framebuffer->framebuffer);
+            Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);
+            Renderer2::SetViewport(0, 0, framebuffer->width, framebuffer->height);
+
+
+
+            // Shader Setup.
+            if (this->IsBloomEnabled())
+            {
+                Renderer2::SetCurrentShader(this->finalCompositionShaderHDR);
+                this->finalCompositionShaderHDR->SetParameter("ColourBuffer", framebuffer->colourBuffer);
+                this->finalCompositionShaderHDR->SetParameter("BloomBuffer",  framebuffer->bloomBuffer);
+                this->finalCompositionShaderHDR->SetParameter("Exposure",     this->hdrExposure);
+                this->finalCompositionShaderHDR->SetParameter("BloomFactor",  this->bloomFactor);
+                {
+                    Renderer2::PushShaderPendingProperties(*this->finalCompositionShaderHDR);
+                }
+                this->finalCompositionShaderHDR->ClearPendingParameters();
+            }
+            else
+            {
+                Renderer2::SetCurrentShader(this->finalCompositionShaderHDRNoBloom);
+                this->finalCompositionShaderHDRNoBloom->SetParameter("ColourBuffer", framebuffer->colourBuffer);
+                this->finalCompositionShaderHDRNoBloom->SetParameter("Exposure",     this->hdrExposure);
+                {
+                    Renderer2::PushShaderPendingProperties(*this->finalCompositionShaderHDRNoBloom);
+                }
+                this->finalCompositionShaderHDRNoBloom->ClearPendingParameters();
+            }
+        }
+        else
+        {
+            Renderer2::SetTexture2DFilter(*framebuffer->colourBuffer, TextureFilter_Nearest, TextureFilter_Nearest);
+
+
+            // Framebuffer Setup.
+            int finalOutputBufferIndex = 4;
+
+            Renderer2::SetCurrentFramebuffer(framebuffer->framebuffer);
+            Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);
+            Renderer2::SetViewport(0, 0, framebuffer->width, framebuffer->height);
+
+
+            // Shader Setup.
+            Renderer2::SetCurrentShader(this->finalCompositionShaderLDR);
+            this->finalCompositionShaderLDR->SetParameter("ColourBuffer", framebuffer->colourBuffer);
+            {
+                Renderer2::PushShaderPendingProperties(*this->finalCompositionShaderLDR);
+            }
+            this->finalCompositionShaderLDR->ClearPendingParameters();
+        }
+
+
+        // Draw.
+        Renderer2::Draw(*this->fullscreenTriangleVA);
+    }
+
+    void DefaultSceneRenderer2::RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer)
+    {
+        // Framebuffer Setup.
+        int bufferIndex = 0;
+
+        Renderer2::SetCurrentFramebuffer(framebuffer->bloomFramebuffer);
+        Renderer2::SetDrawBuffers(1, &bufferIndex);
         Renderer2::SetViewport(0, 0, framebuffer->bloomBuffer->GetWidth(), framebuffer->bloomBuffer->GetHeight());
 
-        Renderer2::SetClearColour(0.0f, 0.0f, 0.0f, 0.0f);
-        Renderer2::Clear(BufferType_Colour);
 
-
-        // 2) Draw a fullscreen triangle using the composition shader.
+        // Shader Setup.
         Renderer2::SetCurrentShader(this->bloomShader);
         this->bloomShader->SetParameter("ColourBuffer", framebuffer->colourBuffer);
         {
@@ -1811,10 +1910,11 @@ namespace GTEngine
         this->bloomShader->ClearPendingParameters();
 
 
+        // Draw.
         Renderer2::Draw(*this->fullscreenTriangleVA);
 
 
-        // 2) Generate mipmaps.
+        // The bloom map needs to have mipmaps generated.
         Renderer2::GenerateTexture2DMipmaps(*framebuffer->bloomBuffer);
     }
 
