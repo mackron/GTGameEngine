@@ -1291,6 +1291,13 @@ namespace GTEngine
             Renderer_DeleteOpenGL33Texture(textureToDeleteGL33->GetOpenGLObjectPtr());
 
             // We can safely delete the main object at this point.
+            delete textureToDeleteGL33->PositiveX;
+            delete textureToDeleteGL33->NegativeX;
+            delete textureToDeleteGL33->PositiveY;
+            delete textureToDeleteGL33->NegativeY;
+            delete textureToDeleteGL33->PositiveZ;
+            delete textureToDeleteGL33->NegativeZ;
+
             delete textureToDelete;
         }
     }
