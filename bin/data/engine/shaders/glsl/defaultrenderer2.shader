@@ -640,7 +640,7 @@
 ]]>
 </shader>
 
-<shader id="DefaultSceneRenderer_FinalCompositionFS">
+<shader id="DefaultSceneRenderer_FinalCompositionHDRFS">
 <![CDATA[
     #version 330
 
@@ -672,6 +672,48 @@
         finalColour *= Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0);
         
         ColourOut = finalColour;
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_FinalCompositionHDRNoBloomFS">
+<![CDATA[
+    #version 330
+
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D ColourBuffer;
+    uniform float     Exposure;
+    
+    void main()
+    {
+        vec4  finalColour = texture2D(ColourBuffer, VertexOutput_TexCoord);
+        float luminance   = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
+
+        // Tone Mapping.
+        finalColour *= Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0);
+        
+        ColourOut = finalColour;
+    }
+]]>
+</shader>
+
+
+<shader id="DefaultSceneRenderer_FinalCompositionLDRFS">
+<![CDATA[
+    #version 330
+
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D ColourBuffer;
+    
+    void main()
+    {
+        ColourOut = texture2D(ColourBuffer, VertexOutput_TexCoord);
     }
 ]]>
 </shader>

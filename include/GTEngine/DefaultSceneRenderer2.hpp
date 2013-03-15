@@ -565,6 +565,44 @@ namespace GTEngine
 
 
         ////////////////////////////////////////////////////////////////
+        // Settings.
+
+        /// Enables HDR.
+        void EnableHDR();
+
+        /// Disables HDR.
+        void DisableHDR();
+
+        /// Determines whether or not HDR is enabled.
+        bool IsHDREnabled() const;
+
+
+        /// Enables bloom.
+        void EnableBloom();
+
+        /// Disables bloom.
+        void DisableBloom();
+
+        /// Determines whether or not bloom is enabled.
+        bool IsBloomEnabled() const;
+
+
+        /// Sets the HDR exposure.
+        void SetHDRExposure(float newExposure);
+
+        /// Retrieves the HDR exposure.
+        float GetHDRExposure() const;
+
+        
+        /// Sets the bloom factor.
+        void SetBloomFactor(float newBloomFactor);
+
+        /// Retrieves the bloom factor.
+        float GetBloomFactor() const;
+
+
+
+        ////////////////////////////////////////////////////////////////
         // Event Handlers from MaterialLibrary.
 
         /// Called when a material definition is deleted.
@@ -747,10 +785,30 @@ namespace GTEngine
         VertexArray* fullscreenTriangleVA;
 
         /// The shader to use when doing the final composition.
-        Shader* finalCompositionShader;
+        Shader* finalCompositionShaderHDR;
+        Shader* finalCompositionShaderHDRNoBloom;
+        Shader* finalCompositionShaderLDR;
 
         /// The shader to use when doing the bloom map.
         Shader* bloomShader;
+
+
+
+        ///////////////////////////////////////////////////////
+        // Settings.
+
+        /// Keeps track of whether or not HDR is enabled.
+        bool isHDREnabled;
+
+        /// Keeps track of whether or not bloom is enabled.
+        bool isBloomEnabled;
+
+        /// Keeps track of the HDR exposure.
+        float hdrExposure;
+
+        /// Keeps track of the bloom factor.
+        float bloomFactor;
+
 
         
         /// Material Library Event Handler.
