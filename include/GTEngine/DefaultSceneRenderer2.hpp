@@ -106,6 +106,39 @@ namespace GTEngine
         unsigned int height;
 
 
+        /// Constructor.
+        DefaultSceneRendererShadowFramebuffer(unsigned int widthIn, unsigned int heightIn)
+            : framebuffer(nullptr), depthStencilBuffer(nullptr), colourBuffer(nullptr),
+              width(widthIn), height(heightIn)
+        {
+            this->framebuffer        = Renderer2::CreateFramebuffer();
+            this->depthStencilBuffer = Renderer2::CreateTexture2D();
+            this->colourBuffer       = Renderer2::CreateTexture2D();
+
+            // We just resize to setup the texture formats and whatnot.
+            this->Resize(widthIn, heightIn);
+
+            // Now we can setup the filtering and attach the textures to the framebuffer itself.
+            Renderer2::SetTexture2DFilter(  *this->colourBuffer, TextureFilter_LinearLinear, TextureFilter_Linear);
+            Renderer2::SetTexture2DWrapMode(*this->colourBuffer, TextureWrapMode_ClampToEdge);
+
+            this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
+            this->framebuffer->AttachColourBuffer(this->colourBuffer, 0);
+
+            Renderer2::PushAttachments(*this->framebuffer);
+        }
+
+        /// Destructor.
+        ~DefaultSceneRendererShadowFramebuffer()
+        {
+            Renderer2::DeleteTexture2D(this->colourBuffer);
+            Renderer2::DeleteTexture2D(this->depthStencilBuffer);
+            Renderer2::DeleteFramebuffer(this->framebuffer);
+        }
+
+
+
+
         /// Resizes the attachments on the framebuffer.
         void Resize(unsigned int newWidth, unsigned int newHeight)
         {
