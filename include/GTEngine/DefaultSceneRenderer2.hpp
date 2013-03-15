@@ -24,8 +24,11 @@ namespace GTEngine
         /// The depth/stencil buffer.
         Texture2D* depthStencilBuffer;
 
-        /// The main colour output buffer (RGBA16F).
-        Texture2D* colourOutputBuffer;
+        /// The main colour buffer (RGBA16F). This is the HDR buffer.
+        Texture2D* colourBuffer;
+
+        /// The bloom colour buffer. RGBA16F.
+        Texture2D* bloomBuffer;
 
 
         /// The first lighting accumulation buffer. RGBA16F. Stores diffuse RGB. A is unused right now.
@@ -33,6 +36,10 @@ namespace GTEngine
 
         /// The second light accumulation buffer. RGBA16F. Stores specular RGB. A is unused right now.
         Texture2D* lightingBuffer1;
+
+
+        /// The final colour output buffer. This is the LDR buffer that will have the final image applied. RGBA8.
+        Texture2D* finalColourBuffer;
 
 
         /// The width of the framebuffer.
@@ -49,14 +56,18 @@ namespace GTEngine
             this->height = newHeight;
 
             this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
-            this->colourOutputBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
+            this->colourBuffer->SetData(      newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
+            this->bloomBuffer->SetData(       newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
             this->lightingBuffer0->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
             this->lightingBuffer1->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGBA16F);
+            this->finalColourBuffer->SetData( newWidth, newHeight, GTImage::ImageFormat_RGBA8);
 
             Renderer2::PushTexture2DData(*this->depthStencilBuffer);
-            Renderer2::PushTexture2DData(*this->colourOutputBuffer);
+            Renderer2::PushTexture2DData(*this->colourBuffer);
+            Renderer2::PushTexture2DData(*this->bloomBuffer);
             Renderer2::PushTexture2DData(*this->lightingBuffer0);
             Renderer2::PushTexture2DData(*this->lightingBuffer1);
+            Renderer2::PushTexture2DData(*this->finalColourBuffer);
         }
     };
 
@@ -585,6 +596,14 @@ namespace GTEngine
         void RenderRefractiveTransparentPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
 
+        /// Renders the final composition.
+        void RenderFinalComposition(DefaultSceneRendererFramebuffer* framebuffer);
+
+        /// Renders the bloom map.
+        void RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer);
+
+
+
         /////////////////////////
         // Materials.
 
@@ -672,6 +691,11 @@ namespace GTEngine
         /// Vertex array for drawing a full screen triangle. This is in P3T2 format. The z coordinate is at 0.
         VertexArray* fullscreenTriangleVA;
 
+        /// The shader to use when doing the final composition.
+        Shader* finalCompositionShader;
+
+        /// The shader to use when doing the bloom map.
+        Shader* bloomShader;
 
         
         /// Material Library Event Handler.

@@ -623,6 +623,101 @@
 
 
 
+<shader id="DefaultSceneRenderer_FinalCompositionVS">
+<![CDATA[
+    #version 330
+    
+    in vec3 VertexInput_Position;
+    in vec2 VertexInput_TexCoord;
+
+    out vec2 VertexOutput_TexCoord;
+    
+    void main()
+    {
+        VertexOutput_TexCoord = VertexInput_TexCoord;
+        gl_Position           = vec4(VertexInput_Position, 1.0);
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_FinalCompositionFS">
+<![CDATA[
+    #version 330
+
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D ColourBuffer;
+    uniform sampler2D BloomBuffer;
+    uniform float     Exposure;
+    uniform float     BloomFactor;
+    
+    void main()
+    {
+        // THIS IS JUST A HDR TEST!!!!
+    
+        vec4  finalColour = texture2D(ColourBuffer, VertexOutput_TexCoord);
+        vec4  bloom       = vec4(0.0, 0.0, 0.0, 0.0);
+        float luminance   = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
+        
+        
+        /*
+        // Just a little bit of bloom for now. Not sure if this is the best way. Probably not.
+        vec2 uvOffset = vec2(1.0, 1.0) / vec2(textureSize(ColourBuffer, 0));
+        
+        vec4 bloom0 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord + vec2(-uvOffset.x, -uvOffset.y)) - vec4(1.0));
+        vec4 bloom1 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord + vec2( uvOffset.x, -uvOffset.y)) - vec4(1.0));
+        vec4 bloom2 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord + vec2( uvOffset.x,  uvOffset.y)) - vec4(1.0));
+        vec4 bloom3 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord + vec2(-uvOffset.x,  uvOffset.y)) - vec4(1.0));
+        
+        bloom = (bloom0 + bloom1 + bloom2 + bloom3) / 4.0;
+        */
+        
+        /*
+        vec4 bloom0 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1) - vec4(0.75));
+        vec4 bloom1 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 2) - vec4(0.75));
+        vec4 bloom2 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 3) - vec4(0.75));
+        bloom = bloom0 + bloom1 + bloom2;
+        */
+        
+        
+        vec4 bloom0 = texture2D(BloomBuffer, VertexOutput_TexCoord, 1);
+        vec4 bloom1 = texture2D(BloomBuffer, VertexOutput_TexCoord, 2);
+        vec4 bloom2 = texture2D(BloomBuffer, VertexOutput_TexCoord, 3);
+        bloom = bloom0 + bloom1 + bloom2;
+        
+        
+        // Bloom.
+        finalColour += bloom * BloomFactor;
+        
+        // Tone Mapping.
+        finalColour *= Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0);
+        
+        ColourOut = finalColour;
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_BloomFS">  <!-- Vertex Shader is DefaultSceneRenderer_FinalCompositionVS -->
+<![CDATA[
+    #version 330
+
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D ColourBuffer;
+    
+    void main()
+    {
+        ColourOut = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord) - vec4(1.0));
+    }
+]]>
+</shader>
+
+
+
 
 
 

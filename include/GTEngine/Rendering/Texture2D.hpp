@@ -50,6 +50,14 @@ namespace GTEngine
         ///     This will return an empty string if the image was not loaded from a file.
         const char* GetRelativePath() const;
 
+        /// Sets the relative path of the texture file, if any.
+        ///
+        /// @param newRelativePath [in] The new relative path.
+        ///
+        /// @remarks
+        ///     This doesn't do any loading. It is a simple setting and should only be used by the texture library.
+        void SetRelativePath(const char* newRelativePath);
+
 
 
         /// Sets the base data of the texture.

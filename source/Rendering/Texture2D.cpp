@@ -51,6 +51,11 @@ namespace GTEngine
         return this->relativePath.c_str();
     }
 
+    void Texture2D::SetRelativePath(const char* newRelativePath)
+    {
+        this->relativePath = newRelativePath;
+    }
+
 
     void Texture2D::SetData(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data)
     {

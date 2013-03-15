@@ -92,12 +92,14 @@ namespace GTEngine
 
 
                     auto newTexture = Renderer2::CreateTexture2D();
+                    newTexture->SetRelativePath(relativePath.c_str());
                     newTexture->SetData(image.GetWidth(), image.GetHeight(), image.GetFormat(), image.GetBaseMipmapData());
 
                     Renderer2::PushTexture2DData(*newTexture);
                     Renderer2::GenerateTexture2DMipmaps(*newTexture);
                     Renderer2::SetTexture2DFilter(*newTexture, DefaultMinFilter, DefaultMagFilter);
                     Renderer2::SetTexture2DAnisotropy(*newTexture, DefaultAnisotropy);
+                    
 
 
                     // Local data should be cleared since it won't be needed now. The renderer will have made a copy of the data, so it's safe to delete now.
