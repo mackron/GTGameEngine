@@ -5,7 +5,6 @@
 #include <GTEngine/DefaultScenePhysicsManager.hpp>
 #include <GTEngine/DefaultSceneCullingManager.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTEngine/GarbageCollector.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Scripting.hpp>
 #include <GTCore/ToString.hpp>
@@ -292,7 +291,7 @@ namespace GTEngine
 
         if (deleteRenderer)
         {
-            GarbageCollector::MarkForCollection(this->renderer);
+            delete this->renderer;
         }
 
 

@@ -22,7 +22,7 @@ namespace GTEngine
 
         if (this->deleteGeometry)
         {
-            GarbageCollector::MarkForCollection(this->geometry);
+            Renderer2::DeleteVertexArray(this->geometry);
         }
 
         if (this->deleteMaterial)
@@ -36,7 +36,7 @@ namespace GTEngine
     {
         if (this->deleteGeometry)
         {
-            GarbageCollector::MarkForCollection(this->geometry);
+            Renderer2::DeleteVertexArray(this->geometry);
         }
 
         this->geometry       = newGeometry;

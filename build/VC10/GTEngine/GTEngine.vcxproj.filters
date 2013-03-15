@@ -335,9 +335,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCQueue.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\GarbageCollector.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Components\ProximityComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
@@ -1007,9 +1004,6 @@
       <Filter>source\Rendering\RenderCommands</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ShaderParameter.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\GarbageCollector.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Components\ProximityComponent.cpp">
