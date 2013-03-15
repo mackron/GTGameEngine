@@ -499,12 +499,14 @@ namespace GTEngine
     DefaultSceneRenderer2::DefaultSceneRenderer2()
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
           shadowMapFramebuffer(), shadowMapShader(nullptr), pointShadowMapFramebuffer(512, 512), pointShadowMapShader(nullptr),
-          fullscreenTriangleVA(nullptr),
+          fullscreenTriangleVA(nullptr), finalCompositionShader(nullptr),
           materialLibraryEventHandler(*this)
     {
-        this->depthPassShader      = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"),      ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
-        this->shadowMapShader      = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapVS"),      ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapFS"));
-        this->pointShadowMapShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapFS"));
+        this->depthPassShader        = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
+        this->shadowMapShader        = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapFS"));
+        this->pointShadowMapShader   = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapVS"),   ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapFS"));
+        this->finalCompositionShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionFS"));
+        this->bloomShader            = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_BloomFS"));
 
 
         // Shadow Map Framebuffer.
@@ -559,6 +561,10 @@ namespace GTEngine
     DefaultSceneRenderer2::~DefaultSceneRenderer2()
     {
         Renderer2::DeleteShader(this->depthPassShader);
+        Renderer2::DeleteShader(this->shadowMapShader);
+        Renderer2::DeleteShader(this->pointShadowMapShader);
+        Renderer2::DeleteShader(this->finalCompositionShader);
+        Renderer2::DeleteShader(this->bloomShader);
 
         for (size_t i = 0; i < this->materialShadersToDelete.count; ++i)
         {
@@ -640,6 +646,10 @@ namespace GTEngine
 
         // 4) The refractive transparent pass (for things with refractive properties).
         //this->RenderRefractiveTransparentPass(scene, framebuffer);
+
+
+        // 5) The final composition.
+        this->RenderFinalComposition(framebuffer);
     }
 
     void DefaultSceneRenderer2::AddViewport(SceneViewport &viewport)
@@ -648,7 +658,7 @@ namespace GTEngine
         auto framebuffer = this->CreateFramebuffer(viewport.GetWidth(), viewport.GetHeight());
         assert(framebuffer != nullptr);
         {
-            viewport.SetColourBuffer(framebuffer->colourOutputBuffer);
+            viewport.SetColourBuffer(framebuffer->finalColourBuffer);
             this->viewportFramebuffers.Add(&viewport, framebuffer);
         }
     }
@@ -717,28 +727,35 @@ namespace GTEngine
         auto newFramebuffer = new DefaultSceneRendererFramebuffer;
         newFramebuffer->framebuffer        = Renderer2::CreateFramebuffer();
         newFramebuffer->depthStencilBuffer = Renderer2::CreateTexture2D();
-        newFramebuffer->colourOutputBuffer = Renderer2::CreateTexture2D();
+        newFramebuffer->colourBuffer       = Renderer2::CreateTexture2D();
+        newFramebuffer->bloomBuffer        = Renderer2::CreateTexture2D();
         newFramebuffer->lightingBuffer0    = Renderer2::CreateTexture2D();
         newFramebuffer->lightingBuffer1    = Renderer2::CreateTexture2D();
+        newFramebuffer->finalColourBuffer  = Renderer2::CreateTexture2D();
 
         // Sizes and formats need to be set. All we need to do is call the Resize() method.
         newFramebuffer->Resize(width, height);
 
 
         // Filters.
-        Renderer2::SetTexture2DFilter(*newFramebuffer->colourOutputBuffer, TextureFilter_Nearest, TextureFilter_Nearest);
-        Renderer2::SetTexture2DFilter(*newFramebuffer->lightingBuffer0,    TextureFilter_Nearest, TextureFilter_Nearest);
-        Renderer2::SetTexture2DFilter(*newFramebuffer->lightingBuffer1,    TextureFilter_Nearest, TextureFilter_Nearest);
-        
+        Renderer2::SetTexture2DFilter(*newFramebuffer->colourBuffer,      TextureFilter_LinearNearest, TextureFilter_Linear);
+        Renderer2::SetTexture2DFilter(*newFramebuffer->bloomBuffer,       TextureFilter_LinearNearest, TextureFilter_Linear);
+        Renderer2::SetTexture2DFilter(*newFramebuffer->lightingBuffer0,   TextureFilter_Nearest,       TextureFilter_Nearest);
+        Renderer2::SetTexture2DFilter(*newFramebuffer->lightingBuffer1  , TextureFilter_Nearest,       TextureFilter_Nearest);
+        Renderer2::SetTexture2DFilter(*newFramebuffer->finalColourBuffer, TextureFilter_Nearest,       TextureFilter_Nearest);
+
         // Wrap Modes.
-        Renderer2::SetTexture2DWrapMode(*newFramebuffer->colourOutputBuffer, TextureWrapMode_ClampToEdge);
+        Renderer2::SetTexture2DWrapMode(*newFramebuffer->colourBuffer, TextureWrapMode_ClampToEdge);
 
 
         // Attach to the main framebuffer.
         newFramebuffer->framebuffer->AttachDepthStencilBuffer(newFramebuffer->depthStencilBuffer);
-        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->colourOutputBuffer, 0);
-        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->lightingBuffer0,    1);
-        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->lightingBuffer1,    2);
+        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->colourBuffer,      0);
+        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->bloomBuffer,       1);
+        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->lightingBuffer0,   2);
+        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->lightingBuffer1,   3);
+        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->finalColourBuffer, 4);
+        
 
         Renderer2::PushAttachments(*newFramebuffer->framebuffer);
 
@@ -749,9 +766,11 @@ namespace GTEngine
     void DefaultSceneRenderer2::DeleteFramebuffer(DefaultSceneRendererFramebuffer* framebufferToDelete)
     {
         Renderer2::DeleteTexture2D(framebufferToDelete->depthStencilBuffer);
-        Renderer2::DeleteTexture2D(framebufferToDelete->colourOutputBuffer);
+        Renderer2::DeleteTexture2D(framebufferToDelete->colourBuffer);
+        Renderer2::DeleteTexture2D(framebufferToDelete->bloomBuffer);
         Renderer2::DeleteTexture2D(framebufferToDelete->lightingBuffer0);
         Renderer2::DeleteTexture2D(framebufferToDelete->lightingBuffer1);
+        Renderer2::DeleteTexture2D(framebufferToDelete->finalColourBuffer);
         
         Renderer2::DeleteFramebuffer(framebufferToDelete->framebuffer);
 
@@ -844,7 +863,7 @@ namespace GTEngine
     void DefaultSceneRenderer2::RenderOpaqueLightingPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         // The lighting buffers must be cleared to black. Also need to clear the depth/stencil buffer.
-        int lightingBuffers[] = {1, 2};
+        int lightingBuffers[] = {2, 3};
         Renderer2::SetDrawBuffers(2, lightingBuffers);
 
         Renderer2::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1206,7 +1225,7 @@ namespace GTEngine
         // With the shadow map done, we now need to go back to the main framebuffer.
         Renderer2::SetCurrentFramebuffer(mainFramebuffer->framebuffer);
 
-        int lightingBuffers[] = {1, 2};
+        int lightingBuffers[] = {2, 3};
         Renderer2::SetDrawBuffers(2, lightingBuffers);
         Renderer2::SetViewport(0, 0, mainFramebuffer->width, mainFramebuffer->height);
         Renderer2::EnableBlending();
@@ -1390,7 +1409,7 @@ namespace GTEngine
         // With the shadow map done, we now need to go back to the main framebuffer.
         Renderer2::SetCurrentFramebuffer(mainFramebuffer->framebuffer);
 
-        int lightingBuffers[] = {1, 2};
+        int lightingBuffers[] = {2, 3};
         Renderer2::SetDrawBuffers(2, lightingBuffers);
         Renderer2::SetViewport(0, 0, mainFramebuffer->width, mainFramebuffer->height);
         Renderer2::EnableBlending();
@@ -1639,7 +1658,7 @@ namespace GTEngine
         // With the shadow map done, we now need to go back to the main framebuffer.
         Renderer2::SetCurrentFramebuffer(mainFramebuffer->framebuffer);
 
-        int lightingBuffers[] = {1, 2};
+        int lightingBuffers[] = {2, 3};
         Renderer2::SetDrawBuffers(2, lightingBuffers);
         Renderer2::SetViewport(0, 0, mainFramebuffer->width, mainFramebuffer->height);
         Renderer2::EnableBlending();
@@ -1737,6 +1756,66 @@ namespace GTEngine
         (void)scene;
         (void)framebuffer;
         (void)visibleObjects;
+    }
+
+
+    void DefaultSceneRenderer2::RenderFinalComposition(DefaultSceneRendererFramebuffer* framebuffer)
+    {
+        // Bloom buffer needs to be build. This will set some shader state for us.
+        this->RenderBloomMap(framebuffer);
+
+
+
+        // 0) Generate mipmaps on the colour buffer.
+        Renderer2::GenerateTexture2DMipmaps(*framebuffer->colourBuffer);
+
+
+        // 1) Setup.
+        int finalOutputBufferIndex = 4;
+        Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);
+
+
+        // 2) Draw a fullscreen triangle using the composition shader.
+        Renderer2::SetCurrentShader(this->finalCompositionShader);
+        this->finalCompositionShader->SetParameter("ColourBuffer", framebuffer->colourBuffer);
+        this->finalCompositionShader->SetParameter("BloomBuffer",  framebuffer->bloomBuffer);
+        this->finalCompositionShader->SetParameter("Exposure",     1.0f);
+        this->finalCompositionShader->SetParameter("BloomFactor",  0.25f);
+        {
+            Renderer2::PushShaderPendingProperties(*this->finalCompositionShader);
+        }
+        this->finalCompositionShader->ClearPendingParameters();
+
+
+        Renderer2::Draw(*this->fullscreenTriangleVA);
+    }
+
+    void DefaultSceneRenderer2::RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer)
+    {
+        // 1) Setup.
+        int finalOutputBufferIndex = 1;
+        Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);
+
+        Renderer2::DisableDepthTest();
+        Renderer2::DisableDepthWrites();
+        Renderer2::DisableStencilTest();
+        Renderer2::DisableBlending();
+
+
+        // 2) Draw a fullscreen triangle using the composition shader.
+        Renderer2::SetCurrentShader(this->bloomShader);
+        this->bloomShader->SetParameter("ColourBuffer", framebuffer->colourBuffer);
+        {
+            Renderer2::PushShaderPendingProperties(*this->bloomShader);
+        }
+        this->bloomShader->ClearPendingParameters();
+
+
+        Renderer2::Draw(*this->fullscreenTriangleVA);
+
+
+        // 2) Generate mipmaps.
+        Renderer2::GenerateTexture2DMipmaps(*framebuffer->bloomBuffer);
     }
 
 
