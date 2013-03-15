@@ -498,7 +498,7 @@ namespace GTEngine
 
     DefaultSceneRenderer2::DefaultSceneRenderer2()
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
-          shadowMapFramebuffer(), shadowMapShader(nullptr), pointShadowMapFramebuffer(512, 512), pointShadowMapShader(nullptr),
+          shadowMapFramebuffer(), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
           fullscreenTriangleVA(nullptr), finalCompositionShader(nullptr),
           materialLibraryEventHandler(*this)
     {
