@@ -1934,7 +1934,6 @@ namespace GTEngine
         assert(this->scene.GetMinAutoSceneNodeID() == 1);
         {
             this->camera.AddComponent<GTEngine::CameraComponent>();
-            this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.0f, 0.0f, 0.0f);
         
             auto metadata = this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
             {

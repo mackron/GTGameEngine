@@ -655,33 +655,10 @@
     
     void main()
     {
-        // THIS IS JUST A HDR TEST!!!!
-    
         vec4  finalColour = texture2D(ColourBuffer, VertexOutput_TexCoord);
-        vec4  bloom       = vec4(0.0, 0.0, 0.0, 0.0);
+        vec4  bloom       = vec4(0.0);
         float luminance   = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
-        
-        
-        /*
-        // Just a little bit of bloom for now. Not sure if this is the best way. Probably not.
-        vec2 uvOffset = vec2(1.0, 1.0) / vec2(textureSize(ColourBuffer, 0));
-        
-        vec4 bloom0 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord + vec2(-uvOffset.x, -uvOffset.y)) - vec4(1.0));
-        vec4 bloom1 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord + vec2( uvOffset.x, -uvOffset.y)) - vec4(1.0));
-        vec4 bloom2 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord + vec2( uvOffset.x,  uvOffset.y)) - vec4(1.0));
-        vec4 bloom3 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord + vec2(-uvOffset.x,  uvOffset.y)) - vec4(1.0));
-        
-        bloom = (bloom0 + bloom1 + bloom2 + bloom3) / 4.0;
-        */
-        
-        /*
-        vec4 bloom0 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1) - vec4(0.75));
-        vec4 bloom1 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 2) - vec4(0.75));
-        vec4 bloom2 = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 3) - vec4(0.75));
-        bloom = bloom0 + bloom1 + bloom2;
-        */
-        
-        
+
         vec4 bloom0 = texture2D(BloomBuffer, VertexOutput_TexCoord, 1);
         vec4 bloom1 = texture2D(BloomBuffer, VertexOutput_TexCoord, 2);
         vec4 bloom2 = texture2D(BloomBuffer, VertexOutput_TexCoord, 3);
@@ -711,7 +688,7 @@
     
     void main()
     {
-        ColourOut = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord) - vec4(1.0));
+        ColourOut = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 0) - vec4(1.0));
     }
 ]]>
 </shader>
