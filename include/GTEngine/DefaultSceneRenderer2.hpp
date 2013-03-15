@@ -123,6 +123,24 @@ namespace GTEngine
     /// The framebuffer for point light shadow maps.
     struct DefaultSceneRendererPointShadowFramebuffer
     {
+        /// A pointer to the main framebuffer.
+        Framebuffer* framebuffer;
+
+        /// The depth/stencil buffer. This is cleared and reused for each face.
+        Texture2D* depthStencilBuffer;
+
+        /// The cube map that will contain the shadow information. RG32F.
+        TextureCube* colourBuffer;
+
+
+        /// The width of each face of the framebuffer.
+        unsigned int width;
+
+        /// The height of each face of the framebuffer.
+        unsigned int height;
+
+
+
         /// Constructor.
         DefaultSceneRendererPointShadowFramebuffer(unsigned int widthIn, unsigned int heightIn)
             : framebuffer(nullptr), depthStencilBuffer(nullptr), colourBuffer(nullptr),
@@ -160,24 +178,6 @@ namespace GTEngine
             Renderer2::DeleteTexture2D(this->depthStencilBuffer);
             Renderer2::DeleteFramebuffer(this->framebuffer);
         }
-
-
-
-        /// A pointer to the main framebuffer.
-        Framebuffer* framebuffer;
-
-        /// The depth/stencil buffer. This is cleared and reused for each face.
-        Texture2D* depthStencilBuffer;
-
-        /// The cube map that will contain the shadow information. RG32F.
-        TextureCube* colourBuffer;
-
-
-        /// The width of each face of the framebuffer.
-        unsigned int width;
-
-        /// The height of each face of the framebuffer.
-        unsigned int height;
 
 
         /// Resizes the attachments on the framebuffer.
