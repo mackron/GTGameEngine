@@ -179,35 +179,6 @@ namespace GTEngine
                     {
                         this->visibleModels.Add(modelComponent, new LightIndices);
                     }
-
-#if 0
-                    auto model = modelComponent->GetModel();
-                    if (model != nullptr)                           // <-- Is allowed to be null. Perhaps due to a bad path?
-                    {
-                        for (size_t i = 0; i < model->meshes.count; ++i)
-                        {
-                            auto mesh = model->meshes[i];
-                            assert(mesh != nullptr);
-                            {
-                                glm::mat4 transform = sceneNode.GetWorldTransform();
-
-                                // If the mesh needs to be animated we don't want to add the mesh straight away. Instead we want to wait until
-                                // after it's been animated. If it's not animated, we just add it straight away.
-                                if (model->IsAnimating() && mesh->IsAnimated())
-                                {
-                                    if (!this->meshesToAnimate.Exists(mesh))
-                                    {
-                                        this->meshesToAnimate.Add(mesh, transform);
-                                    }
-                                }
-                                else
-                                {
-                                    this->AddMesh(*mesh, transform);
-                                }
-                            }
-                        }
-                    }
-#endif
                 }
             }
         }
@@ -374,7 +345,7 @@ namespace GTEngine
 
 
 
-    void DefaultSceneRendererVisibleObjects::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightIndices* lights)
+    void DefaultSceneRendererVisibleObjects::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightIndices* lights, bool drawHighlight)
     {
         // TODO: Consider ways to remove these const_casts. Don't want to make the pointers in SceneRendererMesh constant because
         //       the user of that structure probably won't want a constant pointer.
@@ -385,6 +356,13 @@ namespace GTEngine
         object.material       = const_cast<Material*>(mesh.GetMaterial());
         object.transform      = transform;
         object.touchingLights = lights;
+        
+        // Temp.
+        if (drawHighlight)
+        {
+            object.flags |= SceneRendererMesh::DrawHighlight;
+        }
+
         this->AddMesh(object);
     }
 
@@ -558,7 +536,17 @@ namespace GTEngine
                             }
                             else
                             {
-                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), modelLights);
+                                // TEMP:
+                                //
+                                /// If the node has an editor component and is selected, we'll draw a highlight.
+                                bool drawHighlight = false;
+                                auto editorMetadata = modelComponent->GetNode().GetComponent<EditorMetadataComponent>();
+                                if (editorMetadata != nullptr && editorMetadata->IsSelected())
+                                {
+                                    drawHighlight = true;
+                                }
+
+                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), modelLights, drawHighlight);
                             }
                         }
                     }
@@ -634,7 +622,17 @@ namespace GTEngine
                             auto iModelLights = this->visibleModels.Find(modelComponent);
                             assert(iModelLights != nullptr);
                             {
-                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), iModelLights->value);
+                                // TEMP:
+                                //
+                                /// If the node has an editor component and is selected, we'll draw a highlight.
+                                bool drawHighlight = false;
+                                auto editorMetadata = modelComponent->GetNode().GetComponent<EditorMetadataComponent>();
+                                if (editorMetadata != nullptr && editorMetadata->IsSelected())
+                                {
+                                    drawHighlight = true;
+                                }
+
+                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), iModelLights->value, drawHighlight);
                             }
                         }
                     }
@@ -663,6 +661,7 @@ namespace GTEngine
         this->finalCompositionShaderHDRNoBloom = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionHDRNoBloomFS"));
         this->finalCompositionShaderLDR        = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionLDRFS"));
         this->bloomShader                      = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_BloomFS"));
+        this->highlightShader                  = Renderer2::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightFS"));
 
 
 
@@ -928,61 +927,11 @@ namespace GTEngine
 
     DefaultSceneRendererFramebuffer* DefaultSceneRenderer2::CreateFramebuffer(unsigned int width, unsigned int height)
     {
-        auto newFramebuffer = new DefaultSceneRendererFramebuffer;
-        newFramebuffer->framebuffer        = Renderer2::CreateFramebuffer();
-        newFramebuffer->depthStencilBuffer = Renderer2::CreateTexture2D();
-        newFramebuffer->colourBuffer       = Renderer2::CreateTexture2D();
-        newFramebuffer->lightingBuffer0    = Renderer2::CreateTexture2D();
-        newFramebuffer->lightingBuffer1    = Renderer2::CreateTexture2D();
-        newFramebuffer->finalColourBuffer  = Renderer2::CreateTexture2D();
-
-        newFramebuffer->bloomFramebuffer   = Renderer2::CreateFramebuffer();
-        newFramebuffer->bloomBuffer        = Renderer2::CreateTexture2D();
-
-        // Sizes and formats need to be set. All we need to do is call the Resize() method.
-        newFramebuffer->Resize(width, height);
-
-
-        // Filters.
-        Renderer2::SetTexture2DFilter(*newFramebuffer->colourBuffer,      TextureFilter_NearestNearest, TextureFilter_Nearest);
-        Renderer2::SetTexture2DFilter(*newFramebuffer->bloomBuffer,       TextureFilter_LinearNearest, TextureFilter_Linear);
-        Renderer2::SetTexture2DFilter(*newFramebuffer->lightingBuffer0,   TextureFilter_Nearest,       TextureFilter_Nearest);
-        Renderer2::SetTexture2DFilter(*newFramebuffer->lightingBuffer1  , TextureFilter_Nearest,       TextureFilter_Nearest);
-        Renderer2::SetTexture2DFilter(*newFramebuffer->finalColourBuffer, TextureFilter_Nearest,       TextureFilter_Nearest);
-
-        // Wrap Modes.
-        Renderer2::SetTexture2DWrapMode(*newFramebuffer->colourBuffer, TextureWrapMode_ClampToEdge);
-        Renderer2::SetTexture2DWrapMode(*newFramebuffer->bloomBuffer,  TextureWrapMode_ClampToEdge);
-
-
-        // Attach to the main framebuffer.
-        newFramebuffer->framebuffer->AttachDepthStencilBuffer(newFramebuffer->depthStencilBuffer);
-        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->colourBuffer,      0);
-        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->lightingBuffer0,   2);
-        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->lightingBuffer1,   3);
-        newFramebuffer->framebuffer->AttachColourBuffer(newFramebuffer->finalColourBuffer, 4);
-        Renderer2::PushAttachments(*newFramebuffer->framebuffer);
-
-        newFramebuffer->bloomFramebuffer->AttachColourBuffer(newFramebuffer->bloomBuffer, 0);
-        Renderer2::PushAttachments(*newFramebuffer->bloomFramebuffer);
-        
-
-
-        return newFramebuffer;
+        return new DefaultSceneRendererFramebuffer(width, height);
     }
 
     void DefaultSceneRenderer2::DeleteFramebuffer(DefaultSceneRendererFramebuffer* framebufferToDelete)
     {
-        Renderer2::DeleteTexture2D(framebufferToDelete->depthStencilBuffer);
-        Renderer2::DeleteTexture2D(framebufferToDelete->colourBuffer);
-        Renderer2::DeleteTexture2D(framebufferToDelete->bloomBuffer);
-        Renderer2::DeleteTexture2D(framebufferToDelete->lightingBuffer0);
-        Renderer2::DeleteTexture2D(framebufferToDelete->lightingBuffer1);
-        Renderer2::DeleteTexture2D(framebufferToDelete->finalColourBuffer);
-        
-        Renderer2::DeleteFramebuffer(framebufferToDelete->framebuffer);
-        Renderer2::DeleteFramebuffer(framebufferToDelete->bloomFramebuffer);
-
         delete framebufferToDelete;
     }
 
@@ -1071,8 +1020,12 @@ namespace GTEngine
 
     void DefaultSceneRenderer2::RenderOpaqueLightingPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
+        // TODO: This needs a big improvement here. Need to combine lights into a single pass for objects.
+
+
+
         // The lighting buffers must be cleared to black. Also need to clear the depth/stencil buffer.
-        int lightingBuffers[] = {2, 3};
+        int lightingBuffers[] = {1, 2};
         Renderer2::SetDrawBuffers(2, lightingBuffers);
 
         Renderer2::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1251,6 +1204,34 @@ namespace GTEngine
                         Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
                     }
                     if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+
+
+
+                    // If we're drawing a highlight, we'll need to draw a solid colour transparent mesh over the top using alpha blending.
+                    if ((mesh.flags & SceneRendererMesh::DrawHighlight))
+                    {
+                        Renderer2::EnableBlending();
+                        Renderer2::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
+
+                        //Renderer2::DisableDepthTest();
+                        
+
+                        // Shader.
+                        Renderer2::SetCurrentShader(this->highlightShader);
+                        this->highlightShader->SetParameter("PVMMatrix", visibleObjects.projectionViewMatrix * mesh.transform);
+                        {
+                            Renderer2::PushShaderPendingProperties(*this->highlightShader);
+                        }
+                        this->highlightShader->ClearPendingParameters();
+
+
+                        // Draw.
+                        Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+
+
+                        Renderer2::DisableBlending();
+                        //Renderer2::EnableDepthTest();
+                    }
                 }
             }
         }
@@ -1452,7 +1433,7 @@ namespace GTEngine
         // With the shadow map done, we now need to go back to the main framebuffer.
         Renderer2::SetCurrentFramebuffer(mainFramebuffer->framebuffer);
 
-        int lightingBuffers[] = {2, 3};
+        int lightingBuffers[] = {1, 2};
         Renderer2::SetDrawBuffers(2, lightingBuffers);
         Renderer2::SetViewport(0, 0, mainFramebuffer->width, mainFramebuffer->height);
         Renderer2::EnableBlending();
@@ -1636,7 +1617,7 @@ namespace GTEngine
         // With the shadow map done, we now need to go back to the main framebuffer.
         Renderer2::SetCurrentFramebuffer(mainFramebuffer->framebuffer);
 
-        int lightingBuffers[] = {2, 3};
+        int lightingBuffers[] = {1, 2};
         Renderer2::SetDrawBuffers(2, lightingBuffers);
         Renderer2::SetViewport(0, 0, mainFramebuffer->width, mainFramebuffer->height);
         Renderer2::EnableBlending();
@@ -1885,7 +1866,7 @@ namespace GTEngine
         // With the shadow map done, we now need to go back to the main framebuffer.
         Renderer2::SetCurrentFramebuffer(mainFramebuffer->framebuffer);
 
-        int lightingBuffers[] = {2, 3};
+        int lightingBuffers[] = {1, 2};
         Renderer2::SetDrawBuffers(2, lightingBuffers);
         Renderer2::SetViewport(0, 0, mainFramebuffer->width, mainFramebuffer->height);
         Renderer2::EnableBlending();
@@ -2010,7 +1991,7 @@ namespace GTEngine
 
 
             // Framebuffer Setup.
-            int finalOutputBufferIndex = 4;
+            int finalOutputBufferIndex = 3;
 
             Renderer2::SetCurrentFramebuffer(framebuffer->framebuffer);
             Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);
@@ -2048,7 +2029,7 @@ namespace GTEngine
 
 
             // Framebuffer Setup.
-            int finalOutputBufferIndex = 4;
+            int finalOutputBufferIndex = 3;
 
             Renderer2::SetCurrentFramebuffer(framebuffer->framebuffer);
             Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);

@@ -56,6 +56,68 @@ namespace GTEngine
         unsigned int height;
 
 
+
+        /// Constructor
+        DefaultSceneRendererFramebuffer(unsigned int widthIn, unsigned int heightIn)
+            : framebuffer(nullptr),
+              depthStencilBuffer(nullptr), colourBuffer(nullptr), lightingBuffer0(nullptr), lightingBuffer1(nullptr),
+              finalColourBuffer(nullptr),
+              bloomFramebuffer(nullptr), bloomBuffer(nullptr),
+              width(widthIn), height(heightIn)
+        {
+            this->framebuffer        = Renderer2::CreateFramebuffer();
+            this->depthStencilBuffer = Renderer2::CreateTexture2D();
+            this->colourBuffer       = Renderer2::CreateTexture2D();
+            this->lightingBuffer0    = Renderer2::CreateTexture2D();
+            this->lightingBuffer1    = Renderer2::CreateTexture2D();
+            this->finalColourBuffer  = Renderer2::CreateTexture2D();
+
+            this->bloomFramebuffer   = Renderer2::CreateFramebuffer();
+            this->bloomBuffer        = Renderer2::CreateTexture2D();
+
+            // Sizes and formats need to be set. All we need to do is call the Resize() method.
+            this->Resize(width, height);
+
+
+            // Filters.
+            Renderer2::SetTexture2DFilter(*this->colourBuffer,      TextureFilter_NearestNearest, TextureFilter_Nearest);
+            Renderer2::SetTexture2DFilter(*this->bloomBuffer,       TextureFilter_LinearNearest,  TextureFilter_Linear);
+            Renderer2::SetTexture2DFilter(*this->lightingBuffer0,   TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer2::SetTexture2DFilter(*this->lightingBuffer1  , TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer2::SetTexture2DFilter(*this->finalColourBuffer, TextureFilter_Nearest,        TextureFilter_Nearest);
+
+            // Wrap Modes.
+            Renderer2::SetTexture2DWrapMode(*this->colourBuffer, TextureWrapMode_ClampToEdge);
+            Renderer2::SetTexture2DWrapMode(*this->bloomBuffer,  TextureWrapMode_ClampToEdge);
+
+
+            // Attach to the main framebuffer.
+            this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
+            this->framebuffer->AttachColourBuffer(this->colourBuffer,      0);
+            this->framebuffer->AttachColourBuffer(this->lightingBuffer0,   1);
+            this->framebuffer->AttachColourBuffer(this->lightingBuffer1,   2);
+            this->framebuffer->AttachColourBuffer(this->finalColourBuffer, 3);
+            Renderer2::PushAttachments(*this->framebuffer);
+
+            this->bloomFramebuffer->AttachColourBuffer(this->bloomBuffer, 0);
+            Renderer2::PushAttachments(*this->bloomFramebuffer);
+        }
+
+        /// Destructor
+        ~DefaultSceneRendererFramebuffer()
+        {
+            Renderer2::DeleteTexture2D(this->depthStencilBuffer);
+            Renderer2::DeleteTexture2D(this->colourBuffer);
+            Renderer2::DeleteTexture2D(this->bloomBuffer);
+            Renderer2::DeleteTexture2D(this->lightingBuffer0);
+            Renderer2::DeleteTexture2D(this->lightingBuffer1);
+            Renderer2::DeleteTexture2D(this->finalColourBuffer);
+        
+            Renderer2::DeleteFramebuffer(this->framebuffer);
+            Renderer2::DeleteFramebuffer(this->bloomFramebuffer);
+        }
+
+
         /// Resizes all of the attachments on the framebuffer.
         void Resize(unsigned int newWidth, unsigned int newHeight)
         {
@@ -480,7 +542,7 @@ namespace GTEngine
 
 
         /// Adds the given mesh.
-        void AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightIndices* lights);
+        void AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightIndices* lights, bool drawHighlight);     // <-- TODO: Remove 'drawHighlight' later on.
         void AddMesh(const DefaultSceneRendererMesh &mesh);
 
         /// Performs an optimization step that arranges everything in a way where the renderer can be a bit more efficient.
@@ -907,6 +969,11 @@ namespace GTEngine
 
         /// The shader to use when doing the bloom map.
         Shader* bloomShader;
+
+
+
+        /// TEMP shader for doing highlights.
+        Shader* highlightShader;
 
 
 

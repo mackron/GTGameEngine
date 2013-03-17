@@ -1,4 +1,36 @@
 
+<shader id="DefaultSceneRenderer_HighlightVS">
+<![CDATA[
+    #version 330
+    
+    in      vec3 VertexInput_Position;
+    uniform mat4 PVMMatrix;
+    
+    void main()
+    {
+        gl_Position = PVMMatrix * vec4(VertexInput_Position, 1.0);
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_HighlightFS">
+<![CDATA[
+    #version 330
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    void main()
+    {
+        ColourOut = vec4(1.0, 0.5, 0.0, 0.1);
+    }
+]]>
+</shader>
+
+
+
+
+
+
 <shader id="DefaultSceneRenderer_DepthPassVS">
 <![CDATA[
     #version 330
