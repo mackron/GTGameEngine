@@ -51,6 +51,8 @@ namespace GTEngine
             DrawLast     = (1 << 1),
             NoDepthTest  = (1 << 2),
             NoDepthWrite = (1 << 3),
+
+            DrawHighlight = (1 << 31)           // <-- This is temporary and is only used for the editor.
         };
     };
 
