@@ -42,7 +42,7 @@ namespace GTEngine
                                 auto mesh = model->meshes[i];
                                 assert(mesh != nullptr);
                                 {
-                                    SceneRendererMesh object;
+                                    DefaultSceneRendererMesh object;
                                     object.vertexArray = mesh->GetSkinnedGeometry();
                                     object.drawMode    = mesh->GetDrawMode();
                                     object.material    = mesh->GetMaterial();
@@ -69,7 +69,8 @@ namespace GTEngine
           opaqueObjectsLast(), alphaTransparentObjectsLast(), refractiveTransparentObjectsLast(),
           ambientLights(), directionalLights(), pointLights(), spotLights(),
           shadowDirectionalLights(), shadowPointLights(), shadowSpotLights(),
-          visibleModels(), meshesToAnimate(),
+          visibleModels(), modelsToAnimate(),
+          allLightIndices(),
           projectionMatrix(), viewMatrix(), projectionViewMatrix()
     {
         auto cameraNode = viewportIn.GetCameraNode();
@@ -179,7 +180,7 @@ namespace GTEngine
                         this->visibleModels.Add(modelComponent, new LightIndices);
                     }
 
-
+#if 0
                     auto model = modelComponent->GetModel();
                     if (model != nullptr)                           // <-- Is allowed to be null. Perhaps due to a bad path?
                     {
@@ -206,6 +207,7 @@ namespace GTEngine
                             }
                         }
                     }
+#endif
                 }
             }
         }
@@ -226,11 +228,15 @@ namespace GTEngine
                     {
                         light = new SceneRendererPointLight;
                         this->pointLights.Add(lightComponent, light);
+
+                        this->allLightIndices.pointLights.PushBack(this->pointLights.count - 1);
                     }
                     else
                     {
                         light = new DefaultSceneRendererShadowPointLight;
                         this->shadowPointLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowPointLight*>(light));
+
+                        this->allLightIndices.shadowPointLights.PushBack(this->shadowPointLights.count - 1);
                     }
 
                     light->colour               = lightComponent->GetColour();
@@ -269,11 +275,15 @@ namespace GTEngine
                     {
                         light = new SceneRendererSpotLight;
                         this->spotLights.Add(lightComponent, light);
+
+                        this->allLightIndices.spotLights.PushBack(this->spotLights.count - 1);
                     }
                     else
                     {
                         light = new DefaultSceneRendererShadowSpotLight;
                         this->shadowSpotLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowSpotLight*>(light));
+
+                        this->allLightIndices.shadowSpotLights.PushBack(this->shadowSpotLights.count - 1);
                     }
 
 
@@ -314,6 +324,8 @@ namespace GTEngine
                     light->colour = lightComponent->GetColour();
 
                     this->ambientLights.Add(lightComponent, light);
+
+                    this->allLightIndices.ambientLights.PushBack(this->ambientLights.count - 1);
                 }
             }
         }
@@ -334,11 +346,15 @@ namespace GTEngine
                     {
                         light = new SceneRendererDirectionalLight;
                         this->directionalLights.Add(lightComponent, light);
+
+                        this->allLightIndices.directionalLights.PushBack(this->directionalLights.count - 1);
                     }
                     else
                     {
                         light = new DefaultSceneRendererShadowDirectionalLight;
                         this->shadowDirectionalLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowDirectionalLight*>(light));
+
+                        this->allLightIndices.shadowDirectionalLights.PushBack(this->shadowDirectionalLights.count - 1);
                     }
 
 
@@ -358,24 +374,25 @@ namespace GTEngine
 
 
 
-    void DefaultSceneRendererVisibleObjects::AddMesh(const Mesh &mesh, const glm::mat4 &transform)
+    void DefaultSceneRendererVisibleObjects::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightIndices* lights)
     {
         // TODO: Consider ways to remove these const_casts. Don't want to make the pointers in SceneRendererMesh constant because
         //       the user of that structure probably won't want a constant pointer.
 
-        SceneRendererMesh object;
-        object.vertexArray = const_cast<VertexArray*>(mesh.GetSkinnedGeometry());
-        object.drawMode    = mesh.GetDrawMode();
-        object.material    = const_cast<Material*>(mesh.GetMaterial());
-        object.transform   = transform;
+        DefaultSceneRendererMesh object;
+        object.vertexArray    = const_cast<VertexArray*>(mesh.GetSkinnedGeometry());
+        object.drawMode       = mesh.GetDrawMode();
+        object.material       = const_cast<Material*>(mesh.GetMaterial());
+        object.transform      = transform;
+        object.touchingLights = lights;
         this->AddMesh(object);
     }
 
-    void DefaultSceneRendererVisibleObjects::AddMesh(const SceneRendererMesh &mesh)
+    void DefaultSceneRendererVisibleObjects::AddMesh(const DefaultSceneRendererMesh &mesh)
     {
         if (mesh.material != nullptr)
         {
-            GTCore::Vector<SceneRendererMesh>* objectList = nullptr;
+            GTCore::Vector<DefaultSceneRendererMesh>* objectList = nullptr;
 
             auto &materialDefinition = mesh.material->GetDefinition();
             if (mesh.material->IsRefractive())
@@ -389,7 +406,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        objectList = new GTCore::Vector<SceneRendererMesh>;
+                        objectList = new GTCore::Vector<DefaultSceneRendererMesh>;
                         this->refractiveTransparentObjects.Add(&materialDefinition, objectList);
                     }
                 }
@@ -402,7 +419,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        objectList = new GTCore::Vector<SceneRendererMesh>;
+                        objectList = new GTCore::Vector<DefaultSceneRendererMesh>;
                         this->refractiveTransparentObjectsLast.Add(&materialDefinition, objectList);
                     }
                 }
@@ -421,7 +438,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        objectList = new GTCore::Vector<SceneRendererMesh>(100);
+                        objectList = new GTCore::Vector<DefaultSceneRendererMesh>(100);
                         this->opaqueObjects.Add(&materialDefinition, objectList);
                     }
                 }
@@ -434,7 +451,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        objectList = new GTCore::Vector<SceneRendererMesh>(100);
+                        objectList = new GTCore::Vector<DefaultSceneRendererMesh>(100);
                         this->opaqueObjectsLast.Add(&materialDefinition, objectList);
                     }
                 }
@@ -442,6 +459,12 @@ namespace GTEngine
 
             assert(objectList != nullptr);
             {
+                // If the lights pointer is null, we're going to make it affected by every light.
+                if (mesh.touchingLights == nullptr)
+                {
+                    const_cast<DefaultSceneRendererMesh &>(mesh).touchingLights = &this->allLightIndices;
+                }
+
                 objectList->PushBack(mesh);
             }
         }
@@ -465,7 +488,7 @@ namespace GTEngine
                 // Non-shadow directional lights.
                 for (size_t iDirectionalLight = 0; iDirectionalLight < this->directionalLights.count; ++iDirectionalLight)
                 {
-                    modelLights->directinoalLights.PushBack(static_cast<uint32_t>(iDirectionalLight));
+                    modelLights->directionalLights.PushBack(static_cast<uint32_t>(iDirectionalLight));
                 }
 
                 // Shadow-casting directional lights.
@@ -505,6 +528,47 @@ namespace GTEngine
             // Spot Lights.
 
         }
+
+
+        // We now need to create the mesh objects that will be drawn. These are created from the model components.
+        for (size_t iModel = 0; iModel < this->visibleModels.count; ++iModel)
+        {
+            auto modelComponent = this->visibleModels.buffer[iModel]->key;
+            auto modelLights    = this->visibleModels.buffer[iModel]->value;
+
+            assert(modelComponent != nullptr);
+            assert(modelLights    != nullptr);
+            {
+                auto model = modelComponent->GetModel();
+                if (model != nullptr)                           // <-- Is allowed to be null. Perhaps due to a bad path?
+                {
+                    for (size_t i = 0; i < model->meshes.count; ++i)
+                    {
+                        auto mesh = model->meshes[i];
+                        assert(mesh != nullptr);
+                        {
+                            // If the mesh needs to be animated we don't want to add the mesh straight away. Instead we want to wait until
+                            // after it's been animated. If it's not animated, we just add it straight away.
+                            if (model->IsAnimating())
+                            {
+                                if (!this->modelsToAnimate.Exists(modelComponent))
+                                {
+                                    this->modelsToAnimate.PushBack(modelComponent);
+                                }
+                            }
+                            else
+                            {
+                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), modelLights);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+                    
+
 
 
 
@@ -551,16 +615,30 @@ namespace GTEngine
 
 
         // Apply skinning.
-        for (size_t i = 0; i < this->meshesToAnimate.count; ++i)
+        for (size_t i = 0; i < this->modelsToAnimate.count; ++i)
         {
-            auto mesh       = this->meshesToAnimate.buffer[i]->key;
-            auto &transform = this->meshesToAnimate.buffer[i]->value;
-            assert(mesh != nullptr);
+            auto modelComponent = this->modelsToAnimate[i];
+            assert(modelComponent != nullptr);
             {
-                mesh->ApplySkinning();
+                auto model = modelComponent->GetModel();
+                assert(model != nullptr);
+                {
+                    for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
+                    {
+                        auto mesh = model->meshes[iMesh];
+                        assert(mesh != nullptr);
+                        {
+                            mesh->ApplySkinning();
 
-                // Here is where we need to add the mesh.
-                this->AddMesh(*mesh, transform);
+                            // Now we now give the renderer the mesh so it can render it.
+                            auto iModelLights = this->visibleModels.Find(modelComponent);
+                            assert(iModelLights != nullptr);
+                            {
+                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), iModelLights->value);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -669,7 +747,13 @@ namespace GTEngine
             auto externalMesh = this->externalMeshes[i];
             assert(externalMesh != nullptr);
             {
-                visibleObjects.AddMesh(*externalMesh);
+                DefaultSceneRendererMesh meshToAdd;
+                meshToAdd.vertexArray = externalMesh->vertexArray;
+                meshToAdd.drawMode    = externalMesh->drawMode;
+                meshToAdd.material    = externalMesh->material;
+                meshToAdd.transform   = externalMesh->transform;
+                meshToAdd.flags       = externalMesh->flags;
+                visibleObjects.AddMesh(meshToAdd);
             }
         }
 
@@ -957,7 +1041,7 @@ namespace GTEngine
         Renderer2::EnableColourWrites();
     }
 
-    void DefaultSceneRenderer2::RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    void DefaultSceneRenderer2::RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         (void)framebuffer;
 
@@ -1013,6 +1097,24 @@ namespace GTEngine
         Renderer2::EnableBlending();
         Renderer2::SetBlendEquation(BlendEquation_Add);
         Renderer2::SetBlendFunction(BlendFunc_One, BlendFunc_One);
+
+
+        /*
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
+                {
+                    auto &mesh = meshList->Get(iMesh);
+                    {
+
+                    }
+                }
+            }
+        }
+        */
 
 
         size_t ambientLightsRemaining     = visibleObjects.ambientLights.count;
@@ -1112,7 +1214,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    void DefaultSceneRenderer2::RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
         {
@@ -1180,7 +1282,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    void DefaultSceneRenderer2::RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.ambientLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1251,7 +1353,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    void DefaultSceneRenderer2::RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.directionalLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1380,7 +1482,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    void DefaultSceneRenderer2::RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.shadowDirectionalLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1454,7 +1556,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    void DefaultSceneRenderer2::RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.pointLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1564,7 +1666,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    void DefaultSceneRenderer2::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.shadowPointLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1617,7 +1719,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderPointShapowMapFace(const DefaultSceneRendererShadowPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<SceneRendererMesh> &meshes)
+    void DefaultSceneRenderer2::RenderPointShapowMapFace(const DefaultSceneRendererShadowPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         // The draw buffer needs to be set. The appropriate framebuffer will have already been set.
         Renderer2::SetDrawBuffers(1, &faceIndex);
@@ -1677,7 +1779,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    void DefaultSceneRenderer2::RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.spotLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1812,7 +1914,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes)
+    void DefaultSceneRenderer2::RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.shadowSpotLights.buffer[lightIndex]->value;
         assert(light != nullptr);
