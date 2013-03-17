@@ -1110,7 +1110,7 @@ namespace GTEngine
     }
 
 
-    void Scene::QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibilityCallback &callback)
+    void Scene::QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibilityCallback &callback) const
     {
         this->cullingManager.ProcessVisibleObjects(mvp, callback);
     }

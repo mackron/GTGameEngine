@@ -31,7 +31,7 @@ namespace GTEngine
             /// Called when the model of the given object is processed by ProcessVisibleObjects().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectModel(SceneObject &object)
+            virtual void ProcessObjectModel(const SceneObject &object)
             {
                 (void)object;
             }
@@ -39,7 +39,7 @@ namespace GTEngine
             /// Called when the point light of the given object is processed by ProcessVisibleObjects().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectPointLight(SceneObject &object)
+            virtual void ProcessObjectPointLight(const SceneObject &object)
             {
                 (void)object;
             }
@@ -47,7 +47,7 @@ namespace GTEngine
             /// Called when the spot light of the given object is processed by ProcessVisibleObjects().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectSpotLight(SceneObject &object)
+            virtual void ProcessObjectSpotLight(const SceneObject &object)
             {
                 (void)object;
             }
@@ -56,7 +56,7 @@ namespace GTEngine
             /// Called when the ambient light of the given object is processed by ProcessVisibleObjects().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectAmbientLight(SceneObject &object)
+            virtual void ProcessObjectAmbientLight(const SceneObject &object)
             {
                 (void)object;
             }
@@ -64,7 +64,7 @@ namespace GTEngine
             /// Called when the directional light of the given object is processed by ProcessVisibleObjects().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectDirectionalLight(SceneObject &object)
+            virtual void ProcessObjectDirectionalLight(const SceneObject &object)
             {
                 (void)object;
             }
@@ -82,24 +82,6 @@ namespace GTEngine
         /// Destructor.
         virtual ~SceneCullingManager() {}
 
-
-#if 0
-        /// Adds an object to the manager.
-        ///
-        /// @param object [in] A reference to the object.
-        ///
-        /// @remarks
-        ///     This can include occluder objects.
-        virtual void AddObject(SceneObject &object) = 0;
-
-        /// Removes an object from the manager.
-        ///
-        /// @param object [in] A reference to the object to remove.
-        ///
-        /// @remarks
-        ///     It is possible that this will be call on a object that was not necessarily added with AddObject(). This case needs to be handled safely.
-        virtual void RemoveObject(SceneObject &object) = 0;
-#endif
 
 
         /// Adds a model.
@@ -205,25 +187,6 @@ namespace GTEngine
 
 
 
-#if 0
-        /// Updates the transformation of the given object.
-        ///
-        /// @param object [in] A reference to the object whose transformation is being updated.
-        ///
-        /// @remarks
-        ///     Scaling should be applied seperately with UpdateScale().
-        virtual void UpdateTransform(SceneObject &object) = 0;
-
-        /// Updates the scale of the given object.
-        ///
-        /// @param object [in] A reference to the object whose scale is being updated.
-        ///
-        /// @remarks
-        ///     The scale is not applied to lights. Changes to attenuation should be used instead.
-        virtual void UpdateScale(SceneObject &object) = 0;
-#endif
-
-
         /// Updates the transformation of the given model object.
         ///
         /// @param object [in] A reference to the model object whose transformation is being updated.
@@ -293,35 +256,6 @@ namespace GTEngine
 
 
 
-        /// Called when an object has changed and needs it's culling information updated.
-        ///
-        /// @param object [in] The object whose culling properties have changed.
-        ///
-        /// @remarks
-        ///     This is NOT called when the transform or scale has changed. Instead it is called when something like the attenuation or the model has changed.
-        ///     @par
-        ///     When 'object' is a SceneNode, this will NOT be called when a component has been added or removed.
-        //virtual void UpdateObject(SceneObject &object) = 0;
-
-
-        /// Called when the model of an object has changed and needs to be updated.
-        ///
-        /// @param object [in] A reference to the object whose model has just changed.
-        //virtual void UpdateObjectModel(SceneObject &object) = 0;
-
-        /// Called when the point light of an object has changed and needs to be updated.
-        ///
-        /// @param object [in] A reference to the object whose point light has just changed.
-        //virtual void UpdateObjectPointLight(SceneObject &object) = 0;
-
-        /// Called when the spot light of an object has changed and needs to be updated.
-        ///
-        /// @param object [in] A reference to the object whose spot light has just changed.
-        //virtual void UpdateObjectSpotLight(SceneObject &object) = 0;
-
-
-
-
         /// Retrieves the global bounds of every object.
         ///
         /// @param aabbMin [out] A reference to the variable that will receive the minimum bound.
@@ -333,8 +267,23 @@ namespace GTEngine
         ///
         /// @param mvp      [in] The model-view-projection matrix to cull against.
         /// @param callback [in] The callback to use when processing each visible object.
-        virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback) = 0;
+        virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback) const = 0;
 
+        /// Queries the objects contained within the volume of the given point light.
+        ///
+        /// @param light [in] A reference to the light scene node.
+        ///
+        /// @remarks
+        ///     It is asserted that the light has a point light component and is part of the scene.
+        virtual void QueryPointLightContacts(const SceneObject &light, VisibilityCallback &callback) const = 0;
+
+        /// Queries the objects contained within the volume of the given spot light.
+        ///
+        /// @param light [in] A reference to the light scene node.
+        ///
+        /// @remakrs
+        ///     It is asserted that the light has a spot light component and is part of the scene.
+        virtual void QuerySpotLightContacts(const SceneObject &light, VisibilityCallback &callback) const = 0;
 
 
         /////////////////////////////////////////

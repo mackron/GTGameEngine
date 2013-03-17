@@ -312,7 +312,7 @@ namespace GTEngine
         // Virtual Implementations.
 
         /// SceneCullingManager::VisibilityCallback::ProcessObjectModel().
-        void ProcessObjectModel(SceneObject &object);
+        void ProcessObjectModel(const SceneObject &object);
 
 
 
@@ -326,6 +326,55 @@ namespace GTEngine
     private:
         DefaultSceneRendererShadowObjects(const DefaultSceneRendererShadowObjects &);
         DefaultSceneRendererShadowObjects & operator=(const DefaultSceneRendererShadowObjects &);
+    };
+
+
+
+    /// Structure containing indices of the different kinds of lights.
+    struct LightIndices
+    {
+        /// The indices of the ambient lights.
+        GTCore::Vector<uint32_t> ambientLights;
+
+        /// The indices of the non-shadow directional lights.
+        GTCore::Vector<uint32_t> directinoalLights;
+
+        /// The indices of the non-shadow point lights.
+        GTCore::Vector<uint32_t> pointLights;
+
+        /// The indices of the non-shadow spot lights.
+        GTCore::Vector<uint32_t> spotLights;
+
+
+        /// The indices of the shadow-casting directional lights.
+        GTCore::Vector<uint32_t> shadowDirectionalLights;
+
+        /// The indices of the shadow-casting point lights.
+        GTCore::Vector<uint32_t> shadowPointLights;
+
+        /// The indices of the shadow-casting spot lights.
+        GTCore::Vector<uint32_t> shadowSpotLights;
+    };
+
+
+    /// Structure representing a mesh in the default renderer.
+    struct DefaultSceneRendererMesh : public SceneRendererMesh
+    {
+        /// The indices of the lights that are touching this mesh.
+        LightIndices* touchingLights;
+
+
+
+        /// Constructor.
+        DefaultSceneRendererMesh()
+            : touchingLights(nullptr)
+        {
+        }
+
+        /// Destructor.
+        ~DefaultSceneRendererMesh()
+        {
+        }
     };
 
 
@@ -418,24 +467,24 @@ namespace GTEngine
         // Virtual Implementations.
 
         /// SceneCullingManager::VisibilityCallback::ProcessObjectModel().
-        void ProcessObjectModel(SceneObject &object);
+        void ProcessObjectModel(const SceneObject &object);
 
         /// SceneCullingManager::VisibilityCallback::ProcessObjectPointLight().
-        void ProcessObjectPointLight(SceneObject &object);
+        void ProcessObjectPointLight(const SceneObject &object);
 
         /// SceneCullingManager::VisibilityCallback::ProcessObjectSpotLight().
-        void ProcessObjectSpotLight(SceneObject &object);
+        void ProcessObjectSpotLight(const SceneObject &object);
 
         /// SceneCullingManager::VisibilityCallback::ProcessObjectAmbientLight().
-        void ProcessObjectAmbientLight(SceneObject &object);
+        void ProcessObjectAmbientLight(const SceneObject &object);
 
         /// SceneCullingManager::VisibilityCallback::ProcessObjectDirectionalLight().
-        void ProcessObjectDirectionalLight(SceneObject &object);
+        void ProcessObjectDirectionalLight(const SceneObject &object);
 
 
 
         /// Adds the given mesh.
-        void AddMesh(Mesh &mesh, const glm::mat4 &transform);
+        void AddMesh(const Mesh &mesh, const glm::mat4 &transform);
         void AddMesh(const SceneRendererMesh &mesh);
 
         /// Performs an optimization step that arranges everything in a way where the renderer can be a bit more efficient.
@@ -473,28 +522,32 @@ namespace GTEngine
 
 
         /// The list of ambient lights.
-        GTCore::Vector<SceneRendererAmbientLight*> ambientLights;
+        GTCore::Map<const AmbientLightComponent*, SceneRendererAmbientLight*> ambientLights;
 
         /// The list of directional lights.
-        GTCore::Vector<SceneRendererDirectionalLight*> directionalLights;
+        GTCore::Map<const DirectionalLightComponent*, SceneRendererDirectionalLight*> directionalLights;
 
         /// The list of point lights.
-        GTCore::Vector<SceneRendererPointLight*> pointLights;
+        GTCore::Map<const PointLightComponent*, SceneRendererPointLight*> pointLights;
 
         /// The list of spot lights.
-        GTCore::Vector<SceneRendererSpotLight*> spotLights;
+        GTCore::Map<const SpotLightComponent*, SceneRendererSpotLight*> spotLights;
 
 
         /// The list of shadow-casting directional lights.
-        GTCore::Vector<DefaultSceneRendererShadowDirectionalLight*> shadowDirectionalLights;
+        GTCore::Map<const DirectionalLightComponent*, DefaultSceneRendererShadowDirectionalLight*> shadowDirectionalLights;
 
         /// The list of shadow-casting point lights.
-        GTCore::Vector<DefaultSceneRendererShadowPointLight*> shadowPointLights;
+        GTCore::Map<const PointLightComponent*, DefaultSceneRendererShadowPointLight*> shadowPointLights;
 
         /// The list of shadow-casting spot lights.
-        GTCore::Vector<DefaultSceneRendererShadowSpotLight*> shadowSpotLights;
+        GTCore::Map<const SpotLightComponent*, DefaultSceneRendererShadowSpotLight*> shadowSpotLights;
 
 
+
+        /// The flat list of visible models, mapped to the indices of the lights that touch them. We want to store pointers to the component and
+        /// not the actual model object because we will later want access to the scene node for it's transformation.
+        GTCore::Map<const ModelComponent*, LightIndices*> visibleModels;
 
         /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess(). The value is the transformation.
         GTCore::Map<Mesh*, glm::mat4> meshesToAnimate;
