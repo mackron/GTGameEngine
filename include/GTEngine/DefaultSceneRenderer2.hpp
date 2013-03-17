@@ -296,6 +296,49 @@ namespace GTEngine
 
 
 
+    /// Structure containing indices of the different kinds of lights.
+    struct LightIndices
+    {
+        /// The indices of the ambient lights.
+        GTCore::Vector<uint32_t> ambientLights;
+
+        /// The indices of the non-shadow directional lights.
+        GTCore::Vector<uint32_t> directionalLights;
+
+        /// The indices of the non-shadow point lights.
+        GTCore::Vector<uint32_t> pointLights;
+
+        /// The indices of the non-shadow spot lights.
+        GTCore::Vector<uint32_t> spotLights;
+
+
+        /// The indices of the shadow-casting directional lights.
+        GTCore::Vector<uint32_t> shadowDirectionalLights;
+
+        /// The indices of the shadow-casting point lights.
+        GTCore::Vector<uint32_t> shadowPointLights;
+
+        /// The indices of the shadow-casting spot lights.
+        GTCore::Vector<uint32_t> shadowSpotLights;
+    };
+
+
+    /// Structure representing a mesh in the default renderer.
+    struct DefaultSceneRendererMesh : public SceneRendererMesh
+    {
+        /// The indices of the lights that are touching this mesh.
+        const LightIndices* touchingLights;
+
+
+
+        /// Constructor.
+        DefaultSceneRendererMesh()
+            : touchingLights(nullptr)
+        {
+        }
+    };
+
+
     /// Callback class that will be used when querying the visible objects in a lights view frustum.
     class DefaultSceneRendererShadowObjects : public SceneCullingManager::VisibilityCallback
     {
@@ -320,7 +363,7 @@ namespace GTEngine
         // Member Variables.
 
         /// The list of meshes.
-        GTCore::Vector<SceneRendererMesh> meshes;
+        GTCore::Vector<DefaultSceneRendererMesh> meshes;
 
 
     private:
@@ -329,53 +372,6 @@ namespace GTEngine
     };
 
 
-
-    /// Structure containing indices of the different kinds of lights.
-    struct LightIndices
-    {
-        /// The indices of the ambient lights.
-        GTCore::Vector<uint32_t> ambientLights;
-
-        /// The indices of the non-shadow directional lights.
-        GTCore::Vector<uint32_t> directinoalLights;
-
-        /// The indices of the non-shadow point lights.
-        GTCore::Vector<uint32_t> pointLights;
-
-        /// The indices of the non-shadow spot lights.
-        GTCore::Vector<uint32_t> spotLights;
-
-
-        /// The indices of the shadow-casting directional lights.
-        GTCore::Vector<uint32_t> shadowDirectionalLights;
-
-        /// The indices of the shadow-casting point lights.
-        GTCore::Vector<uint32_t> shadowPointLights;
-
-        /// The indices of the shadow-casting spot lights.
-        GTCore::Vector<uint32_t> shadowSpotLights;
-    };
-
-
-    /// Structure representing a mesh in the default renderer.
-    struct DefaultSceneRendererMesh : public SceneRendererMesh
-    {
-        /// The indices of the lights that are touching this mesh.
-        LightIndices* touchingLights;
-
-
-
-        /// Constructor.
-        DefaultSceneRendererMesh()
-            : touchingLights(nullptr)
-        {
-        }
-
-        /// Destructor.
-        ~DefaultSceneRendererMesh()
-        {
-        }
-    };
 
 
     /// Structure representing a shadow-casting directional light.
@@ -484,8 +480,8 @@ namespace GTEngine
 
 
         /// Adds the given mesh.
-        void AddMesh(const Mesh &mesh, const glm::mat4 &transform);
-        void AddMesh(const SceneRendererMesh &mesh);
+        void AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightIndices* lights);
+        void AddMesh(const DefaultSceneRendererMesh &mesh);
 
         /// Performs an optimization step that arranges everything in a way where the renderer can be a bit more efficient.
         void PostProcess();
@@ -500,23 +496,23 @@ namespace GTEngine
 
 
         /// The list of opaque mesh objects, sorted by material definition.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> opaqueObjects;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> opaqueObjects;
 
         /// The list of alpha-transparent objects, sorted by material definition. This needs to be separate from refractive transparent objects.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> alphaTransparentObjects;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> alphaTransparentObjects;
 
         /// The list of refractive-transparent objects, sorted by material definition.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> refractiveTransparentObjects;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> refractiveTransparentObjects;
 
 
         /// The list of opaque mesh objects that should be drawn last.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> opaqueObjectsLast;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> opaqueObjectsLast;
 
         /// The list of blended-transparent objects that should be drawn last.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> alphaTransparentObjectsLast;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> alphaTransparentObjectsLast;
 
         /// The list of refractive-transparent objects that should be drawn last.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<SceneRendererMesh>*> refractiveTransparentObjectsLast;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> refractiveTransparentObjectsLast;
 
 
 
@@ -550,7 +546,11 @@ namespace GTEngine
         GTCore::Map<const ModelComponent*, LightIndices*> visibleModels;
 
         /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess(). The value is the transformation.
-        GTCore::Map<Mesh*, glm::mat4> meshesToAnimate;
+        GTCore::Vector<const ModelComponent*> modelsToAnimate;
+
+
+        /// The indices of every visible light.
+        LightIndices allLightIndices;
 
 
         /// The projection matrix.
@@ -758,44 +758,44 @@ namespace GTEngine
         /// @remarks
         ///     This method assumes the renderer state has been set beforehand.
         void RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
-        void RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+        void RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
 
         /// Renders the opaque lighting pass.
         void RenderOpaqueLightingPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
         /// Renders the opaque material pass.
         void RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
-        void RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+        void RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
 
         /// Performs an ambient lighting pass in the opaque pass.
         void RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
-        void RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+        void RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
         
         /// Performs a directional lighting pass in the opaque pass.
         void RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
-        void RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+        void RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
 
         /// Performs a point lighting pass in the opaque pass.
         void RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
-        void RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+        void RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
 
         /// Performs a spot lighting pass in the opaque pass.
         void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
-        void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+        void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
 
 
         /// Performs a shadow-casting directional lighting pass in the opaque pass.
         void RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
-        void RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+        void RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
 
         /// Performs a shadow-casting point lighting pass in the opaque pass.
         void RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
-        void RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
-        void RenderPointShapowMapFace(const DefaultSceneRendererShadowPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<SceneRendererMesh> &meshes);
+        void RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
+        void RenderPointShapowMapFace(const DefaultSceneRendererShadowPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
 
         /// Performs a shadow-casting spot lighting pass in the opaque pass.
         void RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
-        void RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<SceneRendererMesh> &meshes);
+        void RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
 
 
         /// Renders the alpha transparency pass.
