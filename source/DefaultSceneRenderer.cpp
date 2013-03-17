@@ -33,13 +33,13 @@ namespace GTEngine
 
 
         /// SceneCullingManager::ProcessObjectModel().
-        void ProcessObjectModel(SceneObject &object)
+        void ProcessObjectModel(const SceneObject &object)
         {
             this->renderer.__MaterialPass_Model(object, this->layerState);
 
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                auto &node = static_cast<SceneNode &>(object);
+                auto &node = static_cast<const SceneNode &>(object);
 
                 if (node.HasComponent<EditorMetadataComponent>())
                 {
@@ -56,14 +56,14 @@ namespace GTEngine
 
 
         /// SceneCullingManager::ProcessObjectAmbientLight().
-        void ProcessObjectAmbientLight(SceneObject &object)
+        void ProcessObjectAmbientLight(const SceneObject &object)
         {
             this->layerState.ambientLights.PushBack(&object);
 
 
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                auto &node = static_cast<SceneNode &>(object);
+                auto &node = static_cast<const SceneNode &>(object);
 
                 if (node.HasComponent<EditorMetadataComponent>())
                 {
@@ -79,11 +79,11 @@ namespace GTEngine
         }
 
         /// SceneCullingManager::ProcessObjectDirectionalLight().
-        void ProcessObjectDirectionalLight(SceneObject &object)
+        void ProcessObjectDirectionalLight(const SceneObject &object)
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                auto &node = static_cast<SceneNode &>(object);
+                auto &node = static_cast<const SceneNode &>(object);
 
                 if (node.GetComponent<DirectionalLightComponent>()->IsShadowCastingEnabled())
                 {
@@ -109,11 +109,11 @@ namespace GTEngine
         }
 
         /// SceneCullingManager::ProcessObjectPointLight().
-        void ProcessObjectPointLight(SceneObject &object)
+        void ProcessObjectPointLight(const SceneObject &object)
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                auto &node = static_cast<SceneNode &>(object);
+                auto &node = static_cast<const SceneNode &>(object);
 
                 if (static_cast<const SceneNode &>(object).GetComponent<PointLightComponent>()->IsShadowCastingEnabled())
                 {
@@ -139,11 +139,11 @@ namespace GTEngine
         }
 
         /// SceneCullingManager::ProcessObjectSpotLight().
-        void ProcessObjectSpotLight(SceneObject &object)
+        void ProcessObjectSpotLight(const SceneObject &object)
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                auto &node = static_cast<SceneNode &>(object);
+                auto &node = static_cast<const SceneNode &>(object);
 
                 if (static_cast<const SceneNode &>(object).GetComponent<SpotLightComponent>()->IsShadowCastingEnabled())
                 {
@@ -207,29 +207,29 @@ namespace GTEngine
 
 
         /// SceneCullingManager::ProcessObjectModel().
-        void ProcessObjectModel(SceneObject &object)
+        void ProcessObjectModel(const SceneObject &object)
         {
             this->renderer.__ShadowPass_Model(object, projection, view);
         }
 
 
         /// SceneCullingManager::ProcessObjectAmbientLight().
-        void ProcessObjectAmbientLight(SceneObject &)
+        void ProcessObjectAmbientLight(const SceneObject &)
         {
         }
 
         /// SceneCullingManager::ProcessObjectDirectionalLight().
-        void ProcessObjectDirectionalLight(SceneObject &)
+        void ProcessObjectDirectionalLight(const SceneObject &)
         {
         }
 
         /// SceneCullingManager::ProcessObjectPointLight().
-        void ProcessObjectPointLight(SceneObject &)
+        void ProcessObjectPointLight(const SceneObject &)
         {
         }
 
         /// SceneCullingManager::ProcessObjectSpotLight().
-        void ProcessObjectSpotLight(SceneObject &)
+        void ProcessObjectSpotLight(const SceneObject &)
         {
         }
 

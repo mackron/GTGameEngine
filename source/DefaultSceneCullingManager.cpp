@@ -375,7 +375,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneCullingManager::ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback)
+    void DefaultSceneCullingManager::ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback) const
     {
         auto flags = this->GetFlags();
 
@@ -446,23 +446,49 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneCullingManager::ProcessVisibleObjectModel(SceneObject &object, VisibilityCallback &callback)
+    void DefaultSceneCullingManager::QueryPointLightContacts(const SceneObject &light, VisibilityCallback &callback) const
+    {
+        assert(this->pointLights.Exists(&light));
+        {
+            if (light.GetType() == SceneObjectType_SceneNode)
+            {
+                auto iMetadata = this->pointLights.Find(&light);
+                assert(iMetadata != nullptr);
+                {
+                    auto metadata = iMetadata->value;
+                    assert(metadata != nullptr);
+                    {
+                        //metadata->collisionObject
+                    }
+                }
+            }
+        }
+    }
+
+    void DefaultSceneCullingManager::QuerySpotLightContacts(const SceneObject &light, VisibilityCallback &callback) const
+    {
+    }
+
+
+
+
+    void DefaultSceneCullingManager::ProcessVisibleObjectModel(SceneObject &object, VisibilityCallback &callback) const
     {
         callback.ProcessObjectModel(object);
     }
 
-    void DefaultSceneCullingManager::ProcessVisibleObjectPointLight(SceneObject &object, VisibilityCallback &callback)
+    void DefaultSceneCullingManager::ProcessVisibleObjectPointLight(SceneObject &object, VisibilityCallback &callback) const
     {
         callback.ProcessObjectPointLight(object);
     }
 
-    void DefaultSceneCullingManager::ProcessVisibleObjectSpotLight(SceneObject &object, VisibilityCallback &callback)
+    void DefaultSceneCullingManager::ProcessVisibleObjectSpotLight(SceneObject &object, VisibilityCallback &callback) const
     {
         callback.ProcessObjectSpotLight(object);
     }
 
 
-    void DefaultSceneCullingManager::ProcessVisibleObject(SceneObject &object, VisibilityCallback &callback)
+    void DefaultSceneCullingManager::ProcessVisibleObject(SceneObject &object, VisibilityCallback &callback) const
     {
         if (object.GetType() == SceneObjectType_SceneNode)
         {
@@ -518,7 +544,7 @@ namespace GTEngine
         }
     };
 
-    DefaultSceneCullingManager::DbvtPolicy::DbvtPolicy(DefaultSceneCullingManager &cullingManagerIn, VisibilityCallback &callbackIn, const glm::mat4 &mvpIn, size_t bufferWidthIn, size_t bufferHeightIn)
+    DefaultSceneCullingManager::DbvtPolicy::DbvtPolicy(const DefaultSceneCullingManager &cullingManagerIn, VisibilityCallback &callbackIn, const glm::mat4 &mvpIn, size_t bufferWidthIn, size_t bufferHeightIn)
         : cullingManager(cullingManagerIn), callback(callbackIn),
           mvp(),
           bufferWidth(bufferWidthIn), bufferHeight(bufferHeightIn),

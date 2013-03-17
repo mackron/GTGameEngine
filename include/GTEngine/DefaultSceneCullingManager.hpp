@@ -101,7 +101,15 @@ namespace GTEngine
 
 
         /// SceneCullingManager::ProcessVisibleObjects().
-        virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback);
+        virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback) const;
+
+
+        /// SceneCullingManager::QueryPointLightContacts().
+        virtual void QueryPointLightContacts(const SceneObject &light, VisibilityCallback &callback) const;
+
+        /// SceneCullingManager::QuerySpotLightContacts().
+        virtual void QuerySpotLightContacts(const SceneObject &light, VisibilityCallback &callback) const;
+
 
 
         /// Processes the model of the given object.
@@ -110,7 +118,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
-        virtual void ProcessVisibleObjectModel(SceneObject &object, VisibilityCallback &callback);
+        virtual void ProcessVisibleObjectModel(SceneObject &object, VisibilityCallback &callback) const;
 
         /// Processes the point light of the given object.
         ///
@@ -118,7 +126,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
-        virtual void ProcessVisibleObjectPointLight(SceneObject &object, VisibilityCallback &callback);
+        virtual void ProcessVisibleObjectPointLight(SceneObject &object, VisibilityCallback &callback) const;
 
         /// Processes the spot light of the given object.
         ///
@@ -126,13 +134,13 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
-        virtual void ProcessVisibleObjectSpotLight(SceneObject &object, VisibilityCallback &callback);
+        virtual void ProcessVisibleObjectSpotLight(SceneObject &object, VisibilityCallback &callback) const;
 
 
         /// Helper method for processing a visible object.
         ///
         /// @param object [in] The object being processed.
-        virtual void ProcessVisibleObject(SceneObject &object, VisibilityCallback &callback);
+        virtual void ProcessVisibleObject(SceneObject &object, VisibilityCallback &callback) const;
 
 
 
@@ -147,19 +155,19 @@ namespace GTEngine
         CollisionWorld world;
 
         /// A container for mapping metadata for models to scene nodes.
-        GTCore::Map<SceneObject*, ModelMetadata*> models;
+        GTCore::Map<const SceneObject*, ModelMetadata*> models;
 
         /// A container for mapping metadata for point lights to scene nodes.
-        GTCore::Map<SceneObject*, PointLightMetadata*> pointLights;
+        GTCore::Map<const SceneObject*, PointLightMetadata*> pointLights;
 
         /// A container for mapping metadata for spot lights to scene nodes.
-        GTCore::Map<SceneObject*, SpotLightMetadata*> spotLights;
+        GTCore::Map<const SceneObject*, SpotLightMetadata*> spotLights;
 
         /// The ambient light objects.
-        GTCore::Vector<SceneObject*> ambientLights;
+        GTCore::Vector<const SceneObject*> ambientLights;
 
         /// The directional light objects.
-        GTCore::Vector<SceneObject*> directionalLights;
+        GTCore::Vector<const SceneObject*> directionalLights;
 
 
         /// Structure containing metadata for each model.
@@ -405,7 +413,7 @@ namespace GTEngine
         struct DbvtPolicy : btDbvt::ICollide
         {
             /// Constructor.
-            DbvtPolicy(DefaultSceneCullingManager &cullingManager, VisibilityCallback &callback, const glm::mat4 &mvp, size_t bufferWidth = 128, size_t bufferHeight = 128);
+            DbvtPolicy(const DefaultSceneCullingManager &cullingManager, VisibilityCallback &callback, const glm::mat4 &mvp, size_t bufferWidth = 128, size_t bufferHeight = 128);
 
             /// Destructor.
             virtual ~DbvtPolicy();
@@ -656,7 +664,7 @@ namespace GTEngine
         private:
 
             /// The culling manager that owns this policy. We need to call methods on this structure.
-            DefaultSceneCullingManager &cullingManager;
+            const DefaultSceneCullingManager &cullingManager;
 
             /// The callback structure that is passed around to cullingManager.
             VisibilityCallback &callback;
