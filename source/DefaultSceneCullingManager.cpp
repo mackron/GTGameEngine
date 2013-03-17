@@ -458,7 +458,8 @@ namespace GTEngine
                     auto metadata = iMetadata->value;
                     assert(metadata != nullptr);
                     {
-                        //metadata->collisionObject
+                        LightContactTestCallback callback(light, callback, CollisionGroups::PointLight, CollisionGroups::Model);
+                        this->world.ContactTest(*metadata->collisionObject, callback);
                     }
                 }
             }
@@ -467,6 +468,22 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::QuerySpotLightContacts(const SceneObject &light, VisibilityCallback &callback) const
     {
+        assert(this->pointLights.Exists(&light));
+        {
+            if (light.GetType() == SceneObjectType_SceneNode)
+            {
+                auto iMetadata = this->pointLights.Find(&light);
+                assert(iMetadata != nullptr);
+                {
+                    auto metadata = iMetadata->value;
+                    assert(metadata != nullptr);
+                    {
+                        LightContactTestCallback callback(light, callback, CollisionGroups::SpotLight, CollisionGroups::Model);
+                        this->world.ContactTest(*metadata->collisionObject, callback);
+                    }
+                }
+            }
+        }
     }
 
 

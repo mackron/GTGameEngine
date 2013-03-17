@@ -7,6 +7,7 @@
 #include "Physics/CollisionWorld.hpp"
 #include "Model.hpp"
 #include "CollisionGroups.hpp"
+#include "SceneNode.hpp"
 
 namespace GTEngine
 {
@@ -407,6 +408,7 @@ namespace GTEngine
         };
 
 
+
         //////////////////////////////////////////////////////////////////
         // The Bullet Dbvt policy structure. Implemented in the cpp file.
 
@@ -685,6 +687,70 @@ namespace GTEngine
         private:    // No copying.
             DbvtPolicy(const DbvtPolicy &);
             DbvtPolicy & operator=(const DbvtPolicy &);
+        };
+
+
+
+        /// Contact callback for lights.
+        class LightContactTestCallback : public btCollisionWorld::ContactResultCallback
+        {
+        public:
+
+            /// Constructor.
+            LightContactTestCallback(const SceneObject &lightIn, VisibilityCallback &callbackIn, short collisionGroup, short collisionMask)
+                : light(lightIn), callback(callbackIn)
+            {
+                this->m_collisionFilterGroup = collisionGroup;
+                this->m_collisionFilterMask  = collisionMask;
+            }
+
+
+            btScalar addSingleResult(btManifoldPoint &, const btCollisionObjectWrapper* colObj0, int, int, const btCollisionObjectWrapper* colObj1, int, int)
+            {
+                assert(colObj0 != nullptr);
+                assert(colObj1 != nullptr);
+
+                // We assume the user pointer is the scene node.
+                auto sceneNodeA = static_cast<SceneNode*>(colObj0->getCollisionObject()->getUserPointer());
+                auto sceneNodeB = static_cast<SceneNode*>(colObj1->getCollisionObject()->getUserPointer());
+
+                if (sceneNodeA != nullptr && sceneNodeB != nullptr)             // <-- Assert this?
+                {
+                    if (sceneNodeA != &this->light)
+                    {
+                        assert(sceneNodeA->HasComponent<ModelComponent>());
+                        {
+                            this->callback.ProcessObjectModel(*sceneNodeA);
+                        }
+                    }
+                    else
+                    {
+                        assert(sceneNodeB != &this->light);
+                        {
+                            assert(sceneNodeB->HasComponent<ModelComponent>());
+                            {
+                                this->callback.ProcessObjectModel(*sceneNodeB);
+                            }
+                        }
+                    }
+                }
+
+                return 0.0f;
+            }
+
+            
+
+            /// The main light.
+            const SceneObject &light;
+
+            /// A reference to the owner culling manager.
+            VisibilityCallback &callback;
+
+
+
+        private:    // No copying.
+            LightContactTestCallback(const LightContactTestCallback &);
+            LightContactTestCallback & operator=(const LightContactTestCallback &);
         };
     };
 }

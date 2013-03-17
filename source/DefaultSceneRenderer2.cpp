@@ -478,16 +478,32 @@ namespace GTEngine
 
 
         // We need to now query the objects contained inside the volumes of the point and spot lights.
-        for (size_t iPointLight = 0; iPointLight < this->pointLights.count; ++iPointLight)              // <-- Non-shadow-casting point lights.
+        const auto &cullingManager = scene.GetCullingManager();
         {
-            const auto &cullingManager = scene.GetCullingManager();
+            // Point Lights.
+            for (size_t iPointLight = 0; iPointLight < this->pointLights.count; ++iPointLight)              // <-- Non-shadow-casting point lights.
             {
-                //cullingManager.QueryPointLightContacts(
+                auto pointLightComponent = this->pointLights.buffer[iPointLight]->key;
+                assert(pointLightComponent != nullptr);
+                {
+                    PointLightContactsCallback callback(*this, iPointLight, false);                         // <-- 'false' means that we're doing a non-shadow-casting light.
+                    cullingManager.QueryPointLightContacts(pointLightComponent->GetNode(), callback);
+                }
             }
-        }
 
-        for (size_t iPointLight = 0; iPointLight < this->shadowPointLights.count; ++iPointLight)        // <-- Shadow-casting point lights.
-        {
+            for (size_t iPointLight = 0; iPointLight < this->shadowPointLights.count; ++iPointLight)        // <-- Shadow-casting point lights.
+            {
+                auto pointLightComponent = this->shadowPointLights.buffer[iPointLight]->key;
+                assert(pointLightComponent != nullptr);
+                {
+                    PointLightContactsCallback callback(*this, iPointLight, true);                          // <-- 'true' means that we're doing a shadow-casting light.
+                    cullingManager.QueryPointLightContacts(pointLightComponent->GetNode(), callback);
+                }
+            }
+
+
+            // Spot Lights.
+
         }
 
 
