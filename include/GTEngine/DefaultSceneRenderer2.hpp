@@ -562,6 +562,69 @@ namespace GTEngine
         /// The projection * view matrix.
         glm::mat4 projectionViewMatrix;
         
+
+
+    private:
+
+        /// Callback for light containment queries.
+        class PointLightContactsCallback : public SceneCullingManager::VisibilityCallback
+        {
+        public:
+
+            /// Constructor.
+            PointLightContactsCallback(DefaultSceneRendererVisibleObjects &ownerIn, size_t lightIndexIn, bool shadowCastingIn)
+                : owner(ownerIn), lightIndex(lightIndexIn), shadowCasting(shadowCastingIn)
+            {
+            }
+
+
+            /// SceneCullingManager::VisibilityCallback::ProcessObjectModel().
+            virtual void ProcessObjectModel(const SceneObject &object)
+            {
+                if (object.GetType() == SceneObjectType_SceneNode)
+                {
+                    auto &sceneNode = static_cast<const SceneNode &>(object);
+                    {
+                        auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+                        assert(modelComponent != nullptr);
+                        {
+                            auto iModel = this->owner.visibleModels.Find(modelComponent);
+                            if (iModel != nullptr)
+                            {
+                                if (!shadowCasting)
+                                {
+                                    iModel->value->pointLights.PushBack(static_cast<uint32_t>(this->lightIndex));
+                                }
+                                else
+                                {
+                                    iModel->value->shadowPointLights.PushBack(static_cast<uint32_t>(this->lightIndex));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+        private:
+
+            /// The owner of the light.
+            DefaultSceneRendererVisibleObjects &owner;
+
+            /// The index of the light.
+            size_t lightIndex;
+
+            /// Whether or not the light is a shadow casting light.
+            bool shadowCasting;
+
+
+
+        private:    // No copying.
+            PointLightContactsCallback(const PointLightContactsCallback &);
+            PointLightContactsCallback & operator=(const PointLightContactsCallback &);
+        };
+
+
         
     private:    // No copying
         DefaultSceneRendererVisibleObjects(const DefaultSceneRendererVisibleObjects &);
