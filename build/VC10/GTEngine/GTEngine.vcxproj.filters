@@ -24,12 +24,6 @@
     <Filter Include="include\Physics">
       <UniqueIdentifier>{d8119c95-3d54-4b89-92d1-26fbcc81c958}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\Rendering\RenderCommands">
-      <UniqueIdentifier>{8e88d608-164c-4a59-88f1-cfcf42d7d1f1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Rendering\RenderCommands">
-      <UniqueIdentifier>{1a05c513-045a-4cf3-88ab-5c1d4e113fa1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\Editor">
       <UniqueIdentifier>{2c1f8a87-c70b-43e6-8d32-b8a0bb1188a8}</UniqueIdentifier>
     </Filter>
@@ -89,12 +83,6 @@
     </Filter>
     <Filter Include="source\Rendering\OpenGL">
       <UniqueIdentifier>{28feea9a-3965-4cae-bd4c-b1d4f0b98ac9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Rendering\OpenGL\OpenGL20">
-      <UniqueIdentifier>{441786e8-8733-44d5-a21a-3b08b5f088c1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\Rendering\OpenGL">
-      <UniqueIdentifier>{8f41a52c-bdaa-43e6-8cad-5cdfe9d57b14}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\HACD">
       <UniqueIdentifier>{860f02ca-3f47-4e3a-a785-0671f17daf1a}</UniqueIdentifier>
@@ -248,9 +236,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp">
-      <Filter>include\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
@@ -311,9 +296,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp">
       <Filter>include\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFramebuffer.hpp">
-      <Filter>include\Rendering\RenderCommands</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\MaterialShaderCache.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -322,9 +304,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCDrawVA.hpp">
-      <Filter>include\Rendering\RenderCommands</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp">
       <Filter>include\Rendering</Filter>
@@ -400,9 +379,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\NavigationMesh.hpp">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommands\RCSetFaceCulling.hpp">
-      <Filter>include\Rendering\RenderCommands</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationChannel.hpp">
       <Filter>include\Animation</Filter>
@@ -523,9 +499,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureCube.hpp">
       <Filter>include\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\OpenGL\OpenGL20.hpp">
-      <Filter>include\Rendering\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdCircularList.h">
       <Filter>include\HACD</Filter>
@@ -895,9 +868,6 @@
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp">
       <Filter>source\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp">
-      <Filter>source\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\Shader.cpp">
       <Filter>source\Rendering</Filter>
     </ClCompile>
@@ -988,17 +958,11 @@
     <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCDrawVA.cpp">
-      <Filter>source\Rendering\RenderCommands</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Editor.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp">
       <Filter>source\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCSetFramebuffer.cpp">
-      <Filter>source\Rendering\RenderCommands</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ShaderParameter.cpp">
       <Filter>source</Filter>
@@ -1056,9 +1020,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\NavigationMesh.cpp">
       <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\RenderCommands\RCSetFaceCulling.cpp">
-      <Filter>source\Rendering\RenderCommands</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Animation\AnimationChannel.cpp">
       <Filter>source\Animation</Filter>
@@ -1143,12 +1104,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\TextureCube.cpp">
       <Filter>source\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\Renderer_Resources.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL20</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL20\OpenGL20.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL20</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\HACD\hacdGraph.cpp">
       <Filter>source\HACD</Filter>
