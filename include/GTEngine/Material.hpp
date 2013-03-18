@@ -7,6 +7,8 @@
 #include <GTCore/Map.hpp>
 #include "ShaderParameterCache.hpp"
 #include "Serialization.hpp"
+#include "Rendering/BlendEquations.hpp"
+#include "Rendering/BlendFunctions.hpp"
 
 namespace GTEngine
 {
@@ -62,9 +64,22 @@ namespace GTEngine
         void RemoveMetadata(size_t key);
 
 
+        /// Determines whether or not the material is blended.
+        bool IsBlended() const { return this->isBlended && !this->isRefractive; }
+
+        /// Retrieves the blending equation to use with this material.
+        BlendEquation GetBlendEquation() const { return this->blendEquation; }
+
+        /// Retrieves the source blending factor.
+        BlendFunc GetBlendSourceFactor() const { return this->blendSourceFactor; }
+
+        /// Retrieves the destination blending factor.
+        BlendFunc GetBlendDestinationFactor() const { return this->blendDestinationFactor; }
+
+
 
         /// Determines whether or not the material is refractive.
-        bool IsRefractive() const { return this->refractive; }
+        bool IsRefractive() const { return this->isRefractive; }
 
         
 
@@ -106,11 +121,21 @@ namespace GTEngine
 
     private:
 
-        /// Keeps track of whether or not the material should have transparency enabled.
-        bool enableTransparency;
+        /// Keeps track of whether or not the material is blended.
+        bool isBlended;
 
         /// Keeps track of whether or not the material is refractive.
-        bool refractive;
+        bool isRefractive;
+
+
+        /// The blending equation.
+        BlendEquation blendEquation;
+
+        /// The source blending factor.
+        BlendFunc blendSourceFactor;
+
+        /// The destination blending factor.
+        BlendFunc blendDestinationFactor;
 
 
     private:
@@ -169,8 +194,18 @@ namespace GTEngine
         const GTCore::Dictionary<ShaderParameter*> & GetParameters() const { return this->parameters.GetParameters(); }
 
 
-        /// Determines whether or not transparency should be enabled for this material.
-        //bool IsTransparencyEnabled() const { return this->definition.enableTransparency; }
+        /// Determines whether or not the material is blended.
+        bool IsBlended() const { return this->definition.IsBlended(); }
+
+        /// Retrieves the blending equation to use with this material.
+        BlendEquation GetBlendEquation() const { return this->definition.GetBlendEquation(); }
+
+        /// Retrieves the source blending factor.
+        BlendFunc GetBlendSourceFactor() const { return this->definition.GetBlendSourceFactor(); }
+
+        /// Retrieves the destination blending factor.
+        BlendFunc GetBlendDestinationFactor() const { return this->definition.GetBlendDestinationFactor(); }
+
 
         /// Determines whether or not the material is refractive.
         bool IsRefractive() const { return this->definition.IsRefractive(); }

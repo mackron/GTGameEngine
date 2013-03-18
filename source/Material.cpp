@@ -43,7 +43,8 @@ namespace GTEngine
           diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(), specularShaderID(),
           defaultParams(),
           metadata(),
-          enableTransparency(false), refractive(false)
+          isBlended(false), isRefractive(false),
+          blendEquation(BlendEquation_Add), blendSourceFactor(BlendFunc_One), blendDestinationFactor(BlendFunc_Zero)
     {
     }
 
@@ -199,12 +200,12 @@ namespace GTEngine
                 }
 
 
-                this->refractive = true;
+                this->isRefractive = true;
             }
             else
             {
                 // Note how we don't set a default ID here.
-                this->refractive = false;
+                this->isRefractive = false;
             }
             
 
@@ -230,6 +231,35 @@ namespace GTEngine
             else
             {
                 this->specularShaderID = "Material_DefaultSpecular";
+            }
+
+
+            // <blending>. Optional. If ommitted, blending is disabled (it's an opaque material).
+            auto blendingNode = materialNode->first_node("blending");
+            if (blendingNode != nullptr)
+            {
+                this->isBlended = true;
+
+                // <equation>
+                auto equationNode = blendingNode->first_node("equation");
+                if (equationNode != nullptr)
+                {
+                    this->blendEquation = ToBlendEquation(equationNode->value());
+                }
+
+                // <sourcefactor>
+                auto sourcefactorNode = blendingNode->first_node("sourcefactor");
+                if (sourcefactorNode != nullptr)
+                {
+                    this->blendSourceFactor = ToBlendFunction(sourcefactorNode->value());
+                }
+
+                // <destinationfactor>
+                auto destinationfactorNode = blendingNode->first_node("destinationfactor");
+                if (destinationfactorNode != nullptr)
+                {
+                    this->blendDestinationFactor = ToBlendFunction(destinationfactorNode->value());
+                }
             }
 
 
@@ -308,11 +338,6 @@ namespace GTEngine
                 }
             }
 
-            auto enabletransparencyNode = materialNode->first_node("enable_transparency");
-            if (enabletransparencyNode != nullptr)
-            {
-                this->enableTransparency = GTCore::Strings::Equal<false>(enabletransparencyNode->value(), "true");
-            }
 
             this->fileName = "";
             return true;

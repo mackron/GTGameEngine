@@ -600,6 +600,8 @@
         vec3  lightSpecular     = texture2D(SpecularLighting, lightUV).rgb;
         
         ColourOut.rgb = (materialDiffuse.rgb * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
+        ColourOut.a   = materialDiffuse.a;
+        
     }
 ]]>
 </shader>
@@ -645,7 +647,7 @@
         vec2 backgroundUV   = ((VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5) + (normalize(materialRefraction).xy * 0.01);
         
         ColourOut.rgb  = texture2D(BackgroundTexture, backgroundUV, 0).rgb * (1.0 - materialDiffuse.a);
-        ColourOut.rgb += ((materialDiffuse.rgb * materialDiffuse.a) * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
+        ColourOut.rgb += (materialDiffuse.rgb * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
     }
 ]]>
 </shader>
