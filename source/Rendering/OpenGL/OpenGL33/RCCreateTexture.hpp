@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_OpenGL33_RCCreateTexture_hpp_
 #define __GTEngine_Rendering_OpenGL33_RCCreateTexture_hpp_
 
-#include <GTEngine/Rendering/RenderCommand.hpp>
+#include "../../RenderCommand.hpp"
 #include <gtgl/gtgl.h>
 
 namespace GTEngine

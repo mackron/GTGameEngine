@@ -3,11 +3,11 @@
 #ifndef __GTEngine_Rendering_OpenGL33_RCSetGlobalState_hpp_
 #define __GTEngine_Rendering_OpenGL33_RCSetGlobalState_hpp_
 
-#include <GTEngine/Rendering/RenderCommand.hpp>
 #include <GTCore/Vector.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 
+#include "../../RenderCommand.hpp"
 #include "ShaderState_OpenGL33.hpp"
 #include "FramebufferState_OpenGL33.hpp"
 

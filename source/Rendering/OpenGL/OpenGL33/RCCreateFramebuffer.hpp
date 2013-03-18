@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_OpenGL33_RCCreateFramebuffer_hpp_
 #define __GTEngine_Rendering_OpenGL33_RCCreateFramebuffer_hpp_
 
-#include <GTEngine/Rendering/RenderCommand.hpp>
+#include "../../RenderCommand.hpp"
 #include "FramebufferState_OpenGL33.hpp"
 
 namespace GTEngine

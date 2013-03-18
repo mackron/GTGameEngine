@@ -304,9 +304,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\PolygonModes.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCQueue.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommand.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RendererFunctions.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp" />
@@ -387,6 +384,9 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\VertexArray_OpenGL33.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\RendererCaps.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\RCCache.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\RCQueue.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\RenderCommand.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Animation\Animation.cpp" />
