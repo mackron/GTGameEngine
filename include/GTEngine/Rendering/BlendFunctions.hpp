@@ -31,6 +31,15 @@ namespace GTEngine
     };
 
 
+    inline bool DoesBlendFunctionUseConstantColour(BlendFunc function)
+    {
+        return function == BlendFunc_ConstantColour         ||
+               function == BlendFunc_OneMinusConstantColour ||
+               function == BlendFunc_ConstantAlpha          ||
+               function == BlendFunc_OneMinusConstantAlpha;
+    }
+
+
     /// Converts a string to a BlendFunction value. Returns Zero if it is invalid. Not case sensitive.
     inline BlendFunc ToBlendFunction(const char* value)
     {

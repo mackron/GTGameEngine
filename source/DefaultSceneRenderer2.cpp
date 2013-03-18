@@ -1998,6 +1998,11 @@ namespace GTEngine
                 Renderer2::SetBlendEquation(mesh.material->GetBlendEquation());
                 Renderer2::SetBlendFunction(mesh.material->GetBlendSourceFactor(), mesh.material->GetBlendDestinationFactor());
 
+                if (DoesBlendFunctionUseConstantColour(mesh.material->GetBlendSourceFactor()) || DoesBlendFunctionUseConstantColour(mesh.material->GetBlendDestinationFactor()))
+                {
+                    Renderer2::SetBlendColour(mesh.material->GetBlendColour());
+                }
+
 
                 // Shader Setup.
                 auto shader = this->GetMaterialMaterialShader(*mesh.material);

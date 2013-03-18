@@ -16,17 +16,18 @@ namespace GTEngine
     #define SET_CURRENT_FRAMEBUFFER_BIT     (1 << 7)
     #define SET_BLEND_FUNCTION_BIT          (1 << 8)
     #define SET_BLEND_EQUATION_BIT          (1 << 9)
-    #define SET_ALPHA_FUNCTION_BIT          (1 << 10)
-    #define SET_DEPTH_FUNCTION_BIT          (1 << 11)
-    #define SET_STENCIL_MASK_BIT            (1 << 12)
-    #define SET_STENCIL_FUNC_BIT            (1 << 13)
-    #define SET_STENCIL_OP_BIT              (1 << 14)
-    #define SET_FACE_CULLING_BIT            (1 << 15)
-    #define SET_POLYGON_MODE_BIT            (1 << 16)
-    #define SET_POLYGON_OFFSET_BIT          (1 << 17)
-    #define SET_DRAW_BUFFERS_BIT            (1 << 18)
-    #define ENABLE_BIT                      (1 << 19)
-    #define DISABLE_BIT                     (1 << 20)
+    #define SET_BLEND_COLOUR_BIT            (1 << 10)
+    #define SET_ALPHA_FUNCTION_BIT          (1 << 11)
+    #define SET_DEPTH_FUNCTION_BIT          (1 << 12)
+    #define SET_STENCIL_MASK_BIT            (1 << 13)
+    #define SET_STENCIL_FUNC_BIT            (1 << 14)
+    #define SET_STENCIL_OP_BIT              (1 << 15)
+    #define SET_FACE_CULLING_BIT            (1 << 16)
+    #define SET_POLYGON_MODE_BIT            (1 << 17)
+    #define SET_POLYGON_OFFSET_BIT          (1 << 18)
+    #define SET_DRAW_BUFFERS_BIT            (1 << 19)
+    #define ENABLE_BIT                      (1 << 20)
+    #define DISABLE_BIT                     (1 << 21)
     
 
 
@@ -120,6 +121,16 @@ namespace GTEngine
         this->blendEquationParams.mode = mode;
 
         this->operationBitfield |= SET_BLEND_EQUATION_BIT;
+    }
+
+    void RCSetGlobalState::SetBlendColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+    {
+        this->blendColor.r = r;
+        this->blendColor.g = g;
+        this->blendColor.b = b;
+        this->blendColor.a = a;
+
+        this->operationBitfield |= SET_BLEND_COLOUR_BIT;
     }
 
     
@@ -393,6 +404,11 @@ namespace GTEngine
         if ((this->operationBitfield & SET_BLEND_EQUATION_BIT))
         {
             glBlendEquation(this->blendEquationParams.mode);
+        }
+
+        if ((this->operationBitfield & SET_BLEND_COLOUR_BIT))
+        {
+            glBlendColor(this->blendColor.r, this->blendColor.g, this->blendColor.b, this->blendColor.a);
         }
 
 
