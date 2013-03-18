@@ -20,7 +20,7 @@ namespace GTEngine
     {
         assert(buffer != nullptr);      // <-- Should use DetachColourBuffer() to remove a buffer. Will probably turn this argument into a reference instead of a pointer.
 
-        if (index < Renderer2::GetMaxColourAttachments())
+        if (index < Renderer::GetMaxColourAttachments())
         {
             auto iColourAttachment = this->colourAttachments.Find(index);
             if (iColourAttachment != nullptr)
@@ -68,7 +68,7 @@ namespace GTEngine
 
     void Framebuffer::DetachColourBuffer(size_t index)
     {
-        if (index < Renderer2::GetMaxColourAttachments())
+        if (index < Renderer::GetMaxColourAttachments())
         {
             auto iColourAttachment = this->colourAttachments.Find(index);
             if (iColourAttachment != nullptr)

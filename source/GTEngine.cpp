@@ -84,12 +84,12 @@ namespace GTEngine
 
         // With the log file created, we can startup all of our other sub-systems.
         Log("Starting Rendering Sub-System...");
-        if (Renderer2::Startup())
+        if (Renderer::Startup())
         {
             Log("Renderer Caps:");
-            Log("    Max Colour Attachments: %d", Renderer2::GetMaxColourAttachments());
-            Log("    Max Draw Buffers:       %d", Renderer2::GetMaxDrawBuffers());
-            Log("    Max Texture Units:      %d", Renderer2::GetMaxTextureUnits());
+            Log("    Max Colour Attachments: %d", Renderer::GetMaxColourAttachments());
+            Log("    Max Draw Buffers:       %d", Renderer::GetMaxDrawBuffers());
+            Log("    Max Texture Units:      %d", Renderer::GetMaxTextureUnits());
 
             Log("Loading Shaders...");
             ShaderLibrary::LoadFromDirectory("engine/shaders/glsl");
@@ -168,7 +168,7 @@ namespace GTEngine
 
 
         // We shutdown major sub-systems before logging. This allows us to log shutdown info.
-        Renderer2::Shutdown();
+        Renderer::Shutdown();
         AudioComposer::Shutdown();
 
 

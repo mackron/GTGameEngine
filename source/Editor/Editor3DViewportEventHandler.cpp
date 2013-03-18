@@ -10,13 +10,13 @@ namespace GTEngine
     Editor3DViewportEventHandler::Editor3DViewportEventHandler(Game &game, SceneViewport &viewport)
         : game(game), viewport(viewport),
           mousePosX(0), mousePosY(0),
-          vertexArray(Renderer2::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P2T2))
+          vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P2T2))
     {
     }
 
     Editor3DViewportEventHandler::~Editor3DViewportEventHandler()
     {
-        Renderer2::DeleteVertexArray(this->vertexArray);
+        Renderer::DeleteVertexArray(this->vertexArray);
     }
 
 
@@ -39,12 +39,12 @@ namespace GTEngine
         auto shader = GTEngine::ShaderLibrary::GetTextured2DQuadShader();
         assert(shader != nullptr);
         {
-            Renderer2::SetCurrentShader(shader);
+            Renderer::SetCurrentShader(shader);
 
             shader->SetParameter("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
             shader->SetParameter("Texture",    colourBuffer);
             {
-                Renderer2::PushShaderPendingProperties(*shader);
+                Renderer::PushShaderPendingProperties(*shader);
             }
             shader->ClearPendingParameters();
 
@@ -82,7 +82,7 @@ namespace GTEngine
 
             this->vertexArray->SetData(quadVertices, 4, quadIndices, 6);
 
-            Renderer2::Draw(*this->vertexArray);
+            Renderer::Draw(*this->vertexArray);
         }
     }
 

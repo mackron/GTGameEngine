@@ -31,7 +31,7 @@ namespace GTEngine
     ImageEditor::~ImageEditor()
     {
         /// The vertex array in the viewports event handler needs to be deleted.
-        Renderer2::DeleteVertexArray(this->viewportEventHandler.vertexArray);
+        Renderer::DeleteVertexArray(this->viewportEventHandler.vertexArray);
 
         // The image needs to be unacquired.
         Texture2DLibrary::Unacquire(this->image);
@@ -71,7 +71,7 @@ namespace GTEngine
     {
         if (this->vertexArray == nullptr)
         {
-            this->vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P2T2);
+            this->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P2T2);
 
             unsigned int indices[] =
             {
@@ -80,7 +80,7 @@ namespace GTEngine
             };
             this->vertexArray->SetIndexData(indices, 6);
 
-            Renderer2::PushVertexArrayIndexData(*this->vertexArray);
+            Renderer::PushVertexArrayIndexData(*this->vertexArray);
         }
 
 
@@ -92,12 +92,12 @@ namespace GTEngine
                 auto shader = GTEngine::ShaderLibrary::GetTextured2DQuadShader();
                 assert(shader != nullptr);
                 {
-                    Renderer2::SetCurrentShader(shader);
+                    Renderer::SetCurrentShader(shader);
 
                     shader->SetParameter("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
                     shader->SetParameter("Texture",    image);
                     {
-                        Renderer2::PushShaderPendingProperties(*shader);
+                        Renderer::PushShaderPendingProperties(*shader);
                     }
                     shader->ClearPendingParameters();
 
@@ -137,8 +137,8 @@ namespace GTEngine
                     };
                     this->vertexArray->SetVertexData(quadVertices, 4);
 
-                    Renderer2::PushVertexArrayVertexData(*this->vertexArray);
-                    Renderer2::Draw(*this->vertexArray);
+                    Renderer::PushVertexArrayVertexData(*this->vertexArray);
+                    Renderer::Draw(*this->vertexArray);
                 }
             }
         }

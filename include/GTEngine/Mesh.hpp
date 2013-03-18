@@ -32,15 +32,15 @@ namespace GTEngine
         /// Destructor.
         ~MeshSkinningData()
         {
-            Renderer2::DeleteVertexArray(this->skinnedGeometry);
+            Renderer::DeleteVertexArray(this->skinnedGeometry);
         }
 
         /// Allocates the vertex arrays for the animated geometry.
         void AllocateAnimatedGeometryArrays(const VertexArray &source)
         {
-            Renderer2::DeleteVertexArray(this->skinnedGeometry);
+            Renderer::DeleteVertexArray(this->skinnedGeometry);
 
-            this->skinnedGeometry = Renderer2::CreateVertexArray(VertexArrayUsage_Stream, source.GetFormat());
+            this->skinnedGeometry = Renderer::CreateVertexArray(VertexArrayUsage_Stream, source.GetFormat());
             this->skinnedGeometry->SetData(nullptr, source.GetVertexCount(), source.GetIndexDataPtr(), source.GetIndexCount());
         }
 

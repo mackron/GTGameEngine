@@ -88,7 +88,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->meshGeometries.count; ++i)
         {
             // It's important that we garbage collect here.
-            Renderer2::DeleteVertexArray(this->meshGeometries[i]);
+            Renderer::DeleteVertexArray(this->meshGeometries[i]);
         }
         this->meshGeometries.Clear();
     }

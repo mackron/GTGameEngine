@@ -21,7 +21,7 @@ namespace GTEngine
     {
         for (size_t i = 0; i < FontTextureMap.count; ++i)
         {
-            Renderer2::DeleteTexture2D(FontTextureMap.buffer[i]->value);
+            Renderer::DeleteTexture2D(FontTextureMap.buffer[i]->value);
         }
     }
 
@@ -36,13 +36,13 @@ namespace GTEngine
     void FontManager::OnCreateFont(GTType::Font &font)
     {
         // We need a texture to associate with the font.
-        auto fontTexture = Renderer2::CreateTexture2D();
+        auto fontTexture = Renderer::CreateTexture2D();
    
         const GTImage::Mipmap &fontBitmap = font.GetBitmap().GetMipmap(0);
 
         fontTexture->SetData(fontBitmap.width, fontBitmap.height, GTImage::ImageFormat_RGBA8, fontBitmap.data);
-        Renderer2::PushTexture2DData(*fontTexture);
-        Renderer2::SetTexture2DFilter(*fontTexture, TextureFilter_Nearest, TextureFilter_Nearest);
+        Renderer::PushTexture2DData(*fontTexture);
+        Renderer::SetTexture2DFilter(*fontTexture, TextureFilter_Nearest, TextureFilter_Nearest);
 
 
         // And now we map the texture to the font.
@@ -54,7 +54,7 @@ namespace GTEngine
         auto item = FontTextureMap.Find(&font);
         if (item != nullptr)
         {
-            Renderer2::DeleteTexture2D(item->value);
+            Renderer::DeleteTexture2D(item->value);
             FontTextureMap.Remove(&font);
         }
     }

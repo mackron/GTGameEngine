@@ -268,8 +268,8 @@ namespace GTEngine
 
 
 
-        this->headMesh.vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
-        this->lineMesh.vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->headMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->lineMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
 
 
         // Head.
@@ -348,8 +348,8 @@ namespace GTEngine
 
     TransformGizmo::TranslateHandle::~TranslateHandle()
     {
-        Renderer2::DeleteVertexArray(this->headMesh.vertexArray);
-        Renderer2::DeleteVertexArray(this->lineMesh.vertexArray);
+        Renderer::DeleteVertexArray(this->headMesh.vertexArray);
+        Renderer::DeleteVertexArray(this->lineMesh.vertexArray);
     }
 
 
@@ -491,7 +491,7 @@ namespace GTEngine
             circleIndices.PushBack((i + 1) % circleSegmentCount);
         }
 
-        this->mesh.vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->mesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
         this->mesh.vertexArray->SetData(&circleVertices[0].x, circleVertices.count, &circleIndices[0], circleIndices.count);
         this->mesh.drawMode = DrawMode_Lines;
 
@@ -511,7 +511,7 @@ namespace GTEngine
 
     TransformGizmo::RotateHandle::~RotateHandle()
     {
-        Renderer2::DeleteVertexArray(this->mesh.vertexArray);
+        Renderer::DeleteVertexArray(this->mesh.vertexArray);
     }
 
 
@@ -685,8 +685,8 @@ namespace GTEngine
 
 
 
-        this->headMesh.vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
-        this->lineMesh.vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->headMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        this->lineMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
 
 
 
@@ -770,8 +770,8 @@ namespace GTEngine
 
     TransformGizmo::ScaleHandle::~ScaleHandle()
     {
-        Renderer2::DeleteVertexArray(this->headMesh.vertexArray);
-        Renderer2::DeleteVertexArray(this->lineMesh.vertexArray);
+        Renderer::DeleteVertexArray(this->headMesh.vertexArray);
+        Renderer::DeleteVertexArray(this->lineMesh.vertexArray);
     }
 
 

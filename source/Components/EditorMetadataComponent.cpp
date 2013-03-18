@@ -184,7 +184,7 @@ namespace GTEngine
         // Vertex Array.
         if (this->spriteMesh.vertexArray == nullptr)
         {
-            this->spriteMesh.vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2);
+            this->spriteMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2);
 
             // X/Y plane facing +Z.
             float vertices[] =
@@ -262,7 +262,7 @@ namespace GTEngine
     {
         delete this->spritePickingCollisionObject;      // <-- the destructor will remove it from the scene.
         delete this->spritePickingCollisionShape;
-        Renderer2::DeleteVertexArray(this->spriteMesh.vertexArray);
+        Renderer::DeleteVertexArray(this->spriteMesh.vertexArray);
         MaterialLibrary::Delete(this->spriteMesh.material);
         Texture2DLibrary::Unacquire(this->spriteTexture);
 
@@ -369,7 +369,7 @@ namespace GTEngine
                 0, 3
             };
 
-            this->directionArrowMesh.vertexArray = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+            this->directionArrowMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
             this->directionArrowMesh.vertexArray->SetData(&vertices[0].x, 4, indices, 6);
             
 
@@ -388,7 +388,7 @@ namespace GTEngine
 
     void EditorMetadataComponent::HideDirectionArrow()
     {
-        Renderer2::DeleteVertexArray(this->directionArrowMesh.vertexArray);
+        Renderer::DeleteVertexArray(this->directionArrowMesh.vertexArray);
         MaterialLibrary::Delete(this->directionArrowMesh.material);
 
         this->directionArrowMesh.vertexArray = nullptr;
