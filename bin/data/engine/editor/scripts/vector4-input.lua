@@ -11,6 +11,8 @@ function GTGUI.Element:Vector4Input()
     self.Z:NumberTextBox():UseFloatFormat();
     self.W:NumberTextBox():UseFloatFormat();
     
+    self.Locked = false;
+    
     
     function self:GetX()
         return self.X:GetValue();
@@ -26,16 +28,16 @@ function GTGUI.Element:Vector4Input()
     end
 
     function self:SetX(value)
-        self.X:SetValue(value);
+        if not self.Locked then self.X:SetValue(value) end;
     end
     function self:SetY(value)
-        self.Y:SetValue(value);
+        if not self.Locked then self.Y:SetValue(value) end;
     end
     function self:SetZ(value)
-        self.Z:SetValue(value);
+        if not self.Locked then self.Z:SetValue(value) end;
     end
     function self:SetW(value)
-        self.W:SetValue(value);
+        if not self.Locked then self.W:SetValue(value) end;
     end
     
     function self:SetFromXYZW(x, y, z, w)
@@ -107,7 +109,9 @@ function GTGUI.Element:Vector4Input()
     
     
     function self:OnValueChanged(arg1)
-        self.Callbacks:BindOrCall("OnValueChanged", arg1);
+        self.Locked = true;
+            self.Callbacks:BindOrCall("OnValueChanged", arg1);
+        self.Locked = false;
     end
     
     return self;
