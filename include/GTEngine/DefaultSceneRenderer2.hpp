@@ -569,7 +569,7 @@ namespace GTEngine
         GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> opaqueObjects;
 
         /// The list of alpha-transparent objects, sorted by material definition. This needs to be separate from refractive transparent objects.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> alphaTransparentObjects;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> blendedTransparentObjects;
 
         /// The list of refractive-transparent objects, sorted by material definition.
         GTCore::Vector<DefaultSceneRendererMesh> refractiveTransparentObjects;
@@ -579,7 +579,7 @@ namespace GTEngine
         GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> opaqueObjectsLast;
 
         /// The list of blended-transparent objects that should be drawn last.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> alphaTransparentObjectsLast;
+        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> blendedTransparentObjectsLast;
 
 
 
@@ -915,10 +915,14 @@ namespace GTEngine
 
 
         /// Renders the alpha transparency pass.
-        void RenderAlphaTransparentPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+        void RenderBlendedTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
         /// Renders the refractive transparent pass.
-        void RenderRefractiveTransparentPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+        void RenderRefractiveTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects);
+
+
+        /// Renders the lighting of the given mesh.
+        void RenderMeshLighting(const DefaultSceneRendererMesh &mesh, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects); 
 
 
         /// Renders the final composition.
