@@ -468,11 +468,11 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::QuerySpotLightContacts(const SceneObject &light, VisibilityCallback &callback) const
     {
-        assert(this->pointLights.Exists(&light));
+        assert(this->spotLights.Exists(&light));
         {
             if (light.GetType() == SceneObjectType_SceneNode)
             {
-                auto iMetadata = this->pointLights.Find(&light);
+                auto iMetadata = this->spotLights.Find(&light);
                 assert(iMetadata != nullptr);
                 {
                     auto metadata = iMetadata->value;

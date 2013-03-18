@@ -484,27 +484,45 @@ namespace GTEngine
             // Point Lights.
             for (size_t iPointLight = 0; iPointLight < this->pointLights.count; ++iPointLight)              // <-- Non-shadow-casting point lights.
             {
-                auto pointLightComponent = this->pointLights.buffer[iPointLight]->key;
-                assert(pointLightComponent != nullptr);
+                auto lightComponent = this->pointLights.buffer[iPointLight]->key;
+                assert(lightComponent != nullptr);
                 {
                     PointLightContactsCallback callback(*this, iPointLight, false);                         // <-- 'false' means that we're doing a non-shadow-casting light.
-                    cullingManager.QueryPointLightContacts(pointLightComponent->GetNode(), callback);
+                    cullingManager.QueryPointLightContacts(lightComponent->GetNode(), callback);
                 }
             }
 
             for (size_t iPointLight = 0; iPointLight < this->shadowPointLights.count; ++iPointLight)        // <-- Shadow-casting point lights.
             {
-                auto pointLightComponent = this->shadowPointLights.buffer[iPointLight]->key;
-                assert(pointLightComponent != nullptr);
+                auto lightComponent = this->shadowPointLights.buffer[iPointLight]->key;
+                assert(lightComponent != nullptr);
                 {
                     PointLightContactsCallback callback(*this, iPointLight, true);                          // <-- 'true' means that we're doing a shadow-casting light.
-                    cullingManager.QueryPointLightContacts(pointLightComponent->GetNode(), callback);
+                    cullingManager.QueryPointLightContacts(lightComponent->GetNode(), callback);
                 }
             }
 
 
             // Spot Lights.
+            for (size_t iSpotLight = 0; iSpotLight < this->spotLights.count; ++iSpotLight)                 // <-- Non-shadow-casting point lights.
+            {
+                auto lightComponent = this->spotLights.buffer[iSpotLight]->key;
+                assert(lightComponent != nullptr);
+                {
+                    SpotLightContactsCallback callback(*this, iSpotLight, false);                         // <-- 'false' means that we're doing a non-shadow-casting light.
+                    cullingManager.QuerySpotLightContacts(lightComponent->GetNode(), callback);
+                }
+            }
 
+            for (size_t iSpotLight = 0; iSpotLight < this->shadowSpotLights.count; ++iSpotLight)           // <-- Shadow-casting point lights.
+            {
+                auto lightComponent = this->shadowSpotLights.buffer[iSpotLight]->key;
+                assert(lightComponent != nullptr);
+                {
+                    SpotLightContactsCallback callback(*this, iSpotLight, true);                          // <-- 'true' means that we're doing a shadow-casting light.
+                    cullingManager.QuerySpotLightContacts(lightComponent->GetNode(), callback);
+                }
+            }
         }
 
 
@@ -790,17 +808,23 @@ namespace GTEngine
         //this->RenderAlphaTransparentPass(scene, framebuffer);
 
         // 4) The refractive transparent pass (for things with refractive properties).
-        //this->RenderRefractiveTransparentPass(scene, framebuffer);
+        this->RenderRefractiveTransparentPass(scene, framebuffer, visibleObjects);
 
 
-        // 5) The final composition.
-        this->RenderFinalComposition(framebuffer);
+        // 5) The final composition. The source colour buffer will depend on whether or not transparency was used.
+        auto sourceColourBuffer = framebuffer->opaqueColourBuffer;
+        if (visibleObjects.refractiveTransparentObjects.count > 0 || visibleObjects.refractiveTransparentObjectsLast.count > 0)
+        {
+            sourceColourBuffer = framebuffer->finalColourBufferHDR;
+        }
+
+        this->RenderFinalComposition(framebuffer, sourceColourBuffer);
     }
 
     void DefaultSceneRenderer2::AddViewport(SceneViewport &viewport)
     {
         // We create a framebuffer for every viewport. We map these to viewports with a simple GTCore::Map container.
-        auto framebuffer = this->CreateFramebuffer(viewport.GetWidth(), viewport.GetHeight());
+        auto framebuffer = new DefaultSceneRendererFramebuffer(viewport.GetWidth(), viewport.GetHeight());
         assert(framebuffer != nullptr);
         {
             viewport.SetColourBuffer(framebuffer->finalColourBuffer);
@@ -819,7 +843,7 @@ namespace GTEngine
             auto framebuffer = iFramebuffer->value;
             assert(framebuffer != nullptr);
             {
-                this->DeleteFramebuffer(framebuffer);
+                delete framebuffer;
                 this->viewportFramebuffers.RemoveByIndex(iFramebuffer->index);
             }
         }
@@ -925,16 +949,6 @@ namespace GTEngine
     /////////////////////////////////////////////////////////
     // Private
 
-    DefaultSceneRendererFramebuffer* DefaultSceneRenderer2::CreateFramebuffer(unsigned int width, unsigned int height)
-    {
-        return new DefaultSceneRendererFramebuffer(width, height);
-    }
-
-    void DefaultSceneRenderer2::DeleteFramebuffer(DefaultSceneRendererFramebuffer* framebufferToDelete)
-    {
-        delete framebufferToDelete;
-    }
-
     DefaultSceneRendererFramebuffer* DefaultSceneRenderer2::GetViewportFramebuffer(SceneViewport &viewport)
     {
         auto iFramebuffer = this->viewportFramebuffers.Find(&viewport);
@@ -945,6 +959,7 @@ namespace GTEngine
 
         return nullptr;
     }
+
 
 
     ///////////////////////
@@ -1213,8 +1228,6 @@ namespace GTEngine
                         Renderer2::EnableBlending();
                         Renderer2::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
 
-                        //Renderer2::DisableDepthTest();
-                        
 
                         // Shader.
                         Renderer2::SetCurrentShader(this->highlightShader);
@@ -1230,7 +1243,6 @@ namespace GTEngine
 
 
                         Renderer2::DisableBlending();
-                        //Renderer2::EnableDepthTest();
                     }
                 }
             }
@@ -1962,12 +1974,415 @@ namespace GTEngine
     void DefaultSceneRenderer2::RenderRefractiveTransparentPass(Scene &scene, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         (void)scene;
-        (void)framebuffer;
-        (void)visibleObjects;
+
+
+        // We need to copy the content from the opaque buffer over the to buffer that will output the results of the transparent pass.
+        int colourBuffer[] = {3};
+        Renderer2::SetDrawBuffers(1, colourBuffer);
+        Renderer2::DisableBlending();
+        Renderer2::DisableDepthTest();
+        Renderer2::DisableDepthWrites();
+        
+
+        // The opaque buffer must have a Nearest/Nearest filter.
+        Renderer2::SetTexture2DFilter(*framebuffer->opaqueColourBuffer, TextureFilter_Nearest, TextureFilter_Nearest);
+
+
+        // Shader.
+        Renderer2::SetCurrentShader(this->finalCompositionShaderLDR);
+        this->finalCompositionShaderLDR->SetParameter("ColourBuffer", framebuffer->opaqueColourBuffer);
+        {
+            Renderer2::PushShaderPendingProperties(*this->finalCompositionShaderLDR);
+        }
+        this->finalCompositionShaderLDR->ClearPendingParameters();
+
+
+        // Draw.
+        Renderer2::Draw(*this->fullscreenTriangleVA);
+
+
+        // Depth testing needs to be re-enabled now.
+        Renderer2::EnableDepthTest();
+        Renderer2::SetDepthFunction(RendererFunction_LEqual);
+
+
+
+        // We loop over every refractive object and draw them one-by-one. For each object, we draw the lighting constribution to the lighting buffers and then
+        // do the material pass.
+
+        for (size_t iMeshList = 0; iMeshList < visibleObjects.refractiveTransparentObjects.count; ++iMeshList)
+        {
+            auto meshList = visibleObjects.refractiveTransparentObjects.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
+                {
+                    auto &mesh = meshList->Get(iMesh);
+                    {
+                        auto lights = mesh.touchingLights;
+                        assert(lights != nullptr);
+                        {
+                            glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                            glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                            // Keeps track of whether or not the first light has been done.
+                            bool doneFirstLight = false;
+
+                            int lightingBuffers[] = {1, 2};
+                            Renderer2::SetDrawBuffers(2, lightingBuffers);
+
+                            // We want to explicitly disable blending here. It will be reenabled with additive blending after we've done the first light.
+                            Renderer2::DisableBlending();
+                            Renderer2::SetBlendEquation(BlendEquation_Add);
+                            Renderer2::SetBlendFunction(BlendFunc_One, BlendFunc_One);
+                            
+
+
+                            // Ambient Lights.
+                            auto ambientLightShader = this->GetMaterialAmbientLightShader(*mesh.material);
+                            for (size_t i = 0; i < lights->ambientLights.count; ++i)
+                            {
+                                auto light  = visibleObjects.ambientLights.buffer[lights->ambientLights[i]]->value;
+                                auto shader = ambientLightShader;
+                                
+
+                                // Shader.
+                                Renderer2::SetCurrentShader(shader);
+                                shader->SetParametersFromMaterial(*mesh.material);
+                                shader->SetParameter("PVMMatrix",       visibleObjects.projectionViewMatrix * mesh.transform);
+                                shader->SetParameter("ViewModelMatrix", viewModelMatrix);
+                                shader->SetParameter("NormalMatrix",    normalMatrix);
+                                shader->SetParameter("Colour",          light->colour);
+                                {
+                                    Renderer2::PushShaderPendingProperties(*shader);
+                                }
+                                shader->ClearPendingParameters();
+
+
+                                // Draw.
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                                {
+                                    Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                                }
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+
+
+                                if (!doneFirstLight)
+                                {
+                                    Renderer2::EnableBlending();
+                                    doneFirstLight = true;
+                                }
+                            }
+
+
+                            // Directional Lights.
+                            auto directionalLightShader = this->GetMaterialDirectionalLightShader(*mesh.material);
+                            for (size_t i = 0; i < lights->directionalLights.count; ++i)
+                            {
+                                auto light  = visibleObjects.directionalLights.buffer[lights->directionalLights[i]]->value;
+                                auto shader = directionalLightShader;
+
+
+                                // Shader.
+                                Renderer2::SetCurrentShader(shader);
+                                shader->SetParametersFromMaterial(*mesh.material);
+                                shader->SetParameter("PVMMatrix",       visibleObjects.projectionViewMatrix * mesh.transform);
+                                shader->SetParameter("ViewModelMatrix", viewModelMatrix);
+                                shader->SetParameter("NormalMatrix",    normalMatrix);
+                                shader->SetParameter("Colour",          light->colour);
+                                shader->SetParameter("Direction",       glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                                {
+                                    Renderer2::PushShaderPendingProperties(*shader);
+                                }
+                                shader->ClearPendingParameters();
+
+
+                                // Draw.
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                                {
+                                    Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                                }
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+
+
+                                if (!doneFirstLight)
+                                {
+                                    Renderer2::EnableBlending();
+                                    doneFirstLight = true;
+                                }
+                            }
+
+                            for (size_t i = 0; i < lights->shadowDirectionalLights.count; ++i)
+                            {
+                                auto light  = visibleObjects.shadowDirectionalLights.buffer[lights->shadowDirectionalLights[i]]->value;
+                                auto shader = directionalLightShader;
+
+
+                                // Shader.
+                                Renderer2::SetCurrentShader(shader);
+                                shader->SetParametersFromMaterial(*mesh.material);
+                                shader->SetParameter("PVMMatrix",       visibleObjects.projectionViewMatrix * mesh.transform);
+                                shader->SetParameter("ViewModelMatrix", viewModelMatrix);
+                                shader->SetParameter("NormalMatrix",    normalMatrix);
+                                shader->SetParameter("Colour",          light->colour);
+                                shader->SetParameter("Direction",       glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                                {
+                                    Renderer2::PushShaderPendingProperties(*shader);
+                                }
+                                shader->ClearPendingParameters();
+
+
+                                // Draw.
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                                {
+                                    Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                                }
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+
+
+
+                                if (!doneFirstLight)
+                                {
+                                    Renderer2::EnableBlending();
+                                    doneFirstLight = true;
+                                }
+                            }
+
+
+                            // Point Lights.
+                            auto pointLightShader = this->GetMaterialPointLightShader(*mesh.material);
+                            for (size_t i = 0; i < lights->pointLights.count; ++i)
+                            {
+                                auto light  = visibleObjects.pointLights.buffer[lights->pointLights[i]]->value;
+                                auto shader = pointLightShader;
+                                
+
+                                // Shader.
+                                Renderer2::SetCurrentShader(shader);
+                                shader->SetParametersFromMaterial(*mesh.material);
+                                shader->SetParameter("PVMMatrix",            visibleObjects.projectionViewMatrix * mesh.transform);
+                                shader->SetParameter("ViewModelMatrix",      viewModelMatrix);
+                                shader->SetParameter("NormalMatrix",         normalMatrix);
+                                shader->SetParameter("Colour",               light->colour);
+                                shader->SetParameter("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                                shader->SetParameter("ConstantAttenuation",  light->constantAttenuation);
+                                shader->SetParameter("LinearAttenuation",    light->linearAttenuation);
+                                shader->SetParameter("QuadraticAttenuation", light->quadraticAttenuation);
+                                {
+                                    Renderer2::PushShaderPendingProperties(*shader);
+                                }
+                                shader->ClearPendingParameters();
+
+
+                                // Draw.
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                                {
+                                    Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                                }
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+
+
+
+                                if (!doneFirstLight)
+                                {
+                                    Renderer2::EnableBlending();
+                                    doneFirstLight = true;
+                                }
+                            }
+
+                            for (size_t i = 0; i < lights->shadowPointLights.count; ++i)
+                            {
+                                auto light  = visibleObjects.shadowPointLights.buffer[lights->shadowPointLights[i]]->value;
+                                auto shader = pointLightShader;
+                                
+
+                                // Shader.
+                                Renderer2::SetCurrentShader(shader);
+                                shader->SetParametersFromMaterial(*mesh.material);
+                                shader->SetParameter("PVMMatrix",            visibleObjects.projectionViewMatrix * mesh.transform);
+                                shader->SetParameter("ViewModelMatrix",      viewModelMatrix);
+                                shader->SetParameter("NormalMatrix",         normalMatrix);
+                                shader->SetParameter("Colour",               light->colour);
+                                shader->SetParameter("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                                shader->SetParameter("ConstantAttenuation",  light->constantAttenuation);
+                                shader->SetParameter("LinearAttenuation",    light->linearAttenuation);
+                                shader->SetParameter("QuadraticAttenuation", light->quadraticAttenuation);
+                                {
+                                    Renderer2::PushShaderPendingProperties(*shader);
+                                }
+                                shader->ClearPendingParameters();
+
+
+                                // Draw.
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                                {
+                                    Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                                }
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+
+
+                                if (!doneFirstLight)
+                                {
+                                    Renderer2::EnableBlending();
+                                    doneFirstLight = true;
+                                }
+                            }
+
+
+                            // Spot Lights.
+                            auto spotLightShader = this->GetMaterialSpotLightShader(*mesh.material);
+                            for (size_t i = 0; i < lights->spotLights.count; ++i)
+                            {
+                                auto light  = visibleObjects.spotLights.buffer[lights->spotLights[i]]->value;
+                                auto shader = spotLightShader;
+
+
+                                // Shader.
+                                Renderer2::SetCurrentShader(shader);
+                                shader->SetParametersFromMaterial(*mesh.material);
+                                shader->SetParameter("PVMMatrix",            visibleObjects.projectionViewMatrix * mesh.transform);
+                                shader->SetParameter("ViewModelMatrix",      viewModelMatrix);
+                                shader->SetParameter("NormalMatrix",         normalMatrix);
+                                shader->SetParameter("Colour",               light->colour);
+                                shader->SetParameter("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                                shader->SetParameter("Direction",            glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                                shader->SetParameter("ConstantAttenuation",  light->constantAttenuation);
+                                shader->SetParameter("LinearAttenuation",    light->linearAttenuation);
+                                shader->SetParameter("QuadraticAttenuation", light->quadraticAttenuation);
+                                shader->SetParameter("CosAngleInner",        glm::cos(glm::radians(light->innerAngle)));
+                                shader->SetParameter("CosAngleOuter",        glm::cos(glm::radians(light->outerAngle)));
+                                {
+                                    Renderer2::PushShaderPendingProperties(*shader);
+                                }
+                                shader->ClearPendingParameters();
+
+
+                                // Draw.
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                                {
+                                    Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                                }
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+
+
+                                if (!doneFirstLight)
+                                {
+                                    Renderer2::EnableBlending();
+                                    doneFirstLight = true;
+                                }
+                            }
+
+                            for (size_t i = 0; i < lights->shadowSpotLights.count; ++i)
+                            {
+                                auto light  = visibleObjects.shadowSpotLights.buffer[lights->shadowSpotLights[i]]->value;
+                                auto shader = spotLightShader;
+
+
+                                // Shader.
+                                Renderer2::SetCurrentShader(shader);
+                                shader->SetParametersFromMaterial(*mesh.material);
+                                shader->SetParameter("PVMMatrix",            visibleObjects.projectionViewMatrix * mesh.transform);
+                                shader->SetParameter("ViewModelMatrix",      viewModelMatrix);
+                                shader->SetParameter("NormalMatrix",         normalMatrix);
+                                shader->SetParameter("Colour",               light->colour);
+                                shader->SetParameter("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                                shader->SetParameter("Direction",            glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                                shader->SetParameter("ConstantAttenuation",  light->constantAttenuation);
+                                shader->SetParameter("LinearAttenuation",    light->linearAttenuation);
+                                shader->SetParameter("QuadraticAttenuation", light->quadraticAttenuation);
+                                shader->SetParameter("CosAngleInner",        glm::cos(glm::radians(light->innerAngle)));
+                                shader->SetParameter("CosAngleOuter",        glm::cos(glm::radians(light->outerAngle)));
+                                {
+                                    Renderer2::PushShaderPendingProperties(*shader);
+                                }
+                                shader->ClearPendingParameters();
+
+
+                                // Draw.
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                                {
+                                    Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                                }
+                                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+
+
+                                if (!doneFirstLight)
+                                {
+                                    Renderer2::EnableBlending();
+                                    doneFirstLight = true;
+                                }
+                            }
+
+
+
+                            // Now we do the actual material pass.
+                            int colourBuffer[] = {3};
+                            Renderer2::SetDrawBuffers(1, colourBuffer);
+
+                            Renderer2::DisableBlending();
+
+                            // Shader Setup.
+                            auto shader = this->GetMaterialMaterialShader(*mesh.material);
+                            assert(shader != nullptr);
+                            {
+                                glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                                glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                                Renderer2::SetCurrentShader(shader);
+                                shader->SetParametersFromMaterial(*mesh.material);
+                                shader->SetParameter("ViewModelMatrix",   viewModelMatrix);
+                                shader->SetParameter("NormalMatrix",      normalMatrix);
+                                shader->SetParameter("PVMMatrix",         visibleObjects.projectionViewMatrix * mesh.transform);
+                                shader->SetParameter("DiffuseLighting",   framebuffer->lightingBuffer0);
+                                shader->SetParameter("SpecularLighting",  framebuffer->lightingBuffer1);
+                                shader->SetParameter("BackgroundTexture", framebuffer->opaqueColourBuffer);
+                                {
+                                    Renderer2::PushShaderPendingProperties(*shader);
+                                }
+                                shader->ClearPendingParameters();
+                            }
+
+                            // Draw.
+                            if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                            {
+                                Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                            }
+                            if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+
+
+                            // If we're drawing a highlight, we'll need to draw a solid colour transparent mesh over the top using alpha blending.
+                            if ((mesh.flags & SceneRendererMesh::DrawHighlight))
+                            {
+                                Renderer2::EnableBlending();
+                                Renderer2::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
+
+
+                                // Shader.
+                                Renderer2::SetCurrentShader(this->highlightShader);
+                                this->highlightShader->SetParameter("PVMMatrix", visibleObjects.projectionViewMatrix * mesh.transform);
+                                {
+                                    Renderer2::PushShaderPendingProperties(*this->highlightShader);
+                                }
+                                this->highlightShader->ClearPendingParameters();
+
+
+                                // Draw.
+                                Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+
+
+                                Renderer2::DisableBlending();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
-    void DefaultSceneRenderer2::RenderFinalComposition(DefaultSceneRendererFramebuffer* framebuffer)
+    void DefaultSceneRenderer2::RenderFinalComposition(DefaultSceneRendererFramebuffer* framebuffer, Texture2D* sourceColourBuffer)
     {
         Renderer2::DisableDepthTest();
         Renderer2::DisableDepthWrites();
@@ -1981,17 +2396,17 @@ namespace GTEngine
             // Might need a bloom buffer.
             if (this->IsBloomEnabled())
             {
-                this->RenderBloomMap(framebuffer);
+                this->RenderBloomMap(framebuffer, sourceColourBuffer);
             }
 
 
             // HDR requires luminosity. We downsample the colour buffer to 1x1 to get this. Mipmap generation will do it for us.
-            Renderer2::SetTexture2DFilter(*framebuffer->colourBuffer, TextureFilter_NearestNearest, TextureFilter_Nearest);
-            Renderer2::GenerateTexture2DMipmaps(*framebuffer->colourBuffer);
+            Renderer2::SetTexture2DFilter(*sourceColourBuffer, TextureFilter_NearestNearest, TextureFilter_Nearest);
+            Renderer2::GenerateTexture2DMipmaps(*sourceColourBuffer);
 
 
             // Framebuffer Setup.
-            int finalOutputBufferIndex = 3;
+            int finalOutputBufferIndex = 4;
 
             Renderer2::SetCurrentFramebuffer(framebuffer->framebuffer);
             Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);
@@ -2003,7 +2418,7 @@ namespace GTEngine
             if (this->IsBloomEnabled())
             {
                 Renderer2::SetCurrentShader(this->finalCompositionShaderHDR);
-                this->finalCompositionShaderHDR->SetParameter("ColourBuffer", framebuffer->colourBuffer);
+                this->finalCompositionShaderHDR->SetParameter("ColourBuffer", sourceColourBuffer);
                 this->finalCompositionShaderHDR->SetParameter("BloomBuffer",  framebuffer->bloomBuffer);
                 this->finalCompositionShaderHDR->SetParameter("Exposure",     this->hdrExposure);
                 this->finalCompositionShaderHDR->SetParameter("BloomFactor",  this->bloomFactor);
@@ -2015,7 +2430,7 @@ namespace GTEngine
             else
             {
                 Renderer2::SetCurrentShader(this->finalCompositionShaderHDRNoBloom);
-                this->finalCompositionShaderHDRNoBloom->SetParameter("ColourBuffer", framebuffer->colourBuffer);
+                this->finalCompositionShaderHDRNoBloom->SetParameter("ColourBuffer", sourceColourBuffer);
                 this->finalCompositionShaderHDRNoBloom->SetParameter("Exposure",     this->hdrExposure);
                 {
                     Renderer2::PushShaderPendingProperties(*this->finalCompositionShaderHDRNoBloom);
@@ -2025,11 +2440,11 @@ namespace GTEngine
         }
         else
         {
-            Renderer2::SetTexture2DFilter(*framebuffer->colourBuffer, TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer2::SetTexture2DFilter(*sourceColourBuffer, TextureFilter_Nearest, TextureFilter_Nearest);
 
 
             // Framebuffer Setup.
-            int finalOutputBufferIndex = 3;
+            int finalOutputBufferIndex = 4;
 
             Renderer2::SetCurrentFramebuffer(framebuffer->framebuffer);
             Renderer2::SetDrawBuffers(1, &finalOutputBufferIndex);
@@ -2038,7 +2453,7 @@ namespace GTEngine
 
             // Shader Setup.
             Renderer2::SetCurrentShader(this->finalCompositionShaderLDR);
-            this->finalCompositionShaderLDR->SetParameter("ColourBuffer", framebuffer->colourBuffer);
+            this->finalCompositionShaderLDR->SetParameter("ColourBuffer", sourceColourBuffer);
             {
                 Renderer2::PushShaderPendingProperties(*this->finalCompositionShaderLDR);
             }
@@ -2050,7 +2465,7 @@ namespace GTEngine
         Renderer2::Draw(*this->fullscreenTriangleVA);
     }
 
-    void DefaultSceneRenderer2::RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer)
+    void DefaultSceneRenderer2::RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer, Texture2D* sourceColourBuffer)
     {
         // Framebuffer Setup.
         int bufferIndex = 0;
@@ -2062,7 +2477,7 @@ namespace GTEngine
 
         // Shader Setup.
         Renderer2::SetCurrentShader(this->bloomShader);
-        this->bloomShader->SetParameter("ColourBuffer", framebuffer->colourBuffer);
+        this->bloomShader->SetParameter("ColourBuffer", sourceColourBuffer);
         {
             Renderer2::PushShaderPendingProperties(*this->bloomShader);
         }
