@@ -307,7 +307,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCQueue.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommand.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer2.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\RendererFunctions.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\ShaderStages.hpp" />
@@ -540,7 +540,7 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureCube_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\VertexArray_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\Renderer2.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Shader.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Texture2D.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\TextureCube.cpp" />

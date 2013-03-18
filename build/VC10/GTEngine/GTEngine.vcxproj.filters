@@ -716,9 +716,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\CollisionShapeComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer2.hpp">
-      <Filter>include\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\RendererCaps.hpp">
       <Filter>source\Rendering\OpenGL</Filter>
     </ClInclude>
@@ -829,6 +826,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer.hpp">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp">
+      <Filter>include\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1312,9 +1312,6 @@
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Game.cpp">
       <Filter>source\Scripting</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\Renderer2.cpp">
-      <Filter>source\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Renderer_OpenGL33.cpp">
       <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
@@ -1398,6 +1395,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp">
+      <Filter>source\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
