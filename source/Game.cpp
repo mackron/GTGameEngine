@@ -6,7 +6,7 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
-#include <GTEngine/Rendering/Renderer2.hpp>
+#include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Audio.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/ModelLibrary.hpp>
@@ -1027,13 +1027,6 @@ namespace GTEngine
     void Game::SwapRCQueues()           // TODO: Consider renaming this to SwapCallCaches() to match the new renderer.
     {
         Renderer2::SwapCallCaches();
-
-
-        // First the renderer...
-        //Renderer::SwapRCQueues();
-
-        // Now the GUI...
-        //this->gui.SwapRCQueues();
     }
 
 

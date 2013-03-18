@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Renderer_DefaultGUIRenderer_hpp_
 #define __GTEngine_Renderer_DefaultGUIRenderer_hpp_
 
-#include "Renderer2.hpp"
+#include "Renderer.hpp"
 #include <GTGUI/Rendering.hpp>
 
 namespace GTEngine

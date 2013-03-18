@@ -6,7 +6,7 @@
 #include "SceneRenderer.hpp"
 #include "Scene.hpp"
 #include "MaterialLibrary.hpp"
-#include "Rendering/Renderer2.hpp"
+#include "Rendering/Renderer.hpp"
 
 #include <GTCore/Map.hpp>
 #include <utility>

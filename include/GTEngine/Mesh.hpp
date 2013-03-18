@@ -7,7 +7,7 @@
 #include "Math.hpp"
 #include "SkinningVertexAttribute.hpp"
 #include "Serialization.hpp"
-#include "Rendering/Renderer2.hpp"
+#include "Rendering/Renderer.hpp"
 
 #if defined(_MSC_VER)
     #pragma warning(push)

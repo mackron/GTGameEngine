@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
-#ifndef __GTEngine_Renderer2_hpp_
-#define __GTEngine_Renderer2_hpp_
+#ifndef __GTEngine_Renderer_hpp_
+#define __GTEngine_Renderer_hpp_
 
 #include <GTCore/Window.hpp>
 #include "Texture2D.hpp"
