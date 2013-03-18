@@ -518,9 +518,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneRenderer.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp">
       <Filter>source\Rendering\OpenGL</Filter>
     </ClInclude>
@@ -1142,9 +1139,6 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\SceneRenderer.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\TextureCube.cpp">
