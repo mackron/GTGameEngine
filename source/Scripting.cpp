@@ -2,7 +2,6 @@
 
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Audio.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/Scene.hpp>

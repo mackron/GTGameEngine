@@ -3,7 +3,15 @@
 #ifndef __GTEngine_TypeConversion_hpp_
 #define __GTEngine_TypeConversion_hpp_
 
-#include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/Rendering/TextureFilters.hpp>
+#include <GTEngine/Rendering/TextureWrapModes.hpp>
+#include <GTEngine/Rendering/VertexArray.hpp>
+#include <GTEngine/Rendering/DrawModes.hpp>
+#include <GTEngine/Rendering/BlendFunctions.hpp>
+#include <GTEngine/Rendering/BlendEquations.hpp>
+#include <GTEngine/Rendering/RendererFunctions.hpp>
+#include <GTEngine/Rendering/StencilOperations.hpp>
+#include <GTImage/ImageFormats.hpp>
 #include <gtgl/gtgl.h>
 
 #if defined(__clang__)
