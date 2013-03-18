@@ -2359,6 +2359,21 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     self.ContextMenu:Menu();
     self.ContextMenu:EnableDefaultEvents();
+    
+    self.ContextMenu:AppendItem("Add Empty"):OnPressed(function()
+        local newNode = self.Scene:CreateNewSceneNode();
+        newNode:SetName("Empty");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata);
+        
+        self:PositionSceneNodeInFrontOfCamera(newNode);
+        
+        self:DeselectAll();
+        self:SelectSceneNode(newNode);
+        
+        self:CommitStateStackFrame();
+    end);
+    
+    self.ContextMenu:AppendSeparator();
 
     self.ContextMenu:AppendItem("Add Cube"):OnPressed(function()
         local newNode = self.Scene:CreateNewSceneNode();
