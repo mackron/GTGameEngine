@@ -572,7 +572,7 @@ namespace GTEngine
         GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> alphaTransparentObjects;
 
         /// The list of refractive-transparent objects, sorted by material definition.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> refractiveTransparentObjects;
+        GTCore::Vector<DefaultSceneRendererMesh> refractiveTransparentObjects;
 
 
         /// The list of opaque mesh objects that should be drawn last.
@@ -580,9 +580,6 @@ namespace GTEngine
 
         /// The list of blended-transparent objects that should be drawn last.
         GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> alphaTransparentObjectsLast;
-
-        /// The list of refractive-transparent objects that should be drawn last.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> refractiveTransparentObjectsLast;
 
 
 
