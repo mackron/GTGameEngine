@@ -99,6 +99,7 @@ namespace GTEngine
         if (enableOpacity)
         {
             Renderer2::EnableBlending();
+            Renderer2::SetBlendEquation(BlendEquation_Add);
             Renderer2::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
         }
         else

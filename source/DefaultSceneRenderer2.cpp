@@ -93,21 +93,9 @@ namespace GTEngine
             delete this->opaqueObjects.buffer[i]->value;
         }
 
-        for (size_t i = 0; i < this->blendedTransparentObjects.count; ++i)
-        {
-            delete this->blendedTransparentObjects.buffer[i]->value;
-        }
-
-
-
         for (size_t i = 0; i < this->opaqueObjectsLast.count; ++i)
         {
             delete this->opaqueObjectsLast.buffer[i]->value;
-        }
-
-        for (size_t i = 0; i < this->blendedTransparentObjectsLast.count; ++i)
-        {
-            delete this->blendedTransparentObjectsLast.buffer[i]->value;
         }
 
 
@@ -370,30 +358,44 @@ namespace GTEngine
             }
             else    // Opaque or Blended
             {
-                if (!(mesh.flags & SceneRendererMesh::DrawLast))
+                if (mesh.material->IsBlended())
                 {
-                    auto iObjectList = this->opaqueObjects.Find(&materialDefinition);
-                    if (iObjectList != nullptr)
+                    if (!(mesh.flags & SceneRendererMesh::DrawLast))
                     {
-                        objectList = iObjectList->value;
+                        objectList = &this->blendedTransparentObjects;
                     }
                     else
                     {
-                        objectList = new GTCore::Vector<DefaultSceneRendererMesh>(100);
-                        this->opaqueObjects.Add(&materialDefinition, objectList);
+                        objectList = &this->blendedTransparentObjectsLast;
                     }
                 }
                 else
                 {
-                    auto iObjectList = this->opaqueObjectsLast.Find(&materialDefinition);
-                    if (iObjectList != nullptr)
+                    if (!(mesh.flags & SceneRendererMesh::DrawLast))
                     {
-                        objectList = iObjectList->value;
+                        auto iObjectList = this->opaqueObjects.Find(&materialDefinition);
+                        if (iObjectList != nullptr)
+                        {
+                            objectList = iObjectList->value;
+                        }
+                        else
+                        {
+                            objectList = new GTCore::Vector<DefaultSceneRendererMesh>(100);
+                            this->opaqueObjects.Add(&materialDefinition, objectList);
+                        }
                     }
                     else
                     {
-                        objectList = new GTCore::Vector<DefaultSceneRendererMesh>(100);
-                        this->opaqueObjectsLast.Add(&materialDefinition, objectList);
+                        auto iObjectList = this->opaqueObjectsLast.Find(&materialDefinition);
+                        if (iObjectList != nullptr)
+                        {
+                            objectList = iObjectList->value;
+                        }
+                        else
+                        {
+                            objectList = new GTCore::Vector<DefaultSceneRendererMesh>(100);
+                            this->opaqueObjectsLast.Add(&materialDefinition, objectList);
+                        }
                     }
                 }
             }
@@ -1933,8 +1935,123 @@ namespace GTEngine
 
     void DefaultSceneRenderer2::RenderBlendedTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
-        (void)framebuffer;
-        (void)visibleObjects;
+        Renderer2::SetDepthFunction(RendererFunction_LEqual);
+
+
+        // We loop over every refractive object and draw them one-by-one. For each object, we draw the lighting constribution to the lighting buffers and then
+        // do the material pass.
+
+        // We need to render these back to front. We'll just build a new list. Shouldn't be too many refractive objects on screen at a time.
+        struct SortedMesh
+        {
+            float distanceToCamera;
+            const DefaultSceneRendererMesh* mesh;
+
+            SortedMesh(float distanceToCameraIn, const DefaultSceneRendererMesh* meshIn)
+                : distanceToCamera(distanceToCameraIn), mesh(meshIn)
+            {
+            }
+
+            bool operator<(const SortedMesh &other) const
+            {
+                return this->distanceToCamera > other.distanceToCamera;     // <-- Intentionally opposite.
+            }
+            bool operator>(const SortedMesh &other) const
+            {
+                return this->distanceToCamera < other.distanceToCamera;     // <-- Intentionally opposite.
+            }
+
+            bool operator==(const SortedMesh &other) const
+            {
+                return this->distanceToCamera == other.distanceToCamera;
+            }
+            bool operator!=(const SortedMesh &other) const
+            {
+                return this->distanceToCamera != other.distanceToCamera;
+            }
+        };
+
+        GTCore::SortedVector<SortedMesh> sortedMeshes;
+        for (size_t iMesh = 0; iMesh < visibleObjects.blendedTransparentObjects.count; ++iMesh)
+        {
+            auto &mesh = visibleObjects.blendedTransparentObjects[iMesh];
+            {
+                float distanceToCamera = glm::distance(glm::inverse(visibleObjects.viewMatrix)[3], mesh.transform[3]);
+                sortedMeshes.Insert(SortedMesh(distanceToCamera, &mesh));
+            }
+        }
+
+
+        for (size_t iMesh = 0; iMesh < sortedMeshes.count; ++iMesh)
+        {
+            auto &mesh = *sortedMeshes[iMesh].mesh;
+            {
+                // First step is to draw the lighting.
+                this->RenderMeshLighting(mesh, visibleObjects);
+
+
+                int colourBuffer[] = {0};
+                Renderer2::SetDrawBuffers(1, colourBuffer);
+
+                // Now we do the material pass. We need to enable blending and set the equation and factors.
+                Renderer2::EnableBlending();
+                Renderer2::SetBlendEquation(mesh.material->GetBlendEquation());
+                Renderer2::SetBlendFunction(mesh.material->GetBlendSourceFactor(), mesh.material->GetBlendDestinationFactor());
+
+
+                // Shader Setup.
+                auto shader = this->GetMaterialMaterialShader(*mesh.material);
+                assert(shader != nullptr);
+                {
+                    glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                    glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                    Renderer2::SetCurrentShader(shader);
+                    shader->SetParametersFromMaterial(*mesh.material);
+                    shader->SetParameter("ViewModelMatrix",   viewModelMatrix);
+                    shader->SetParameter("NormalMatrix",      normalMatrix);
+                    shader->SetParameter("PVMMatrix",         visibleObjects.projectionViewMatrix * mesh.transform);
+                    shader->SetParameter("DiffuseLighting",   framebuffer->lightingBuffer0);
+                    shader->SetParameter("SpecularLighting",  framebuffer->lightingBuffer1);
+                    {
+                        Renderer2::PushShaderPendingProperties(*shader);
+                    }
+                    shader->ClearPendingParameters();
+                }
+
+                // Draw.
+                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::DisableDepthTest();
+                {
+                    Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+                }
+                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer2::EnableDepthTest();
+
+
+                // If we're drawing a highlight, we'll need to draw a solid colour transparent mesh over the top using alpha blending.
+                if ((mesh.flags & SceneRendererMesh::DrawHighlight))
+                {
+                    Renderer2::EnableBlending();
+                    Renderer2::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
+
+
+                    // Shader.
+                    Renderer2::SetCurrentShader(this->highlightShader);
+                    this->highlightShader->SetParameter("PVMMatrix", visibleObjects.projectionViewMatrix * mesh.transform);
+                    {
+                        Renderer2::PushShaderPendingProperties(*this->highlightShader);
+                    }
+                    this->highlightShader->ClearPendingParameters();
+
+
+                    // Draw.
+                    Renderer2::Draw(*mesh.vertexArray, mesh.drawMode);
+
+
+                    Renderer2::DisableBlending();
+                }
+            }
+        }
     }
 
     void DefaultSceneRenderer2::RenderRefractiveTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
@@ -2017,7 +2134,7 @@ namespace GTEngine
             auto &mesh = *sortedMeshes[iMesh].mesh;
             {
                 // First step is to draw the lighting.
-                this->RenderMeshLighting(mesh, framebuffer, visibleObjects);
+                this->RenderMeshLighting(mesh, visibleObjects);
 
 
                 // Now we do the actual material pass.
@@ -2103,7 +2220,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderMeshLighting(const DefaultSceneRendererMesh &mesh, DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer2::RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         auto lights = mesh.touchingLights;
         if (lights != nullptr)
