@@ -851,10 +851,10 @@
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureWrapModes.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer2.hpp">
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeEventHandler.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeEventHandler.hpp">
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1438,10 +1438,10 @@
     <ClCompile Include="..\..\..\source\Rendering\DefaultGUIRenderer.cpp">
       <Filter>source\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\DefaultSceneRenderer2.cpp">
+    <ClCompile Include="..\..\..\source\SceneNodeEventHandler.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\SceneNodeEventHandler.cpp">
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

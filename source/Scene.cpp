@@ -251,7 +251,7 @@ namespace GTEngine
 
 
     Scene::Scene()
-        : renderer(new DefaultSceneRenderer2),
+        : renderer(new DefaultSceneRenderer),
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
           paused(false),
@@ -264,7 +264,7 @@ namespace GTEngine
     }
 
     Scene::Scene(SceneUpdateManager &updateManagerIn, ScenePhysicsManager &physicsManagerIn, SceneCullingManager &cullingManagerIn)
-        : renderer(new DefaultSceneRenderer2),
+        : renderer(new DefaultSceneRenderer),
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
           paused(false),
