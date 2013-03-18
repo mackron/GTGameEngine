@@ -598,9 +598,8 @@
         vec2  lightUV           = (VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5;     // <-- Can this compuation be done in the vertex shader?
         vec3  lightDiffuse      = texture2D(DiffuseLighting,  lightUV).rgb;
         vec3  lightSpecular     = texture2D(SpecularLighting, lightUV).rgb;
-        float lightFactor       = materialDiffuse.a;                           // Just an alias to make things a little bit more readable.
         
-        ColourOut.rgb = (materialDiffuse.rgb * lightDiffuse * lightFactor) + (materialShininess * lightSpecular * lightFactor) + materialEmissive;
+        ColourOut.rgb = (materialDiffuse.rgb * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
     }
 ]]>
 </shader>
@@ -615,8 +614,8 @@
     vec3  Refraction();
     
     
-    in vec3 VertexOutput_Position;
-    in vec3 VertexOutput_PositionVS;
+    in vec4 VertexOutput_Position;
+    in vec4 VertexOutput_PositionVS;
     in vec2 VertexOutput_TexCoord;
     in vec3 VertexOutput_Normal;
     in vec3 VertexOutput_Tangent;
@@ -635,19 +634,26 @@
         float materialShininess  = Shininess();
         vec3  materialRefraction = Refraction();
         
-        vec2  lightUV            = (VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5;     // <-- Can this compuation be done in the vertex shader?
-        vec3  lightDiffuse       = texture2D(DiffuseLighting,  lightUV).rgb;
-        vec3  lightSpecular      = texture2D(SpecularLighting, lightUV).rgb;
         float lightFactor        = materialDiffuse.a;                           // Just an alias to make things a little bit more readable.
+        vec2  lightUV            = (VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5;     // <-- Can this compuation be done in the vertex shader?
+        vec3  lightDiffuse       = texture2D(DiffuseLighting,  lightUV).rgb * lightFactor;
+        vec3  lightSpecular      = texture2D(SpecularLighting, lightUV).rgb * lightFactor;
+        
         
         
         // The diffuse needs to be modified to account for refraction.
         vec2 backgroundUV   = ((VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5) + (normalize(materialRefraction).xy * 0.01);
-        materialDiffuse.rgb = (materialDiffuse.rgb * materialDiffuse.a) + (texture2D(BackgroundTexture, backgroundUV).rgb * (1.0 - materialDiffuse.a));
+        //materialDiffuse.rgb = (materialDiffuse.rgb * materialDiffuse.a) + (texture2D(BackgroundTexture, backgroundUV).rgb * (1.0 - materialDiffuse.a));
+        
+        ColourOut.rgb  = texture2D(BackgroundTexture, backgroundUV).rgb * (1.0 - materialDiffuse.a);
+        ColourOut.rgb += ((materialDiffuse.rgb * materialDiffuse.a) * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
         
         
         // Output is same as usual.
-        ColourOut.rgb = (materialDiffuse.rgb * lightDiffuse * lightFactor) + (materialShininess * lightSpecular * lightFactor) + materialEmissive;
+        //ColourOut.rgb = materialDiffuse.rgb;
+        
+        //ColourOut.rgb = (materialDiffuse.rgb * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
+        //ColourOut.rgb = lightDiffuse;
     }
 ]]>
 </shader>

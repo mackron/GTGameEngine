@@ -26,7 +26,10 @@ namespace GTEngine
         Texture2D* depthStencilBuffer;
 
         /// The main colour buffer (RGBA16F). This is the HDR buffer.
-        Texture2D* colourBuffer;
+        Texture2D* opaqueColourBuffer;
+
+        /// The final HDR colour buffer. RGBA16F.
+        Texture2D* finalColourBufferHDR;
 
         
 
@@ -60,43 +63,46 @@ namespace GTEngine
         /// Constructor
         DefaultSceneRendererFramebuffer(unsigned int widthIn, unsigned int heightIn)
             : framebuffer(nullptr),
-              depthStencilBuffer(nullptr), colourBuffer(nullptr), lightingBuffer0(nullptr), lightingBuffer1(nullptr),
-              finalColourBuffer(nullptr),
+              depthStencilBuffer(nullptr), opaqueColourBuffer(nullptr), lightingBuffer0(nullptr), lightingBuffer1(nullptr),
+              finalColourBufferHDR(nullptr), finalColourBuffer(nullptr),
               bloomFramebuffer(nullptr), bloomBuffer(nullptr),
               width(widthIn), height(heightIn)
         {
-            this->framebuffer        = Renderer2::CreateFramebuffer();
-            this->depthStencilBuffer = Renderer2::CreateTexture2D();
-            this->colourBuffer       = Renderer2::CreateTexture2D();
-            this->lightingBuffer0    = Renderer2::CreateTexture2D();
-            this->lightingBuffer1    = Renderer2::CreateTexture2D();
-            this->finalColourBuffer  = Renderer2::CreateTexture2D();
+            this->framebuffer          = Renderer2::CreateFramebuffer();
+            this->depthStencilBuffer   = Renderer2::CreateTexture2D();
+            this->opaqueColourBuffer   = Renderer2::CreateTexture2D();
+            this->lightingBuffer0      = Renderer2::CreateTexture2D();
+            this->lightingBuffer1      = Renderer2::CreateTexture2D();
+            this->finalColourBufferHDR = Renderer2::CreateTexture2D();
+            this->finalColourBuffer    = Renderer2::CreateTexture2D();
 
-            this->bloomFramebuffer   = Renderer2::CreateFramebuffer();
-            this->bloomBuffer        = Renderer2::CreateTexture2D();
+            this->bloomFramebuffer     = Renderer2::CreateFramebuffer();
+            this->bloomBuffer          = Renderer2::CreateTexture2D();
 
             // Sizes and formats need to be set. All we need to do is call the Resize() method.
             this->Resize(width, height);
 
 
             // Filters.
-            Renderer2::SetTexture2DFilter(*this->colourBuffer,      TextureFilter_NearestNearest, TextureFilter_Nearest);
-            Renderer2::SetTexture2DFilter(*this->bloomBuffer,       TextureFilter_LinearNearest,  TextureFilter_Linear);
-            Renderer2::SetTexture2DFilter(*this->lightingBuffer0,   TextureFilter_Nearest,        TextureFilter_Nearest);
-            Renderer2::SetTexture2DFilter(*this->lightingBuffer1  , TextureFilter_Nearest,        TextureFilter_Nearest);
-            Renderer2::SetTexture2DFilter(*this->finalColourBuffer, TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer2::SetTexture2DFilter(*this->opaqueColourBuffer,    TextureFilter_NearestNearest, TextureFilter_Nearest);
+            Renderer2::SetTexture2DFilter(*this->bloomBuffer,           TextureFilter_LinearNearest,  TextureFilter_Linear);
+            Renderer2::SetTexture2DFilter(*this->lightingBuffer0,       TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer2::SetTexture2DFilter(*this->lightingBuffer1,       TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer2::SetTexture2DFilter(*this->finalColourBufferHDR,  TextureFilter_NearestNearest, TextureFilter_Nearest);
+            Renderer2::SetTexture2DFilter(*this->finalColourBuffer,     TextureFilter_Nearest,        TextureFilter_Nearest);
 
             // Wrap Modes.
-            Renderer2::SetTexture2DWrapMode(*this->colourBuffer, TextureWrapMode_ClampToEdge);
-            Renderer2::SetTexture2DWrapMode(*this->bloomBuffer,  TextureWrapMode_ClampToEdge);
+            Renderer2::SetTexture2DWrapMode(*this->opaqueColourBuffer, TextureWrapMode_ClampToEdge);
+            Renderer2::SetTexture2DWrapMode(*this->bloomBuffer,        TextureWrapMode_ClampToEdge);
 
 
             // Attach to the main framebuffer.
             this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
-            this->framebuffer->AttachColourBuffer(this->colourBuffer,      0);
-            this->framebuffer->AttachColourBuffer(this->lightingBuffer0,   1);
-            this->framebuffer->AttachColourBuffer(this->lightingBuffer1,   2);
-            this->framebuffer->AttachColourBuffer(this->finalColourBuffer, 3);
+            this->framebuffer->AttachColourBuffer(this->opaqueColourBuffer,   0);
+            this->framebuffer->AttachColourBuffer(this->lightingBuffer0,      1);
+            this->framebuffer->AttachColourBuffer(this->lightingBuffer1,      2);
+            this->framebuffer->AttachColourBuffer(this->finalColourBufferHDR, 3);
+            this->framebuffer->AttachColourBuffer(this->finalColourBuffer,    4);
             Renderer2::PushAttachments(*this->framebuffer);
 
             this->bloomFramebuffer->AttachColourBuffer(this->bloomBuffer, 0);
@@ -107,10 +113,11 @@ namespace GTEngine
         ~DefaultSceneRendererFramebuffer()
         {
             Renderer2::DeleteTexture2D(this->depthStencilBuffer);
-            Renderer2::DeleteTexture2D(this->colourBuffer);
+            Renderer2::DeleteTexture2D(this->opaqueColourBuffer);
             Renderer2::DeleteTexture2D(this->bloomBuffer);
             Renderer2::DeleteTexture2D(this->lightingBuffer0);
             Renderer2::DeleteTexture2D(this->lightingBuffer1);
+            Renderer2::DeleteTexture2D(this->finalColourBufferHDR);
             Renderer2::DeleteTexture2D(this->finalColourBuffer);
         
             Renderer2::DeleteFramebuffer(this->framebuffer);
@@ -125,18 +132,19 @@ namespace GTEngine
             this->height = newHeight;
 
             
-            this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
-            this->colourBuffer->SetData(      newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->lightingBuffer0->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->lightingBuffer1->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->finalColourBuffer->SetData( newWidth, newHeight, GTImage::ImageFormat_RGB8);
+            this->depthStencilBuffer->SetData(  newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            this->opaqueColourBuffer->SetData(  newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->lightingBuffer0->SetData(     newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->lightingBuffer1->SetData(     newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->finalColourBufferHDR->SetData(newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->finalColourBuffer->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGB8);
 
             Renderer2::PushTexture2DData(*this->depthStencilBuffer);
-            Renderer2::PushTexture2DData(*this->colourBuffer);
+            Renderer2::PushTexture2DData(*this->opaqueColourBuffer);
             Renderer2::PushTexture2DData(*this->lightingBuffer0);
             Renderer2::PushTexture2DData(*this->lightingBuffer1);
+            Renderer2::PushTexture2DData(*this->finalColourBufferHDR);
             Renderer2::PushTexture2DData(*this->finalColourBuffer);
-
 
 
             unsigned int bloomWidth  = GTCore::Max(1U, newWidth  / 1);
@@ -628,7 +636,7 @@ namespace GTEngine
 
     private:
 
-        /// Callback for light containment queries.
+        /// Callback for point light containment queries.
         class PointLightContactsCallback : public SceneCullingManager::VisibilityCallback
         {
         public:
@@ -684,6 +692,66 @@ namespace GTEngine
         private:    // No copying.
             PointLightContactsCallback(const PointLightContactsCallback &);
             PointLightContactsCallback & operator=(const PointLightContactsCallback &);
+        };
+
+
+
+        /// Callback for spot light containment queries.
+        class SpotLightContactsCallback : public SceneCullingManager::VisibilityCallback
+        {
+        public:
+
+            /// Constructor.
+            SpotLightContactsCallback(DefaultSceneRendererVisibleObjects &ownerIn, size_t lightIndexIn, bool shadowCastingIn)
+                : owner(ownerIn), lightIndex(lightIndexIn), shadowCasting(shadowCastingIn)
+            {
+            }
+
+
+            /// SceneCullingManager::VisibilityCallback::ProcessObjectModel().
+            virtual void ProcessObjectModel(const SceneObject &object)
+            {
+                if (object.GetType() == SceneObjectType_SceneNode)
+                {
+                    auto &sceneNode = static_cast<const SceneNode &>(object);
+                    {
+                        auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+                        assert(modelComponent != nullptr);
+                        {
+                            auto iModel = this->owner.visibleModels.Find(modelComponent);
+                            if (iModel != nullptr)
+                            {
+                                if (!shadowCasting)
+                                {
+                                    iModel->value->spotLights.PushBack(static_cast<uint32_t>(this->lightIndex));
+                                }
+                                else
+                                {
+                                    iModel->value->shadowSpotLights.PushBack(static_cast<uint32_t>(this->lightIndex));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+        private:
+
+            /// The owner of the light.
+            DefaultSceneRendererVisibleObjects &owner;
+
+            /// The index of the light.
+            size_t lightIndex;
+
+            /// Whether or not the light is a shadow casting light.
+            bool shadowCasting;
+
+
+
+        private:    // No copying.
+            SpotLightContactsCallback(const SpotLightContactsCallback &);
+            SpotLightContactsCallback & operator=(const SpotLightContactsCallback &);
         };
 
 
@@ -791,17 +859,6 @@ namespace GTEngine
 
     private:
 
-        /// Creates a new framebuffer of the given dimensions.
-        ///
-        /// @param width  [in] The width of the new framebuffer.
-        /// @param height [in] The height of the new framebuffer.
-        DefaultSceneRendererFramebuffer* CreateFramebuffer(unsigned int width, unsigned int height);
-
-        /// Deletes the given framebuffer that was created with CreateFramebuffer().
-        ///
-        /// @param framebufferToDelete [in] A pointer to the framebuffer being deleted. This must have been created with CreateFramebuffer().
-        void DeleteFramebuffer(DefaultSceneRendererFramebuffer* framebufferToDelete);
-
         /// Retrieves a pointer to the framebuffer of the given viewport.
         ///
         /// @param viewport [in] A reference to the viewport whose framebuffer is being retrieved.
@@ -868,10 +925,10 @@ namespace GTEngine
 
 
         /// Renders the final composition.
-        void RenderFinalComposition(DefaultSceneRendererFramebuffer* framebuffer);
+        void RenderFinalComposition(DefaultSceneRendererFramebuffer* framebuffer, Texture2D* sourceColourBuffer);
 
         /// Renders the bloom map.
-        void RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer);
+        void RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer, Texture2D* sourceColourBuffer);
 
 
 
