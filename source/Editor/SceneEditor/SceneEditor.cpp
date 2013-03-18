@@ -53,7 +53,6 @@ namespace GTEngine
           viewport(), camera(), cameraXRotation(0.0f), cameraYRotation(0.0f),
           updateManager(camera), physicsManager(), cullingManager(),
           scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
-          viewportEventHandler(ownerEditor.GetGame(), viewport),
           selectedNodes(), selectedNodesBeforePlaying(), selectedNodesBeforePhysicsSimulation(),
           pickingWorld(),
           transformGizmo(), gizmoDragAxis(1.0f, 0.0f, 0.0f), gizmoDragFactor(1.0f, 0.0f),
@@ -63,7 +62,7 @@ namespace GTEngine
           transformedObjectWithGizmo(false),
           isDeserializing(false), isUpdatingFromStateStack(false),
           isPlaying(false), isPaused(false),
-          GUI()
+          GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), viewport)
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
 
@@ -1555,6 +1554,12 @@ namespace GTEngine
         {
             this->MarkAsModified();
         }
+    }
+
+
+    void SceneEditor::OnViewportSize()
+    {
+        this->UpdateGizmo();
     }
 
 

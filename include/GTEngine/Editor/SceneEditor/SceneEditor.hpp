@@ -268,6 +268,15 @@ namespace GTEngine
         void OnStateStackFrameCommitted();
 
 
+        ///////////////////////////////////////////////////
+        // GUI Events.
+        //
+        // These events are received in response to certain GUI events.
+
+        /// Called when the main viewport is resized.
+        void OnViewportSize();
+
+
 
         ///////////////////////////////////////////////////
         // Virtual Methods.
@@ -456,9 +465,6 @@ namespace GTEngine
         /// The event handler to attach to the scene.
         SceneEditorSceneEventHandler sceneEventHandler;
 
-        /// The event handler for the 3D viewport.
-        Editor3DViewportEventHandler viewportEventHandler;
-
 
         /// The list of selected nodes.
         GTCore::Vector<uint64_t> selectedNodes;
@@ -564,6 +570,30 @@ namespace GTEngine
             GTGUI::Element* PropertiesPanel;
 
         }GUI;
+
+
+        /// The viewport event handler to we can detect when it is resized.
+        struct ViewportEventHandler : public Editor3DViewportEventHandler
+        {
+            /// Constructor.
+            ViewportEventHandler(SceneEditor &ownerIn, Game &game, SceneViewport &viewport)
+                : Editor3DViewportEventHandler(game, viewport), owner(ownerIn)
+            {
+            }
+
+
+            /// Called after the element has been resized.
+            void OnSize(GTGUI::Element &element)
+            {
+                Editor3DViewportEventHandler::OnSize(element);
+                owner.OnViewportSize();
+            }
+
+
+            /// The owner of the viewport.
+            SceneEditor &owner;
+
+        }viewportEventHandler;
     };
 }
 
