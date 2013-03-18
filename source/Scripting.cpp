@@ -6328,13 +6328,13 @@ namespace GTEngine
             {
                 int EnableVSync(GTCore::Script &)
                 {
-                    Renderer2::SetSwapInterval(1);
+                    Renderer::SetSwapInterval(1);
                     return 0;
                 }
 
                 int DisableVSync(GTCore::Script &)
                 {
-                    Renderer2::SetSwapInterval(0);
+                    Renderer::SetSwapInterval(0);
                     return 0;
                 }
             }

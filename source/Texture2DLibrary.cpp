@@ -51,12 +51,12 @@ namespace GTEngine
         // Textures need to be deleted.
         for (size_t i = 0; i < LoadedTextures.count; ++i)
         {
-            Renderer2::DeleteTexture2D(LoadedTextures.buffer[i]->value);
+            Renderer::DeleteTexture2D(LoadedTextures.buffer[i]->value);
         }
         LoadedTextures.Clear();
 
 
-        Renderer2::DeleteTexture2D(Black1x1Texture);
+        Renderer::DeleteTexture2D(Black1x1Texture);
         Black1x1Texture = nullptr;
     }
 
@@ -91,14 +91,14 @@ namespace GTEngine
                     image.PullAllMipmaps();     // <-- This loads the image data.
 
 
-                    auto newTexture = Renderer2::CreateTexture2D();
+                    auto newTexture = Renderer::CreateTexture2D();
                     newTexture->SetRelativePath(relativePath.c_str());
                     newTexture->SetData(image.GetWidth(), image.GetHeight(), image.GetFormat(), image.GetBaseMipmapData());
 
-                    Renderer2::PushTexture2DData(*newTexture);
-                    Renderer2::GenerateTexture2DMipmaps(*newTexture);
-                    Renderer2::SetTexture2DFilter(*newTexture, DefaultMinFilter, DefaultMagFilter);
-                    Renderer2::SetTexture2DAnisotropy(*newTexture, DefaultAnisotropy);
+                    Renderer::PushTexture2DData(*newTexture);
+                    Renderer::GenerateTexture2DMipmaps(*newTexture);
+                    Renderer::SetTexture2DFilter(*newTexture, DefaultMinFilter, DefaultMagFilter);
+                    Renderer::SetTexture2DAnisotropy(*newTexture, DefaultAnisotropy);
                     
 
 
@@ -152,7 +152,7 @@ namespace GTEngine
                     }
                 }
 
-                Renderer2::DeleteTexture2D(texture);
+                Renderer::DeleteTexture2D(texture);
             }
             else
             {
@@ -176,8 +176,8 @@ namespace GTEngine
                     if (image.IsLinkedToFile())
                     {
                         texture->SetData(image.GetWidth(), image.GetHeight(), image.GetFormat(), image.GetBaseMipmapData());
-                        Renderer2::PushTexture2DData(*texture);
-                        Renderer2::GenerateTexture2DMipmaps(*texture);
+                        Renderer::PushTexture2DData(*texture);
+                        Renderer::GenerateTexture2DMipmaps(*texture);
 
                         // The local data should be deleted to save on some memory.
                         texture->DeleteLocalData();
@@ -199,10 +199,10 @@ namespace GTEngine
         if (Black1x1Texture == nullptr)
         {
             uint32_t texel = 0xFF000000;
-            Black1x1Texture = Renderer2::CreateTexture2D();
+            Black1x1Texture = Renderer::CreateTexture2D();
 
             Black1x1Texture->SetData(1, 1, GTImage::ImageFormat_RGBA8, &texel);
-            Renderer2::PushTexture2DData(*Black1x1Texture);
+            Renderer::PushTexture2DData(*Black1x1Texture);
         }
 
         return Black1x1Texture;

@@ -10,7 +10,7 @@ namespace GTEngine
           framebuffers(), shaders(),
           refCount(1)
     {
-        if (Renderer2::HasFlippedTextures())
+        if (Renderer::HasFlippedTextures())
         {
             this->FlipVertically();
         }
@@ -21,7 +21,7 @@ namespace GTEngine
           framebuffers(), shaders(),
           refCount(1)
     {
-        if (Renderer2::HasFlippedTextures())
+        if (Renderer::HasFlippedTextures())
         {
             this->FlipVertically();
         }

@@ -7,7 +7,7 @@ namespace GTEngine
 {
     VertexArray * VertexArrayFactory::CreateWireframeFromAABB(const btAABB &aabb)
     {
-        VertexArray * va = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+        VertexArray * va = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
 
         float vertices[] =
         {
@@ -49,7 +49,7 @@ namespace GTEngine
 
     VertexArray * VertexArrayFactory::CreatePlaneXZ(float width, float height, VertexFormat &format)
     {
-        auto va = Renderer2::CreateVertexArray(VertexArrayUsage_Static, format);
+        auto va = Renderer::CreateVertexArray(VertexArrayUsage_Static, format);
 
         auto vertexSize     = format.GetSize();
         auto positionOffset = format.GetAttributeOffset(VertexAttribs::Position);
@@ -107,7 +107,7 @@ namespace GTEngine
 
     VertexArray * VertexArrayFactory::CreatePlaneXY(float width, float height, VertexFormat &format)
     {
-        auto va = Renderer2::CreateVertexArray(VertexArrayUsage_Static, format);
+        auto va = Renderer::CreateVertexArray(VertexArrayUsage_Static, format);
 
         auto vertexSize     = format.GetSize();
         auto positionOffset = format.GetAttributeOffset(VertexAttribs::Position);

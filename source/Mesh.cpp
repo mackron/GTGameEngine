@@ -22,7 +22,7 @@ namespace GTEngine
 
         if (this->deleteGeometry)
         {
-            Renderer2::DeleteVertexArray(this->geometry);
+            Renderer::DeleteVertexArray(this->geometry);
         }
 
         if (this->deleteMaterial)
@@ -36,7 +36,7 @@ namespace GTEngine
     {
         if (this->deleteGeometry)
         {
-            Renderer2::DeleteVertexArray(this->geometry);
+            Renderer::DeleteVertexArray(this->geometry);
         }
 
         this->geometry       = newGeometry;
@@ -226,11 +226,11 @@ namespace GTEngine
                         {
                             if (this->deleteGeometry)
                             {
-                                Renderer2::DeleteVertexArray(this->geometry);
+                                Renderer::DeleteVertexArray(this->geometry);
                             }
 
 
-                            auto newVA = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat());
+                            auto newVA = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat());
                             newVA->Deserialize(deserializer);
 
                             this->SetGeometry(newVA);

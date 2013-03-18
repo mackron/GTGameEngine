@@ -164,7 +164,7 @@ namespace GTEngine
 
 
 
-    bool Renderer2::Startup()
+    bool Renderer::Startup()
     {
         assert(!IsInitialised);
         {
@@ -237,7 +237,7 @@ namespace GTEngine
         return IsInitialised;
     }
 
-    void Renderer2::Shutdown()
+    void Renderer::Shutdown()
     {
         assert(IsInitialised);
         {
@@ -264,7 +264,7 @@ namespace GTEngine
     }
 
 
-    GTCore::Window* Renderer2::CreateWindow()
+    GTCore::Window* Renderer::CreateWindow()
     {
         assert(IsInitialised);
         {
@@ -292,7 +292,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetCurrentWindow(GTCore::Window *window)
+    void Renderer::SetCurrentWindow(GTCore::Window *window)
     {
     #ifdef GTCORE_PLATFORM_WINDOWS
         if (window != nullptr)
@@ -315,7 +315,7 @@ namespace GTEngine
     #endif
     }
 
-    void Renderer2::SwapCallCaches()
+    void Renderer::SwapCallCaches()
     {
         // 1) Swap the back call cache index.
         BackCallCacheIndex = !BackCallCacheIndex;
@@ -352,7 +352,7 @@ namespace GTEngine
         State.currentRCDraw                = nullptr;
     }
 
-    void Renderer2::ExecuteCallCache()
+    void Renderer::ExecuteCallCache()
     {
         // 1) Create resources. We want to lock and clear this all at the same time.
         ResourceCreationLock.Lock();
@@ -370,7 +370,7 @@ namespace GTEngine
         ResourceDeletionLock.Unlock();
     }
 
-    void Renderer2::SwapBuffers()
+    void Renderer::SwapBuffers()
     {
         if (State.swapIntervalNeedsUpdate)
         {
@@ -400,7 +400,7 @@ namespace GTEngine
     ///////////////////////////
     // Simple State Changes
 
-    void Renderer2::SetViewport(int x, int y, unsigned int width, unsigned int height)
+    void Renderer::SetViewport(int x, int y, unsigned int width, unsigned int height)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -412,7 +412,7 @@ namespace GTEngine
         State.currentRCClear = nullptr;
     }
 
-    void Renderer2::SetScissor(int x, int y, unsigned int width, unsigned int height)
+    void Renderer::SetScissor(int x, int y, unsigned int width, unsigned int height)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -425,7 +425,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::SetClearColour(float r, float g, float b, float a)
+    void Renderer::SetClearColour(float r, float g, float b, float a)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -437,7 +437,7 @@ namespace GTEngine
         State.currentRCClear = nullptr;
     }
 
-    void Renderer2::SetClearDepth(float depth)
+    void Renderer::SetClearDepth(float depth)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -449,7 +449,7 @@ namespace GTEngine
         State.currentRCClear = nullptr;
     }
 
-    void Renderer2::SetClearStencil(int stencil)
+    void Renderer::SetClearStencil(int stencil)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -462,7 +462,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::SetCurrentShader(Shader* programToMakeCurrent)
+    void Renderer::SetCurrentShader(Shader* programToMakeCurrent)
     {
         if (programToMakeCurrent != nullptr)
         {
@@ -479,7 +479,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetCurrentFramebuffer(Framebuffer* framebufferToMakeCurrent)
+    void Renderer::SetCurrentFramebuffer(Framebuffer* framebufferToMakeCurrent)
     {
         FramebufferState_OpenGL33* framebufferState = nullptr;
         if (framebufferToMakeCurrent != nullptr)
@@ -500,7 +500,7 @@ namespace GTEngine
 
 
 
-    void Renderer2::EnableScissorTest()
+    void Renderer::EnableScissorTest()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -511,7 +511,7 @@ namespace GTEngine
         State.currentRCClear = nullptr;
     }
 
-    void Renderer2::DisableScissorTest()
+    void Renderer::DisableScissorTest()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -523,7 +523,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::EnableBlending()
+    void Renderer::EnableBlending()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -532,7 +532,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::DisableBlending()
+    void Renderer::DisableBlending()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -541,7 +541,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetBlendFunction(BlendFunc sfactor, BlendFunc dfactor)
+    void Renderer::SetBlendFunction(BlendFunc sfactor, BlendFunc dfactor)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -550,7 +550,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetBlendEquation(BlendEquation equation)
+    void Renderer::SetBlendEquation(BlendEquation equation)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -559,7 +559,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetBlendColour(float r, float g, float b, float a)
+    void Renderer::SetBlendColour(float r, float g, float b, float a)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -569,7 +569,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::EnableAlphaTest()
+    void Renderer::EnableAlphaTest()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -578,7 +578,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::DisableAlphaTest()
+    void Renderer::DisableAlphaTest()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -587,7 +587,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetAlphaTestFunction(RendererFunction function, float ref)
+    void Renderer::SetAlphaTestFunction(RendererFunction function, float ref)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -597,7 +597,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::EnableColourWrites()
+    void Renderer::EnableColourWrites()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -608,7 +608,7 @@ namespace GTEngine
         State.currentRCClear = nullptr;
     }
 
-    void Renderer2::DisableColourWrites()
+    void Renderer::DisableColourWrites()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -619,7 +619,7 @@ namespace GTEngine
         State.currentRCClear = nullptr;
     }
 
-    void Renderer2::EnableDepthWrites()
+    void Renderer::EnableDepthWrites()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -630,7 +630,7 @@ namespace GTEngine
         State.currentRCClear = nullptr;
     }
 
-    void Renderer2::DisableDepthWrites()
+    void Renderer::DisableDepthWrites()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -642,7 +642,7 @@ namespace GTEngine
     }
 
     
-    void Renderer2::EnableDepthTest()
+    void Renderer::EnableDepthTest()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -651,7 +651,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::DisableDepthTest()
+    void Renderer::DisableDepthTest()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -660,7 +660,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetDepthFunction(RendererFunction function)
+    void Renderer::SetDepthFunction(RendererFunction function)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -671,7 +671,7 @@ namespace GTEngine
 
 
 
-    void Renderer2::EnableStencilTest()
+    void Renderer::EnableStencilTest()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -680,7 +680,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::DisableStencilTest()
+    void Renderer::DisableStencilTest()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -689,7 +689,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetStencilMaskSeparate(bool frontFace, bool backFace, unsigned int mask)
+    void Renderer::SetStencilMaskSeparate(bool frontFace, bool backFace, unsigned int mask)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -715,7 +715,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetStencilFuncSeparate(bool frontFace, bool backFace, RendererFunction func, int ref, unsigned int mask)
+    void Renderer::SetStencilFuncSeparate(bool frontFace, bool backFace, RendererFunction func, int ref, unsigned int mask)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -741,7 +741,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetStencilOpSeparate(bool frontFace, bool backFace, StencilOp stencilFail, StencilOp depthFail, StencilOp pass)
+    void Renderer::SetStencilOpSeparate(bool frontFace, bool backFace, StencilOp stencilFail, StencilOp depthFail, StencilOp pass)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -769,7 +769,7 @@ namespace GTEngine
 
 
 
-    void Renderer2::SetFaceCulling(bool cullFront, bool cullBack)
+    void Renderer::SetFaceCulling(bool cullFront, bool cullBack)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -796,7 +796,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::EnablePolygonOffset(PolygonMode mode)
+    void Renderer::EnablePolygonOffset(PolygonMode mode)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -819,7 +819,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::DisablePolygonOffset(PolygonMode mode)
+    void Renderer::DisablePolygonOffset(PolygonMode mode)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -842,7 +842,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetPolygonMode(bool frontFaces, bool backFaces, PolygonMode mode)
+    void Renderer::SetPolygonMode(bool frontFaces, bool backFaces, PolygonMode mode)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -884,7 +884,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetPolygonOffset(float factor, float units)
+    void Renderer::SetPolygonOffset(float factor, float units)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -894,7 +894,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::SetDrawBuffers(size_t count, int* buffers)
+    void Renderer::SetDrawBuffers(size_t count, int* buffers)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);
@@ -906,7 +906,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::SetSwapInterval(int interval)
+    void Renderer::SetSwapInterval(int interval)
     {
         State.swapInterval            = interval;
         State.swapIntervalNeedsUpdate = true;
@@ -917,7 +917,7 @@ namespace GTEngine
     ///////////////////////////
     // Drawing
 
-    void Renderer2::Clear(unsigned int bufferMask)
+    void Renderer::Clear(unsigned int bufferMask)
     {
         UPDATE_CURRENT_RC(RCClear);
         assert(State.currentRCClear != nullptr);
@@ -945,18 +945,18 @@ namespace GTEngine
         State.currentRCSetFramebufferState = nullptr;
     }
 
-    void Renderer2::Draw(const VertexArray &vertexArray, DrawMode mode)
+    void Renderer::Draw(const VertexArray &vertexArray, DrawMode mode)
     {
         auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
 
         // If the vertex array needs anything updated, do so now.
         if (vertexArrayGL33.DoesVertexDataNeedUpdating())
         {
-            Renderer2::PushVertexArrayVertexData(vertexArray);
+            Renderer::PushVertexArrayVertexData(vertexArray);
         }
         if (vertexArrayGL33.DoesIndexDataNeedUpdating())
         {
-            Renderer2::PushVertexArrayIndexData(vertexArray);
+            Renderer::PushVertexArrayIndexData(vertexArray);
         }
 
 
@@ -981,7 +981,7 @@ namespace GTEngine
     ///////////////////////////
     // Resources
 
-    VertexArray* Renderer2::CreateVertexArray(VertexArrayUsage usage, const VertexFormat &format)
+    VertexArray* Renderer::CreateVertexArray(VertexArrayUsage usage, const VertexFormat &format)
     {
         State.instantiatedVertexArrayObjects.PushBack(new GLuint(0));
         GLuint* vertexArrayObject  = State.instantiatedVertexArrayObjects.GetBack();
@@ -1008,7 +1008,7 @@ namespace GTEngine
         return new VertexArray_OpenGL33(usage, format, vertexArrayObject, vertexBufferObject, indexBufferObject);
     }
 
-    void Renderer2::DeleteVertexArray(VertexArray* vertexArrayToDelete)
+    void Renderer::DeleteVertexArray(VertexArray* vertexArrayToDelete)
     {
         auto vertexArrayToDeleteGL33 = static_cast<VertexArray_OpenGL33*>(vertexArrayToDelete);
         if (vertexArrayToDeleteGL33 != nullptr)
@@ -1045,7 +1045,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::PushVertexArrayVertexData(const VertexArray &vertexArray)
+    void Renderer::PushVertexArrayVertexData(const VertexArray &vertexArray)
     {
         auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
         {
@@ -1071,7 +1071,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::PushVertexArrayIndexData(const VertexArray &vertexArray)
+    void Renderer::PushVertexArrayIndexData(const VertexArray &vertexArray)
     {
         auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
         {
@@ -1094,7 +1094,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::PushVertexArrayData(const VertexArray &vertexArray)
+    void Renderer::PushVertexArrayData(const VertexArray &vertexArray)
     {
         auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL33 &>(vertexArray);
         {
@@ -1257,12 +1257,12 @@ namespace GTEngine
 
 
 
-    Texture2D* Renderer2::CreateTexture2D()
+    Texture2D* Renderer::CreateTexture2D()
     {
         return new Texture2D_OpenGL33(Renderer_CreateOpenGL33Texture(), GL_TEXTURE_2D);
     }
 
-    TextureCube* Renderer2::CreateTextureCube()
+    TextureCube* Renderer::CreateTextureCube()
     {
         // The texture object for each of the faces is actually the main cube map object.
         GLuint* objectGL = Renderer_CreateOpenGL33Texture();
@@ -1278,7 +1278,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::DeleteTexture2D(Texture2D* textureToDelete)
+    void Renderer::DeleteTexture2D(Texture2D* textureToDelete)
     {
         auto textureToDeleteGL33 = static_cast<Texture2D_OpenGL33*>(textureToDelete);
         if (textureToDeleteGL33 != nullptr)
@@ -1291,7 +1291,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::DeleteTextureCube(TextureCube* textureToDelete)
+    void Renderer::DeleteTextureCube(TextureCube* textureToDelete)
     {
         auto textureToDeleteGL33 = static_cast<TextureCube_OpenGL33*>(textureToDelete);
         if (textureToDeleteGL33 != nullptr)
@@ -1312,7 +1312,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::PushTexture2DData(const Texture2D &texture, int mipmapIndex)
+    void Renderer::PushTexture2DData(const Texture2D &texture, int mipmapIndex)
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
@@ -1347,7 +1347,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::PushTextureCubeData(const TextureCube &texture)
+    void Renderer::PushTextureCubeData(const TextureCube &texture)
     {
         auto &textureGL33 = static_cast<const TextureCube_OpenGL33 &>(texture);
         {
@@ -1387,7 +1387,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::SetTexture2DFilter(const Texture2D &texture, TextureFilter minification, TextureFilter magnification)
+    void Renderer::SetTexture2DFilter(const Texture2D &texture, TextureFilter minification, TextureFilter magnification)
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
@@ -1395,7 +1395,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetTextureCubeFilter(const TextureCube &texture, TextureFilter minification, TextureFilter magnification)
+    void Renderer::SetTextureCubeFilter(const TextureCube &texture, TextureFilter minification, TextureFilter magnification)
     {
         auto &textureGL33 = static_cast<const TextureCube_OpenGL33 &>(texture);
         {
@@ -1404,7 +1404,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::SetTexture2DAnisotropy(const Texture2D &texture, unsigned int anisotropy)
+    void Renderer::SetTexture2DAnisotropy(const Texture2D &texture, unsigned int anisotropy)
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
@@ -1412,7 +1412,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetTextureCubeAnisotropy(const TextureCube &texture, unsigned int anisotropy)
+    void Renderer::SetTextureCubeAnisotropy(const TextureCube &texture, unsigned int anisotropy)
     {
         auto &textureGL33 = static_cast<const TextureCube_OpenGL33 &>(texture);
         {
@@ -1421,7 +1421,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::SetTexture2DWrapMode(const Texture2D &texture, TextureWrapMode wrapMode)
+    void Renderer::SetTexture2DWrapMode(const Texture2D &texture, TextureWrapMode wrapMode)
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
@@ -1429,7 +1429,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetTextureCubeWrapMode(const TextureCube &texture, TextureWrapMode wrapMode)
+    void Renderer::SetTextureCubeWrapMode(const TextureCube &texture, TextureWrapMode wrapMode)
     {
         auto &textureGL33 = static_cast<const TextureCube_OpenGL33 &>(texture);
         {
@@ -1438,7 +1438,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::SetTexture2DMipmapLevels(const Texture2D &texture, unsigned int baseLevel, unsigned int maxLevel)
+    void Renderer::SetTexture2DMipmapLevels(const Texture2D &texture, unsigned int baseLevel, unsigned int maxLevel)
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
@@ -1446,7 +1446,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::SetTextureCubeMipmapLevels(const TextureCube &texture, unsigned int baseLevel, unsigned int maxLevel)
+    void Renderer::SetTextureCubeMipmapLevels(const TextureCube &texture, unsigned int baseLevel, unsigned int maxLevel)
     {
         auto &textureGL33 = static_cast<const TextureCube_OpenGL33 &>(texture);
         {
@@ -1455,7 +1455,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::GenerateTexture2DMipmaps(const Texture2D &texture)
+    void Renderer::GenerateTexture2DMipmaps(const Texture2D &texture)
     {
         auto &textureGL33 = static_cast<const Texture2D_OpenGL33 &>(texture);
         {
@@ -1463,7 +1463,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer2::GenerateTextureCubeMipmaps(const TextureCube &texture)
+    void Renderer::GenerateTextureCubeMipmaps(const TextureCube &texture)
     {
         auto &textureGL33 = static_cast<const TextureCube_OpenGL33 &>(texture);
         {
@@ -1473,7 +1473,7 @@ namespace GTEngine
 
 
 
-    Shader* Renderer2::CreateShader(const char* vertexShaderSource, const char* fragmentShaderSource, const char* geometryShaderSource)
+    Shader* Renderer::CreateShader(const char* vertexShaderSource, const char* fragmentShaderSource, const char* geometryShaderSource)
     {
         State.instantiatedProgramObjects.PushBack(new ShaderState_OpenGL33);
         auto programState = State.instantiatedProgramObjects.GetBack();
@@ -1493,7 +1493,7 @@ namespace GTEngine
         return new Shader_OpenGL33(programState, vertexShaderSource, fragmentShaderSource, geometryShaderSource);
     }
 
-    void Renderer2::DeleteShader(Shader* shaderToDelete)
+    void Renderer::DeleteShader(Shader* shaderToDelete)
     {
         auto shaderToDeleteGL33 = static_cast<Shader_OpenGL33*>(shaderToDelete);
         if (shaderToDeleteGL33 != nullptr)
@@ -1525,7 +1525,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::PushShaderPendingProperties(const Shader &shader)
+    void Renderer::PushShaderPendingProperties(const Shader &shader)
     {
         auto &shaderGL33 = static_cast<const Shader_OpenGL33 &>(shader);
         {
@@ -1633,7 +1633,7 @@ namespace GTEngine
 
 
 
-    Framebuffer* Renderer2::CreateFramebuffer()
+    Framebuffer* Renderer::CreateFramebuffer()
     {
         State.instantiatedFramebufferObjects.PushBack(new FramebufferState_OpenGL33);
         auto framebufferState = State.instantiatedFramebufferObjects.GetBack();
@@ -1653,7 +1653,7 @@ namespace GTEngine
         return new Framebuffer_OpenGL33(framebufferState);
     }
 
-    void Renderer2::DeleteFramebuffer(Framebuffer* framebufferToDelete)
+    void Renderer::DeleteFramebuffer(Framebuffer* framebufferToDelete)
     {
         auto framebufferToDeleteGL33 = static_cast<Framebuffer_OpenGL33*>(framebufferToDelete);
         if (framebufferToDeleteGL33 != nullptr)
@@ -1685,7 +1685,7 @@ namespace GTEngine
     }
 
 
-    void Renderer2::PushAttachments(const Framebuffer &framebuffer)
+    void Renderer::PushAttachments(const Framebuffer &framebuffer)
     {
         auto &framebufferGL33 = static_cast<const Framebuffer_OpenGL33 &>(framebuffer);
         {
@@ -1736,22 +1736,22 @@ namespace GTEngine
     /////////////////////////////////////////////////////////////
     // Support Queries
 
-    bool Renderer2::HasFlippedTextures()
+    bool Renderer::HasFlippedTextures()
     {
         return true;
     }
 
-    unsigned int Renderer2::GetMaxColourAttachments()
+    unsigned int Renderer::GetMaxColourAttachments()
     {
         return static_cast<unsigned int>(RendererCaps.MaxColourAttachments);
     }
 
-    unsigned int Renderer2::GetMaxDrawBuffers()
+    unsigned int Renderer::GetMaxDrawBuffers()
     {
         return static_cast<unsigned int>(RendererCaps.MaxDrawBuffers);
     }
 
-    unsigned int Renderer2::GetMaxTextureUnits()
+    unsigned int Renderer::GetMaxTextureUnits()
     {
         return static_cast<unsigned int>(RendererCaps.MaxTextureUnits);
     }

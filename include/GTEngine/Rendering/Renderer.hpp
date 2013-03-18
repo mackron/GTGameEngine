@@ -51,7 +51,7 @@ namespace GTEngine
     ///
     /// To simplify and encourage one-way throughput of the renderer, there is no way to retrieve the current state via the public API. This
     /// should be done at a higher level.
-    class Renderer2
+    class Renderer
     {
     public:
 

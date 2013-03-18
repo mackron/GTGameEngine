@@ -13,7 +13,7 @@ namespace GTEngine
     {
         if (FullscreenQuad == nullptr)
         {
-            FullscreenQuad = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P2);
+            FullscreenQuad = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P2);
             
             float vertices[] =
             {
@@ -49,7 +49,7 @@ namespace GTEngine
 
     void VertexArrayLibrary::Shutdown()
     {
-        Renderer2::DeleteVertexArray(FullscreenQuad);
+        Renderer::DeleteVertexArray(FullscreenQuad);
         FullscreenQuad = nullptr;
     }
 
@@ -228,7 +228,7 @@ namespace GTEngine
 
     VertexArray* VertexArrayLibrary::CreateFromBuilder(const MeshBuilderP3T2N3 &builder)
     {
-        auto va = Renderer2::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3T3B3);
+        auto va = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3T3B3);
         va->SetIndexData(builder.GetIndexData(), builder.GetIndexCount());
         
         // Here we need to copy over the data. The data will be in a different format, so we need to do this vertex by vertex.
@@ -273,7 +273,7 @@ namespace GTEngine
                 indexCount  += vertexArrays[i]->GetIndexCount();
             }
 
-            auto va = Renderer2::CreateVertexArray(VertexArrayUsage_Static, format);
+            auto va = Renderer::CreateVertexArray(VertexArrayUsage_Static, format);
             va->SetData(nullptr, vertexCount, nullptr, indexCount);
 
             auto destVertexSize = format.GetSize();
@@ -341,6 +341,6 @@ namespace GTEngine
 
     void VertexArrayLibrary::Delete(VertexArray* va)
     {
-        Renderer2::DeleteVertexArray(va);
+        Renderer::DeleteVertexArray(va);
     }
 }

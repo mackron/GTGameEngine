@@ -116,7 +116,7 @@ namespace GTEngine
             int height = this->script.GetInteger("GTEngine.Display.Height");
 
             this->window->EnableFullscreen(static_cast<unsigned int>(width), static_cast<unsigned int>(height));
-            Renderer2::SetCurrentWindow(this->window);
+            Renderer::SetCurrentWindow(this->window);
         }
     }
 
@@ -125,7 +125,7 @@ namespace GTEngine
         if (this->window != nullptr)
         {
             this->window->DisableFullscreen();
-            Renderer2::SetCurrentWindow(this->window);
+            Renderer::SetCurrentWindow(this->window);
         }
     }
 
@@ -707,7 +707,7 @@ namespace GTEngine
 
 
             // First we need a window. Note that we don't show it straight away.
-            this->window = Renderer2::CreateWindow();
+            this->window = Renderer::CreateWindow();
             if (this->window != nullptr)
             {
                 // We'll need to grab the update thread object. We grab this from the thread cache which will have been initialised
@@ -1008,14 +1008,14 @@ namespace GTEngine
         this->OnDraw();
         //this->script.Execute("Game.OnDraw();");
 
-        Renderer2::ExecuteCallCache();
+        Renderer::ExecuteCallCache();
 
         this->OnPostDraw();
         //this->script.Execute("Game.OnPostDraw();");
 
 
         // At this point we can finally swap the buffers.
-        Renderer2::SwapBuffers();
+        Renderer::SwapBuffers();
 
 
         if (this->profiler.IsEnabled())
@@ -1026,7 +1026,7 @@ namespace GTEngine
 
     void Game::SwapRCQueues()           // TODO: Consider renaming this to SwapCallCaches() to match the new renderer.
     {
-        Renderer2::SwapCallCaches();
+        Renderer::SwapCallCaches();
     }
 
 

@@ -564,7 +564,7 @@ namespace GTEngine
         {
             // We'll get here if the shader has not already been created.
             shaderInfo = new ShaderInfo;
-            shaderInfo->shader           = Renderer2::CreateShader(ShaderLibrary::GetShaderString(vertexShaderID), ShaderLibrary::GetShaderString(fragmentShaderID));
+            shaderInfo->shader           = Renderer::CreateShader(ShaderLibrary::GetShaderString(vertexShaderID), ShaderLibrary::GetShaderString(fragmentShaderID));
             shaderInfo->vertexShaderID   = vertexShaderID;
             shaderInfo->fragmentShaderID = fragmentShaderID;
             shaderInfo->refCount         = 1;
@@ -600,7 +600,7 @@ namespace GTEngine
             {
                 AcquiredShaders.RemoveFirstOccuranceOf(shaderInfo);
 
-                Renderer2::DeleteShader(shaderInfo->shader);
+                Renderer::DeleteShader(shaderInfo->shader);
                 delete shaderInfo;
             }
             else
@@ -638,7 +638,7 @@ namespace GTEngine
     {
         if (GUIShader == nullptr)
         {
-            GUIShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("Engine_GUI_VS"), ShaderLibrary::GetShaderString("Engine_GUI_FS"), nullptr);
+            GUIShader = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_GUI_VS"), ShaderLibrary::GetShaderString("Engine_GUI_FS"), nullptr);
         }
 
         return GUIShader;
@@ -648,7 +648,7 @@ namespace GTEngine
     {
         if (FullscreenQuadShader == nullptr)
         {
-            FullscreenQuadShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("Engine_FullscreenQuad_VS"), ShaderLibrary::GetShaderString("Engine_FullscreenQuad_FS"));
+            FullscreenQuadShader = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_FullscreenQuad_VS"), ShaderLibrary::GetShaderString("Engine_FullscreenQuad_FS"));
         }
 
         return FullscreenQuadShader;
@@ -658,7 +658,7 @@ namespace GTEngine
     {
         if (Textured2DQuadShader == nullptr)
         {
-            Textured2DQuadShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("Engine_Textured2DQuad_VS"), ShaderLibrary::GetShaderString("Engine_Textured2DQuad_FS"));
+            Textured2DQuadShader = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_Textured2DQuad_VS"), ShaderLibrary::GetShaderString("Engine_Textured2DQuad_FS"));
         }
 
         return Textured2DQuadShader;
@@ -668,7 +668,7 @@ namespace GTEngine
     {
         if (ColouredBGQuadShader == nullptr)
         {
-            ColouredBGQuadShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("Engine_ColouredBGQuad_VS"), ShaderLibrary::GetShaderString("Engine_ColouredBGQuad_FS"));
+            ColouredBGQuadShader = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_ColouredBGQuad_VS"), ShaderLibrary::GetShaderString("Engine_ColouredBGQuad_FS"));
         }
 
         return ColouredBGQuadShader;
@@ -678,7 +678,7 @@ namespace GTEngine
     {
         if (LineShader == nullptr)
         {
-            LineShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("Engine_SimpleLine_VS"), ShaderLibrary::GetShaderString("Engine_SimpleLine_FS"));
+            LineShader = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_SimpleLine_VS"), ShaderLibrary::GetShaderString("Engine_SimpleLine_FS"));
         }
 
         return LineShader;
@@ -688,7 +688,7 @@ namespace GTEngine
     {
         if (DepthClearShader == nullptr)
         {
-            DepthClearShader = Renderer2::CreateShader(ShaderLibrary::GetShaderString("Engine_ClearDepth_VS"), ShaderLibrary::GetShaderString("Engine_ClearDepth_FS"));
+            DepthClearShader = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_ClearDepth_VS"), ShaderLibrary::GetShaderString("Engine_ClearDepth_FS"));
         }
 
         return DepthClearShader;
@@ -701,12 +701,12 @@ namespace GTEngine
 {
     void ShaderLibrary::Shutdown()
     {
-        Renderer2::DeleteShader(GUIShader);
-        Renderer2::DeleteShader(FullscreenQuadShader);
-        Renderer2::DeleteShader(Textured2DQuadShader);
-        Renderer2::DeleteShader(ColouredBGQuadShader);
-        Renderer2::DeleteShader(LineShader);
-        Renderer2::DeleteShader(DepthClearShader);
+        Renderer::DeleteShader(GUIShader);
+        Renderer::DeleteShader(FullscreenQuadShader);
+        Renderer::DeleteShader(Textured2DQuadShader);
+        Renderer::DeleteShader(ColouredBGQuadShader);
+        Renderer::DeleteShader(LineShader);
+        Renderer::DeleteShader(DepthClearShader);
 
         GUIShader            = nullptr;
         FullscreenQuadShader = nullptr;
