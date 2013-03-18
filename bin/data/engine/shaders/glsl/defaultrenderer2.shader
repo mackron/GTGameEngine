@@ -1,4 +1,31 @@
 
+<shader id="DefaultSceneRenderer_DepthPassVS">
+<![CDATA[
+    #version 330
+    
+    in      vec3 VertexInput_Position;
+    uniform mat4 PVMMatrix;
+    
+    void main()
+    {
+        gl_Position = PVMMatrix * vec4(VertexInput_Position, 1.0);
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_DepthPassFS">
+<![CDATA[
+    #version 330
+    
+    void main()
+    {
+    }
+]]>
+</shader>
+
+
+
+
 <shader id="DefaultSceneRenderer_HighlightVS">
 <![CDATA[
     #version 330
@@ -27,33 +54,6 @@
 </shader>
 
 
-
-
-
-
-<shader id="DefaultSceneRenderer_DepthPassVS">
-<![CDATA[
-    #version 330
-    
-    in      vec3 VertexInput_Position;
-    uniform mat4 PVMMatrix;
-    
-    void main()
-    {
-        gl_Position = PVMMatrix * vec4(VertexInput_Position, 1.0);
-    }
-]]>
-</shader>
-
-<shader id="DefaultSceneRenderer_DepthPassFS">
-<![CDATA[
-    #version 330
-    
-    void main()
-    {
-    }
-]]>
-</shader>
 
 
 
