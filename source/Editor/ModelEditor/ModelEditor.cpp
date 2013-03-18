@@ -32,7 +32,7 @@ namespace GTEngine
         
 
         // HDR should be disabled for this.
-        static_cast<DefaultSceneRenderer2 &>(this->scene.GetRenderer()).DisableHDR();
+        static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).DisableHDR();
 
 
         // We need to ensure the model node has a model component. What we want to do is pass an absolute path, which will in turn

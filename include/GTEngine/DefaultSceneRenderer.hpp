@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
-#ifndef __GTEngine_DefaultSceneRenderer2_hpp_
-#define __GTEngine_DefaultSceneRenderer2_hpp_
+#ifndef __GTEngine_DefaultSceneRenderer_hpp_
+#define __GTEngine_DefaultSceneRenderer_hpp_
 
 #include "SceneRenderer.hpp"
 #include "Scene.hpp"
@@ -766,15 +766,15 @@ namespace GTEngine
 
 
     /// Class representing the default scene renderer.
-    class DefaultSceneRenderer2 : public SceneRenderer
+    class DefaultSceneRenderer : public SceneRenderer
     {
     public:
 
         /// Constructor.
-        DefaultSceneRenderer2();
+        DefaultSceneRenderer();
 
         /// Destructor.
-        virtual ~DefaultSceneRenderer2();
+        virtual ~DefaultSceneRenderer();
 
 
 
@@ -1058,7 +1058,7 @@ namespace GTEngine
         public:
 
             /// Constructor.
-            MaterialLibraryEventHandler(DefaultSceneRenderer2 &rendererIn)
+            MaterialLibraryEventHandler(DefaultSceneRenderer &rendererIn)
                 : renderer(rendererIn)
             {
             }
@@ -1073,7 +1073,7 @@ namespace GTEngine
 
 
             /// A reference to the renderer that owns this event handler.
-            DefaultSceneRenderer2 &renderer;
+            DefaultSceneRenderer &renderer;
 
 
         private:    // No copying.
@@ -1084,8 +1084,8 @@ namespace GTEngine
         
         
     private:    // No copying.
-        DefaultSceneRenderer2(const DefaultSceneRenderer2 &);
-        DefaultSceneRenderer2 & operator=(const DefaultSceneRenderer2 &);
+        DefaultSceneRenderer(const DefaultSceneRenderer &);
+        DefaultSceneRenderer & operator=(const DefaultSceneRenderer &);
     };
 }
 

@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
-#include <GTEngine/DefaultSceneRenderer2.hpp>
+#include <GTEngine/DefaultSceneRenderer.hpp>
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 
@@ -631,7 +631,7 @@ namespace GTEngine
     ///////////////////////////////////////////////////////////
     // DefaultSceneRenderer
 
-    DefaultSceneRenderer2::DefaultSceneRenderer2()
+    DefaultSceneRenderer::DefaultSceneRenderer()
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
           shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
           fullscreenTriangleVA(nullptr), finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
@@ -679,7 +679,7 @@ namespace GTEngine
         MaterialLibrary::AttachEventHandler(this->materialLibraryEventHandler);
     }
 
-    DefaultSceneRenderer2::~DefaultSceneRenderer2()
+    DefaultSceneRenderer::~DefaultSceneRenderer()
     {
         Renderer2::DeleteShader(this->depthPassShader);
         Renderer2::DeleteShader(this->shadowMapShader);
@@ -708,17 +708,17 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer2::Begin(Scene &scene)
+    void DefaultSceneRenderer::Begin(Scene &scene)
     {
         (void)scene;
     }
 
-    void DefaultSceneRenderer2::End(Scene &scene)
+    void DefaultSceneRenderer::End(Scene &scene)
     {
         (void)scene;
     }
 
-    void DefaultSceneRenderer2::RenderViewport(Scene &scene, SceneViewport &viewport)
+    void DefaultSceneRenderer::RenderViewport(Scene &scene, SceneViewport &viewport)
     {
         // 0) Retrieve visible objects.
         DefaultSceneRendererVisibleObjects visibleObjects(scene, viewport);
@@ -790,7 +790,7 @@ namespace GTEngine
         this->RenderFinalComposition(framebuffer, sourceColourBuffer);
     }
 
-    void DefaultSceneRenderer2::AddViewport(SceneViewport &viewport)
+    void DefaultSceneRenderer::AddViewport(SceneViewport &viewport)
     {
         // We create a framebuffer for every viewport. We map these to viewports with a simple GTCore::Map container.
         auto framebuffer = new DefaultSceneRendererFramebuffer(viewport.GetWidth(), viewport.GetHeight());
@@ -801,7 +801,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RemoveViewport(SceneViewport &viewport)
+    void DefaultSceneRenderer::RemoveViewport(SceneViewport &viewport)
     {
         // When a viewport is removed, the framebuffer needs to be deleted.
         viewport.SetColourBuffer(nullptr);
@@ -818,7 +818,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::OnViewportResized(SceneViewport &viewport)
+    void DefaultSceneRenderer::OnViewportResized(SceneViewport &viewport)
     {
         auto framebuffer = this->GetViewportFramebuffer(viewport);
         assert(framebuffer != nullptr);
@@ -828,7 +828,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer2::AddExternalMesh(const SceneRendererMesh &meshToAdd)
+    void DefaultSceneRenderer::AddExternalMesh(const SceneRendererMesh &meshToAdd)
     {
         if (!this->externalMeshes.Exists(&meshToAdd))
         {
@@ -836,7 +836,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RemoveExternalMesh(const SceneRendererMesh &meshToRemove)
+    void DefaultSceneRenderer::RemoveExternalMesh(const SceneRendererMesh &meshToRemove)
     {
         this->externalMeshes.RemoveFirstOccuranceOf(&meshToRemove);
     }
@@ -845,55 +845,55 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////////
     // Settings.
 
-    void DefaultSceneRenderer2::EnableHDR()
+    void DefaultSceneRenderer::EnableHDR()
     {
         this->isHDREnabled = true;
     }
 
-    void DefaultSceneRenderer2::DisableHDR()
+    void DefaultSceneRenderer::DisableHDR()
     {
         this->isHDREnabled = false;
     }
 
-    bool DefaultSceneRenderer2::IsHDREnabled() const
+    bool DefaultSceneRenderer::IsHDREnabled() const
     {
         return this->isHDREnabled;
     }
 
 
-    void DefaultSceneRenderer2::EnableBloom()
+    void DefaultSceneRenderer::EnableBloom()
     {
         this->isBloomEnabled = true;
     }
 
-    void DefaultSceneRenderer2::DisableBloom()
+    void DefaultSceneRenderer::DisableBloom()
     {
         this->isBloomEnabled = false;
     }
 
-    bool DefaultSceneRenderer2::IsBloomEnabled() const
+    bool DefaultSceneRenderer::IsBloomEnabled() const
     {
         return this->isBloomEnabled;
     }
 
 
-    void DefaultSceneRenderer2::SetHDRExposure(float newExposure)
+    void DefaultSceneRenderer::SetHDRExposure(float newExposure)
     {
         this->hdrExposure = newExposure;
     }
 
-    float DefaultSceneRenderer2::GetHDRExposure() const
+    float DefaultSceneRenderer::GetHDRExposure() const
     {
         return this->hdrExposure;
     }
 
 
-    void DefaultSceneRenderer2::SetBloomFactor(float newBloomFactor)
+    void DefaultSceneRenderer::SetBloomFactor(float newBloomFactor)
     {
         this->bloomFactor = newBloomFactor;
     }
 
-    float DefaultSceneRenderer2::GetBloomFactor() const
+    float DefaultSceneRenderer::GetBloomFactor() const
     {
         return this->bloomFactor;
     }
@@ -903,7 +903,7 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////////
     // Event Handlers from MaterialLibrary.
 
-    void DefaultSceneRenderer2::OnDeleteMaterialDefinition(MaterialDefinition &definition)
+    void DefaultSceneRenderer::OnDeleteMaterialDefinition(MaterialDefinition &definition)
     {
         auto iShaders = this->materialShadersToDelete.Find(&definition);
         if (iShaders != nullptr)
@@ -918,7 +918,7 @@ namespace GTEngine
     /////////////////////////////////////////////////////////
     // Private
 
-    DefaultSceneRendererFramebuffer* DefaultSceneRenderer2::GetViewportFramebuffer(SceneViewport &viewport)
+    DefaultSceneRendererFramebuffer* DefaultSceneRenderer::GetViewportFramebuffer(SceneViewport &viewport)
     {
         auto iFramebuffer = this->viewportFramebuffers.Find(&viewport);
         if (iFramebuffer != nullptr)
@@ -934,13 +934,13 @@ namespace GTEngine
     ///////////////////////
     // Rendering.
 
-    void DefaultSceneRenderer2::RenderOpaquePass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderOpaquePass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         this->RenderOpaqueLightingPass(framebuffer, visibleObjects);
         this->RenderOpaqueMaterialPass(framebuffer, visibleObjects);
     }
 
-    void DefaultSceneRenderer2::RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         // We need to do a depth pre-pass.
         Renderer2::DisableColourWrites();
@@ -974,7 +974,7 @@ namespace GTEngine
         Renderer2::EnableColourWrites();
     }
 
-    void DefaultSceneRenderer2::RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         (void)framebuffer;
 
@@ -1002,7 +1002,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer2::RenderOpaqueLightingPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderOpaqueLightingPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         // TODO: This needs a big improvement here. Need to combine lights into a single pass for objects.
 
@@ -1113,7 +1113,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         // This pass draws the objects like normal and grab the lighting information from the lighting buffers.
         Renderer2::DisableBlending();
@@ -1151,7 +1151,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
         {
@@ -1221,7 +1221,7 @@ namespace GTEngine
     
 
 
-    void DefaultSceneRenderer2::RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         // First.
         for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
@@ -1244,7 +1244,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.ambientLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1292,7 +1292,7 @@ namespace GTEngine
 
 
 
-    void DefaultSceneRenderer2::RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         // First.
         for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
@@ -1315,7 +1315,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.directionalLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1363,7 +1363,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer2::RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
+    void DefaultSceneRenderer::RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
     {
         // We first need to build the shadow map.
         Renderer2::DisableBlending();
@@ -1444,7 +1444,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.shadowDirectionalLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1495,7 +1495,7 @@ namespace GTEngine
 
 
 
-    void DefaultSceneRenderer2::RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         // First.
         for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
@@ -1518,7 +1518,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.pointLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1570,7 +1570,7 @@ namespace GTEngine
 
 
 
-    void DefaultSceneRenderer2::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
+    void DefaultSceneRenderer::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
     {
         // We first need to build the shadow map.
         Renderer2::DisableBlending();
@@ -1628,7 +1628,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.shadowPointLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1681,7 +1681,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderPointShapowMapFace(const DefaultSceneRendererShadowPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderPointShapowMapFace(const DefaultSceneRendererShadowPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         // The draw buffer needs to be set. The appropriate framebuffer will have already been set.
         Renderer2::SetDrawBuffers(1, &faceIndex);
@@ -1718,7 +1718,7 @@ namespace GTEngine
 
 
 
-    void DefaultSceneRenderer2::RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         // First.
         for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
@@ -1741,7 +1741,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.spotLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1796,7 +1796,7 @@ namespace GTEngine
 
 
 
-    void DefaultSceneRenderer2::RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
+    void DefaultSceneRenderer::RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
     {
         // We first need to build the shadow map.
         Renderer2::DisableBlending();
@@ -1876,7 +1876,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         auto light = visibleObjects.shadowSpotLights.buffer[lightIndex]->value;
         assert(light != nullptr);
@@ -1933,7 +1933,7 @@ namespace GTEngine
 
 
 
-    void DefaultSceneRenderer2::RenderBlendedTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderBlendedTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         Renderer2::SetDepthFunction(RendererFunction_LEqual);
 
@@ -2059,7 +2059,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderRefractiveTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderRefractiveTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         // We need to copy the content from the opaque buffer over the to buffer that will output the results of the transparent pass.
         int colourBuffer[] = {3};
@@ -2225,7 +2225,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer2::RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const DefaultSceneRendererVisibleObjects &visibleObjects)
+    void DefaultSceneRenderer::RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
         auto lights = mesh.touchingLights;
         if (lights != nullptr)
@@ -2524,7 +2524,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer2::RenderFinalComposition(DefaultSceneRendererFramebuffer* framebuffer, Texture2D* sourceColourBuffer)
+    void DefaultSceneRenderer::RenderFinalComposition(DefaultSceneRendererFramebuffer* framebuffer, Texture2D* sourceColourBuffer)
     {
         Renderer2::DisableDepthTest();
         Renderer2::DisableDepthWrites();
@@ -2607,7 +2607,7 @@ namespace GTEngine
         Renderer2::Draw(*this->fullscreenTriangleVA);
     }
 
-    void DefaultSceneRenderer2::RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer, Texture2D* sourceColourBuffer)
+    void DefaultSceneRenderer::RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer, Texture2D* sourceColourBuffer)
     {
         // Framebuffer Setup.
         int bufferIndex = 0;
@@ -2639,7 +2639,7 @@ namespace GTEngine
     ///////////////////////
     // Materials.
 
-    DefaultSceneRendererMaterialShaders* DefaultSceneRenderer2::GetMaterialShaders(Material &material)
+    DefaultSceneRendererMaterialShaders* DefaultSceneRenderer::GetMaterialShaders(Material &material)
     {
         // The shaders are created per-definition. This means 1 shader for each definition. If we don't do this, we'll be creating many more shaders
         // than is required. Also, since we're modifying the definition (by setting a metadata property), we'll be evil and do a const_cast.
@@ -2658,7 +2658,7 @@ namespace GTEngine
         }
     }
 
-    Shader* DefaultSceneRenderer2::GetMaterialAmbientLightShader(Material &material)
+    Shader* DefaultSceneRenderer::GetMaterialAmbientLightShader(Material &material)
     {
         auto shaders = this->GetMaterialShaders(material);
         assert(shaders != nullptr);
@@ -2681,7 +2681,7 @@ namespace GTEngine
         }
     }
 
-    Shader* DefaultSceneRenderer2::GetMaterialDirectionalLightShader(Material &material)
+    Shader* DefaultSceneRenderer::GetMaterialDirectionalLightShader(Material &material)
     {
         auto shaders = this->GetMaterialShaders(material);
         assert(shaders != nullptr);
@@ -2704,7 +2704,7 @@ namespace GTEngine
         }
     }
 
-    Shader* DefaultSceneRenderer2::GetMaterialPointLightShader(Material &material)
+    Shader* DefaultSceneRenderer::GetMaterialPointLightShader(Material &material)
     {
         auto shaders = this->GetMaterialShaders(material);
         assert(shaders != nullptr);
@@ -2727,7 +2727,7 @@ namespace GTEngine
         }
     }
 
-    Shader* DefaultSceneRenderer2::GetMaterialSpotLightShader(Material &material)
+    Shader* DefaultSceneRenderer::GetMaterialSpotLightShader(Material &material)
     {
         auto shaders = this->GetMaterialShaders(material);
         assert(shaders != nullptr);
@@ -2751,7 +2751,7 @@ namespace GTEngine
     }
 
 
-    Shader* DefaultSceneRenderer2::GetMaterialShadowDirectionalLightShader(Material &material)
+    Shader* DefaultSceneRenderer::GetMaterialShadowDirectionalLightShader(Material &material)
     {
         auto shaders = this->GetMaterialShaders(material);
         assert(shaders != nullptr);
@@ -2774,7 +2774,7 @@ namespace GTEngine
         }
     }
 
-    Shader* DefaultSceneRenderer2::GetMaterialShadowPointLightShader(Material &material)
+    Shader* DefaultSceneRenderer::GetMaterialShadowPointLightShader(Material &material)
     {
         auto shaders = this->GetMaterialShaders(material);
         assert(shaders != nullptr);
@@ -2797,7 +2797,7 @@ namespace GTEngine
         }
     }
 
-    Shader* DefaultSceneRenderer2::GetMaterialShadowSpotLightShader(Material &material)
+    Shader* DefaultSceneRenderer::GetMaterialShadowSpotLightShader(Material &material)
     {
         auto shaders = this->GetMaterialShaders(material);
         assert(shaders != nullptr);
@@ -2822,7 +2822,7 @@ namespace GTEngine
 
 
 
-    Shader* DefaultSceneRenderer2::GetMaterialMaterialShader(Material &material)
+    Shader* DefaultSceneRenderer::GetMaterialMaterialShader(Material &material)
     {
         auto shaders = this->GetMaterialShaders(material);
         assert(shaders != nullptr);

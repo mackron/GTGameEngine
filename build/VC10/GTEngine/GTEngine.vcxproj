@@ -199,7 +199,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\DataFilesWatcher.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneCullingManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultScenePhysicsManager.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer2.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneUpdateManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor3DViewportEventHandler.hpp" />
@@ -428,7 +428,7 @@
     <ClCompile Include="..\..\..\source\DataFilesWatcher.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneCullingManager.cpp" />
     <ClCompile Include="..\..\..\source\DefaultScenePhysicsManager.cpp" />
-    <ClCompile Include="..\..\..\source\DefaultSceneRenderer2.cpp" />
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneUpdateManager.cpp" />
     <ClCompile Include="..\..\..\source\Editor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor3DViewportEventHandler.cpp" />
