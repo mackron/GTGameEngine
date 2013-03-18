@@ -559,6 +559,15 @@ namespace GTEngine
         }
     }
 
+    void Renderer2::SetBlendColour(float r, float g, float b, float a)
+    {
+        UPDATE_CURRENT_RC(RCSetGlobalState);
+        assert(State.currentRCSetGlobalState != nullptr);
+        {
+            State.currentRCSetGlobalState->SetBlendColour(r, g, b, a);
+        }
+    }
+
 
     void Renderer2::EnableAlphaTest()
     {

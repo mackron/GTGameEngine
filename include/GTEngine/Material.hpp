@@ -76,6 +76,9 @@ namespace GTEngine
         /// Retrieves the destination blending factor.
         BlendFunc GetBlendDestinationFactor() const { return this->blendDestinationFactor; }
 
+        /// Retrieves the blend colour.
+        const glm::vec4 & GetBlendColour() const { return this->blendColour; }
+
 
 
         /// Determines whether or not the material is refractive.
@@ -136,6 +139,9 @@ namespace GTEngine
 
         /// The destination blending factor.
         BlendFunc blendDestinationFactor;
+
+        /// The colour to use with the "constant" blending factors.
+        glm::vec4 blendColour;
 
 
     private:
@@ -206,6 +212,9 @@ namespace GTEngine
         /// Retrieves the destination blending factor.
         BlendFunc GetBlendDestinationFactor() const { return this->definition.GetBlendDestinationFactor(); }
 
+        /// Retrieves the blend colour.
+        const glm::vec4 & GetBlendColour() const { return this->blendColour; }
+
 
         /// Determines whether or not the material is refractive.
         bool IsRefractive() const { return this->definition.IsRefractive(); }
@@ -256,6 +265,9 @@ namespace GTEngine
 
         /// The parameters being used by the material.
         ShaderParameterCache parameters;
+
+        /// The blend colour for the "constant colour" blending factors.
+        glm::vec4 blendColour;
 
 
 

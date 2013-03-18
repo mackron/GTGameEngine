@@ -198,6 +198,11 @@ namespace GTEngine
         /// Sets the blending equation.
         static void SetBlendEquation(BlendEquation equation);
 
+        /// Sets the colour to use with the constant-colour blending factors.
+        static void SetBlendColour(float r, float g, float b, float a);
+        static void SetBlendColour(const glm::vec4 &colour) { SetBlendColour(colour.x, colour.y, colour.z, colour.w); }
+        
+
 
         /// Enables alpha testing.
         static void EnableAlphaTest();

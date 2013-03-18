@@ -260,6 +260,16 @@ namespace GTEngine
                 {
                     this->blendDestinationFactor = ToBlendFunction(destinationfactorNode->value());
                 }
+
+                // <colour>
+                auto colourNode = blendingNode->first_node("colour");
+                if (colourNode != nullptr)
+                {
+                    float colour[4];
+                    MaterialDefinition::ParseFloatArray(colourNode->value(), colour, 4);
+                    
+                    this->blendColour = glm::vec4(colour[0], colour[1], colour[2], colour[3]);
+                }
             }
 
 
@@ -433,7 +443,7 @@ namespace GTEngine
 namespace GTEngine
 {
     Material::Material(const MaterialDefinition &definition)
-        : definition(definition), parameters()
+        : definition(definition), parameters(), blendColour(definition.GetBlendColour())
     {
         for (size_t i = 0; i < definition.defaultParams.GetCount(); ++i)
         {

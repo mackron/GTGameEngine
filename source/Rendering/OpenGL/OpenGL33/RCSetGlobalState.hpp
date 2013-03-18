@@ -52,6 +52,9 @@ namespace GTEngine
         /// Renderer::SetBlendEquation()
         void SetBlendEquation(GLenum mode);
 
+        /// Renderer::SetBlendColour()
+        void SetBlendColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+
 
         /// Renderer::SetAlphaTestFunction()
         void SetAlphaTestFunction(GLenum func, GLclampf ref);
@@ -190,6 +193,16 @@ namespace GTEngine
             GLenum mode;
 
         }blendEquationParams;
+
+        /// glBlendColor parameters.
+        struct
+        {
+            GLfloat r;
+            GLfloat g;
+            GLfloat b;
+            GLfloat a;
+
+        }blendColor;
 
 
         /// glAlphaFunc parameters.
