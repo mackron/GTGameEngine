@@ -7,6 +7,8 @@ function GTGUI.Element:Vector2Input()
     self.X:NumberTextBox():UseFloatFormat();
     self.Y:NumberTextBox():UseFloatFormat();
     
+    self.Locked = false;
+    
     
     function self:GetX()
         return self.X:GetValue();
@@ -17,10 +19,10 @@ function GTGUI.Element:Vector2Input()
     
     
     function self:SetX(value)
-        self.X:SetValue(value);
+        if not self.Locked then self.X:SetValue(value) end;
     end
     function self:SetY(value)
-        self.Y:SetValue(value);
+        if not self.Locked then self.Y:SetValue(value) end;
     end
     
     
@@ -73,7 +75,9 @@ function GTGUI.Element:Vector2Input()
     
     
     function self:OnValueChanged(arg1)
-        self.Callbacks:BindOrCall("OnValueChanged", arg1);
+        self.Locked = true;
+            self.Callbacks:BindOrCall("OnValueChanged", arg1);
+        self.Locked = false;
     end
     
     return self;

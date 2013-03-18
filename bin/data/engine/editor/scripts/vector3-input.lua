@@ -9,6 +9,8 @@ function GTGUI.Element:Vector3Input()
     self.Y:NumberTextBox():UseFloatFormat();
     self.Z:NumberTextBox():UseFloatFormat();
     
+    self.Locked = false;
+    
 
     function self:GetX()
         return self.X:GetValue();
@@ -22,13 +24,13 @@ function GTGUI.Element:Vector3Input()
     
     
     function self:SetX(value)
-        self.X:SetValue(value);
+        if not self.Locked then self.X:SetValue(value) end;
     end
     function self:SetY(value)
-        self.Y:SetValue(value);
+        if not self.Locked then self.Y:SetValue(value) end;
     end
     function self:SetZ(value)
-        self.Z:SetValue(value);
+        if not self.Locked then self.Z:SetValue(value) end;
     end
     
     
@@ -44,7 +46,6 @@ function GTGUI.Element:Vector3Input()
     
     function self:GetXYZ()
         return self:GetX(), self:GetY(), self:GetZ();
-        --return tonumber(self.X:GetText()) or 0.0, tonumber(self.Y:GetText()) or 0.0, tonumber(self.Z:GetText()) or 0.0;
     end
     
     function self:GetXYZTable()
@@ -92,7 +93,9 @@ function GTGUI.Element:Vector3Input()
     
     
     function self:OnValueChanged(arg1)
-        self.Callbacks:BindOrCall("OnValueChanged", arg1);
+        self.Locked = true;
+            self.Callbacks:BindOrCall("OnValueChanged", arg1);
+        self.Locked = false;
     end
     
     return self;
