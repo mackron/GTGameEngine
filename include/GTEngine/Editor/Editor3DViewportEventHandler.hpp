@@ -36,28 +36,28 @@ namespace GTEngine
         // Events.
 
         /// OnSize.
-        void OnSize(GTGUI::Element &element);
+        virtual void OnSize(GTGUI::Element &element);
 
         /// OnDraw.
-        void OnDraw(GTGUI::Element &element);
+        virtual void OnDraw(GTGUI::Element &element);
 
         /// OnLMBDown.
-        void OnLMBDown(GTGUI::Element &element, int x, int y);
+        virtual void OnLMBDown(GTGUI::Element &element, int x, int y);
 
         /// OnLMBUp.
-        void OnLMBUp(GTGUI::Element &element, int x, int y);
+        virtual void OnLMBUp(GTGUI::Element &element, int x, int y);
 
         /// OnRMBDown.
-        void OnRMBDown(GTGUI::Element &element, int x, int y);
+        virtual void OnRMBDown(GTGUI::Element &element, int x, int y);
 
         /// OnRMBUp.
-        void OnRMBUp(GTGUI::Element &element, int x, int y);
+        virtual void OnRMBUp(GTGUI::Element &element, int x, int y);
 
         /// OnMouseMove
-        void OnMouseMove(GTGUI::Element &element, int x, int y);
+        virtual void OnMouseMove(GTGUI::Element &element, int x, int y);
 
         /// OnMouseWhee
-        void OnMouseWheel(GTGUI::Element &element, int delta, int x, int y);
+        virtual void OnMouseWheel(GTGUI::Element &element, int delta, int x, int y);
 
 
 
