@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_OpenGL33_RCSetVertexArrayState_hpp_
 #define __GTEngine_Rendering_OpenGL33_RCSetVertexArrayState_hpp_
 
-#include <GTEngine/Rendering/RenderCommand.hpp>
+#include "../../RenderCommand.hpp"
 #include <GTEngine/Rendering/VertexFormat.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>

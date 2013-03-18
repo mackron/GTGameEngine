@@ -3,7 +3,7 @@
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
-#include <GTEngine/Rendering/Renderer2.hpp>
+#include <GTEngine/Rendering/Renderer.hpp>
 #include <GTCore/IO.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Dictionary.hpp>

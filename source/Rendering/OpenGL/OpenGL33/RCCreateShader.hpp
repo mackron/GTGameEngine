@@ -3,10 +3,10 @@
 #ifndef __GTEngine_Rendering_OpenGL33_RCCreateShader_hpp_
 #define __GTEngine_Rendering_OpenGL33_RCCreateShader_hpp_
 
-#include <GTEngine/Rendering/RenderCommand.hpp>
 #include <GTCore/String.hpp>
 #include <gtgl/gtgl.h>
 
+#include "../../RenderCommand.hpp"
 #include "ShaderState_OpenGL33.hpp"
 
 namespace GTEngine

@@ -3,12 +3,12 @@
 #ifndef __GTEngine_Rendering_OpenGL33_RCSetShaderState_hpp_
 #define __GTEngine_Rendering_OpenGL33_RCSetShaderState_hpp_
 
-#include <GTEngine/Rendering/RenderCommand.hpp>
 #include <GTEngine/ShaderParameterCache.hpp>
 #include <GTCore/Dictionary.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 
+#include "../../RenderCommand.hpp"
 #include "ShaderState_OpenGL33.hpp"
 
 namespace GTEngine

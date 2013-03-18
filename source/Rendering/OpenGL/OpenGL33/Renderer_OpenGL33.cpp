@@ -1,10 +1,8 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
-#include <GTEngine/Rendering/Renderer2.hpp>
+#include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTEngine/Rendering/RCQueue.hpp>
-#include <GTEngine/Rendering/RCCache.hpp>
 
 
 #include <gtgl/gtgl.h>
@@ -16,6 +14,8 @@
 #endif
 
 
+#include "../../RCCache.hpp"
+#include "../../RCQueue.hpp"
 #include "../RendererCaps.hpp"
 #include "../Debugging_OpenGL.hpp"
 #include "../TypeConversion.hpp"

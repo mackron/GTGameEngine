@@ -299,20 +299,11 @@
     <ClInclude Include="..\..\..\include\GTEngine\MaterialShaderCache.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RenderCommand.hpp">
-      <Filter>include\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCCache.hpp">
-      <Filter>include\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RCQueue.hpp">
-      <Filter>include\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Components\ProximityComponent.hpp">
       <Filter>include\Components</Filter>
@@ -829,6 +820,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp">
       <Filter>include\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\RCCache.hpp">
+      <Filter>source\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\RCQueue.hpp">
+      <Filter>source\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\RenderCommand.hpp">
+      <Filter>source\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -3,7 +3,7 @@
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTEngine/Rendering/Renderer2.hpp>
+#include <GTEngine/Rendering/Renderer.hpp>
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/Path.hpp>
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
-#include <GTEngine/Rendering/RCQueue.hpp>
-#include <GTEngine/Rendering/RenderCommand.hpp>
+#include "RCQueue.hpp"
+#include "RenderCommand.hpp"
 #include <cstring>      // For memcpy().
 
 namespace GTEngine
