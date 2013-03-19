@@ -582,7 +582,7 @@
     
     float CalculateShadowVSM(vec2 shadowUV, float fragmentDepth)
     {
-        float bias     = 0.001;
+        float bias     = 0.001 * fragmentDepth;
         vec2  moments  = texture2D(ShadowMap, shadowUV).xy;
         float variance = moments.y - (moments.x * moments.x);
         float d        = fragmentDepth - moments.x;

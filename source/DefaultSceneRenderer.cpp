@@ -1382,8 +1382,9 @@ namespace GTEngine
         Renderer::SetClearDepth(1.0f);
         Renderer::Clear(BufferType_Colour | BufferType_Depth);
 
-        int shadowBufferIndex = 0;
-        Renderer::SetDrawBuffers(1, &shadowBufferIndex);
+        int colourBufferIndex = 0;
+        int blurBufferIndex   = 1;
+        Renderer::SetDrawBuffers(1, &colourBufferIndex);
 
 
 
@@ -1411,7 +1412,44 @@ namespace GTEngine
             }
         }
 
-        Renderer::GenerateTexture2DMipmaps(*this->shadowMapFramebuffer.colourBuffer);
+
+        Renderer::DisableDepthTest();
+        Renderer::DisableDepthWrites();
+
+        // Blur X.
+        {
+            Renderer::SetDrawBuffers(1, &blurBufferIndex);
+
+            // Shader.
+            Renderer::SetCurrentShader(this->blurShaderX);
+            this->blurShaderX->SetParameter("Texture", this->shadowMapFramebuffer.colourBuffer);
+            {
+                Renderer::PushShaderPendingProperties(*this->blurShaderX);
+            }
+            this->blurShaderX->ClearPendingParameters();
+
+            // Draw.
+            Renderer::Draw(*this->fullscreenTriangleVA);
+        }
+
+        // Blur Y.
+        {
+            Renderer::SetDrawBuffers(1, &colourBufferIndex);
+
+            // Shader.
+            Renderer::SetCurrentShader(this->blurShaderY);
+            this->blurShaderY->SetParameter("Texture", this->shadowMapFramebuffer.blurBuffer);
+            {
+                Renderer::PushShaderPendingProperties(*this->blurShaderY);
+            }
+            this->blurShaderY->ClearPendingParameters();
+
+            // Draw.
+            Renderer::Draw(*this->fullscreenTriangleVA);
+        }
+
+        Renderer::EnableDepthWrites();
+        Renderer::EnableDepthTest();
 
 
 
@@ -1862,8 +1900,9 @@ namespace GTEngine
         Renderer::SetClearDepth(1.0f);
         Renderer::Clear(BufferType_Colour | BufferType_Depth);
 
-        int shadowBufferIndex = 0;
-        Renderer::SetDrawBuffers(1, &shadowBufferIndex);
+        int colourBufferIndex = 0;
+        int blurBufferIndex   = 1;
+        Renderer::SetDrawBuffers(1, &colourBufferIndex);
 
 
 
@@ -1891,7 +1930,45 @@ namespace GTEngine
             }
         }
 
-        Renderer::GenerateTexture2DMipmaps(*this->shadowMapFramebuffer.colourBuffer);
+
+        Renderer::DisableDepthTest();
+        Renderer::DisableDepthWrites();
+
+        // Blur X.
+        {
+            Renderer::SetDrawBuffers(1, &blurBufferIndex);
+
+            // Shader.
+            Renderer::SetCurrentShader(this->blurShaderX);
+            this->blurShaderX->SetParameter("Texture", this->shadowMapFramebuffer.colourBuffer);
+            {
+                Renderer::PushShaderPendingProperties(*this->blurShaderX);
+            }
+            this->blurShaderX->ClearPendingParameters();
+
+            // Draw.
+            Renderer::Draw(*this->fullscreenTriangleVA);
+        }
+
+        // Blur Y.
+        {
+            Renderer::SetDrawBuffers(1, &colourBufferIndex);
+
+            // Shader.
+            Renderer::SetCurrentShader(this->blurShaderY);
+            this->blurShaderY->SetParameter("Texture", this->shadowMapFramebuffer.blurBuffer);
+            {
+                Renderer::PushShaderPendingProperties(*this->blurShaderY);
+            }
+            this->blurShaderY->ClearPendingParameters();
+
+            // Draw.
+            Renderer::Draw(*this->fullscreenTriangleVA);
+        }
+
+        Renderer::EnableDepthWrites();
+        Renderer::EnableDepthTest();
+        
 
 
 
