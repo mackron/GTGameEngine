@@ -62,6 +62,21 @@ namespace GTEngine
     }
 
 
+    bool ModelComponent::SetMaterial(size_t materialIndex, const char* materialRelativePath)
+    {
+        if (this->model != nullptr)
+        {
+            if (this->model->meshes[materialIndex]->SetMaterial(materialRelativePath))
+            {
+                this->OnChanged();
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+
     void ModelComponent::SetFaceCulling(bool cullFront, bool cullBack)
     {
         if (cullFront)

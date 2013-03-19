@@ -3445,18 +3445,10 @@ namespace GTEngine
                         auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                         if (component != nullptr)
                         {
-                            auto model = component->GetModel();
-                            if (model != nullptr)
-                            {
-                                auto index        = script.ToInteger(2) - 1;        // Minus 1 because Lua is 1 based.
-                                auto materialPath = script.ToString(3);
+                            auto index        = script.ToInteger(2) - 1;        // Minus 1 because Lua is 1 based.
+                            auto materialPath = script.ToString(3);
 
-                                script.Push(model->meshes[index]->SetMaterial(materialPath));
-                            }
-                            else
-                            {
-                                script.Push(false);
-                            }
+                            script.Push(component->SetMaterial(static_cast<size_t>(index), materialPath));
                         }
                         else
                         {
