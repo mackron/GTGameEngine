@@ -278,6 +278,17 @@ namespace GTEngine
         normalTransform.Transpose();
         normalTransform.Inverse();
 
+        
+        // If the scale has a negative component we need to reverse the polygon winding.
+        aiVector3t<float>    scale;
+        aiQuaterniont<float> rotation;
+        aiVector3t<float>    position;
+        node.mTransformation.Decompose(scale, rotation, position);
+
+        bool useReverseWinding = scale.x < 0.0f || scale.y < 0.0f || scale.z < 0.0f;
+
+
+
         // Here we need to loop over each mesh and add it to the model. The mesh needs to be transformed based on the transformation.
         for (unsigned int iMesh = 0; iMesh < node.mNumMeshes; ++iMesh)
         {
@@ -354,9 +365,18 @@ namespace GTEngine
 
                     auto indexDst = indexData + (iFace * 3);
 
-                    indexDst[0] = face.mIndices[0];
-                    indexDst[1] = face.mIndices[1];
-                    indexDst[2] = face.mIndices[2];
+                    if (!useReverseWinding)
+                    {
+                        indexDst[0] = face.mIndices[0];
+                        indexDst[1] = face.mIndices[1];
+                        indexDst[2] = face.mIndices[2];
+                    }
+                    else
+                    {
+                        indexDst[0] = face.mIndices[2];
+                        indexDst[1] = face.mIndices[1];
+                        indexDst[2] = face.mIndices[0];
+                    }
                 }
 
                 va->UnmapVertexData();
