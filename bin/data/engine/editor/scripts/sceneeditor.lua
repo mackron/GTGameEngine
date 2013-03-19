@@ -1368,48 +1368,73 @@ end
 
 function GTGUI.Element:ScriptComponentPanel()
     self:PanelGroupBox("Script", true);
-    self.ScriptsContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass=''                  style='' />");
-    self.NewScriptButton  = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='new-script-button' style='' />");
-    self.ScriptPanels     = {};
+    self.ScriptsContainer   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass=''                  style='' />");
+
     
-    self.CurrentNode      = nil;
-    self.CurrentComponent = nil;
-    self.IsUpdating       = false;
+    self.NewScriptContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()               .. "' styleclass='new-script-container' style='margin-top:4px' />");
+    self.NewScriptTextBox   = GTGUI.Server.New("<div parentid='" .. self.NewScriptContainer:GetID() .. "' styleclass='new-script-textbox'   style='' />");
+    self.NewScriptIcon      = GTGUI.Server.New("<div parentid='" .. self.NewScriptContainer:GetID() .. "' styleclass='new-script-icon'      style='' />");
+    self.ScriptPanels       = {};
+    
+    self.CurrentNode        = nil;
+    self.CurrentComponent   = nil;
+    self.IsUpdating         = false;
     
     
-    GTGUI.Server.New("<div parentid='" .. self.NewScriptButton:GetID() .. "' styleclass='' style='transparent-mouse-input:true; width:16px; height:16px; background-image:std-plus; background-image-color:inherit' />");
-    GTGUI.Server.New("<div parentid='" .. self.NewScriptButton:GetID() .. "' styleclass='' style='transparent-mouse-input:true; width:auto;'>New Script</div>");
     
-    self.NewScriptButton:OnPressed(function()
-        self:AddScript(name);
+    self.NewScriptTextBox:OnDrop(function(data)
+        if data.droppedElement.isAsset then
+            if not self.CurrentComponent:IsUsingScript(data.droppedElement.path) then
+                if self:AddScript(data.droppedElement.path) then
+                    self.NewScriptTextBox:SetText("");
+                end
+            end
+        end
     end);
     
     
+    self.NewScriptTextBox:OnKeyPressed(function(data)
+        if data.key == GTGUI.Keys.Enter then
+            if self:AddScript(self.NewScriptTextBox:GetText()) then
+                self.NewScriptTextBox:SetText("");
+            end
+        end
+    end);
+    
+    self.NewScriptIcon:OnPressed(function(data)
+        if self:AddScript(self.NewScriptTextBox:GetText()) then
+            self.NewScriptTextBox:SetText("");
+        end
+    end);
+    
+    
+    
+    
     function self:AddScript(name)
+        -- If we're not updating we want to add the script to the component itself.
+        if not self.IsUpdating then
+            if not self.CurrentComponent:IsUsingScript(name) then
+                if self.CurrentComponent:AddScript(name) then
+                    self.ParentPanel:OnSceneNodeChanged();
+                else
+                    return false;
+                end
+            else
+                return false;
+            end
+        end
+        
+    
         local new = GTGUI.Server.New("<div parentid='" .. self.ScriptsContainer:GetID() .. "' styleclass='' style='margin-bottom:4px;' />");
         
         ---------------------------------
         -- Header
         new.Header             = GTGUI.Server.New("<div parentid='" .. new:GetID()        .. "' styleclass=''                           style='child-plane:horizontal; flex-child-width:true; vertical-align:center;' />");
-        new.FilePathTextBox    = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass='textbox'                    style='width:100%;' />");
+        new.FilePathTextBox    = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass=''                    style='width:100%; text-color:std-text-color; font-style:bold;' />");
         new.CloseButton        = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass='panel-groupbox-title-cross' style='margin-left:4px;' />");
         
         new.FilePathTextBox:SetText(name);
         
-        new.FilePathTextBox:OnKeyPressed(function(data)
-            if data.key == GTGUI.Keys.Enter then
-                self:ReloadScript(new);
-                self:ReloadVariables(new);
-            end
-        end);
-        
-        new.FilePathTextBox:OnDrop(function(data)
-            if data.droppedElement.isAsset then
-                new.FilePathTextBox:SetText(data.droppedElement.path);
-                self:ReloadScript(new);
-                self:ReloadVariables(new);
-            end
-        end);
         
         
         new.CloseButton:OnPressed(function()
@@ -1421,22 +1446,20 @@ function GTGUI.Element:ScriptComponentPanel()
         self.ScriptPanels[#self.ScriptPanels + 1] = new;
         
         
-        -- If we're not updating we want to add the script to the component itself.
-        if not self.IsUpdating then
-            self.CurrentComponent:AddScript(name);
-            self.ParentPanel:OnSceneNodeChanged();
-        end
+        
         
         
         ---------------------------------
         -- Variables.
         --
         -- These need to be done after adding the script to the component.
-        new.VariablesContainer = GTGUI.Server.New("<div parentid='" .. new:GetID() .. "' styleclass='' style='padding:4px; padding-left:8px; padding-right:0px;' />");
+        new.VariablesContainer = GTGUI.Server.New("<div parentid='" .. new:GetID() .. "' styleclass='' style='padding:4px; padding-left:8px; padding-right:0px; border-bottom:1px #444' />");
         new.Variables          = {};
         
         -- We initialize the variables by just "reloading" them.
         self:ReloadVariables(new);
+        
+        return true;    -- Successful.
     end
     
     
@@ -1484,21 +1507,7 @@ function GTGUI.Element:ScriptComponentPanel()
         self.ScriptPanels = {};
     end
     
-    
-    function self:ReloadScript(panelToReloadFrom)
-        for i,panel in ipairs(self.ScriptPanels) do
-            if panel == panelToReloadFrom then
-                self:ReloadScriptByIndex(i, panelToReloadFrom.FilePathTextBox:GetText());
-                break;
-            end
-        end
-    end
-    
-    function self:ReloadScriptByIndex(index, newRelativePath)
-        self.CurrentComponent:ReloadScript(index, newRelativePath);
-        self.ParentPanel:OnSceneNodeChanged();
-    end
-    
+
     
     function self:ReloadVariables(panel)
         panel.VariablesContainer:DeleteAllChildren();
@@ -2039,7 +2048,7 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
             self.Scrollbar:Scroll(-data.delta * self.MouseWheelScrollSpeed);
         end
     end);
-    
+
     
     
     function self:OnSceneNodeChanged(arg1)
@@ -2309,6 +2318,27 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
     
     self.TabBar:ActivateTab(self.PropertiesTab);
     
+    
+    
+    self:OnDrop(function(data)
+        if self.PropertiesPanel:IsVisible() then
+            -- If we drop a script file onto the properties panel we want to add a script component if it doesn't already have one
+            -- and add the given script to it.
+            if data.droppedElement.isAsset and GTEngine.IsScriptFile(data.droppedElement.path) then
+                if self.PropertiesPanel.CurrentSceneNode ~= nil then
+                    print("Dropped " .. data.droppedElement.path);
+                    
+                    local scriptComponent = self.PropertiesPanel.CurrentSceneNode:GetComponent(GTEngine.Components.Script);
+                    if scriptComponent == nil then
+                        scriptComponent = self.PropertiesPanel.CurrentSceneNode:AddComponent(GTEngine.Components.Script);
+                    end
+                    
+                    self.PropertiesPanel:UpdateComponentPanels();
+                    self.PropertiesPanel.ComponentPanels[GTEngine.Components.Script]:AddScript(data.droppedElement.path);
+                end
+            end
+        end
+    end);
     
     
     

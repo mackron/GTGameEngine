@@ -15,7 +15,8 @@ namespace GTEngine
         AssetType_Model,
         AssetType_Material,
         AssetType_Sound,
-        AssetType_ParticleEffect,
+        AssetType_ParticleSystem,
+        AssetType_Script,
         
         // Special
         AssetType_Scene,

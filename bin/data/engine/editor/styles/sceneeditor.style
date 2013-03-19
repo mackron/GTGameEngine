@@ -347,6 +347,7 @@ new-component-menu-item:pushed
 }
 
 
+// TODO: Delete new-script-button
 new-script-button
 {
     width:                  auto
@@ -371,6 +372,42 @@ new-script-button:pushed
     text-color:             #eee
     background-image-color: #eee
 }
+
+
+
+new-script-container
+{
+    width:            100%
+    child-plane:      horizontal
+    flex-child-width: true
+    vertical-align:   center
+}
+
+new-script-textbox includes textbox
+{
+    width: 100%
+}
+
+new-script-icon
+{
+    width:                   16px
+    height:                  16px
+    background-image:        std-plus
+    background-image-color:  std-text-color
+    margin-left:             4px
+}
+
+new-script-icon:hovered
+{
+    background-image-color: #ccc
+}
+
+new-script-icon:pushed
+{
+    background-image-color: #eee
+}
+
+
 
 
 script-variable-container

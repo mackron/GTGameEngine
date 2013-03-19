@@ -31,7 +31,7 @@ namespace GTEngine
             return AudioComposer::IsExtensionSupported(GTCore::Path::Extension(fileName));
         }
 
-        bool IsSupportedParticleEffectExtension(const char* fileName)
+        bool IsSupportedParticleSystemExtension(const char* fileName)
         {
             return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "gtparticle");
         }
@@ -44,6 +44,15 @@ namespace GTEngine
         bool IsSupportedPrefabExtension(const char* fileName)
         {
             return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "gtprefab");
+        }
+
+        bool IsSupportedScriptExtension(const char* fileName)
+        {
+            auto extension = GTCore::Path::Extension(fileName);
+
+            return GTCore::Strings::Equal<false>(extension, "gtscript") ||
+                   GTCore::Strings::Equal<false>(extension, "script")   ||
+                   GTCore::Strings::Equal<false>(extension, "lua");
         }
 
 
@@ -66,9 +75,9 @@ namespace GTEngine
             {
                 return AssetType_Sound;
             }
-            else if (IsSupportedParticleEffectExtension(fileName))
+            else if (IsSupportedParticleSystemExtension(fileName))
             {
-                return AssetType_ParticleEffect;
+                return AssetType_ParticleSystem;
             }
             else if (IsSupportedSceneExtension(fileName))
             {
@@ -77,6 +86,10 @@ namespace GTEngine
             else if (IsSupportedPrefabExtension(fileName))
             {
                 return AssetType_Prefab;
+            }
+            else if (IsSupportedScriptExtension(fileName))
+            {
+                return AssetType_Script;
             }
             else
             {

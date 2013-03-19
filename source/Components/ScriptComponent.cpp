@@ -27,17 +27,20 @@ namespace GTEngine
         {
             // If we get here it means the script does not already exist and needs to be added. Note that we want to add these even
             // if we get a null pointer. We do this so the names remain persistant for things like editting tools.
-            auto definition = GTEngine::ScriptLibrary::Acquire(relativePath, nullptr, true);
-            this->scripts.PushBack(definition);
-
-            // We need to merge the variables from the new definition into our own. The definition is allowed to be null here, so
-            // that'll also need to be checked.
+            definition = GTEngine::ScriptLibrary::Acquire(relativePath, nullptr, true);
             if (definition != nullptr)
             {
-                this->MergePublicVariables(*definition);
-            }
+                this->scripts.PushBack(definition);
 
-            this->OnChanged();
+                // We need to merge the variables from the new definition into our own. The definition is allowed to be null here, so
+                // that'll also need to be checked.
+                if (definition != nullptr)
+                {
+                    this->MergePublicVariables(*definition);
+                }
+
+                this->OnChanged();
+            }
         }
 
         return definition;
@@ -69,47 +72,14 @@ namespace GTEngine
         this->OnChanged();
     }
 
-    ScriptDefinition* ScriptComponent::ReloadScript(size_t index, const char* newRelativePath)
+    void ScriptComponent::ReloadScript(size_t index)
     {
-        if (newRelativePath == nullptr)
+        assert(this->scripts[index] != nullptr);
         {
-            if (this->scripts[index] != nullptr)
-            {
-                newRelativePath = this->scripts[index]->GetRelativePath();
-            }
-        }
-
-
-        if (this->scripts[index] != nullptr)
-        {
-            if (!GTCore::Strings::Equal(this->scripts[index]->GetRelativePath(), newRelativePath))
-            {
-                // Public variables from this definition need to be removed.
-                this->RemovePublicVariables(*this->scripts[index]);
-                ScriptLibrary::Unacquire(this->scripts[index]);
-            }
-            else
-            {
-                // It's the same file. We don't actually want to re-acquire anything here because we want to keep the same pointer, but we do
-                // want to re-merge the public variables. We then need to get rid of any unused ones.
-                this->MergePublicVariables(*this->scripts[index]);
-                this->RemoveUnusedPublicVariables();
-
-                return this->scripts[index];
-            }
-        }
-
-        this->scripts[index] = ScriptLibrary::Acquire(newRelativePath, nullptr, true);
-
-        // Variables from the new definition need to be merged.
-        if (this->scripts[index] != nullptr)
-        {
+            // All we need to do is merge the public variables and remove and unused ones.
             this->MergePublicVariables(*this->scripts[index]);
+            this->RemoveUnusedPublicVariables();
         }
-
-        this->OnChanged();
-
-        return this->scripts[index];
     }
 
 
@@ -162,22 +132,18 @@ namespace GTEngine
 
     const char* ScriptComponent::GetScriptAbsolutePathByIndex(size_t index) const
     {
-        if (this->scripts[index] != nullptr)
+        assert(this->scripts[index] != nullptr);
         {
             return this->scripts[index]->GetAbsolutePath();
         }
-
-        return nullptr;
     }
 
     const char* ScriptComponent::GetScriptRelativePathByIndex(size_t index) const
     {
-        if (this->scripts[index] != nullptr)
+        assert(this->scripts[index] != nullptr);
         {
             return this->scripts[index]->GetRelativePath();
         }
-
-        return nullptr;
     }
 
 
@@ -187,7 +153,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnUpdate())
                 {
@@ -204,7 +170,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnStartup())
                 {
@@ -221,7 +187,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnShutdown())
                 {
@@ -238,7 +204,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnShow())
                 {
@@ -255,7 +221,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnHide())
                 {
@@ -272,7 +238,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnObjectEnter())
                 {
@@ -289,7 +255,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnEnterObject())
                 {
@@ -306,7 +272,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnObjectLeave())
                 {
@@ -323,7 +289,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnLeaveObject())
                 {
@@ -341,7 +307,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnMouseMove())
                 {
@@ -358,7 +324,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnMouseWheel())
                 {
@@ -375,7 +341,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnMouseButtonDown())
                 {
@@ -392,7 +358,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnMouseButtonUp())
                 {
@@ -409,7 +375,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnMouseButtonDoubleClick())
                 {
@@ -426,7 +392,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnKeyPressed())
                 {
@@ -443,7 +409,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 if (script->HasOnKeyReleased())
                 {
@@ -530,8 +496,6 @@ namespace GTEngine
             }
             else
             {
-                // TODO: Implement these conditions!
-
                 // Also valid for vector types in which case we'll set every component to this value.
                 if (variable->GetType() == ScriptVariableType_Vec2)
                 {
@@ -639,13 +603,9 @@ namespace GTEngine
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
-            if (script != nullptr)
+            assert(script != nullptr);
             {
                 intermediarySerializer.WriteString(script->GetRelativePath());
-            }
-            else
-            {
-                intermediarySerializer.WriteString("");
             }
         }
 

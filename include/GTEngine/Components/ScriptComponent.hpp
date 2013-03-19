@@ -27,6 +27,8 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If the script is already loaded, this will do nothing and return the existing definition.
+        ///     @par
+        ///     If the script can not be loaded the component will be left unmodified and null will be returned.
         ScriptDefinition* AddScript(const char* relativePath);
 
         /// Removes a script by it's file name.
@@ -41,9 +43,8 @@ namespace GTEngine
 
         /// Reloads a script at the given index.
         ///
-        /// @param index           [in] The index of the item being reloaded.
-        /// @param newRelativePath [in] The relative path of the new script. Can be null, in which case the existing script is just reloaded.
-        ScriptDefinition* ReloadScript(size_t index, const char* newRelativePath = nullptr);
+        /// @param index [in] The index of the item being reloaded.
+        void ReloadScript(size_t index);
 
 
 
