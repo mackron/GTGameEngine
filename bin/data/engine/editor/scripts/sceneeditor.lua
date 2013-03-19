@@ -1071,6 +1071,13 @@ function GTGUI.Element:DynamicsComponentPanel()
     self.FrictionRight     = GTGUI.Server.New("<div parentid='" .. self.FrictionContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
     self.FrictionLabel     = GTGUI.Server.New("<div parentid='" .. self.FrictionLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Friction:</div>");
     self.FrictionInput     = GTGUI.Server.New("<div parentid='" .. self.FrictionRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
+    
+    -- Restitution
+    self.RestitutionContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
+    self.RestitutionLeft      = GTGUI.Server.New("<div parentid='" .. self.RestitutionContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
+    self.RestitutionRight     = GTGUI.Server.New("<div parentid='" .. self.RestitutionContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
+    self.RestitutionLabel     = GTGUI.Server.New("<div parentid='" .. self.RestitutionLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Resitution:</div>");
+    self.RestitutionInput     = GTGUI.Server.New("<div parentid='" .. self.RestitutionRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
 
     
     -- Collision Shapes
@@ -1128,6 +1135,12 @@ function GTGUI.Element:DynamicsComponentPanel()
             self:ApplyFriction();
         end
     end);
+    
+    self.RestitutionInput:OnTextChanged(function(data)
+        if not self.IsUpdating then
+            self:ApplyRestitution();
+        end
+    end);
 
     
     
@@ -1147,8 +1160,9 @@ function GTGUI.Element:DynamicsComponentPanel()
                 self.MassInput:Enable();
             end
             
-            self.MassInput:SetText(    string.format("%.4f", self.CurrentComponent:GetMass()));
-            self.FrictionInput:SetText(string.format("%.4f", self.CurrentComponent:GetFriction()));
+            self.MassInput:SetText(       string.format("%.4f", self.CurrentComponent:GetMass()));
+            self.FrictionInput:SetText(   string.format("%.4f", self.CurrentComponent:GetFriction()));
+            self.RestitutionInput:SetText(string.format("%.4f", self.CurrentComponent:GetRestitution()));
             
             -- Collision shapes need to be updated.
             self.CollisionShapes:Update(self.CurrentComponent);
@@ -1168,6 +1182,13 @@ function GTGUI.Element:DynamicsComponentPanel()
     function self:ApplyFriction()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:SetFriction(tonumber(self.FrictionInput:GetText()));
+            self.ParentPanel:OnSceneNodeChanged();
+        end
+    end
+    
+    function self:ApplyRestitution()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetRestitution(tonumber(self.RestitutionInput:GetText()));
             self.ParentPanel:OnSceneNodeChanged();
         end
     end
