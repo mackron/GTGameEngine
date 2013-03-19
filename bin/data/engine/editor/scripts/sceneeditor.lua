@@ -1062,9 +1062,15 @@ function GTGUI.Element:DynamicsComponentPanel()
     self.MassContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()          .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
     self.MassLeft      = GTGUI.Server.New("<div parentid='" .. self.MassContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
     self.MassRight     = GTGUI.Server.New("<div parentid='" .. self.MassContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
-    
     self.MassLabel     = GTGUI.Server.New("<div parentid='" .. self.MassLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Mass (0 = Static):</div>");
     self.MassInput     = GTGUI.Server.New("<div parentid='" .. self.MassRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
+    
+    -- Friction
+    self.FrictionContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()              .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
+    self.FrictionLeft      = GTGUI.Server.New("<div parentid='" .. self.FrictionContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
+    self.FrictionRight     = GTGUI.Server.New("<div parentid='" .. self.FrictionContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
+    self.FrictionLabel     = GTGUI.Server.New("<div parentid='" .. self.FrictionLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Friction:</div>");
+    self.FrictionInput     = GTGUI.Server.New("<div parentid='" .. self.FrictionRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
 
     
     -- Collision Shapes
@@ -1116,6 +1122,12 @@ function GTGUI.Element:DynamicsComponentPanel()
             self:ApplyMass();
         end
     end);
+    
+    self.FrictionInput:OnTextChanged(function(data)
+        if not self.IsUpdating then
+            self:ApplyFriction();
+        end
+    end);
 
     
     
@@ -1135,7 +1147,8 @@ function GTGUI.Element:DynamicsComponentPanel()
                 self.MassInput:Enable();
             end
             
-            self.MassInput:SetText(string.format("%.4f", self.CurrentComponent:GetMass()));
+            self.MassInput:SetText(    string.format("%.4f", self.CurrentComponent:GetMass()));
+            self.FrictionInput:SetText(string.format("%.4f", self.CurrentComponent:GetFriction()));
             
             -- Collision shapes need to be updated.
             self.CollisionShapes:Update(self.CurrentComponent);
@@ -1148,6 +1161,13 @@ function GTGUI.Element:DynamicsComponentPanel()
     function self:ApplyMass()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:SetMass(tonumber(self.MassInput:GetText()));
+            self.ParentPanel:OnSceneNodeChanged();
+        end
+    end
+    
+    function self:ApplyFriction()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetFriction(tonumber(self.FrictionInput:GetText()));
             self.ParentPanel:OnSceneNodeChanged();
         end
     end
