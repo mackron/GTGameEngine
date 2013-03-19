@@ -634,7 +634,7 @@ namespace GTEngine
 
     DefaultSceneRenderer::DefaultSceneRenderer()
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
-          shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
+          shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(384, 384), pointShadowMapShader(nullptr),
           fullscreenTriangleVA(nullptr), finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
           isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(0.25f), blurShaderX(nullptr), blurShaderY(nullptr),
           materialLibraryEventHandler(*this)
@@ -755,16 +755,6 @@ namespace GTEngine
         {
             Renderer::SetCurrentFramebuffer(framebuffer->framebuffer);
             Renderer::SetViewport(0, 0, framebuffer->width, framebuffer->height);
-
-            //int drawBuffers[] = {0};
-            //Renderer::SetDrawBuffers(1, drawBuffers);
-
-
-            // Clear.
-            //Renderer::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
-            //Renderer::SetClearDepth(1.0f);
-            //Renderer::SetClearStencil(0);
-            //Renderer::Clear(BufferType_Colour | BufferType_Depth | BufferType_Stencil);
         }
 
 
