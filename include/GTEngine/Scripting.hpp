@@ -290,6 +290,9 @@ namespace GTEngine
             /// Determines if the given file path is a prefab file, based on it's extension.
             int IsPrefabFile(GTCore::Script &script);
 
+            /// Determines if the given file path is a script file, based on it's extension.
+            int IsScriptFile(GTCore::Script &script);
+
 
             /// Creates a prefab file from a scene node.
             ///
@@ -1711,7 +1714,6 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the component.
                     ///     Argument 2: The index of the script being reloaded.
-                    ///     Argument 3: The relative path of the new script.
                     int ReloadScript(GTCore::Script &script);
 
                     /// Retrieves the names of the script files the given script component uses.
@@ -1719,6 +1721,13 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the component.
                     int GetScriptFilePaths(GTCore::Script &script);
+
+                    /// Determines if the script component is using the given script file.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The relative path of the script.
+                    int IsUsingScript(GTCore::Script &script);
 
                     /// Retrieves an array containing the names and types of the public variables of the script definition at the given index.
                     ///

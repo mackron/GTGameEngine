@@ -798,7 +798,7 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.ScriptComponent:AddScript(relativePath)"
-                "    GTEngine.System.ScriptComponent.AddScript(self._internalPtr, relativePath);"
+                "    return GTEngine.System.ScriptComponent.AddScript(self._internalPtr, relativePath);"
                 "end;"
 
                 "function GTEngine.ScriptComponent:RemoveScriptByRelativePath(relativePath)"
@@ -815,6 +815,10 @@ namespace GTEngine
 
                 "function GTEngine.ScriptComponent:GetScriptFilePaths()"
                 "    return GTEngine.System.ScriptComponent.GetScriptFilePaths(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ScriptComponent:IsUsingScript(relativePath)"
+                "    return GTEngine.System.ScriptComponent.IsUsingScript(self._internalPtr, relativePath);"
                 "end;"
 
                 "function GTEngine.ScriptComponent:GetPublicVariableNamesAndTypesByIndex(index)"
@@ -1305,6 +1309,7 @@ namespace GTEngine
                 script.SetTableFunction(-1, "IsSoundFile",  FFI::IsSoundFile);
                 script.SetTableFunction(-1, "IsSceneFile",  FFI::IsSceneFile);
                 script.SetTableFunction(-1, "IsPrefabFile", FFI::IsPrefabFile);
+                script.SetTableFunction(-1, "IsScriptFile", FFI::IsScriptFile);
 
                 script.SetTableFunction(-1, "CreatePrefab", FFI::CreatePrefab);
 
@@ -1565,6 +1570,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "RemoveScriptByIndex",                      FFI::SystemFFI::ScriptComponentFFI::RemoveScriptByIndex);
                         script.SetTableFunction(-1, "ReloadScript",                             FFI::SystemFFI::ScriptComponentFFI::ReloadScript);
                         script.SetTableFunction(-1, "GetScriptFilePaths",                       FFI::SystemFFI::ScriptComponentFFI::GetScriptFilePaths);
+                        script.SetTableFunction(-1, "IsUsingScript",                            FFI::SystemFFI::ScriptComponentFFI::IsUsingScript);
                         script.SetTableFunction(-1, "GetPublicVariableNamesAndTypesByIndex",    FFI::SystemFFI::ScriptComponentFFI::GetPublicVariableNamesAndTypesByIndex);
                         script.SetTableFunction(-1, "GetPublicVariableNamesAndValues",          FFI::SystemFFI::ScriptComponentFFI::GetPublicVariableNamesAndValues);
                         script.SetTableFunction(-1, "GetPublicVariableValue",                   FFI::SystemFFI::ScriptComponentFFI::GetPublicVariableValue);
@@ -2556,6 +2562,12 @@ namespace GTEngine
             int IsPrefabFile(GTCore::Script &script)
             {
                 script.Push(IO::IsSupportedPrefabExtension(script.ToString(1)));
+                return 1;
+            }
+
+            int IsScriptFile(GTCore::Script &script)
+            {
+                script.Push(IO::IsSupportedScriptExtension(script.ToString(1)));
                 return 1;
             }
 
@@ -5102,10 +5114,10 @@ namespace GTEngine
                         auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
                         if (component != nullptr)
                         {
-                            component->AddScript(script.ToString(2));
+                            script.Push(component->AddScript(script.ToString(2)) != nullptr);
                         }
 
-                        return 0;
+                        return 1;
                     }
 
                     int RemoveScriptByRelativePath(GTCore::Script &script)
@@ -5135,7 +5147,7 @@ namespace GTEngine
                         auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
                         if (component != nullptr)
                         {
-                            component->ReloadScript(static_cast<size_t>(script.ToInteger(2) - 1), script.ToString(3));      // <-- Subtract 1 because Lua is 1 based.
+                            component->ReloadScript(static_cast<size_t>(script.ToInteger(2) - 1));                          // <-- Subtract 1 because Lua is 1 based.
                         }
 
                         return 0;
@@ -5156,6 +5168,17 @@ namespace GTEngine
                                 auto relativePath = component->GetScriptRelativePathByIndex(i);
                                 script.SetTableValue(-1, static_cast<int>(i + 1), (relativePath != nullptr) ? relativePath : "");      // <-- i + 1 because Lua is 1-based.
                             }
+                        }
+
+                        return 1;
+                    }
+
+                    int IsUsingScript(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetScriptDefinitionByRelativePath(script.ToString(2)) != nullptr);
                         }
 
                         return 1;

@@ -281,6 +281,7 @@ namespace GTEngine
                         break;
                     }
 
+                case AssetType_Script:
                 case AssetType_TextFile:
                     {
                         newSubEditor = new TextEditor(*this, absolutePath.c_str(), relativePath.c_str());
@@ -289,7 +290,7 @@ namespace GTEngine
 
                 case AssetType_Material:
                 case AssetType_Sound:
-                case AssetType_ParticleEffect:
+                case AssetType_ParticleSystem:
                 case AssetType_Prefab:
 
                 case AssetType_None:
