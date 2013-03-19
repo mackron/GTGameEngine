@@ -11,6 +11,7 @@
 #include <GTCore/Serializer.hpp>
 #include <GTCore/Deserializer.hpp>
 #include <GTCore/Path.hpp>
+#include <GTCore/String.hpp>
 
 
 #if defined(_MSC_VER)
@@ -174,6 +175,13 @@ namespace GTEngine
 
     SceneEditor::~SceneEditor()
     {
+        // If we're playing, we need to stop. If we don't do this there are a few things that won't get restored correctly.
+        if (this->IsPlaying())
+        {
+            this->StopPlaying();
+        }
+
+
         // GUI elements need to be deleted. We will delete the toolbar first, via the scripting interface.
         auto &script = this->GetScript();
 
@@ -219,13 +227,24 @@ namespace GTEngine
             {
                 this->updateManager.Enable();
                 this->physicsManager.EnableSimulation();
-
-                //this->scene.Resume();
             }
             else
             {
                 this->isPlaying                  = true;
                 this->selectedNodesBeforePlaying = this->selectedNodes;
+
+
+                // We need to make it so Game.GetGameWindowGUIElement() is our own implementation. We restore it later. Our version returns an element
+                // that is contained within the viewport.
+                auto &script = this->GetScript();
+
+                script.Execute(GTCore::String::CreateFormatted("GTEngine.Editor.__CurrentSceneEditorViewportElement = GTGUI.Server.GetElementByID('%s')", this->GUI.Viewport->id).c_str());
+                script.Execute
+                (
+                    "Game.GetGameWindowGUIElement = function()"
+                    "    return GTEngine.Editor.__CurrentSceneEditorViewportElement;"
+                    "end"
+                );
 
 
                 // We want to make sure the scripting environment is synced up with the script library just in case anything has changed.
@@ -285,6 +304,17 @@ namespace GTEngine
 
                 this->isPlaying = false;
                 this->isPaused  = false;
+
+
+                // The game window GUI element needs to be restored.
+                auto &script = this->GetScript();
+                script.GetGlobal("Game");
+                assert(script.IsTable(-1));
+                {
+                    script.SetTableFunction(-1, "GetGameWindowGUIElement", Scripting::FFI::GameFFI::GetGameWindowGUIElement);
+                }
+                script.Pop(1);
+
 
 
                 this->updateManager.Disable();
@@ -1590,6 +1620,13 @@ namespace GTEngine
 
     void SceneEditor::Hide()
     {
+        // When the editor is hidden, we need to stop playing.
+        if (this->IsPlaying())
+        {
+            this->StopPlaying();
+        }
+
+
         auto &script = this->GetScript();
 
         script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());

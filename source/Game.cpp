@@ -36,7 +36,7 @@ namespace GTEngine
           updateThread(nullptr), updateJob(*this),
           deltaTimeInSeconds(0.0), totalRunninTimeInSeconds(0.0), updateTimer(),
           fontServer("var/fonts.cache"), defaultFont(nullptr),
-          gui(&script, &fontServer), guiEventHandler(*this), guiRenderer(),
+          gui(&script, &fontServer), guiEventHandler(*this), guiRenderer(), gameWindowGUIElement(nullptr),
           paused(false), focused(true),
           isCursorVisible(true),
           isAutoScriptReloadEnabled(false),
@@ -54,6 +54,10 @@ namespace GTEngine
           profilerToggleKey(GTCore::Keys::F11),
           editorToggleKeyCombination(GTCore::Keys::Shift, GTCore::Keys::Tab)
     {
+        // The main game window GUI element needs to be created. It is just a 100% x 100% invisible element off the root element.
+        this->gui.Load("<div id='MainGameWindow' style='width:100%; height:100%' />");
+        this->gameWindowGUIElement = this->gui.GetElementByID("MainGameWindow");
+
         this->gui.SetRenderer(this->guiRenderer);
     }
 
@@ -348,6 +352,10 @@ namespace GTEngine
     {
         if (this->OnEditorOpening())
         {
+            // The main game window GUI element needs to be hidden.
+            this->gameWindowGUIElement->Hide();
+
+
             // The in-game profiling GUI needs to be hidden when the editor is open.
             this->DebuggingGUI.Hide();
 
@@ -373,6 +381,9 @@ namespace GTEngine
         if (this->OnEditorClosing())
         {
             this->editor.Close();
+
+            // The main game window GUI element needs to be shown.
+            this->gameWindowGUIElement->Show();
 
             // We can now unpause the game.
             this->Resume();

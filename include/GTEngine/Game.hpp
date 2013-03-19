@@ -107,6 +107,9 @@ namespace GTEngine
         void StepGUI(double deltaTimeInSeconds);
 
 
+        /// Retrieves the GUI element of the main game window.
+        GTGUI::Element* GetGameWindowGUIElement() { return this->gameWindowGUIElement; }
+
         /// Retrieves a pointer to the main game window.
         GTCore::Window* GetWindow() { return this->window; }
 
@@ -636,6 +639,9 @@ namespace GTEngine
 
         /// The GUI renderer.
         DefaultGUIRenderer guiRenderer;
+
+        /// The GUI element for the main game window.
+        GTGUI::Element* gameWindowGUIElement;
 
 
         /// Whether or not the game is paused. A paused game will continue to render, but scene nodes and animations will not tick.

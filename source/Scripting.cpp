@@ -25,7 +25,19 @@ namespace GTEngine
             script.PushNewTable();
             {
                 ///////////////////////////////////////////////////
+                // GTEngine.Editor
+
+                script.Push("Editor");
+                script.PushNewTable();
+                {
+                }
+                script.SetTableValue(-3);
+
+
+
+                ///////////////////////////////////////////////////
                 // GTEngine.System
+
                 script.Push("System");
                 script.PushNewTable();
                 {
