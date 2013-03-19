@@ -141,6 +141,7 @@ namespace GTEngine
                 script.SetTableFunction(-1, "CaptureMouse",            FFI::GameFFI::CaptureMouse);
                 script.SetTableFunction(-1, "ReleaseMouse",            FFI::GameFFI::ReleaseMouse);
                 script.SetTableFunction(-1, "ScanDataFilesForChanges", FFI::GameFFI::ScanDataFilesForChanges);
+                script.SetTableFunction(-1, "GetGameWindowGUIElement", FFI::GameFFI::GetGameWindowGUIElement);
                
 
                 // TODO: Move these to GTEngine.
@@ -253,6 +254,21 @@ namespace GTEngine
                     return 0;
                 }
 
+
+                int GetGameWindowGUIElement(GTCore::Script &script)
+                {
+                    auto element = GetGame(script).GetGameWindowGUIElement();
+                    if (element != nullptr)
+                    {
+                        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", element->id).c_str());
+                    }
+                    else
+                    {
+                        script.PushNil();
+                    }
+
+                    return 1;
+                }
 
 
 

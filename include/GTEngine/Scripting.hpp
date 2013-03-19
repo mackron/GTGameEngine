@@ -361,6 +361,10 @@ namespace GTEngine
                 int ScanDataFilesForChanges(GTCore::Script &script);
 
 
+                /// Retrieves the GUI element of the main game window.
+                int GetGameWindowGUIElement(GTCore::Script &script);
+
+
 
                 // TODO: Move these to GTEngine.
 
