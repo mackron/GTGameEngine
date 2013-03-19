@@ -57,6 +57,101 @@
 
 
 
+<shader id="DefaultSceneRenderer_BlurVS">
+<![CDATA[
+    #version 330
+    
+    in vec3 VertexInput_Position;
+    in vec2 VertexInput_TexCoord;
+
+    out vec2 VertexOutput_TexCoord;
+    
+    void main()
+    {
+        VertexOutput_TexCoord = VertexInput_TexCoord;
+        gl_Position           = vec4(VertexInput_Position, 1.0);
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_BlurXFS">
+<![CDATA[
+    #version 330
+    
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D Texture;
+    
+    void main()
+    {
+        vec2  uv       = VertexOutput_TexCoord;
+        float uvOffset = 1.0 / float(textureSize(Texture, 0));
+    
+        float coefficients[21] = float[]
+        (
+            0.000272337, 0.00089296, 0.002583865, 0.00659813, 0.014869116,
+            0.029570767, 0.051898313, 0.080381679, 0.109868729, 0.132526984,
+            0.14107424,
+            0.132526984, 0.109868729, 0.080381679, 0.051898313, 0.029570767,
+            0.014869116, 0.00659813, 0.002583865, 0.00089296, 0.000272337
+        );
+        
+        
+        ColourOut = vec4(0.0, 0.0, 0.0, 1.0);
+        
+        for(int i = 0; i < 21; i++)
+        {
+            ColourOut.xy += texture2D(Texture, vec2(uv.x + (i - 10) * uvOffset, uv.y)).xy * coefficients[i];
+        }
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_BlurYFS">
+<![CDATA[
+    #version 330
+    
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D Texture;
+    
+    void main()
+    {
+    /*
+        vec2  uv       = VertexOutput_TexCoord;
+        float uvOffset = 1.0 / textureSize(Texture, 0).x;
+    
+        float coefficients[21] = float[]
+        (
+            0.000272337, 0.00089296, 0.002583865, 0.00659813, 0.014869116,
+            0.029570767, 0.051898313, 0.080381679, 0.109868729, 0.132526984,
+            0.14107424,
+            0.132526984, 0.109868729, 0.080381679, 0.051898313, 0.029570767,
+            0.014869116, 0.00659813, 0.002583865, 0.00089296, 0.000272337
+        );
+        
+        
+        ColourOut = vec4(0.0, 0.0, 0.0, 1.0);
+        
+        for(int i = 0; i < 21; i++)
+        {
+            ColourOut.xy += texture2D(Texture, vec2(uv.x, uv.y + (i - 10) * uvOffset)).xy * coefficients[i];
+        }
+        */
+        
+        ColourOut.xy = texture2D(Texture, VertexOutput_TexCoord).xy;
+    }
+]]>
+</shader>
+
+
+
+
+
 <shader id="DefaultSceneRenderer_ShadowMapVS">
 <![CDATA[
     #version 330
@@ -383,7 +478,7 @@
 
     float CalculateShadowVSM(vec3 shadowCoord, float fragmentDepth)
     {
-        float bias     = 0.1;       // This can affect seams. Lower value = more seams.
+        float bias     = 0.04 * fragmentDepth;       // This can affect seams. Lower value = more seams.
         vec2  moments  = texture(ShadowMap, shadowCoord).xy;
         float variance = moments.y - (moments.x * moments.x);
         float d        = fragmentDepth - moments.x;
@@ -398,6 +493,7 @@
     float CalculateShadow()
     {
         vec3 shadowCoord = VertexOutput_PositionWS.xyz - PositionWS;
+        shadowCoord.x = shadowCoord.x;
         shadowCoord.y = -shadowCoord.y;
         shadowCoord.z = -shadowCoord.z;
         
@@ -701,7 +797,7 @@
         finalColour += bloom * BloomFactor;
         
         // Tone Mapping.
-        finalColour *= Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0);
+        finalColour *= min(10.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));
         
         ColourOut = finalColour;
     }
@@ -725,7 +821,7 @@
         float luminance   = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
 
         // Tone Mapping.
-        finalColour *= Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0);
+        finalColour *= min(10.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));
         
         ColourOut = finalColour;
     }

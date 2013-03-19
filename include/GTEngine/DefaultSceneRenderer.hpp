@@ -235,6 +235,10 @@ namespace GTEngine
         /// The cube map that will contain the shadow information. RG32F.
         TextureCube* colourBuffer;
 
+        /// Buffer for performing the blur stage.
+        Texture2D* blurBuffer0;
+        Texture2D* blurBuffer1;
+
 
         /// The width of each face of the framebuffer.
         unsigned int width;
@@ -246,12 +250,14 @@ namespace GTEngine
 
         /// Constructor.
         DefaultSceneRendererPointShadowFramebuffer(unsigned int widthIn, unsigned int heightIn)
-            : framebuffer(nullptr), depthStencilBuffer(nullptr), colourBuffer(nullptr),
+            : framebuffer(nullptr), depthStencilBuffer(nullptr), colourBuffer(nullptr), blurBuffer0(nullptr), blurBuffer1(nullptr),
               width(widthIn), height(heightIn)
         {
             this->framebuffer        = Renderer::CreateFramebuffer();
             this->depthStencilBuffer = Renderer::CreateTexture2D();
             this->colourBuffer       = Renderer::CreateTextureCube();
+            this->blurBuffer0        = Renderer::CreateTexture2D();
+            this->blurBuffer1        = Renderer::CreateTexture2D();
 
             // We just call Resize() to get the data setup.
             this->Resize(widthIn, heightIn);
@@ -259,7 +265,13 @@ namespace GTEngine
 
             // Filters.
             Renderer::SetTextureCubeFilter(*this->colourBuffer, TextureFilter_Linear, TextureFilter_Linear);
+            Renderer::SetTexture2DFilter(  *this->blurBuffer0,  TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(  *this->blurBuffer1,  TextureFilter_Nearest, TextureFilter_Nearest);
+
+            // Wrapping modes.
             Renderer::SetTextureCubeWrapMode(*this->colourBuffer, TextureWrapMode_ClampToEdge);
+            Renderer::SetTexture2DWrapMode(  *this->blurBuffer0,  TextureWrapMode_ClampToEdge);
+            Renderer::SetTexture2DWrapMode(  *this->blurBuffer1,  TextureWrapMode_ClampToEdge);
             
 
             // Attach.
@@ -270,6 +282,8 @@ namespace GTEngine
             this->framebuffer->AttachColourBuffer(this->colourBuffer->NegativeY, 3);
             this->framebuffer->AttachColourBuffer(this->colourBuffer->PositiveZ, 4);
             this->framebuffer->AttachColourBuffer(this->colourBuffer->NegativeZ, 5);
+            this->framebuffer->AttachColourBuffer(this->blurBuffer0,             6);
+            this->framebuffer->AttachColourBuffer(this->blurBuffer1,             7);
 
             Renderer::PushAttachments(*this->framebuffer);
         }
@@ -277,6 +291,8 @@ namespace GTEngine
         /// Destructor.
         ~DefaultSceneRendererPointShadowFramebuffer()
         {
+            Renderer::DeleteTexture2D(this->blurBuffer0);
+            Renderer::DeleteTexture2D(this->blurBuffer1);
             Renderer::DeleteTextureCube(this->colourBuffer);
             Renderer::DeleteTexture2D(this->depthStencilBuffer);
             Renderer::DeleteFramebuffer(this->framebuffer);
@@ -296,9 +312,13 @@ namespace GTEngine
             this->colourBuffer->NegativeY->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
             this->colourBuffer->PositiveZ->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
             this->colourBuffer->NegativeZ->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
+            this->blurBuffer0->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
+            this->blurBuffer1->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
 
-            Renderer::PushTexture2DData(*this->depthStencilBuffer, 0);
+            Renderer::PushTexture2DData(  *this->depthStencilBuffer, 0);
             Renderer::PushTextureCubeData(*this->colourBuffer);
+            Renderer::PushTexture2DData(  *this->blurBuffer0);
+            Renderer::PushTexture2DData(  *this->blurBuffer1);
         }
     };
 
@@ -1028,10 +1048,13 @@ namespace GTEngine
         /// The shader to use when doing the bloom map.
         Shader* bloomShader;
 
-
-
-        /// TEMP shader for doing highlights.
+        /// Shader for doing highlights.
         Shader* highlightShader;
+
+
+        /// The shader use for doing a gaussian blur.
+        Shader* blurShaderX;
+        Shader* blurShaderY;
 
 
 

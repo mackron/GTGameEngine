@@ -198,10 +198,11 @@ namespace GTEngine
                     if (lightComponent->IsShadowCastingEnabled())
                     {
                         static_cast<DefaultSceneRendererShadowPointLight*>(light)->projection    = glm::perspective(90.0f, 1.0f, 0.1f, Math::Lighting::ApproximateAttenuationRadius(light->constantAttenuation, light->linearAttenuation, light->quadraticAttenuation));
+                        
                         static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveXView = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeXView = glm::mat4_cast(glm::inverse(glm::angleAxis(+90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
+                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeXView = glm::mat4_cast(glm::inverse(glm::angleAxis( 90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
                         static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveYView = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f, glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-light->position);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeYView = glm::mat4_cast(glm::inverse(glm::angleAxis(+90.0f, glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-light->position);
+                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeYView = glm::mat4_cast(glm::inverse(glm::angleAxis( 90.0f, glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-light->position);
                         static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveZView = glm::mat4_cast(glm::inverse(glm::angleAxis(  0.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
                         static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeZView = glm::mat4_cast(glm::inverse(glm::angleAxis(180.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
                     }
@@ -633,9 +634,9 @@ namespace GTEngine
 
     DefaultSceneRenderer::DefaultSceneRenderer()
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
-          shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
+          shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(512, 512), pointShadowMapShader(nullptr),
           fullscreenTriangleVA(nullptr), finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
-          isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(0.25f),
+          isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(0.25f), blurShaderX(nullptr), blurShaderY(nullptr),
           materialLibraryEventHandler(*this)
     {
         this->depthPassShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
@@ -646,6 +647,8 @@ namespace GTEngine
         this->finalCompositionShaderLDR        = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionLDRFS"));
         this->bloomShader                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_BloomFS"));
         this->highlightShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightFS"));
+        this->blurShaderX                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurXFS"));
+        this->blurShaderY                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurYFS"));
 
 
 
@@ -1685,7 +1688,10 @@ namespace GTEngine
     void DefaultSceneRenderer::RenderPointShapowMapFace(const DefaultSceneRendererShadowPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         // The draw buffer needs to be set. The appropriate framebuffer will have already been set.
-        Renderer::SetDrawBuffers(1, &faceIndex);
+        int blurBuffer0Index = 6;
+        int blurBuffer1Index = 7;
+        Renderer::SetDrawBuffers(1, &blurBuffer0Index);
+        Renderer::SetCurrentShader(this->pointShadowMapShader);
         
         // We need to clear both depth and colour. The colour needs to be cleared to the radius of the light.
         float radius = Math::Lighting::ApproximateAttenuationRadius(light.constantAttenuation, light.linearAttenuation, light.quadraticAttenuation);
@@ -1693,10 +1699,11 @@ namespace GTEngine
         Renderer::SetClearDepth(1.0f);
         Renderer::Clear(BufferType_Colour | BufferType_Depth);
 
+        
+
 
 
         glm::mat4 projectionView = light.projection * faceViewMatrix;
-
         for (size_t i = 0; i < meshes.count; ++i)
         {
             auto &mesh = meshes[i];
@@ -1715,6 +1722,49 @@ namespace GTEngine
                 Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
             }
         }
+
+
+        // TODO: Make this optional.
+
+        // Now we want to do a gaussian blur on the face. The way we do it is we first blur on the X axis and then do the same on the Y axis. We use
+        // an intermediary buffer that is bound to index 6 in the framebuffer. Not sure how seams will work here.
+        Renderer::DisableDepthTest();
+        Renderer::DisableDepthWrites();
+
+        // Blur X.
+        {
+            Renderer::SetDrawBuffers(1, &blurBuffer1Index);
+
+            // Shader.
+            Renderer::SetCurrentShader(this->blurShaderX);
+            this->blurShaderX->SetParameter("Texture", this->pointShadowMapFramebuffer.blurBuffer0);
+            {
+                Renderer::PushShaderPendingProperties(*this->blurShaderX);
+            }
+            this->blurShaderX->ClearPendingParameters();
+
+            // Draw.
+            Renderer::Draw(*this->fullscreenTriangleVA);
+        }
+
+        // Blur Y
+        {
+            Renderer::SetDrawBuffers(1, &faceIndex);
+
+            // Shader.
+            Renderer::SetCurrentShader(this->blurShaderY);
+            this->blurShaderY->SetParameter("Texture", this->pointShadowMapFramebuffer.blurBuffer1);
+            {
+                Renderer::PushShaderPendingProperties(*this->blurShaderY);
+            }
+            this->blurShaderY->ClearPendingParameters();
+
+            // Draw.
+            Renderer::Draw(*this->fullscreenTriangleVA);
+        }
+
+        Renderer::EnableDepthTest();
+        Renderer::EnableDepthWrites();
     }
 
 
@@ -2088,6 +2138,7 @@ namespace GTEngine
 
         // Depth testing needs to be re-enabled now.
         Renderer::EnableDepthTest();
+        Renderer::EnableDepthWrites();
         Renderer::SetDepthFunction(RendererFunction_LEqual);
 
 
@@ -2148,6 +2199,8 @@ namespace GTEngine
                 Renderer::SetDrawBuffers(1, colourBuffer);
 
                 Renderer::DisableBlending();
+
+                
 
                 // Shader Setup.
                 auto shader = this->GetMaterialMaterialShader(*mesh.material);
