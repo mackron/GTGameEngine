@@ -180,10 +180,6 @@
     void main()
     {
         float depth = ShadowCoord.z / ShadowCoord.w;
-        //float dx    = dFdx(depth);
-        //float dy    = dFdy(depth);
-        
-        //ColourOut = vec4(depth, (depth * depth) + (0.25 * ((dx * dx) + (dy * dy))), 0.0, 1.0);
         ColourOut = vec4(depth, depth * depth, 0.0, 1.0);
     }
 ]]>
