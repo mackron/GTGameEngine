@@ -1616,6 +1616,7 @@ namespace GTEngine
     {
         // We first need to build the shadow map.
         Renderer::DisableBlending();
+        Renderer::EnableDepthTest();
         Renderer::EnableDepthWrites();
         Renderer::SetDepthFunction(RendererFunction_LEqual);
         
