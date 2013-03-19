@@ -40,6 +40,15 @@ namespace GTEngine
         const Model* GetModel() const { return this->model; }
 
 
+        /// Sets/replaces a material on the model by it's index.
+        ///
+        /// @param materialIndex        [in] The index of the material being changed.
+        /// @param materialRelativePath [in] The relative path of the new material.
+        ///
+        /// @return True if the material is set successfully; false otherwise.
+        bool SetMaterial(size_t materialIndex, const char* materialRelativePath);
+
+
         /// Sets the back/front face culling mode. By default, back faces are culled.
         ///
         /// @param cullFront [in] Specifies whether or not front faces should be drawn.
