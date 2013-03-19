@@ -2367,8 +2367,6 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
             -- and add the given script to it.
             if data.droppedElement.isAsset and GTEngine.IsScriptFile(data.droppedElement.path) then
                 if self.PropertiesPanel.CurrentSceneNode ~= nil then
-                    print("Dropped " .. data.droppedElement.path);
-                    
                     local scriptComponent = self.PropertiesPanel.CurrentSceneNode:GetComponent(GTEngine.Components.Script);
                     if scriptComponent == nil then
                         scriptComponent = self.PropertiesPanel.CurrentSceneNode:AddComponent(GTEngine.Components.Script);
