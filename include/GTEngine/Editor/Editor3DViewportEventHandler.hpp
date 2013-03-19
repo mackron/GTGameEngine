@@ -40,6 +40,7 @@ namespace GTEngine
 
         /// OnDraw.
         virtual void OnDraw(GTGUI::Element &element);
+        virtual bool ImplementsOnDraw() const { return true; }
 
         /// OnLMBDown.
         virtual void OnLMBDown(GTGUI::Element &element, int x, int y);
