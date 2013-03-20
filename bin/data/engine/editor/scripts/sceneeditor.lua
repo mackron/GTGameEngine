@@ -2345,6 +2345,7 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
             self.PropertiesPanel:Show();
         elseif data.tab == self.HierarchyTab then
             self.HierarchyPanel:Show();
+            self.HierarchyPanel.TreeView:UpdateScrollbars();
         end
     end);
     
