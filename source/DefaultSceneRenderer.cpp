@@ -1023,70 +1023,65 @@ namespace GTEngine
             this->RenderDepthPass(framebuffer, visibleObjects);
 
 
-            // Depth is laid down. No need to write.
-            Renderer::DisableDepthWrites();
-            Renderer::SetDepthFunction(RendererFunction_Equal);
-
-            // We use additive blending here.
-            Renderer::EnableBlending();
+            // All lighting will use additive blending so we'll set it once here.
             Renderer::SetBlendEquation(BlendEquation_Add);
             Renderer::SetBlendFunction(BlendFunc_One, BlendFunc_One);
 
 
-            /*
-            for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
-            {
-                auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
-                assert(meshList != nullptr);
-                {
-                    for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
-                    {
-                        auto &mesh = meshList->Get(iMesh);
-                        {
-
-                        }
-                    }
-                }
-            }
-            */
-
-
+            // The first set of lights to render are the non-shadow-casting lights. We can set some rendering state at the start so that we don't
+            // have to keep changing it for each individual light. This will be different for shadow-casting lights, though, because they will 
+            // need to have their shadow maps rendered also.
             size_t ambientLightsRemaining     = visibleObjects.ambientLights.count;
             size_t directionalLightsRemaining = visibleObjects.directionalLights.count;
             size_t pointLightsRemaining       = visibleObjects.pointLights.count;
             size_t spotLightsRemaining        = visibleObjects.spotLights.count;
 
-            // Ambient Lights.
-            while (ambientLightsRemaining > 0)
+            if (ambientLightsRemaining > 0 || directionalLightsRemaining > 0 || pointLightsRemaining > 0 || spotLightsRemaining > 0)
             {
-                this->RenderOpaqueAmbientLightingPass(ambientLightsRemaining - 1, visibleObjects);
-                ambientLightsRemaining -= 1;
+                // Depth is laid down. No need to write.
+                Renderer::DisableDepthWrites();
+                Renderer::SetDepthFunction(RendererFunction_Equal);
+                Renderer::EnableBlending();
+
+
+                // Ambient Lights.
+                while (ambientLightsRemaining > 0)
+                {
+                    this->RenderOpaqueAmbientLightingPass(ambientLightsRemaining - 1, visibleObjects);
+                    ambientLightsRemaining -= 1;
+                }
+
+                // Directional Lights.
+                while (directionalLightsRemaining > 0)
+                {
+                    this->RenderOpaqueDirectionalLightingPass(directionalLightsRemaining - 1, visibleObjects);
+                    directionalLightsRemaining -= 1;
+                }
+
+                // Point Lights.
+                while (pointLightsRemaining > 0)
+                {
+                    this->RenderOpaquePointLightingPass(pointLightsRemaining - 1, visibleObjects);
+                    pointLightsRemaining -= 1;
+                }
+
+                // Spot Lights.
+                while (spotLightsRemaining > 0)
+                {
+                    this->RenderOpaqueSpotLightingPass(spotLightsRemaining - 1, visibleObjects);
+                    spotLightsRemaining -= 1;
+                }
+
+                // We have finished with the non-shadow casting lights, so now some state needs to be restored. The next lights will have shadow
+                // maps generated which means they will need to handle state changes themselves.
+                Renderer::EnableDepthWrites();
+                Renderer::SetDepthFunction(RendererFunction_LEqual);
+                Renderer::DisableBlending();
             }
 
-            // Directional Lights.
-            while (directionalLightsRemaining > 0)
-            {
-                this->RenderOpaqueDirectionalLightingPass(directionalLightsRemaining - 1, visibleObjects);
-                directionalLightsRemaining -= 1;
-            }
-
-            // Point Lights.
-            while (pointLightsRemaining > 0)
-            {
-                this->RenderOpaquePointLightingPass(pointLightsRemaining - 1, visibleObjects);
-                pointLightsRemaining -= 1;
-            }
-
-            // Spot Lights.
-            while (spotLightsRemaining > 0)
-            {
-                this->RenderOpaqueSpotLightingPass(spotLightsRemaining - 1, visibleObjects);
-                spotLightsRemaining -= 1;
-            }
 
 
-
-            /// Shadow-Casting Spot Lights.
+            // Shadow-Casting Lights.
             size_t shadowDirectionalLightsRemaining = visibleObjects.shadowDirectionalLights.count;
             size_t shadowPointLightsRemaining       = visibleObjects.shadowPointLights.count;
             size_t shadowSpotLightsRemaining        = visibleObjects.shadowSpotLights.count;
@@ -1108,13 +1103,6 @@ namespace GTEngine
                 this->RenderOpaqueShadowSpotLightingPass(shadowSpotLightsRemaining - 1, visibleObjects, framebuffer);
                 shadowSpotLightsRemaining -= 1;
             }
-
-
-
-            // Restore state.
-            Renderer::DisableBlending();
-            Renderer::EnableDepthWrites();
-            Renderer::SetDepthFunction(RendererFunction_LEqual);
         }
     }
 
@@ -1367,10 +1355,6 @@ namespace GTEngine
     void DefaultSceneRenderer::RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
     {
         // We first need to build the shadow map.
-        Renderer::DisableBlending();
-        Renderer::SetDepthFunction(RendererFunction_LEqual);
-        Renderer::EnableDepthWrites();
-
         Renderer::SetCurrentFramebuffer(this->shadowMapFramebuffer.framebuffer);
         Renderer::SetCurrentShader(this->shadowMapShader);        
         Renderer::SetViewport(0, 0, this->shadowMapFramebuffer.width, this->shadowMapFramebuffer.height);
@@ -1382,7 +1366,6 @@ namespace GTEngine
         int colourBufferIndex = 0;
         int blurBufferIndex   = 1;
         Renderer::SetDrawBuffers(1, &colourBufferIndex);
-
 
 
         auto light = visibleObjects.shadowDirectionalLights.buffer[lightIndex]->value;
@@ -1410,9 +1393,10 @@ namespace GTEngine
         }
 
 
-        Renderer::DisableDepthTest();
+        // Here is where we perform the blurring of the shadow map. This renders a fullscreen quad, so we don't want depth testing here.
         Renderer::DisableDepthWrites();
-
+        Renderer::DisableDepthTest();
+        
         // Blur X.
         {
             Renderer::SetDrawBuffers(1, &blurBufferIndex);
@@ -1445,12 +1429,14 @@ namespace GTEngine
             Renderer::Draw(*this->fullscreenTriangleVA);
         }
 
-        Renderer::EnableDepthWrites();
+        // The blurring is now done, but we want to restore depth testing.
         Renderer::EnableDepthTest();
 
 
-        // We went into this method with blending enabled, but the shadow map generation disabled it. Thus, we need to re-enable it.
-        Renderer::EnableBlending();
+        // At this point the shad map has been generated and we need to set the state as if we were doing normal lighting. Note how the blur pass has already
+        // disabled depth writing, so no need to disable it again.
+        Renderer::SetDepthFunction(RendererFunction_Equal);
+        Renderer::EnableBlending();     // <-- Blending functions were set higher up.
 
 
 
@@ -1481,6 +1467,12 @@ namespace GTEngine
                 this->RenderOpaqueShadowDirectionalLightingPass(lightIndex, visibleObjects, *meshList);
             }
         }
+
+
+        // Restore state.
+        Renderer::DisableBlending();
+        Renderer::EnableDepthWrites();
+        Renderer::SetDepthFunction(RendererFunction_LEqual);
     }
 
     void DefaultSceneRenderer::RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
@@ -1612,10 +1604,6 @@ namespace GTEngine
     void DefaultSceneRenderer::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
     {
         // We first need to build the shadow map.
-        Renderer::DisableBlending();
-        Renderer::EnableDepthWrites();
-        Renderer::SetDepthFunction(RendererFunction_LEqual);
-        
         Renderer::SetCurrentFramebuffer(this->pointShadowMapFramebuffer.framebuffer);
         Renderer::SetViewport(0, 0, this->pointShadowMapFramebuffer.width, this->pointShadowMapFramebuffer.height);
 
@@ -1632,8 +1620,11 @@ namespace GTEngine
         }
 
 
-        // We went into this method with blending enabled, but the shadow map generation disabled it. Thus, we need to re-enable it.
-        Renderer::EnableBlending();
+        // At this point the shadow map is done and we can now set the state appropriately and render.
+        Renderer::DisableDepthWrites();
+        Renderer::SetDepthFunction(RendererFunction_Equal);
+        Renderer::EnableBlending();     // <-- Blending functions were set higher up.
+
 
 
 
@@ -1664,6 +1655,12 @@ namespace GTEngine
                 this->RenderOpaqueShadowPointLightingPass(lightIndex, visibleObjects, *meshList);
             }
         }
+
+
+        // Restore state.
+        Renderer::DisableBlending();
+        Renderer::EnableDepthWrites();
+        Renderer::SetDepthFunction(RendererFunction_LEqual);
     }
 
     void DefaultSceneRenderer::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
@@ -1882,10 +1879,6 @@ namespace GTEngine
     void DefaultSceneRenderer::RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
     {
         // We first need to build the shadow map.
-        Renderer::DisableBlending();
-        Renderer::SetDepthFunction(RendererFunction_LEqual);
-        Renderer::EnableDepthWrites();
-
         Renderer::SetCurrentFramebuffer(this->shadowMapFramebuffer.framebuffer);
         Renderer::SetCurrentShader(this->shadowMapShader);        
         Renderer::SetViewport(0, 0, this->shadowMapFramebuffer.width, this->shadowMapFramebuffer.height);
@@ -1925,8 +1918,9 @@ namespace GTEngine
         }
 
 
-        Renderer::DisableDepthTest();
+        // Here is where we perform the blurring of the shadow map. This renders a fullscreen quad, so we don't want depth testing here.
         Renderer::DisableDepthWrites();
+        Renderer::DisableDepthTest();
 
         // Blur X.
         {
@@ -1960,12 +1954,15 @@ namespace GTEngine
             Renderer::Draw(*this->fullscreenTriangleVA);
         }
 
-        Renderer::EnableDepthWrites();
+        // The blurring is now done, but we want to restore depth testing.
         Renderer::EnableDepthTest();
-        
 
-        // We went into this method with blending enabled, but the shadow map generation disabled it. Thus, we need to re-enable it.
-        Renderer::EnableBlending();
+
+        // At this point the shad map has been generated and we need to set the state as if we were doing normal lighting. Note how the blur pass has already
+        // disabled depth writing, so no need to disable it again.
+        Renderer::SetDepthFunction(RendererFunction_Equal);
+        Renderer::EnableBlending();     // <-- Blending functions were set higher up.
+        
 
 
         // With the shadow map done, we now need to go back to the main framebuffer.
@@ -1995,6 +1992,12 @@ namespace GTEngine
                 this->RenderOpaqueShadowSpotLightingPass(lightIndex, visibleObjects, *meshList);
             }
         }
+
+
+        // Restore state.
+        Renderer::DisableBlending();
+        Renderer::EnableDepthWrites();
+        Renderer::SetDepthFunction(RendererFunction_LEqual);
     }
 
     void DefaultSceneRenderer::RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
@@ -2056,9 +2059,6 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderBlendedTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
-        Renderer::SetDepthFunction(RendererFunction_LEqual);
-
-
         // We loop over every refractive object and draw them one-by-one. For each object, we draw the lighting constribution to the lighting buffers and then
         // do the material pass.
 
