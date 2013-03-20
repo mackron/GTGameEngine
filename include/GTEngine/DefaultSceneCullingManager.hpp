@@ -351,8 +351,12 @@ namespace GTEngine
                 this->collisionShape  = new btCompoundShape;
 
                 // Here we create the cone shape. We need to offset by half the height because Bullet creates it's cones centered.
+                btQuaternion rotation;
+                rotation.setRotation(btVector3(0.0f, 1.0f, 0.0f), 180.0f);      // <-- Not sure if this is needed...
+
                 btTransform coneTransform;
                 coneTransform.setIdentity();
+                coneTransform.setBasis(btMatrix3x3(rotation));
                 coneTransform.setOrigin(btVector3(0.0f, 0.0f, -height * 0.5f));
                 this->collisionShape->addChildShape(coneTransform, new btConeShapeZ(glm::sin(glm::radians(outerAngle)) * height, height));
 
