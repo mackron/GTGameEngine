@@ -749,7 +749,7 @@ namespace GTEngine
 
 
 
-        // 1) Make everything current.
+        // 1) Set default state.
         auto framebuffer = this->GetViewportFramebuffer(viewport);
         assert(framebuffer != nullptr);
         {
@@ -757,6 +757,10 @@ namespace GTEngine
             Renderer::SetViewport(0, 0, framebuffer->width, framebuffer->height);
         }
 
+        Renderer::DisableBlending();
+        Renderer::EnableDepthTest();
+        Renderer::EnableDepthWrites();
+        Renderer::SetDepthFunction(RendererFunction_LEqual);
 
 
 
@@ -1011,10 +1015,6 @@ namespace GTEngine
         Renderer::SetClearStencil(0);
         Renderer::Clear(BufferType_Colour | BufferType_Depth | BufferType_Stencil);
 
-        Renderer::DisableBlending();
-        Renderer::EnableDepthWrites();
-        Renderer::EnableDepthTest();
-        Renderer::SetDepthFunction(RendererFunction_LEqual);
 
         // Depth Pass first.
         this->RenderDepthPass(framebuffer, visibleObjects);
@@ -1105,14 +1105,17 @@ namespace GTEngine
             this->RenderOpaqueShadowSpotLightingPass(shadowSpotLightsRemaining - 1, visibleObjects, framebuffer);
             shadowSpotLightsRemaining -= 1;
         }
+
+
+
+        // Restore state.
+        Renderer::DisableBlending();
+        Renderer::EnableDepthWrites();
+        Renderer::SetDepthFunction(RendererFunction_LEqual);
     }
 
     void DefaultSceneRenderer::RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
     {
-        // This pass draws the objects like normal and grab the lighting information from the lighting buffers.
-        Renderer::DisableBlending();
-        
-
         int outputBuffer[] = {0};
         Renderer::SetDrawBuffers(1, outputBuffer);
 
@@ -1442,6 +1445,10 @@ namespace GTEngine
         Renderer::EnableDepthTest();
 
 
+        // We went into this method with blending enabled, but the shadow map generation disabled it. Thus, we need to re-enable it.
+        Renderer::EnableBlending();
+
+
 
         // With the shadow map done, we now need to go back to the main framebuffer.
         Renderer::SetCurrentFramebuffer(mainFramebuffer->framebuffer);
@@ -1449,10 +1456,6 @@ namespace GTEngine
         int lightingBuffers[] = {1, 2};
         Renderer::SetDrawBuffers(2, lightingBuffers);
         Renderer::SetViewport(0, 0, mainFramebuffer->width, mainFramebuffer->height);
-        Renderer::EnableBlending();
-        Renderer::DisableDepthWrites();
-        Renderer::SetDepthFunction(RendererFunction_Equal);
-
 
 
         // First.
@@ -1625,6 +1628,10 @@ namespace GTEngine
         }
 
 
+        // We went into this method with blending enabled, but the shadow map generation disabled it. Thus, we need to re-enable it.
+        Renderer::EnableBlending();
+
+
 
         // With the shadow map done, we now need to go back to the main framebuffer.
         Renderer::SetCurrentFramebuffer(mainFramebuffer->framebuffer);
@@ -1632,9 +1639,6 @@ namespace GTEngine
         int lightingBuffers[] = {1, 2};
         Renderer::SetDrawBuffers(2, lightingBuffers);
         Renderer::SetViewport(0, 0, mainFramebuffer->width, mainFramebuffer->height);
-        Renderer::EnableBlending();
-        Renderer::DisableDepthWrites();
-        Renderer::SetDepthFunction(RendererFunction_Equal);
 
 
         // First.
@@ -1956,6 +1960,8 @@ namespace GTEngine
         Renderer::EnableDepthTest();
         
 
+        // We went into this method with blending enabled, but the shadow map generation disabled it. Thus, we need to re-enable it.
+        Renderer::EnableBlending();
 
 
         // With the shadow map done, we now need to go back to the main framebuffer.
@@ -1964,9 +1970,6 @@ namespace GTEngine
         int lightingBuffers[] = {1, 2};
         Renderer::SetDrawBuffers(2, lightingBuffers);
         Renderer::SetViewport(0, 0, mainFramebuffer->width, mainFramebuffer->height);
-        Renderer::EnableBlending();
-        Renderer::DisableDepthWrites();
-        Renderer::SetDepthFunction(RendererFunction_Equal);
 
 
         // First.
@@ -2150,7 +2153,6 @@ namespace GTEngine
                 // If we're drawing a highlight, we'll need to draw a solid colour transparent mesh over the top using alpha blending.
                 if ((mesh.flags & SceneRendererMesh::DrawHighlight))
                 {
-                    Renderer::EnableBlending();
                     Renderer::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
 
 
@@ -2178,7 +2180,7 @@ namespace GTEngine
         // We need to copy the content from the opaque buffer over the to buffer that will output the results of the transparent pass.
         int colourBuffer[] = {3};
         Renderer::SetDrawBuffers(1, colourBuffer);
-        Renderer::DisableBlending();
+
         Renderer::DisableDepthTest();
         Renderer::DisableDepthWrites();
         
@@ -2262,9 +2264,7 @@ namespace GTEngine
                 int colourBuffer[] = {3};
                 Renderer::SetDrawBuffers(1, colourBuffer);
 
-                Renderer::DisableBlending();
 
-                
 
                 // Shader Setup.
                 auto shader = this->GetMaterialMaterialShader(*mesh.material);
@@ -2337,7 +2337,9 @@ namespace GTEngine
 
                     Renderer::DisableDepthTest();
                     Renderer::DisableDepthWrites();
-                    Renderer::Draw(*this->fullscreenTriangleVA);
+                    {
+                        Renderer::Draw(*this->fullscreenTriangleVA);
+                    }
                     Renderer::EnableDepthTest();
                     Renderer::EnableDepthWrites();
                 }
@@ -2640,6 +2642,13 @@ namespace GTEngine
                     doneFirstLight = true;
                 }
             }
+
+
+            // Blending might need to be disabled.
+            if (doneFirstLight)
+            {
+                Renderer::DisableBlending();
+            }
         }
     }
 
@@ -2649,8 +2658,6 @@ namespace GTEngine
         Renderer::DisableDepthTest();
         Renderer::DisableDepthWrites();
         Renderer::DisableStencilTest();
-        Renderer::DisableBlending();
-        Renderer::DisableScissorTest();
 
 
         if (this->IsHDREnabled())
