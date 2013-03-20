@@ -634,7 +634,7 @@ namespace GTEngine
 
     DefaultSceneRenderer::DefaultSceneRenderer()
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
-          shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(384, 384), pointShadowMapShader(nullptr),
+          shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
           fullscreenTriangleVA(nullptr), finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
           isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(0.25f), blurShaderX(nullptr), blurShaderY(nullptr),
           materialLibraryEventHandler(*this)
@@ -1606,12 +1606,10 @@ namespace GTEngine
     {
         // We first need to build the shadow map.
         Renderer::DisableBlending();
-        Renderer::EnableDepthTest();
         Renderer::EnableDepthWrites();
         Renderer::SetDepthFunction(RendererFunction_LEqual);
         
         Renderer::SetCurrentFramebuffer(this->pointShadowMapFramebuffer.framebuffer);
-        Renderer::SetCurrentShader(this->pointShadowMapShader);
         Renderer::SetViewport(0, 0, this->pointShadowMapFramebuffer.width, this->pointShadowMapFramebuffer.height);
 
         
@@ -1637,7 +1635,6 @@ namespace GTEngine
         Renderer::EnableBlending();
         Renderer::DisableDepthWrites();
         Renderer::SetDepthFunction(RendererFunction_Equal);
-
 
 
         // First.
@@ -1728,9 +1725,6 @@ namespace GTEngine
         Renderer::SetClearDepth(1.0f);
         Renderer::Clear(BufferType_Colour | BufferType_Depth);
 
-        
-
-
 
         glm::mat4 projectionView = light.projection * faceViewMatrix;
         for (size_t i = 0; i < meshes.count; ++i)
@@ -1753,8 +1747,9 @@ namespace GTEngine
         }
 
 
-        // TODO: Make this optional.
 
+        // TODO: Make this optional.
+        
         // Now we want to do a gaussian blur on the face. The way we do it is we first blur on the X axis and then do the same on the Y axis. We use
         // an intermediary buffer that is bound to index 6 in the framebuffer. Not sure how seams will work here.
         Renderer::DisableDepthTest();
@@ -2185,6 +2180,7 @@ namespace GTEngine
         Renderer::SetDrawBuffers(1, colourBuffer);
         Renderer::DisableBlending();
         Renderer::DisableDepthTest();
+        Renderer::DisableDepthWrites();
         
 
         // The opaque buffer must have a Nearest/Nearest filter.
@@ -2340,8 +2336,10 @@ namespace GTEngine
                     
 
                     Renderer::DisableDepthTest();
+                    Renderer::DisableDepthWrites();
                     Renderer::Draw(*this->fullscreenTriangleVA);
                     Renderer::EnableDepthTest();
+                    Renderer::EnableDepthWrites();
                 }
             }
         }
