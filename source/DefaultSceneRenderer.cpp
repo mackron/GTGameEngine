@@ -1007,113 +1007,115 @@ namespace GTEngine
         // TODO: This needs a big improvement here. Need to combine lights into a single pass for objects.
 
 
-
-        // The lighting buffers must be cleared to black. Also need to clear the depth/stencil buffer.
-        int lightingBuffers[] = {1, 2};
-        Renderer::SetDrawBuffers(2, lightingBuffers);
-
-        Renderer::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
-        Renderer::SetClearDepth(1.0f);
-        Renderer::SetClearStencil(0);
-        Renderer::Clear(BufferType_Colour | BufferType_Depth | BufferType_Stencil);
-
-
-        // Depth Pass first.
-        this->RenderDepthPass(framebuffer, visibleObjects);
-
-
-        // Depth is laid down. No need to write.
-        Renderer::DisableDepthWrites();
-        Renderer::SetDepthFunction(RendererFunction_Equal);
-
-        // We use additive blending here.
-        Renderer::EnableBlending();
-        Renderer::SetBlendEquation(BlendEquation_Add);
-        Renderer::SetBlendFunction(BlendFunc_One, BlendFunc_One);
-
-
-        /*
-        for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
+        if (visibleObjects.opaqueObjects.count > 0 || visibleObjects.opaqueObjectsLast.count > 0)
         {
-            auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
-            assert(meshList != nullptr);
-            {
-                for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
-                {
-                    auto &mesh = meshList->Get(iMesh);
-                    {
+            // The lighting buffers must be cleared to black. Also need to clear the depth/stencil buffer.
+            int lightingBuffers[] = {1, 2};
+            Renderer::SetDrawBuffers(2, lightingBuffers);
 
+            Renderer::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
+            Renderer::SetClearDepth(1.0f);
+            Renderer::SetClearStencil(0);
+            Renderer::Clear(BufferType_Colour | BufferType_Depth | BufferType_Stencil);
+
+
+            // Depth Pass first.
+            this->RenderDepthPass(framebuffer, visibleObjects);
+
+
+            // Depth is laid down. No need to write.
+            Renderer::DisableDepthWrites();
+            Renderer::SetDepthFunction(RendererFunction_Equal);
+
+            // We use additive blending here.
+            Renderer::EnableBlending();
+            Renderer::SetBlendEquation(BlendEquation_Add);
+            Renderer::SetBlendFunction(BlendFunc_One, BlendFunc_One);
+
+
+            /*
+            for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
+            {
+                auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
+                assert(meshList != nullptr);
+                {
+                    for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
+                    {
+                        auto &mesh = meshList->Get(iMesh);
+                        {
+
+                        }
                     }
                 }
             }
-        }
-        */
+            */
 
 
-        size_t ambientLightsRemaining     = visibleObjects.ambientLights.count;
-        size_t directionalLightsRemaining = visibleObjects.directionalLights.count;
-        size_t pointLightsRemaining       = visibleObjects.pointLights.count;
-        size_t spotLightsRemaining        = visibleObjects.spotLights.count;
+            size_t ambientLightsRemaining     = visibleObjects.ambientLights.count;
+            size_t directionalLightsRemaining = visibleObjects.directionalLights.count;
+            size_t pointLightsRemaining       = visibleObjects.pointLights.count;
+            size_t spotLightsRemaining        = visibleObjects.spotLights.count;
 
-        // Ambient Lights.
-        while (ambientLightsRemaining > 0)
-        {
-            this->RenderOpaqueAmbientLightingPass(ambientLightsRemaining - 1, visibleObjects);
-            ambientLightsRemaining -= 1;
-        }
+            // Ambient Lights.
+            while (ambientLightsRemaining > 0)
+            {
+                this->RenderOpaqueAmbientLightingPass(ambientLightsRemaining - 1, visibleObjects);
+                ambientLightsRemaining -= 1;
+            }
 
-        // Directional Lights.
-        while (directionalLightsRemaining > 0)
-        {
-            this->RenderOpaqueDirectionalLightingPass(directionalLightsRemaining - 1, visibleObjects);
-            directionalLightsRemaining -= 1;
-        }
+            // Directional Lights.
+            while (directionalLightsRemaining > 0)
+            {
+                this->RenderOpaqueDirectionalLightingPass(directionalLightsRemaining - 1, visibleObjects);
+                directionalLightsRemaining -= 1;
+            }
 
-        // Point Lights.
-        while (pointLightsRemaining > 0)
-        {
-            this->RenderOpaquePointLightingPass(pointLightsRemaining - 1, visibleObjects);
-            pointLightsRemaining -= 1;
-        }
+            // Point Lights.
+            while (pointLightsRemaining > 0)
+            {
+                this->RenderOpaquePointLightingPass(pointLightsRemaining - 1, visibleObjects);
+                pointLightsRemaining -= 1;
+            }
 
-        // Spot Lights.
-        while (spotLightsRemaining > 0)
-        {
-            this->RenderOpaqueSpotLightingPass(spotLightsRemaining - 1, visibleObjects);
-            spotLightsRemaining -= 1;
-        }
+            // Spot Lights.
+            while (spotLightsRemaining > 0)
+            {
+                this->RenderOpaqueSpotLightingPass(spotLightsRemaining - 1, visibleObjects);
+                spotLightsRemaining -= 1;
+            }
 
 
 
-        /// Shadow-Casting Spot Lights.
-        size_t shadowDirectionalLightsRemaining = visibleObjects.shadowDirectionalLights.count;
-        size_t shadowPointLightsRemaining       = visibleObjects.shadowPointLights.count;
-        size_t shadowSpotLightsRemaining        = visibleObjects.shadowSpotLights.count;
+            /// Shadow-Casting Spot Lights.
+            size_t shadowDirectionalLightsRemaining = visibleObjects.shadowDirectionalLights.count;
+            size_t shadowPointLightsRemaining       = visibleObjects.shadowPointLights.count;
+            size_t shadowSpotLightsRemaining        = visibleObjects.shadowSpotLights.count;
 
-        while (shadowDirectionalLightsRemaining > 0)
-        {
-            this->RenderOpaqueShadowDirectionalLightingPass(shadowDirectionalLightsRemaining - 1, visibleObjects, framebuffer);
-            shadowDirectionalLightsRemaining -= 1;
-        }
+            while (shadowDirectionalLightsRemaining > 0)
+            {
+                this->RenderOpaqueShadowDirectionalLightingPass(shadowDirectionalLightsRemaining - 1, visibleObjects, framebuffer);
+                shadowDirectionalLightsRemaining -= 1;
+            }
 
-        while (shadowPointLightsRemaining > 0)
-        {
-            this->RenderOpaqueShadowPointLightingPass(shadowPointLightsRemaining - 1, visibleObjects, framebuffer);
-            shadowPointLightsRemaining -= 1;
-        }
+            while (shadowPointLightsRemaining > 0)
+            {
+                this->RenderOpaqueShadowPointLightingPass(shadowPointLightsRemaining - 1, visibleObjects, framebuffer);
+                shadowPointLightsRemaining -= 1;
+            }
         
-        while (shadowSpotLightsRemaining > 0)
-        {
-            this->RenderOpaqueShadowSpotLightingPass(shadowSpotLightsRemaining - 1, visibleObjects, framebuffer);
-            shadowSpotLightsRemaining -= 1;
+            while (shadowSpotLightsRemaining > 0)
+            {
+                this->RenderOpaqueShadowSpotLightingPass(shadowSpotLightsRemaining - 1, visibleObjects, framebuffer);
+                shadowSpotLightsRemaining -= 1;
+            }
+
+
+
+            // Restore state.
+            Renderer::DisableBlending();
+            Renderer::EnableDepthWrites();
+            Renderer::SetDepthFunction(RendererFunction_LEqual);
         }
-
-
-
-        // Restore state.
-        Renderer::DisableBlending();
-        Renderer::EnableDepthWrites();
-        Renderer::SetDepthFunction(RendererFunction_LEqual);
     }
 
     void DefaultSceneRenderer::RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRendererVisibleObjects &visibleObjects)
