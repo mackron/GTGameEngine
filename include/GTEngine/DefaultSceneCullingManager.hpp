@@ -102,6 +102,9 @@ namespace GTEngine
 
 
         /// SceneCullingManager::ProcessVisibleObjects().
+        ///
+        /// @remarks
+        ///     This is not currently thread-safe.
         virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback) const;
 
 
@@ -419,10 +422,14 @@ namespace GTEngine
         struct DbvtPolicy : btDbvt::ICollide
         {
             /// Constructor.
-            DbvtPolicy(const DefaultSceneCullingManager &cullingManager, VisibilityCallback &callback, const glm::mat4 &mvp, size_t bufferWidth = 128, size_t bufferHeight = 128);
+            DbvtPolicy(const DefaultSceneCullingManager &cullingManager, size_t bufferWidth = 128, size_t bufferHeight = 128);
 
             /// Destructor.
             virtual ~DbvtPolicy();
+
+
+            /// Initialises the policy with a new callback and matrix.
+            void Initialize(VisibilityCallback &callback, const glm::mat4 &mvp);
 
 
             /// btDbvt::ICollide::Descent()
@@ -673,7 +680,7 @@ namespace GTEngine
             const DefaultSceneCullingManager &cullingManager;
 
             /// The callback structure that is passed around to cullingManager.
-            VisibilityCallback &callback;
+            VisibilityCallback* callback;
 
             /// The model-view-projection matrix to use with the culling.
             btScalar mvp[16];
@@ -692,6 +699,10 @@ namespace GTEngine
             DbvtPolicy(const DbvtPolicy &);
             DbvtPolicy & operator=(const DbvtPolicy &);
         };
+        
+        /// The persistent DBVT policy to use for culling. This is intended to make things more efficient because it has an expensive constructor, but
+        /// it eliminates thread safty for occlusion culling.
+        mutable DbvtPolicy dbvtPolicy;
 
 
 

@@ -7,12 +7,14 @@
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4351)       // new behavior: elements of array 'GTEngine::DefaultSceneCullingManager::DbvtPolicy::mvp' will be default initialized
+    #pragma warning(disable:4355)       // 'this' used in initializer list.
 #endif
 
 namespace GTEngine
 {
     DefaultSceneCullingManager::DefaultSceneCullingManager()
-        : world(), models(), pointLights(), spotLights(), ambientLights(), directionalLights()
+        : world(), models(), pointLights(), spotLights(), ambientLights(), directionalLights(),
+          dbvtPolicy(*this)
     {
     }
 
@@ -375,7 +377,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneCullingManager::ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback) const
+    void DefaultSceneCullingManager::ProcessVisibleObjects(const glm::mat4 &mvpIn, VisibilityCallback &callbackIn) const
     {
         auto flags = this->GetFlags();
 
@@ -394,7 +396,7 @@ namespace GTEngine
                 auto sceneObject = static_cast<SceneObject*>(collisionObject->getUserPointer());
                 if (sceneObject != nullptr)
                 {
-                    this->ProcessVisibleObject(*sceneObject, callback);
+                    this->ProcessVisibleObject(*sceneObject, callbackIn);
                 }
             }
         }
@@ -402,7 +404,7 @@ namespace GTEngine
         {
             // The first thing we're going to do is convert our planes to a format Bullet will like.
             Math::Plane planes[6];
-            Math::CalculateFrustumPlanes(mvp, planes, false);       // <-- last arguments means "don't normalize" (not needed by Bullet).
+            Math::CalculateFrustumPlanes(mvpIn, planes, false);       // <-- last arguments means "don't normalize" (not needed by Bullet).
 
             btVector3 planes_n[6];
 	        btScalar  planes_o[6];
@@ -420,7 +422,8 @@ namespace GTEngine
 
 
             // Now we just create our Dbvt policy and call our occlusion functions.
-            DbvtPolicy dbvtPolicy(*this, callback, mvp);
+            //DbvtPolicy dbvtPolicy(*this, callback, mvp);
+            this->dbvtPolicy.Initialize(callbackIn, mvpIn);
 
             if (!(flags & SceneCullingManager::NoOcclusionCulling))
             {
@@ -437,12 +440,12 @@ namespace GTEngine
 
         for (size_t i = 0; i < this->ambientLights.count; ++i)
         {
-            callback.ProcessObjectAmbientLight(*this->ambientLights[i]);
+            callbackIn.ProcessObjectAmbientLight(*this->ambientLights[i]);
         }
 
         for (size_t i = 0; i < this->directionalLights.count; ++i)
         {
-            callback.ProcessObjectDirectionalLight(*this->directionalLights[i]);
+            callbackIn.ProcessObjectDirectionalLight(*this->directionalLights[i]);
         }
     }
 
@@ -561,12 +564,25 @@ namespace GTEngine
         }
     };
 
-    DefaultSceneCullingManager::DbvtPolicy::DbvtPolicy(const DefaultSceneCullingManager &cullingManagerIn, VisibilityCallback &callbackIn, const glm::mat4 &mvpIn, size_t bufferWidthIn, size_t bufferHeightIn)
-        : cullingManager(cullingManagerIn), callback(callbackIn),
+    DefaultSceneCullingManager::DbvtPolicy::DbvtPolicy(const DefaultSceneCullingManager &cullingManagerIn, size_t bufferWidthIn, size_t bufferHeightIn)
+        : cullingManager(cullingManagerIn), callback(nullptr),
           mvp(),
           bufferWidth(bufferWidthIn), bufferHeight(bufferHeightIn),
           buffer()
     {
+        // First create the buffer.
+        buffer.resize(bufferWidth * bufferHeight, 0);
+    }
+
+    DefaultSceneCullingManager::DbvtPolicy::~DbvtPolicy()
+    {
+    }
+
+
+    void DefaultSceneCullingManager::DbvtPolicy::Initialize(VisibilityCallback &callbackIn, const glm::mat4 &mvpIn)
+    {
+        this->callback = &callbackIn;
+
         this->mvp[0]  = mvpIn[0][0];
         this->mvp[1]  = mvpIn[0][1];
         this->mvp[2]  = mvpIn[0][2];
@@ -586,12 +602,6 @@ namespace GTEngine
         this->mvp[13] = mvpIn[3][1];
         this->mvp[14] = mvpIn[3][2];
         this->mvp[15] = mvpIn[3][3];
-
-        buffer.resize(bufferWidth * bufferHeight, 0);
-    }
-
-    DefaultSceneCullingManager::DbvtPolicy::~DbvtPolicy()
-    {
     }
 
 
@@ -635,20 +645,20 @@ namespace GTEngine
 
                         if (modelComponent->GetModel() != nullptr && modelComponent->IsModelVisible())
                         {
-                            this->cullingManager.ProcessVisibleObjectModel(*sceneNode, this->callback);
+                            this->cullingManager.ProcessVisibleObjectModel(*sceneNode, *this->callback);
                         }
                     }
                     else if (proxy->m_collisionFilterGroup & CollisionGroups::PointLight)
                     {
                         assert(sceneNode->GetComponent<PointLightComponent>() != nullptr);
 
-                        this->cullingManager.ProcessVisibleObjectPointLight(*sceneNode, this->callback);
+                        this->cullingManager.ProcessVisibleObjectPointLight(*sceneNode, *this->callback);
                     }
                     else if (proxy->m_collisionFilterGroup & CollisionGroups::SpotLight)
                     {
                         assert(sceneNode->GetComponent<SpotLightComponent>() != nullptr);
 
-                        this->cullingManager.ProcessVisibleObjectSpotLight(*sceneNode, this->callback);
+                        this->cullingManager.ProcessVisibleObjectSpotLight(*sceneNode, *this->callback);
                     }
                 }
             }
