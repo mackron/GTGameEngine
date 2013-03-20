@@ -121,7 +121,6 @@
     
     void main()
     {
-    /*
         vec2  uv       = VertexOutput_TexCoord;
         float uvOffset = 1.0 / textureSize(Texture, 0).x;
     
@@ -141,9 +140,6 @@
         {
             ColourOut.xy += texture2D(Texture, vec2(uv.x, uv.y + (i - 10) * uvOffset)).xy * coefficients[i];
         }
-        */
-        
-        ColourOut.xy = texture2D(Texture, VertexOutput_TexCoord).xy;
     }
 ]]>
 </shader>
