@@ -4,6 +4,7 @@
 #include <gtgl/gtgl.h>
 
 #include "../CapabilityBits.hpp"
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -28,6 +29,38 @@ namespace GTEngine
     #define SET_DRAW_BUFFERS_BIT            (1 << 19)
     #define ENABLE_BIT                      (1 << 20)
     #define DISABLE_BIT                     (1 << 21)
+
+
+    /// Just a helper function so we can set a break point for when a redundancy message is received.
+    void PostRedundancyMessage(const char* message)
+    {
+        GTEngine::Log(message);
+    }
+
+#ifdef NDEBUG
+    #define CHECK_REDUNDANCY(settingBit, message)
+    #define CHECK_ENABLE_REDUNDANCY(settingBit, message)
+    #define CHECK_DISABLE_REDUNDANCY(settingBit, message)
+#else
+    #define CHECK_REDUNDANCY(settingBit, message) \
+        if ((this->operationBitfield & settingBit)) \
+        { \
+            PostRedundancyMessage(message); \
+        }
+
+    #define CHECK_ENABLE_REDUNDANCY(settingBit, message) \
+        if ((this->enableParams.caps & settingBit)) \
+        { \
+            PostRedundancyMessage(message); \
+        }
+
+    #define CHECK_DISABLE_REDUNDANCY(settingBit, message) \
+        if ((this->disableParams.caps & settingBit)) \
+        { \
+            PostRedundancyMessage(message); \
+        }
+#endif
+        
     
 
 
@@ -45,10 +78,15 @@ namespace GTEngine
           drawBuffersParams(),
           enableParams(), disableParams()
     {
+        this->enableParams.caps  = 0;
+        this->disableParams.caps = 0;
     }
 
     void RCSetGlobalState::SetViewport(GLint x, GLint y, GLsizei width, GLsizei height)
     {
+        CHECK_REDUNDANCY(VIEWPORT_BIT, "Warning: Renderer: Redundant call to SetViewport().");
+
+
         this->viewportParams.x      = x;
         this->viewportParams.y      = y;
         this->viewportParams.width  = width;
@@ -59,6 +97,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetScissor(GLint x, GLint y, GLsizei width, GLsizei height)
     {
+        CHECK_REDUNDANCY(SCISSOR_BIT, "Warning: Renderer: Redundant call to SetScissor().");
+
+
         this->scissorParams.x      = x;
         this->scissorParams.y      = y;
         this->scissorParams.width  = width;
@@ -70,6 +111,9 @@ namespace GTEngine
     
     void RCSetGlobalState::SetClearColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
     {
+        CHECK_REDUNDANCY(CLEAR_COLOUR_BIT, "Warning: Renderer: Redundant call to SetClearColour().");
+
+
         this->clearColorParams.r = r;
         this->clearColorParams.g = g;
         this->clearColorParams.b = b;
@@ -80,6 +124,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetClearDepth(GLfloat depth)
     {
+        CHECK_REDUNDANCY(CLEAR_DEPTH_BIT, "Warning: Renderer: Redundant call to SetClearDepth().");
+
+
         this->clearDepthParams.depth = depth;
 
         this->operationBitfield |= CLEAR_DEPTH_BIT;
@@ -87,6 +134,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetClearStencil(GLint stencil)
     {
+        CHECK_REDUNDANCY(CLEAR_STENCIL_BIT, "Warning: Renderer: Redundant call to SetClearStencil().");
+
+
         this->clearStencilParams.stencil = stencil;
 
         this->operationBitfield |= CLEAR_STENCIL_BIT;
@@ -95,6 +145,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetCurrentShader(ShaderState_OpenGL33* programState)
     {
+        CHECK_REDUNDANCY(SET_CURRENT_SHADER_BIT, "Warning: Renderer: Redundant call to SetCurrentShader().");
+
+
         this->currentShaderParams.programState = programState;
 
         this->operationBitfield |= SET_CURRENT_SHADER_BIT;
@@ -102,6 +155,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetCurrentFramebuffer(FramebufferState_OpenGL33* framebufferState)
     {
+        CHECK_REDUNDANCY(SET_CURRENT_FRAMEBUFFER_BIT, "Warning: Renderer: Redundant call to SetCurrentFramebuffer().");
+
+
         this->currentFramebufferParams.framebufferState = framebufferState;
 
         this->operationBitfield |= SET_CURRENT_FRAMEBUFFER_BIT;
@@ -110,6 +166,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetBlendFunction(GLenum sfactor, GLenum dfactor)
     {
+        CHECK_REDUNDANCY(SET_BLEND_FUNCTION_BIT, "Warning: Renderer: Redundant call to SetBlendFunction().");
+
+
         this->blendFuncParams.sfactor = sfactor;
         this->blendFuncParams.dfactor = dfactor;
 
@@ -118,6 +177,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetBlendEquation(GLenum mode)
     {
+        CHECK_REDUNDANCY(SET_BLEND_EQUATION_BIT, "Warning: Renderer: Redundant call to SetBlendEquation().");
+
+
         this->blendEquationParams.mode = mode;
 
         this->operationBitfield |= SET_BLEND_EQUATION_BIT;
@@ -125,6 +187,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetBlendColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
     {
+        CHECK_REDUNDANCY(SET_BLEND_COLOUR_BIT, "Warning: Renderer: Redundant call to SetBlendColour().");
+
+
         this->blendColor.r = r;
         this->blendColor.g = g;
         this->blendColor.b = b;
@@ -136,6 +201,9 @@ namespace GTEngine
     
     void RCSetGlobalState::SetAlphaTestFunction(GLenum func, GLclampf ref)
     {
+        CHECK_REDUNDANCY(SET_ALPHA_FUNCTION_BIT, "Warning: Renderer: Redundant call to SetAlphaTestFunction().");
+
+
         this->alphaFuncParams.func = func;
         this->alphaFuncParams.ref  = ref;
 
@@ -145,6 +213,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetDepthFunction(GLenum func)
     {
+        CHECK_REDUNDANCY(SET_DEPTH_FUNCTION_BIT, "Warning: Renderer: Redundant call to SetDepthFunction().");
+
+
         this->depthFuncParams.func = func;
 
         this->operationBitfield |= SET_DEPTH_FUNCTION_BIT;
@@ -153,6 +224,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetStencilMask(GLenum face, GLuint mask)
     {
+        CHECK_REDUNDANCY(SET_STENCIL_MASK_BIT, "Warning: Renderer: Redundant call to SetStencilMask().");
+
+
         this->stencilMaskParams.face = face;
         this->stencilMaskParams.mask = mask;
 
@@ -161,6 +235,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetStencilFunc(GLenum face, GLenum func, GLint ref, GLuint mask)
     {
+        CHECK_REDUNDANCY(SET_STENCIL_FUNC_BIT, "Warning: Renderer: Redundant call to SetStencilFunc().");
+
+
         this->stencilFuncParams.face = face;
         this->stencilFuncParams.func = func;
         this->stencilFuncParams.ref  = ref;
@@ -171,6 +248,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetStencilOp(GLenum face, GLenum stencilFail, GLenum depthFail, GLenum pass)
     {
+        CHECK_REDUNDANCY(SET_STENCIL_OP_BIT, "Warning: Renderer: Redundant call to SetStencilOp().");
+
+
         this->stencilOpParams.face        = face;
         this->stencilOpParams.stencilFail = stencilFail;
         this->stencilOpParams.depthFail   = depthFail;
@@ -183,6 +263,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetFaceCulling(GLenum face)
     {
+        CHECK_REDUNDANCY(SET_FACE_CULLING_BIT, "Warning: Renderer: Redundant call to SetFaceCullingBit().");
+
+
         this->cullFaceParams.face = face;
 
         this->operationBitfield |= SET_FACE_CULLING_BIT;
@@ -191,6 +274,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetPolygonMode(GLenum face, GLenum mode)
     {
+        CHECK_REDUNDANCY(SET_POLYGON_MODE_BIT, "Warning: Renderer: Redundant call to SetPolygonMode().");
+
+
         this->polygonModeParams.face = face;
         this->polygonModeParams.mode = mode;
 
@@ -199,6 +285,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetPolygonOffset(GLfloat factor, GLfloat units)
     {
+        CHECK_REDUNDANCY(SET_POLYGON_OFFSET_BIT, "Warning: Renderer: Redundant call to SetPolygonOffset().");
+
+
         this->polygonOffsetParams.factor = factor;
         this->polygonOffsetParams.units  = units;
 
@@ -208,6 +297,9 @@ namespace GTEngine
 
     void RCSetGlobalState::SetDrawBuffers(size_t count, int* buffers)
     {
+        CHECK_REDUNDANCY(SCISSOR_BIT, "Warning: Renderer: Redundant call to SetDrawBuffers().");
+
+
         this->drawBuffersParams.buffers.Clear();
 
         for (size_t i = 0; i < count; ++i)
@@ -223,41 +315,49 @@ namespace GTEngine
     {
         if (cap == GL_SCISSOR_TEST)
         {
+            CHECK_ENABLE_REDUNDANCY(SCISSOR_TEST_BIT, "Warning: Renderer: Redundant call to Enable(GL_SCISSOR_TEST).");
             this->enableParams.caps  |=  SCISSOR_TEST_BIT;
             this->disableParams.caps &= ~SCISSOR_TEST_BIT;
         }
         else if (cap == GL_BLEND)
         {
+            CHECK_ENABLE_REDUNDANCY(BLENDING_BIT, "Warning: Renderer: Redundant call to Enable(GL_BLEND).");
             this->enableParams.caps  |=  BLENDING_BIT;
             this->disableParams.caps &= ~BLENDING_BIT;
         }
         else if (cap == GL_ALPHA_TEST)
         {
+            CHECK_ENABLE_REDUNDANCY(ALPHA_TEST_BIT, "Warning: Renderer: Redundant call to Enable(GL_ALPHA_TEST).");
             this->enableParams.caps  |=  ALPHA_TEST_BIT;
             this->disableParams.caps &= ~ALPHA_TEST_BIT;
         }
         else if (cap == GL_DEPTH_TEST)
         {
+            CHECK_ENABLE_REDUNDANCY(DEPTH_TEST_BIT, "Warning: Renderer: Redundant call to Enable(GL_DEPTH_TEST).");
             this->enableParams.caps  |=  DEPTH_TEST_BIT;
             this->disableParams.caps &= ~DEPTH_TEST_BIT;
         }
         else if (cap == GL_POLYGON_OFFSET_FILL)
         {
+            CHECK_ENABLE_REDUNDANCY(POLYGON_OFFSET_FILL_BIT, "Warning: Renderer: Redundant call to Enable(GL_POLYGON_OFFSET_FILL).");
             this->enableParams.caps  |=  POLYGON_OFFSET_FILL_BIT;
             this->disableParams.caps &= ~POLYGON_OFFSET_FILL_BIT;
         }
         else if (cap == GL_POLYGON_OFFSET_LINE)
         {
+            CHECK_ENABLE_REDUNDANCY(POLYGON_OFFSET_LINE_BIT, "Warning: Renderer: Redundant call to Enable(GL_POLYGON_OFFSET_LINE).");
             this->enableParams.caps  |=  POLYGON_OFFSET_LINE_BIT;
             this->disableParams.caps &= ~POLYGON_OFFSET_LINE_BIT;
         }
         else if (cap == GL_POLYGON_OFFSET_POINT)
         {
+            CHECK_ENABLE_REDUNDANCY(POLYGON_OFFSET_POINT_BIT, "Warning: Renderer: Redundant call to Enable(GL_POLYGON_OFFSET_POINT).");
             this->enableParams.caps  |=  POLYGON_OFFSET_POINT_BIT;
             this->disableParams.caps &= ~POLYGON_OFFSET_POINT_BIT;
         }
         else if (cap == GL_CULL_FACE)
         {
+            CHECK_ENABLE_REDUNDANCY(FACE_CULLING_BIT, "Warning: Renderer: Redundant call to Enable(GL_CULL_FACE).");
             this->enableParams.caps  |=  FACE_CULLING_BIT;
             this->disableParams.caps &= ~FACE_CULLING_BIT;
         }
@@ -269,41 +369,49 @@ namespace GTEngine
     {
         if (cap == GL_SCISSOR_TEST)
         {
+            CHECK_DISABLE_REDUNDANCY(SCISSOR_TEST_BIT, "Warning: Renderer: Redundant call to Disable(GL_SCISSOR_TEST).");
             this->disableParams.caps |=  SCISSOR_TEST_BIT;
             this->enableParams.caps  &= ~SCISSOR_TEST_BIT;
         }
         else if (cap == GL_BLEND)
         {
+            CHECK_DISABLE_REDUNDANCY(BLENDING_BIT, "Warning: Renderer: Redundant call to Disable(GL_BLEND).");
             this->disableParams.caps |=  BLENDING_BIT;
             this->enableParams.caps  &= ~BLENDING_BIT;
         }
         else if (cap == GL_ALPHA_TEST)
         {
+            CHECK_DISABLE_REDUNDANCY(ALPHA_TEST_BIT, "Warning: Renderer: Redundant call to Disable(GL_ALPHA_TEST).");
             this->disableParams.caps |=  ALPHA_TEST_BIT;
             this->enableParams.caps  &= ~ALPHA_TEST_BIT;
         }
         else if (cap == GL_DEPTH_TEST)
         {
+            CHECK_DISABLE_REDUNDANCY(DEPTH_TEST_BIT, "Warning: Renderer: Redundant call to Disable(GL_DEPTH_TEST).");
             this->disableParams.caps |=  DEPTH_TEST_BIT;
             this->enableParams.caps  &= ~DEPTH_TEST_BIT;
         }
         else if (cap == GL_POLYGON_OFFSET_FILL)
         {
+            CHECK_DISABLE_REDUNDANCY(POLYGON_OFFSET_FILL_BIT, "Warning: Renderer: Redundant call to Disable(GL_POLYGON_OFFSET_FILL).");
             this->disableParams.caps |=  POLYGON_OFFSET_FILL_BIT;
             this->enableParams.caps  &= ~POLYGON_OFFSET_FILL_BIT;
         }
         else if (cap == GL_POLYGON_OFFSET_LINE)
         {
+            CHECK_DISABLE_REDUNDANCY(POLYGON_OFFSET_LINE_BIT, "Warning: Renderer: Redundant call to Disable(GL_POLYGON_OFFSET_LINE).");
             this->disableParams.caps |=  POLYGON_OFFSET_LINE_BIT;
             this->enableParams.caps  &= ~POLYGON_OFFSET_LINE_BIT;
         }
         else if (cap == GL_POLYGON_OFFSET_POINT)
         {
+            CHECK_DISABLE_REDUNDANCY(POLYGON_OFFSET_POINT_BIT, "Warning: Renderer: Redundant call to Disable(GL_POLYGON_OFFSET_POINT).");
             this->disableParams.caps |=  POLYGON_OFFSET_POINT_BIT;
             this->enableParams.caps  &= ~POLYGON_OFFSET_POINT_BIT;
         }
         else if (cap == GL_CULL_FACE)
         {
+            CHECK_DISABLE_REDUNDANCY(FACE_CULLING_BIT, "Warning: Renderer: Redundant call to Disable(GL_CULL_FACE).");
             this->disableParams.caps |=  FACE_CULLING_BIT;
             this->enableParams.caps  &= ~FACE_CULLING_BIT;
         }
@@ -313,26 +421,38 @@ namespace GTEngine
 
     void RCSetGlobalState::EnableColourWrites()
     {
+        CHECK_ENABLE_REDUNDANCY(COLOUR_WRITES_BIT, "Warning: Renderer: Redundant call to EnableColourWrites().");
         this->enableParams.caps  |=  COLOUR_WRITES_BIT;
         this->disableParams.caps &= ~COLOUR_WRITES_BIT;
+
+        this->operationBitfield |= ENABLE_BIT;
     }
 
     void RCSetGlobalState::DisableColourWrites()
     {
+        CHECK_DISABLE_REDUNDANCY(COLOUR_WRITES_BIT, "Warning: Renderer: Redundant call to DisableColourWrites().");
         this->disableParams.caps |=  COLOUR_WRITES_BIT;
         this->enableParams.caps  &= ~COLOUR_WRITES_BIT;
+
+        this->operationBitfield |= DISABLE_BIT;
     }
 
     void RCSetGlobalState::EnableDepthWrites()
     {
+        CHECK_ENABLE_REDUNDANCY(DEPTH_WRITES_BIT, "Warning: Renderer: Redundant call to EnableDepthWrites().");
         this->enableParams.caps  |=  DEPTH_WRITES_BIT;
         this->disableParams.caps &= ~DEPTH_WRITES_BIT;
+
+        this->operationBitfield |= ENABLE_BIT;
     }
 
     void RCSetGlobalState::DisableDepthWrites()
     {
+        CHECK_DISABLE_REDUNDANCY(DEPTH_WRITES_BIT, "Warning: Renderer: Redundant call to DisableDepthWrites().");
         this->disableParams.caps |=  DEPTH_WRITES_BIT;
         this->enableParams.caps  &= ~DEPTH_WRITES_BIT;
+
+        this->operationBitfield |= DISABLE_BIT;
     }
 
     
