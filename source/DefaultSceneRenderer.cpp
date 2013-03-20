@@ -692,6 +692,8 @@ namespace GTEngine
         Renderer::DeleteShader(this->finalCompositionShaderLDR);
         Renderer::DeleteShader(this->bloomShader);
         Renderer::DeleteShader(this->highlightShader);
+        Renderer::DeleteShader(this->blurShaderX);
+        Renderer::DeleteShader(this->blurShaderY);
 
         for (size_t i = 0; i < this->materialShadersToDelete.count; ++i)
         {
