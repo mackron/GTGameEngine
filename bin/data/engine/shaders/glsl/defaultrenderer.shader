@@ -103,7 +103,7 @@
         
         for(int i = 0; i < 21; i++)
         {
-            ColourOut.xy += texture2D(Texture, vec2(uv.x + (i - 10) * uvOffset, uv.y)).xy * coefficients[i];
+            ColourOut += texture2D(Texture, vec2(uv.x + (i - 10) * uvOffset, uv.y)) * coefficients[i];
         }
     }
 ]]>
@@ -138,7 +138,7 @@
         
         for(int i = 0; i < 21; i++)
         {
-            ColourOut.xy += texture2D(Texture, vec2(uv.x, uv.y + (i - 10) * uvOffset)).xy * coefficients[i];
+            ColourOut += texture2D(Texture, vec2(uv.x, uv.y + (i - 10) * uvOffset)) * coefficients[i];
         }
     }
 ]]>
@@ -470,7 +470,7 @@
 
     float CalculateShadowVSM(vec3 shadowCoord, float fragmentDepth)
     {
-        float bias     = 0.04 * fragmentDepth;       // This can affect seams. Lower value = more seams.
+        float bias     = 0.06 * fragmentDepth;       // This can affect seams. Lower value = more seams.
         vec2  moments  = texture(ShadowMap, shadowCoord).xy;
         float variance = moments.y - (moments.x * moments.x);
         float d        = fragmentDepth - moments.x;
