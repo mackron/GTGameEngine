@@ -459,14 +459,15 @@
         return clamp((v - low) / (high - low), 0.0, 1.0);
     }
     
-    
+    /*
     float CalculateShadowBasic(vec3 shadowCoord, float fragmentDepth)
     {
-        float bias        = 0.02;
+        float bias        = 0.06;
         float shadowDepth = texture(ShadowMap, shadowCoord).r + bias;
 
         return step(fragmentDepth, shadowDepth);
     }
+    */
 
     float CalculateShadowVSM(vec3 shadowCoord, float fragmentDepth)
     {
