@@ -2171,10 +2171,9 @@ namespace GTEngine
 
                     // Draw.
                     Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
-
-
-                    Renderer::DisableBlending();
                 }
+
+                Renderer::DisableBlending();
             }
         }
     }
@@ -2367,7 +2366,6 @@ namespace GTEngine
             Renderer::SetDrawBuffers(2, lightingBuffers);
 
             // We want to explicitly disable blending here. It will be reenabled with additive blending after we've done the first light.
-            Renderer::DisableBlending();
             Renderer::SetBlendEquation(BlendEquation_Add);
             Renderer::SetBlendFunction(BlendFunc_One, BlendFunc_One);
 
