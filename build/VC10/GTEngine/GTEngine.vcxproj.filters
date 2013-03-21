@@ -830,6 +830,9 @@
     <ClInclude Include="..\..\..\source\Rendering\RenderCommand.hpp">
       <Filter>source\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\ServerState_OpenGL33.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1398,6 +1401,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp">
       <Filter>source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\ServerState_OpenGL33.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

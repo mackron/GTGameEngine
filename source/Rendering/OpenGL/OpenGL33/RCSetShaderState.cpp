@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include "RCSetShaderState.hpp"
+#include "ServerState_OpenGL33.hpp"
 #include "../TypeConversion.hpp"
 #include <assert.h>
 
@@ -202,10 +203,7 @@ namespace GTEngine
         {
             // We need to bind the program. However, we need to maintain the integrity of the global state. Thus, we need to grab the current
             // shader so it can be restored later. Basically, we're emulating Direct State Access.
-            GLint previousCurrentProgram;
-            glGetIntegerv(GL_CURRENT_PROGRAM, &previousCurrentProgram);
-
-            if (static_cast<GLuint>(previousCurrentProgram) != this->programState->programObject)
+            if (ServerState_GL_CURRENT_PROGRAM != this->programState->programObject)
             {
                 glUseProgram(this->programState->programObject);
             }
@@ -347,10 +345,28 @@ namespace GTEngine
 
 
                     // If this program state is the current one, we'll need to bind the texture straight away.
-                    if (static_cast<GLuint>(previousCurrentProgram) == this->programState->programObject && setBinding)
+                    if (ServerState_GL_CURRENT_PROGRAM == this->programState->programObject && setBinding)
                     {
                         glActiveTexture(GL_TEXTURE0 + parameter.textureUnit);
                         glBindTexture(parameter.textureTarget, *parameter.textureObject);
+
+                        // State needs to be set.
+                        if (parameter.textureTarget == GL_TEXTURE_1D)
+                        {
+                            ServerState_GL_TEXTURE_BINDING_1D = *parameter.textureObject;
+                        }
+                        else if (parameter.textureTarget == GL_TEXTURE_2D)
+                        {
+                            ServerState_GL_TEXTURE_BINDING_2D = *parameter.textureObject;
+                        }
+                        else if (parameter.textureTarget == GL_TEXTURE_3D)
+                        {
+                            ServerState_GL_TEXTURE_BINDING_3D = *parameter.textureObject;
+                        }
+                        else if (parameter.textureTarget == GL_TEXTURE_CUBE_MAP)
+                        {
+                            ServerState_GL_TEXTURE_BINDING_CUBE = *parameter.textureObject;
+                        }
                     }
 
                     if (setUniform)
@@ -363,9 +379,9 @@ namespace GTEngine
 
 
             // Need to rebind the previous program because it's important that we maintain the integrity of the global state.
-            if (static_cast<GLuint>(previousCurrentProgram) != this->programState->programObject)
+            if (ServerState_GL_CURRENT_PROGRAM != this->programState->programObject)
             {
-                glUseProgram(static_cast<GLuint>(previousCurrentProgram));
+                glUseProgram(ServerState_GL_CURRENT_PROGRAM);
             }
         }
     }
