@@ -127,18 +127,6 @@ namespace GTEngine
         void OnDetachFromFramebuffer(Framebuffer* framebuffer);
 
 
-        /// Called when the texture is attached to a shader.
-        ///
-        /// @remarks
-        ///     Do not call this directly. Used internally.
-        void OnAttachToShader(Shader &shader);
-
-        /// Called when the texture is detached from a shader.
-        ///
-        /// @remarks
-        ///     Do not call this directly. Used internally.
-        void OnDetachFromShader(Shader &shader);
-
 
     private:
 

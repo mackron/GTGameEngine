@@ -25,6 +25,21 @@ namespace GTEngine
         ShaderState_OpenGL33* GetOpenGLState() const;
 
 
+
+        //////////////////////////////////////////////
+        // Uniforms.
+
+        void SetUniform(const char* name, float x);
+        void SetUniform(const char* name, float x, float y);
+        void SetUniform(const char* name, float x, float y, float z);
+        void SetUniform(const char* name, float x, float y, float z, float w);
+        void SetUniform(const char* name, const glm::mat2 &value);
+        void SetUniform(const char* name, const glm::mat3 &value);
+        void SetUniform(const char* name, const glm::mat4 &value);
+        void SetUniform(const char* name, const Texture2D* value);
+        void SetUniform(const char* name, const TextureCube* value);
+
+
     private:
 
         /// A pointer to the OpenGL object.

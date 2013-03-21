@@ -6,150 +6,120 @@
 namespace GTEngine
 {
     Shader::Shader(const char* vertexSourceIn, const char* fragmentSourceIn, const char* geometrySourceIn)
-        : vertexSource(vertexSourceIn), fragmentSource(fragmentSourceIn), geometrySource(geometrySourceIn),
-          pendingParameters(),
-          currentTextures()
+        : vertexSource(vertexSourceIn), fragmentSource(fragmentSourceIn), geometrySource(geometrySourceIn)
     {
     }
 
     Shader::~Shader()
     {
-        this->ClearPendingParameters();
+    }
 
-        // We need to let any textures know that they are no longer attached to this shader.
-        for (size_t i = 0; i < this->currentTextures.count; ++i)
+
+    //////////////////////////////////////////////
+    // Uniforms.
+
+    void Shader::SetUniform(const char*, float)
+    {
+    }
+
+    void Shader::SetUniform(const char*, float, float)
+    {
+    }
+
+    void Shader::SetUniform(const char*, float, float, float)
+    {
+    }
+
+    void Shader::SetUniform(const char*, float, float, float, float)
+    {
+    }
+
+    void Shader::SetUniform(const char*, const glm::mat2 &)
+    {
+    }
+
+    void Shader::SetUniform(const char*, const glm::mat3 &)
+    {
+    }
+
+    void Shader::SetUniform(const char*, const glm::mat4 &)
+    {
+    }
+
+    void Shader::SetUniform(const char*, const Texture2D*)
+    {
+    }
+
+    void Shader::SetUniform(const char*, const TextureCube*)
+    {
+    }
+
+    void Shader::SetUniformsFromMaterial(Material &material)
+    {
+        auto &materialUniforms = material.GetParameters();
+
+        for (size_t i = 0; i < materialUniforms.count; ++i)
         {
-            auto iTexture = this->currentTextures.buffer[i];
-            assert(iTexture != nullptr);
+            auto uniformName  = materialUniforms.buffer[i]->key;
+            auto uniformValue = materialUniforms.buffer[i]->value;
 
-            auto &attachment = iTexture->value;
-
-            if (attachment.texture != nullptr)
+            switch (uniformValue->type)
             {
-                switch (attachment.type)
+            case ShaderParameterType_Float:
                 {
-                //case ShaderParameterType_Texture1D:   static_cast<Texture1D*  >(attachment.texture)->OnDetachFromShader(*this); break;
-                case ShaderParameterType_Texture2D:   static_cast<Texture2D*  >(attachment.texture)->OnDetachFromShader(*this); break;
-                //case ShaderParameterType_Texture3D:   static_cast<Texture3D*  >(attachment.texture)->OnDetachFromShader(*this); break;
-                case ShaderParameterType_TextureCube: static_cast<TextureCube*>(attachment.texture)->OnDetachFromShader(*this); break;
-
-
-                case ShaderParameterType_Float:
-                case ShaderParameterType_Float2:
-                case ShaderParameterType_Float3:
-                case ShaderParameterType_Float4:
-                case ShaderParameterType_Integer:
-                case ShaderParameterType_Integer2:
-                case ShaderParameterType_Integer3:
-                case ShaderParameterType_Integer4:
-                case ShaderParameterType_Float2x2:
-                case ShaderParameterType_Float3x3:
-                case ShaderParameterType_Float4x4:
-                case ShaderParameterType_Texture1D:
-                case ShaderParameterType_Texture3D:
-                default: break;
+                    this->SetUniform(uniformName, static_cast<ShaderParameter_Float*>(uniformValue)->value);
+                    break;
                 }
-            }
-        }
-    }
 
-    void Shader::SetParametersFromMaterial(Material &material)
-    {
-        auto &materialParameters = material.GetParameters();
-        for (size_t i = 0; i < materialParameters.count; ++i)
-        {
-            this->pendingParameters.Set(materialParameters.buffer[i]->key, materialParameters.buffer[i]->value);
-        }
-    }
-
-    void Shader::ClearPendingParameters()
-    {
-        this->pendingParameters.Clear();
-    }
-
-
-    void Shader::OnTextureDeleted(Texture2D* texture)
-    {
-        // We need to look for the shader in our current shaders and clear to null. We're also going to set the parameter to null so that
-        // it will be updated on the renderer in the next binding.
-        for (size_t i = 0; i < currentTextures.count; ++i)
-        {
-            auto iTexture = currentTextures.buffer[i];
-            assert(iTexture != nullptr);
-
-            auto &attachment = iTexture->value;
-
-            if (attachment.texture == texture)
-            {
-                attachment.texture = nullptr;
-                this->SetParameter(iTexture->key, static_cast<Texture2D*>(nullptr));
-            }
-        }
-    }
-
-    void Shader::OnTextureDeleted(TextureCube* texture)
-    {
-        // We need to look for the shader in our current shaders and clear to null. We're also going to set the parameter to null so that
-        // it will be updated on the renderer in the next binding.
-        for (size_t i = 0; i < currentTextures.count; ++i)
-        {
-            auto iTexture = currentTextures.buffer[i];
-            assert(iTexture != nullptr);
-
-            auto &attachment = iTexture->value;
-
-            if (attachment.texture == texture)
-            {
-                attachment.texture = nullptr;
-                this->SetParameter(iTexture->key, static_cast<TextureCube*>(nullptr));
-            }
-        }
-    }
-
-
-
-    void Shader::OnTextureParameterChanged(Texture2D* oldTexture)
-    {
-        if (oldTexture != nullptr)
-        {
-            bool referenced = false;
-
-            // We check if the old texture is being used by anything. If not, we let it know that it's no longer being used.
-            for (size_t i = 0; i < currentTextures.count; ++i)
-            {
-                if (currentTextures.buffer[i]->value.texture == oldTexture)
+            case ShaderParameterType_Float2:
                 {
-                    referenced = true;
+                    this->SetUniform(uniformName, static_cast<ShaderParameter_Float2*>(uniformValue)->value);
+                    break;
                 }
-            }
 
-            // If the texture is no longer referenced, we let it know that it is detached from the shader.
-            if (!referenced)
-            {
-                oldTexture->OnDetachFromShader(*this);
-            }
-        }
-    }
-
-    void Shader::OnTextureParameterChanged(TextureCube* oldTexture)
-    {
-        if (oldTexture != nullptr)
-        {
-            bool referenced = false;
-
-            // We check if the old texture is being used by anything. If not, we let it know that it's no longer being used.
-            for (size_t i = 0; i < currentTextures.count; ++i)
-            {
-                if (currentTextures.buffer[i]->value.texture == oldTexture)
+            case ShaderParameterType_Float3:
                 {
-                    referenced = true;
+                    this->SetUniform(uniformName, static_cast<ShaderParameter_Float3*>(uniformValue)->value);
+                    break;
                 }
-            }
 
-            // If the texture is no longer referenced, we let it know that it is detached from the shader.
-            if (!referenced)
-            {
-                oldTexture->OnDetachFromShader(*this);
+            case ShaderParameterType_Float4:
+                {
+                    this->SetUniform(uniformName, static_cast<ShaderParameter_Float4*>(uniformValue)->value);
+                    break;
+                }
+
+
+            case ShaderParameterType_Float2x2:
+                {
+                    this->SetUniform(uniformName, static_cast<ShaderParameter_Float2x2*>(uniformValue)->value);
+                    break;
+                }
+
+            case ShaderParameterType_Float3x3:
+                {
+                    this->SetUniform(uniformName, static_cast<ShaderParameter_Float3x3*>(uniformValue)->value);
+                    break;
+                }
+
+            case ShaderParameterType_Float4x4:
+                {
+                    this->SetUniform(uniformName, static_cast<ShaderParameter_Float4x4*>(uniformValue)->value);
+                    break;
+                }
+
+
+            case ShaderParameterType_Texture2D:
+                {
+                    this->SetUniform(uniformName, static_cast<ShaderParameter_Texture2D*>(uniformValue)->value);
+                    break;
+                }
+
+            case ShaderParameterType_TextureCube:
+                {
+                    this->SetUniform(uniformName, static_cast<ShaderParameter_TextureCube*>(uniformValue)->value);
+                    break;
+                }
             }
         }
     }

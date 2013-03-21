@@ -491,7 +491,7 @@ namespace GTEngine
             glUseProgram(this->currentShaderParams.programState->programObject);
 
             // 2) Bind textures.
-            auto &textures = this->currentShaderParams.programState->textures;
+            auto &textures = this->currentShaderParams.programState->currentTextureUniforms;
             for (size_t i = 0; i < textures.count; ++i)
             {
                 auto &texture = textures.buffer[i]->value;

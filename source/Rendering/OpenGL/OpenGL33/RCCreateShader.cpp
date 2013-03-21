@@ -42,8 +42,106 @@ namespace GTEngine
         this->programState->programObject = this->LinkProgram(vertexShaderObject, fragmentShaderObject, geometryShaderObject);
 
 
+        // 3) Grab the uniforms.
+        if (this->programState->programObject != 0)
+        {
+            GLint uniformCount = 0;
+            glGetProgramiv(this->programState->programObject, GL_ACTIVE_UNIFORMS, &uniformCount);
 
-        // 3) Delete the shader objects.
+
+            for (GLint iUniform = 0; iUniform < uniformCount; ++iUniform)
+            {
+                GLint  uniformSize;
+                GLenum uniformType;
+                char   uniformName[100];
+                glGetActiveUniform(this->programState->programObject, iUniform, sizeof(uniformName) - 1, nullptr, &uniformSize, &uniformType, uniformName);
+
+
+                switch (uniformType)
+                {
+                case GL_FLOAT:
+                    {
+                        this->programState->floatUniformLocations.Add(uniformName, iUniform);
+                        break;
+                    }
+
+                case GL_FLOAT_VEC2:
+                    {
+                        this->programState->float2UniformLocations.Add(uniformName, iUniform);
+                        break;
+                    }
+
+                case GL_FLOAT_VEC3:
+                    {
+                        this->programState->float3UniformLocations.Add(uniformName, iUniform);
+                        break;
+                    }
+
+                case GL_FLOAT_VEC4:
+                    {
+                        this->programState->float4UniformLocations.Add(uniformName, iUniform);
+                        break;
+                    }
+
+
+                case GL_FLOAT_MAT2:
+                    {
+                        this->programState->float2x2UniformLocations.Add(uniformName, iUniform);
+                        break;
+                    }
+
+                case GL_FLOAT_MAT3:
+                    {
+                        this->programState->float3x3UniformLocations.Add(uniformName, iUniform);
+                        break;
+                    }
+
+                case GL_FLOAT_MAT4:
+                    {
+                        this->programState->float4x4UniformLocations.Add(uniformName, iUniform);
+                        break;
+                    }
+
+
+                case GL_SAMPLER_1D:
+                case GL_SAMPLER_1D_ARRAY:
+                case GL_SAMPLER_2D:
+                case GL_SAMPLER_2D_ARRAY:
+                case GL_SAMPLER_3D:
+                case GL_SAMPLER_CUBE:
+                case GL_SAMPLER_2D_MULTISAMPLE:
+                case GL_SAMPLER_2D_MULTISAMPLE_ARRAY:
+                case GL_SAMPLER_BUFFER:
+                case GL_INT_SAMPLER_1D:
+                case GL_INT_SAMPLER_1D_ARRAY:
+                case GL_INT_SAMPLER_2D:
+                case GL_INT_SAMPLER_2D_ARRAY:
+                case GL_INT_SAMPLER_3D:
+                case GL_INT_SAMPLER_CUBE:
+                case GL_INT_SAMPLER_BUFFER:
+                case GL_UNSIGNED_INT_SAMPLER_1D:
+                case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY:
+                case GL_UNSIGNED_INT_SAMPLER_2D:
+                case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY:
+                case GL_UNSIGNED_INT_SAMPLER_3D:
+                case GL_UNSIGNED_INT_SAMPLER_CUBE:
+                case GL_UNSIGNED_INT_SAMPLER_BUFFER:
+                    {
+                        this->programState->textureUniformLocations.Add(uniformName, iUniform);
+                        break;
+                    }
+
+
+                default:
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        // 4) Delete the shader objects.
         if (vertexShaderObject   != 0) glDeleteShader(vertexShaderObject);
         if (fragmentShaderObject != 0) glDeleteShader(fragmentShaderObject);
         if (geometryShaderObject != 0) glDeleteShader(geometryShaderObject);

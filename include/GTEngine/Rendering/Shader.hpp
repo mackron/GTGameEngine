@@ -37,51 +37,28 @@ namespace GTEngine
         const char* GetGeometrySource() const { return this->geometrySource.c_str(); }
 
 
+
+        //////////////////////////////////////////////
+        // Uniforms.
+
+        virtual void SetUniform(const char* name, float x);
+        virtual void SetUniform(const char* name, float x, float y);
+        virtual void SetUniform(const char* name, float x, float y, float z);
+        virtual void SetUniform(const char* name, float x, float y, float z, float w);
+        virtual void SetUniform(const char* name, const glm::mat2 &value);
+        virtual void SetUniform(const char* name, const glm::mat3 &value);
+        virtual void SetUniform(const char* name, const glm::mat4 &value);
+        virtual void SetUniform(const char* name, const Texture2D* value);
+        virtual void SetUniform(const char* name, const TextureCube* value);
+
+        void SetUniform(const char* name, const glm::vec2 &value) { this->SetUniform(name, value.x, value.y); }
+        void SetUniform(const char* name, const glm::vec3 &value) { this->SetUniform(name, value.x, value.y, value.z); }
+        void SetUniform(const char* name, const glm::vec4 &value) { this->SetUniform(name, value.x, value.y, value.z, value.w); }
+
+
+        /// Helper for setting the uniforms defined by the given material.
+        void SetUniformsFromMaterial(Material &material);
         
-    // Property setters.
-    public:
-
-        template <typename T>
-        void SetParameter(const char* name, const T &value)
-        {
-            this->pendingParameters.Set(name, value);
-        }
-
-        void SetParameter(const char* name, float x, float y)                   { this->SetParameter(name, glm::vec2(x, y)); }
-        void SetParameter(const char* name, float x, float y, float z)          { this->SetParameter(name, glm::vec3(x, y, z)); }
-        void SetParameter(const char* name, float x, float y, float z, float w) { this->SetParameter(name, glm::vec4(x, y, z, w)); }
-
-
-        /// Sets the parameters defined by the given material.
-        void SetParametersFromMaterial(Material &material);
-
-
-        /// Clears the pending parameters.
-        void ClearPendingParameters();
-
-
-    // The methods below should only be called by the renderer and it's support functions.
-    public:
-
-        /// Retrieves the internal list of pending parameters.
-        ///
-        /// @return A reference to the internal list of rendering parameters waiting to be set.
-              GTCore::Dictionary<ShaderParameter*> & GetPendingParameters()       { return this->pendingParameters.GetParameters(); }
-        const GTCore::Dictionary<ShaderParameter*> & GetPendingParameters() const { return this->pendingParameters.GetParameters(); }
-
-        
-
-
-
-        /// Called when a texture is destructed and thus no longer part of the shader.
-        void OnTextureDeleted(Texture2D*   texture);
-        void OnTextureDeleted(TextureCube* texture);
-
-        /// Called when a texture parameter is being changed. We use this to check whether or not we need to let the texture
-        /// know that it's no longer being used by the shader.
-        void OnTextureParameterChanged(Texture2D*   oldTexture);
-        void OnTextureParameterChanged(TextureCube* oldTexture);
-
 
 
     private:
@@ -90,27 +67,6 @@ namespace GTEngine
         GTCore::String vertexSource;
         GTCore::String fragmentSource;
         GTCore::String geometrySource;
-
-        /// The parameters that are waiting to be set on the shader. This will be cleared when the shader is made current on the renderer.
-        ShaderParameterCache pendingParameters;
-
-
-
-        // We need to keep track of the textures that are being used by the shader so we can bind the appropriately.
-        struct AttachedTexture
-        {
-            AttachedTexture(ShaderParameterType typeIn, void* textureIn)
-                : type(typeIn), texture(textureIn)
-            {
-            }
-
-            ShaderParameterType type;
-            void*               texture;        // The texture, cast based on 'type'.
-        };
-
-        /// The textures currently being used by the renderer.
-        GTCore::Dictionary<AttachedTexture> currentTextures;
-
 
 
 

@@ -7,188 +7,219 @@
 
 namespace GTEngine
 {
-    #define SET_BASIC_PARAMETER_BIT       (1 << 1)
-    #define SET_TEXTURE_PARAMETER_BIT     (1 << 2)
-
-
     RCSetShaderState::RCSetShaderState()
         : operationBitfield(0),
-          programState(nullptr), basicParametersToSet(), textureParametersToSet()
+          programState(nullptr),
+          floatUniformsToSetByName(nullptr),
+          float2UniformsToSetByName(nullptr),
+          float3UniformsToSetByName(nullptr),
+          float4UniformsToSetByName(nullptr),
+          float2x2UniformsToSetByName(nullptr),
+          float3x3UniformsToSetByName(nullptr),
+          float4x4UniformsToSetByName(nullptr),
+          textureUniformsToSetByName(nullptr),
+          floatUniformsToSetByLocation(nullptr),
+          float2UniformsToSetByLocation(nullptr),
+          float3UniformsToSetByLocation(nullptr),
+          float4UniformsToSetByLocation(nullptr),
+          float2x2UniformsToSetByLocation(nullptr),
+          float3x3UniformsToSetByLocation(nullptr),
+          float4x4UniformsToSetByLocation(nullptr),
+          textureUniformsToSetByLocation(nullptr)
     {
     }
 
-
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x)
+    RCSetShaderState::~RCSetShaderState()
     {
-        assert(programStateIn != nullptr);
-        {
-            assert(this->programState == nullptr || this->programState == programStateIn);
-            {
-                this->basicParametersToSet.Set(name, x);
-
-                this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
-            }
-        }
+        delete this->floatUniformsToSetByName;
+        delete this->float2UniformsToSetByName;
+        delete this->float3UniformsToSetByName;
+        delete this->float4UniformsToSetByName;
+        delete this->float2x2UniformsToSetByName;
+        delete this->float3x3UniformsToSetByName;
+        delete this->float4x4UniformsToSetByName;
+        delete this->textureUniformsToSetByName;
+        delete this->floatUniformsToSetByLocation;
+        delete this->float2UniformsToSetByLocation;
+        delete this->float3UniformsToSetByLocation;
+        delete this->float4UniformsToSetByLocation;
+        delete this->float2x2UniformsToSetByLocation;
+        delete this->float3x3UniformsToSetByLocation;
+        delete this->float4x4UniformsToSetByLocation;
+        delete this->textureUniformsToSetByLocation;
     }
 
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x, float y)
-    {
-        assert(programStateIn != nullptr);
-        {
-            assert(this->programState == nullptr || this->programState == programStateIn);
-            {
-                this->basicParametersToSet.Set(name, x, y);
 
-                this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
-            }
-        }
-    }
-
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x, float y, float z)
-    {
-        assert(programStateIn != nullptr);
-        {
-            assert(this->programState == nullptr || this->programState == programStateIn);
-            {
-                this->basicParametersToSet.Set(name, x, y, z);
-
-                this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
-            }
-        }
-    }
-
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x, float y, float z, float w)
+    void RCSetShaderState::SetFloatUniforms(ShaderState_OpenGL33* programStateIn)
     {
         assert(programStateIn != nullptr);
         {
             assert(this->programState == nullptr || this->programState == programStateIn);
             {
-                this->basicParametersToSet.Set(name, x, y, z, w);
+                if (programStateIn->pendingFloatUniformsByName.count > 0)
+                {
+                    this->floatUniformsToSetByName = new GTCore::Dictionary<ShaderState_OpenGL33::FloatParameter>(programStateIn->pendingFloatUniformsByName);
+                }
+                if (programStateIn->pendingFloatUniformsByLocation.count > 0)
+                {
+                    this->floatUniformsToSetByLocation = new GTCore::Vector<ShaderState_OpenGL33::FloatParameter>(programStateIn->pendingFloatUniformsByLocation);
+                }
+
 
                 this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
             }
         }
     }
 
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x)
+    void RCSetShaderState::SetFloat2Uniforms(ShaderState_OpenGL33* programStateIn)
     {
         assert(programStateIn != nullptr);
         {
             assert(this->programState == nullptr || this->programState == programStateIn);
             {
-                this->basicParametersToSet.Set(name, x);
+                if (programStateIn->pendingFloat2UniformsByName.count > 0)
+                {
+                    this->float2UniformsToSetByName = new GTCore::Dictionary<ShaderState_OpenGL33::Float2Parameter>(programStateIn->pendingFloat2UniformsByName);
+                }
+                if (programStateIn->pendingFloat2UniformsByLocation.count > 0)
+                {
+                    this->float2UniformsToSetByLocation = new GTCore::Vector<ShaderState_OpenGL33::Float2Parameter>(programStateIn->pendingFloat2UniformsByLocation);
+                }
+
 
                 this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
             }
         }
     }
 
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x, int y)
+    void RCSetShaderState::SetFloat3Uniforms(ShaderState_OpenGL33* programStateIn)
     {
         assert(programStateIn != nullptr);
         {
             assert(this->programState == nullptr || this->programState == programStateIn);
             {
-                this->basicParametersToSet.Set(name, x, y);
+                if (programStateIn->pendingFloat3UniformsByName.count > 0)
+                {
+                    this->float3UniformsToSetByName = new GTCore::Dictionary<ShaderState_OpenGL33::Float3Parameter>(programStateIn->pendingFloat3UniformsByName);
+                }
+                if (programStateIn->pendingFloat3UniformsByLocation.count > 0)
+                {
+                    this->float3UniformsToSetByLocation = new GTCore::Vector<ShaderState_OpenGL33::Float3Parameter>(programStateIn->pendingFloat3UniformsByLocation);
+                }
+
 
                 this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
             }
         }
     }
 
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x, int y, int z)
+    void RCSetShaderState::SetFloat4Uniforms(ShaderState_OpenGL33* programStateIn)
     {
         assert(programStateIn != nullptr);
         {
             assert(this->programState == nullptr || this->programState == programStateIn);
             {
-                this->basicParametersToSet.Set(name, x, y, z);
+                if (programStateIn->pendingFloat4UniformsByName.count > 0)
+                {
+                    this->float4UniformsToSetByName = new GTCore::Dictionary<ShaderState_OpenGL33::Float4Parameter>(programStateIn->pendingFloat4UniformsByName);
+                }
+                if (programStateIn->pendingFloat4UniformsByLocation.count > 0)
+                {
+                    this->float4UniformsToSetByLocation = new GTCore::Vector<ShaderState_OpenGL33::Float4Parameter>(programStateIn->pendingFloat4UniformsByLocation);
+                }
+
 
                 this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
             }
         }
     }
 
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x, int y, int z, int w)
+
+    void RCSetShaderState::SetFloat2x2Uniforms(ShaderState_OpenGL33* programStateIn)
     {
         assert(programStateIn != nullptr);
         {
             assert(this->programState == nullptr || this->programState == programStateIn);
             {
-                this->basicParametersToSet.Set(name, x, y, z, w);
+                if (programStateIn->pendingFloat2x2UniformsByName.count > 0)
+                {
+                    this->float2x2UniformsToSetByName = new GTCore::Dictionary<ShaderState_OpenGL33::Float2x2Parameter>(programStateIn->pendingFloat2x2UniformsByName);
+                }
+                if (programStateIn->pendingFloat2x2UniformsByLocation.count > 0)
+                {
+                    this->float2x2UniformsToSetByLocation = new GTCore::Vector<ShaderState_OpenGL33::Float2x2Parameter>(programStateIn->pendingFloat2x2UniformsByLocation);
+                }
+
 
                 this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
             }
         }
     }
 
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::mat2x2 &value)
+    void RCSetShaderState::SetFloat3x3Uniforms(ShaderState_OpenGL33* programStateIn)
     {
         assert(programStateIn != nullptr);
         {
             assert(this->programState == nullptr || this->programState == programStateIn);
             {
-                this->basicParametersToSet.Set(name, value);
+                if (programStateIn->pendingFloat3x3UniformsByName.count > 0)
+                {
+                    this->float3x3UniformsToSetByName = new GTCore::Dictionary<ShaderState_OpenGL33::Float3x3Parameter>(programStateIn->pendingFloat3x3UniformsByName);
+                }
+                if (programStateIn->pendingFloat3x3UniformsByLocation.count > 0)
+                {
+                    this->float3x3UniformsToSetByLocation = new GTCore::Vector<ShaderState_OpenGL33::Float3x3Parameter>(programStateIn->pendingFloat3x3UniformsByLocation);
+                }
+
 
                 this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
             }
         }
     }
 
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::mat3x3 &value)
+    void RCSetShaderState::SetFloat4x4Uniforms(ShaderState_OpenGL33* programStateIn)
     {
         assert(programStateIn != nullptr);
         {
             assert(this->programState == nullptr || this->programState == programStateIn);
             {
-                this->basicParametersToSet.Set(name, value);
+                if (programStateIn->pendingFloat4x4UniformsByName.count > 0)
+                {
+                    this->float4x4UniformsToSetByName = new GTCore::Dictionary<ShaderState_OpenGL33::Float4x4Parameter>(programStateIn->pendingFloat4x4UniformsByName);
+                }
+                if (programStateIn->pendingFloat4x4UniformsByLocation.count > 0)
+                {
+                    this->float4x4UniformsToSetByLocation = new GTCore::Vector<ShaderState_OpenGL33::Float4x4Parameter>(programStateIn->pendingFloat4x4UniformsByLocation);
+                }
+
 
                 this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
             }
         }
     }
 
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::mat4x4 &value)
+
+    void RCSetShaderState::SetTextureUniforms(ShaderState_OpenGL33* programStateIn)
     {
         assert(programStateIn != nullptr);
         {
             assert(this->programState == nullptr || this->programState == programStateIn);
             {
-                this->basicParametersToSet.Set(name, value);
+                if (programStateIn->pendingTextureUniformsByName.count > 0)
+                {
+                    this->textureUniformsToSetByName = new GTCore::Dictionary<ShaderState_OpenGL33::TextureParameter>(programStateIn->pendingTextureUniformsByName);
+                }
+                if (programStateIn->pendingTextureUniformsByLocation.count > 0)
+                {
+                    this->textureUniformsToSetByLocation = new GTCore::Vector<ShaderState_OpenGL33::TextureParameter>(programStateIn->pendingTextureUniformsByLocation);
+                }
+
 
                 this->programState = programStateIn;
-                this->operationBitfield |= SET_BASIC_PARAMETER_BIT;
             }
         }
     }
 
-
-    void RCSetShaderState::SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, GLuint* textureObject, GLenum textureTarget)
-    {
-        assert(programStateIn != nullptr);
-        {
-            assert(this->programState == nullptr || this->programState == programStateIn);
-            {
-                ShaderState_OpenGL33::TextureParameter parameter;
-                parameter.textureObject = textureObject;
-                parameter.textureTarget = textureTarget;
-                this->textureParametersToSet.Add(name, parameter);
-
-                this->programState = programStateIn;
-                this->operationBitfield |= SET_TEXTURE_PARAMETER_BIT;
-            }
-        }
-    }
 
 
     ShaderState_OpenGL33* RCSetShaderState::GetProgramState() const
@@ -210,171 +241,192 @@ namespace GTEngine
 
 
 
-            if ((this->operationBitfield & SET_BASIC_PARAMETER_BIT))
+            // Float.
+            if (this->floatUniformsToSetByName != nullptr)
             {
-                for (size_t i = 0; i < this->basicParametersToSet.GetCount(); ++i)
+                for (size_t i = 0; i < this->floatUniformsToSetByName->count; ++i)
                 {
-                    auto parameterName = this->basicParametersToSet.GetNameByIndex(i);
-                    auto parameter     = this->basicParametersToSet.GetByIndex(i);
+                    auto  parameterName  = this->floatUniformsToSetByName->buffer[i]->key;
+                    auto &parameterValue = this->floatUniformsToSetByName->buffer[i]->value;
 
-                    assert(parameterName != nullptr);
-                    assert(parameter     != nullptr);
+                    glUniform1f(glGetUniformLocation(this->programState->programObject, parameterName), parameterValue.x);
+                }
+            }
+
+            if (this->floatUniformsToSetByLocation != nullptr)
+            {
+                for (size_t i = 0; i < this->floatUniformsToSetByLocation->count; ++i)
+                {
+                    auto &parameter = this->floatUniformsToSetByLocation->Get(i);
                     {
-                        switch (parameter->type)
-                        {
-                        // Floats.
-                        case ShaderParameterType_Float:
-                            {
-                                glUniform1f(glGetUniformLocation(this->programState->programObject, parameterName), static_cast<ShaderParameter_Float*>(parameter)->value);
-                                break;
-                            }
-
-                        case ShaderParameterType_Float2:
-                            {
-                                glUniform2fv(glGetUniformLocation(this->programState->programObject, parameterName), 1, &static_cast<ShaderParameter_Float2*>(parameter)->value.x);
-                                break;
-                            }
-
-                        case ShaderParameterType_Float3:
-                            {
-                                glUniform3fv(glGetUniformLocation(this->programState->programObject, parameterName), 1, &static_cast<ShaderParameter_Float3*>(parameter)->value.x);
-                                break;
-                            }
-
-                        case ShaderParameterType_Float4:
-                            {
-                                glUniform4fv(glGetUniformLocation(this->programState->programObject, parameterName), 1, &static_cast<ShaderParameter_Float4*>(parameter)->value.x);
-                                break;
-                            }
-
-
-                        // Integers.
-                        case ShaderParameterType_Integer:
-                            {
-                                glUniform1i(glGetUniformLocation(this->programState->programObject, parameterName), static_cast<ShaderParameter_Integer*>(parameter)->value);
-                                break;
-                            }
-
-                        case ShaderParameterType_Integer2:
-                            {
-                                glUniform2iv(glGetUniformLocation(this->programState->programObject, parameterName), 1, &static_cast<ShaderParameter_Integer2*>(parameter)->value.x);
-                                break;
-                            }
-
-                        case ShaderParameterType_Integer3:
-                            {
-                                glUniform3iv(glGetUniformLocation(this->programState->programObject, parameterName), 1, &static_cast<ShaderParameter_Integer3*>(parameter)->value.x);
-                                break;
-                            }
-
-                        case ShaderParameterType_Integer4:
-                            {
-                                glUniform4iv(glGetUniformLocation(this->programState->programObject, parameterName), 1, &static_cast<ShaderParameter_Integer4*>(parameter)->value.x);
-                                break;
-                            }
-
-
-                        // Matrices.
-                        case ShaderParameterType_Float2x2:
-                            {
-                                glUniformMatrix2fv(glGetUniformLocation(this->programState->programObject, parameterName), 1, GL_FALSE, &static_cast<ShaderParameter_Float2x2*>(parameter)->value[0][0]);
-                                break;
-                            }
-
-                        case ShaderParameterType_Float3x3:
-                            {
-                                glUniformMatrix3fv(glGetUniformLocation(this->programState->programObject, parameterName), 1, GL_FALSE, &static_cast<ShaderParameter_Float3x3*>(parameter)->value[0][0]);
-                                break;
-                            }
-
-                        case ShaderParameterType_Float4x4:
-                            {
-                                glUniformMatrix4fv(glGetUniformLocation(this->programState->programObject, parameterName), 1, GL_FALSE, &static_cast<ShaderParameter_Float4x4*>(parameter)->value[0][0]);
-                                break;
-                            }
-                            
-                            
-                        case ShaderParameterType_Texture1D:
-                        case ShaderParameterType_Texture2D:
-                        case ShaderParameterType_Texture3D:
-                        case ShaderParameterType_TextureCube:
-                        default: break;
-                        }
+                        glUniform1f(parameter.location, parameter.x);
                     }
                 }
             }
 
-            if ((this->operationBitfield & SET_TEXTURE_PARAMETER_BIT))
+            // Float2.
+            if (this->float2UniformsToSetByName != nullptr)
             {
-                for (size_t i = 0; i < this->textureParametersToSet.count; ++i)
+                for (size_t i = 0; i < this->float2UniformsToSetByName->count; ++i)
                 {
-                    auto  parameterName = this->textureParametersToSet.buffer[i]->key;
-                    auto &parameter     = this->textureParametersToSet.buffer[i]->value;
+                    auto  parameterName  = this->float2UniformsToSetByName->buffer[i]->key;
+                    auto &parameterValue = this->float2UniformsToSetByName->buffer[i]->value;
 
-                    bool setUniform = true;
-                    bool setBinding = true;
+                    glUniform2f(glGetUniformLocation(this->programState->programObject, parameterName), parameterValue.x, parameterValue.y);
+                }
+            }
 
-                    // We need to check if the shader state has the texture already set.
-                    auto iExistingParameter = this->programState->textures.Find(parameterName);
-                    if (iExistingParameter != nullptr)
+            if (this->float2UniformsToSetByLocation != nullptr)
+            {
+                for (size_t i = 0; i < this->float2UniformsToSetByLocation->count; ++i)
+                {
+                    auto &parameter = this->float2UniformsToSetByLocation->Get(i);
                     {
-                        // The parameter already exists. The uniform does not need to be set, but the texture binding might.
-                        setUniform = false;
-
-                        if (iExistingParameter->value.textureObject == parameter.textureObject)
-                        {
-                            setBinding = false;
-                        }
-                        else
-                        {
-                            setBinding = true;
-                            iExistingParameter->value.textureObject = parameter.textureObject;
-
-                            parameter.textureUnit     = iExistingParameter->value.textureUnit;
-                            parameter.uniformLocation = iExistingParameter->value.uniformLocation;
-                        }
-                    }
-                    else
-                    {
-                        // The parameter has not been set before. We need to set the uniform and bind.
-                        parameter.textureUnit     = static_cast<GLint>(this->programState->textures.count);
-                        parameter.uniformLocation = glGetUniformLocation(this->programState->programObject, parameterName);
-                        this->programState->textures.Add(parameterName, parameter);
-                    }
-
-
-
-                    // If this program state is the current one, we'll need to bind the texture straight away.
-                    if (ServerState_GL_CURRENT_PROGRAM == this->programState->programObject && setBinding)
-                    {
-                        glActiveTexture(GL_TEXTURE0 + parameter.textureUnit);
-                        glBindTexture(parameter.textureTarget, *parameter.textureObject);
-
-                        // State needs to be set.
-                        if (parameter.textureTarget == GL_TEXTURE_1D)
-                        {
-                            ServerState_GL_TEXTURE_BINDING_1D = *parameter.textureObject;
-                        }
-                        else if (parameter.textureTarget == GL_TEXTURE_2D)
-                        {
-                            ServerState_GL_TEXTURE_BINDING_2D = *parameter.textureObject;
-                        }
-                        else if (parameter.textureTarget == GL_TEXTURE_3D)
-                        {
-                            ServerState_GL_TEXTURE_BINDING_3D = *parameter.textureObject;
-                        }
-                        else if (parameter.textureTarget == GL_TEXTURE_CUBE_MAP)
-                        {
-                            ServerState_GL_TEXTURE_BINDING_CUBE = *parameter.textureObject;
-                        }
-                    }
-
-                    if (setUniform)
-                    {
-                        glUniform1i(parameter.uniformLocation, parameter.textureUnit);
+                        glUniform2f(parameter.location, parameter.x, parameter.y);
                     }
                 }
             }
+
+            // Float3.
+            if (this->float3UniformsToSetByName != nullptr)
+            {
+                for (size_t i = 0; i < this->float3UniformsToSetByName->count; ++i)
+                {
+                    auto  parameterName  = this->float3UniformsToSetByName->buffer[i]->key;
+                    auto &parameterValue = this->float3UniformsToSetByName->buffer[i]->value;
+
+                    glUniform3f(glGetUniformLocation(this->programState->programObject, parameterName), parameterValue.x, parameterValue.y, parameterValue.z);
+                }
+            }
+
+            if (this->float3UniformsToSetByLocation != nullptr)
+            {
+                for (size_t i = 0; i < this->float3UniformsToSetByLocation->count; ++i)
+                {
+                    auto &parameter = this->float3UniformsToSetByLocation->Get(i);
+                    {
+                        glUniform3f(parameter.location, parameter.x, parameter.y, parameter.z);
+                    }
+                }
+            }
+
+            // Float4.
+            if (this->float4UniformsToSetByName != nullptr)
+            {
+                for (size_t i = 0; i < this->float4UniformsToSetByName->count; ++i)
+                {
+                    auto  parameterName  = this->float4UniformsToSetByName->buffer[i]->key;
+                    auto &parameterValue = this->float4UniformsToSetByName->buffer[i]->value;
+
+                    glUniform4f(glGetUniformLocation(this->programState->programObject, parameterName), parameterValue.x, parameterValue.y, parameterValue.z, parameterValue.w);
+                }
+            }
+
+            if (this->float4UniformsToSetByLocation != nullptr)
+            {
+                for (size_t i = 0; i < this->float4UniformsToSetByLocation->count; ++i)
+                {
+                    auto &parameter = this->float4UniformsToSetByLocation->Get(i);
+                    {
+                        glUniform4f(parameter.location, parameter.x, parameter.y, parameter.z, parameter.w);
+                    }
+                }
+            }
+
+
+            // Float2x2.
+            if (this->float2x2UniformsToSetByName != nullptr)
+            {
+                for (size_t i = 0; i < this->float2x2UniformsToSetByName->count; ++i)
+                {
+                    auto  parameterName  = this->float2x2UniformsToSetByName->buffer[i]->key;
+                    auto &parameterValue = this->float2x2UniformsToSetByName->buffer[i]->value;
+
+                    glUniformMatrix2fv(glGetUniformLocation(this->programState->programObject, parameterName), 1, false, parameterValue.value);
+                }
+            }
+
+            if (this->float2x2UniformsToSetByLocation != nullptr)
+            {
+                for (size_t i = 0; i < this->float2x2UniformsToSetByLocation->count; ++i)
+                {
+                    auto &parameter = this->float2x2UniformsToSetByLocation->Get(i);
+                    {
+                        glUniformMatrix2fv(parameter.location, 1, false, parameter.value);
+                    }
+                }
+            }
+
+            // Float3x3.
+            if (this->float3x3UniformsToSetByName != nullptr)
+            {
+                for (size_t i = 0; i < this->float3x3UniformsToSetByName->count; ++i)
+                {
+                    auto  parameterName  = this->float3x3UniformsToSetByName->buffer[i]->key;
+                    auto &parameterValue = this->float3x3UniformsToSetByName->buffer[i]->value;
+
+                    glUniformMatrix3fv(glGetUniformLocation(this->programState->programObject, parameterName), 1, false, parameterValue.value);
+                }
+            }
+
+            if (this->float3x3UniformsToSetByLocation != nullptr)
+            {
+                for (size_t i = 0; i < this->float3x3UniformsToSetByLocation->count; ++i)
+                {
+                    auto &parameter = this->float3x3UniformsToSetByLocation->Get(i);
+                    {
+                        glUniformMatrix3fv(parameter.location, 1, false, parameter.value);
+                    }
+                }
+            }
+
+            // Float4x4.
+            if (this->float4x4UniformsToSetByName != nullptr)
+            {
+                for (size_t i = 0; i < this->float4x4UniformsToSetByName->count; ++i)
+                {
+                    auto  parameterName  = this->float4x4UniformsToSetByName->buffer[i]->key;
+                    auto &parameterValue = this->float4x4UniformsToSetByName->buffer[i]->value;
+
+                    glUniformMatrix4fv(glGetUniformLocation(this->programState->programObject, parameterName), 1, false, parameterValue.value);
+                }
+            }
+
+            if (this->float4x4UniformsToSetByLocation != nullptr)
+            {
+                for (size_t i = 0; i < this->float4x4UniformsToSetByLocation->count; ++i)
+                {
+                    auto &parameter = this->float4x4UniformsToSetByLocation->Get(i);
+                    {
+                        glUniformMatrix4fv(parameter.location, 1, false, parameter.value);
+                    }
+                }
+            }
+
+
+            // Textures.
+            if (this->textureUniformsToSetByName != nullptr)
+            {
+                for (size_t i = 0; i < this->textureUniformsToSetByName->count; ++i)
+                {
+                    GLint uniformLocation = glGetUniformLocation(this->programState->programObject, this->textureUniformsToSetByName->buffer[i]->key);
+                    auto &uniformValue    = this->textureUniformsToSetByName->buffer[i]->value;
+
+                    this->SetTextureUniform(uniformLocation, uniformValue);
+                }
+            }
+
+            if (this->textureUniformsToSetByLocation != nullptr)
+            {
+                for (size_t i = 0 ; i < this->textureUniformsToSetByLocation->count; ++i)
+                {
+                    auto &uniform = this->textureUniformsToSetByLocation->Get(i);
+                    {
+                        this->SetTextureUniform(uniform.location, uniform);
+                    }
+                }
+            }
+
 
 
 
@@ -383,6 +435,72 @@ namespace GTEngine
             {
                 glUseProgram(ServerState_GL_CURRENT_PROGRAM);
             }
+        }
+    }
+
+    void RCSetShaderState::SetTextureUniform(GLint location, ShaderState_OpenGL33::TextureParameter &value)
+    {
+        bool setUniform = true;
+        bool setBinding = true;
+
+        // We need to check if the shader state has the texture already set.
+        auto iExistingParameter = this->programState->currentTextureUniforms.Find(location);
+        if (iExistingParameter != nullptr)
+        {
+            // The parameter already exists. The uniform does not need to be set, but the texture binding might.
+            setUniform = false;
+
+            if (iExistingParameter->value.textureObject == value.textureObject)
+            {
+                setBinding = false;
+            }
+            else
+            {
+                setBinding = true;
+                iExistingParameter->value.textureObject = value.textureObject;
+
+                value.textureUnit = iExistingParameter->value.textureUnit;
+                value.location    = iExistingParameter->value.location;
+            }
+        }
+        else
+        {
+            // The parameter has not been set before. We need to set the uniform and bind.
+            value.textureUnit = static_cast<GLint>(this->programState->currentTextureUniforms.count);
+            value.location    = location;
+            this->programState->currentTextureUniforms.Add(location, value);
+        }
+
+
+
+        // If this program state is the current one, we'll need to bind the texture straight away.
+        if (ServerState_GL_CURRENT_PROGRAM == this->programState->programObject && setBinding)
+        {
+            glActiveTexture(GL_TEXTURE0 + value.textureUnit);
+            glBindTexture(value.textureTarget, *value.textureObject);
+
+            // State needs to be set.
+            if (value.textureTarget == GL_TEXTURE_1D)
+            {
+                ServerState_GL_TEXTURE_BINDING_1D = *value.textureObject;
+            }
+            else if (value.textureTarget == GL_TEXTURE_2D)
+            {
+                ServerState_GL_TEXTURE_BINDING_2D = *value.textureObject;
+            }
+            else if (value.textureTarget == GL_TEXTURE_3D)
+            {
+                ServerState_GL_TEXTURE_BINDING_3D = *value.textureObject;
+            }
+            else if (value.textureTarget == GL_TEXTURE_CUBE_MAP)
+            {
+                ServerState_GL_TEXTURE_BINDING_CUBE = *value.textureObject;
+            }
+        }
+
+        if (setUniform)
+        {
+            glUniform1i(value.location, value.textureUnit);
         }
     }
 }

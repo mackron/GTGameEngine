@@ -522,15 +522,13 @@ namespace GTEngine
         /// @param shaderToDelete [in] The shader to delete.
         static void DeleteShader(Shader* shaderToDelete);
 
-        /// Pushes the pending properties of the given shader to the renderer.
+        /// Pushings any pending shader uniform parameters of the given shader.
         ///
-        /// @param shader [in] The shader whose pending properties are being pushed.
+        /// @param shader [in] The shadow whose pending uniforms are being pushed.
         ///
         /// @remarks
-        ///     It is the responsibility of the client to clear pending properties where appropriate. Typically, the pending properties should
-        ///     be cleared straight after this call. This function will immediately make a copy of the properties so it is safe to clear straight
-        ///     away after this function returned.
-        static void PushShaderPendingProperties(const Shader &shader);
+        ///     This will clear any pending uniforms.
+        static void PushPendingUniforms(const Shader &shader);
 
 
 
