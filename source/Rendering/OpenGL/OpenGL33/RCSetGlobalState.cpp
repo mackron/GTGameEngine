@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include "RCSetGlobalState.hpp"
+#include "ServerState_OpenGL33.hpp"
 #include <gtgl/gtgl.h>
 
 #include "../CapabilityBits.hpp"
@@ -497,7 +498,29 @@ namespace GTEngine
 
                 glActiveTexture(GL_TEXTURE0 + texture.textureUnit);
                 glBindTexture(texture.textureTarget, *texture.textureObject);
+
+                // State needs to be set.
+                if (texture.textureTarget == GL_TEXTURE_1D)
+                {
+                    ServerState_GL_TEXTURE_BINDING_1D = *texture.textureObject;
+                }
+                else if (texture.textureTarget == GL_TEXTURE_2D)
+                {
+                    ServerState_GL_TEXTURE_BINDING_2D = *texture.textureObject;
+                }
+                else if (texture.textureTarget == GL_TEXTURE_3D)
+                {
+                    ServerState_GL_TEXTURE_BINDING_3D = *texture.textureObject;
+                }
+                else if (texture.textureTarget == GL_TEXTURE_CUBE_MAP)
+                {
+                    ServerState_GL_TEXTURE_BINDING_CUBE = *texture.textureObject;
+                }
             }
+
+
+            // 3) Set state.
+            ServerState_GL_CURRENT_PROGRAM = this->currentShaderParams.programState->programObject;
         }
 
         if ((this->operationBitfield & SET_CURRENT_FRAMEBUFFER_BIT))
@@ -505,6 +528,7 @@ namespace GTEngine
             if (this->currentFramebufferParams.framebufferState != nullptr)
             {
                 glBindFramebuffer(GL_FRAMEBUFFER, this->currentFramebufferParams.framebufferState->framebufferObject);
+                ServerState_GL_FRAMEBUFFER_BINDING = this->currentFramebufferParams.framebufferState->framebufferObject;
             }
             else
             {
@@ -512,6 +536,8 @@ namespace GTEngine
 
                 GLenum backBuffer = GL_BACK;
                 glDrawBuffers(1, &backBuffer);
+
+                ServerState_GL_FRAMEBUFFER_BINDING = 0;
             }
         }
 

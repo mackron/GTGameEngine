@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include "RCSetFramebufferState.hpp"
+#include "ServerState_OpenGL33.hpp"
 #include "../TypeConversion.hpp"
 #include <assert.h>
 
@@ -45,10 +46,7 @@ namespace GTEngine
         assert(this->framebufferState != nullptr);
         {
             // We don't want this to modify global state, so we'll need to grab the currently bound framebuffer so it can be restored later.
-            GLint previousCurrentFramebuffer;
-            glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previousCurrentFramebuffer);        // <-- framebuffers are always bound with GL_FRAMEBUFFER, so we can also use GL_READ_FRAMEBUFFER_BINDING if we wanted to.
-
-            if (static_cast<GLuint>(previousCurrentFramebuffer) != this->framebufferState->framebufferObject)
+            if (ServerState_GL_FRAMEBUFFER_BINDING != this->framebufferState->framebufferObject)
             {
                 glBindFramebuffer(GL_FRAMEBUFFER, this->framebufferState->framebufferObject);
             }
@@ -88,9 +86,9 @@ namespace GTEngine
 
 
             // Global state needs to be restored.
-            if (static_cast<GLuint>(previousCurrentFramebuffer) != this->framebufferState->framebufferObject)
+            if (ServerState_GL_FRAMEBUFFER_BINDING != this->framebufferState->framebufferObject)
             {
-                glBindFramebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(previousCurrentFramebuffer));
+                glBindFramebuffer(GL_FRAMEBUFFER, ServerState_GL_FRAMEBUFFER_BINDING);
             }
         }
     }

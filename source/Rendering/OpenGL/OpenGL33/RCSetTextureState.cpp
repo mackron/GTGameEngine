@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include "RCSetTextureState.hpp"
+#include "ServerState_OpenGL33.hpp"
 #include "../TypeConversion.hpp"
 #include <gtgl/gtgl.h>
 #include <assert.h>
@@ -348,29 +349,26 @@ namespace GTEngine
     {
         assert(this->textureObject != nullptr);
         {
-            // We may need to restore the texture binding at the end of this. To keep things simple, we're going to just use glGetIntegerv().
-            GLint previousTextureObject = 0;
+            // We may need to restore the texture binding at the end of this, so we'll grab the current binding here.
+            GLuint previousTextureObject = 0;
 
             if (this->target == GL_TEXTURE_1D)
             {
-                glGetIntegerv(GL_TEXTURE_BINDING_1D, &previousTextureObject);
+                previousTextureObject = ServerState_GL_TEXTURE_BINDING_1D;
             }
             else if (this->target == GL_TEXTURE_2D)
             {
-                glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTextureObject);
+                previousTextureObject = ServerState_GL_TEXTURE_BINDING_2D;
             }
             else if (this->target == GL_TEXTURE_3D)
             {
-                glGetIntegerv(GL_TEXTURE_BINDING_3D, &previousTextureObject);
+                previousTextureObject = ServerState_GL_TEXTURE_BINDING_3D;
             }
             else if (this->target == GL_TEXTURE_CUBE_MAP || (this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z))
             {
-                glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &previousTextureObject);
+                previousTextureObject = ServerState_GL_TEXTURE_BINDING_CUBE;
             }
-            else if (this->target == GL_TEXTURE_RECTANGLE)
-            {
-                glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &previousTextureObject);
-            }
+
 
 
             // If the target is cube map face, the binding target needs to be GL_TEXTURE_CUBE_MAP.
@@ -517,11 +515,11 @@ namespace GTEngine
             // We need to restore the texture binding. If the target is cube map face, the binding target needs to be GL_TEXTURE_CUBE_MAP.
             if (this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)
             {
-                glBindTexture(GL_TEXTURE_CUBE_MAP, static_cast<GLuint>(previousTextureObject));
+                glBindTexture(GL_TEXTURE_CUBE_MAP, previousTextureObject);
             }
             else
             {
-                glBindTexture(this->target, static_cast<GLuint>(previousTextureObject));
+                glBindTexture(this->target, previousTextureObject);
             }
         }
     }

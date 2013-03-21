@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include "RCCreateVertexArray.hpp"
+#include "ServerState_OpenGL33.hpp"
 #include <gtgl/gtgl.h>
 
 namespace GTEngine
@@ -26,11 +27,8 @@ namespace GTEngine
         glGenBuffers(1, this->indexBufferObject);
 
 
-        // 2) Bind the vertex array object. We don't want to modify global state here, so we need to get the current binding so it can be restored later.
-        GLint previousCurrentVAO;
-        glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previousCurrentVAO);
-
-        if (static_cast<GLuint>(previousCurrentVAO) != *this->vertexArrayObject)
+        // 2) Bind the vertex array object. This will be restored later.
+        if (ServerState_GL_VERTEX_ARRAY_BINDING != *this->vertexArrayObject)
         {
             glBindVertexArray(*this->vertexArrayObject);
         }
@@ -38,12 +36,9 @@ namespace GTEngine
 
         // 3) Bind the vertex and index arrays.
         //
-        // GL_ARRAY_BUFFER is not stored in the VAO state. This needs to be bound alongside the VAO whenever it's bound. As usual, we need to grab the
-        // current binding so we can keep the integrity of the global state. There is not need to retrieve the 
-        GLint previousCurrentVertexBuffer;
-        glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &previousCurrentVertexBuffer);
-
-        if (static_cast<GLuint>(previousCurrentVertexBuffer) != *this->vertexBufferObject)
+        // GL_ARRAY_BUFFER is not stored in the VAO state. This needs to be bound alongside the VAO whenever it's bound. As usual, this will be restored afterwards so
+        // that the global state can keep it's integrity.
+        if (ServerState_GL_ARRAY_BUFFER_BINDING != *this->vertexBufferObject)
         {
             glBindBuffer(GL_ARRAY_BUFFER, *this->vertexBufferObject);
         }
@@ -72,14 +67,14 @@ namespace GTEngine
 
 
         // 5) Bind the previous vertex array so we can restore global state..
-        if (static_cast<GLuint>(previousCurrentVAO) != *this->vertexArrayObject)
+        if (ServerState_GL_VERTEX_ARRAY_BINDING != *this->vertexArrayObject)
         {
-            glBindVertexArray(static_cast<GLuint>(previousCurrentVAO));
+            glBindVertexArray(ServerState_GL_VERTEX_ARRAY_BINDING);
         }
 
-        if (static_cast<GLuint>(previousCurrentVertexBuffer) != *this->vertexBufferObject)
+        if (ServerState_GL_ARRAY_BUFFER_BINDING != *this->vertexBufferObject)
         {
-            glBindBuffer(GL_ARRAY_BUFFER, static_cast<GLuint>(previousCurrentVertexBuffer));
+            glBindBuffer(GL_ARRAY_BUFFER, ServerState_GL_ARRAY_BUFFER_BINDING);
         }
     }
 }
