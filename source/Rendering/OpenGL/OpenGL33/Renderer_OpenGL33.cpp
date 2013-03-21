@@ -1525,19 +1525,13 @@ namespace GTEngine
     }
 
 
-    void Renderer::PushShaderPendingProperties(const Shader &shader)
+    void Renderer::PushPendingUniforms(const Shader &shader)
     {
         auto &shaderGL33 = static_cast<const Shader_OpenGL33 &>(shader);
         {
             auto programState = shaderGL33.GetOpenGLState();
             assert(programState != nullptr);
             {
-                if (shaderGL33.GetPendingParameters().count == 0)
-                {
-                    GTEngine::Log("Rendering Performance Warning: Attempting to push pending shader properties when there are not properties to push.");
-                }
-
-
                 if (State.currentRCSetShaderState == nullptr || State.currentRCSetShaderState->GetProgramState() != programState)
                 {
                     State.currentRCSetShaderState = &RCCaches[BackCallCacheIndex].RCSetShaderStateCache.Acquire();
@@ -1547,85 +1541,16 @@ namespace GTEngine
 
                 assert(State.currentRCSetShaderState != nullptr);
                 {
-                    auto &pendingParameters = shaderGL33.GetPendingParameters();
-                    for (size_t i = 0; i < pendingParameters.count; ++i)
-                    {
-                        auto parameterName = pendingParameters.buffer[i]->key;
-                        auto parameter     = pendingParameters.buffer[i]->value;
+                    State.currentRCSetShaderState->SetFloatUniforms(programState);
+                    State.currentRCSetShaderState->SetFloat2Uniforms(programState);
+                    State.currentRCSetShaderState->SetFloat3Uniforms(programState);
+                    State.currentRCSetShaderState->SetFloat4Uniforms(programState);
+                    State.currentRCSetShaderState->SetFloat2x2Uniforms(programState);
+                    State.currentRCSetShaderState->SetFloat3x3Uniforms(programState);
+                    State.currentRCSetShaderState->SetFloat4x4Uniforms(programState);
+                    State.currentRCSetShaderState->SetTextureUniforms(programState);
 
-                        assert(parameterName != nullptr);
-                        assert(parameter     != nullptr);
-                        {
-                            if (parameter->type == ShaderParameterType_Texture1D)
-                            {
-                            }
-                            else if (parameter->type == ShaderParameterType_Texture2D)
-                            {
-                                auto texture = static_cast<Texture2D_OpenGL33*>(static_cast<ShaderParameter_Texture2D*>(parameter)->value);
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, texture->GetOpenGLObjectPtr(), texture->GetTarget());
-                                }
-                            }
-                            else if (parameter->type == ShaderParameterType_Texture3D)
-                            {
-                            }
-                            else if (parameter->type == ShaderParameterType_TextureCube)
-                            {
-                                auto texture = static_cast<TextureCube_OpenGL33*>(static_cast<ShaderParameter_TextureCube*>(parameter)->value);
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, texture->GetOpenGLObjectPtr(), GL_TEXTURE_CUBE_MAP);
-                                }
-                            }
-                            else
-                            {
-                                // It's a basic type.
-                                if (parameter->type == ShaderParameterType_Float)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float*>(parameter)->value);
-                                }
-                                else if (parameter->type == ShaderParameterType_Float2)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float2*>(parameter)->value);
-                                }
-                                else if (parameter->type == ShaderParameterType_Float3)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float3*>(parameter)->value);
-                                }
-                                else if (parameter->type == ShaderParameterType_Float4)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float4*>(parameter)->value);
-                                }
-                                else if (parameter->type == ShaderParameterType_Integer)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Integer*>(parameter)->value);
-                                }
-                                else if (parameter->type == ShaderParameterType_Integer2)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Integer2*>(parameter)->value);
-                                }
-                                else if (parameter->type == ShaderParameterType_Integer3)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Integer3*>(parameter)->value);
-                                }
-                                else if (parameter->type == ShaderParameterType_Integer4)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Integer4*>(parameter)->value);
-                                }
-                                else if (parameter->type == ShaderParameterType_Float2x2)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float2x2*>(parameter)->value);
-                                }
-                                else if (parameter->type == ShaderParameterType_Float3x3)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float3x3*>(parameter)->value);
-                                }
-                                else if (parameter->type == ShaderParameterType_Float4x4)
-                                {
-                                    State.currentRCSetShaderState->SetShaderParameter(programState, parameterName, static_cast<ShaderParameter_Float4x4*>(parameter)->value);
-                                }
-                            }
-                        }
-                    }
+                    programState->ClearPendingUniforms();
                 }
             }
         }

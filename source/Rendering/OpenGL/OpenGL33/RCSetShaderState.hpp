@@ -21,28 +21,19 @@ namespace GTEngine
         /// Constructor.
         RCSetShaderState();
 
+        /// Destructor.
+        ~RCSetShaderState();
 
-        /// Renderer::SetShaderParameter().
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x, float y);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x, float y, float z);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, float x, float y, float z, float w);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x, int y);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x, int y, int z);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, int x, int y, int z, int w);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::mat2x2 &value);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::mat3x3 &value);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::mat4x4 &value);
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, GLuint* textureObject, GLenum textureTarget);
 
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::vec2 &value)  { this->SetShaderParameter(programStateIn, name, value.x, value.y); }
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::vec3 &value)  { this->SetShaderParameter(programStateIn, name, value.x, value.y, value.z); }
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::vec4 &value)  { this->SetShaderParameter(programStateIn, name, value.x, value.y, value.z, value.w); }
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::ivec2 &value) { this->SetShaderParameter(programStateIn, name, value.x, value.y); }
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::ivec3 &value) { this->SetShaderParameter(programStateIn, name, value.x, value.y, value.z); }
-        void SetShaderParameter(ShaderState_OpenGL33* programStateIn, const char* name, const glm::ivec4 &value) { this->SetShaderParameter(programStateIn, name, value.x, value.y, value.z, value.w); }
-
+        /// Sets the pending uniforms of the given state.
+        void SetFloatUniforms(ShaderState_OpenGL33* programStateIn);
+        void SetFloat2Uniforms(ShaderState_OpenGL33* programStateIn);
+        void SetFloat3Uniforms(ShaderState_OpenGL33* programStateIn);
+        void SetFloat4Uniforms(ShaderState_OpenGL33* programStateIn);
+        void SetFloat2x2Uniforms(ShaderState_OpenGL33* programStateIn);
+        void SetFloat3x3Uniforms(ShaderState_OpenGL33* programStateIn);
+        void SetFloat4x4Uniforms(ShaderState_OpenGL33* programStateIn);
+        void SetTextureUniforms(ShaderState_OpenGL33* programStateIn);
 
 
         /// Retrieves the program object whose state is being set.
@@ -52,6 +43,12 @@ namespace GTEngine
 
         /// RenderCommand::Execute()
         void Execute();
+
+
+    private:
+
+        /// A helper for setting a texture uniform.
+        void SetTextureUniform(GLint location, ShaderState_OpenGL33::TextureParameter &value);
 
 
 
@@ -64,11 +61,27 @@ namespace GTEngine
         /// The shader state being modified.
         ShaderState_OpenGL33* programState;
 
-        /// The shader parameter cache for basic types. Textures are handled separately.
-        ShaderParameterCache basicParametersToSet;
 
-        /// The texture texture parameters to set, keyed by name.
-        GTCore::Dictionary<ShaderState_OpenGL33::TextureParameter> textureParametersToSet;
+        /// The parameters that should be set by name. These default to null. We use pointers here so make it easier to determine whether or not a group can be ignored.
+        GTCore::Dictionary<ShaderState_OpenGL33::FloatParameter>*    floatUniformsToSetByName;
+        GTCore::Dictionary<ShaderState_OpenGL33::Float2Parameter>*   float2UniformsToSetByName;
+        GTCore::Dictionary<ShaderState_OpenGL33::Float3Parameter>*   float3UniformsToSetByName;
+        GTCore::Dictionary<ShaderState_OpenGL33::Float4Parameter>*   float4UniformsToSetByName;
+        GTCore::Dictionary<ShaderState_OpenGL33::Float2x2Parameter>* float2x2UniformsToSetByName;
+        GTCore::Dictionary<ShaderState_OpenGL33::Float3x3Parameter>* float3x3UniformsToSetByName;
+        GTCore::Dictionary<ShaderState_OpenGL33::Float4x4Parameter>* float4x4UniformsToSetByName;
+        GTCore::Dictionary<ShaderState_OpenGL33::TextureParameter>*  textureUniformsToSetByName;
+
+
+        /// The uniforms that should be set by their location. These default to null. We use pointers here so make it easier to determine whether or not a group can be ignored.
+        GTCore::Vector<ShaderState_OpenGL33::FloatParameter>*    floatUniformsToSetByLocation;
+        GTCore::Vector<ShaderState_OpenGL33::Float2Parameter>*   float2UniformsToSetByLocation;
+        GTCore::Vector<ShaderState_OpenGL33::Float3Parameter>*   float3UniformsToSetByLocation;
+        GTCore::Vector<ShaderState_OpenGL33::Float4Parameter>*   float4UniformsToSetByLocation;
+        GTCore::Vector<ShaderState_OpenGL33::Float2x2Parameter>* float2x2UniformsToSetByLocation;
+        GTCore::Vector<ShaderState_OpenGL33::Float3x3Parameter>* float3x3UniformsToSetByLocation;
+        GTCore::Vector<ShaderState_OpenGL33::Float4x4Parameter>* float4x4UniformsToSetByLocation;
+        GTCore::Vector<ShaderState_OpenGL33::TextureParameter>*  textureUniformsToSetByLocation;
 
 
 

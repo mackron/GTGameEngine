@@ -93,13 +93,9 @@ namespace GTEngine
                 assert(shader != nullptr);
                 {
                     Renderer::SetCurrentShader(shader);
-
-                    shader->SetParameter("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
-                    shader->SetParameter("Texture",    image);
-                    {
-                        Renderer::PushShaderPendingProperties(*shader);
-                    }
-                    shader->ClearPendingParameters();
+                    shader->SetUniform("Projection", glm::ortho(0.0f, static_cast<float>(element.server.GetViewportWidth()), static_cast<float>(element.server.GetViewportHeight()), 0.0f, 0.0f, -1.0f));
+                    shader->SetUniform("Texture",    image);
+                    Renderer::PushPendingUniforms(*shader);
 
             
 

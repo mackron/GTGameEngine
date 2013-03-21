@@ -36,13 +36,6 @@ namespace GTEngine
         {
             this->framebuffers.root->value->DetachBuffer(this);
         }
-
-        // We also need to detach from all shaders.
-        while (this->shaders.root != nullptr)
-        {
-            this->shaders.root->value->OnTextureDeleted(this);
-            this->shaders.RemoveRoot();
-        }
     }
 
 
@@ -119,19 +112,5 @@ namespace GTEngine
     void Texture2D::OnDetachFromFramebuffer(Framebuffer *framebuffer)
     {
         this->framebuffers.Remove(this->framebuffers.Find(framebuffer));
-    }
-
-
-    void Texture2D::OnAttachToShader(Shader &shader)
-    {
-        if (this->shaders.Find(&shader) == nullptr)
-        {
-            this->shaders.Append(&shader);
-        }
-    }
-
-    void Texture2D::OnDetachFromShader(Shader &shader)
-    {
-        this->shaders.Remove(this->shaders.Find(&shader));
     }
 }

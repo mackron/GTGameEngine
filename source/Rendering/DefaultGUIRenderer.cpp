@@ -60,11 +60,8 @@ namespace GTEngine
 
 
         // We need to set the projection uniform on the main shader. Slightly more efficient if we do this after making it current.
-        this->shader->SetParameter("Projection", this->projection);
-        {
-            GTEngine::Renderer::PushShaderPendingProperties(*this->shader);
-        }
-        this->shader->ClearPendingParameters();
+        this->shader->SetUniform("Projection", this->projection);
+        GTEngine::Renderer::PushPendingUniforms(*this->shader);
     }
 
     void DefaultGUIRenderer::End()
@@ -88,13 +85,9 @@ namespace GTEngine
 
         // The shader needs to be make current in case an OnDraw event handler changes it. Setting uniforms is slightly more efficient if we bind it first.
         GTEngine::Renderer::SetCurrentShader(this->shader);
-
-        this->shader->SetParameter("Offset",  offsetX, offsetY);
-        this->shader->SetParameter("Texture", texture);
-        {
-            GTEngine::Renderer::PushShaderPendingProperties(*this->shader);
-        }
-        this->shader->ClearPendingParameters();
+        this->shader->SetUniform("Offset",  offsetX, offsetY);
+        this->shader->SetUniform("Texture", texture);
+        GTEngine::Renderer::PushPendingUniforms(*this->shader);
 
 
         if (enableOpacity)
