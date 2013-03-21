@@ -588,11 +588,7 @@ namespace GTEngine
             // Shapes are going to be completely recreated.
             while (this->pickingShape.getNumChildShapes() > 0)
             {
-                auto shape = this->pickingShape.getChildShape(0);
-                assert(shape != nullptr);
-                {
-                    this->pickingShape.removeChildShapeByIndex(0);
-                }
+                this->pickingShape.removeChildShapeByIndex(0);
             }
 
             float        outerRadius   = 1.0f * scale.y;              // 1.0 is the radius of the circles.
