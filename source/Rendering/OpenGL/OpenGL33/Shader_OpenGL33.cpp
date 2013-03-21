@@ -39,7 +39,11 @@ namespace GTEngine
         }
         else
         {
-            this->stateGL->pendingFloatUniformsByLocation.PushBack(ShaderState_OpenGL33::FloatParameter(this->stateGL->GetFloatUniformLocation(name), x));
+            GLint location = this->stateGL->GetFloatUniformLocation(name);
+            if (location != -1)
+            {
+                this->stateGL->pendingFloatUniformsByLocation.PushBack(ShaderState_OpenGL33::FloatParameter(location, x));
+            }
         }
     }
 
@@ -51,7 +55,11 @@ namespace GTEngine
         }
         else
         {
-            this->stateGL->pendingFloat2UniformsByLocation.PushBack(ShaderState_OpenGL33::Float2Parameter(this->stateGL->GetFloat2UniformLocation(name), x, y));
+            GLint location = this->stateGL->GetFloat2UniformLocation(name);
+            if (location != -1)
+            {
+                this->stateGL->pendingFloat2UniformsByLocation.PushBack(ShaderState_OpenGL33::Float2Parameter(location, x, y));
+            }
         }
     }
 
@@ -63,7 +71,11 @@ namespace GTEngine
         }
         else
         {
-            this->stateGL->pendingFloat3UniformsByLocation.PushBack(ShaderState_OpenGL33::Float3Parameter(this->stateGL->GetFloat3UniformLocation(name), x, y, z));
+            GLint location = this->stateGL->GetFloat3UniformLocation(name);
+            if (location != -1)
+            {
+                this->stateGL->pendingFloat3UniformsByLocation.PushBack(ShaderState_OpenGL33::Float3Parameter(location, x, y, z));
+            }
         }
     }
 
@@ -75,7 +87,11 @@ namespace GTEngine
         }
         else
         {
-            this->stateGL->pendingFloat4UniformsByLocation.PushBack(ShaderState_OpenGL33::Float4Parameter(this->stateGL->GetFloat4UniformLocation(name), x, y, z, w));
+            GLint location = this->stateGL->GetFloat4UniformLocation(name);
+            if (location != -1)
+            {
+                this->stateGL->pendingFloat4UniformsByLocation.PushBack(ShaderState_OpenGL33::Float4Parameter(location, x, y, z, w));
+            }
         }
     }
 
@@ -87,7 +103,11 @@ namespace GTEngine
         }
         else
         {
-            this->stateGL->pendingFloat2x2UniformsByLocation.PushBack(ShaderState_OpenGL33::Float2x2Parameter(this->stateGL->GetFloat2x2UniformLocation(name), value));
+            GLint location = this->stateGL->GetFloat2x2UniformLocation(name);
+            if (location != -1)
+            {
+                this->stateGL->pendingFloat2x2UniformsByLocation.PushBack(ShaderState_OpenGL33::Float2x2Parameter(location, value));
+            }
         }
     }
 
@@ -99,7 +119,11 @@ namespace GTEngine
         }
         else
         {
-            this->stateGL->pendingFloat3x3UniformsByLocation.PushBack(ShaderState_OpenGL33::Float3x3Parameter(this->stateGL->GetFloat3x3UniformLocation(name), value));
+            GLint location = this->stateGL->GetFloat3x3UniformLocation(name);
+            if (location != -1)
+            {
+                this->stateGL->pendingFloat3x3UniformsByLocation.PushBack(ShaderState_OpenGL33::Float3x3Parameter(location, value));
+            }
         }
     }
 
@@ -111,7 +135,11 @@ namespace GTEngine
         }
         else
         {
-            this->stateGL->pendingFloat4x4UniformsByLocation.PushBack(ShaderState_OpenGL33::Float4x4Parameter(this->stateGL->GetFloat4x4UniformLocation(name), value));
+            GLint location = this->stateGL->GetFloat4x4UniformLocation(name);
+            if (location != -1)
+            {
+                this->stateGL->pendingFloat4x4UniformsByLocation.PushBack(ShaderState_OpenGL33::Float4x4Parameter(location, value));
+            }
         }
     }
 
@@ -130,7 +158,11 @@ namespace GTEngine
             }
             else
             {
-                this->stateGL->pendingTextureUniformsByLocation.PushBack(ShaderState_OpenGL33::TextureParameter(this->stateGL->GetTextureUniformLocation(name), textureObject, textureTarget));
+                GLint location = this->stateGL->GetTextureUniformLocation(name);
+                if (location != -1)
+                {
+                    this->stateGL->pendingTextureUniformsByLocation.PushBack(ShaderState_OpenGL33::TextureParameter(location, textureObject, textureTarget));
+                }
             }
         }
     }
@@ -150,7 +182,11 @@ namespace GTEngine
             }
             else
             {
-                this->stateGL->pendingTextureUniformsByLocation.PushBack(ShaderState_OpenGL33::TextureParameter(this->stateGL->GetTextureUniformLocation(name), textureObject, textureTarget));
+                GLint location = this->stateGL->GetTextureUniformLocation(name);
+                if (location != -1)
+                {
+                    this->stateGL->pendingTextureUniformsByLocation.PushBack(ShaderState_OpenGL33::TextureParameter(location, textureObject, textureTarget));
+                }
             }
         }
     }
