@@ -39,14 +39,14 @@ namespace GTEngine
 
 
         // 2) Link the program.
-        this->programState->programObject = this->LinkProgram(vertexShaderObject, fragmentShaderObject, geometryShaderObject);
+        GLuint programObject = this->LinkProgram(vertexShaderObject, fragmentShaderObject, geometryShaderObject);
 
 
         // 3) Grab the uniforms.
-        if (this->programState->programObject != 0)
+        if (programObject != 0)
         {
             GLint uniformCount = 0;
-            glGetProgramiv(this->programState->programObject, GL_ACTIVE_UNIFORMS, &uniformCount);
+            glGetProgramiv(programObject, GL_ACTIVE_UNIFORMS, &uniformCount);
 
 
             for (GLint iUniform = 0; iUniform < uniformCount; ++iUniform)
@@ -54,7 +54,7 @@ namespace GTEngine
                 GLint  uniformSize;
                 GLenum uniformType;
                 char   uniformName[100];
-                glGetActiveUniform(this->programState->programObject, iUniform, sizeof(uniformName) - 1, nullptr, &uniformSize, &uniformType, uniformName);
+                glGetActiveUniform(programObject, iUniform, sizeof(uniformName) - 1, nullptr, &uniformSize, &uniformType, uniformName);
 
 
                 switch (uniformType)
@@ -139,6 +139,11 @@ namespace GTEngine
                 }
             }
         }
+
+
+        // It's important that this is set AFTER creating the uniform locations. Reason for this is that the other thread uses the program object in
+        // determining whether or not to search for uniform locations.
+        this->programState->programObject = programObject;
 
 
         // 4) Delete the shader objects.
