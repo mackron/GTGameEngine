@@ -144,6 +144,68 @@
 ]]>
 </shader>
 
+<shader id="DefaultSceneRenderer_BlurX7x7FS">
+<![CDATA[
+    #version 330
+    
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D Texture;
+    
+    void main()
+    {
+        vec2  uv       = VertexOutput_TexCoord;
+        float uvOffset = 1.0 / float(textureSize(Texture, 0));
+    
+        float coefficients[7] = float[]
+        (
+            0.006, 0.061, 0.242, 0.383, 0.242, 0.061, 0.006
+        );
+        
+        
+        ColourOut = vec4(0.0, 0.0, 0.0, 1.0);
+        
+        for(int i = 0; i < 7; i++)
+        {
+            ColourOut += texture2D(Texture, vec2(uv.x + (i - 3) * uvOffset, uv.y)) * coefficients[i];
+        }
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_BlurY7x7FS">
+<![CDATA[
+    #version 330
+    
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D Texture;
+    
+    void main()
+    {
+        vec2  uv       = VertexOutput_TexCoord;
+        float uvOffset = 1.0 / float(textureSize(Texture, 0));
+    
+        float coefficients[7] = float[]
+        (
+            0.006, 0.061, 0.242, 0.383, 0.242, 0.061, 0.006
+        );
+        
+        
+        ColourOut = vec4(0.0, 0.0, 0.0, 1.0);
+        
+        for(int i = 0; i < 7; i++)
+        {
+            ColourOut += texture2D(Texture, vec2(uv.x, uv.y + (i - 3) * uvOffset)) * coefficients[i];
+        }
+    }
+]]>
+</shader>
+
 
 
 
@@ -638,6 +700,7 @@
     out vec3 VertexOutput_Normal;
     out vec3 VertexOutput_Tangent;
     out vec3 VertexOutput_Bitangent;
+    out vec2 lightUV;
     
     uniform mat4 PVMMatrix;
     uniform mat4 ViewModelMatrix;
@@ -684,7 +747,7 @@
         vec3  materialEmissive  = Emissive();
         float materialShininess = Shininess();
         
-        vec2  lightUV           = (VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5;     // <-- Can this compuation be done in the vertex shader?
+        vec2  lightUV           = (VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5;
         vec3  lightDiffuse      = texture2D(DiffuseLighting,  lightUV).rgb;
         vec3  lightSpecular     = texture2D(SpecularLighting, lightUV).rgb;
         
@@ -726,14 +789,14 @@
         vec3  materialRefraction = Refraction();
         
         float lightFactor        = materialDiffuse.a;                           // Just an alias to make things a little bit more readable.
-        vec2  lightUV            = (VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5;     // <-- Can this compuation be done in the vertex shader?
+        vec2  lightUV            = (VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5;
         vec3  lightDiffuse       = texture2D(DiffuseLighting,  lightUV).rgb * lightFactor;
         vec3  lightSpecular      = texture2D(SpecularLighting, lightUV).rgb * lightFactor;
         
         
         
         // The diffuse needs to be modified to account for refraction.
-        vec2 backgroundUV   = ((VertexOutput_Position.xy / VertexOutput_Position.w) * 0.5 + 0.5) + (normalize(materialRefraction).xy * 0.01);
+        vec2 backgroundUV   = lightUV + (normalize(materialRefraction).xy * 0.01);
         
         ColourOut.rgb  = texture2D(BackgroundTexture, backgroundUV, 0).rgb * (1.0 - materialDiffuse.a);
         ColourOut.rgb += (materialDiffuse.rgb * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;
@@ -780,10 +843,10 @@
         vec4  bloom       = vec4(0.0);
         float luminance   = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
 
-        vec4 bloom0 = texture2D(BloomBuffer, VertexOutput_TexCoord, 1);
-        vec4 bloom1 = texture2D(BloomBuffer, VertexOutput_TexCoord, 2);
-        vec4 bloom2 = texture2D(BloomBuffer, VertexOutput_TexCoord, 3);
-        bloom = bloom0 + bloom1 + bloom2;
+        vec4 bloom0 = texture2D(BloomBuffer, VertexOutput_TexCoord, 2);
+        vec4 bloom1 = texture2D(BloomBuffer, VertexOutput_TexCoord, 3);
+        //vec4 bloom2 = texture2D(BloomBuffer, VertexOutput_TexCoord, 4);
+        bloom = (bloom0 + bloom1) / 2.0f;
         
         
         // Bloom.
@@ -851,7 +914,7 @@
     
     void main()
     {
-        ColourOut = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 0) - vec4(1.0));
+        ColourOut = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 0) - vec4(1.0, 1.0, 1.0, 0.0));
     }
 ]]>
 </shader>
