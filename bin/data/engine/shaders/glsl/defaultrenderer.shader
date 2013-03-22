@@ -476,12 +476,57 @@
 </shader>
 
 
-
+<shader id="DefaultSceneRenderer_PointLightVS">
+<![CDATA[
+    #version 330
+    
+    in  vec3 VertexInput_Position;
+    in  vec3 VertexInput_PositionVS;
+    in  vec2 VertexInput_TexCoord;
+    in  vec3 VertexInput_Normal;
+    in  vec3 VertexInput_Tangent;
+    in  vec3 VertexInput_Bitangent;
+    
+    out vec4 VertexOutput_Position;
+    out vec4 VertexOutput_PositionVS;
+    out vec4 VertexOutput_PositionWS;
+    out vec2 VertexOutput_TexCoord;
+    out vec3 VertexOutput_Normal;
+    out vec3 VertexOutput_Tangent;
+    out vec3 VertexOutput_Bitangent;
+    
+    out vec3 VertexOutput_L;
+    
+    
+    uniform mat4 PVMMatrix;
+    uniform mat4 ViewModelMatrix;
+    uniform mat4 ModelMatrix;
+    uniform mat3 NormalMatrix;
+    
+    uniform vec3 Position;
+    
+    void main()
+    {
+        VertexOutput_Position   = PVMMatrix       * vec4(VertexInput_Position, 1.0);
+        VertexOutput_PositionVS = ViewModelMatrix * vec4(VertexInput_Position, 1.0);
+        VertexOutput_PositionWS = ModelMatrix     * vec4(VertexInput_Position, 1.0);
+        VertexOutput_TexCoord   = VertexInput_TexCoord;
+        VertexOutput_Normal     = normalize(NormalMatrix * VertexInput_Normal);
+        VertexOutput_Tangent    = normalize(NormalMatrix * VertexInput_Tangent);
+        VertexOutput_Bitangent  = normalize(NormalMatrix * VertexInput_Bitangent);
+        
+        VertexOutput_L          = Position - VertexOutput_PositionVS.xyz;
+        
+        gl_Position = VertexOutput_Position;
+    }
+]]>
+</shader>
 
 <shader id="DefaultSceneRenderer_PointLight">
 <![CDATA[
+    in vec3 VertexOutput_L;
+
     uniform vec3  Colour;
-    uniform vec3  Position;
     uniform float ConstantAttenuation;
     uniform float LinearAttenuation;
     uniform float QuadraticAttenuation;
@@ -492,12 +537,12 @@
         // L - Light vector from the light to the vertex
         
         vec3 N = normal;
-        vec3 L = Position - VertexOutput_PositionVS.xyz;
-        vec3 H = normalize(normalize(L) - normalize(VertexOutput_PositionVS.xyz));
+        vec3 L = normalize(VertexOutput_L);
+        vec3 H = normalize(L - normalize(VertexOutput_PositionVS.xyz));
 
-        float diffuse     = DiffuseFactor(N, normalize(L));
+        float diffuse     = DiffuseFactor(N, L);
         float specular    = SpecularFactor(N, H, 64.0f);
-        float attenuation = AttenuationFactor(ConstantAttenuation, LinearAttenuation, QuadraticAttenuation, length(L));
+        float attenuation = AttenuationFactor(ConstantAttenuation, LinearAttenuation, QuadraticAttenuation, length(VertexOutput_L));
 
         diffuseOut  = Colour * diffuse  * attenuation;
         specularOut = Colour * specular * attenuation;
@@ -505,32 +550,74 @@
 ]]>
 </shader>
 
+
+<shader id="DefaultSceneRenderer_ShadowPointLightVS">
+<![CDATA[
+    #version 330
+    
+    in  vec3 VertexInput_Position;
+    in  vec3 VertexInput_PositionVS;
+    in  vec2 VertexInput_TexCoord;
+    in  vec3 VertexInput_Normal;
+    in  vec3 VertexInput_Tangent;
+    in  vec3 VertexInput_Bitangent;
+    
+    out vec4 VertexOutput_Position;
+    out vec4 VertexOutput_PositionVS;
+    out vec4 VertexOutput_PositionWS;
+    out vec2 VertexOutput_TexCoord;
+    out vec3 VertexOutput_Normal;
+    out vec3 VertexOutput_Tangent;
+    out vec3 VertexOutput_Bitangent;
+    
+    out vec3 VertexOutput_ShadowCoord;
+    out vec3 VertexOutput_L;
+    
+    
+    uniform mat4 PVMMatrix;
+    uniform mat4 ViewModelMatrix;
+    uniform mat4 ModelMatrix;
+    uniform mat3 NormalMatrix;
+    
+    uniform vec3 LightPositionWS;
+    uniform vec3 Position;
+    
+    void main()
+    {
+        VertexOutput_Position   = PVMMatrix       * vec4(VertexInput_Position, 1.0);
+        VertexOutput_PositionVS = ViewModelMatrix * vec4(VertexInput_Position, 1.0);
+        VertexOutput_PositionWS = ModelMatrix     * vec4(VertexInput_Position, 1.0);
+        VertexOutput_TexCoord   = VertexInput_TexCoord;
+        VertexOutput_Normal     = normalize(NormalMatrix * VertexInput_Normal);
+        VertexOutput_Tangent    = normalize(NormalMatrix * VertexInput_Tangent);
+        VertexOutput_Bitangent  = normalize(NormalMatrix * VertexInput_Bitangent);
+        
+        VertexOutput_ShadowCoord = VertexOutput_PositionWS.xyz - LightPositionWS;
+        VertexOutput_L           = Position - VertexOutput_PositionVS.xyz;
+        
+        gl_Position = VertexOutput_Position;
+    }
+]]>
+</shader>
+
 <shader id="DefaultSceneRenderer_ShadowPointLight">
 <![CDATA[
+    in vec3 VertexOutput_ShadowCoord;
+    in vec3 VertexOutput_L;
+    
     uniform vec3  Colour;
-    uniform vec3  Position;
     uniform float ConstantAttenuation;
     uniform float LinearAttenuation;
     uniform float QuadraticAttenuation;
     
     uniform samplerCube ShadowMap;
-    uniform vec3        PositionWS;
+    
     
     float linstep(float low, float high, float v)
     {
         return clamp((v - low) / (high - low), 0.0, 1.0);
     }
     
-    /*
-    float CalculateShadowBasic(vec3 shadowCoord, float fragmentDepth)
-    {
-        float bias        = 0.06;
-        float shadowDepth = texture(ShadowMap, shadowCoord).r + bias;
-
-        return step(fragmentDepth, shadowDepth);
-    }
-    */
-
     float CalculateShadowVSM(vec3 shadowCoord, float fragmentDepth)
     {
         float bias     = 0.06 * fragmentDepth;       // This can affect seams. Lower value = more seams.
@@ -547,12 +634,7 @@
     
     float CalculateShadow()
     {
-        vec3 shadowCoord = VertexOutput_PositionWS.xyz - PositionWS;
-        
-        float fragmentDepth = length(shadowCoord);
-        
-        //return CalculateShadowBasic(shadowCoord, fragmentDepth);
-        return CalculateShadowVSM(shadowCoord, fragmentDepth);
+        return CalculateShadowVSM(VertexOutput_ShadowCoord, length(VertexOutput_ShadowCoord));
     }
     
     void DoLighting(in vec3 normal, out vec3 diffuseOut, out vec3 specularOut)
@@ -561,12 +643,12 @@
         // L - Light vector from the light to the vertex
         
         vec3 N = normal;
-        vec3 L = Position - VertexOutput_PositionVS.xyz;
-        vec3 H = normalize(normalize(L) - normalize(VertexOutput_PositionVS.xyz));
+        vec3 L = normalize(VertexOutput_L);
+        vec3 H = normalize(L - normalize(VertexOutput_PositionVS.xyz));
 
-        float diffuse     = DiffuseFactor(N, normalize(L));
+        float diffuse     = DiffuseFactor(N, L);
         float specular    = SpecularFactor(N, H, 64.0f);
-        float attenuation = AttenuationFactor(ConstantAttenuation, LinearAttenuation, QuadraticAttenuation, length(L));
+        float attenuation = AttenuationFactor(ConstantAttenuation, LinearAttenuation, QuadraticAttenuation, length(VertexOutput_L));
         float shadow      = CalculateShadow();
 
         diffuseOut  = Colour * diffuse  * attenuation * shadow;

@@ -1669,7 +1669,7 @@ namespace GTEngine
                             shader->SetUniform("LinearAttenuation",    light->linearAttenuation);
                             shader->SetUniform("QuadraticAttenuation", light->quadraticAttenuation);
                             shader->SetUniform("ShadowMap",            this->pointShadowMapFramebuffer.colourBuffer);
-                            shader->SetUniform("PositionWS",           light->position);
+                            shader->SetUniform("LightPositionWS",      light->position);
                             Renderer::PushPendingUniforms(*shader);
                         }
 
@@ -2734,7 +2734,7 @@ namespace GTEngine
             {
                 /// The shader has not yet been created, so it needs to be.
                 GTCore::Strings::List<char> vertexSource;
-                vertexSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_LightingVS"));
+                vertexSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointLightVS"));
 
                 GTCore::Strings::List<char> fragmentSource;
                 fragmentSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_LightingFS"));
@@ -2804,7 +2804,7 @@ namespace GTEngine
             {
                 /// The shader has not yet been created, so it needs to be.
                 GTCore::Strings::List<char> vertexSource;
-                vertexSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_LightingVS"));
+                vertexSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowPointLightVS"));
 
                 GTCore::Strings::List<char> fragmentSource;
                 fragmentSource.Append(ShaderLibrary::GetShaderString("DefaultSceneRenderer_LightingFS"));
