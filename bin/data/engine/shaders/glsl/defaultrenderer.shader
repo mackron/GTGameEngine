@@ -538,7 +538,7 @@
         float variance = moments.y - (moments.x * moments.x);
         float d        = fragmentDepth - moments.x;
         float p        = smoothstep(fragmentDepth - bias, fragmentDepth, moments.x);
-        float pMax     = linstep(0.2, 1.0, variance / (variance + (d * d)));
+        float pMax     = linstep(0.4, 1.0, variance / (variance + (d * d)));
         
         return clamp(max(p, pMax), 0.0, 1.0);
     }
@@ -548,9 +548,6 @@
     float CalculateShadow()
     {
         vec3 shadowCoord = VertexOutput_PositionWS.xyz - PositionWS;
-        shadowCoord.x = shadowCoord.x;
-        shadowCoord.y = -shadowCoord.y;
-        shadowCoord.z = -shadowCoord.z;
         
         float fragmentDepth = length(shadowCoord);
         

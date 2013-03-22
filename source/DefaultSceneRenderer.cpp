@@ -197,14 +197,19 @@ namespace GTEngine
 
                     if (lightComponent->IsShadowCastingEnabled())
                     {
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->projection    = glm::perspective(90.0f, 1.0f, 0.1f, Math::Lighting::ApproximateAttenuationRadius(light->constantAttenuation, light->linearAttenuation, light->quadraticAttenuation));
+                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->projection = glm::perspective(90.0f, 1.0f, 0.1f, Math::Lighting::ApproximateAttenuationRadius(light->constantAttenuation, light->linearAttenuation, light->quadraticAttenuation));
                         
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveXView = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeXView = glm::mat4_cast(glm::inverse(glm::angleAxis( 90.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveYView = glm::mat4_cast(glm::inverse(glm::angleAxis(-90.0f, glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-light->position);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeYView = glm::mat4_cast(glm::inverse(glm::angleAxis( 90.0f, glm::vec3(1.0f, 0.0f, 0.0f)))) * glm::translate(-light->position);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveZView = glm::mat4_cast(glm::inverse(glm::angleAxis(  0.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeZView = glm::mat4_cast(glm::inverse(glm::angleAxis(180.0f, glm::vec3(0.0f, 1.0f, 0.0f)))) * glm::translate(-light->position);
+                        glm::vec3 origin(light->position);
+                        glm::vec3 posx(  1.0f, 0.0f, 0.0f);
+                        glm::vec3 posy(  0.0f, 1.0f, 0.0f);
+                        glm::vec3 posz(  0.0f, 0.0f, 1.0f);
+
+                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveXView = glm::lookAt(origin, origin + posx, -posy);
+                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeXView = glm::lookAt(origin, origin - posx, -posy);
+                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveYView = glm::lookAt(origin, origin + posy,  posz);
+                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeYView = glm::lookAt(origin, origin - posy, -posz);
+                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveZView = glm::lookAt(origin, origin + posz, -posy);
+                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeZView = glm::lookAt(origin, origin - posz, -posy);
                     }
                 }
             }
