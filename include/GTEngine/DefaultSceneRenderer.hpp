@@ -85,11 +85,11 @@ namespace GTEngine
 
             // Filters.
             Renderer::SetTexture2DFilter(*this->opaqueColourBuffer,    TextureFilter_NearestNearest, TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->bloomBuffer,           TextureFilter_LinearNearest,  TextureFilter_Linear);
             Renderer::SetTexture2DFilter(*this->lightingBuffer0,       TextureFilter_Nearest,        TextureFilter_Nearest);
             Renderer::SetTexture2DFilter(*this->lightingBuffer1,       TextureFilter_Nearest,        TextureFilter_Nearest);
             Renderer::SetTexture2DFilter(*this->finalColourBufferHDR,  TextureFilter_NearestNearest, TextureFilter_Nearest);
             Renderer::SetTexture2DFilter(*this->finalColourBuffer,     TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->bloomBuffer,           TextureFilter_LinearNearest,  TextureFilter_Linear);
 
             // Wrap Modes.
             Renderer::SetTexture2DWrapMode(*this->opaqueColourBuffer, TextureWrapMode_ClampToEdge);
@@ -105,7 +105,7 @@ namespace GTEngine
             this->framebuffer->AttachColourBuffer(this->finalColourBuffer,    4);
             Renderer::PushAttachments(*this->framebuffer);
 
-            this->bloomFramebuffer->AttachColourBuffer(this->bloomBuffer, 0);
+            this->bloomFramebuffer->AttachColourBuffer(this->bloomBuffer,     0);
             Renderer::PushAttachments(*this->bloomFramebuffer);
         }
 
@@ -114,13 +114,13 @@ namespace GTEngine
         {
             Renderer::DeleteTexture2D(this->depthStencilBuffer);
             Renderer::DeleteTexture2D(this->opaqueColourBuffer);
-            Renderer::DeleteTexture2D(this->bloomBuffer);
             Renderer::DeleteTexture2D(this->lightingBuffer0);
             Renderer::DeleteTexture2D(this->lightingBuffer1);
             Renderer::DeleteTexture2D(this->finalColourBufferHDR);
             Renderer::DeleteTexture2D(this->finalColourBuffer);
-        
             Renderer::DeleteFramebuffer(this->framebuffer);
+
+            Renderer::DeleteTexture2D(this->bloomBuffer);
             Renderer::DeleteFramebuffer(this->bloomFramebuffer);
         }
 
@@ -149,7 +149,7 @@ namespace GTEngine
 
             unsigned int bloomWidth  = GTCore::Max(1U, newWidth  / 1);
             unsigned int bloomHeight = GTCore::Max(1U, newHeight / 1);
-            this->bloomBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGB16F);
+            this->bloomBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGB8);
 
             Renderer::PushTexture2DData(*this->bloomBuffer);
         }
@@ -1065,6 +1065,8 @@ namespace GTEngine
         /// The shader use for doing a gaussian blur.
         Shader* blurShaderX;
         Shader* blurShaderY;
+        Shader* blurShaderX7x7;
+        Shader* blurShaderY7x7;
 
 
 

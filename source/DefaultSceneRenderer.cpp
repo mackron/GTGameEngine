@@ -636,7 +636,7 @@ namespace GTEngine
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
           shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
           fullscreenTriangleVA(nullptr), finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
-          isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(0.25f), blurShaderX(nullptr), blurShaderY(nullptr),
+          isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(1.0f), blurShaderX(nullptr), blurShaderY(nullptr),
           materialLibraryEventHandler(*this)
     {
         this->depthPassShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
@@ -649,6 +649,8 @@ namespace GTEngine
         this->highlightShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightFS"));
         this->blurShaderX                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurXFS"));
         this->blurShaderY                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurYFS"));
+        this->blurShaderX7x7                   = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurX7x7FS"));
+        this->blurShaderY7x7                   = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurY7x7FS"));
 
 
 
@@ -2639,7 +2641,6 @@ namespace GTEngine
         Renderer::SetCurrentShader(this->bloomShader);
         this->bloomShader->SetUniform("ColourBuffer", sourceColourBuffer);
         Renderer::PushPendingUniforms(*this->bloomShader);
-
 
         // Draw.
         Renderer::Draw(*this->fullscreenTriangleVA);
