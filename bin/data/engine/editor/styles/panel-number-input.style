@@ -1,0 +1,10 @@
+
+panel-number-input
+{
+    width:            100%
+    height:           auto
+    child-plane:      horizontal
+    flex-child-width: true
+    horizontal-align: right
+    margin-top:       4px
+}
