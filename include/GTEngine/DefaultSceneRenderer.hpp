@@ -274,7 +274,7 @@ namespace GTEngine
 
 
             // Filters.
-            Renderer::SetTextureCubeFilter(*this->colourBuffer, TextureFilter_Linear, TextureFilter_Linear);
+            Renderer::SetTextureCubeFilter(*this->colourBuffer, TextureFilter_Linear,  TextureFilter_Linear);
             Renderer::SetTexture2DFilter(  *this->blurBuffer0,  TextureFilter_Nearest, TextureFilter_Nearest);
             Renderer::SetTexture2DFilter(  *this->blurBuffer1,  TextureFilter_Nearest, TextureFilter_Nearest);
 
@@ -1067,6 +1067,10 @@ namespace GTEngine
         Shader* blurShaderY;
         Shader* blurShaderX7x7;
         Shader* blurShaderY7x7;
+        Shader* blurShaderX11x11;
+        Shader* blurShaderY11x11;
+        Shader* blurShaderX15x15;
+        Shader* blurShaderY15x15;
 
 
 

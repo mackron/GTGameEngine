@@ -25,20 +25,19 @@ namespace GTEngine
         void SetColour(float x, float y, float z) { this->SetColour(glm::vec3(x, y, z)); }
 
 
-        /// Retrieves the constant attenuation.
-        float GetConstantAttenuation() const { return this->constantAttenuation; }
-        
-        /// Retrieves the linear attenuation.
-        float GetLinearAttenuation() const { return this->linearAttenuation; }
-        
-        /// Retrieves the quadratic attenuation.
-        float GetQuadraticAttenuation() const { return this->quadraticAttenuation; }
-        
-        /// Sets the attenuation of the light.
-        void SetAttenuation(float constantAttenuation, float linearAttenuation, float quadraticAttenuation);
-        
-        /// Retrieves an approximate radius of the light.
-        float GetApproximateRadius() const;
+
+        /// Sets the radius of the light.
+        void SetRadius(float radius);
+
+        /// Retrieves the radius of the light.
+        float GetRadius() const;
+
+
+        /// Sets the falloff rate factor.
+        void SetFalloff(float falloff);
+
+        /// Retrieves the falloff rate factor.
+        float GetFalloff() const;
 
 
         /// Enables shadow casting.
@@ -82,6 +81,14 @@ namespace GTEngine
         /// The quadratic attenuation.
         float quadraticAttenuation;
 
+
+        /// The radius of the light.
+        float radius;
+
+        /// The exponential falloff factor.
+        float falloff;
+
+
         /// Keeps track of whether or not the light should cast shadows.
         bool castShadows;
 
@@ -114,21 +121,20 @@ namespace GTEngine
         void SetColour(float x, float y, float z) { this->SetColour(glm::vec3(x, y, z)); }
 
         
-        /// Retrieves the constant attenuation.
-        float GetConstantAttenuation() const { return this->constantAttenuation; }
-        
-        /// Retrieves the linear attenuation.
-        float GetLinearAttenuation() const { return this->linearAttenuation; }
-        
-        /// Retrieves the quadratic attenuation.
-        float GetQuadraticAttenuation() const { return this->quadraticAttenuation; }
-        
-        /// Sets the attenuation of the light.
-        void SetAttenuation(float constantAttenuation, float linearAttenuation, float quadraticAttenuation);
 
-        
-        /// Retrieves the approximate length of the light based on it's attenuation.
-        float GetApproximateLength() const;
+        /// Sets the radius of the light.
+        void SetLength(float radius);
+
+        /// Retrieves the radius of the light.
+        float GetLength() const;
+
+
+        /// Sets the falloff rate factor.
+        void SetFalloff(float falloff);
+
+        /// Retrieves the falloff rate factor.
+        float GetFalloff() const;
+
 
 
         /// Sets the inner and outer angles of the spot light.
@@ -179,6 +185,14 @@ namespace GTEngine
 
         /// The colour of the light. No alpha.
         glm::vec3 colour;
+
+
+        /// The length of the spot light.
+        float length;
+
+        /// The exponential falloff factor.
+        float falloff;
+
         
         /// The constant attenuation.
         float constantAttenuation;
@@ -188,6 +202,8 @@ namespace GTEngine
         
         /// The quadratic attenuation.
         float quadraticAttenuation;
+
+
 
         /// Keeps track of whether or not the light casts shadows.
         bool castShadows;

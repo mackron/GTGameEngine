@@ -80,7 +80,7 @@ namespace GTEngine
                 btTransform worldTransform;
                 sceneNode.GetWorldTransform(worldTransform);
 
-                auto metadata = new PointLightMetadata(pointLightComponent->GetApproximateRadius(), worldTransform);
+                auto metadata = new PointLightMetadata(pointLightComponent->GetRadius(), worldTransform);
                 metadata->collisionObject->setUserPointer(&object);
 
                 this->world.AddCollisionObject(*metadata->collisionObject,
@@ -118,7 +118,7 @@ namespace GTEngine
                 btTransform worldTransform;
                 sceneNode.GetWorldTransform(worldTransform);
 
-                auto metadata = new SpotLightMetadata(spotLightComponent->GetOuterAngle(), spotLightComponent->GetApproximateLength(), worldTransform);
+                auto metadata = new SpotLightMetadata(spotLightComponent->GetOuterAngle(), spotLightComponent->GetLength(), worldTransform);
                 metadata->collisionObject->setUserPointer(&object);
 
                 this->world.AddCollisionObject(*metadata->collisionObject,

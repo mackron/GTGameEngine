@@ -12,6 +12,7 @@ namespace GTEngine
 
     PointLightComponent::PointLightComponent(SceneNode &node)
         : Component(node), colour(1.0f, 1.0f, 1.0f), constantAttenuation(1.0f), linearAttenuation(0.0f), quadraticAttenuation(0.0666f),
+          radius(16.0f), falloff(1.0f),
           castShadows(false)
     {
     }
@@ -24,19 +25,29 @@ namespace GTEngine
     }
 
 
-    void PointLightComponent::SetAttenuation(float constant, float linear, float quadratic)
+    void PointLightComponent::SetRadius(float radiusIn)
     {
-        this->constantAttenuation  = constant;
-        this->linearAttenuation    = linear;
-        this->quadraticAttenuation = quadratic;
-
+        this->radius = radiusIn;
         this->OnChanged();
     }
 
-    float PointLightComponent::GetApproximateRadius() const
+    float PointLightComponent::GetRadius() const
     {
-        return Math::Lighting::ApproximateAttenuationRadius(this->constantAttenuation, this->linearAttenuation, this->quadraticAttenuation);
+        return this->radius;
     }
+
+
+    void PointLightComponent::SetFalloff(float falloffIn)
+    {
+        this->falloff = falloffIn;
+        this->OnChanged();
+    }
+
+    float PointLightComponent::GetFalloff() const
+    {
+        return this->falloff;
+    }
+
 
     void PointLightComponent::EnableShadowCasting()
     {
@@ -113,7 +124,8 @@ namespace GTEngine
     GTENGINE_IMPL_COMPONENT_ATTRIBS(SpotLightComponent, "SpotLight");
 
     SpotLightComponent::SpotLightComponent(SceneNode &node)
-        : Component(node), innerAngle(40.0f), outerAngle(45.0f), colour(1.0f, 1.0f, 1.0f), constantAttenuation(1.0f), linearAttenuation(0.0f), quadraticAttenuation(0.0666f),
+        : Component(node), innerAngle(40.0f), outerAngle(45.0f), colour(1.0f, 1.0f, 1.0f), length(16.0f), falloff(1.0f),
+          constantAttenuation(1.0f), linearAttenuation(0.0f), quadraticAttenuation(0.0666f),
           castShadows(false)
     {
     }
@@ -126,19 +138,30 @@ namespace GTEngine
     }
 
 
-    void SpotLightComponent::SetAttenuation(float constant, float linear, float quadratic)
-    {
-        this->constantAttenuation  = constant;
-        this->linearAttenuation    = linear;
-        this->quadraticAttenuation = quadratic;
 
+    void SpotLightComponent::SetLength(float lengthIn)
+    {
+        this->length = lengthIn;
         this->OnChanged();
     }
 
-    float SpotLightComponent::GetApproximateLength() const
+    float SpotLightComponent::GetLength() const
     {
-        return Math::Lighting::ApproximateAttenuationRadius(this->constantAttenuation, this->linearAttenuation, this->quadraticAttenuation);
+        return this->length;
     }
+
+
+    void SpotLightComponent::SetFalloff(float falloffIn)
+    {
+        this->falloff = falloffIn;
+        this->OnChanged();
+    }
+
+    float SpotLightComponent::GetFalloff() const
+    {
+        return this->falloff;
+    }
+
 
 
     void SpotLightComponent::SetAngles(float newInnerAngle, float newOuterAngle)

@@ -93,14 +93,11 @@ namespace GTEngine
         /// The position of the light.
         glm::vec3 position;
 
-        /// The constant attenuation.
-        float constantAttenuation;
+        /// The radius of the light.
+        float radius;
 
-        /// The linear attenuation.
-        float linearAttenuation;
-
-        /// The quadratic attenuation.
-        float quadraticAttenuation;
+        /// The falloff of the light.
+        float falloff;
     };
 
     /// Structure representing a spot light object.
@@ -115,20 +112,20 @@ namespace GTEngine
         /// The orientation of the light.
         glm::quat orientation;
 
-        /// The constant attenuation.
-        float constantAttenuation;
 
-        /// The linear attenuation.
-        float linearAttenuation;
+        /// The length of the light.
+        float length;
 
-        /// The quadratic attenuation.
-        float quadraticAttenuation;
+        /// The falloff.
+        float falloff;
+
 
         /// The inner radius of the light.
         float innerAngle;
 
         /// The outer radius of the light.
         float outerAngle;
+
 
 
 
