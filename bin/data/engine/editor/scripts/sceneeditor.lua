@@ -1099,8 +1099,16 @@ function GTGUI.Element:DynamicsComponentPanel()
     self.RestitutionInput     = GTGUI.Server.New("<div parentid='" .. self.RestitutionRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
 
     
-    -- Collision Shapes
+    -- Linear Damping.
+    self.LinearDampingInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.LinearDampingInput:PanelNumberInput("Linear Damping", 0.0);
     
+    -- Angular Damping.
+    self.AngularDampingInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.AngularDampingInput:PanelNumberInput("Angular Damping", 0.0);
+    
+    
+    -- Collision Shapes
     self.CollisionShapesTitle = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='width:100%; text-color:#bbb; margin-top:8px; flex-child-width:true; child-plane:horizontal; vertical-align:center;' />");
     self.CollisionShapesLeft  = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
     self.CollisionShapesLabel = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:auto; text-color:#777; margin:4px 0px; vertical-align:center;'>Collision Shapes</div>");
@@ -1160,6 +1168,22 @@ function GTGUI.Element:DynamicsComponentPanel()
             self:ApplyRestitution();
         end
     end);
+    
+    self.LinearDampingInput:OnValueChanged(function(data)
+        if not self.IsUpdating then
+            if data.value > 1.0 then
+                self.LinearDampingInput:SetValue(1.0);
+            end
+        
+            self:ApplyLinearDamping();
+        end
+    end);
+    
+    self.AngularDampingInput:OnValueChanged(function(data)
+        if not self.IsUpdating then
+            self:ApplyAngularDamping();
+        end
+    end);
 
     
     
@@ -1182,6 +1206,8 @@ function GTGUI.Element:DynamicsComponentPanel()
             self.MassInput:SetText(       string.format("%.4f", self.CurrentComponent:GetMass()));
             self.FrictionInput:SetText(   string.format("%.4f", self.CurrentComponent:GetFriction()));
             self.RestitutionInput:SetText(string.format("%.4f", self.CurrentComponent:GetRestitution()));
+            self.LinearDampingInput:SetValue( self.CurrentComponent:GetLinearDamping());
+            self.AngularDampingInput:SetValue(self.CurrentComponent:GetAngularDamping());
             
             -- Collision shapes need to be updated.
             self.CollisionShapes:Update(self.CurrentComponent);
@@ -1208,6 +1234,20 @@ function GTGUI.Element:DynamicsComponentPanel()
     function self:ApplyRestitution()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:SetRestitution(tonumber(self.RestitutionInput:GetText()));
+            self.ParentPanel:OnSceneNodeChanged();
+        end
+    end
+    
+    function self:ApplyLinearDamping()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetDamping(self.LinearDampingInput:GetValue(), self.AngularDampingInput:GetValue());
+            self.ParentPanel:OnSceneNodeChanged();
+        end
+    end
+    
+    function self:ApplyAngularDamping()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetDamping(self.LinearDampingInput:GetValue(), self.AngularDampingInput:GetValue());
             self.ParentPanel:OnSceneNodeChanged();
         end
     end

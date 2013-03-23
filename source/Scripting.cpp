@@ -479,7 +479,7 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.DynamicsComponent:SetDamping(linearDamping, angularDamping)"
-                "    GTEngine.System.DynamicsComponent.SetRestitution(self._internalPtr, linearDamping, angularDamping);"
+                "    GTEngine.System.DynamicsComponent.SetDamping(self._internalPtr, linearDamping, angularDamping);"
                 "end;"
 
                 "function GTEngine.DynamicsComponent:GetLinearDamping()"
