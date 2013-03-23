@@ -46,7 +46,7 @@ function GTGUI.Element:NumberTextBox(defaultValue)
     end);
     
     
-    self:SetValue(defaultValue or 0);
+    self:SetValue(defaultValue or 0, true);
     
 
     return self;
