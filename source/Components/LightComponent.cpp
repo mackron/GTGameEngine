@@ -11,7 +11,7 @@ namespace GTEngine
     GTENGINE_IMPL_COMPONENT_ATTRIBS(PointLightComponent, "PointLight");
 
     PointLightComponent::PointLightComponent(SceneNode &node)
-        : Component(node), colour(1.0f, 1.0f, 1.0f), constantAttenuation(1.0f), linearAttenuation(0.0f), quadraticAttenuation(0.0666f),
+        : Component(node), colour(1.0f, 1.0f, 1.0f),
           radius(16.0f), falloff(1.0f),
           castShadows(false)
     {
@@ -65,9 +65,8 @@ namespace GTEngine
     {
         GTCore::BasicSerializer intermediarySerializer;
         intermediarySerializer.Write(this->colour);
-        intermediarySerializer.Write(this->constantAttenuation);
-        intermediarySerializer.Write(this->linearAttenuation);
-        intermediarySerializer.Write(this->quadraticAttenuation);
+        intermediarySerializer.Write(this->radius);
+        intermediarySerializer.Write(this->falloff);
         intermediarySerializer.Write(this->castShadows);
 
 
@@ -91,9 +90,8 @@ namespace GTEngine
             case 1:
                 {
                     deserializer.Read(this->colour);
-                    deserializer.Read(this->constantAttenuation);
-                    deserializer.Read(this->linearAttenuation);
-                    deserializer.Read(this->quadraticAttenuation);
+                    deserializer.Read(this->radius);
+                    deserializer.Read(this->falloff);
                     deserializer.Read(this->castShadows);
 
                     this->OnChanged();
@@ -125,7 +123,6 @@ namespace GTEngine
 
     SpotLightComponent::SpotLightComponent(SceneNode &node)
         : Component(node), innerAngle(40.0f), outerAngle(45.0f), colour(1.0f, 1.0f, 1.0f), length(16.0f), falloff(1.0f),
-          constantAttenuation(1.0f), linearAttenuation(0.0f), quadraticAttenuation(0.0666f),
           castShadows(false)
     {
     }
@@ -197,9 +194,8 @@ namespace GTEngine
         intermediarySerializer.Write(this->innerAngle);
         intermediarySerializer.Write(this->outerAngle);
         intermediarySerializer.Write(this->colour);
-        intermediarySerializer.Write(this->constantAttenuation);
-        intermediarySerializer.Write(this->linearAttenuation);
-        intermediarySerializer.Write(this->quadraticAttenuation);
+        intermediarySerializer.Write(this->length);
+        intermediarySerializer.Write(this->falloff);
         intermediarySerializer.Write(this->castShadows);
 
 
@@ -225,9 +221,8 @@ namespace GTEngine
                     deserializer.Read(this->innerAngle);
                     deserializer.Read(this->outerAngle);
                     deserializer.Read(this->colour);
-                    deserializer.Read(this->constantAttenuation);
-                    deserializer.Read(this->linearAttenuation);
-                    deserializer.Read(this->quadraticAttenuation);
+                    deserializer.Read(this->length);
+                    deserializer.Read(this->falloff);
                     deserializer.Read(this->castShadows);
 
                     this->OnChanged();

@@ -72,15 +72,6 @@ namespace GTEngine
         /// The colour of the light. No alpha.
         glm::vec3 colour;
         
-        /// The constant attenuation.
-        float constantAttenuation;
-        
-        /// The linear attenuation.
-        float linearAttenuation;
-        
-        /// The quadratic attenuation.
-        float quadraticAttenuation;
-
 
         /// The radius of the light.
         float radius;
@@ -192,17 +183,6 @@ namespace GTEngine
 
         /// The exponential falloff factor.
         float falloff;
-
-        
-        /// The constant attenuation.
-        float constantAttenuation;
-        
-        /// The linear attenuation.
-        float linearAttenuation;
-        
-        /// The quadratic attenuation.
-        float quadraticAttenuation;
-
 
 
         /// Keeps track of whether or not the light casts shadows.
