@@ -117,6 +117,9 @@ namespace GTEngine
         ///     If the node has no parent, false will be returned.
         bool IsAncestorSelected(const SceneNode &node) const;
 
+        /// Determines if at least one scene node is selected.
+        bool IsAnythingSelected() const;
+
         /// Selects the given scene node.
         ///
         /// @param node  [in] The node to select.

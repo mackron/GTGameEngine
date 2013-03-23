@@ -693,6 +693,11 @@ namespace GTEngine
         return false;
     }
 
+    bool SceneEditor::IsAnythingSelected() const
+    {
+        return this->selectedNodes.count > 0;
+    }
+
     void SceneEditor::SelectSceneNode(SceneNode &node, unsigned int options)
     {
         if ((options & SelectionOption_Force) || !this->IsSceneNodeSelected(node))
@@ -2204,7 +2209,15 @@ namespace GTEngine
     {
         this->RepositionGizmo();
         this->RescaleGizmo();
-        this->ShowGizmoHandles();
+
+        if (this->IsAnythingSelected())
+        {
+            this->ShowGizmoHandles();
+        }
+        else
+        {
+            this->HideGizmo();
+        }
     }
 
     bool SceneEditor::IsDraggingGizmo() const
