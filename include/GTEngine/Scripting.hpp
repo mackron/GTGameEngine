@@ -768,6 +768,20 @@ namespace GTEngine
                     int GetColour(GTCore::Script &script);
 
 
+                    /// Retrieves the radius of the light.
+                    int GetRadius(GTCore::Script &script);
+
+                    /// Sets the radius of the light.
+                    int SetRadius(GTCore::Script &script);
+
+
+                    /// Retrieves the exponential falloff factor.
+                    int GetFalloff(GTCore::Script &script);
+
+                    /// Sets the exponential falloff factor.
+                    int SetFalloff(GTCore::Script &script);
+
+
                     /// Enables shadow casting on the light.
                     int EnableShadowCasting(GTCore::Script &script);
 
@@ -776,25 +790,6 @@ namespace GTEngine
 
                     /// Determines whether or not shadow casting is enabled.
                     int IsShadowCastingEnabled(GTCore::Script &script);
-
-
-                    /// Retrieves the constant attenuation of the light.
-                    int GetConstantAttenuation(GTCore::Script &script);
-
-                    /// Retrieves the linear attenuation of the light.
-                    int GetLinearAttenuation(GTCore::Script &script);
-
-                    /// Retrieves the quadratic attenuation of the light.
-                    int GetQuadraticAttenuation(GTCore::Script &script);
-
-                    /// Sets the attenuation of the light.
-                    ///
-                    /// @remarks
-                    ///     Argument 1: A pointer to the component whose attenuation is being set.
-                    ///     Argument 2: The constant attenuation.
-                    ///     Argument 3: The linear attenuation.
-                    ///     Argument 4: The quadratic attenuation.
-                    int SetAttenuation(GTCore::Script &script);
                 }
 
                 namespace SpotLightComponentFFI
@@ -810,6 +805,20 @@ namespace GTEngine
                     int GetColour(GTCore::Script &script);
 
 
+                    /// Retrieves the length of the light.
+                    int GetLength(GTCore::Script &script);
+
+                    /// Sets the length of the light.
+                    int SetLength(GTCore::Script &script);
+
+
+                    /// Retrieves the exponential falloff factor.
+                    int GetFalloff(GTCore::Script &script);
+
+                    /// Sets the exponential falloff factor.
+                    int SetFalloff(GTCore::Script &script);
+
+
                     /// Enables shadow casting on the light.
                     int EnableShadowCasting(GTCore::Script &script);
 
@@ -818,25 +827,6 @@ namespace GTEngine
 
                     /// Determines whether or not shadow casting is enabled.
                     int IsShadowCastingEnabled(GTCore::Script &script);
-
-
-                    /// Retrieves the constant attenuation of the light.
-                    int GetConstantAttenuation(GTCore::Script &script);
-
-                    /// Retrieves the linear attenuation of the light.
-                    int GetLinearAttenuation(GTCore::Script &script);
-
-                    /// Retrieves the quadratic attenuation of the light.
-                    int GetQuadraticAttenuation(GTCore::Script &script);
-
-                    /// Sets the attenuation of the light.
-                    ///
-                    /// @remarks
-                    ///     Argument 1: A pointer to the component whose attenuation is being set.
-                    ///     Argument 2: The constant attenuation.
-                    ///     Argument 3: The linear attenuation.
-                    ///     Argument 4: The quadratic attenuation.
-                    int SetAttenuation(GTCore::Script &script);
 
 
                     /// Sets the inner and outer angles of the spot light.

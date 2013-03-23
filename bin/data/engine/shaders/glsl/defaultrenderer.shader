@@ -207,6 +207,138 @@
 </shader>
 
 
+<shader id="DefaultSceneRenderer_BlurX11x11FS">
+<![CDATA[
+    #version 330
+    
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D Texture;
+    
+    void main()
+    {
+        vec2  uv       = VertexOutput_TexCoord;
+        float uvOffset = 1.0 / float(textureSize(Texture, 0));
+    
+        float coefficients[11] = float[]
+        (
+            0.0005446104822918076, 0.005167120389696288, 0.029734724821789165, 0.10378438737379546, 0.21971154979445848,
+            0.28211521427593783,
+            0.21971154979445848, 0.10378438737379546, 0.029734724821789165, 0.005167120389696288, 0.0005446104822918076
+        );
+        
+        
+        ColourOut = vec4(0.0, 0.0, 0.0, 1.0);
+        
+        for(int i = 0; i < 11; i++)
+        {
+            ColourOut += texture2D(Texture, vec2(uv.x + (i - 5) * uvOffset, uv.y)) * coefficients[i];
+        }
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_BlurY11x11FS">
+<![CDATA[
+    #version 330
+    
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D Texture;
+    
+    void main()
+    {
+        vec2  uv       = VertexOutput_TexCoord;
+        float uvOffset = 1.0 / float(textureSize(Texture, 0));
+    
+        float coefficients[11] = float[]
+        (
+            0.0005446104822918076, 0.005167120389696288, 0.029734724821789165, 0.10378438737379546, 0.21971154979445848,
+            0.28211521427593783,
+            0.21971154979445848, 0.10378438737379546, 0.029734724821789165, 0.005167120389696288, 0.0005446104822918076
+        );
+        
+        
+        ColourOut = vec4(0.0, 0.0, 0.0, 1.0);
+        
+        for(int i = 0; i < 11; i++)
+        {
+            ColourOut += texture2D(Texture, vec2(uv.x, uv.y + (i - 5) * uvOffset)) * coefficients[i];
+        }
+    }
+]]>
+</shader>
+
+
+<shader id="DefaultSceneRenderer_BlurX15x15FS">
+<![CDATA[
+    #version 330
+    
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D Texture;
+    
+    void main()
+    {
+        vec2  uv       = VertexOutput_TexCoord;
+        float uvOffset = 1.0 / float(textureSize(Texture, 0));
+    
+        float coefficients[15] = float[]
+        (
+            0.0004364074260382143, 0.002216259780359165, 0.008765477469243402, 0.026999571389574404, 0.06476860475415001, 0.1210036840004649, 0.17605932135784913,
+            0.19950134764464159,
+            0.17605932135784913, 0.1210036840004649, 0.06476860475415001, 0.026999571389574404, 0.008765477469243402, 0.002216259780359165, 0.0004364074260382143
+        );
+        
+        
+        ColourOut = vec4(0.0, 0.0, 0.0, 1.0);
+        
+        for(int i = 0; i < 15; i++)
+        {
+            ColourOut += texture2D(Texture, vec2(uv.x + (i - 7) * uvOffset, uv.y)) * coefficients[i];
+        }
+    }
+]]>
+</shader>
+
+<shader id="DefaultSceneRenderer_BlurY15x15FS">
+<![CDATA[
+    #version 330
+    
+    in vec2 VertexOutput_TexCoord;
+    
+    layout(location = 0) out vec4 ColourOut;
+    
+    uniform sampler2D Texture;
+    
+    void main()
+    {
+        vec2  uv       = VertexOutput_TexCoord;
+        float uvOffset = 1.0 / float(textureSize(Texture, 0));
+    
+        float coefficients[15] = float[]
+        (
+            0.0004364074260382143, 0.002216259780359165, 0.008765477469243402, 0.026999571389574404, 0.06476860475415001, 0.1210036840004649, 0.17605932135784913,
+            0.19950134764464159,
+            0.17605932135784913, 0.1210036840004649, 0.06476860475415001, 0.026999571389574404, 0.008765477469243402, 0.002216259780359165, 0.0004364074260382143
+        );
+        
+        
+        ColourOut = vec4(0.0, 0.0, 0.0, 1.0);
+        
+        for(int i = 0; i < 15; i++)
+        {
+            ColourOut += texture2D(Texture, vec2(uv.x, uv.y + (i - 7) * uvOffset)) * coefficients[i];
+        }
+    }
+]]>
+</shader>
 
 
 
@@ -354,13 +486,12 @@
     
     float SpotFactor(vec3 L, vec3 lightDirection, float cosAngleInner, float cosAngleOuter)
     {
-        float angle = dot(normalize(-L), lightDirection);
-        return clamp((angle - cosAngleOuter) / (cosAngleInner - cosAngleOuter), 0.0, 1.0);
+        return clamp((dot(-L, lightDirection) - cosAngleOuter) / (cosAngleInner - cosAngleOuter), 0.0, 1.0);
     }
     
-    float AttenuationFactor(float c, float l, float q, float d)     // d = distance
+    float AttenuationFactor(float r, float f, float d)
     {
-        return 1.0 / (c + (l * d) + (q * d * d));
+        return pow(max(0.0, 1.0 - (d / r)), f + 1.0);
     }
     
     
@@ -527,9 +658,8 @@
     in vec3 VertexOutput_L;
 
     uniform vec3  Colour;
-    uniform float ConstantAttenuation;
-    uniform float LinearAttenuation;
-    uniform float QuadraticAttenuation;
+    uniform float Radius;
+    uniform float Falloff;
     
     void DoLighting(in vec3 normal, out vec3 diffuseOut, out vec3 specularOut)
     {
@@ -542,7 +672,7 @@
 
         float diffuse     = DiffuseFactor(N, L);
         float specular    = SpecularFactor(N, H, 64.0f);
-        float attenuation = AttenuationFactor(ConstantAttenuation, LinearAttenuation, QuadraticAttenuation, length(VertexOutput_L));
+        float attenuation = AttenuationFactor(Radius, Falloff, length(VertexOutput_L));
 
         diffuseOut  = Colour * diffuse  * attenuation;
         specularOut = Colour * specular * attenuation;
@@ -606,9 +736,8 @@
     in vec3 VertexOutput_L;
     
     uniform vec3  Colour;
-    uniform float ConstantAttenuation;
-    uniform float LinearAttenuation;
-    uniform float QuadraticAttenuation;
+    uniform float Radius;
+    uniform float Falloff;
     
     uniform samplerCube ShadowMap;
     
@@ -620,7 +749,7 @@
     
     float CalculateShadowVSM(vec3 shadowCoord, float fragmentDepth)
     {
-        float bias     = 0.06 * fragmentDepth;       // This can affect seams. Lower value = more seams.
+        float bias     = 0.04 * fragmentDepth;       // This can affect seams. Lower value = more seams.
         vec2  moments  = texture(ShadowMap, shadowCoord).xy;
         float variance = moments.y - (moments.x * moments.x);
         float d        = fragmentDepth - moments.x;
@@ -648,7 +777,8 @@
 
         float diffuse     = DiffuseFactor(N, L);
         float specular    = SpecularFactor(N, H, 64.0f);
-        float attenuation = AttenuationFactor(ConstantAttenuation, LinearAttenuation, QuadraticAttenuation, length(VertexOutput_L));
+        //float attenuation = AttenuationFactor(ConstantAttenuation, LinearAttenuation, QuadraticAttenuation, length(VertexOutput_L));
+        float attenuation = AttenuationFactor(Radius, Falloff, length(VertexOutput_L));
         float shadow      = CalculateShadow();
 
         diffuseOut  = Colour * diffuse  * attenuation * shadow;
@@ -663,12 +793,12 @@
     uniform vec3  Colour;
     uniform vec3  Position;
     uniform vec3  Direction;
-    uniform float ConstantAttenuation;
-    uniform float LinearAttenuation;
-    uniform float QuadraticAttenuation;
+    uniform float Length;
+    uniform float Falloff;
     uniform float CosAngleInner;
     uniform float CosAngleOuter;
     
+
     void DoLighting(in vec3 normal, out vec3 diffuseOut, out vec3 specularOut)
     {
         vec3 N = normal;
@@ -677,8 +807,8 @@
         
         float diffuse     = DiffuseFactor(N, normalize(L));
         float specular    = SpecularFactor(N, H, 64.0f);
-        float attenuation = AttenuationFactor(ConstantAttenuation, LinearAttenuation, QuadraticAttenuation, length(L));
-        float spot        = SpotFactor(L, Direction, CosAngleInner, CosAngleOuter);
+        float attenuation = AttenuationFactor(Length, Falloff, length(L));
+        float spot        = SpotFactor(normalize(L), Direction, CosAngleInner, CosAngleOuter);
             
         diffuseOut  = Colour * diffuse  * attenuation * spot;
         specularOut = Colour * specular * attenuation * spot;
@@ -688,14 +818,14 @@
 
 <shader id="DefaultSceneRenderer_ShadowSpotLight">
 <![CDATA[
-    uniform vec3      Colour;
-    uniform vec3      Position;
-    uniform vec3      Direction;
-    uniform float     ConstantAttenuation;
-    uniform float     LinearAttenuation;
-    uniform float     QuadraticAttenuation;
-    uniform float     CosAngleInner;
-    uniform float     CosAngleOuter;
+    uniform vec3  Colour;
+    uniform vec3  Position;
+    uniform vec3  Direction;
+    uniform float Length;
+    uniform float Falloff;
+    uniform float CosAngleInner;
+    uniform float CosAngleOuter;
+
     
     
     uniform sampler2D ShadowMap;
@@ -746,8 +876,8 @@
         
         float diffuse     = DiffuseFactor(N, normalize(L));
         float specular    = SpecularFactor(N, H, 64.0f);
-        float attenuation = AttenuationFactor(ConstantAttenuation, LinearAttenuation, QuadraticAttenuation, length(L));
-        float spot        = SpotFactor(L, Direction, CosAngleInner, CosAngleOuter);
+        float attenuation = AttenuationFactor(Length, Falloff, length(L));
+        float spot        = SpotFactor(normalize(L), Direction, CosAngleInner, CosAngleOuter);
         float shadow      = CalculateShadow();
         
             
@@ -932,7 +1062,7 @@
         finalColour += bloom * BloomFactor;
         
         // Tone Mapping.
-        finalColour *= min(10.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));
+        finalColour *= min(5.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));
         
         ColourOut = finalColour;
     }
@@ -956,7 +1086,7 @@
         float luminance   = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
 
         // Tone Mapping.
-        finalColour *= min(10.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));
+        finalColour *= min(5.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));
         
         ColourOut = finalColour;
     }

@@ -477,22 +477,24 @@ function GTGUI.Element:PointLightComponentPanel()
     self:PanelGroupBox("Point Light", true);
     
     -- Colour
-    self.ColourContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
-    self.ColourLabel     = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; margin-bottom:4px; margin-right:8px;'>Colour:</div>");
-    self.ColourInput     = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true;' />"):Vector3Input();
+    self.ColourContainer  = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
+    self.ColourLabel      = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; margin-bottom:4px; margin-right:8px;'>Colour:</div>");
+    self.ColourInput      = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true;' />"):Vector3Input();
     
-    -- Attenuation
-    self.AttenuationContainer      = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
-    self.AttenuationLeft           = GTGUI.Server.New("<div parentid='" .. self.AttenuationContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
-    self.AttenuationRight          = GTGUI.Server.New("<div parentid='" .. self.AttenuationContainer:GetID() .. "' style='width:100%; height:auto;' />");
+    -- Radius
+    self.RadiusContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
+    self.RadiusLeft      = GTGUI.Server.New("<div parentid='" .. self.RadiusContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
+    self.RadiusRight     = GTGUI.Server.New("<div parentid='" .. self.RadiusContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
+    self.RadiusLabel     = GTGUI.Server.New("<div parentid='" .. self.RadiusLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Radius:</div>");
+    self.RadiusInput     = GTGUI.Server.New("<div parentid='" .. self.RadiusRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
     
-    self.ConstantAttenuationLabel  = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; margin-bottom:4px;'>Constant Attenuation:</div>");
-    self.LinearAttenuationLabel    = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; margin-bottom:4px;'>Linear Attenuation:</div>");
-    self.QuadraticAttenuationLabel = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; padding-bottom:0px'>Quadratic Attenuation:</div>");
+    -- Falloff
+    self.FalloffContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()             .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
+    self.FalloffLeft      = GTGUI.Server.New("<div parentid='" .. self.FalloffContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
+    self.FalloffRight     = GTGUI.Server.New("<div parentid='" .. self.FalloffContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
+    self.FalloffLabel     = GTGUI.Server.New("<div parentid='" .. self.FalloffLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Falloff:</div>");
+    self.FalloffInput     = GTGUI.Server.New("<div parentid='" .. self.FalloffRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
     
-    self.ConstantAttenuationInput  = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%; margin-bottom:2px;'></div>");
-    self.LinearAttenuationInput    = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%; margin-bottom:2px;'></div>");
-    self.QuadraticAttenuationInput = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%;'></div>");
     
     
     -- Shadows
@@ -514,20 +516,15 @@ function GTGUI.Element:PointLightComponentPanel()
     end);
     
     
-    
-    self.ConstantAttenuationInput:OnTextChanged(function()
-        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateComponentAttenuation() end
+    self.RadiusInput:OnTextChanged(function()
+        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateRadius() end;
     end);
     
-    self.LinearAttenuationInput:OnTextChanged(function()
-        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateComponentAttenuation() end
+    self.FalloffInput:OnTextChanged(function()
+        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateFalloff() end;
     end);
     
-    self.QuadraticAttenuationInput:OnTextChanged(function()
-        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateComponentAttenuation() end
-    end);
-    
-    
+
     
     self.CastShadows:CheckBox("Cast Shadows");
     
@@ -556,9 +553,8 @@ function GTGUI.Element:PointLightComponentPanel()
             self.ColourInput:SetFromXYZ(self.CurrentComponent:GetColour());
             
             self.LockAttenuationEvents = true;
-            self.ConstantAttenuationInput:SetText( string.format("%.4f", self.CurrentComponent:GetConstantAttenuation()));
-            self.LinearAttenuationInput:SetText(   string.format("%.4f", self.CurrentComponent:GetLinearAttenuation()));
-            self.QuadraticAttenuationInput:SetText(string.format("%.4f", self.CurrentComponent:GetQuadraticAttenuation()));
+                self.RadiusInput:SetText( string.format("%.4f", self.CurrentComponent:GetRadius()));
+                self.FalloffInput:SetText(string.format("%.4f", self.CurrentComponent:GetFalloff()));
             self.LockAttenuationEvents = false;
             
             if self.CurrentComponent:IsShadowCastingEnabled() then
@@ -566,6 +562,20 @@ function GTGUI.Element:PointLightComponentPanel()
             else
                 self.CastShadows:Uncheck(true);
             end
+        end
+    end
+    
+    function self:UpdateRadius()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetRadius(tonumber(self.RadiusInput:GetText()));
+            self.ParentPanel:OnSceneNodeChanged();
+        end
+    end
+    
+    function self:UpdateFalloff()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetFalloff(tonumber(self.FalloffInput:GetText()));
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
@@ -591,19 +601,21 @@ function GTGUI.Element:SpotLightComponentPanel()
     self.ColourLabel     = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; margin-bottom:4px; margin-right:8px;'>Colour:</div>");
     self.ColourInput     = GTGUI.Server.New("<div parentid='" .. self.ColourContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true;' />"):Vector3Input();
     
-    -- Attenuation
-    self.AttenuationContainer      = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
-    self.AttenuationLeft           = GTGUI.Server.New("<div parentid='" .. self.AttenuationContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
-    self.AttenuationRight          = GTGUI.Server.New("<div parentid='" .. self.AttenuationContainer:GetID() .. "' style='width:100%; height:auto;' />");
+    -- Length
+    self.LengthContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()            .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
+    self.LengthLeft      = GTGUI.Server.New("<div parentid='" .. self.LengthContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
+    self.LengthRight     = GTGUI.Server.New("<div parentid='" .. self.LengthContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
+    self.LengthLabel     = GTGUI.Server.New("<div parentid='" .. self.LengthLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Length:</div>");
+    self.LengthInput     = GTGUI.Server.New("<div parentid='" .. self.LengthRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
     
-    self.ConstantAttenuationLabel  = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; margin-bottom:4px;'>Constant Attenuation:</div>");
-    self.LinearAttenuationLabel    = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px; margin-bottom:4px;'>Linear Attenuation:</div>");
-    self.QuadraticAttenuationLabel = GTGUI.Server.New("<div parentid='" .. self.AttenuationLeft:GetID()  .. "' style='width:auto; text-color:std-text-color; padding-top:2px;'                   >Quadratic Attenuation:</div>");
+    -- Falloff
+    self.FalloffContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()             .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
+    self.FalloffLeft      = GTGUI.Server.New("<div parentid='" .. self.FalloffContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
+    self.FalloffRight     = GTGUI.Server.New("<div parentid='" .. self.FalloffContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
+    self.FalloffLabel     = GTGUI.Server.New("<div parentid='" .. self.FalloffLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Falloff:</div>");
+    self.FalloffInput     = GTGUI.Server.New("<div parentid='" .. self.FalloffRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
     
-    self.ConstantAttenuationInput  = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%; margin-bottom:2px;'></div>");
-    self.LinearAttenuationInput    = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%; margin-bottom:2px;'></div>");
-    self.QuadraticAttenuationInput = GTGUI.Server.New("<div parentid='" .. self.AttenuationRight:GetID()  .. "' styleclass='textbox' style='width:100%;'></div>");
-    
+
     -- Angles
     self.AnglesContainer  = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:8px;' />");
     self.AnglesLeft       = GTGUI.Server.New("<div parentid='" .. self.AnglesContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
@@ -636,20 +648,14 @@ function GTGUI.Element:SpotLightComponentPanel()
     end);
     
     
-    
-    self.ConstantAttenuationInput:OnTextChanged(function()
-        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateComponentAttenuation() end
+    self.LengthInput:OnTextChanged(function()
+        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateLength() end;
     end);
     
-    self.LinearAttenuationInput:OnTextChanged(function()
-        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateComponentAttenuation() end
+    self.FalloffInput:OnTextChanged(function()
+        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateFalloff() end;
     end);
-    
-    self.QuadraticAttenuationInput:OnTextChanged(function()
-        if self.CurrentComponent ~= nil and not self.LockAttenuationEvents then self:UpdateComponentAttenuation() end
-    end);
-    
-    
+
     
     self.InnerAngleInput:OnTextChanged(function()
         if self.CurrentComponent ~= nil and not self.LockAnglesEvents then self:UpdateComponentAngles() end
@@ -688,15 +694,14 @@ function GTGUI.Element:SpotLightComponentPanel()
             self.ColourInput:SetFromXYZ(self.CurrentComponent:GetColour());
             
             self.LockAttenuationEvents = true;
-            self.ConstantAttenuationInput:SetText( string.format("%.4f", self.CurrentComponent:GetConstantAttenuation()));
-            self.LinearAttenuationInput:SetText(   string.format("%.4f", self.CurrentComponent:GetLinearAttenuation()));
-            self.QuadraticAttenuationInput:SetText(string.format("%.4f", self.CurrentComponent:GetQuadraticAttenuation()));
+                self.LengthInput:SetText( string.format("%.4f", self.CurrentComponent:GetLength()));
+                self.FalloffInput:SetText(string.format("%.4f", self.CurrentComponent:GetFalloff()));
             self.LockAttenuationEvents = false;
             
             self.LockAnglesEvents = true;
-            local innerAngle, outerAngle = self.CurrentComponent:GetAngles();
-            self.InnerAngleInput:SetText(string.format("%.4g", innerAngle));
-            self.OuterAngleInput:SetText(string.format("%.4g", outerAngle));
+                local innerAngle, outerAngle = self.CurrentComponent:GetAngles();
+                self.InnerAngleInput:SetText(string.format("%.4g", innerAngle));
+                self.OuterAngleInput:SetText(string.format("%.4g", outerAngle));
             self.LockAnglesEvents = false;
             
             if self.CurrentComponent:IsShadowCastingEnabled() then
@@ -704,6 +709,20 @@ function GTGUI.Element:SpotLightComponentPanel()
             else
                 self.CastShadows:Uncheck(true);
             end
+        end
+    end
+    
+    function self:UpdateLength()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetLength(tonumber(self.LengthInput:GetText()));
+            self.ParentPanel:OnSceneNodeChanged();
+        end
+    end
+    
+    function self:UpdateFalloff()
+        if self.CurrentComponent ~= nil then
+            self.CurrentComponent:SetFalloff(tonumber(self.FalloffInput:GetText()));
+            self.ParentPanel:OnSceneNodeChanged();
         end
     end
     

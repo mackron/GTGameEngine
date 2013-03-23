@@ -189,16 +189,16 @@ namespace GTEngine
                         this->allLightIndices.shadowPointLights.PushBack(this->shadowPointLights.count - 1);
                     }
 
-                    light->colour               = lightComponent->GetColour();
-                    light->position             = sceneNode.GetWorldPosition();
-                    light->constantAttenuation  = lightComponent->GetConstantAttenuation();
-                    light->linearAttenuation    = lightComponent->GetLinearAttenuation();
-                    light->quadraticAttenuation = lightComponent->GetQuadraticAttenuation();
+                    
+                    light->position = sceneNode.GetWorldPosition();
+                    light->colour   = lightComponent->GetColour();
+                    light->radius   = lightComponent->GetRadius();
+                    light->falloff  = lightComponent->GetFalloff();
 
                     if (lightComponent->IsShadowCastingEnabled())
                     {
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->projection = glm::perspective(90.0f, 1.0f, 0.1f, Math::Lighting::ApproximateAttenuationRadius(light->constantAttenuation, light->linearAttenuation, light->quadraticAttenuation));
-                        
+                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->projection = glm::perspective(90.0f, 1.0f, 0.1f, light->radius);
+
                         glm::vec3 origin(light->position);
                         glm::vec3 posx(  1.0f, 0.0f, 0.0f);
                         glm::vec3 posy(  0.0f, 1.0f, 0.0f);
@@ -243,23 +243,20 @@ namespace GTEngine
                     }
 
 
-                    light->colour               = lightComponent->GetColour();
-                    light->position             = sceneNode.GetWorldPosition();
-                    light->orientation          = sceneNode.GetWorldOrientation();
-                    light->constantAttenuation  = lightComponent->GetConstantAttenuation();
-                    light->linearAttenuation    = lightComponent->GetLinearAttenuation();
-                    light->quadraticAttenuation = lightComponent->GetQuadraticAttenuation();
-                    light->innerAngle           = lightComponent->GetInnerAngle();
-                    light->outerAngle           = lightComponent->GetOuterAngle();
+                    light->colour      = lightComponent->GetColour();
+                    light->position    = sceneNode.GetWorldPosition();
+                    light->orientation = sceneNode.GetWorldOrientation();
+                    light->length      = lightComponent->GetLength();
+                    light->falloff     = lightComponent->GetFalloff();
+                    light->innerAngle  = lightComponent->GetInnerAngle();
+                    light->outerAngle  = lightComponent->GetOuterAngle();
+                    
+                    
 
                     // A few additional properties need to be set if the light is casting a shadow.
                     if (lightComponent->IsShadowCastingEnabled())
                     {
-                        float cAtt = light->constantAttenuation; 
-                        float lAtt = light->linearAttenuation;
-                        float qAtt = light->quadraticAttenuation;
-
-                        static_cast<DefaultSceneRendererShadowSpotLight*>(light)->projection = glm::perspective(light->outerAngle * 2.0f, 1.0f, 0.1f, Math::Lighting::ApproximateAttenuationRadius(cAtt, lAtt, qAtt));
+                        static_cast<DefaultSceneRendererShadowSpotLight*>(light)->projection = glm::perspective(light->outerAngle * 2.0f, 1.0f, 0.1f, light->length);
                         static_cast<DefaultSceneRendererShadowSpotLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
                     }
                 }
@@ -641,7 +638,8 @@ namespace GTEngine
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
           shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
           fullscreenTriangleVA(nullptr), finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
-          isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(1.0f), blurShaderX(nullptr), blurShaderY(nullptr),
+          isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(1.0f),
+          blurShaderX(nullptr), blurShaderY(nullptr), blurShaderX7x7(nullptr), blurShaderY7x7(nullptr), blurShaderX11x11(nullptr), blurShaderY11x11(nullptr), blurShaderX15x15(nullptr), blurShaderY15x15(nullptr),
           materialLibraryEventHandler(*this)
     {
         this->depthPassShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
@@ -656,6 +654,10 @@ namespace GTEngine
         this->blurShaderY                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurYFS"));
         this->blurShaderX7x7                   = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurX7x7FS"));
         this->blurShaderY7x7                   = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurY7x7FS"));
+        this->blurShaderX11x11                 = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurX11x11FS"));
+        this->blurShaderY11x11                 = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurY11x11FS"));
+        this->blurShaderX15x15                 = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurX15x15FS"));
+        this->blurShaderY15x15                 = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurY15x15FS"));
 
 
 
@@ -701,6 +703,12 @@ namespace GTEngine
         Renderer::DeleteShader(this->highlightShader);
         Renderer::DeleteShader(this->blurShaderX);
         Renderer::DeleteShader(this->blurShaderY);
+        Renderer::DeleteShader(this->blurShaderX7x7);
+        Renderer::DeleteShader(this->blurShaderY7x7);
+        Renderer::DeleteShader(this->blurShaderX11x11);
+        Renderer::DeleteShader(this->blurShaderY11x11);
+        Renderer::DeleteShader(this->blurShaderX15x15);
+        Renderer::DeleteShader(this->blurShaderY15x15);
 
         for (size_t i = 0; i < this->materialShadersToDelete.count; ++i)
         {
@@ -1549,14 +1557,13 @@ namespace GTEngine
                             Renderer::SetCurrentShader(shader);
 
                             shader->SetUniformsFromMaterial(*material);
-                            shader->SetUniform("PVMMatrix",            visibleObjects.projectionViewMatrix * mesh.transform);
-                            shader->SetUniform("ViewModelMatrix",      viewModelMatrix);
-                            shader->SetUniform("NormalMatrix",         normalMatrix);
-                            shader->SetUniform("Colour",               light->colour);
-                            shader->SetUniform("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
-                            shader->SetUniform("ConstantAttenuation",  light->constantAttenuation);
-                            shader->SetUniform("LinearAttenuation",    light->linearAttenuation);
-                            shader->SetUniform("QuadraticAttenuation", light->quadraticAttenuation);
+                            shader->SetUniform("PVMMatrix",       visibleObjects.projectionViewMatrix * mesh.transform);
+                            shader->SetUniform("ViewModelMatrix", viewModelMatrix);
+                            shader->SetUniform("NormalMatrix",    normalMatrix);
+                            shader->SetUniform("Colour",          light->colour);
+                            shader->SetUniform("Position",        glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                            shader->SetUniform("Radius",          light->radius);
+                            shader->SetUniform("Falloff",         light->falloff);
                             Renderer::PushPendingUniforms(*shader);
                         }
 
@@ -1659,17 +1666,16 @@ namespace GTEngine
 
                             Renderer::SetCurrentShader(shader);
                             shader->SetUniformsFromMaterial(*material);
-                            shader->SetUniform("PVMMatrix",            visibleObjects.projectionViewMatrix * mesh.transform);
-                            shader->SetUniform("ViewModelMatrix",      viewModelMatrix);
-                            shader->SetUniform("ModelMatrix",          mesh.transform);
-                            shader->SetUniform("NormalMatrix",         normalMatrix);
-                            shader->SetUniform("Colour",               light->colour);
-                            shader->SetUniform("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
-                            shader->SetUniform("ConstantAttenuation",  light->constantAttenuation);
-                            shader->SetUniform("LinearAttenuation",    light->linearAttenuation);
-                            shader->SetUniform("QuadraticAttenuation", light->quadraticAttenuation);
-                            shader->SetUniform("ShadowMap",            this->pointShadowMapFramebuffer.colourBuffer);
-                            shader->SetUniform("LightPositionWS",      light->position);
+                            shader->SetUniform("PVMMatrix",       visibleObjects.projectionViewMatrix * mesh.transform);
+                            shader->SetUniform("ViewModelMatrix", viewModelMatrix);
+                            shader->SetUniform("ModelMatrix",     mesh.transform);
+                            shader->SetUniform("NormalMatrix",    normalMatrix);
+                            shader->SetUniform("Colour",          light->colour);
+                            shader->SetUniform("Position",        glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                            shader->SetUniform("Radius",          light->radius);
+                            shader->SetUniform("Falloff",         light->falloff);
+                            shader->SetUniform("ShadowMap",       this->pointShadowMapFramebuffer.colourBuffer);
+                            shader->SetUniform("LightPositionWS", light->position);
                             Renderer::PushPendingUniforms(*shader);
                         }
 
@@ -1695,7 +1701,7 @@ namespace GTEngine
         Renderer::SetCurrentShader(this->pointShadowMapShader);
         
         // We need to clear both depth and colour. The colour needs to be cleared to the radius of the light.
-        float radius = Math::Lighting::ApproximateAttenuationRadius(light.constantAttenuation, light.linearAttenuation, light.quadraticAttenuation);
+        float radius = light.radius;
         Renderer::SetClearColour(radius, radius * radius, 0.0f, 1.0f);
         Renderer::SetClearDepth(1.0f);
         Renderer::Clear(BufferType_Colour | BufferType_Depth);
@@ -1732,9 +1738,9 @@ namespace GTEngine
             Renderer::SetDrawBuffers(1, &blurBuffer1Index);
 
             // Shader.
-            Renderer::SetCurrentShader(this->blurShaderX);
-            this->blurShaderX->SetUniform("Texture", this->pointShadowMapFramebuffer.blurBuffer0);
-            Renderer::PushPendingUniforms(*this->blurShaderX);
+            Renderer::SetCurrentShader(this->blurShaderX11x11);
+            this->blurShaderX11x11->SetUniform("Texture", this->pointShadowMapFramebuffer.blurBuffer0);
+            Renderer::PushPendingUniforms(*this->blurShaderX11x11);
 
             // Draw.
             Renderer::Draw(*this->fullscreenTriangleVA);
@@ -1745,9 +1751,9 @@ namespace GTEngine
             Renderer::SetDrawBuffers(1, &faceIndex);
 
             // Shader.
-            Renderer::SetCurrentShader(this->blurShaderY);
-            this->blurShaderY->SetUniform("Texture", this->pointShadowMapFramebuffer.blurBuffer1);
-            Renderer::PushPendingUniforms(*this->blurShaderY);
+            Renderer::SetCurrentShader(this->blurShaderY11x11);
+            this->blurShaderY11x11->SetUniform("Texture", this->pointShadowMapFramebuffer.blurBuffer1);
+            Renderer::PushPendingUniforms(*this->blurShaderY11x11);
 
             // Draw.
             Renderer::Draw(*this->fullscreenTriangleVA);
@@ -1804,17 +1810,16 @@ namespace GTEngine
 
                             Renderer::SetCurrentShader(shader);
                             shader->SetUniformsFromMaterial(*material);
-                            shader->SetUniform("PVMMatrix",            visibleObjects.projectionViewMatrix * mesh.transform);
-                            shader->SetUniform("ViewModelMatrix",      viewModelMatrix);
-                            shader->SetUniform("NormalMatrix",         normalMatrix);
-                            shader->SetUniform("Colour",               light->colour);
-                            shader->SetUniform("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
-                            shader->SetUniform("Direction",            glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
-                            shader->SetUniform("ConstantAttenuation",  light->constantAttenuation);
-                            shader->SetUniform("LinearAttenuation",    light->linearAttenuation);
-                            shader->SetUniform("QuadraticAttenuation", light->quadraticAttenuation);
-                            shader->SetUniform("CosAngleInner",        glm::cos(glm::radians(light->innerAngle)));
-                            shader->SetUniform("CosAngleOuter",        glm::cos(glm::radians(light->outerAngle)));
+                            shader->SetUniform("PVMMatrix",       visibleObjects.projectionViewMatrix * mesh.transform);
+                            shader->SetUniform("ViewModelMatrix", viewModelMatrix);
+                            shader->SetUniform("NormalMatrix",    normalMatrix);
+                            shader->SetUniform("Colour",          light->colour);
+                            shader->SetUniform("Position",        glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                            shader->SetUniform("Direction",       glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                            shader->SetUniform("Length",          light->length);
+                            shader->SetUniform("Falloff",         light->falloff);
+                            shader->SetUniform("CosAngleInner",   glm::cos(glm::radians(light->innerAngle)));
+                            shader->SetUniform("CosAngleOuter",   glm::cos(glm::radians(light->outerAngle)));
                             Renderer::PushPendingUniforms(*shader);
                         }
 
@@ -1881,9 +1886,9 @@ namespace GTEngine
             Renderer::SetDrawBuffers(1, &blurBufferIndex);
 
             // Shader.
-            Renderer::SetCurrentShader(this->blurShaderX);
-            this->blurShaderX->SetUniform("Texture", this->shadowMapFramebuffer.colourBuffer);
-            Renderer::PushPendingUniforms(*this->blurShaderX);
+            Renderer::SetCurrentShader(this->blurShaderX11x11);
+            this->blurShaderX11x11->SetUniform("Texture", this->shadowMapFramebuffer.colourBuffer);
+            Renderer::PushPendingUniforms(*this->blurShaderX11x11);
 
             // Draw.
             Renderer::Draw(*this->fullscreenTriangleVA);
@@ -1894,9 +1899,9 @@ namespace GTEngine
             Renderer::SetDrawBuffers(1, &colourBufferIndex);
 
             // Shader.
-            Renderer::SetCurrentShader(this->blurShaderY);
-            this->blurShaderY->SetUniform("Texture", this->shadowMapFramebuffer.blurBuffer);
-            Renderer::PushPendingUniforms(*this->blurShaderY);
+            Renderer::SetCurrentShader(this->blurShaderY11x11);
+            this->blurShaderY11x11->SetUniform("Texture", this->shadowMapFramebuffer.blurBuffer);
+            Renderer::PushPendingUniforms(*this->blurShaderY11x11);
 
             // Draw.
             Renderer::Draw(*this->fullscreenTriangleVA);
@@ -1977,9 +1982,8 @@ namespace GTEngine
                             shader->SetUniform("Colour",               light->colour);
                             shader->SetUniform("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
                             shader->SetUniform("Direction",            glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
-                            shader->SetUniform("ConstantAttenuation",  light->constantAttenuation);
-                            shader->SetUniform("LinearAttenuation",    light->linearAttenuation);
-                            shader->SetUniform("QuadraticAttenuation", light->quadraticAttenuation);
+                            shader->SetUniform("Length",               light->length);
+                            shader->SetUniform("Falloff",              light->falloff);
                             shader->SetUniform("CosAngleInner",        glm::cos(glm::radians(light->innerAngle)));
                             shader->SetUniform("CosAngleOuter",        glm::cos(glm::radians(light->outerAngle)));
                             shader->SetUniform("ShadowMap",            this->shadowMapFramebuffer.colourBuffer);
@@ -2414,9 +2418,8 @@ namespace GTEngine
                 shader->SetUniform("NormalMatrix",         normalMatrix);
                 shader->SetUniform("Colour",               light->colour);
                 shader->SetUniform("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
-                shader->SetUniform("ConstantAttenuation",  light->constantAttenuation);
-                shader->SetUniform("LinearAttenuation",    light->linearAttenuation);
-                shader->SetUniform("QuadraticAttenuation", light->quadraticAttenuation);
+                shader->SetUniform("Radius",               light->radius);
+                shader->SetUniform("Falloff",              light->falloff);
                 Renderer::PushPendingUniforms(*shader);
 
 
@@ -2450,9 +2453,8 @@ namespace GTEngine
                 shader->SetUniform("NormalMatrix",         normalMatrix);
                 shader->SetUniform("Colour",               light->colour);
                 shader->SetUniform("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
-                shader->SetUniform("ConstantAttenuation",  light->constantAttenuation);
-                shader->SetUniform("LinearAttenuation",    light->linearAttenuation);
-                shader->SetUniform("QuadraticAttenuation", light->quadraticAttenuation);
+                shader->SetUniform("Radius",               light->radius);
+                shader->SetUniform("Falloff",              light->falloff);
                 Renderer::PushPendingUniforms(*shader);
 
 
@@ -2489,9 +2491,8 @@ namespace GTEngine
                 shader->SetUniform("Colour",               light->colour);
                 shader->SetUniform("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
                 shader->SetUniform("Direction",            glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
-                shader->SetUniform("ConstantAttenuation",  light->constantAttenuation);
-                shader->SetUniform("LinearAttenuation",    light->linearAttenuation);
-                shader->SetUniform("QuadraticAttenuation", light->quadraticAttenuation);
+                shader->SetUniform("Length",               light->length);
+                shader->SetUniform("Falloff",              light->falloff);
                 shader->SetUniform("CosAngleInner",        glm::cos(glm::radians(light->innerAngle)));
                 shader->SetUniform("CosAngleOuter",        glm::cos(glm::radians(light->outerAngle)));
                 Renderer::PushPendingUniforms(*shader);
@@ -2527,9 +2528,8 @@ namespace GTEngine
                 shader->SetUniform("Colour",               light->colour);
                 shader->SetUniform("Position",             glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
                 shader->SetUniform("Direction",            glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
-                shader->SetUniform("ConstantAttenuation",  light->constantAttenuation);
-                shader->SetUniform("LinearAttenuation",    light->linearAttenuation);
-                shader->SetUniform("QuadraticAttenuation", light->quadraticAttenuation);
+                shader->SetUniform("Length",               light->length);
+                shader->SetUniform("Falloff",              light->falloff);
                 shader->SetUniform("CosAngleInner",        glm::cos(glm::radians(light->innerAngle)));
                 shader->SetUniform("CosAngleOuter",        glm::cos(glm::radians(light->outerAngle)));
                 Renderer::PushPendingUniforms(*shader);

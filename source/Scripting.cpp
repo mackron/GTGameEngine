@@ -291,6 +291,24 @@ namespace GTEngine
                 "    return GTEngine.System.PointLightComponent.GetColour(self._internalPtr);"
                 "end;"
 
+
+                "function GTEngine.PointLightComponent:SetRadius(radius)"
+                "    GTEngine.System.PointLightComponent.SetRadius(self._internalPtr, radius);"
+                "end;"
+
+                "function GTEngine.PointLightComponent:GetRadius()"
+                "    return GTEngine.System.PointLightComponent.GetRadius(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.PointLightComponent:SetFalloff(falloff)"
+                "    GTEngine.System.PointLightComponent.SetFalloff(self._internalPtr, falloff);"
+                "end;"
+
+                "function GTEngine.PointLightComponent:GetFalloff()"
+                "    return GTEngine.System.PointLightComponent.GetFalloff(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.PointLightComponent:EnableShadowCasting()"
                 "    GTEngine.System.PointLightComponent.EnableShadowCasting(self._internalPtr);"
                 "end;"
@@ -301,22 +319,6 @@ namespace GTEngine
 
                 "function GTEngine.PointLightComponent:IsShadowCastingEnabled()"
                 "    return GTEngine.System.PointLightComponent.IsShadowCastingEnabled(self._internalPtr);"
-                "end;"
-
-                "function GTEngine.PointLightComponent:GetConstantAttenuation()"
-                "    return GTEngine.System.PointLightComponent.GetConstantAttenuation(self._internalPtr);"
-                "end;"
-
-                "function GTEngine.PointLightComponent:GetLinearAttenuation()"
-                "    return GTEngine.System.PointLightComponent.GetLinearAttenuation(self._internalPtr);"
-                "end;"
-
-                "function GTEngine.PointLightComponent:GetQuadraticAttenuation()"
-                "    return GTEngine.System.PointLightComponent.GetQuadraticAttenuation(self._internalPtr);"
-                "end;"
-
-                "function GTEngine.PointLightComponent:SetAttenuation(constant, linear, quadratic)"
-                "    GTEngine.System.PointLightComponent.SetAttenuation(self._internalPtr, constant, linear, quadratic);"
                 "end;"
 
 
@@ -339,6 +341,24 @@ namespace GTEngine
                 "    return GTEngine.System.SpotLightComponent.GetColour(self._internalPtr);"
                 "end;"
 
+
+                "function GTEngine.SpotLightComponent:SetLength(radius)"
+                "    GTEngine.System.SpotLightComponent.SetLength(self._internalPtr, radius);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:GetLength()"
+                "    return GTEngine.System.SpotLightComponent.GetLength(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:SetFalloff(falloff)"
+                "    GTEngine.System.SpotLightComponent.SetFalloff(self._internalPtr, falloff);"
+                "end;"
+
+                "function GTEngine.SpotLightComponent:GetFalloff()"
+                "    return GTEngine.System.SpotLightComponent.GetFalloff(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.SpotLightComponent:EnableShadowCasting()"
                 "    GTEngine.System.SpotLightComponent.EnableShadowCasting(self._internalPtr);"
                 "end;"
@@ -351,21 +371,6 @@ namespace GTEngine
                 "    return GTEngine.System.SpotLightComponent.IsShadowCastingEnabled(self._internalPtr);"
                 "end;"
 
-                "function GTEngine.SpotLightComponent:GetConstantAttenuation()"
-                "    return GTEngine.System.SpotLightComponent.GetConstantAttenuation(self._internalPtr);"
-                "end;"
-
-                "function GTEngine.SpotLightComponent:GetLinearAttenuation()"
-                "    return GTEngine.System.SpotLightComponent.GetLinearAttenuation(self._internalPtr);"
-                "end;"
-
-                "function GTEngine.SpotLightComponent:GetQuadraticAttenuation()"
-                "    return GTEngine.System.SpotLightComponent.GetQuadraticAttenuation(self._internalPtr);"
-                "end;"
-
-                "function GTEngine.SpotLightComponent:SetAttenuation(constant, linear, quadratic)"
-                "    GTEngine.System.SpotLightComponent.SetAttenuation(self._internalPtr, constant, linear, quadratic);"
-                "end;"
 
                 "function GTEngine.SpotLightComponent:SetAngles(inner, outer)"
                 "    GTEngine.System.SpotLightComponent.SetAngles(self._internalPtr, inner, outer);"
@@ -374,6 +379,7 @@ namespace GTEngine
                 "function GTEngine.SpotLightComponent:GetAngles()"
                 "    return GTEngine.System.SpotLightComponent.GetAngles(self._internalPtr);"
                 "end;"
+
 
 
                 // DirectionalLightComponent
@@ -1414,13 +1420,13 @@ namespace GTEngine
                     {
                         script.SetTableFunction(-1, "SetColour",               FFI::SystemFFI::PointLightComponentFFI::SetColour);
                         script.SetTableFunction(-1, "GetColour",               FFI::SystemFFI::PointLightComponentFFI::GetColour);
+                        script.SetTableFunction(-1, "SetRadius",               FFI::SystemFFI::PointLightComponentFFI::SetRadius);
+                        script.SetTableFunction(-1, "GetRadius",               FFI::SystemFFI::PointLightComponentFFI::GetRadius);
+                        script.SetTableFunction(-1, "SetFalloff",              FFI::SystemFFI::PointLightComponentFFI::SetFalloff);
+                        script.SetTableFunction(-1, "GetFalloff",              FFI::SystemFFI::PointLightComponentFFI::GetFalloff);
                         script.SetTableFunction(-1, "EnableShadowCasting",     FFI::SystemFFI::PointLightComponentFFI::EnableShadowCasting);
                         script.SetTableFunction(-1, "DisableShadowCasting",    FFI::SystemFFI::PointLightComponentFFI::DisableShadowCasting);
                         script.SetTableFunction(-1, "IsShadowCastingEnabled",  FFI::SystemFFI::PointLightComponentFFI::IsShadowCastingEnabled);
-                        script.SetTableFunction(-1, "GetConstantAttenuation",  FFI::SystemFFI::PointLightComponentFFI::GetConstantAttenuation);
-                        script.SetTableFunction(-1, "GetLinearAttenuation",    FFI::SystemFFI::PointLightComponentFFI::GetLinearAttenuation);
-                        script.SetTableFunction(-1, "GetQuadraticAttenuation", FFI::SystemFFI::PointLightComponentFFI::GetQuadraticAttenuation);
-                        script.SetTableFunction(-1, "SetAttenuation",          FFI::SystemFFI::PointLightComponentFFI::SetAttenuation);
                     }
                     script.Pop(1);
 
@@ -1431,13 +1437,13 @@ namespace GTEngine
                     {
                         script.SetTableFunction(-1, "SetColour",               FFI::SystemFFI::SpotLightComponentFFI::SetColour);
                         script.SetTableFunction(-1, "GetColour",               FFI::SystemFFI::SpotLightComponentFFI::GetColour);
+                        script.SetTableFunction(-1, "SetLength",               FFI::SystemFFI::SpotLightComponentFFI::SetLength);
+                        script.SetTableFunction(-1, "GetLength",               FFI::SystemFFI::SpotLightComponentFFI::GetLength);
+                        script.SetTableFunction(-1, "SetFalloff",              FFI::SystemFFI::SpotLightComponentFFI::SetFalloff);
+                        script.SetTableFunction(-1, "GetFalloff",              FFI::SystemFFI::SpotLightComponentFFI::GetFalloff);
                         script.SetTableFunction(-1, "EnableShadowCasting",     FFI::SystemFFI::SpotLightComponentFFI::EnableShadowCasting);
                         script.SetTableFunction(-1, "DisableShadowCasting",    FFI::SystemFFI::SpotLightComponentFFI::DisableShadowCasting);
                         script.SetTableFunction(-1, "IsShadowCastingEnabled",  FFI::SystemFFI::SpotLightComponentFFI::IsShadowCastingEnabled);
-                        script.SetTableFunction(-1, "GetConstantAttenuation",  FFI::SystemFFI::SpotLightComponentFFI::GetConstantAttenuation);
-                        script.SetTableFunction(-1, "GetLinearAttenuation",    FFI::SystemFFI::SpotLightComponentFFI::GetLinearAttenuation);
-                        script.SetTableFunction(-1, "GetQuadraticAttenuation", FFI::SystemFFI::SpotLightComponentFFI::GetQuadraticAttenuation);
-                        script.SetTableFunction(-1, "SetAttenuation",          FFI::SystemFFI::SpotLightComponentFFI::SetAttenuation);
                         script.SetTableFunction(-1, "SetAngles",               FFI::SystemFFI::SpotLightComponentFFI::SetAngles);
                         script.SetTableFunction(-1, "GetAngles",               FFI::SystemFFI::SpotLightComponentFFI::GetAngles);
                     }
@@ -3544,6 +3550,62 @@ namespace GTEngine
                         return 3;
                     }
 
+
+                    int GetRadius(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetRadius());
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetRadius(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetRadius(script.ToFloat(2));
+                        }
+
+                        return 0;
+                    }
+
+
+                    int GetFalloff(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetFalloff());
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetFalloff(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetFalloff(script.ToFloat(2));
+                        }
+
+                        return 0;
+                    }
+
+
+
                     int EnableShadowCasting(GTCore::Script &script)
                     {
                         auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
@@ -3579,66 +3641,6 @@ namespace GTEngine
                         }
 
                         return 1;
-                    }
-
-
-                    int GetConstantAttenuation(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            script.Push(component->GetConstantAttenuation());
-                        }
-                        else
-                        {
-                            script.Push(1.0f);
-                        }
-
-                        return 1;
-                    }
-
-                    int GetLinearAttenuation(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            script.Push(component->GetLinearAttenuation());
-                        }
-                        else
-                        {
-                            script.Push(0.0f);
-                        }
-
-                        return 1;
-                    }
-
-                    int GetQuadraticAttenuation(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            script.Push(component->GetQuadraticAttenuation());
-                        }
-                        else
-                        {
-                            script.Push(0.0666f);
-                        }
-
-                        return 1;
-                    }
-
-                    int SetAttenuation(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float constant  = script.ToFloat(2);
-                            float linear    = script.ToFloat(3);
-                            float quadratic = script.ToFloat(4);
-                            component->SetAttenuation(constant, linear, quadratic);
-                        }
-
-                        return 0;
                     }
                 }
 
@@ -3679,6 +3681,61 @@ namespace GTEngine
                         return 3;
                     }
 
+
+                    int GetLength(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetLength());
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetLength(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetLength(script.ToFloat(2));
+                        }
+
+                        return 0;
+                    }
+
+
+                    int GetFalloff(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->GetFalloff());
+                        }
+                        else
+                        {
+                            script.Push(0.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int SetFalloff(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            component->SetFalloff(script.ToFloat(2));
+                        }
+
+                        return 0;
+                    }
+
+
                     int EnableShadowCasting(GTCore::Script &script)
                     {
                         auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
@@ -3714,66 +3771,6 @@ namespace GTEngine
                         }
 
                         return 1;
-                    }
-
-
-                    int GetConstantAttenuation(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            script.Push(component->GetConstantAttenuation());
-                        }
-                        else
-                        {
-                            script.Push(1.0f);
-                        }
-
-                        return 1;
-                    }
-
-                    int GetLinearAttenuation(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            script.Push(component->GetLinearAttenuation());
-                        }
-                        else
-                        {
-                            script.Push(0.0f);
-                        }
-
-                        return 1;
-                    }
-
-                    int GetQuadraticAttenuation(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            script.Push(component->GetQuadraticAttenuation());
-                        }
-                        else
-                        {
-                            script.Push(0.0666f);
-                        }
-
-                        return 1;
-                    }
-
-                    int SetAttenuation(GTCore::Script &script)
-                    {
-                        auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
-                        if (component != nullptr)
-                        {
-                            float constant  = script.ToFloat(2);
-                            float linear    = script.ToFloat(3);
-                            float quadratic = script.ToFloat(4);
-                            component->SetAttenuation(constant, linear, quadratic);
-                        }
-
-                        return 0;
                     }
 
 
