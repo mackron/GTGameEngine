@@ -8,3 +8,21 @@ panel-number-input
     horizontal-align: right
     margin-top:       4px
 }
+
+panel-number-input-label
+{
+    width:      auto
+    text-color: std-text-color
+    padding:    0px 2px
+}
+
+panel-number-input-label:disabled
+{
+    text-color: #5a5a5a
+}
+
+panel-number-input-textbox includes textbox
+{
+    width:     100%
+    max-width: 72px
+}

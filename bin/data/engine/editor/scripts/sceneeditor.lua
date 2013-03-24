@@ -1075,28 +1075,21 @@ end
 function GTGUI.Element:DynamicsComponentPanel()
     self:PanelGroupBox("Dynamics", true);
     
-    -- Mass
-    self.IsKinematic   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:0px;' />");
+    -- Kinematic
+    self.IsKinematic = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-top:0px;' />");
+    self.IsKinematic:CheckBox("Is Kinematic");
     
-    self.MassContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()          .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
-    self.MassLeft      = GTGUI.Server.New("<div parentid='" .. self.MassContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
-    self.MassRight     = GTGUI.Server.New("<div parentid='" .. self.MassContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
-    self.MassLabel     = GTGUI.Server.New("<div parentid='" .. self.MassLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Mass (0 = Static):</div>");
-    self.MassInput     = GTGUI.Server.New("<div parentid='" .. self.MassRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
+    -- Mass
+    self.MassInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.MassInput:PanelNumberInput("Mass");
     
     -- Friction
-    self.FrictionContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()              .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
-    self.FrictionLeft      = GTGUI.Server.New("<div parentid='" .. self.FrictionContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
-    self.FrictionRight     = GTGUI.Server.New("<div parentid='" .. self.FrictionContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
-    self.FrictionLabel     = GTGUI.Server.New("<div parentid='" .. self.FrictionLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Friction:</div>");
-    self.FrictionInput     = GTGUI.Server.New("<div parentid='" .. self.FrictionRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
+    self.FrictionInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.FrictionInput:PanelNumberInput("Friction");
     
     -- Restitution
-    self.RestitutionContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; horizontal-align:right; margin-top:4px;' />");
-    self.RestitutionLeft      = GTGUI.Server.New("<div parentid='" .. self.RestitutionContainer:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
-    self.RestitutionRight     = GTGUI.Server.New("<div parentid='" .. self.RestitutionContainer:GetID() .. "' style='width:100%; height:auto; horizontal-align:right;' />");
-    self.RestitutionLabel     = GTGUI.Server.New("<div parentid='" .. self.RestitutionLeft:GetID()      .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;'>Resitution:</div>");
-    self.RestitutionInput     = GTGUI.Server.New("<div parentid='" .. self.RestitutionRight:GetID()     .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
+    self.RestitutionInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.RestitutionInput:PanelNumberInput("Restitution", 0.0);
 
     
     -- Linear Damping.
@@ -1128,12 +1121,11 @@ function GTGUI.Element:DynamicsComponentPanel()
 
     
     
-    self.IsKinematic:CheckBox("Is Kinematic");
+    
     
     self.IsKinematic:OnChecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:IsKinematic(true);
-            self.MassLabel:SetStyle("text-color", "#5a5a5a");
             self.MassInput:Disable();
             
             self.ParentPanel:OnSceneNodeChanged();
@@ -1143,7 +1135,6 @@ function GTGUI.Element:DynamicsComponentPanel()
     self.IsKinematic:OnUnchecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:IsKinematic(false);
-            self.MassLabel:SetStyle("text-color", "std-text-color");
             self.MassInput:Enable();
             
             self.ParentPanel:OnSceneNodeChanged();
@@ -1151,19 +1142,19 @@ function GTGUI.Element:DynamicsComponentPanel()
     end);
     
     
-    self.MassInput:OnTextChanged(function(data)
+    self.MassInput:OnValueChanged(function(data)
         if not self.IsUpdating then
             self:ApplyMass();
         end
     end);
     
-    self.FrictionInput:OnTextChanged(function(data)
+    self.FrictionInput:OnValueChanged(function(data)
         if not self.IsUpdating then
             self:ApplyFriction();
         end
     end);
     
-    self.RestitutionInput:OnTextChanged(function(data)
+    self.RestitutionInput:OnValueChanged(function(data)
         if not self.IsUpdating then
             self:ApplyRestitution();
         end
@@ -1203,17 +1194,15 @@ function GTGUI.Element:DynamicsComponentPanel()
         if self.CurrentComponent ~= nil then
             if self.CurrentComponent:IsKinematic() then
                 self.IsKinematic:Check(true);
-                self.MassLabel:SetStyle("text-color", "#5a5a5a");
                 self.MassInput:Disable();
             else
                 self.IsKinematic:Uncheck(true);
-                self.MassLabel:SetStyle("text-color", "std-text-color");
                 self.MassInput:Enable();
             end
             
-            self.MassInput:SetText(       string.format("%.4f", self.CurrentComponent:GetMass()));
-            self.FrictionInput:SetText(   string.format("%.4f", self.CurrentComponent:GetFriction()));
-            self.RestitutionInput:SetText(string.format("%.4f", self.CurrentComponent:GetRestitution()));
+            self.MassInput:SetValue(          self.CurrentComponent:GetMass());
+            self.FrictionInput:SetValue(      self.CurrentComponent:GetFriction());
+            self.RestitutionInput:SetValue(   self.CurrentComponent:GetRestitution());
             self.LinearDampingInput:SetValue( self.CurrentComponent:GetLinearDamping());
             self.AngularDampingInput:SetValue(self.CurrentComponent:GetAngularDamping());
             
@@ -1227,21 +1216,21 @@ function GTGUI.Element:DynamicsComponentPanel()
     
     function self:ApplyMass()
         if self.CurrentComponent ~= nil then
-            self.CurrentComponent:SetMass(tonumber(self.MassInput:GetText()));
+            self.CurrentComponent:SetMass(self.MassInput:GetValue());
             self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
     function self:ApplyFriction()
         if self.CurrentComponent ~= nil then
-            self.CurrentComponent:SetFriction(tonumber(self.FrictionInput:GetText()));
+            self.CurrentComponent:SetFriction(self.FrictionInput:GetValue());
             self.ParentPanel:OnSceneNodeChanged();
         end
     end
     
     function self:ApplyRestitution()
         if self.CurrentComponent ~= nil then
-            self.CurrentComponent:SetRestitution(tonumber(self.RestitutionInput:GetText()));
+            self.CurrentComponent:SetRestitution(self.RestitutionInput:GetValue());
             self.ParentPanel:OnSceneNodeChanged();
         end
     end
