@@ -27,13 +27,13 @@ function GTGUI.Element:MenuBar()
             self:CollapseMenu();
         end
 
-        if item.menu:IsEmpty() == false then
+        --if item.menu:IsEmpty() == false then
             item.menu:Show();
             item.borderMask:Show();
             item:AttachStyleClass("menubar-item-active");
 
             self.selectedItem = item;
-        end
+        --end
     end
 
     -- Collapses the currently expanded menu.

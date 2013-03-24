@@ -2523,15 +2523,15 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.Panel             = GTGUI.Server.New("<div parentid='" .. self:GetID()                   .. "' styleclass='scene-editor-panel'       style='' />");
     self.ContextMenu       = GTGUI.Server.New("<div                                                     styleclass='menu'                     style='z-index:100; positioning:absolute; visible:false' />");
     
-    self.PlaybackContainer = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()           .. "' styleclass='playback-container' />");
+    self.MenuBar           = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()           .. "' styleclass='menubar' />");
+    
+    self.PlaybackContainer = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()           .. "' styleclass='playback-container' style='margin-left:8px;' />");
     self.PlayPauseButton   = GTGUI.Server.New("<div parentid='" .. self.PlaybackContainer:GetID() .. "' styleclass='play-button' />");
     self.StopButton        = GTGUI.Server.New("<div parentid='" .. self.PlaybackContainer:GetID() .. "' styleclass='stop-button' style='enabled:false;' />");
     
     self.PhysicsButton     = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()           .. "' styleclass='physics-button-container' style='' />");
     self.PhysicsButtonIcon = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID()     .. "' styleclass='physics-button-icon'      style='' />");
     self.PhysicsButtonText = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID()     .. "' styleclass='physics-button-text'      style=''>Physics</div>");
-    
-    
     
     
     
@@ -2549,6 +2549,47 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.PropertiesPanel = self.Panel.PropertiesPanel;
     self.HierarchyPanel  = self.Panel.HierarchyPanel;
 
+    
+    
+    self.MenuBar:MenuBar();
+    self.MenuBar.View = self.MenuBar:AppendItem("View");
+    self.MenuBar.View.menu:SetStyle("padding",   "8px");
+    self.MenuBar.View.menu:SetStyle("min-width", "300px");
+    
+    self.MenuBar.View.GridCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' />");
+    self.MenuBar.View.GridCheckBox:CheckBox("Show Grid");
+    self.MenuBar.View.GridCheckBox:OnChecked(function()
+        self:ShowGrid();
+    end);
+    self.MenuBar.View.GridCheckBox:OnUnchecked(function()
+        self:HideGrid();
+    end);
+    
+    GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' style='width:100%; height:1px; background-color:#5a5a5a; margin:0px 8px;' />");
+    
+    self.MenuBar.View.EnableHDRCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' />");
+    self.MenuBar.View.EnableHDRCheckBox:CheckBox("Enable HDR");
+    
+    self.MenuBar.View.EnableBloomCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' style='margin-top:4px;' />");
+    self.MenuBar.View.EnableBloomCheckBox:CheckBox("Enable Bloom");
+    
+    
+    --[[
+    self.MenuBar.View.ShowGrid = self.MenuBar.View.menu:AppendItem("Show Grid"):OnPressed(function()
+        self.MenuBar:CollapseMenu();
+    end);
+    self.MenuBar.View.HideGrid = self.MenuBar.View.menu:AppendItem("Hide Grid"):OnPressed(function()
+        self.MenuBar:CollapseMenu();
+    end);
+    
+    self.MenuBar.View.menu:AppendSeparator();
+    
+    self.MenuBar.View.RenderingSettings = self.MenuBar.View.menu:AppendItem("Rendering Settings..."):OnPressed(function()
+        self.MenuBar:CollapseMenu();
+    end);
+    ]]
+    
+    
     
     self.ContextMenu:Menu();
     self.ContextMenu:EnableDefaultEvents();
@@ -2869,6 +2910,15 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
     
     
+    
+    function self:ShowGrid()
+        GTEngine.System.SceneEditor.ShowGrid(self._internalPtr);
+    end
+    
+    function self:HideGrid()
+        GTEngine.System.SceneEditor.HideGrid(self._internalPtr);
+    end
+    
 
     
     function self:HidePropertyPanels(message)
@@ -2891,6 +2941,9 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self.PropertiesPanel:UpdateScriptProperties();
     end
 
+    
+    
+    
     
     
     function self:OnSelectionChanged()

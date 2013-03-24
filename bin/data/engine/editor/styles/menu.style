@@ -9,8 +9,9 @@ menu
     positioning: relative
     //z-index:     1
         
-    width:  192px
-    height: auto
+    min-width:  192px
+    width:      auto
+    height:     auto
 
     position-origin:inner;
         
