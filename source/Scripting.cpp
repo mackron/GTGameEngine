@@ -1353,6 +1353,11 @@ namespace GTEngine
                 "    return GTEngine.System.Scene.SetViewportCamera(self._internalPtr, cameraNodePtr, viewportIndex);"
                 "end;"
 
+                "function GTEngine.Scene:ApplyViewportCameraAspectRatio(viewportIndex)"
+                "    GTEngine.System.Scene.ApplyViewportCameraAspectRatio(self._internalPtr, viewportIndex);"
+                "end;"
+
+
 
                 "GTEngine.RegisteredScenes = {};"
             );
@@ -1430,13 +1435,14 @@ namespace GTEngine
                     script.GetTableValue(-2);
                     if (script.IsTable(-1))
                     {
-                        script.SetTableFunction(-1, "AddSceneNode",        FFI::SystemFFI::SceneFFI::AddSceneNode);
-                        script.SetTableFunction(-1, "RemoveSceneNode",     FFI::SystemFFI::SceneFFI::RemoveSceneNode);
-                        script.SetTableFunction(-1, "CreateNewSceneNode",  FFI::SystemFFI::SceneFFI::CreateNewSceneNode);
-                        script.SetTableFunction(-1, "GetSceneNodePtrs",    FFI::SystemFFI::SceneFFI::GetSceneNodePtrs);
-                        script.SetTableFunction(-1, "GetSceneNodePtrByID", FFI::SystemFFI::SceneFFI::GetSceneNodePtrByID);
-                        script.SetTableFunction(-1, "IsPaused",            FFI::SystemFFI::SceneFFI::IsPaused);
-                        script.SetTableFunction(-1, "SetViewportCamera",   FFI::SystemFFI::SceneFFI::SetViewportCamera);
+                        script.SetTableFunction(-1, "AddSceneNode",                   FFI::SystemFFI::SceneFFI::AddSceneNode);
+                        script.SetTableFunction(-1, "RemoveSceneNode",                FFI::SystemFFI::SceneFFI::RemoveSceneNode);
+                        script.SetTableFunction(-1, "CreateNewSceneNode",             FFI::SystemFFI::SceneFFI::CreateNewSceneNode);
+                        script.SetTableFunction(-1, "GetSceneNodePtrs",               FFI::SystemFFI::SceneFFI::GetSceneNodePtrs);
+                        script.SetTableFunction(-1, "GetSceneNodePtrByID",            FFI::SystemFFI::SceneFFI::GetSceneNodePtrByID);
+                        script.SetTableFunction(-1, "IsPaused",                       FFI::SystemFFI::SceneFFI::IsPaused);
+                        script.SetTableFunction(-1, "SetViewportCamera",              FFI::SystemFFI::SceneFFI::SetViewportCamera);
+                        script.SetTableFunction(-1, "ApplyViewportCameraAspectRatio", FFI::SystemFFI::SceneFFI::ApplyViewportCameraAspectRatio);
                     }
                     script.Pop(1);
 
@@ -3447,6 +3453,32 @@ namespace GTEngine
                                 if (static_cast<size_t>(viewportIndex) < scene->GetViewportCount())
                                 {
                                     scene->GetViewportByIndex(viewportIndex).SetCameraNode(*sceneNode);
+                                }
+                            }
+                        }
+
+                        return 0;
+                    }
+
+                    int ApplyViewportCameraAspectRatio(GTCore::Script &script)
+                    {
+                        auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                        if (scene != nullptr)
+                        {
+                            int viewportIndex = script.ToInteger(2);
+                            if (static_cast<size_t>(viewportIndex) < scene->GetViewportCount())
+                            {
+                                auto &viewport = scene->GetViewportByIndex(viewportIndex);
+                                {
+                                    auto sceneNode = viewport.GetCameraNode();
+                                    if (sceneNode != nullptr)
+                                    {
+                                        auto cameraComponent = sceneNode->GetComponent<CameraComponent>();
+                                        if (cameraComponent != nullptr)
+                                        {
+                                            cameraComponent->Set3DProjection(cameraComponent->perspective.fov, static_cast<float>(viewport.GetWidth()) / static_cast<float>(viewport.GetHeight()), cameraComponent->zNear, cameraComponent->zFar);
+                                        }
+                                    }
                                 }
                             }
                         }

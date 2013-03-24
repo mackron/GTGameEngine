@@ -723,6 +723,13 @@ namespace GTEngine
                     ///
                     ///     If the index is invalid, nothing will be modified.
                     int SetViewportCamera(GTCore::Script &script);
+
+                    /// Sets the aspect ratio of the camera attached to the given viewport to viewports width divided by height.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene.
+                    ///     Argument 2: The index of the viewport.
+                    int ApplyViewportCameraAspectRatio(GTCore::Script &script);
                 }
 
 
