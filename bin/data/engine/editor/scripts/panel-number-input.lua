@@ -21,6 +21,15 @@ function GTGUI.Element:PanelNumberInput(title, initialValue)
     end
     
     
+    function self:UseFloatFormat()
+        self.Input:UseFloatFormat();
+    end
+    
+    function self:UseDefaultFormat()
+        self.Input:UseDefaultFormat();
+    end
+    
+    
     -- Called when the text of the input control has been changed. We need to call OnValueChanged when this occurs.
     --
     -- Note that this event will not be posted when the text is changed via SetValue().

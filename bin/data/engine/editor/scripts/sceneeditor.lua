@@ -332,21 +332,58 @@ end
 function GTGUI.Element:CameraComponentPanel()
     self:PanelGroupBox("Camera", true);
     
-    self.CurrentNode      = nil;
-    self.CurrentComponent = nil;
+    -- FOV
+    self.FOVInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.FOVInput:PanelNumberInput("FOV");
+    self.FOVInput:UseFloatFormat();
+    
+    -- zNear
+    self.NearInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.NearInput:PanelNumberInput("Near Plane");
+    self.NearInput:UseFloatFormat();
+    
+    -- zFar
+    self.FarInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.FarInput:PanelNumberInput("Far Plane");
+    self.FarInput:UseFloatFormat();
+    
+    
+    
+    self.FOVInput:OnValueChanged(function(data)
+        self:Update3DProjection();
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
+    
+    self.NearInput:OnValueChanged(function(data)
+        self.Update3DProjection();
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
+    
+    self.FarInput:OnValueChanged(function(data)
+        self.Update3DProjection();
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
+    
     
     
     function self:Update(node)
         self.CurrentNode      = node;
         self.CurrentComponent = node:GetComponent(GTEngine.Components.Camera);
         
-        if self.CurrentComponent ~= nil then
-        end
+        self.FOVInput:SetValue(self.CurrentComponent:GetFOV());
+        self.NearInput:SetValue(self.CurrentComponent:GetNearClippingPlane());
+        self.FarInput:SetValue(self.CurrentComponent:GetFarClippingPlane());
     end
-    
     
     function self:Update3DProjection()
+        local fov    = self.FOVInput:GetValue();
+        local aspect = 16.0 / 9.0;
+        local znear  = self.NearInput:GetValue();
+        local zfar   = self.FarInput:GetValue();
+        self.CurrentComponent:Set3DProjection(fov, aspect, znear, zfar);
     end
+    
+    return self;
 end
 
 
@@ -487,14 +524,6 @@ function GTGUI.Element:ModelComponentPanel()
     return self;
 end
 
-function GTGUI.Element:CameraComponentPanel()
-    self:PanelGroupBox("Camera", true);
-    
-    function self:Update(node)
-    end
-    
-    return self;
-end
 
 function GTGUI.Element:PointLightComponentPanel()
     self:PanelGroupBox("Point Light", true);
@@ -1149,7 +1178,10 @@ function GTGUI.Element:DynamicsComponentPanel()
     self.IsKinematic:OnChecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:IsKinematic(true);
+            
+            self.MassInput:SetValue(self.CurrentComponent:GetMass());
             self.MassInput:Disable();
+            
             
             self.ParentPanel:OnSceneNodeChanged();
         end
@@ -1158,6 +1190,8 @@ function GTGUI.Element:DynamicsComponentPanel()
     self.IsKinematic:OnUnchecked(function()
         if self.CurrentComponent ~= nil then
             self.CurrentComponent:IsKinematic(false);
+            
+            self.MassInput:SetValue(self.CurrentComponent:GetMass());
             self.MassInput:Enable();
             
             self.ParentPanel:OnSceneNodeChanged();
@@ -1984,7 +2018,10 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
     
     
     self.NewComponentMenu:AppendNewItem("Camera"):OnPressed(function()
-        self.CurrentSceneNode:AddComponent(GTEngine.Components.Camera);
+        local component = self.CurrentSceneNode:AddComponent(GTEngine.Components.Camera);
+        if component ~= nil then
+            component:Set3DProjection(90.0, 16.0 / 9.0, 0.1, 1000.0);
+        end
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
