@@ -1181,6 +1181,10 @@ function GTGUI.Element:DynamicsComponentPanel()
     
     self.AngularDampingInput:OnValueChanged(function(data)
         if not self.IsUpdating then
+            if data.value > 1.0 then
+                self.AngularDampingInput:SetValue(1.0);
+            end
+        
             self:ApplyAngularDamping();
         end
     end);
