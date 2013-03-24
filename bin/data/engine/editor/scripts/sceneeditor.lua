@@ -292,7 +292,9 @@ function Editor.SceneEditor.CreateComponentPanel(parentPanel, componentID)
     element.ParentPanel = parentPanel;
     
     
-    if componentID == GTEngine.Components.Model then
+    if     componentID == GTEngine.Components.Camera then
+        element:CameraComponentPanel();
+    elseif componentID == GTEngine.Components.Model then
         element:ModelComponentPanel();
     elseif componentID == GTEngine.Components.Camera then
         element:CameraComponentPanel();
@@ -324,6 +326,27 @@ function Editor.SceneEditor.CreateComponentPanel(parentPanel, componentID)
 
     
     return element;
+end
+
+
+function GTGUI.Element:CameraComponentPanel()
+    self:PanelGroupBox("Camera", true);
+    
+    self.CurrentNode      = nil;
+    self.CurrentComponent = nil;
+    
+    
+    function self:Update(node)
+        self.CurrentNode      = node;
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.Camera);
+        
+        if self.CurrentComponent ~= nil then
+        end
+    end
+    
+    
+    function self:Update3DProjection()
+    end
 end
 
 
@@ -1959,6 +1982,13 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
         end
     end);
     
+    
+    self.NewComponentMenu:AppendNewItem("Camera"):OnPressed(function()
+        self.CurrentSceneNode:AddComponent(GTEngine.Components.Camera);
+        
+        self:UpdateComponentPanels();
+        self:OnSceneNodeChanged();
+    end);
     
     self.NewComponentMenu:AppendNewItem("Model"):OnPressed(function()
         local component = self.CurrentSceneNode:AddComponent(GTEngine.Components.Model);
