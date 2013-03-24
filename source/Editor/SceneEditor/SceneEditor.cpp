@@ -272,7 +272,6 @@ namespace GTEngine
         {
             this->isPaused = true;
 
-            //this->scene.Pause();
             this->updateManager.Disable();
             this->physicsManager.DisableSimulation();
 
@@ -315,6 +314,7 @@ namespace GTEngine
 
                 // The scripting environment might have changed the main camera. We need to revert back just in case.
                 this->scene.GetViewportByIndex(0).SetCameraNode(this->camera);
+                this->viewportEventHandler.OnSize(*this->GUI.Viewport);
 
                 // A game may have captured the mouse. We'll force a release just in case it doesn't handle it correctly.
                 this->GetOwnerEditor().GetGame().ReleaseMouse();
@@ -1775,7 +1775,7 @@ namespace GTEngine
                         {
                             if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
                             {
-                                this->camera.MoveUp(-mouseOffsetY * moveSpeed);
+                                this->camera.MoveUp(  -mouseOffsetY * moveSpeed);
                                 this->camera.MoveRight(mouseOffsetX * moveSpeed);
                             }
                             else
