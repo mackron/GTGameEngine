@@ -709,6 +709,44 @@ namespace GTEngine
                 }
 
 
+                namespace CameraComponentFFI
+                {
+                    /// Applies a 3D projection to the given component.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    ///     Argument 2: The field-of-view.
+                    ///     Argument 3: The aspect ratio.
+                    ///     Argument 4: The near clipping plane.
+                    ///     Argument 5: The far clipping plane.
+                    int Set3DProjection(GTCore::Script &script);
+
+                    /// Retrieves the field of view of the given camera.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetFOV(GTCore::Script &script);
+
+                    /// Retrieves the aspect ratio of the given camera.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetAspectRatio(GTCore::Script &script);
+
+                    /// Retrieves the near clipping plane of the given camera.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetNearClippingPlane(GTCore::Script &script);
+
+                    /// Retrieves the far clipping plane of the given camera.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the component.
+                    int GetFarClippingPlane(GTCore::Script &script);
+                }
+
+
                 namespace ModelComponentFFI
                 {
                     /// Sets the model for the given component.

@@ -112,6 +112,7 @@ namespace GTEngine
                 script.Push("Components");
                 script.PushNewTable();
                 {
+                    script.SetTableValue(-1, "Camera",            CameraComponent::Name);
                     script.SetTableValue(-1, "Model",             ModelComponent::Name);
                     script.SetTableValue(-1, "Camera",            CameraComponent::Name);
                     script.SetTableValue(-1, "PointLight",        PointLightComponent::Name);
@@ -226,6 +227,40 @@ namespace GTEngine
 
             successful = successful && script.Execute
             (
+                // CameraComponent
+                "GTEngine.CameraComponent = {};"
+                "GTEngine.CameraComponent.__index = GTEngine.CameraComponent;"
+
+                "function GTEngine.CameraComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.CameraComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
+                "end;"
+
+                "function GTEngine.CameraComponent:Set3DProjection(fov, aspect, zNear, zFar)"
+                "    GTEngine.System.CameraComponent.Set3DProjection(self._internalPtr, fov, aspect, zNear, zFar);"
+                "end;"
+
+                "function GTEngine.CameraComponent:GetFOV()"
+                "    return GTEngine.System.CameraComponent.GetFOV(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.CameraComponent:GetAspectRatio()"
+                "    return GTEngine.System.CameraComponent.GetAspectRatio(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.CameraComponent:GetNearClippingPlane()"
+                "    return GTEngine.System.CameraComponent.GetNearClippingPlane(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.CameraComponent:GetFarClippingPlane()"
+                "    return GTEngine.System.CameraComponent.GetFarClippingPlane(self._internalPtr);"
+                "end;"
+
+
+
+
                 // ModelComponent
                 "GTEngine.ModelComponent = {};"
                 "GTEngine.ModelComponent.__index = GTEngine.ModelComponent;"
@@ -1396,6 +1431,18 @@ namespace GTEngine
                     }
                     script.Pop(1);
 
+
+                    script.Push("CameraComponent");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(-1))
+                    {
+                        script.SetTableFunction(-1, "Set3DProjection",      FFI::SystemFFI::CameraComponentFFI::Set3DProjection);
+                        script.SetTableFunction(-1, "GetFOV",               FFI::SystemFFI::CameraComponentFFI::GetFOV);
+                        script.SetTableFunction(-1, "GetAspectRatio",       FFI::SystemFFI::CameraComponentFFI::GetAspectRatio);
+                        script.SetTableFunction(-1, "GetNearClippingPlane", FFI::SystemFFI::CameraComponentFFI::GetNearClippingPlane);
+                        script.SetTableFunction(-1, "GetFarClippingPlane",  FFI::SystemFFI::CameraComponentFFI::GetFarClippingPlane);
+                    }
+                    script.Pop(1);
 
 
                     script.Push("ModelComponent");
@@ -2855,7 +2902,11 @@ namespace GTEngine
                         auto sceneNode     = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                         auto componentName = script.ToString(2);
 
-                        if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
+                        if (GTCore::Strings::Equal(componentName, CameraComponent::Name))
+                        {
+                            PushComponent(script, "CameraComponent", sceneNode->AddComponent<CameraComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
                         {
                             PushComponent(script, "ModelComponent", sceneNode->AddComponent<ModelComponent>());
                         }
@@ -2910,7 +2961,11 @@ namespace GTEngine
                         auto sceneNode     = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                         auto componentName = script.ToString(2);
 
-                        if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
+                        if (GTCore::Strings::Equal(componentName, CameraComponent::Name))
+                        {
+                            PushComponent(script, "CameraComponent", sceneNode->GetComponent<CameraComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
                         {
                             PushComponent(script, "ModelComponent", sceneNode->GetComponent<ModelComponent>());
                         }
@@ -3365,6 +3420,88 @@ namespace GTEngine
                         else
                         {
                             script.Push(false);
+                        }
+
+                        return 1;
+                    }
+                }
+
+
+                //////////////////////////////////////////////////
+                // GTEngine.System.CameraComponent
+
+                namespace CameraComponentFFI
+                {
+                    int Set3DProjection(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            auto fov    = script.ToFloat(2);
+                            auto aspect = script.ToFloat(3);
+                            auto zNear  = script.ToFloat(4);
+                            auto zFar   = script.ToFloat(5);
+                            component->Set3DProjection(fov, aspect, zNear, zFar);
+                        }
+
+                        return 0;
+                    }
+
+                    int GetFOV(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->perspective.fov);
+                        }
+                        else
+                        {
+                            script.Push(90.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetAspectRatio(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->perspective.aspect);
+                        }
+                        else
+                        {
+                            script.Push(16.0f / 9.0f);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetNearClippingPlane(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->zNear);
+                        }
+                        else
+                        {
+                            script.Push(0.1);
+                        }
+
+                        return 1;
+                    }
+
+                    int GetFarClippingPlane(GTCore::Script &script)
+                    {
+                        auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
+                        if (component != nullptr)
+                        {
+                            script.Push(component->zFar);
+                        }
+                        else
+                        {
+                            script.Push(1000.0f);
                         }
 
                         return 1;
