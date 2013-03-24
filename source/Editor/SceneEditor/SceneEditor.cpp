@@ -72,12 +72,6 @@ namespace GTEngine
         this->CreateAndAddSystemNodes();
 
 
-        // We want to have a minimum ID for automatically generated IDs so that we can have enough room for system nodes such
-        // as the camera and gizmos.
-        this->scene.SetMinAutoSceneNodeID(16384);
-
-        
-
 
         auto &gui    = this->GetGUI();
         auto &script = this->GetScript();
