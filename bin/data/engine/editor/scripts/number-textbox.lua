@@ -46,6 +46,13 @@ function GTGUI.Element:NumberTextBox(defaultValue)
     end);
     
     
+    self:OnKeyDown(function(data)
+        if data.key == GTGUI.Keys.Tab or data.key == GTGUI.Keys.Space then
+            return false;
+        end
+    end);
+    
+    
     self:SetValue(defaultValue or 0, true);
     
 
