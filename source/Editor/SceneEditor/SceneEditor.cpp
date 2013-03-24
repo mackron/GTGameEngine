@@ -51,7 +51,7 @@ namespace GTEngine
     // Scene Editor
     SceneEditor::SceneEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          viewport(), camera(), cameraXRotation(0.0f), cameraYRotation(0.0f),
+          viewport(), camera(), cameraEventHandler(*this), cameraXRotation(0.0f), cameraYRotation(0.0f),
           updateManager(camera), physicsManager(), cullingManager(),
           scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
           selectedNodes(), selectedNodesBeforePlaying(), selectedNodesBeforePhysicsSimulation(),
@@ -1311,7 +1311,7 @@ namespace GTEngine
 
 
             // If the node that was transformed is the main camera we'll need to scale the gizmos so that they look a constant size.
-            if (&node == &this->camera || metadata->IsSelected())
+            if (metadata->IsSelected())
             {
                 this->RescaleGizmo();
             }
@@ -1595,6 +1595,13 @@ namespace GTEngine
     void SceneEditor::OnViewportSize()
     {
         this->UpdateGizmo();
+    }
+
+
+    void SceneEditor::OnCameraTransformed()
+    {
+        // When the camera moves the transformation control needs to be rescaled.
+        this->RescaleGizmo();
     }
 
 
@@ -1980,13 +1987,8 @@ namespace GTEngine
         assert(this->scene.GetSceneNodeCount()     == 0);
         assert(this->scene.GetMinAutoSceneNodeID() == 1);
         {
+            this->camera.AttachEventHandler(this->cameraEventHandler);
             this->camera.AddComponent<GTEngine::CameraComponent>();
-        
-            auto metadata = this->camera.AddComponent<GTEngine::EditorMetadataComponent>();
-            {
-                metadata->IsSystemNode(true);
-            }
-        
             this->camera.DisableSerialization();
             this->camera.DisableStateStackStaging();
 
@@ -1994,9 +1996,6 @@ namespace GTEngine
             this->viewport.SetCameraNode(this->camera);
             this->scene.AddViewport(this->viewport);
             this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
-
-            // TODO: Need to keep the camera node outside the scene. Makes scene node management easier.
-            this->scene.AddSceneNode(this->camera);
         }
     }
 
@@ -2082,9 +2081,6 @@ namespace GTEngine
                 this->scene.CommitStateStackFrame();
             }
 
-
-            // TODO: Keep this separate from the scene. Problem is detecting movements to give the gizmo a chance to update it's size.
-            this->scene.AddSceneNode(this->camera);
 
             // Gizmo should be updated now.
             this->UpdateGizmo();

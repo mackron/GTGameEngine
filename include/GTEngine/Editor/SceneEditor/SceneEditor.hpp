@@ -280,6 +280,12 @@ namespace GTEngine
         void OnViewportSize();
 
 
+        ///////////////////////////////////////////////////
+        // Misc. Events.
+        
+        /// Called when the camera node is traansformed.
+        void OnCameraTransformed();
+
 
         ///////////////////////////////////////////////////
         // Virtual Methods.
@@ -448,6 +454,28 @@ namespace GTEngine
 
         /// The scene node acting as the camera for the viewport.
         SceneNode camera;
+
+        /// The event handler to apply to the camera.
+        struct CameraEventHandler : public SceneNodeEventHandler
+        {
+            /// Constructor.
+            CameraEventHandler(SceneEditor &ownerIn)
+                : SceneNodeEventHandler(), owner(ownerIn)
+            {
+            }
+
+
+            /// SceneNodeEventHandler::OnTransform().
+            void OnTransform(SceneNode &)
+            {
+                this->owner.OnCameraTransformed();
+            }
+
+
+            /// The scene editor that owns the camera.
+            SceneEditor &owner;
+
+        }cameraEventHandler;
 
         float cameraXRotation;      ///< The camera's current X rotation.
         float cameraYRotation;      ///< The camera's current Y rotation.
