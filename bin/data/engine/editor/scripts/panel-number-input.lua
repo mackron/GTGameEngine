@@ -4,8 +4,8 @@
 function GTGUI.Element:PanelNumberInput(title, initialValue)
     self.Left  = GTGUI.Server.New("<div parentid='" .. self:GetID()       .. "' style='width:auto; height:auto; margin-right:4px;' />");
     self.Right = GTGUI.Server.New("<div parentid='" .. self:GetID()       .. "' style='width:100%; height:auto; horizontal-align:right;' />");
-    self.Label = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 2px;' />");
-    self.Input = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' styleclass='textbox' style='width:100%; max-width:72px;' />");
+    self.Label = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' styleclass='panel-number-input-label'   />");
+    self.Input = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' styleclass='panel-number-input-textbox' />");
     self.Input:NumberTextBox(initialValue);
     
     -- Sets the value of the input.
