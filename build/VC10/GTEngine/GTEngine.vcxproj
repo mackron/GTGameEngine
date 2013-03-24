@@ -203,6 +203,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneUpdateManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor3DViewportEventHandler.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorGrid.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\ImageEditor\ImageEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\ModelEditor\ModelEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditor.hpp" />
@@ -428,6 +429,7 @@
     <ClCompile Include="..\..\..\source\DefaultSceneUpdateManager.cpp" />
     <ClCompile Include="..\..\..\source\Editor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor3DViewportEventHandler.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\EditorGrid.cpp" />
     <ClCompile Include="..\..\..\source\Editor\ImageEditor\ImageEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\ModelEditor\ModelEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditor.cpp" />

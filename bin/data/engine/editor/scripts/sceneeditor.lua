@@ -2569,9 +2569,21 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     self.MenuBar.View.EnableHDRCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' />");
     self.MenuBar.View.EnableHDRCheckBox:CheckBox("Enable HDR");
+    self.MenuBar.View.EnableHDRCheckBox:OnChecked(function()
+        self:EnableHDR();
+    end);
+    self.MenuBar.View.EnableHDRCheckBox:OnUnchecked(function()
+        self:DisableHDR();
+    end);
     
     self.MenuBar.View.EnableBloomCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' style='margin-top:4px;' />");
     self.MenuBar.View.EnableBloomCheckBox:CheckBox("Enable Bloom");
+    self.MenuBar.View.EnableBloomCheckBox:OnChecked(function()
+        self:EnableBloom();
+    end);
+    self.MenuBar.View.EnableBloomCheckBox:OnUnchecked(function()
+        self:DisableBloom();
+    end);
     
     
     --[[
@@ -2919,6 +2931,37 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         GTEngine.System.SceneEditor.HideGrid(self._internalPtr);
     end
     
+    function self:IsShowingGrid()
+        return GTEngine.System.SceneEditor.IsShowingGrid(self._internalPtr);
+    end
+    
+    
+    function self:EnableHDR()
+        GTEngine.System.SceneEditor.EnableHDR(self._internalPtr);
+    end
+    
+    function self:DisableHDR()
+        GTEngine.System.SceneEditor.DisableHDR(self._internalPtr);
+    end
+    
+    function self:IsHDREnabled()
+        return GTEngine.System.SceneEditor.IsHDREnabled(self._internalPtr);
+    end
+    
+    
+    function self:EnableBloom()
+        GTEngine.System.SceneEditor.EnableBloom(self._internalPtr);
+    end
+    
+    function self:DisableBloom()
+        GTEngine.System.SceneEditor.DisableBloom(self._internalPtr);
+    end
+    
+    function self:IsBloomEnabled()
+        return GTEngine.System.SceneEditor.IsBloomEnabled(self._internalPtr);
+    end
+    
+    
 
     
     function self:HidePropertyPanels(message)
@@ -2941,6 +2984,13 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self.PropertiesPanel:UpdateScriptProperties();
     end
 
+    
+    function self:UpdateViewMenu()
+        self.MenuBar.View.GridCheckBox:SetChecked(self:IsShowingGrid(), true);
+        self.MenuBar.View.EnableHDRCheckBox:SetChecked(self:IsHDREnabled(), true);
+        self.MenuBar.View.EnableBloomCheckBox:SetChecked(self:IsBloomEnabled(), true);
+    end
+    
     
     
     

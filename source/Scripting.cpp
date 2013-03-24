@@ -1744,6 +1744,16 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetSceneNodePtrByID",                 FFI::SystemFFI::SceneEditorFFI::GetSceneNodePtrByID);
                         script.SetTableFunction(-1, "GetSceneNodes",                       FFI::SystemFFI::SceneEditorFFI::GetSceneNodes);
                         script.SetTableFunction(-1, "PositionSceneNodeInFrontOfCamera",    FFI::SystemFFI::SceneEditorFFI::PositionSceneNodeInFrontOfCamera);
+
+                        script.SetTableFunction(-1, "ShowGrid",                            FFI::SystemFFI::SceneEditorFFI::ShowGrid);
+                        script.SetTableFunction(-1, "HideGrid",                            FFI::SystemFFI::SceneEditorFFI::HideGrid);
+                        script.SetTableFunction(-1, "IsShowingGrid",                       FFI::SystemFFI::SceneEditorFFI::IsShowingGrid);
+                        script.SetTableFunction(-1, "EnableHDR",                           FFI::SystemFFI::SceneEditorFFI::EnableHDR);
+                        script.SetTableFunction(-1, "DisableHDR",                          FFI::SystemFFI::SceneEditorFFI::DisableHDR);
+                        script.SetTableFunction(-1, "IsHDREnabled",                        FFI::SystemFFI::SceneEditorFFI::IsHDREnabled);
+                        script.SetTableFunction(-1, "EnableBloom",                         FFI::SystemFFI::SceneEditorFFI::EnableBloom);
+                        script.SetTableFunction(-1, "DisableBloom",                        FFI::SystemFFI::SceneEditorFFI::DisableBloom);
+                        script.SetTableFunction(-1, "IsBloomEnabled",                      FFI::SystemFFI::SceneEditorFFI::IsBloomEnabled);
                     }
                     script.Pop(1);
                 }
@@ -6538,6 +6548,120 @@ namespace GTEngine
                         }
 
                         return 0;
+                    }
+
+
+                    int ShowGrid(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->ShowGrid();
+                        }
+
+                        return 0;
+                    }
+
+                    int HideGrid(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->HideGrid();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsShowingGrid(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->IsShowingGrid());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+
+                    int EnableHDR(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->EnableHDR();
+                        }
+
+                        return 0;
+                    }
+
+                    int DisableHDR(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->DisableHDR();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsHDREnabled(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->IsHDREnabled());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+
+                    int EnableBloom(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->EnableBloom();
+                        }
+
+                        return 0;
+                    }
+
+                    int DisableBloom(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->DisableBloom();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsBloomEnabled(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->IsBloomEnabled());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
                     }
                 }
             }
