@@ -64,7 +64,7 @@ namespace GTEngine
           isDeserializing(false), isUpdatingFromStateStack(false),
           isPlaying(false), isPaused(false),
           GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), viewport),
-          grid(2.0f, 8, 32), isShowingGrid(false)
+          grid(1.0f, 8, 32), isShowingGrid(false)
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
 
@@ -149,6 +149,13 @@ namespace GTEngine
             // To place the camera correctly, we'll just reset it.
             this->ResetCamera();
 
+            // Show the grid by default.
+            this->ShowGrid();
+
+            // HDR+Bloom should be disabled by default.
+            this->DisableHDR();
+            this->DisableBloom();
+
 
             // At this point we should actually load the scene file. If this is an empty file, we'll just load an empty scene.
             if (GTCore::IO::Size(file) > 0)
@@ -161,6 +168,10 @@ namespace GTEngine
                 // We want to do an initial commit.
                 this->scene.CommitStateStackFrame();
             }
+
+
+            // Now we want to update the "view" menu.
+            this->UpdateViewMenuGUI();
 
 
             // The scene will be done loading by this pointer, so we can close the file.
@@ -201,8 +212,12 @@ namespace GTEngine
 
     void SceneEditor::ResetCamera()
     {
-        this->camera.SetPosition(0.0f, 0.0f, 10.0f);
-        this->SetCameraRotation(0.0f, 0.0f);
+        this->camera.SetPosition(32.0f, 20.0f, 32.0f);
+        this->camera.LookAt(0.0f, 0.0f, 0.0f);
+        
+
+        glm::vec3 euler = glm::eulerAngles(this->camera.GetOrientation());
+        this->SetCameraRotation(euler.x, euler.y);
     }
 
     void SceneEditor::SetCameraRotation(float xRotation, float yRotation)
@@ -1993,6 +2008,12 @@ namespace GTEngine
             metadataSerializer.Write(this->cameraXRotation);
             metadataSerializer.Write(this->cameraYRotation);
 
+            // View settings.
+            metadataSerializer.Write(this->IsShowingGrid());
+            metadataSerializer.Write(this->IsHDREnabled());
+            metadataSerializer.Write(this->IsBloomEnabled());
+
+
             // We're going to serialize the state stack, too.
             this->scene.SerializeStateStack(metadataSerializer);
 
@@ -2038,6 +2059,42 @@ namespace GTEngine
                 this->camera.DisableStateStackStaging();
 
 
+                // "View" settings.
+                bool isShowingGrid;
+                bool isHDREnabled;
+                bool isBloomEnabled;
+                deserializer.Read(isShowingGrid);
+                deserializer.Read(isHDREnabled);
+                deserializer.Read(isBloomEnabled);
+
+                if (isShowingGrid)
+                {
+                    this->ShowGrid();
+                }
+                else
+                {
+                    this->HideGrid();
+                }
+
+                if (isHDREnabled)
+                {
+                    this->EnableHDR();
+                }
+                else
+                {
+                    this->DisableHDR();
+                }
+
+                if (isBloomEnabled)
+                {
+                    this->EnableBloom();
+                }
+                else
+                {
+                    this->DisableBloom();
+                }
+
+
                 // We need to peek at the next bytes. If it's a state stack, we need to deserialize it.
                 if (deserializer.Peek(&header, sizeof(header)) == sizeof(header) && header.id == Serialization::ChunkID_SceneStateStack)
                 {
@@ -2070,9 +2127,6 @@ namespace GTEngine
 
         // We'll let the editor do it's thing with selections.
         this->PostOnSelectionChangedEventToScript();
-
-        // Now we want to update the "view" menu.
-        this->UpdateViewMenuGUI();
     }
 
     void SceneEditor::SerializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Serializer &serializer)
