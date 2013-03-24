@@ -63,7 +63,8 @@ namespace GTEngine
           transformedObjectWithGizmo(false),
           isDeserializing(false), isUpdatingFromStateStack(false),
           isPlaying(false), isPaused(false),
-          GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), viewport)
+          GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), viewport),
+          grid(2.0f, 8, 32), isShowingGrid(false)
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
 
@@ -397,6 +398,63 @@ namespace GTEngine
     const SceneNode* SceneEditor::GetSceneNodeByID(uint64_t id) const
     {
         return this->scene.GetSceneNodeByID(id);
+    }
+
+
+    void SceneEditor::ShowGrid()
+    {
+        if (!this->isShowingGrid)
+        {
+            this->grid.Show(this->scene.GetRenderer());
+            this->isShowingGrid = true;
+        }
+    }
+
+    void SceneEditor::HideGrid()
+    {
+        if (this->isShowingGrid)
+        {
+            this->grid.Hide(this->scene.GetRenderer());
+            this->isShowingGrid = false;
+        }
+    }
+
+    bool SceneEditor::IsShowingGrid() const
+    {
+        return this->isShowingGrid;
+    }
+
+
+    // TODO: Improve the ways these properties are set so that custom renderers can be used.
+    void SceneEditor::EnableHDR()
+    {
+        static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).EnableHDR();
+    }
+
+    void SceneEditor::DisableHDR()
+    {
+        static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).DisableHDR();
+    }
+    
+    bool SceneEditor::IsHDREnabled() const
+    {
+        return static_cast<const DefaultSceneRenderer &>(this->scene.GetRenderer()).IsHDREnabled();
+    }
+
+
+    void SceneEditor::EnableBloom()
+    {
+        static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).EnableBloom();
+    }
+
+    void SceneEditor::DisableBloom()
+    {
+        static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).DisableBloom();
+    }
+    
+    bool SceneEditor::IsBloomEnabled() const
+    {
+        return static_cast<const DefaultSceneRenderer &>(this->scene.GetRenderer()).IsBloomEnabled();
     }
 
 
@@ -2012,6 +2070,9 @@ namespace GTEngine
 
         // We'll let the editor do it's thing with selections.
         this->PostOnSelectionChangedEventToScript();
+
+        // Now we want to update the "view" menu.
+        this->UpdateViewMenuGUI();
     }
 
     void SceneEditor::SerializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Serializer &serializer)
@@ -2283,6 +2344,25 @@ namespace GTEngine
         assert(script.IsTable(-1));
         {
             script.Push("UpdateScriptProperties");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // <-- 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
+    }
+
+    
+    void SceneEditor::UpdateViewMenuGUI()
+    {
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("UpdateViewMenu");
             script.GetTableValue(-2);
             assert(script.IsFunction(-1));
             {

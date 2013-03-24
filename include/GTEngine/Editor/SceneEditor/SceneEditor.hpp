@@ -6,6 +6,7 @@
 #include "SceneEditorCommand.hpp"
 #include "../SubEditor.hpp"
 #include "../TransformGizmo.hpp"
+#include "../EditorGrid.hpp"
 #include "../Editor3DViewportEventHandler.hpp"
 #include "../SceneEditor/SceneEditorSceneEventHandler.hpp"
 #include "../SceneEditor/SceneEditorSceneUpdateManager.hpp"
@@ -78,6 +79,38 @@ namespace GTEngine
         /// Retrieves a scene node by it's ID, or null if the scene node is not currently instantiated.
               SceneNode* GetSceneNodeByID(uint64_t id);
         const SceneNode* GetSceneNodeByID(uint64_t id) const;
+
+
+        /// Shows the grid.
+        void ShowGrid();
+
+        /// Hides the grid.
+        void HideGrid();
+
+        /// Determines whether or not the grid is showing.
+        bool IsShowingGrid() const;
+
+
+        /// Enables HDR.
+        void EnableHDR();
+
+        /// Disables HDR.
+        void DisableHDR();
+
+        /// Determines whether or not HDR is enabled.
+        bool IsHDREnabled() const;
+
+
+        /// Enables bloom.
+        void EnableBloom();
+
+        /// Disable bloom.
+        void DisableBloom();
+
+        /// Determines whether or not bloom is enabled.
+        bool IsBloomEnabled() const;
+
+
 
 
         ///////////////////////////////////////////////////
@@ -393,6 +426,9 @@ namespace GTEngine
         /// Updates the script properties on the editor GUI.
         void UpdateSelecteSceneNodeScriptPropertiesGUI();
 
+        /// Updates the view menu on the editor GUI.
+        void UpdateViewMenuGUI();
+
 
         /// Refreshes the selections.
         ///
@@ -623,6 +659,14 @@ namespace GTEngine
             SceneEditor &owner;
 
         }viewportEventHandler;
+
+
+
+        /// The grid.
+        EditorGrid grid;
+
+        /// Keeps track of whether or not the grid is showing.
+        bool isShowingGrid;
     };
 }
 

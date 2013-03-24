@@ -2212,6 +2212,63 @@ namespace GTEngine
                     ///     Argument 1: A pointer to the scene editor.
                     ///     Argument 2: A pointer to the scene node.
                     int PositionSceneNodeInFrontOfCamera(GTCore::Script &script);
+
+
+                    /// Shows the grid if it isn't showing already.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int ShowGrid(GTCore::Script &script);
+
+                    /// Hides the grid if it isn't hidden already.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int HideGrid(GTCore::Script &script);
+
+                    /// Determines whether or not the grid is showing.
+                    ///
+                    /// @remakrs
+                    ///     Argument 1: A pointer to the scene editor.
+                    int IsShowingGrid(GTCore::Script &script);
+
+
+                    /// Enables HDR.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int EnableHDR(GTCore::Script &script);
+
+                    /// Disables HDR.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int DisableHDR(GTCore::Script &script);
+
+                    /// Determines whether or not HDR is enabled.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int IsHDREnabled(GTCore::Script &script);
+
+
+                    /// Enables bloom.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int EnableBloom(GTCore::Script &script);
+
+                    /// Disables bloom.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int DisableBloom(GTCore::Script &script);
+
+                    /// Determines whether or not bloom is enabled.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int IsBloomEnabled(GTCore::Script &script);
                 }
             }
         }
