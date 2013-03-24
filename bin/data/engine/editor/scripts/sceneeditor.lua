@@ -1173,6 +1173,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if not self.IsUpdating then
             if data.value > 1.0 then
                 self.LinearDampingInput:SetValue(1.0);
+            elseif data.value < 0.0 then
+                self.LinearDampingInput:SetValue(0.0);
             end
         
             self:ApplyLinearDamping();
@@ -1183,6 +1185,8 @@ function GTGUI.Element:DynamicsComponentPanel()
         if not self.IsUpdating then
             if data.value > 1.0 then
                 self.AngularDampingInput:SetValue(1.0);
+            elseif data.value < 0.0 then
+                self.AngularDampingInput:SetValue(0.0);
             end
         
             self:ApplyAngularDamping();
