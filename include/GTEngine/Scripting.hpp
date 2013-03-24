@@ -706,6 +706,17 @@ namespace GTEngine
                     /// @remarks
                     ///     Argument 1: A pointer to the scene.
                     int IsPaused(GTCore::Script &script);
+
+
+                    /// Sets the camera of the attached viewport at the given index.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene.
+                    ///     Argument 2: A pointer to the scene node.
+                    ///     Argument 3: The index of the viewport whose camera is being set.
+                    ///
+                    ///     If the index is invalid, nothing will be modified.
+                    int SetViewportCamera(GTCore::Script &script);
                 }
 
 

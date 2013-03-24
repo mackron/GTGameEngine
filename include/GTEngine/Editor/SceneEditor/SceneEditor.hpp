@@ -356,16 +356,14 @@ namespace GTEngine
 
 
         /// Shows and repositions the positioning gizmo.
-        void ShowTransformGizmo();
+        void ShowGizmo();
 
         /// Hides whatever gizmo is currently showing.
         void HideGizmo();
 
-        /// Updates the position of the gizmos.
-        void RepositionGizmo();
 
-        /// Updates the scale of the gizmos so that they appear a constant size.
-        void RescaleGizmo();
+        /// Updates the transformation of the gizmo.
+        void UpdateGizmoTransform(bool onlyUpdateVisibleHandles = true);
 
         /// Updates the gizmo so that it's scaled, positioned and rotated properly.
         void UpdateGizmo();

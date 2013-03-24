@@ -21,7 +21,7 @@ namespace GTEngine
 
 
         /// Sets the position of the gizmo.
-        void SetPosition(const glm::vec3 &position, const SceneNode &cameraNode);
+        void SetPosition(const glm::vec3 &position, const SceneNode &cameraNode, bool onlyVisibleHandles);
 
         /// Retrieves the position of the gizmo.
         const glm::vec3 & GetPosition() const;
@@ -33,21 +33,28 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is only used for rotating the circles.
-        void SetRotation(const glm::quat &rotation, const SceneNode &cameraNode);
+        void SetRotation(const glm::quat &rotation, const SceneNode &cameraNode, bool onlyVisibleHandles);
 
 
         /// Sets the scale of the gizmo.
         ///
         /// @remarks
         ///     This will also update the picking shape.
-        void SetScale(const glm::vec3 &scale, const SceneNode &cameraNode);
+        void SetScale(const glm::vec3 &scale, const SceneNode &cameraNode, bool onlyVisibleHandles);
 
         /// Retrieves the scale of the gizmo.
         const glm::vec3 & GetScale() const;
 
 
+        /// Sets the position, rotation and scale of the gizmo in one go.
+        void SetTransform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale, const SceneNode &cameraNode, bool updateOnlyVisibleHandles);
+
+
         /// Updates the transform of every gizmo.
-        void UpdateHandleTransforms(const SceneNode &cameraNode);
+        void UpdateHandleTransforms(const SceneNode &cameraNode, bool onlyVisibleHandles);
+
+
+        
 
 
 

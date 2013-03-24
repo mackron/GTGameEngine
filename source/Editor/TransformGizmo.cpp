@@ -20,10 +20,10 @@ namespace GTEngine
     }
 
 
-    void TransformGizmo::SetPosition(const glm::vec3 &newPosition, const SceneNode &cameraNode)
+    void TransformGizmo::SetPosition(const glm::vec3 &newPosition, const SceneNode &cameraNode, bool onlyVisibleHandles)
     {
         this->position = newPosition;
-        this->UpdateHandleTransforms(cameraNode);
+        this->UpdateHandleTransforms(cameraNode, onlyVisibleHandles);
     }
 
     const glm::vec3 & TransformGizmo::GetPosition() const
@@ -32,17 +32,17 @@ namespace GTEngine
     }
 
 
-    void TransformGizmo::SetRotation(const glm::quat &rotation, const SceneNode &cameraNode)
+    void TransformGizmo::SetRotation(const glm::quat &rotation, const SceneNode &cameraNode, bool onlyVisibleHandles)
     {
         this->orientation = rotation;
-        this->UpdateHandleTransforms(cameraNode);
+        this->UpdateHandleTransforms(cameraNode, onlyVisibleHandles);
     }
 
 
-    void TransformGizmo::SetScale(const glm::vec3 &newScale, const SceneNode &cameraNode)
+    void TransformGizmo::SetScale(const glm::vec3 &newScale, const SceneNode &cameraNode, bool onlyVisibleHandles)
     {
         this->scale = newScale;
-        this->UpdateHandleTransforms(cameraNode);
+        this->UpdateHandleTransforms(cameraNode, onlyVisibleHandles);
     }
 
     const glm::vec3 & TransformGizmo::GetScale() const
@@ -51,8 +51,16 @@ namespace GTEngine
     }
 
 
+    void TransformGizmo::SetTransform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale, const SceneNode &cameraNode, bool updateOnlyVisibleHandles)
+    {
+        this->position    = position;
+        this->orientation = rotation;
+        this->scale       = scale;
+        this->UpdateHandleTransforms(cameraNode, updateOnlyVisibleHandles);
+    }
 
-    void TransformGizmo::UpdateHandleTransforms(const SceneNode &cameraNode)
+
+    void TransformGizmo::UpdateHandleTransforms(const SceneNode &cameraNode, bool onlyVisibleHandles)
     {
         glm::mat4 viewMatrix;
         if (cameraNode.HasComponent<CameraComponent>())
@@ -60,18 +68,27 @@ namespace GTEngine
             viewMatrix = cameraNode.GetComponent<CameraComponent>()->GetViewMatrix();
         }
 
-        this->xTranslateHandle.UpdateTransform(this->position, this->orientation, this->scale);
-        this->yTranslateHandle.UpdateTransform(this->position, this->orientation, this->scale);
-        this->zTranslateHandle.UpdateTransform(this->position, this->orientation, this->scale);
+        if (!onlyVisibleHandles || this->showingTranslationHandles)
+        {
+            this->xTranslateHandle.UpdateTransform(this->position, this->orientation, this->scale);
+            this->yTranslateHandle.UpdateTransform(this->position, this->orientation, this->scale);
+            this->zTranslateHandle.UpdateTransform(this->position, this->orientation, this->scale);
+        }
 
-        this->xRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
-        this->yRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
-        this->zRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
-        this->cameraFacingRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
+        if (!onlyVisibleHandles || this->showingRotationHandles)
+        {
+            this->xRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
+            this->yRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
+            this->zRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
+            this->cameraFacingRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
+        }
 
-        this->xScaleHandle.UpdateTransform(this->position, this->orientation, this->scale);
-        this->yScaleHandle.UpdateTransform(this->position, this->orientation, this->scale);
-        this->zScaleHandle.UpdateTransform(this->position, this->orientation, this->scale);
+        if (!onlyVisibleHandles || this->showingScaleHandles)
+        {
+            this->xScaleHandle.UpdateTransform(this->position, this->orientation, this->scale);
+            this->yScaleHandle.UpdateTransform(this->position, this->orientation, this->scale);
+            this->zScaleHandle.UpdateTransform(this->position, this->orientation, this->scale);
+        }
     }
 
 
@@ -537,7 +554,9 @@ namespace GTEngine
             size_t vertexCount = this->mesh.vertexArray->GetVertexCount();
 
             auto circlePosition  = glm::vec3(viewMatrix * glm::vec4(position, 1.0f));
-            auto circleTransform = transform;
+            auto circleTransform = viewMatrix * transform;
+
+
 
             // All we do is start from the start and work our way around. If a line segment has both vertices facing away from the camera,
             // we'll ignore it and move on.
@@ -550,8 +569,8 @@ namespace GTEngine
                 auto vertexPtr0 = reinterpret_cast<const glm::vec3*>(this->mesh.vertexArray->GetVertexDataPtr()) + index0;
                 auto vertexPtr1 = reinterpret_cast<const glm::vec3*>(this->mesh.vertexArray->GetVertexDataPtr()) + index1;
 
-                glm::vec3 vertex0(viewMatrix * circleTransform * glm::vec4(*vertexPtr0, 1.0f));
-                glm::vec3 vertex1(viewMatrix * circleTransform * glm::vec4(*vertexPtr1, 1.0f));
+                glm::vec3 vertex0(circleTransform * glm::vec4(*vertexPtr0, 1.0f));
+                glm::vec3 vertex1(circleTransform * glm::vec4(*vertexPtr1, 1.0f));
 
                 if (glm::vec3(circlePosition - vertex0).z <= 0.0f ||
                     glm::vec3(circlePosition - vertex1).z <= 0.0f)
@@ -572,7 +591,6 @@ namespace GTEngine
 
         // Update forward vector.
         this->forwardVector = glm::normalize(orientation * (this->localOrientation * glm::vec3(0.0f, 0.0f, -1.0f)));
-
 
 
         // Update picking volumes. Only do this for the non-forward-facing handles.
