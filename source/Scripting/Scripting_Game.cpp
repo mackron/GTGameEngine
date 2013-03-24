@@ -140,6 +140,7 @@ namespace GTEngine
                 script.SetTableFunction(-1, "IsMouseButtonDown",       FFI::GameFFI::IsMouseButtonDown);
                 script.SetTableFunction(-1, "CaptureMouse",            FFI::GameFFI::CaptureMouse);
                 script.SetTableFunction(-1, "ReleaseMouse",            FFI::GameFFI::ReleaseMouse);
+                script.SetTableFunction(-1, "GetMouseOffset",          FFI::GameFFI::GetMouseOffset);
                 script.SetTableFunction(-1, "ScanDataFilesForChanges", FFI::GameFFI::ScanDataFilesForChanges);
                 script.SetTableFunction(-1, "GetGameWindowGUIElement", FFI::GameFFI::GetGameWindowGUIElement);
                
@@ -240,6 +241,27 @@ namespace GTEngine
                 {
                     GetGame(script).ReleaseMouse();
                     return 0;
+                }
+
+                int GetMouseOffset(GTCore::Script &script)
+                {
+                    auto &game = GetGame(script);
+
+                    if (game.IsMouseCaptured())
+                    {
+                        float xOffset;
+                        float yOffset;
+                        game.GetSmoothedMouseOffset(xOffset, yOffset);
+
+                        script.Push(xOffset);
+                        script.Push(yOffset);
+
+                        return 2;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
                 }
 
 
