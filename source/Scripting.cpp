@@ -1345,6 +1345,14 @@ namespace GTEngine
                 "    return GTEngine.System.Scene.IsPaused(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.Scene:SetViewportCamera(cameraNode, viewportIndex)"
+                "    return self:SetViewportCameraByPtr(cameraNode._internalPtr, viewportIndex);"
+                "end;"
+
+                "function GTEngine.Scene:SetViewportCameraByPtr(cameraNodePtr, viewportIndex)"
+                "    return GTEngine.System.Scene.SetViewportCamera(self._internalPtr, cameraNodePtr, viewportIndex);"
+                "end;"
+
 
                 "GTEngine.RegisteredScenes = {};"
             );
@@ -1428,6 +1436,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetSceneNodePtrs",    FFI::SystemFFI::SceneFFI::GetSceneNodePtrs);
                         script.SetTableFunction(-1, "GetSceneNodePtrByID", FFI::SystemFFI::SceneFFI::GetSceneNodePtrByID);
                         script.SetTableFunction(-1, "IsPaused",            FFI::SystemFFI::SceneFFI::IsPaused);
+                        script.SetTableFunction(-1, "SetViewportCamera",   FFI::SystemFFI::SceneFFI::SetViewportCamera);
                     }
                     script.Pop(1);
 
@@ -3423,6 +3432,26 @@ namespace GTEngine
                         }
 
                         return 1;
+                    }
+
+
+                    int SetViewportCamera(GTCore::Script &script)
+                    {
+                        auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                        if (scene != nullptr)
+                        {
+                            auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+                            if (sceneNode != nullptr)
+                            {
+                                int viewportIndex = script.ToInteger(3);
+                                if (static_cast<size_t>(viewportIndex) < scene->GetViewportCount())
+                                {
+                                    scene->GetViewportByIndex(viewportIndex).SetCameraNode(*sceneNode);
+                                }
+                            }
+                        }
+
+                        return 0;
                     }
                 }
 

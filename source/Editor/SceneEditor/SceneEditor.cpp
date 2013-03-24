@@ -227,6 +227,9 @@ namespace GTEngine
                 this->isPlaying                  = true;
                 this->selectedNodesBeforePlaying = this->selectedNodes;
 
+                // We want to deselect everything to begin with.
+                this->DeselectAll(SelectionOption_NoStateStaging);
+
 
                 // We need to make it so Game.GetGameWindowGUIElement() is our own implementation. We restore it later. Our version returns an element
                 // that is contained within the viewport.
@@ -308,6 +311,10 @@ namespace GTEngine
                     script.SetTableFunction(-1, "GetGameWindowGUIElement", Scripting::FFI::GameFFI::GetGameWindowGUIElement);
                 }
                 script.Pop(1);
+
+
+                // The scripting environment might have changed the main camera. We need to revert back just in case.
+                this->scene.GetViewportByIndex(0).SetCameraNode(this->camera);
 
 
 
@@ -462,87 +469,6 @@ namespace GTEngine
 
 
                     handle->SetColour(glm::vec3(1.0f, 1.0f, 1.0f));
-
-
-
-
-                    //auto &selectedNode = metadata->GetNode();
-
-                    // Arrows
-                    /*
-                    if (&selectedNode == &this->transformGizmo.GetXArrowSceneNode())
-                    {
-                        this->gizmoDragAxis    = glm::vec3(1.0f, 0.0f, 0.0f);
-                        this->gizmoDragMode    = GizmoDragMode_Translate;
-                    }
-                    else if (&selectedNode == &this->transformGizmo.GetYArrowSceneNode())
-                    {
-                        this->gizmoDragAxis    = glm::vec3(0.0f, 1.0f, 0.0f);
-                        this->gizmoDragMode    = GizmoDragMode_Translate;
-                    }
-                    else if (&selectedNode == &this->transformGizmo.GetZArrowSceneNode())
-                    {
-                        this->gizmoDragAxis    = glm::vec3(0.0f, 0.0f, 1.0f);
-                        this->gizmoDragMode    = GizmoDragMode_Translate;
-                    }
-                    // Circles
-                    else if (&selectedNode == &this->transformGizmo.GetXCircleSceneNode())
-                    {
-                        this->gizmoDragAxis    = glm::vec3(1.0f, 0.0f, 0.0f);
-                        this->gizmoDragMode    = GizmoDragMode_Rotate;
-                    }
-                    else if (&selectedNode == &this->transformGizmo.GetYCircleSceneNode())
-                    {
-                        this->gizmoDragAxis    = glm::vec3(0.0f, 1.0f, 0.0f);
-                        this->gizmoDragMode    = GizmoDragMode_Rotate;
-                    }
-                    else if (&selectedNode == &this->transformGizmo.GetZCircleSceneNode())
-                    {
-                        this->gizmoDragAxis    = glm::vec3(0.0f, 0.0f, 1.0f);
-                        this->gizmoDragMode    = GizmoDragMode_Rotate;
-                    }
-                    // Scale handles.
-                    else if (&selectedNode == &this->transformGizmo.GetXScaleSceneNode())
-                    {
-                        this->gizmoDragAxis    = glm::vec3(1.0f, 0.0f, 0.0f);
-                        this->gizmoDragMode    = GizmoDragMode_Scale;
-                    }
-                    else if (&selectedNode == &this->transformGizmo.GetYScaleSceneNode())
-                    {
-                        this->gizmoDragAxis    = glm::vec3(0.0f, 1.0f, 0.0f);
-                        this->gizmoDragMode    = GizmoDragMode_Scale;
-                    }
-                    else if (&selectedNode == &this->transformGizmo.GetZScaleSceneNode())
-                    {
-                        this->gizmoDragAxis    = glm::vec3(0.0f, 0.0f, 1.0f);
-                        this->gizmoDragMode    = GizmoDragMode_Scale;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-
-                    // The mouse dragging has a different level of influence depending on the direction of the axis. We need to calculate that now. We project two points - the
-                    // center of the gizmo and the end point of the selected axis. From that we can get a normalised direction vector and use that as the influence.
-                    glm::vec3 gizmoWorldPos        = this->transformGizmo.GetPosition();
-                    glm::vec3 gizmoCenterWindowPos = this->viewport.Project(gizmoWorldPos);
-                    glm::vec3 axisTipWindowPos     = this->viewport.Project(gizmoWorldPos + (selectedNode.GetWorldForwardVector() * selectedNode.GetWorldScale()));
-
-                    this->gizmoDragFactor = glm::vec2(axisTipWindowPos - gizmoCenterWindowPos);
-                    if (glm::dot(this->gizmoDragFactor, this->gizmoDragFactor) > 0.0f)
-                    {
-                        this->gizmoDragFactor = glm::normalize(this->gizmoDragFactor);
-                    }
-                    else
-                    {
-                        this->gizmoDragFactor.x = 1.0f;
-                        this->gizmoDragFactor.y = 0.0f;
-                    }
-
-
-                    this->transformGizmo.ChangeAxisColour(selectedNode, 1.0f, 1.0f, 1.0f);
-                    */
                 }
 
                 return true;
@@ -714,7 +640,7 @@ namespace GTEngine
 
 
                 // With a change in selection, we will need to update the position of the gizmos.
-                this->ShowTransformGizmo();
+                this->ShowGizmo();
 
 
                 // We want to add this node to the staging area as an update command. We don't want to do this if we're in the middle of
@@ -771,7 +697,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    this->RepositionGizmo();
+                    this->UpdateGizmoTransform();
                 }
 
 
@@ -1300,15 +1226,9 @@ namespace GTEngine
             // If the scene node was selected, we should reposition the gizmo.
             if (metadata->IsSelected())
             {
-                this->RepositionGizmo();
+                this->UpdateGizmoTransform();
             }
 
-
-            // If the node that was transformed is the main camera we'll need to scale the gizmos so that they look a constant size.
-            if (metadata->IsSelected())
-            {
-                this->RescaleGizmo();
-            }
 
             if (this->selectedNodes.count == 1 && node.GetID() == this->selectedNodes[0])
             {
@@ -1594,8 +1514,6 @@ namespace GTEngine
 
     void SceneEditor::OnCameraTransformed()
     {
-        // When the camera moves the transformation control needs to be rescaled.
-        this->RescaleGizmo();
     }
 
 
@@ -1846,33 +1764,33 @@ namespace GTEngine
                 }
                 else
                 {
-                    if (game.IsMouseButtonDown(GTCore::MouseButton_Left))
+                    // If we make it here it means we are just moving the camera around like normal. We only want to rotate the camera if the viewport camera
+                    // is the main camera. The camera can be changed by a script when the game is played.
+                    if (this->scene.GetViewportByIndex(0).GetCameraNode() == &this->camera)     
                     {
-                        if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
+                        if (game.IsMouseButtonDown(GTCore::MouseButton_Left))
                         {
-                            this->camera.MoveUp(-mouseOffsetY * moveSpeed);
-                            this->camera.MoveRight(mouseOffsetX * moveSpeed);
+                            if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
+                            {
+                                this->camera.MoveUp(-mouseOffsetY * moveSpeed);
+                                this->camera.MoveRight(mouseOffsetX * moveSpeed);
+                            }
+                            else
+                            {
+                                this->camera.MoveForward(-mouseOffsetY * moveSpeed);
+                                this->cameraYRotation += -mouseOffsetX * rotateSpeed;
+                            }
                         }
                         else
                         {
-                            this->camera.MoveForward(-mouseOffsetY * moveSpeed);
-                            this->cameraYRotation += -mouseOffsetX * rotateSpeed;
+                            if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
+                            {
+                                this->cameraXRotation += -mouseOffsetY * rotateSpeed;
+                                this->cameraYRotation += -mouseOffsetX * rotateSpeed;
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
-                        {
-                            this->cameraXRotation += -mouseOffsetY * rotateSpeed;
-                            this->cameraYRotation += -mouseOffsetX * rotateSpeed;
-                        }
-                    }
 
-                    this->ApplyCameraRotation();
-
-                    if (transformGizmo.IsVisible())
-                    {
-                        this->transformGizmo.SetRotation(this->GetGizmoRotation(), this->camera);
+                        this->ApplyCameraRotation();
                     }
                 }
             }
@@ -1998,6 +1916,7 @@ namespace GTEngine
         this->camera.SetOrientation(glm::quat());
         this->camera.RotateY(this->cameraYRotation);
         this->camera.RotateX(this->cameraXRotation);
+        this->UpdateGizmoTransform();
     }
 
     void SceneEditor::SerializeScene(GTCore::Serializer &serializer, bool serializeMetadata) const
@@ -2125,7 +2044,7 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::ShowTransformGizmo()
+    void SceneEditor::ShowGizmo()
     {
         this->transformGizmo.Show(this->scene.GetRenderer(), this->pickingWorld);
         this->UpdateGizmo();
@@ -2136,24 +2055,24 @@ namespace GTEngine
         this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
     }
 
-    void SceneEditor::RepositionGizmo()
-    {
-        this->transformGizmo.SetPosition(this->GetSelectionCenterPoint(), this->camera);
-        this->transformGizmo.SetRotation(this->GetGizmoRotation(), this->camera);
-    }
 
-    void SceneEditor::RescaleGizmo()
+    void SceneEditor::UpdateGizmoTransform(bool onlyUpdateVisibleHandles)
     {
-        // We're going to determine the new scale of the gizmos by using a project/unproject system. We first project the actual position of the gizmo
-        // into window coordinates. We then add a value to the y result that will represent the size of the object on the screen. Then, we unproject
-        // that position back into world space. The length between the gizmo position and unprojected position will be the new scale.
-        glm::vec3 gizmoPosition = this->GetSelectionCenterPoint();
+        // Position.
+        glm::vec3 position = this->GetSelectionCenterPoint();
+        
+        // Orientation.
+        glm::quat orientation = this->GetGizmoRotation();
 
-        glm::vec3 windowPos = this->viewport.Project(gizmoPosition);
+        // Scale.
+        glm::vec3 windowPos = this->viewport.Project(position);
         windowPos.y += 64.0f;
 
-        glm::vec3 gizmoScale(glm::distance(this->viewport.Unproject(windowPos), gizmoPosition));
-        this->transformGizmo.SetScale(gizmoScale, this->camera);
+        glm::vec3 scale(glm::distance(this->viewport.Unproject(windowPos), position));
+
+
+        // Now we just update in one go.
+        this->transformGizmo.SetTransform(position, orientation, scale, *this->scene.GetViewportByIndex(0).GetCameraNode(), onlyUpdateVisibleHandles);
     }
 
 
@@ -2197,8 +2116,7 @@ namespace GTEngine
 
     void SceneEditor::UpdateGizmo()
     {
-        this->RepositionGizmo();
-        this->RescaleGizmo();
+        this->UpdateGizmoTransform(false);  // 'false' means to update all handles.
 
         if (this->IsAnythingSelected())
         {

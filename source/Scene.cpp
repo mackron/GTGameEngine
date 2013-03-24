@@ -852,6 +852,22 @@ namespace GTEngine
     }
 
 
+    size_t Scene::GetViewportCount() const
+    {
+        return this->viewports.count;
+    }
+
+    SceneViewport & Scene::GetViewportByIndex(size_t index)
+    {
+        return *this->viewports[index];
+    }
+
+    const SceneViewport & Scene::GetViewportByIndex(size_t index) const
+    {
+        return *this->viewports[index];
+    }
+
+
     void Scene::GetAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const
     {
         // We'll retrieve the global AABB from the culling manager. Might need to move this over to physics manager, perhaps.

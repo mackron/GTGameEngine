@@ -382,6 +382,14 @@ namespace GTEngine
         void RemoveAllViewports();
 
 
+        /// Retrieves the number of viewports currently attached to the scene.
+        size_t GetViewportCount() const;
+
+        /// Retrieves a reference to the viewport at the given index.
+              SceneViewport & GetViewportByIndex(size_t index);
+        const SceneViewport & GetViewportByIndex(size_t index) const;
+
+
         /// Retrieves the AABB of the scene.
         void GetAABB(glm::vec3 &min, glm::vec3 &max) const;
 
