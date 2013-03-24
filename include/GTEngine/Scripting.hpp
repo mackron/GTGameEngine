@@ -353,6 +353,12 @@ namespace GTEngine
                 /// Releases the mouse.
                 int ReleaseMouse(GTCore::Script &script);
 
+                /// Retrieves the mouse offset for when it is captured as two floats.
+                ///
+                /// @remarks
+                ///     This returns nil if the mouse is not captured.
+                int GetMouseOffset(GTCore::Script &script);
+
 
                 /// Scans the data files for changes and posts the relevant events.
                 ///
