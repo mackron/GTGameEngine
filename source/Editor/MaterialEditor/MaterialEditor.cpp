@@ -14,8 +14,8 @@ namespace GTEngine
     {
         // We use the camera for our lights.
         this->camera.AddComponent<GTEngine::CameraComponent>();
-        this->camera.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
-        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.6f, 0.6f, 0.6f);
+        this->camera.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.4f, 0.4f, 0.4f);
+        this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
 
         // Viewport and Renderer.
         this->viewport.SetCameraNode(this->camera);
@@ -114,7 +114,7 @@ namespace GTEngine
 
     void MaterialEditor::ResetCamera()
     {
-        this->camera.SetPosition(5.0f, 2.5f, 5.0f);
+        this->camera.SetPosition(3.5f, 2.0f, 3.5f);
         this->camera.LookAt(0.0f, 0.0f, 0.0f);
 
         glm::vec3 cameraRotation = glm::eulerAngles(this->camera.GetWorldOrientation());
