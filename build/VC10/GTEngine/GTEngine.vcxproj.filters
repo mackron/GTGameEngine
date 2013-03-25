@@ -836,6 +836,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorGrid.hpp">
       <Filter>include\Editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorAxisArrows.hpp">
+      <Filter>include\Editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1409,6 +1412,9 @@
       <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\EditorGrid.cpp">
+      <Filter>source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\EditorAxisArrows.cpp">
       <Filter>source\Editor</Filter>
     </ClCompile>
   </ItemGroup>

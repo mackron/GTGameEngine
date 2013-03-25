@@ -7,6 +7,7 @@
 #include "../SubEditor.hpp"
 #include "../TransformGizmo.hpp"
 #include "../EditorGrid.hpp"
+#include "../EditorAxisArrows.hpp"
 #include "../Editor3DViewportEventHandler.hpp"
 #include "../SceneEditor/SceneEditorSceneEventHandler.hpp"
 #include "../SceneEditor/SceneEditorSceneUpdateManager.hpp"
@@ -81,6 +82,7 @@ namespace GTEngine
         const SceneNode* GetSceneNodeByID(uint64_t id) const;
 
 
+
         /// Shows the grid.
         void ShowGrid();
 
@@ -89,6 +91,17 @@ namespace GTEngine
 
         /// Determines whether or not the grid is showing.
         bool IsShowingGrid() const;
+
+
+        /// Shows the axis arrows.
+        void ShowAxisArrows();
+
+        /// Hides the axis arrows.
+        void HideAxisArrows();
+
+        /// Determines whether or not the axis arrows is showing.
+        bool IsShowingAxisArrows() const;
+
 
 
         /// Enables HDR.
@@ -670,6 +683,16 @@ namespace GTEngine
 
         /// Keeps track of whether or not the grid was showing before playing.
         bool wasShowingGridBeforePlaying;
+
+
+        /// The axis arrows.
+        EditorAxisArrows axisArrows;
+
+        /// Keeps track of whether or not the axis arrows is showing.
+        bool isShowingAxisArrows;
+
+        /// Keeps track of whether or not the axis arrows showing before playing.
+        bool wasShowingAxisArrowsBeforePlaying;
     };
 }
 

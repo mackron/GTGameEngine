@@ -64,7 +64,8 @@ namespace GTEngine
           isDeserializing(false), isUpdatingFromStateStack(false),
           isPlaying(false), isPaused(false),
           GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), viewport),
-          grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false)
+          grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false),
+          axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false)
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
 
@@ -152,9 +153,15 @@ namespace GTEngine
             // Show the grid by default.
             this->ShowGrid();
 
+            // Show the axis arrows by default.
+            this->ShowAxisArrows();
+
+
             // HDR+Bloom should be disabled by default.
             this->DisableHDR();
             this->DisableBloom();
+
+
 
 
             // At this point we should actually load the scene file. If this is an empty file, we'll just load an empty scene.
@@ -251,6 +258,10 @@ namespace GTEngine
                 this->wasShowingGridBeforePlaying = this->isShowingGrid;
                 this->HideGrid();
 
+                // As with the grid, we'll hide the axis arrows.
+                this->wasShowingAxisArrowsBeforePlaying = this->isShowingAxisArrows;
+                this->HideAxisArrows();
+
 
                 // We need to make it so Game.GetGameWindowGUIElement() is our own implementation. We restore it later. Our version returns an element
                 // that is contained within the viewport.
@@ -345,6 +356,12 @@ namespace GTEngine
                 if (this->wasShowingGridBeforePlaying)
                 {
                     this->ShowGrid();
+                }
+
+                // As with the grid, we might need to show the axis arrows.
+                if (this->wasShowingAxisArrowsBeforePlaying)
+                {
+                    this->ShowAxisArrows();
                 }
 
 
@@ -449,6 +466,30 @@ namespace GTEngine
     bool SceneEditor::IsShowingGrid() const
     {
         return this->isShowingGrid;
+    }
+
+
+    void SceneEditor::ShowAxisArrows()
+    {
+        if (!this->isShowingAxisArrows)
+        {
+            this->axisArrows.Show(this->scene.GetRenderer());
+            this->isShowingAxisArrows = true;
+        }
+    }
+
+    void SceneEditor::HideAxisArrows()
+    {
+        if (this->isShowingAxisArrows)
+        {
+            this->axisArrows.Hide(this->scene.GetRenderer());
+            this->isShowingAxisArrows = false;
+        }
+    }
+
+    bool SceneEditor::IsShowingAxisArrows() const
+    {
+        return this->isShowingAxisArrows;
     }
 
 
@@ -1597,6 +1638,34 @@ namespace GTEngine
     void SceneEditor::OnViewportSize()
     {
         this->UpdateGizmo();
+
+        float screenPositionX = 48.0f;
+        float screenPositionY = 48.0f;
+        float screenSize      = 32.0f;
+        
+
+
+        // We need to update the position of the gizmo so that it's positioned in the appropriate corner.
+        glm::vec3 cameraPosition      = this->camera.GetWorldPosition();
+        glm::vec3 cameraForward       = this->camera.GetWorldForwardVector();
+        glm::vec3 arrowsWorldPosition = cameraPosition + (cameraForward * 1.0f);
+
+        glm::vec3 windowPos      = this->viewport.Project(arrowsWorldPosition);
+        glm::vec3 arrowsPosition = this->viewport.Unproject(glm::vec3(screenPositionX, screenPositionY, windowPos.z));
+        
+
+        // We actually need to scale this a bit to keep it a constant size.
+        glm::vec3 arrowsScale(glm::distance(this->viewport.Unproject(glm::vec3(screenPositionX, screenPositionY + screenSize, windowPos.z)), arrowsPosition));
+
+
+        // World Space -> Local Space.
+        arrowsPosition -= cameraPosition;
+        arrowsPosition  = glm::inverse(this->camera.GetWorldOrientation()) * arrowsPosition;
+        
+
+        this->axisArrows.SetLocalPosition(arrowsPosition);
+        this->axisArrows.SetLocalScale(arrowsScale);
+        this->axisArrows.UpdateTransform(this->camera);
     }
 
 
@@ -2005,6 +2074,8 @@ namespace GTEngine
         this->camera.RotateY(this->cameraYRotation);
         this->camera.RotateX(this->cameraXRotation);
         this->UpdateGizmoTransform();
+
+        this->axisArrows.UpdateTransform(this->camera);
     }
 
     void SceneEditor::SerializeScene(GTCore::Serializer &serializer, bool serializeMetadata) const
