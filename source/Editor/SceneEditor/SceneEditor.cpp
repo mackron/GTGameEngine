@@ -1668,6 +1668,12 @@ namespace GTEngine
         this->axisArrows.UpdateTransform(this->camera);
     }
 
+    void SceneEditor::OnViewportMouseWheel()
+    {
+        // This just forces camera-dependant stuff to have the appropriate properties applied.
+        this->ApplyCameraRotation();
+    }
+
 
     void SceneEditor::OnCameraTransformed()
     {

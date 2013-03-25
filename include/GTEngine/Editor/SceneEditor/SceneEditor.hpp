@@ -325,6 +325,9 @@ namespace GTEngine
         /// Called when the main viewport is resized.
         void OnViewportSize();
 
+        /// Called when the main viewport has the mouse wheel turned while hovered over it.
+        void OnViewportMouseWheel();
+
 
         ///////////////////////////////////////////////////
         // Misc. Events.
@@ -665,6 +668,13 @@ namespace GTEngine
             {
                 Editor3DViewportEventHandler::OnSize(element);
                 owner.OnViewportSize();
+            }
+
+            /// Called when the mouse wheel is moved.
+            void OnMouseWheel(GTGUI::Element &element, int delta, int x, int y)
+            {
+                Editor3DViewportEventHandler::OnMouseWheel(element, delta, x, y);
+                owner.OnViewportMouseWheel();
             }
 
 
