@@ -2233,6 +2233,25 @@ namespace GTEngine
                     int IsShowingGrid(GTCore::Script &script);
 
 
+                    /// Shows the axis arrows if it isn't showing already.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int ShowAxisArrows(GTCore::Script &script);
+
+                    /// Hides the axis arrows if it isn't hidden already.
+                    ///
+                    /// @remarks
+                    ///     Argument 1: A pointer to the scene editor.
+                    int HideAxisArrows(GTCore::Script &script);
+
+                    /// Determines whether or not the grid is showing.
+                    ///
+                    /// @remakrs
+                    ///     Argument 1: A pointer to the scene editor.
+                    int IsShowingAxisArrows(GTCore::Script &script);
+
+
                     /// Enables HDR.
                     ///
                     /// @remarks
