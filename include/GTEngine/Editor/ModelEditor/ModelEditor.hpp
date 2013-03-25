@@ -115,7 +115,7 @@ namespace GTEngine
         GTCore::Vector<GTEngine::SceneNode*> convexHullNodes;
 
 
-        /// The main container element.s
+        /// The main container element.
         GTGUI::Element* mainElement;
 
         /// The viewport element.
