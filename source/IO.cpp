@@ -23,7 +23,10 @@ namespace GTEngine
 
         bool IsSupportedMaterialExtension(const char* fileName)
         {
-            return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "material");
+            auto extension = GTCore::Path::Extension(fileName);
+
+            return GTCore::Strings::Equal<false>(extension, "material") ||
+                   GTCore::Strings::Equal<false>(extension, "gtmaterial");
         }
 
         bool IsSupportedSoundExtension(const char* fileName)
