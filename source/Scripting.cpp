@@ -1748,6 +1748,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ShowGrid",                            FFI::SystemFFI::SceneEditorFFI::ShowGrid);
                         script.SetTableFunction(-1, "HideGrid",                            FFI::SystemFFI::SceneEditorFFI::HideGrid);
                         script.SetTableFunction(-1, "IsShowingGrid",                       FFI::SystemFFI::SceneEditorFFI::IsShowingGrid);
+                        script.SetTableFunction(-1, "ShowAxisArrows",                      FFI::SystemFFI::SceneEditorFFI::ShowAxisArrows);
+                        script.SetTableFunction(-1, "HideAxisArrows",                      FFI::SystemFFI::SceneEditorFFI::HideAxisArrows);
+                        script.SetTableFunction(-1, "IsShowingAxisArrows",                 FFI::SystemFFI::SceneEditorFFI::IsShowingAxisArrows);
                         script.SetTableFunction(-1, "EnableHDR",                           FFI::SystemFFI::SceneEditorFFI::EnableHDR);
                         script.SetTableFunction(-1, "DisableHDR",                          FFI::SystemFFI::SceneEditorFFI::DisableHDR);
                         script.SetTableFunction(-1, "IsHDREnabled",                        FFI::SystemFFI::SceneEditorFFI::IsHDREnabled);
@@ -6579,6 +6582,44 @@ namespace GTEngine
                         if (sceneEditor != nullptr)
                         {
                             script.Push(sceneEditor->IsShowingGrid());
+                        }
+                        else
+                        {
+                            script.Push(false);
+                        }
+
+                        return 1;
+                    }
+
+
+                    int ShowAxisArrows(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->ShowAxisArrows();
+                        }
+
+                        return 0;
+                    }
+
+                    int HideAxisArrows(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            sceneEditor->HideAxisArrows();
+                        }
+
+                        return 0;
+                    }
+
+                    int IsShowingAxisArrows(GTCore::Script &script)
+                    {
+                        auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                        if (sceneEditor != nullptr)
+                        {
+                            script.Push(sceneEditor->IsShowingAxisArrows());
                         }
                         else
                         {

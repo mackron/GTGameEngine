@@ -2565,6 +2565,15 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         self:HideGrid();
     end);
     
+    self.MenuBar.View.AxisArrowsCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' style='margin-top:4px;' />");
+    self.MenuBar.View.AxisArrowsCheckBox:CheckBox("Show Axis Guide");
+    self.MenuBar.View.AxisArrowsCheckBox:OnChecked(function()
+        self:ShowAxisArrows();
+    end);
+    self.MenuBar.View.AxisArrowsCheckBox:OnUnchecked(function()
+        self:HideAxisArrows();
+    end);
+    
     GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' style='width:100%; height:1px; background-color:#5a5a5a; margin:0px 8px;' />");
     
     self.MenuBar.View.EnableHDRCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' />");
@@ -2936,6 +2945,19 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
     
     
+    function self:ShowAxisArrows()
+        GTEngine.System.SceneEditor.ShowAxisArrows(self._internalPtr);
+    end
+    
+    function self:HideAxisArrows()
+        GTEngine.System.SceneEditor.HideAxisArrows(self._internalPtr);
+    end
+    
+    function self:IsShowingAxisArrows()
+        return GTEngine.System.SceneEditor.IsShowingAxisArrows(self._internalPtr);
+    end
+    
+    
     function self:EnableHDR()
         GTEngine.System.SceneEditor.EnableHDR(self._internalPtr);
     end
@@ -2986,7 +3008,9 @@ function GTGUI.Element:SceneEditor(_internalPtr)
 
     
     function self:UpdateViewMenu()
+        -- The 'true' arguments mean to block events from being posted.
         self.MenuBar.View.GridCheckBox:SetChecked(self:IsShowingGrid(), true);
+        self.MenuBar.View.AxisArrowsCheckBox:SetChecked(self:IsShowingAxisArrows(), true);
         self.MenuBar.View.EnableHDRCheckBox:SetChecked(self:IsHDREnabled(), true);
         self.MenuBar.View.EnableBloomCheckBox:SetChecked(self:IsBloomEnabled(), true);
     end
