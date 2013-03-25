@@ -36,6 +36,9 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script url="scripts/modeleditor-animationspanel.lua" />
 <script url="scripts/modeleditor-cdpanel.lua"         />
 
+<style  url="styles/materialeditor.style" />
+<script url="scripts/materialeditor.lua"  />
+
 <style  url="styles/sceneeditor.style" />
 <script url="scripts/sceneeditor.lua"  />
 
