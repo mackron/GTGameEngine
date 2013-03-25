@@ -5,6 +5,7 @@
 
 #include "Editor/ImageEditor/ImageEditor.hpp"
 #include "Editor/ModelEditor/ModelEditor.hpp"
+#include "Editor/MaterialEditor/MaterialEditor.hpp"
 #include "Editor/SceneEditor/SceneEditor.hpp"
 #include "Editor/TextEditor/TextEditor.hpp"
 #include "DataFilesWatcher.hpp"

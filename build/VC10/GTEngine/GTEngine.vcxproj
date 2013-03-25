@@ -206,6 +206,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorAxisArrows.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorGrid.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\ImageEditor\ImageEditor.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\MaterialEditor\MaterialEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\ModelEditor\ModelEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorCommand.hpp" />
@@ -433,6 +434,7 @@
     <ClCompile Include="..\..\..\source\Editor\EditorAxisArrows.cpp" />
     <ClCompile Include="..\..\..\source\Editor\EditorGrid.cpp" />
     <ClCompile Include="..\..\..\source\Editor\ImageEditor\ImageEditor.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\MaterialEditor\MaterialEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\ModelEditor\ModelEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorPhysicsManager.cpp" />

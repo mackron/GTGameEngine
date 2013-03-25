@@ -274,6 +274,12 @@ namespace GTEngine
                         break;
                     }
 
+                case AssetType_Material:
+                    {
+                        newSubEditor = new MaterialEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
 
                 case AssetType_Scene:
                     {
@@ -288,7 +294,7 @@ namespace GTEngine
                         break;
                     }
 
-                case AssetType_Material:
+
                 case AssetType_Sound:
                 case AssetType_ParticleSystem:
                 case AssetType_Prefab:
