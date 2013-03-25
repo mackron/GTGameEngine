@@ -667,6 +667,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not the grid is showing.
         bool isShowingGrid;
+
+        /// Keeps track of whether or not the grid was showing before playing.
+        bool wasShowingGridBeforePlaying;
     };
 }
 

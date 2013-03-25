@@ -64,7 +64,7 @@ namespace GTEngine
           isDeserializing(false), isUpdatingFromStateStack(false),
           isPlaying(false), isPaused(false),
           GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), viewport),
-          grid(1.0f, 8, 32), isShowingGrid(false)
+          grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false)
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
 
@@ -246,6 +246,11 @@ namespace GTEngine
                 // We want to deselect everything to begin with.
                 this->DeselectAll(SelectionOption_NoStateStaging);
 
+                // The grid needs to be hidden while playing, but we need to keep track of whether or not it was showing beforehand so we can restore
+                // it when we stop playing.
+                this->wasShowingGridBeforePlaying = this->isShowingGrid;
+                this->HideGrid();
+
 
                 // We need to make it so Game.GetGameWindowGUIElement() is our own implementation. We restore it later. Our version returns an element
                 // that is contained within the viewport.
@@ -334,6 +339,13 @@ namespace GTEngine
 
                 // A game may have captured the mouse. We'll force a release just in case it doesn't handle it correctly.
                 this->GetOwnerEditor().GetGame().ReleaseMouse();
+
+
+                // The grid might need to be shown.
+                if (this->wasShowingGridBeforePlaying)
+                {
+                    this->ShowGrid();
+                }
 
 
 
