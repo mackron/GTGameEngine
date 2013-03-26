@@ -5,12 +5,18 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4355)   // 'this' used in initialise list.
+#endif
+
 namespace GTEngine
 {
     MaterialEditor::MaterialEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           scene(), viewport(), camera(), modelNode(),
-          mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), this->viewport)
+          mainElement(nullptr), scriptTextBoxElement(nullptr), scriptTextBoxEventHandler(*this), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), this->viewport),
+          isSaving(false), isReloading(false)
     {
         // We use the camera for our lights.
         this->camera.AddComponent<GTEngine::CameraComponent>();
@@ -88,6 +94,30 @@ namespace GTEngine
                         }
                     }
                     script.Pop(1);
+
+
+                    script.Push("ScriptTextBox");
+                    script.GetTableValue(-2);
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("GetID");
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.PushValue(-2);   // <-- 'self'
+                            script.Call(1, 1);
+                            assert(script.IsString(-1));
+                            {
+                                this->scriptTextBoxElement = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextArea:GetID();", script.ToString(-1)).c_str()));
+                                this->scriptTextBoxElement->SetText(this->material->GetDefinition().GetXMLString());
+
+                                // We want to attach this after setting the initial text so that is isn't marked as modified.
+                                this->scriptTextBoxElement->AttachEventHandler(this->scriptTextBoxEventHandler);
+                            }
+                            script.Pop(1);          // <-- return value from GetID()
+                        }
+                    }
+                    script.Pop(1);
                 }
             }
             script.Pop(1);
@@ -126,6 +156,19 @@ namespace GTEngine
 
 
     ///////////////////////////////////////////////////
+    // GUI Events.
+
+    void MaterialEditor::OnScriptTextChanged()
+    {
+        if (!this->IsMarkedAsModified() && !this->isReloading)
+        {
+            this->MarkAsModified();
+        }
+    }
+
+
+
+    ///////////////////////////////////////////////////
     // Virtual Methods.
 
     void MaterialEditor::Show()
@@ -140,6 +183,32 @@ namespace GTEngine
 
     bool MaterialEditor::Save()
     {
+        this->isSaving = true;
+        {
+            bool wasSaved = false;
+
+            auto xmlString = this->scriptTextBoxElement->GetText();
+            if (xmlString != nullptr)
+            {
+                wasSaved = GTCore::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), xmlString);
+            }
+            else
+            {
+                wasSaved = GTCore::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), "");
+            }
+
+            if (wasSaved)
+            {
+                this->UnmarkAsModified();
+
+                // We want to immediatly force the game to check for changes so that the material is immediately reloaded.
+                auto &dataFilesWatcher = this->GetOwnerEditor().GetGame().GetDataFilesWatcher();
+                dataFilesWatcher.CheckForChanges(false);
+                dataFilesWatcher.DispatchEvents();
+            }
+        }
+        this->isSaving = false;
+
         return true;
     }
 
@@ -190,6 +259,19 @@ namespace GTEngine
 
     void MaterialEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
+        if (GTCore::Strings::Equal(item.absolutePath.c_str(), this->GetAbsolutePath()))
+        {
+            if (!this->isSaving)
+            {
+                this->isReloading = true;
+                {
+                    // TODO: If our file is already marked as modified, we should ask if it should be reloaded. Don't want to lose changes.
+
+                    this->scriptTextBoxElement->SetText(this->material->GetDefinition().GetXMLString());
+                }
+                this->isReloading = false;
+            }
+        }
     }
 
 
@@ -206,3 +288,8 @@ namespace GTEngine
         this->camera.RotateX(this->cameraXRotation);
     }
 }
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif

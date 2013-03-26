@@ -27,6 +27,14 @@ namespace GTEngine
 
 
         ///////////////////////////////////////////////////
+        // GUI Events.
+
+        /// Called when the text script text box is modified.
+        void OnScriptTextChanged();
+
+
+
+        ///////////////////////////////////////////////////
         // Virtual Methods.
 
         /// SubEditor::Show()
@@ -52,8 +60,40 @@ namespace GTEngine
         /// Applies the camera rotation to the camera node.
         void ApplyCameraRotation();
 
+        
+
 
     private:
+
+        /// The event handler attached to the text area.
+        struct ScriptTextBoxEventHandler : public GTGUI::ElementEventHandler
+        {
+            /// Constructor.
+            ScriptTextBoxEventHandler(MaterialEditor &ownerEditorIn)
+                : ownerEditor(ownerEditorIn)
+            {
+            }
+
+            /// GTGUI::ElementEventHandler::OnTextChanged().
+            void OnTextChanged(GTGUI::Element &)
+            {
+                ownerEditor.OnScriptTextChanged();
+            }
+
+
+            /// A pointer to the text editor that owns the text area.
+            MaterialEditor &ownerEditor;
+
+
+        private:    // No copying.
+            ScriptTextBoxEventHandler(const ScriptTextBoxEventHandler &);
+            ScriptTextBoxEventHandler & operator=(const ScriptTextBoxEventHandler &);
+        };
+
+
+
+
+
 
         /// The scene for the preview window.
         Scene scene;
@@ -71,11 +111,20 @@ namespace GTEngine
         /// The main container element.
         GTGUI::Element* mainElement;
 
+
+        /// The script text box element.
+        GTGUI::Element* scriptTextBoxElement;
+
+        /// The event handler for the script text box.
+        ScriptTextBoxEventHandler scriptTextBoxEventHandler;
+
+
         /// The viewport element.
         GTGUI::Element* viewportElement;
 
         /// The viewport event handler.
         Editor3DViewportEventHandler viewportEventHandler;
+
 
 
         float cameraXRotation;      ///< The camera's current X rotation.
@@ -84,6 +133,15 @@ namespace GTEngine
 
         /// The material to use with the model.
         Material* material;
+
+
+        /// Keeps track of whether or not the material editor is in the middle of saving. We use this in determining whether or not the text
+        /// should be set when it detects a modification to the file on disk.
+        bool isSaving;
+
+        /// Keeps track of whether or not we are handling a reload. We use this in keeping track of whether or not to mark the file as modified
+        /// when the script text is changed.
+        bool isReloading;
     };
 }
 
