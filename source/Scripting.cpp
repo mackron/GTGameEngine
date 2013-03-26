@@ -122,6 +122,7 @@ namespace GTEngine
                     script.SetTableValue(-1, "Dynamics",          DynamicsComponent::Name);
                     script.SetTableValue(-1, "Proximity",         ProximityComponent::Name);
                     script.SetTableValue(-1, "Script",            ScriptComponent::Name);
+                    script.SetTableValue(-1, "ParticleSystem",    ParticleSystemComponent::Name);
                     script.SetTableValue(-1, "EditorMetadata",    EditorMetadataComponent::Name);
                 }
                 script.SetTableValue(-3);
@@ -888,6 +889,19 @@ namespace GTEngine
 
                 "function GTEngine.ScriptComponent:SetPublicVariableValue(name, value)"
                 "    return GTEngine.System.ScriptComponent.SetPublicVariableValue(self._internalPtr, name, value);"
+                "end;"
+
+
+
+                // ParticleSystemComponent
+                "GTEngine.ParticleSystemComponent = {};"
+                "GTEngine.ParticleSystemComponent.__index = GTEngine.ParticleSystemComponent;"
+
+                "function GTEngine.ParticleSystemComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.ParticleSystemComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
                 "end;"
 
 
@@ -2966,6 +2980,10 @@ namespace GTEngine
                         {
                             PushComponent(script, "ScriptComponent", sceneNode->AddComponent<ScriptComponent>());
                         }
+                        else if (GTCore::Strings::Equal(componentName, ParticleSystemComponent::Name))
+                        {
+                            PushComponent(script, "ParticleSystemComponent", sceneNode->AddComponent<ParticleSystemComponent>());
+                        }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
                             PushComponent(script, "EditorMetadataComponent", sceneNode->AddComponent<EditorMetadataComponent>());
@@ -3024,6 +3042,10 @@ namespace GTEngine
                         else if (GTCore::Strings::Equal(componentName, ScriptComponent::Name))
                         {
                             PushComponent(script, "ScriptComponent", sceneNode->GetComponent<ScriptComponent>());
+                        }
+                        else if (GTCore::Strings::Equal(componentName, ParticleSystemComponent::Name))
+                        {
+                            PushComponent(script, "ParticleSystemComponent", sceneNode->GetComponent<ParticleSystemComponent>());
                         }
                         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
                         {
@@ -5705,7 +5727,17 @@ namespace GTEngine
 
 
                 //////////////////////////////////////////////////
+                // GTEngine.System.ParticleSystemComponent
+
+                namespace ParticleSystemComponentFFI
+                {
+                }
+
+
+
+                //////////////////////////////////////////////////
                 // GTEngine.System.EditorMetadataComponent
+
                 namespace EditorMetadataComponentFFI
                 {
                     int Select(GTCore::Script &script)

@@ -19,6 +19,7 @@
 #include "Components/ConeTwistConstraintComponent.hpp"
 #include "Components/PointToPointConstraintComponent.hpp"
 #include "Components/ScriptComponent.hpp"
+#include "Components/ParticleSystemComponent.hpp"
 #include "Components/EditorMetadataComponent.hpp"
 
 #include <GTCore/Dictionary.hpp>

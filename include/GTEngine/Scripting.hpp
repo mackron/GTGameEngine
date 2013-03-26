@@ -1822,6 +1822,12 @@ namespace GTEngine
                 }
 
 
+                namespace ParticleSystemComponentFFI
+                {
+                }
+
+
+
                 namespace EditorMetadataComponentFFI
                 {
                     /// Marks the node as selected.
