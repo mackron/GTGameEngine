@@ -881,6 +881,9 @@ namespace GTEngine
         /// Called when a material definition is deleted.
         void OnDeleteMaterialDefinition(MaterialDefinition &definition);
 
+        /// Called when a material definition is reloaded.
+        void OnReloadMaterialDefinition(MaterialDefinition &definition);
+
 
 
 
@@ -1107,6 +1110,12 @@ namespace GTEngine
             void OnDeleteMaterialDefinition(MaterialDefinition &definition)
             {
                 renderer.OnDeleteMaterialDefinition(definition);
+            }
+
+            /// MaterialLibrary::EventHandler::OnReloadMaterialDefinition().
+            void OnReloadMaterialDefinition(MaterialDefinition &definition)
+            {
+                renderer.OnReloadMaterialDefinition(definition);
             }
 
 

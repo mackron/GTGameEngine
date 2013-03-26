@@ -11,6 +11,15 @@ namespace GTEngine
     {
     }
 
+    ShaderParameterCache::ShaderParameterCache(const ShaderParameterCache &other)
+        : parameters()
+    {
+        for (size_t i = 0; i < other.parameters.count; ++i)
+        {
+            this->Set(other.parameters.buffer[i]->key, other.parameters.buffer[i]->value);
+        }
+    }
+
     ShaderParameterCache::~ShaderParameterCache()
     {
         for (size_t i = 0; i < this->parameters.count; ++i)
@@ -90,6 +99,19 @@ namespace GTEngine
 
         this->parameters.Add(name, CopyShaderParameter(parameter));
     }
+
+    
+    void ShaderParameterCache::Unset(const char* name)
+    {
+        auto iParam = this->parameters.Find(name);
+        if (iParam != nullptr)
+        {
+            delete iParam->value;
+        }
+
+        this->parameters.RemoveByIndex(iParam->index);
+    }
+
 
 
     ShaderParameter* ShaderParameterCache::Get(const char* name) const

@@ -13,6 +13,7 @@
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Scripting.hpp>
+#include <GTEngine/IO.hpp>
 #include <GTCore/System.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
 #include <GTCore/String.hpp>
@@ -526,6 +527,10 @@ namespace GTEngine
             else if (Texture2DLibrary::IsExtensionSupported(extension))
             {
                 Texture2DLibrary::Reload(item.info.path.c_str());
+            }
+            else if (IO::IsSupportedMaterialExtension(item.info.path.c_str()))
+            {
+                MaterialLibrary::Reload(item.relativePath.c_str());
             }
             else
             {

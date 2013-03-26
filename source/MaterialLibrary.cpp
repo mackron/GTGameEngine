@@ -55,6 +55,15 @@ namespace GTEngine
         }
     }
 
+    /// Helper function for calling the OnReloadMaterialDefinition() event.
+    void MaterialLibrary_OnReloadMaterialDefinition(MaterialDefinition &definition)
+    {
+        for (size_t i = 0; i < EventHandlers.count; ++i)
+        {
+            EventHandlers[i]->OnReloadMaterialDefinition(definition);
+        }
+    }
+
 
 
     bool MaterialLibrary::Startup()
@@ -125,7 +134,7 @@ namespace GTEngine
         {
             MaterialDefinition* definition = nullptr;
 
-            auto iMaterialDefinition = MaterialDefinitions.Find(fileName);
+            auto iMaterialDefinition = MaterialDefinitions.Find(absolutePath.c_str());
             if (iMaterialDefinition != nullptr)
             {
                 // Definition is already loaded.
@@ -137,7 +146,7 @@ namespace GTEngine
                 definition = new MaterialDefinition;
                 if (definition->LoadFromFile(absolutePath.c_str(), relativePath.c_str()))
                 {
-                    MaterialDefinitions.Add(fileName, definition);
+                    MaterialDefinitions.Add(absolutePath.c_str(), definition);
                     MaterialLibrary_OnCreateMaterialDefinition(*definition);
                 }
                 else
@@ -183,5 +192,83 @@ namespace GTEngine
 
             delete material;
         }
+    }
+
+
+    bool MaterialLibrary::Reload(const char* fileName)
+    {
+        GTCore::String absolutePath;
+        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        {
+            auto iDefinition = MaterialDefinitions.Find(absolutePath.c_str());
+            if (iDefinition != nullptr)
+            {
+                auto definition = iDefinition->value;
+                assert(definition != nullptr);
+                {
+                    // We want to grab a copy of the default parameters before reloading so that we can determine which ones to remove from linked materials.
+                    ShaderParameterCache oldDefaultParameters(definition->defaultParams);
+
+
+
+                    bool result = definition->LoadFromFile(definition->absolutePath.c_str(), definition->relativePath.c_str());
+                    if (result)
+                    {
+                        // Materials linked to the definition need to have their parameters set to their new defaults. Any default parameters that have been
+                        // removed need to be removed from the linked materials. If the default parameter is still present and has not been modified by the
+                        // material, it will be changed to the new default.
+                        for (auto iMaterial = LoadedMaterials.root; iMaterial != nullptr; iMaterial = iMaterial->next)
+                        {
+                            auto material = iMaterial->value;
+                            assert(material != nullptr);
+                            {
+                                if (&material->GetDefinition() == definition)
+                                {
+                                    for (size_t iParameter = 0; iParameter < oldDefaultParameters.GetCount(); ++iParameter)
+                                    {
+                                        auto parameterName = oldDefaultParameters.GetNameByIndex(iParameter);
+                                        assert(parameterName != nullptr);
+                                        {
+                                            auto oldParameter = oldDefaultParameters.GetByIndex(iParameter);
+                                            auto newParameter = definition->defaultParams.Get(parameterName);
+
+                                            if (newParameter == nullptr)
+                                            {
+                                                // The parameter doesn't exist anymore. It needs to be removed from the material.
+                                                material->UnsetParameter(parameterName);
+                                            }
+                                            else
+                                            {
+                                                // The parameter still exists, but we need to check if it needs replacing.
+                                                auto iMaterialParameter = material->GetParameters().Find(parameterName);
+                                                if (iMaterialParameter != nullptr)
+                                                {
+                                                    if (CompareShaderParameters(oldParameter, iMaterialParameter->value))
+                                                    {
+                                                        // We'll replace the parameter.
+                                                        material->SetParameter(parameterName, newParameter);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+
+
+
+
+
+                        MaterialLibrary_OnReloadMaterialDefinition(*definition);
+
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }

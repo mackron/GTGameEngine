@@ -67,6 +67,11 @@ namespace GTEngine
             ///
             /// @param definition [in] A reference to the material definition that is about to be deleted.
             virtual void OnDeleteMaterialDefinition(MaterialDefinition &) {}
+
+            /// Called just after a material definition is reloaded.
+            ///
+            /// @param definition [in] A reference to the material definition that has just been reloaded.
+            virtual void OnReloadMaterialDefinition(MaterialDefinition &) {}
         };
 
 
@@ -97,6 +102,9 @@ namespace GTEngine
         /// @remarks
         ///     Delete the returned material with Delete(). The material library does not do memory management; materials must be
         ///     deleted manually.
+        ///
+        ///     This will not reload the file if it has previously been loaded. Thus, calling this function with the same file will
+        ///     be quick after the first load. Use Reload() to reload a file.
         static Material* Create(const char* fileName, const char* makeRelativeTo = nullptr);
 
         /// Creates a copy of the given material.
@@ -112,6 +120,15 @@ namespace GTEngine
         ///
         /// @param materialToDelete [in] A pointer to the material being deleted.
         static void Delete(Material* materialToDelete);
+
+
+        /// Reloads the given material. If the material has not yet been loaded, it will NOT be loaded.
+        ///
+        /// @param fileName [in] The name of the file to reload.
+        ///
+        /// @remarks
+        ///     This will update every material using the given file.
+        static bool Reload(const char* fileName);
     };
 }
 
