@@ -187,6 +187,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\LightComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ModelComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\OccluderComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ParticleSystemComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\PointToPointConstraintComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ProximityComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ScriptComponent.hpp" />
@@ -416,6 +417,7 @@
     <ClCompile Include="..\..\..\source\Components\LightComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ModelComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\OccluderComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Components\ParticleSystemComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\PointToPointConstraintComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ProximityComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ScriptComponent.cpp" />
