@@ -97,7 +97,7 @@ namespace GTEngine
         /// @remarks
         ///     Delete the returned material with Delete(). The material library does not do memory management; materials must be
         ///     deleted manually.
-        static Material* Create(const char* fileName);
+        static Material* Create(const char* fileName, const char* makeRelativeTo = nullptr);
 
         /// Creates a copy of the given material.
         ///

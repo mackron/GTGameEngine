@@ -7,6 +7,7 @@
 #include <GTEngine/ShaderParameter.hpp>
 #include <GTCore/Parse.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
+#include <GTCore/Path.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -39,7 +40,7 @@ namespace GTEngine
 
 
     MaterialDefinition::MaterialDefinition()
-        : fileName(),
+        : absolutePath(), relativePath(),
           diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(), specularShaderID(),
           defaultParams(),
           metadata(),
@@ -348,8 +349,9 @@ namespace GTEngine
                 }
             }
 
+            this->absolutePath = "";
+            this->relativePath = "";
 
-            this->fileName = "";
             return true;
         }
 
@@ -368,9 +370,39 @@ namespace GTEngine
         return result;
     }
 
-    bool MaterialDefinition::LoadFromFile(const char* fileNameIn)
+    bool MaterialDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn)
     {
-        auto file = GTCore::IO::Open(fileNameIn, GTCore::IO::OpenMode::Binary | GTCore::IO::OpenMode::Read);
+        GTCore::String newAbsolutePath;
+        GTCore::String newRelativePath;
+
+
+        if (GTCore::Path::IsAbsolute(fileNameIn))
+        {
+            newAbsolutePath = fileNameIn;
+
+            if (relativePathIn != nullptr)
+            {
+                newRelativePath = relativePathIn;
+            }
+            else
+            {
+                GTEngine::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileNameIn);
+                return false;
+            }
+        }
+        else
+        {
+            newRelativePath = fileNameIn;
+
+            if (!GTCore::IO::FindAbsolutePath(fileNameIn, newAbsolutePath))
+            {
+                return false;
+            }
+        }
+
+
+
+        auto file = GTCore::IO::Open(newAbsolutePath.c_str(), GTCore::IO::OpenMode::Binary | GTCore::IO::OpenMode::Read);
         if (file != nullptr)
         {
             size_t fileSize = static_cast<size_t>(GTCore::IO::Size(file));
@@ -388,8 +420,11 @@ namespace GTEngine
             free(data);
             GTCore::IO::Close(file);
 
-            // TODO: Should ensure the file name is relative to the data directory and not an absolute path.
-            this->fileName = fileNameIn;
+
+            // LoadFromXML() will have reset the paths to "" so we need to make sure they are set again.
+            this->absolutePath = newAbsolutePath;
+            this->relativePath = newRelativePath;
+
 
             return result;
         }

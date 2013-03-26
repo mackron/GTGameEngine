@@ -141,7 +141,7 @@ namespace GTEngine
 
                 for (size_t i = 0; i < definition.meshMaterials.count; ++i)
                 {
-                    materialsOut.PushBack(definition.meshMaterials[i]->GetDefinition().fileName);
+                    materialsOut.PushBack(definition.meshMaterials[i]->GetDefinition().relativePath);
                 }
             }
         }

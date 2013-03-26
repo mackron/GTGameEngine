@@ -3685,7 +3685,7 @@ namespace GTEngine
                             {
                                 auto index = script.ToInteger(2) - 1;   // Minus 1 because Lua is 1 based.
 
-                                script.Push(model->meshes[index]->GetMaterial()->GetDefinition().fileName.c_str());
+                                script.Push(model->meshes[index]->GetMaterial()->GetDefinition().relativePath.c_str());
                             }
                             else
                             {

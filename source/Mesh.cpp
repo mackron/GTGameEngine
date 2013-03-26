@@ -138,11 +138,11 @@ namespace GTEngine
     void Mesh::Serialize(GTCore::Serializer &serializer, bool serializeGeometry) const
     {
         // We'll write the material chunk first.
-        if (this->material != nullptr && !this->material->GetDefinition().fileName.IsEmpty())
+        if (this->material != nullptr && !this->material->GetDefinition().relativePath.IsEmpty())
         {
             GTCore::BasicSerializer materialSerializer;
             
-            materialSerializer.Write(this->material->GetDefinition().fileName);
+            materialSerializer.Write(this->material->GetDefinition().relativePath);
             this->material->Serialize(materialSerializer);
 
 

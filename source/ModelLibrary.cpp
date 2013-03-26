@@ -1826,7 +1826,7 @@ namespace GTEngine
             {
                 mtlsSizeInBytes += 4;                                   // <-- Variable for storing the index of the mesh this material is applied to.
                 mtlsSizeInBytes += 4;                                   // <-- Variable for storing the size of the
-                mtlsSizeInBytes += definition.meshMaterials[iMaterial] != nullptr ? definition.meshMaterials[iMaterial]->GetDefinition().fileName.GetLengthInTs() : 0;
+                mtlsSizeInBytes += definition.meshMaterials[iMaterial] != nullptr ? definition.meshMaterials[iMaterial]->GetDefinition().relativePath.GetLengthInTs() : 0;
             }
 
 
@@ -1849,9 +1849,9 @@ namespace GTEngine
                 }
                 else
                 {
-                    uint32_t length = static_cast<uint32_t>(material->GetDefinition().fileName.GetLength());
+                    uint32_t length = static_cast<uint32_t>(material->GetDefinition().relativePath.GetLength());
                     GTCore::IO::Write(file, &length, 4);
-                    GTCore::IO::Write(file, material->GetDefinition().fileName.c_str(), static_cast<size_t>(length));
+                    GTCore::IO::Write(file, material->GetDefinition().relativePath.c_str(), static_cast<size_t>(length));
                 }
             }
         }
