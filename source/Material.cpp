@@ -40,7 +40,7 @@ namespace GTEngine
 
 
     MaterialDefinition::MaterialDefinition()
-        : absolutePath(), relativePath(),
+        : absolutePath(), relativePath(), xmlString(),
           diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(), specularShaderID(),
           defaultParams(),
           metadata(),
@@ -87,6 +87,10 @@ namespace GTEngine
         {
             // We need to reset the definition.
             this->Reset();
+
+
+            // We need to keep track of the XML string.
+            this->xmlString = xml;
 
 
             // <diffuse>
@@ -434,6 +438,12 @@ namespace GTEngine
     }
 
 
+    const char* MaterialDefinition::GetXMLString() const
+    {
+        return this->xmlString.c_str();
+    }
+
+
     void MaterialDefinition::ParseFloatArray(const char* str, float* dest, size_t count)
     {
         assert(str != nullptr);
@@ -481,8 +491,10 @@ namespace GTEngine
 
     void MaterialDefinition::Reset()
     {
-        this->absolutePath = "";
-        this->relativePath = "";
+        this->absolutePath       = "";
+        this->relativePath       = "";
+
+        this->xmlString          = "";
 
         this->diffuseShaderID    = "";
         this->emissiveShaderID   = "";

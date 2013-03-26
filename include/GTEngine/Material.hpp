@@ -42,6 +42,9 @@ namespace GTEngine
         bool LoadFromFile(const char* fileName, const char* relativePath = nullptr);
 
 
+        /// Retrieves the XML string.
+        const char* GetXMLString() const;
+
 
         /// Sets the metadata pointer to use with the given key.
         ///
@@ -103,6 +106,10 @@ namespace GTEngine
 
         /// The relative path of the material.
         GTCore::String relativePath;
+
+
+        /// The XML string of the material.
+        GTCore::String xmlString;
 
 
         /// The ID of the diffuse shader.
