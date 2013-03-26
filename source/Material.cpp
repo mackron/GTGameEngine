@@ -70,6 +70,9 @@ namespace GTEngine
 
     bool MaterialDefinition::LoadFromXML(char* xml)
     {
+        GTCore::String newXMLString(xml);
+
+
         xml_document<> document;
 
         try
@@ -90,7 +93,7 @@ namespace GTEngine
 
 
             // We need to keep track of the XML string.
-            this->xmlString = xml;
+            this->xmlString = newXMLString;
 
 
             // <diffuse>
