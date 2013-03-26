@@ -257,10 +257,7 @@ namespace GTEngine
                         }
                         
 
-
-
-
-
+                        // We need to let everything know that the material has been reloaded.
                         MaterialLibrary_OnReloadMaterialDefinition(*definition);
 
                         return true;
