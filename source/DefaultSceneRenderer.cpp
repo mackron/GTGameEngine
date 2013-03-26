@@ -928,6 +928,22 @@ namespace GTEngine
         }
     }
 
+    void DefaultSceneRenderer::OnReloadMaterialDefinition(MaterialDefinition &definition)
+    {
+        // All we want to do is remove the metadata from the material definition and delete the old shaders. This will force the renderer to recreate the shaders
+        // when the material is used next.
+        auto shaders = static_cast<DefaultSceneRendererMaterialShaders*>(definition.GetMetadata(reinterpret_cast<size_t>(this)));
+        if (shaders != nullptr)
+        {
+            // Clear the metadata.
+            definition.SetMetadata(reinterpret_cast<size_t>(this), nullptr);
+
+            // Delete the old shaders.
+            delete shaders;
+            this->materialShadersToDelete.RemoveByKey(&definition);
+        }
+    }
+
 
 
     /////////////////////////////////////////////////////////

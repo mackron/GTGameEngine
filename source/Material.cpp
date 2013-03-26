@@ -85,6 +85,10 @@ namespace GTEngine
         auto materialNode = document.first_node("material");
         if (materialNode != nullptr)
         {
+            // We need to reset the definition.
+            this->Reset();
+
+
             // <diffuse>
             auto diffuseNode = materialNode->first_node("diffuse");
             if (diffuseNode != nullptr)
@@ -349,9 +353,6 @@ namespace GTEngine
                 }
             }
 
-            this->absolutePath = "";
-            this->relativePath = "";
-
             return true;
         }
 
@@ -472,6 +473,25 @@ namespace GTEngine
     void MaterialDefinition::RemoveMetadata(size_t key)
     {
         this->metadata.RemoveByKey(key);
+    }
+
+
+    //////////////////////////////////
+    // Private
+
+    void MaterialDefinition::Reset()
+    {
+        this->absolutePath = "";
+        this->relativePath = "";
+
+        this->diffuseShaderID    = "";
+        this->emissiveShaderID   = "";
+        this->shininessShaderID  = "";
+        this->normalShaderID     = "";
+        this->refractionShaderID = "";
+        this->specularShaderID   = "";
+
+        this->defaultParams.Clear();
     }
 }
 

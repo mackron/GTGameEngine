@@ -21,6 +21,9 @@ namespace GTEngine
         /// Constructor.
         ShaderParameterCache();
 
+        /// Copy constructor.
+        ShaderParameterCache(const ShaderParameterCache &other);
+
         /// Destructor.
         ~ShaderParameterCache();
 
@@ -51,6 +54,11 @@ namespace GTEngine
 
         /// This overload makes a local copy of the input parameter.
         void Set(const char* name, const ShaderParameter* parameter);
+
+
+        /// Unsets a parameter by name.
+        void Unset(const char* name);
+
 
 
         /// Retrieves a parameter by its name.

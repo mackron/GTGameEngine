@@ -296,6 +296,97 @@ namespace GTEngine
 
         return newProp;
     }
+
+
+    /// Compares two shader parameters for equality.
+    inline bool CompareShaderParameters(const ShaderParameter* parameterA, const ShaderParameter* parameterB)
+    {
+        assert(parameterA != nullptr);
+        assert(parameterB != nullptr);
+        {
+            if (parameterA->type == parameterB->type)
+            {
+                switch (parameterA->type)
+                {
+                case ShaderParameterType_Float:
+                    {
+                        return static_cast<const ShaderParameter_Float*>(parameterA)->value == static_cast<const ShaderParameter_Float*>(parameterB)->value;
+                    }
+                case ShaderParameterType_Float2:
+                    {
+                        return static_cast<const ShaderParameter_Float2*>(parameterA)->value == static_cast<const ShaderParameter_Float2*>(parameterB)->value;
+                    }
+                case ShaderParameterType_Float3:
+                    {
+                        return static_cast<const ShaderParameter_Float3*>(parameterA)->value == static_cast<const ShaderParameter_Float3*>(parameterB)->value;
+                    }
+                case ShaderParameterType_Float4:
+                    {
+                        return static_cast<const ShaderParameter_Float4*>(parameterA)->value == static_cast<const ShaderParameter_Float4*>(parameterB)->value;
+                    }
+
+
+                case ShaderParameterType_Integer:
+                    {
+                        return static_cast<const ShaderParameter_Integer*>(parameterA)->value == static_cast<const ShaderParameter_Integer*>(parameterB)->value;
+                    }
+                case ShaderParameterType_Integer2:
+                    {
+                        return static_cast<const ShaderParameter_Integer2*>(parameterA)->value == static_cast<const ShaderParameter_Integer2*>(parameterB)->value;
+                    }
+                case ShaderParameterType_Integer3:
+                    {
+                        return static_cast<const ShaderParameter_Integer3*>(parameterA)->value == static_cast<const ShaderParameter_Integer3*>(parameterB)->value;
+                    }
+                case ShaderParameterType_Integer4:
+                    {
+                        return static_cast<const ShaderParameter_Integer4*>(parameterA)->value == static_cast<const ShaderParameter_Integer4*>(parameterB)->value;
+                    }
+
+
+                case ShaderParameterType_Float2x2:
+                    {
+                        return static_cast<const ShaderParameter_Float2x2*>(parameterA)->value == static_cast<const ShaderParameter_Float2x2*>(parameterB)->value;
+                    }
+                case ShaderParameterType_Float3x3:
+                    {
+                        return static_cast<const ShaderParameter_Float3x3*>(parameterA)->value == static_cast<const ShaderParameter_Float3x3*>(parameterB)->value;
+                    }
+                case ShaderParameterType_Float4x4:
+                    {
+                        return static_cast<const ShaderParameter_Float4x4*>(parameterA)->value == static_cast<const ShaderParameter_Float4x4*>(parameterB)->value;
+                    }
+
+
+                case ShaderParameterType_Texture1D:
+                    {
+                        break;
+                    }
+
+                case ShaderParameterType_Texture2D:
+                    {
+                        return static_cast<const ShaderParameter_Texture2D*>(parameterA)->value == static_cast<const ShaderParameter_Texture2D*>(parameterB)->value;
+                    }
+
+                case ShaderParameterType_Texture3D:
+                    {
+                        break;
+                    }
+
+                case ShaderParameterType_TextureCube:
+                    {
+                        return static_cast<const ShaderParameter_TextureCube*>(parameterA)->value == static_cast<const ShaderParameter_TextureCube*>(parameterB)->value;
+                    }
+
+
+                default: break;
+                }
+            }
+        }
+
+        return false;
+    }
+
     
 #if defined(__clang__)
     #pragma GCC diagnostic pop

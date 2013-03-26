@@ -87,6 +87,13 @@ namespace GTEngine
         /// Determines whether or not the material is refractive.
         bool IsRefractive() const { return this->isRefractive; }
 
+
+    private:
+
+        /// Resets the definition to it's default state - i.e. clears the material.
+        ///
+        /// This does NOT clear metadata.
+        void Reset();
         
 
     public:
@@ -263,6 +270,12 @@ namespace GTEngine
         void SetParameter(const char* name, float x, float y, float z)          { this->SetParameter(name, glm::vec3(x, y, z)); }
         void SetParameter(const char* name, float x, float y, float z, float w) { this->SetParameter(name, glm::vec4(x, y, z, w)); }
         
+
+        // Unsets a parameter by it's name.
+        void UnsetParameter(const char* name)
+        {
+            this->parameters.Unset(name);
+        }
 
 
     private:
