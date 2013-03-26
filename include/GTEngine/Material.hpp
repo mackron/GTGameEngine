@@ -36,7 +36,10 @@ namespace GTEngine
         bool LoadFromXML(char* xml);        // <-- Needed because rapidxml takes a non-const string.
 
         /// Helper method for loading the material definition from a file.
-        bool LoadFromFile(const char* fileName);
+        ///
+        /// @remarks
+        ///     If 'fileName' is absolute, a relative path must also be specified. It is an error for 'fileName' to be absolute and 'relativePath' to be null.
+        bool LoadFromFile(const char* fileName, const char* relativePath = nullptr);
 
 
 
@@ -88,8 +91,12 @@ namespace GTEngine
 
     public:
 
-        /// The name of the file used to create the definition. This will be an empty string if it was not created from a file.
-        GTCore::String fileName;
+        /// The absolute paht of the material.
+        GTCore::String absolutePath;
+
+        /// The relative path of the material.
+        GTCore::String relativePath;
+
 
         /// The ID of the diffuse shader.
         GTCore::String diffuseShaderID;

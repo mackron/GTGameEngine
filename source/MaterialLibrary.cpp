@@ -1,9 +1,11 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/MaterialLibrary.hpp>
+#include <GTEngine/Errors.hpp>
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/List.hpp>
 #include <GTCore/Vector.hpp>
+#include <GTCore/Path.hpp>
 
 namespace GTEngine
 {
@@ -100,41 +102,61 @@ namespace GTEngine
     }
 
 
-    Material* MaterialLibrary::Create(const char* fileName)
+    Material* MaterialLibrary::Create(const char* fileName, const char* makeRelativeTo)
     {
-        // We create materials from material definitions. Thus, we'll need one first. If one already exists, we reuse that. Otherwise, we create a new one.
-        MaterialDefinition* definition = nullptr;
-        
-        auto iMaterialDefinition = MaterialDefinitions.Find(fileName);
-        if (iMaterialDefinition != nullptr)
+        GTCore::String relativePath(fileName);
+
+        if (GTCore::Path::IsAbsolute(fileName))
         {
-            definition = iMaterialDefinition->value;
-        }
-        else
-        {
-            definition = new MaterialDefinition;
-            if (definition->LoadFromFile(fileName))
+            if (makeRelativeTo != nullptr)
             {
-                MaterialDefinitions.Add(fileName, definition);
-                MaterialLibrary_OnCreateMaterialDefinition(*definition);
+                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
             }
             else
             {
-                delete definition;
-                definition = nullptr;
+                GTEngine::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
+                return nullptr;
             }
         }
 
 
-        // With the definition retrieved, we now need to move on to create the actual material.
-        if (definition != nullptr)
+        GTCore::String absolutePath;
+        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
         {
-            auto material = new Material(*definition);
-            LoadedMaterials.Append(material);
+            MaterialDefinition* definition = nullptr;
 
-            MaterialLibrary_OnCreateMaterial(*material);
+            auto iMaterialDefinition = MaterialDefinitions.Find(fileName);
+            if (iMaterialDefinition != nullptr)
+            {
+                // Definition is already loaded.
+                definition = iMaterialDefinition->value;
+            }
+            else
+            {
+                // Definition is not yet loaded.
+                definition = new MaterialDefinition;
+                if (definition->LoadFromFile(absolutePath.c_str(), relativePath.c_str()))
+                {
+                    MaterialDefinitions.Add(fileName, definition);
+                    MaterialLibrary_OnCreateMaterialDefinition(*definition);
+                }
+                else
+                {
+                    delete definition;
+                    definition = nullptr;
+                }
+            }
 
-            return material;
+            // With the definition retrieved, we now need to move on to create the actual material.
+            if (definition != nullptr)
+            {
+                auto material = new Material(*definition);
+                LoadedMaterials.Append(material);
+
+                MaterialLibrary_OnCreateMaterial(*material);
+
+                return material;
+            }
         }
 
         return nullptr;

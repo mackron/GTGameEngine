@@ -238,11 +238,11 @@ namespace GTEngine
         {
             if (this->definition.meshSkinningVertexAttributes[i] != nullptr)
             {
-                this->AttachMesh(this->definition.meshGeometries[i], this->definition.meshMaterials[i]->GetDefinition().fileName.c_str(), this->definition.meshSkinningVertexAttributes[i]);
+                this->AttachMesh(this->definition.meshGeometries[i], this->definition.meshMaterials[i]->GetDefinition().relativePath.c_str(), this->definition.meshSkinningVertexAttributes[i]);
             }
             else
             {
-                this->AttachMesh(this->definition.meshGeometries[i], this->definition.meshMaterials[i]->GetDefinition().fileName.c_str());
+                this->AttachMesh(this->definition.meshGeometries[i], this->definition.meshMaterials[i]->GetDefinition().relativePath.c_str());
             }
         }
     }
