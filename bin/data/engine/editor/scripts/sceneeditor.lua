@@ -310,6 +310,8 @@ function Editor.SceneEditor.CreateComponentPanel(parentPanel, componentID)
         element:DynamicsComponentPanel();
     elseif componentID == GTEngine.Components.Proximity then
         element:ProximityComponentPanel();
+    elseif componentID == GTEngine.Components.ParticleSystem then
+        element:ParticleSystemComponentPanel();
     elseif componentID == GTEngine.Components.Script then
         element:ScriptComponentPanel();
     elseif componentID == GTEngine.Components.EditorMetadata then 
@@ -1721,6 +1723,24 @@ function GTGUI.Element:ScriptComponentPanel()
 end
 
 
+
+function GTGUI.Element:ParticleSystemComponentPanel()
+    self:PanelGroupBox("Particle System", true);
+    
+    
+    
+
+    function self:Update(node)
+        self.CurrentNode      = node;
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.Camera);
+    end
+    
+
+    return self;
+end
+
+
+
 function GTGUI.Element:EditorMetadataComponentPanel()
     self:PanelGroupBox("Editor Metadata");
     
@@ -2082,12 +2102,21 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
         self:OnSceneNodeChanged();
     end);
     
+    self.NewComponentMenu:AppendNewItem("Particle System"):OnPressed(function()
+        self.CurrentSceneNode:AddComponent(GTEngine.Components.ParticleSystem);
+
+        self:UpdateComponentPanels();
+        self:OnSceneNodeChanged();
+    end);
+    
     self.NewComponentMenu:AppendNewItem("Script"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.Script);
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
     end);
+    
+    
     
     
     
