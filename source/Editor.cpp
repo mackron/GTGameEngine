@@ -287,6 +287,12 @@ namespace GTEngine
                         break;
                     }
 
+                case AssetType_ParticleSystem:
+                    {
+                        newSubEditor = new ParticleEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
                 case AssetType_Script:
                 case AssetType_TextFile:
                     {
@@ -294,11 +300,10 @@ namespace GTEngine
                         break;
                     }
 
+                
 
                 case AssetType_Sound:
-                case AssetType_ParticleSystem:
                 case AssetType_Prefab:
-
                 case AssetType_None:
                 default:
                     {
