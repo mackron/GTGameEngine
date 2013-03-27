@@ -257,6 +257,10 @@
     <ClInclude Include="..\..\..\include\GTEngine\ModelDefinition.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\NavigationMesh.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Particle.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleEmitter.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleSystem.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleSystemDefinition.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ParticleSystemLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\BaseCollisionWorld.hpp" />
@@ -480,6 +484,10 @@
     <ClCompile Include="..\..\..\source\ModelDefinition.cpp" />
     <ClCompile Include="..\..\..\source\ModelLibrary.cpp" />
     <ClCompile Include="..\..\..\source\NavigationMesh.cpp" />
+    <ClCompile Include="..\..\..\source\Particle.cpp" />
+    <ClCompile Include="..\..\..\source\ParticleEmitter.cpp" />
+    <ClCompile Include="..\..\..\source\ParticleSystem.cpp" />
+    <ClCompile Include="..\..\..\source\ParticleSystemDefinition.cpp" />
     <ClCompile Include="..\..\..\source\ParticleSystemLibrary.cpp" />
     <ClCompile Include="..\..\..\source\Physics\BaseCollisionWorld.cpp" />
     <ClCompile Include="..\..\..\source\Physics\btEllipsoidShape.cpp" />

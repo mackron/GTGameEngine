@@ -851,6 +851,18 @@
     <ClInclude Include="..\..\..\include\GTEngine\ParticleSystemLibrary.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleSystem.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleSystemDefinition.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleEmitter.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Particle.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1439,6 +1451,18 @@
       <Filter>source\Editor\ParticleEditor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ParticleSystemLibrary.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ParticleSystem.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ParticleSystemDefinition.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ParticleEmitter.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Particle.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
