@@ -3,6 +3,8 @@
 #ifndef __GTEngine_ParticleSystemLibrary_hpp_
 #define __GTEngine_ParticleSystemLibrary_hpp_
 
+#include "ParticleSystem.hpp"
+
 namespace GTEngine
 {
     /// Static class for managing loaded particle systems.

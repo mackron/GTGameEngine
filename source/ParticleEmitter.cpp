@@ -11,4 +11,9 @@ namespace GTEngine
     ParticleEmitter::~ParticleEmitter()
     {
     }
+
+
+    void ParticleEmitter::Update(double deltaTimeInSeconds)
+    {
+    }
 }

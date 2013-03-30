@@ -12,17 +12,13 @@ namespace GTEngine
     DefaultGUIRenderer::DefaultGUIRenderer()
         : shader(ShaderLibrary::GetGUIShader()),
           viewportWidth(0), viewportHeight(0), projection(0),
-          textures(),
-          vertexArray(GTEngine::Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P2T2C4))
+          textures()
     {
-        assert(shader      != nullptr);
-        assert(vertexArray != nullptr);
+        assert(shader != nullptr);
     }
 
     DefaultGUIRenderer::~DefaultGUIRenderer()
     {
-        GTEngine::Renderer::DeleteVertexArray(this->vertexArray);
-
         for (size_t i = 0; i < this->textures.count; ++i)
         {
             GTEngine::Renderer::DeleteTexture2D(this->textures.buffer[i]->value);
@@ -101,10 +97,9 @@ namespace GTEngine
             GTEngine::Renderer::DisableBlending();  // Ensure blending is disabled for performance.
         }
 
-        // We're going to do something a little inefficient here until we can improve it later. We'll use a single vertex array and update the data for every
-        // call to this function.
-        this->vertexArray->SetData(vertices, vertexCount, indices, indexCount);
-        GTEngine::Renderer::Draw(*vertexArray);
+
+        // Draw.
+        GTEngine::Renderer::Draw(vertices, vertexCount, indices, indexCount, VertexFormat::P2T2C4);
     }
 
 

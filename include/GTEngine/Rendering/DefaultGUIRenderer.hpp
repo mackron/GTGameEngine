@@ -55,9 +55,6 @@ namespace GTEngine
 
         /// The list of textures currently loaded by the GUI.
         GTCore::Map<const GTImage::Image*, Texture2D*> textures;
-
-        /// The main vertex array.
-        VertexArray* vertexArray;
         
         
     private:    // No copying.
