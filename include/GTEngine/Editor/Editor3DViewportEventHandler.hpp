@@ -78,10 +78,6 @@ namespace GTEngine
         int mousePosY;
 
 
-        /// The vertex array for drawing the quad.
-        VertexArray* vertexArray;
-
-
     private:    // No copying.
         Editor3DViewportEventHandler(const Editor3DViewportEventHandler &);
         Editor3DViewportEventHandler & operator=(const Editor3DViewportEventHandler &);

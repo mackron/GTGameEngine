@@ -349,11 +349,28 @@ namespace GTEngine
         
         /// Draws the elements defined in the given vertex data.
         ///
+        /// @param vertices    [in] A pointer to the vertex data.
+        /// @param vertexCount [in] The number of vertices defined in 'vertices'.
+        /// @param indices     [in] A pointer to the buffer containing the index data.
+        /// @param format      [in] The format of the vertex data.
+        /// @param mode        [in] The primitives to draw (triangles or lines).
+        ///
+        /// @remarks
+        ///     This function will copy the data. 'vertexCount' is only used in determining how much data to copy.
+        static void Draw(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode = DrawMode_Triangles);
+
+        /// Draws the elements defined in the given vertex data.
+        ///
         /// @param vertices [in] A pointer to the vertex data.
         /// @param indices  [in] A pointer to the buffer containing the index data.
         /// @param format   [in] The format of the vertex data.
         /// @param mode     [in] The primitives to draw (triangles or lines).
-        //static void Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode = DrawMode_Triangles);
+        ///
+        /// @remarks
+        ///     Internally, this function needs to copy the data. To do this, it needs to have a reliable vertex count. This version of Draw() will
+        ///     iterate over each index in determining how much data to copy. If the vertex count is already know, use the version of Draw() that
+        ///     takes the vertex count.
+        static void Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode = DrawMode_Triangles);
 
 
 

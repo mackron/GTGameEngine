@@ -9,14 +9,12 @@ namespace GTEngine
 {
     Editor3DViewportEventHandler::Editor3DViewportEventHandler(Game &game, SceneViewport &viewport)
         : game(game), viewport(viewport),
-          mousePosX(0), mousePosY(0),
-          vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P2T2))
+          mousePosX(0), mousePosY(0)
     {
     }
 
     Editor3DViewportEventHandler::~Editor3DViewportEventHandler()
     {
-        Renderer::DeleteVertexArray(this->vertexArray);
     }
 
 
@@ -76,9 +74,7 @@ namespace GTEngine
                 2, 3, 0,
             };
 
-            this->vertexArray->SetData(quadVertices, 4, quadIndices, 6);
-
-            Renderer::Draw(*this->vertexArray);
+            Renderer::Draw(quadVertices, 4, quadIndices, 6, VertexFormat::P2T2);
         }
     }
 

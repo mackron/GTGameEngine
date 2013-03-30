@@ -7,6 +7,9 @@
 
 namespace GTEngine
 {
+    /// Class used for emitting particles.
+    ///
+    /// The particles emitted by an emitter is basically just a big mesh.
     class ParticleEmitter
     {
     public:
@@ -18,8 +21,18 @@ namespace GTEngine
         ~ParticleEmitter();
 
 
+        /// Updates the emitter.
+        ///
+        /// @param deltaTimeInSeconds [in] The delta time for doing time-based movement.
+        ///
+        /// @remarks
+        ///     This will update the relevant properties of each particle and also spawn/delete particles where necessary.
+        void Update(double deltaTimeInSeconds);
+
+
 
     private:
+
 
 
     };

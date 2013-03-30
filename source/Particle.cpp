@@ -5,6 +5,7 @@
 namespace GTEngine
 {
     Particle::Particle()
+        : position(), orientation(), scale(1.0f, 1.0f, 1.0f), timeLeftToDeath(1.0)
     {
     }
 

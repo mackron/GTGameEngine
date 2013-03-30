@@ -20,6 +20,7 @@
 #include "../Debugging_OpenGL.hpp"
 #include "../TypeConversion.hpp"
 #include "State_OpenGL33.hpp"
+#include "ServerState_OpenGL33.hpp"
 #include "VertexArray_OpenGL33.hpp"
 #include "Texture2D_OpenGL33.hpp"
 #include "TextureCube_OpenGL33.hpp"
@@ -219,6 +220,20 @@ namespace GTEngine
                 glEnable(GL_DEPTH_TEST);
                 glEnable(GL_CULL_FACE);
                 //glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+
+                // The default VAO/VBO.
+                glGenVertexArrays(1, &ServerState_DefaultVAO);
+                glGenBuffers(1, &ServerState_DefaultVBO);
+                glGenBuffers(1, &ServerState_DefaultIBO);
+
+                glBindVertexArray(ServerState_DefaultVAO);
+                glBindBuffer(GL_ARRAY_BUFFER,         ServerState_DefaultVBO);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ServerState_DefaultIBO);
+
+                ServerState_GL_VERTEX_ARRAY_BINDING = ServerState_DefaultVAO;
+                ServerState_GL_ARRAY_BUFFER_BINDING = ServerState_DefaultVBO;
+
 
 
                 // We're going to initialise the X11 sub-system from here.
@@ -964,7 +979,7 @@ namespace GTEngine
         UPDATE_CURRENT_RC(RCDraw);
         assert(State.currentRCDraw != nullptr);
         {
-            State.currentRCDraw->Draw(vertexArrayGL33.GetOpenGLObjectPtr(), vertexArrayGL33.GetOpenGLVertexObjectPtr(), ToOpenGLDrawMode(mode), vertexArrayGL33.GetIndexCount());
+            State.currentRCDraw->Draw(vertexArrayGL33.GetOpenGLObjectPtr(), vertexArrayGL33.GetOpenGLVertexObjectPtr(), ToOpenGLDrawMode(mode), static_cast<GLsizei>(vertexArrayGL33.GetIndexCount()));
         }
 
         State.currentRCSetGlobalState      = nullptr;
@@ -974,6 +989,45 @@ namespace GTEngine
         State.currentRCSetFramebufferState = nullptr;
         State.currentRCClear               = nullptr;
         State.currentRCDraw                = nullptr;
+    }
+
+    void Renderer::Draw(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
+    {
+        UPDATE_CURRENT_RC(RCDraw);
+        assert(State.currentRCDraw != nullptr);
+        {
+            State.currentRCDraw->Draw(vertices, static_cast<GLsizei>(vertexCount), indices, static_cast<GLsizei>(indexCount), format, ToOpenGLDrawMode(mode));
+        }
+
+        State.currentRCSetGlobalState      = nullptr;
+        State.currentRCSetVertexArrayState = nullptr;
+        State.currentRCSetTextureState     = nullptr;
+        State.currentRCSetShaderState      = nullptr;
+        State.currentRCSetFramebufferState = nullptr;
+        State.currentRCClear               = nullptr;
+        State.currentRCDraw                = nullptr;
+    }
+
+
+    void Renderer::Draw(const float* vertices, const unsigned int* indices, size_t indexCount, const VertexFormat &format, DrawMode mode)
+    {
+        size_t vertexCount = 0;
+
+        // We need to determine the vertex count by looking at the indices. We need the vertex count so we can know how much data to copy.
+        for (size_t i = 0; i < indexCount; ++i)
+        {
+            if (indices[i] > vertexCount)
+            {
+                vertexCount = indices[i];
+            }
+        }
+
+        // We just +1 to make the vertex count 1 based.
+        vertexCount += 1;
+
+
+        // Now we just draw like normal.
+        Renderer::Draw(vertices, vertexCount, indices, indexCount, format, mode);
     }
 
 
