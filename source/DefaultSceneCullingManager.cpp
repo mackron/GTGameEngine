@@ -449,7 +449,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneCullingManager::QueryPointLightContacts(const SceneObject &light, VisibilityCallback &callback) const
+    void DefaultSceneCullingManager::QueryPointLightContacts(const SceneObject &light, VisibilityCallback &callbackIn) const
     {
         assert(this->pointLights.Exists(&light));
         {
@@ -461,7 +461,7 @@ namespace GTEngine
                     auto metadata = iMetadata->value;
                     assert(metadata != nullptr);
                     {
-                        LightContactTestCallback callback(light, callback, CollisionGroups::PointLight, CollisionGroups::Model);
+                        LightContactTestCallback callback(light, callbackIn, CollisionGroups::PointLight, CollisionGroups::Model);
                         this->world.ContactTest(*metadata->collisionObject, callback);
                     }
                 }
@@ -469,7 +469,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneCullingManager::QuerySpotLightContacts(const SceneObject &light, VisibilityCallback &callback) const
+    void DefaultSceneCullingManager::QuerySpotLightContacts(const SceneObject &light, VisibilityCallback &callbackIn) const
     {
         assert(this->spotLights.Exists(&light));
         {
@@ -481,7 +481,7 @@ namespace GTEngine
                     auto metadata = iMetadata->value;
                     assert(metadata != nullptr);
                     {
-                        LightContactTestCallback callback(light, callback, CollisionGroups::SpotLight, CollisionGroups::Model);
+                        LightContactTestCallback callback(light, callbackIn, CollisionGroups::SpotLight, CollisionGroups::Model);
                         this->world.ContactTest(*metadata->collisionObject, callback);
                     }
                 }

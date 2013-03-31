@@ -21,8 +21,8 @@ namespace GTEngine
     struct SceneCullingCallback : SceneCullingManager::VisibilityCallback
     {
         /// Constructor
-        SceneCullingCallback(GTCore::Vector<ModelComponent*> &modelComponentsOut, GTCore::Vector<PointLightComponent*> &pointLightComponentsOut, GTCore::Vector<SpotLightComponent*> &spotLightComponentsOut,
-                             GTCore::Vector<AmbientLightComponent*> &ambientLightComponentsOut, GTCore::Vector<DirectionalLightComponent*> &directionalLightComponentsOut)
+        SceneCullingCallback(GTCore::Vector<const ModelComponent*> &modelComponentsOut, GTCore::Vector<const PointLightComponent*> &pointLightComponentsOut, GTCore::Vector<const SpotLightComponent*> &spotLightComponentsOut,
+                             GTCore::Vector<const AmbientLightComponent*> &ambientLightComponentsOut, GTCore::Vector<const DirectionalLightComponent*> &directionalLightComponentsOut)
             : modelComponents(modelComponentsOut), pointLightComponents(pointLightComponentsOut), spotLightComponents(spotLightComponentsOut),
               ambientLightComponents(ambientLightComponentsOut), directionalLightComponents(directionalLightComponentsOut)
         {
@@ -35,11 +35,11 @@ namespace GTEngine
 
 
         /// VisibleCallback::ProcessObjectModel().
-        virtual void ProcessObjectModel(SceneObject &object)
+        virtual void ProcessObjectModel(const SceneObject &object)
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::ModelComponent>();
+                auto component = static_cast<const SceneNode &>(object).GetComponent<GTEngine::ModelComponent>();
                 if (component != nullptr)
                 {
                     this->modelComponents.PushBack(component);
@@ -48,11 +48,11 @@ namespace GTEngine
         }
 
         /// VisibleCallback::ProcessObjectPointLight().
-        virtual void ProcessObjectPointLight(SceneObject &object)
+        virtual void ProcessObjectPointLight(const SceneObject &object)
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::PointLightComponent>();
+                auto component = static_cast<const SceneNode &>(object).GetComponent<GTEngine::PointLightComponent>();
                 if (component != nullptr)
                 {
                     this->pointLightComponents.PushBack(component);
@@ -61,11 +61,11 @@ namespace GTEngine
         }
 
         /// VisibleCallback::ProcessObjectSpotLight().
-        virtual void ProcessObjectSpotLight(SceneObject &object)
+        virtual void ProcessObjectSpotLight(const SceneObject &object)
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::SpotLightComponent>();
+                auto component = static_cast<const SceneNode &>(object).GetComponent<GTEngine::SpotLightComponent>();
                 if (component != nullptr)
                 {
                     this->spotLightComponents.PushBack(component);
@@ -75,11 +75,11 @@ namespace GTEngine
 
 
         /// VisibleCallback::ProcessObjectAmbientLight().
-        virtual void ProcessObjectAmbientLight(SceneObject &object)
+        virtual void ProcessObjectAmbientLight(const SceneObject &object)
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::AmbientLightComponent>();
+                auto component = static_cast<const SceneNode &>(object).GetComponent<GTEngine::AmbientLightComponent>();
                 if (component != nullptr)
                 {
                     this->ambientLightComponents.PushBack(component);
@@ -88,11 +88,11 @@ namespace GTEngine
         }
 
         /// VisibleCallback::ProcessObjectDirectionalLight().
-        virtual void ProcessObjectDirectionalLight(SceneObject &object)
+        virtual void ProcessObjectDirectionalLight(const SceneObject &object)
         {
             if (object.GetType() == SceneObjectType_SceneNode)
             {
-                auto component = static_cast<SceneNode &>(object).GetComponent<GTEngine::DirectionalLightComponent>();
+                auto component = static_cast<const SceneNode &>(object).GetComponent<GTEngine::DirectionalLightComponent>();
                 if (component != nullptr)
                 {
                     this->directionalLightComponents.PushBack(component);
@@ -102,11 +102,11 @@ namespace GTEngine
 
 
     private:
-        GTCore::Vector<ModelComponent*>            &modelComponents;
-        GTCore::Vector<PointLightComponent*>       &pointLightComponents;
-        GTCore::Vector<SpotLightComponent*>        &spotLightComponents;
-        GTCore::Vector<AmbientLightComponent*>     &ambientLightComponents;
-        GTCore::Vector<DirectionalLightComponent*> &directionalLightComponents;
+        GTCore::Vector<const ModelComponent*>            &modelComponents;
+        GTCore::Vector<const PointLightComponent*>       &pointLightComponents;
+        GTCore::Vector<const SpotLightComponent*>        &spotLightComponents;
+        GTCore::Vector<const AmbientLightComponent*>     &ambientLightComponents;
+        GTCore::Vector<const DirectionalLightComponent*> &directionalLightComponents;
 
 
     private:    // No copying.

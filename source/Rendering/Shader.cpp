@@ -120,6 +120,15 @@ namespace GTEngine
                     this->SetUniform(uniformName, static_cast<ShaderParameter_TextureCube*>(uniformValue)->value);
                     break;
                 }
+                
+            
+            case ShaderParameterType_Integer:
+            case ShaderParameterType_Integer2:
+            case ShaderParameterType_Integer3:
+            case ShaderParameterType_Integer4:
+            case ShaderParameterType_Texture1D:
+            case ShaderParameterType_Texture3D:
+            default: break;
             }
         }
     }
