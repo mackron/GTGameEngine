@@ -63,8 +63,9 @@ namespace GTEngine
         /// Constructor
         DefaultSceneRendererFramebuffer(unsigned int widthIn, unsigned int heightIn)
             : framebuffer(nullptr),
-              depthStencilBuffer(nullptr), opaqueColourBuffer(nullptr), lightingBuffer0(nullptr), lightingBuffer1(nullptr),
-              finalColourBufferHDR(nullptr), finalColourBuffer(nullptr),
+              depthStencilBuffer(nullptr), opaqueColourBuffer(nullptr), finalColourBufferHDR(nullptr),
+              lightingBuffer0(nullptr), lightingBuffer1(nullptr),
+              finalColourBuffer(nullptr),
               bloomFramebuffer(nullptr), bloomBuffer(nullptr),
               width(widthIn), height(heightIn)
         {

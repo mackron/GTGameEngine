@@ -172,6 +172,7 @@ namespace GTEngine
 
     void ParticleEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
+        (void)item;
     }
 
 

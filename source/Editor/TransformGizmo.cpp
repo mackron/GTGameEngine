@@ -10,8 +10,8 @@ namespace GTEngine
         : position(), orientation(), scale(1.0f, 1.0f, 1.0f),
           isVisible(false), showingTranslationHandles(false), showingRotationHandles(false), showingScaleHandles(false),
           xTranslateHandle(HandleAxis_X), yTranslateHandle(HandleAxis_Y), zTranslateHandle(HandleAxis_Z),
-          xScaleHandle(HandleAxis_X),     yScaleHandle(HandleAxis_Y),     zScaleHandle(HandleAxis_Z),
-          xRotateHandle(HandleAxis_X),    yRotateHandle(HandleAxis_Y),    zRotateHandle(HandleAxis_Z), cameraFacingRotateHandle(HandleAxis_FrontFacing)
+          xRotateHandle(HandleAxis_X),    yRotateHandle(HandleAxis_Y),    zRotateHandle(HandleAxis_Z), cameraFacingRotateHandle(HandleAxis_FrontFacing),
+          xScaleHandle(HandleAxis_X),     yScaleHandle(HandleAxis_Y),     zScaleHandle(HandleAxis_Z)
     {
     }
 
