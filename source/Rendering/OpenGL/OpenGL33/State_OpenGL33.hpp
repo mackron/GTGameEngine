@@ -20,6 +20,7 @@
 #include "RCSetFramebufferState.hpp"
 
 #include "../CapabilityBits.hpp"
+#include "TextureState_OpenGL33.hpp"
 #include "ShaderState_OpenGL33.hpp"
 #include "FramebufferState_OpenGL33.hpp"
 
@@ -64,7 +65,7 @@ namespace GTEngine
 
 
         /// The list of currently instantiated textures. This includes all texture types.
-        GTCore::Vector<GLuint*> instantiatedTextureObjects;
+        GTCore::Vector<TextureState_OpenGL33*> instantiatedTextureObjects;
 
         /// The list of currently instantiated shader programs.
         GTCore::Vector<ShaderState_OpenGL33*> instantiatedProgramObjects;
@@ -80,7 +81,7 @@ namespace GTEngine
         
 
         /// The list texture objects that need to be deleted.
-        GTCore::Vector<GLuint*> deletedTextureObjects[2];
+        GTCore::Vector<TextureState_OpenGL33*> deletedTextureObjects[2];
 
         /// The list of shader programs that need to be deleted.
         GTCore::Vector<ShaderState_OpenGL33*> deletedProgramObjects[2];
@@ -115,7 +116,7 @@ namespace GTEngine
 
         
         /// Marks a texture as deleted.
-        void MarkTextureObjectAsDeleted(GLuint* textureObject);
+        void MarkTextureObjectAsDeleted(TextureState_OpenGL33* textureObject);
 
         /// Marks a shader program as deleted.
         void MarkProgramObjectAsDeleted(ShaderState_OpenGL33* programObject);

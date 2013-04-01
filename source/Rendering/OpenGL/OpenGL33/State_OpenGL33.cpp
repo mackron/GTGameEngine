@@ -26,12 +26,12 @@ namespace GTEngine
     }
 
 
-    void State_OpenGL33::MarkTextureObjectAsDeleted(GLuint* textureObject)
+    void State_OpenGL33::MarkTextureObjectAsDeleted(TextureState_OpenGL33* textureState)
     {
-        assert(this->instantiatedTextureObjects.Exists(textureObject));
+        assert(this->instantiatedTextureObjects.Exists(textureState));
         {
-            this->instantiatedTextureObjects.RemoveFirstOccuranceOf(textureObject);
-            this->deletedTextureObjects[this->backIndex].PushBack(textureObject);
+            this->instantiatedTextureObjects.RemoveFirstOccuranceOf(textureState);
+            this->deletedTextureObjects[this->backIndex].PushBack(textureState);
         }
     }
 

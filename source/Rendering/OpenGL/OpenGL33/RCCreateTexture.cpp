@@ -6,17 +6,17 @@
 namespace GTEngine
 {
     RCCreateTexture::RCCreateTexture()
-        : textureObject(nullptr)
+        : textureState(nullptr)
     {
     }
 
-    void RCCreateTexture::CreateTexture(GLuint* textureObjectIn)
+    void RCCreateTexture::CreateTexture(TextureState_OpenGL33* textureStateIn)
     {
-        this->textureObject = textureObjectIn;
+        this->textureState = textureStateIn;
     }
 
     void RCCreateTexture::Execute()
     {
-        glGenTextures(1, this->textureObject);
+        glGenTextures(1, &this->textureState->objectGL);
     }
 }

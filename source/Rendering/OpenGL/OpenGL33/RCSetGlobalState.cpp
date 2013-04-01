@@ -497,24 +497,24 @@ namespace GTEngine
                 auto &texture = textures.buffer[i]->value;
 
                 glActiveTexture(GL_TEXTURE0 + texture.textureUnit);
-                glBindTexture(texture.textureTarget, *texture.textureObject);
+                glBindTexture(texture.textureTarget, texture.textureState->objectGL);
 
                 // State needs to be set.
                 if (texture.textureTarget == GL_TEXTURE_1D)
                 {
-                    ServerState_GL_TEXTURE_BINDING_1D = *texture.textureObject;
+                    ServerState_GL_TEXTURE_BINDING_1D = texture.textureState->objectGL;
                 }
                 else if (texture.textureTarget == GL_TEXTURE_2D)
                 {
-                    ServerState_GL_TEXTURE_BINDING_2D = *texture.textureObject;
+                    ServerState_GL_TEXTURE_BINDING_2D = texture.textureState->objectGL;
                 }
                 else if (texture.textureTarget == GL_TEXTURE_3D)
                 {
-                    ServerState_GL_TEXTURE_BINDING_3D = *texture.textureObject;
+                    ServerState_GL_TEXTURE_BINDING_3D = texture.textureState->objectGL;
                 }
                 else if (texture.textureTarget == GL_TEXTURE_CUBE_MAP)
                 {
-                    ServerState_GL_TEXTURE_BINDING_CUBE = *texture.textureObject;
+                    ServerState_GL_TEXTURE_BINDING_CUBE = texture.textureState->objectGL;
                 }
             }
 

@@ -6,6 +6,9 @@
 #include <GTEngine/Rendering/Texture2D.hpp>
 #include <gtgl/gtgl.h>
 
+#include "TextureState_OpenGL33.hpp"
+
+
 namespace GTEngine
 {
     class Texture2D_OpenGL33 : public Texture2D
@@ -13,26 +16,26 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        Texture2D_OpenGL33(GLuint* objectGLIn, GLenum targetIn);
+        Texture2D_OpenGL33(TextureState_OpenGL33* stateGLIn, GLenum targetIn);
 
         /// Destructor.
         ~Texture2D_OpenGL33();
 
 
-        /// Retrieves a pointer to the OpenGL object.
-        GLuint* GetOpenGLObjectPtr() const;
+        /// Retrieves a pointer to the OpenGL state object.
+        TextureState_OpenGL33* GetOpenGLState() const;
 
-        /// Retrieves the target.
+        /// Retrieves the OpenGL texture target for this texture.
         GLenum GetTarget() const;
 
 
 
     private:
 
-        /// A pointer to the OpenGL object.
-        GLuint* objectGL;
+        /// A pointer to the structure containing the OpenGL state.
+        TextureState_OpenGL33* stateGL;
 
-        /// The target.
+        /// The texture target.
         GLenum target;
         
         

@@ -10,6 +10,8 @@
 #include <GTCore/String.hpp>
 #include <gtgl/gtgl.h>
 
+#include "TextureState_OpenGL33.hpp"
+
 
 namespace GTEngine
 {
@@ -243,18 +245,18 @@ namespace GTEngine
         /// Structure containing information about a texture being used by the shader.
         struct TextureParameter : public Parameter
         {
-            TextureParameter(GLuint* textureObjectIn, GLenum textureTargetIn, GLint textureUnitIn = 0)
-                : Parameter(), textureObject(textureObjectIn), textureTarget(textureTargetIn), textureUnit(textureUnitIn)
+            TextureParameter(TextureState_OpenGL33* textureStateIn, GLenum textureTargetIn, GLint textureUnitIn = 0)
+                : Parameter(), textureState(textureStateIn), textureTarget(textureTargetIn), textureUnit(textureUnitIn)
             {
             }
 
-            TextureParameter(GLint locationIn, GLuint* textureObjectIn, GLenum textureTargetIn, GLint textureUnitIn = 0)
-                : Parameter(locationIn), textureObject(textureObjectIn), textureTarget(textureTargetIn), textureUnit(textureUnitIn)
+            TextureParameter(GLint locationIn, TextureState_OpenGL33* textureStateIn, GLenum textureTargetIn, GLint textureUnitIn = 0)
+                : Parameter(locationIn), textureState(textureStateIn), textureTarget(textureTargetIn), textureUnit(textureUnitIn)
             {
             }
 
             TextureParameter(const TextureParameter &other)
-                : Parameter(other), textureObject(other.textureObject), textureTarget(other.textureTarget), textureUnit(other.textureUnit)
+                : Parameter(other), textureState(other.textureState), textureTarget(other.textureTarget), textureUnit(other.textureUnit)
             {
             }
 
@@ -262,7 +264,7 @@ namespace GTEngine
             {
                 Parameter::operator=(other);
 
-                this->textureObject = other.textureObject;
+                this->textureState  = other.textureState;
                 this->textureTarget = other.textureTarget;
                 this->textureUnit   = other.textureUnit;
 
@@ -271,8 +273,8 @@ namespace GTEngine
 
 
 
-            /// A pointer to the relevant texture object.
-            GLuint* textureObject;
+            /// A pointer to the relevant texture state.
+            TextureState_OpenGL33* textureState;
 
             /// The texture target. Needed for binding.
             GLenum textureTarget;

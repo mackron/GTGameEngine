@@ -6,6 +6,9 @@
 #include <GTEngine/Rendering/TextureCube.hpp>
 #include <gtgl/gtgl.h>
 
+#include "TextureState_OpenGL33.hpp"
+
+
 namespace GTEngine
 {
     class TextureCube_OpenGL33 : public TextureCube
@@ -13,20 +16,20 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        TextureCube_OpenGL33(GLuint* objectGLIn, Texture2D* positiveX, Texture2D* negativeX, Texture2D* positiveY, Texture2D* negativeY, Texture2D* positiveZ, Texture2D* negativeZ);
+        TextureCube_OpenGL33(TextureState_OpenGL33* stateGLIn, Texture2D* positiveX, Texture2D* negativeX, Texture2D* positiveY, Texture2D* negativeY, Texture2D* positiveZ, Texture2D* negativeZ);
 
         /// Destructor.
         ~TextureCube_OpenGL33();
 
 
         /// Retrieves a pointer to the OpenGL object.
-        GLuint* GetOpenGLObjectPtr() const;
+        TextureState_OpenGL33* GetOpenGLState() const;
 
 
     private:
 
         /// A pointer to the OpenGL object.
-        GLuint* objectGL;
+        TextureState_OpenGL33* stateGL;
         
         
     private:    // No copying.

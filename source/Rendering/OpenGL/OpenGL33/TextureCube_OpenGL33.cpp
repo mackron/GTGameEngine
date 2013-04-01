@@ -4,8 +4,8 @@
 
 namespace GTEngine
 {
-    TextureCube_OpenGL33::TextureCube_OpenGL33(GLuint* objectGLIn, Texture2D* positiveX, Texture2D* negativeX, Texture2D* positiveY, Texture2D* negativeY, Texture2D* positiveZ, Texture2D* negativeZ)
-        : TextureCube(positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ), objectGL(objectGLIn)
+    TextureCube_OpenGL33::TextureCube_OpenGL33(TextureState_OpenGL33* stateGLIn, Texture2D* positiveX, Texture2D* negativeX, Texture2D* positiveY, Texture2D* negativeY, Texture2D* positiveZ, Texture2D* negativeZ)
+        : TextureCube(positiveX, negativeX, positiveY, negativeY, positiveZ, negativeZ), stateGL(stateGLIn)
     {
     }
 
@@ -14,8 +14,8 @@ namespace GTEngine
     }
 
 
-    GLuint* TextureCube_OpenGL33::GetOpenGLObjectPtr() const
+    TextureState_OpenGL33* TextureCube_OpenGL33::GetOpenGLState() const
     {
-        return this->objectGL;
+        return this->stateGL;
     }
 }

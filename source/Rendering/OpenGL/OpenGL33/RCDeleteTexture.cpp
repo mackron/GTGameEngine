@@ -6,17 +6,17 @@
 namespace GTEngine
 {
     RCDeleteTexture::RCDeleteTexture()
-        : textureObject(nullptr)
+        : textureState(nullptr)
     {
     }
 
-    void RCDeleteTexture::DeleteTexture(GLuint* textureObjectIn)
+    void RCDeleteTexture::DeleteTexture(TextureState_OpenGL33* textureStateIn)
     {
-        this->textureObject = textureObjectIn;
+        this->textureState = textureStateIn;
     }
 
     void RCDeleteTexture::Execute()
     {
-        glDeleteTextures(1, this->textureObject);
+        glDeleteTextures(1, &this->textureState->objectGL);
     }
 }
