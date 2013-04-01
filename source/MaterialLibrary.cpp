@@ -210,13 +210,10 @@ namespace GTEngine
                     ShaderParameterCache oldDefaultParameters(definition->defaultParams);
 
 
-
                     bool result = definition->LoadFromFile(definition->absolutePath.c_str(), definition->relativePath.c_str());
                     if (result)
                     {
-                        // Materials linked to the definition need to have their parameters set to their new defaults. Any default parameters that have been
-                        // removed need to be removed from the linked materials. If the default parameter is still present and has not been modified by the
-                        // material, it will be changed to the new default.
+                        // Now we just iterate over material that uses the definition in question and update the default parameters.
                         for (auto iMaterial = LoadedMaterials.root; iMaterial != nullptr; iMaterial = iMaterial->next)
                         {
                             auto material = iMaterial->value;
@@ -224,34 +221,7 @@ namespace GTEngine
                             {
                                 if (&material->GetDefinition() == definition)
                                 {
-                                    for (size_t iParameter = 0; iParameter < oldDefaultParameters.GetCount(); ++iParameter)
-                                    {
-                                        auto parameterName = oldDefaultParameters.GetNameByIndex(iParameter);
-                                        assert(parameterName != nullptr);
-                                        {
-                                            auto oldParameter = oldDefaultParameters.GetByIndex(iParameter);
-                                            auto newParameter = definition->defaultParams.Get(parameterName);
-
-                                            if (newParameter == nullptr)
-                                            {
-                                                // The parameter doesn't exist anymore. It needs to be removed from the material.
-                                                material->UnsetParameter(parameterName);
-                                            }
-                                            else
-                                            {
-                                                // The parameter still exists, but we need to check if it needs replacing.
-                                                auto iMaterialParameter = material->GetParameters().Find(parameterName);
-                                                if (iMaterialParameter != nullptr)
-                                                {
-                                                    if (CompareShaderParameters(oldParameter, iMaterialParameter->value))
-                                                    {
-                                                        // We'll replace the parameter.
-                                                        material->SetParameter(parameterName, newParameter);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                    material->ResetDefaultParameters(oldDefaultParameters);
                                 }
                             }
                         }
