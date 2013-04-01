@@ -20,9 +20,6 @@ namespace GTEngine
 
     State_OpenGL33::~State_OpenGL33()
     {
-        // We call this twice just to make sure both the back and front buffers are cleared correctly.
-        this->ClearDeletedOpenGLObjects();
-        this->ClearDeletedOpenGLObjects();
     }
 
 
@@ -77,7 +74,11 @@ namespace GTEngine
         // Textures.
         for (size_t i = 0; i < this->deletedTextureObjects[!this->backIndex].count; ++i)
         {
-            delete this->deletedTextureObjects[!this->backIndex][i];
+            auto textureStateToDelete = this->deletedTextureObjects[!this->backIndex][i];
+            assert(textureStateToDelete != nullptr);
+            {
+                delete textureStateToDelete;
+            }
         }
         this->deletedTextureObjects[!this->backIndex].Clear();
 
@@ -86,13 +87,17 @@ namespace GTEngine
         // Programs.
         for (size_t i = 0; i < this->deletedProgramObjects[!this->backIndex].count; ++i)
         {
-            // If the program is the current one, we'll just set it to null.
-            if (this->deletedProgramObjects[!this->backIndex][i] == this->currentProgramState)
+            auto programStateToDelete = this->deletedProgramObjects[!this->backIndex][i];
+            assert(programStateToDelete != nullptr);
             {
-                this->currentProgramState = nullptr;
-            }
+                // If the program is the current one, we'll just set it to null.
+                if (programStateToDelete == this->currentProgramState)
+                {
+                    this->currentProgramState = nullptr;
+                }
 
-            delete this->deletedProgramObjects[!this->backIndex][i];
+                delete programStateToDelete;
+            }
         }
         this->deletedProgramObjects[!this->backIndex].Clear();
 
@@ -133,5 +138,13 @@ namespace GTEngine
 
         // We need to swap the back index now.
         this->backIndex = !this->backIndex;
+    }
+
+
+    void State_OpenGL33::Shutdown()
+    {
+        // We call this twice just to make sure both the back and front buffers are cleared correctly.
+        this->ClearDeletedOpenGLObjects();
+        this->ClearDeletedOpenGLObjects();
     }
 }

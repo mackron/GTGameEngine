@@ -1468,6 +1468,9 @@
     <ClCompile Include="..\..\..\source\Particle.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureState_OpenGL33.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\engine\editor\combobox.xml">

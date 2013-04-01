@@ -278,6 +278,11 @@ namespace GTEngine
             ResourceDeletionCallCaches[0].Clear();
             ResourceDeletionCallCaches[1].Clear();
 
+
+            // The client-side state needs to be shutdown.
+            State.Shutdown();
+
+
             // GTGL needs to be shutdown.
             gtglShutdown();
             OpenGLContext = nullptr;

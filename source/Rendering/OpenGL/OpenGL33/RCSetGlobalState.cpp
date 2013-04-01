@@ -516,6 +516,13 @@ namespace GTEngine
                 {
                     ServerState_GL_TEXTURE_BINDING_CUBE = texture.textureState->objectGL;
                 }
+
+
+                // Texture needs to be aware of this.
+                //if (!texture.textureState->shaders.Exists(this->currentShaderParams.programState))
+                //{
+                //    texture.textureState->shaders.PushBack(this->currentShaderParams.programState);
+                //}
             }
 
 

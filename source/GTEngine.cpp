@@ -160,8 +160,8 @@ namespace GTEngine
         ModelLibrary::Shutdown();
         VertexArrayLibrary::Shutdown();
         MaterialLibrary::Shutdown();
-        ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();
+        ShaderLibrary::Shutdown();
         SceneNodeClassLibrary::Shutdown();
         ScriptLibrary::Shutdown();
         

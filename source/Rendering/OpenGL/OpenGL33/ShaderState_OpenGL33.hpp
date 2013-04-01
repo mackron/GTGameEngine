@@ -351,6 +351,16 @@ namespace GTEngine
         {
         }
 
+        /// Destructor.
+        ~ShaderState_OpenGL33()
+        {
+            // Textures need to be notified.
+            for (size_t iTextureUniform = 0; iTextureUniform < this->currentTextureUniforms.count; ++iTextureUniform)
+            {
+                this->currentTextureUniforms.buffer[iTextureUniform]->value.textureState->shaders.RemoveFirstOccuranceOf(this);
+            }
+        }
+
 
         /// Clears all pending uniforms.
         void ClearPendingUniforms()
@@ -439,6 +449,12 @@ namespace GTEngine
 
             return -1;
         }
+
+
+
+    private:    // No copying.
+        ShaderState_OpenGL33(const ShaderState_OpenGL33 &);
+        ShaderState_OpenGL33 & operator=(const ShaderState_OpenGL33 &);
     };
 }
 

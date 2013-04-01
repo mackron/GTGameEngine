@@ -135,6 +135,10 @@ namespace GTEngine
         void ClearDeletedOpenGLObjects();
 
 
+        /// Shuts down the state by clearing all objects waiting for deletion and whatnot.
+        void Shutdown();
+
+
     private:    // No copying.
         State_OpenGL33(const State_OpenGL33 &);
         State_OpenGL33 & operator=(const State_OpenGL33 &);
