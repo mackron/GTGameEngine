@@ -657,7 +657,6 @@ namespace GTEngine
 {
     void ShaderLibrary::Shutdown()
     {
-        /*
         Renderer::DeleteShader(GUIShader);
         Renderer::DeleteShader(Textured2DQuadShader);
 
@@ -673,6 +672,5 @@ namespace GTEngine
             delete AcquiredShaders.buffer[i];
         }
         AcquiredShaders.Clear();
-        */
     }
 }

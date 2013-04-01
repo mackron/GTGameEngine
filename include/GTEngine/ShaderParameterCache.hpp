@@ -54,12 +54,6 @@ namespace GTEngine
         void Set(const char* name, Texture2D*   texture);
         void Set(const char* name, TextureCube* texture);
 
-        /// This overload makes a local copy of the input parameter.
-        //void Set(const char* name, const ShaderParameter* parameter);
-
-
-        /// Unsets a parameter by name.
-        //void Unset(const char* name);
 
         /// Unsets a parameter by name.
         void UnsetFloat(const char* name);
@@ -98,38 +92,6 @@ namespace GTEngine
 
 
 
-        /// Retrieves a parameter by its name.
-        ///
-        /// @param name [in] The name of the parameter to retrieve.
-        //ShaderParameter* Get(const char* name) const;
-        //ShaderParameter* Get(const char* name);
-
-        /// Retrieves a parameter by its index.
-        ///
-        /// @param index [in] The index of the parameter to retrieve. This is a O(1) direct accessor.
-        ///
-        /// @remarks
-        ///     Use GetCount() to iterate over each parameter.
-        ///     @par
-        ///     This does not do run-time checks for index validity. If the index is invalid, an assert will fail.
-        //ShaderParameter* GetByIndex(size_t index) const;
-        //ShaderParameter* GetByIndex(size_t index);
-
-        /// Retrieves the name of a parameter by it's index.
-        ///
-        /// @param index [in] The index of the parameter whose name is being retrieved. This is an O(1) direct accessor.
-        //const char* GetNameByIndex(size_t index) const;
-
-
-        /*
-        /// Retrieves the number of parameters in the cache.
-        size_t GetCount() const;
-
-        /// Retrieves a reference to the internal map of parameters.
-        const GTCore::Dictionary<ShaderParameter*> & GetParameters() const { return this->parameters; }
-              GTCore::Dictionary<ShaderParameter*> & GetParameters()       { return this->parameters; }
-        */
-
         /// Clears the cache.
         void Clear();
 
@@ -161,40 +123,7 @@ namespace GTEngine
         void Deserialize(GTCore::Deserializer &deserializer);
 
 
-
     private:
-
-        /*
-        /// Generically sets the value of a parameter. T is the type class (ShaderParameter_Float2, etc) and U is the value type (vec2, mat4, Texture2D, etc).
-        template <typename T, typename U>
-        void SetGeneric(const char* name, const U &value)
-        {
-            auto iParam = this->parameters.Find(name);
-            if (iParam != nullptr)
-            {
-                auto param = T::Upcast(iParam->value);
-                if (param != nullptr)
-                {
-                    param->value = value;
-                }
-                else
-                {
-                    delete iParam;
-                    this->parameters.Add(name, new T(value));
-                }
-            }
-            else
-            {
-                this->parameters.Add(name, new T(value));
-            }
-        }
-        */
-
-
-    private:
-
-        /// The dictionary containing pointers to ShaderParameter objects. The key is the parameter name.
-        //GTCore::Dictionary<ShaderParameter*> parameters;
 
         GTCore::Dictionary<ShaderParameter_Float>       floatParameters;
         GTCore::Dictionary<ShaderParameter_Float2>      float2Parameters;

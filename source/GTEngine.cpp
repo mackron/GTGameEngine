@@ -159,9 +159,9 @@ namespace GTEngine
         // We kill our libraries before the major sub-systems.
         ModelLibrary::Shutdown();
         MaterialLibrary::Shutdown();
+        ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();
         VertexArrayLibrary::Shutdown();
-        ShaderLibrary::Shutdown();
         SceneNodeClassLibrary::Shutdown();
         ScriptLibrary::Shutdown();
 
