@@ -8,6 +8,15 @@
 namespace GTEngine
 {
     ShaderParameterCache::ShaderParameterCache()
+        : floatParameters(),
+          float2Parameters(),
+          float3Parameters(),
+          float4Parameters(),
+          float2x2Parameters(),
+          float3x3Parameters(),
+          float4x4Parameters(),
+          texture2DParameters(),
+          textureCubeParameters()
     {
     }
 

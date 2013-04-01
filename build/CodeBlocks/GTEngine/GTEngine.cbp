@@ -530,6 +530,8 @@
 		<Unit filename="../../../source/Rendering/OpenGL/OpenGL33/Texture2D_OpenGL33.hpp" />
 		<Unit filename="../../../source/Rendering/OpenGL/OpenGL33/TextureCube_OpenGL33.cpp" />
 		<Unit filename="../../../source/Rendering/OpenGL/OpenGL33/TextureCube_OpenGL33.hpp" />
+		<Unit filename="../../../source/Rendering/OpenGL/OpenGL33/TextureState_OpenGL33.cpp" />
+		<Unit filename="../../../source/Rendering/OpenGL/OpenGL33/TextureState_OpenGL33.hpp" />
 		<Unit filename="../../../source/Rendering/OpenGL/OpenGL33/VertexArray_OpenGL33.cpp" />
 		<Unit filename="../../../source/Rendering/OpenGL/OpenGL33/VertexArray_OpenGL33.hpp" />
 		<Unit filename="../../../source/Rendering/OpenGL/RendererCaps.hpp" />
