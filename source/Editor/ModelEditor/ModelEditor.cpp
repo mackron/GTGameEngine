@@ -29,7 +29,7 @@ namespace GTEngine
         this->viewport.SetCameraNode(this->camera);
         this->scene.AddViewport(this->viewport);
         this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
-        
+
 
         // HDR should be disabled for this.
         static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).DisableHDR();
@@ -89,7 +89,7 @@ namespace GTEngine
 
 
 
-        
+
 
 
         // Convex hull.
