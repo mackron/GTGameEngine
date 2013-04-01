@@ -11,12 +11,22 @@ function GTGUI.Element:NumberTextBox(defaultValue)
     function self:SetValue(newValue, force)
         if newValue == -0.0 then newValue = 0.0 end;
         
+        -- We handle the case of 0.0 in a special way because for some reason the GCC build is having it turn into -0.0. Passing 'true' to
+        -- SetText() causes the OnTextChanged() event to be blocked (not posted).
         local oldValue = self:GetValue();
         if oldValue ~= newValue or force then
             if self.useFloatFormat then
-                self:SetText(string.format("%.4f", newValue), true);     -- 'true' = block the OnTextChanged event.
+                if newValue ~= 0.0 then
+                    self:SetText(string.format("%.4f", newValue), true);
+                else
+                    self:SetText("0.0000", true);
+                end
             else
-                self:SetText(tostring(newValue), true);
+                if newValue ~= 0.0 then
+                    self:SetText(tostring(newValue), true);
+                else
+                    self:SetText("0", true);
+                end
             end
         end
     end
