@@ -186,6 +186,17 @@ namespace GTEngine
         {
             Texture2DLibrary::Unacquire(this->value);
         }
+        
+        
+        ShaderParameter_Texture2D & operator=(const ShaderParameter_Texture2D &other)
+        {
+            ShaderParameter::operator=(other);
+            
+            Texture2DLibrary::Unacquire(this->value);
+            this->value = Texture2DLibrary::Acquire(other.value);
+            
+            return *this;
+        }
     };
 
     struct ShaderParameter_TextureCube : public ShaderParameter
@@ -200,6 +211,15 @@ namespace GTEngine
         ShaderParameter_TextureCube(const ShaderParameter_TextureCube &other)
             : ShaderParameter(other), value(other.value)
         {
+        }
+        
+        
+        ShaderParameter_TextureCube & operator=(const ShaderParameter_TextureCube &other)
+        {
+            ShaderParameter_TextureCube::operator=(other);
+            this->value = other.value;
+            
+            return *this;
         }
     };
 };
