@@ -9,6 +9,7 @@
 #include <cstdint>
 
 #include "../../RenderCommand.hpp"
+#include "TextureState_OpenGL33.hpp"
 #include "ShaderState_OpenGL33.hpp"
 
 namespace GTEngine
@@ -23,40 +24,40 @@ namespace GTEngine
 
 
         /// Renderer::PushTexture1DData().
-        void SetTexture1DData(GLuint* textureObject, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes);
+        void SetTexture1DData(TextureState_OpenGL33* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes);
 
         /// Renderer::PushTexture2DData().
-        void SetTexture2DData(GLuint* textureObject, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes);
+        void SetTexture2DData(TextureState_OpenGL33* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes);
 
         /// Renderer::PushTexture3DData().
-        void SetTexture3DData(GLuint* textureObject, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes);
+        void SetTexture3DData(TextureState_OpenGL33* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes);
 
         /// Renderer::PushTextureCubeData().
-        void SetTextureCubeData(GLuint* textureObject, GTImage::ImageFormat format, unsigned int width, unsigned int height, size_t dataSizeInBytes,
+        void SetTextureCubeData(TextureState_OpenGL33* textureState, GTImage::ImageFormat format, unsigned int width, unsigned int height, size_t dataSizeInBytes,
             const void* positiveXData, const void* negativeXData,
             const void* positiveYData, const void* negativeYData,
             const void* positiveZData, const void* negativeZData);
 
 
         /// Renderer::SetTexture*Filter().
-        void SetTextureFilter(GLuint* textureObject, GLenum target, GLint minification, GLint magnification);
+        void SetTextureFilter(TextureState_OpenGL33* textureState, GLenum target, GLint minification, GLint magnification);
 
         /// Renderer::SetTexture*Anisotropy().
-        void SetTextureAnisotropy(GLuint* textureObject, GLenum target, GLint anisotropy);
+        void SetTextureAnisotropy(TextureState_OpenGL33* textureState, GLenum target, GLint anisotropy);
 
         /// Renderer::SetTexture*WrapMode().
-        void SetTextureWrapMode(GLuint* textureObject, GLenum target, GLint wrapMode);
+        void SetTextureWrapMode(TextureState_OpenGL33* textureState, GLenum target, GLint wrapMode);
 
         /// Renderer::SetTexture*MipmapLevels().
-        void SetTextureMipmapLevels(GLuint* textureObject, GLenum target, GLint baseLevel, GLint maxLevel);
+        void SetTextureMipmapLevels(TextureState_OpenGL33* textureState, GLenum target, GLint baseLevel, GLint maxLevel);
 
         /// Renderer::SetTexture*GenerateMipmaps().
-        void GenerateTextureMipmaps(GLuint* textureObject, GLenum target);
+        void GenerateTextureMipmaps(TextureState_OpenGL33* textureState, GLenum target);
 
 
 
         /// Retrieves the texture object whose state is being set.
-        GLuint* GetTextureObject();
+        TextureState_OpenGL33* GetTextureState();
 
         /// Retrieves the target (texture type) of the state being set.
         GLenum GetTarget();
@@ -73,7 +74,7 @@ namespace GTEngine
 
 
         /// The texture object whose state is being modified.
-        GLuint* textureObject;
+        TextureState_OpenGL33* textureState;
 
         /// The texture target.
         GLenum target;

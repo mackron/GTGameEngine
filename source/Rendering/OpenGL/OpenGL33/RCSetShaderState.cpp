@@ -450,14 +450,14 @@ namespace GTEngine
             // The parameter already exists. The uniform does not need to be set, but the texture binding might.
             setUniform = false;
 
-            if (iExistingParameter->value.textureObject == value.textureObject)
+            if (iExistingParameter->value.textureState == value.textureState)
             {
                 setBinding = false;
             }
             else
             {
                 setBinding = true;
-                iExistingParameter->value.textureObject = value.textureObject;
+                iExistingParameter->value.textureState = value.textureState;
 
                 value.textureUnit = iExistingParameter->value.textureUnit;
                 value.location    = iExistingParameter->value.location;
@@ -477,24 +477,24 @@ namespace GTEngine
         if (ServerState_GL_CURRENT_PROGRAM == this->programState->programObject && setBinding)
         {
             glActiveTexture(GL_TEXTURE0 + value.textureUnit);
-            glBindTexture(value.textureTarget, *value.textureObject);
+            glBindTexture(value.textureTarget, value.textureState->objectGL);
 
             // State needs to be set.
             if (value.textureTarget == GL_TEXTURE_1D)
             {
-                ServerState_GL_TEXTURE_BINDING_1D = *value.textureObject;
+                ServerState_GL_TEXTURE_BINDING_1D = value.textureState->objectGL;
             }
             else if (value.textureTarget == GL_TEXTURE_2D)
             {
-                ServerState_GL_TEXTURE_BINDING_2D = *value.textureObject;
+                ServerState_GL_TEXTURE_BINDING_2D = value.textureState->objectGL;
             }
             else if (value.textureTarget == GL_TEXTURE_3D)
             {
-                ServerState_GL_TEXTURE_BINDING_3D = *value.textureObject;
+                ServerState_GL_TEXTURE_BINDING_3D = value.textureState->objectGL;
             }
             else if (value.textureTarget == GL_TEXTURE_CUBE_MAP)
             {
-                ServerState_GL_TEXTURE_BINDING_CUBE = *value.textureObject;
+                ServerState_GL_TEXTURE_BINDING_CUBE = value.textureState->objectGL;
             }
         }
 

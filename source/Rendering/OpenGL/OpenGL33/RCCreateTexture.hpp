@@ -6,6 +6,9 @@
 #include "../../RenderCommand.hpp"
 #include <gtgl/gtgl.h>
 
+#include "TextureState_OpenGL33.hpp"
+
+
 namespace GTEngine
 {
     /// Render command for clearing the buffers/
@@ -18,7 +21,7 @@ namespace GTEngine
 
 
         /// Renderer::CreateVertexArray()
-        void CreateTexture(GLuint* textureObjectIn);
+        void CreateTexture(TextureState_OpenGL33* textureStateIn);
 
 
         /// RenderCommand::Execute()
@@ -28,7 +31,7 @@ namespace GTEngine
     private:
 
         /// A pointer to the OpenGL texture object.
-        GLuint* textureObject;
+        TextureState_OpenGL33* textureState;
 
 
 

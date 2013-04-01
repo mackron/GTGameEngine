@@ -863,6 +863,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Particle.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureState_OpenGL33.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">

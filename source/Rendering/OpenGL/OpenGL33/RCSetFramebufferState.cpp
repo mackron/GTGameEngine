@@ -18,14 +18,14 @@ namespace GTEngine
     }
 
 
-    void RCSetFramebufferState::SetAttachedBuffer(FramebufferState_OpenGL33* framebufferStateIn, GLenum attachmentPoint, GLenum textureTarget, GLuint* textureObject)
+    void RCSetFramebufferState::SetAttachedBuffer(FramebufferState_OpenGL33* framebufferStateIn, GLenum attachmentPoint, GLenum textureTarget, TextureState_OpenGL33* textureState)
     {
         assert(framebufferStateIn != nullptr && (this->framebufferState == nullptr || this->framebufferState == framebufferStateIn));
         {
             FramebufferState_OpenGL33::Attachment attachment;
             attachment.attachmentPoint = attachmentPoint;
             attachment.textureTarget   = textureTarget;
-            attachment.textureObject   = textureObject;
+            attachment.textureState    = textureState;
 
             this->attachments.Add(attachmentPoint, attachment);
 
@@ -79,7 +79,7 @@ namespace GTEngine
                 {
                     auto &attachmentToAdd = this->attachments.buffer[i]->value;
 
-                    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, attachmentToAdd.attachmentPoint, attachmentToAdd.textureTarget, *attachmentToAdd.textureObject, 0);
+                    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, attachmentToAdd.attachmentPoint, attachmentToAdd.textureTarget, attachmentToAdd.textureState->objectGL, 0);
                     this->framebufferState->attachments.Add(attachmentToAdd.attachmentPoint, attachmentToAdd);
                 }
             }

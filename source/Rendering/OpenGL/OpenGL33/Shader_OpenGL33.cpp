@@ -148,20 +148,20 @@ namespace GTEngine
         assert(value != nullptr);
         {
             auto textureGL33 = static_cast<const Texture2D_OpenGL33*>(value);
-            GLuint* textureObject = textureGL33->GetOpenGLObjectPtr();
-            GLenum  textureTarget = textureGL33->GetTarget();
+            auto   textureState  = textureGL33->GetOpenGLState();
+            GLenum textureTarget = textureGL33->GetTarget();
 
 
             if (this->stateGL->programObject == 0)
             {
-                this->stateGL->pendingTextureUniformsByName.Add(name, ShaderState_OpenGL33::TextureParameter(textureObject, textureTarget));
+                this->stateGL->pendingTextureUniformsByName.Add(name, ShaderState_OpenGL33::TextureParameter(textureState, textureTarget));
             }
             else
             {
                 GLint location = this->stateGL->GetTextureUniformLocation(name);
                 if (location != -1)
                 {
-                    this->stateGL->pendingTextureUniformsByLocation.PushBack(ShaderState_OpenGL33::TextureParameter(location, textureObject, textureTarget));
+                    this->stateGL->pendingTextureUniformsByLocation.PushBack(ShaderState_OpenGL33::TextureParameter(location, textureState, textureTarget));
                 }
             }
         }
@@ -172,20 +172,20 @@ namespace GTEngine
         assert(value != nullptr);
         {
             auto textureGL33 = static_cast<const TextureCube_OpenGL33*>(value);
-            GLuint* textureObject = textureGL33->GetOpenGLObjectPtr();
-            GLenum  textureTarget = GL_TEXTURE_CUBE_MAP;
+            auto   textureState  = textureGL33->GetOpenGLState();
+            GLenum textureTarget = GL_TEXTURE_CUBE_MAP;
 
 
             if (this->stateGL->programObject == 0)
             {
-                this->stateGL->pendingTextureUniformsByName.Add(name, ShaderState_OpenGL33::TextureParameter(textureObject, textureTarget));
+                this->stateGL->pendingTextureUniformsByName.Add(name, ShaderState_OpenGL33::TextureParameter(textureState, textureTarget));
             }
             else
             {
                 GLint location = this->stateGL->GetTextureUniformLocation(name);
                 if (location != -1)
                 {
-                    this->stateGL->pendingTextureUniformsByLocation.PushBack(ShaderState_OpenGL33::TextureParameter(location, textureObject, textureTarget));
+                    this->stateGL->pendingTextureUniformsByLocation.PushBack(ShaderState_OpenGL33::TextureParameter(location, textureState, textureTarget));
                 }
             }
         }

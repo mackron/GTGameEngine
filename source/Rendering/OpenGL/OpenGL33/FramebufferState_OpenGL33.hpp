@@ -6,6 +6,9 @@
 #include <GTCore/Map.hpp>
 #include <gtgl/gtgl.h>
 
+#include "TextureState_OpenGL33.hpp"
+
+
 namespace GTEngine
 {
     /// Structure containing some state information about framebuffers.
@@ -29,8 +32,8 @@ namespace GTEngine
             /// The texture target.
             GLenum textureTarget;
 
-            /// A pointer to the OpenGL texture object.
-            GLuint* textureObject;
+            /// A pointer to the OpenGL texture state.
+            TextureState_OpenGL33* textureState;
         };
 
         /// The map containing the attached colour buffers. This is keyed by the attachment point.

@@ -23,7 +23,7 @@ namespace GTEngine
 
     RCSetTextureState::RCSetTextureState()
         : operationBitfield(0),
-          textureObject(nullptr), target(),
+          textureState(nullptr), target(),
           mipmapDatas(), cubeMapData(), filters(), anisotropy(), wrapMode(),
           mipmapLevels()
     {
@@ -37,9 +37,9 @@ namespace GTEngine
     }
 
 
-    void RCSetTextureState::SetTexture1DData(GLuint* textureObjectIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes)
+    void RCSetTextureState::SetTexture1DData(TextureState_OpenGL33* textureStateIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes)
     {
-        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
+        assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
             TextureData mipmapData;
             mipmapData.internalFormat = ToOpenGLInternalFormat(format);
@@ -73,16 +73,16 @@ namespace GTEngine
             }
 
 
-            this->textureObject = textureObjectIn;
+            this->textureState = textureStateIn;
             this->target        = targetIn;
 
             this->operationBitfield |= SET_DATA_1D_BIT;
         }
     }
 
-    void RCSetTextureState::SetTexture2DData(GLuint* textureObjectIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes)
+    void RCSetTextureState::SetTexture2DData(TextureState_OpenGL33* textureStateIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes)
     {
-        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
+        assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
             TextureData mipmapData;
             mipmapData.internalFormat = ToOpenGLInternalFormat(format);
@@ -116,16 +116,16 @@ namespace GTEngine
             }
 
 
-            this->textureObject = textureObjectIn;
+            this->textureState = textureStateIn;
             this->target        = targetIn;
 
             this->operationBitfield |= SET_DATA_2D_BIT;
         }
     }
 
-    void RCSetTextureState::SetTexture3DData(GLuint* textureObjectIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes)
+    void RCSetTextureState::SetTexture3DData(TextureState_OpenGL33* textureStateIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes)
     {
-        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
+        assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
             TextureData mipmapData;
             mipmapData.internalFormat = ToOpenGLInternalFormat(format);
@@ -159,19 +159,19 @@ namespace GTEngine
             }
 
 
-            this->textureObject = textureObjectIn;
+            this->textureState = textureStateIn;
             this->target        = targetIn;
 
             this->operationBitfield |= SET_DATA_3D_BIT;
         }
     }
 
-    void RCSetTextureState::SetTextureCubeData(GLuint* textureObjectIn, GTImage::ImageFormat format, unsigned int width, unsigned int height, size_t dataSizeInBytes,
+    void RCSetTextureState::SetTextureCubeData(TextureState_OpenGL33* textureStateIn, GTImage::ImageFormat format, unsigned int width, unsigned int height, size_t dataSizeInBytes,
         const void* positiveXData, const void* negativeXData,
         const void* positiveYData, const void* negativeYData,
         const void* positiveZData, const void* negativeZData)
     {
-        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == GL_TEXTURE_CUBE_MAP)) && textureObjectIn != nullptr);
+        assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == GL_TEXTURE_CUBE_MAP)) && textureStateIn != nullptr);
         {
             // Previous data needs to be freed.
             free(this->cubeMapData.positiveXData);
@@ -255,7 +255,7 @@ namespace GTEngine
 
 
 
-            this->textureObject = textureObjectIn;
+            this->textureState = textureStateIn;
             this->target        = GL_TEXTURE_CUBE_MAP;
 
             this->operationBitfield |= SET_DATA_CUBE_BIT;
@@ -263,69 +263,69 @@ namespace GTEngine
     }
 
 
-    void RCSetTextureState::SetTextureFilter(GLuint* textureObjectIn, GLenum targetIn, GLint minification, GLint magnification)
+    void RCSetTextureState::SetTextureFilter(TextureState_OpenGL33* textureStateIn, GLenum targetIn, GLint minification, GLint magnification)
     {
-        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
+        assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
             this->filters.minification  = minification;
             this->filters.magnification = magnification;
 
 
-            this->textureObject = textureObjectIn;
+            this->textureState = textureStateIn;
             this->target        = targetIn;
 
             this->operationBitfield |= SET_FILTERS_BIT;
         }
     }
 
-    void RCSetTextureState::SetTextureAnisotropy(GLuint* textureObjectIn, GLenum targetIn, GLint anisotropyIn)
+    void RCSetTextureState::SetTextureAnisotropy(TextureState_OpenGL33* textureStateIn, GLenum targetIn, GLint anisotropyIn)
     {
-        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
+        assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
             this->anisotropy = anisotropyIn;
 
 
-            this->textureObject = textureObjectIn;
+            this->textureState = textureStateIn;
             this->target        = targetIn;
 
             this->operationBitfield |= SET_ANISOTROPY_BIT;
         }
     }
 
-    void RCSetTextureState::SetTextureWrapMode(GLuint* textureObjectIn, GLenum targetIn, GLint wrapModeIn)
+    void RCSetTextureState::SetTextureWrapMode(TextureState_OpenGL33* textureStateIn, GLenum targetIn, GLint wrapModeIn)
     {
-        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
+        assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
             this->wrapMode = wrapModeIn;
 
 
-            this->textureObject = textureObjectIn;
+            this->textureState = textureStateIn;
             this->target        = targetIn;
 
             this->operationBitfield |= SET_WRAP_MODE_2D_BIT;
         }
     }
 
-    void RCSetTextureState::SetTextureMipmapLevels(GLuint* textureObjectIn, GLenum targetIn, GLint baseLevel, GLint maxLevel)
+    void RCSetTextureState::SetTextureMipmapLevels(TextureState_OpenGL33* textureStateIn, GLenum targetIn, GLint baseLevel, GLint maxLevel)
     {
-        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
+        assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
             this->mipmapLevels.baseLevel = baseLevel;
             this->mipmapLevels.maxLevel  = maxLevel;
 
 
-            this->textureObject = textureObjectIn;
+            this->textureState = textureStateIn;
             this->target        = targetIn;
 
             this->operationBitfield |= SET_MIPMAP_LEVELS_BIT;
         }
     }
 
-    void RCSetTextureState::GenerateTextureMipmaps(GLuint* textureObjectIn, GLenum targetIn)
+    void RCSetTextureState::GenerateTextureMipmaps(TextureState_OpenGL33* textureStateIn, GLenum targetIn)
     {
-        assert((this->textureObject == nullptr || (this->textureObject == textureObjectIn && this->target == targetIn)) && textureObjectIn != nullptr);
+        assert((this->textureState == nullptr || (this->textureState == textureStateIn && this->target == targetIn)) && textureStateIn != nullptr);
         {
-            this->textureObject = textureObjectIn;
+            this->textureState = textureStateIn;
             this->target        = targetIn;
 
             this->operationBitfield |= GENERATE_MIPMAPS_BIT;
@@ -333,9 +333,9 @@ namespace GTEngine
     }
 
 
-    GLuint* RCSetTextureState::GetTextureObject()
+    TextureState_OpenGL33* RCSetTextureState::GetTextureState()
     {
-        return this->textureObject;
+        return this->textureState;
     }
 
     GLenum RCSetTextureState::GetTarget()
@@ -347,7 +347,7 @@ namespace GTEngine
 
     void RCSetTextureState::Execute()
     {
-        assert(this->textureObject != nullptr);
+        assert(this->textureState != nullptr);
         {
             // We may need to restore the texture binding at the end of this, so we'll grab the current binding here.
             GLuint previousTextureObject = 0;
@@ -374,11 +374,11 @@ namespace GTEngine
             // If the target is cube map face, the binding target needs to be GL_TEXTURE_CUBE_MAP.
             if (this->target >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && this->target <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z)
             {
-                glBindTexture(GL_TEXTURE_CUBE_MAP, *this->textureObject);
+                glBindTexture(GL_TEXTURE_CUBE_MAP, this->textureState->objectGL);
             }
             else
             {
-                glBindTexture(this->target, *this->textureObject);
+                glBindTexture(this->target, this->textureState->objectGL);
             }
 
 
