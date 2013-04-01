@@ -117,7 +117,7 @@ namespace GTEngine
         btTransform transform;
         this->node.GetWorldTransform(transform);
         this->pickingCollisionObject.setWorldTransform(transform);
-        
+
 
 
         if (world != nullptr && this->pickingCollisionShape != nullptr)
@@ -202,7 +202,7 @@ namespace GTEngine
                  0.0f,   1.0f,
             };
 
-            unsigned int indices[] = 
+            unsigned int indices[] =
             {
                 0, 1, 2,
                 2, 3, 0
@@ -239,7 +239,7 @@ namespace GTEngine
             this->spriteMesh.material->SetParameter("SpriteTexture", this->spriteTexture);
         }
 
-        this->spriteMesh.material->SetParameter("SpriteColour",  colour);
+        this->spriteMesh.material->SetParameter("SpriteColour", colour);
 
 
 
@@ -371,7 +371,7 @@ namespace GTEngine
 
             this->directionArrowMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
             this->directionArrowMesh.vertexArray->SetData(&vertices[0].x, 4, indices, 6);
-            
+
 
             // Material.
             this->directionArrowMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");

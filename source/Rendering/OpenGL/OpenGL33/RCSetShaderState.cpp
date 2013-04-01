@@ -440,72 +440,75 @@ namespace GTEngine
 
     void RCSetShaderState::SetTextureUniform(GLint location, ShaderState_OpenGL33::TextureParameter &value)
     {
-        bool setUniform = true;
-        bool setBinding = true;
-
-        // We need to check if the shader state has the texture already set.
-        auto iExistingParameter = this->programState->currentTextureUniforms.Find(location);
-        if (iExistingParameter != nullptr)
+        if (location != -1)
         {
-            // The parameter already exists. The uniform does not need to be set, but the texture binding might.
-            setUniform = false;
+            bool setUniform = true;
+            bool setBinding = true;
 
-            if (iExistingParameter->value.textureState == value.textureState)
+            // We need to check if the shader state has the texture already set.
+            auto iExistingParameter = this->programState->currentTextureUniforms.Find(location);
+            if (iExistingParameter != nullptr)
             {
-                setBinding = false;
+                // The parameter already exists. The uniform does not need to be set, but the texture binding might.
+                setUniform = false;
+
+                if (iExistingParameter->value.textureState == value.textureState)
+                {
+                    setBinding = false;
+                }
+                else
+                {
+                    setBinding = true;
+
+                    iExistingParameter->value.textureState->shaders.RemoveFirstOccuranceOf(this->programState);
+                    iExistingParameter->value.textureState = value.textureState;
+                    iExistingParameter->value.textureState->shaders.PushBack(this->programState);
+
+                    value.textureUnit = iExistingParameter->value.textureUnit;
+                    value.location    = iExistingParameter->value.location;
+                }
             }
             else
             {
-                setBinding = true;
+                // The parameter has not been set before. We need to set the uniform and bind.
+                value.textureUnit = static_cast<GLint>(this->programState->currentTextureUniforms.count);
+                value.location    = location;
+                value.textureState->shaders.PushBack(this->programState);
 
-                iExistingParameter->value.textureState->shaders.RemoveFirstOccuranceOf(this->programState);
-                iExistingParameter->value.textureState = value.textureState;
-                iExistingParameter->value.textureState->shaders.PushBack(this->programState);
-
-                value.textureUnit = iExistingParameter->value.textureUnit;
-                value.location    = iExistingParameter->value.location;
+                this->programState->currentTextureUniforms.Add(location, value);
             }
-        }
-        else
-        {
-            // The parameter has not been set before. We need to set the uniform and bind.
-            value.textureUnit = static_cast<GLint>(this->programState->currentTextureUniforms.count);
-            value.location    = location;
-            value.textureState->shaders.PushBack(this->programState);
-
-            this->programState->currentTextureUniforms.Add(location, value);
-        }
 
 
 
-        // If this program state is the current one, we'll need to bind the texture straight away.
-        if (ServerState_GL_CURRENT_PROGRAM == this->programState->programObject && setBinding)
-        {
-            glActiveTexture(GL_TEXTURE0 + value.textureUnit);
-            glBindTexture(value.textureTarget, value.textureState->objectGL);
-
-            // State needs to be set.
-            if (value.textureTarget == GL_TEXTURE_1D)
+            // If this program state is the current one, we'll need to bind the texture straight away.
+            if (ServerState_GL_CURRENT_PROGRAM == this->programState->programObject && setBinding)
             {
-                ServerState_GL_TEXTURE_BINDING_1D = value.textureState->objectGL;
-            }
-            else if (value.textureTarget == GL_TEXTURE_2D)
-            {
-                ServerState_GL_TEXTURE_BINDING_2D = value.textureState->objectGL;
-            }
-            else if (value.textureTarget == GL_TEXTURE_3D)
-            {
-                ServerState_GL_TEXTURE_BINDING_3D = value.textureState->objectGL;
-            }
-            else if (value.textureTarget == GL_TEXTURE_CUBE_MAP)
-            {
-                ServerState_GL_TEXTURE_BINDING_CUBE = value.textureState->objectGL;
-            }
-        }
+                glActiveTexture(GL_TEXTURE0 + value.textureUnit);
+                glBindTexture(value.textureTarget, value.textureState->objectGL);
 
-        if (setUniform)
-        {
-            glUniform1i(value.location, value.textureUnit);
+                // State needs to be set.
+                if (value.textureTarget == GL_TEXTURE_1D)
+                {
+                    ServerState_GL_TEXTURE_BINDING_1D = value.textureState->objectGL;
+                }
+                else if (value.textureTarget == GL_TEXTURE_2D)
+                {
+                    ServerState_GL_TEXTURE_BINDING_2D = value.textureState->objectGL;
+                }
+                else if (value.textureTarget == GL_TEXTURE_3D)
+                {
+                    ServerState_GL_TEXTURE_BINDING_3D = value.textureState->objectGL;
+                }
+                else if (value.textureTarget == GL_TEXTURE_CUBE_MAP)
+                {
+                    ServerState_GL_TEXTURE_BINDING_CUBE = value.textureState->objectGL;
+                }
+            }
+
+            if (setUniform)
+            {
+                glUniform1i(value.location, value.textureUnit);
+            }
         }
     }
 }
