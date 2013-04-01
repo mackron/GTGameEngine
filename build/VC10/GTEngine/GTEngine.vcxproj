@@ -561,6 +561,7 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Texture2D_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureCube_OpenGL33.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureState_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\VertexArray_OpenGL33.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp" />

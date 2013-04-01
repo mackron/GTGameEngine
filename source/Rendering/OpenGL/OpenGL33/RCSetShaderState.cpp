@@ -502,5 +502,12 @@ namespace GTEngine
         {
             glUniform1i(value.location, value.textureUnit);
         }
+
+
+        // Texture needs to be aware of this.
+        if (!value.textureState->shaders.Exists(this->programState))
+        {
+            value.textureState->shaders.PushBack(this->programState);
+        }
     }
 }
