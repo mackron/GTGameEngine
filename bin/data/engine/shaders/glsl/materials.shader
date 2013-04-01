@@ -25,7 +25,7 @@
 <shader id="Material_DefaultShininess">
     float Shininess()
     {
-        return 0.25;
+        return 0.5;
     }
 </shader>
 

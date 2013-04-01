@@ -56,49 +56,50 @@ namespace GTEngine
                 char   uniformName[100];
                 glGetActiveUniform(programObject, iUniform, sizeof(uniformName) - 1, nullptr, &uniformSize, &uniformType, uniformName);
 
+                GLint uniformLocation = glGetUniformLocation(programObject, uniformName);
 
                 switch (uniformType)
                 {
                 case GL_FLOAT:
                     {
-                        this->programState->floatUniformLocations.Add(uniformName, iUniform);
+                        this->programState->floatUniformLocations.Add(uniformName, uniformLocation);
                         break;
                     }
 
                 case GL_FLOAT_VEC2:
                     {
-                        this->programState->float2UniformLocations.Add(uniformName, iUniform);
+                        this->programState->float2UniformLocations.Add(uniformName, uniformLocation);
                         break;
                     }
 
                 case GL_FLOAT_VEC3:
                     {
-                        this->programState->float3UniformLocations.Add(uniformName, iUniform);
+                        this->programState->float3UniformLocations.Add(uniformName, uniformLocation);
                         break;
                     }
 
                 case GL_FLOAT_VEC4:
                     {
-                        this->programState->float4UniformLocations.Add(uniformName, iUniform);
+                        this->programState->float4UniformLocations.Add(uniformName, uniformLocation);
                         break;
                     }
 
 
                 case GL_FLOAT_MAT2:
                     {
-                        this->programState->float2x2UniformLocations.Add(uniformName, iUniform);
+                        this->programState->float2x2UniformLocations.Add(uniformName, uniformLocation);
                         break;
                     }
 
                 case GL_FLOAT_MAT3:
                     {
-                        this->programState->float3x3UniformLocations.Add(uniformName, iUniform);
+                        this->programState->float3x3UniformLocations.Add(uniformName, uniformLocation);
                         break;
                     }
 
                 case GL_FLOAT_MAT4:
                     {
-                        this->programState->float4x4UniformLocations.Add(uniformName, iUniform);
+                        this->programState->float4x4UniformLocations.Add(uniformName, uniformLocation);
                         break;
                     }
 
@@ -127,7 +128,7 @@ namespace GTEngine
                 case GL_UNSIGNED_INT_SAMPLER_CUBE:
                 case GL_UNSIGNED_INT_SAMPLER_BUFFER:
                     {
-                        this->programState->textureUniformLocations.Add(uniformName, iUniform);
+                        this->programState->textureUniformLocations.Add(uniformName, uniformLocation);
                         break;
                     }
 

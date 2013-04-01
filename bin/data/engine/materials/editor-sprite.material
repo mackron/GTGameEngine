@@ -11,7 +11,7 @@
     </emissive>
     
     <diffuse   id='Material_NoDiffuse' />
-    <shininess id='Material_DefaultShininess' />
+    <shininess id='Material_NoShininess' />
     
     <defaultproperties>
         <texture2D name='SpriteTexture'>engine/textures/default.png</texture2D>
