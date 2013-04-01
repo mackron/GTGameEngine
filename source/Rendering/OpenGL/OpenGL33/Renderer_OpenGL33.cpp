@@ -125,6 +125,16 @@ namespace GTEngine
         RCCache<RCDeleteFramebuffer>   RCDeleteFramebufferCache;
 
 
+        _RCCaches()
+            : RCSetGlobalStateCache(), RCSetVertexArrayStateCache(), RCSetTextureStateCache(), RCSetShaderStateCache(), RCSetFramebufferStateCache(),
+              RCClearCache(), RCDrawCache(),
+              RCCreateVertexArrayCache(), RCDeleteVertexArrayCache(),
+              RCCreateTextureCache(),     RCDeleteTextureCache(),
+              RCCreateShaderCache(),      RCDeleteShaderCache(),
+              RCCreateFramebufferCache(), RCDeleteFramebufferCache()
+        {
+        }
+
         void Clear(bool clearResources = false)
         {
             this->RCSetGlobalStateCache.Reset();
@@ -136,7 +146,7 @@ namespace GTEngine
 
             this->RCClearCache.Reset();
             this->RCDrawCache.Reset();
-            
+
 
             if (clearResources)
             {
@@ -336,7 +346,7 @@ namespace GTEngine
         BackCallCacheIndex = !BackCallCacheIndex;
 
         // 2) Clear the new back cache in preparation for filling by another thread. Note how we don't clear the resource creation and deletion
-        //    call caches here. The reason is because they are cleared in ExecuteCallCache(). 
+        //    call caches here. The reason is because they are cleared in ExecuteCallCache().
         CallCaches[BackCallCacheIndex].Clear();
 
         ResourceCreationLock.Lock();
@@ -656,7 +666,7 @@ namespace GTEngine
         State.currentRCClear = nullptr;
     }
 
-    
+
     void Renderer::EnableDepthTest()
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
@@ -1416,7 +1426,7 @@ namespace GTEngine
                     CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
                 }
 
-                
+
                 assert(State.currentRCSetTextureState != nullptr);
                 {
                     auto &positiveX = static_cast<const Texture2D_OpenGL33*>(texture.PositiveX)->GetMipmap(0);

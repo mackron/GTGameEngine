@@ -45,7 +45,7 @@ namespace GTEngine
           defaultParams(),
           metadata(),
           isBlended(false), isRefractive(false),
-          blendEquation(BlendEquation_Add), blendSourceFactor(BlendFunc_One), blendDestinationFactor(BlendFunc_Zero)
+          blendEquation(BlendEquation_Add), blendSourceFactor(BlendFunc_One), blendDestinationFactor(BlendFunc_Zero), blendColour(0.0f, 0.0f, 0.0f, 0.0f)
     {
     }
 
@@ -219,7 +219,7 @@ namespace GTEngine
                 // Note how we don't set a default ID here.
                 this->isRefractive = false;
             }
-            
+
 
             // <specular>
             auto specularNode = materialNode->first_node("specular");
@@ -279,7 +279,7 @@ namespace GTEngine
                 {
                     float colour[4];
                     MaterialDefinition::ParseFloatArray(colourNode->value(), colour, 4);
-                    
+
                     this->blendColour = glm::vec4(colour[0], colour[1], colour[2], colour[3]);
                 }
             }

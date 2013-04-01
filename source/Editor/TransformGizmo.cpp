@@ -267,7 +267,7 @@ namespace GTEngine
     // TranslateHandle
 
     TransformGizmo::TranslateHandle::TranslateHandle(HandleAxis axis)
-        : Handle(HandleType_Translate, axis), localOrientation(), headMesh(), lineMesh(), pickingShape(), pickingShapeBox(btVector3(1.0f, 1.0f, 1.0f))
+        : Handle(HandleType_Translate, axis), localOrientation(), headMesh(), lineMesh(), pickingShape(), pickingShapeBox(btVector3(1.0f, 1.0f, 1.0f)), forwardVector()
     {
         switch (axis)
         {
@@ -466,7 +466,7 @@ namespace GTEngine
     // RotateHandle
 
     TransformGizmo::RotateHandle::RotateHandle(HandleAxis axis)
-        : Handle(HandleType_Rotate, axis), localOrientation(), mesh(), pickingShape(), pickingShapeSegment(0.0f, 0.0f)
+        : Handle(HandleType_Rotate, axis), localOrientation(), mesh(), pickingShape(), pickingShapeSegment(0.0f, 0.0f), forwardVector()
     {
         switch (axis)
         {
@@ -681,7 +681,7 @@ namespace GTEngine
     // ScaleHandle
 
     TransformGizmo::ScaleHandle::ScaleHandle(HandleAxis axis)
-        : Handle(HandleType_Scale, axis), localOrientation(), headMesh(), lineMesh(), pickingShape(), pickingShapeBox(btVector3(1.0f, 1.0f, 1.0f))
+        : Handle(HandleType_Scale, axis), localOrientation(), headMesh(), lineMesh(), pickingShape(), pickingShapeBox(btVector3(1.0f, 1.0f, 1.0f)), forwardVector()
     {
         switch (axis)
         {

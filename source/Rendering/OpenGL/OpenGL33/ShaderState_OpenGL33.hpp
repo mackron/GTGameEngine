@@ -37,6 +37,23 @@ namespace GTEngine
             {
             }
 
+            Parameter(const Parameter &other)
+                : location(other.location)
+            {
+            }
+
+            virtual ~Parameter()
+            {
+            }
+
+            Parameter & operator=(const Parameter &other)
+            {
+                this->location = other.location;
+
+                return *this;
+            }
+
+
             GLint location;
         };
 
@@ -236,6 +253,22 @@ namespace GTEngine
             {
             }
 
+            TextureParameter(const TextureParameter &other)
+                : Parameter(other), textureObject(other.textureObject), textureTarget(other.textureTarget), textureUnit(other.textureUnit)
+            {
+            }
+
+            TextureParameter & operator=(const TextureParameter &other)
+            {
+                Parameter::operator=(other);
+
+                this->textureObject = other.textureObject;
+                this->textureTarget = other.textureTarget;
+                this->textureUnit   = other.textureUnit;
+
+                return *this;
+            }
+
 
 
             /// A pointer to the relevant texture object.
@@ -285,10 +318,34 @@ namespace GTEngine
         GTCore::Dictionary<Float4x4Parameter> pendingFloat4x4UniformsByName;
         GTCore::Dictionary<TextureParameter>  pendingTextureUniformsByName;
 
-        
+
         /// Constructor.
         ShaderState_OpenGL33()
-            : programObject(0), currentTextureUniforms()
+            : programObject(0), currentTextureUniforms(),
+              floatUniformLocations(),
+              float2UniformLocations(),
+              float3UniformLocations(),
+              float4UniformLocations(),
+              float2x2UniformLocations(),
+              float3x3UniformLocations(),
+              float4x4UniformLocations(),
+              textureUniformLocations(),
+              pendingFloatUniformsByLocation(),
+              pendingFloat2UniformsByLocation(),
+              pendingFloat3UniformsByLocation(),
+              pendingFloat4UniformsByLocation(),
+              pendingFloat2x2UniformsByLocation(),
+              pendingFloat3x3UniformsByLocation(),
+              pendingFloat4x4UniformsByLocation(),
+              pendingTextureUniformsByLocation(),
+              pendingFloatUniformsByName(),
+              pendingFloat2UniformsByName(),
+              pendingFloat3UniformsByName(),
+              pendingFloat4UniformsByName(),
+              pendingFloat2x2UniformsByName(),
+              pendingFloat3x3UniformsByName(),
+              pendingFloat4x4UniformsByName(),
+              pendingTextureUniformsByName()
         {
         }
 
@@ -363,9 +420,9 @@ namespace GTEngine
         }
 
 
-        
+
     private:
-        
+
         /// Generic function for retrieving a uniform location from the given list.
         GLint GetUniformLocation(const char* name, const GTCore::Dictionary<GLint> &uniformLocations)
         {

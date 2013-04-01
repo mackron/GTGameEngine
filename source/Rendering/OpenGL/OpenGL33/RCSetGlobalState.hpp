@@ -118,6 +118,11 @@ namespace GTEngine
         /// A bitfield containing the state operations to call.
         uint32_t operationBitfield;
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
+
         /// glViewport parameters.
         struct
         {
@@ -298,6 +303,9 @@ namespace GTEngine
 
         }disableParams;
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
 
     private:    // No copying.

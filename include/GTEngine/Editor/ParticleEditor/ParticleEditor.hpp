@@ -92,6 +92,11 @@ namespace GTEngine
         /// Keeps track of whether or not we are handling a reload. We use this in keeping track of whether or not to mark the file as modified
         /// when the settings are changed.
         bool isReloading;
+
+
+    private:    // No copying.
+        ParticleEditor(const ParticleEditor &);
+        ParticleEditor & operator=(const ParticleEditor &);
     };
 }
 

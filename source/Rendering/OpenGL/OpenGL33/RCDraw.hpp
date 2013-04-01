@@ -35,6 +35,10 @@ namespace GTEngine
         /// The type of draw command being performed.
         uint32_t drawType;
 
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 
         /// Structure for drawing from a vertex array.
         struct
@@ -78,7 +82,9 @@ namespace GTEngine
 
         }drawRaw;
 
-        
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
 
     private:    // No copying.

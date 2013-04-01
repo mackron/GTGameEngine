@@ -28,6 +28,16 @@ namespace GTEngine
         {
         }
 
+        SceneRendererMesh(const SceneRendererMesh &other)
+            : vertexArray(other.vertexArray), drawMode(other.drawMode), material(other.material), transform(other.transform), flags(other.flags)
+        {
+        }
+
+        /// Destructor (warning silencer)
+        virtual ~SceneRendererMesh()
+        {
+        }
+
 
         /// The vertex array containing the mesh data.
         VertexArray* vertexArray;
@@ -54,6 +64,10 @@ namespace GTEngine
 
             DrawHighlight = (1 << 31)           // <-- This is temporary and is only used for the editor.
         };
+
+
+    private:    // No copying.
+        SceneRendererMesh & operator=(const SceneRendererMesh &);
     };
 
 
@@ -62,6 +76,18 @@ namespace GTEngine
     {
         /// The colour of the light.
         glm::vec3 colour;
+
+
+        /// Constructor.
+        SceneRendererAmbientLight()
+            : colour()
+        {
+        }
+
+        /// Destructor (warning silencer)
+        virtual ~SceneRendererAmbientLight()
+        {
+        }
     };
 
     /// Structure representing a directional light object.
@@ -75,6 +101,19 @@ namespace GTEngine
 
         /// The directional of the light.
         glm::quat orientation;
+
+
+
+        /// Constructor.
+        SceneRendererDirectionalLight()
+            : colour(), position(), orientation()
+        {
+        }
+
+        /// Destructor (warning silencer)
+        virtual ~SceneRendererDirectionalLight()
+        {
+        }
 
 
         /// Helper method for calculating the forward vector.
@@ -98,6 +137,18 @@ namespace GTEngine
 
         /// The falloff of the light.
         float falloff;
+
+
+        /// Constructor.
+        SceneRendererPointLight()
+            : colour(), position(), radius(), falloff()
+        {
+        }
+
+        /// Destructor (warning silencer)
+        virtual ~SceneRendererPointLight()
+        {
+        }
     };
 
     /// Structure representing a spot light object.
@@ -127,6 +178,19 @@ namespace GTEngine
         float outerAngle;
 
 
+
+
+
+        /// Constructor.
+        SceneRendererSpotLight()
+            : colour(), position(), orientation(), length(), falloff(), innerAngle(), outerAngle()
+        {
+        }
+
+        /// Destructor (warning silencer)
+        virtual ~SceneRendererSpotLight()
+        {
+        }
 
 
         /// Helper method for calculating the forward vector.
@@ -210,7 +274,7 @@ namespace GTEngine
         virtual void RemoveExternalMesh(const SceneRendererMesh &meshToRemove);
 
 
-        
+
 
 
 
@@ -233,7 +297,7 @@ namespace GTEngine
 
         /// Retrieves the background clear colour.
         const glm::vec3 & GetBackgroundClearColour() const;
-        
+
 
 
 
