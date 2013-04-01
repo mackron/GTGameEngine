@@ -189,7 +189,7 @@ namespace GTEngine
                         this->allLightIndices.shadowPointLights.PushBack(this->shadowPointLights.count - 1);
                     }
 
-                    
+
                     light->position = sceneNode.GetWorldPosition();
                     light->colour   = lightComponent->GetColour();
                     light->radius   = lightComponent->GetRadius();
@@ -250,8 +250,8 @@ namespace GTEngine
                     light->falloff     = lightComponent->GetFalloff();
                     light->innerAngle  = lightComponent->GetInnerAngle();
                     light->outerAngle  = lightComponent->GetOuterAngle();
-                    
-                    
+
+
 
                     // A few additional properties need to be set if the light is casting a shadow.
                     if (lightComponent->IsShadowCastingEnabled())
@@ -338,7 +338,7 @@ namespace GTEngine
         object.material       = const_cast<Material*>(mesh.GetMaterial());
         object.transform      = transform;
         object.touchingLights = lights;
-        
+
         // Temp.
         if (drawHighlight)
         {
@@ -542,7 +542,7 @@ namespace GTEngine
         }
 
 
-                    
+
 
 
 
@@ -638,6 +638,7 @@ namespace GTEngine
         : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
           shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
           fullscreenTriangleVA(nullptr), finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
+          bloomShader(nullptr), highlightShader(nullptr),
           blurShaderX(nullptr), blurShaderY(nullptr), blurShaderX7x7(nullptr), blurShaderY7x7(nullptr), blurShaderX11x11(nullptr), blurShaderY11x11(nullptr), blurShaderX15x15(nullptr), blurShaderY15x15(nullptr),
           isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(1.0f),
           materialLibraryEventHandler(*this)
@@ -663,7 +664,7 @@ namespace GTEngine
 
         /// Fullscreen Triangle Vertex Array.
         this->fullscreenTriangleVA = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2);
-        
+
         float triangleVertices[] =
         {
             -3.0f, -1.0f, 0.0f,
@@ -744,7 +745,7 @@ namespace GTEngine
         // 0) Retrieve visible objects.
         DefaultSceneRendererVisibleObjects visibleObjects(scene, viewport);
         scene.QueryVisibleObjects(viewport.GetMVPMatrix(), visibleObjects);
-        
+
         // All external meshes are considered visible. Not going to do any frustum culling here.
         for (size_t i = 0; i < this->externalMeshes.count; ++i)
         {
@@ -1058,7 +1059,7 @@ namespace GTEngine
 
 
             // The first set of lights to render are the non-shadow-casting lights. We can set some rendering state at the start so that we don't
-            // have to keep changing it for each individual light. This will be different for shadow-casting lights, though, because they will 
+            // have to keep changing it for each individual light. This will be different for shadow-casting lights, though, because they will
             // need to have their shadow maps rendered also.
             size_t ambientLightsRemaining     = visibleObjects.ambientLights.count;
             size_t directionalLightsRemaining = visibleObjects.directionalLights.count;
@@ -1126,7 +1127,7 @@ namespace GTEngine
                 this->RenderOpaqueShadowPointLightingPass(shadowPointLightsRemaining - 1, visibleObjects, framebuffer);
                 shadowPointLightsRemaining -= 1;
             }
-        
+
             while (shadowSpotLightsRemaining > 0)
             {
                 this->RenderOpaqueShadowSpotLightingPass(shadowSpotLightsRemaining - 1, visibleObjects, framebuffer);
@@ -1157,7 +1158,7 @@ namespace GTEngine
                 this->RenderOpaqueMaterialPass(framebuffer, visibleObjects, *meshList);
             }
         }
-        
+
         // Last.
         for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjectsLast.count; ++iMeshList)
         {
@@ -1229,7 +1230,7 @@ namespace GTEngine
         }
     }
 
-    
+
 
 
     void DefaultSceneRenderer::RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects)
@@ -1370,7 +1371,7 @@ namespace GTEngine
     {
         // We first need to build the shadow map.
         Renderer::SetCurrentFramebuffer(this->shadowMapFramebuffer.framebuffer);
-        Renderer::SetCurrentShader(this->shadowMapShader);        
+        Renderer::SetCurrentShader(this->shadowMapShader);
         Renderer::SetViewport(0, 0, this->shadowMapFramebuffer.width, this->shadowMapFramebuffer.height);
 
         Renderer::SetClearColour(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1407,7 +1408,7 @@ namespace GTEngine
         // Here is where we perform the blurring of the shadow map. This renders a fullscreen quad, so we don't want depth testing here.
         Renderer::DisableDepthWrites();
         Renderer::DisableDepthTest();
-        
+
         // Blur X.
         {
             Renderer::SetDrawBuffers(1, &blurBufferIndex);
@@ -1604,7 +1605,7 @@ namespace GTEngine
         Renderer::SetCurrentFramebuffer(this->pointShadowMapFramebuffer.framebuffer);
         Renderer::SetViewport(0, 0, this->pointShadowMapFramebuffer.width, this->pointShadowMapFramebuffer.height);
 
-        
+
         auto light = visibleObjects.shadowPointLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
@@ -1715,7 +1716,7 @@ namespace GTEngine
         int blurBuffer1Index = 7;
         Renderer::SetDrawBuffers(1, &blurBuffer0Index);
         Renderer::SetCurrentShader(this->pointShadowMapShader);
-        
+
         // We need to clear both depth and colour. The colour needs to be cleared to the radius of the light.
         float radius = light.radius;
         Renderer::SetClearColour(radius, radius * radius, 0.0f, 1.0f);
@@ -1743,7 +1744,7 @@ namespace GTEngine
 
 
         // TODO: Make this optional.
-        
+
         // Now we want to do a gaussian blur on the face. The way we do it is we first blur on the X axis and then do the same on the Y axis. We use
         // an intermediary buffer that is bound to index 6 in the framebuffer. Not sure how seams will work here.
         Renderer::DisableDepthTest();
@@ -1858,7 +1859,7 @@ namespace GTEngine
     {
         // We first need to build the shadow map.
         Renderer::SetCurrentFramebuffer(this->shadowMapFramebuffer.framebuffer);
-        Renderer::SetCurrentShader(this->shadowMapShader);        
+        Renderer::SetCurrentShader(this->shadowMapShader);
         Renderer::SetViewport(0, 0, this->shadowMapFramebuffer.width, this->shadowMapFramebuffer.height);
 
         Renderer::SetClearColour(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1931,7 +1932,7 @@ namespace GTEngine
         // disabled depth writing, so no need to disable it again.
         Renderer::SetDepthFunction(RendererFunction_Equal);
         Renderer::EnableBlending();     // <-- Blending functions were set higher up.
-        
+
 
 
         // With the shadow map done, we now need to go back to the main framebuffer.
@@ -2144,7 +2145,7 @@ namespace GTEngine
 
         Renderer::DisableDepthTest();
         Renderer::DisableDepthWrites();
-        
+
 
         // The opaque buffer must have a Nearest/Nearest filter.
         Renderer::SetTexture2DFilter(*framebuffer->opaqueColourBuffer, TextureFilter_Nearest, TextureFilter_Nearest);
@@ -2282,7 +2283,7 @@ namespace GTEngine
                     Renderer::SetCurrentShader(this->finalCompositionShaderLDR);
                     this->finalCompositionShaderLDR->SetUniform("ColourBuffer", framebuffer->finalColourBufferHDR);
                     Renderer::PushPendingUniforms(*this->finalCompositionShaderLDR);
-                    
+
 
                     Renderer::DisableDepthTest();
                     Renderer::DisableDepthWrites();
@@ -2322,7 +2323,7 @@ namespace GTEngine
             {
                 auto light  = visibleObjects.ambientLights.buffer[lights->ambientLights[i]]->value;
                 auto shader = ambientLightShader;
-                                
+
 
                 // Shader.
                 Renderer::SetCurrentShader(shader);
@@ -2424,7 +2425,7 @@ namespace GTEngine
             {
                 auto light  = visibleObjects.pointLights.buffer[lights->pointLights[i]]->value;
                 auto shader = pointLightShader;
-                                
+
 
                 // Shader.
                 Renderer::SetCurrentShader(shader);
@@ -2459,7 +2460,7 @@ namespace GTEngine
             {
                 auto light  = visibleObjects.shadowPointLights.buffer[lights->shadowPointLights[i]]->value;
                 auto shader = pointLightShader;
-                                
+
 
                 // Shader.
                 Renderer::SetCurrentShader(shader);

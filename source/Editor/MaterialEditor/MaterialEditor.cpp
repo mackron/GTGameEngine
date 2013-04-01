@@ -16,6 +16,7 @@ namespace GTEngine
         : SubEditor(ownerEditor, absolutePath, relativePath),
           scene(), viewport(), camera(), modelNode(),
           mainElement(nullptr), scriptTextBoxElement(nullptr), scriptTextBoxEventHandler(*this), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), this->viewport),
+          cameraXRotation(0.0f), cameraYRotation(0.0f), material(nullptr),
           isSaving(false), isReloading(false)
     {
         // We use the camera for our lights.
@@ -27,7 +28,7 @@ namespace GTEngine
         this->viewport.SetCameraNode(this->camera);
         this->scene.AddViewport(this->viewport);
         this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
-        
+
 
         // HDR should be disabled for this.
         static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).DisableHDR();
@@ -40,7 +41,7 @@ namespace GTEngine
         // We'll load the material here. What we want to do is pass an absolute path, which will in turn require us to specify the base part of the path that would be used to make it relative.
         GTCore::String basePath = GTEngine::IO::GetBasePath(absolutePath, relativePath);
         this->material = MaterialLibrary::Create(absolutePath, basePath.c_str());
-        
+
         // Now we apply the material to the model.
         auto model = this->modelNode.GetComponent<ModelComponent>()->GetModel();
         if (model != nullptr)
@@ -127,7 +128,7 @@ namespace GTEngine
         // Here we'll add the appropriate scene nodes to the preview scene.
         this->scene.AddSceneNode(this->camera);
         this->scene.AddSceneNode(this->modelNode);
-        
+
         // Now position the camera.
         this->ResetCamera();
     }

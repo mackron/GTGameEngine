@@ -61,8 +61,8 @@ namespace GTEngine
             PostRedundancyMessage(message); \
         }
 #endif
-        
-    
+
+
 
 
     RCSetGlobalState::RCSetGlobalState()
@@ -70,7 +70,7 @@ namespace GTEngine
           viewportParams(), scissorParams(),
           clearColorParams(), clearDepthParams(), clearStencilParams(),
           currentShaderParams(), currentFramebufferParams(),
-          blendFuncParams(), blendEquationParams(),
+          blendFuncParams(), blendEquationParams(), blendColor(),
           alphaFuncParams(),
           depthFuncParams(),
           stencilMaskParams(), stencilFuncParams(), stencilOpParams(),
@@ -109,7 +109,7 @@ namespace GTEngine
         this->operationBitfield |= SCISSOR_BIT;
     }
 
-    
+
     void RCSetGlobalState::SetClearColour(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
     {
         CHECK_REDUNDANCY(CLEAR_COLOUR_BIT, "Warning: Renderer: Redundant call to SetClearColour().");
@@ -199,7 +199,7 @@ namespace GTEngine
         this->operationBitfield |= SET_BLEND_COLOUR_BIT;
     }
 
-    
+
     void RCSetGlobalState::SetAlphaTestFunction(GLenum func, GLclampf ref)
     {
         CHECK_REDUNDANCY(SET_ALPHA_FUNCTION_BIT, "Warning: Renderer: Redundant call to SetAlphaTestFunction().");
@@ -456,7 +456,7 @@ namespace GTEngine
         this->operationBitfield |= DISABLE_BIT;
     }
 
-    
+
     void RCSetGlobalState::Execute()
     {
         if ((this->operationBitfield & VIEWPORT_BIT))
@@ -533,10 +533,6 @@ namespace GTEngine
             else
             {
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-                GLenum backBuffer = GL_BACK;
-                glDrawBuffers(1, &backBuffer);
-
                 ServerState_GL_FRAMEBUFFER_BINDING = 0;
             }
         }

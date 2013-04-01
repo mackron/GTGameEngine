@@ -54,7 +54,7 @@ namespace GTEngine
         void UpdateHandleTransforms(const SceneNode &cameraNode, bool onlyVisibleHandles);
 
 
-        
+
 
 
 
@@ -193,8 +193,8 @@ namespace GTEngine
             /// The picking object. The shape will be defined and set by sub-classes.
             CollisionObject pickingObject;
 
-            
-            
+
+
 
 
             /// Constructor.
@@ -215,6 +215,11 @@ namespace GTEngine
 
             /// Virtual method for retrieving the forward vector.
             virtual glm::vec3 GetForwardVector() const { return glm::vec3(0.0f, 0.0f, 0.0f); }
+
+
+        private:    // No copying.
+            Handle(const Handle &);
+            Handle & operator=(const Handle &);
         };
 
 

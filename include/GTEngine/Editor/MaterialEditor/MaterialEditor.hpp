@@ -60,7 +60,7 @@ namespace GTEngine
         /// Applies the camera rotation to the camera node.
         void ApplyCameraRotation();
 
-        
+
 
 
     private:
@@ -142,6 +142,11 @@ namespace GTEngine
         /// Keeps track of whether or not we are handling a reload. We use this in keeping track of whether or not to mark the file as modified
         /// when the script text is changed.
         bool isReloading;
+
+
+    private:    // No copying.
+        MaterialEditor(const MaterialEditor &);
+        MaterialEditor & operator=(const MaterialEditor &);
     };
 }
 

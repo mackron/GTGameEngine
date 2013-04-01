@@ -21,7 +21,7 @@ namespace GTEngine
         /// A pointer to main framebuffer object.
         Framebuffer* framebuffer;
 
-        
+
         /// The depth/stencil buffer.
         Texture2D* depthStencilBuffer;
 
@@ -31,7 +31,7 @@ namespace GTEngine
         /// The final HDR colour buffer. RGBA16F.
         Texture2D* finalColourBufferHDR;
 
-        
+
 
 
         /// The first lighting accumulation buffer. RGBA16F. Stores diffuse RGB. A is unused right now.
@@ -132,7 +132,7 @@ namespace GTEngine
             this->width  = newWidth;
             this->height = newHeight;
 
-            
+
             this->depthStencilBuffer->SetData(  newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
             this->opaqueColourBuffer->SetData(  newWidth, newHeight, GTImage::ImageFormat_RGB16F);
             this->lightingBuffer0->SetData(     newWidth, newHeight, GTImage::ImageFormat_RGB16F);
@@ -154,6 +154,11 @@ namespace GTEngine
 
             Renderer::PushTexture2DData(*this->bloomBuffer);
         }
+
+
+    private:    // No copying.
+        DefaultSceneRendererFramebuffer(const DefaultSceneRendererFramebuffer &);
+        DefaultSceneRendererFramebuffer & operator=(const DefaultSceneRendererFramebuffer &);
     };
 
 
@@ -182,7 +187,7 @@ namespace GTEngine
 
         /// Constructor.
         DefaultSceneRendererShadowFramebuffer(unsigned int widthIn, unsigned int heightIn)
-            : framebuffer(nullptr), depthStencilBuffer(nullptr), colourBuffer(nullptr),
+            : framebuffer(nullptr), depthStencilBuffer(nullptr), colourBuffer(nullptr), blurBuffer(nullptr),
               width(widthIn), height(heightIn)
         {
             this->framebuffer        = Renderer::CreateFramebuffer();
@@ -232,6 +237,11 @@ namespace GTEngine
             Renderer::PushTexture2DData(*this->colourBuffer);
             Renderer::PushTexture2DData(*this->blurBuffer);
         }
+
+
+    private:    // No copying.
+        DefaultSceneRendererShadowFramebuffer(const DefaultSceneRendererShadowFramebuffer &);
+        DefaultSceneRendererShadowFramebuffer & operator=(const DefaultSceneRendererShadowFramebuffer &);
     };
 
     /// The framebuffer for point light shadow maps.
@@ -283,7 +293,7 @@ namespace GTEngine
             Renderer::SetTextureCubeWrapMode(*this->colourBuffer, TextureWrapMode_ClampToEdge);
             Renderer::SetTexture2DWrapMode(  *this->blurBuffer0,  TextureWrapMode_ClampToEdge);
             Renderer::SetTexture2DWrapMode(  *this->blurBuffer1,  TextureWrapMode_ClampToEdge);
-            
+
 
             // Attach.
             this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
@@ -331,6 +341,11 @@ namespace GTEngine
             Renderer::PushTexture2DData(  *this->blurBuffer0);
             Renderer::PushTexture2DData(  *this->blurBuffer1);
         }
+
+
+    private:    // No copying.
+        DefaultSceneRendererPointShadowFramebuffer(const DefaultSceneRendererPointShadowFramebuffer &);
+        DefaultSceneRendererPointShadowFramebuffer & operator=(const DefaultSceneRendererPointShadowFramebuffer &);
     };
 
 
@@ -388,8 +403,8 @@ namespace GTEngine
 
         /// The shader to use when doing the material pass.
         Shader* materialShader;
-        
-        
+
+
     private:    // No copying.
         DefaultSceneRendererMaterialShaders(const DefaultSceneRendererMaterialShaders &);
         DefaultSceneRendererMaterialShaders & operator=(const DefaultSceneRendererMaterialShaders &);
@@ -421,6 +436,14 @@ namespace GTEngine
 
         /// The indices of the shadow-casting spot lights.
         GTCore::Vector<uint32_t> shadowSpotLights;
+
+
+        /// Constructor.
+        LightIndices()
+            : ambientLights(), directionalLights(), pointLights(), spotLights(),
+              shadowDirectionalLights(), shadowPointLights(), shadowSpotLights()
+        {
+        }
     };
 
 
@@ -437,6 +460,16 @@ namespace GTEngine
             : touchingLights(nullptr)
         {
         }
+
+        /// Copy constructor.
+        DefaultSceneRendererMesh(const DefaultSceneRendererMesh &other)
+            : SceneRendererMesh(other), touchingLights(other.touchingLights)
+        {
+        }
+
+
+    private:    // No copying.
+        DefaultSceneRendererMesh & operator=(const DefaultSceneRendererMesh &);
     };
 
 
@@ -486,6 +519,14 @@ namespace GTEngine
 
         /// The view matrix to use when building the shadow map.
         glm::mat4 view;
+
+
+
+        /// Constructor.
+        DefaultSceneRendererShadowDirectionalLight()
+            : containedMeshes(), projection(), view()
+        {
+        }
     };
 
     /// Structure representing a shadow-casting point light.
@@ -510,9 +551,6 @@ namespace GTEngine
         DefaultSceneRendererShadowObjects containedMeshesNegativeZ;
 
 
-        /// The projection matrix.
-        glm::mat4 projection;
-
         /// The positive X view matrix.
         glm::mat4 positiveXView;
 
@@ -530,6 +568,23 @@ namespace GTEngine
 
         /// The negative Z view matrix.
         glm::mat4 negativeZView;
+
+
+        /// The projection matrix.
+        glm::mat4 projection;
+
+
+        /// Constructor.
+        DefaultSceneRendererShadowPointLight()
+            : containedMeshesPositiveX(), containedMeshesNegativeX(),
+              containedMeshesPositiveY(), containedMeshesNegativeY(),
+              containedMeshesPositiveZ(), containedMeshesNegativeZ(),
+              positiveXView(), negativeXView(),
+              positiveYView(), negativeYView(),
+              positiveZView(), negativeZView(),
+              projection()
+        {
+        }
     };
 
     /// Structure representing a shadow-casting spot light. The main difference between this and the normal one is that we have a list
@@ -544,6 +599,13 @@ namespace GTEngine
 
         /// The view matrix to use when building the shadow map.
         glm::mat4 view;
+
+
+        /// Constructor.
+        DefaultSceneRendererShadowSpotLight()
+            : containedMeshes(), projection(), view()
+        {
+        }
     };
 
 
@@ -659,7 +721,7 @@ namespace GTEngine
 
         /// The projection * view matrix.
         glm::mat4 projectionViewMatrix;
-        
+
 
 
     private:
@@ -783,14 +845,14 @@ namespace GTEngine
         };
 
 
-        
+
     private:    // No copying
         DefaultSceneRendererVisibleObjects(const DefaultSceneRendererVisibleObjects &);
         DefaultSceneRendererVisibleObjects & operator=(const DefaultSceneRendererVisibleObjects &);
     };
 
 
-    
+
 
 
 
@@ -867,7 +929,7 @@ namespace GTEngine
         /// Retrieves the HDR exposure.
         float GetHDRExposure() const;
 
-        
+
         /// Sets the bloom factor.
         void SetBloomFactor(float newBloomFactor);
 
@@ -920,7 +982,7 @@ namespace GTEngine
         /// Performs an ambient lighting pass in the opaque pass.
         void RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
         void RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-        
+
         /// Performs a directional lighting pass in the opaque pass.
         void RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects);
         void RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRendererVisibleObjects &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
@@ -956,7 +1018,7 @@ namespace GTEngine
 
 
         /// Renders the lighting of the given mesh.
-        void RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const DefaultSceneRendererVisibleObjects &visibleObjects); 
+        void RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const DefaultSceneRendererVisibleObjects &visibleObjects);
 
 
         /// Renders the final composition.
@@ -1094,7 +1156,7 @@ namespace GTEngine
         float bloomFactor;
 
 
-        
+
         /// Material Library Event Handler.
         class MaterialLibraryEventHandler : public MaterialLibrary::EventHandler
         {
@@ -1130,8 +1192,8 @@ namespace GTEngine
             MaterialLibraryEventHandler & operator=(const MaterialLibraryEventHandler &);
 
         }materialLibraryEventHandler;
-        
-        
+
+
     private:    // No copying.
         DefaultSceneRenderer(const DefaultSceneRenderer &);
         DefaultSceneRenderer & operator=(const DefaultSceneRenderer &);
