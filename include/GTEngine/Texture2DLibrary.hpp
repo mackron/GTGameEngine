@@ -52,6 +52,10 @@ namespace GTEngine
         /// @param texture [in] The texture being reacquired.
         ///
         /// @return <texture>. Done for consistency with Acquire(const char*).
+        ///
+        /// @remarks
+        ///     It is safe to call this generically on textures that were not initially acquired by this library. In this case, the
+        ///     acquire/unacquire operations will simply be ignored.
         static Texture2D* Acquire(Texture2D* texture);
 
 

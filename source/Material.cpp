@@ -51,19 +51,6 @@ namespace GTEngine
 
     MaterialDefinition::~MaterialDefinition()
     {
-        // Default properties need to be deleted. Textures need to be unacquired.
-        for (size_t i = 0; i < this->defaultParams.GetCount(); ++i)
-        {
-            auto param = this->defaultParams.GetByIndex(i);
-            assert(param != nullptr);
-
-            // If it's a texture property, it needs to be unacquired.
-            if (param->type == ShaderParameterType_Texture2D)
-            {
-                Texture2DLibrary::Unacquire(ShaderParameter_Texture2D::Upcast(param)->value);
-            }
-        }
-
         this->defaultParams.Clear();
     }
 
@@ -352,7 +339,11 @@ namespace GTEngine
                         {
                             auto valueStr = child->value();
 
-                            this->defaultParams.Set(nameAttr->value(), Texture2DLibrary::Acquire(valueStr));
+                            auto texture = Texture2DLibrary::Acquire(valueStr);
+                            {
+                                this->defaultParams.Set(nameAttr->value(), texture);
+                            }
+                            Texture2DLibrary::Unacquire(texture);
                         }
                     }
 
@@ -515,10 +506,7 @@ namespace GTEngine
     Material::Material(const MaterialDefinition &definition)
         : definition(definition), parameters(), blendColour(definition.GetBlendColour())
     {
-        for (size_t i = 0; i < definition.defaultParams.GetCount(); ++i)
-        {
-            this->SetParameter(definition.defaultParams.GetNameByIndex(i), definition.defaultParams.GetByIndex(i));
-        }
+        this->parameters = definition.defaultParams;
     }
 
     Material::~Material()
@@ -526,6 +514,326 @@ namespace GTEngine
         this->parameters.Clear();
     }
 
+
+    void Material::UnsetParameters(const ShaderParameterCache &parametersToUnset)
+    {
+        this->parameters.UnsetParameters(parametersToUnset);
+    }
+
+    void Material::ResetDefaultParameters(const ShaderParameterCache &oldDefaultParameters)
+    {
+        auto &oldFloatParameters       = oldDefaultParameters.GetFloatParameters();
+        auto &oldFloat2Parameters      = oldDefaultParameters.GetFloat2Parameters();
+        auto &oldFloat3Parameters      = oldDefaultParameters.GetFloat3Parameters();
+        auto &oldFloat4Parameters      = oldDefaultParameters.GetFloat4Parameters();
+        auto &oldFloat2x2Parameters    = oldDefaultParameters.GetFloat2x2Parameters();
+        auto &oldFloat3x3Parameters    = oldDefaultParameters.GetFloat3x3Parameters();
+        auto &oldFloat4x4Parameters    = oldDefaultParameters.GetFloat4x4Parameters();
+        auto &oldTexture2DParameters   = oldDefaultParameters.GetTexture2DParameters();
+        auto &oldTextureCubeParameters = oldDefaultParameters.GetTextureCubeParameters();
+
+        auto &currentFloatParameters       = this->parameters.GetFloatParameters();
+        auto &currentFloat2Parameters      = this->parameters.GetFloat2Parameters();
+        auto &currentFloat3Parameters      = this->parameters.GetFloat3Parameters();
+        auto &currentFloat4Parameters      = this->parameters.GetFloat4Parameters();
+        auto &currentFloat2x2Parameters    = this->parameters.GetFloat2x2Parameters();
+        auto &currentFloat3x3Parameters    = this->parameters.GetFloat3x3Parameters();
+        auto &currentFloat4x4Parameters    = this->parameters.GetFloat4x4Parameters();
+        auto &currentTexture2DParameters   = this->parameters.GetTexture2DParameters();
+        auto &currentTextureCubeParameters = this->parameters.GetTextureCubeParameters();
+
+
+        // Float
+        for (size_t i = 0; i < oldFloatParameters.count; ++i)
+        {
+            auto name     = oldFloatParameters.buffer[i]->key;
+            auto oldValue = oldFloatParameters.buffer[i]->value.value;
+
+            auto newDefaultParameter = this->definition.defaultParams.GetFloatParameter(name);
+            if (newDefaultParameter != nullptr)
+            {
+                auto iCurrentParameter = currentFloatParameters.Find(name);
+                if (iCurrentParameter != nullptr)
+                {
+                    if (iCurrentParameter->value.value == oldValue)
+                    {
+                        this->parameters.Set(name, newDefaultParameter->value);
+                    }
+                }
+                else
+                {
+                    this->parameters.Set(name, newDefaultParameter->value);
+                }
+            }
+            else
+            {
+                this->parameters.UnsetFloat(name);
+            }
+        }
+
+        // Float2
+        for (size_t i = 0; i < oldFloat2Parameters.count; ++i)
+        {
+            auto name     = oldFloat2Parameters.buffer[i]->key;
+            auto oldValue = oldFloat2Parameters.buffer[i]->value.value;
+
+            auto newDefaultParameter = this->definition.defaultParams.GetFloat2Parameter(name);
+            if (newDefaultParameter != nullptr)
+            {
+                auto iCurrentParameter = currentFloat2Parameters.Find(name);
+                if (iCurrentParameter != nullptr)
+                {
+                    if (iCurrentParameter->value.value == oldValue)
+                    {
+                        this->parameters.Set(name, newDefaultParameter->value);
+                    }
+                }
+                else
+                {
+                    this->parameters.Set(name, newDefaultParameter->value);
+                }
+            }
+            else
+            {
+                this->parameters.UnsetFloat2(name);
+            }
+        }
+
+        // Float3
+        for (size_t i = 0; i < oldFloat3Parameters.count; ++i)
+        {
+            auto name     = oldFloat3Parameters.buffer[i]->key;
+            auto oldValue = oldFloat3Parameters.buffer[i]->value.value;
+
+            auto newDefaultParameter = this->definition.defaultParams.GetFloat3Parameter(name);
+            if (newDefaultParameter != nullptr)
+            {
+                auto iCurrentParameter = currentFloat3Parameters.Find(name);
+                if (iCurrentParameter != nullptr)
+                {
+                    if (iCurrentParameter->value.value == oldValue)
+                    {
+                        this->parameters.Set(name, newDefaultParameter->value);
+                    }
+                }
+                else
+                {
+                    this->parameters.Set(name, newDefaultParameter->value);
+                }
+            }
+            else
+            {
+                this->parameters.UnsetFloat3(name);
+            }
+        }
+
+        // Float4
+        for (size_t i = 0; i < oldFloat4Parameters.count; ++i)
+        {
+            auto name     = oldFloat4Parameters.buffer[i]->key;
+            auto oldValue = oldFloat4Parameters.buffer[i]->value.value;
+
+            auto newDefaultParameter = this->definition.defaultParams.GetFloat4Parameter(name);
+            if (newDefaultParameter != nullptr)
+            {
+                auto iCurrentParameter = currentFloat4Parameters.Find(name);
+                if (iCurrentParameter != nullptr)
+                {
+                    if (iCurrentParameter->value.value == oldValue)
+                    {
+                        this->parameters.Set(name, newDefaultParameter->value);
+                    }
+                }
+                else
+                {
+                    this->parameters.Set(name, newDefaultParameter->value);
+                }
+            }
+            else
+            {
+                this->parameters.UnsetFloat4(name);
+            }
+        }
+
+        // Float2x2
+        for (size_t i = 0; i < oldFloat2x2Parameters.count; ++i)
+        {
+            auto name     = oldFloat2x2Parameters.buffer[i]->key;
+            auto oldValue = oldFloat2x2Parameters.buffer[i]->value.value;
+
+            auto newDefaultParameter = this->definition.defaultParams.GetFloat2x2Parameter(name);
+            if (newDefaultParameter != nullptr)
+            {
+                auto iCurrentParameter = currentFloat2x2Parameters.Find(name);
+                if (iCurrentParameter != nullptr)
+                {
+                    if (iCurrentParameter->value.value == oldValue)
+                    {
+                        this->parameters.Set(name, newDefaultParameter->value);
+                    }
+                }
+                else
+                {
+                    this->parameters.Set(name, newDefaultParameter->value);
+                }
+            }
+            else
+            {
+                this->parameters.UnsetFloat2x2(name);
+            }
+        }
+
+        // Float3x3
+        for (size_t i = 0; i < oldFloat3x3Parameters.count; ++i)
+        {
+            auto name     = oldFloat3x3Parameters.buffer[i]->key;
+            auto oldValue = oldFloat3x3Parameters.buffer[i]->value.value;
+
+            auto newDefaultParameter = this->definition.defaultParams.GetFloat3x3Parameter(name);
+            if (newDefaultParameter != nullptr)
+            {
+                auto iCurrentParameter = currentFloat3x3Parameters.Find(name);
+                if (iCurrentParameter != nullptr)
+                {
+                    if (iCurrentParameter->value.value == oldValue)
+                    {
+                        this->parameters.Set(name, newDefaultParameter->value);
+                    }
+                }
+                else
+                {
+                    this->parameters.Set(name, newDefaultParameter->value);
+                }
+            }
+            else
+            {
+                this->parameters.UnsetFloat3x3(name);
+            }
+        }
+
+        // Float4x4
+        for (size_t i = 0; i < oldFloat4x4Parameters.count; ++i)
+        {
+            auto name     = oldFloat4x4Parameters.buffer[i]->key;
+            auto oldValue = oldFloat4x4Parameters.buffer[i]->value.value;
+
+            auto newDefaultParameter = this->definition.defaultParams.GetFloat4x4Parameter(name);
+            if (newDefaultParameter != nullptr)
+            {
+                auto iCurrentParameter = currentFloat4x4Parameters.Find(name);
+                if (iCurrentParameter != nullptr)
+                {
+                    if (iCurrentParameter->value.value == oldValue)
+                    {
+                        this->parameters.Set(name, newDefaultParameter->value);
+                    }
+                }
+                else
+                {
+                    this->parameters.Set(name, newDefaultParameter->value);
+                }
+            }
+            else
+            {
+                this->parameters.UnsetFloat4x4(name);
+            }
+        }
+
+
+        // Texture2D
+        for (size_t i = 0; i < oldTexture2DParameters.count; ++i)
+        {
+            auto name     = oldTexture2DParameters.buffer[i]->key;
+            auto oldValue = oldTexture2DParameters.buffer[i]->value.value;
+
+            auto newDefaultParameter = this->definition.defaultParams.GetTexture2DParameter(name);
+            if (newDefaultParameter != nullptr)
+            {
+                auto iCurrentParameter = currentTexture2DParameters.Find(name);
+                if (iCurrentParameter != nullptr)
+                {
+                    if (iCurrentParameter->value.value == oldValue)
+                    {
+                        this->parameters.Set(name, newDefaultParameter->value);
+                    }
+                }
+                else
+                {
+                    this->parameters.Set(name, newDefaultParameter->value);
+                }
+            }
+            else
+            {
+                this->parameters.UnsetTexture2D(name);
+            }
+        }
+
+        // TextureCube
+        for (size_t i = 0; i < oldTextureCubeParameters.count; ++i)
+        {
+            auto name     = oldTextureCubeParameters.buffer[i]->key;
+            auto oldValue = oldTextureCubeParameters.buffer[i]->value.value;
+
+            auto newDefaultParameter = this->definition.defaultParams.GetTextureCubeParameter(name);
+            if (newDefaultParameter != nullptr)
+            {
+                auto iCurrentParameter = currentTextureCubeParameters.Find(name);
+                if (iCurrentParameter != nullptr)
+                {
+                    if (iCurrentParameter->value.value == oldValue)
+                    {
+                        this->parameters.Set(name, newDefaultParameter->value);
+                    }
+                }
+                else
+                {
+                    this->parameters.Set(name, newDefaultParameter->value);
+                }
+            }
+            else
+            {
+                this->parameters.UnsetTextureCube(name);
+            }
+        }
+    }
+
+
+#if 0
+    void Material::ResetDefaultParameters(const ShaderParameterCache &oldDefaultParameters)
+    {
+        this->parameters.UnsetUnusedParameters(oldDefaultParameters);
+
+
+        for (size_t iParameter = 0; iParameter < oldDefaultParameters.GetCount(); ++iParameter)
+        {
+            auto parameterName = oldDefaultParameters.GetNameByIndex(iParameter);
+            assert(parameterName != nullptr);
+            {
+                auto oldParameter = oldDefaultParameters.GetByIndex(iParameter);
+                auto newParameter = definition->defaultParams.Get(parameterName);
+
+                if (newParameter == nullptr)
+                {
+                    // The parameter doesn't exist anymore. It needs to be removed from the material.
+                    material->UnsetParameter(parameterName);
+                }
+                else
+                {
+                    // The parameter still exists, but we need to check if it needs replacing.
+                    auto iMaterialParameter = material->GetParameters().Find(parameterName);
+                    if (iMaterialParameter != nullptr)
+                    {
+                        if (CompareShaderParameters(oldParameter, iMaterialParameter->value))
+                        {
+                            // We'll replace the parameter.
+                            material->SetParameter(parameterName, newParameter);
+                        }
+                    }
+                }
+            }
+        }
+    }
+#endif
 
     void Material::Serialize(GTCore::Serializer &serializer) const
     {

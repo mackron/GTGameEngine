@@ -143,16 +143,17 @@ namespace GTEngine
             // If the texture is not referenced elsewhere, it needs to be deleted.
             if (texture->refCount == 1)
             {
+                // We only delete the texture if it was initially acquired by the library.
                 for (size_t i = 0; i < LoadedTextures.count; ++i)
                 {
                     if (LoadedTextures.buffer[i]->value == texture)
                     {
+                        Renderer::DeleteTexture2D(texture);
+
                         LoadedTextures.RemoveByIndex(i);
                         break;
                     }
                 }
-
-                Renderer::DeleteTexture2D(texture);
             }
             else
             {

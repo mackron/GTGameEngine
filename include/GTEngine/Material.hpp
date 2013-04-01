@@ -214,11 +214,19 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the list of default parameters.
-        const GTCore::Dictionary<ShaderParameter*> & DetDefaultParameters() const { return this->definition.defaultParams.GetParameters(); }
-
+        const ShaderParameterCache & DetDefaultParameters() const { return this->definition.defaultParams; }
 
         /// Retrieves a reference to the list of parameters for this material.
-        const GTCore::Dictionary<ShaderParameter*> & GetParameters() const { return this->parameters.GetParameters(); }
+        const ShaderParameterCache & GetParameters() const { return this->parameters; }
+
+
+
+        /// Removes the parameters by name in the given parameters.
+        void UnsetParameters(const ShaderParameterCache &parametersToUnset);
+
+        /// Resets the default parameters, but leaves modified ones alone.
+        void ResetDefaultParameters(const ShaderParameterCache &oldDefaultParameters);
+
 
 
         /// Determines whether or not the material is blended.
@@ -278,11 +286,13 @@ namespace GTEngine
         void SetParameter(const char* name, float x, float y, float z, float w) { this->SetParameter(name, glm::vec4(x, y, z, w)); }
         
 
+        /*
         // Unsets a parameter by it's name.
         void UnsetParameter(const char* name)
         {
             this->parameters.Unset(name);
         }
+        */
 
 
     private:

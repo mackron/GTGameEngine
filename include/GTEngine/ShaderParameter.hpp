@@ -9,117 +9,6 @@
 #define GLM_FORCE_ONLY_XYZW
 #include <glm/glm.hpp>
 
-#define GTENGINE_SHADERPARAMETER_DECL_COPYCTOR(typeName, typeID) \
-        typeName(const ShaderParameter* otherIn) \
-            : ShaderParameter(typeID), value() \
-        { \
-            auto other = typeName::Upcast(otherIn); \
-            assert(other != nullptr); \
-            \
-            this->value = other->value; \
-        } \
-
-#define GTENGINE_SHADERPARAMETER_DECL_SETONCURRENTSHADER() \
-        void SetOnCurrentShader(const char* name) const; \
-
-#define GTENGINE_SHADERPARAMETER_DECL_UPCAST(typeName, typeID) \
-        static const typeName* Upcast(const ShaderParameter* self) \
-        { \
-            if (self->type == typeID) \
-            { \
-                return static_cast<const typeName*>(self); \
-            } \
-            \
-            return nullptr; \
-        } \
-        \
-        static typeName* Upcast(ShaderParameter* self) \
-        { \
-            if (self->type == typeID) \
-            { \
-                return static_cast<typeName*>(self); \
-            } \
-            \
-            return nullptr; \
-        } \
-
-
-#define GTENGINE_SHADERPARAMETER_DECL(typeName, typeID, valueType) \
-    struct typeName : public ShaderParameter \
-    { \
-        valueType value; \
-        \
-        typeName(const valueType &valueIn) \
-            : ShaderParameter(typeID), value(valueIn) \
-        { \
-        } \
-        \
-        GTENGINE_SHADERPARAMETER_DECL_COPYCTOR(typeName, typeID) \
-        GTENGINE_SHADERPARAMETER_DECL_SETONCURRENTSHADER() \
-        GTENGINE_SHADERPARAMETER_DECL_UPCAST(typeName, typeID) \
-    }; \
-
-#define GTENGINE_SHADERPARAMETER_DECL_PTR(typeName, typeID, valueType) \
-    struct typeName : public ShaderParameter \
-    { \
-        valueType* value; \
-        \
-        typeName(valueType* valueIn) \
-            : ShaderParameter(typeID), value(valueIn) \
-        { \
-        } \
-        \
-        GTENGINE_SHADERPARAMETER_DECL_COPYCTOR(typeName, typeID) \
-        GTENGINE_SHADERPARAMETER_DECL_SETONCURRENTSHADER() \
-        GTENGINE_SHADERPARAMETER_DECL_UPCAST(typeName, typeID) \
-        \
-    private: \
-        typeName(const typeName &); \
-        typeName & operator=(const typeName &); \
-    }; \
-
-#define GTENGINE_SHADERPARAMETER_DECL_TEXTURE2D(typeName, typeID, valueType) \
-    struct typeName : public ShaderParameter \
-    { \
-        valueType* value; \
-        bool       unacquireInDtor; \
-        \
-        typeName(valueType* valueIn) \
-            : ShaderParameter(typeID), value(valueIn), unacquireInDtor(false) \
-        { \
-        } \
-        \
-        typeName(const ShaderParameter* otherIn) \
-            : ShaderParameter(typeID), value(), unacquireInDtor(false) \
-        { \
-            auto other = typeName::Upcast(otherIn); \
-            assert(other != nullptr); \
-            \
-            this->value = other->value; \
-            \
-            if (other->unacquireInDtor) \
-            { \
-                this->unacquireInDtor = other->unacquireInDtor; \
-                Texture2DLibrary::Acquire(this->value); \
-            } \
-        } \
-        \
-        ~typeName() \
-        { \
-            if (this->unacquireInDtor) \
-            { \
-                Texture2DLibrary::Unacquire(this->value); \
-            } \
-        } \
-        \
-        GTENGINE_SHADERPARAMETER_DECL_SETONCURRENTSHADER() \
-        GTENGINE_SHADERPARAMETER_DECL_UPCAST(typeName, typeID) \
-        \
-    private: \
-        typeName(const typeName &); \
-        typeName & operator=(const typeName &); \
-    }; \
-
 
 namespace GTEngine
 {
@@ -161,34 +50,159 @@ namespace GTEngine
         {
         }
 
-        /// Destructor.
-        virtual ~ShaderParameter()
+        /// Copy constructor.
+        ShaderParameter(const ShaderParameter &other)
+            : type(other.type)
         {
         }
 
-        /// Virtual method for applying the value onto the current shader. Use Renderer::SetShaderParameter(). This method
-        /// is intended to be called from the rendering thread.
-        //virtual void SetOnCurrentShader(const char* name) const = 0;
+        /// Destructor.
+        virtual ~ShaderParameter() {}
     };
 
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float,    ShaderParameterType_Float,    float);
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float2,   ShaderParameterType_Float2,   glm::vec2);
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float3,   ShaderParameterType_Float3,   glm::vec3);
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float4,   ShaderParameterType_Float4,   glm::vec4);
 
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Integer,  ShaderParameterType_Integer,  int);
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Integer2, ShaderParameterType_Integer2, glm::ivec2);
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Integer3, ShaderParameterType_Integer3, glm::ivec3);
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Integer4, ShaderParameterType_Integer4, glm::ivec4);
+    struct ShaderParameter_Float : public ShaderParameter
+    {
+        float value;
 
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float2x2, ShaderParameterType_Float2x2, glm::mat2);
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float3x3, ShaderParameterType_Float3x3, glm::mat3);
-    GTENGINE_SHADERPARAMETER_DECL(ShaderParameter_Float4x4, ShaderParameterType_Float4x4, glm::mat4);
+        ShaderParameter_Float(float valueIn)
+            : ShaderParameter(ShaderParameterType_Float), value(valueIn)
+        {
+        }
 
-    //GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_Texture1D,   ShaderParameterType_Texture1D,   Texture1D);
-    GTENGINE_SHADERPARAMETER_DECL_TEXTURE2D(ShaderParameter_Texture2D,   ShaderParameterType_Texture2D,   Texture2D);
-    //GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_Texture3D,   ShaderParameterType_Texture3D,   Texture3D);
-    GTENGINE_SHADERPARAMETER_DECL_PTR(ShaderParameter_TextureCube, ShaderParameterType_TextureCube, TextureCube);
+        ShaderParameter_Float(const ShaderParameter_Float &other)
+            : ShaderParameter(other), value(other.value)
+        {
+        }
+    };
+
+    struct ShaderParameter_Float2 : public ShaderParameter
+    {
+        glm::vec2 value;
+
+        ShaderParameter_Float2(const glm::vec2 &valueIn)
+            : ShaderParameter(ShaderParameterType_Float2), value(valueIn)
+        {
+        }
+
+        ShaderParameter_Float2(const ShaderParameter_Float2 &other)
+            : ShaderParameter(other), value(other.value)
+        {
+        }
+    };
+
+    struct ShaderParameter_Float3 : public ShaderParameter
+    {
+        glm::vec3 value;
+
+        ShaderParameter_Float3(const glm::vec3 &valueIn)
+            : ShaderParameter(ShaderParameterType_Float3), value(valueIn)
+        {
+        }
+
+        ShaderParameter_Float3(const ShaderParameter_Float3 &other)
+            : ShaderParameter(other), value(other.value)
+        {
+        }
+    };
+
+    struct ShaderParameter_Float4 : public ShaderParameter
+    {
+        glm::vec4 value;
+
+        ShaderParameter_Float4(const glm::vec4 &valueIn)
+            : ShaderParameter(ShaderParameterType_Float4), value(valueIn)
+        {
+        }
+
+        ShaderParameter_Float4(const ShaderParameter_Float4 &other)
+            : ShaderParameter(other), value(other.value)
+        {
+        }
+    };
+
+
+    struct ShaderParameter_Float2x2 : public ShaderParameter
+    {
+        glm::mat2 value;
+
+        ShaderParameter_Float2x2(const glm::mat2 &valueIn)
+            : ShaderParameter(ShaderParameterType_Float2x2), value(valueIn)
+        {
+        }
+
+        ShaderParameter_Float2x2(const ShaderParameter_Float2x2 &other)
+            : ShaderParameter(other), value(other.value)
+        {
+        }
+    };
+
+    struct ShaderParameter_Float3x3 : public ShaderParameter
+    {
+        glm::mat3 value;
+
+        ShaderParameter_Float3x3(const glm::mat3 &valueIn)
+            : ShaderParameter(ShaderParameterType_Float3x3), value(valueIn)
+        {
+        }
+
+        ShaderParameter_Float3x3(const ShaderParameter_Float3x3 &other)
+            : ShaderParameter(other), value(other.value)
+        {
+        }
+    };
+
+    struct ShaderParameter_Float4x4 : public ShaderParameter
+    {
+        glm::mat4 value;
+
+        ShaderParameter_Float4x4(const glm::mat4 &valueIn)
+            : ShaderParameter(ShaderParameterType_Float4x4), value(valueIn)
+        {
+        }
+
+        ShaderParameter_Float4x4(const ShaderParameter_Float4x4 &other)
+            : ShaderParameter(other), value(other.value)
+        {
+        }
+    };
+
+
+    struct ShaderParameter_Texture2D : public ShaderParameter
+    {
+        Texture2D* value;
+
+        ShaderParameter_Texture2D(Texture2D* valueIn)
+            : ShaderParameter(ShaderParameterType_Texture2D), value(Texture2DLibrary::Acquire(valueIn))
+        {
+        }
+
+        ShaderParameter_Texture2D(const ShaderParameter_Texture2D &other)
+            : ShaderParameter(other), value(Texture2DLibrary::Acquire(other.value))
+        {
+        }
+
+        ~ShaderParameter_Texture2D()
+        {
+            Texture2DLibrary::Unacquire(this->value);
+        }
+    };
+
+    struct ShaderParameter_TextureCube : public ShaderParameter
+    {
+        TextureCube* value;
+
+        ShaderParameter_TextureCube(TextureCube* valueIn)
+            : ShaderParameter(ShaderParameterType_TextureCube), value(valueIn)
+        {
+        }
+
+        ShaderParameter_TextureCube(const ShaderParameter_TextureCube &other)
+            : ShaderParameter(other), value(other.value)
+        {
+        }
+    };
+
 
 
 #if defined(__clang__)
@@ -197,7 +211,7 @@ namespace GTEngine
 #endif
 
     /// Creates a copy of the given material property. Delete the property with 'delete'.
-    inline ShaderParameter* CopyShaderParameter(const ShaderParameter* propToCopy)
+    inline ShaderParameter* CopyShaderParameter(const ShaderParameter* propToCopy)              // <-- TODO: Should be able to get rid of this with the new system.
     {
         assert(propToCopy != nullptr);
 
@@ -207,61 +221,61 @@ namespace GTEngine
         {
         case ShaderParameterType_Float:
             {
-                newProp = new ShaderParameter_Float(propToCopy);
+                newProp = new ShaderParameter_Float(static_cast<const ShaderParameter_Float &>(*propToCopy));
                 break;
             }
         case ShaderParameterType_Float2:
             {
-                newProp = new ShaderParameter_Float2(propToCopy);
+                newProp = new ShaderParameter_Float2(static_cast<const ShaderParameter_Float2 &>(*propToCopy));
                 break;
             }
         case ShaderParameterType_Float3:
             {
-                newProp = new ShaderParameter_Float3(propToCopy);
+                newProp = new ShaderParameter_Float3(static_cast<const ShaderParameter_Float3 &>(*propToCopy));
                 break;
             }
         case ShaderParameterType_Float4:
             {
-                newProp = new ShaderParameter_Float4(propToCopy);
+                newProp = new ShaderParameter_Float4(static_cast<const ShaderParameter_Float4 &>(*propToCopy));
                 break;
             }
 
 
         case ShaderParameterType_Integer:
             {
-                newProp = new ShaderParameter_Integer(propToCopy);
+                //newProp = new ShaderParameter_Integer(propToCopy);
                 break;
             }
         case ShaderParameterType_Integer2:
             {
-                newProp = new ShaderParameter_Integer2(propToCopy);
+                //newProp = new ShaderParameter_Integer2(propToCopy);
                 break;
             }
         case ShaderParameterType_Integer3:
             {
-                newProp = new ShaderParameter_Integer3(propToCopy);
+                //newProp = new ShaderParameter_Integer3(propToCopy);
                 break;
             }
         case ShaderParameterType_Integer4:
             {
-                newProp = new ShaderParameter_Integer4(propToCopy);
+                //newProp = new ShaderParameter_Integer4(propToCopy);
                 break;
             }
 
 
         case ShaderParameterType_Float2x2:
             {
-                newProp = new ShaderParameter_Float2x2(propToCopy);
+                newProp = new ShaderParameter_Float2x2(static_cast<const ShaderParameter_Float2x2 &>(*propToCopy));
                 break;
             }
         case ShaderParameterType_Float3x3:
             {
-                newProp = new ShaderParameter_Float3x3(propToCopy);
+                newProp = new ShaderParameter_Float3x3(static_cast<const ShaderParameter_Float3x3 &>(*propToCopy));
                 break;
             }
         case ShaderParameterType_Float4x4:
             {
-                newProp = new ShaderParameter_Float4x4(propToCopy);
+                newProp = new ShaderParameter_Float4x4(static_cast<const ShaderParameter_Float4x4 &>(*propToCopy));
                 break;
             }
 
@@ -274,7 +288,7 @@ namespace GTEngine
 
         case ShaderParameterType_Texture2D:
             {
-                newProp = new ShaderParameter_Texture2D(propToCopy);
+                newProp = new ShaderParameter_Texture2D(static_cast<const ShaderParameter_Texture2D &>(*propToCopy));
                 break;
             }
 
@@ -286,7 +300,7 @@ namespace GTEngine
 
         case ShaderParameterType_TextureCube:
             {
-                newProp = new ShaderParameter_TextureCube(propToCopy);
+                newProp = new ShaderParameter_TextureCube(static_cast<const ShaderParameter_TextureCube &>(*propToCopy));
                 break;
             }
 
@@ -328,19 +342,23 @@ namespace GTEngine
 
                 case ShaderParameterType_Integer:
                     {
-                        return static_cast<const ShaderParameter_Integer*>(parameterA)->value == static_cast<const ShaderParameter_Integer*>(parameterB)->value;
+                        //return static_cast<const ShaderParameter_Integer*>(parameterA)->value == static_cast<const ShaderParameter_Integer*>(parameterB)->value;
+                        break;
                     }
                 case ShaderParameterType_Integer2:
                     {
-                        return static_cast<const ShaderParameter_Integer2*>(parameterA)->value == static_cast<const ShaderParameter_Integer2*>(parameterB)->value;
+                        //return static_cast<const ShaderParameter_Integer2*>(parameterA)->value == static_cast<const ShaderParameter_Integer2*>(parameterB)->value;
+                        break;
                     }
                 case ShaderParameterType_Integer3:
                     {
-                        return static_cast<const ShaderParameter_Integer3*>(parameterA)->value == static_cast<const ShaderParameter_Integer3*>(parameterB)->value;
+                        //return static_cast<const ShaderParameter_Integer3*>(parameterA)->value == static_cast<const ShaderParameter_Integer3*>(parameterB)->value;
+                        break;
                     }
                 case ShaderParameterType_Integer4:
                     {
-                        return static_cast<const ShaderParameter_Integer4*>(parameterA)->value == static_cast<const ShaderParameter_Integer4*>(parameterB)->value;
+                        //return static_cast<const ShaderParameter_Integer4*>(parameterA)->value == static_cast<const ShaderParameter_Integer4*>(parameterB)->value;
+                        break;
                     }
 
 
