@@ -122,16 +122,49 @@ namespace GTEngine
 
     void ModelEditor::ResetCamera()
     {
-        this->camera.SetPosition(0.0f, 0.0f, 10.0f);
-        this->SetCameraRotation(0.0f, 0.0f);
-    }
+        // The camera needs to be positioned based on the bounding volume. We will position the camera at the +Z/+X edge of a scaled bounding volume.
+        glm::vec3 aabbMin;
+        glm::vec3 aabbMax;
 
-    void ModelEditor::SetCameraRotation(float xRotation, float yRotation)
-    {
-        this->cameraXRotation = xRotation;
-        this->cameraYRotation = yRotation;
+        auto modelComponent = this->modelNode.GetComponent<ModelComponent>();
+        assert(modelComponent != nullptr);
+        {
+            auto model = modelComponent->GetModel();
+            if (model != nullptr)
+            {
+                model->GetBaseAABB(aabbMin, aabbMax);
+
+                // Center point (camera look-at target).
+                glm::vec3 cameraLookAtTarget = (aabbMin + aabbMax) * 0.5f;
+
+
+                // Camera position.
+                glm::vec3 aabbSize = aabbMax - aabbMin;
+                float maxDimension = glm::max(aabbSize.x, glm::max(aabbSize.y, aabbSize.z));
+
+                glm::vec3 cameraPosition = cameraLookAtTarget;
+                cameraPosition += glm::normalize(glm::vec3(1.0f, 0.5f, 1.0f)) * maxDimension * 2.0f;
+
+
+
+                // Position and rotate the camera.
+                this->camera.SetPosition(cameraPosition);
+                this->camera.LookAt(cameraLookAtTarget);
+            }
+            else
+            {
+                this->camera.SetPosition(10.0f, 5.0f, 10.0f);
+                this->camera.LookAt(0.0f, 0.0f, 0.0f);
+            }
+        }
+
+
+        glm::vec3 cameraRotation = glm::eulerAngles(this->camera.GetWorldOrientation());
+        this->cameraXRotation = cameraRotation.x;
+        this->cameraYRotation = cameraRotation.y;
         this->ApplyCameraRotation();
     }
+
 
     void ModelEditor::GetMaterials(GTCore::Vector<GTCore::String> &materialsOut)
     {

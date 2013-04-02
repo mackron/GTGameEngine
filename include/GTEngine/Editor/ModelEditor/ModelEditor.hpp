@@ -26,9 +26,6 @@ namespace GTEngine
         /// Resets the camera to the default position.
         void ResetCamera();
 
-        /// Sets the rotation of the camera.
-        void SetCameraRotation(float xRotation, float yRotation);
-
 
         /// Retrieves the relative paths of the materials attached to the model.
         ///
