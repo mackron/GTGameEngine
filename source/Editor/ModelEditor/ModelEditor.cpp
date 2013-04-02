@@ -18,6 +18,7 @@ namespace GTEngine
           modelNode(), convexHullParentNode(), convexHullNodes(),
           mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), viewport),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
+          grid(0.25f, 8, 32),
           random()
     {
         // We use the camera for our lights.
@@ -33,6 +34,9 @@ namespace GTEngine
 
         // HDR should be disabled for this.
         static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).DisableHDR();
+
+        // Show the grid.
+        this->grid.Show(this->scene.GetRenderer());
 
 
         // We need to ensure the model node has a model component. What we want to do is pass an absolute path, which will in turn
