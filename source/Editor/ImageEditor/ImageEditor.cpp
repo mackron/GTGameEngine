@@ -131,9 +131,8 @@ namespace GTEngine
                         quadLeft,  quadTop,
                         0.0f,      1.0f
                     };
-                    this->vertexArray->SetVertexData(quadVertices, 4);
 
-                    Renderer::PushVertexArrayVertexData(*this->vertexArray);
+                    this->vertexArray->SetVertexData(quadVertices, 4);
                     Renderer::Draw(*this->vertexArray);
                 }
             }
