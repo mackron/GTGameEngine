@@ -11,6 +11,7 @@ namespace GTEngine
           scene(), viewport(), camera(), particleNode(),
           mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), this->viewport),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
+          grid(0.25f, 8, 32),
           isSaving(false), isReloading(false)
     {
         // We use the camera for our lights.
@@ -26,6 +27,9 @@ namespace GTEngine
 
         // HDR should be disabled for this.
         static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).DisableHDR();
+
+        // Show the grid.
+        this->grid.Show(this->scene.GetRenderer());
 
 
         // Now we setup the particle node.

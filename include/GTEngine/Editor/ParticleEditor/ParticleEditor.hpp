@@ -5,6 +5,7 @@
 
 #include "../SubEditor.hpp"
 #include "../Editor3DViewportEventHandler.hpp"
+#include "../EditorGrid.hpp"
 #include "../../Scene.hpp"
 
 namespace GTEngine
@@ -83,6 +84,10 @@ namespace GTEngine
 
         float cameraXRotation;      ///< The camera's current X rotation.
         float cameraYRotation;      ///< The camera's current Y rotation.
+
+
+        /// The grid.
+        EditorGrid grid;
 
 
         /// Keeps track of whether or not the editor is in the middle of saving. We use this in determining whether or not the settings should be
