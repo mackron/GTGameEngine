@@ -63,10 +63,13 @@ namespace GTEngine
             }
 
 
-            /// OnDraw.
+            /// GTGUI::ElementEventHandler::OnDraw()
             void OnDraw(GTGUI::Element &element);
 
-            /// OnMouseWheel.
+            /// GTGUI::ElementEventHandler::ImplementsOnDraw()
+            bool ImplementsOnDraw() const { return true; }
+
+            /// GTGUI::ElementEventHandler::OnMouseWheel()
             void OnMouseWheel(GTGUI::Element &element, int delta, int x, int y);
 
 
