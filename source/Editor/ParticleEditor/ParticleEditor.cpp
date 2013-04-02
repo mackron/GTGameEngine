@@ -4,6 +4,11 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4355)   // 'this' used in initialise list.
+#endif
+
 namespace GTEngine
 {
     ParticleEditor::ParticleEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
@@ -192,3 +197,7 @@ namespace GTEngine
         this->camera.RotateX(this->cameraXRotation);
     }
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
