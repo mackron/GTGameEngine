@@ -5,6 +5,7 @@
 
 #include "../SubEditor.hpp"
 #include "../Editor3DViewportEventHandler.hpp"
+#include "../EditorGrid.hpp"
 #include "../../Scene.hpp"
 #include <GTCore/Random.hpp>
 
@@ -127,6 +128,10 @@ namespace GTEngine
 
         float cameraXRotation;      ///< The camera's current X rotation.
         float cameraYRotation;      ///< The camera's current Y rotation.
+
+
+        /// The grid.
+        EditorGrid grid;
 
 
         /// The random number generator for convex hull colours, and whatever else we may need.
