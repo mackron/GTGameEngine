@@ -339,7 +339,7 @@ namespace GTEngine
                 script.GetGlobal("Game");
                 assert(script.IsTable(-1));
                 {
-                    script.SetTableFunction(-1, "GetGameWindowGUIElement", Scripting::FFI::GameFFI::GetGameWindowGUIElement);
+                    script.SetTableFunction(-1, "GetGameWindowGUIElement", Scripting::GameFFI::GetGameWindowGUIElement);
                 }
                 script.Pop(1);
 
