@@ -31,7 +31,7 @@ namespace GTEngine
 
         bool IsSupportedSoundExtension(const char* fileName)
         {
-            return AudioComposer::IsExtensionSupported(GTCore::Path::Extension(fileName));
+            return AudioComposer::IsFileExtensionSupported(GTCore::Path::Extension(fileName));
         }
 
         bool IsSupportedParticleSystemExtension(const char* fileName)
