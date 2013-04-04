@@ -349,6 +349,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ScriptDefinition.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Game.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Math.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ScriptLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ScriptVariable.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ScriptVariableTypes.hpp" />
