@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Scripting/Scripting_Audio.hpp>
+#include <GTEngine/Scripting/Scripting_Math.hpp>
 #include <GTEngine/Audio.hpp>
 
 namespace GTEngine
@@ -27,7 +28,23 @@ namespace GTEngine
         {
             int Play(GTCore::Script &script)
             {
-                AudioComposer::Play(script.ToString(1));
+                auto fileName = script.ToString(1);
+                auto position = Scripting::ToVector3(script, 2);
+                auto relative = script.ToBoolean(3);
+
+                AudioComposer::Play(fileName, position, relative);
+                return 0;
+            }
+
+            int SetListenerPosition(GTCore::Script &script)
+            {
+                AudioComposer::SetListenerPosition(Scripting::ToVector3(script, 1));
+                return 0;
+            }
+
+            int SetListenerOrientation(GTCore::Script &script)
+            {
+                AudioComposer::SetListenerOrientation(Scripting::ToQuaternion(script, 1));
                 return 0;
             }
         }
