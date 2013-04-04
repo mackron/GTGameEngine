@@ -88,14 +88,6 @@ namespace GTEngine
 
 
 
-                ///////////////////////////////////////////////////
-                // GTEngine.Renderer
-                
-                script.Push("Renderer");
-                script.PushNewTable();
-                script.SetTableValue(-3);
-
-
 
                 ///////////////////////////////////////////////////
                 // GTEngine.Audio
@@ -224,6 +216,12 @@ namespace GTEngine
                 "    GTEngine.System[value .. 'Component'] = {};"
                 "end;"
             );
+
+
+
+            successful = successful && LoadRenderingLibrary(script);
+            successful = successful && LoadAudioLibrary(script);
+
 
 
             successful = successful && script.Execute
@@ -1773,26 +1771,6 @@ namespace GTEngine
                         script.SetTableFunction(-1, "IsBloomEnabled",                      FFI::SystemFFI::SceneEditorFFI::IsBloomEnabled);
                     }
                     script.Pop(1);
-                }
-                script.Pop(1);
-
-
-
-                script.Push("Renderer");
-                script.GetTableValue(-2);
-                if (script.IsTable(-1))
-                {
-                    script.SetTableFunction(-1, "EnableVSync",  FFI::RendererFFI::EnableVSync);
-                    script.SetTableFunction(-1, "DisableVSync", FFI::RendererFFI::DisableVSync);
-                }
-                script.Pop(1);
-
-
-                script.Push("Audio");
-                script.GetTableValue(-2);
-                if (script.IsTable(-1))
-                {
-                    script.SetTableFunction(-1, "Play", FFI::AudioFFI::Play);
                 }
                 script.Pop(1);
             }
@@ -6736,36 +6714,6 @@ namespace GTEngine
 
                         return 1;
                     }
-                }
-            }
-
-
-
-            //////////////////////////////////////////////////
-            // GTEngine.Rendering
-            namespace RendererFFI
-            {
-                int EnableVSync(GTCore::Script &)
-                {
-                    Renderer::SetSwapInterval(1);
-                    return 0;
-                }
-
-                int DisableVSync(GTCore::Script &)
-                {
-                    Renderer::SetSwapInterval(0);
-                    return 0;
-                }
-            }
-
-            //////////////////////////////////////////////////
-            // GTEngine.Audio
-            namespace AudioFFI
-            {
-                int Play(GTCore::Script &script)
-                {
-                    AudioComposer::Play(script.ToString(1));
-                    return 0;
                 }
             }
         }

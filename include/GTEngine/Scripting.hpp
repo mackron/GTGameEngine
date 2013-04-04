@@ -5,6 +5,8 @@
 
 #include "Scripting/Scripting_Game.hpp"
 #include "Scripting/Scripting_Math.hpp"
+#include "Scripting/Scripting_Rendering.hpp"
+#include "Scripting/Scripting_Audio.hpp"
 #include "Scene.hpp"
 
 namespace GTEngine
@@ -290,28 +292,6 @@ namespace GTEngine
             int IsSceneNodeEventHandler(GTCore::Script &script);
 
             
-
-
-
-            namespace RendererFFI
-            {
-                /// Enables v-sync on the renderer.
-                int EnableVSync(GTCore::Script &script);
-
-                /// Disables v-sync on the renderer.
-                int DisableVSync(GTCore::Script &script);
-            }
-
-
-            namespace AudioFFI
-            {
-                /// Plays a sound.
-                ///
-                /// @remarks
-                ///     Argument 1: The file name of the sound to play.
-                int Play(GTCore::Script &script);
-            }
-
 
             namespace SystemFFI
             {
