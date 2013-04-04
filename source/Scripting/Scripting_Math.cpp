@@ -514,5 +514,163 @@ namespace GTEngine
 
             return true;
         }
+
+
+
+        glm::vec2 ToVector2(GTCore::Script &script, int position)
+        {
+            glm::vec2 result;
+
+            if (script.IsTable(position))
+            {
+                script.Push("x");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.x = script.ToFloat(-1);
+                }
+                script.Pop(1);
+
+
+                script.Push("y");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.y = script.ToFloat(-1);
+                }
+                script.Pop(1);
+            }
+
+            return result;
+        }
+
+
+        glm::vec3 ToVector3(GTCore::Script &script, int position)
+        {
+            glm::vec3 result;
+
+            if (script.IsTable(position))
+            {
+                script.Push("x");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.x = script.ToFloat(-1);
+                }
+                script.Pop(1);
+
+
+                script.Push("y");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.y = script.ToFloat(-1);
+                }
+                script.Pop(1);
+
+
+                script.Push("z");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.z = script.ToFloat(-1);
+                }
+                script.Pop(1);
+            }
+
+            return result;
+        }
+
+
+        glm::vec4 ToVector4(GTCore::Script &script, int position)
+        {
+            glm::vec4 result;
+
+            if (script.IsTable(position))
+            {
+                script.Push("x");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.x = script.ToFloat(-1);
+                }
+                script.Pop(1);
+
+
+                script.Push("y");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.y = script.ToFloat(-1);
+                }
+                script.Pop(1);
+
+
+                script.Push("z");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.z = script.ToFloat(-1);
+                }
+                script.Pop(1);
+
+
+                script.Push("w");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.w = script.ToFloat(-1);
+                }
+                script.Pop(1);
+            }
+
+            return result;
+        }
+
+
+        glm::quat ToQuaternion(GTCore::Script &script, int position)
+        {
+            glm::quat result;
+
+            if (script.IsTable(position))
+            {
+                script.Push("x");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.x = script.ToFloat(-1);
+                }
+                script.Pop(1);
+
+
+                script.Push("y");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.y = script.ToFloat(-1);
+                }
+                script.Pop(1);
+
+
+                script.Push("z");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.z = script.ToFloat(-1);
+                }
+                script.Pop(1);
+
+
+                script.Push("w");
+                script.GetTableValue((position > 0) ? position : position - 1);
+                if (script.IsNumber(-1))
+                {
+                    result.w = script.ToFloat(-1);
+                }
+                script.Pop(1);
+            }
+
+            return result;
+        }
     }
 }
