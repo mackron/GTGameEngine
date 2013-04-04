@@ -38,19 +38,19 @@ namespace GTEngine
                 "math.__vec2.__index = math.__vec2;"
 
                 "math.__vec2.__add = function(a, b)"
-                "    return math.vec4(a.x + b.x, a.y + b.y);"
+                "    return math.vec2(a.x + b.x, a.y + b.y);"
                 "end;"
 
                 "math.__vec2.__sub = function(a, b)"
-                "    return math.vec4(a.x - b.x, a.y - b.y);"
+                "    return math.vec2(a.x - b.x, a.y - b.y);"
                 "end;"
 
                 "math.__vec2.__mul = function(a, b)"
-                "    return math.vec4(a.x * b.x, a.y * b.y);"
+                "    return math.vec2(a.x * b.x, a.y * b.y);"
                 "end;"
 
                 "math.__vec2.__div = function(a, b)"
-                "    return math.vec4(a.x / b.x, a.y / b.y);"
+                "    return math.vec2(a.x / b.x, a.y / b.y);"
                 "end;"
 
                 "math.__vec2.__eq = function(a, b)"
@@ -58,7 +58,7 @@ namespace GTEngine
                 "end;"
 
                 "math.__vec2.__unm = function(op)"
-                "    return math.vec4(-op.x, -op.y);"
+                "    return math.vec2(-op.x, -op.y);"
                 "end;"
 
                 "math.__vec2.__len = function(op)"
