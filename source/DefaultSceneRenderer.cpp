@@ -2586,16 +2586,17 @@ namespace GTEngine
 
         if (this->IsHDREnabled())
         {
+            // HDR requires luminosity. We downsample the colour buffer to 1x1 to get this. Mipmap generation will do it for us.
+            Renderer::SetTexture2DFilter(*sourceColourBuffer, TextureFilter_NearestNearest, TextureFilter_Nearest);
+            Renderer::GenerateTexture2DMipmaps(*sourceColourBuffer);
+
+
             // Might need a bloom buffer.
             if (this->IsBloomEnabled())
             {
                 this->RenderBloomMap(framebuffer, sourceColourBuffer);
             }
 
-
-            // HDR requires luminosity. We downsample the colour buffer to 1x1 to get this. Mipmap generation will do it for us.
-            Renderer::SetTexture2DFilter(*sourceColourBuffer, TextureFilter_NearestNearest, TextureFilter_Nearest);
-            Renderer::GenerateTexture2DMipmaps(*sourceColourBuffer);
 
 
             // Framebuffer Setup.
@@ -2652,7 +2653,8 @@ namespace GTEngine
     void DefaultSceneRenderer::RenderBloomMap(DefaultSceneRendererFramebuffer* framebuffer, Texture2D* sourceColourBuffer)
     {
         // Framebuffer Setup.
-        int bufferIndex = 0;
+        int bufferIndex     = 0;
+        int blurBufferIndex = 1;
 
         Renderer::SetCurrentFramebuffer(framebuffer->bloomFramebuffer);
         Renderer::SetDrawBuffers(1, &bufferIndex);
@@ -2668,8 +2670,34 @@ namespace GTEngine
         Renderer::Draw(*this->fullscreenTriangleVA);
 
 
-        // The bloom map needs to have mipmaps generated.
-        Renderer::GenerateTexture2DMipmaps(*framebuffer->bloomBuffer);
+
+        // Gaussian Blur.
+
+        // Blur X.
+        {
+            Renderer::SetDrawBuffers(1, &blurBufferIndex);
+
+            // Shader.
+            Renderer::SetCurrentShader(this->blurShaderX);
+            this->blurShaderX->SetUniform("Texture", framebuffer->bloomBuffer);
+            Renderer::PushPendingUniforms(*this->blurShaderX);
+
+            // Draw.
+            Renderer::Draw(*this->fullscreenTriangleVA);
+        }
+
+        // Blur Y.
+        {
+            Renderer::SetDrawBuffers(1, &bufferIndex);
+
+            // Shader.
+            Renderer::SetCurrentShader(this->blurShaderY);
+            this->blurShaderY->SetUniform("Texture", framebuffer->bloomBlurBuffer);
+            Renderer::PushPendingUniforms(*this->blurShaderY);
+
+            // Draw.
+            Renderer::Draw(*this->fullscreenTriangleVA);
+        }
     }
 
 

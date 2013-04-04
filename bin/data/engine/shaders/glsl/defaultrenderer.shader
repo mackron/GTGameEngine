@@ -1026,13 +1026,8 @@
     
     void main()
     {
-        vec4  bloom     = vec4(0.0);
+        vec4  bloom     = texture2D(BloomBuffer, VertexOutput_TexCoord, 0);
         float luminance = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
-
-        vec4 bloom0 = texture2D(BloomBuffer, VertexOutput_TexCoord, 2);
-        vec4 bloom1 = texture2D(BloomBuffer, VertexOutput_TexCoord, 3);
-        //vec4 bloom2 = texture2D(BloomBuffer, VertexOutput_TexCoord, 4);
-        bloom = (bloom0 + bloom1) * 0.5f;
         
         
         // Bloom.
@@ -1095,7 +1090,7 @@
     
     void main()
     {
-        ColourOut = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord) - vec4(1.0, 1.0, 1.0, 0.0));
+        ColourOut = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 0) - vec4(1.0, 1.0, 1.0, 0.0));
     }
 ]]>
 </shader>

@@ -51,6 +51,9 @@ namespace GTEngine
         /// The bloom colour buffer. RGBA16F.
         Texture2D* bloomBuffer;
 
+        /// The intermediary buffer to use for blurring the bloom buffer.
+        Texture2D* bloomBlurBuffer;
+
 
         /// The width of the framebuffer.
         unsigned int width;
@@ -66,7 +69,7 @@ namespace GTEngine
               depthStencilBuffer(nullptr), opaqueColourBuffer(nullptr), finalColourBufferHDR(nullptr),
               lightingBuffer0(nullptr), lightingBuffer1(nullptr),
               finalColourBuffer(nullptr),
-              bloomFramebuffer(nullptr), bloomBuffer(nullptr),
+              bloomFramebuffer(nullptr), bloomBuffer(nullptr), bloomBlurBuffer(nullptr),
               width(widthIn), height(heightIn)
         {
             this->framebuffer          = Renderer::CreateFramebuffer();
@@ -79,6 +82,8 @@ namespace GTEngine
 
             this->bloomFramebuffer     = Renderer::CreateFramebuffer();
             this->bloomBuffer          = Renderer::CreateTexture2D();
+            this->bloomBlurBuffer      = Renderer::CreateTexture2D();
+
 
             // Sizes and formats need to be set. All we need to do is call the Resize() method.
             this->Resize(width, height);
@@ -90,11 +95,13 @@ namespace GTEngine
             Renderer::SetTexture2DFilter(*this->lightingBuffer1,       TextureFilter_Nearest,        TextureFilter_Nearest);
             Renderer::SetTexture2DFilter(*this->finalColourBufferHDR,  TextureFilter_NearestNearest, TextureFilter_Nearest);
             Renderer::SetTexture2DFilter(*this->finalColourBuffer,     TextureFilter_Nearest,        TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->bloomBuffer,           TextureFilter_LinearNearest,  TextureFilter_Linear);
+            Renderer::SetTexture2DFilter(*this->bloomBuffer,           TextureFilter_Linear,         TextureFilter_Linear);
+            Renderer::SetTexture2DFilter(*this->bloomBlurBuffer,       TextureFilter_Nearest,        TextureFilter_Nearest);
 
             // Wrap Modes.
             Renderer::SetTexture2DWrapMode(*this->opaqueColourBuffer, TextureWrapMode_ClampToEdge);
             Renderer::SetTexture2DWrapMode(*this->bloomBuffer,        TextureWrapMode_ClampToEdge);
+            Renderer::SetTexture2DWrapMode(*this->bloomBlurBuffer,    TextureWrapMode_ClampToEdge);
 
 
             // Attach to the main framebuffer.
@@ -107,6 +114,7 @@ namespace GTEngine
             Renderer::PushAttachments(*this->framebuffer);
 
             this->bloomFramebuffer->AttachColourBuffer(this->bloomBuffer,     0);
+            this->bloomFramebuffer->AttachColourBuffer(this->bloomBlurBuffer, 1);
             Renderer::PushAttachments(*this->bloomFramebuffer);
         }
 
@@ -121,6 +129,7 @@ namespace GTEngine
             Renderer::DeleteTexture2D(this->finalColourBuffer);
             Renderer::DeleteFramebuffer(this->framebuffer);
 
+            Renderer::DeleteTexture2D(this->bloomBlurBuffer);
             Renderer::DeleteTexture2D(this->bloomBuffer);
             Renderer::DeleteFramebuffer(this->bloomFramebuffer);
         }
@@ -148,11 +157,13 @@ namespace GTEngine
             Renderer::PushTexture2DData(*this->finalColourBuffer);
 
 
-            unsigned int bloomWidth  = GTCore::Max(1U, newWidth  / 1);
-            unsigned int bloomHeight = GTCore::Max(1U, newHeight / 1);
+            unsigned int bloomWidth  = GTCore::Max(1U, newWidth  / 4);
+            unsigned int bloomHeight = GTCore::Max(1U, newHeight / 4);
             this->bloomBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGB8);
+            this->bloomBlurBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGB8);
 
             Renderer::PushTexture2DData(*this->bloomBuffer);
+            Renderer::PushTexture2DData(*this->bloomBlurBuffer);
         }
 
 
