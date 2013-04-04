@@ -875,6 +875,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Math.hpp">
       <Filter>include\Scripting</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Audio.hpp">
+      <Filter>include\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Rendering.hpp">
+      <Filter>include\Scripting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1479,6 +1485,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureState_OpenGL33.cpp">
       <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Audio.cpp">
+      <Filter>source\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Rendering.cpp">
+      <Filter>source\Scripting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
