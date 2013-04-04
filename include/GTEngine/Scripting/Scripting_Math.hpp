@@ -4,6 +4,7 @@
 #define __GTEngine_Scripting_Math_hpp_
 
 #include "../GameScript.hpp"
+#include "../Math.hpp"
 
 namespace GTEngine
 {
@@ -18,6 +19,39 @@ namespace GTEngine
         /// @remarks
         ///     This will load the library into the global 'math' table. This will not override existing functions.
         bool LoadExtendedMathLibrary(GTCore::Script &script);
+
+
+        /// Converts the table at the given position to a glm::vec2.
+        ///
+        /// @param script   [in] A reference to the script to read the table from.
+        /// @param position [in] The position of the table to read.
+        ///
+        /// @return The glm::vec2 at the given position, or (0, 0) if an error occurs.
+        glm::vec2 ToVector2(GTCore::Script &script, int position);
+
+        /// Converts the table at the given position to a glm::vec3.
+        ///
+        /// @param script   [in] A reference to the script to read the table from.
+        /// @param position [in] The position of the table to read.
+        ///
+        /// @return The glm::vec3 at the given position, or (0, 0, 0) if an error occurs.
+        glm::vec3 ToVector3(GTCore::Script &script, int position);
+
+        /// Converts the table at the given position to a glm::vec4.
+        ///
+        /// @param script   [in] A reference to the script to read the table from.
+        /// @param position [in] The position of the table to read.
+        ///
+        /// @return The glm::vec4 at the given position, or (0, 0, 0, 0) if an error occurs.
+        glm::vec4 ToVector4(GTCore::Script &script, int position);
+
+        /// Converts the table at the given position to a glm::quat.
+        ///
+        /// @param script   [in] A reference to the script to read the table from.
+        /// @param position [in] The position of the table to read.
+        ///
+        /// @return The glm::vec4 at the given position, or (0, 0, 0, 0) if an error occurs.
+        glm::quat ToQuaternion(GTCore::Script &script, int position);
 
 
         namespace FFI
