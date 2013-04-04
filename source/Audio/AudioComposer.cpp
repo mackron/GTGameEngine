@@ -230,12 +230,16 @@ namespace GTEngine
 // Playback.
 namespace GTEngine
 {
+    const bool UseRelativePositioning = true;
+    const bool UseAbsolutePositioning = false;
+
+
     bool AudioComposer::Play(const char* fileName)
     {
-        return AudioComposer::Play(fileName, ListenerX, ListenerY, ListenerZ);
+        return AudioComposer::Play(fileName, 0.0f, 0.0f, 0.0f, UseRelativePositioning);
     }
 
-    bool AudioComposer::Play(const char* fileName, float x, float y, float z)
+    bool AudioComposer::Play(const char* fileName, float x, float y, float z, bool relativePositioning)
     {
         (void)x;
         (void)y;
@@ -252,6 +256,13 @@ namespace GTEngine
 
             // This sets the position of the source.
             alSource3f(source, AL_POSITION, x, y, z);
+
+            // If the sound is relative, it must be specified as such.
+            if (relativePositioning)
+            {
+                alSourcei(source, AL_SOURCE_RELATIVE, AL_TRUE);
+            }
+
 
             // We create two buffers. One for the back which is currently playing, and another for the front which is being filled by the streamer.
             ALuint buffers[2];

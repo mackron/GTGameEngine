@@ -29,8 +29,8 @@ namespace GTEngine
         ///
         /// @param fileName [in] The file name of the sound to play.
         static bool Play(const char* fileName);
-        static bool Play(const char* fileName, float x, float y, float z);
-        static bool Play(const char* fileName, const glm::vec3 &position) { return Play(fileName, position.x, position.y, position.z); }
+        static bool Play(const char* fileName, float x, float y, float z, bool relativePositioning = false);
+        static bool Play(const char* fileName, const glm::vec3 &position, bool relativePositioning = false) { return Play(fileName, position.x, position.y, position.z, relativePositioning); }
 
 
 
