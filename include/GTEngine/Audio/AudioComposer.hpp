@@ -70,7 +70,7 @@ namespace GTEngine
         /// Determines whether or not the given extension is supported by the composer.
         ///
         /// @param extension [in] The extension to check. For example: "wav", "ogg"
-        static bool IsExtensionSupported(const char* extension);
+        static bool IsFileExtensionSupported(const char* extension);
     };
 }
 

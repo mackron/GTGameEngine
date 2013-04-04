@@ -337,7 +337,7 @@ namespace GTEngine
 // Misc.
 namespace GTEngine
 {
-    bool AudioComposer::IsExtensionSupported(const char* extension)
+    bool AudioComposer::IsFileExtensionSupported(const char* extension)
     {
         return GTCore::Strings::Equal<false>(extension, "wav");
     }
