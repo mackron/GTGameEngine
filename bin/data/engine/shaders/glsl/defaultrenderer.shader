@@ -537,8 +537,8 @@
         float diffuse  = DiffuseFactor(N, L);
         float specular = SpecularFactor(N, H, 64.0f);
 
-        diffuseOut  += Colour * diffuse;
-        specularOut += Colour * specular;
+        diffuseOut  = Colour * diffuse;
+        specularOut = Colour * specular;
     }
 ]]>
 </shader>
@@ -558,14 +558,6 @@
     }
     
     
-    float CalculateShadowBasic(vec2 shadowUV, float fragmentDepth)
-    {
-        float bias        = 0.00001;
-        float shadowDepth = texture2D(ShadowMap, shadowUV).r + bias;
-
-        return step(fragmentDepth, shadowDepth);
-    }
-    
     float CalculateShadowVSM(vec2 shadowUV, float fragmentDepth)
     {
         float bias     = 0.00075;
@@ -584,8 +576,6 @@
         vec2  shadowUV      = shadowCoord.xy * 0.5 + 0.5;
         float fragmentDepth = shadowCoord.z;
     
-    
-        //return CalculateShadowBasic(shadowUV, fragmentDepth);
         return CalculateShadowVSM(shadowUV, fragmentDepth);
     }
     
@@ -600,8 +590,8 @@
         float specular = SpecularFactor(N, H, 64.0f);
         float shadow   = CalculateShadow();
 
-        diffuseOut  += Colour * diffuse  * shadow;
-        specularOut += Colour * specular * shadow;
+        diffuseOut  = Colour * (diffuse  * shadow);
+        specularOut = Colour * (specular * shadow);
     }
 ]]>
 </shader>
@@ -674,8 +664,8 @@
         float specular    = SpecularFactor(N, H, 64.0f);
         float attenuation = AttenuationFactor(Radius, Falloff, length(VertexOutput_L));
 
-        diffuseOut  = Colour * diffuse  * attenuation;
-        specularOut = Colour * specular * attenuation;
+        diffuseOut  = Colour * (diffuse  * attenuation);
+        specularOut = Colour * (specular * attenuation);
     }
 ]]>
 </shader>
@@ -754,7 +744,7 @@
         float variance = moments.y - (moments.x * moments.x);
         float d        = fragmentDepth - moments.x;
         float p        = smoothstep(fragmentDepth - bias, fragmentDepth, moments.x);
-        float pMax     = linstep(0.4, 1.0, variance / (variance + (d * d)));
+        float pMax     = linstep(0.4, 1.0, variance / ((d * d) + variance));
         
         return clamp(max(p, pMax), 0.0, 1.0);
     }
@@ -777,12 +767,11 @@
 
         float diffuse     = DiffuseFactor(N, L);
         float specular    = SpecularFactor(N, H, 64.0f);
-        //float attenuation = AttenuationFactor(ConstantAttenuation, LinearAttenuation, QuadraticAttenuation, length(VertexOutput_L));
         float attenuation = AttenuationFactor(Radius, Falloff, length(VertexOutput_L));
         float shadow      = CalculateShadow();
 
-        diffuseOut  = Colour * diffuse  * attenuation * shadow;
-        specularOut = Colour * specular * attenuation * shadow;
+        diffuseOut  = Colour * (diffuse  * attenuation * shadow);
+        specularOut = Colour * (specular * attenuation * shadow);
     }
 ]]>
 </shader>
@@ -810,8 +799,8 @@
         float attenuation = AttenuationFactor(Length, Falloff, length(L));
         float spot        = SpotFactor(normalize(L), Direction, CosAngleInner, CosAngleOuter);
             
-        diffuseOut  = Colour * diffuse  * attenuation * spot;
-        specularOut = Colour * specular * attenuation * spot;
+        diffuseOut  = Colour * (diffuse  * attenuation * spot);
+        specularOut = Colour * (specular * attenuation * spot);
     }
 ]]>
 </shader>
@@ -835,15 +824,6 @@
         return clamp((v - low) / (high - low), 0.0, 1.0);
     }
     
-    
-    float CalculateShadowBasic(vec2 shadowUV, float fragmentDepth)
-    {
-        float bias        = 0.001;
-        float shadowDepth = texture2D(ShadowMap, shadowUV).r + bias;
-
-        return step(fragmentDepth, shadowDepth);
-    }
-    
     float CalculateShadowVSM(vec2 shadowUV, float fragmentDepth)
     {
         float bias     = 0.001 * fragmentDepth;
@@ -851,7 +831,7 @@
         float variance = moments.y - (moments.x * moments.x);
         float d        = fragmentDepth - moments.x;
         float p        = smoothstep(fragmentDepth - bias, fragmentDepth, moments.x);
-        float pMax     = linstep(0.2, 1.0, variance / (variance + (d * d)));
+        float pMax     = linstep(0.2, 1.0, variance / ((d * d) + variance));
         
         return clamp(max(p, pMax), 0.0, 1.0);
     }
@@ -862,8 +842,6 @@
         vec2  shadowUV      = shadowCoord.xy * 0.5 + 0.5;
         float fragmentDepth = shadowCoord.z;
     
-    
-        //return CalculateShadowBasic(shadowUV, fragmentDepth);
         return CalculateShadowVSM(shadowUV, fragmentDepth);
     }
     
@@ -881,8 +859,8 @@
         float shadow      = CalculateShadow();
         
             
-        diffuseOut  = Colour * diffuse  * attenuation * spot * shadow;
-        specularOut = Colour * specular * attenuation * spot * shadow;
+        diffuseOut  = Colour * (diffuse  * attenuation * spot * shadow);
+        specularOut = Colour * (specular * attenuation * spot * shadow);
     }
 ]]>
 </shader>
@@ -1048,23 +1026,20 @@
     
     void main()
     {
-        vec4  finalColour = texture2D(ColourBuffer, VertexOutput_TexCoord);
-        vec4  bloom       = vec4(0.0);
-        float luminance   = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
+        vec4  bloom     = vec4(0.0);
+        float luminance = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
 
         vec4 bloom0 = texture2D(BloomBuffer, VertexOutput_TexCoord, 2);
         vec4 bloom1 = texture2D(BloomBuffer, VertexOutput_TexCoord, 3);
         //vec4 bloom2 = texture2D(BloomBuffer, VertexOutput_TexCoord, 4);
-        bloom = (bloom0 + bloom1) / 2.0f;
+        bloom = (bloom0 + bloom1) * 0.5f;
         
         
         // Bloom.
-        finalColour += bloom * BloomFactor;
+        ColourOut = (bloom * BloomFactor) + texture2D(ColourBuffer, VertexOutput_TexCoord);
         
         // Tone Mapping.
-        finalColour *= min(5.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));
-        
-        ColourOut = finalColour;
+        ColourOut = ColourOut * min(5.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));
     }
 ]]>
 </shader>
@@ -1082,13 +1057,10 @@
     
     void main()
     {
-        vec4  finalColour = texture2D(ColourBuffer, VertexOutput_TexCoord);
-        float luminance   = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
+        float luminance = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));
 
         // Tone Mapping.
-        finalColour *= min(5.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));
-        
-        ColourOut = finalColour;
+        ColourOut = texture2D(ColourBuffer, VertexOutput_TexCoord) * min(5.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));
     }
 ]]>
 </shader>
@@ -1123,7 +1095,7 @@
     
     void main()
     {
-        ColourOut = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 0) - vec4(1.0, 1.0, 1.0, 0.0));
+        ColourOut = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord) - vec4(1.0, 1.0, 1.0, 0.0));
     }
 ]]>
 </shader>
