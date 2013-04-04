@@ -150,6 +150,9 @@
     <Filter Include="source\Rendering\OpenGL\OpenGL33">
       <UniqueIdentifier>{31bc8600-c0b2-4301-a7ec-d9e12782b992}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Scripting">
+      <UniqueIdentifier>{7a3aedfc-b891-4947-899d-bf130afabfc1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -865,6 +868,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureState_OpenGL33.hpp">
       <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Game.hpp">
+      <Filter>include\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Math.hpp">
+      <Filter>include\Scripting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

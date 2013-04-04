@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
-#include <GTEngine/Scripting.hpp>
+#include <GTEngine/Scripting/Scripting_Math.hpp>
 #include <GTEngine/Math.hpp>
 
 namespace GTEngine
