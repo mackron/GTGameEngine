@@ -887,6 +887,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_SceneNode.hpp">
       <Filter>include\Scripting</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Components.hpp">
+      <Filter>include\Scripting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1502,6 +1505,9 @@
       <Filter>source\Scripting</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Scripting\Scripting_SceneNode.cpp">
+      <Filter>source\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Components.cpp">
       <Filter>source\Scripting</Filter>
     </ClCompile>
   </ItemGroup>
