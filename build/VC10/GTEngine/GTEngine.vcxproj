@@ -351,6 +351,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Scripting.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Components.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Game.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Math.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Rendering.hpp" />
@@ -598,6 +599,7 @@
     <ClCompile Include="..\..\..\source\Scripting.cpp" />
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Audio.cpp" />
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Components.cpp" />
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Editor.cpp" />
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Game.cpp" />
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Math.cpp" />
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Rendering.cpp" />
