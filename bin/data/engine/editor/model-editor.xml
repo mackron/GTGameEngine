@@ -1,0 +1,10 @@
+<!-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file. -->
+
+<include url="sub-editor.xml" />
+
+<style  url="styles/modeleditor.style"                />
+<script url="scripts/modeleditor.lua"                 />
+
+<script url="scripts/modeleditor-materialpanel.lua"   />
+<script url="scripts/modeleditor-animationspanel.lua" />
+<script url="scripts/modeleditor-cdpanel.lua"         />
