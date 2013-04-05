@@ -28,22 +28,12 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <script url="scripts/panel-groupbox.lua"  />
 
 
-<script url="scripts/sub-editor.lua" />
 
-<style  url="styles/modeleditor.style"                />
-<script url="scripts/modeleditor.lua"                 />
-<script url="scripts/modeleditor-materialpanel.lua"   />
-<script url="scripts/modeleditor-animationspanel.lua" />
-<script url="scripts/modeleditor-cdpanel.lua"         />
+<include url="model-editor.xml"    />
+<include url="material-editor.xml" />
+<include url="particle-editor.xml" />
+<include url="scene-editor.xml"    />
 
-<style  url="styles/materialeditor.style" />
-<script url="scripts/materialeditor.lua"  />
-
-<style  url="styles/sceneeditor.style" />
-<script url="scripts/sceneeditor.lua"  />
-
-<style  url="styles/particleeditor.style" />
-<script url="scripts/particleeditor.lua"  />
 
 <script url="scripts/number-textbox.lua" />
 <script url="scripts/vector2-input.lua"  />

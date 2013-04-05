@@ -1,0 +1,6 @@
+<!-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file. -->
+
+<include url="sub-editor.xml" />
+
+<style  url="styles/particleeditor.style" />
+<script url="scripts/particleeditor.lua"  />
