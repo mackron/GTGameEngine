@@ -9,7 +9,7 @@
 
 namespace GTEngine
 {
-    /// The list of loaded material definitions, indexed by their file path, relative to the data directory.
+    /// The list of loaded material definitions, indexed by their absolute path.
     static GTCore::Dictionary<MaterialDefinition*> MaterialDefinitions;
 
     /// The list of loaded materials.
