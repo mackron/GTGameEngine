@@ -183,10 +183,10 @@ namespace GTEngine
             {
                 GTGL_CONTEXT_MAJOR_VERSION,      3,
                 GTGL_CONTEXT_MINOR_VERSION,      3,
-                GTGL_CONTEXT_FORWARD_COMPATIBLE, 1,
+                GTGL_CONTEXT_FORWARD_COMPATIBLE, GL_TRUE,
 
             #if !defined(NDEBUG)
-                GTGL_CONTEXT_DEBUG,         GL_TRUE,
+                GTGL_CONTEXT_DEBUG,              GL_TRUE,
             #endif
 
                 0, 0
@@ -211,6 +211,8 @@ namespace GTEngine
                 Log("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
                 Log("    EXT_texture_filter_anisotropic:     %s", GTGL_EXT_texture_filter_anisotropic     ? "yes" : "no");
                 Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
+                Log("    NV_shader_buffer_load:              %s", GTGL_NV_shader_buffer_load              ? "yes" : "no");
+                Log("    NV_vertex_buffer_unified_memory:    %s", GTGL_NV_vertex_buffer_unified_memory    ? "yes" : "no");
 
 
             #if !defined(NDEBUG)
