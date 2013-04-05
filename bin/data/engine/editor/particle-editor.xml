@@ -2,5 +2,5 @@
 
 <include url="sub-editor.xml" />
 
-<style  url="styles/particleeditor.style" />
-<script url="scripts/particleeditor.lua"  />
+<style  url="particle-editor/particle-editor.style" />
+<script url="particle-editor/particle-editor.lua"  />
