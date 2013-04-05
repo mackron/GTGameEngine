@@ -218,8 +218,7 @@ namespace GTEngine
                     assert(script.IsTable(-1));
                     {
                         script.Push("Scene");
-                        script.GetTableValue(-2);
-                        assert(script.IsTable(-1));
+                        script.PushNewTable();
                         {
                             script.SetTableFunction(-1, "AddSceneNode",                   SceneFFI::AddSceneNode);
                             script.SetTableFunction(-1, "RemoveSceneNode",                SceneFFI::RemoveSceneNode);
@@ -230,7 +229,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "SetViewportCamera",              SceneFFI::SetViewportCamera);
                             script.SetTableFunction(-1, "ApplyViewportCameraAspectRatio", SceneFFI::ApplyViewportCameraAspectRatio);
                         }
-                        script.Pop(1);
+                        script.SetTableValue(-3);
                     }
                     script.Pop(1);
                 }
@@ -238,7 +237,7 @@ namespace GTEngine
             }
 
 
-            return true;
+            return successful;
         }
 
 

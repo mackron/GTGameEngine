@@ -263,8 +263,7 @@ namespace GTEngine
                     assert(script.IsTable(-1));
                     {
                         script.Push("SceneNode");
-                        script.GetTableValue(-2);
-                        assert(script.IsTable(-1));
+                        script.PushNewTable();
                         {
                             script.SetTableFunction(-1, "Create",                  SceneNodeFFI::Create);
                             script.SetTableFunction(-1, "Delete",                  SceneNodeFFI::Delete);
@@ -306,7 +305,7 @@ namespace GTEngine
 
                             script.SetTableFunction(-1, "GetScenePtr",             SceneNodeFFI::GetScenePtr);
                         }
-                        script.Pop(1);
+                        script.SetTableValue(-3);
                     }
                     script.Pop(1);
                 }
@@ -314,7 +313,7 @@ namespace GTEngine
             }
 
 
-            return true;
+            return successful;
         }
 
 
