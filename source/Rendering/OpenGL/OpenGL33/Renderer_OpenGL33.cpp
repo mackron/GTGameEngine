@@ -204,6 +204,8 @@ namespace GTEngine
                 Log("OpenGL Vendor:   %s",    glGetString(GL_VENDOR));
 
                 Log("OpenGL Extensions:");
+                Log("    ARB_vertex_program:                 %s", GTGL_ARB_vertex_program                 ? "yes" : "no");
+                Log("    ARB_fragment_program:               %s", GTGL_ARB_fragment_program               ? "yes" : "no");
                 Log("    ARB_ES2_compatibility:              %s", GTGL_ARB_ES2_compatibility              ? "yes" : "no");
                 Log("    ARB_get_program_binary:             %s", GTGL_ARB_get_program_binary             ? "yes" : "no");
                 Log("    ARB_separate_shader_objects:        %s", GTGL_ARB_separate_shader_objects        ? "yes" : "no");
@@ -213,6 +215,8 @@ namespace GTEngine
                 Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
                 Log("    NV_shader_buffer_load:              %s", GTGL_NV_shader_buffer_load              ? "yes" : "no");
                 Log("    NV_vertex_buffer_unified_memory:    %s", GTGL_NV_vertex_buffer_unified_memory    ? "yes" : "no");
+                Log("    NV_gpu_program4:                    %s", GTGL_NV_gpu_program4                    ? "yes" : "no");
+                Log("    NV_gpu_program5:                    %s", GTGL_NV_gpu_program5                    ? "yes" : "no");
 
 
             #if !defined(NDEBUG)
