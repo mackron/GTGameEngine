@@ -583,7 +583,6 @@
 		<Unit filename="../../../source/Texture2DLibrary.cpp" />
 		<Unit filename="../../../source/ThreadCache.cpp" />
 		<Unit filename="../../../source/Utilities/DynamicCharacterController.cpp" />
-		<Unit filename="../../../source/Utilities/KinematicCharacterController.cpp" />
 		<Unit filename="../../../source/VertexArrayLibrary.cpp" />
 		<Extensions>
 			<code_completion />

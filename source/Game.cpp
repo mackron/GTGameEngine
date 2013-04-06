@@ -987,8 +987,8 @@ namespace GTEngine
         // The game needs to know that we're updating...
         this->OnUpdate(deltaTimeInSeconds);
         this->PostScriptEvent_OnUpdate(deltaTimeInSeconds);
-        
-        
+
+
         // ... and the game state.
         if (this->currentGameState != nullptr)
         {
