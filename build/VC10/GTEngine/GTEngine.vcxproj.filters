@@ -275,9 +275,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\ModelComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Components\SpriteComponent.hpp">
-      <Filter>include\Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\GTEngine.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -893,9 +890,6 @@
       <Filter>source\Components</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Components\ModelComponent.cpp">
-      <Filter>source\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Components\SpriteComponent.cpp">
       <Filter>source\Components</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Physics\CollisionObject.cpp">

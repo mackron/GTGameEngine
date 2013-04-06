@@ -74,10 +74,6 @@ namespace GTEngine
         {
             return new OccluderComponent(hostSceneNode);
         }
-        else if (GTCore::Strings::Equal(componentName, SpriteComponent::Name))
-        {
-            return new SpriteComponent(hostSceneNode);
-        }
         else if (GTCore::Strings::Equal(componentName, ParticleSystemComponent::Name))
         {
             return new ParticleSystemComponent(hostSceneNode);
