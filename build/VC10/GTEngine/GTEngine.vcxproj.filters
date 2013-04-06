@@ -227,9 +227,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\VertexArrayFactory.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -1007,9 +1004,6 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\VertexArrayFactory.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\VertexArrayLibrary.cpp">

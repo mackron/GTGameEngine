@@ -8,6 +8,7 @@
 #include "MeshBuilder.hpp"
 #include "ConvexHull.hpp"
 
+
 namespace GTEngine
 {
     class VertexArrayLibrary
@@ -48,6 +49,12 @@ namespace GTEngine
         static VertexArray* CreateBox(const btVector3 &halfExtents) { return CreateBox(halfExtents.x(), halfExtents.y(), halfExtents.z()); }
 
 
+
+        ////////////////////////////////////////////////////////////////
+        // Wireframe Primitives
+
+        /// Creates a wireframe AABB.
+        static VertexArray* CreateWireframeFromAABB(const btAABB &aabb);
 
 
 
