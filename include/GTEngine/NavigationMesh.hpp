@@ -124,7 +124,7 @@ namespace GTEngine
 
 
         /// The vertex array containing geometric data for the visual representation.
-        VertexArray visualVA;
+        VertexArray* visualVA;
         
         
     private:

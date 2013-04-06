@@ -16,26 +16,18 @@ namespace GTEngine
         VertexArrayUsage_Stream
     };
 
-    /**
-    *   \brief  Class representing a vertex array.
-    *
-    *   Vertex array data is stored in two locations: on client memory (CPU/RAM) and server memory (GPU). We do this so we can
-    *   easily access geometric information from outside the rendering thread in a much easier manner. If we don't do this, getting
-    *   access to the vertex data anywhere other than rendering thread is impossible since we would need to call a renderer function.
-    *
-    *   When data is changed, it is changed on the system side and a flag will be set specifying that the data needs to be
-    *   changed on the GPU side. The data will be synced the next time the vertex array is used.
-    *
-    *   If/when an application will never need access to the client vertex data, it can use VertexArray::DeleteLocalData(). This
-    *   will delete the data on the client side. It will, however, render Get*DataPtr() useless and will cause Map*Data() and 
-    *   Unmap*Data() to become server-side GPU calls, which can not be called from anywhere other than the rendering thread.
-    */
+    /// Class representing a vertex array.
+    ///
+    /// Currently, vertex and index data will be stored on both the client and server (GPU).
     class VertexArray
     {
-    public:
+    protected:
 
         /// Constructor.
         VertexArray(VertexArrayUsage usage, const VertexFormat &format);
+
+
+    public:
 
         /// Destructor.
         virtual ~VertexArray();

@@ -11,7 +11,7 @@ namespace GTEngine
           mesh(nullptr), detailMesh(nullptr),
           detourNavMesh(nullptr), navMeshQuery(nullptr),
           walkableHeight(2.0f), walkableRadius(0.85f), walkableSlope(27.5f), walkableClimb(0.25f),
-          visualVA(VertexArrayUsage_Static, VertexFormat::P3T2N3)
+          visualVA(Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3))
     {
         memset(&this->config, 0, sizeof(this->config));
         this->SetCellSize(0.25f);
@@ -31,6 +31,8 @@ namespace GTEngine
         rcFreePolyMeshDetail(this->detailMesh);
         dtFreeNavMesh(this->detourNavMesh);
         dtFreeNavMeshQuery(this->navMeshQuery);
+
+        Renderer::DeleteVertexArray(this->visualVA);
     }
 
 
@@ -408,7 +410,7 @@ namespace GTEngine
 
 
         // Now we can set the VA data.
-        this->visualVA.SetData(builder.GetVertexData(), builder.GetVertexCount(), builder.GetIndexData(), builder.GetIndexCount());
+        this->visualVA->SetData(builder.GetVertexData(), builder.GetVertexCount(), builder.GetIndexData(), builder.GetIndexCount());
     }
 }
 

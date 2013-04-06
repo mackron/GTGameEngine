@@ -39,7 +39,7 @@ namespace GTEngine
     private:
 
         /// The vertex array containing the vertex data. This is in P3 format.
-        VertexArray vertexArray;
+        VertexArray* vertexArray;
     };
 }
 
