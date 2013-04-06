@@ -10,24 +10,16 @@ namespace GTEngine
 {
     class Texture2D;
 
-    /**
-    *   \brief  Class representing a framebuffer.
-    *
-    *   Framebuffers are made up of three sub-buffers: Colour, Depth and Stencil. The depth and stencil buffers can
-    *   be combined. To do this, the depth buffer must be 24-bit and the stencil buffer must be 8-bit (totalling 32
-    *   bits). Also, combineDepthStencil must be set to true in the constructor.
-    *
-    *   Framebuffers use textures internally. This is how render-to-texture is performed in the GTEngine.
-    *
-    *   Once a framebuffer is constructed, it is not possible to change any of it's properties. In this case, the
-    *   framebuffer will need to be re-created.
-    */
+    /// Class representing a framebuffer.
     class Framebuffer
     {
-    public:
+    protected:
 
         /// Constructor.
         Framebuffer();
+
+
+    public:
 
         /// Destructor.
         ///
