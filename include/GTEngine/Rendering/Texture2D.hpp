@@ -13,30 +13,26 @@ namespace GTEngine
     class Framebuffer;
     class Shader;
 
-    /**
-    *   \brief  Class representing a 2D texture.
-    *
-    *   When a Texture2D object is first created, it will contain no data. You must manually load data into
-    *   the texture.
-    *
-    *   Although a texture is tightly bound to the renderer, you do not need to worry about updating the texture
-    *   data on the rendering thread. The data will be synced as the renderer uses the texture.
-    *
-    *   Once the texture has been constructed, it can not be resized. You must delete and then re-create a new
-    *   texture.
-    *
-    *   A texture is constructed of mipmaps. When setting data, you actually set the data of each mipmap. The
-    *   GenerateMipmaps() method can be used to generate mipmaps from the base mipmap.
-    */
+    /// Class representing a 2D texture.
+    ///
+    /// Textures should not be constructed directly, but should instead by created with Renderer::CreateTexture2D(). Textures should be deleted
+    /// with Renderer::DeleteTexture2D().
+    ///
+    /// When the data of a texture is changed, it needs to be pushed to the GPU with Renderer::PushTexture2DData() before those changes will
+    /// appear during rendering.
     class Texture2D : private GTImage::Image
     {
-    public:
+    protected:
 
         /// Default constructor.
         Texture2D();
 
         /// Constructor.
         Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data = nullptr);
+
+
+
+    public:
 
         /// Destructor.
         ~Texture2D();
