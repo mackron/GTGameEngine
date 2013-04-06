@@ -6,7 +6,6 @@
 #include <GTCore/Vector.hpp>
 #include <GTEngine/Components/LightComponent.hpp>
 #include <GTEngine/Components/ModelComponent.hpp>
-#include <GTEngine/Components/SpriteComponent.hpp>
 #include "Math.hpp"
 
 namespace GTEngine

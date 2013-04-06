@@ -10,7 +10,6 @@
 #include "Components/CameraComponent.hpp"
 #include "Components/LightComponent.hpp"
 #include "Components/ModelComponent.hpp"
-#include "Components/SpriteComponent.hpp"
 #include "Components/DynamicsComponent.hpp"
 #include "Components/ProximityComponent.hpp"
 #include "Components/OccluderComponent.hpp"
