@@ -215,9 +215,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneNode.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeFactory.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -986,9 +983,6 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\SceneNode.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\SceneNodeFactory.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\SceneViewport.cpp">
