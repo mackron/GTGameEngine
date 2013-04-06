@@ -2,7 +2,6 @@
 
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTEngine/VertexArrayFactory.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
@@ -962,42 +961,6 @@ namespace GTEngine
     Model* ModelLibrary::CreateEmpty()
     {
         return new Model;
-    }
-
-    Model* ModelLibrary::CreatePlaneXZ(float width, float height, VertexFormat &format)
-    {
-        // We need a unique identifier for this mesh. We will base it on the size of the box.
-        char name[128];
-        GTCore::IO::snprintf(name, 128, "prim:planexz(%.4f %.4f)", width, height);
-
-        // We create the model from a primitive. To do this we need a non-const vertex array.
-        VertexArray* va = nullptr;
-
-        bool exists = LoadedDefinitions.Find(name) != nullptr;
-        if (!exists)
-        {
-            va = VertexArrayFactory::CreatePlaneXZ(width, height, format);
-        }
-
-        return ModelLibrary_CreateFromPrimitive(name, va);
-    }
-
-    Model* ModelLibrary::CreatePlaneXY(float width, float height, VertexFormat &format)
-    {
-        // We need a unique identifier for this mesh. We will base it on the size of the box.
-        char name[128];
-        GTCore::IO::snprintf(name, 128, "prim:planexy(%.4f %.4f)", width, height);
-
-        // We create the model from a primitive. To do this we need a non-const vertex array.
-        VertexArray* va = nullptr;
-
-        bool exists = LoadedDefinitions.Find(name) != nullptr;
-        if (!exists)
-        {
-            va = VertexArrayFactory::CreatePlaneXY(width, height, format);
-        }
-
-        return ModelLibrary_CreateFromPrimitive(name, va);
     }
 
 

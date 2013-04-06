@@ -178,6 +178,53 @@ namespace GTEngine
 
 
     ////////////////////////////////////////////////////////////////
+    // Wireframe Primitives
+
+    VertexArray* VertexArrayLibrary::CreateWireframeFromAABB(const btAABB &aabb)
+    {
+        auto va = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+
+        float vertices[] =
+        {
+            aabb.m_min.x(), aabb.m_min.y(), aabb.m_max.z(),     // left/bottom/front
+            aabb.m_max.x(), aabb.m_min.y(), aabb.m_max.z(),     // right/bottom/front
+            aabb.m_max.x(), aabb.m_max.y(), aabb.m_max.z(),     // right/top/front
+            aabb.m_min.x(), aabb.m_max.y(), aabb.m_max.z(),     // left/top/front
+            aabb.m_min.x(), aabb.m_min.y(), aabb.m_min.z(),     // left/bottom/back
+            aabb.m_max.x(), aabb.m_min.y(), aabb.m_min.z(),     // right/bottom/back
+            aabb.m_max.x(), aabb.m_max.y(), aabb.m_min.z(),     // right/top/back
+            aabb.m_min.x(), aabb.m_max.y(), aabb.m_min.z()      // left/top/back
+        };
+
+        unsigned int indices[] =
+        {
+            // Front side.
+            0, 1,
+            1, 2,
+            2, 3,
+            3, 0,
+
+            // Back side.
+            4, 5,
+            5, 6,
+            6, 7,
+            7, 4,
+
+            // Connectors.
+            0, 4,
+            1, 5,
+            2, 6,
+            3, 7
+        };
+
+        va->SetData(vertices, 8, indices, 24);
+
+        return va;
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////
     // Convex Hulls
 
     VertexArray* VertexArrayLibrary::CreateFromConvexHull(const ConvexHull &convexHull)
