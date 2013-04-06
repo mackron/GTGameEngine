@@ -48,7 +48,7 @@
     
     void main()
     {
-        ColourOut = vec4(1.0, 0.5, 0.0, 0.1);
+        ColourOut = vec4(0.0, 0.0, 0.0, 0.0);
     }
 ]]>
 </shader>
