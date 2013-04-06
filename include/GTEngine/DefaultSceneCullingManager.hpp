@@ -28,72 +28,72 @@ namespace GTEngine
 
 
         /// SceneCullingManager::AddModel().
-        virtual void AddModel(SceneObject &object);
+        virtual void AddModel(SceneNode &object);
 
         /// SceneCullingManager::RemoveModel().
-        virtual void RemoveModel(SceneObject &object);
+        virtual void RemoveModel(SceneNode &object);
 
 
         /// SceneCullingManager::AddPointLight().
-        virtual void AddPointLight(SceneObject &object);
+        virtual void AddPointLight(SceneNode &object);
 
         /// SceneCullingManager::RemovePointLight().
-        virtual void RemovePointLight(SceneObject &object);
+        virtual void RemovePointLight(SceneNode &object);
 
 
         /// SceneCullingManager::AddSpotLight().
-        virtual void AddSpotLight(SceneObject &object);
+        virtual void AddSpotLight(SceneNode &object);
 
         /// SceneCullingManager::RemoveSpotLight().
-        virtual void RemoveSpotLight(SceneObject &object);
+        virtual void RemoveSpotLight(SceneNode &object);
 
 
         /// SceneCullingManager::AddDirectionalLight().
-        virtual void AddDirectionalLight(SceneObject &object);
+        virtual void AddDirectionalLight(SceneNode &object);
 
         /// SceneCullingManager::RemoveDirectionalLight().
-        virtual void RemoveDirectionalLight(SceneObject &object);
+        virtual void RemoveDirectionalLight(SceneNode &object);
 
 
         /// SceneCullingManager::AddAmbientLight().
-        virtual void AddAmbientLight(SceneObject &object);
+        virtual void AddAmbientLight(SceneNode &object);
 
         /// SceneCullingManager::RemoveAmbientLight().
-        virtual void RemoveAmbientLight(SceneObject &object);
+        virtual void RemoveAmbientLight(SceneNode &object);
 
 
         /// SceneCullingManager::AddOccluder().
-        virtual void AddOccluder(SceneObject &object);
+        virtual void AddOccluder(SceneNode &object);
 
         /// SceneCullingManager::RemoveOccluder().
-        virtual void RemoveOccluder(SceneObject &object);
+        virtual void RemoveOccluder(SceneNode &object);
 
 
 
         /// SceneCullingManager::UpdateModelTransform().
-        virtual void UpdateModelTransform(SceneObject &object);
+        virtual void UpdateModelTransform(SceneNode &object);
 
         /// SceneCullingManager::UpdatePointLightTransform().
-        virtual void UpdatePointLightTransform(SceneObject &object);
+        virtual void UpdatePointLightTransform(SceneNode &object);
 
         /// SceneCullingManager::UpdateSpotLightTransform().
-        virtual void UpdateSpotLightTransform(SceneObject &object);
+        virtual void UpdateSpotLightTransform(SceneNode &object);
 
         /// SceneCullingManager::UpdateDirectionalLightTransform().
-        virtual void UpdateDirectionalLightTransform(SceneObject &object);
+        virtual void UpdateDirectionalLightTransform(SceneNode &object);
 
         /// SceneCullingManager::UpdateAmbientLightTransform().
-        virtual void UpdateAmbientLightTransform(SceneObject &object);
+        virtual void UpdateAmbientLightTransform(SceneNode &object);
 
         /// SceneCullingManager::UpdateOccluderLightTransform().
-        virtual void UpdateOccluderTransform(SceneObject &object);
+        virtual void UpdateOccluderTransform(SceneNode &object);
 
 
         /// SceneCullingManager::UpdateModelScale().
-        virtual void UpdateModelScale(SceneObject &object);
+        virtual void UpdateModelScale(SceneNode &object);
 
         /// SceneCullingManager::UpdateOccluderScale().
-        virtual void UpdateOccluderScale(SceneObject &object);
+        virtual void UpdateOccluderScale(SceneNode &object);
 
 
 
@@ -105,46 +105,46 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is not currently thread-safe.
-        virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback) const;
+        virtual void ProcessVisibleSceneNodes(const glm::mat4 &mvp, VisibilityCallback &callback) const;
 
 
         /// SceneCullingManager::QueryPointLightContacts().
-        virtual void QueryPointLightContacts(const SceneObject &light, VisibilityCallback &callback) const;
+        virtual void QueryPointLightContacts(const SceneNode &light, VisibilityCallback &callback) const;
 
         /// SceneCullingManager::QuerySpotLightContacts().
-        virtual void QuerySpotLightContacts(const SceneObject &light, VisibilityCallback &callback) const;
+        virtual void QuerySpotLightContacts(const SceneNode &light, VisibilityCallback &callback) const;
 
 
 
         /// Processes the model of the given object.
         ///
-        /// @param object [in] The object being processed.
+        /// @param sceneNode [in] The object being processed.
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
-        virtual void ProcessVisibleObjectModel(SceneObject &object, VisibilityCallback &callback) const;
+        virtual void ProcessVisibleModel(SceneNode &sceneNode, VisibilityCallback &callback) const;
 
         /// Processes the point light of the given object.
         ///
-        /// @param object [in] The object being processed.
+        /// @param sceneNode [in] The object being processed.
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
-        virtual void ProcessVisibleObjectPointLight(SceneObject &object, VisibilityCallback &callback) const;
+        virtual void ProcessVisiblePointLight(SceneNode &sceneNode, VisibilityCallback &callback) const;
 
         /// Processes the spot light of the given object.
         ///
-        /// @param object [in] The object being processed.
+        /// @param sceneNode [in] The object being processed.
         ///
         /// @remarks
         ///     This is called from ProcessVisibleObjects().
-        virtual void ProcessVisibleObjectSpotLight(SceneObject &object, VisibilityCallback &callback) const;
+        virtual void ProcessVisibleSpotLight(SceneNode &sceneNode, VisibilityCallback &callback) const;
 
 
         /// Helper method for processing a visible object.
         ///
-        /// @param object [in] The object being processed.
-        virtual void ProcessVisibleObject(SceneObject &object, VisibilityCallback &callback) const;
+        /// @param sceneNode [in] The object being processed.
+        virtual void ProcessVisibleSceneNode(SceneNode &sceneNode, VisibilityCallback &callback) const;
 
 
 
@@ -159,19 +159,19 @@ namespace GTEngine
         CollisionWorld world;
 
         /// A container for mapping metadata for models to scene nodes.
-        GTCore::Map<const SceneObject*, ModelMetadata*> models;
+        GTCore::Map<const SceneNode*, ModelMetadata*> models;
 
         /// A container for mapping metadata for point lights to scene nodes.
-        GTCore::Map<const SceneObject*, PointLightMetadata*> pointLights;
+        GTCore::Map<const SceneNode*, PointLightMetadata*> pointLights;
 
         /// A container for mapping metadata for spot lights to scene nodes.
-        GTCore::Map<const SceneObject*, SpotLightMetadata*> spotLights;
+        GTCore::Map<const SceneNode*, SpotLightMetadata*> spotLights;
 
         /// The ambient light objects.
-        GTCore::Vector<const SceneObject*> ambientLights;
+        GTCore::Vector<const SceneNode*> ambientLights;
 
         /// The directional light objects.
-        GTCore::Vector<const SceneObject*> directionalLights;
+        GTCore::Vector<const SceneNode*> directionalLights;
 
 
         /// Structure containing metadata for each model.
@@ -712,7 +712,7 @@ namespace GTEngine
         public:
 
             /// Constructor.
-            LightContactTestCallback(const SceneObject &lightIn, VisibilityCallback &callbackIn, short collisionGroup, short collisionMask)
+            LightContactTestCallback(const SceneNode &lightIn, VisibilityCallback &callbackIn, short collisionGroup, short collisionMask)
                 : light(lightIn), callback(callbackIn)
             {
                 this->m_collisionFilterGroup = collisionGroup;
@@ -735,7 +735,7 @@ namespace GTEngine
                     {
                         assert(sceneNodeA->HasComponent<ModelComponent>());
                         {
-                            this->callback.ProcessObjectModel(*sceneNodeA);
+                            this->callback.ProcessModel(*sceneNodeA);
                         }
                     }
                     else
@@ -744,7 +744,7 @@ namespace GTEngine
                         {
                             assert(sceneNodeB->HasComponent<ModelComponent>());
                             {
-                                this->callback.ProcessObjectModel(*sceneNodeB);
+                                this->callback.ProcessModel(*sceneNodeB);
                             }
                         }
                     }
@@ -756,7 +756,7 @@ namespace GTEngine
             
 
             /// The main light.
-            const SceneObject &light;
+            const SceneNode &light;
 
             /// A reference to the owner culling manager.
             VisibilityCallback &callback;

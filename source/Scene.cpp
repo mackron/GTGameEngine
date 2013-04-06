@@ -34,69 +34,54 @@ namespace GTEngine
         }
 
 
-        /// VisibleCallback::ProcessObjectModel().
-        virtual void ProcessObjectModel(const SceneObject &object)
+        /// VisibleCallback::ProcessModel().
+        virtual void ProcessModel(const SceneNode &sceneNode)
         {
-            if (object.GetType() == SceneObjectType_SceneNode)
+            auto component = sceneNode.GetComponent<GTEngine::ModelComponent>();
+            if (component != nullptr)
             {
-                auto component = static_cast<const SceneNode &>(object).GetComponent<GTEngine::ModelComponent>();
-                if (component != nullptr)
-                {
-                    this->modelComponents.PushBack(component);
-                }
+                this->modelComponents.PushBack(component);
             }
         }
 
-        /// VisibleCallback::ProcessObjectPointLight().
-        virtual void ProcessObjectPointLight(const SceneObject &object)
+        /// VisibleCallback::ProcessPointLight().
+        virtual void ProcessPointLight(const SceneNode &sceneNode)
         {
-            if (object.GetType() == SceneObjectType_SceneNode)
+            auto component = sceneNode.GetComponent<GTEngine::PointLightComponent>();
+            if (component != nullptr)
             {
-                auto component = static_cast<const SceneNode &>(object).GetComponent<GTEngine::PointLightComponent>();
-                if (component != nullptr)
-                {
-                    this->pointLightComponents.PushBack(component);
-                }
+                this->pointLightComponents.PushBack(component);
             }
         }
 
-        /// VisibleCallback::ProcessObjectSpotLight().
-        virtual void ProcessObjectSpotLight(const SceneObject &object)
+        /// VisibleCallback::ProcessSpotLight().
+        virtual void ProcessSpotLight(const SceneNode &sceneNode)
         {
-            if (object.GetType() == SceneObjectType_SceneNode)
+            auto component = sceneNode.GetComponent<GTEngine::SpotLightComponent>();
+            if (component != nullptr)
             {
-                auto component = static_cast<const SceneNode &>(object).GetComponent<GTEngine::SpotLightComponent>();
-                if (component != nullptr)
-                {
-                    this->spotLightComponents.PushBack(component);
-                }
+                this->spotLightComponents.PushBack(component);
             }
         }
 
 
-        /// VisibleCallback::ProcessObjectAmbientLight().
-        virtual void ProcessObjectAmbientLight(const SceneObject &object)
+        /// VisibleCallback::ProcessAmbientLight().
+        virtual void ProcessAmbientLight(const SceneNode &sceneNode)
         {
-            if (object.GetType() == SceneObjectType_SceneNode)
+            auto component = sceneNode.GetComponent<GTEngine::AmbientLightComponent>();
+            if (component != nullptr)
             {
-                auto component = static_cast<const SceneNode &>(object).GetComponent<GTEngine::AmbientLightComponent>();
-                if (component != nullptr)
-                {
-                    this->ambientLightComponents.PushBack(component);
-                }
+                this->ambientLightComponents.PushBack(component);
             }
         }
 
-        /// VisibleCallback::ProcessObjectDirectionalLight().
-        virtual void ProcessObjectDirectionalLight(const SceneObject &object)
+        /// VisibleCallback::ProcessDirectionalLight().
+        virtual void ProcessDirectionalLight(const SceneNode &sceneNode)
         {
-            if (object.GetType() == SceneObjectType_SceneNode)
+            auto component = sceneNode.GetComponent<GTEngine::DirectionalLightComponent>();
+            if (component != nullptr)
             {
-                auto component = static_cast<const SceneNode &>(object).GetComponent<GTEngine::DirectionalLightComponent>();
-                if (component != nullptr)
-                {
-                    this->directionalLightComponents.PushBack(component);
-                }
+                this->directionalLightComponents.PushBack(component);
             }
         }
 
@@ -279,7 +264,7 @@ namespace GTEngine
     Scene::~Scene()
     {
         this->RemoveAllViewports();
-        this->RemoveAllObjects();
+        this->RemoveAllSceneNodes();
 
 
         // We need to unregister after removing every object.
@@ -310,35 +295,6 @@ namespace GTEngine
             delete &this->cullingManager;
         }
     }
-
-    void Scene::AddObject(SceneObject &object)
-    {
-        if (object.GetType() == SceneObjectType_SceneNode)
-        {
-            this->AddSceneNode(static_cast<SceneNode &>(object));
-        }
-    }
-
-    void Scene::RemoveObject(SceneObject &object)
-    {
-        if (object.GetType() == SceneObjectType_SceneNode)
-        {
-            this->RemoveSceneNode(static_cast<SceneNode &>(object));
-        }
-    }
-
-    void Scene::RemoveAllObjects()
-    {
-        while (this->sceneNodes.GetCount() > 0)
-        {
-            auto node = this->sceneNodes.GetSceneNodeAtIndex(0);
-            assert(node != nullptr);
-            {
-                this->RemoveSceneNode(*node);
-            }
-        }
-    }
-
 
 
     void Scene::AddSceneNode(SceneNode &node)
@@ -446,6 +402,18 @@ namespace GTEngine
         if (sceneNode != nullptr)
         {
             this->RemoveSceneNode(*sceneNode);
+        }
+    }
+
+    void Scene::RemoveAllSceneNodes()
+    {
+        while (this->sceneNodes.GetCount() > 0)
+        {
+            auto node = this->sceneNodes.GetSceneNodeAtIndex(0);
+            assert(node != nullptr);
+            {
+                this->RemoveSceneNode(*node);
+            }
         }
     }
 
@@ -1126,9 +1094,9 @@ namespace GTEngine
     }
 
 
-    void Scene::QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibilityCallback &callback) const
+    void Scene::QueryVisibleSceneNodes(const glm::mat4 &mvp, SceneCullingManager::VisibilityCallback &callback) const
     {
-        this->cullingManager.ProcessVisibleObjects(mvp, callback);
+        this->cullingManager.ProcessVisibleSceneNodes(mvp, callback);
     }
 
 
@@ -1431,7 +1399,7 @@ namespace GTEngine
 
 
         // At this point everything will have loaded successfully. We will now want to clear the scene add add the new scene nodes.
-        this->RemoveAllObjects();
+        this->RemoveAllSceneNodes();
 
         // The current state stack will be invalid, so that also needs to be cleared.
         this->stateStack.Clear();
@@ -1506,7 +1474,7 @@ namespace GTEngine
         // We need to add the node to the update manager.
         if (this->updateManager.NeedsUpdate(node))
         {
-            this->updateManager.AddObject(node);
+            this->updateManager.AddSceneNode(node);
         }
 
 
@@ -1537,7 +1505,7 @@ namespace GTEngine
 
 
         // Event handlers need to know.
-        this->PostEvent_OnObjectAdded(node);
+        this->PostEvent_OnSceneNodeAdded(node);
     }
 
     void Scene::OnSceneNodeRemoved(SceneNode &node)
@@ -1575,10 +1543,10 @@ namespace GTEngine
 
 
         // The node must be removed from the update manager.
-        this->updateManager.RemoveObject(node);
+        this->updateManager.RemoveSceneNode(node);
 
         // Event handlers need to know.
-        this->PostEvent_OnObjectRemoved(node);
+        this->PostEvent_OnSceneNodeRemoved(node);
     }
 
     void Scene::OnSceneNodeNameChanged(SceneNode &node)
@@ -1978,11 +1946,11 @@ namespace GTEngine
                 {
                     if (GTCore::Strings::Equal(component.GetName(), ScriptComponent::Name))
                     {
-                        this->updateManager.RemoveObject(node);
+                        this->updateManager.RemoveSceneNode(node);
 
                         if (this->updateManager.NeedsUpdate(node))
                         {
-                            this->updateManager.AddObject(node);
+                            this->updateManager.AddSceneNode(node);
                         }
 
 
@@ -2067,11 +2035,11 @@ namespace GTEngine
                     if (GTCore::Strings::Equal(component.GetName(), ScriptComponent::Name))
                     {
                         // We do this exactly the same as when the script component is changed.
-                        this->updateManager.RemoveObject(node);
+                        this->updateManager.RemoveSceneNode(node);
 
                         if (this->updateManager.NeedsUpdate(node))
                         {
-                            this->updateManager.AddObject(node);
+                            this->updateManager.AddSceneNode(node);
                         }
                     }
                 }
@@ -2165,11 +2133,11 @@ namespace GTEngine
                     // In this case of a script, there's a chance that it won't want to be updated anymore or vice versa. We can get around this easily
                     // enough by just removing and re-adding it.
 
-                    this->updateManager.RemoveObject(node);
+                    this->updateManager.RemoveSceneNode(node);
 
                     if (this->updateManager.NeedsUpdate(node))
                     {
-                        this->updateManager.AddObject(node);
+                        this->updateManager.AddSceneNode(node);
                     }
 
 
@@ -2275,19 +2243,19 @@ namespace GTEngine
 
     // Event Posting
 
-    void Scene::PostEvent_OnObjectAdded(SceneObject &object)
+    void Scene::PostEvent_OnSceneNodeAdded(SceneNode &sceneNode)
     {
         for (size_t i = 0; i < this->eventHandlers.count; ++i)
         {
-            this->eventHandlers[i]->OnObjectAdded(object);
+            this->eventHandlers[i]->OnSceneNodeAdded(sceneNode);
         }
     }
 
-    void Scene::PostEvent_OnObjectRemoved(SceneObject &object)
+    void Scene::PostEvent_OnSceneNodeRemoved(SceneNode &sceneNode)
     {
         for (size_t i = 0; i < this->eventHandlers.count; ++i)
         {
-            this->eventHandlers[i]->OnObjectRemoved(object);
+            this->eventHandlers[i]->OnSceneNodeRemoved(sceneNode);
         }
     }
 

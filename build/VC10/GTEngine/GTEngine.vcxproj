@@ -336,8 +336,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeFactory.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeMap.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\SceneObject.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\SceneObjectTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ScenePhysicsManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneRenderer.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneStateStack.hpp" />
@@ -586,7 +584,6 @@
     <ClCompile Include="..\..\..\source\SceneNodeEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\SceneNodeFactory.cpp" />
     <ClCompile Include="..\..\..\source\SceneNodeMap.cpp" />
-    <ClCompile Include="..\..\..\source\SceneObject.cpp" />
     <ClCompile Include="..\..\..\source\SceneRenderer.cpp" />
     <ClCompile Include="..\..\..\source\SceneStateStack.cpp" />
     <ClCompile Include="..\..\..\source\SceneStateStackBranch.cpp" />

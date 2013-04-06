@@ -15,14 +15,14 @@ namespace GTEngine
     }
 
 
-    void SceneEditorSceneEventHandler::OnObjectAdded(SceneObject &object)
+    void SceneEditorSceneEventHandler::OnSceneNodeAdded(SceneNode &sceneNode)
     {
-        this->sceneEditor.OnObjectAdded(object);
+        this->sceneEditor.OnSceneNodeAdded(sceneNode);
     }
 
-    void SceneEditorSceneEventHandler::OnObjectRemoved(SceneObject &object)
+    void SceneEditorSceneEventHandler::OnSceneNodeRemoved(SceneNode &sceneNode)
     {
-        this->sceneEditor.OnObjectRemoved(object);
+        this->sceneEditor.OnSceneNodeRemoved(sceneNode);
     }
 
 

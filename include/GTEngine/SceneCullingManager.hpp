@@ -3,7 +3,7 @@
 #ifndef __GTEngine_SceneCullingManager_hpp_
 #define __GTEngine_SceneCullingManager_hpp_
 
-#include "SceneObject.hpp"
+#include "SceneNode.hpp"
 
 namespace GTEngine
 {
@@ -28,43 +28,43 @@ namespace GTEngine
             virtual ~VisibilityCallback() {};
 
 
-            /// Called when the model of the given object is processed by ProcessVisibleObjects().
+            /// Called when the model of the given object is processed by ProcessVisibleSceneNodes().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectModel(const SceneObject &object)
+            virtual void ProcessModel(const SceneNode &object)
             {
                 (void)object;
             }
 
-            /// Called when the point light of the given object is processed by ProcessVisibleObjects().
+            /// Called when the point light of the given object is processed by ProcessVisibleSceneNodes().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectPointLight(const SceneObject &object)
+            virtual void ProcessPointLight(const SceneNode &object)
             {
                 (void)object;
             }
 
-            /// Called when the spot light of the given object is processed by ProcessVisibleObjects().
+            /// Called when the spot light of the given object is processed by ProcessVisibleSceneNodes().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectSpotLight(const SceneObject &object)
+            virtual void ProcessSpotLight(const SceneNode &object)
             {
                 (void)object;
             }
 
 
-            /// Called when the ambient light of the given object is processed by ProcessVisibleObjects().
+            /// Called when the ambient light of the given object is processed by ProcessVisibleSceneNodes().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectAmbientLight(const SceneObject &object)
+            virtual void ProcessAmbientLight(const SceneNode &object)
             {
                 (void)object;
             }
 
-            /// Called when the directional light of the given object is processed by ProcessVisibleObjects().
+            /// Called when the directional light of the given object is processed by ProcessVisibleSceneNodes().
             ///
             /// @param object [in] The object being processed.
-            virtual void ProcessObjectDirectionalLight(const SceneObject &object)
+            virtual void ProcessDirectionalLight(const SceneNode &object)
             {
                 (void)object;
             }
@@ -86,173 +86,114 @@ namespace GTEngine
 
         /// Adds a model.
         ///
-        /// @param object [in] A reference to the model object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with a ModelComponent.
-        virtual void AddModel(SceneObject &object) = 0;
+        /// @param object [in] A reference to the scene node with an attached ModelComponent.
+        virtual void AddModel(SceneNode &sceneNode) = 0;
 
         /// Removes a model.
         ///
-        /// @param object [in] A reference to the model object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with a ModelComponent.
-        virtual void RemoveModel(SceneObject &object) = 0;
+        /// @param object [in] A reference to the scene node with an attached ModelComponent.
+        virtual void RemoveModel(SceneNode &sceneNode) = 0;
 
 
         /// Adds a point light.
         ///
-        /// @param object [in] A reference to the point light object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with a PointLightComponent.
-        virtual void AddPointLight(SceneObject &object) = 0;
+        /// @param object [in] A reference to the scene node with an attached PointLightComponent.
+        virtual void AddPointLight(SceneNode &sceneNode) = 0;
 
         /// Removes a point light.
         ///
-        /// @param object [in] A reference to the point light object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with a PointLightComponent.
-        virtual void RemovePointLight(SceneObject &object) = 0;
+        /// @param object [in] A reference to the scene node with an attached PointLightComponent.
+        virtual void RemovePointLight(SceneNode &sceneNode) = 0;
 
 
         /// Adds a spot light.
         ///
-        /// @param object [in] A reference to the spot light object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with a SpotLightComponent.
-        virtual void AddSpotLight(SceneObject &object) = 0;
+        /// @param object [in] A reference to the scene node with an attached SpotLightComponent.
+        virtual void AddSpotLight(SceneNode &sceneNode) = 0;
 
         /// Removes a spot light.
         ///
-        /// @param object [in] A reference to the spot light object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with a SpotLightComponent.
-        virtual void RemoveSpotLight(SceneObject &object) = 0;
+        /// @param object [in] A reference to the scene node with an attached SpotLightComponent.
+        virtual void RemoveSpotLight(SceneNode &sceneNode) = 0;
 
 
         /// Adds a directional light.
         ///
-        /// @param object [in] A reference to the directional light object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with a DirectionalLightComponent.
-        virtual void AddDirectionalLight(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached DirectionalLightComponent.
+        virtual void AddDirectionalLight(SceneNode &sceneNode) = 0;
 
         /// Removes a directional light.
         ///
-        /// @param object [in] A reference to the directional light object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with a DirectionalLightComponent.
-        virtual void RemoveDirectionalLight(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached DirectionalLightComponent.
+        virtual void RemoveDirectionalLight(SceneNode &sceneNode) = 0;
 
 
         /// Adds an ambient light.
         ///
-        /// @param object [in] A reference to the ambient light object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with an AmbientLightComponent.
-        virtual void AddAmbientLight(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached AmbientLightComponent.
+        virtual void AddAmbientLight(SceneNode &sceneNode) = 0;
 
         /// Removes an ambient light.
         ///
-        /// @param object [in] A reference to the ambient light object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with an AmbientLightComponent.
-        virtual void RemoveAmbientLight(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached AmbientLightComponent.
+        virtual void RemoveAmbientLight(SceneNode &sceneNode) = 0;
 
 
         /// Adds an occluder.
         ///
-        /// @param object [in] A reference to the occluder object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with an OccluderComponent.
-        virtual void AddOccluder(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached OccluderComponent.
+        virtual void AddOccluder(SceneNode &sceneNode) = 0;
 
         /// Removes an occluder.
         ///
-        /// @param object [in] A reference to the occluder object.
-        ///
-        /// @remarks
-        ///     This can be a scene node with an OccluderComponent.
-        virtual void RemoveOccluder(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached OccluderComponent to remove.
+        virtual void RemoveOccluder(SceneNode &sceneNode) = 0;
 
 
 
         /// Updates the transformation of the given model object.
         ///
-        /// @param object [in] A reference to the model object whose transformation is being updated.
+        /// @param scene node [in] A reference to the scene node with an attached ModelComponent whose transformation is being updated.
         ///
         /// @remarks
-        ///     The object can be a scene node with a ModelComponent.
-        ///     @par
         ///     Scaling should be applied separately with UpdateModelScale().
-        virtual void UpdateModelTransform(SceneObject &object) = 0;
+        virtual void UpdateModelTransform(SceneNode &sceneNode) = 0;
 
         /// Updates the transformation of the given point light.
         ///
-        /// @param object [in] A reference to the point light object whose transformation is being updated.
-        ///
-        /// @remarks
-        ///     The object can be a scene node with a PointLightComponent.
-        virtual void UpdatePointLightTransform(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached PointLightComponent whose transformation is being updated.
+        virtual void UpdatePointLightTransform(SceneNode &sceneNode) = 0;
 
         /// Updates the transformation of the given spot light.
         ///
-        /// @param object [in] A reference to the spot light object whose transformation is being updated.
-        ///
-        /// @remarks
-        ///     The object can be a scene node with a SpotLightComponent.
-        virtual void UpdateSpotLightTransform(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached SpotLightComponent whose transformation is being updated.
+        virtual void UpdateSpotLightTransform(SceneNode &sceneNode) = 0;
 
         /// Updates the transformation of the given directional light.
         ///
-        /// @param object [in] A reference to the directional light object whose transformation is being updated.
-        ///
-        /// @remarks
-        ///     The object can be a scene node with a DirectionalLightComponent.
-        virtual void UpdateDirectionalLightTransform(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached DirectionalLightComponent whose transformation is being updated.
+        virtual void UpdateDirectionalLightTransform(SceneNode &sceneNode) = 0;
 
         /// Updates the transformation of the given ambient light.
         ///
-        /// @param object [in] A reference to the ambient light object whose transformation is being updated.
-        ///
-        /// @remarks
-        ///     The object can be a scene node with an AmbientLightComponent.
-        virtual void UpdateAmbientLightTransform(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached AmbientLightComponent whose transformation is being updated.
+        virtual void UpdateAmbientLightTransform(SceneNode &sceneNode) = 0;
 
         /// Updates the transformation of the occluder.
         ///
-        /// @param object [in] A reference to the occluder object whose transformation is being updated.
-        ///
-        /// @remarks
-        ///     The object can be a scene node with an OccluderComponent.
-        virtual void UpdateOccluderTransform(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached OccluderComponent whose transformation is being updated.
+        virtual void UpdateOccluderTransform(SceneNode &sceneNode) = 0;
 
 
         /// Updates the scale of the given model object.
         ///
-        /// @param object [in] A reference to the model object whose scale is being updated.
-        ///
-        /// @remarks
-        ///     The object can be a scene node with a ModelComponent.
-        virtual void UpdateModelScale(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached ModelComponent whose scale is being updated.
+        virtual void UpdateModelScale(SceneNode &sceneNode) = 0;
 
         /// Updates the scale of the given occluder object.
         ///
-        /// @param object [in] A reference to the occluder object whose scale is being updated.
-        ///
-        /// @remarks
-        ///     The object can be a scene node with an OccluderComponent.
-        virtual void UpdateOccluderScale(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node with an attached OccluderComponent whose scale is being updated.
+        virtual void UpdateOccluderScale(SceneNode &sceneNode) = 0;
 
 
 
@@ -267,7 +208,7 @@ namespace GTEngine
         ///
         /// @param mvp      [in] The model-view-projection matrix to cull against.
         /// @param callback [in] The callback to use when processing each visible object.
-        virtual void ProcessVisibleObjects(const glm::mat4 &mvp, VisibilityCallback &callback) const = 0;
+        virtual void ProcessVisibleSceneNodes(const glm::mat4 &mvp, VisibilityCallback &callback) const = 0;
 
         /// Queries the objects contained within the volume of the given point light.
         ///
@@ -275,7 +216,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     It is asserted that the light has a point light component and is part of the scene.
-        virtual void QueryPointLightContacts(const SceneObject &light, VisibilityCallback &callback) const = 0;
+        virtual void QueryPointLightContacts(const SceneNode &light, VisibilityCallback &callback) const = 0;
 
         /// Queries the objects contained within the volume of the given spot light.
         ///
@@ -283,7 +224,7 @@ namespace GTEngine
         ///
         /// @remakrs
         ///     It is asserted that the light has a spot light component and is part of the scene.
-        virtual void QuerySpotLightContacts(const SceneObject &light, VisibilityCallback &callback) const = 0;
+        virtual void QuerySpotLightContacts(const SceneNode &light, VisibilityCallback &callback) const = 0;
 
 
         /////////////////////////////////////////

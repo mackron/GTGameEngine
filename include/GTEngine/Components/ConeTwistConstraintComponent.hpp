@@ -5,7 +5,6 @@
 
 #include "../Component.hpp"
 #include "../Physics.hpp"
-#include "../SceneObject.hpp"
 
 namespace GTEngine
 {
@@ -23,12 +22,12 @@ namespace GTEngine
 
         /// Sets the bodies that are attached to the constraint.
         ///
-        /// @param objectA [in] A reference to the first object to attach to the constraint.
-        /// @param objectB [in] A reference to the second object to attach to the constraint.
-        /// @param frameA  [in] The transformation frame for objectA.
-        /// @param frameB  [in] The transformation frame for objectB.
-        void SetAttachments(SceneObject &objectA, SceneObject &objectB, const glm::mat4 &frameA, const glm::mat4 &frameB);
-        void SetAttachments(SceneObject &objectB, const glm::mat4 &frameB);
+        /// @param sceneNodeA [in] A reference to the first scene node to attach to the constraint.
+        /// @param sceneNodeB [in] A reference to the second scene node to attach to the constraint.
+        /// @param frameA     [in] The transformation frame for objectA.
+        /// @param frameB     [in] The transformation frame for objectB.
+        void SetAttachments(SceneNode &sceneNodeA, SceneNode &sceneNodeB, const glm::mat4 &frameA, const glm::mat4 &frameB);
+        void SetAttachments(SceneNode &sceneNodeB, const glm::mat4 &frameB);
 
 
         /// Sets the limits.

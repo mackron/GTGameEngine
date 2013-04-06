@@ -3,7 +3,6 @@
 #ifndef __GTEngine_SceneNode_hpp_
 #define __GTEngine_SceneNode_hpp_
 
-#include "SceneObject.hpp"
 #include "SceneNodeEventHandler.hpp"
 
 // Though not required for compilation of this file, we will include the components here to make using the SceneNode class a bit easier. They're
@@ -32,51 +31,43 @@ namespace GTEngine
     class Scene;            // <-- Needed by SceneNode.
     
 
-    /**
-    *   \brief  Base class for scene nodes.
-    *
-    *   Scene nodes have a single parent and many children. The positions of scenes nodes are always relative to the parent
-    *   node. Helper functions exist for retrieving and setting the world transformation of the node.
-    *
-    *   Nodes have a series of Components attached to them. The components essentially define what the node actually does. For
-    *   example, if the node has a point light component attached, it means the node will emit a point light.
-    *
-    *   Nodes also have a list (or map, specifically) or data pointers. It is through these data pointers that the node can
-    *   have custom data attached to it. There can be many data pointers attached to a node. Each different data pointer is
-    *   distinguished with a key. When retrieving or setting a data pointer, you must also specify a key for that data pointer.
-    *   The node itself does not use any predefined keys, but if using classes/objects which also use a scene node, you must
-    *   ensure your data pointer keys do not conflict.
-    */
-    class SceneNode : public SceneObject
+    /// Class representing a scene node.
+    ///
+    /// Scene nodes have a single parent and many children. The positions of scenes nodes are always relative to the parent
+    /// node. Helper functions exist for retrieving and setting the world transformation of the node.
+    ///
+    /// Nodes have a series of Components attached to them. The components essentially define what the node actually does. For
+    /// example, if the node has a point light component attached, it means the node will emit a point light.
+    ///
+    /// Nodes also have a list (or map, specifically) or data pointers. It is through these data pointers that the node can
+    /// have custom data attached to it. There can be many data pointers attached to a node. Each different data pointer is
+    /// distinguished with a key. When retrieving or setting a data pointer, you must also specify a key for that data pointer.
+    /// The node itself does not use any predefined keys, but if using classes/objects which also use a scene node, you must
+    /// ensure your data pointer keys do not conflict.
+    class SceneNode
     {
     public:
 
         /// Constructor.
         SceneNode();
 
-        /**
-        *   \brief  Destructor.
-        *
-        *   The destructor will orphan/detach any children that are still attached. Children must be deleted manually.
-        *
-        *   The destructor will detach the node from it's parent, if it has one. After being detached from
-        *   the parent, it will call the OnDestroy() event. OnDestroy() is called before the constructor orphans
-        *   the child nodes.
-        *
-        *   The destructor will delete any attached components. The destructor does not delete the attached event
-        *   handler or data pointers.
-        */
+        /// Destructor.
+        ///
+        /// The destructor will orphan/detach any children that are still attached. Children must be deleted manually.
+        ///
+        /// The destructor will detach the node from it's parent, if it has one. After being detached from
+        /// the parent, it will call the OnDestroy() event. OnDestroy() is called before the constructor orphans
+        /// the child nodes.
+        ///
+        /// The destructor will delete any attached components. The destructor does not delete the attached event
+        /// handler or data pointers.
         virtual ~SceneNode();
 
 
-        /**
-        *   \brief  Retrieves the name of the node.
-        */
+        /// Retrieves the name of the node.
         const char* GetName() const;
 
-        /**
-        *   \brief  Sets the name of the node.
-        */
+        /// Sets the name of the node.
         void SetName(const char* name);
 
 
@@ -96,9 +87,10 @@ namespace GTEngine
 
 
 
-        /**
-        *   \brief  Retrieves the parent node, or null if the node does not have a parent.
-        */
+        ////////////////////////////////////////////////
+        // Hierarchy
+
+        /// Retrieves the parent node, or null if the node does not have a parent.
               SceneNode* GetParent();
         const SceneNode* GetParent() const;
 
@@ -135,80 +127,68 @@ namespace GTEngine
         size_t GetChildCount() const;
 
 
-        /**
-        *   \brief               Attaches an event handler to the node.
-        *   \param  handler [in] A reference to the event handler to attach to the node.
-        *
-        *   \remarks
-        *       This function will not attach the handler if it is already attached.
-        *       \par
-        *       The event handler can not be deleted while it is in scope. A node will not make a copy of the event handler. Instead
-        *       it just references the object directly. It is done this way so that a single event handler can be used across multiple
-        *       nodes, thus saving a bit of memory.
-        */
+        /// Attaches an event handler to the node.
+        ///
+        /// @param  handler [in] A reference to the event handler to attach to the node.
+        ///
+        /// @remarks
+        ///     This function will not attach the handler if it is already attached.
+        ///     @par
+        ///     The event handler can not be deleted while it is in scope. A node will not make a copy of the event handler. Instead
+        ///     it just references the object directly. It is done this way so that a single event handler can be used across multiple
+        ///     nodes, thus saving a bit of memory.
         void AttachEventHandler(SceneNodeEventHandler &handler);
 
-        /**
-        *   \brief               Detaches an event handler from the node.
-        *   \param  handler [in] A reference to the event handler to detach.
-        *
-        *   \remarks
-        *       Note that this function does not actually delete the event handler. Deletion must be managed by the caller.
-        */
+        /// Detaches an event handler from the node.
+        ///
+        /// @param  handler [in] A reference to the event handler to detach.
+        ///
+        /// @remarks
+        ///     Note that this function does not actually delete the event handler. Deletion must be managed by the caller.
         void DetachEventHandler(SceneNodeEventHandler &handler);
 
 
-        /**
-        *   \brief                 Attaches a child to this node.
-        *   \param  childNode [in] A pointer to the child node to attach to this node.
-        *
-        *   \remarks
-        *       If the child is already attached to another parent, it is first detached from that parent. OnDetach() will be called
-        *       like normal.
-        *       \par
-        *       If the child is already attached to a different scene as this node, it will be removed from that scene.
-        */
+        /// Attaches a child to this node.
+        ///
+        /// @param  childNode [in] A pointer to the child node to attach to this node.
+        ///
+        /// @remarks
+        ///     If the child is already attached to another parent, it is first detached from that parent. OnDetach() will be called
+        ///     like normal.
+        ///     @par
+        ///     If the child is already attached to a different scene as this node, it will be removed from that scene.
         void AttachChild(SceneNode &childNode, bool keepWorldTransform = false);
 
-        /**
-        *   \brief              Attaches this node to another node.
-        *   \param  parent [in] A pointer to the parent node that this node should be attached to.
-        *
-        *   \remarks
-        *       This function is the same as Attach(), only the other way around. This is more intuitive in some cases.
-        */
+        /// Attaches this node to another node.
+        ///
+        /// @param  parent [in] A pointer to the parent node that this node should be attached to.
+        ///
+        /// @remarks
+        ///     This function is the same as Attach(), only the other way around. This is more intuitive in some cases.
         void AttachTo(SceneNode &parent, bool keepWorldTransform = false);
 
-        /**
-        *   \brief                                     Detaches/orphans a child from the node.
-        *   \param  childNode                     [in] A pointer to the child node to detach.
-        *   \param  postParentChangedEventToScene [in] Controls whether or not we post an OnParentChanged event to the 
-        *
-        *   \remarks
-        *       This method does NOT delete the child.
-        */
+        /// Detaches/orphans a child from the node.
+        ///
+        /// @param  childNode                     [in] A pointer to the child node to detach.
+        /// @param  postParentChangedEventToScene [in] Controls whether or not we post an OnParentChanged event to the 
+        ///
+        /// @remarks
+        ///     This method does NOT delete the child.
         void DetachChild(SceneNode &childNode, bool keepWorldTransform = false, bool postParentChangedEventToScene = true);
 
-        /**
-        *   \brief  Safely detaches/orphans all children.
-        */
+        /// Safely detaches/orphans all children.
         void DetachAllChildren(bool keepWorldTransform = false);
 
-        /**
-        *   \brief  Helper function for detaching this node from it's parent.
-        */
+        /// Helper function for detaching this node from it's parent.
         void DetachFromParent(bool keepWorldTransform = false, bool postParentChangedEventToScene = true);
 
-        /**
-        *   \brief            Retrieves the first child who has the given name, or nullptr if a child is not found.
-        *   \param  name [in] The name of the child to return.
-        *   \param  recursive [in] Whether or not to do a deep recursive search. False by default.
-        */
+        /// Retrieves the first child who has the given name, or nullptr if a child is not found.
+        ///
+        /// @param  name [in] The name of the child to return.
+        /// @param  recursive [in] Whether or not to do a deep recursive search. False by default.
         SceneNode* FindFirstChild(const char* name, bool recursive = false);
 
-        /**
-        *   \brief  Retrieves the first child node with the given component.
-        */
+        /// Retrieves the first child node with the given component.
         SceneNode* FindFirstChildWithComponent(const char* componentName, bool recursive = false);
 
         template <typename T>
@@ -228,11 +208,17 @@ namespace GTEngine
         bool IsRelated(const SceneNode &other) const { return this->IsAncestor(other) || this->IsDescendant(other); }
 
 
-        /**
-        *   \brief                            Sets the position of the node relative to the parent.
-        *   \param  position             [in] The new relative position of the node.
-        *   \param  updateDynamicsObject [in] Whether or not the attached dynamics object should be updated.
-        */
+
+        ////////////////////////////////////////////////
+        // Transformation
+
+        /// Retrieves the position of the object.
+        const glm::vec3 & GetPosition() const { return this->position; }
+
+        /// Sets the position of the node relative to the parent.
+        ///
+        /// @param  position             [in] The new relative position of the node.
+        /// @param  updateDynamicsObject [in] Whether or not the attached dynamics object should be updated.
         void SetPosition(const glm::vec3 &position, bool updateDynamicsObject);
         void SetPosition(float x, float y, float z, bool updateDynamicsObject) { this->SetPosition(glm::vec3(x, y, z), updateDynamicsObject); }
 
@@ -240,77 +226,68 @@ namespace GTEngine
         void SetPosition(float x, float y, float z) { this->SetPosition(glm::vec3(x, y, z), true); }
         
 
-
-
-        /**
-        *   \brief  Retrieves the world/absolute position of node.
-        */
+        /// Retrieves the world/absolute position of node.
         glm::vec3 GetWorldPosition() const;
 
-        /**
-        *   \brief  Sets the world/absolute position of the node.
-        */
+        /// Sets the world/absolute position of the node.
         void SetWorldPosition(const glm::vec3 &worldPosition, bool updateDynamicsObject = true);
         void SetWorldPosition(float x, float y, float z, bool updateDynamicsObject = true) { this->SetWorldPosition(glm::vec3(x, y, z), updateDynamicsObject); }
 
 
 
-        /**
-        *   \brief                   Sets the orientation of the node relative to the parent.
-        *   \param  orientation [in] The new orientation of the node.
-        */
+        /// Retrieves the orientation of the object.
+        const glm::quat & GetOrientation() const { return this->orientation; }
+
+        /// Sets the orientation of the node relative to the parent.
+        ///
+        /// @param  orientation [in] The new orientation of the node.
         void SetOrientation(const glm::quat &orientation, bool updateDynamicsObject);
         void SetOrientation(const glm::quat &orientation) { this->SetOrientation(orientation, true); }
         
 
-        /**
-        *   \brief  Retrieves the world/absolute orientation of the node.
-        */
+        /// Retrieves the world/absolute orientation of the node.
         glm::quat GetWorldOrientation() const;
 
-        /**
-        *   \brief  Sets the world/absolute orientation of the node.
-        */
+        /// Sets the world/absolute orientation of the node.
         void SetWorldOrientation(const glm::quat &worldOrientation, bool updateDynamicsObject = true);
 
 
-        /**
-        *   \brief             Sets the scale of the node relative to the parent.
-        *   \param  scale [in] The new scale of the node relative to the parent.
-        */
+
+        /// Retrieves the scale of the object.
+        const glm::vec3 & GetScale() const { return this->scale; }
+
+        /// Sets the scale of the node relative to the parent.
+        ///
+        /// @param  scale [in] The new scale of the node relative to the parent.
         void SetScale(const glm::vec3 &scale);
         void SetScale(float x, float y, float z) { this->SetScale(glm::vec3(x, y, z)); }
 
-        /**
-        *   \brief  Retrieves the world/absolute scale of the node.
-        *   \return The world/absolute scale of the node.
-        */
+
+        /// Retrieves the world/absolute scale of the node.
         glm::vec3 GetWorldScale() const;
 
-        /**
-        *   \brief                  Sets the world/absolute scale of the node.
-        *   \param  worldScale [in] The new world/absolute scale of the node.
-        */
+        /// Sets the world/absolute scale of the node.
+        ///
+        /// @param  worldScale [in] The new world/absolute scale of the node.
         void SetWorldScale(const glm::vec3 &worldScale);
         void SetWorldScale(float x, float y, float z) { this->SetWorldScale(glm::vec3(x, y, z)); }
 
 
-        /**
-        *   \brief              Looks at a point in the world.
-        *   \param  target [in] The position in the world to look at.
-        *   \param  up     [in] The up direction. Defaults to (0, 1, 0). Must be normalized.
-        *
-        *   \remarks
-        *       For efficiency, the up vector is not normalized internally.
-        */
+
+        /// Looks at a point in the world.
+        ///
+        /// @param  target [in] The position in the world to look at.
+        /// @param  up     [in] The up direction. Defaults to (0, 1, 0). Must be normalized.
+        ///
+        /// @remarks
+        ///     For efficiency, the up vector is not normalized internally.
         void LookAt(const glm::vec3 &target, const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 0.0f));
         void LookAt(float targetX, float targetY, float targetZ, float upX = 0.0f, float upY = 1.0f, float upZ = 0.0f) { this->LookAt(glm::vec3(targetX, targetY, targetZ), glm::vec3(upX, upY, upZ)); }
 
-        /**
-        *   \brief  Looks at another scene node.
-        *   \param  target [in] The other scene node to look at.
-        *   \param  up     [in] The up direction. Defaults to (0, 1, 0). Must be normalized.
-        */
+        /// Looks at another scene node.
+        ///
+        /// @param  target [in] The other scene node to look at.
+        /// @param  up     [in] The up direction. Defaults to (0, 1, 0). Must be normalized.
         void LookAt(const SceneNode &target, const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 0.0f));
 
 
@@ -322,19 +299,13 @@ namespace GTEngine
         void LookInDirection(float directionX, float directionY, float directionZ, float upX = 0.0f, float upY = 1.0f, float upZ = 0.0f) { this->LookInDirection(glm::vec3(directionX, directionY, directionZ), glm::vec3(upX, upY, upZ)); }
 
 
-        /**
-        *   \brief  Retrieves the normalised vector pointing in the forward direction of the node, in world coordinates.
-        */
+        /// Retrieves the normalised vector pointing in the forward direction of the node, in world coordinates.
         glm::vec3 GetWorldForwardVector() const;
 
-        /**
-        *   \brief  Retrieves the normalised vector pointing in the right direction of the node, in world coordinates.
-        */
+        /// Retrieves the normalised vector pointing in the right direction of the node, in world coordinates.
         glm::vec3 GetWorldRightVector() const;
 
-        /**
-        *   \brief  Retrieves the normalised vector pointing in the up direction of the node, in world coordinates.
-        */
+        /// Retrieves the normalised vector pointing in the up direction of the node, in world coordinates.
         glm::vec3 GetWorldUpVector() const;
 
 
@@ -348,20 +319,129 @@ namespace GTEngine
         /// Retrieves the world transform, not including the scale.
         glm::mat4 GetWorldTransformWithoutScale() const;
 
-        /**
-        *   \brief                       Retrieves the Bullet transform for use with physics.
-        *   \param  worldTransform [out] A reference to the Bullet btTransform object that will receive the world transformation.
-        */
+        /// Retrieves the Bullet transform for use with physics.
+        ///
+        /// @param  worldTransform [out] A reference to the Bullet btTransform object that will receive the world transformation.
         void GetWorldTransform(btTransform &worldTransform) const;
 
-        /**
-        *   \brief                      Sets the world transform of the scene node based on the given btTransform object.
-        *   \param  worldTransform [in] A reference to the btTransform object containing the new world transformation.
-        *   \param  offset         [in] Physics objects can be given a center of mass offset. This represents that offset.
-        */
+        /// Sets the world transform of the scene node based on the given btTransform object.
+        ///
+        /// @param  worldTransform [in] A reference to the btTransform object containing the new world transformation.
+        /// @param  offset         [in] Physics objects can be given a center of mass offset. This represents that offset.
         void SetWorldTransform(const btTransform &worldTransform, bool updateDynamicsObject = true);
 
 
+
+        /// Translates the object.
+        ///
+        /// @param offset [in] The amount to translate on each axis.
+        ///
+        /// @remarks
+        ///     This does a local transformation where the orientation of the object is taken into acount.
+        void Translate(const glm::vec3 &offset);
+
+        /// Rotates the node.
+        ///
+        /// @param angleDegrees [in] The amount of degrees to rotate the object.
+        /// @param axis         [in] The axis to rotate around.
+        void Rotate(float angleDegrees, const glm::vec3 &axis);
+
+        /// Scales the node.
+        ///
+        /// @param scale [in] The amount to scale the object.
+        void Scale(const glm::vec3 &scale);
+
+
+        /// Moves the object in the direction of its forward vector.
+        ///
+        /// @param  distance [in] The distance to move.
+        void MoveForward(float distance) { this->Translate(glm::vec3(0.0f, 0.0f, -distance)); }
+
+        /// Moves the object in the direction of its right vector.
+        ///
+        /// @param  distance [in] The distance to move.
+        void MoveRight(float distance) { this->Translate(glm::vec3(distance, 0.0f, 0.0f)); }
+
+        /// Moves the object in the direction of its up vector.
+        ///
+        /// @param  distance [in] The distance to move.
+        void MoveUp(float distance) { this->Translate(glm::vec3(0.0f, distance, 0.0f)); }
+
+
+        /// Rotates the object around it's local x axis.
+        ///
+        /// @param  angleDegress [in] The angle in degrees to rotate.
+        void RotateX(float angleDegrees) { this->Rotate(angleDegrees, glm::vec3(1.0f, 0.0f, 0.0f)); }
+
+        /// Rotates the object around it's local y axis.
+        ///
+        /// @param  angleDegress [in] The angle in degrees to rotate.
+        void RotateY(float angleDegrees) { this->Rotate(angleDegrees, glm::vec3(0.0f, 1.0f, 0.0f)); }
+
+        /// Rotates the object around it's local z axis.
+        ///
+        /// @param  angleDegress [in] The angle in degrees to rotate.
+        void RotateZ(float angleDegrees) { this->Rotate(angleDegrees, glm::vec3(0.0f, 0.0f, 1.0f)); }
+
+
+
+        /// Performs a linear interpolation of the object's position.
+        ///
+        /// @param dest [in] The destination position.
+        /// @param a    [in] The factor controlling how far to move towards <dest>. A value of 1.0 will move the object to <dest>, whereas a value of 0.0 will not move it at all.
+        void InterpolatePosition(const glm::vec3 &dest, float a);
+
+        /// Performs a spherical-linear interpolation of the object's rotation.
+        ///
+        /// @param dest [in] The destination orientation.
+        /// @param a    [in] The factor controlling how far to rotate towards <dest>.
+        void InterpolateOrientation(const glm::quat &dest, float a);
+
+        /// Performs a linear interpolation of the object's scale.
+        ///
+        /// @param dest [in] The destination scale.
+        /// @param a    [in] The factor controlling how far to scale towards <dest>.
+        void InterpolateScale(const glm::vec3 &scale, float a);
+
+
+        /// Retrieves a normalised vector pointing in the forward direction of the object.
+        glm::vec3 GetForwardVector() const;
+
+        /// Retrieves a normalised vector pointing in the right direction of the object.
+        glm::vec3 GetRightVector() const;
+
+        /// Retrieves a normalised vector pointing in the up direction of the object.
+        glm::vec3 GetUpVector() const;
+
+
+        /// Rotates the object about the world axis.
+        ///
+        /// @param angle [in] The angle of rotation.
+        /// @param axis  [in] The axis of rotation.
+        void RotateAroundWorldAxis(float angle, const glm::vec3 &axis);
+
+        /// Rotates the object about the world axis around the given pivot point.
+        ///
+        /// @param angle [in] The angle of rotation.
+        /// @param axis  [in] The axis of rotation.
+        /// @param pivot [in] The pivot point to rotate around.
+        void RotateAtPivotAroundWorldAxis(float angle, const glm::vec3 &axis, const glm::vec3 &pivot);
+
+
+        /// Calculates a transformation matrix for this object.
+        ///
+        /// @param dest [in] A reference to the matrix that will receive the transformation.
+        ///
+        /// @remarks
+        ///     This is not a simple accessor, but rather a calculate of the transform from the position, orientation and scale.
+        void GetTransform(glm::mat4 &dest);
+
+
+
+
+
+        ////////////////////////////////////////////////
+        // Components
 
         /// Retrieves a pointer to the component as specified by 'T'.
         ///
@@ -444,13 +524,15 @@ namespace GTEngine
         void GetAttachedComponentNames(GTCore::Vector<GTCore::String> &output) const;
 
 
-        /**
-        *   \brief  Retrieves the data pointer for the given key.
-        *
-        *   If a data pointer at the given key can not be found, null is returned, casted to T.
-        *
-        *   Ideally, this should not be called too often since it needs to access a map.
-        */
+
+
+
+        /// Retrieves the data pointer for the given key.
+        ///
+        /// @remarks
+        ///     If a data pointer at the given key can not be found, null is returned, casted to T.
+        ///     @par
+        ///     Ideally, this should not be called too often since it needs to access a map.
         template <typename T>
         T* GetDataPointer(size_t key)
         {
@@ -463,20 +545,15 @@ namespace GTEngine
             return nullptr;
         }
 
-        /**
-        *   \brief  Sets the data pointer for the given key.
-        */
+        /// Sets the data pointer for the given key.
         void SetDataPointer(size_t key, void *data)
         {
             this->dataPointers.Add(key, data);
         }
 
-        /**
-        *   \brief  Removes a data pointer from the scene node for the given key.
-        *
-        *   Note that this does not delete the data at the given pointer. This is the responsibility of the
-        *   caller.
-        */
+        /// Removes a data pointer from the scene node for the given key.
+        ///
+        /// Note that this does not delete the data at the given pointer. This is the responsibility of the caller.
         void RemoveDataPointer(size_t key)
         {
             this->dataPointers.RemoveByKey(key);
@@ -504,37 +581,26 @@ namespace GTEngine
 
 
 
-        /**
-        *   \brief  Sets whether or not the scene node is static.
-        */
+        /// Sets whether or not the scene node is static.
         void SetStatic(bool isStatic);
 
-        /**
-        *   \brief  Determines whether or not the node is static.
-        */
+        /// Determines whether or not the node is static.
         bool IsStatic() const;
 
         
 
-        /**
-        *   \brief  Sets whether or not the scene node is visible.
-        */
+        /// Sets whether or not the scene node is visible.
         void SetVisible(bool isVisible);
 
-        /**
-        *   \brief  Makes the scene node visible.
-        */
+        /// Makes the scene node visible.
         inline void Show() { this->SetVisible(true); }
 
-        /**
-        *   \brief  Makes the scene node invisible.
-        */
+        /// Makes the scene node invisible.
         inline void Hide() { this->SetVisible(false); }
 
-        /**
-        *   \brief                 Determines if the scene node is visible.
-        *   \param  recursive [in] Whether or not the visibility should be check recursively. If a parent is invisible, so is it's children.
-        */
+        /// Determines if the scene node is visible.
+        ///
+        /// @param  recursive [in] Whether or not the visibility should be check recursively. If a parent is invisible, so is it's children.
         bool IsVisible(bool recursive = true) const;
 
         
@@ -657,13 +723,12 @@ namespace GTEngine
 
     public:
 
-        /**
-        *   \brief              Helper for setting the parent. Do not call this function directly - it is only used internally.
-        *   \param  parent [in] A pointer to the new parent node. Can be null.
-        *
-        *   \remarks
-        *       Do not call this function directly. Instead use Attach()/Detach() to set the parent.
-        */
+        /// Helper for setting the parent. Do not call this function directly - it is only used internally.
+        ///
+        /// @param  parent [in] A pointer to the new parent node. Can be null.
+        ///
+        /// @remarks
+        ///     Do not call this function directly. Instead use Attach()/Detach() to set the parent.
         void _SetParent(SceneNode *parent);
 
         void _SetPrevSibling(SceneNode* newPrevSibling);
@@ -709,6 +774,17 @@ namespace GTEngine
         SceneNode* nextSibling;
 
 
+        /// The position of the scene node, relative to the parent.
+        glm::vec3 position;
+
+        /// The orientation of the scene node, relative to the parent.
+        glm::quat orientation;
+
+        /// The scale of the scene node, relative to the parent.
+        glm::vec3 scale;
+
+
+
         /// The list of pointers of the event handlers that are attached to this node. This should usually always have at
         /// least a single entry, but doesn't have to.
         GTCore::List<SceneNodeEventHandler*> eventHandlers;
@@ -752,30 +828,8 @@ namespace GTEngine
         EditorMetadataComponent* editorMetadataComponent;
         
         
+
     public:
-
-        /////////////////////////////////////////////////////////
-        // Upcaster.
-
-        static SceneNode* Upcast(SceneObject* object)
-        {
-            if (object != nullptr && object->GetType() == SceneObjectType_SceneNode)
-            {
-                return static_cast<SceneNode*>(object);
-            }
-
-            return nullptr;
-        }
-        static const SceneNode* Upcast(const SceneObject* object)
-        {
-            if (object != nullptr && object->GetType() == SceneObjectType_SceneNode)
-            {
-                return static_cast<const SceneNode*>(object);
-            }
-
-            return nullptr;
-        }
-
 
         /////////////////////////////////////////////////////////
         // Flags.

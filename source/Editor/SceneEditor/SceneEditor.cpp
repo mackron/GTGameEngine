@@ -1182,133 +1182,123 @@ namespace GTEngine
     //
     // These method should only be called for the active scene.
 
-    void SceneEditor::OnObjectAdded(SceneObject &object)
+    void SceneEditor::OnSceneNodeAdded(SceneNode &sceneNode)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
+        // We need a metadata component if we don't already have one.
+        auto metadata = sceneNode.GetComponent<EditorMetadataComponent>();
+        if (metadata == nullptr)
         {
-            auto &node = static_cast<SceneNode &>(object);
-
-            // We need a metadata component if we don't already have one.
-            auto metadata = node.GetComponent<EditorMetadataComponent>();
-            if (metadata == nullptr)
-            {
-                metadata = node.AddComponent<EditorMetadataComponent>();
-                this->OnSceneNodeComponentChanged(node, *metadata);
-            }
+            metadata = sceneNode.AddComponent<EditorMetadataComponent>();
+            this->OnSceneNodeComponentChanged(sceneNode, *metadata);
+        }
 
 
-            // Picking volume must be set here.
-            if (metadata->UseModelForPickingShape() && node.HasComponent<ModelComponent>())
+        // Picking volume must be set here.
+        if (metadata->UseModelForPickingShape() && sceneNode.HasComponent<ModelComponent>())
+        {
+            metadata->SetPickingCollisionShapeToModel();
+        }
+
+
+        assert(metadata != nullptr);
+        {
+            // Picking shapes need to be created.
+            //
+            // We always create the shapes regardless of whether or not they're visible. We only add to the picking world if it's visible, though.
+            auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
+
+            if (metadata->UseModelForPickingShape())
             {
                 metadata->SetPickingCollisionShapeToModel();
+
+                if (metadata->GetPickingCollisionShape())
+                {
+                    pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(sceneNode.GetWorldScale()));
+                }
             }
 
 
-            assert(metadata != nullptr);
+            if (sceneNode.IsVisible())
             {
-                // Picking shapes need to be created.
-                //
-                // We always create the shapes regardless of whether or not they're visible. We only add to the picking world if it's visible, though.
-                auto &pickingCollisionObject = metadata->GetPickingCollisionObject();
-
-                if (metadata->UseModelForPickingShape())
+                if (metadata->GetPickingCollisionShape() != nullptr)
                 {
-                    metadata->SetPickingCollisionShapeToModel();
+                    btTransform transform;
+                    sceneNode.GetWorldTransform(transform);
+                    pickingCollisionObject.setWorldTransform(transform);
 
-                    if (metadata->GetPickingCollisionShape())
-                    {
-                        pickingCollisionObject.getCollisionShape()->setLocalScaling(ToBulletVector3(node.GetWorldScale()));
-                    }
+                    this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                 }
 
 
-                if (node.IsVisible())
+                // If we have a sprite, we'll want to add it's picking object to the picking world.
+                if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
                 {
-                    if (metadata->GetPickingCollisionShape() != nullptr)
+                    this->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                }
+
+
+                if (metadata->IsUsingSprite())
+                {
+                    auto scene = sceneNode.GetScene();
+                    assert(scene != nullptr);
                     {
-                        btTransform transform;
-                        node.GetWorldTransform(transform);
-                        pickingCollisionObject.setWorldTransform(transform);
-
-                        this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
-                    }
-
-
-                    // If we have a sprite, we'll want to add it's picking object to the picking world.
-                    if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
-                    {
-                        this->pickingWorld.AddCollisionObject(*metadata->GetSpritePickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
-                    }
-
-
-                    if (metadata->IsUsingSprite())
-                    {
-                        auto scene = node.GetScene();
-                        assert(scene != nullptr);
-                        {
-                            scene->GetRenderer().AddExternalMesh(metadata->GetSpriteMesh());
-                        }
-                    }
-
-                    if (metadata->IsShowingDirectionArrow())
-                    {
-                        auto scene = node.GetScene();
-                        assert(scene != nullptr);
-                        {
-                            scene->GetRenderer().AddExternalMesh(metadata->GetDirectionArrowMesh());
-                        }
+                        scene->GetRenderer().AddExternalMesh(metadata->GetSpriteMesh());
                     }
                 }
+
+                if (metadata->IsShowingDirectionArrow())
+                {
+                    auto scene = sceneNode.GetScene();
+                    assert(scene != nullptr);
+                    {
+                        scene->GetRenderer().AddExternalMesh(metadata->GetDirectionArrowMesh());
+                    }
+                }
+            }
 
                 
 
 
-                // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
-                this->PostOnSceneNodeAddedToScript(node);
+            // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
+            this->PostOnSceneNodeAddedToScript(sceneNode);
 
 
-                // Select the scene node if it's marked as such.
-                if (metadata->IsSelected())
-                {
-                    this->SelectSceneNode(node, SelectionOption_NoScriptNotify | SelectionOption_Force);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
-                }
+            // Select the scene node if it's marked as such.
+            if (metadata->IsSelected())
+            {
+                this->SelectSceneNode(sceneNode, SelectionOption_NoScriptNotify | SelectionOption_Force);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
             }
         }
     }
 
-    void SceneEditor::OnObjectRemoved(SceneObject &object)
+    void SceneEditor::OnSceneNodeRemoved(SceneNode &sceneNode)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
+        auto metadata = sceneNode.GetComponent<EditorMetadataComponent>();
+        assert(metadata != nullptr);
         {
-            auto &node = static_cast<SceneNode &>(object);
+            // Collision shapes need to be removed.
+            this->pickingWorld.RemoveCollisionObject(metadata->GetPickingCollisionObject());
 
-            auto metadata = node.GetComponent<EditorMetadataComponent>();
-            assert(metadata != nullptr);
+            if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
             {
-                // Collision shapes need to be removed.
-                this->pickingWorld.RemoveCollisionObject(metadata->GetPickingCollisionObject());
-
-                if (metadata->IsUsingSprite() && metadata->GetSpritePickingCollisionObject() != nullptr)
-                {
-                    this->pickingWorld.RemoveCollisionObject(*metadata->GetSpritePickingCollisionObject());
-                }
-
-
-                auto scene = node.GetScene();
-                assert(scene != nullptr);
-                {
-                    scene->GetRenderer().RemoveExternalMesh(metadata->GetSpriteMesh());
-                    scene->GetRenderer().RemoveExternalMesh(metadata->GetDirectionArrowMesh());
-                }
-
-
-                // We need to make sure scene nodes are deseleted when they are removed from the scene.
-                this->DeselectSceneNode(node, 0);
-
-
-                // We need to let the editor know about this. It will need to do things like remove it from the hierarchy explorer.
-                this->PostOnSceneNodeRemovedToScript(node);
+                this->pickingWorld.RemoveCollisionObject(*metadata->GetSpritePickingCollisionObject());
             }
+
+
+            auto scene = sceneNode.GetScene();
+            assert(scene != nullptr);
+            {
+                scene->GetRenderer().RemoveExternalMesh(metadata->GetSpriteMesh());
+                scene->GetRenderer().RemoveExternalMesh(metadata->GetDirectionArrowMesh());
+            }
+
+
+            // We need to make sure scene nodes are deseleted when they are removed from the scene.
+            this->DeselectSceneNode(sceneNode, 0);
+
+
+            // We need to let the editor know about this. It will need to do things like remove it from the hierarchy explorer.
+            this->PostOnSceneNodeRemovedToScript(sceneNode);
         }
     }
 

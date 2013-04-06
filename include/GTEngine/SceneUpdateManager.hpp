@@ -3,7 +3,7 @@
 #ifndef __GTEngine_SceneUpdateManager_hpp_
 #define __GTEngine_SceneUpdateManager_hpp_
 
-#include "SceneObject.hpp"
+#include "SceneNode.hpp"
 
 namespace GTEngine
 {
@@ -23,28 +23,28 @@ namespace GTEngine
         virtual ~SceneUpdateManager() {}
 
 
-        /// Determines whether or not an objects needs updating.
+        /// Determines whether or not a scene node needs updating.
         ///
-        /// @param object [in] The object to check.
+        /// @param sceneNode [in] The scene node to check.
         ///
         /// @remarks
         ///     This method is called during a preprocess step for determining whether or not the object should be added with AddObject(). If this
         ///     method returns false, AddObject() will not be called on the object. Otherwise, it will. This method makes it simpler for implementations
         ///     of AddObject().
-        virtual bool NeedsUpdate(SceneObject &object) const = 0;
+        virtual bool NeedsUpdate(SceneNode &sceneNode) const = 0;
 
-        /// Called when an object is added.
+        /// Called when a scene node is added.
         ///
-        /// @param object [in] A reference to the object being added to the manager.
-        virtual void AddObject(SceneObject &object) = 0;
+        /// @param sceneNode [in] A reference to the scene node being added to the manager.
+        virtual void AddSceneNode(SceneNode &sceneNode) = 0;
 
-        /// Called when an object is removed.
+        /// Called when a scene node is removed.
         ///
-        /// @param object [in] A reference to the object being removed.
+        /// @param sceneNode [in] A reference to the scene node being removed.
         ///
         /// @remarks
         ///     It is possible that this method can be called on an object that was not added with AddObject(). This case must be handled.
-        virtual void RemoveObject(SceneObject &object) = 0;
+        virtual void RemoveSceneNode(SceneNode &sceneNode) = 0;
     
 
         /// Performs the update step.

@@ -413,12 +413,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\SimpleQuadtree.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\SceneObject.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\SceneObjectTypes.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\ModelDefinition.hpp">
       <Filter>include</Filter>
     </ClInclude>
@@ -1109,9 +1103,6 @@
       <Filter>source\Editor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ShadowVolume.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\SceneObject.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\ModelDefinition.cpp">

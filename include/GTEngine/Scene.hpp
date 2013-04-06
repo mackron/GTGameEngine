@@ -242,19 +242,6 @@ namespace GTEngine
         virtual ~Scene();
 
 
-        /// Adds the given object to the scene.
-        ///
-        /// @param object [in] The object to add to the scene.
-        void AddObject(SceneObject &object);
-
-        /// Removes the given object from the scene.
-        ///
-        /// @param object [in] A reference to the object to remove from the scene.
-        void RemoveObject(SceneObject &object);
-
-        /// Removes every object from the scene.
-        void RemoveAllObjects();
-
 
         /// Adds a scene node to the scene.
         ///
@@ -270,6 +257,9 @@ namespace GTEngine
         ///
         /// @param sceneNodeID [in] The ID of the scene node to remove.
         void RemoveSceneNodeByID(uint64_t sceneNodeID);
+
+        /// Removes every scene node from the scene.
+        void RemoveAllSceneNodes();
 
 
         /// Creates a new empty scene node.
@@ -555,7 +545,7 @@ namespace GTEngine
         ///
         /// @param mvp      [in] The projection matrix whose visible objects are being retrieved.
         /// @param callback [in] The callback that will receive the visible objects.
-        void QueryVisibleObjects(const glm::mat4 &mvp, SceneCullingManager::VisibilityCallback &callback) const;
+        void QueryVisibleSceneNodes(const glm::mat4 &mvp, SceneCullingManager::VisibilityCallback &callback) const;
 
 
 
@@ -794,15 +784,15 @@ namespace GTEngine
         /////////////////////////////////////////////////
         // Event Posting
 
-        /// Helper for posting an OnObjectAdded event to every attached event handler.
+        /// Helper for posting an OnSceneNodeAdded event to every attached event handler.
         ///
-        /// @param object [in] A reference to the object that was just added.
-        void PostEvent_OnObjectAdded(SceneObject &object);
+        /// @param sceneNode [in] A reference to the scene node that was just added.
+        void PostEvent_OnSceneNodeAdded(SceneNode &sceneNode);
 
-        /// Helper for posting an OnObjectRemoved event to every attached event handler.
+        /// Helper for posting an OnSceneNodeRemoved event to every attached event handler.
         ///
-        /// @param object [in] A reference to the object that is being removed.
-        void PostEvent_OnObjectRemoved(SceneObject &object);
+        /// @param sceneNode [in] A reference to the scene node that is being removed.
+        void PostEvent_OnSceneNodeRemoved(SceneNode &sceneNode);
 
         /// Helper for posting an OnSceneNodeNameChanged event.
         ///
