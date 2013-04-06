@@ -280,11 +280,11 @@ namespace GTEngine
         //
         // These events are received from the scene event handler for the currently active scene.
 
-        /// SceneEditorSceneEventHandler::OnObjectAdded()
-        void OnObjectAdded(SceneObject &object);
+        /// SceneEditorSceneEventHandler::OnSceneNodeAdded()
+        void OnSceneNodeAdded(SceneNode &object);
 
-        /// SceneEditorSceneEventHandler::OnObjectRemoved()
-        void OnObjectRemoved(SceneObject &object);
+        /// SceneEditorSceneEventHandler::OnSceneNodeRemoved()
+        void OnSceneNodeRemoved(SceneNode &object);
 
         /// SceneEditorSceneEventHandler::OnSceneNodeNameChanged()
         void OnSceneNodeNameChanged(SceneNode &node);
@@ -465,7 +465,6 @@ namespace GTEngine
 
 
         /// Updates the icon on the "Play" button.
-        //void UpdatePlayButtonIcon();
         void UpdatePlaybackControls();
 
         /// Updates the icon on the Physics button.

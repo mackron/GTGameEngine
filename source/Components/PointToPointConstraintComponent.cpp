@@ -18,31 +18,25 @@ namespace GTEngine
         delete this->constraint;
     }
 
-    void PointToPointConstraintComponent::SetAttachments(SceneObject &objectA, SceneObject &objectB, const glm::vec3 &pivotInA, const glm::vec3 &pivotInB)
+    void PointToPointConstraintComponent::SetAttachments(SceneNode &sceneNodeA, SceneNode &sceneNodeB, const glm::vec3 &pivotInA, const glm::vec3 &pivotInB)
     {
         RigidBody* bodyA = nullptr;
         RigidBody* bodyB = nullptr;
 
-        if (objectA.GetType() == GTEngine::SceneObjectType_SceneNode)
+        auto dynamicsComponent = sceneNodeA.GetComponent<GTEngine::DynamicsComponent>();
+        if (dynamicsComponent != nullptr)
         {
-            auto dynamicsComponent = static_cast<SceneNode &>(objectA).GetComponent<GTEngine::DynamicsComponent>();
-            if (dynamicsComponent != nullptr)
-            {
-                dynamicsComponent->ApplySceneNodeScaling();
-                dynamicsComponent->ApplySceneNodeTransformation();
-                bodyA = &dynamicsComponent->GetRigidBody();
-            }
+            dynamicsComponent->ApplySceneNodeScaling();
+            dynamicsComponent->ApplySceneNodeTransformation();
+            bodyA = &dynamicsComponent->GetRigidBody();
         }
-
-        if (objectB.GetType() == GTEngine::SceneObjectType_SceneNode)
+        
+        dynamicsComponent = sceneNodeB.GetComponent<GTEngine::DynamicsComponent>();
+        if (dynamicsComponent != nullptr)
         {
-            auto dynamicsComponent = static_cast<SceneNode &>(objectB).GetComponent<GTEngine::DynamicsComponent>();
-            if (dynamicsComponent != nullptr)
-            {
-                dynamicsComponent->ApplySceneNodeScaling();
-                dynamicsComponent->ApplySceneNodeTransformation();
-                bodyB = &dynamicsComponent->GetRigidBody();
-            }
+            dynamicsComponent->ApplySceneNodeScaling();
+            dynamicsComponent->ApplySceneNodeTransformation();
+            bodyB = &dynamicsComponent->GetRigidBody();
         }
 
 
@@ -66,19 +60,16 @@ namespace GTEngine
     }
 
 
-    void PointToPointConstraintComponent::SetAttachments(SceneObject &objectB, const glm::vec3 &pivotInB)
+    void PointToPointConstraintComponent::SetAttachments(SceneNode &sceneNodeB, const glm::vec3 &pivotInB)
     {
         RigidBody* bodyB = nullptr;
 
-        if (objectB.GetType() == GTEngine::SceneObjectType_SceneNode)
+        auto dynamicsComponent = sceneNodeB.GetComponent<GTEngine::DynamicsComponent>();
+        if (dynamicsComponent != nullptr)
         {
-            auto dynamicsComponent = static_cast<SceneNode &>(objectB).GetComponent<GTEngine::DynamicsComponent>();
-            if (dynamicsComponent != nullptr)
-            {
-                dynamicsComponent->ApplySceneNodeScaling();
-                dynamicsComponent->ApplySceneNodeTransformation();
-                bodyB = &dynamicsComponent->GetRigidBody();
-            }
+            dynamicsComponent->ApplySceneNodeScaling();
+            dynamicsComponent->ApplySceneNodeTransformation();
+            bodyB = &dynamicsComponent->GetRigidBody();
         }
 
 

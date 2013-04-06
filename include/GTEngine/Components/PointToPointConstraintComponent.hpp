@@ -5,7 +5,6 @@
 
 #include "../Component.hpp"
 #include "../Physics.hpp"
-#include "../SceneObject.hpp"
 
 namespace GTEngine
 {
@@ -23,12 +22,12 @@ namespace GTEngine
 
         /// Sets the attachments.
         ///
-        /// @param objectA  [in] A reference to the first object to attach to the constraint.
-        /// @param objectB  [in] A reference to the second object to attach to the constraint.
-        /// @param pivotInA [in] The pivot location for objectA.
-        /// @param pivotInB [in] The pivot location for objectB.
-        void SetAttachments(SceneObject &objectA, SceneObject &objectB, const glm::vec3 &pivotInA, const glm::vec3 &pivotInB);
-        void SetAttachments(SceneObject &objectA, const glm::vec3 &pivotInB);
+        /// @param sceneNodeA [in] A reference to the first scene node to attach to the constraint.
+        /// @param sceneNodeB [in] A reference to the second scene node to attach to the constraint.
+        /// @param pivotInA   [in] The pivot location for objectA.
+        /// @param pivotInB   [in] The pivot location for objectB.
+        void SetAttachments(SceneNode &sceneNodeA, SceneNode &sceneNodeB, const glm::vec3 &pivotInA, const glm::vec3 &pivotInB);
+        void SetAttachments(SceneNode &sceneNodeB, const glm::vec3 &pivotInB);
 
 
         /// Retrieves a pointer to the internal constraint object.

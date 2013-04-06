@@ -25,13 +25,13 @@ namespace GTEngine
 
 
         /// SceneUpdateManager::NeedsUpdate().
-        virtual bool NeedsUpdate(SceneObject &object) const;
+        virtual bool NeedsUpdate(SceneNode &sceneNode) const;
 
         /// SceneUpdateManager::AddObject().
-        virtual void AddObject(SceneObject &object);
+        virtual void AddSceneNode(SceneNode &sceneNode);
 
         /// SceneUpdateManager::RemoveObject().
-        virtual void RemoveObject(SceneObject &object);
+        virtual void RemoveSceneNode(SceneNode &sceneNode);
 
         /// SceneUpdateManager::Step().
         virtual void Step(double deltaTimeInSeconds);
@@ -52,8 +52,8 @@ namespace GTEngine
 
     protected:
 
-        /// The list of every object that should be updated.
-        GTCore::Vector<SceneObject*> objects;
+        /// The list of every scene node that should be updated.
+        GTCore::Vector<SceneNode*> sceneNodes;
     };
 }
 

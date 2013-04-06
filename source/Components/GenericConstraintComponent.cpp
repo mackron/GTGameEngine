@@ -18,31 +18,25 @@ namespace GTEngine
         delete this->constraint;
     }
 
-    void GenericConstraintComponent::SetAttachments(SceneObject &objectA, SceneObject &objectB, const glm::mat4 &frameA, const glm::mat4 &frameB)
+    void GenericConstraintComponent::SetAttachments(SceneNode &sceneNodeA, SceneNode &sceneNodeB, const glm::mat4 &frameA, const glm::mat4 &frameB)
     {
         RigidBody* bodyA = nullptr;
         RigidBody* bodyB = nullptr;
 
-        if (objectA.GetType() == GTEngine::SceneObjectType_SceneNode)
+        auto dynamicsComponent = sceneNodeA.GetComponent<GTEngine::DynamicsComponent>();
+        if (dynamicsComponent != nullptr)
         {
-            auto dynamicsComponent = static_cast<SceneNode &>(objectA).GetComponent<GTEngine::DynamicsComponent>();
-            if (dynamicsComponent != nullptr)
-            {
-                dynamicsComponent->ApplySceneNodeScaling();
-                dynamicsComponent->ApplySceneNodeTransformation();
-                bodyA = &dynamicsComponent->GetRigidBody();
-            }
+            dynamicsComponent->ApplySceneNodeScaling();
+            dynamicsComponent->ApplySceneNodeTransformation();
+            bodyA = &dynamicsComponent->GetRigidBody();
         }
 
-        if (objectB.GetType() == GTEngine::SceneObjectType_SceneNode)
+        dynamicsComponent = sceneNodeB.GetComponent<GTEngine::DynamicsComponent>();
+        if (dynamicsComponent != nullptr)
         {
-            auto dynamicsComponent = static_cast<SceneNode &>(objectB).GetComponent<GTEngine::DynamicsComponent>();
-            if (dynamicsComponent != nullptr)
-            {
-                dynamicsComponent->ApplySceneNodeScaling();
-                dynamicsComponent->ApplySceneNodeTransformation();
-                bodyB = &dynamicsComponent->GetRigidBody();
-            }
+            dynamicsComponent->ApplySceneNodeScaling();
+            dynamicsComponent->ApplySceneNodeTransformation();
+            bodyB = &dynamicsComponent->GetRigidBody();
         }
 
 
@@ -65,19 +59,16 @@ namespace GTEngine
         this->OnChanged();
     }
 
-    void GenericConstraintComponent::SetAttachments(SceneObject &objectB, const glm::mat4 &frameB)
+    void GenericConstraintComponent::SetAttachments(SceneNode &sceneNodeB, const glm::mat4 &frameB)
     {
         RigidBody* bodyB = nullptr;
 
-        if (objectB.GetType() == GTEngine::SceneObjectType_SceneNode)
+        auto dynamicsComponent = sceneNodeB.GetComponent<GTEngine::DynamicsComponent>();
+        if (dynamicsComponent != nullptr)
         {
-            auto dynamicsComponent = static_cast<SceneNode &>(objectB).GetComponent<GTEngine::DynamicsComponent>();
-            if (dynamicsComponent != nullptr)
-            {
-                dynamicsComponent->ApplySceneNodeScaling();
-                dynamicsComponent->ApplySceneNodeTransformation();
-                bodyB = &dynamicsComponent->GetRigidBody();
-            }
+            dynamicsComponent->ApplySceneNodeScaling();
+            dynamicsComponent->ApplySceneNodeTransformation();
+            bodyB = &dynamicsComponent->GetRigidBody();
         }
 
 

@@ -3,7 +3,6 @@
 #ifndef __GTEngine_ScenePhysicsManager_hpp_
 #define __GTEngine_ScenePhysicsManager_hpp_
 
-#include "SceneObject.hpp"
 #include "Physics.hpp"
 
 namespace GTEngine

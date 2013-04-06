@@ -23,33 +23,27 @@ namespace GTEngine
     {
     }
 
-    void DefaultSceneRendererShadowObjects::ProcessObjectModel(const SceneObject &object)
+    void DefaultSceneRendererShadowObjects::ProcessModel(const SceneNode &sceneNode)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
+        auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+        assert(modelComponent != nullptr);
         {
-            auto &sceneNode = static_cast<const SceneNode &>(object);
+            if (modelComponent->IsShadowCastingEnabled())       // <-- Ignore the model if it is not casting shadows.
             {
-                auto modelComponent = sceneNode.GetComponent<ModelComponent>();
-                assert(modelComponent != nullptr);
+                auto model = modelComponent->GetModel();
+                if (model != nullptr)                           // <-- Is allowed to be null. Perhaps due to a bad path?
                 {
-                    if (modelComponent->IsShadowCastingEnabled())       // <-- Ignore the model if it is not casting shadows.
+                    for (size_t i = 0; i < model->meshes.count; ++i)
                     {
-                        auto model = modelComponent->GetModel();
-                        if (model != nullptr)                           // <-- Is allowed to be null. Perhaps due to a bad path?
+                        auto mesh = model->meshes[i];
+                        assert(mesh != nullptr);
                         {
-                            for (size_t i = 0; i < model->meshes.count; ++i)
-                            {
-                                auto mesh = model->meshes[i];
-                                assert(mesh != nullptr);
-                                {
-                                    DefaultSceneRendererMesh object;
-                                    object.vertexArray = mesh->GetSkinnedGeometry();
-                                    object.drawMode    = mesh->GetDrawMode();
-                                    object.material    = mesh->GetMaterial();
-                                    object.transform   = sceneNode.GetWorldTransform();
-                                    this->meshes.PushBack(object);
-                                }
-                            }
+                            DefaultSceneRendererMesh object;
+                            object.vertexArray = mesh->GetSkinnedGeometry();
+                            object.drawMode    = mesh->GetDrawMode();
+                            object.material    = mesh->GetMaterial();
+                            object.transform   = sceneNode.GetWorldTransform();
+                            this->meshes.PushBack(object);
                         }
                     }
                 }
@@ -145,182 +139,152 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRendererVisibleObjects::ProcessObjectModel(const SceneObject &object)
+    void DefaultSceneRendererVisibleObjects::ProcessModel(const SceneNode &sceneNode)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
+        auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+        assert(modelComponent != nullptr);
         {
-            auto &sceneNode = static_cast<const SceneNode &>(object);
+            if (!this->visibleModels.Exists(modelComponent))
             {
-                auto modelComponent = sceneNode.GetComponent<ModelComponent>();
-                assert(modelComponent != nullptr);
-                {
-                    if (!this->visibleModels.Exists(modelComponent))
-                    {
-                        this->visibleModels.Add(modelComponent, new LightIndices);
-                    }
-                }
+                this->visibleModels.Add(modelComponent, new LightIndices);
             }
         }
     }
 
-    void DefaultSceneRendererVisibleObjects::ProcessObjectPointLight(const SceneObject &object)
+    void DefaultSceneRendererVisibleObjects::ProcessPointLight(const SceneNode &sceneNode)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
+        auto lightComponent = sceneNode.GetComponent<PointLightComponent>();
+        assert(lightComponent != nullptr);
         {
-            auto &sceneNode = static_cast<const SceneNode &>(object);
+            SceneRendererPointLight* light = nullptr;
+
+            if (!lightComponent->IsShadowCastingEnabled())
             {
-                auto lightComponent = sceneNode.GetComponent<PointLightComponent>();
-                assert(lightComponent != nullptr);
-                {
-                    SceneRendererPointLight* light = nullptr;
+                light = new SceneRendererPointLight;
+                this->pointLights.Add(lightComponent, light);
 
-                    if (!lightComponent->IsShadowCastingEnabled())
-                    {
-                        light = new SceneRendererPointLight;
-                        this->pointLights.Add(lightComponent, light);
+                this->allLightIndices.pointLights.PushBack(this->pointLights.count - 1);
+            }
+            else
+            {
+                light = new DefaultSceneRendererShadowPointLight;
+                this->shadowPointLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowPointLight*>(light));
 
-                        this->allLightIndices.pointLights.PushBack(this->pointLights.count - 1);
-                    }
-                    else
-                    {
-                        light = new DefaultSceneRendererShadowPointLight;
-                        this->shadowPointLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowPointLight*>(light));
-
-                        this->allLightIndices.shadowPointLights.PushBack(this->shadowPointLights.count - 1);
-                    }
+                this->allLightIndices.shadowPointLights.PushBack(this->shadowPointLights.count - 1);
+            }
 
 
-                    light->position = sceneNode.GetWorldPosition();
-                    light->colour   = lightComponent->GetColour();
-                    light->radius   = lightComponent->GetRadius();
-                    light->falloff  = lightComponent->GetFalloff();
+            light->position = sceneNode.GetWorldPosition();
+            light->colour   = lightComponent->GetColour();
+            light->radius   = lightComponent->GetRadius();
+            light->falloff  = lightComponent->GetFalloff();
 
-                    if (lightComponent->IsShadowCastingEnabled())
-                    {
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->projection = glm::perspective(90.0f, 1.0f, 0.1f, light->radius);
+            if (lightComponent->IsShadowCastingEnabled())
+            {
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->projection = glm::perspective(90.0f, 1.0f, 0.1f, light->radius);
 
-                        glm::vec3 origin(light->position);
-                        glm::vec3 posx(  1.0f, 0.0f, 0.0f);
-                        glm::vec3 posy(  0.0f, 1.0f, 0.0f);
-                        glm::vec3 posz(  0.0f, 0.0f, 1.0f);
+                glm::vec3 origin(light->position);
+                glm::vec3 posx(  1.0f, 0.0f, 0.0f);
+                glm::vec3 posy(  0.0f, 1.0f, 0.0f);
+                glm::vec3 posz(  0.0f, 0.0f, 1.0f);
 
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveXView = glm::lookAt(origin, origin + posx, -posy);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeXView = glm::lookAt(origin, origin - posx, -posy);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveYView = glm::lookAt(origin, origin + posy,  posz);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeYView = glm::lookAt(origin, origin - posy, -posz);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveZView = glm::lookAt(origin, origin + posz, -posy);
-                        static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeZView = glm::lookAt(origin, origin - posz, -posy);
-                    }
-                }
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveXView = glm::lookAt(origin, origin + posx, -posy);
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeXView = glm::lookAt(origin, origin - posx, -posy);
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveYView = glm::lookAt(origin, origin + posy,  posz);
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeYView = glm::lookAt(origin, origin - posy, -posz);
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveZView = glm::lookAt(origin, origin + posz, -posy);
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeZView = glm::lookAt(origin, origin - posz, -posy);
             }
         }
     }
 
-    void DefaultSceneRendererVisibleObjects::ProcessObjectSpotLight(const SceneObject &object)
+    void DefaultSceneRendererVisibleObjects::ProcessSpotLight(const SceneNode &sceneNode)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
+        auto lightComponent = sceneNode.GetComponent<SpotLightComponent>();
+        assert(lightComponent != nullptr);
         {
-            auto &sceneNode = static_cast<const SceneNode &>(object);
+            SceneRendererSpotLight* light = nullptr;
+
+            if (!lightComponent->IsShadowCastingEnabled())
             {
-                auto lightComponent = sceneNode.GetComponent<SpotLightComponent>();
-                assert(lightComponent != nullptr);
-                {
-                    SceneRendererSpotLight* light = nullptr;
+                light = new SceneRendererSpotLight;
+                this->spotLights.Add(lightComponent, light);
 
-                    if (!lightComponent->IsShadowCastingEnabled())
-                    {
-                        light = new SceneRendererSpotLight;
-                        this->spotLights.Add(lightComponent, light);
+                this->allLightIndices.spotLights.PushBack(this->spotLights.count - 1);
+            }
+            else
+            {
+                light = new DefaultSceneRendererShadowSpotLight;
+                this->shadowSpotLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowSpotLight*>(light));
 
-                        this->allLightIndices.spotLights.PushBack(this->spotLights.count - 1);
-                    }
-                    else
-                    {
-                        light = new DefaultSceneRendererShadowSpotLight;
-                        this->shadowSpotLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowSpotLight*>(light));
-
-                        this->allLightIndices.shadowSpotLights.PushBack(this->shadowSpotLights.count - 1);
-                    }
+                this->allLightIndices.shadowSpotLights.PushBack(this->shadowSpotLights.count - 1);
+            }
 
 
-                    light->colour      = lightComponent->GetColour();
-                    light->position    = sceneNode.GetWorldPosition();
-                    light->orientation = sceneNode.GetWorldOrientation();
-                    light->length      = lightComponent->GetLength();
-                    light->falloff     = lightComponent->GetFalloff();
-                    light->innerAngle  = lightComponent->GetInnerAngle();
-                    light->outerAngle  = lightComponent->GetOuterAngle();
+            light->colour      = lightComponent->GetColour();
+            light->position    = sceneNode.GetWorldPosition();
+            light->orientation = sceneNode.GetWorldOrientation();
+            light->length      = lightComponent->GetLength();
+            light->falloff     = lightComponent->GetFalloff();
+            light->innerAngle  = lightComponent->GetInnerAngle();
+            light->outerAngle  = lightComponent->GetOuterAngle();
 
 
 
-                    // A few additional properties need to be set if the light is casting a shadow.
-                    if (lightComponent->IsShadowCastingEnabled())
-                    {
-                        static_cast<DefaultSceneRendererShadowSpotLight*>(light)->projection = glm::perspective(light->outerAngle * 2.0f, 1.0f, 0.1f, light->length);
-                        static_cast<DefaultSceneRendererShadowSpotLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
-                    }
-                }
+            // A few additional properties need to be set if the light is casting a shadow.
+            if (lightComponent->IsShadowCastingEnabled())
+            {
+                static_cast<DefaultSceneRendererShadowSpotLight*>(light)->projection = glm::perspective(light->outerAngle * 2.0f, 1.0f, 0.1f, light->length);
+                static_cast<DefaultSceneRendererShadowSpotLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
             }
         }
     }
 
-    void DefaultSceneRendererVisibleObjects::ProcessObjectAmbientLight(const SceneObject &object)
+    void DefaultSceneRendererVisibleObjects::ProcessAmbientLight(const SceneNode &sceneNode)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
+        auto lightComponent = sceneNode.GetComponent<AmbientLightComponent>();
+        assert(lightComponent != nullptr);
         {
-            auto &sceneNode = static_cast<const SceneNode &>(object);
-            {
-                auto lightComponent = sceneNode.GetComponent<AmbientLightComponent>();
-                assert(lightComponent != nullptr);
-                {
-                    auto light = new SceneRendererAmbientLight;
-                    light->colour = lightComponent->GetColour();
+            auto light = new SceneRendererAmbientLight;
+            light->colour = lightComponent->GetColour();
 
-                    this->ambientLights.Add(lightComponent, light);
+            this->ambientLights.Add(lightComponent, light);
 
-                    this->allLightIndices.ambientLights.PushBack(this->ambientLights.count - 1);
-                }
-            }
+            this->allLightIndices.ambientLights.PushBack(this->ambientLights.count - 1);
         }
     }
 
-    void DefaultSceneRendererVisibleObjects::ProcessObjectDirectionalLight(const SceneObject &object)
+    void DefaultSceneRendererVisibleObjects::ProcessDirectionalLight(const SceneNode &sceneNode)
     {
-        if (object.GetType() == SceneObjectType_SceneNode)
+        auto lightComponent = sceneNode.GetComponent<DirectionalLightComponent>();
+        assert(lightComponent != nullptr);
         {
-            auto &sceneNode = static_cast<const SceneNode &>(object);
+            SceneRendererDirectionalLight* light = nullptr;
+
+            if (!lightComponent->IsShadowCastingEnabled())
             {
-                auto lightComponent = sceneNode.GetComponent<DirectionalLightComponent>();
-                assert(lightComponent != nullptr);
-                {
-                    SceneRendererDirectionalLight* light = nullptr;
+                light = new SceneRendererDirectionalLight;
+                this->directionalLights.Add(lightComponent, light);
 
-                    if (!lightComponent->IsShadowCastingEnabled())
-                    {
-                        light = new SceneRendererDirectionalLight;
-                        this->directionalLights.Add(lightComponent, light);
+                this->allLightIndices.directionalLights.PushBack(this->directionalLights.count - 1);
+            }
+            else
+            {
+                light = new DefaultSceneRendererShadowDirectionalLight;
+                this->shadowDirectionalLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowDirectionalLight*>(light));
 
-                        this->allLightIndices.directionalLights.PushBack(this->directionalLights.count - 1);
-                    }
-                    else
-                    {
-                        light = new DefaultSceneRendererShadowDirectionalLight;
-                        this->shadowDirectionalLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowDirectionalLight*>(light));
-
-                        this->allLightIndices.shadowDirectionalLights.PushBack(this->shadowDirectionalLights.count - 1);
-                    }
+                this->allLightIndices.shadowDirectionalLights.PushBack(this->shadowDirectionalLights.count - 1);
+            }
 
 
-                    light->colour      = lightComponent->GetColour();
-                    light->position    = sceneNode.GetWorldPosition();
-                    light->orientation = sceneNode.GetWorldOrientation();
+            light->colour      = lightComponent->GetColour();
+            light->position    = sceneNode.GetWorldPosition();
+            light->orientation = sceneNode.GetWorldOrientation();
 
-                    if (lightComponent->IsShadowCastingEnabled())
-                    {
-                        static_cast<DefaultSceneRendererShadowDirectionalLight*>(light)->projection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 500.0f);
-                        static_cast<DefaultSceneRendererShadowDirectionalLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
-                    }
-                }
+            if (lightComponent->IsShadowCastingEnabled())
+            {
+                static_cast<DefaultSceneRendererShadowDirectionalLight*>(light)->projection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 500.0f);
+                static_cast<DefaultSceneRendererShadowDirectionalLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
             }
         }
     }
@@ -555,7 +519,7 @@ namespace GTEngine
             auto light = this->shadowDirectionalLights.buffer[i]->value;
             assert(light != nullptr);
             {
-                scene.QueryVisibleObjects(light->projection * light->view, light->containedMeshes);
+                scene.QueryVisibleSceneNodes(light->projection * light->view, light->containedMeshes);
             }
         }
 
@@ -567,12 +531,12 @@ namespace GTEngine
             assert(light != nullptr);
             {
                 // We need to do 6 queries here - one for each face.
-                scene.QueryVisibleObjects(light->projection * light->positiveXView, light->containedMeshesPositiveX);
-                scene.QueryVisibleObjects(light->projection * light->negativeXView, light->containedMeshesNegativeX);
-                scene.QueryVisibleObjects(light->projection * light->positiveYView, light->containedMeshesPositiveY);
-                scene.QueryVisibleObjects(light->projection * light->negativeYView, light->containedMeshesNegativeY);
-                scene.QueryVisibleObjects(light->projection * light->positiveZView, light->containedMeshesPositiveZ);
-                scene.QueryVisibleObjects(light->projection * light->negativeZView, light->containedMeshesNegativeZ);
+                scene.QueryVisibleSceneNodes(light->projection * light->positiveXView, light->containedMeshesPositiveX);
+                scene.QueryVisibleSceneNodes(light->projection * light->negativeXView, light->containedMeshesNegativeX);
+                scene.QueryVisibleSceneNodes(light->projection * light->positiveYView, light->containedMeshesPositiveY);
+                scene.QueryVisibleSceneNodes(light->projection * light->negativeYView, light->containedMeshesNegativeY);
+                scene.QueryVisibleSceneNodes(light->projection * light->positiveZView, light->containedMeshesPositiveZ);
+                scene.QueryVisibleSceneNodes(light->projection * light->negativeZView, light->containedMeshesNegativeZ);
             }
         }
 
@@ -583,7 +547,7 @@ namespace GTEngine
             auto light = this->shadowSpotLights.buffer[i]->value;
             assert(light != nullptr);
             {
-                scene.QueryVisibleObjects(light->projection * light->view, light->containedMeshes);
+                scene.QueryVisibleSceneNodes(light->projection * light->view, light->containedMeshes);
             }
         }
 
@@ -635,7 +599,7 @@ namespace GTEngine
     // DefaultSceneRenderer
 
     DefaultSceneRenderer::DefaultSceneRenderer()
-        : viewportFramebuffers(), materialShadersToDelete(), depthPassShader(nullptr), externalMeshes(),
+        : viewportFramebuffers(), materialShaders(), depthPassShader(nullptr), externalMeshes(),
           shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
           fullscreenTriangleVA(nullptr), finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
           bloomShader(nullptr), highlightShader(nullptr),
@@ -711,15 +675,11 @@ namespace GTEngine
         Renderer::DeleteShader(this->blurShaderX15x15);
         Renderer::DeleteShader(this->blurShaderY15x15);
 
-        for (size_t i = 0; i < this->materialShadersToDelete.count; ++i)
+        for (size_t i = 0; i < this->materialShaders.count; ++i)
         {
-            auto materialDefinition = this->materialShadersToDelete.buffer[i]->key;
-            auto materialShaders    = this->materialShadersToDelete.buffer[i]->value;
-
-            assert(materialDefinition != nullptr);
-            assert(materialShaders    != nullptr);
+            auto materialShaders = this->materialShaders.buffer[i]->value;
+            assert(materialShaders != nullptr);
             {
-                materialDefinition->RemoveMetadata(reinterpret_cast<size_t>(this));
                 delete materialShaders;
             }
         }
@@ -744,7 +704,7 @@ namespace GTEngine
     {
         // 0) Retrieve visible objects.
         DefaultSceneRendererVisibleObjects visibleObjects(scene, viewport);
-        scene.QueryVisibleObjects(viewport.GetMVPMatrix(), visibleObjects);
+        scene.QueryVisibleSceneNodes(viewport.GetMVPMatrix(), visibleObjects);
 
         // All external meshes are considered visible. Not going to do any frustum culling here.
         for (size_t i = 0; i < this->externalMeshes.count; ++i)
@@ -921,27 +881,22 @@ namespace GTEngine
 
     void DefaultSceneRenderer::OnDeleteMaterialDefinition(MaterialDefinition &definition)
     {
-        auto iShaders = this->materialShadersToDelete.Find(&definition);
+        auto iShaders = this->materialShaders.Find(&definition);
         if (iShaders != nullptr)
         {
             delete iShaders->value;
-            this->materialShadersToDelete.RemoveByIndex(iShaders->index);
+            this->materialShaders.RemoveByIndex(iShaders->index);
         }
     }
 
     void DefaultSceneRenderer::OnReloadMaterialDefinition(MaterialDefinition &definition)
     {
-        // All we want to do is remove the metadata from the material definition and delete the old shaders. This will force the renderer to recreate the shaders
-        // when the material is used next.
-        auto shaders = static_cast<DefaultSceneRendererMaterialShaders*>(definition.GetMetadata(reinterpret_cast<size_t>(this)));
-        if (shaders != nullptr)
+        // All we want to do is delete the shaders. This will force the renderer to recreated them when the material is used next.
+        auto iShaders = this->materialShaders.Find(&definition);
+        if (iShaders != nullptr)
         {
-            // Clear the metadata.
-            definition.SetMetadata(reinterpret_cast<size_t>(this), nullptr);
-
-            // Delete the old shaders.
-            delete shaders;
-            this->materialShadersToDelete.RemoveByKey(&definition);
+            delete iShaders->value;
+            this->materialShaders.RemoveByIndex(iShaders->index);
         }
     }
 
@@ -2707,20 +2662,20 @@ namespace GTEngine
 
     DefaultSceneRendererMaterialShaders* DefaultSceneRenderer::GetMaterialShaders(Material &material)
     {
-        // The shaders are created per-definition. This means 1 shader for each definition. If we don't do this, we'll be creating many more shaders
-        // than is required. Also, since we're modifying the definition (by setting a metadata property), we'll be evil and do a const_cast.
-        auto &materialDefinition = const_cast<MaterialDefinition &>(material.GetDefinition());
+        // A single set of shaders is created for each definition. We map the shaders to the definition, with the definition acting as the key.
+        auto iMaterialShaders = this->materialShaders.Find(&material.GetDefinition());
+        if (iMaterialShaders == nullptr)
         {
-            auto shaders = static_cast<DefaultSceneRendererMaterialShaders*>(materialDefinition.GetMetadata(reinterpret_cast<size_t>(this)));
-            if (shaders == nullptr)
-            {
-                shaders = new DefaultSceneRendererMaterialShaders;
-                materialDefinition.SetMetadata(reinterpret_cast<size_t>(this), shaders);
-
-                this->materialShadersToDelete.Add(&materialDefinition, shaders);
-            }
+            // The shaders structure has not yet been created, so it needs to be created now.
+            auto shaders = new DefaultSceneRendererMaterialShaders;
+            this->materialShaders.Add(&material.GetDefinition(), shaders);
 
             return shaders;
+        }
+        else
+        {
+            // The shaders structure has already been created, so we just return that.
+            return iMaterialShaders->value;
         }
     }
 

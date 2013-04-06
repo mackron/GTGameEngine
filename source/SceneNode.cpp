@@ -7,10 +7,10 @@
 namespace GTEngine
 {
     SceneNode::SceneNode()
-        : SceneObject(SceneObjectType_SceneNode),
-          uniqueID(0), name(),
+        : uniqueID(0), name(),
           parent(nullptr),
           firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
+          position(), orientation(), scale(1.0f, 1.0f, 1.0f),
           eventHandlers(), components(), dataPointers(),
           scene(nullptr),
           flags(0),
@@ -437,6 +437,10 @@ namespace GTEngine
     }
 
 
+
+    ////////////////////////////////////////////////
+    // Transformation
+
     void SceneNode::SetPosition(const glm::vec3 &position, bool updateDynamicsObject)
     {
         if (this->position.x != position.x || this->position.y != position.y || this->position.z != position.z)
@@ -714,6 +718,78 @@ namespace GTEngine
 
         // Now is where we post the transformation event.
         this->OnTransform(updateDynamicsObject);
+    }
+
+
+
+    void SceneNode::Translate(const glm::vec3 &offset)
+    {
+        this->SetPosition(this->position + (this->orientation * offset));
+    }
+
+    void SceneNode::Rotate(float angle, const glm::vec3 &axis)
+    {
+        this->SetOrientation(this->orientation * glm::angleAxis(angle, axis));
+    }
+
+    void SceneNode::Scale(const glm::vec3 &scale)
+    {
+        this->SetScale(this->scale * scale);
+    }
+
+
+    void SceneNode::InterpolatePosition(const glm::vec3 &dest, float a)
+    {
+        this->SetPosition(glm::mix(this->position, dest, a));
+    }
+
+    void SceneNode::InterpolateOrientation(const glm::quat &dest, float a)
+    {
+        this->SetOrientation(glm::slerp(this->orientation, dest, a));
+    }
+
+    void SceneNode::InterpolateScale(const glm::vec3 &dest, float a)
+    {
+        this->SetScale(glm::mix(this->scale, dest, a));
+    }
+
+
+    glm::vec3 SceneNode::GetForwardVector() const
+    {
+        return this->orientation * glm::vec3(0.0f, 0.0f, -1.0f);
+    }
+
+    glm::vec3 SceneNode::GetRightVector() const
+    {
+        return this->orientation * glm::vec3(1.0f, 0.0f, 0.0f);
+    }
+
+    glm::vec3 SceneNode::GetUpVector() const
+    {
+        return this->orientation * glm::vec3(0.0f, 1.0f, 0.0f);
+    }
+
+
+
+    void SceneNode::RotateAroundWorldAxis(float angle, const glm::vec3 &axis)
+    {
+        this->SetOrientation(glm::angleAxis(angle, axis) * this->GetOrientation());
+    }
+
+    void SceneNode::RotateAtPivotAroundWorldAxis(float angle, const glm::vec3 &axis, const glm::vec3 &pivot)
+    {
+        glm::quat rotation       = glm::angleAxis(angle, axis);
+        glm::quat newOrientation = rotation * this->GetOrientation();
+        glm::vec3 newPosition    = rotation * (this->GetPosition() - pivot) + pivot;
+
+        this->SetOrientation(newOrientation);
+        this->SetPosition(newPosition);
+    }
+
+
+    void SceneNode::GetTransform(glm::mat4 &transform)
+    {
+        Math::CalculateTransformMatrix(this->position, this->orientation, this->scale, transform);
     }
 
 
@@ -1047,10 +1123,6 @@ namespace GTEngine
 
     void SceneNode::Serialize(GTCore::Serializer &serializer, unsigned int flags) const
     {
-        // First, we serialize the SceneObject.
-        SceneObject::Serialize(serializer);
-
-
         // The first scene node chunk, besides SceneObject, is the general attributes. We're going to use an intermediate serializer here
         // because we're writing a string.
         GTCore::BasicSerializer secondarySerializer;
@@ -1065,6 +1137,9 @@ namespace GTEngine
         }
 
         secondarySerializer.Write(this->name);
+        secondarySerializer.Write(this->position);
+        secondarySerializer.Write(this->orientation);
+        secondarySerializer.Write(this->scale);
         secondarySerializer.Write(static_cast<uint32_t>(this->flags));
 
 
@@ -1130,10 +1205,9 @@ namespace GTEngine
         auto wasStatic  = this->IsStatic();
         auto wasVisible = this->IsVisible();
         
-
-
-        // Deserialize the SceneObject first.
-        SceneObject::Deserialize(deserializer);
+        glm::vec3 newPosition;
+        glm::quat newOrientation;
+        glm::vec3 newScale;
 
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -1153,6 +1227,9 @@ namespace GTEngine
                         }
 
                         deserializer.Read(newName);
+                        deserializer.Read(newPosition);
+                        deserializer.Read(newOrientation);
+                        deserializer.Read(newScale);
                         deserializer.Read(reinterpret_cast<uint32_t &>(this->flags));
 
                         break;
@@ -1219,6 +1296,12 @@ namespace GTEngine
 
         // The new name needs to be set with SetName() so that the OnNameChanged event is called.
         this->SetName(newName.c_str());
+
+
+        // The transformation now needs to be set.
+        this->SetPosition(newPosition);
+        this->SetOrientation(newOrientation);
+        this->SetScale(newScale);
 
 
         if (wasStatic != this->IsStatic())

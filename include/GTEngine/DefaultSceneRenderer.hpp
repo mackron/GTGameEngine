@@ -499,8 +499,8 @@ namespace GTEngine
         ////////////////////////////////////////////
         // Virtual Implementations.
 
-        /// SceneCullingManager::VisibilityCallback::ProcessObjectModel().
-        void ProcessObjectModel(const SceneObject &object);
+        /// SceneCullingManager::VisibilityCallback::ProcessModel().
+        void ProcessModel(const SceneNode &object);
 
 
 
@@ -636,20 +636,20 @@ namespace GTEngine
         ////////////////////////////////////////////
         // Virtual Implementations.
 
-        /// SceneCullingManager::VisibilityCallback::ProcessObjectModel().
-        void ProcessObjectModel(const SceneObject &object);
+        /// SceneCullingManager::VisibilityCallback::ProcessModel().
+        void ProcessModel(const SceneNode &object);
 
-        /// SceneCullingManager::VisibilityCallback::ProcessObjectPointLight().
-        void ProcessObjectPointLight(const SceneObject &object);
+        /// SceneCullingManager::VisibilityCallback::ProcessPointLight().
+        void ProcessPointLight(const SceneNode &object);
 
-        /// SceneCullingManager::VisibilityCallback::ProcessObjectSpotLight().
-        void ProcessObjectSpotLight(const SceneObject &object);
+        /// SceneCullingManager::VisibilityCallback::ProcessSpotLight().
+        void ProcessSpotLight(const SceneNode &object);
 
-        /// SceneCullingManager::VisibilityCallback::ProcessObjectAmbientLight().
-        void ProcessObjectAmbientLight(const SceneObject &object);
+        /// SceneCullingManager::VisibilityCallback::ProcessAmbientLight().
+        void ProcessAmbientLight(const SceneNode &object);
 
-        /// SceneCullingManager::VisibilityCallback::ProcessObjectDirectionalLight().
-        void ProcessObjectDirectionalLight(const SceneObject &object);
+        /// SceneCullingManager::VisibilityCallback::ProcessDirectionalLight().
+        void ProcessDirectionalLight(const SceneNode &object);
 
 
 
@@ -749,28 +749,22 @@ namespace GTEngine
             }
 
 
-            /// SceneCullingManager::VisibilityCallback::ProcessObjectModel().
-            virtual void ProcessObjectModel(const SceneObject &object)
+            /// SceneCullingManager::VisibilityCallback::ProcessModel().
+            virtual void ProcessModel(const SceneNode &sceneNode)
             {
-                if (object.GetType() == SceneObjectType_SceneNode)
+                auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+                assert(modelComponent != nullptr);
                 {
-                    auto &sceneNode = static_cast<const SceneNode &>(object);
+                    auto iModel = this->owner.visibleModels.Find(modelComponent);
+                    if (iModel != nullptr)
                     {
-                        auto modelComponent = sceneNode.GetComponent<ModelComponent>();
-                        assert(modelComponent != nullptr);
+                        if (!shadowCasting)
                         {
-                            auto iModel = this->owner.visibleModels.Find(modelComponent);
-                            if (iModel != nullptr)
-                            {
-                                if (!shadowCasting)
-                                {
-                                    iModel->value->pointLights.PushBack(static_cast<uint32_t>(this->lightIndex));
-                                }
-                                else
-                                {
-                                    iModel->value->shadowPointLights.PushBack(static_cast<uint32_t>(this->lightIndex));
-                                }
-                            }
+                            iModel->value->pointLights.PushBack(static_cast<uint32_t>(this->lightIndex));
+                        }
+                        else
+                        {
+                            iModel->value->shadowPointLights.PushBack(static_cast<uint32_t>(this->lightIndex));
                         }
                     }
                 }
@@ -809,28 +803,22 @@ namespace GTEngine
             }
 
 
-            /// SceneCullingManager::VisibilityCallback::ProcessObjectModel().
-            virtual void ProcessObjectModel(const SceneObject &object)
+            /// SceneCullingManager::VisibilityCallback::ProcessModel().
+            virtual void ProcesstModel(const SceneNode &sceneNode)
             {
-                if (object.GetType() == SceneObjectType_SceneNode)
+                auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+                assert(modelComponent != nullptr);
                 {
-                    auto &sceneNode = static_cast<const SceneNode &>(object);
+                    auto iModel = this->owner.visibleModels.Find(modelComponent);
+                    if (iModel != nullptr)
                     {
-                        auto modelComponent = sceneNode.GetComponent<ModelComponent>();
-                        assert(modelComponent != nullptr);
+                        if (!shadowCasting)
                         {
-                            auto iModel = this->owner.visibleModels.Find(modelComponent);
-                            if (iModel != nullptr)
-                            {
-                                if (!shadowCasting)
-                                {
-                                    iModel->value->spotLights.PushBack(static_cast<uint32_t>(this->lightIndex));
-                                }
-                                else
-                                {
-                                    iModel->value->shadowSpotLights.PushBack(static_cast<uint32_t>(this->lightIndex));
-                                }
-                            }
+                            iModel->value->spotLights.PushBack(static_cast<uint32_t>(this->lightIndex));
+                        }
+                        else
+                        {
+                            iModel->value->shadowSpotLights.PushBack(static_cast<uint32_t>(this->lightIndex));
                         }
                     }
                 }
@@ -1101,8 +1089,9 @@ namespace GTEngine
         /// The framebuffers for each attached viewport. Keyed by the viewport.
         GTCore::Map<SceneViewport*, DefaultSceneRendererFramebuffer*> viewportFramebuffers;
 
-        /// Keeps track of the material shaders that need to be deleted. Keyed by the material definition.
-        GTCore::Map<MaterialDefinition*, DefaultSceneRendererMaterialShaders*> materialShadersToDelete;
+        /// Keeps track of the shaders associated with each referenced material definition. Keyed by the material definition.
+        GTCore::Map<const MaterialDefinition*, DefaultSceneRendererMaterialShaders*> materialShaders;
+
 
         /// The shader to use with the depth pre-pass.
         Shader* depthPassShader;

@@ -26,15 +26,15 @@ namespace GTEngine
         virtual ~SceneEventHandler();
 
 
-        /// Called when a scene object is added to the scene.
+        /// Called when a scene node is added to the scene.
         ///
-        /// @param object [in] A reference to the object that was just added.
-        virtual void OnObjectAdded(SceneObject &object);
+        /// @param sceneNode [in] A reference to the scene node that was just added.
+        virtual void OnSceneNodeAdded(SceneNode &sceneNode);
 
-        /// Called when a scene object is being removed from the scene.
+        /// Called when a scene node is being removed from the scene.
         ///
-        /// @param object [in] A reference to the object that is being removed.
-        virtual void OnObjectRemoved(SceneObject &object);
+        /// @param sceneNode [in] A reference to the scene node that is being removed.
+        virtual void OnSceneNodeRemoved(SceneNode &sceneNode);
 
 
         /// Called just after a scene node has had it's name changed.

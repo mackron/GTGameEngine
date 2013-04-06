@@ -20,11 +20,11 @@ namespace GTEngine
         virtual ~SceneEditorSceneEventHandler();
 
 
-        /// SceneEventHandler::OnObjectAdded()
-        void OnObjectAdded(SceneObject &object);
+        /// SceneEventHandler::OnSceneNodeAdded()
+        void OnSceneNodeAdded(SceneNode &sceneNode);
 
         /// SceneEventHandler::OnObjectRemoved()
-        void OnObjectRemoved(SceneObject &object);
+        void OnSceneNodeRemoved(SceneNode &sceneNode);
 
 
         /// SceneEventHandler::OnSceneNodeNameChanged()

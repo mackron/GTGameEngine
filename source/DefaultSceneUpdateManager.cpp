@@ -7,7 +7,7 @@
 namespace GTEngine
 {
     DefaultSceneUpdateManager::DefaultSceneUpdateManager()
-        : objects()
+        : sceneNodes()
     {
     }
 
@@ -16,65 +16,38 @@ namespace GTEngine
     }
 
 
-    bool DefaultSceneUpdateManager::NeedsUpdate(SceneObject &object) const
+    bool DefaultSceneUpdateManager::NeedsUpdate(SceneNode &sceneNode) const
     {
         // We care about everything except:
         //   - Physics objects (handled by the physics manager).
-
-        if (object.GetType() != SceneObjectType_PhysicsObject)
+   
+        auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
+        if (scriptComponent != nullptr && scriptComponent->HasOnUpdate())
         {
-            // If we are a scene node, we want to ignore those with the SceneNode::NoUpdate flag.
-            if (object.GetType() == SceneObjectType_SceneNode)
-            {
-                auto &node = static_cast<SceneNode &>(object);
-                
-                auto scriptComponent = node.GetComponent<ScriptComponent>();
-                if (scriptComponent != nullptr && scriptComponent->HasOnUpdate())
-                {
-                    return true;
-                }
-
-                return !(node.GetFlags() & SceneNode::NoUpdate);
-            }
-
             return true;
         }
 
-        return false;
+        return !(sceneNode.GetFlags() & SceneNode::NoUpdate);
     }
     
-    void DefaultSceneUpdateManager::AddObject(SceneObject &object)
+    void DefaultSceneUpdateManager::AddSceneNode(SceneNode &sceneNode)
     {
-        this->objects.PushBack(&object);
+        this->sceneNodes.PushBack(&sceneNode);
     }
 
-    void DefaultSceneUpdateManager::RemoveObject(SceneObject &object)
+    void DefaultSceneUpdateManager::RemoveSceneNode(SceneNode &sceneNode)
     {
-        this->objects.RemoveFirstOccuranceOf(&object);
+        this->sceneNodes.RemoveFirstOccuranceOf(&sceneNode);
     }
 
     void DefaultSceneUpdateManager::Step(double deltaTimeInSeconds)
     {
-        for (size_t i = 0; i < this->objects.count; ++i)
+        for (size_t i = 0; i < this->sceneNodes.count; ++i)
         {
-            auto object = this->objects[i];
-            assert(object != nullptr);
-
-            switch (object->GetType())
+            auto sceneNode = this->sceneNodes[i];
+            assert(sceneNode != nullptr);
             {
-            case SceneObjectType_SceneNode:
-                {
-                    this->StepSceneNode(static_cast<SceneNode &>(*object), deltaTimeInSeconds);
-                    break;
-                }
-
-
-            case SceneObjectType_Custom:
-            case SceneObjectType_Unknown:
-            case SceneObjectType_None:
-            case SceneObjectType_PhysicsObject:
-            case SceneObjectType_Particle:
-            default: break;
+                this->StepSceneNode(*sceneNode, deltaTimeInSeconds);
             }
         }
     }

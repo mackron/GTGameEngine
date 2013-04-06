@@ -12,11 +12,11 @@ namespace GTEngine
     {
     }
 
-    void SceneEventHandler::OnObjectAdded(SceneObject &)
+    void SceneEventHandler::OnSceneNodeAdded(SceneNode &)
     {
     }
 
-    void SceneEventHandler::OnObjectRemoved(SceneObject &)
+    void SceneEventHandler::OnSceneNodeRemoved(SceneNode &)
     {
     }
 
