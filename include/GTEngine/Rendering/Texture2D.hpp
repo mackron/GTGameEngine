@@ -35,7 +35,7 @@ namespace GTEngine
     public:
 
         /// Destructor.
-        ~Texture2D();
+        virtual ~Texture2D();
 
 
         /// Retrieves the relative path of the texture file.
