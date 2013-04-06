@@ -127,6 +127,13 @@ namespace GTEngine
         void OnDetachFromFramebuffer(Framebuffer* framebuffer);
 
 
+        /// Increments the internal reference counter.
+        int IncrementReferenceCounter();
+
+        /// Decrements the internal reference counter.
+        int DecrementReferenceCounter();
+        
+
 
     private:
 
@@ -142,16 +149,13 @@ namespace GTEngine
 
 
         /// We store a reference count which will be used by the Texture2DLibrary. Initializes to 1.
-        mutable int refCount;   // TODO: Move this over to Texture2DLibrary. Makes no sense to have this here.
+        int refCount;
 
 
 
     private:    // No copying.
         Texture2D(const Texture2D &);
         Texture2D & operator=(const Texture2D &);
-
-
-    friend class Texture2DLibrary;  // TODO: Remove this when 'refCount' is removed.
     };
 }
 

@@ -101,6 +101,9 @@ namespace GTEngine
 
 
 
+    //////////////////////////////////////
+    // Internal Use.
+
     void Texture2D::OnAttachToFramebuffer(Framebuffer *framebuffer)
     {
         if (this->framebuffers.Find(framebuffer) == nullptr)
@@ -112,5 +115,23 @@ namespace GTEngine
     void Texture2D::OnDetachFromFramebuffer(Framebuffer *framebuffer)
     {
         this->framebuffers.Remove(this->framebuffers.Find(framebuffer));
+    }
+
+
+    int Texture2D::IncrementReferenceCounter()
+    {
+        this->refCount += 1;
+
+        return this->refCount;
+    }
+
+    int Texture2D::DecrementReferenceCounter()
+    {
+        if (this->refCount > 0)
+        {
+            this->refCount -= 1;
+        }
+
+        return this->refCount;
     }
 }

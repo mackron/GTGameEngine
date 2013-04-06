@@ -118,7 +118,9 @@ namespace GTEngine
             else
             {
                 assert(iTexture->value != nullptr);
-                ++iTexture->value->refCount;
+                {
+                    iTexture->value->IncrementReferenceCounter();
+                }
 
                 return iTexture->value;
             }
@@ -130,8 +132,9 @@ namespace GTEngine
     Texture2D* Texture2DLibrary::Acquire(Texture2D* texture)
     {
         assert(texture != nullptr);
-
-        ++texture->refCount;
+        {
+            texture->IncrementReferenceCounter();
+        }
 
         return texture;
     }
@@ -141,7 +144,7 @@ namespace GTEngine
         if (texture != nullptr)
         {
             // If the texture is not referenced elsewhere, it needs to be deleted.
-            if (texture->refCount == 1)
+            if (texture->DecrementReferenceCounter() == 0)
             {
                 // We only delete the texture if it was initially acquired by the library.
                 for (size_t i = 0; i < LoadedTextures.count; ++i)
@@ -154,10 +157,6 @@ namespace GTEngine
                         break;
                     }
                 }
-            }
-            else
-            {
-                --texture->refCount;
             }
         }
     }
