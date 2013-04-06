@@ -16,16 +16,16 @@ namespace GTEngine
 
     /// Class representing a shader.
     ///
-    /// The source of a shader is defined at construction time. It can not be changed after construction.
-    ///
-    /// Shader parameters are set on the shader itself and then pushed to the renderer. When the properties after been pushed, they should
-    /// usually be cleared with ClearPendingParameters().
+    /// The uniforms need to be pushed to the GPU with Renderer::PushShaderUniforms() before they will be used by the renderer.
     class Shader
     {
-    public:
+    protected:
 
         /// Constructor.
-        Shader(const char* vertexSource, const char* fragmentSource, const char* geometryShader = nullptr);         // <-- TODO: Remove the default argument. Used only for compatibility with the old renderer.
+        Shader(const char* vertexSource, const char* fragmentSource, const char* geometryShader);
+
+
+    public:
 
         /// Destructor.
         virtual ~Shader();
