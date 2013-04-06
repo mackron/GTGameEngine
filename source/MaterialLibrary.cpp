@@ -6,14 +6,46 @@
 #include <GTCore/List.hpp>
 #include <GTCore/Vector.hpp>
 #include <GTCore/Path.hpp>
+#include <utility>
 
 namespace GTEngine
 {
+    ///////////////////////////////////////
+    // Globals
+
+    struct MaterialDefinitionReference
+    {
+        MaterialDefinition* definition;
+        size_t              referenceCount;
+
+
+        MaterialDefinitionReference(MaterialDefinition* definitionIn, size_t referenceCountIn)
+            : definition(definitionIn), referenceCount(referenceCountIn)
+        {
+        }
+
+        MaterialDefinitionReference(const MaterialDefinitionReference &other)
+            : definition(other.definition), referenceCount(other.referenceCount)
+        {
+        }
+
+
+        MaterialDefinitionReference & operator=(const MaterialDefinitionReference &other)
+        {
+            this->definition     = other.definition;
+            this->referenceCount = other.referenceCount;
+
+            return *this;
+        }
+    };
+
+
     /// The list of loaded material definitions, indexed by their absolute path.
-    static GTCore::Dictionary<MaterialDefinition*> MaterialDefinitions;
+    static GTCore::Dictionary<MaterialDefinitionReference> MaterialDefinitions;
 
     /// The list of loaded materials.
     static GTCore::List<Material*> LoadedMaterials;
+
 
 
     /// The list of event handlers.
@@ -87,11 +119,11 @@ namespace GTEngine
 
         for (size_t i = 0; i < MaterialDefinitions.count; ++i)
         {
-            auto definition = MaterialDefinitions.buffer[i]->value;
-            assert(definition != nullptr);
+            auto &reference = MaterialDefinitions.buffer[i]->value;
+            assert(reference.definition != nullptr);
             {
-                MaterialLibrary_OnDeleteMaterialDefinition(*definition);
-                delete definition;
+                MaterialLibrary_OnDeleteMaterialDefinition(*reference.definition);
+                delete reference.definition;
             }
         }
     }
@@ -137,8 +169,10 @@ namespace GTEngine
             auto iMaterialDefinition = MaterialDefinitions.Find(absolutePath.c_str());
             if (iMaterialDefinition != nullptr)
             {
-                // Definition is already loaded.
-                definition = iMaterialDefinition->value;
+                // Definition is already loaded. All we do it increment the reference counter.
+                iMaterialDefinition->value.referenceCount += 1;
+
+                definition = iMaterialDefinition->value.definition;
             }
             else
             {
@@ -146,7 +180,7 @@ namespace GTEngine
                 definition = new MaterialDefinition;
                 if (definition->LoadFromFile(absolutePath.c_str(), relativePath.c_str()))
                 {
-                    MaterialDefinitions.Add(absolutePath.c_str(), definition);
+                    MaterialDefinitions.Add(absolutePath.c_str(), MaterialDefinitionReference(definition, 1));
                     MaterialLibrary_OnCreateMaterialDefinition(*definition);
                 }
                 else
@@ -178,6 +212,15 @@ namespace GTEngine
 
         MaterialLibrary_OnCreateMaterial(*newMaterial);
 
+
+        // The reference counter needs to be incremented.
+        auto iMaterialDefinition = MaterialDefinitions.Find(source.GetDefinition().absolutePath.c_str());
+        if (iMaterialDefinition != nullptr)
+        {
+            iMaterialDefinition->value.referenceCount += 1;
+        }
+
+
         return newMaterial;
     }
 
@@ -189,6 +232,26 @@ namespace GTEngine
             MaterialLibrary_OnDeleteMaterial(*material);
 
             LoadedMaterials.Remove(LoadedMaterials.Find(material));
+
+
+            // The reference counter needs to be decremented. If this is the last reference to the material we'll delete it.
+            GTCore::String absolutePath(material->GetDefinition().absolutePath);
+
+            auto iMaterialDefinition = MaterialDefinitions.Find(absolutePath.c_str());
+            if (iMaterialDefinition != nullptr)
+            {
+                assert(iMaterialDefinition->value.referenceCount >= 1);
+                {
+                    iMaterialDefinition->value.referenceCount -= 1;
+
+                    if (iMaterialDefinition->value.referenceCount == 0)
+                    {
+                        delete iMaterialDefinition->value.definition;
+                        MaterialDefinitions.RemoveByKey(absolutePath.c_str());
+                    }
+                }
+            }
+
 
             delete material;
         }
@@ -203,14 +266,14 @@ namespace GTEngine
             auto iDefinition = MaterialDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)
             {
-                auto definition = iDefinition->value;
-                assert(definition != nullptr);
+                auto &reference = iDefinition->value;
+                assert(reference.definition != nullptr);
                 {
                     // We want to grab a copy of the default parameters before reloading so that we can determine which ones to remove from linked materials.
-                    ShaderParameterCache oldDefaultParameters(definition->defaultParams);
+                    ShaderParameterCache oldDefaultParameters(reference.definition->defaultParams);
 
 
-                    bool result = definition->LoadFromFile(definition->absolutePath.c_str(), definition->relativePath.c_str());
+                    bool result = reference.definition->LoadFromFile(reference.definition->absolutePath.c_str(), reference.definition->relativePath.c_str());
                     if (result)
                     {
                         // Now we just iterate over material that uses the definition in question and update the default parameters.
@@ -219,7 +282,7 @@ namespace GTEngine
                             auto material = iMaterial->value;
                             assert(material != nullptr);
                             {
-                                if (&material->GetDefinition() == definition)
+                                if (&material->GetDefinition() == reference.definition)
                                 {
                                     material->ResetDefaultParameters(oldDefaultParameters);
                                 }
@@ -228,7 +291,7 @@ namespace GTEngine
                         
 
                         // We need to let everything know that the material has been reloaded.
-                        MaterialLibrary_OnReloadMaterialDefinition(*definition);
+                        MaterialLibrary_OnReloadMaterialDefinition(*reference.definition);
 
                         return true;
                     }
