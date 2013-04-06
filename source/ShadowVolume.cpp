@@ -6,12 +6,13 @@
 namespace GTEngine
 {
     ShadowVolume::ShadowVolume()
-        : vertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3)
+        : vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3))
     {
     }
 
     ShadowVolume::~ShadowVolume()
     {
+        Renderer::DeleteVertexArray(this->vertexArray);
     }
 
     void ShadowVolume::BuildFromPointLight(const glm::vec3 &position, float lightRadius, const Model &model, const Math::Plane &nearPlane, const Math::Plane &farPlane)
