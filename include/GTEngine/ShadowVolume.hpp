@@ -40,6 +40,11 @@ namespace GTEngine
 
         /// The vertex array containing the vertex data. This is in P3 format.
         VertexArray* vertexArray;
+        
+        
+    private:    // No copying, for now.
+        ShadowVolume(const ShadowVolume &);
+        ShadowVolume & operator=(const ShadowVolume &);
     };
 }
 
