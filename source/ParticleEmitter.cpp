@@ -5,7 +5,9 @@
 namespace GTEngine
 {
     ParticleEmitter::ParticleEmitter()
-        : durationInSeconds(5.0f), emissionRatePerSecond(10U), burst(false)
+        : durationInSeconds(5.0f), emissionRatePerSecond(10U), burst(false),
+          position(), orientation(),
+          material(nullptr)
     {
     }
 

@@ -163,7 +163,6 @@
 		<Unit filename="../../../include/GTEngine/Components/PointToPointConstraintComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/ProximityComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/ScriptComponent.hpp" />
-		<Unit filename="../../../include/GTEngine/Components/SpriteComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/ConvexHull.hpp" />
 		<Unit filename="../../../include/GTEngine/ConvexHullBuildSettings.hpp" />
 		<Unit filename="../../../include/GTEngine/DataFilesWatcher.hpp" />
@@ -309,10 +308,8 @@
 		<Unit filename="../../../include/GTEngine/SceneNodeClass.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNodeClassLibrary.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNodeEventHandler.hpp" />
-		<Unit filename="../../../include/GTEngine/SceneNodeFactory.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNodeMap.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneObject.hpp" />
-		<Unit filename="../../../include/GTEngine/SceneObjectTypes.hpp" />
 		<Unit filename="../../../include/GTEngine/ScenePhysicsManager.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneRenderer.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneStateStack.hpp" />
@@ -327,6 +324,14 @@
 		<Unit filename="../../../include/GTEngine/ScriptVariable.hpp" />
 		<Unit filename="../../../include/GTEngine/ScriptVariableTypes.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting.hpp" />
+		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Audio.hpp" />
+		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Components.hpp" />
+		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Editor.hpp" />
+		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Game.hpp" />
+		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Math.hpp" />
+		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Rendering.hpp" />
+		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Scene.hpp" />
+		<Unit filename="../../../include/GTEngine/Scripting/Scripting_SceneNode.hpp" />
 		<Unit filename="../../../include/GTEngine/Serialization.hpp" />
 		<Unit filename="../../../include/GTEngine/ShaderLibrary.hpp" />
 		<Unit filename="../../../include/GTEngine/ShaderParameter.hpp" />
@@ -339,7 +344,6 @@
 		<Unit filename="../../../include/GTEngine/Utilities/CharacterControllerEventHandler.hpp" />
 		<Unit filename="../../../include/GTEngine/Utilities/DynamicCharacterController.hpp" />
 		<Unit filename="../../../include/GTEngine/Utilities/KinematicCharacterController.hpp" />
-		<Unit filename="../../../include/GTEngine/VertexArrayFactory.hpp" />
 		<Unit filename="../../../include/GTEngine/VertexArrayLibrary.hpp" />
 		<Unit filename="../../../include/GTEngine/rapidxml.hpp" />
 		<Unit filename="../../../source/Animation/Animation.cpp" />
@@ -374,7 +378,6 @@
 		<Unit filename="../../../source/Components/PointToPointConstraintComponent.cpp" />
 		<Unit filename="../../../source/Components/ProximityComponent.cpp" />
 		<Unit filename="../../../source/Components/ScriptComponent.cpp" />
-		<Unit filename="../../../source/Components/SpriteComponent.cpp" />
 		<Unit filename="../../../source/ConvexHull.cpp" />
 		<Unit filename="../../../source/DataFilesWatcher.cpp" />
 		<Unit filename="../../../source/DefaultSceneCullingManager.cpp" />
@@ -553,9 +556,7 @@
 		<Unit filename="../../../source/SceneNodeClass.cpp" />
 		<Unit filename="../../../source/SceneNodeClassLibrary.cpp" />
 		<Unit filename="../../../source/SceneNodeEventHandler.cpp" />
-		<Unit filename="../../../source/SceneNodeFactory.cpp" />
 		<Unit filename="../../../source/SceneNodeMap.cpp" />
-		<Unit filename="../../../source/SceneObject.cpp" />
 		<Unit filename="../../../source/SceneRenderer.cpp" />
 		<Unit filename="../../../source/SceneStateStack.cpp" />
 		<Unit filename="../../../source/SceneStateStackBranch.cpp" />
@@ -567,8 +568,14 @@
 		<Unit filename="../../../source/ScriptLibrary.cpp" />
 		<Unit filename="../../../source/ScriptVariable.cpp" />
 		<Unit filename="../../../source/Scripting.cpp" />
+		<Unit filename="../../../source/Scripting/Scripting_Audio.cpp" />
+		<Unit filename="../../../source/Scripting/Scripting_Components.cpp" />
+		<Unit filename="../../../source/Scripting/Scripting_Editor.cpp" />
 		<Unit filename="../../../source/Scripting/Scripting_Game.cpp" />
 		<Unit filename="../../../source/Scripting/Scripting_Math.cpp" />
+		<Unit filename="../../../source/Scripting/Scripting_Rendering.cpp" />
+		<Unit filename="../../../source/Scripting/Scripting_Scene.cpp" />
+		<Unit filename="../../../source/Scripting/Scripting_SceneNode.cpp" />
 		<Unit filename="../../../source/ShaderLibrary.cpp" />
 		<Unit filename="../../../source/ShaderParameter.cpp" />
 		<Unit filename="../../../source/ShaderParameterCache.cpp" />
@@ -576,7 +583,7 @@
 		<Unit filename="../../../source/Texture2DLibrary.cpp" />
 		<Unit filename="../../../source/ThreadCache.cpp" />
 		<Unit filename="../../../source/Utilities/DynamicCharacterController.cpp" />
-		<Unit filename="../../../source/VertexArrayFactory.cpp" />
+		<Unit filename="../../../source/Utilities/KinematicCharacterController.cpp" />
 		<Unit filename="../../../source/VertexArrayLibrary.cpp" />
 		<Extensions>
 			<code_completion />

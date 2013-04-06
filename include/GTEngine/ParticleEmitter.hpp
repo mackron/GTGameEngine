@@ -128,6 +128,12 @@ namespace GTEngine
 
         /// The material that will be cloned for each particle.
         Material* material;
+        
+        
+        
+    private:    // No copying.
+        ParticleEmitter(const ParticleEmitter &);
+        ParticleEmitter & operator=(const ParticleEmitter &);
     };
 }
 
