@@ -43,7 +43,6 @@ namespace GTEngine
         : absolutePath(), relativePath(), xmlString(),
           diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(), specularShaderID(),
           defaultParams(),
-          metadata(),
           isBlended(false), isRefractive(false),
           blendEquation(BlendEquation_Add), blendSourceFactor(BlendFunc_One), blendDestinationFactor(BlendFunc_Zero), blendColour(0.0f, 0.0f, 0.0f, 0.0f)
     {
@@ -455,28 +454,6 @@ namespace GTEngine
             ++tokens;
             --count;
         }
-    }
-
-
-    void MaterialDefinition::SetMetadata(size_t key, void* data)
-    {
-        this->metadata.Add(key, data);
-    }
-
-    void* MaterialDefinition::GetMetadata(size_t key)
-    {
-        auto iData = this->metadata.Find(key);
-        if (iData != nullptr)
-        {
-            return iData->value;
-        }
-
-        return nullptr;
-    }
-
-    void MaterialDefinition::RemoveMetadata(size_t key)
-    {
-        this->metadata.RemoveByKey(key);
     }
 
 
