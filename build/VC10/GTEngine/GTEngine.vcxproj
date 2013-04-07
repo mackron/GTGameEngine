@@ -350,6 +350,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Game.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Math.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Particles.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Rendering.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Scene.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_SceneNode.hpp" />
@@ -594,6 +595,7 @@
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Editor.cpp" />
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Game.cpp" />
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Math.cpp" />
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Particles.cpp" />
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Rendering.cpp" />
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Scene.cpp" />
     <ClCompile Include="..\..\..\source\Scripting\Scripting_SceneNode.cpp" />
