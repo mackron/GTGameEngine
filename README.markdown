@@ -7,8 +7,8 @@ GTGameEngine supports Windows and Linux and compiles with MSVC, GCC and Clang. O
 compilers have not been tested, but should mostly work. The Linux build usually lags
 behind the Windows build, so expect some errors with the Linux build occasionally.
 
-GTGameEngine is built as a static library. There is no direct support shared/dynamic
-libraries (.so/.dll).
+GTGameEngine is built as a static library. There is no direct support for
+shared/dynamic libraries (.so/.dll).
 
 While I do appreciate people trying this out, I do ask that you don't yet build
 anything serious until things become a bit more stable. In particular, I'm not
