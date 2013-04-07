@@ -13,17 +13,27 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        ParticleSystem();
+        ParticleSystem(const ParticleSystemDefinition &definition);
 
         /// Destructor.
         ~ParticleSystem();
 
 
+        /// Retrieves a reference to the definition.
+        const ParticleSystemDefinition & GetDefinition() const { return this->definition; }
+
 
 
     private:
 
+        /// The definition of the particle system.
+        const ParticleSystemDefinition &definition;
 
+
+
+    private:    // No copying, for now.
+        ParticleSystem(const ParticleSystem &);
+        ParticleSystem & operator=(const ParticleSystem &);
     };
 }
 
