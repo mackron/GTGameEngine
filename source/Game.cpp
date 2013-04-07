@@ -765,10 +765,6 @@ namespace GTEngine
                 }
 
 
-                // We're going to have keyboard auto-repeat disabled by default. This should make things like player controlling a bit more intuitive.
-                GTCore::Keyboard::DisableAutoRepeat();
-
-
                 // Here is where we let the game object do some startup stuff.
                 if (this->OnStartup(argc, argv))
                 {

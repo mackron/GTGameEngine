@@ -282,10 +282,6 @@ namespace GTEngine
         /// Whether or not file watching should be disabled when the editor is closed.
         bool disableFileWatchingAfterClose;
 
-        /// Whether or not auto-repeat should be disabled when the editor is closed.
-        bool disableKeyboardAutoRepeatAfterClose;
-
-
 
         /// The event handler for the data files watcher. This will just dispatch the events to the main Editor object.
         class DataFilesWatcherEventHandler : public DataFilesWatcher::EventHandler
