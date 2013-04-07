@@ -22,7 +22,7 @@ namespace GTEngine
           openedFiles(), currentlyShownEditor(nullptr),
           GUI(),
           lastProfilingUpdateTime(0.0),
-          isStarted(false), isOpen(false), disableFileWatchingAfterClose(true), disableKeyboardAutoRepeatAfterClose(true),
+          isStarted(false), isOpen(false), disableFileWatchingAfterClose(true),
           dataFilesWatcherEventHandler(*this)
     {
     }
@@ -174,11 +174,6 @@ namespace GTEngine
             this->game.GetDataFilesWatcher().DispatchEvents();
 
 
-            // We want to keep track of whether or not auto-repeating should be disabled when the editor is closed.
-            this->disableKeyboardAutoRepeatAfterClose = !GTCore::Keyboard::IsAutoRepeatEnabled();
-            GTCore::Keyboard::EnableAutoRepeat();
-
-
             this->isOpen = true;
         }
     }
@@ -200,13 +195,6 @@ namespace GTEngine
             if (this->disableFileWatchingAfterClose)
             {
                 this->game.DisableDataFilesWatching();
-            }
-
-
-            // We may want to disable auto repeat.
-            if (this->disableKeyboardAutoRepeatAfterClose)
-            {
-                GTCore::Keyboard::DisableAutoRepeat();
             }
 
 
@@ -300,7 +288,7 @@ namespace GTEngine
                         break;
                     }
 
-                
+
 
                 case AssetType_Sound:
                 case AssetType_Prefab:
