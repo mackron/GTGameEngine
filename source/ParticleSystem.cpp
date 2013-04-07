@@ -4,7 +4,8 @@
 
 namespace GTEngine
 {
-    ParticleSystem::ParticleSystem()
+    ParticleSystem::ParticleSystem(const ParticleSystemDefinition &definitionIn)
+        : definition(definitionIn)
     {
     }
 

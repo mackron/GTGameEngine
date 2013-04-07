@@ -12,6 +12,7 @@
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/SceneNodeClassLibrary.hpp>
+#include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/FontManager.hpp>
@@ -127,6 +128,9 @@ namespace GTEngine
         Log("Initializing Scene Node Class Library...");
         SceneNodeClassLibrary::Startup();
 
+        Log("Initializing Particle System Library...");
+        ParticleSystemLibrary::Startup();
+
         Log("Initializing Script Library...");
         ScriptLibrary::Startup();
 
@@ -163,6 +167,7 @@ namespace GTEngine
         Texture2DLibrary::Shutdown();
         VertexArrayLibrary::Shutdown();
         SceneNodeClassLibrary::Shutdown();
+        ParticleSystemLibrary::Shutdown();
         ScriptLibrary::Shutdown();
 
         // We shutdown major sub-systems before logging. This allows us to log shutdown info.
