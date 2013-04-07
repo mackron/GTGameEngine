@@ -4,7 +4,6 @@
 #define __GTEngine_Material_hpp_
 
 #include <GTCore/String.hpp>
-#include <GTCore/Map.hpp>
 #include "ShaderParameterCache.hpp"
 #include "Serialization.hpp"
 #include "Rendering/BlendEquations.hpp"
@@ -46,29 +45,6 @@ namespace GTEngine
         const char* GetXMLString() const;
 
 
-        /// Sets the metadata pointer to use with the given key.
-        ///
-        /// @param key  [in] The key to use with the given pointer.
-        /// @param data [in] The pointer to associate with the given key.
-        ///
-        /// @remarks
-        ///     The pointer can be retrieved with GetMetadata().
-        ///     @par
-        ///     If a pointer already exists for the given key, it is overwritten.
-        void SetMetadata(size_t key, void* data);
-
-        /// Retrieves the metadata associated with the given key.
-        ///
-        /// @param key [in] The key of the metadata being retrieved.
-        ///
-        /// @return A pointer to the metadata associated with the key or null if there is no metadata for that key.
-        void* GetMetadata(size_t key);
-
-        /// Removes a metadata value.
-        ///
-        /// @param key [in] The key of the metadata to remove.
-        void RemoveMetadata(size_t key);
-
 
         /// Determines whether or not the material is blended.
         bool IsBlended() const { return this->isBlended && !this->isRefractive; }
@@ -94,8 +70,6 @@ namespace GTEngine
     private:
 
         /// Resets the definition to it's default state - i.e. clears the material.
-        ///
-        /// This does NOT clear metadata.
         void Reset();
         
 
@@ -134,12 +108,6 @@ namespace GTEngine
 
         /// The default parameters.
         ShaderParameterCache defaultParams;
-
-
-        /// Every material can have metadata associated with it. This is one way of doing things like associating a shader to a material or whatnot. The default
-        /// renderer will use this system. This is a map allowing something to associate a pointer to a key. The key is a size_t which will allow a pointer to
-        /// an object to be used if desired.
-        GTCore::Map<size_t, void*> metadata;
 
 
 
