@@ -42,6 +42,9 @@ particle-editor-panel-body
     transparent-mouse-input: true
 }
 
+particle-editor-panel-scrollbar includes vertical-scrollbar
+{
+}
 
 
 particle-editor-newemitter-button
@@ -95,4 +98,10 @@ particle-editor-newemitter-button-label
     text-color:              inherit
     margin-left:             4px
     transparent-mouse-input: true
+}
+
+
+
+particle-editor-panel-groupbox includes panel-groupbox
+{
 }

@@ -8,3 +8,4 @@
 <script url="particle-editor/particle-editor-viewport.lua"          />
 <script url="particle-editor/particle-editor-panel.lua"             />
 <script url="particle-editor/particle-editor-newemitter-button.lua" />
+<script url="particle-editor/particle-editor-emitter-panel.lua"     />
