@@ -8,12 +8,14 @@
 namespace GTEngine
 {
     ParticleSystemDefinition::ParticleSystemDefinition()
-        : absolutePath(), relativePath()
+        : absolutePath(), relativePath(),
+          emitters()
     {
     }
 
     ParticleSystemDefinition::~ParticleSystemDefinition()
     {
+        this->Clear();
     }
 
 
@@ -82,8 +84,44 @@ namespace GTEngine
         return this->emitters.count;
     }
 
+
+    ParticleEmitter* ParticleSystemDefinition::GetEmitter(size_t index)
+    {
+        return this->emitters[index];
+    }
+
     const ParticleEmitter* ParticleSystemDefinition::GetEmitter(size_t index) const
     {
         return this->emitters[index];
+    }
+
+
+    ParticleEmitter* ParticleSystemDefinition::AppendNewEmitter()
+    {
+        auto newEmitter = new ParticleEmitter;
+        this->emitters.PushBack(newEmitter);
+
+        return newEmitter;
+    }
+
+    void ParticleSystemDefinition::DeleteEmitterByIndex(size_t index)
+    {
+        delete this->emitters[index];
+        this->emitters.Remove(index);
+    }
+
+
+
+
+    //////////////////////////////////////
+    // Private
+
+    void ParticleSystemDefinition::Clear()
+    {
+        for (size_t i = 0; i < this->emitters.count; ++i)
+        {
+            delete this->emitters[i];
+        }
+        this->emitters.Clear();
     }
 }

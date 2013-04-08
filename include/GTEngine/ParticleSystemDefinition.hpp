@@ -43,7 +43,29 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This asserts that the index is valid.
+              ParticleEmitter* GetEmitter(size_t index);
         const ParticleEmitter* GetEmitter(size_t index) const;
+
+
+        /// Appends a new emitter, returning a pointer to it.
+        ///
+        /// @return A pointer to the new emitter.
+        ParticleEmitter* AppendNewEmitter();
+
+        /// Deletes an emitter by it's index.
+        ///
+        /// @param index [in] The index of the emitter to delete.
+        ///
+        /// @remarks
+        ///     The emitter will be completely deleted meaning any existing pointer to the emitter will be made invalid.
+        void DeleteEmitterByIndex(size_t index);
+
+
+
+    private:
+
+        /// Clears the particle system, leaving it empty.
+        void Clear();
 
 
 

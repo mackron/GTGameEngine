@@ -30,6 +30,19 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the sub-editor.
             int GetRelativePath(GTCore::Script &script);
+
+
+            /// Marks the editor as modified.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the sub-editor to mark as modified.
+            int MarkAsModified(GTCore::Script &script);
+
+            /// Unmarks the editor as modified.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the sub-editor to unmark as modified.
+            int UnmarkAsModified(GTCore::Script &script);
         }
 
         namespace ModelEditorFFI
@@ -408,6 +421,25 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the scene editor.
             int IsBloomEnabled(GTCore::Script &script);
+        }
+
+
+        namespace ParticleEditorFFI
+        {
+            /// Retrieves a pointer to the particle system definition being editted.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle edittor.
+            int GetParticleSystemDefinitionPtr(GTCore::Script &script);
+
+
+            /// Refreshes the viewport to show the current state of the particle system being modified.
+            ///
+            /// @remarks
+            ///     This is called whenever a property of the particle system is modified.
+            ///
+            ///     Argument 1: A pointer to the particle editor.
+            int RefreshViewport(GTCore::Script &script);
         }
     }
 }

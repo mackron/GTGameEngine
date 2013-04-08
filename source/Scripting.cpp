@@ -126,6 +126,7 @@ namespace GTEngine
             successful = successful && LoadSceneLibrary(script);
             successful = successful && LoadSceneNodeLibrary(script);
             successful = successful && LoadComponentsLibrary(script);
+            successful = successful && LoadParticlesLibrary(script);
             successful = successful && LoadEditorLibrary(script);
 
 

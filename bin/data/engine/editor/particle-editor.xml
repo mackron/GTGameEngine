@@ -3,4 +3,8 @@
 <include url="sub-editor.xml" />
 
 <style  url="particle-editor/particle-editor.style" />
-<script url="particle-editor/particle-editor.lua"  />
+
+<script url="particle-editor/particle-editor.lua"                   />
+<script url="particle-editor/particle-editor-viewport.lua"          />
+<script url="particle-editor/particle-editor-panel.lua"             />
+<script url="particle-editor/particle-editor-newemitter-button.lua" />

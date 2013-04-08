@@ -123,6 +123,18 @@ namespace GTEngine
     }
 
 
+    ParticleSystemDefinition & ParticleEditor::GetParticleSystemDefinition()
+    {
+        return this->particleSystemDefinition;
+    }
+
+
+    void ParticleEditor::RefreshViewport()
+    {
+        this->particleSystem.Refresh();
+    }
+
+
     ///////////////////////////////////////////////////
     // Virtual Methods.
 
