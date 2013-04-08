@@ -26,9 +26,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <style  url="styles/tabbar.style" />
 <script url="scripts/tabbar.lua"  />
 
-<style  url="styles/panel-groupbox.style" />
-<script url="scripts/panel-groupbox.lua"  />
-
 
 
 <include url="model-editor.xml"    />
