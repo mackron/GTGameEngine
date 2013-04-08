@@ -23,11 +23,41 @@ namespace GTEngine
         const ParticleSystemDefinition & GetDefinition() const { return this->definition; }
 
 
+        /// Refreshes the particle system to bring it up-to-date with it's attached definition.
+        ///
+        /// @remarks
+        ///     You will typically not need to call this. It is mainly intended for use by editting tools.
+        void Refresh();
+
+
+
+        /// Retrieves the emitter count.
+        size_t GetEmitterCount() const;
+
+        /// Retrieves a pointer to the emitter at the given index.
+        ///
+        /// @param index [in] The index of the emitter to retrieve.
+        ///
+        /// @remarks
+        ///     This asserts that the index is valid.
+        const ParticleEmitter* GetEmitter(size_t index) const;
+
+
+    private:
+
+        /// Clears the particle system.
+        void Clear();
+
+
 
     private:
 
         /// The definition of the particle system.
         const ParticleSystemDefinition &definition;
+
+
+        /// The list of emitters making up this particle system.
+        GTCore::Vector<ParticleEmitter*> emitters;
 
 
 

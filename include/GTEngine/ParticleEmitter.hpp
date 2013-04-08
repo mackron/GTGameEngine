@@ -18,6 +18,10 @@ namespace GTEngine
         /// Constructor.
         ParticleEmitter();
 
+        /// Copy constructor.
+        ParticleEmitter(const ParticleEmitter &other);
+
+
         /// Destructor.
         ~ParticleEmitter();
 
@@ -131,8 +135,7 @@ namespace GTEngine
         
         
         
-    private:    // No copying.
-        ParticleEmitter(const ParticleEmitter &);
+    private:    // No assignment operator.
         ParticleEmitter & operator=(const ParticleEmitter &);
     };
 }

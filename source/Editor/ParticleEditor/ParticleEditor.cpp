@@ -3,6 +3,7 @@
 #include <GTEngine/Editor/ParticleEditor/ParticleEditor.hpp>
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
+#include <GTEngine/IO.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -13,6 +14,7 @@ namespace GTEngine
 {
     ParticleEditor::ParticleEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
+          particleSystemDefinition(), particleSystem(particleSystemDefinition),
           scene(), viewport(), camera(), particleNode(),
           mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), this->viewport),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
@@ -37,8 +39,13 @@ namespace GTEngine
         this->grid.Show(this->scene.GetRenderer());
 
 
+        // Load the particle system.
+        this->particleSystemDefinition.LoadFromFile(absolutePath, relativePath);
+        this->particleSystem.Refresh();
+
+
         // Now we setup the particle node.
-        this->particleNode.AddComponent<ParticleSystemComponent>();
+        this->particleNode.AddComponent<ParticleSystemComponent>()->SetParticleSystem(this->particleSystem);
 
 
 

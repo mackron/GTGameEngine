@@ -4,6 +4,7 @@
 #define __GTEngine_ParticleSystemDefinition_hpp_
 
 #include <GTCore/String.hpp>
+#include "ParticleEmitter.hpp"
 
 namespace GTEngine
 {
@@ -33,6 +34,16 @@ namespace GTEngine
 
 
         
+        /// Retrieves the emitter count.
+        size_t GetEmitterCount() const;
+
+        /// Retrieves a pointer to the emitter at the given index.
+        ///
+        /// @param index [in] The index of the emitter to retrieve.
+        ///
+        /// @remarks
+        ///     This asserts that the index is valid.
+        const ParticleEmitter* GetEmitter(size_t index) const;
 
 
 
@@ -45,6 +56,9 @@ namespace GTEngine
         GTCore::String relativePath;
 
 
+        /// The list of particle emitters making up the particle system. These emitters will always remain in their default state and
+        /// should never be updated. Instead, they will be source of a copy operation which ParticleSystem instantiations will inherit.
+        GTCore::Vector<ParticleEmitter*> emitters;
     };
 }
 
