@@ -6,6 +6,7 @@
 #include "../SubEditor.hpp"
 #include "../Editor3DViewportEventHandler.hpp"
 #include "../EditorGrid.hpp"
+#include "../../ParticleSystem.hpp"
 #include "../../Scene.hpp"
 
 namespace GTEngine
@@ -56,6 +57,13 @@ namespace GTEngine
 
 
     private:
+
+        /// The particle system definition that is being editted. This is not instantiated by the particle system library.
+        ParticleSystemDefinition particleSystemDefinition;
+
+        /// The particle system to use in the preview window.
+        ParticleSystem particleSystem;
+
 
 
         /// The scene for the preview window.

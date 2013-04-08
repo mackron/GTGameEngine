@@ -11,6 +11,14 @@ namespace GTEngine
     {
     }
 
+    ParticleEmitter::ParticleEmitter(const ParticleEmitter &other)
+        : durationInSeconds(other.durationInSeconds), emissionRatePerSecond(other.emissionRatePerSecond), burst(other.burst),
+          position(other.position), orientation(other.orientation),
+          material((other.material != nullptr) ? MaterialLibrary::CreateCopy(*other.material) : nullptr)
+    {
+    }
+
+
     ParticleEmitter::~ParticleEmitter()
     {
     }

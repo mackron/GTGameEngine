@@ -73,4 +73,17 @@ namespace GTEngine
     {
         return this->relativePath.c_str();
     }
+
+
+
+
+    size_t ParticleSystemDefinition::GetEmitterCount() const
+    {
+        return this->emitters.count;
+    }
+
+    const ParticleEmitter* ParticleSystemDefinition::GetEmitter(size_t index) const
+    {
+        return this->emitters[index];
+    }
 }
