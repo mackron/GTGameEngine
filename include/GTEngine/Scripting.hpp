@@ -10,6 +10,7 @@
 #include "Scripting/Scripting_Scene.hpp"
 #include "Scripting/Scripting_SceneNode.hpp"
 #include "Scripting/Scripting_Components.hpp"
+#include "Scripting/Scripting_Particles.hpp"
 #include "Scripting/Scripting_Editor.hpp"
 
 namespace GTEngine

@@ -21,6 +21,8 @@ namespace GTEngine
                     {
                         script.SetTableFunction(-1, "GetAbsolutePath",              SubEditorFFI::GetAbsolutePath);
                         script.SetTableFunction(-1, "GetRelativePath",              SubEditorFFI::GetRelativePath);
+                        script.SetTableFunction(-1, "MarkAsModified",               SubEditorFFI::MarkAsModified);
+                        script.SetTableFunction(-1, "UnmarkAsModified",             SubEditorFFI::UnmarkAsModified);
                     }
                     script.SetTableValue(-3);
 
@@ -95,6 +97,15 @@ namespace GTEngine
                         script.SetTableFunction(-1, "IsBloomEnabled",                      SceneEditorFFI::IsBloomEnabled);
                     }
                     script.SetTableValue(-3);
+
+
+                    script.Push("ParticleEditor");
+                    script.PushNewTable();
+                    {
+                        script.SetTableFunction(-1, "GetParticleSystemDefinitionPtr",      ParticleEditorFFI::GetParticleSystemDefinitionPtr);
+                        script.SetTableFunction(-1, "RefreshViewport",                     ParticleEditorFFI::RefreshViewport);
+                    }
+                    script.SetTableValue(-3);
                 }
                 script.Pop(1);
             }
@@ -136,6 +147,29 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+
+            int MarkAsModified(GTCore::Script &script)
+            {
+                auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
+                if (subEditor != nullptr)
+                {
+                    subEditor->MarkAsModified();
+                }
+
+                return 0;
+            }
+
+            int UnmarkAsModified(GTCore::Script &script)
+            {
+                auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
+                if (subEditor != nullptr)
+                {
+                    subEditor->UnmarkAsModified();
+                }
+
+                return 0;
             }
         }
 
@@ -950,6 +984,36 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+        }
+
+
+        namespace ParticleEditorFFI
+        {
+            int GetParticleSystemDefinitionPtr(GTCore::Script &script)
+            {
+                auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
+                if (particleEditor != nullptr)
+                {
+                    script.Push(&particleEditor->GetParticleSystemDefinition());
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+
+            int RefreshViewport(GTCore::Script &script)
+            {
+                auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
+                if (particleEditor != nullptr)
+                {
+                    particleEditor->RefreshViewport();
+                }
+
+                return 0;
             }
         }
     }

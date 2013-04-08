@@ -27,6 +27,15 @@ namespace GTEngine
         void ResetCamera();
 
 
+        /// Retrieves a reference to the particle system definition being editted.
+        ParticleSystemDefinition & GetParticleSystemDefinition();
+
+        /// Refreshes the viewport so that it shows the current state of the particle system being editted.
+        ///
+        /// @remarks
+        ///     This should be called whenever the particle definition has been modified.
+        void RefreshViewport();
+
 
 
         ///////////////////////////////////////////////////

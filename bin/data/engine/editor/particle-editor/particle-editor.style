@@ -41,3 +41,58 @@ particle-editor-panel-body
     
     transparent-mouse-input: true
 }
+
+
+
+particle-editor-newemitter-button
+{
+    padding:4px;
+}
+
+
+particle-editor-newemitter-button-container
+{
+    width:            auto
+    height:           auto
+    child-plane:      horizontal
+    flex-child-width: true
+    horizontal-align: left
+    vertical-align:   center
+    margin-top:       2px
+    padding:          6px 4px
+    font-style:       bold
+    
+
+    background-image-color: std-text-color
+    text-color:             std-text-color
+}
+
+particle-editor-newemitter-button-container:hovered
+{
+    background-image-color: #ccc
+    text-color:             #ccc
+}
+
+particle-editor-newemitter-button-container:pushed
+{
+    background-image-color: #ddd
+    text-color:             #ddd
+}
+
+
+particle-editor-newemitter-button-icon
+{
+    width:                   8px
+    height:                  12px
+    background-image:        std-plus
+    background-image-color:  inherit
+    transparent-mouse-input: true
+}
+
+particle-editor-newemitter-button-label
+{
+    width:                   auto
+    text-color:              inherit
+    margin-left:             4px
+    transparent-mouse-input: true
+}
