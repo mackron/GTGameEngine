@@ -9,14 +9,19 @@ function GTGUI.Element:ParticleEditor(_internalPtr)
     self.Viewport:ParticleEditorViewport();
     
     self.Panel    = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='particle-editor-panel' />");
-    self.Panel:ParticleEditorPanel();
+    self.Panel:ParticleEditorPanel(self);
     
 
-    self.Panel.NewEmitterButton:OnPressed(function(data)
+
+    function self:AppendNewEmitter()
         self.ParticleSystemDefinition:AppendNewEmitter();
         self:OnChange();
-    end);
+    end
     
+    function self:DeleteEmitterByIndex(index)
+        self.ParticleSystemDefinition:DeleteEmitterByIndex(index);
+        self:OnChange();
+    end
     
     
     function self:UpdatePanel()
@@ -29,6 +34,9 @@ function GTGUI.Element:ParticleEditor(_internalPtr)
         
         self:MarkAsModified();
     end
+    
+    
+    
     
     
     -------------------------------
