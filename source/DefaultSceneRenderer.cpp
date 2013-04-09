@@ -321,7 +321,6 @@ namespace GTEngine
         object.transform      = transform;
         object.touchingLights = lights;
 
-        // Temp.
         if (drawHighlight)
         {
             object.flags |= SceneRendererMesh::DrawHighlight;
@@ -552,6 +551,8 @@ namespace GTEngine
 
 
         // Now we need to build the mesh to draw for each particle system.
+        glm::mat4 inverseViewMatrix = glm::inverse(this->viewMatrix);
+
         for (size_t iParticleSystem = 0; iParticleSystem < this->visibleParticleSystems.count; ++iParticleSystem)
         {
             auto particleSystemComponent = this->visibleParticleSystems.buffer[iParticleSystem]->key;
@@ -568,7 +569,108 @@ namespace GTEngine
                         auto emitter = particleSystem->GetEmitter(iEmitter);
                         assert(emitter != nullptr);
                         {
-                            // TODO: Build the emitter geometry from it's particles and add it.
+                            auto &vertexArray = emitter->GetVertexArray();
+                            {
+                                size_t particleCount = emitter->GetParticleCount();
+
+                                if (particleCount > 0)
+                                {
+                                    // Pre-allocate.
+                                    vertexArray.SetVertexData(nullptr, particleCount * 4);
+                                    vertexArray.SetIndexData( nullptr, particleCount * 6);
+
+                                
+                                    // Build the data.
+                                    auto vertices = vertexArray.MapVertexData();
+                                    auto indices  = vertexArray.MapIndexData();
+                                
+                                    assert(vertices != nullptr);
+                                    assert(indices  != nullptr);
+                                    {
+                                        for (size_t iParticle = 0; iParticle < particleCount; ++iParticle)
+                                        {
+                                            auto &particle = emitter->GetParticle(iParticle);
+                                            {
+                                                // Vertices.
+                                                size_t vertexSize = vertexArray.GetFormat().GetSize();
+
+                                                auto vertex0 = vertices + (iParticle * 4 * vertexSize);
+                                                auto vertex1 = vertex0 + vertexSize;
+                                                auto vertex2 = vertex1 + vertexSize;
+                                                auto vertex3 = vertex2 + vertexSize;
+
+                                                glm::mat4 transform(inverseViewMatrix);
+                                                transform[3] = glm::vec4(particle.position, 1.0f);
+                                                transform   *= glm::scale(particle.scale);
+
+                                                glm::vec3 position0 = glm::vec3(transform * glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f));
+                                                glm::vec3 position1 = glm::vec3(transform * glm::vec4( 1.0f, -1.0f, 0.0f, 1.0f));
+                                                glm::vec3 position2 = glm::vec3(transform * glm::vec4( 1.0f,  1.0f, 0.0f, 1.0f));
+                                                glm::vec3 position3 = glm::vec3(transform * glm::vec4(-1.0f,  1.0f, 0.0f, 1.0f));
+
+                                                glm::vec2 texcoord0 = glm::vec2(0.0f, 0.0f);
+                                                glm::vec2 texcoord1 = glm::vec2(1.0f, 0.0f);
+                                                glm::vec2 texcoord2 = glm::vec2(1.0f, 1.0f);
+                                                glm::vec2 texcoord3 = glm::vec2(0.0f, 1.0f);
+
+                                                glm::vec3 normal0 = glm::triangleNormal(position0, position1, position2);
+                                                glm::vec3 normal1 = normal0;
+                                                glm::vec3 normal2 = normal0;
+                                                glm::vec3 normal3 = normal0;
+
+                                                glm::vec4 colour0 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour1 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour2 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour3 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+                                                vertex0[0] = position0.x; vertex0[1] = position0.y; vertex0[2]  = position0.z;
+                                                vertex0[3] = texcoord0.x; vertex0[4] = texcoord0.y;
+                                                vertex0[5] = normal0.x;   vertex0[6] = normal0.y;   vertex0[7]  = normal0.z;
+                                                vertex0[8] = colour0.x;   vertex0[9] = colour0.y;   vertex0[10] = colour0.z;   vertex0[11] = colour0.w;
+
+                                                vertex1[0] = position1.x; vertex1[1] = position1.y; vertex1[2]  = position1.z;
+                                                vertex1[3] = texcoord1.x; vertex1[4] = texcoord1.y;
+                                                vertex1[5] = normal1.x;   vertex1[6] = normal1.y;   vertex1[7]  = normal1.z;
+                                                vertex1[8] = colour1.x;   vertex1[9] = colour1.y;   vertex1[10] = colour1.z;   vertex1[11] = colour1.w;
+
+                                                vertex2[0] = position2.x; vertex2[1] = position2.y; vertex2[2]  = position2.z;
+                                                vertex2[3] = texcoord2.x; vertex2[4] = texcoord2.y;
+                                                vertex2[5] = normal2.x;   vertex2[6] = normal2.y;   vertex2[7]  = normal2.z;
+                                                vertex2[8] = colour2.x;   vertex2[9] = colour2.y;   vertex2[10] = colour2.z;   vertex2[11] = colour2.w;
+
+                                                vertex3[0] = position3.x; vertex3[1] = position3.y; vertex3[2]  = position3.z;
+                                                vertex3[3] = texcoord3.x; vertex3[4] = texcoord3.y;
+                                                vertex3[5] = normal3.x;   vertex3[6] = normal3.y;   vertex3[7]  = normal3.z;
+                                                vertex3[8] = colour3.x;   vertex3[9] = colour3.y;   vertex3[10] = colour3.z;   vertex3[11] = colour3.w;
+
+
+
+                                                // Indices.
+                                                indices[(iParticle * 6) + 0] = (iParticle * 4) + 0;
+                                                indices[(iParticle * 6) + 1] = (iParticle * 4) + 1;
+                                                indices[(iParticle * 6) + 2] = (iParticle * 4) + 2;
+                                                indices[(iParticle * 6) + 3] = (iParticle * 4) + 2;
+                                                indices[(iParticle * 6) + 4] = (iParticle * 4) + 3;
+                                                indices[(iParticle * 6) + 5] = (iParticle * 4) + 0;
+                                            }
+                                        }
+                                    }
+                                
+                                    vertexArray.UnmapVertexData();
+                                    vertexArray.UnmapIndexData();
+                                
+
+
+                                    DefaultSceneRendererMesh mesh;
+                                    mesh.vertexArray    = &vertexArray;
+                                    mesh.drawMode       = DrawMode_Triangles;
+                                    mesh.material       = emitter->GetMaterial();
+                                    mesh.transform      = glm::mat4();
+                                    mesh.touchingLights = particleSystemLights;
+                                    this->AddMesh(mesh);
+                                }
+                            }
                         }
                     }
                 }

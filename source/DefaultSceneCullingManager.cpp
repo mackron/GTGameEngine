@@ -163,7 +163,12 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::RemoveParticleSystem(SceneNode &sceneNode)
     {
-        this->particleSystems.Remove(&sceneNode);
+        auto iMetadata = this->particleSystems.Find(&sceneNode);
+        if (iMetadata != nullptr)
+        {
+            delete iMetadata->value;
+            this->particleSystems.RemoveByIndex(iMetadata->index);
+        }
     }
 
 

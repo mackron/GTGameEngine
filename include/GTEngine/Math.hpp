@@ -22,6 +22,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/orthonormalize.hpp>
+#include <glm/gtx/normal.hpp>
 #include <glm/gtx/simd_mat4.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
