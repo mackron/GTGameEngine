@@ -30,43 +30,52 @@ namespace GTEngine
 
             /// Called when the model of the given object is processed by ProcessVisibleSceneNodes().
             ///
-            /// @param object [in] The object being processed.
-            virtual void ProcessModel(const SceneNode &object)
+            /// @param sceneNode [in] The object being processed.
+            virtual void ProcessModel(const SceneNode &sceneNode)
             {
-                (void)object;
+                (void)sceneNode;
             }
 
             /// Called when the point light of the given object is processed by ProcessVisibleSceneNodes().
             ///
-            /// @param object [in] The object being processed.
-            virtual void ProcessPointLight(const SceneNode &object)
+            /// @param sceneNode [in] The object being processed.
+            virtual void ProcessPointLight(const SceneNode &sceneNode)
             {
-                (void)object;
+                (void)sceneNode;
             }
 
             /// Called when the spot light of the given object is processed by ProcessVisibleSceneNodes().
             ///
-            /// @param object [in] The object being processed.
-            virtual void ProcessSpotLight(const SceneNode &object)
+            /// @param sceneNode [in] The object being processed.
+            virtual void ProcessSpotLight(const SceneNode &sceneNode)
             {
-                (void)object;
+                (void)sceneNode;
             }
 
 
             /// Called when the ambient light of the given object is processed by ProcessVisibleSceneNodes().
             ///
-            /// @param object [in] The object being processed.
-            virtual void ProcessAmbientLight(const SceneNode &object)
+            /// @param sceneNode [in] The object being processed.
+            virtual void ProcessAmbientLight(const SceneNode &sceneNode)
             {
-                (void)object;
+                (void)sceneNode;
             }
 
             /// Called when the directional light of the given object is processed by ProcessVisibleSceneNodes().
             ///
-            /// @param object [in] The object being processed.
-            virtual void ProcessDirectionalLight(const SceneNode &object)
+            /// @param sceneNode [in] The object being processed.
+            virtual void ProcessDirectionalLight(const SceneNode &sceneNode)
             {
-                (void)object;
+                (void)sceneNode;
+            }
+
+
+            /// Called when the particle system of the given scene node is processed by ProcessVisibleSceneNodes().
+            ///
+            /// @param sceneNode [in] The scene node being processed.
+            virtual void ProcessParticleSystem(const SceneNode &sceneNode)
+            {
+                (void)sceneNode;
             }
         };
 
@@ -139,6 +148,18 @@ namespace GTEngine
         virtual void RemoveAmbientLight(SceneNode &sceneNode) = 0;
 
 
+        /// Adds a particle system.
+        ///
+        /// @param sceneNode [in] A reference to the scene node with an attached ParticleSystemComponent.
+        virtual void AddParticleSystem(SceneNode &sceneNode) = 0;
+
+        /// Removes a particle system.
+        ///
+        /// @param sceneNode [in] A reference to the scene node with an attached ParticleSystemComponent.
+        virtual void RemoveParticleSystem(SceneNode &sceneNode) = 0;
+
+
+
         /// Adds an occluder.
         ///
         /// @param sceneNode [in] A reference to the scene node with an attached OccluderComponent.
@@ -148,6 +169,7 @@ namespace GTEngine
         ///
         /// @param sceneNode [in] A reference to the scene node with an attached OccluderComponent to remove.
         virtual void RemoveOccluder(SceneNode &sceneNode) = 0;
+
 
 
 
@@ -178,6 +200,11 @@ namespace GTEngine
         ///
         /// @param sceneNode [in] A reference to the scene node with an attached AmbientLightComponent whose transformation is being updated.
         virtual void UpdateAmbientLightTransform(SceneNode &sceneNode) = 0;
+
+        /// Updates the transformation of the given particle system.
+        ///
+        /// @param sceneNode [in] A reference to the scene node with an attached ParticleSystemComponent whose transformation is being updated.
+        virtual void UpdateParticleSystemTransform(SceneNode &sceneNode) = 0;
 
         /// Updates the transformation of the occluder.
         ///

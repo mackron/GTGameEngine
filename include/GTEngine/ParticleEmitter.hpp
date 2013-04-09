@@ -43,14 +43,12 @@ namespace GTEngine
         /// Updates the emitter.
         ///
         /// @param deltaTimeInSeconds [in] The delta time for doing time-based movement.
-        /// @param cameraPosition     [in] The camera position.
-        /// @param cameraOrientation  [in] The camera orientation.
         ///
         /// @remarks
         ///     This will update the relevant properties of each particle and also spawn/delete particles where necessary.
         ///     @par
-        ///     The camera position and orientation is needed in order to face the particles towards the camera.
-        void Update(double deltaTimeInSeconds, const glm::vec3 &cameraPosition, const glm::quat &cameraOrientation);
+        ///     This does not orientate particles towards the camera. That needs to be done at render time.
+        void Update(double deltaTimeInSeconds);
 
 
         /// Sets the duration of the emitter in seconds.

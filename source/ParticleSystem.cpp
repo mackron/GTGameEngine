@@ -33,6 +33,19 @@ namespace GTEngine
     }
 
 
+    void ParticleSystem::Update(double deltaTimeInSeconds)
+    {
+        for (size_t i = 0; i < this->emitters.count; ++i)
+        {
+            auto emitter = this->emitters[i];
+            assert(emitter != nullptr);
+            {
+                emitter->Update(deltaTimeInSeconds);
+            }
+        }
+    }
+
+
     size_t ParticleSystem::GetEmitterCount() const
     {
         return this->emitters.count;

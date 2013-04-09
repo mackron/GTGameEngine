@@ -19,6 +19,32 @@ namespace GTEngine
 
         namespace ParticleEmitterFFI
         {
+            /// Sets the duration in seconds.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The duration in seconds.
+            int SetDurationInSeconds(GTCore::Script &script);
+
+            /// Retrieves the duration in seconds.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetDurationInSeconds(GTCore::Script &script);
+
+
+            /// Sets the emission rate per second.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The emission rate per second.
+            int SetEmissionRatePerSecond(GTCore::Script &script);
+
+            /// Retrieves the emission rate per second.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetEmissionRatePerSecond(GTCore::Script &script);
         }
 
         namespace ParticleSystemFFI

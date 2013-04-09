@@ -1620,6 +1620,10 @@ namespace GTEngine
             {
                 this->cullingManager.UpdateAmbientLightTransform(node);
             }
+            if (node.HasComponent<ParticleSystemComponent>())
+            {
+                this->cullingManager.UpdateParticleSystemTransform(node);
+            }
             if (node.HasComponent<OccluderComponent>())
             {
                 this->cullingManager.UpdateOccluderTransform(node);
@@ -1734,6 +1738,10 @@ namespace GTEngine
             {
                 this->cullingManager.AddAmbientLight(node);
             }
+            if (node.HasComponent<ParticleSystemComponent>())
+            {
+                this->cullingManager.AddParticleSystem(node);
+            }
             if (node.HasComponent<OccluderComponent>())
             {
                 this->cullingManager.AddOccluder(node);
@@ -1780,6 +1788,10 @@ namespace GTEngine
             if (node.HasComponent<AmbientLightComponent>())
             {
                 this->cullingManager.RemoveAmbientLight(node);
+            }
+            if (node.HasComponent<ParticleSystemComponent>())
+            {
+                this->cullingManager.RemoveParticleSystem(node);
             }
             if (node.HasComponent<OccluderComponent>())
             {
@@ -1850,6 +1862,16 @@ namespace GTEngine
             if (node.IsVisible())
             {
                 this->cullingManager.AddAmbientLight(node);
+            }
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
+        {
+            if (node.IsVisible())
+            {
+                if (static_cast<ParticleSystemComponent &>(component).GetParticleSystem() != nullptr)
+                {
+                    this->cullingManager.AddParticleSystem(node);
+                }
             }
         }
         else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
@@ -1999,6 +2021,10 @@ namespace GTEngine
         {
             this->cullingManager.RemoveAmbientLight(node);
         }
+        else if (GTCore::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
+        {
+            this->cullingManager.RemoveParticleSystem(node);
+        }
         else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
         {
             this->cullingManager.RemoveOccluder(node);
@@ -2090,6 +2116,11 @@ namespace GTEngine
         {
             this->cullingManager.RemoveAmbientLight(node);
             this->cullingManager.AddAmbientLight(node);
+        }
+        else if (GTCore::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
+        {
+            this->cullingManager.RemoveParticleSystem(node);
+            this->cullingManager.AddParticleSystem(node);
         }
         else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
         {

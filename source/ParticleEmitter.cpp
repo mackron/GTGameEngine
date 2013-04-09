@@ -5,7 +5,7 @@
 namespace GTEngine
 {
     ParticleEmitter::ParticleEmitter()
-        : durationInSeconds(5.0f), emissionRatePerSecond(10U), burst(false),
+        : durationInSeconds(5.0), emissionRatePerSecond(10U), burst(false),
           position(), orientation(),
           material(nullptr)
     {
@@ -33,11 +33,9 @@ namespace GTEngine
     }
 
 
-    void ParticleEmitter::Update(double deltaTimeInSeconds, const glm::vec3 &cameraPosition, const glm::quat &cameraOrientation)
+    void ParticleEmitter::Update(double deltaTimeInSeconds)
     {
         (void)deltaTimeInSeconds;
-        (void)cameraPosition;
-        (void)cameraOrientation;
     }
 
 

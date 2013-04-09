@@ -637,19 +637,22 @@ namespace GTEngine
         // Virtual Implementations.
 
         /// SceneCullingManager::VisibilityCallback::ProcessModel().
-        void ProcessModel(const SceneNode &object);
+        void ProcessModel(const SceneNode &sceneNode);
 
         /// SceneCullingManager::VisibilityCallback::ProcessPointLight().
-        void ProcessPointLight(const SceneNode &object);
+        void ProcessPointLight(const SceneNode &sceneNode);
 
         /// SceneCullingManager::VisibilityCallback::ProcessSpotLight().
-        void ProcessSpotLight(const SceneNode &object);
+        void ProcessSpotLight(const SceneNode &sceneNode);
 
         /// SceneCullingManager::VisibilityCallback::ProcessAmbientLight().
-        void ProcessAmbientLight(const SceneNode &object);
+        void ProcessAmbientLight(const SceneNode &sceneNode);
 
         /// SceneCullingManager::VisibilityCallback::ProcessDirectionalLight().
-        void ProcessDirectionalLight(const SceneNode &object);
+        void ProcessDirectionalLight(const SceneNode &sceneNode);
+
+        /// SceneCullingManager::VisibilityCallback::ProcessParticleSystem().
+        void ProcessParticleSystem(const SceneNode &sceneNode);
 
 
 
@@ -716,8 +719,13 @@ namespace GTEngine
         /// not the actual model object because we will later want access to the scene node for it's transformation.
         GTCore::Map<const ModelComponent*, LightIndices*> visibleModels;
 
-        /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess(). The value is the transformation.
+        /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess().
         GTCore::Vector<const ModelComponent*> modelsToAnimate;
+
+
+        /// The flat list of visible particle systems, mapped to the indices of the lights that touch them.
+        GTCore::Map<const ParticleSystemComponent*, LightIndices*> visibleParticleSystems;
+
 
 
         /// The indices of every visible light.
@@ -758,13 +766,34 @@ namespace GTEngine
                     auto iModel = this->owner.visibleModels.Find(modelComponent);
                     if (iModel != nullptr)
                     {
-                        if (!shadowCasting)
+                        if (!this->shadowCasting)
                         {
                             iModel->value->pointLights.PushBack(static_cast<uint32_t>(this->lightIndex));
                         }
                         else
                         {
                             iModel->value->shadowPointLights.PushBack(static_cast<uint32_t>(this->lightIndex));
+                        }
+                    }
+                }
+            }
+
+            /// SceneCullingManager::VisibilityCallback::ProcessParticleSystem().
+            virtual void ProcessParticleSystem(const SceneNode &sceneNode)
+            {
+                auto particleSystemComponent = sceneNode.GetComponent<ParticleSystemComponent>();
+                assert(particleSystemComponent != nullptr);
+                {
+                    auto iParticleSystemComponent = this->owner.visibleParticleSystems.Find(particleSystemComponent);
+                    if (iParticleSystemComponent != nullptr)
+                    {
+                        if (!this->shadowCasting)
+                        {
+                            iParticleSystemComponent->value->pointLights.PushBack(static_cast<uint32_t>(this->lightIndex));
+                        }
+                        else
+                        {
+                            iParticleSystemComponent->value->shadowPointLights.PushBack(static_cast<uint32_t>(this->lightIndex));
                         }
                     }
                 }
@@ -819,6 +848,27 @@ namespace GTEngine
                         else
                         {
                             iModel->value->shadowSpotLights.PushBack(static_cast<uint32_t>(this->lightIndex));
+                        }
+                    }
+                }
+            }
+
+            /// SceneCullingManager::VisibilityCallback::ProcessParticleSystem().
+            virtual void ProcessParticleSystem(const SceneNode &sceneNode)
+            {
+                auto particleSystemComponent = sceneNode.GetComponent<ParticleSystemComponent>();
+                assert(particleSystemComponent != nullptr);
+                {
+                    auto iParticleSystemComponent = this->owner.visibleParticleSystems.Find(particleSystemComponent);
+                    if (iParticleSystemComponent != nullptr)
+                    {
+                        if (!this->shadowCasting)
+                        {
+                            iParticleSystemComponent->value->spotLights.PushBack(static_cast<uint32_t>(this->lightIndex));
+                        }
+                        else
+                        {
+                            iParticleSystemComponent->value->shadowSpotLights.PushBack(static_cast<uint32_t>(this->lightIndex));
                         }
                     }
                 }

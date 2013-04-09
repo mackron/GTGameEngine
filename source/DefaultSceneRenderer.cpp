@@ -64,6 +64,7 @@ namespace GTEngine
           ambientLights(), directionalLights(), pointLights(), spotLights(),
           shadowDirectionalLights(), shadowPointLights(), shadowSpotLights(),
           visibleModels(), modelsToAnimate(),
+          visibleParticleSystems(),
           allLightIndices(),
           projectionMatrix(), viewMatrix(), projectionViewMatrix()
     {
@@ -135,6 +136,11 @@ namespace GTEngine
         for (size_t i = 0; i < this->visibleModels.count; ++i)
         {
             delete this->visibleModels.buffer[i]->value;
+        }
+
+        for (size_t i = 0; i < this->visibleParticleSystems.count; ++i)
+        {
+            delete this->visibleParticleSystems.buffer[i]->value;
         }
     }
 
@@ -289,6 +295,18 @@ namespace GTEngine
         }
     }
 
+    void DefaultSceneRendererVisibleObjects::ProcessParticleSystem(const SceneNode &sceneNode)
+    {
+        auto particleSystemComponent = sceneNode.GetComponent<ParticleSystemComponent>();
+        assert(particleSystemComponent != nullptr);
+        {
+            if (!this->visibleParticleSystems.Exists(particleSystemComponent))
+            {
+                this->visibleParticleSystems.Add(particleSystemComponent, new LightIndices);
+            }
+        }
+    }
+
 
 
     void DefaultSceneRendererVisibleObjects::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightIndices* lights, bool drawHighlight)
@@ -410,6 +428,33 @@ namespace GTEngine
             }
         }
 
+        // As above, but now with particle systems.
+        for (size_t iParticleSystem = 0; iParticleSystem < this->visibleParticleSystems.count; ++iParticleSystem)
+        {
+            auto particleSystemLights = this->visibleParticleSystems.buffer[iParticleSystem]->value;
+            assert(particleSystemLights != nullptr);
+            {
+                for (size_t iAmbientLight = 0; iAmbientLight < this->ambientLights.count; ++iAmbientLight)
+                {
+                    particleSystemLights->ambientLights.PushBack(static_cast<uint32_t>(iAmbientLight));
+                }
+
+
+                // Non-shadow directional lights.
+                for (size_t iDirectionalLight = 0; iDirectionalLight < this->directionalLights.count; ++iDirectionalLight)
+                {
+                    particleSystemLights->directionalLights.PushBack(static_cast<uint32_t>(iDirectionalLight));
+                }
+
+                // Shadow-casting directional lights.
+                for (size_t iDirectionalLight = 0; iDirectionalLight < this->shadowDirectionalLights.count; ++iDirectionalLight)
+                {
+                    particleSystemLights->shadowDirectionalLights.PushBack(static_cast<uint32_t>(iDirectionalLight));
+                }
+            }
+        }
+
+
 
         // We need to now query the objects contained inside the volumes of the point and spot lights.
         const auto &cullingManager = scene.GetCullingManager();
@@ -505,6 +550,30 @@ namespace GTEngine
             }
         }
 
+
+        // Now we need to build the mesh to draw for each particle system.
+        for (size_t iParticleSystem = 0; iParticleSystem < this->visibleParticleSystems.count; ++iParticleSystem)
+        {
+            auto particleSystemComponent = this->visibleParticleSystems.buffer[iParticleSystem]->key;
+            auto particleSystemLights    = this->visibleParticleSystems.buffer[iParticleSystem]->value;
+
+            assert(particleSystemComponent != nullptr);
+            assert(particleSystemLights    != nullptr);
+            {
+                auto particleSystem = particleSystemComponent->GetParticleSystem();
+                if (particleSystem != nullptr)
+                {
+                    for (size_t iEmitter = 0; iEmitter < particleSystem->GetEmitterCount(); ++iEmitter)
+                    {
+                        auto emitter = particleSystem->GetEmitter(iEmitter);
+                        assert(emitter != nullptr);
+                        {
+                            // TODO: Build the emitter geometry from it's particles and add it.
+                        }
+                    }
+                }
+            }
+        }
 
 
 
