@@ -5,7 +5,9 @@
 namespace GTEngine
 {
     ParticleSystem::ParticleSystem(const ParticleSystemDefinition &definitionIn)
-        : definition(definitionIn), emitters()
+        : definition(definitionIn),
+          position(), orientation(),
+          emitters()
     {
         this->Refresh();
     }
@@ -27,7 +29,11 @@ namespace GTEngine
             auto definitionEmitter = this->definition.GetEmitter(i);
             assert(definitionEmitter != nullptr);
             {
-                this->emitters.PushBack(new ParticleEmitter(*definitionEmitter));
+                auto newEmitter = new ParticleEmitter(*definitionEmitter);
+                newEmitter->SetPosition(this->position);
+                newEmitter->SetOrientation(this->orientation);
+
+                this->emitters.PushBack(newEmitter);
             }
         }
     }
@@ -41,6 +47,51 @@ namespace GTEngine
             assert(emitter != nullptr);
             {
                 emitter->Update(deltaTimeInSeconds);
+            }
+        }
+    }
+
+
+    void ParticleSystem::SetPosition(const glm::vec3 &newPosition)
+    {
+        this->position = newPosition;
+
+        for (size_t i = 0; i < this->emitters.count; ++i)
+        {
+            auto emitter = this->emitters[i];
+            assert(emitter != nullptr);
+            {
+                emitter->SetPosition(newPosition);
+            }
+        }
+    }
+
+    void ParticleSystem::SetOrientation(const glm::quat &newOrientation)
+    {
+        this->orientation = newOrientation;
+
+        for (size_t i = 0; i < this->emitters.count; ++i)
+        {
+            auto emitter = this->emitters[i];
+            assert(emitter != nullptr);
+            {
+                emitter->SetOrientation(newOrientation);
+            }
+        }
+    }
+
+    void ParticleSystem::SetTransform(const glm::vec3 &newPosition, const glm::quat &newOrientation)
+    {
+        this->position    = newPosition;
+        this->orientation = newOrientation;
+
+        for (size_t i = 0; i < this->emitters.count; ++i)
+        {
+            auto emitter = this->emitters[i];
+            assert(emitter != nullptr);
+            {
+                emitter->SetPosition(newPosition);
+                emitter->SetOrientation(newOrientation);
             }
         }
     }
