@@ -26,17 +26,27 @@ namespace GTEngine
 
     void VertexArray::SetVertexData(const float *vertices, size_t vertexCount)
     {
-        assert(vertexCount > 0);
         assert(!this->verticesMapped);
 
-        this->vertexCount = vertexCount;
-
-        delete [] this->vertices;
 
         size_t vertexDataSize = vertexCount * this->format.GetSize();
-        this->vertices        = new float[vertexDataSize];
 
-        if (vertices != nullptr)
+        if (this->vertexCount != vertexCount)
+        {
+            delete [] this->vertices;
+
+            if (vertexCount > 0)
+            {
+                this->vertices = new float[vertexDataSize];
+            }
+            else
+            {
+                this->vertices = nullptr;
+            }
+        }
+
+
+        if (this->vertices != nullptr && vertices != nullptr)
         {
             for (size_t i = 0; i < vertexDataSize; ++i)
             {
@@ -45,20 +55,29 @@ namespace GTEngine
         }
 
         
+        this->vertexCount = vertexCount;
         this->OnVertexDataChanged();
     }
 
     void VertexArray::SetIndexData(const unsigned int *indices, size_t indexCount)
     {
-        assert(indexCount > 0);
         assert(!this->indicesMapped);
 
-        this->indexCount = indexCount;
+        if (this->indexCount != indexCount)
+        {
+            delete [] this->indices;
 
-        delete [] this->indices;
-        this->indices = new unsigned int[indexCount];
+            if (indexCount > 0)
+            {
+                this->indices = new unsigned int[indexCount];
+            }
+            else
+            {
+                this->indices = 0;
+            }
+        }
 
-        if (indices != nullptr)
+        if (this->indices != nullptr && indices != nullptr)
         {
             for (size_t i = 0; i < indexCount; ++i)
             {
@@ -67,6 +86,7 @@ namespace GTEngine
         }
 
 
+        this->indexCount = indexCount;
         this->OnIndexDataChanged();
     }
 

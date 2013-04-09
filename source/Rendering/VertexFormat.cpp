@@ -197,6 +197,7 @@ namespace GTEngine
     int TempP3T2N3T3B3[] = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::Normal, 3, VertexAttribs::Tangent, 3, VertexAttribs::Bitangent, 3, VertexAttribs::End};
     int TempP2C4[]       = {VertexAttribs::Position, 2, VertexAttribs::Colour,   4, VertexAttribs::End};
     int TempP2T2C4[]     = {VertexAttribs::Position, 2, VertexAttribs::TexCoord, 2, VertexAttribs::Colour, 4, VertexAttribs::End};
+    int TempP3T2N3C4[]   = {VertexAttribs::Position, 3, VertexAttribs::TexCoord, 2, VertexAttribs::Normal, 3, VertexAttribs::Colour, 4, VertexAttribs::End};
 
     VertexFormat VertexFormat::P2(TempP2);
     VertexFormat VertexFormat::P3(TempP3);
@@ -206,6 +207,7 @@ namespace GTEngine
     VertexFormat VertexFormat::P3T2N3T3B3(TempP3T2N3T3B3);
     VertexFormat VertexFormat::P2C4(TempP2C4);
     VertexFormat VertexFormat::P2T2C4(TempP2T2C4);
+    VertexFormat VertexFormat::P3T2N3C4(TempP3T2N3C4);
 }
 
 

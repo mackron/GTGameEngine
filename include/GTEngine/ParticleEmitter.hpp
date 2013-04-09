@@ -5,6 +5,8 @@
 
 #include "Particle.hpp"
 #include "MaterialLibrary.hpp"
+#include "Rendering/VertexArray.hpp"
+#include <GTCore/Vector.hpp>
 
 namespace GTEngine
 {
@@ -81,6 +83,20 @@ namespace GTEngine
 
 
 
+        /// Retrieves the start speed of each particle.
+        double GetStartSpeed() const;
+
+        /// Sets the start speed of each particle.
+        void SetStartSpeed(double newStartSpeed);
+
+
+        /// Retrieves the lifetime of a particle.
+        double GetLifetime() const;
+
+        /// Sets the lifetime of particles.
+        void SetLifetime(double newLifetime);
+
+
 
         /// Retrieves the position of the emitter.
         const glm::vec3 & GetPosition() const;
@@ -104,6 +120,22 @@ namespace GTEngine
         /// Sets the material to use with each particle.
         void SetMaterial(const char* relativePath);
 
+        /// Retrieves a pointer to the material.
+        Material* GetMaterial() const { return this->material; }
+
+
+
+        /// Retrieves the number of alive particles.
+        size_t GetParticleCount() const { return this->particles.count; }
+
+        /// Retrieves a reference to the particle at the given index.
+              Particle & GetParticle(size_t index)       { return this->particles[index]; }
+        const Particle & GetParticle(size_t index) const { return this->particles[index]; }
+
+
+        /// Retrieves a reference to the internal vertex array.
+        VertexArray & GetVertexArray() const { return *this->vertexArray; }
+
 
 
     private:
@@ -119,6 +151,13 @@ namespace GTEngine
         bool burst;
 
 
+        /// The starting speed of the particles.
+        double startSpeed;
+
+        /// The lifetime of a particle.
+        double lifetime;
+
+
 
         /// The position of the emitter.
         glm::vec3 position;
@@ -130,7 +169,19 @@ namespace GTEngine
 
         /// The material that will be cloned for each particle.
         Material* material;
+
+
+        /// The time since the last time a particle was emitted.
+        double timeSinceLastEmission;
+
+
+        // TODO: Use a more efficient data structure here. Look at the same type of structure as the event messaging one.
+        /// The flat list of alive particles.
+        GTCore::Vector<Particle> particles;
         
+
+        /// The vertex array for rendering. This will only be used by the renderer.
+        mutable VertexArray* vertexArray;
         
         
     private:    // No assignment operator.
