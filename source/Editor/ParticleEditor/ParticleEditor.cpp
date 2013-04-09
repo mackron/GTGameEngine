@@ -47,6 +47,10 @@ namespace GTEngine
         // Now we setup the particle node.
         this->particleNode.AddComponent<ParticleSystemComponent>()->SetParticleSystem(this->particleSystem);
 
+        // We're going to have the particles travelling in the +Y direction by default.
+        this->particleNode.RotateX(90.0f);
+
+
 
 
         auto &gui    = this->GetGUI();
