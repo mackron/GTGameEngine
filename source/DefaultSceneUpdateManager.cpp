@@ -18,14 +18,17 @@ namespace GTEngine
 
     bool DefaultSceneUpdateManager::NeedsUpdate(SceneNode &sceneNode) const
     {
-        // We care about everything except:
-        //   - Physics objects (handled by the physics manager).
-   
         auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
         if (scriptComponent != nullptr && scriptComponent->HasOnUpdate())
         {
             return true;
         }
+
+        if (sceneNode.HasComponent<ParticleSystemComponent>())
+        {
+            return true;
+        }
+
 
         return !(sceneNode.GetFlags() & SceneNode::NoUpdate);
     }
@@ -69,6 +72,18 @@ namespace GTEngine
                 model->StepAnimation(deltaTimeInSeconds);
             }
         }
+
+        // If we have a particle system component that will need to be stepped also.
+        auto particleSystemComponent = node.GetComponent<ParticleSystemComponent>();
+        if (particleSystemComponent != nullptr)
+        {
+            auto particleSystem = particleSystemComponent->GetParticleSystem();
+            if (particleSystem != nullptr)
+            {
+                particleSystem->Update(deltaTimeInSeconds);
+            }
+        }
+
 
         // Now we just let the scene node itself know about it.
         node.OnUpdate(deltaTimeInSeconds);

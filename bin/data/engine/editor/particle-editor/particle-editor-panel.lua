@@ -33,7 +33,7 @@ function GTGUI.Element:ParticleEditorPanel(ownerEditor)
         local emitterCount = definition:GetEmitterCount();
         for i=1,emitterCount do
             local panel = GTGUI.Server.New("<div parentid='" .. self.EmittersContainer:GetID() .. "' styleclass='particle-editor-panel-groupbox' />");
-            panel:ParticleEditorEmitterPanel("Emitter " .. tostring(i), i);
+            panel:ParticleEditorEmitterPanel(definition:GetEmitterByIndex(i), i);
             
             panel:OnClose(function(data)
                 self.OwnerEditor:DeleteEmitterByIndex(panel.Index);

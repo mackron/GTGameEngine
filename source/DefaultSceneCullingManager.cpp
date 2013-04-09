@@ -13,7 +13,7 @@
 namespace GTEngine
 {
     DefaultSceneCullingManager::DefaultSceneCullingManager()
-        : world(), models(), pointLights(), spotLights(), ambientLights(), directionalLights(),
+        : world(), models(), pointLights(), spotLights(), ambientLights(), directionalLights(), particleSystems(),
           dbvtPolicy(*this)
     {
     }
@@ -151,6 +151,22 @@ namespace GTEngine
     }
 
 
+    void DefaultSceneCullingManager::AddParticleSystem(SceneNode &sceneNode)
+    {
+        // TODO: Implement proper culling for particle systems.
+        auto particleSystemComponent = sceneNode.GetComponent<ParticleSystemComponent>();
+        assert(particleSystemComponent != nullptr);
+        {
+            this->particleSystems.Add(&sceneNode, new ParticleSystemMetadata);
+        }
+    }
+
+    void DefaultSceneCullingManager::RemoveParticleSystem(SceneNode &sceneNode)
+    {
+        this->particleSystems.Remove(&sceneNode);
+    }
+
+
     void DefaultSceneCullingManager::AddOccluder(SceneNode &sceneNode)
     {
         auto occluderComponent = sceneNode.GetComponent<OccluderComponent>();
@@ -231,6 +247,12 @@ namespace GTEngine
     }
 
     void DefaultSceneCullingManager::UpdateAmbientLightTransform(SceneNode &sceneNode)
+    {
+        // For now, nothing to actually do here.
+        (void)sceneNode;
+    }
+
+    void DefaultSceneCullingManager::UpdateParticleSystemTransform(SceneNode &sceneNode)
     {
         // For now, nothing to actually do here.
         (void)sceneNode;
@@ -335,7 +357,6 @@ namespace GTEngine
 
 
             // Now we just create our Dbvt policy and call our occlusion functions.
-            //DbvtPolicy dbvtPolicy(*this, callback, mvp);
             this->dbvtPolicy.Initialize(callbackIn, mvpIn);
 
             if (!(flags & SceneCullingManager::NoOcclusionCulling))
@@ -359,6 +380,13 @@ namespace GTEngine
         for (size_t i = 0; i < this->directionalLights.count; ++i)
         {
             callbackIn.ProcessDirectionalLight(*this->directionalLights[i]);
+        }
+
+
+        // TODO: Implement proper culling for particle systems. Currently we will just have all particle systems be "visible".
+        for (size_t i = 0; i < this->particleSystems.count; ++i)
+        {
+            callbackIn.ProcessParticleSystem(*this->particleSystems.buffer[i]->key);
         }
     }
 
@@ -408,6 +436,11 @@ namespace GTEngine
         callback.ProcessSpotLight(sceneNode);
     }
 
+    void DefaultSceneCullingManager::ProcessVisibleParticleSystem(SceneNode &sceneNode, VisibilityCallback &callback) const
+    {
+        callback.ProcessParticleSystem(sceneNode);
+    }
+
 
     void DefaultSceneCullingManager::ProcessVisibleSceneNode(SceneNode &sceneNode, VisibilityCallback &callback) const
     {
@@ -430,6 +463,15 @@ namespace GTEngine
             if (sceneNode.GetComponent<SpotLightComponent>() != nullptr)
             {
                 this->ProcessVisibleSpotLight(sceneNode, callback);
+            }
+
+            auto particleSystemComponent = sceneNode.GetComponent<ParticleSystemComponent>();
+            if (particleSystemComponent != nullptr)
+            {
+                if (particleSystemComponent->GetParticleSystem() != nullptr)
+                {
+                    this->ProcessVisibleParticleSystem(sceneNode, callback);
+                }
             }
         }
     }

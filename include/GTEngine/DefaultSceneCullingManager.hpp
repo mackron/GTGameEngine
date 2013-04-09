@@ -28,72 +28,82 @@ namespace GTEngine
 
 
         /// SceneCullingManager::AddModel().
-        virtual void AddModel(SceneNode &object);
+        virtual void AddModel(SceneNode &sceneNode);
 
         /// SceneCullingManager::RemoveModel().
-        virtual void RemoveModel(SceneNode &object);
+        virtual void RemoveModel(SceneNode &sceneNode);
 
 
         /// SceneCullingManager::AddPointLight().
-        virtual void AddPointLight(SceneNode &object);
+        virtual void AddPointLight(SceneNode &sceneNode);
 
         /// SceneCullingManager::RemovePointLight().
-        virtual void RemovePointLight(SceneNode &object);
+        virtual void RemovePointLight(SceneNode &sceneNode);
 
 
         /// SceneCullingManager::AddSpotLight().
-        virtual void AddSpotLight(SceneNode &object);
+        virtual void AddSpotLight(SceneNode &sceneNode);
 
         /// SceneCullingManager::RemoveSpotLight().
-        virtual void RemoveSpotLight(SceneNode &object);
+        virtual void RemoveSpotLight(SceneNode &sceneNode);
 
 
         /// SceneCullingManager::AddDirectionalLight().
-        virtual void AddDirectionalLight(SceneNode &object);
+        virtual void AddDirectionalLight(SceneNode &sceneNode);
 
         /// SceneCullingManager::RemoveDirectionalLight().
-        virtual void RemoveDirectionalLight(SceneNode &object);
+        virtual void RemoveDirectionalLight(SceneNode &sceneNode);
 
 
         /// SceneCullingManager::AddAmbientLight().
-        virtual void AddAmbientLight(SceneNode &object);
+        virtual void AddAmbientLight(SceneNode &sceneNode);
 
         /// SceneCullingManager::RemoveAmbientLight().
-        virtual void RemoveAmbientLight(SceneNode &object);
+        virtual void RemoveAmbientLight(SceneNode &sceneNode);
+
+
+        /// SceneCullingManager::AddParticleSystem().
+        virtual void AddParticleSystem(SceneNode &sceneNode);
+
+        /// SceneCullingManager::RemoveParticleSystem().
+        virtual void RemoveParticleSystem(SceneNode &sceneNode);
 
 
         /// SceneCullingManager::AddOccluder().
-        virtual void AddOccluder(SceneNode &object);
+        virtual void AddOccluder(SceneNode &sceneNode);
 
         /// SceneCullingManager::RemoveOccluder().
-        virtual void RemoveOccluder(SceneNode &object);
+        virtual void RemoveOccluder(SceneNode &sceneNode);
 
 
 
         /// SceneCullingManager::UpdateModelTransform().
-        virtual void UpdateModelTransform(SceneNode &object);
+        virtual void UpdateModelTransform(SceneNode &sceneNode);
 
         /// SceneCullingManager::UpdatePointLightTransform().
-        virtual void UpdatePointLightTransform(SceneNode &object);
+        virtual void UpdatePointLightTransform(SceneNode &sceneNode);
 
         /// SceneCullingManager::UpdateSpotLightTransform().
-        virtual void UpdateSpotLightTransform(SceneNode &object);
+        virtual void UpdateSpotLightTransform(SceneNode &sceneNode);
 
         /// SceneCullingManager::UpdateDirectionalLightTransform().
-        virtual void UpdateDirectionalLightTransform(SceneNode &object);
+        virtual void UpdateDirectionalLightTransform(SceneNode &sceneNode);
 
         /// SceneCullingManager::UpdateAmbientLightTransform().
-        virtual void UpdateAmbientLightTransform(SceneNode &object);
+        virtual void UpdateAmbientLightTransform(SceneNode &sceneNode);
+
+        /// SceneCullingManager::UpdateParticleSystemTransform().
+        virtual void UpdateParticleSystemTransform(SceneNode &sceneNode);
 
         /// SceneCullingManager::UpdateOccluderLightTransform().
-        virtual void UpdateOccluderTransform(SceneNode &object);
+        virtual void UpdateOccluderTransform(SceneNode &sceneNode);
 
 
         /// SceneCullingManager::UpdateModelScale().
-        virtual void UpdateModelScale(SceneNode &object);
+        virtual void UpdateModelScale(SceneNode &sceneNode);
 
         /// SceneCullingManager::UpdateOccluderScale().
-        virtual void UpdateOccluderScale(SceneNode &object);
+        virtual void UpdateOccluderScale(SceneNode &sceneNode);
 
 
 
@@ -121,7 +131,7 @@ namespace GTEngine
         /// @param sceneNode [in] The object being processed.
         ///
         /// @remarks
-        ///     This is called from ProcessVisibleObjects().
+        ///     This is called from ProcessVisibleSceneNodes().
         virtual void ProcessVisibleModel(SceneNode &sceneNode, VisibilityCallback &callback) const;
 
         /// Processes the point light of the given object.
@@ -129,7 +139,7 @@ namespace GTEngine
         /// @param sceneNode [in] The object being processed.
         ///
         /// @remarks
-        ///     This is called from ProcessVisibleObjects().
+        ///     This is called from ProcessVisibleSceneNodes().
         virtual void ProcessVisiblePointLight(SceneNode &sceneNode, VisibilityCallback &callback) const;
 
         /// Processes the spot light of the given object.
@@ -137,8 +147,16 @@ namespace GTEngine
         /// @param sceneNode [in] The object being processed.
         ///
         /// @remarks
-        ///     This is called from ProcessVisibleObjects().
+        ///     This is called from ProcessVisibleSceneNodes().
         virtual void ProcessVisibleSpotLight(SceneNode &sceneNode, VisibilityCallback &callback) const;
+
+        /// Processes the given particle system scene node.
+        ///
+        /// @param sceneNode [in] The scene node being processed.
+        ///
+        /// @remarks
+        ///     This is called from ProcessVisibleSceneNodes().
+        virtual void ProcessVisibleParticleSystem(SceneNode &sceneNode, VisibilityCallback &callback) const;
 
 
         /// Helper method for processing a visible object.
@@ -153,6 +171,7 @@ namespace GTEngine
         struct ModelMetadata;
         struct PointLightMetadata;
         struct SpotLightMetadata;
+        struct ParticleSystemMetadata;
 
 
         /// The collision world containing collision objects for everything needing culling.
@@ -172,6 +191,9 @@ namespace GTEngine
 
         /// The directional light objects.
         GTCore::Vector<const SceneNode*> directionalLights;
+
+        /// The particle system objects.
+        GTCore::Map<const SceneNode*, ParticleSystemMetadata*> particleSystems;
 
 
         /// Structure containing metadata for each model.
@@ -412,6 +434,37 @@ namespace GTEngine
         private:    // No copying.
             SpotLightMetadata(const SpotLightMetadata &);
             SpotLightMetadata & operator=(const SpotLightMetadata &);
+        };
+
+
+
+        // TODO: Implement proper culling for particle systems.
+        /// Structure containing the metadata for each particle system.
+        struct ParticleSystemMetadata
+        {
+            ParticleSystemMetadata()
+            {
+            }
+
+            ~ParticleSystemMetadata()
+            {
+            }
+
+
+            /// Updates the transformation.
+            void UpdateTransform(const btTransform &transform)
+            {
+                (void)transform;
+            }
+
+
+            ////////////////////////////////////////////////////////////
+            // Attributes.
+
+
+        private:    // No copying.
+            ParticleSystemMetadata(const ParticleSystemMetadata &);
+            ParticleSystemMetadata & operator=(const ParticleSystemMetadata &);
         };
 
 

@@ -24,6 +24,23 @@ namespace GTEngine
                 "        new._internalPtr = internalPtr;"
                 "    return new;"
                 "end;"
+
+                "function GTEngine.ParticleEmitter:SetDurationInSeconds(durationInSeconds)"
+                "    return GTEngine.System.ParticleEmitter.SetDurationInSeconds(self._internalPtr, durationInSeconds);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetDurationInSeconds()"
+                "    return GTEngine.System.ParticleEmitter.GetDurationInSeconds(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.ParticleEmitter:SetEmissionRatePerSecond(emissionRatePerSecond)"
+                "    return GTEngine.System.ParticleEmitter.SetEmissionRatePerSecond(self._internalPtr, emissionRatePerSecond);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetEmissionRatePerSecond()"
+                "    return GTEngine.System.ParticleEmitter.GetEmissionRatePerSecond(self._internalPtr);"
+                "end;"
             );
 
             if (successful)
@@ -38,6 +55,10 @@ namespace GTEngine
                         script.Push("ParticleEmitter");
                         script.PushNewTable();
                         {
+                            script.SetTableFunction(-1, "SetDurationInSeconds",      ParticleEmitterFFI::SetDurationInSeconds);
+                            script.SetTableFunction(-1, "GetDurationInSeconds",      ParticleEmitterFFI::GetDurationInSeconds);
+                            script.SetTableFunction(-1, "SetEmissionRatePerSecond",  ParticleEmitterFFI::SetEmissionRatePerSecond);
+                            script.SetTableFunction(-1, "GetEmissionRatePerSecond",  ParticleEmitterFFI::GetEmissionRatePerSecond);
                         }
                         script.SetTableValue(-3);
                     }
@@ -92,8 +113,27 @@ namespace GTEngine
                 "    local new = {};"
                 "    setmetatable(new, GTEngine.ParticleSystemDefinition);"
                 "        new._internalPtr = internalPtr;"
+                "        new.Emitters = {};"
+                ""
+                "        self:UpdateEmitters();"
                 "    return new;"
                 "end;"
+
+                "function GTEngine.ParticleSystemDefinition:UpdateEmitters()"
+                "    local count = self:GetEmitterCount();"
+                "    for i=1,count do"
+                "        local iEmitterPtr = self:GetEmitterPtrByIndex(i);"
+                "        if self.Emitters[i] == nil or self.Emitters[i]._internalPtr ~= iEmitterPtr then"
+                "            self.Emitters[i] = GTEngine.ParticleEmitter:Create(iEmitterPtr);"
+                "        end;"
+                "    end;"
+                "end;"
+
+                "function GTEngine.ParticleSystemDefinition:GetEmitterByIndex(index)"
+                "    self:UpdateEmitters();"
+                "    return self.Emitters[index];"
+                "end;"
+
 
                 "function GTEngine.ParticleSystemDefinition:GetEmitterCount()"
                 "    return GTEngine.System.ParticleSystemDefinition.GetEmitterCount(self._internalPtr);"
@@ -144,6 +184,58 @@ namespace GTEngine
 
         namespace ParticleEmitterFFI
         {
+            int SetDurationInSeconds(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->SetDurationInSeconds(script.ToDouble(2));
+                }
+
+                return 0;
+            }
+
+            int GetDurationInSeconds(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(emitter->GetDurationInSeconds());
+                }
+                else
+                {
+                    script.Push(5.0);
+                }
+
+                return 1;
+            }
+
+
+            int SetEmissionRatePerSecond(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->SetEmissionRatePerSecond(script.ToInteger(2));
+                }
+
+                return 0;
+            }
+
+            int GetEmissionRatePerSecond(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(static_cast<int>(emitter->GetEmissionRatePerSecond()));
+                }
+                else
+                {
+                    script.Push(10);
+                }
+
+                return 1;
+            }
         }
 
         namespace ParticleSystemFFI

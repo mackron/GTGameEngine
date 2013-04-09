@@ -30,6 +30,12 @@ namespace GTEngine
         void Refresh();
 
 
+        /// Steps the particle system.
+        ///
+        /// @param deltaTimeInSeconds [in] The time in seconds since the last update.
+        void Update(double deltaTimeInSeconds);
+
+
 
         /// Retrieves the emitter count.
         size_t GetEmitterCount() const;

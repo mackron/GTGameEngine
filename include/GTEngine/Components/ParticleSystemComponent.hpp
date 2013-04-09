@@ -37,6 +37,12 @@ namespace GTEngine
         void UnsetParticleSystem();
 
 
+        /// Retrieves a pointer to the particle system.
+              ParticleSystem* GetParticleSystem()       { return this->particleSystem; }
+        const ParticleSystem* GetParticleSystem() const { return this->particleSystem; }
+
+
+
 
 
         ///////////////////////////////////////////////////////
