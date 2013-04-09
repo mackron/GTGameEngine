@@ -2,6 +2,7 @@
 
 #include <GTEngine/Components/ParticleSystemComponent.hpp>
 #include <GTEngine/ParticleSystemLibrary.hpp>
+#include <GTEngine/SceneNode.hpp>
 
 namespace GTEngine
 {
@@ -9,8 +10,10 @@ namespace GTEngine
 
     ParticleSystemComponent::ParticleSystemComponent(SceneNode &sceneNode)
         : Component(sceneNode),
-          particleSystem(nullptr), isOwner(false)
+          particleSystem(nullptr), isOwner(false),
+          sceneNodeEventHandler()
     {
+        sceneNode.AttachEventHandler(this->sceneNodeEventHandler);
     }
 
     ParticleSystemComponent::~ParticleSystemComponent()
@@ -19,6 +22,8 @@ namespace GTEngine
         {
             ParticleSystemLibrary::Delete(this->particleSystem);
         }
+
+        this->node.DetachEventHandler(this->sceneNodeEventHandler);
     }
 
 
@@ -47,6 +52,11 @@ namespace GTEngine
     }
 
 
+    void ParticleSystemComponent::UpdateTransform()
+    {
+        this->particleSystem->SetTransform(this->node.GetWorldPosition(), this->node.GetWorldOrientation());
+    }
+
 
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
@@ -59,5 +69,17 @@ namespace GTEngine
     void ParticleSystemComponent::Deserialize(GTCore::Deserializer &deserializer)
     {
         (void)deserializer;
+    }
+
+
+
+
+
+    ///////////////////////////////////////////////////////
+    // Private
+
+    void ParticleSystemComponent::EventHandler::OnTransform(SceneNode &sceneNode)
+    {
+        sceneNode.GetComponent<ParticleSystemComponent>()->UpdateTransform();
     }
 }

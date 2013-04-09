@@ -1,7 +1,11 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
+#ifndef __GTEngine_ParticleSystemComponent_hpp_
+#define __GTEngine_ParticleSystemComponent_hpp_
+
 #include "../Component.hpp"
 #include "../ParticleSystem.hpp"
+#include "../SceneNodeEventHandler.hpp"
 
 namespace GTEngine
 {
@@ -43,6 +47,9 @@ namespace GTEngine
 
 
 
+        /// Updates the transformation of the particle system based on the scene node.
+        void UpdateTransform();
+
 
 
         ///////////////////////////////////////////////////////
@@ -65,7 +72,18 @@ namespace GTEngine
         bool isOwner;
 
 
+        /// The event handler to attach to the scene node. This is used only to detect when it has had it's transformation changed
+        /// so that we can re-orientation the particle system.
+        struct EventHandler : public SceneNodeEventHandler
+        {
+            /// SceneNodeEventHandler::OnTransform().
+            void OnTransform(SceneNode &node);
+
+        }sceneNodeEventHandler;
+
 
         GTENGINE_DECL_COMPONENT_ATTRIBS(ParticleSystemComponent)
     };
 }
+
+#endif
