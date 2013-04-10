@@ -16,22 +16,22 @@ function GTGUI.Element:ParticleEditor(_internalPtr)
     function self:AppendNewEmitter()
         self.ParticleSystemDefinition:AppendNewEmitter();
         self:OnChange();
+        self:RefreshPanel();
     end
     
     function self:DeleteEmitterByIndex(index)
         self.ParticleSystemDefinition:DeleteEmitterByIndex(index);
         self:OnChange();
+        self:RefreshPanel();
     end
     
     
-    function self:UpdatePanel()
-        self.Panel:Update(self.ParticleSystemDefinition);
+    function self:RefreshPanel()
+        self.Panel:Refresh(self.ParticleSystemDefinition);
     end
     
     function self:OnChange()
         self:RefreshViewport();
-        self:UpdatePanel();
-        
         self:MarkAsModified();
     end
     
@@ -53,7 +53,7 @@ function GTGUI.Element:ParticleEditor(_internalPtr)
     
     
     -- At this point we want to make sure everything is up-to-date.
-    self:UpdatePanel();
+    self:RefreshPanel();
     
     return self;
 end
