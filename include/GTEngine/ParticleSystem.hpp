@@ -36,17 +36,6 @@ namespace GTEngine
         void Update(double deltaTimeInSeconds);
 
 
-        /// Sets the world positition of the particle system.
-        void SetPosition(const glm::vec3 &newPosition);
-
-        /// Sets the world orientation of the particle system.
-        void SetOrientation(const glm::quat &newOrientation);
-
-        /// Sets the transformation of the particle system all at once.
-        void SetTransform(const glm::vec3 &newPosition, const glm::quat &newOrientation);
-
-
-
         /// Retrieves the emitter count.
         size_t GetEmitterCount() const;
 
@@ -57,6 +46,27 @@ namespace GTEngine
         /// @remarks
         ///     This asserts that the index is valid.
         const ParticleEmitter* GetEmitter(size_t index) const;
+
+
+        /// Sets the world positition of the particle system.
+        void SetPosition(const glm::vec3 &newPosition);
+
+        /// Sets the world orientation of the particle system.
+        void SetOrientation(const glm::quat &newOrientation);
+
+        /// Sets the transformation of the particle system all at once.
+        void SetTransform(const glm::vec3 &newPosition, const glm::quat &newOrientation);
+
+
+        /// Sets the gravity velocity.
+        ///
+        /// @remarks
+        ///     This will be applied to all existing and new emitters.
+        void SetGravity(const glm::vec3 &gravity);
+
+        /// Retrieves the gravity velocity.
+        const glm::vec3 & GetGravity() const;
+
 
 
     private:
@@ -72,6 +82,10 @@ namespace GTEngine
         const ParticleSystemDefinition &definition;
 
 
+        /// The list of emitters making up this particle system.
+        GTCore::Vector<ParticleEmitter*> emitters;
+
+
         /// The position of the particle system.
         glm::vec3 position;
 
@@ -79,8 +93,9 @@ namespace GTEngine
         glm::quat orientation;
 
 
-        /// The list of emitters making up this particle system.
-        GTCore::Vector<ParticleEmitter*> emitters;
+        /// The gravity to apply to all particles of all emitters. Each emitter will multiply this with a factor to control how much
+        /// influence the gravity has on the particles.
+        glm::vec3 gravity;
 
 
 

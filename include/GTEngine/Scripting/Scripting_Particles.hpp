@@ -19,6 +19,25 @@ namespace GTEngine
 
         namespace ParticleEmitterFFI
         {
+            /// Enables burst mode.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int EnableBurstMode(GTCore::Script &script);
+
+            /// Disables burst mode.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int DisableBurstMode(GTCore::Script &script);
+
+            /// Determines whether or not burst mode is enabled.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int IsBurstModeEnabled(GTCore::Script &script);
+
+
             /// Sets the duration in seconds.
             ///
             /// @remarks
@@ -45,6 +64,48 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             int GetEmissionRatePerSecond(GTCore::Script &script);
+
+
+            /// Sets the start speed of the particles of the emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The new start speed.
+            int SetStartSpeed(GTCore::Script &script);
+
+            /// Retrieves the start speed of the particles of the emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetStartSpeed(GTCore::Script &script);
+
+
+            /// Sets the lifetime of the particles of the emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The new lifetime.
+            int SetLifetime(GTCore::Script &script);
+
+            /// Retrieves the lifetime of the particles of the emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetLifetime(GTCore::Script &script);
+
+
+            /// Sets the gravity factor.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The new gravity factor.
+            int SetGravityFactor(GTCore::Script &script);
+
+            /// Retrieves the gravity factor.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetGravityFactor(GTCore::Script &script);
         }
 
         namespace ParticleSystemFFI

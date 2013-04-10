@@ -50,7 +50,17 @@ namespace GTEngine
         ///     This will update the relevant properties of each particle and also spawn/delete particles where necessary.
         ///     @par
         ///     This does not orientate particles towards the camera. That needs to be done at render time.
-        void Update(double deltaTimeInSeconds);
+        void Update(double deltaTimeInSeconds, const glm::vec3 &gravity);
+
+
+        /// Enables burst mode.
+        void EnableBurstMode();
+
+        /// Disables burst mode.
+        void DisableBurstMode();
+
+        /// Determines whether or not burst mode is enabled.
+        bool IsBurstModeEnabled() const;
 
 
         /// Sets the duration of the emitter in seconds.
@@ -66,20 +76,10 @@ namespace GTEngine
 
 
         /// Sets the number of particles to emit per second, or in the case of burst mode the number of particles to emit during the burst.
-        void SetEmissionRatePerSecond(unsigned int emissionRatePerSecond);
+        void SetEmissionRatePerSecond(double emissionRatePerSecond);
 
         /// Retrieves the number of particles to emit per second.
-        unsigned int GetEmissionRatePerSecond() const;
-
-
-        /// Enables burst mode.
-        void EnableBurstMode();
-
-        /// Disables burst mode.
-        void DisableBurstMode();
-
-        /// Determines whether or not burst mode is enabled.
-        bool IsBurstModeEnabled() const;
+        double GetEmissionRatePerSecond() const;
 
 
 
@@ -95,6 +95,13 @@ namespace GTEngine
 
         /// Sets the lifetime of particles.
         void SetLifetime(double newLifetime);
+
+
+        /// Retrieves the gravity factor.
+        double GetGravityFactor() const;
+
+        /// Sets the gravity factor.
+        void SetGravityFactor(double newGravityFactor);
 
 
 
@@ -140,22 +147,24 @@ namespace GTEngine
 
     private:
 
+        /// Keeps track of whether or not the emitter is in burst mode. False by default.
+        bool burst;
+
         /// Keeps track of the amount of time to emit particles in seconds. When this is set to 0, the emitter will emit particles infinately. If particles
         /// are being bursted, this will control the amount of time between bursts.
         double durationInSeconds;
 
         /// The number of particles to spawn per second. If burst mode is enabled, this will control the number of particles to burst.
-        unsigned int emissionRatePerSecond;
-
-        /// Keeps track of whether or not the emitter is in burst mode. False by default.
-        bool burst;
-
+        double emissionRatePerSecond;
 
         /// The starting speed of the particles.
         double startSpeed;
 
         /// The lifetime of a particle.
         double lifetime;
+
+        /// The factor to apply to gravity.
+        double gravityFactor;
 
 
 

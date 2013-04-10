@@ -1104,6 +1104,24 @@ namespace GTEngine
     void Scene::SetGravity(float x, float y, float z)
     {
         this->physicsManager.SetGravity(x, y, z);
+
+        // We need to let particle systems know about this. Should really optimize this, but it might not really be needed.
+        for (size_t i = 0; i < this->sceneNodes.GetCount(); ++i)
+        {
+            auto sceneNode = this->sceneNodes.GetSceneNodeAtIndex(i);
+            assert(sceneNode != nullptr);
+            {
+                auto particleSystemComponent = sceneNode->GetComponent<ParticleSystemComponent>();
+                if (particleSystemComponent != nullptr)
+                {
+                    auto particleSystem = particleSystemComponent->GetParticleSystem();
+                    if (particleSystem != nullptr)
+                    {
+                        particleSystem->SetGravity(this->GetGravity());
+                    }
+                }
+            }
+        }
     }
 
     void Scene::GetGravity(float &x, float &y, float &z) const
@@ -1868,9 +1886,13 @@ namespace GTEngine
         {
             if (node.IsVisible())
             {
-                if (static_cast<ParticleSystemComponent &>(component).GetParticleSystem() != nullptr)
+                auto particleSystem = static_cast<ParticleSystemComponent &>(component).GetParticleSystem();
+                if (particleSystem != nullptr)
                 {
                     this->cullingManager.AddParticleSystem(node);
+                    
+                    // Gravity needs to be set.
+                    particleSystem->SetGravity(this->GetGravity());
                 }
             }
         }
