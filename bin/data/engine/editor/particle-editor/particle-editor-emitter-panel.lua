@@ -15,6 +15,14 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index)
     self.EmissionRate = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.EmissionRate:PanelNumberInput("Emission Rate", emitter:GetEmissionRatePerSecond());
     
+    self.Speed = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.Speed:PanelNumberInput("Speed", emitter:GetStartSpeed());
+    
+    self.Lifetime = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.Lifetime:PanelNumberInput("Lifetime", emitter:GetLifetime());
+    
+    self.GravityFactor = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.GravityFactor:PanelNumberInput("Gravity Factor", emitter:GetGravityFactor());
     
     
     return self;

@@ -6,8 +6,9 @@
 namespace GTEngine
 {
     ParticleEmitter::ParticleEmitter()
-        : durationInSeconds(0.0), emissionRatePerSecond(10U), burst(false),
+        : burst(false), durationInSeconds(0.0), emissionRatePerSecond(10.0),
           startSpeed(5.0), lifetime(5.0),
+          gravityFactor(0.0),
           position(), orientation(),
           material(nullptr),
           timeSinceLastEmission(0.0),
@@ -18,8 +19,9 @@ namespace GTEngine
     }
 
     ParticleEmitter::ParticleEmitter(const ParticleEmitter &other)
-        : durationInSeconds(other.durationInSeconds), emissionRatePerSecond(other.emissionRatePerSecond), burst(other.burst),
+        : burst(other.burst), durationInSeconds(other.durationInSeconds), emissionRatePerSecond(other.emissionRatePerSecond),
           startSpeed(other.startSpeed), lifetime(other.lifetime),
+          gravityFactor(other.gravityFactor),
           position(other.position), orientation(other.orientation),
           material((other.material != nullptr) ? MaterialLibrary::CreateCopy(*other.material) : nullptr),
           timeSinceLastEmission(other.timeSinceLastEmission),
@@ -45,8 +47,10 @@ namespace GTEngine
     }
 
 
-    void ParticleEmitter::Update(double deltaTimeInSeconds)
+    void ParticleEmitter::Update(double deltaTimeInSeconds, const glm::vec3 &gravity)
     {
+        float deltaTimeInSecondsF = static_cast<float>(deltaTimeInSeconds);
+
         // We will first update any still-alive particles.
         size_t iParticle = 0;
         while (iParticle < this->particles.count)
@@ -64,7 +68,8 @@ namespace GTEngine
                     // The particle is still alive. We need to update it.
                     //
                     // For now, we will just move it in the direction of the emitter for the sake of testing.
-                    particle.position += this->GetForwardVector() * static_cast<float>(this->startSpeed * deltaTimeInSeconds);
+                    particle.velocity += gravity * static_cast<float>(this->gravityFactor * deltaTimeInSeconds);
+                    particle.position += particle.velocity * deltaTimeInSecondsF;
 
                     ++iParticle;
                 }
@@ -78,33 +83,12 @@ namespace GTEngine
         {
             Particle particle;
             particle.position        = this->position;
+            particle.velocity        = this->GetForwardVector() * static_cast<float>(this->startSpeed);
             particle.timeLeftToDeath = this->lifetime;
             this->particles.PushBack(particle);
 
             this->timeSinceLastEmission = 0.0;
         }
-    }
-
-
-    void ParticleEmitter::SetDurationInSeconds(double newDurationInSeconds)
-    {
-        this->durationInSeconds = newDurationInSeconds;
-    }
-
-    double ParticleEmitter::GetDurationInSeconds() const
-    {
-        return this->durationInSeconds;
-    }
-
-
-    void ParticleEmitter::SetEmissionRatePerSecond(unsigned int newEmissionRatePerSecond)
-    {
-        this->emissionRatePerSecond = newEmissionRatePerSecond;
-    }
-
-    unsigned int ParticleEmitter::GetEmissionRatePerSecond() const
-    {
-        return this->emissionRatePerSecond;
     }
 
 
@@ -121,6 +105,29 @@ namespace GTEngine
     bool ParticleEmitter::IsBurstModeEnabled() const
     {
         return this->burst;
+    }
+
+
+
+    void ParticleEmitter::SetDurationInSeconds(double newDurationInSeconds)
+    {
+        this->durationInSeconds = newDurationInSeconds;
+    }
+
+    double ParticleEmitter::GetDurationInSeconds() const
+    {
+        return this->durationInSeconds;
+    }
+
+
+    void ParticleEmitter::SetEmissionRatePerSecond(double newEmissionRatePerSecond)
+    {
+        this->emissionRatePerSecond = newEmissionRatePerSecond;
+    }
+
+    double ParticleEmitter::GetEmissionRatePerSecond() const
+    {
+        return this->emissionRatePerSecond;
     }
 
 
@@ -144,6 +151,17 @@ namespace GTEngine
     void ParticleEmitter::SetLifetime(double newLifetime)
     {
         this->lifetime = newLifetime;
+    }
+
+
+    double ParticleEmitter::GetGravityFactor() const
+    {
+        return this->gravityFactor;
+    }
+
+    void ParticleEmitter::SetGravityFactor(double newGravityFactor)
+    {
+        this->gravityFactor = newGravityFactor;
     }
 
 

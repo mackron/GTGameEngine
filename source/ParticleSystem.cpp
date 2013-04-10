@@ -6,8 +6,9 @@ namespace GTEngine
 {
     ParticleSystem::ParticleSystem(const ParticleSystemDefinition &definitionIn)
         : definition(definitionIn),
+          emitters(),
           position(), orientation(),
-          emitters()
+          gravity()
     {
         this->Refresh();
     }
@@ -46,9 +47,20 @@ namespace GTEngine
             auto emitter = this->emitters[i];
             assert(emitter != nullptr);
             {
-                emitter->Update(deltaTimeInSeconds);
+                emitter->Update(deltaTimeInSeconds, this->gravity);
             }
         }
+    }
+
+
+    size_t ParticleSystem::GetEmitterCount() const
+    {
+        return this->emitters.count;
+    }
+
+    const ParticleEmitter* ParticleSystem::GetEmitter(size_t index) const
+    {
+        return this->emitters[index];
     }
 
 
@@ -97,14 +109,14 @@ namespace GTEngine
     }
 
 
-    size_t ParticleSystem::GetEmitterCount() const
+    void ParticleSystem::SetGravity(const glm::vec3 &newGravity)
     {
-        return this->emitters.count;
+        this->gravity = newGravity;
     }
 
-    const ParticleEmitter* ParticleSystem::GetEmitter(size_t index) const
+    const glm::vec3 & ParticleSystem::GetGravity() const
     {
-        return this->emitters[index];
+        return this->gravity;
     }
 
 

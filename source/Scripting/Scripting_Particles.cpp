@@ -25,8 +25,22 @@ namespace GTEngine
                 "    return new;"
                 "end;"
 
+
+                "function GTEngine.ParticleEmitter:EnableBurstMode()"
+                "   GTEngine.System.ParticleEmitter.EnableBurstMode(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:DisableBurstMode()"
+                "   GTEngine.System.ParticleEmitter.DisableBurstMode(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:IsBurstModeEnabled()"
+                "   return GTEngine.System.ParticleEmitter.IsBurstModeEnabled(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.ParticleEmitter:SetDurationInSeconds(durationInSeconds)"
-                "    return GTEngine.System.ParticleEmitter.SetDurationInSeconds(self._internalPtr, durationInSeconds);"
+                "    GTEngine.System.ParticleEmitter.SetDurationInSeconds(self._internalPtr, durationInSeconds);"
                 "end;"
 
                 "function GTEngine.ParticleEmitter:GetDurationInSeconds()"
@@ -35,11 +49,38 @@ namespace GTEngine
 
 
                 "function GTEngine.ParticleEmitter:SetEmissionRatePerSecond(emissionRatePerSecond)"
-                "    return GTEngine.System.ParticleEmitter.SetEmissionRatePerSecond(self._internalPtr, emissionRatePerSecond);"
+                "    GTEngine.System.ParticleEmitter.SetEmissionRatePerSecond(self._internalPtr, emissionRatePerSecond);"
                 "end;"
 
                 "function GTEngine.ParticleEmitter:GetEmissionRatePerSecond()"
                 "    return GTEngine.System.ParticleEmitter.GetEmissionRatePerSecond(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.ParticleEmitter:SetStartSpeed(startSpeed)"
+                "    GTEngine.System.ParticleEmitter.SetStartSpeed(self._internalPtr, startSpeed);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetStartSpeed()"
+                "    return GTEngine.System.ParticleEmitter.GetStartSpeed(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.ParticleEmitter:SetLifetime(lifetime)"
+                "    GTEngine.System.ParticleEmitter.SetLifetime(self._internalPtr, lifetime);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetLifetime()"
+                "    return GTEngine.System.ParticleEmitter.GetLifetime(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.ParticleEmitter:SetGravityFactor(gravityFactor)"
+                "    GTEngine.System.ParticleEmitter.SetGravityFactor(self._internalPtr, gravityFactor);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetGravityFactor()"
+                "    return GTEngine.System.ParticleEmitter.GetGravityFactor(self._internalPtr);"
                 "end;"
             );
 
@@ -55,10 +96,19 @@ namespace GTEngine
                         script.Push("ParticleEmitter");
                         script.PushNewTable();
                         {
+                            script.SetTableFunction(-1, "EnableBurstMode",           ParticleEmitterFFI::EnableBurstMode);
+                            script.SetTableFunction(-1, "DisableBurstMode",          ParticleEmitterFFI::DisableBurstMode);
+                            script.SetTableFunction(-1, "IsBurstModeEnabled",        ParticleEmitterFFI::IsBurstModeEnabled);
                             script.SetTableFunction(-1, "SetDurationInSeconds",      ParticleEmitterFFI::SetDurationInSeconds);
                             script.SetTableFunction(-1, "GetDurationInSeconds",      ParticleEmitterFFI::GetDurationInSeconds);
                             script.SetTableFunction(-1, "SetEmissionRatePerSecond",  ParticleEmitterFFI::SetEmissionRatePerSecond);
                             script.SetTableFunction(-1, "GetEmissionRatePerSecond",  ParticleEmitterFFI::GetEmissionRatePerSecond);
+                            script.SetTableFunction(-1, "SetStartSpeed",             ParticleEmitterFFI::SetStartSpeed);
+                            script.SetTableFunction(-1, "GetStartSpeed",             ParticleEmitterFFI::GetStartSpeed);
+                            script.SetTableFunction(-1, "SetLifetime",               ParticleEmitterFFI::SetLifetime);
+                            script.SetTableFunction(-1, "GetLifetime",               ParticleEmitterFFI::GetLifetime);
+                            script.SetTableFunction(-1, "SetGravityFactor",          ParticleEmitterFFI::SetGravityFactor);
+                            script.SetTableFunction(-1, "GetGravityFactor",          ParticleEmitterFFI::GetGravityFactor);
                         }
                         script.SetTableValue(-3);
                     }
@@ -184,6 +234,44 @@ namespace GTEngine
 
         namespace ParticleEmitterFFI
         {
+            int EnableBurstMode(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->EnableBurstMode();
+                }
+
+                return 0;
+            }
+
+            int DisableBurstMode(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->DisableBurstMode();
+                }
+
+                return 0;
+            }
+
+            int IsBurstModeEnabled(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(emitter->IsBurstModeEnabled());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+
             int SetDurationInSeconds(GTCore::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
@@ -216,7 +304,7 @@ namespace GTEngine
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
                 {
-                    emitter->SetEmissionRatePerSecond(script.ToInteger(2));
+                    emitter->SetEmissionRatePerSecond(script.ToDouble(2));
                 }
 
                 return 0;
@@ -227,11 +315,92 @@ namespace GTEngine
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
                 {
-                    script.Push(static_cast<int>(emitter->GetEmissionRatePerSecond()));
+                    script.Push(emitter->GetEmissionRatePerSecond());
                 }
                 else
                 {
-                    script.Push(10);
+                    script.Push(10.0);
+                }
+
+                return 1;
+            }
+
+
+            int SetStartSpeed(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->SetStartSpeed(script.ToDouble(2));
+                }
+
+                return 0;
+            }
+
+            int GetStartSpeed(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(emitter->GetStartSpeed());
+                }
+                else
+                {
+                    script.Push(5.0);
+                }
+
+                return 1;
+            }
+
+
+            int SetLifetime(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->SetLifetime(script.ToDouble(2));
+                }
+
+                return 0;
+            }
+
+            int GetLifetime(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(emitter->GetLifetime());
+                }
+                else
+                {
+                    script.Push(5.0);
+                }
+
+                return 1;
+            }
+
+
+            int SetGravityFactor(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->SetGravityFactor(script.ToDouble(2));
+                }
+
+                return 0;
+            }
+
+            int GetGravityFactor(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(emitter->GetGravityFactor());
+                }
+                else
+                {
+                    script.Push(5.0);
                 }
 
                 return 1;
