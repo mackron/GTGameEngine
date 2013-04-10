@@ -7,6 +7,7 @@
 #include "MaterialLibrary.hpp"
 #include "Rendering/VertexArray.hpp"
 #include <GTCore/Vector.hpp>
+#include <GTCore/Random.hpp>
 
 namespace GTEngine
 {
@@ -147,6 +148,35 @@ namespace GTEngine
 
     private:
 
+        enum EmissionShapeType
+        {
+            EmissionShapeType_Cone   = 1,
+            EmissionShapeType_Sphere = 2,
+            EmissionShapeType_Box    = 3            
+        };
+
+        union EmissionShape
+        {
+            struct
+            {
+                float radius;
+                float angle;
+            }cone;
+
+            struct
+            {
+                float radius;
+            }sphere;
+
+            struct
+            {
+                float x;
+                float y;
+                float z;
+            }box;
+        };
+
+
         /// Keeps track of whether or not the emitter is in burst mode. False by default.
         bool burst;
 
@@ -167,6 +197,13 @@ namespace GTEngine
         double gravityFactor;
 
 
+        /// The emission shape type.
+        EmissionShapeType emissionShapeType;
+
+        /// The emission shape.
+        EmissionShape emissionShape;
+
+
 
         /// The position of the emitter.
         glm::vec3 position;
@@ -182,6 +219,9 @@ namespace GTEngine
 
         /// The time since the last time a particle was emitted.
         double timeSinceLastEmission;
+
+        /// The random number generator for spawning particles randomly.
+        GTCore::Random random;
 
 
         // TODO: Use a more efficient data structure here. Look at the same type of structure as the event messaging one.
