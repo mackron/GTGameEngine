@@ -6,13 +6,13 @@
 namespace GTEngine
 {
     ParticleEmitter::ParticleEmitter()
-        : burst(false), durationInSeconds(0.0), emissionRatePerSecond(10.0),
+        : flags(0), durationInSeconds(0.0), emissionRatePerSecond(10.0),
           startSpeed(5.0), lifetime(5.0),
           gravityFactor(0.0),
           emissionShapeType(EmissionShapeType_Cone), emissionShape(),
           position(), orientation(),
           material(nullptr),
-          timeSinceLastEmission(0.0),
+          timeSinceLastEmission(1.0 / emissionRatePerSecond),
           random(),
           particles(),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
@@ -24,7 +24,7 @@ namespace GTEngine
     }
 
     ParticleEmitter::ParticleEmitter(const ParticleEmitter &other)
-        : burst(other.burst), durationInSeconds(other.durationInSeconds), emissionRatePerSecond(other.emissionRatePerSecond),
+        : flags(other.flags), durationInSeconds(other.durationInSeconds), emissionRatePerSecond(other.emissionRatePerSecond),
           startSpeed(other.startSpeed), lifetime(other.lifetime),
           gravityFactor(other.gravityFactor),
           emissionShapeType(other.emissionShapeType), emissionShape(other.emissionShape),
@@ -47,10 +47,12 @@ namespace GTEngine
 
     void ParticleEmitter::Start()
     {
+        this->HasDoneFirstEmission(false);
     }
 
     void ParticleEmitter::Stop()
     {
+        this->HasDoneFirstEmission(false);
     }
 
 
@@ -86,96 +88,130 @@ namespace GTEngine
 
         // Now we need to spawn some particles if applicable.
         this->timeSinceLastEmission += deltaTimeInSeconds;
+        int spawnCount = 0;
 
-        double emissionRate = 1.0 / static_cast<double>(this->emissionRatePerSecond);
-        if (this->timeSinceLastEmission >= emissionRate)
+        if (!this->IsBurstModeEnabled())
         {
-            int spawnCount = static_cast<int>(this->timeSinceLastEmission / emissionRate);
-            for (int i = 0; i < spawnCount; ++i)
+            double emissionRate = 1.0 / this->emissionRatePerSecond;
+            if (this->timeSinceLastEmission >= emissionRate || !this->HasDoneFirstEmission())
             {
-                Particle particle;
+                spawnCount = static_cast<int>(this->timeSinceLastEmission / emissionRate);
 
-                // The spawning position and direction is different depending on the spawn shape. The position and direction is calculated
-                // in local space, which is then later transformed by the emitters transform.
-                glm::vec3 spawnPosition  = glm::vec3(0.0f, 0.0f,  0.0f);
-                glm::vec3 spawnDirection = glm::vec3(0.0f, 0.0f, -1.0f);
-
-                switch (this->emissionShapeType)
+                if (this->HasDoneFirstEmission())
                 {
-                case EmissionShapeType_Cone:
+                    this->timeSinceLastEmission = 0.0;
+                }
+                else
+                {
+                    if (this->emissionRatePerSecond > 0.0)
                     {
-                        // We first get an untransformed random position on the surface of a circle. The z axis will be 0.0.
-                        glm::vec3 normalizedPosition;
-                        this->random.NextCircle(1.0f, normalizedPosition.x, normalizedPosition.y);
+                        spawnCount = 1;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (this->durationInSeconds > 0.0 || !this->HasDoneFirstEmission())                         // <-- Ensures that if the duration is 0.0, only a single burst is done.
+            {
+                if (this->timeSinceLastEmission >= this->durationInSeconds)
+                {
+                    spawnCount = static_cast<int>(this->emissionRatePerSecond);
+                    this->timeSinceLastEmission = 0.0;
+                }
+            }
+        }
 
-                        float distanceFactor = glm::length(normalizedPosition);
 
-                        spawnPosition.x = normalizedPosition.x * this->emissionShape.cone.radius * std::sqrt(distanceFactor);
-                        spawnPosition.y = normalizedPosition.y * this->emissionShape.cone.radius * std::sqrt(distanceFactor);
-                        spawnPosition.z = 0.0f;
+        for (int i = 0; i < spawnCount; ++i)
+        {
+            Particle particle;
 
-                        // Now we need an untransformed direction.
-                        float rotationAngle    = this->emissionShape.cone.angle * distanceFactor;
-                        glm::vec3 rotationAxis = glm::cross(glm::vec3(0.0f, 0.0f, -1.0f), glm::normalize(normalizedPosition));
+            // The spawning position and direction is different depending on the spawn shape. The position and direction is calculated
+            // in local space, which is then later transformed by the emitters transform.
+            glm::vec3 spawnPosition  = glm::vec3(0.0f, 0.0f,  0.0f);
+            glm::vec3 spawnDirection = glm::vec3(0.0f, 0.0f, -1.0f);
+
+            switch (this->emissionShapeType)
+            {
+            case EmissionShapeType_Cone:
+                {
+                    // We first get an untransformed random position on the surface of a circle. The z axis will be 0.0.
+                    glm::vec3 normalizedPosition;
+                    this->random.NextCircle(1.0f, normalizedPosition.x, normalizedPosition.y);
+
+                    float distanceFactor = glm::length(normalizedPosition);
+
+                    spawnPosition.x = normalizedPosition.x * this->emissionShape.cone.radius * std::sqrt(distanceFactor);
+                    spawnPosition.y = normalizedPosition.y * this->emissionShape.cone.radius * std::sqrt(distanceFactor);
+                    spawnPosition.z = 0.0f;
+
+                    // Now we need an untransformed direction.
+                    float rotationAngle    = this->emissionShape.cone.angle * distanceFactor;
+                    glm::vec3 rotationAxis = glm::cross(glm::vec3(0.0f, 0.0f, -1.0f), glm::normalize(normalizedPosition));
                     
-                        spawnDirection = glm::normalize(glm::angleAxis(rotationAngle, rotationAxis) * glm::vec3(0.0f, 0.0f, -1.0f));
+                    spawnDirection = glm::normalize(glm::angleAxis(rotationAngle, rotationAxis) * glm::vec3(0.0f, 0.0f, -1.0f));
 
 
-                        break;
-                    }
-
-                case EmissionShapeType_Sphere:
-                    {
-                        this->random.NextSphere(this->emissionShape.sphere.radius, spawnPosition.x, spawnPosition.y, spawnPosition.z);
-                        spawnDirection = glm::normalize(spawnPosition);
-
-                        break;
-                    }
-
-                case EmissionShapeType_Box:
-                    {
-                        this->random.NextBox(this->emissionShape.box.x, this->emissionShape.box.y, this->emissionShape.box.z, spawnPosition.x, spawnPosition.y, spawnPosition.z);
-
-                        break;
-                    }
-
-                default: break;
+                    break;
                 }
 
+            case EmissionShapeType_Sphere:
+                {
+                    this->random.NextSphere(this->emissionShape.sphere.radius, spawnPosition.x, spawnPosition.y, spawnPosition.z);
+                    spawnDirection = glm::normalize(spawnPosition);
 
-                // Now we need to transform the position and calculate the velocity.
-                glm::mat4 transform = glm::mat4_cast(this->orientation);
-                transform[3]        = glm::vec4(this->position, 1.0f);
+                    break;
+                }
 
-                particle.position = glm::vec3(transform * glm::vec4(spawnPosition, 1.0f));
-                particle.velocity = this->orientation * spawnDirection * static_cast<float>(this->startSpeed);
+            case EmissionShapeType_Box:
+                {
+                    this->random.NextBox(this->emissionShape.box.x, this->emissionShape.box.y, this->emissionShape.box.z, spawnPosition.x, spawnPosition.y, spawnPosition.z);
 
+                    break;
+                }
 
-
-                //particle.scale = glm::vec3(0.2f);  // <-- TEMP!
-
-                particle.timeLeftToDeath = this->lifetime;
-                this->particles.PushBack(particle);
+            default: break;
             }
 
-            this->timeSinceLastEmission = 0.0;
+
+            // Now we need to transform the position and calculate the velocity.
+            glm::mat4 transform = glm::mat4_cast(this->orientation);
+            transform[3]        = glm::vec4(this->position, 1.0f);
+
+            particle.position = glm::vec3(transform * glm::vec4(spawnPosition, 1.0f));
+            particle.velocity = this->orientation * spawnDirection * static_cast<float>(this->startSpeed);
+
+
+
+            //particle.scale = glm::vec3(0.2f);  // <-- TEMP!
+
+            particle.timeLeftToDeath = this->lifetime;
+            this->particles.PushBack(particle);
+        }
+
+
+        // We need to have the emitter know that the first emission has been performed.
+        if (spawnCount > 0)
+        {
+            this->HasDoneFirstEmission(true);
         }
     }
 
 
     void ParticleEmitter::EnableBurstMode()
     {
-        this->burst = true;
+        this->flags = this->flags | BurstEnabled;
     }
 
     void ParticleEmitter::DisableBurstMode()
     {
-        this->burst = false;
+        this->flags = this->flags & ~BurstEnabled;
     }
 
     bool ParticleEmitter::IsBurstModeEnabled() const
     {
-        return this->burst;
+        return (this->flags & BurstEnabled) != 0;
     }
 
 
@@ -271,5 +307,28 @@ namespace GTEngine
         this->material = MaterialLibrary::Create(relativePath);
 
         // TODO: Apply the material to all existing particles.
+    }
+
+
+
+
+    ////////////////////////////////////////////////
+    // Private
+
+    bool ParticleEmitter::HasDoneFirstEmission() const
+    {
+        return (this->flags & DoneFirstEmission) != 0;
+    }
+
+    void ParticleEmitter::HasDoneFirstEmission(bool doneFirstEmission)
+    {
+        if (doneFirstEmission)
+        {
+            this->flags = this->flags | DoneFirstEmission;
+        }
+        else
+        {
+            this->flags = this->flags & ~DoneFirstEmission;
+        }
     }
 }

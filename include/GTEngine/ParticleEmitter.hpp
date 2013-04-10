@@ -148,6 +148,16 @@ namespace GTEngine
 
     private:
 
+        /// Determines whether or not an emission has taken place.
+        bool HasDoneFirstEmission() const;
+
+        /// Sets whether or not the first emission has taken place.
+        void HasDoneFirstEmission(bool doneFirstEmission);
+
+
+
+    private:
+
         enum EmissionShapeType
         {
             EmissionShapeType_Cone   = 1,
@@ -176,9 +186,15 @@ namespace GTEngine
             }box;
         };
 
+        enum Flags
+        {
+            BurstEnabled      = (1 << 1),
+            DoneFirstEmission = (1 << 2)
+        };
 
-        /// Keeps track of whether or not the emitter is in burst mode. False by default.
-        bool burst;
+
+        /// Various boolean flags. Defaults to 0 (all false).
+        uint32_t flags;
 
         /// Keeps track of the amount of time to emit particles in seconds. When this is set to 0, the emitter will emit particles infinately. If particles
         /// are being bursted, this will control the amount of time between bursts.
