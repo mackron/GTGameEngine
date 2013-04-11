@@ -14,8 +14,8 @@ namespace GTEngine
 
     VertexArray::~VertexArray()
     {
-        delete [] this->vertices;
-        delete [] this->indices;
+        free(this->vertices);
+        free(this->indices);
     }
 
     void VertexArray::SetData(const float *vertices, size_t vertexCount, const unsigned int *indices, size_t indexCount)
@@ -33,11 +33,11 @@ namespace GTEngine
 
         if (this->vertexCount != vertexCount)
         {
-            delete [] this->vertices;
+            free(this->vertices);
 
             if (vertexCount > 0)
             {
-                this->vertices = new float[vertexDataSize];
+                this->vertices = static_cast<float*>(malloc(vertexDataSize * sizeof(float)));
             }
             else
             {
@@ -65,11 +65,11 @@ namespace GTEngine
 
         if (this->indexCount != indexCount)
         {
-            delete [] this->indices;
+            free(this->indices);
 
             if (indexCount > 0)
             {
-                this->indices = new unsigned int[indexCount];
+                this->indices = static_cast<unsigned int*>(malloc(indexCount * sizeof(unsigned int)));
             }
             else
             {
@@ -231,8 +231,8 @@ namespace GTEngine
                     
                     this->vertexCount = static_cast<size_t>(newVertexCount);
 
-                    delete [] this->vertices;
-                    this->vertices = new float[this->format.GetSize() * this->vertexCount];
+                    free(this->vertices);
+                    this->vertices = static_cast<float*>(malloc(this->format.GetSize() * this->vertexCount * sizeof(float)));
                     deserializer.Read(this->vertices, sizeof(float) * this->format.GetSize() * this->vertexCount);
                 }
 
@@ -258,8 +258,8 @@ namespace GTEngine
 
                     this->indexCount = static_cast<size_t>(newIndexCount);
 
-                    delete [] this->indices;
-                    this->indices = new unsigned int[this->indexCount];
+                    free(this->indices);
+                    this->indices = static_cast<unsigned int*>(malloc(this->indexCount * sizeof(unsigned int)));
                     deserializer.Read(this->indices, sizeof(unsigned int) * this->indexCount);
                 }
 
