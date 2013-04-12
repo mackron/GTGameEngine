@@ -14,7 +14,7 @@ namespace GTEngine
 
         /// Constructor.
         Particle()
-            : position(), orientation(), scale(1.0f, 1.0f, 1.0f), velocity(), timeLeftToDeath(1.0)
+            : position(), orientation(), scale(1.0f, 1.0f, 1.0f), linearVelocity(), angularVelocity(glm::vec3(0.0f, 0.0f, 0.0f)), timeLeftToDeath(1.0)
         {
         }
 
@@ -26,12 +26,15 @@ namespace GTEngine
         /// The orienation of the particle.
         glm::quat orientation;
 
-        /// The scale of the particle.
+        /// The scale of the particle.e
         glm::vec3 scale;
 
 
-        /// The current velocity of the particle.
-        glm::vec3 velocity;
+        /// The current linear velocity of the particle.
+        glm::vec3 linearVelocity;
+
+        /// The current angular velocity of the particle.
+        glm::vec3 angularVelocity;
 
 
         /// The amount of time left before the particle dies.
