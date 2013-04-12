@@ -133,6 +133,13 @@ namespace GTEngine
                     };
 
                     this->vertexArray->SetVertexData(quadVertices, 4);
+                    
+
+                    // We want to enable blending here. There is no need to disable yet because the GUI renderer will be doing that when it's finished here.
+                    Renderer::EnableBlending();
+                    Renderer::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
+
+                    // Now we can draw.
                     Renderer::Draw(*this->vertexArray);
                 }
             }
