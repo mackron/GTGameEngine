@@ -603,10 +603,10 @@ namespace GTEngine
                                                 transform[3] = glm::vec4(particle.position, 1.0f);
                                                 transform   *= glm::scale(particle.scale);
 
-                                                glm::vec3 position0 = glm::vec3(transform * glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f));
-                                                glm::vec3 position1 = glm::vec3(transform * glm::vec4( 1.0f, -1.0f, 0.0f, 1.0f));
-                                                glm::vec3 position2 = glm::vec3(transform * glm::vec4( 1.0f,  1.0f, 0.0f, 1.0f));
-                                                glm::vec3 position3 = glm::vec3(transform * glm::vec4(-1.0f,  1.0f, 0.0f, 1.0f));
+                                                glm::vec3 position0 = glm::vec3(transform * glm::vec4(-0.5f, -0.5f, 0.0f, 1.0f));
+                                                glm::vec3 position1 = glm::vec3(transform * glm::vec4( 0.5f, -0.5f, 0.0f, 1.0f));
+                                                glm::vec3 position2 = glm::vec3(transform * glm::vec4( 0.5f,  0.5f, 0.0f, 1.0f));
+                                                glm::vec3 position3 = glm::vec3(transform * glm::vec4(-0.5f,  0.5f, 0.0f, 1.0f));
 
                                                 glm::vec2 texcoord0 = glm::vec2(0.0f, 0.0f);
                                                 glm::vec2 texcoord1 = glm::vec2(1.0f, 0.0f);
