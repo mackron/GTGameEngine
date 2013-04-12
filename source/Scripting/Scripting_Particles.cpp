@@ -103,6 +103,15 @@ namespace GTEngine
                 "function GTEngine.ParticleEmitter:GetEmissionShapeProperties()"
                 "    return GTEngine.System.ParticleEmitter.GetEmissionShapeProperties(self._internalPtr);"
                 "end;"
+
+
+                "function GTEngine.ParticleEmitter:SetBillboardMaterial(relativePath)"
+                "    return GTEngine.System.ParticleEmitter.SetBillboardMaterial(self._internalPtr, relativePath);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetBillboardMaterialRelativePath()"
+                "    return GTEngine.System.ParticleEmitter.GetBillboardMaterialRelativePath(self._internalPtr);"
+                "end;"
             );
 
             if (successful)
@@ -117,24 +126,26 @@ namespace GTEngine
                         script.Push("ParticleEmitter");
                         script.PushNewTable();
                         {
-                            script.SetTableFunction(-1, "EnableBurstMode",            ParticleEmitterFFI::EnableBurstMode);
-                            script.SetTableFunction(-1, "DisableBurstMode",           ParticleEmitterFFI::DisableBurstMode);
-                            script.SetTableFunction(-1, "IsBurstModeEnabled",         ParticleEmitterFFI::IsBurstModeEnabled);
-                            script.SetTableFunction(-1, "SetDurationInSeconds",       ParticleEmitterFFI::SetDurationInSeconds);
-                            script.SetTableFunction(-1, "GetDurationInSeconds",       ParticleEmitterFFI::GetDurationInSeconds);
-                            script.SetTableFunction(-1, "SetEmissionRatePerSecond",   ParticleEmitterFFI::SetEmissionRatePerSecond);
-                            script.SetTableFunction(-1, "GetEmissionRatePerSecond",   ParticleEmitterFFI::GetEmissionRatePerSecond);
-                            script.SetTableFunction(-1, "SetStartSpeed",              ParticleEmitterFFI::SetStartSpeed);
-                            script.SetTableFunction(-1, "GetStartSpeed",              ParticleEmitterFFI::GetStartSpeed);
-                            script.SetTableFunction(-1, "SetLifetime",                ParticleEmitterFFI::SetLifetime);
-                            script.SetTableFunction(-1, "GetLifetime",                ParticleEmitterFFI::GetLifetime);
-                            script.SetTableFunction(-1, "SetGravityFactor",           ParticleEmitterFFI::SetGravityFactor);
-                            script.SetTableFunction(-1, "GetGravityFactor",           ParticleEmitterFFI::GetGravityFactor);
-                            script.SetTableFunction(-1, "GetEmissionShapeType",       ParticleEmitterFFI::GetEmissionShapeType);
-                            script.SetTableFunction(-1, "SetConeEmissionShape",       ParticleEmitterFFI::SetConeEmissionShape);
-                            script.SetTableFunction(-1, "SetSphereEmissionShape",     ParticleEmitterFFI::SetSphereEmissionShape);
-                            script.SetTableFunction(-1, "SetBoxEmissionShape",        ParticleEmitterFFI::SetBoxEmissionShape);
-                            script.SetTableFunction(-1, "GetEmissionShapeProperties", ParticleEmitterFFI::GetEmissionShapeProperties);
+                            script.SetTableFunction(-1, "EnableBurstMode",                  ParticleEmitterFFI::EnableBurstMode);
+                            script.SetTableFunction(-1, "DisableBurstMode",                 ParticleEmitterFFI::DisableBurstMode);
+                            script.SetTableFunction(-1, "IsBurstModeEnabled",               ParticleEmitterFFI::IsBurstModeEnabled);
+                            script.SetTableFunction(-1, "SetDurationInSeconds",             ParticleEmitterFFI::SetDurationInSeconds);
+                            script.SetTableFunction(-1, "GetDurationInSeconds",             ParticleEmitterFFI::GetDurationInSeconds);
+                            script.SetTableFunction(-1, "SetEmissionRatePerSecond",         ParticleEmitterFFI::SetEmissionRatePerSecond);
+                            script.SetTableFunction(-1, "GetEmissionRatePerSecond",         ParticleEmitterFFI::GetEmissionRatePerSecond);
+                            script.SetTableFunction(-1, "SetStartSpeed",                    ParticleEmitterFFI::SetStartSpeed);
+                            script.SetTableFunction(-1, "GetStartSpeed",                    ParticleEmitterFFI::GetStartSpeed);
+                            script.SetTableFunction(-1, "SetLifetime",                      ParticleEmitterFFI::SetLifetime);
+                            script.SetTableFunction(-1, "GetLifetime",                      ParticleEmitterFFI::GetLifetime);
+                            script.SetTableFunction(-1, "SetGravityFactor",                 ParticleEmitterFFI::SetGravityFactor);
+                            script.SetTableFunction(-1, "GetGravityFactor",                 ParticleEmitterFFI::GetGravityFactor);
+                            script.SetTableFunction(-1, "GetEmissionShapeType",             ParticleEmitterFFI::GetEmissionShapeType);
+                            script.SetTableFunction(-1, "SetConeEmissionShape",             ParticleEmitterFFI::SetConeEmissionShape);
+                            script.SetTableFunction(-1, "SetSphereEmissionShape",           ParticleEmitterFFI::SetSphereEmissionShape);
+                            script.SetTableFunction(-1, "SetBoxEmissionShape",              ParticleEmitterFFI::SetBoxEmissionShape);
+                            script.SetTableFunction(-1, "GetEmissionShapeProperties",       ParticleEmitterFFI::GetEmissionShapeProperties);
+                            script.SetTableFunction(-1, "SetBillboardMaterial",             ParticleEmitterFFI::SetBillboardMaterial);
+                            script.SetTableFunction(-1, "GetBillboardMaterialRelativePath", ParticleEmitterFFI::GetBillboardMaterialRelativePath);
                         }
                         script.SetTableValue(-3);
                     }
@@ -253,18 +264,28 @@ namespace GTEngine
             }
 
 
-            // Emission shapes.
+            // Misc. stuff like enumerators.
             if (successful)
             {
                 script.GetGlobal("GTEngine");
                 assert(script.IsTable(-1));
                 {
+                    // Emission shapes.
                     script.Push("ParticleEmissionShapes");
                     script.PushNewTable();
                     {
                         script.SetTableValue(-1, "Cone",   ParticleEmitter::EmissionShapeType_Cone);
                         script.SetTableValue(-1, "Sphere", ParticleEmitter::EmissionShapeType_Sphere);
                         script.SetTableValue(-1, "Box",    ParticleEmitter::EmissionShapeType_Box);
+                    }
+                    script.SetTableValue(-3);
+
+                    // Particle shapes.
+                    script.Push("ParticleShapeTypes");
+                    script.PushNewTable();
+                    {
+                        script.SetTableValue(-1, "Billboard", ParticleEmitter::ParticleShapeType_Billboard);
+                        script.SetTableValue(-1, "Model",     ParticleEmitter::ParticleShapeType_Model);
                     }
                     script.SetTableValue(-3);
                 }
@@ -558,6 +579,45 @@ namespace GTEngine
                 }
 
                 return 0;
+            }
+
+
+            int SetBillboardMaterial(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(emitter->SetMaterial(script.ToString(2)));
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+            int GetBillboardMaterialRelativePath(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    auto material = emitter->GetMaterial();
+                    if (material != nullptr)
+                    {
+                        script.Push(material->GetDefinition().relativePath.c_str());
+                    }
+                    else
+                    {
+                        script.PushNil();
+                    }
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
             }
         }
 

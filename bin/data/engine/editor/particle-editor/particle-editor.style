@@ -93,3 +93,12 @@ particle-editor-panel-emitter-shape-container
     
     padding-left: 8px
 }
+
+particle-editor-panel-particle-shape-container
+{
+    width:   100%
+    height:  auto
+    visible: false
+    
+    padding-left: 8px
+}

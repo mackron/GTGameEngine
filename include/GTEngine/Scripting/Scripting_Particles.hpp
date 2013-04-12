@@ -151,6 +151,20 @@ namespace GTEngine
             ///         Sphere Shape: radius
             ///         Box Shape: x, y, z extents.
             int GetEmissionShapeProperties(GTCore::Script &script);
+
+
+            /// Sets the material of the billboard shape.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The relative path of the material.
+            int SetBillboardMaterial(GTCore::Script &script);
+
+            /// Retrieves the relative path of the billboard material.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetBillboardMaterialRelativePath(GTCore::Script &script);
         }
 
         namespace ParticleSystemFFI
