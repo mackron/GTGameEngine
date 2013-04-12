@@ -329,6 +329,7 @@
 		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Editor.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Game.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Math.hpp" />
+		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Particles.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Rendering.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Scene.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting/Scripting_SceneNode.hpp" />
@@ -573,6 +574,7 @@
 		<Unit filename="../../../source/Scripting/Scripting_Editor.cpp" />
 		<Unit filename="../../../source/Scripting/Scripting_Game.cpp" />
 		<Unit filename="../../../source/Scripting/Scripting_Math.cpp" />
+		<Unit filename="../../../source/Scripting/Scripting_Particles.cpp" />
 		<Unit filename="../../../source/Scripting/Scripting_Rendering.cpp" />
 		<Unit filename="../../../source/Scripting/Scripting_Scene.cpp" />
 		<Unit filename="../../../source/Scripting/Scripting_SceneNode.cpp" />
