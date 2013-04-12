@@ -25,6 +25,12 @@ namespace GTEngine
             EmissionShapeType_Box    = 3            
         };
 
+        enum ParticleShapeType
+        {
+            ParticleShapeType_Billboard = 1,
+            ParticleShapeType_Model     = 2,
+        };
+
 
 
     public:
@@ -169,7 +175,7 @@ namespace GTEngine
 
 
         /// Sets the material to use with each particle.
-        void SetMaterial(const char* relativePath);
+        bool SetMaterial(const char* relativePath);
 
         /// Retrieves a pointer to the material.
         Material* GetMaterial() const { return this->material; }

@@ -351,12 +351,20 @@ namespace GTEngine
     }
 
 
-    void ParticleEmitter::SetMaterial(const char* relativePath)
+    bool ParticleEmitter::SetMaterial(const char* relativePath)
     {
-        MaterialLibrary::Delete(this->material);
-        this->material = MaterialLibrary::Create(relativePath);
+        auto newMaterial = MaterialLibrary::Create(relativePath);
+        if (newMaterial != nullptr)
+        {
+            MaterialLibrary::Delete(this->material);
+            this->material = newMaterial;
 
-        // TODO: Apply the material to all existing particles.
+            // TODO: Apply the material to all existing particles.
+
+            return true;
+        }
+
+        return false;
     }
 
 

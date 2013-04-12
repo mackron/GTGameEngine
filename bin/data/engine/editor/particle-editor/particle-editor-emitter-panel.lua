@@ -6,7 +6,8 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.Index       = index;
     self.OwnerEditor = ownerEditor;
     
-    self.ShapeDropDownItems = {};       -- Indexed by the shape type.
+    self.EmissionShapeDropDownItems = {};       -- Indexed by the shape type.
+    self.ParticleShapeDropDownItems = {};       -- Indexed by the shape type.
     
     
     self.Burst = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:4px' />");
@@ -30,13 +31,12 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     self.EmissionShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-dropdown-box' />");
     self.EmissionShape:PanelDropDownBox("Emission Shape");
-    self.ShapeDropDownItems[GTEngine.ParticleEmissionShapes.Cone]   = self.EmissionShape:AppendItem("Cone");
-    self.ShapeDropDownItems[GTEngine.ParticleEmissionShapes.Sphere] = self.EmissionShape:AppendItem("Sphere");
-    self.ShapeDropDownItems[GTEngine.ParticleEmissionShapes.Box]    = self.EmissionShape:AppendItem("Box");
-    
-    self.ShapeDropDownItems[GTEngine.ParticleEmissionShapes.Cone].ShapeType   = GTEngine.ParticleEmissionShapes.Cone;
-    self.ShapeDropDownItems[GTEngine.ParticleEmissionShapes.Sphere].ShapeType = GTEngine.ParticleEmissionShapes.Sphere;
-    self.ShapeDropDownItems[GTEngine.ParticleEmissionShapes.Box].ShapeType    = GTEngine.ParticleEmissionShapes.Box;
+    self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Cone]   = self.EmissionShape:AppendItem("Cone");
+    self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Sphere] = self.EmissionShape:AppendItem("Sphere");
+    self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Box]    = self.EmissionShape:AppendItem("Box");
+    self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Cone].ShapeType   = GTEngine.ParticleEmissionShapes.Cone;
+    self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Sphere].ShapeType = GTEngine.ParticleEmissionShapes.Sphere;
+    self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Box].ShapeType    = GTEngine.ParticleEmissionShapes.Box;
     
     
     self.ConeShapeProperties        = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                .. "' styleclass='particle-editor-panel-emitter-shape-container' />");
@@ -58,7 +58,23 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.BoxShapeProperties.Z:PanelNumberInput("Z", 0.0);
     
     
-    function self:SetShape(shapeType)
+    self.ParticleShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-dropdown-box' />");
+    self.ParticleShape:PanelDropDownBox("Particle Shape");
+    self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Billboard] = self.ParticleShape:AppendItem("Billboard");
+    self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Model]     = self.ParticleShape:AppendItem("Model");
+    self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Billboard].ShapeType = GTEngine.ParticleShapeTypes.Billboard;
+    self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Model].ShapeType     = GTEngine.ParticleShapeTypes.Model;
+    
+    self.BillboardShapeProperties          = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                     .. "' styleclass='particle-editor-panel-particle-shape-container' />");
+    self.BillboardShapeProperties.Material = GTGUI.Server.New("<div parentid='" .. self.BillboardShapeProperties:GetID() .. "' styleclass='textbox' style='width:100%; margin:0px 2px;' />");
+    
+    self.ModelShapeProperties          = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' styleclass='particle-editor-panel-particle-shape-container' />");
+    self.ModelShapeProperties.Message  = GTGUI.Server.New("<div parentid='" .. self.ModelShapeProperties:GetID() .. "' style='margin:0px 2px; text-color:#666; font-style:bold; horizontal-align:center;'>Not currently supported.</div>");
+    
+    
+    
+    
+    function self:SetEmissionShape(shapeType)
         if      shapeType == GTEngine.ParticleEmissionShapes.Cone   then
             self.Emitter:SetConeEmissionShape(1.0, 25.0);
             
@@ -97,6 +113,23 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     end
     
     
+    function self:SetParticleShape(shapeType)
+        if     shapeType == GTEngine.ParticleShapeTypes.Billboard then
+            self.BillboardShapeProperties.Material:SetText(self.Emitter:GetBillboardMaterialRelativePath());
+        
+            self.BillboardShapeProperties:Show();
+            self.ModelShapeProperties:Hide();
+        elseif shapeType == GTEngine.ParticleShapeTypes.Model     then
+            self.BillboardShapeProperties:Hide();
+            self.ModelShapeProperties:Show();
+        else
+            return;
+        end
+        
+        self.OwnerEditor:OnChange();
+    end
+    
+    
     
     -----------------------------------------------
     -- Changes to shape properties.
@@ -127,11 +160,27 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.ConeShapeProperties.Angle:OnValueChanged(ApplyEmissionShape);
     
     self.SphereShapeProperties.Radius:OnValueChanged(ApplyEmissionShape);
-    
+
     self.BoxShapeProperties.X:OnValueChanged(ApplyEmissionShape);
     self.BoxShapeProperties.Y:OnValueChanged(ApplyEmissionShape);
     self.BoxShapeProperties.Z:OnValueChanged(ApplyEmissionShape);
     
+    
+    
+    self.BillboardShapeProperties.Material:OnKeyPressed(function(data)
+        if data.key == GTGUI.Keys.Enter then
+            self.Emitter:SetBillboardMaterial(self.BillboardShapeProperties.Material:GetText());
+            self.OwnerEditor:OnChange();
+        end
+    end)
+    
+    self.BillboardShapeProperties.Material:OnDrop(function(data)
+        if data.droppedElement.isAsset then
+            self.BillboardShapeProperties.Material:SetText(data.droppedElement.path);
+            self.Emitter:SetBillboardMaterial(data.droppedElement.path);
+            self.OwnerEditor:OnChange();
+        end
+    end)
     
     
     
@@ -172,12 +221,19 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     
     self.EmissionShape:OnSelectionChanged(function(data)
-        self:SetShape(data.selectedItem.ShapeType);
+        self:SetEmissionShape(data.selectedItem.ShapeType);
+    end);
+    
+    self.ParticleShape:OnSelectionChanged(function(data)
+        self:SetParticleShape(data.selectedItem.ShapeType);
     end);
     
     
-    -- Select the shape from the dropdown.
-    self.EmissionShape:SelectItem(self.ShapeDropDownItems[self.Emitter:GetEmissionShapeType()]);
+    -- Select the emission shape from the dropdown.
+    self.EmissionShape:SelectItem(self.EmissionShapeDropDownItems[self.Emitter:GetEmissionShapeType()]);
+    
+    -- Select the particle shape from the dropdown.
+    self.ParticleShape:SelectItemByIndex(1);
     
     
     
