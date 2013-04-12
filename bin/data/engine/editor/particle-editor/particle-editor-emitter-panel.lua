@@ -75,9 +75,9 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     
     function self:SetEmissionShape(shapeType)
+        self.Emitter:SetEmissionShapeType(shapeType);
+        
         if      shapeType == GTEngine.ParticleEmissionShapes.Cone   then
-            self.Emitter:SetConeEmissionShape(1.0, 25.0);
-            
             local radius,angle = self.Emitter:GetEmissionShapeProperties();
             self.ConeShapeProperties.Radius:SetValue(radius);
             self.ConeShapeProperties.Angle:SetValue(angle);
@@ -86,8 +86,6 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
             self.SphereShapeProperties:Hide();
             self.BoxShapeProperties:Hide();
         elseif shapeType == GTEngine.ParticleEmissionShapes.Sphere then
-            self.Emitter:SetSphereEmissionShape(1.0);
-            
             local radius = self.Emitter:GetEmissionShapeProperties();
             self.SphereShapeProperties.Radius:SetValue(radius);
             
@@ -95,8 +93,6 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
             self.SphereShapeProperties:Show();
             self.BoxShapeProperties:Hide();
         elseif shapeType == GTEngine.ParticleEmissionShapes.Box    then
-            self.Emitter:SetBoxEmissionShape(1.0, 1.0, 1.0);
-            
             local x,y,z = self.Emitter:GetEmissionShapeProperties();
             self.BoxShapeProperties.X:SetValue(x);
             self.BoxShapeProperties.Y:SetValue(y);

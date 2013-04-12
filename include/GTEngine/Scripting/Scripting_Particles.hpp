@@ -114,6 +114,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the particle emitter.
             int GetEmissionShapeType(GTCore::Script &script);
 
+            /// Sets the emission shape type.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int SetEmissionShapeType(GTCore::Script &script);
+
+
             /// Sets the emission shape to a cone.
             ///
             /// @remarks

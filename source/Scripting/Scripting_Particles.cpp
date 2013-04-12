@@ -88,6 +88,11 @@ namespace GTEngine
                 "    return GTEngine.System.ParticleEmitter.GetEmissionShapeType(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.ParticleEmitter:SetEmissionShapeType(shapeType)"
+                "    return GTEngine.System.ParticleEmitter.SetEmissionShapeType(self._internalPtr, shapeType);"
+                "end;"
+
+
                 "function GTEngine.ParticleEmitter:SetConeEmissionShape(radius, angle)"
                 "    return GTEngine.System.ParticleEmitter.SetConeEmissionShape(self._internalPtr, radius, angle);"
                 "end;"
@@ -140,6 +145,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "SetGravityFactor",                 ParticleEmitterFFI::SetGravityFactor);
                             script.SetTableFunction(-1, "GetGravityFactor",                 ParticleEmitterFFI::GetGravityFactor);
                             script.SetTableFunction(-1, "GetEmissionShapeType",             ParticleEmitterFFI::GetEmissionShapeType);
+                            script.SetTableFunction(-1, "SetEmissionShapeType",             ParticleEmitterFFI::SetEmissionShapeType);
                             script.SetTableFunction(-1, "SetConeEmissionShape",             ParticleEmitterFFI::SetConeEmissionShape);
                             script.SetTableFunction(-1, "SetSphereEmissionShape",           ParticleEmitterFFI::SetSphereEmissionShape);
                             script.SetTableFunction(-1, "SetBoxEmissionShape",              ParticleEmitterFFI::SetBoxEmissionShape);
@@ -487,6 +493,18 @@ namespace GTEngine
 
                 return 1;
             }
+
+            int SetEmissionShapeType(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->SetEmissionShapeType(static_cast<ParticleEmitter::EmissionShapeType>(script.ToInteger(2)));
+                }
+
+                return 0;
+            }
+
 
             int SetConeEmissionShape(GTCore::Script &script)
             {
