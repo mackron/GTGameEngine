@@ -17,6 +17,17 @@ namespace GTEngine
     class ParticleEmitter
     {
     public:
+
+        enum EmissionShapeType
+        {
+            EmissionShapeType_Cone   = 1,
+            EmissionShapeType_Sphere = 2,
+            EmissionShapeType_Box    = 3            
+        };
+
+
+
+    public:
         
         /// Constructor.
         ParticleEmitter();
@@ -105,6 +116,38 @@ namespace GTEngine
         void SetGravityFactor(double newGravityFactor);
 
 
+        /// Retrieves the type of the emission shape.
+        EmissionShapeType GetEmissionShapeType() const;
+
+        /// Sets the emission shape to a cone.
+        void SetConeEmissionShape(float radius, float angle);
+
+        /// Sets the emission shape to a sphere.
+        void SetSphereEmissionShape(float radius);
+
+        /// Sets the emission shape to a box.
+        void SetBoxEmissionShape(float x, float y, float z);
+
+
+        /// Retrieves the cone emission shape properties.
+        ///
+        /// @remarks
+        ///     This is only a valid call if the shape is a cone. Results are undefined if this is not the case.
+        void GetConeEmissionShape(float &radiusOut, float &angleOut) const;
+
+        /// Retrieves the sphere emission shape properties.
+        ///
+        /// @remarks
+        ///     This is only a valid call if the shape is a sphere. Results are undefined if this is not the case.
+        void GetSphereEmissionShape(float &radiusOut) const;
+
+        /// Retrieves the box emission shape properties.
+        ///
+        /// @remarks
+        ///     This is only a valid call if the shape is a box. Results are undefined if this is not the case.
+        void GetBoxEmissionShape(float &xOut, float &yOut, float &zOut) const;
+
+
 
         /// Retrieves the position of the emitter.
         const glm::vec3 & GetPosition() const;
@@ -155,15 +198,7 @@ namespace GTEngine
         void HasDoneFirstEmission(bool doneFirstEmission);
 
 
-
     private:
-
-        enum EmissionShapeType
-        {
-            EmissionShapeType_Cone   = 1,
-            EmissionShapeType_Sphere = 2,
-            EmissionShapeType_Box    = 3            
-        };
 
         union EmissionShape
         {

@@ -82,6 +82,27 @@ namespace GTEngine
                 "function GTEngine.ParticleEmitter:GetGravityFactor()"
                 "    return GTEngine.System.ParticleEmitter.GetGravityFactor(self._internalPtr);"
                 "end;"
+
+
+                "function GTEngine.ParticleEmitter:GetEmissionShapeType()"
+                "    return GTEngine.System.ParticleEmitter.GetEmissionShapeType(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:SetConeEmissionShape(radius, angle)"
+                "    return GTEngine.System.ParticleEmitter.SetConeEmissionShape(self._internalPtr, radius, angle);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:SetSphereEmissionShape(radius)"
+                "    return GTEngine.System.ParticleEmitter.SetSphereEmissionShape(self._internalPtr, radius);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:SetBoxEmissionShape(x, y, z)"
+                "    return GTEngine.System.ParticleEmitter.SetBoxEmissionShape(self._internalPtr, x, y, z);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetEmissionShapeProperties()"
+                "    return GTEngine.System.ParticleEmitter.GetEmissionShapeProperties(self._internalPtr);"
+                "end;"
             );
 
             if (successful)
@@ -96,19 +117,24 @@ namespace GTEngine
                         script.Push("ParticleEmitter");
                         script.PushNewTable();
                         {
-                            script.SetTableFunction(-1, "EnableBurstMode",           ParticleEmitterFFI::EnableBurstMode);
-                            script.SetTableFunction(-1, "DisableBurstMode",          ParticleEmitterFFI::DisableBurstMode);
-                            script.SetTableFunction(-1, "IsBurstModeEnabled",        ParticleEmitterFFI::IsBurstModeEnabled);
-                            script.SetTableFunction(-1, "SetDurationInSeconds",      ParticleEmitterFFI::SetDurationInSeconds);
-                            script.SetTableFunction(-1, "GetDurationInSeconds",      ParticleEmitterFFI::GetDurationInSeconds);
-                            script.SetTableFunction(-1, "SetEmissionRatePerSecond",  ParticleEmitterFFI::SetEmissionRatePerSecond);
-                            script.SetTableFunction(-1, "GetEmissionRatePerSecond",  ParticleEmitterFFI::GetEmissionRatePerSecond);
-                            script.SetTableFunction(-1, "SetStartSpeed",             ParticleEmitterFFI::SetStartSpeed);
-                            script.SetTableFunction(-1, "GetStartSpeed",             ParticleEmitterFFI::GetStartSpeed);
-                            script.SetTableFunction(-1, "SetLifetime",               ParticleEmitterFFI::SetLifetime);
-                            script.SetTableFunction(-1, "GetLifetime",               ParticleEmitterFFI::GetLifetime);
-                            script.SetTableFunction(-1, "SetGravityFactor",          ParticleEmitterFFI::SetGravityFactor);
-                            script.SetTableFunction(-1, "GetGravityFactor",          ParticleEmitterFFI::GetGravityFactor);
+                            script.SetTableFunction(-1, "EnableBurstMode",            ParticleEmitterFFI::EnableBurstMode);
+                            script.SetTableFunction(-1, "DisableBurstMode",           ParticleEmitterFFI::DisableBurstMode);
+                            script.SetTableFunction(-1, "IsBurstModeEnabled",         ParticleEmitterFFI::IsBurstModeEnabled);
+                            script.SetTableFunction(-1, "SetDurationInSeconds",       ParticleEmitterFFI::SetDurationInSeconds);
+                            script.SetTableFunction(-1, "GetDurationInSeconds",       ParticleEmitterFFI::GetDurationInSeconds);
+                            script.SetTableFunction(-1, "SetEmissionRatePerSecond",   ParticleEmitterFFI::SetEmissionRatePerSecond);
+                            script.SetTableFunction(-1, "GetEmissionRatePerSecond",   ParticleEmitterFFI::GetEmissionRatePerSecond);
+                            script.SetTableFunction(-1, "SetStartSpeed",              ParticleEmitterFFI::SetStartSpeed);
+                            script.SetTableFunction(-1, "GetStartSpeed",              ParticleEmitterFFI::GetStartSpeed);
+                            script.SetTableFunction(-1, "SetLifetime",                ParticleEmitterFFI::SetLifetime);
+                            script.SetTableFunction(-1, "GetLifetime",                ParticleEmitterFFI::GetLifetime);
+                            script.SetTableFunction(-1, "SetGravityFactor",           ParticleEmitterFFI::SetGravityFactor);
+                            script.SetTableFunction(-1, "GetGravityFactor",           ParticleEmitterFFI::GetGravityFactor);
+                            script.SetTableFunction(-1, "GetEmissionShapeType",       ParticleEmitterFFI::GetEmissionShapeType);
+                            script.SetTableFunction(-1, "SetConeEmissionShape",       ParticleEmitterFFI::SetConeEmissionShape);
+                            script.SetTableFunction(-1, "SetSphereEmissionShape",     ParticleEmitterFFI::SetSphereEmissionShape);
+                            script.SetTableFunction(-1, "SetBoxEmissionShape",        ParticleEmitterFFI::SetBoxEmissionShape);
+                            script.SetTableFunction(-1, "GetEmissionShapeProperties", ParticleEmitterFFI::GetEmissionShapeProperties);
                         }
                         script.SetTableValue(-3);
                     }
@@ -222,6 +248,25 @@ namespace GTEngine
                         script.SetTableValue(-3);
                     }
                     script.Pop(1);
+                }
+                script.Pop(1);
+            }
+
+
+            // Emission shapes.
+            if (successful)
+            {
+                script.GetGlobal("GTEngine");
+                assert(script.IsTable(-1));
+                {
+                    script.Push("ParticleEmissionShapes");
+                    script.PushNewTable();
+                    {
+                        script.SetTableValue(-1, "Cone",   ParticleEmitter::EmissionShapeType_Cone);
+                        script.SetTableValue(-1, "Sphere", ParticleEmitter::EmissionShapeType_Sphere);
+                        script.SetTableValue(-1, "Box",    ParticleEmitter::EmissionShapeType_Box);
+                    }
+                    script.SetTableValue(-3);
                 }
                 script.Pop(1);
             }
@@ -404,6 +449,115 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+
+            int GetEmissionShapeType(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(emitter->GetEmissionShapeType());
+                }
+                else
+                {
+                    script.Push(ParticleEmitter::EmissionShapeType_Cone);
+                }
+
+                return 1;
+            }
+
+            int SetConeEmissionShape(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    float radius = script.ToFloat(2);
+                    float angle  = script.ToFloat(3);
+
+                    emitter->SetConeEmissionShape(radius, angle);
+                }
+
+                return 0;
+            }
+
+            int SetSphereEmissionShape(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    float radius = script.ToFloat(2);
+
+                    emitter->SetSphereEmissionShape(radius);
+                }
+
+                return 0;
+            }
+
+            int SetBoxEmissionShape(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    float x = script.ToFloat(2);
+                    float y = script.ToFloat(3);
+                    float z = script.ToFloat(4);
+
+                    emitter->SetBoxEmissionShape(x, y, z);
+                }
+
+                return 0;
+            }
+
+            int GetEmissionShapeProperties(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    switch (emitter->GetEmissionShapeType())
+                    {
+                    case ParticleEmitter::EmissionShapeType_Cone:
+                        {
+                            float radius;
+                            float angle;
+                            emitter->GetConeEmissionShape(radius, angle);
+
+                            script.Push(radius);
+                            script.Push(angle);
+
+                            return 2;
+                        }
+
+                    case ParticleEmitter::EmissionShapeType_Sphere:
+                        {
+                            float radius;
+                            emitter->GetSphereEmissionShape(radius);
+
+                            script.Push(radius);
+
+                            return 1;
+                        }
+
+                    case ParticleEmitter::EmissionShapeType_Box:
+                        {
+                            float x;
+                            float y;
+                            float z;
+                            emitter->GetBoxEmissionShape(x, y, z);
+
+                            script.Push(x);
+                            script.Push(y);
+                            script.Push(z);
+
+                            return 3;
+                        }
+
+
+                    default: break;
+                    }
+                }
+
+                return 0;
             }
         }
 

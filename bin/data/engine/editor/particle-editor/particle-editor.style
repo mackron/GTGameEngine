@@ -83,3 +83,13 @@ particle-editor-newemitter-button-label
 particle-editor-panel-groupbox includes panel-groupbox
 {
 }
+
+
+particle-editor-panel-emitter-shape-container
+{
+    width:   100%
+    height:  auto
+    visible: false
+    
+    padding-left: 8px
+}

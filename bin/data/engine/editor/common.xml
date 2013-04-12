@@ -1,7 +1,13 @@
 <!-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file. -->
 
-<style  url="common/editor-panel.style" />
-<script url="common/editor-panel.lua"   />
+<style  url="common/dropdown-box.style"       />
+<script url="common/dropdown-box.lua"         />
 
-<style  url="common/panel-groupbox.style" />
-<script url="common/panel-groupbox.lua"   />
+<style  url="common/editor-panel.style"       />
+<script url="common/editor-panel.lua"         />
+
+<style  url="common/panel-groupbox.style"     />
+<script url="common/panel-groupbox.lua"       />
+
+<style  url="common/panel-dropdown-box.style" />
+<script url="common/panel-dropdown-box.lua"   />

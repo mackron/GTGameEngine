@@ -106,6 +106,51 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             int GetGravityFactor(GTCore::Script &script);
+
+
+            /// Retrieves the emission shape type.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetEmissionShapeType(GTCore::Script &script);
+
+            /// Sets the emission shape to a cone.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The radius of the cone shape.
+            ///     Argument 3: The angle of the cone shape.
+            int SetConeEmissionShape(GTCore::Script &script);
+
+            /// Sets the emission shape to a sphere.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The radius of the sphere.
+            int SetSphereEmissionShape(GTCore::Script &script);
+
+            /// Sets the emission shape to a box.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The x dimensions of the box.
+            ///     Argument 3: The y dimensions of the box.
+            ///     Argument 4: The z dimensions of the box.
+            int SetBoxEmissionShape(GTCore::Script &script);
+
+            /// Retrieves the properties of the current emission shape.
+            ///
+            /// @remarks
+            ///     This will return different values depending on the shape type. It is up to the script to check the type before handling the
+            ///     return values.
+            ///
+            ///     Argument 1: A pointer to the particle emitter.
+            ///
+            ///     Return:
+            ///         Cone Shape: radius, angle
+            ///         Sphere Shape: radius
+            ///         Box Shape: x, y, z extents.
+            int GetEmissionShapeProperties(GTCore::Script &script);
         }
 
         namespace ParticleSystemFFI

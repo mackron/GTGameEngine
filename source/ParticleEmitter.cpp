@@ -273,6 +273,56 @@ namespace GTEngine
 
 
 
+    ParticleEmitter::EmissionShapeType ParticleEmitter::GetEmissionShapeType() const
+    {
+        return this->emissionShapeType;
+    }
+
+    void ParticleEmitter::SetConeEmissionShape(float radius, float angle)
+    {
+        this->emissionShapeType = EmissionShapeType_Cone;
+        
+        this->emissionShape.cone.radius = radius;
+        this->emissionShape.cone.angle  = angle;
+    }
+
+    void ParticleEmitter::SetSphereEmissionShape(float radius)
+    {
+        this->emissionShapeType = EmissionShapeType_Sphere;
+
+        this->emissionShape.sphere.radius = radius;
+    }
+
+    void ParticleEmitter::SetBoxEmissionShape(float x, float y, float z)
+    {
+        this->emissionShapeType = EmissionShapeType_Box;
+
+        this->emissionShape.box.x = x;
+        this->emissionShape.box.y = y;
+        this->emissionShape.box.z = z;
+    }
+
+
+    void ParticleEmitter::GetConeEmissionShape(float &radiusOut, float &angleOut) const
+    {
+        radiusOut = this->emissionShape.cone.radius;
+        angleOut  = this->emissionShape.cone.angle;
+    }
+
+    void ParticleEmitter::GetSphereEmissionShape(float &radiusOut) const
+    {
+        radiusOut = this->emissionShape.sphere.radius;
+    }
+
+    void ParticleEmitter::GetBoxEmissionShape(float &xOut, float &yOut, float &zOut) const
+    {
+        xOut = this->emissionShape.box.x;
+        yOut = this->emissionShape.box.y;
+        zOut = this->emissionShape.box.z;
+    }
+
+
+
     const glm::vec3 & ParticleEmitter::GetPosition() const
     {
         return this->position;

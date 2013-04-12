@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
-panel-number-input
+panel-dropdown-box
 {
     width:            100%
     height:           auto
@@ -10,20 +10,19 @@ panel-number-input
     margin-top:       4px
 }
 
-panel-number-input-label
+panel-dropdown-box-label
 {
     width:      auto
     text-color: std-text-color
     padding:    0px 2px
 }
 
-panel-number-input-label:disabled
+panel-dropdown-box:disabled
 {
     text-color: #5a5a5a
 }
 
-panel-number-input-textbox includes textbox
+panel-dropdown-box-dropdown-box includes dropdown-box
 {
-    width:     100%
-    max-width: 72px
+    
 }
