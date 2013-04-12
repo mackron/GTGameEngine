@@ -181,9 +181,6 @@ namespace GTEngine
             particle.linearVelocity = this->orientation * spawnDirection * static_cast<float>(this->startSpeed);
 
 
-
-            //particle.scale = glm::vec3(0.2f);  // <-- TEMP!
-
             particle.timeLeftToDeath = this->lifetime;
             this->particles.PushBack(particle);
         }
