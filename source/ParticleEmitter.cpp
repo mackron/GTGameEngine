@@ -74,8 +74,9 @@ namespace GTEngine
                     // The particle is still alive. We need to update it.
                     //
                     // For now, we will just move it in the direction of the emitter for the sake of testing.
-                    particle.velocity += gravity * static_cast<float>(this->gravityFactor * deltaTimeInSeconds);
-                    particle.position += particle.velocity * deltaTimeInSecondsF;
+                    particle.linearVelocity += gravity * static_cast<float>(this->gravityFactor * deltaTimeInSeconds);
+                    particle.position       += particle.linearVelocity * deltaTimeInSecondsF;
+                    particle.orientation     = particle.orientation * glm::quat(glm::radians(particle.angularVelocity * deltaTimeInSecondsF));
 
                     ++iParticle;
                 }
@@ -176,8 +177,8 @@ namespace GTEngine
             glm::mat4 transform = glm::mat4_cast(this->orientation);
             transform[3]        = glm::vec4(this->position, 1.0f);
 
-            particle.position = glm::vec3(transform * glm::vec4(spawnPosition, 1.0f));
-            particle.velocity = this->orientation * spawnDirection * static_cast<float>(this->startSpeed);
+            particle.position       = glm::vec3(transform * glm::vec4(spawnPosition, 1.0f));
+            particle.linearVelocity = this->orientation * spawnDirection * static_cast<float>(this->startSpeed);
 
 
 

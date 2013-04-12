@@ -599,7 +599,7 @@ namespace GTEngine
                                                 auto vertex2 = vertex1 + vertexSize;
                                                 auto vertex3 = vertex2 + vertexSize;
 
-                                                glm::mat4 transform(inverseViewMatrix);
+                                                glm::mat4 transform(inverseViewMatrix * glm::mat4_cast(particle.orientation));
                                                 transform[3] = glm::vec4(particle.position, 1.0f);
                                                 transform   *= glm::scale(particle.scale);
 
