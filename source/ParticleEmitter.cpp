@@ -9,7 +9,7 @@ namespace GTEngine
         : flags(0), durationInSeconds(0.0), emissionRatePerSecond(10.0),
           startSpeed(5.0), lifetime(5.0),
           gravityFactor(0.0),
-          emissionShapeType(EmissionShapeType_Cone), emissionShape(),
+          emissionShapeType(EmissionShapeType_Cone), emissionShapeCone(), emissionShapeSphere(), emissionShapeBox(),
           position(), orientation(),
           material(nullptr),
           timeSinceLastEmission(1.0 / emissionRatePerSecond),
@@ -18,16 +18,13 @@ namespace GTEngine
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
     {
         this->SetMaterial("engine/materials/simple-diffuse.material");
-
-        this->emissionShape.cone.angle  = 25.0f;
-        this->emissionShape.cone.radius = 1.0f;
     }
 
     ParticleEmitter::ParticleEmitter(const ParticleEmitter &other)
         : flags(other.flags), durationInSeconds(other.durationInSeconds), emissionRatePerSecond(other.emissionRatePerSecond),
           startSpeed(other.startSpeed), lifetime(other.lifetime),
           gravityFactor(other.gravityFactor),
-          emissionShapeType(other.emissionShapeType), emissionShape(other.emissionShape),
+          emissionShapeType(other.emissionShapeType), emissionShapeCone(other.emissionShapeCone), emissionShapeSphere(other.emissionShapeSphere), emissionShapeBox(other.emissionShapeBox),
           position(other.position), orientation(other.orientation),
           material((other.material != nullptr) ? MaterialLibrary::CreateCopy(*other.material) : nullptr),
           timeSinceLastEmission(other.timeSinceLastEmission),
@@ -142,12 +139,12 @@ namespace GTEngine
 
                     float distanceFactor = glm::length(normalizedPosition);
 
-                    spawnPosition.x = normalizedPosition.x * this->emissionShape.cone.radius * std::sqrt(distanceFactor);
-                    spawnPosition.y = normalizedPosition.y * this->emissionShape.cone.radius * std::sqrt(distanceFactor);
+                    spawnPosition.x = normalizedPosition.x * this->emissionShapeCone.radius * std::sqrt(distanceFactor);
+                    spawnPosition.y = normalizedPosition.y * this->emissionShapeCone.radius * std::sqrt(distanceFactor);
                     spawnPosition.z = 0.0f;
 
                     // Now we need an untransformed direction.
-                    float rotationAngle    = this->emissionShape.cone.angle * distanceFactor;
+                    float rotationAngle    = this->emissionShapeCone.angle * distanceFactor;
                     glm::vec3 rotationAxis = glm::cross(glm::vec3(0.0f, 0.0f, -1.0f), glm::normalize(normalizedPosition));
                     
                     spawnDirection = glm::normalize(glm::angleAxis(rotationAngle, rotationAxis) * glm::vec3(0.0f, 0.0f, -1.0f));
@@ -158,7 +155,7 @@ namespace GTEngine
 
             case EmissionShapeType_Sphere:
                 {
-                    this->random.NextSphere(this->emissionShape.sphere.radius, spawnPosition.x, spawnPosition.y, spawnPosition.z);
+                    this->random.NextSphere(this->emissionShapeSphere.radius, spawnPosition.x, spawnPosition.y, spawnPosition.z);
                     spawnDirection = glm::normalize(spawnPosition);
 
                     break;
@@ -166,7 +163,7 @@ namespace GTEngine
 
             case EmissionShapeType_Box:
                 {
-                    this->random.NextBox(this->emissionShape.box.x, this->emissionShape.box.y, this->emissionShape.box.z, spawnPosition.x, spawnPosition.y, spawnPosition.z);
+                    this->random.NextBox(this->emissionShapeBox.x, this->emissionShapeBox.y, this->emissionShapeBox.z, spawnPosition.x, spawnPosition.y, spawnPosition.z);
 
                     break;
                 }
@@ -278,47 +275,53 @@ namespace GTEngine
         return this->emissionShapeType;
     }
 
+    void ParticleEmitter::SetEmissionShapeType(ParticleEmitter::EmissionShapeType newEmissionShapeType)
+    {
+        this->emissionShapeType = newEmissionShapeType;
+    }
+
+
     void ParticleEmitter::SetConeEmissionShape(float radius, float angle)
     {
         this->emissionShapeType = EmissionShapeType_Cone;
         
-        this->emissionShape.cone.radius = radius;
-        this->emissionShape.cone.angle  = angle;
+        this->emissionShapeCone.radius = radius;
+        this->emissionShapeCone.angle  = angle;
     }
 
     void ParticleEmitter::SetSphereEmissionShape(float radius)
     {
         this->emissionShapeType = EmissionShapeType_Sphere;
 
-        this->emissionShape.sphere.radius = radius;
+        this->emissionShapeSphere.radius = radius;
     }
 
     void ParticleEmitter::SetBoxEmissionShape(float x, float y, float z)
     {
         this->emissionShapeType = EmissionShapeType_Box;
 
-        this->emissionShape.box.x = x;
-        this->emissionShape.box.y = y;
-        this->emissionShape.box.z = z;
+        this->emissionShapeBox.x = x;
+        this->emissionShapeBox.y = y;
+        this->emissionShapeBox.z = z;
     }
 
 
     void ParticleEmitter::GetConeEmissionShape(float &radiusOut, float &angleOut) const
     {
-        radiusOut = this->emissionShape.cone.radius;
-        angleOut  = this->emissionShape.cone.angle;
+        radiusOut = this->emissionShapeCone.radius;
+        angleOut  = this->emissionShapeCone.angle;
     }
 
     void ParticleEmitter::GetSphereEmissionShape(float &radiusOut) const
     {
-        radiusOut = this->emissionShape.sphere.radius;
+        radiusOut = this->emissionShapeSphere.radius;
     }
 
     void ParticleEmitter::GetBoxEmissionShape(float &xOut, float &yOut, float &zOut) const
     {
-        xOut = this->emissionShape.box.x;
-        yOut = this->emissionShape.box.y;
-        zOut = this->emissionShape.box.z;
+        xOut = this->emissionShapeBox.x;
+        yOut = this->emissionShapeBox.y;
+        zOut = this->emissionShapeBox.z;
     }
 
 

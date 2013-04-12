@@ -125,6 +125,10 @@ namespace GTEngine
         /// Retrieves the type of the emission shape.
         EmissionShapeType GetEmissionShapeType() const;
 
+        /// Sets the emission shape type.
+        void SetEmissionShapeType(EmissionShapeType newEmissionShapeType);
+
+
         /// Sets the emission shape to a cone.
         void SetConeEmissionShape(float radius, float angle);
 
@@ -206,25 +210,37 @@ namespace GTEngine
 
     private:
 
-        union EmissionShape
+        struct ConeEmissionShape
         {
-            struct
+            ConeEmissionShape()
+                : radius(1.0f), angle(25.0f)
             {
-                float radius;
-                float angle;
-            }cone;
+            }
 
-            struct
-            {
-                float radius;
-            }sphere;
+            float radius;
+            float angle;
+        };
 
-            struct
+        struct SphereEmissionShape
+        {
+            SphereEmissionShape()
+                : radius(1.0f)
             {
-                float x;
-                float y;
-                float z;
-            }box;
+            }
+
+            float radius;
+        };
+
+        struct BoxEmissionShape
+        {
+            BoxEmissionShape()
+                : x(1.0f), y(1.0f), z(1.0f)
+            {
+            }
+
+            float x;
+            float y;
+            float z;
         };
 
         enum Flags
@@ -258,7 +274,9 @@ namespace GTEngine
         EmissionShapeType emissionShapeType;
 
         /// The emission shape.
-        EmissionShape emissionShape;
+        ConeEmissionShape   emissionShapeCone;
+        SphereEmissionShape emissionShapeSphere;
+        BoxEmissionShape    emissionShapeBox;
 
 
 
