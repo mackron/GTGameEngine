@@ -72,14 +72,8 @@ function GTGUI.Element:PickingDropDownBox(titleText)
         else
             self.ListBox:SetStyle("top", "100%");
         end
-        
-        -- The position of the context menu will depend on whether or not it fits in the viewport.
-        --[[local xPos, yPos = GTGUI.Server.GetMousePosition();
-        if (xPos + self.ContextMenu:GetWidth()) > GTGUI.Server.GetViewportWidth() then
-            xPos = xPos - self.ContextMenu:GetWidth();
-        end]]
-        
 
+        
         self.ListBox:Show();
         self:AttachStyleClass("picking-dropdown-box-opened");
     end
