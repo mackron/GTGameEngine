@@ -672,5 +672,70 @@ namespace GTEngine
 
             return result;
         }
+
+
+
+        void PushNewVector2(GTCore::Script &script, float x, float y)
+        {
+            script.GetGlobal("math");
+            assert(script.IsTable(-1));
+            {
+                script.Push("vec2");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Push(x);
+                    script.Push(y);
+                    script.Call(2, 1);
+
+                    // Return value needs to be moved behind "math" in the stack which will leave it in the correct position for us.
+                    script.InsertIntoStack(-2);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PushNewVector3(GTCore::Script &script, float x, float y, float z)
+        {
+            script.GetGlobal("math");
+            assert(script.IsTable(-1));
+            {
+                script.Push("vec3");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Push(x);
+                    script.Push(y);
+                    script.Push(z);
+                    script.Call(3, 1);
+
+                    // Return value needs to be moved behind "math" in the stack which will leave it in the correct position for us.
+                    script.InsertIntoStack(-2);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PushNewVector4(GTCore::Script &script, float x, float y, float z, float w)
+        {
+            script.GetGlobal("math");
+            assert(script.IsTable(-1));
+            {
+                script.Push("vec4");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Push(x);
+                    script.Push(y);
+                    script.Push(z);
+                    script.Push(w);
+                    script.Call(4, 1);
+
+                    // Return value needs to be moved behind "math" in the stack which will leave it in the correct position for us.
+                    script.InsertIntoStack(-2);
+                }
+            }
+            script.Pop(1);
+        }
     }
 }

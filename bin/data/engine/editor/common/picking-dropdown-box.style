@@ -1,0 +1,110 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+picking-dropdown-box
+{
+    width:                  auto
+    height:                 auto
+    
+    child-plane:            horizontal
+    vertical-align:         center
+    
+    text-color:             std-text-color
+    background-image-color: std-text-color
+}
+
+picking-dropdown-box:hovered
+{
+    text-color:             #ccc
+    background-image-color: #ccc
+}
+
+picking-dropdown-box:pushed
+{
+    text-color:             #ddd
+    background-image-color: #ddd
+}
+
+
+picking-dropdown-box-opened
+{
+    text-color:              #ccc
+    background-image-color:  #ccc
+}
+
+picking-dropdown-box-opened:hovered
+{
+    background-image-color:  #ccc
+}
+
+picking-dropdown-box-opened:pushed
+{
+    background-image-color:  #ccc
+}
+
+
+
+
+picking-dropdown-box-icon
+{
+    width:                   16px
+    height:                  16px
+    background-image:        std-plus
+    
+    transparent-mouse-input: true
+}
+
+picking-dropdown-box-label
+{
+    width:  auto
+    height: auto
+    
+    transparent-mouse-input: true
+}
+
+picking-dropdown-box-listbox
+{
+    visible:            false
+    
+    width:              auto
+    height:             auto
+    //min-width:          150px
+    
+    positioning:        relative
+    relative-origin:    outer
+    top:                100%
+    left:               0px
+    
+    border:             1px #777
+    background-color:   #444
+    
+    enable-shadow:      true
+    shadow-color:       #000
+    shadow-offset-x:    4px
+    shadow-offset-y:    4px
+    shadow-extrusion-x: 2px
+    shadow-extrusion-y: 2px
+    shadow-blur-radius: 6px
+}
+
+picking-dropdown-box-listbox-item
+{
+    width:      auto
+    height:     auto
+    
+    min-width:  100%
+    
+    padding:    8px 3px
+    
+    text-color: #ccc
+}
+
+picking-dropdown-box-listbox-item:hovered
+{
+    background-color: #666
+}
+
+picking-dropdown-box-listbox-item:pushed
+{
+    background-color: #777
+}
+

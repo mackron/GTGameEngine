@@ -881,6 +881,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Particles.hpp">
       <Filter>include\Scripting</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleFunction.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleFunctionTypes.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1494,6 +1500,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Particles.cpp">
       <Filter>source\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ParticleFunction.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -172,6 +172,32 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             int GetBillboardMaterialRelativePath(GTCore::Script &script);
+
+
+            /// Retrieves the number of functions that are attached to the emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetFunctionCount(GTCore::Script &script);
+
+            /// Retrieves the properties of the function at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The index of the function being retrieved.
+            ///
+            ///     The return value is a table containing the type of the function and the start/end values. These are specific to the function type,
+            ///     so it is up to the script to handle the types manually. The type will be specified in the 'type' field in the returned table.
+            ///
+            ///     Typically this function should only ever be used by editting tool.
+            int GetFunctionByIndex(GTCore::Script &script);
+
+            /// Removes a function by it's index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The index of the function to remove.
+            int RemoveFunctionByIndex(GTCore::Script &script);
         }
 
         namespace ParticleSystemFFI

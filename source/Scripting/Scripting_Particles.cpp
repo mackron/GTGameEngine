@@ -1,7 +1,9 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Scripting/Scripting_Particles.hpp>
+#include <GTEngine/Scripting/Scripting_Math.hpp>
 #include <GTEngine/ParticleSystem.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -117,6 +119,20 @@ namespace GTEngine
                 "function GTEngine.ParticleEmitter:GetBillboardMaterialRelativePath()"
                 "    return GTEngine.System.ParticleEmitter.GetBillboardMaterialRelativePath(self._internalPtr);"
                 "end;"
+
+
+                "function GTEngine.ParticleEmitter:GetFunctionCount()"
+                "    return GTEngine.System.ParticleEmitter.GetFunctionCount(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetFunctionByIndex(index)"
+                "    return GTEngine.System.ParticleEmitter.GetFunctionByIndex(self._internalPtr, index);"
+                "end;"
+
+
+                "function GTEngine.ParticleEmitter:RemoveFunctionByIndex(index)"
+                "    return GTEngine.System.ParticleEmitter.RemoveFunctionByIndex(self._internalPtr, index);"
+                "end;"
             );
 
             if (successful)
@@ -152,6 +168,9 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetEmissionShapeProperties",       ParticleEmitterFFI::GetEmissionShapeProperties);
                             script.SetTableFunction(-1, "SetBillboardMaterial",             ParticleEmitterFFI::SetBillboardMaterial);
                             script.SetTableFunction(-1, "GetBillboardMaterialRelativePath", ParticleEmitterFFI::GetBillboardMaterialRelativePath);
+                            script.SetTableFunction(-1, "GetFunctionCount",                 ParticleEmitterFFI::GetFunctionCount);
+                            script.SetTableFunction(-1, "GetFunctionByIndex",               ParticleEmitterFFI::GetFunctionByIndex);
+                            script.SetTableFunction(-1, "RemoveFunctionByIndex",            ParticleEmitterFFI::RemoveFunctionByIndex);
                         }
                         script.SetTableValue(-3);
                     }
@@ -292,6 +311,16 @@ namespace GTEngine
                     {
                         script.SetTableValue(-1, "Billboard", ParticleEmitter::ParticleShapeType_Billboard);
                         script.SetTableValue(-1, "Model",     ParticleEmitter::ParticleShapeType_Model);
+                    }
+                    script.SetTableValue(-3);
+
+                    // Particle function types.
+                    script.Push("ParticleFunctionTypes");
+                    script.PushNewTable();
+                    {
+                        script.SetTableValue(-1, "SizeOverTime",            ParticleFunctionType_SizeOverTime);
+                        script.SetTableValue(-1, "LinearVelocityOverTime",  ParticleFunctionType_LinearVelocityOverTime);
+                        script.SetTableValue(-1, "AngularVelocityOverTime", ParticleFunctionType_AngularVelocityOverTime);
                     }
                     script.SetTableValue(-3);
                 }
@@ -636,6 +665,111 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+
+            int GetFunctionCount(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(static_cast<int>(emitter->GetFunctionCount()));
+                }
+                else
+                {
+                    script.Push(0);
+                }
+
+                return 1;
+            }
+
+            int GetFunctionByIndex(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    auto &function = emitter->GetFunction(script.ToInteger(2) - 1);      // <-- Minus 1 because Lua is 1 based.
+                    {
+                        script.PushNewTable();
+                        
+                        // Type.
+                        script.SetTableValue(-1, "type", function.GetType());
+
+
+                        switch (function.GetType())
+                        {
+                        case ParticleFunctionType_SizeOverTime:
+                            {
+                                float startValue;
+                                float endValue;
+                                static_cast<ParticleFunction_SizeOverTime &>(function).GetStartAndEndSizes(startValue, endValue);
+
+                                script.SetTableValue(-1, "startValue", startValue);
+                                script.SetTableValue(-1, "endValue",   endValue);
+
+                                break;
+                            }
+
+                        case ParticleFunctionType_LinearVelocityOverTime:
+                            {
+                                glm::vec3 startValue;
+                                glm::vec3 endValue;
+                                static_cast<ParticleFunction_LinearVelocityOverTime &>(function).GetStartAndEndVelocities(startValue, endValue);
+
+                                script.Push("startValue");
+                                PushNewVector3(script, startValue);
+                                script.SetTableValue(-3);
+
+                                script.Push("endValue");
+                                PushNewVector3(script, endValue);
+                                script.SetTableValue(-3);
+
+                                break;
+                            }
+
+                        case ParticleFunctionType_AngularVelocityOverTime:
+                            {
+                                glm::vec3 startValue;
+                                glm::vec3 endValue;
+                                static_cast<ParticleFunction_AngularVelocityOverTime &>(function).GetStartAndEndVelocities(startValue, endValue);
+
+                                script.Push("startValue");
+                                PushNewVector3(script, startValue);
+                                script.SetTableValue(-3);
+
+                                script.Push("endValue");
+                                PushNewVector3(script, endValue);
+                                script.SetTableValue(-3);
+
+                                break;
+                            }
+
+
+                        default:
+                            {
+                                GTEngine::Log("You've forgotten to add the particle function to the scripting environment!");
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+
+            int RemoveFunctionByIndex(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->RemoveFunctionByIndex(script.ToInteger(2) - 1);        // <-- Minus 1 because Lua is 1 based.
+                }
+
+                return 0;
             }
         }
 

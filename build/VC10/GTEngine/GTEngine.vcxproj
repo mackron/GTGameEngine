@@ -258,6 +258,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\NavigationMesh.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Particle.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ParticleEmitter.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleFunction.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleFunctionTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ParticleSystem.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ParticleSystemDefinition.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ParticleSystemLibrary.hpp" />
@@ -490,6 +492,7 @@
     <ClCompile Include="..\..\..\source\NavigationMesh.cpp" />
     <ClCompile Include="..\..\..\source\Particle.cpp" />
     <ClCompile Include="..\..\..\source\ParticleEmitter.cpp" />
+    <ClCompile Include="..\..\..\source\ParticleFunction.cpp" />
     <ClCompile Include="..\..\..\source\ParticleSystem.cpp" />
     <ClCompile Include="..\..\..\source\ParticleSystemDefinition.cpp" />
     <ClCompile Include="..\..\..\source\ParticleSystemLibrary.cpp" />

@@ -54,6 +54,34 @@ namespace GTEngine
         glm::quat ToQuaternion(GTCore::Script &script, int position);
 
 
+        /// Pushes a new math.vec2 table.
+        ///
+        /// @param value [in] The glm::vec2 containing the initial value of the math.vec2.
+        /// @param x     [in] The initial x value.
+        /// @param y     [in] The initial y value.
+        void PushNewVector2(GTCore::Script &script, float x, float y);
+        inline void PushNewVector2(GTCore::Script &script, const glm::vec2 &value) { PushNewVector2(script, value.x, value.y); }
+
+        /// Pushes a new math.vec3 table.
+        ///
+        /// @param value [in] The glm::vec3 containing the initial value of the math.vec3.
+        /// @param x     [in] The initial x value.
+        /// @param y     [in] The initial y value.
+        /// @param z     [in] The initial z value.
+        void PushNewVector3(GTCore::Script &script, float x, float y, float z);
+        inline void PushNewVector3(GTCore::Script &script, const glm::vec3 &value) { PushNewVector3(script, value.x, value.y, value.z); }
+
+        /// Pushes a new math.vec4 table.
+        ///
+        /// @param value [in] The glm::vec4 containing the initial value of the math.vec4.
+        /// @param x     [in] The initial x value.
+        /// @param y     [in] The initial y value.
+        /// @param z     [in] The initial z value.
+        /// @param w     [in] The initial w value.
+        void PushNewVector4(GTCore::Script &script, float x, float y, float z, float w);
+        inline void PushNewVector4(GTCore::Script &script, const glm::vec4 &value) { PushNewVector4(script, value.x, value.y, value.z, value.w); }
+
+
         namespace FFI
         {
             namespace MathFFI

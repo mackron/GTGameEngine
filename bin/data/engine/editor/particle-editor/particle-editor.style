@@ -102,3 +102,108 @@ particle-editor-panel-particle-shape-container
     
     padding-left: 8px
 }
+
+
+particle-editor-panel-functions-label
+{
+    margin-top: 12px
+    text-color: std-text-color
+    font-style: bold
+}
+
+
+particle-editor-panel-functions-container
+{
+    margin-top:    4px
+    border:1px     #333
+}
+
+
+
+
+particle-editor-function-panel
+{
+    padding-top:             4px
+    horizontal-align:        left
+    transparent-mouse-input: true
+}
+
+particle-editor-function-panel-title
+{
+    child-plane:      horizontal
+    vertical-align:   center
+    padding:          4px 0px
+    flex-child-width: true
+}
+
+particle-editor-function-panel-body
+{
+    margin-top:  8px
+    padding:     8px 0px
+    
+    transparent-mouse-input: true
+}
+
+particle-editor-function-panel-separator
+{
+    width:         100%
+    border-top:    1px #2a2a2a
+    border-bottom: 1px #494949
+    
+    margin-bottom: 0px
+    margin-top:    4px
+    
+    transparent-mouse-input: true
+}
+
+
+particle-editor-function-panel-title-text
+{
+    text-color:              #bbb
+    transparent-mouse-input: true
+}
+
+particle-editor-function-panel-title-arrow
+{
+    background-image:        std-arrow-down
+    background-image-color:  #bbb
+    
+    width:                   8px
+    height:                  8px
+    
+    margin-right:            4px
+    
+    transparent-mouse-input: true
+}
+
+particle-editor-function-panel-title-cross
+{
+    width:                  12px
+    height:                 12px
+    background-image:       std-cross
+    background-image-color: #555
+}
+
+particle-editor-function-panel-title-cross:hovered
+{
+    background-image-color: #f99
+}
+
+particle-editor-function-panel-title-cross:pushed
+{
+    background-image-color: #f66
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
