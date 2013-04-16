@@ -127,7 +127,7 @@ dropdown-box-item
     
     min-width:  100%
     
-    padding:    8px 2px
+    padding:    8px 3px
     
     text-color: #ccc
 }

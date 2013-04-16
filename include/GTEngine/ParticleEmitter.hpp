@@ -4,6 +4,7 @@
 #define __GTEngine_ParticleEmitter_hpp_
 
 #include "Particle.hpp"
+#include "ParticleFunction.hpp"
 #include "MaterialLibrary.hpp"
 #include "Rendering/VertexArray.hpp"
 #include <GTCore/Vector.hpp>
@@ -186,6 +187,18 @@ namespace GTEngine
 
 
 
+        /// Retrieves the number of functions attached to the emitter.
+        size_t GetFunctionCount() const;
+
+        /// Retrieves a reference to the function at the given index.
+              ParticleFunction & GetFunction(size_t index);
+        const ParticleFunction & GetFunction(size_t index) const;
+
+        /// Removes a function by it's index.
+        void RemoveFunctionByIndex(size_t index);
+
+
+
         /// Retrieves the number of alive particles.
         size_t GetParticleCount() const { return this->particles.count; }
 
@@ -302,6 +315,10 @@ namespace GTEngine
         // TODO: Use a more efficient data structure here. Look at the same type of structure as the event messaging one.
         /// The flat list of alive particles.
         GTCore::Vector<Particle> particles;
+
+
+        /// The list of functions to apply to each particle as time goes on.
+        GTCore::Vector<ParticleFunction*> functions;
         
 
         /// The vertex array for rendering. This will only be used by the renderer.

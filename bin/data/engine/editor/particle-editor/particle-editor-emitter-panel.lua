@@ -8,6 +8,7 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     self.EmissionShapeDropDownItems = {};       -- Indexed by the shape type.
     self.ParticleShapeDropDownItems = {};       -- Indexed by the shape type.
+    self.FunctionPanels             = {};
     
     
     self.Burst = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:4px' />");
@@ -70,6 +71,20 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     self.ModelShapeProperties          = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' styleclass='particle-editor-panel-particle-shape-container' />");
     self.ModelShapeProperties.Message  = GTGUI.Server.New("<div parentid='" .. self.ModelShapeProperties:GetID() .. "' style='margin:0px 2px; text-color:#666; font-style:bold; horizontal-align:center;'>Not currently supported.</div>");
+    
+    
+    self.FunctionsLabel = GTGUI.Server.CreateElement(self.Body, "particle-editor-panel-functions-label");
+    self.FunctionsLabel:SetText("Functions:");
+    
+    self.FunctionContainer = GTGUI.Server.CreateElement(self.Body, "particle-editor-panel-functions-container");
+    
+    -- New Function Menu.
+    self.NewFunctionDropDownBox = GTGUI.Server.CreateElement(self.Body, "picking-dropdown-box");
+    self.NewFunctionDropDownBox:PickingDropDownBox("New Function");
+    self.NewFunctionDropDownBox:SetStyle("margin-top", "4px");
+    self.NewFunctionDropDownBox:AppendItem("Size over Time");
+    self.NewFunctionDropDownBox:AppendItem("Linear Velocity over Time");
+    self.NewFunctionDropDownBox:AppendItem("Angular Velocity over Time");
     
     
     
@@ -180,6 +195,60 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     
     
+    
+    -- Appends a panel for the given particle function.
+    function self:AddFunctionPanel(particleFunction)
+        if particleFunction ~= nil then
+            local functionType = particleFunction.type;
+            local newPanel     = GTGUI.Server.CreateElement(self.FunctionContainer, "particle-editor-function-panel");
+            
+            if     functionType == GTEngine.ParticleFunctionTypes.SizeOverTime            then newPanel:ScalarParticleFunctionPanel("Size over Time");
+            elseif functionType == GTEngine.ParticleFunctionTypes.LinearVelocityOverTime  then newPanel:Vector3ParticleFunctionPanel("Linear Velocity over Time");
+            elseif functionType == GTEngine.ParticleFunctionTypes.AngularVelocityOverTime then newPanel:Vector3ParticleFunctionPanel("Angular Velocity over Time");
+            end
+            
+            
+            -- We hide the separator of the last function, so therefore the second last one needs to have it reshown because it will
+            -- have previously been hidden.
+            newPanel:HideSeparator();
+            if #self.FunctionPanels > 0 then
+                self.FunctionPanels[#self.FunctionPanels]:ShowSeparator();
+            end
+            
+            
+            newPanel:OnClose(function(data)
+                self:RemoveFunctionByIndex(self:GetFunctionPanelIndex(newPanel));
+            end);
+            
+            
+            self.FunctionPanels[#self.FunctionPanels + 1] = newPanel;
+        end
+    end
+    
+    function self:RemoveFunctionPanelByIndex(panelIndex)
+        GTGUI.Server.DeleteElement(self.FunctionPanels[panelIndex]);
+        table.remove(self.FunctionPanels, panelIndex);
+    end
+    
+    
+    function self:RemoveFunctionByIndex(functionIndex)
+        self:RemoveFunctionPanelByIndex(functionIndex);
+        self.Emitter:RemoveFunctionByIndex(functionIndex);
+        
+        self.OwnerEditor:OnChange();
+    end
+    
+    function self:GetFunctionPanelIndex(panel)
+        return table.indexof(self.FunctionPanels, panel);
+    end
+    
+    
+    
+    
+    
+    
+    
+    
     self.Burst:OnChecked(function(data)
         self.Emitter:EnableBurstMode();
         self.OwnerEditor:OnChange();
@@ -233,5 +302,53 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     
     
+    -- Here we're going to add panels for each function type.
+    local functionCount = self.Emitter:GetFunctionCount();
+    for i=1,functionCount do
+        local particleFunction = self.Emitter:GetFunctionByIndex(i);
+        if particleFunction ~= nil then
+            self:AddFunctionPanel(particleFunction);
+        end
+    end
+    
+    
     return self;
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

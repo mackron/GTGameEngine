@@ -15,8 +15,25 @@ namespace GTEngine
           timeSinceLastEmission(1.0 / emissionRatePerSecond),
           random(),
           particles(),
+          functions(),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
     {
+        // Add a size over time function for testing.
+        auto sizeOverTimeFunction = new ParticleFunction_SizeOverTime();
+        sizeOverTimeFunction->SetStartAndEndSizes(1.0f, 0.0f);
+        this->functions.PushBack(sizeOverTimeFunction);
+
+        /*
+        auto linearVelocityOverTimeFunction = new ParticleFunction_LinearVelocityOverTime();
+        linearVelocityOverTimeFunction->SetStartAndEndVelocities(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
+        this->functions.PushBack(linearVelocityOverTimeFunction);
+        */
+
+        auto angularVelocityOverTimeFunction = new ParticleFunction_AngularVelocityOverTime();
+        angularVelocityOverTimeFunction->SetStartAndEndVelocities(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 90.0f));
+        this->functions.PushBack(angularVelocityOverTimeFunction);
+
+
         this->SetMaterial("engine/materials/simple-diffuse.material");
     }
 
@@ -30,14 +47,52 @@ namespace GTEngine
           timeSinceLastEmission(other.timeSinceLastEmission),
           random(other.random),
           particles(other.particles),
+          functions(),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
     {
+        // The functions need to be copied over.
+        for (size_t iFunction = 0; iFunction < other.GetFunctionCount(); ++iFunction)
+        {
+            auto &functionToCopy = other.GetFunction(iFunction);
+            {
+                switch (functionToCopy.GetType())
+                {
+                case ParticleFunctionType_SizeOverTime:
+                    {
+                        this->functions.PushBack(new ParticleFunction_SizeOverTime(reinterpret_cast<const ParticleFunction_SizeOverTime &>(functionToCopy)));
+                        break;
+                    }
+
+                case ParticleFunctionType_LinearVelocityOverTime:
+                    {
+                        this->functions.PushBack(new ParticleFunction_LinearVelocityOverTime(reinterpret_cast<const ParticleFunction_LinearVelocityOverTime &>(functionToCopy)));
+                        break;
+                    }
+
+                case ParticleFunctionType_AngularVelocityOverTime:
+                    {
+                        this->functions.PushBack(new ParticleFunction_AngularVelocityOverTime(reinterpret_cast<const ParticleFunction_AngularVelocityOverTime &>(functionToCopy)));
+                        break;
+                    }
+
+
+                default: break;
+                }
+            }
+        }
+
+
         this->vertexArray->SetData(other.vertexArray->GetVertexDataPtr(), other.vertexArray->GetVertexCount(), other.vertexArray->GetIndexDataPtr(), other.vertexArray->GetIndexCount());
     }
 
 
     ParticleEmitter::~ParticleEmitter()
     {
+        for (size_t iFunction = 0; iFunction < this->functions.count; ++iFunction)
+        {
+            delete this->functions[iFunction];
+        }
+
         Renderer::DeleteVertexArray(this->vertexArray);
     }
 
@@ -57,34 +112,9 @@ namespace GTEngine
     {
         float deltaTimeInSecondsF = static_cast<float>(deltaTimeInSeconds);
 
-        // We will first update any still-alive particles.
-        size_t iParticle = 0;
-        while (iParticle < this->particles.count)
-        {
-            auto &particle = this->GetParticle(iParticle);
-            {
-                particle.timeLeftToDeath -= deltaTimeInSeconds;
-                if (particle.timeLeftToDeath <= 0.0)
-                {
-                    // The particle is dead. Needs to be removed.
-                    this->particles.Remove(iParticle);
-                }
-                else
-                {
-                    // The particle is still alive. We need to update it.
-                    //
-                    // For now, we will just move it in the direction of the emitter for the sake of testing.
-                    particle.linearVelocity += gravity * static_cast<float>(this->gravityFactor * deltaTimeInSeconds);
-                    particle.position       += particle.linearVelocity * deltaTimeInSecondsF;
-                    particle.orientation     = particle.orientation * glm::quat(glm::radians(particle.angularVelocity * deltaTimeInSecondsF));
 
-                    ++iParticle;
-                }
-            }
-        }
-
-
-        // Now we need to spawn some particles if applicable.
+        // Now we need to spawn some particles if applicable. We need to do this before stepping particles because we want
+        // to do an initial iteration of each attached function.
         this->timeSinceLastEmission += deltaTimeInSeconds;
         int spawnCount = 0;
 
@@ -177,13 +207,58 @@ namespace GTEngine
             glm::mat4 transform = glm::mat4_cast(this->orientation);
             transform[3]        = glm::vec4(this->position, 1.0f);
 
-            particle.position       = glm::vec3(transform * glm::vec4(spawnPosition, 1.0f));
-            particle.linearVelocity = this->orientation * spawnDirection * static_cast<float>(this->startSpeed);
+            particle.position            = glm::vec3(transform * glm::vec4(spawnPosition, 1.0f));
+            particle.spawnLinearVelocity = this->orientation * spawnDirection * static_cast<float>(this->startSpeed);
 
 
             particle.timeLeftToDeath = this->lifetime;
             this->particles.PushBack(particle);
         }
+
+
+
+
+        // Here we will update any still-alive particles.
+        size_t iParticle = 0;
+        while (iParticle < this->particles.count)
+        {
+            auto &particle = this->GetParticle(iParticle);
+            {
+                particle.timeLeftToDeath -= deltaTimeInSeconds;
+                if (particle.timeLeftToDeath <= 0.0)
+                {
+                    // The particle is dead. Needs to be removed.
+                    this->particles.Remove(iParticle);
+                }
+                else
+                {
+                    // The particle is still alive. We need to update it.
+                    //
+                    // For now, we will just move it in the direction of the emitter for the sake of testing.
+                    particle.gravityLinearVelocity += gravity * static_cast<float>(this->gravityFactor * deltaTimeInSeconds);
+
+                    particle.linearVelocity  = particle.gravityLinearVelocity + particle.spawnLinearVelocity + particle.functionLinearVelocity;
+                    particle.position       += particle.linearVelocity * deltaTimeInSecondsF;
+                    particle.orientation     = particle.orientation * glm::quat(glm::radians(particle.angularVelocity * deltaTimeInSecondsF));
+
+
+                    // At this point we need to run all of the functions that are currently being used by the emitter.
+                    float lifetimeRatio = static_cast<float>(1.0 - (particle.timeLeftToDeath / this->lifetime));
+                    for (size_t iFunction = 0; iFunction < this->functions.count; ++iFunction)
+                    {
+                        auto function = this->functions[iFunction];
+                        assert(function != nullptr);
+                        {
+                            function->Execute(particle, lifetimeRatio);
+                        }
+                    }
+
+
+                    ++iParticle;
+                }
+            }
+        }
+
 
 
         // We need to have the emitter know that the first emission has been performed.
@@ -360,12 +435,32 @@ namespace GTEngine
             MaterialLibrary::Delete(this->material);
             this->material = newMaterial;
 
-            // TODO: Apply the material to all existing particles.
-
             return true;
         }
 
         return false;
+    }
+
+
+    size_t ParticleEmitter::GetFunctionCount() const
+    {
+        return this->functions.count;
+    }
+
+    ParticleFunction & ParticleEmitter::GetFunction(size_t index)
+    {
+        return *this->functions[index];
+    }
+
+    const ParticleFunction & ParticleEmitter::GetFunction(size_t index) const
+    {
+        return *this->functions[index];
+    }
+
+    void ParticleEmitter::RemoveFunctionByIndex(size_t index)
+    {
+        delete this->functions[index];
+        this->functions.Remove(index);
     }
 
 

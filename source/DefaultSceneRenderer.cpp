@@ -579,7 +579,7 @@ namespace GTEngine
                                     vertexArray.SetVertexData(nullptr, particleCount * 4);
                                     vertexArray.SetIndexData( nullptr, particleCount * 6);
 
-                                
+
                                     // Build the data.
                                     auto vertices = vertexArray.MapVertexData();
                                     auto indices  = vertexArray.MapIndexData();
