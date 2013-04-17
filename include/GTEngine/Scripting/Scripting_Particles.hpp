@@ -186,7 +186,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The index of the function being retrieved.
             ///
-            ///     The return value is a table containing the type of the function and the start/end values. These are specific to the function type,
+            ///     The return value is a table containing the type of the function and the min/max values. These are specific to the function type,
             ///     so it is up to the script to handle the types manually. The type will be specified in the 'type' field in the returned table.
             ///
             ///     Typically this function should only ever be used by editting tool.
@@ -204,11 +204,16 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The type of function to add.
-            ///     Argument 3: The low value to use in the function. Can be nil.
-            ///     Argument 4: The high value to use in the function. Can be nil.
-            ///
-            ///     Arguments 3 and 4 depend on the function type. If the type requires scalars, that will be assumed. Same applies for math.vec3s, etc.
             int AddFunction(GTCore::Script &script);
+
+            /// Sets the range of the function at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The index of the function whose range is being set.
+            ///     Argument 3: The min value in the range.
+            ///     Argument 4: The max value in the range.
+            int SetFunctionRangeByIndex(GTCore::Script &script);
         }
 
         namespace ParticleSystemFFI

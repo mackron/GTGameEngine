@@ -138,6 +138,11 @@ namespace GTEngine
                 "function GTEngine.ParticleEmitter:AddFunction(functionType, lowValue, highValue)"
                 "    return GTEngine.System.ParticleEmitter.AddFunction(self._internalPtr, functionType, lowValue, highValue);"
                 "end;"
+
+
+                "function GTEngine.ParticleEmitter:SetFunctionRangeByIndex(functionIndex, rangeMin, rangeMax)"
+                "    return GTEngine.System.ParticleEmitter.SetFunctionRangeByIndex(self._internalPtr, functionIndex, rangeMin, rangeMax);"
+                "end;"
             );
 
             if (successful)
@@ -177,6 +182,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetFunctionByIndex",               ParticleEmitterFFI::GetFunctionByIndex);
                             script.SetTableFunction(-1, "RemoveFunctionByIndex",            ParticleEmitterFFI::RemoveFunctionByIndex);
                             script.SetTableFunction(-1, "AddFunction",                      ParticleEmitterFFI::AddFunction);
+                            script.SetTableFunction(-1, "SetFunctionRangeByIndex",          ParticleEmitterFFI::SetFunctionRangeByIndex);
                         }
                         script.SetTableValue(-3);
                     }
@@ -706,45 +712,29 @@ namespace GTEngine
                         {
                         case ParticleFunctionType_SizeOverTime:
                             {
-                                float startValue;
-                                float endValue;
-                                static_cast<ParticleFunction_SizeOverTime &>(function).GetStartAndEndSizes(startValue, endValue);
+                                float rangeMin;
+                                float rangeMax;
+                                static_cast<ParticleFunction_Scalar &>(function).GetRange(rangeMin, rangeMax);
 
-                                script.SetTableValue(-1, "startValue", startValue);
-                                script.SetTableValue(-1, "endValue",   endValue);
+                                script.SetTableValue(-1, "rangeMin", rangeMin);
+                                script.SetTableValue(-1, "rangeMax", rangeMax);
 
                                 break;
                             }
 
                         case ParticleFunctionType_LinearVelocityOverTime:
-                            {
-                                glm::vec3 startValue;
-                                glm::vec3 endValue;
-                                static_cast<ParticleFunction_LinearVelocityOverTime &>(function).GetStartAndEndVelocities(startValue, endValue);
-
-                                script.Push("startValue");
-                                PushNewVector3(script, startValue);
-                                script.SetTableValue(-3);
-
-                                script.Push("endValue");
-                                PushNewVector3(script, endValue);
-                                script.SetTableValue(-3);
-
-                                break;
-                            }
-
                         case ParticleFunctionType_AngularVelocityOverTime:
                             {
-                                glm::vec3 startValue;
-                                glm::vec3 endValue;
-                                static_cast<ParticleFunction_AngularVelocityOverTime &>(function).GetStartAndEndVelocities(startValue, endValue);
+                                glm::vec3 rangeMin;
+                                glm::vec3 rangeMax;
+                                static_cast<ParticleFunction_Vector3 &>(function).GetRange(rangeMin, rangeMax);
 
-                                script.Push("startValue");
-                                PushNewVector3(script, startValue);
+                                script.Push("rangeMin");
+                                PushNewVector3(script, rangeMin);
                                 script.SetTableValue(-3);
 
-                                script.Push("endValue");
-                                PushNewVector3(script, endValue);
+                                script.Push("rangeMax");
+                                PushNewVector3(script, rangeMax);
                                 script.SetTableValue(-3);
 
                                 break;
@@ -783,49 +773,44 @@ namespace GTEngine
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
                 {
-                    auto type = static_cast<ParticleFunctionType>(script.ToInteger(2));
+                    emitter->AddFunction(static_cast<ParticleFunctionType>(script.ToInteger(2)));
+                }
 
-                    auto &function = emitter->AddFunction(type);
+                return 0;
+            }
+
+
+            int SetFunctionRangeByIndex(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    if (!script.IsNil(3))
                     {
-                        if (!script.IsNil(3))
+                        auto &function = emitter->GetFunction(script.ToInteger(2) - 1);     // Minus 1 because Lua is 1 based.
                         {
-                            switch (type)
+                            switch (function.GetType())
                             {
                             case ParticleFunctionType_SizeOverTime:
                                 {
-                                    float lowValue  = script.ToFloat(3);
-                                    float highValue = script.IsNil(4) ? lowValue : script.ToFloat(4);
-                                    
-                                    static_cast<ParticleFunction_SizeOverTime &>(function).SetStartAndEndSizes(lowValue, highValue);
+                                    float rangeMin = script.ToFloat(3);
+                                    float rangeMax = script.IsNil(4) ? rangeMin : script.ToFloat(4);
 
+                                    static_cast<ParticleFunction_Scalar &>(function).SetRange(rangeMin, rangeMax);
                                     break;
                                 }
 
                             case ParticleFunctionType_LinearVelocityOverTime:
-                                {
-                                    glm::vec3 lowValue  = ToVector3(script, 3);
-                                    glm::vec3 highValue = script.IsNil(4) ? lowValue : ToVector3(script, 4);
-
-                                    static_cast<ParticleFunction_LinearVelocityOverTime &>(function).SetStartAndEndVelocities(lowValue, highValue);
-
-                                    break;
-                                }
-
                             case ParticleFunctionType_AngularVelocityOverTime:
                                 {
-                                    glm::vec3 lowValue  = ToVector3(script, 3);
-                                    glm::vec3 highValue = script.IsNil(4) ? lowValue : ToVector3(script, 4);
+                                    glm::vec3 rangeMin = ToVector3(script, 3);
+                                    glm::vec3 rangeMax = script.IsNil(4) ? rangeMin : ToVector3(script, 4);
 
-                                    static_cast<ParticleFunction_AngularVelocityOverTime &>(function).SetStartAndEndVelocities(lowValue, highValue);
-
+                                    static_cast<ParticleFunction_Vector3 &>(function).SetRange(rangeMin, rangeMax);
                                     break;
                                 }
 
-                            default:
-                                {
-                                    assert(false);
-                                    break;
-                                }
+                            default: break;
                             }
                         }
                     }

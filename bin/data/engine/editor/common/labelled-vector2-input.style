@@ -1,0 +1,10 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+labelled-vector2-input includes labelled-vector-input
+{
+}
+
+labelled-vector2-input-input includes labelled-vector-input-input
+{
+    max-width: 122px
+}

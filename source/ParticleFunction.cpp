@@ -5,25 +5,84 @@
 namespace GTEngine
 {
     ///////////////////////////////////////
+    // Generic Scalar
+
+    ParticleFunction_Scalar::ParticleFunction_Scalar(ParticleFunctionType type, float rangeMinIn, float rangeMaxIn)
+        : ParticleFunction(type), rangeMin(rangeMinIn), rangeMax(rangeMaxIn)
+    {
+    }
+
+    ParticleFunction_Scalar::ParticleFunction_Scalar(const ParticleFunction_Scalar &other)
+        : ParticleFunction(other), rangeMin(other.rangeMin), rangeMax(other.rangeMax)
+    {
+    }
+
+    ParticleFunction_Scalar::~ParticleFunction_Scalar()
+    {
+    }
+
+    void ParticleFunction_Scalar::SetRange(float rangeMinIn, float rangeMaxIn)
+    {
+        this->rangeMin = rangeMinIn;
+        this->rangeMax = rangeMaxIn;
+    }
+
+    void ParticleFunction_Scalar::GetRange(float &rangeMinOut, float &rangeMaxOut) const
+    {
+        rangeMinOut = this->rangeMin;
+        rangeMaxOut = this->rangeMax;
+    }
+
+    float ParticleFunction_Scalar::Evaluate(float lifetimeRatio) const
+    {
+        return glm::mix(this->rangeMin, this->rangeMax, lifetimeRatio);
+    }
+
+
+
+    ///////////////////////////////////////
+    // Generic Vector3
+
+    ParticleFunction_Vector3::ParticleFunction_Vector3(ParticleFunctionType type, const glm::vec3 &rangeMinIn, const glm::vec3 &rangeMaxIn)
+        : ParticleFunction(type), rangeMin(rangeMinIn), rangeMax(rangeMaxIn)
+    {
+    }
+
+    ParticleFunction_Vector3::ParticleFunction_Vector3(const ParticleFunction_Vector3 &other)
+        : ParticleFunction(other), rangeMin(other.rangeMin), rangeMax(other.rangeMax)
+    {
+    }
+
+    ParticleFunction_Vector3::~ParticleFunction_Vector3()
+    {
+    }
+
+    void ParticleFunction_Vector3::SetRange(const glm::vec3 &rangeMinIn, const glm::vec3 &rangeMaxIn)
+    {
+        this->rangeMin = rangeMinIn;
+        this->rangeMax = rangeMaxIn;
+    }
+
+    void ParticleFunction_Vector3::GetRange(glm::vec3 &rangeMinOut, glm::vec3 &rangeMaxOut) const
+    {
+        rangeMinOut = this->rangeMin;
+        rangeMaxOut = this->rangeMax;
+    }
+
+    glm::vec3 ParticleFunction_Vector3::Evaluate(float lifetimeRatio) const
+    {
+        return glm::mix(this->rangeMin, this->rangeMax, lifetimeRatio);
+    }
+
+
+
+
+    ///////////////////////////////////////
     // Size over Time
 
     void ParticleFunction_SizeOverTime::Execute(Particle &particle, float lifetimeRatio)
     {
-        float scale = glm::mix(this->startSize, this->endSize, lifetimeRatio);
-
-        particle.scale = glm::vec3(scale);
-    }
-
-    void ParticleFunction_SizeOverTime::SetStartAndEndSizes(float startSizeIn, float endSizeIn)
-    {
-        this->startSize = startSizeIn;
-        this->endSize   = endSizeIn;
-    }
-
-    void ParticleFunction_SizeOverTime::GetStartAndEndSizes(float &startSizeOut, float &endSizeOut) const
-    {
-        startSizeOut = this->startSize;
-        endSizeOut   = this->endSize;
+        particle.scale = glm::vec3(this->Evaluate(lifetimeRatio));
     }
 
 
@@ -33,23 +92,8 @@ namespace GTEngine
 
     void ParticleFunction_LinearVelocityOverTime::Execute(Particle &particle, float lifetimeRatio)
     {
-        glm::vec3 velocity = glm::mix(this->startVelocity, this->endVelocity, lifetimeRatio);
-
-        particle.functionLinearVelocity = velocity;
+        particle.functionLinearVelocity = this->Evaluate(lifetimeRatio);
     }
-
-    void ParticleFunction_LinearVelocityOverTime::SetStartAndEndVelocities(const glm::vec3 &startVelocityIn, const glm::vec3 &endVelocityIn)
-    {
-        this->startVelocity = startVelocityIn;
-        this->endVelocity   = endVelocityIn;
-    }
-
-    void ParticleFunction_LinearVelocityOverTime::GetStartAndEndVelocities(glm::vec3 &startVelocityOut, glm::vec3 &endVelocityOut)
-    {
-        startVelocityOut = this->startVelocity;
-        endVelocityOut   = this->endVelocity;
-    }
-
     
 
 
@@ -58,20 +102,6 @@ namespace GTEngine
 
     void ParticleFunction_AngularVelocityOverTime::Execute(Particle &particle, float lifetimeRatio)
     {
-        glm::vec3 velocity = glm::mix(this->startVelocity, this->endVelocity, lifetimeRatio);
-
-        particle.angularVelocity = velocity;
-    }
-
-    void ParticleFunction_AngularVelocityOverTime::SetStartAndEndVelocities(const glm::vec3 &startVelocityIn, const glm::vec3 &endVelocityIn)
-    {
-        this->startVelocity = startVelocityIn;
-        this->endVelocity   = endVelocityIn;
-    }
-
-    void ParticleFunction_AngularVelocityOverTime::GetStartAndEndVelocities(glm::vec3 &startVelocityOut, glm::vec3 &endVelocityOut)
-    {
-        startVelocityOut = this->startVelocity;
-        endVelocityOut   = this->endVelocity;
+        particle.angularVelocity = this->Evaluate(lifetimeRatio);
     }
 }

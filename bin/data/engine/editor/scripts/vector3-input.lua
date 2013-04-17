@@ -34,28 +34,29 @@ function GTGUI.Element:Vector3Input()
     end
     
     
-    function self:SetFromXYZ(x, y, z)
-        self:SetX(x);
-        self:SetY(y);
-        self:SetZ(z);
+    function self:SetValue(x, y, z)
+        if x ~= nil then
+            if type(x) == 'table' then      -- If it's a table, assume a math.vec3.
+                self:SetX(x.x);
+                self:SetY(x.y);
+                self:SetX(x.z);
+            else
+                self:SetX(x);
+                self:SetY(y or x);
+                self:SetZ(z or x);
+            end
+        end
     end
     
-    function self:SetFromXYZTable(value)
-        self:SetFromXYZ(value.x, value.y, value.z);
+    function self:GetValue()
+        return math.vec3(self:GetX(), self:GetY(), self:GetZ());
     end
     
-    function self:GetXYZ()
-        return self:GetX(), self:GetY(), self:GetZ();
-    end
-    
-    function self:GetXYZTable()
-        return {x = self:GetX(), y = self:GetY(), z = self:GetZ()};
-    end
     
     
 
     function OnTextChangedHandler()
-        self:OnValueChanged(self:GetXYZTable());
+        self:OnValueChanged(self:GetValue());
     end
 
     self.X:OnTextChanged(OnTextChangedHandler);
@@ -97,6 +98,33 @@ function GTGUI.Element:Vector3Input()
             self.Callbacks:BindOrCall("OnValueChanged", arg1);
         self.Locked = false;
     end
+    
+    
+    
+    
+    
+    ----------------------------------------
+    -- Deprecated.
+    function self:SetFromXYZ(x, y, z)
+        self:SetX(x);
+        self:SetY(y);
+        self:SetZ(z);
+    end
+    
+    function self:SetFromXYZTable(value)
+        self:SetFromXYZ(value.x, value.y, value.z);
+    end
+    
+    function self:GetXYZ()
+        return self:GetX(), self:GetY(), self:GetZ();
+    end
+    
+    function self:GetXYZTable()
+        return {x = self:GetX(), y = self:GetY(), z = self:GetZ()};
+    end
+    
+    
+    
     
     return self;
 end

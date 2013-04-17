@@ -2,9 +2,8 @@
 
 -- An input control for simple numbers in a properties panel.
 function GTGUI.Element:PanelNumberInput(title, initialValue)
-    self.Left  = GTGUI.Server.New("<div parentid='" .. self:GetID()       .. "' style='width:auto; height:auto; margin-right:4px;' />");
-    self.Right = GTGUI.Server.New("<div parentid='" .. self:GetID()       .. "' style='width:100%; height:auto; horizontal-align:right;' />");
-    self.Label = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' styleclass='panel-number-input-label'   />");
+    self:LabelledElement(title);
+    
     self.Input = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' styleclass='panel-number-input-textbox' />");
     self.Input:NumberTextBox(initialValue);
     
@@ -44,5 +43,5 @@ function GTGUI.Element:PanelNumberInput(title, initialValue)
         self.Locked = false;
     end
     
-    self.Label:SetText(title);
+    return self;
 end;
