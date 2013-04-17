@@ -20,16 +20,6 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.EmissionRate = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.EmissionRate:PanelNumberInput("Emission Rate", emitter:GetEmissionRatePerSecond());
     
-    self.StartSpeed = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.StartSpeed:PanelNumberInput("Start Speed", emitter:GetStartSpeed());
-    
-    self.Lifetime = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.Lifetime:PanelNumberInput("Lifetime", emitter:GetLifetime());
-    
-    self.GravityFactor = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.GravityFactor:PanelNumberInput("Gravity Factor", emitter:GetGravityFactor());
-    
-    
     self.EmissionShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-dropdown-box' />");
     self.EmissionShape:PanelDropDownBox("Emission Shape");
     self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Cone]   = self.EmissionShape:AppendItem("Cone");
@@ -38,7 +28,6 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Cone].ShapeType   = GTEngine.ParticleEmissionShapes.Cone;
     self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Sphere].ShapeType = GTEngine.ParticleEmissionShapes.Sphere;
     self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Box].ShapeType    = GTEngine.ParticleEmissionShapes.Box;
-    
     
     self.ConeShapeProperties        = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                .. "' styleclass='particle-editor-panel-emitter-shape-container' />");
     self.ConeShapeProperties.Radius = GTGUI.Server.New("<div parentid='" .. self.ConeShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
@@ -59,6 +48,19 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.BoxShapeProperties.Z:PanelNumberInput("Z", 0.0);
     
     
+    
+    self.StartSpeed = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.StartSpeed:PanelNumberInput("Start Speed", emitter:GetStartSpeed());
+    self.StartSpeed:SetStyle("margin-top", "8px");
+    
+    self.Lifetime = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.Lifetime:PanelNumberInput("Lifetime", emitter:GetLifetime());
+    
+    self.GravityFactor = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.GravityFactor:PanelNumberInput("Gravity Factor", emitter:GetGravityFactor());
+    
+    
+
     self.ParticleShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-dropdown-box' />");
     self.ParticleShape:PanelDropDownBox("Particle Shape");
     self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Billboard] = self.ParticleShape:AppendItem("Billboard");
@@ -154,7 +156,7 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     function ApplyEmissionShape(data, blockOnChangeEvent)
         local shapeType = self.Emitter:GetEmissionShapeType();
         
-        if      shapeType == GTEngine.ParticleEmissionShapes.Cone   then
+        if     shapeType == GTEngine.ParticleEmissionShapes.Cone   then
             local radius = self.ConeShapeProperties.Radius:GetValue();
             local angle  = self.ConeShapeProperties.Angle:GetValue();
             self.Emitter:SetConeEmissionShape(radius, angle);
