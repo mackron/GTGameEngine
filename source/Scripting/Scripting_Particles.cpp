@@ -133,6 +133,11 @@ namespace GTEngine
                 "function GTEngine.ParticleEmitter:RemoveFunctionByIndex(index)"
                 "    return GTEngine.System.ParticleEmitter.RemoveFunctionByIndex(self._internalPtr, index);"
                 "end;"
+
+
+                "function GTEngine.ParticleEmitter:AddFunction(functionType, lowValue, highValue)"
+                "    return GTEngine.System.ParticleEmitter.AddFunction(self._internalPtr, functionType, lowValue, highValue);"
+                "end;"
             );
 
             if (successful)
@@ -171,6 +176,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetFunctionCount",                 ParticleEmitterFFI::GetFunctionCount);
                             script.SetTableFunction(-1, "GetFunctionByIndex",               ParticleEmitterFFI::GetFunctionByIndex);
                             script.SetTableFunction(-1, "RemoveFunctionByIndex",            ParticleEmitterFFI::RemoveFunctionByIndex);
+                            script.SetTableFunction(-1, "AddFunction",                      ParticleEmitterFFI::AddFunction);
                         }
                         script.SetTableValue(-3);
                     }
@@ -767,6 +773,62 @@ namespace GTEngine
                 if (emitter != nullptr)
                 {
                     emitter->RemoveFunctionByIndex(script.ToInteger(2) - 1);        // <-- Minus 1 because Lua is 1 based.
+                }
+
+                return 0;
+            }
+
+            int AddFunction(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    auto type = static_cast<ParticleFunctionType>(script.ToInteger(2));
+
+                    auto &function = emitter->AddFunction(type);
+                    {
+                        if (!script.IsNil(3))
+                        {
+                            switch (type)
+                            {
+                            case ParticleFunctionType_SizeOverTime:
+                                {
+                                    float lowValue  = script.ToFloat(3);
+                                    float highValue = script.IsNil(4) ? lowValue : script.ToFloat(4);
+                                    
+                                    static_cast<ParticleFunction_SizeOverTime &>(function).SetStartAndEndSizes(lowValue, highValue);
+
+                                    break;
+                                }
+
+                            case ParticleFunctionType_LinearVelocityOverTime:
+                                {
+                                    glm::vec3 lowValue  = ToVector3(script, 3);
+                                    glm::vec3 highValue = script.IsNil(4) ? lowValue : ToVector3(script, 4);
+
+                                    static_cast<ParticleFunction_LinearVelocityOverTime &>(function).SetStartAndEndVelocities(lowValue, highValue);
+
+                                    break;
+                                }
+
+                            case ParticleFunctionType_AngularVelocityOverTime:
+                                {
+                                    glm::vec3 lowValue  = ToVector3(script, 3);
+                                    glm::vec3 highValue = script.IsNil(4) ? lowValue : ToVector3(script, 4);
+
+                                    static_cast<ParticleFunction_AngularVelocityOverTime &>(function).SetStartAndEndVelocities(lowValue, highValue);
+
+                                    break;
+                                }
+
+                            default:
+                                {
+                                    assert(false);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 return 0;

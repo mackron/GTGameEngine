@@ -197,6 +197,15 @@ namespace GTEngine
         /// Removes a function by it's index.
         void RemoveFunctionByIndex(size_t index);
 
+        /// Adds a new instance of the function of the given type.
+        ///
+        /// @param type The type of the function to instantiate.
+        ///
+        /// @return A reference to the new function.
+        ParticleFunction & AddFunction(ParticleFunctionType type);
+
+
+
 
 
         /// Retrieves the number of alive particles.
