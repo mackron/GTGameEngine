@@ -72,6 +72,24 @@ namespace GTEngine
         void Update(double deltaTimeInSeconds, const glm::vec3 &gravity);
 
 
+        /// Retrieves the position of the emitter.
+        const glm::vec3 & GetPosition() const;
+
+        /// Sets the position of the emitter.
+        void SetPosition(const glm::vec3 &position);
+
+        
+        /// Retrieves the orientation of the emitter.
+        const glm::quat & GetOrientation() const;
+
+        /// Sets the orientation of the emitter.
+        void SetOrientation(const glm::quat &orientation);
+
+
+        /// Retrieves the normalized forward vector of the emitter.
+        glm::vec3 GetForwardVector() const;
+
+
         /// Enables burst mode.
         void EnableBurstMode();
 
@@ -101,26 +119,12 @@ namespace GTEngine
         double GetEmissionRatePerSecond() const;
 
 
-
-        /// Retrieves the start speed of each particle.
-        double GetStartSpeed() const;
-
-        /// Sets the start speed of each particle.
-        void SetStartSpeed(double newStartSpeed);
-
-
-        /// Retrieves the lifetime of a particle.
-        double GetLifetime() const;
-
-        /// Sets the lifetime of particles.
-        void SetLifetime(double newLifetime);
-
-
         /// Retrieves the gravity factor.
         double GetGravityFactor() const;
 
         /// Sets the gravity factor.
         void SetGravityFactor(double newGravityFactor);
+
 
 
         /// Retrieves the type of the emission shape.
@@ -160,22 +164,26 @@ namespace GTEngine
 
 
 
-        /// Retrieves the position of the emitter.
-        const glm::vec3 & GetPosition() const;
 
-        /// Sets the position of the emitter.
-        void SetPosition(const glm::vec3 &position);
+        /// Retrieves the start speed of each particle.
+        void GetStartSpeed(double &startSpeedMinOut, double &startSpeedMaxOut) const;
+
+        /// Sets the start speed of each particle.
+        void SetStartSpeed(double newStartSpeedMin, double newStartSpeedMax);
+        void SetStartSpeed(double newStartSpeed) { this->SetStartSpeed(newStartSpeed, newStartSpeed); }
+        
+
+
+        /// Retrieves the lifetime of a particle.
+        void GetLifetime(double &ifetimeMinOut, double &lifetimeMaxOut) const;
+
+        /// Sets the lifetime of particles.
+        void SetLifetime(double newLifetimeMin, double newLifetimeMax);
+        void SetLifetime(double newLifetime) { this->SetLifetime(newLifetime, newLifetime); }
+
 
         
-        /// Retrieves the orientation of the emitter.
-        const glm::quat & GetOrientation() const;
 
-        /// Sets the orientation of the emitter.
-        void SetOrientation(const glm::quat &orientation);
-
-
-        /// Retrieves the normalized forward vector of the emitter.
-        glm::vec3 GetForwardVector() const;
 
 
 
@@ -272,6 +280,13 @@ namespace GTEngine
         };
 
 
+        /// The position of the emitter.
+        glm::vec3 position;
+
+        /// The orientation of the emitter.
+        glm::quat orientation;
+
+
         /// Various boolean flags. Defaults to 0 (all false).
         uint32_t flags;
 
@@ -281,12 +296,6 @@ namespace GTEngine
 
         /// The number of particles to spawn per second. If burst mode is enabled, this will control the number of particles to burst.
         double emissionRatePerSecond;
-
-        /// The starting speed of the particles.
-        double startSpeed;
-
-        /// The lifetime of a particle.
-        double lifetime;
 
         /// The factor to apply to gravity.
         double gravityFactor;
@@ -302,11 +311,18 @@ namespace GTEngine
 
 
 
-        /// The position of the emitter.
-        glm::vec3 position;
+        
+        /// The starting speed of the particles.
+        double startSpeedMin;
+        double startSpeedMax;
 
-        /// The orientation of the emitter.
-        glm::quat orientation;
+        /// The starting rotation of the particles.
+        glm::vec3 startRotationMin;
+        glm::vec3 startRotationMax;
+
+        /// The lifetime of a particle.
+        double lifetimeMin;
+        double lifetimeMax;
 
 
 

@@ -6,11 +6,12 @@
 namespace GTEngine
 {
     ParticleEmitter::ParticleEmitter()
-        : flags(0), durationInSeconds(0.0), emissionRatePerSecond(10.0),
-          startSpeed(5.0), lifetime(5.0),
-          gravityFactor(0.0),
+        : position(), orientation(),
+          flags(0), durationInSeconds(0.0), emissionRatePerSecond(10.0), gravityFactor(0.0),
           emissionShapeType(EmissionShapeType_Cone), emissionShapeCone(), emissionShapeSphere(), emissionShapeBox(),
-          position(), orientation(),
+          startSpeedMin(5.0), startSpeedMax(5.0),
+          startRotationMin(), startRotationMax(),
+          lifetimeMin(5.0), lifetimeMax(5.0),
           material(nullptr),
           timeSinceLastEmission(1.0 / emissionRatePerSecond),
           random(),
@@ -22,11 +23,12 @@ namespace GTEngine
     }
 
     ParticleEmitter::ParticleEmitter(const ParticleEmitter &other)
-        : flags(other.flags), durationInSeconds(other.durationInSeconds), emissionRatePerSecond(other.emissionRatePerSecond),
-          startSpeed(other.startSpeed), lifetime(other.lifetime),
-          gravityFactor(other.gravityFactor),
+        : position(other.position), orientation(other.orientation),
+          flags(other.flags), durationInSeconds(other.durationInSeconds), emissionRatePerSecond(other.emissionRatePerSecond), gravityFactor(other.gravityFactor),
           emissionShapeType(other.emissionShapeType), emissionShapeCone(other.emissionShapeCone), emissionShapeSphere(other.emissionShapeSphere), emissionShapeBox(other.emissionShapeBox),
-          position(other.position), orientation(other.orientation),
+          startSpeedMin(other.startSpeedMin), startSpeedMax(other.startSpeedMax),
+          startRotationMin(other.startRotationMin), startRotationMax(other.startRotationMax),
+          lifetimeMin(other.lifetimeMin), lifetimeMax(other.lifetimeMax),
           material((other.material != nullptr) ? MaterialLibrary::CreateCopy(*other.material) : nullptr),
           timeSinceLastEmission(other.timeSinceLastEmission),
           random(other.random),
@@ -191,11 +193,16 @@ namespace GTEngine
             glm::mat4 transform = glm::mat4_cast(this->orientation);
             transform[3]        = glm::vec4(this->position, 1.0f);
 
+            particle.orientation = glm::quat(glm::radians(glm::vec3(
+                this->random.Next(this->startRotationMin.x, this->startRotationMax.x),
+                this->random.Next(this->startRotationMin.y, this->startRotationMax.y),
+                this->random.Next(this->startRotationMin.z, this->startRotationMax.z))));
+
             particle.position            = glm::vec3(transform * glm::vec4(spawnPosition, 1.0f));
-            particle.spawnLinearVelocity = this->orientation * spawnDirection * static_cast<float>(this->startSpeed);
+            particle.spawnLinearVelocity = this->orientation * spawnDirection * static_cast<float>(this->random.Next(this->startSpeedMin, this->startSpeedMax));
 
 
-            particle.timeLeftToDeath = this->lifetime;
+            particle.timeLeftToDeath = particle.lifetime = this->random.Next(this->lifetimeMin, this->lifetimeMax);
             this->particles.PushBack(particle);
         }
 
@@ -227,7 +234,7 @@ namespace GTEngine
 
 
                     // At this point we need to run all of the functions that are currently being used by the emitter.
-                    float lifetimeRatio = static_cast<float>(1.0 - (particle.timeLeftToDeath / this->lifetime));
+                    float lifetimeRatio = static_cast<float>(1.0 - (particle.timeLeftToDeath / particle.lifetime));
                     for (size_t iFunction = 0; iFunction < this->functions.count; ++iFunction)
                     {
                         auto function = this->functions[iFunction];
@@ -292,29 +299,6 @@ namespace GTEngine
     }
 
 
-
-    double ParticleEmitter::GetStartSpeed() const
-    {
-        return this->startSpeed;
-    }
-
-    void ParticleEmitter::SetStartSpeed(double newStartSpeed)
-    {
-        this->startSpeed = newStartSpeed;
-    }
-
-
-    double ParticleEmitter::GetLifetime() const
-    {
-        return this->lifetime;
-    }
-
-    void ParticleEmitter::SetLifetime(double newLifetime)
-    {
-        this->lifetime = newLifetime;
-    }
-
-
     double ParticleEmitter::GetGravityFactor() const
     {
         return this->gravityFactor;
@@ -324,6 +308,36 @@ namespace GTEngine
     {
         this->gravityFactor = newGravityFactor;
     }
+
+
+
+
+    void ParticleEmitter::GetStartSpeed(double &startSpeedMinOut, double &startSpeedMaxOut) const
+    {
+        startSpeedMinOut = this->startSpeedMin;
+        startSpeedMaxOut = this->startSpeedMax;
+    }
+
+
+    void ParticleEmitter::SetStartSpeed(double newStartSpeedMin, double newStartSpeedMax)
+    {
+        this->startSpeedMin = newStartSpeedMin;
+        this->startSpeedMax = newStartSpeedMax;
+    }
+
+
+    void ParticleEmitter::GetLifetime(double &lifetimeMinOut, double &lifetimeMaxOut) const
+    {
+        lifetimeMinOut = this->lifetimeMin;
+        lifetimeMaxOut = this->lifetimeMax;
+    }
+
+    void ParticleEmitter::SetLifetime(double newLifetimeMin, double newLifetimeMax)
+    {
+        this->lifetimeMin = newLifetimeMin;
+        this->lifetimeMax = newLifetimeMax;
+    }
+
 
 
 

@@ -59,8 +59,8 @@ namespace GTEngine
                 "end;"
 
 
-                "function GTEngine.ParticleEmitter:SetStartSpeed(startSpeed)"
-                "    GTEngine.System.ParticleEmitter.SetStartSpeed(self._internalPtr, startSpeed);"
+                "function GTEngine.ParticleEmitter:SetStartSpeed(startSpeedMin, startSpeedMax)"
+                "    GTEngine.System.ParticleEmitter.SetStartSpeed(self._internalPtr, startSpeedMin, startSpeedMax);"
                 "end;"
 
                 "function GTEngine.ParticleEmitter:GetStartSpeed()"
@@ -68,8 +68,8 @@ namespace GTEngine
                 "end;"
 
 
-                "function GTEngine.ParticleEmitter:SetLifetime(lifetime)"
-                "    GTEngine.System.ParticleEmitter.SetLifetime(self._internalPtr, lifetime);"
+                "function GTEngine.ParticleEmitter:SetLifetime(lifetimeMin, lifetimeMax)"
+                "    GTEngine.System.ParticleEmitter.SetLifetime(self._internalPtr, lifetimeMin, lifetimeMax);"
                 "end;"
 
                 "function GTEngine.ParticleEmitter:GetLifetime()"
@@ -444,7 +444,10 @@ namespace GTEngine
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
                 {
-                    emitter->SetStartSpeed(script.ToDouble(2));
+                    double startSpeedMin = script.ToDouble(2);
+                    double startSpeedMax = script.IsNil(3) ? startSpeedMin : script.ToDouble(3);
+
+                    emitter->SetStartSpeed(startSpeedMin, startSpeedMax);
                 }
 
                 return 0;
@@ -455,14 +458,20 @@ namespace GTEngine
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
                 {
-                    script.Push(emitter->GetStartSpeed());
+                    double startSpeedMin;
+                    double startSpeedMax;
+                    emitter->GetStartSpeed(startSpeedMin, startSpeedMax);
+
+                    script.Push(startSpeedMin);
+                    script.Push(startSpeedMax);
                 }
                 else
                 {
                     script.Push(5.0);
+                    script.Push(5.0);
                 }
 
-                return 1;
+                return 2;
             }
 
 
@@ -471,7 +480,10 @@ namespace GTEngine
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
                 {
-                    emitter->SetLifetime(script.ToDouble(2));
+                    double lifetimeMin = script.ToDouble(2);
+                    double lifetimeMax = script.IsNil(3) ? lifetimeMin : script.ToDouble(3);
+
+                    emitter->SetLifetime(lifetimeMin, lifetimeMax);
                 }
 
                 return 0;
@@ -482,14 +494,20 @@ namespace GTEngine
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
                 {
-                    script.Push(emitter->GetLifetime());
+                    double lifetimeMin;
+                    double lifetimeMax;
+                    emitter->GetLifetime(lifetimeMin, lifetimeMax);
+
+                    script.Push(lifetimeMin);
+                    script.Push(lifetimeMax);
                 }
                 else
                 {
                     script.Push(5.0);
+                    script.Push(5.0);
                 }
 
-                return 1;
+                return 2;
             }
 
 
