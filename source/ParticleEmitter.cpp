@@ -18,22 +18,6 @@ namespace GTEngine
           functions(),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
     {
-        // Add a size over time function for testing.
-        auto sizeOverTimeFunction = new ParticleFunction_SizeOverTime();
-        sizeOverTimeFunction->SetStartAndEndSizes(1.0f, 0.0f);
-        this->functions.PushBack(sizeOverTimeFunction);
-
-        /*
-        auto linearVelocityOverTimeFunction = new ParticleFunction_LinearVelocityOverTime();
-        linearVelocityOverTimeFunction->SetStartAndEndVelocities(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
-        this->functions.PushBack(linearVelocityOverTimeFunction);
-        */
-
-        auto angularVelocityOverTimeFunction = new ParticleFunction_AngularVelocityOverTime();
-        angularVelocityOverTimeFunction->SetStartAndEndVelocities(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 90.0f));
-        this->functions.PushBack(angularVelocityOverTimeFunction);
-
-
         this->SetMaterial("engine/materials/simple-diffuse.material");
     }
 
@@ -461,6 +445,40 @@ namespace GTEngine
     {
         delete this->functions[index];
         this->functions.Remove(index);
+    }
+
+    ParticleFunction & ParticleEmitter::AddFunction(ParticleFunctionType type)
+    {
+        ParticleFunction* newFunction = nullptr;
+
+        switch (type)
+        {
+        case ParticleFunctionType_SizeOverTime:
+            {
+                newFunction = new ParticleFunction_SizeOverTime;
+                break;
+            }
+
+        case ParticleFunctionType_LinearVelocityOverTime:
+            {
+                newFunction = new ParticleFunction_LinearVelocityOverTime;
+                break;
+            }
+
+        case ParticleFunctionType_AngularVelocityOverTime:
+            {
+                newFunction = new ParticleFunction_AngularVelocityOverTime;
+                break;
+            }
+
+        default: break;
+        }
+
+        assert(newFunction != nullptr);
+
+
+        this->functions.PushBack(newFunction);
+        return* newFunction;
     }
 
 

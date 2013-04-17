@@ -82,9 +82,15 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.NewFunctionDropDownBox = GTGUI.Server.CreateElement(self.Body, "picking-dropdown-box");
     self.NewFunctionDropDownBox:PickingDropDownBox("New Function");
     self.NewFunctionDropDownBox:SetStyle("margin-top", "4px");
-    self.NewFunctionDropDownBox:AppendItem("Size over Time");
-    self.NewFunctionDropDownBox:AppendItem("Linear Velocity over Time");
-    self.NewFunctionDropDownBox:AppendItem("Angular Velocity over Time");
+    self.NewFunctionDropDownBox:AppendItem("Size over Time"):OnPressed(function(data)
+        self:AddFunction(GTEngine.ParticleFunctionTypes.SizeOverTime);
+    end);
+    self.NewFunctionDropDownBox:AppendItem("Linear Velocity over Time"):OnPressed(function(data)
+        self:AddFunction(GTEngine.ParticleFunctionTypes.LinearVelocityOverTime);
+    end);
+    self.NewFunctionDropDownBox:AppendItem("Angular Velocity over Time"):OnPressed(function(data)
+        self:AddFunction(GTEngine.ParticleFunctionTypes.AngularVelocityOverTime);
+    end);
     
     
     
@@ -222,12 +228,25 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
             
             
             self.FunctionPanels[#self.FunctionPanels + 1] = newPanel;
+            
+            
+            -- The functions container may be hidden. It must be shown now.
+            self.FunctionContainer:Show();
         end
     end
     
     function self:RemoveFunctionPanelByIndex(panelIndex)
         GTGUI.Server.DeleteElement(self.FunctionPanels[panelIndex]);
         table.remove(self.FunctionPanels, panelIndex);
+        
+        
+        if #self.FunctionPanels > 0 then
+            -- The last item must have it's separator hidden.
+            self.FunctionPanels[#self.FunctionPanels]:HideSeparator();
+        else
+            -- If there are no functions, we want to hide the functions container so that the borders will be hidden.
+            self.FunctionContainer:Hide();
+        end
     end
     
     
@@ -243,7 +262,15 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     end
     
     
-    
+    -- Adds a new function of the given type to the emitter and then updates the function panel.
+    function self:AddFunction(functionType)
+        self.Emitter:AddFunction(functionType);
+        
+        local newFunctionIndex = self.Emitter:GetFunctionCount();
+        self:AddFunctionPanel(self.Emitter:GetFunctionByIndex(newFunctionIndex));
+        
+        self.OwnerEditor:OnChange();
+    end
     
     
     

@@ -198,6 +198,17 @@ namespace GTEngine
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The index of the function to remove.
             int RemoveFunctionByIndex(GTCore::Script &script);
+
+            /// Adds a new function.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The type of function to add.
+            ///     Argument 3: The low value to use in the function. Can be nil.
+            ///     Argument 4: The high value to use in the function. Can be nil.
+            ///
+            ///     Arguments 3 and 4 depend on the function type. If the type requires scalars, that will be assumed. Same applies for math.vec3s, etc.
+            int AddFunction(GTCore::Script &script);
         }
 
         namespace ParticleSystemFFI
