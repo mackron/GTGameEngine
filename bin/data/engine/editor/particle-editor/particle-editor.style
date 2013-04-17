@@ -117,7 +117,7 @@ particle-editor-panel-functions-container
     visible:       false
 
     margin-top:    4px
-    border:1px     #333
+    border:1px     #2c2c2c
 }
 
 

@@ -39,7 +39,7 @@ function GTGUI.Element:Vector3Input()
             if type(x) == 'table' then      -- If it's a table, assume a math.vec3.
                 self:SetX(x.x);
                 self:SetY(x.y);
-                self:SetX(x.z);
+                self:SetZ(x.z);
             else
                 self:SetX(x);
                 self:SetY(y or x);

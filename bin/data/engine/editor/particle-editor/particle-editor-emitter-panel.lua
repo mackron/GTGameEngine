@@ -17,6 +17,9 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.Duration = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.Duration:PanelNumberInput("Duration", emitter:GetDurationInSeconds());
     
+    self.GravityFactor = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.GravityFactor:PanelNumberInput("Gravity Factor", emitter:GetGravityFactor());
+    
     self.EmissionRate = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.EmissionRate:PanelNumberInput("Emission Rate", emitter:GetEmissionRatePerSecond());
     
@@ -49,15 +52,15 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     
     
-    self.StartSpeed = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.StartSpeed:PanelNumberInput("Start Speed", emitter:GetStartSpeed());
-    self.StartSpeed:SetStyle("margin-top", "8px");
-    
     self.Lifetime = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.Lifetime:PanelNumberInput("Lifetime", emitter:GetLifetime());
+    self.Lifetime:SetStyle("margin-top", "8px");
     
-    self.GravityFactor = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.GravityFactor:PanelNumberInput("Gravity Factor", emitter:GetGravityFactor());
+    self.StartSpeed = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
+    self.StartSpeed:PanelNumberInput("Start Speed", emitter:GetStartSpeed());
+    
+    
+    
     
     
 
@@ -298,8 +301,20 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
         self.OwnerEditor:OnChange();
     end);
     
+    self.GravityFactor:OnValueChanged(function(data)
+        self.Emitter:SetGravityFactor(self.GravityFactor:GetValue());
+        self.OwnerEditor:OnChange();
+    end);
+    
     self.EmissionRate:OnValueChanged(function(data)
         self.Emitter:SetEmissionRatePerSecond(self.EmissionRate:GetValue());
+        self.OwnerEditor:OnChange();
+    end);
+    
+    
+    
+    self.Lifetime:OnValueChanged(function(data)
+        self.Emitter:SetLifetime(self.Lifetime:GetValue());
         self.OwnerEditor:OnChange();
     end);
     
@@ -308,15 +323,7 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
         self.OwnerEditor:OnChange();
     end);
     
-    self.Lifetime:OnValueChanged(function(data)
-        self.Emitter:SetLifetime(self.Lifetime:GetValue());
-        self.OwnerEditor:OnChange();
-    end);
     
-    self.GravityFactor:OnValueChanged(function(data)
-        self.Emitter:SetGravityFactor(self.GravityFactor:GetValue());
-        self.OwnerEditor:OnChange();
-    end);
     
     
     self.EmissionShape:OnSelectionChanged(function(data)

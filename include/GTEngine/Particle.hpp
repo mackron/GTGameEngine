@@ -49,6 +49,9 @@ namespace GTEngine
         glm::vec3 functionLinearVelocity;
 
 
+        /// The lifetime of the particle.
+        double lifetime;
+
         /// The amount of time left before the particle dies.
         double timeLeftToDeath;
     };

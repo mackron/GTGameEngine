@@ -47,7 +47,7 @@ function GTGUI.Element:Vector4Input()
             if type(x) == 'table' then      -- If it's a table, assume a math.vec4.
                 self:SetX(x.x);
                 self:SetY(x.y);
-                self:SetX(x.z);
+                self:SetZ(x.z);
                 self:SetW(x.w);
             else
                 self:SetX(x);
