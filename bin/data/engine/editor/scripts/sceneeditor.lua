@@ -2366,12 +2366,14 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
                 local dragAndDropElement = GTGUI.Server.New("<div style='visible:false; positioning:absolute; z-index:100; opacity:50%; width:auto; padding:4px 2px; text-color:#ccc; font-style:bold; background-color:#666; vertical-align:center;' />");
                 dragAndDropElement:SetText(item:GetText());
                 dragAndDropElement:OnSize(function()
-                    GTGUI.Server.SetDragAndDropProxyElement(dragAndDropElement, -(dragAndDropElement:GetWidth() / 2), -(dragAndDropElement:GetHeight() / 2));
+                    GTGUI.Server.SetDragAndDropProxyElementOffset(-(dragAndDropElement:GetWidth() / 2), -(dragAndDropElement:GetHeight() / 2));
                     dragAndDropElement:Show();
                 end)
                 dragAndDropElement:OnDragAndDropProxyRemoved(function()
                     GTGUI.Server.DeleteElement(dragAndDropElement);
                 end)
+                
+                GTGUI.Server.SetDragAndDropProxyElement(dragAndDropElement);
                 
                 dragAndDropElement.sceneNodeID  = item.SceneNodeID;
                 dragAndDropElement.sceneNodePtr = self.SceneEditor:GetSceneNodePtrByID(item.SceneNodeID);
