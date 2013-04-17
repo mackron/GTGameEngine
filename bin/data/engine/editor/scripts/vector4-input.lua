@@ -40,24 +40,30 @@ function GTGUI.Element:Vector4Input()
         if not self.Locked then self.W:SetValue(value) end;
     end
     
-    function self:SetFromXYZW(x, y, z, w)
-        self:SetX(x);
-        self:SetY(y);
-        self:SetZ(z);
-        self:SetW(w);
+    
+    
+    function self:SetValue(x, y, z, w)
+        if x ~= nil then
+            if type(x) == 'table' then      -- If it's a table, assume a math.vec4.
+                self:SetX(x.x);
+                self:SetY(x.y);
+                self:SetX(x.z);
+                self:SetW(x.w);
+            else
+                self:SetX(x);
+                self:SetY(y or x);
+                self:SetZ(z or x);
+                self:SetW(w or x);
+            end
+        end
     end
     
-    function self:SetFromXYZWTable(value)
-        self:SetFromXYZW(value.x, value.y, value.z, value.w);
+    function self:GetValue()
+        return math.vec4(self:GetX(), self:GetY(), self:GetZ(), self:GetW());
     end
     
-    function self:GetXYZW()
-        return self:GetX(), self:GetY(), self:GetZ(), self:GetW();
-    end
     
-    function self:GetXYZWTable()
-        return {x = self:GetX(), y = self:GetY(), z = self:GetZ(), w = self:GetW()};
-    end
+    
     
     
     function OnTextChangedHandler()
@@ -113,6 +119,31 @@ function GTGUI.Element:Vector4Input()
             self.Callbacks:BindOrCall("OnValueChanged", arg1);
         self.Locked = false;
     end
+    
+    
+    
+    
+    ----------------------------------------
+    -- Deprecated.
+    function self:SetFromXYZW(x, y, z, w)
+        self:SetX(x);
+        self:SetY(y);
+        self:SetZ(z);
+        self:SetW(w);
+    end
+    
+    function self:SetFromXYZWTable(value)
+        self:SetFromXYZW(value.x, value.y, value.z, value.w);
+    end
+    
+    function self:GetXYZW()
+        return self:GetX(), self:GetY(), self:GetZ(), self:GetW();
+    end
+    
+    function self:GetXYZWTable()
+        return {x = self:GetX(), y = self:GetY(), z = self:GetZ(), w = self:GetW()};
+    end
+    
     
     return self;
 end

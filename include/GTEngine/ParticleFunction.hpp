@@ -51,22 +51,113 @@ namespace GTEngine
     };
 
 
+    /// Base class for basic scalar functions.
+    class ParticleFunction_Scalar : public ParticleFunction
+    {
+    public:
+
+        /// Constructor.
+        ParticleFunction_Scalar(ParticleFunctionType type, float rangeMin, float rangeMax);
+
+        /// Copy constructor.
+        ParticleFunction_Scalar(const ParticleFunction_Scalar &other);
+        
+        /// Destructor.
+        virtual ~ParticleFunction_Scalar();
+
+
+
+        /// Sets the range.
+        ///
+        /// @param rangeMin [in] The minimum value in the range.
+        /// @param rangeMax [in] The maximum value in the range.
+        void SetRange(float rangeMin, float rangeMax);
+
+        /// Retrieves the range.
+        ///
+        /// @param rangeMinOut [out] A reference to the variable that will receive the min value.
+        /// @param rangeMaxOut [out] A reference to the variable that will receive the max value.
+        void GetRange(float &rangeMinOut, float &rangeMaxOut) const;
+
+
+        /// Evaluates the function.
+        ///
+        /// @param lifetimeRatio [in] A value between 0 and 1 that specifies where in it's life the particle is currently at.
+        float Evaluate(float lifetimeRatio) const;
+
+
+    private:
+
+        /// The min value in the range.
+        float rangeMin;
+
+        /// The max value in the range.
+        float rangeMax;
+    };
+
+
+    /// Base class for basic vec3 functions.
+    class ParticleFunction_Vector3 : public ParticleFunction
+    {
+    public:
+
+        /// Constructor.
+        ParticleFunction_Vector3(ParticleFunctionType type, const glm::vec3 &rangeMin, const glm::vec3 &rangeMax);
+
+        /// Copy constructor.
+        ParticleFunction_Vector3(const ParticleFunction_Vector3 &other);
+
+        /// Destructor.
+        virtual ~ParticleFunction_Vector3();
+
+
+        /// Sets the range.
+        ///
+        /// @param rangeMin [in] The minimum value in the range.
+        /// @param rangeMax [in] The maximum value in the range.
+        void SetRange(const glm::vec3 &rangeMin, const glm::vec3 &rangeMax);
+
+        /// Retrieves the range.
+        ///
+        /// @param rangeMinOut [out] A reference to the variable that will receive the min value.
+        /// @param rangeMaxOut [out] A reference to the variable that will receive the max value.
+        void GetRange(glm::vec3 &rangeMinOut, glm::vec3 &rangeMaxOut) const;
+
+
+        /// Evaluates the function.
+        ///
+        /// @param lifetimeRatio [in] A value between 0 and 1 that specifies where in it's life the particle is currently at.
+        glm::vec3 Evaluate(float lifetimeRatio) const;
+
+
+
+
+    private:
+
+        /// The min value in the range.
+        glm::vec3 rangeMin;
+
+        /// The max value in the range.
+        glm::vec3 rangeMax;
+    };
+
+
+
+
     /// The Size over Time particle function.
-    class ParticleFunction_SizeOverTime : public ParticleFunction
+    class ParticleFunction_SizeOverTime : public ParticleFunction_Scalar
     {
     public:
 
         /// Constructor.
         ParticleFunction_SizeOverTime()
-            : ParticleFunction(ParticleFunctionType_SizeOverTime),
-              startSize(1.0f), endSize(1.0f)
+            : ParticleFunction_Scalar(ParticleFunctionType_SizeOverTime, 1.0f, 1.0f)
         {
         }
 
         /// Copy constructor.
         ParticleFunction_SizeOverTime(const ParticleFunction_SizeOverTime &other)
-            : ParticleFunction(other),
-              startSize(other.startSize), endSize(other.endSize)
+            : ParticleFunction_Scalar(other)
         {
         }
 
@@ -74,128 +165,55 @@ namespace GTEngine
 
         /// ParticleFunction::Execute().
         void Execute(Particle &particle, float lifetimeRatio);
-
-
-        /// Sets the start and end size this function should use in determining the size of the particle at a particlur point in time.
-        ///
-        /// @param startSizeIn [in] The scale of the particle at the beginning of it's life.
-        /// @param endSizeIn   [in] The scale of the particle at the end of it's life.
-        void SetStartAndEndSizes(float startSizeIn, float endSizeIn);
-
-        /// Retrieves the start and end size this function is using in determining the size of the particle at a particular point in time.
-        ///
-        /// @param startSizeOut [out] A reference to the variable that will receive the start size.
-        /// @param endSizeOut   [out] A reference to the variable that will receive the end size.
-        void GetStartAndEndSizes(float &startSizeOut, float &endSizeOut) const;
-
-
-
-    private:
-
-        /// The size of the particle at the beginning of it's life.
-        float startSize;
-
-        /// The size of the particle at the end of it's life.
-        float endSize;
     };
 
 
 
     /// The Linear Velocity over Time particle function.
-    class ParticleFunction_LinearVelocityOverTime : public ParticleFunction
+    class ParticleFunction_LinearVelocityOverTime : public ParticleFunction_Vector3
     {
     public:
 
         /// Constructor.
         ParticleFunction_LinearVelocityOverTime()
-            : ParticleFunction(ParticleFunctionType_LinearVelocityOverTime),
-              startVelocity(0.0f, 0.0f, 0.0f), endVelocity(0.0f, 0.0f, 0.0f)
+            : ParticleFunction_Vector3(ParticleFunctionType_LinearVelocityOverTime, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f))
         {
         }
 
         /// Copy constructor.
         ParticleFunction_LinearVelocityOverTime(const ParticleFunction_LinearVelocityOverTime &other)
-            : ParticleFunction(other),
-              startVelocity(other.startVelocity), endVelocity(other.endVelocity)
+            : ParticleFunction_Vector3(other)
         {
         }
 
 
         /// ParticleFunction::Execute()
         void Execute(Particle &particle, float lifetimeRatio);
-
-
-        /// Sets the start and end linear velocities this function should use in determining the size of the particle at a particular point in time.
-        ///
-        /// @param startVelocityIn [in] The linear velocity of the particle at the beginning of it's life.
-        /// @param endVelocityIn   [in] The linear velocity of the particle at the end of it's life.
-        void SetStartAndEndVelocities(const glm::vec3 &startVelocityIn, const glm::vec3 &endVelocityIn);
-
-        /// Retrieves the start and end linear velocities this function should use in determining the size of the particle at a particular point in time.
-        ///
-        /// @param startVelocityOut [out] A reference to the variable that will receive the start velocity.
-        /// @param endVelocityOut   [out] A reference to the variable that will receive the end velocity.
-        void GetStartAndEndVelocities(glm::vec3 &startVelocityOut, glm::vec3 &endVelocityOut);
-
-
-
-    private:
-
-        /// The velocity to apply to the particle at the beginning of it's life.
-        glm::vec3 startVelocity;
-
-        /// The velocity to apply to the particle at the end of it's life.
-        glm::vec3 endVelocity;
     };
 
 
 
 
     /// The Angular Velocity over Time particle function.
-    class ParticleFunction_AngularVelocityOverTime : public ParticleFunction
+    class ParticleFunction_AngularVelocityOverTime : public ParticleFunction_Vector3
     {
     public:
 
         /// Constructor.
         ParticleFunction_AngularVelocityOverTime()
-            : ParticleFunction(ParticleFunctionType_AngularVelocityOverTime),
-              startVelocity(0.0f, 0.0f, 0.0f), endVelocity(0.0f, 0.0f, 0.0f)
+            : ParticleFunction_Vector3(ParticleFunctionType_AngularVelocityOverTime, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f))
         {
         }
 
         /// Copy constructor.
         ParticleFunction_AngularVelocityOverTime(const ParticleFunction_AngularVelocityOverTime &other)
-            : ParticleFunction(other),
-              startVelocity(other.startVelocity), endVelocity(other.endVelocity)
+            : ParticleFunction_Vector3(other)
         {
         }
 
 
         /// ParticleFunction::Execute()
         void Execute(Particle &particle, float lifetimeRatio);
-
-
-        /// Sets the start and end linear velocities this function should use in determining the size of the particle at a particular point in time.
-        ///
-        /// @param startVelocityIn [in] The linear velocity of the particle at the beginning of it's life.
-        /// @param endVelocityIn   [in] The linear velocity of the particle at the end of it's life.
-        void SetStartAndEndVelocities(const glm::vec3 &startVelocityIn, const glm::vec3 &endVelocityIn);
-
-        /// Retrieves the start and end linear velocities this function should use in determining the size of the particle at a particular point in time.
-        ///
-        /// @param startVelocityOut [out] A reference to the variable that will receive the start velocity.
-        /// @param endVelocityOut   [out] A reference to the variable that will receive the end velocity.
-        void GetStartAndEndVelocities(glm::vec3 &startVelocityOut, glm::vec3 &endVelocityOut);
-
-
-
-    private:
-
-        /// The velocity to apply to the particle at the beginning of it's life.
-        glm::vec3 startVelocity;
-
-        /// The velocity to apply to the particle at the end of it's life.
-        glm::vec3 endVelocity;
     };
 }
 

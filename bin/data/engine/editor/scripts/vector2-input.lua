@@ -26,23 +26,23 @@ function GTGUI.Element:Vector2Input()
     end
     
     
-    function self:SetFromXY(x, y)
-        self:SetX(x);
-        self:SetY(y);
+    
+    function self:SetValue(x, y)
+        if x ~= nil then
+            if type(x) == 'table' then      -- If it's a table, assume a math.vec2.
+                self:SetX(x.x);
+                self:SetY(x.y);
+            else
+                self:SetX(x);
+                self:SetY(y or x);
+            end
+        end
     end
     
-    function self:SetFromXYTable(value)
-        self:SetFromXY(value.x, value.y);
+    function self:GetValue()
+        return math.vec2(self:GetX(), self:GetY());
     end
     
-    
-    function self:GetXY()
-        return self:GetX(), self:GetY();
-    end
-    
-    function self:GetXYTable()
-        return {x = self:GetX(), y = self:GetY()};
-    end
     
     
 
@@ -79,6 +79,31 @@ function GTGUI.Element:Vector2Input()
             self.Callbacks:BindOrCall("OnValueChanged", arg1);
         self.Locked = false;
     end
+    
+    
+    
+    
+    
+    ----------------------------------------
+    -- Deprecated.
+    function self:SetFromXY(x, y)
+        self:SetX(x);
+        self:SetY(y);
+    end
+    
+    function self:SetFromXYTable(value)
+        self:SetFromXY(value.x, value.y);
+    end
+    
+    
+    function self:GetXY()
+        return self:GetX(), self:GetY();
+    end
+    
+    function self:GetXYTable()
+        return {x = self:GetX(), y = self:GetY()};
+    end
+    
     
     return self;
 end

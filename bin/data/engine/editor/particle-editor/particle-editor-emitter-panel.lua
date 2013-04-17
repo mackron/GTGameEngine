@@ -208,9 +208,9 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
             local functionType = particleFunction.type;
             local newPanel     = GTGUI.Server.CreateElement(self.FunctionContainer, "particle-editor-function-panel");
             
-            if     functionType == GTEngine.ParticleFunctionTypes.SizeOverTime            then newPanel:ScalarParticleFunctionPanel("Size over Time");
-            elseif functionType == GTEngine.ParticleFunctionTypes.LinearVelocityOverTime  then newPanel:Vector3ParticleFunctionPanel("Linear Velocity over Time");
-            elseif functionType == GTEngine.ParticleFunctionTypes.AngularVelocityOverTime then newPanel:Vector3ParticleFunctionPanel("Angular Velocity over Time");
+            if     functionType == GTEngine.ParticleFunctionTypes.SizeOverTime            then newPanel:ScalarParticleFunctionPanel( "Size over Time",             particleFunction.rangeMin, particleFunction.rangeMax);
+            elseif functionType == GTEngine.ParticleFunctionTypes.LinearVelocityOverTime  then newPanel:Vector3ParticleFunctionPanel("Linear Velocity over Time",  particleFunction.rangeMin, particleFunction.rangeMax);
+            elseif functionType == GTEngine.ParticleFunctionTypes.AngularVelocityOverTime then newPanel:Vector3ParticleFunctionPanel("Angular Velocity over Time", particleFunction.rangeMin, particleFunction.rangeMax);
             end
             
             
@@ -224,6 +224,11 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
             
             newPanel:OnClose(function(data)
                 self:RemoveFunctionByIndex(self:GetFunctionPanelIndex(newPanel));
+            end);
+            
+            newPanel:OnRangeChanged(function(data)
+                self.Emitter:SetFunctionRangeByIndex(self:GetFunctionPanelIndex(newPanel), data.minValue, data.maxValue);
+                self.OwnerEditor:OnChange();
             end);
             
             

@@ -84,16 +84,72 @@ end
 -----------------------------------------
 -- Scalar Function Panel.
 
-function GTGUI.Element:ScalarParticleFunctionPanel(titleText)
+function GTGUI.Element:ScalarParticleFunctionPanel(titleText, minValue, maxValue)
     self:ParticleEditorFunctionPanel(titleText);
+    
+    self.MinInput = GTGUI.Server.CreateElement(self.Body:GetID(), "panel-number-input");
+    self.MinInput:PanelNumberInput("Min", minValue);
+    
+    self.MaxInput = GTGUI.Server.CreateElement(self.Body:GetID(), "panel-number-input");
+    self.MaxInput:PanelNumberInput("Max", maxValue);
+    
+    
+    self.MinInput:OnValueChanged(function(data)
+        self:OnRangeChanged({minValue = self.MinInput:GetValue(), maxValue = self.MaxInput:GetValue()});
+    end);
+    
+    self.MaxInput:OnValueChanged(function(data)
+        self:OnRangeChanged({minValue = self.MinInput:GetValue(), maxValue = self.MaxInput:GetValue()});
+    end);
+    
+    
+    function self:SetRange(minValue, maxValue)
+        self.MinInput:SetValue(minValue);
+        self.MaxInput:SetValue(maxValue);
+    end
+    
+    
+    
+    function self:OnRangeChanged(arg1)
+        self.Callbacks:BindOrCall("OnRangeChanged", arg1);
+    end
 end
 
 
 -----------------------------------------
 -- Vector Function Panel.
 
-function GTGUI.Element:Vector3ParticleFunctionPanel(titleText)
+function GTGUI.Element:Vector3ParticleFunctionPanel(titleText, minValue, maxValue)
     self:ParticleEditorFunctionPanel(titleText);
+    
+    self.MinInput = GTGUI.Server.CreateElement(self.Body:GetID(), "labelled-vector3-input");
+    self.MinInput:LabelledVector3Input("Min", minValue);
+    self.MinInput:SetStyle("margin-top", "4px");
+    
+    self.MaxInput = GTGUI.Server.CreateElement(self.Body:GetID(), "labelled-vector3-input");
+    self.MaxInput:LabelledVector3Input("Max", maxValue);
+    self.MaxInput:SetStyle("margin-top", "4px");
+    
+    
+    self.MinInput:OnValueChanged(function(data)
+        self:OnRangeChanged({minValue = self.MinInput:GetValue(), maxValue = self.MaxInput:GetValue()});
+    end);
+    
+    self.MaxInput:OnValueChanged(function(data)
+        self:OnRangeChanged({minValue = self.MinInput:GetValue(), maxValue = self.MaxInput:GetValue()});
+    end);
+    
+    
+    function self:SetRange(minValue, maxValue)
+        self.MinInput:SetValue(minValue);
+        self.MaxInput:SetValue(maxValue);
+    end
+    
+    
+    
+    function self:OnRangeChanged(arg1)
+        self.Callbacks:BindOrCall("OnRangeChanged", arg1);
+    end
 end
 
 

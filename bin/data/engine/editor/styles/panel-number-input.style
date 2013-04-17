@@ -25,5 +25,5 @@ panel-number-input-label:disabled
 panel-number-input-textbox includes textbox
 {
     width:     100%
-    max-width: 72px
+    max-width: 60px
 }

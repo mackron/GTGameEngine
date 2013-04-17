@@ -1,0 +1,9 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+labelled-vector-input includes labelled-element
+{
+}
+
+labelled-vector-input-input includes vector3-input
+{
+}

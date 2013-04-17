@@ -1,0 +1,36 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+labelled-element
+{
+    width:            100%
+    height:           auto
+    child-plane:      horizontal
+    flex-child-width: true
+    horizontal-align: right
+}
+
+labelled-element-left
+{
+    width:            auto
+    height:           auto
+    margin-right:     4px
+}
+
+labelled-element-right
+{
+    width:            100%
+    height:           auto
+    horizontal-align: right
+}
+
+labelled-element-label
+{
+    width:            auto
+    text-color:       std-text-color
+    padding:          0px 2px
+}
+
+labelled-element-label:disabled
+{
+    text-color:       #5a5a5a
+}

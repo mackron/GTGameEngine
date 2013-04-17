@@ -140,8 +140,8 @@ particle-editor-function-panel-title
 
 particle-editor-function-panel-body
 {
-    margin-top:  8px
-    padding:     8px 0px
+    margin-top:  4px
+    padding:     4px 0px
     
     transparent-mouse-input: true
 }
