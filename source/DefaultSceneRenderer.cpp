@@ -603,8 +603,10 @@ namespace GTEngine
 
 
                                                 glm::mat4 transform(glm::mat4_cast(absoluteOrientation));
-                                                transform[3] = glm::vec4(particle.position, 1.0f);
-                                                transform   *= glm::scale(particle.scale);
+                                                transform[0] *= particle.scale.x;
+                                                transform[1] *= particle.scale.y;
+                                                transform[2] *= particle.scale.z;
+                                                transform[3]  = glm::vec4(particle.position, 1.0f);
 
                                                 glm::vec4 position0 = transform * glm::vec4(-0.5f, -0.5f, 0.0f, 1.0f);
                                                 glm::vec4 position1 = transform * glm::vec4( 0.5f, -0.5f, 0.0f, 1.0f);
