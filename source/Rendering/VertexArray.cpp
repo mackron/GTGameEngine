@@ -7,7 +7,7 @@ namespace GTEngine
 {
     VertexArray::VertexArray(VertexArrayUsage usage, const VertexFormat &format)
         : usage(usage), format(format),
-          vertices(nullptr), vertexCount(0), indices(nullptr), indexCount(0),
+          vertices(nullptr), vertexCount(0), vertexBufferSize(0), indices(nullptr), indexCount(0), indexBufferSize(0),
           verticesMapped(false), indicesMapped(false)
     {
     }
@@ -18,20 +18,20 @@ namespace GTEngine
         free(this->indices);
     }
 
-    void VertexArray::SetData(const float *vertices, size_t vertexCount, const unsigned int *indices, size_t indexCount)
+    void VertexArray::SetData(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount)
     {
         this->SetVertexData(vertices, vertexCount);
         this->SetIndexData(indices, indexCount);
     }
 
-    void VertexArray::SetVertexData(const float *vertices, size_t vertexCount)
+    void VertexArray::SetVertexData(const float* vertices, size_t vertexCount)
     {
         assert(!this->verticesMapped);
 
 
         size_t vertexDataSize = vertexCount * this->format.GetSize();
 
-        if (this->vertexCount != vertexCount)
+        if (this->vertexBufferSize < vertexDataSize || this->vertexBufferSize > vertexDataSize * 2)
         {
             free(this->vertices);
 
@@ -43,6 +43,9 @@ namespace GTEngine
             {
                 this->vertices = nullptr;
             }
+
+
+            this->vertexBufferSize = vertexDataSize;
         }
 
 
@@ -59,11 +62,11 @@ namespace GTEngine
         this->OnVertexDataChanged();
     }
 
-    void VertexArray::SetIndexData(const unsigned int *indices, size_t indexCount)
+    void VertexArray::SetIndexData(const unsigned int* indices, size_t indexCount)
     {
         assert(!this->indicesMapped);
 
-        if (this->indexCount != indexCount)
+        if (this->indexBufferSize < indexCount || this->indexBufferSize > indexCount * 2)
         {
             free(this->indices);
 
@@ -75,6 +78,9 @@ namespace GTEngine
             {
                 this->indices = 0;
             }
+
+            
+            this->indexBufferSize = indexCount;
         }
 
         if (this->indices != nullptr && indices != nullptr)

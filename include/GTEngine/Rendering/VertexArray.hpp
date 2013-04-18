@@ -177,6 +177,7 @@ namespace GTEngine
         /// The format of the vertex data.
         VertexFormat format;
 
+
         /// A pointer to the the vertex information. The format of the data in this array is determined by 'format'.
         float* vertices;
 
@@ -184,11 +185,21 @@ namespace GTEngine
         /// in 'vertices' defines.
         size_t vertexCount;
 
+        /// The size in floats of the vertex buffer.
+        size_t vertexBufferSize;
+
+
+
         /// A pointer to the indices that determine the vertices that make up each polygon in the array.
         unsigned int* indices;
 
         /// The number of indices making up the vertex array.
         size_t indexCount;
+
+        /// The size in unsigned ints of the index buffer.
+        size_t indexBufferSize;
+
+
 
         /// Keeps track of whether or not the vertex data is currently mapped.
         bool verticesMapped;

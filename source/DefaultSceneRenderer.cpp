@@ -551,7 +551,7 @@ namespace GTEngine
 
 
         // Now we need to build the mesh to draw for each particle system.
-        glm::mat4 inverseViewMatrix = glm::inverse(this->viewMatrix);
+        glm::quat inverseView = glm::quat(glm::inverse(glm::quat_cast(this->viewMatrix)));
 
         for (size_t iParticleSystem = 0; iParticleSystem < this->visibleParticleSystems.count; ++iParticleSystem)
         {
@@ -599,29 +599,32 @@ namespace GTEngine
                                                 auto vertex2 = vertex1 + vertexSize;
                                                 auto vertex3 = vertex2 + vertexSize;
 
-                                                glm::mat4 transform(inverseViewMatrix * glm::mat4_cast(particle.orientation));
+                                                glm::quat absoluteOrientation = inverseView * particle.orientation;
+
+
+                                                glm::mat4 transform(glm::mat4_cast(absoluteOrientation));
                                                 transform[3] = glm::vec4(particle.position, 1.0f);
                                                 transform   *= glm::scale(particle.scale);
 
-                                                glm::vec3 position0 = glm::vec3(transform * glm::vec4(-0.5f, -0.5f, 0.0f, 1.0f));
-                                                glm::vec3 position1 = glm::vec3(transform * glm::vec4( 0.5f, -0.5f, 0.0f, 1.0f));
-                                                glm::vec3 position2 = glm::vec3(transform * glm::vec4( 0.5f,  0.5f, 0.0f, 1.0f));
-                                                glm::vec3 position3 = glm::vec3(transform * glm::vec4(-0.5f,  0.5f, 0.0f, 1.0f));
+                                                glm::vec4 position0 = transform * glm::vec4(-0.5f, -0.5f, 0.0f, 1.0f);
+                                                glm::vec4 position1 = transform * glm::vec4( 0.5f, -0.5f, 0.0f, 1.0f);
+                                                glm::vec4 position2 = transform * glm::vec4( 0.5f,  0.5f, 0.0f, 1.0f);
+                                                glm::vec4 position3 = transform * glm::vec4(-0.5f,  0.5f, 0.0f, 1.0f);
 
                                                 glm::vec2 texcoord0 = glm::vec2(0.0f, 0.0f);
                                                 glm::vec2 texcoord1 = glm::vec2(1.0f, 0.0f);
                                                 glm::vec2 texcoord2 = glm::vec2(1.0f, 1.0f);
                                                 glm::vec2 texcoord3 = glm::vec2(0.0f, 1.0f);
 
-                                                glm::vec3 normal0 = glm::triangleNormal(position0, position1, position2);
-                                                glm::vec3 normal1 = normal0;
-                                                glm::vec3 normal2 = normal0;
-                                                glm::vec3 normal3 = normal0;
+                                                glm::vec3 normal0   = absoluteOrientation * glm::vec3(0.0f, 0.0f, 1.0f);
+                                                glm::vec3 normal1   = normal0;
+                                                glm::vec3 normal2   = normal0;
+                                                glm::vec3 normal3   = normal0;
 
-                                                glm::vec4 colour0 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-                                                glm::vec4 colour1 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-                                                glm::vec4 colour2 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-                                                glm::vec4 colour3 = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour0   = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour1   = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour2   = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour3   = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 
                                                 vertex0[0] = position0.x; vertex0[1] = position0.y; vertex0[2]  = position0.z;
