@@ -38,6 +38,32 @@ namespace GTEngine
 {
     namespace Math
     {
+        /// A fast, approximate sin() function.
+        ///
+        /// @remarks
+        ///     'x' must be in [-pi,pi].
+        template <typename T>
+        T fastSin(T x)
+        {
+            const T b = T( 4) /  glm::pi<T>();
+            const T c = T(-4) / (glm::pi<T>() * glm::pi<T>());
+
+            T y = b * x + c * x * glm::abs(x);
+            
+            y = T(0.225) * (y * glm::abs(y) - y) + y;
+
+            return y;
+        }
+
+        /// A fast, approximate cos() function.
+        template <typename T>
+        T fastCos(T x)
+        {
+            return fastSin(glm::pi<T>() * T(0.5) + x);
+        }
+
+
+        /// A fast quaternion constructor from Euler angles.
         template <typename T> 
 	    GLM_FUNC_QUALIFIER glm::detail::tquat<T> quatFromEulerFast
 	    (
@@ -46,8 +72,8 @@ namespace GTEngine
 	    {
             glm::detail::tquat<T> result;
 
-		    glm::detail::tvec3<T> c = glm::fastCos(eulerAngle * T(0.5));
-		    glm::detail::tvec3<T> s = glm::fastSin(eulerAngle * T(0.5));
+		    glm::detail::tvec3<T> c = Math::fastCos(eulerAngle * T(0.5));
+		    glm::detail::tvec3<T> s = Math::fastSin(eulerAngle * T(0.5));
 		
 		    result.w = c.x * c.y * c.z + s.x * s.y * s.z;
 		    result.x = s.x * c.y * c.z - c.x * s.y * s.z;
@@ -57,6 +83,8 @@ namespace GTEngine
             return result;
 	    }
 
+
+        /// A fast quaternion mix function.
         template <typename T> 
 	    GLM_FUNC_QUALIFIER glm::detail::tquat<T> fastMix
 	    (
@@ -65,6 +93,37 @@ namespace GTEngine
 		    T const & a
 	    )
 	    {
+#if 0
+            __m128 simdResult;
+            __m128 simdX = _mm_set_ps(x.x, x.y, x.z, x.w);
+            __m128 simdY = _mm_set_ps(y.x, y.y, y.z, y.w);
+
+            float cosTheta;
+            _mm_store_ss(&cosTheta, glm::detail::sse_dot_ss(simdX, simdY));
+
+
+            if (cosTheta > T(1) - glm::epsilon<T>())
+            {
+	            simdResult = _mm_add_ps(simdX, _mm_mul_ps(_mm_set1_ps(a), _mm_sub_ps(simdY, simdX)));
+            }
+            else
+            {
+                T angle = glm::fastAcos(cosTheta);
+
+                __m128 scalarA = _mm_set1_ps(Math::fastSin((T(1.0) - a) * angle));
+                __m128 scalarB = _mm_set1_ps(Math::fastSin(a * angle));
+                __m128 scalarC = _mm_set1_ps(T(1.0) / Math::fastSin(angle));
+
+                simdResult = _mm_mul_ps(_mm_add_ps(_mm_mul_ps(scalarA, simdX), _mm_mul_ps(scalarB, simdY)), scalarC);
+            }
+
+            float result[4];
+            _mm_store_ps(result, simdResult);
+
+            return glm::detail::tquat<T>(result[0], result[1], result[2], result[3]);
+#endif
+
+#if 1
             T cosTheta = glm::dot(x, y);
 
 		    // Perform a linear interpolation when cosTheta is close to 1 to avoid side effect of sin(angle) becoming a zero denominator
@@ -81,8 +140,9 @@ namespace GTEngine
 		    {
 			    // Essential Mathematics, page 467
                 T angle = glm::fastAcos(cosTheta);
-			    return (glm::fastSin((T(1) - a) * angle) * x + glm::fastSin(a * angle) * y) / glm::fastSin(angle);
+			    return (Math::fastSin((T(1) - a) * angle) * x + Math::fastSin(a * angle) * y) * (1.0f / Math::fastSin(angle));
 		    }
+#endif
 	    }
 
 
