@@ -19,6 +19,21 @@ namespace GTEngine
 
         namespace ParticleEmitterFFI
         {
+            /// Retrieves the name of the given particle emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetName(GTCore::Script &script);
+
+            /// Sets the name of the given particle emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The new name.
+            int SetName(GTCore::Script &script);
+
+
+
             /// Enables burst mode.
             ///
             /// @remarks

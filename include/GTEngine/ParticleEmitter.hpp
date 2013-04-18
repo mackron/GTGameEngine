@@ -8,7 +8,6 @@
 #include "ParticleFunction.hpp"
 #include "MaterialLibrary.hpp"
 #include "Rendering/VertexArray.hpp"
-#include <GTCore/Vector.hpp>
 #include <GTCore/Random.hpp>
 
 namespace GTEngine
@@ -71,6 +70,13 @@ namespace GTEngine
         ///     @par
         ///     This does not orientate particles towards the camera. That needs to be done at render time.
         void Update(double deltaTimeInSeconds, const glm::vec3 &gravity);
+
+
+        /// Retrieves the name of the emitter.
+        const char* GetName() const;
+
+        /// Sets the name of the emitter.
+        void SetName(const char* newName);
 
 
         /// Retrieves the position of the emitter.
@@ -294,6 +300,12 @@ namespace GTEngine
             BurstEnabled      = (1 << 1),
             DoneFirstEmission = (1 << 2)
         };
+
+
+
+        /// The name of the emitter. The name is only used for identification for humans. This does not need to be unique.
+        GTCore::String name;
+
 
 
         /// The position of the emitter.
