@@ -6,7 +6,7 @@
 namespace GTEngine
 {
     ParticleEmitter::ParticleEmitter()
-        : position(), orientation(),
+        : name(""), position(), orientation(),
           flags(0), durationInSeconds(0.0), emissionRatePerSecond(10.0), gravityFactor(0.0),
           emissionShapeType(EmissionShapeType_Cone), emissionShapeCone(), emissionShapeSphere(), emissionShapeBox(),
           startSpeedMin(5.0), startSpeedMax(5.0),
@@ -24,7 +24,7 @@ namespace GTEngine
     }
 
     ParticleEmitter::ParticleEmitter(const ParticleEmitter &other)
-        : position(other.position), orientation(other.orientation),
+        : name(other.name), position(other.position), orientation(other.orientation),
           flags(other.flags), durationInSeconds(other.durationInSeconds), emissionRatePerSecond(other.emissionRatePerSecond), gravityFactor(other.gravityFactor),
           emissionShapeType(other.emissionShapeType), emissionShapeCone(other.emissionShapeCone), emissionShapeSphere(other.emissionShapeSphere), emissionShapeBox(other.emissionShapeBox),
           startSpeedMin(other.startSpeedMin), startSpeedMax(other.startSpeedMax),
@@ -270,6 +270,46 @@ namespace GTEngine
     }
 
 
+    const char* ParticleEmitter::GetName() const
+    {
+        return this->name.c_str();
+    }
+
+    void ParticleEmitter::SetName(const char* newName)
+    {
+        this->name = newName;
+    }
+
+
+    const glm::vec3 & ParticleEmitter::GetPosition() const
+    {
+        return this->position;
+    }
+
+    void ParticleEmitter::SetPosition(const glm::vec3 &newPosition)
+    {
+        this->position = newPosition;
+    }
+
+
+    const glm::quat & ParticleEmitter::GetOrientation() const
+    {
+        return this->orientation;
+    }
+
+    void ParticleEmitter::SetOrientation(const glm::quat &newOrientation)
+    {
+        this->orientation = newOrientation;
+    }
+
+    
+    glm::vec3 ParticleEmitter::GetForwardVector() const
+    {
+        return this->orientation * glm::vec3(0.0f, 0.0f, -1.0f);
+    }
+
+
+
     void ParticleEmitter::EnableBurstMode()
     {
         this->flags = this->flags | BurstEnabled;
@@ -432,33 +472,6 @@ namespace GTEngine
     }
 
 
-
-    const glm::vec3 & ParticleEmitter::GetPosition() const
-    {
-        return this->position;
-    }
-
-    void ParticleEmitter::SetPosition(const glm::vec3 &newPosition)
-    {
-        this->position = newPosition;
-    }
-
-
-    const glm::quat & ParticleEmitter::GetOrientation() const
-    {
-        return this->orientation;
-    }
-
-    void ParticleEmitter::SetOrientation(const glm::quat &newOrientation)
-    {
-        this->orientation = newOrientation;
-    }
-
-    
-    glm::vec3 ParticleEmitter::GetForwardVector() const
-    {
-        return this->orientation * glm::vec3(0.0f, 0.0f, -1.0f);
-    }
 
 
     bool ParticleEmitter::SetMaterial(const char* relativePath)

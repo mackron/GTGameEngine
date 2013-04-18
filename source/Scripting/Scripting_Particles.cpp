@@ -28,6 +28,15 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.ParticleEmitter:GetName()"
+                "   return GTEngine.System.ParticleEmitter.GetName(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:SetName(newName)"
+                "   GTEngine.System.ParticleEmitter.SetName(self._internalPtr, newName);"
+                "end;"
+
+
                 "function GTEngine.ParticleEmitter:EnableBurstMode()"
                 "   GTEngine.System.ParticleEmitter.EnableBurstMode(self._internalPtr);"
                 "end;"
@@ -174,6 +183,8 @@ namespace GTEngine
                         script.Push("ParticleEmitter");
                         script.PushNewTable();
                         {
+                            script.SetTableFunction(-1, "GetName",                          ParticleEmitterFFI::GetName);
+                            script.SetTableFunction(-1, "SetName",                          ParticleEmitterFFI::SetName);
                             script.SetTableFunction(-1, "EnableBurstMode",                  ParticleEmitterFFI::EnableBurstMode);
                             script.SetTableFunction(-1, "DisableBurstMode",                 ParticleEmitterFFI::DisableBurstMode);
                             script.SetTableFunction(-1, "IsBurstModeEnabled",               ParticleEmitterFFI::IsBurstModeEnabled);
@@ -368,6 +379,33 @@ namespace GTEngine
 
         namespace ParticleEmitterFFI
         {
+            int GetName(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(emitter->GetName());
+                }
+                else
+                {
+                    script.Push("");
+                }
+
+                return 1;
+            }
+
+            int SetName(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->SetName(script.ToString(2));
+                }
+
+                return 0;
+            }
+
+
             int EnableBurstMode(GTCore::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));

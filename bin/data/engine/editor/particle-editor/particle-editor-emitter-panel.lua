@@ -1,7 +1,12 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
-    self:PanelGroupBox("Emitter " .. tostring(index), true);
+    local groupBoxTitle = emitter:GetName();
+    if groupBoxTitle == nil or groupBoxTitle == "" then
+        groupBoxTitle = "Emitter " .. tostring(index);
+    end
+
+    self:PanelGroupBox(groupBoxTitle, true);
     self.Emitter     = emitter;
     self.Index       = index;
     self.OwnerEditor = ownerEditor;
