@@ -197,7 +197,8 @@ namespace GTEngine
             glm::mat4 transform = glm::mat4_cast(this->orientation);
             transform[3]        = glm::vec4(this->position, 1.0f);
 
-            particle.orientation = glm::quat(glm::radians(glm::vec3(
+            //particle.orientation = glm::quat(glm::radians(glm::vec3(
+            particle.orientation = Math::quatFromEulerFast(glm::radians(glm::vec3(
                 this->random.Next(this->startRotationMin.x, this->startRotationMax.x),
                 this->random.Next(this->startRotationMin.y, this->startRotationMax.y),
                 this->random.Next(this->startRotationMin.z, this->startRotationMax.z))));
@@ -233,7 +234,7 @@ namespace GTEngine
 
                     particle.linearVelocity  = particle.gravityLinearVelocity + particle.spawnLinearVelocity + particle.functionLinearVelocity;
                     particle.position       += particle.linearVelocity * deltaTimeInSecondsF;
-                    particle.orientation     = particle.orientation * glm::quat(glm::radians(particle.angularVelocity * deltaTimeInSecondsF));
+                    particle.orientation     = particle.orientation * Math::quatFromEulerFast(glm::radians(particle.angularVelocity * deltaTimeInSecondsF));
 
 
                     // At this point we need to run all of the functions that are currently being used by the emitter.
