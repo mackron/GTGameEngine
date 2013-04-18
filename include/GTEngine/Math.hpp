@@ -23,6 +23,9 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/orthonormalize.hpp>
 #include <glm/gtx/normal.hpp>
+#include <glm/gtx/fast_trigonometry.hpp>
+#include <glm/gtx/fast_square_root.hpp>
+#include <glm/gtx/fast_exponential.hpp>
 #include <glm/gtx/simd_mat4.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
@@ -35,6 +38,27 @@ namespace GTEngine
 {
     namespace Math
     {
+        template <typename T> 
+	    GLM_FUNC_QUALIFIER glm::detail::tquat<T> quatFromEulerFast
+	    (
+		    glm::detail::tvec3<T> const & eulerAngle
+	    )
+	    {
+            glm::detail::tquat<T> result;
+
+		    glm::detail::tvec3<T> c = glm::fastCos(eulerAngle * T(0.5));
+		    glm::detail::tvec3<T> s = glm::fastSin(eulerAngle * T(0.5));
+		
+		    result.w = c.x * c.y * c.z + s.x * s.y * s.z;
+		    result.x = s.x * c.y * c.z - c.x * s.y * s.z;
+		    result.y = c.x * s.y * c.z + s.x * c.y * s.z;
+		    result.z = c.x * c.y * s.z - s.x * s.y * c.z;
+
+            return result;
+	    }
+
+
+
         /// Calculates a view matrix from a position and orientation.
         void CalculateViewMatrix(const glm::vec3 &position, const glm::quat &orientation, glm::mat4 &result);
 
