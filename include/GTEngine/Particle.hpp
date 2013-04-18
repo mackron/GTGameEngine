@@ -36,7 +36,7 @@ namespace GTEngine
         glm::vec3 linearVelocity;
 
         /// The current angular velocity of the particle.
-        glm::vec3 angularVelocity;
+        glm::quat angularVelocity;
 
 
         /// The linear velocity of the particle when it was spawned.
