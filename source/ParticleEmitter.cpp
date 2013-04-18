@@ -139,7 +139,9 @@ namespace GTEngine
 
         for (int i = 0; i < spawnCount; ++i)
         {
-            Particle particle;
+            auto &particle = this->particles.PushNewParticle();
+
+
 
             // The spawning position and direction is different depending on the spawn shape. The position and direction is calculated
             // in local space, which is then later transformed by the emitters transform.
@@ -189,6 +191,8 @@ namespace GTEngine
             }
 
 
+
+
             // Now we need to transform the position and calculate the velocity.
             glm::mat4 transform = glm::mat4_cast(this->orientation);
             transform[3]        = glm::vec4(this->position, 1.0f);
@@ -203,7 +207,6 @@ namespace GTEngine
 
 
             particle.timeLeftToDeath = particle.lifetime = this->random.Next(this->lifetimeMin, this->lifetimeMax);
-            this->particles.PushBack(particle);
         }
 
 
@@ -211,7 +214,7 @@ namespace GTEngine
 
         // Here we will update any still-alive particles.
         size_t iParticle = 0;
-        while (iParticle < this->particles.count)
+        while (iParticle < this->particles.GetCount())
         {
             auto &particle = this->GetParticle(iParticle);
             {
