@@ -57,6 +57,34 @@ namespace GTEngine
             return result;
 	    }
 
+        template <typename T> 
+	    GLM_FUNC_QUALIFIER glm::detail::tquat<T> fastMix
+	    (
+		    glm::detail::tquat<T> const & x, 
+		    glm::detail::tquat<T> const & y, 
+		    T const & a
+	    )
+	    {
+            T cosTheta = glm::dot(x, y);
+
+		    // Perform a linear interpolation when cosTheta is close to 1 to avoid side effect of sin(angle) becoming a zero denominator
+		    if(cosTheta > T(1) - glm::epsilon<T>())
+		    {
+			    // Linear interpolation
+			    return glm::detail::tquat<T>(
+				    glm::mix(x.w, y.w, a),
+				    glm::mix(x.x, y.x, a),
+				    glm::mix(x.y, y.y, a),
+				    glm::mix(x.z, y.z, a));
+		    }
+		    else
+		    {
+			    // Essential Mathematics, page 467
+                T angle = glm::fastAcos(cosTheta);
+			    return (glm::fastSin((T(1) - a) * angle) * x + glm::fastSin(a * angle) * y) / glm::fastSin(angle);
+		    }
+	    }
+
 
 
         /// Calculates a view matrix from a position and orientation.

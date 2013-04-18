@@ -115,13 +115,13 @@ namespace GTEngine
         ///
         /// @param rangeMin [in] The minimum value in the range.
         /// @param rangeMax [in] The maximum value in the range.
-        void SetRange(const glm::vec3 &rangeMin, const glm::vec3 &rangeMax);
+        virtual void SetRange(const glm::vec3 &rangeMin, const glm::vec3 &rangeMax);
 
         /// Retrieves the range.
         ///
         /// @param rangeMinOut [out] A reference to the variable that will receive the min value.
         /// @param rangeMaxOut [out] A reference to the variable that will receive the max value.
-        void GetRange(glm::vec3 &rangeMinOut, glm::vec3 &rangeMaxOut) const;
+        virtual void GetRange(glm::vec3 &rangeMinOut, glm::vec3 &rangeMaxOut) const;
 
 
         /// Evaluates the function.
@@ -201,19 +201,34 @@ namespace GTEngine
 
         /// Constructor.
         ParticleFunction_AngularVelocityOverTime()
-            : ParticleFunction_Vector3(ParticleFunctionType_AngularVelocityOverTime, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f))
+            : ParticleFunction_Vector3(ParticleFunctionType_AngularVelocityOverTime, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+              rangeMinQuat(), rangeMaxQuat()
         {
         }
 
         /// Copy constructor.
         ParticleFunction_AngularVelocityOverTime(const ParticleFunction_AngularVelocityOverTime &other)
-            : ParticleFunction_Vector3(other)
+            : ParticleFunction_Vector3(other),
+              rangeMinQuat(other.rangeMinQuat), rangeMaxQuat(other.rangeMaxQuat)
         {
         }
 
 
         /// ParticleFunction::Execute()
         void Execute(Particle &particle, float lifetimeRatio);
+
+        /// ParticleFunction_Vector3::SetRange().
+        void SetRange(const glm::vec3 &rangeMin, const glm::vec3 &rangeMax);
+
+
+
+    private:
+
+        /// The min value in the range, as a quaternion.
+        glm::quat rangeMinQuat;
+
+        /// The max value in the range, as a quaternion.
+        glm::quat rangeMaxQuat;
     };
 }
 
