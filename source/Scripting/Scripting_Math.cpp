@@ -100,7 +100,7 @@ namespace GTEngine
                 "    local new = {};"
                 "    setmetatable(new, math.__vec2);"
                 "        new.x = xIn;"
-                "        new.y = yIn;"
+                "        new.y = yIn or xIn;"
                 "    return new;"
                 "end;"
 
@@ -233,8 +233,8 @@ namespace GTEngine
                 "    local new = {};"
                 "    setmetatable(new, math.__vec3);"
                 "        new.x = xIn;"
-                "        new.y = yIn;"
-                "        new.z = zIn;"
+                "        new.y = yIn or xIn;"
+                "        new.z = zIn or xIn;"
                 "    return new;"
                 "end;"
 
@@ -378,9 +378,9 @@ namespace GTEngine
                 "    local new = {};"
                 "    setmetatable(new, math.__vec4);"
                 "        new.x = xIn;"
-                "        new.y = yIn;"
-                "        new.z = zIn;"
-                "        new.w = wIn;"
+                "        new.y = yIn or xIn;"
+                "        new.z = zIn or xIn;"
+                "        new.w = wIn or xIn;"
                 "    return new;"
                 "end;"
 

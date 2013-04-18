@@ -70,21 +70,52 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            ///     Argument 2: The new start speed.
+            ///     Argument 2: The new minimum start speed.
+            ///     Argument 3: The new maximum start speed.
             int SetStartSpeed(GTCore::Script &script);
 
-            /// Retrieves the start speed of the particles of the emitter.
+            /// Retrieves the start speed range of the particles of the emitter.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             int GetStartSpeed(GTCore::Script &script);
 
 
+            /// Sets the start rotation of the particles of the given emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The new minimum start rotation.
+            ///     Argument 3: The new maximum start rotation.
+            int SetStartRotation(GTCore::Script &script);
+
+            /// Retrieves the start rotation of the particles of the given emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetStartRotation(GTCore::Script &script);
+
+            /// Sets the start scale of the particles of the given emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The new minimum start scale.
+            ///     Argument 3: The new maximum start scale.
+            int SetStartScale(GTCore::Script &script);
+
+            /// Retrieves the start scale of the particles of the given emitter.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetStartScale(GTCore::Script &script);
+
+
             /// Sets the lifetime of the particles of the emitter.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            ///     Argument 2: The new lifetime.
+            ///     Argument 2: The new minimum lifetime.
+            ///     Argument 3: The new maximum lifetime.
             int SetLifetime(GTCore::Script &script);
 
             /// Retrieves the lifetime of the particles of the emitter.

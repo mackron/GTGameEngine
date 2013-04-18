@@ -174,6 +174,21 @@ namespace GTEngine
         void SetStartSpeed(double newStartSpeed) { this->SetStartSpeed(newStartSpeed, newStartSpeed); }
         
 
+        /// Retrieves the start rotation range of each particle.
+        void GetStartRotation(glm::vec3 &startRotationMinOut, glm::vec3 &startRotationMaxOut) const;
+
+        /// Sets the start rotation range of each particle.
+        void SetStartRotation(const glm::vec3 &newStartRotationMin, const glm::vec3 &newStartRotationMax);
+        void SetStartRotation(const glm::vec3 &newStartRotation) { this->SetStartRotation(newStartRotation, newStartRotation); }
+
+
+        /// Retrieves the start rotation range of each particle.
+        void GetStartScale(glm::vec3 &startScaleMinOut, glm::vec3 &startScaleMaxOut) const;
+
+        /// Sets the start rotation range of each particle.
+        void SetStartScale(const glm::vec3 &newStartScaleMin, const glm::vec3 &newStartScaleMax);
+        void SetStartScale(const glm::vec3 &newStartScale) { this->SetStartScale(newStartScale, newStartScale); }
+
 
         /// Retrieves the lifetime of a particle.
         void GetLifetime(double &ifetimeMinOut, double &lifetimeMaxOut) const;
@@ -320,6 +335,10 @@ namespace GTEngine
         /// The starting rotation of the particles.
         glm::vec3 startRotationMin;
         glm::vec3 startRotationMax;
+
+        /// The starting scale of the particles.
+        glm::vec3 startScaleMin;
+        glm::vec3 startScaleMax;
 
         /// The lifetime of a particle.
         double lifetimeMin;

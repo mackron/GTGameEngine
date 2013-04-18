@@ -68,6 +68,23 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.ParticleEmitter:SetStartRotation(startRotationMin, startRotationMax)"
+                "    GTEngine.System.ParticleEmitter.SetStartRotation(self._internalPtr, startRotationMin, startRotationMax);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetStartRotation()"
+                "    return GTEngine.System.ParticleEmitter.GetStartRotation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:SetStartScale(startScaleMin, startScaleMax)"
+                "    GTEngine.System.ParticleEmitter.SetStartScale(self._internalPtr, startScaleMin, startScaleMax);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetStartScale()"
+                "    return GTEngine.System.ParticleEmitter.GetStartScale(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.ParticleEmitter:SetLifetime(lifetimeMin, lifetimeMax)"
                 "    GTEngine.System.ParticleEmitter.SetLifetime(self._internalPtr, lifetimeMin, lifetimeMax);"
                 "end;"
@@ -166,6 +183,10 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetEmissionRatePerSecond",         ParticleEmitterFFI::GetEmissionRatePerSecond);
                             script.SetTableFunction(-1, "SetStartSpeed",                    ParticleEmitterFFI::SetStartSpeed);
                             script.SetTableFunction(-1, "GetStartSpeed",                    ParticleEmitterFFI::GetStartSpeed);
+                            script.SetTableFunction(-1, "SetStartRotation",                 ParticleEmitterFFI::SetStartRotation);
+                            script.SetTableFunction(-1, "GetStartRotation",                 ParticleEmitterFFI::GetStartRotation);
+                            script.SetTableFunction(-1, "SetStartScale",                    ParticleEmitterFFI::SetStartScale);
+                            script.SetTableFunction(-1, "GetStartScale",                    ParticleEmitterFFI::GetStartScale);
                             script.SetTableFunction(-1, "SetLifetime",                      ParticleEmitterFFI::SetLifetime);
                             script.SetTableFunction(-1, "GetLifetime",                      ParticleEmitterFFI::GetLifetime);
                             script.SetTableFunction(-1, "SetGravityFactor",                 ParticleEmitterFFI::SetGravityFactor);
@@ -469,6 +490,78 @@ namespace GTEngine
                 {
                     script.Push(5.0);
                     script.Push(5.0);
+                }
+
+                return 2;
+            }
+
+
+            int SetStartRotation(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    glm::vec3 startRotationMin = ToVector3(script, 2);
+                    glm::vec3 startRotationMax = script.IsNil(3) ? startRotationMin : ToVector3(script, 3);
+
+                    emitter->SetStartRotation(startRotationMin, startRotationMax);
+                }
+
+                return 0;
+            }
+
+            int GetStartRotation(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    glm::vec3 startRotationMin;
+                    glm::vec3 startRotationMax;
+                    emitter->GetStartRotation(startRotationMin, startRotationMax);
+
+                    PushNewVector3(script, startRotationMin);
+                    PushNewVector3(script, startRotationMax);
+                }
+                else
+                {
+                    PushNewVector3(script, 0.0f, 0.0f, 0.0f);
+                    PushNewVector3(script, 0.0f, 0.0f, 0.0f);
+                }
+
+                return 2;
+            }
+
+
+            int SetStartScale(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    glm::vec3 startScaleMin = ToVector3(script, 2);
+                    glm::vec3 startScaleMax = script.IsNil(3) ? startScaleMin : ToVector3(script, 3);
+
+                    emitter->SetStartScale(startScaleMin, startScaleMax);
+                }
+
+                return 0;
+            }
+
+            int GetStartScale(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    glm::vec3 startScaleMin;
+                    glm::vec3 startScaleMax;
+                    emitter->GetStartScale(startScaleMin, startScaleMax);
+
+                    PushNewVector3(script, startScaleMin);
+                    PushNewVector3(script, startScaleMax);
+                }
+                else
+                {
+                    PushNewVector3(script, 1.0f, 1.0f, 1.0f);
+                    PushNewVector3(script, 1.0f, 1.0f, 1.0f);
                 }
 
                 return 2;
