@@ -59,6 +59,13 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.StartSpeed = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.StartSpeed:PanelNumberInput("Start Speed", emitter:GetStartSpeed());
     
+    self.StartScale    = GTGUI.Server.CreateElement(self.Body:GetID(), "panel-number-input");
+    self.StartScale:PanelNumberInput("Start Size", emitter:GetStartScale().x);
+    
+    self.StartRotation = GTGUI.Server.CreateElement(self.Body:GetID(), "labelled-vector3-input");
+    self.StartRotation:LabelledVector3Input("Start Rotation", emitter:GetStartRotation());
+    self.StartRotation:SetStyle("margin-top", "4px");
+    
     
     
     
@@ -322,6 +329,17 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
         self.Emitter:SetStartSpeed(self.StartSpeed:GetValue());
         self.OwnerEditor:OnChange();
     end);
+    
+    self.StartScale:OnValueChanged(function(data)
+        self.Emitter:SetStartScale(math.vec3(self.StartScale:GetValue()));
+        self.OwnerEditor:OnChange();
+    end);
+    
+    self.StartRotation:OnValueChanged(function(data)
+        self.Emitter:SetStartRotation(self.StartRotation:GetValue());
+        self.OwnerEditor:OnChange();
+    end);
+    
     
     
     

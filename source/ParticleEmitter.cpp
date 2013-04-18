@@ -11,6 +11,7 @@ namespace GTEngine
           emissionShapeType(EmissionShapeType_Cone), emissionShapeCone(), emissionShapeSphere(), emissionShapeBox(),
           startSpeedMin(5.0), startSpeedMax(5.0),
           startRotationMin(), startRotationMax(),
+          startScaleMin(1.0f, 1.0f, 1.0f), startScaleMax(1.0f, 1.0f, 1.0f),
           lifetimeMin(5.0), lifetimeMax(5.0),
           material(nullptr),
           timeSinceLastEmission(1.0 / emissionRatePerSecond),
@@ -28,6 +29,7 @@ namespace GTEngine
           emissionShapeType(other.emissionShapeType), emissionShapeCone(other.emissionShapeCone), emissionShapeSphere(other.emissionShapeSphere), emissionShapeBox(other.emissionShapeBox),
           startSpeedMin(other.startSpeedMin), startSpeedMax(other.startSpeedMax),
           startRotationMin(other.startRotationMin), startRotationMax(other.startRotationMax),
+          startScaleMin(other.startScaleMin), startScaleMax(other.startScaleMax),
           lifetimeMin(other.lifetimeMin), lifetimeMax(other.lifetimeMax),
           material((other.material != nullptr) ? MaterialLibrary::CreateCopy(*other.material) : nullptr),
           timeSinceLastEmission(other.timeSinceLastEmission),
@@ -197,6 +199,11 @@ namespace GTEngine
             glm::mat4 transform = glm::mat4_cast(this->orientation);
             transform[3]        = glm::vec4(this->position, 1.0f);
 
+            particle.scale = glm::vec3(
+                this->random.Next(this->startScaleMin.x, this->startScaleMax.x),
+                this->random.Next(this->startScaleMin.y, this->startScaleMax.y),
+                this->random.Next(this->startScaleMin.z, this->startScaleMax.z));
+
             particle.orientation = Math::quatFromEulerFast(glm::radians(glm::vec3(
                 this->random.Next(this->startRotationMin.x, this->startRotationMax.x),
                 this->random.Next(this->startRotationMin.y, this->startRotationMax.y),
@@ -326,6 +333,32 @@ namespace GTEngine
     {
         this->startSpeedMin = newStartSpeedMin;
         this->startSpeedMax = newStartSpeedMax;
+    }
+
+
+    void ParticleEmitter::GetStartRotation(glm::vec3 &startRotationMinOut, glm::vec3 &startRotationMaxOut) const
+    {
+        startRotationMinOut = this->startRotationMin;
+        startRotationMaxOut = this->startRotationMax;
+    }
+
+    void ParticleEmitter::SetStartRotation(const glm::vec3 &newStartRotationMin, const glm::vec3 &newStartRotationMax)
+    {
+        this->startRotationMin = newStartRotationMin;
+        this->startRotationMax = newStartRotationMax;
+    }
+
+
+    void ParticleEmitter::GetStartScale(glm::vec3 &startScaleMinOut, glm::vec3 &startScaleMaxOut) const
+    {
+        startScaleMinOut = this->startScaleMin;
+        startScaleMaxOut = this->startScaleMax;
+    }
+
+    void ParticleEmitter::SetStartScale(const glm::vec3 &newStartScaleMin, const glm::vec3 &newStartScaleMax)
+    {
+        this->startScaleMin = newStartScaleMin;
+        this->startScaleMax = newStartScaleMax;
     }
 
 
