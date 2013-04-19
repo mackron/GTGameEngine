@@ -38,6 +38,11 @@ namespace GTEngine
         this->particleSystem = newParticleSystem;
         this->isOwner        = takeOwnership;
 
+        if (this->particleSystem != nullptr)
+        {
+            this->particleSystem->SetTransform(this->node.GetWorldPosition(), this->node.GetWorldOrientation());
+        }
+
         this->OnChanged();
     }
 
