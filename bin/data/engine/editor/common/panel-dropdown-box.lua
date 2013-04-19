@@ -23,11 +23,11 @@ function GTGUI.Element:PanelDropDownBox(title)
     end
     
     function self:SelectItemByIndex(index)
-        self.DropDownBox:SelectItemByIndex(index);
+        self.DropDownBox:SelectItemByIndex(index, true);          -- 'true' = 'blockEvent'
     end
     
     function self:SelectItem(itemToSelect)
-        self.DropDownBox:SelectItem(itemToSelect);
+        self.DropDownBox:SelectItem(itemToSelect, true);          -- 'true' = 'blockEvent'
     end
     
     

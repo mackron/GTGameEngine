@@ -62,6 +62,17 @@ namespace GTEngine
 
 
 
+        ///////////////////////////////////////////////////////////
+        // Serialization/Deserialization.
+
+        /// Serializes the particle system definition.
+        void Serialize(GTCore::Serializer &serializer);
+
+        /// Deserializes the particle system definition.
+        void Deserialize(GTCore::Deserializer &deserializer);
+
+
+
     private:
 
         /// Clears the particle system, leaving it empty.

@@ -107,6 +107,12 @@ namespace GTEngine
     }
 
 
+    void ParticleList::Clear()
+    {
+        this->count      = 0;
+        this->startIndex = 0;
+    }
+
 
 
     ////////////////////////////////////////////

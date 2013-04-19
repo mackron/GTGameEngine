@@ -153,6 +153,13 @@ namespace GTEngine
         static const uint32_t ChunkID_Material_Main                           = CHUNK_ID(0x00000510U);
         static const uint32_t ChunkID_Material_Parameters                     = CHUNK_ID(0x00000511U);
 
+        // Particles.
+        static const uint32_t ChunkID_ParticleSystemDefinition_Main           = CHUNK_ID(0x00000520U);
+        static const uint32_t ChunkID_ParticleSystem_Main                     = CHUNK_ID(0x00000521U);
+        static const uint32_t ChunkID_ParticleEmitter_Main                    = CHUNK_ID(0x00000522U);
+        static const uint32_t ChunkID_ParticleEmitter_Particles               = CHUNK_ID(0x00000523U);
+        
+
 
         /////////////////////////////////////////////////////
         // Scene State Stack

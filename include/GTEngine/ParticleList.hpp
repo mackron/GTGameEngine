@@ -48,6 +48,9 @@ namespace GTEngine
               Particle & GetParticle(size_t index);
         const Particle & GetParticle(size_t index) const;
 
+
+        /// Clears the list.
+        void Clear();
         
 
     private:

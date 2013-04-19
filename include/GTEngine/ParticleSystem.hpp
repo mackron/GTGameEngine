@@ -68,7 +68,6 @@ namespace GTEngine
         const glm::vec3 & GetGravity() const;
 
 
-
     private:
 
         /// Clears the particle system.

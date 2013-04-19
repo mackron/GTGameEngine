@@ -53,12 +53,14 @@ namespace GTEngine
         auto file = GTCore::IO::Open(newAbsolutePath.c_str(), GTCore::IO::OpenMode::Binary | GTCore::IO::OpenMode::Read);
         if (file != nullptr)
         {
-            // TODO: Actually load the file!
+            GTCore::FileDeserializer deserializer(file);
+            this->Deserialize(deserializer);
 
 
             this->absolutePath = newAbsolutePath;
             this->relativePath = newRelativePath;
 
+            GTCore::IO::Close(file);
             return true;
         }
 
@@ -110,6 +112,68 @@ namespace GTEngine
         this->emitters.Remove(index);
     }
 
+
+
+
+    //////////////////////////////////////
+    // Serialization/Deserialization
+
+    void ParticleSystemDefinition::Serialize(GTCore::Serializer &serializer)
+    {
+        GTCore::BasicSerializer intermediarySerializer;
+
+        uint32_t emitterCount = static_cast<uint32_t>(this->emitters.count);
+        intermediarySerializer.Write(emitterCount);
+
+
+        // Emitters.
+        for (uint32_t iEmitter = 0; iEmitter < emitterCount; ++iEmitter)
+        {
+            auto emitter = this->emitters[iEmitter];
+            assert(emitter != nullptr);
+            {
+                emitter->Serialize(intermediarySerializer, false);      // <-- 'false' means that individual particle information will not be serialized (not needed for definitions).
+            }
+        }
+
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_ParticleSystemDefinition_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+        
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
+    }
+
+    void ParticleSystemDefinition::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+
+        if (header.id == Serialization::ChunkID_ParticleSystemDefinition_Main)
+        {
+            // We'll first want to clear the definition (reset it).
+            this->Clear();
+
+            uint32_t emitterCount;
+            deserializer.Read(emitterCount);
+
+            for (size_t iEmitter = 0; iEmitter < emitterCount; ++iEmitter)
+            {
+                auto emitter = this->AppendNewEmitter();
+                assert(emitter != nullptr);
+                {
+                    emitter->Deserialize(deserializer);
+                }
+            }
+        }
+        else
+        {
+            GTEngine::PostError("Error deserializing particle system definition. Unknown chunk ID (%d).", header.id);
+        }
+    }
 
 
 
