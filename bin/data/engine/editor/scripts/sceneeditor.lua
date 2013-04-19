@@ -1727,12 +1727,35 @@ end
 function GTGUI.Element:ParticleSystemComponentPanel()
     self:PanelGroupBox("Particle System", true);
     
+    -- File Path
+    self.FilePath = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox' style='width:100%;' />");
+    
+    self.FilePath:OnKeyPressed(function(data)
+        if data.key == GTGUI.Keys.Enter then
+            self:UpdateFile();
+        end
+    end);
+    
+    self.FilePath:OnDrop(function(data)
+        if data.droppedElement.isAsset then
+            self.FilePath:SetText(data.droppedElement.path);
+            self:UpdateFile();
+        end
+    end);
     
     
 
     function self:Update(node)
         self.CurrentNode      = node;
-        self.CurrentComponent = node:GetComponent(GTEngine.Components.Camera);
+        self.CurrentComponent = node:GetComponent(GTEngine.Components.ParticleSystem);
+        
+        self.FilePath:SetText(self.CurrentComponent:GetRelativeFilePath(), true);       -- 'true' = block OnTextChanged event.
+    end
+    
+    
+    function self:UpdateFile()
+        self.CurrentComponent:SetFromFile(self.FilePath:GetText());
+        self.ParentPanel:OnSceneNodeChanged();
     end
     
 

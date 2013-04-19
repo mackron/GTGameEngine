@@ -1109,6 +1109,18 @@ namespace GTEngine
 
         namespace ParticleSystemComponentFFI
         {
+            /// Sets the particle system from a relative file path.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The relative path of the particle system to set.
+            int SetFromFile(GTCore::Script &script);
+
+            /// Retrieves the relative file path of the attached particle system.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int GetRelativeFilePath(GTCore::Script &script);
         }
 
 

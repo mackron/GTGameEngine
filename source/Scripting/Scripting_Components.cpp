@@ -723,6 +723,14 @@ namespace GTEngine
                 "    return new;"
                 "end;"
 
+                "function GTEngine.ParticleSystemComponent:SetFromFile(relativePath)"
+                "    return GTEngine.System.ParticleSystemComponent.SetFromFile(self._internalPtr, relativePath);"
+                "end;"
+
+                "function GTEngine.ParticleSystemComponent:GetRelativeFilePath()"
+                "    return GTEngine.System.ParticleSystemComponent.GetRelativeFilePath(self._internalPtr);"
+                "end;"
+
 
 
                 // EditorMetadataComponent
@@ -980,6 +988,16 @@ namespace GTEngine
                             script.SetTableFunction(-1, "SetEllipsoidCollisionShapeRadius",               ProximityComponentFFI::SetEllipsoidCollisionShapeRadius);
                             script.SetTableFunction(-1, "SetCylinderCollisionShapeHalfExtents",           ProximityComponentFFI::SetCylinderCollisionShapeHalfExtents);
                             script.SetTableFunction(-1, "SetCapsuleCollisionShapeSize",                   ProximityComponentFFI::SetCapsuleCollisionShapeSize);
+                        }
+                        script.Pop(1);
+
+
+                        script.Push("ParticleSystemComponent");
+                        script.GetTableValue(-2);
+                        assert(script.IsTable(-1));
+                        {
+                            script.SetTableFunction(-1, "SetFromFile",         ParticleSystemComponentFFI::SetFromFile);
+                            script.SetTableFunction(-1, "GetRelativeFilePath", ParticleSystemComponentFFI::GetRelativeFilePath);
                         }
                         script.Pop(1);
 
@@ -3239,6 +3257,39 @@ namespace GTEngine
 
         namespace ParticleSystemComponentFFI
         {
+            int SetFromFile(GTCore::Script &script)
+            {
+                auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->SetParticleSystem(script.ToString(2));
+                }
+
+                return 0;
+            }
+
+            int GetRelativeFilePath(GTCore::Script &script)
+            {
+                auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto particleSystem = component->GetParticleSystem();
+                    if (particleSystem != nullptr)
+                    {
+                        script.Push(particleSystem->GetDefinition().GetRelativePath());
+                    }
+                    else
+                    {
+                        script.PushNil();
+                    }
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
         }
 
 
