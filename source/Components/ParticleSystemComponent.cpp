@@ -3,6 +3,7 @@
 #include <GTEngine/Components/ParticleSystemComponent.hpp>
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/SceneNode.hpp>
+#include <GTEngine/Errors.hpp>
 
 namespace GTEngine
 {
@@ -54,7 +55,10 @@ namespace GTEngine
 
     void ParticleSystemComponent::UpdateTransform()
     {
-        this->particleSystem->SetTransform(this->node.GetWorldPosition(), this->node.GetWorldOrientation());
+        if (this->particleSystem != nullptr)
+        {
+            this->particleSystem->SetTransform(this->node.GetWorldPosition(), this->node.GetWorldOrientation());
+        }
     }
 
 
@@ -63,12 +67,44 @@ namespace GTEngine
 
     void ParticleSystemComponent::Serialize(GTCore::Serializer &serializer) const
     {
-        (void)serializer;
+        GTCore::BasicSerializer intermediarySerializer;
+
+        if (this->particleSystem != nullptr)
+        {
+            intermediarySerializer.WriteString(this->particleSystem->GetDefinition().GetRelativePath());
+        }
+        else
+        {
+            intermediarySerializer.WriteString("");
+        }
+
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_ParticleSystemComponent_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
     void ParticleSystemComponent::Deserialize(GTCore::Deserializer &deserializer)
     {
-        (void)deserializer;
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+
+        if (header.id == Serialization::ChunkID_ParticleSystemComponent_Main)
+        {
+            GTCore::String relativeFilePath;
+            deserializer.ReadString(relativeFilePath);
+
+            this->SetParticleSystem(relativeFilePath.c_str());
+        }
+        else
+        {
+            GTEngine::PostError("Error deserializing particle system component. Unknown chunk ID (%d).", header.id);
+        }
     }
 
 
