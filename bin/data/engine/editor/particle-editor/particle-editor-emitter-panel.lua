@@ -18,6 +18,7 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     self.Burst = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:4px' />");
     self.Burst:CheckBox("Burst");
+    self.Burst:SetChecked(self.Emitter:IsBurstModeEnabled());
     
     self.Duration = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.Duration:PanelNumberInput("Duration", emitter:GetDurationInSeconds());
