@@ -142,7 +142,7 @@ namespace GTEngine
         {
             GTCore::BasicSerializer materialSerializer;
             
-            materialSerializer.Write(this->material->GetDefinition().relativePath);
+            materialSerializer.WriteString(this->material->GetDefinition().relativePath);
             this->material->Serialize(materialSerializer);
 
 
@@ -200,7 +200,7 @@ namespace GTEngine
                     case 1:
                         {
                             GTCore::String materialPath;
-                            deserializer.Read(materialPath);
+                            deserializer.ReadString(materialPath);
 
                             this->SetMaterial(materialPath.c_str());
                             this->material->Deserialize(deserializer);

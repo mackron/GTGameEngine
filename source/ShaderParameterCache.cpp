@@ -471,7 +471,7 @@ namespace GTEngine
                         GTCore::String name;
                         float          value;
 
-                        deserializer.Read(name);
+                        deserializer.ReadString(name);
                         deserializer.Read(value);
 
                         this->Set(name.c_str(), value);
@@ -485,7 +485,7 @@ namespace GTEngine
                         GTCore::String name;
                         glm::vec2      value;
 
-                        deserializer.Read(name);
+                        deserializer.ReadString(name);
                         deserializer.Read(value);
 
                         this->Set(name.c_str(), value);
@@ -499,7 +499,7 @@ namespace GTEngine
                         GTCore::String name;
                         glm::vec3      value;
 
-                        deserializer.Read(name);
+                        deserializer.ReadString(name);
                         deserializer.Read(value);
 
                         this->Set(name.c_str(), value);
@@ -513,7 +513,7 @@ namespace GTEngine
                         GTCore::String name;
                         glm::vec4      value;
 
-                        deserializer.Read(name);
+                        deserializer.ReadString(name);
                         deserializer.Read(value);
 
                         this->Set(name.c_str(), value);
@@ -528,7 +528,7 @@ namespace GTEngine
                         GTCore::String name;
                         glm::mat2      value;
 
-                        deserializer.Read(name);
+                        deserializer.ReadString(name);
                         deserializer.Read(value);
 
                         this->Set(name.c_str(), value);
@@ -542,7 +542,7 @@ namespace GTEngine
                         GTCore::String name;
                         glm::mat3      value;
 
-                        deserializer.Read(name);
+                        deserializer.ReadString(name);
                         deserializer.Read(value);
 
                         this->Set(name.c_str(), value);
@@ -556,7 +556,7 @@ namespace GTEngine
                         GTCore::String name;
                         glm::mat4      value;
 
-                        deserializer.Read(name);
+                        deserializer.ReadString(name);
                         deserializer.Read(value);
 
                         this->Set(name.c_str(), value);
@@ -571,8 +571,8 @@ namespace GTEngine
                         GTCore::String name;
                         GTCore::String value;
 
-                        deserializer.Read(name);
-                        deserializer.Read(value);
+                        deserializer.ReadString(name);
+                        deserializer.ReadString(value);
 
                         auto texture = Texture2DLibrary::Acquire(value.c_str());
                         {

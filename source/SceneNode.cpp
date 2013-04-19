@@ -1136,7 +1136,7 @@ namespace GTEngine
             secondarySerializer.Write(static_cast<uint64_t>(0));
         }
 
-        secondarySerializer.Write(this->name);
+        secondarySerializer.WriteString(this->name);
         secondarySerializer.Write(this->position);
         secondarySerializer.Write(this->orientation);
         secondarySerializer.Write(this->scale);
@@ -1226,7 +1226,7 @@ namespace GTEngine
                             this->uniqueID = newID;
                         }
 
-                        deserializer.Read(newName);
+                        deserializer.ReadString(newName);
                         deserializer.Read(newPosition);
                         deserializer.Read(newOrientation);
                         deserializer.Read(newScale);
@@ -1261,7 +1261,7 @@ namespace GTEngine
                 for (uint32_t iComponent = 0; iComponent < componentCount; ++iComponent)
                 {
                     GTCore::String name;
-                    deserializer.Read(name);
+                    deserializer.ReadString(name);
 
                     uint32_t componentDataSizeInBytes;
                     deserializer.Read(componentDataSizeInBytes);
