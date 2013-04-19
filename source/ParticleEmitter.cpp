@@ -133,7 +133,7 @@ namespace GTEngine
         {
             if (this->durationInSeconds > 0.0 || !this->HasDoneFirstEmission())                         // <-- Ensures that if the duration is 0.0, only a single burst is done.
             {
-                if (this->timeSinceLastEmission >= this->durationInSeconds)
+                if (this->timeSinceLastEmission >= this->durationInSeconds || !this->HasDoneFirstEmission())
                 {
                     spawnCount = static_cast<int>(this->emissionRatePerSecond);
                     this->timeSinceLastEmission = 0.0;
