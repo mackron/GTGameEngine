@@ -154,7 +154,19 @@ namespace GTEngine
 
     bool ParticleEditor::Save()
     {
-        return true;
+        auto file = GTCore::IO::Open(this->GetAbsolutePath(), GTCore::IO::OpenMode::Write);
+        if (file != nullptr)
+        {
+            GTCore::FileSerializer serializer(file);
+            this->particleSystemDefinition.Serialize(serializer);
+
+            this->UnmarkAsModified();
+
+            GTCore::IO::Close(file);
+            return true;
+        }
+
+        return false;
     }
 
     void ParticleEditor::OnUpdate(double deltaTimeInSeconds)

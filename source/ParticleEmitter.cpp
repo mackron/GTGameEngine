@@ -2,6 +2,7 @@
 
 #include <GTEngine/ParticleEmitter.hpp>
 #include <GTEngine/Rendering.hpp>
+#include <GTEngine/Errors.hpp>
 
 namespace GTEngine
 {
@@ -14,10 +15,10 @@ namespace GTEngine
           startScaleMin(1.0f, 1.0f, 1.0f), startScaleMax(1.0f, 1.0f, 1.0f),
           lifetimeMin(5.0), lifetimeMax(5.0),
           material(nullptr),
-          timeSinceLastEmission(1.0 / emissionRatePerSecond),
-          random(),
-          particles(),
           functions(),
+          random(),
+          timeSinceLastEmission(1.0 / emissionRatePerSecond),
+          particles(),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
     {
         this->SetMaterial("engine/materials/simple-diffuse.material");
@@ -32,10 +33,10 @@ namespace GTEngine
           startScaleMin(other.startScaleMin), startScaleMax(other.startScaleMax),
           lifetimeMin(other.lifetimeMin), lifetimeMax(other.lifetimeMax),
           material((other.material != nullptr) ? MaterialLibrary::CreateCopy(*other.material) : nullptr),
-          timeSinceLastEmission(other.timeSinceLastEmission),
-          random(other.random),
-          particles(other.particles),
           functions(),
+          random(other.random),
+          timeSinceLastEmission(other.timeSinceLastEmission),
+          particles(other.particles),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
     {
         // The functions need to be copied over.
@@ -76,6 +77,8 @@ namespace GTEngine
 
     ParticleEmitter::~ParticleEmitter()
     {
+        MaterialLibrary::Delete(this->material);
+
         for (size_t iFunction = 0; iFunction < this->functions.count; ++iFunction)
         {
             delete this->functions[iFunction];
@@ -512,6 +515,329 @@ namespace GTEngine
 
     ParticleFunction & ParticleEmitter::AddFunction(ParticleFunctionType type)
     {
+        auto newFunction = this->InstantiateFunctionByType(type);
+        assert(newFunction != nullptr);
+        {
+            this->functions.PushBack(newFunction);
+        }
+
+        return* newFunction;
+    }
+
+
+
+
+    ////////////////////////////////////////////////
+    // Serialization/Deserialization.
+
+    void ParticleEmitter::Serialize(GTCore::Serializer &serializer, bool serializeParticles)
+    {
+        GTCore::BasicSerializer intermediarySerializer;
+
+        // First chunk is the main information.
+        intermediarySerializer.WriteString(this->name.c_str());
+        intermediarySerializer.Write(this->position);
+        intermediarySerializer.Write(this->orientation);
+        intermediarySerializer.Write(this->flags);
+        intermediarySerializer.Write(this->durationInSeconds);
+        intermediarySerializer.Write(this->emissionRatePerSecond);
+        intermediarySerializer.Write(this->gravityFactor);
+        intermediarySerializer.Write(static_cast<uint32_t>(this->emissionShapeType));
+        intermediarySerializer.Write(this->emissionShapeCone);
+        intermediarySerializer.Write(this->emissionShapeSphere);
+        intermediarySerializer.Write(this->emissionShapeBox);
+        intermediarySerializer.Write(this->startSpeedMin);
+        intermediarySerializer.Write(this->startSpeedMax);
+        intermediarySerializer.Write(this->startRotationMin);
+        intermediarySerializer.Write(this->startRotationMax);
+        intermediarySerializer.Write(this->startScaleMin);
+        intermediarySerializer.Write(this->startScaleMax);
+        intermediarySerializer.Write(this->lifetimeMin);
+        intermediarySerializer.Write(this->lifetimeMax);
+        intermediarySerializer.WriteString(this->material->GetDefinition().relativePath.c_str());
+
+        // Functions.
+        uint32_t functionCount = static_cast<uint32_t>(this->functions.count);
+        intermediarySerializer.Write(functionCount);
+
+        for (uint32_t iFunction = 0; iFunction < functionCount; ++iFunction)
+        {
+            auto function = this->functions[iFunction];
+            assert(function != nullptr);
+            {
+                this->SerializeFunction(intermediarySerializer, *function);
+            }
+        }
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_ParticleEmitter_Main;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
+
+
+
+
+        // Now we'll want to serialize each active particle if applicable.
+        if (serializeParticles)
+        {
+            intermediarySerializer.Clear();
+
+            intermediarySerializer.Write(this->random);
+            intermediarySerializer.Write(this->timeSinceLastEmission);
+            
+            uint32_t particleCount = static_cast<uint32_t>(this->particles.GetCount());
+            intermediarySerializer.Write(particleCount);
+
+            for (uint32_t iParticle = 0; iParticle < particleCount; ++iParticle)
+            {
+                this->SerializeParticle(intermediarySerializer, this->particles.GetParticle(iParticle));
+            }
+
+
+
+            header.id          = Serialization::ChunkID_ParticleEmitter_Particles;
+            header.version     = 1;
+            header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+            serializer.Write(header);
+            serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
+        }
+    }
+
+
+    void ParticleEmitter::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+        
+        if (header.id == Serialization::ChunkID_ParticleEmitter_Main)
+        {
+            if (header.version == 1)
+            {
+                // Before deserializing we are going to want to clear a few things.
+                for (size_t iFunction = 0; iFunction < this->functions.count; ++iFunction)
+                {
+                    delete this->functions[iFunction];
+                }
+                this->functions.Clear();
+
+
+
+                deserializer.ReadString(this->name);
+                deserializer.Read(this->position);
+                deserializer.Read(this->orientation);
+                deserializer.Read(this->flags);
+                deserializer.Read(this->durationInSeconds);
+                deserializer.Read(this->emissionRatePerSecond);
+                deserializer.Read(this->gravityFactor);
+
+                uint32_t serializedEmissionShapeType;
+                deserializer.Read(serializedEmissionShapeType);
+                this->emissionShapeType = static_cast<EmissionShapeType>(serializedEmissionShapeType);
+
+                deserializer.Read(this->emissionShapeCone);
+                deserializer.Read(this->emissionShapeSphere);
+                deserializer.Read(this->emissionShapeBox);
+        
+                deserializer.Read(this->startSpeedMin);
+                deserializer.Read(this->startSpeedMax);
+                deserializer.Read(this->startRotationMin);
+                deserializer.Read(this->startRotationMax);
+                deserializer.Read(this->startScaleMin);
+                deserializer.Read(this->startScaleMax);
+                deserializer.Read(this->lifetimeMin);
+                deserializer.Read(this->lifetimeMax);
+
+                GTCore::String materialRelativePath;
+                deserializer.ReadString(materialRelativePath);
+                this->SetMaterial(materialRelativePath.c_str());
+
+
+                // Functions.
+                uint32_t functionCount;
+                deserializer.Read(functionCount);
+
+                for (uint32_t iFunction = 0; iFunction < functionCount; ++iFunction)
+                {
+                    auto function = this->DeserializeFunction(deserializer);
+                    assert(function != nullptr);
+                    {
+                        this->functions.PushBack(function);
+                    }
+                }
+
+
+
+                // Particles. This is only done if we have the chunk.
+                if (deserializer.Peek(&header, sizeof(header)) == sizeof(header))
+                {
+                    if (header.id == Serialization::ChunkID_ParticleEmitter_Particles)
+                    {
+                        deserializer.Seek(sizeof(header));  // <-- We read the header with Peek(), so we just skip.
+
+
+                        // Existing particles need to be cleared.
+                        this->particles.Clear();
+
+
+
+                        if (header.version == 1)
+                        {
+                            deserializer.Read(this->random);
+                            deserializer.Read(this->timeSinceLastEmission);
+
+                            uint32_t particleCount;
+                            deserializer.Read(particleCount);
+
+                            for (uint32_t iParticle = 0; iParticle < particleCount; ++iParticle)
+                            {
+                                auto &particle = this->particles.PushNewParticle();
+                                {
+                                    this->DeserializeParticle(deserializer, particle);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            GTEngine::PostError("Error deserializing particle emitter. Unknown chunk ID (%d).", header.id);
+            return;
+        }
+    }
+
+
+
+    ////////////////////////////////////////////////
+    // Private
+
+    bool ParticleEmitter::HasDoneFirstEmission() const
+    {
+        return (this->flags & DoneFirstEmission) != 0;
+    }
+
+    void ParticleEmitter::HasDoneFirstEmission(bool doneFirstEmission)
+    {
+        if (doneFirstEmission)
+        {
+            this->flags = this->flags | DoneFirstEmission;
+        }
+        else
+        {
+            this->flags = this->flags & ~DoneFirstEmission;
+        }
+    }
+
+
+
+    void ParticleEmitter::SerializeFunction(GTCore::Serializer &serializer, const ParticleFunction &function)
+    {
+        serializer.Write(static_cast<uint32_t>(function.GetType()));
+
+        switch (function.GetType())
+        {
+        case ParticleFunctionType_SizeOverTime:
+            {
+                float rangeMin;
+                float rangeMax;
+                static_cast<const ParticleFunction_Scalar &>(function).GetRange(rangeMin, rangeMax);
+
+                serializer.Write(rangeMin);
+                serializer.Write(rangeMax);
+
+                break;
+            }
+
+        case ParticleFunctionType_LinearVelocityOverTime:
+        case ParticleFunctionType_AngularVelocityOverTime:
+            {
+                glm::vec3 rangeMin;
+                glm::vec3 rangeMax;
+                static_cast<const ParticleFunction_Vector3 &>(function).GetRange(rangeMin, rangeMax);
+
+                serializer.Write(rangeMin);
+                serializer.Write(rangeMax);
+
+                break;
+            }
+
+
+        default:
+            {
+                assert(false);
+                break;
+            }
+        }
+    }
+
+    ParticleFunction* ParticleEmitter::DeserializeFunction(GTCore::Deserializer &deserializer)
+    {
+        uint32_t serializedType;
+        deserializer.Read(serializedType);
+
+        auto function = this->InstantiateFunctionByType(static_cast<ParticleFunctionType>(serializedType));
+        assert(function != nullptr);
+        {
+            switch (function->GetType())
+            {
+            case ParticleFunctionType_SizeOverTime:
+                {
+                    float rangeMin;
+                    float rangeMax;
+                    deserializer.Read(rangeMin);
+                    deserializer.Read(rangeMax);
+
+                    static_cast<ParticleFunction_Scalar*>(function)->SetRange(rangeMin, rangeMax);
+
+                    break;
+                }
+
+            case ParticleFunctionType_LinearVelocityOverTime:
+            case ParticleFunctionType_AngularVelocityOverTime:
+                {
+                    glm::vec3 rangeMin;
+                    glm::vec3 rangeMax;
+                    deserializer.Read(rangeMin);
+                    deserializer.Read(rangeMax);
+
+                    static_cast<ParticleFunction_Vector3*>(function)->SetRange(rangeMin, rangeMax);
+
+                    break;
+                }
+
+
+            default:
+                {
+                    assert(false);
+                    break;
+                }
+            }
+        }
+
+
+        return function;
+    }
+
+
+    void ParticleEmitter::SerializeParticle(GTCore::Serializer &serializer, const Particle &particle)
+    {
+        serializer.Write(particle);
+    }
+
+    void ParticleEmitter::DeserializeParticle(GTCore::Deserializer &deserializer, Particle &particle)
+    {
+        deserializer.Read(particle);
+    }
+
+
+    ParticleFunction* ParticleEmitter::InstantiateFunctionByType(ParticleFunctionType type)
+    {
         ParticleFunction* newFunction = nullptr;
 
         switch (type)
@@ -534,36 +860,16 @@ namespace GTEngine
                 break;
             }
 
-        default: break;
+        default:
+            {
+                assert(false);
+                break;
+            }
         }
+
 
         assert(newFunction != nullptr);
 
-
-        this->functions.PushBack(newFunction);
-        return* newFunction;
-    }
-
-
-
-
-    ////////////////////////////////////////////////
-    // Private
-
-    bool ParticleEmitter::HasDoneFirstEmission() const
-    {
-        return (this->flags & DoneFirstEmission) != 0;
-    }
-
-    void ParticleEmitter::HasDoneFirstEmission(bool doneFirstEmission)
-    {
-        if (doneFirstEmission)
-        {
-            this->flags = this->flags | DoneFirstEmission;
-        }
-        else
-        {
-            this->flags = this->flags & ~DoneFirstEmission;
-        }
+        return newFunction;
     }
 }

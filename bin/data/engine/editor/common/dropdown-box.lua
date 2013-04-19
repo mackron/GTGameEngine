@@ -41,18 +41,20 @@ function GTGUI.Element:DropDownBox()
     
     
     
-    function self:SelectItemByIndex(index)
+    function self:SelectItemByIndex(index, blockEvent)
         local itemToSelect = self.Items[index];
         if itemToSelect ~= nil and itemToSelect ~= self.SelectedItem then
             self.TitleLabel:SetText(itemToSelect:GetText());
             self.SelectedItem = itemToSelect;
             
-            self:OnSelectionChanged({selectedItem = self.SelectedItem});
+            if not blockEvent then
+                self:OnSelectionChanged({selectedItem = self.SelectedItem});
+            end
         end
     end
     
-    function self:SelectItem(itemToSelect)
-        self:SelectItemByIndex(table.indexof(self.Items, itemToSelect));
+    function self:SelectItem(itemToSelect, blockEvent)
+        self:SelectItemByIndex(table.indexof(self.Items, itemToSelect), blockEvent);
     end
     
     
