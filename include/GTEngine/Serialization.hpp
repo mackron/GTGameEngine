@@ -128,7 +128,7 @@ namespace GTEngine
         static const uint32_t ChunkID_OccluderComponent_Main                  = CHUNK_ID(0x00000200U);
 
         // SpriteComponent
-        static const uint32_t ChunkID_SpriteComponent_Main                    = CHUNK_ID(0x00000210U);
+        static const uint32_t ChunkID_ParticleSystemComponent_Main            = CHUNK_ID(0x00000210U);
 
         // ScriptComponent
         static const uint32_t ChunkID_ScriptComponent_Main                    = CHUNK_ID(0x00000220U);
