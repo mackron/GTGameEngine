@@ -134,7 +134,7 @@ namespace GTEngine
         if (this->model != nullptr)
         {
             intermediarySerializer.Write(true);
-            intermediarySerializer.Write(this->model->GetDefinition().fileName);
+            intermediarySerializer.WriteString(this->model->GetDefinition().fileName);
 
             this->model->Serialize(intermediarySerializer);
         }
@@ -175,7 +175,7 @@ namespace GTEngine
                     if (hasModel)
                     {
                         GTCore::String modelPath;
-                        deserializer.Read(modelPath);
+                        deserializer.ReadString(modelPath);
 
                         if (!modelPath.IsEmpty())
                         {

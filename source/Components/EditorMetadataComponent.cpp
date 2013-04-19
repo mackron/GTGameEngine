@@ -482,7 +482,7 @@ namespace GTEngine
         if (this->IsUsingSprite())
         {
             intermediarySerializer.Write(true);
-            intermediarySerializer.Write(this->spriteTexturePath);
+            intermediarySerializer.WriteString(this->spriteTexturePath);
         }
         else
         {
@@ -491,7 +491,7 @@ namespace GTEngine
 
         intermediarySerializer.Write(this->IsShowingDirectionArrow());
 
-        intermediarySerializer.Write(this->prefabRelativePath);
+        intermediarySerializer.WriteString(this->prefabRelativePath);
         intermediarySerializer.Write(this->prefabID);
 
 
@@ -531,7 +531,7 @@ namespace GTEngine
 
                     if (isUsingSprite)
                     {
-                        deserializer.Read(this->spriteTexturePath);
+                        deserializer.ReadString(this->spriteTexturePath);
                         this->ShowSprite(this->spriteTexturePath.c_str());
                     }
 
@@ -545,7 +545,7 @@ namespace GTEngine
                     }
 
 
-                    deserializer.Read(this->prefabRelativePath);
+                    deserializer.ReadString(this->prefabRelativePath);
                     deserializer.Read(this->prefabID);
 
 
