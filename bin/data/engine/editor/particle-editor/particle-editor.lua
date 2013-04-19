@@ -1,6 +1,8 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 function GTGUI.Element:ParticleEditor(_internalPtr)
+    self.IsLoading = true;          -- This is used to prevent OnChange events being posted back and thus causing the editor to think a modification was made.
+
     self:SubEditor(_internalPtr);
     self.ParticleSystemDefinition = GTEngine.ParticleSystemDefinition:Create(GTEngine.System.ParticleEditor.GetParticleSystemDefinitionPtr(self._internalPtr));
     
@@ -31,8 +33,10 @@ function GTGUI.Element:ParticleEditor(_internalPtr)
     end
     
     function self:OnChange()
-        self:RefreshViewport();
-        self:MarkAsModified();
+        if not self.IsLoading then
+            self:RefreshViewport();
+            self:MarkAsModified();
+        end
     end
     
     
@@ -55,5 +59,6 @@ function GTGUI.Element:ParticleEditor(_internalPtr)
     -- At this point we want to make sure everything is up-to-date.
     self:RefreshPanel();
     
+    self.IsLoading = false;
     return self;
 end
