@@ -5,7 +5,7 @@
 namespace GTEngine
 {
     SceneEditorSceneUpdateManager::SceneEditorSceneUpdateManager(const SceneNode &cameraNodeIn)
-        : DefaultSceneUpdateManager(), cameraNode(cameraNodeIn), isEnabled(false)
+        : DefaultSceneUpdateManager(), cameraNode(cameraNodeIn), isEnabled(false), isParticlesEnabled(true)
     {
     }
 
@@ -25,6 +25,17 @@ namespace GTEngine
     }
 
 
+    void SceneEditorSceneUpdateManager::EnableParticles()
+    {
+        this->isParticlesEnabled = true;
+    }
+
+    void SceneEditorSceneUpdateManager::DisableParticles()
+    {
+        this->isParticlesEnabled = false;
+    }
+
+
     void SceneEditorSceneUpdateManager::StepSceneNode(SceneNode &node, double deltaTimeInSeconds)
     {
         // We need to orientate any sprites to face the camera.
@@ -41,6 +52,22 @@ namespace GTEngine
         if (this->isEnabled)
         {
             DefaultSceneUpdateManager::StepSceneNode(node, deltaTimeInSeconds);
+        }
+        else
+        {
+            // If the particles are being updated, we should do that now.
+            if (this->isParticlesEnabled)
+            {
+                auto particleSystemComponent = node.GetComponent<ParticleSystemComponent>();
+                if (particleSystemComponent != nullptr)
+                {
+                    auto particleSystem = particleSystemComponent->GetParticleSystem();
+                    if (particleSystem != nullptr)
+                    {
+                        particleSystem->Update(deltaTimeInSeconds);
+                    }
+                }
+            }
         }
     }
 }

@@ -29,6 +29,16 @@ namespace GTEngine
         bool IsEnabled() const { return this->isEnabled; }
 
 
+        /// Enables particles simulation.
+        void EnableParticles();
+
+        /// Disables particles simulation.
+        void DisableParticles();
+
+        /// Determines whether or not the particles simulation is enabled.
+        bool IsParticlesEnabled() const { return this->isParticlesEnabled; }
+
+
         /// DefaultSceneUpdateManager::Step()
         void StepSceneNode(SceneNode &node, double deltaTimeInSeconds);
 
@@ -40,6 +50,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not updating is enabled.
         bool isEnabled;
+
+        /// Keeps track of whether or not particles are being updated while editting.
+        bool isParticlesEnabled;
 
 
     private:    // No copying.
