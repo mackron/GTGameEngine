@@ -48,20 +48,6 @@ namespace GTEngine
         ~ParticleEmitter();
 
 
-        /// Starts the emitter.
-        ///
-        /// @remarks
-        ///     If the emitter is in burst mode, the initial burst of particles will occur when Update() is next called.
-        void Start();
-
-        /// Stops the emitter.
-        ///
-        /// @remarks
-        ///     Stopping the emitter does not destroy the particles. So long as Update() is called, particles will continue to animate
-        ///     until they are themselves or the emitter is destroyed.
-        void Stop();
-
-
         /// Updates the emitter.
         ///
         /// @param deltaTimeInSeconds [in] The delta time for doing time-based movement.
@@ -71,6 +57,23 @@ namespace GTEngine
         ///     @par
         ///     This does not orientate particles towards the camera. That needs to be done at render time.
         void Update(double deltaTimeInSeconds, const glm::vec3 &gravity);
+
+
+        /// Fully resets the particle emitter.
+        ///
+        /// @remarks
+        ///     This will clear any existing particles and reset all timers and random generators.
+        ///     @par
+        ///     This will NOT modify the position or orientation.
+        void Reset();
+
+        /// Deletes all of the currently alive particles, but does not do a complete reset.
+        ///
+        /// @remarks
+        ///     All this function does is deletes any existing particles. Use Reset() to do a full reset, which will include
+        ///     this operation.
+        void ClearParticles();
+
 
 
         /// Retrieves the name of the emitter.

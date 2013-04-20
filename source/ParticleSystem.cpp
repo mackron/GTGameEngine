@@ -18,7 +18,6 @@ namespace GTEngine
         this->Clear();
     }
 
-
     void ParticleSystem::Refresh()
     {
         // 1) Clear.
@@ -35,6 +34,31 @@ namespace GTEngine
                 newEmitter->SetOrientation(this->orientation);
 
                 this->emitters.PushBack(newEmitter);
+            }
+        }
+    }
+
+
+    void ParticleSystem::Reset()
+    {
+        for (size_t iEmitter = 0; iEmitter < this->emitters.count; ++iEmitter)
+        {
+            auto emitter = this->emitters[iEmitter];
+            assert(emitter != nullptr);
+            {
+                emitter->Reset();
+            }
+        }
+    }
+
+    void ParticleSystem::ClearParticles()
+    {
+        for (size_t iEmitter = 0; iEmitter < this->emitters.count; ++iEmitter)
+        {
+            auto emitter = this->emitters[iEmitter];
+            assert(emitter != nullptr);
+            {
+                emitter->ClearParticles();
             }
         }
     }

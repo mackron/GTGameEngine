@@ -30,6 +30,14 @@ namespace GTEngine
         void Refresh();
 
 
+        /// Resets the particle system to it's initial state.
+        void Reset();
+
+        /// Deletes all of the currently alive particles of every emitter, but does not reset timers.
+        void ClearParticles();
+
+
+
         /// Steps the particle system.
         ///
         /// @param deltaTimeInSeconds [in] The time in seconds since the last update.
@@ -95,7 +103,6 @@ namespace GTEngine
         /// The gravity to apply to all particles of all emitters. Each emitter will multiply this with a factor to control how much
         /// influence the gravity has on the particles.
         glm::vec3 gravity;
-
 
 
     private:    // No copying, for now.
