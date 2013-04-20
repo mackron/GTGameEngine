@@ -168,14 +168,14 @@ namespace GTEngine
 
                 this->UnmarkAsModified();
 
+                GTCore::IO::Close(file);
+                wasSaved = true;
+
+
                 // We want to immediatly force the game to check for changes so that the particle system is immediately reloaded.
                 auto &dataFilesWatcher = this->GetOwnerEditor().GetGame().GetDataFilesWatcher();
                 dataFilesWatcher.CheckForChanges(false);
                 dataFilesWatcher.DispatchEvents();
-
-
-                GTCore::IO::Close(file);
-                wasSaved = true;
             }
         }
         this->isSaving = false;
