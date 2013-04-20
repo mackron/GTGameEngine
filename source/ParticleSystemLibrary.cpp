@@ -197,7 +197,17 @@ namespace GTEngine
                     bool result = reference.definition->LoadFromFile(reference.definition->GetAbsolutePath(), reference.definition->GetRelativePath());
                     if (result)
                     {
-                        // TODO: Do whatever needs to be done in order to update each particle system instantiation that uses this definition.
+                        for (size_t iParticleSystem = 0; iParticleSystem < InstantiatedParticleSystems.count; ++iParticleSystem)
+                        {
+                            auto particleSystem = InstantiatedParticleSystems.buffer[iParticleSystem];
+                            assert(particleSystem != nullptr);
+                            {
+                                if (&particleSystem->GetDefinition() == reference.definition)
+                                {
+                                    particleSystem->Refresh();
+                                }
+                            }
+                        }
 
                         return true;
                     }

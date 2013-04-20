@@ -11,6 +11,7 @@
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
+#include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/IO.hpp>
@@ -531,6 +532,10 @@ namespace GTEngine
             else if (IO::IsSupportedMaterialExtension(item.info.path.c_str()))
             {
                 MaterialLibrary::Reload(item.relativePath.c_str());
+            }
+            else if (IO::IsSupportedParticleSystemExtension(item.info.path.c_str()))
+            {
+                ParticleSystemLibrary::Reload(item.relativePath.c_str());
             }
             else
             {
