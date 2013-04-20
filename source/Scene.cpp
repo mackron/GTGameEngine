@@ -2231,9 +2231,13 @@ namespace GTEngine
         if (this->registeredScript != nullptr)
         {
             auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
-            if (scriptComponent != nullptr && scriptComponent->HasOnStartup() && !scriptComponent->HasOnStartupBeenCalled())
+            if (scriptComponent != nullptr && !scriptComponent->HasOnStartupBeenCalled())
             {
-                Scripting::PostSceneNodeEvent_OnStartup(*this->registeredScript, sceneNode);
+                if (scriptComponent->HasOnStartup())
+                {
+                    Scripting::PostSceneNodeEvent_OnStartup(*this->registeredScript, sceneNode);
+                }
+
                 scriptComponent->MarkOnStartupAsCalled();
             }
         }
@@ -2261,9 +2265,13 @@ namespace GTEngine
         if (this->registeredScript != nullptr)
         {
             auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
-            if (scriptComponent != nullptr && scriptComponent->HasOnShutdown() && scriptComponent->HasOnStartupBeenCalled())
+            if (scriptComponent != nullptr && scriptComponent->HasOnStartupBeenCalled())
             {
-                Scripting::PostSceneNodeEvent_OnShutdown(*this->registeredScript, sceneNode);
+                if (scriptComponent->HasOnShutdown())
+                {
+                    Scripting::PostSceneNodeEvent_OnShutdown(*this->registeredScript, sceneNode);
+                }
+
                 scriptComponent->UnmarkOnStartupAsCalled();
             }
         }
