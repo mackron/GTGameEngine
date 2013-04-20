@@ -156,19 +156,31 @@ namespace GTEngine
 
     bool ParticleEditor::Save()
     {
-        auto file = GTCore::IO::Open(this->GetAbsolutePath(), GTCore::IO::OpenMode::Write);
-        if (file != nullptr)
+        bool wasSaved = false;
+
+        this->isSaving = true;
         {
-            GTCore::FileSerializer serializer(file);
-            this->particleSystemDefinition.Serialize(serializer);
+            auto file = GTCore::IO::Open(this->GetAbsolutePath(), GTCore::IO::OpenMode::Write);
+            if (file != nullptr)
+            {
+                GTCore::FileSerializer serializer(file);
+                this->particleSystemDefinition.Serialize(serializer);
 
-            this->UnmarkAsModified();
+                this->UnmarkAsModified();
 
-            GTCore::IO::Close(file);
-            return true;
+                // We want to immediatly force the game to check for changes so that the particle system is immediately reloaded.
+                auto &dataFilesWatcher = this->GetOwnerEditor().GetGame().GetDataFilesWatcher();
+                dataFilesWatcher.CheckForChanges(false);
+                dataFilesWatcher.DispatchEvents();
+
+
+                GTCore::IO::Close(file);
+                wasSaved = true;
+            }
         }
+        this->isSaving = false;
 
-        return false;
+        return wasSaved;
     }
 
     void ParticleEditor::OnUpdate(double deltaTimeInSeconds)
