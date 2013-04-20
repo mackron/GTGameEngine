@@ -67,6 +67,20 @@ namespace GTEngine
             int GetDurationInSeconds(GTCore::Script &script);
 
 
+            /// Sets the delay in seconds.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            ///     Argument 2: The delay in seconds.
+            int SetDelayInSeconds(GTCore::Script &script);
+
+            /// Retrieves the delay in seconds.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle emitter.
+            int GetDelayInSeconds(GTCore::Script &script);
+
+
             /// Sets the emission rate per second.
             ///
             /// @remarks

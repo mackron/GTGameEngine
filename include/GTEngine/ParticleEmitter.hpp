@@ -120,6 +120,15 @@ namespace GTEngine
         double GetDurationInSeconds() const;
 
 
+        /// Sets the spawn delay in seconds.
+        ///
+        /// @param delayInSeconds [in] The new spawn delay, in seconds.
+        void SetDelayInSeconds(double delayInSeconds);
+
+        /// Retrieves the spawn delay, in seconds.
+        double GetDelayInSeconds() const;
+
+
         /// Sets the number of particles to emit per second, or in the case of burst mode the number of particles to emit during the burst.
         void SetEmissionRatePerSecond(double emissionRatePerSecond);
 
@@ -366,12 +375,16 @@ namespace GTEngine
         /// are being bursted, this will control the amount of time between bursts.
         double durationInSeconds;
 
-        /// The number of particles to spawn per second. If burst mode is enabled, this will control the number of particles to burst.
-        double emissionRatePerSecond;
+        /// The amount of time to delay before spawning the first particles.
+        double delayInSeconds;
 
         /// The factor to apply to gravity.
         double gravityFactor;
 
+        /// The number of particles to spawn per second. If burst mode is enabled, this will control the number of particles to burst.
+        double emissionRatePerSecond;
+
+        
 
         /// The emission shape type.
         EmissionShapeType emissionShapeType;

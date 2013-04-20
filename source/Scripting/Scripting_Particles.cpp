@@ -59,6 +59,15 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.ParticleEmitter:SetDelayInSeconds(delayInSeconds)"
+                "    GTEngine.System.ParticleEmitter.SetDelayInSeconds(self._internalPtr, delayInSeconds);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetDelayInSeconds()"
+                "    return GTEngine.System.ParticleEmitter.GetDelayInSeconds(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.ParticleEmitter:SetEmissionRatePerSecond(emissionRatePerSecond)"
                 "    GTEngine.System.ParticleEmitter.SetEmissionRatePerSecond(self._internalPtr, emissionRatePerSecond);"
                 "end;"
@@ -190,6 +199,8 @@ namespace GTEngine
                             script.SetTableFunction(-1, "IsBurstModeEnabled",               ParticleEmitterFFI::IsBurstModeEnabled);
                             script.SetTableFunction(-1, "SetDurationInSeconds",             ParticleEmitterFFI::SetDurationInSeconds);
                             script.SetTableFunction(-1, "GetDurationInSeconds",             ParticleEmitterFFI::GetDurationInSeconds);
+                            script.SetTableFunction(-1, "SetDelayInSeconds",                ParticleEmitterFFI::SetDelayInSeconds);
+                            script.SetTableFunction(-1, "GetDelayInSeconds",                ParticleEmitterFFI::GetDelayInSeconds);
                             script.SetTableFunction(-1, "SetEmissionRatePerSecond",         ParticleEmitterFFI::SetEmissionRatePerSecond);
                             script.SetTableFunction(-1, "GetEmissionRatePerSecond",         ParticleEmitterFFI::GetEmissionRatePerSecond);
                             script.SetTableFunction(-1, "SetStartSpeed",                    ParticleEmitterFFI::SetStartSpeed);
@@ -461,6 +472,33 @@ namespace GTEngine
                 if (emitter != nullptr)
                 {
                     script.Push(emitter->GetDurationInSeconds());
+                }
+                else
+                {
+                    script.Push(5.0);
+                }
+
+                return 1;
+            }
+
+
+            int SetDelayInSeconds(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    emitter->SetDelayInSeconds(script.ToDouble(2));
+                }
+
+                return 0;
+            }
+
+            int GetDelayInSeconds(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    script.Push(emitter->GetDelayInSeconds());
                 }
                 else
                 {

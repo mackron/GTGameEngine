@@ -8,7 +8,8 @@ namespace GTEngine
 {
     ParticleEmitter::ParticleEmitter()
         : name(""), position(), orientation(),
-          flags(0), durationInSeconds(0.0), emissionRatePerSecond(10.0), gravityFactor(0.0),
+          flags(0), durationInSeconds(0.0), delayInSeconds(1.0),
+          gravityFactor(0.0), emissionRatePerSecond(10.0),
           emissionShapeType(EmissionShapeType_Cone), emissionShapeCone(), emissionShapeSphere(), emissionShapeBox(),
           startSpeedMin(5.0), startSpeedMax(5.0),
           startRotationMin(), startRotationMax(),
@@ -26,7 +27,8 @@ namespace GTEngine
 
     ParticleEmitter::ParticleEmitter(const ParticleEmitter &other)
         : name(other.name), position(other.position), orientation(other.orientation),
-          flags(other.flags), durationInSeconds(other.durationInSeconds), emissionRatePerSecond(other.emissionRatePerSecond), gravityFactor(other.gravityFactor),
+          flags(other.flags), durationInSeconds(other.durationInSeconds),  delayInSeconds(other.delayInSeconds),
+          gravityFactor(other.gravityFactor), emissionRatePerSecond(other.emissionRatePerSecond),
           emissionShapeType(other.emissionShapeType), emissionShapeCone(other.emissionShapeCone), emissionShapeSphere(other.emissionShapeSphere), emissionShapeBox(other.emissionShapeBox),
           startSpeedMin(other.startSpeedMin), startSpeedMax(other.startSpeedMax),
           startRotationMin(other.startRotationMin), startRotationMax(other.startRotationMax),
@@ -109,34 +111,45 @@ namespace GTEngine
         this->timeSinceLastEmission += deltaTimeInSeconds;
         int spawnCount = 0;
 
-        if (!this->IsBurstModeEnabled())
+        if (this->HasDoneFirstEmission() || this->timeSinceLastEmission >= this->delayInSeconds)   // <-- Delay
         {
-            double emissionRate = 1.0 / this->emissionRatePerSecond;
-            if (this->timeSinceLastEmission >= emissionRate || !this->HasDoneFirstEmission())
+            // We need to subtract the delay time from the time since the last emission so that the correct number of particles are spawned
+            // for the first emission.
+            if (!this->HasDoneFirstEmission())
             {
-                spawnCount = static_cast<int>(this->timeSinceLastEmission / emissionRate);
+                this->timeSinceLastEmission -= this->delayInSeconds;
+            }
 
-                if (this->HasDoneFirstEmission())
+
+            if (!this->IsBurstModeEnabled())
+            {
+                double emissionRate = 1.0 / this->emissionRatePerSecond;
+                if (this->timeSinceLastEmission >= emissionRate || !this->HasDoneFirstEmission())
                 {
-                    this->timeSinceLastEmission = 0.0;
-                }
-                else
-                {
-                    if (this->emissionRatePerSecond > 0.0)
+                    spawnCount = static_cast<int>(this->timeSinceLastEmission / emissionRate);
+
+                    if (this->HasDoneFirstEmission())
                     {
-                        spawnCount = 1;
+                        this->timeSinceLastEmission = 0.0;
+                    }
+                    else
+                    {
+                        if (this->emissionRatePerSecond > 0.0)
+                        {
+                            spawnCount = 1;
+                        }
                     }
                 }
             }
-        }
-        else
-        {
-            if (this->durationInSeconds > 0.0 || !this->HasDoneFirstEmission())                         // <-- Ensures that if the duration is 0.0, only a single burst is done.
+            else
             {
-                if (this->timeSinceLastEmission >= this->durationInSeconds || !this->HasDoneFirstEmission())
+                if (this->durationInSeconds > 0.0 || !this->HasDoneFirstEmission())                         // <-- Ensures that if the duration is 0.0, only a single burst is done.
                 {
-                    spawnCount = static_cast<int>(this->emissionRatePerSecond);
-                    this->timeSinceLastEmission = 0.0;
+                    if (this->timeSinceLastEmission >= this->durationInSeconds || !this->HasDoneFirstEmission())
+                    {
+                        spawnCount = static_cast<int>(this->emissionRatePerSecond);
+                        this->timeSinceLastEmission = 0.0;
+                    }
                 }
             }
         }
@@ -341,6 +354,18 @@ namespace GTEngine
     }
 
 
+    void ParticleEmitter::SetDelayInSeconds(double newDelayInSeconds)
+    {
+        this->delayInSeconds = newDelayInSeconds;
+    }
+
+    double ParticleEmitter::GetDelayInSeconds() const
+    {
+        return this->delayInSeconds;
+    }
+
+
+
     void ParticleEmitter::SetEmissionRatePerSecond(double newEmissionRatePerSecond)
     {
         this->emissionRatePerSecond = newEmissionRatePerSecond;
@@ -540,8 +565,9 @@ namespace GTEngine
         intermediarySerializer.Write(this->orientation);
         intermediarySerializer.Write(this->flags);
         intermediarySerializer.Write(this->durationInSeconds);
-        intermediarySerializer.Write(this->emissionRatePerSecond);
+        intermediarySerializer.Write(this->delayInSeconds);
         intermediarySerializer.Write(this->gravityFactor);
+        intermediarySerializer.Write(this->emissionRatePerSecond);
         intermediarySerializer.Write(static_cast<uint32_t>(this->emissionShapeType));
         intermediarySerializer.Write(this->emissionShapeCone);
         intermediarySerializer.Write(this->emissionShapeSphere);
@@ -632,8 +658,9 @@ namespace GTEngine
                 deserializer.Read(this->orientation);
                 deserializer.Read(this->flags);
                 deserializer.Read(this->durationInSeconds);
-                deserializer.Read(this->emissionRatePerSecond);
+                deserializer.Read(this->delayInSeconds);
                 deserializer.Read(this->gravityFactor);
+                deserializer.Read(this->emissionRatePerSecond);
 
                 uint32_t serializedEmissionShapeType;
                 deserializer.Read(serializedEmissionShapeType);
