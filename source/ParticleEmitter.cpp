@@ -90,14 +90,19 @@ namespace GTEngine
     }
 
 
-    void ParticleEmitter::Start()
+    void ParticleEmitter::Reset()
     {
+        this->ClearParticles();
+
+        // TODO: Reset the random seed.
+
+        this->timeSinceLastEmission = 0.0;
         this->HasDoneFirstEmission(false);
     }
 
-    void ParticleEmitter::Stop()
+    void ParticleEmitter::ClearParticles()
     {
-        this->HasDoneFirstEmission(false);
+        this->particles.Clear();
     }
 
 
