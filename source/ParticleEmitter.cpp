@@ -8,7 +8,7 @@ namespace GTEngine
 {
     ParticleEmitter::ParticleEmitter()
         : name(""), position(), orientation(),
-          flags(0), durationInSeconds(0.0), delayInSeconds(1.0),
+          flags(0), durationInSeconds(0.0), delayInSeconds(0.0),
           gravityFactor(0.0), emissionRatePerSecond(10.0),
           emissionShapeType(EmissionShapeType_Cone), emissionShapeCone(), emissionShapeSphere(), emissionShapeBox(),
           startSpeedMin(5.0), startSpeedMax(5.0),
