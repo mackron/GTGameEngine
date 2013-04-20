@@ -1121,6 +1121,46 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             int GetRelativeFilePath(GTCore::Script &script);
+
+
+            /// Marks the particle system as playing.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int Play(GTCore::Script &script);
+
+            /// Marks the particle system as paused.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int Pause(GTCore::Script &script);
+
+            /// Determines whether or not the particle system is playing.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int IsPlaying(GTCore::Script &script);
+
+
+            /// Sets whether or not the particle system should be played on startup.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: Boolean: True if the particle system should be played on startup.
+            int PlayOnStartup(GTCore::Script &script);
+
+            /// Determines whether or not the particle system is playing on startup.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int IsPlayingOnStartup(GTCore::Script &script);
+
+
+            /// Resets the particle system.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle system.
+            int Reset(GTCore::Script &script);
         }
 
 

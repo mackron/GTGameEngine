@@ -496,6 +496,10 @@ namespace GTEngine
         void UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath);
 
 
+        /// Resets all particle systems.
+        void ResetAllParticleSystems();
+
+
     private:
 
         /// The viewport that the scene will be drawn from.

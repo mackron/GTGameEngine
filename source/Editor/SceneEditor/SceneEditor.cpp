@@ -283,6 +283,10 @@ namespace GTEngine
                 this->scene.RegisterToScript(this->GetScript());
 
 
+                // All particle system should be reset.
+                this->ResetAllParticleSystems();
+
+
                 // We'll call OnStartup on all scene nodes here.
                 this->scene.PostSceneNodeScriptEvent_OnStartup();
 
@@ -368,6 +372,11 @@ namespace GTEngine
 
                 this->updateManager.Disable();
                 this->physicsManager.DisableSimulation();
+
+
+                // Particles systems should be reset.
+                this->ResetAllParticleSystems();
+
 
 
                 // To restore, all we need to do is revert the staging area.
@@ -2994,6 +3003,25 @@ namespace GTEngine
         if (notifyScriptingEnvironment)
         {
             this->PostOnSelectionChangedEventToScript();
+        }
+    }
+
+
+    void SceneEditor::ResetAllParticleSystems()
+    {
+        size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+
+        for (size_t iSceneNode = 0; iSceneNode < sceneNodeCount; ++iSceneNode)
+        {
+            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
+            assert(sceneNode != nullptr);
+            {
+                auto particleSystemComponent = sceneNode->GetComponent<ParticleSystemComponent>();
+                if (particleSystemComponent != nullptr)
+                {
+                    particleSystemComponent->Reset();
+                }
+            }
         }
     }
 }

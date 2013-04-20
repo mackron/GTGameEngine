@@ -80,11 +80,15 @@ namespace GTEngine
     void ParticleSystemComponent::Play()
     {
         this->isPlaying = true;
+
+        this->OnChanged();
     }
 
     void ParticleSystemComponent::Pause()
     {
         this->isPlaying = false;
+
+        this->OnChanged();
     }
 
     bool ParticleSystemComponent::IsPlaying() const
@@ -96,12 +100,33 @@ namespace GTEngine
     void ParticleSystemComponent::PlayOnStartup(bool playOnStartupIn)
     {
         this->playOnStartup = playOnStartupIn;
+        
+        this->OnChanged();
     }
 
     bool ParticleSystemComponent::IsPlayingOnStartup() const
     {
         return this->playOnStartup;
     }
+
+
+    void ParticleSystemComponent::Reset()
+    {
+        if (this->particleSystem != nullptr)
+        {
+            this->particleSystem->Reset();
+        }
+
+        if (this->playOnStartup)
+        {
+            this->Play();
+        }
+        else
+        {
+            this->Pause();
+        }
+    }
+
 
 
     ///////////////////////////////////////////////////////

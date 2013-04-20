@@ -77,10 +77,13 @@ namespace GTEngine
         auto particleSystemComponent = node.GetComponent<ParticleSystemComponent>();
         if (particleSystemComponent != nullptr)
         {
-            auto particleSystem = particleSystemComponent->GetParticleSystem();
-            if (particleSystem != nullptr)
+            if (particleSystemComponent->IsPlaying())
             {
-                particleSystem->Update(deltaTimeInSeconds);
+                auto particleSystem = particleSystemComponent->GetParticleSystem();
+                if (particleSystem != nullptr)
+                {
+                    particleSystem->Update(deltaTimeInSeconds);
+                }
             }
         }
 
