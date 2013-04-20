@@ -793,12 +793,9 @@ namespace GTEngine
                     }
                     else
                     {
-                        assert(sceneNodeB != &this->light);
+                        assert(sceneNodeB->HasComponent<ModelComponent>());
                         {
-                            assert(sceneNodeB->HasComponent<ModelComponent>());
-                            {
-                                this->callback.ProcessModel(*sceneNodeB);
-                            }
+                            this->callback.ProcessModel(*sceneNodeB);
                         }
                     }
                 }
