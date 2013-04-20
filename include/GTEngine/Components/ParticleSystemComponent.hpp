@@ -52,6 +52,23 @@ namespace GTEngine
 
 
 
+        /// Marks the particle system as playing.
+        void Play();
+
+        /// Marks the particle system as paused (default).
+        void Pause();
+
+        /// Determines whether or not the particle system is playing.
+        bool IsPlaying() const;
+
+
+        /// Sets whether or not to play the particle system on startup.
+        void PlayOnStartup(bool playOnStartup);
+
+        /// Determines whether or not the particle system should be played on startup.
+        bool IsPlayingOnStartup() const;
+
+
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
 
@@ -70,6 +87,12 @@ namespace GTEngine
 
         /// Keeps track of whether or not the component has taken ownership of the particle system.
         bool isOwner;
+
+        /// Keeps track of whether or not the particle system is currently playing.
+        bool isPlaying;
+
+        /// Keeps track of whether or not to start playing the particle system on startup.
+        bool playOnStartup;
 
 
         /// The event handler to attach to the scene node. This is used only to detect when it has had it's transformation changed

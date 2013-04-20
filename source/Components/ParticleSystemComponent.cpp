@@ -12,6 +12,7 @@ namespace GTEngine
     ParticleSystemComponent::ParticleSystemComponent(SceneNode &sceneNode)
         : Component(sceneNode),
           particleSystem(nullptr), isOwner(false),
+          isPlaying(false), playOnStartup(false),
           sceneNodeEventHandler()
     {
         sceneNode.AttachEventHandler(this->sceneNodeEventHandler);
@@ -41,6 +42,15 @@ namespace GTEngine
         if (this->particleSystem != nullptr)
         {
             this->particleSystem->SetTransform(this->node.GetWorldPosition(), this->node.GetWorldOrientation());
+
+            if (this->IsPlayingOnStartup())
+            {
+                this->Play();
+            }
+            else
+            {
+                this->Pause();
+            }
         }
 
         this->OnChanged();
@@ -67,6 +77,33 @@ namespace GTEngine
     }
 
 
+    void ParticleSystemComponent::Play()
+    {
+        this->isPlaying = true;
+    }
+
+    void ParticleSystemComponent::Pause()
+    {
+        this->isPlaying = false;
+    }
+
+    bool ParticleSystemComponent::IsPlaying() const
+    {
+        return this->isPlaying;
+    }
+
+
+    void ParticleSystemComponent::PlayOnStartup(bool playOnStartupIn)
+    {
+        this->playOnStartup = playOnStartupIn;
+    }
+
+    bool ParticleSystemComponent::IsPlayingOnStartup() const
+    {
+        return this->playOnStartup;
+    }
+
+
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
@@ -82,6 +119,9 @@ namespace GTEngine
         {
             intermediarySerializer.WriteString("");
         }
+
+        intermediarySerializer.Write(this->isPlaying);
+        intermediarySerializer.Write(this->playOnStartup);
 
 
 
@@ -105,6 +145,10 @@ namespace GTEngine
             deserializer.ReadString(relativeFilePath);
 
             this->SetParticleSystem(relativeFilePath.c_str());
+
+
+            deserializer.Read(this->isPlaying);
+            deserializer.Read(this->playOnStartup);
         }
         else
         {
