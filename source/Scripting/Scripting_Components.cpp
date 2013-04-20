@@ -731,6 +731,33 @@ namespace GTEngine
                 "    return GTEngine.System.ParticleSystemComponent.GetRelativeFilePath(self._internalPtr);"
                 "end;"
 
+                
+                "function GTEngine.ParticleSystemComponent:Play()"
+                "    return GTEngine.System.ParticleSystemComponent.Play(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ParticleSystemComponent:Pause()"
+                "    return GTEngine.System.ParticleSystemComponent.Pause(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ParticleSystemComponent:IsPlaying()"
+                "    return GTEngine.System.ParticleSystemComponent.IsPlaying(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.ParticleSystemComponent:PlayOnStartup(playOnStartup)"
+                "    return GTEngine.System.ParticleSystemComponent.PlayOnStartup(self._internalPtr, playOnStartup);"
+                "end;"
+
+                "function GTEngine.ParticleSystemComponent:IsPlayingOnStartup()"
+                "    return GTEngine.System.ParticleSystemComponent.IsPlayingOnStartup(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.ParticleSystemComponent:Reset()"
+                "    return GTEngine.System.ParticleSystemComponent.Reset(self._internalPtr);"
+                "end;"
+
 
 
                 // EditorMetadataComponent
@@ -998,6 +1025,12 @@ namespace GTEngine
                         {
                             script.SetTableFunction(-1, "SetFromFile",         ParticleSystemComponentFFI::SetFromFile);
                             script.SetTableFunction(-1, "GetRelativeFilePath", ParticleSystemComponentFFI::GetRelativeFilePath);
+                            script.SetTableFunction(-1, "Play",                ParticleSystemComponentFFI::Play);
+                            script.SetTableFunction(-1, "Pause",               ParticleSystemComponentFFI::Pause);
+                            script.SetTableFunction(-1, "IsPlaying",           ParticleSystemComponentFFI::IsPlaying);
+                            script.SetTableFunction(-1, "PlayOnStartup",       ParticleSystemComponentFFI::PlayOnStartup);
+                            script.SetTableFunction(-1, "IsPlayingOnStartup",  ParticleSystemComponentFFI::IsPlayingOnStartup);
+                            script.SetTableFunction(-1, "Reset",               ParticleSystemComponentFFI::Reset);
                         }
                         script.Pop(1);
 
@@ -3289,6 +3322,83 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+
+            int Play(GTCore::Script &script)
+            {
+                auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->Play();
+                }
+
+                return 0;
+            }
+
+            int Pause(GTCore::Script &script)
+            {
+                auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->Pause();
+                }
+
+                return 0;
+            }
+
+            int IsPlaying(GTCore::Script &script)
+            {
+                auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    script.Push(component->IsPlaying());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+            int PlayOnStartup(GTCore::Script &script)
+            {
+                auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->PlayOnStartup(script.ToBoolean(2));
+                }
+
+                return 0;
+            }
+
+            int IsPlayingOnStartup(GTCore::Script &script)
+            {
+                auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    script.Push(component->IsPlayingOnStartup());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+            int Reset(GTCore::Script &script)
+            {
+                auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->Reset();
+                }
+
+                return 0;
             }
         }
 

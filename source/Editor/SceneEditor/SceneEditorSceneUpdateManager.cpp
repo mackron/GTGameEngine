@@ -61,10 +61,13 @@ namespace GTEngine
                 auto particleSystemComponent = node.GetComponent<ParticleSystemComponent>();
                 if (particleSystemComponent != nullptr)
                 {
-                    auto particleSystem = particleSystemComponent->GetParticleSystem();
-                    if (particleSystem != nullptr)
+                    if (particleSystemComponent->IsPlayingOnStartup())      // Prevents particles from playing in-editor when not playing on startup. Unlikely deseriable.
                     {
-                        particleSystem->Update(deltaTimeInSeconds);
+                        auto particleSystem = particleSystemComponent->GetParticleSystem();
+                        if (particleSystem != nullptr)
+                        {
+                            particleSystem->Update(deltaTimeInSeconds);
+                        }
                     }
                 }
             }

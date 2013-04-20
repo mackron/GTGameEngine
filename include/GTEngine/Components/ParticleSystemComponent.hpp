@@ -69,6 +69,13 @@ namespace GTEngine
         bool IsPlayingOnStartup() const;
 
 
+        /// Resets the particle system.
+        ///
+        /// @remarks
+        ///     This does not change anything to do with the playback state. All this does is resets the internal particle system.
+        void Reset();
+
+
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
 

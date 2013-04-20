@@ -1730,6 +1730,12 @@ function GTGUI.Element:ParticleSystemComponentPanel()
     -- File Path
     self.FilePath = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox' style='width:100%;' />");
     
+    -- Play on Startup.
+    self.PlayOnStartup = GTGUI.Server.CreateElement(self.Body, "checkbox");
+    self.PlayOnStartup:CheckBox("Play on Startup");
+    self.PlayOnStartup:SetStyle("margin-top", "4px");
+    
+    
     self.FilePath:OnKeyPressed(function(data)
         if data.key == GTGUI.Keys.Enter then
             self:UpdateFile();
@@ -1744,12 +1750,26 @@ function GTGUI.Element:ParticleSystemComponentPanel()
     end);
     
     
+    
+    self.PlayOnStartup:OnChecked(function(data)
+        self.CurrentComponent:PlayOnStartup(true);
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
+    
+    self.PlayOnStartup:OnUnchecked(function(data)
+        self.CurrentComponent:PlayOnStartup(false);
+        self.CurrentComponent:Reset();
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
+    
+    
 
     function self:Update(node)
         self.CurrentNode      = node;
         self.CurrentComponent = node:GetComponent(GTEngine.Components.ParticleSystem);
         
-        self.FilePath:SetText(self.CurrentComponent:GetRelativeFilePath(), true);       -- 'true' = block OnTextChanged event.
+        self.FilePath:SetText(self.CurrentComponent:GetRelativeFilePath(), true);           -- 'true' = block OnTextChanged event.
+        self.PlayOnStartup:SetChecked(self.CurrentComponent:IsPlayingOnStartup(), true);    -- 'true' = block OnChecked/OnUnchecked event.
     end
     
     
