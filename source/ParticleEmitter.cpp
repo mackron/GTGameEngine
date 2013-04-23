@@ -376,6 +376,10 @@ namespace GTEngine
         this->aabbMin = glm::vec3(aabbMinFloats[0], aabbMinFloats[1], aabbMinFloats[2]);
         this->aabbMax = glm::vec3(aabbMaxFloats[0], aabbMaxFloats[1], aabbMaxFloats[2]);
 
+        // AABB padding. Should probably find a way to do this more accurately.
+        this->aabbMin -= glm::vec3(4.0f, 4.0f, 4.0f);
+        this->aabbMax += glm::vec3(4.0f, 4.0f, 4.0f);
+
 
         // We need to have the emitter know that the first emission has been performed.
         if (spawnCount > 0)
@@ -646,6 +650,13 @@ namespace GTEngine
         }
 
         return* newFunction;
+    }
+
+
+    void ParticleEmitter::GetAABB(glm::vec3 &aabbMinOut, glm::vec3 &aabbMaxOut) const
+    {
+        aabbMinOut = this->aabbMin;
+        aabbMaxOut = this->aabbMax;
     }
 
 
