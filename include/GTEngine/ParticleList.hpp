@@ -66,13 +66,6 @@ namespace GTEngine
 
         
         
-
-    private:
-
-        
-
-
-
     private:
 
         /// A pointer to the buffer containing the particles.
@@ -86,6 +79,10 @@ namespace GTEngine
 
         /// The index of the first particle.
         size_t startIndex;
+        
+        
+    private:    // No assignment, yet.
+        ParticleList & operator=(const ParticleList &);
     };
 }
 

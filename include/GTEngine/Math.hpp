@@ -14,7 +14,7 @@
     #endif
 #endif
 #define GLM_FORCE_ONLY_XYZW
-#define GLM_FORCE_SSE4
+#define GLM_FORCE_SSE3
 #define GLM_SIMD_ENABLE_XYZW_UNION
 #define GLM_SIMD_ENABLE_DEFAULT_INIT
 #include <glm/glm.hpp>

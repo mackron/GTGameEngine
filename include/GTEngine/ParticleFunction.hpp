@@ -6,6 +6,7 @@
 #include "ParticleFunctionTypes.hpp"
 #include "Particle.hpp"
 
+
 namespace GTEngine
 {
     /// Base class representing a function that is run on a particle.
@@ -22,6 +23,11 @@ namespace GTEngine
         /// Copy constructor.
         ParticleFunction(const ParticleFunction &other)
             : type(other.type)
+        {
+        }
+        
+        /// Destructor.
+        virtual ~ParticleFunction()
         {
         }
 
@@ -53,15 +59,8 @@ namespace GTEngine
 
     public: // Aligned new/delete.
 
-        void* operator new(size_t size)
-        {
-            return _mm_malloc(size, 16);
-        }
-
-        void operator delete(void* buffer)
-        {
-            _mm_free(buffer);
-        }
+        void* operator new(size_t nbytes);
+        void  operator delete(void* buffer);
     };
 
 
@@ -209,7 +208,7 @@ namespace GTEngine
 
 
     /// The Angular Velocity over Time particle function.
-    GLM_ALIGN(16) class ParticleFunction_AngularVelocityOverTime : public ParticleFunction_Vector3
+    class GLM_ALIGN(16) ParticleFunction_AngularVelocityOverTime : public ParticleFunction_Vector3
     {
     public:
 

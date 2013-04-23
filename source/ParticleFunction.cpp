@@ -4,6 +4,21 @@
 
 namespace GTEngine
 {
+    void* ParticleFunction::operator new(size_t nbytes)
+    {
+        return _mm_malloc(nbytes, 16);
+    }
+    
+    void ParticleFunction::operator delete(void* buffer)
+    {
+        _mm_free(buffer);
+    }
+    
+    
+    
+    
+    
+    
     ///////////////////////////////////////
     // Generic Scalar
 
