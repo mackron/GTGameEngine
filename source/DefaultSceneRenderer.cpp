@@ -550,8 +550,9 @@ namespace GTEngine
         }
 
 
+#if 1
         // Now we need to build the mesh to draw for each particle system.
-        glm::quat inverseView = glm::quat(glm::inverse(glm::quat_cast(this->viewMatrix)));
+        glm::simdQuat inverseView = glm::simdQuat(glm::inverse(glm::quat_cast(this->viewMatrix)));
 
         for (size_t iParticleSystem = 0; iParticleSystem < this->visibleParticleSystems.count; ++iParticleSystem)
         {
@@ -599,14 +600,15 @@ namespace GTEngine
                                                 auto vertex2 = vertex1 + vertexSize;
                                                 auto vertex3 = vertex2 + vertexSize;
 
-                                                glm::quat absoluteOrientation = inverseView * particle.orientation;
+                                                glm::simdQuat absoluteOrientation = inverseView * particle.orientation;
 
 
-                                                glm::simdMat4 transform(glm::mat4_cast(absoluteOrientation));
+                                                glm::simdMat4 transform = glm::mat4_cast(absoluteOrientation);
                                                 transform[0] *= particle.scale.x;
                                                 transform[1] *= particle.scale.y;
                                                 transform[2] *= particle.scale.z;
-                                                transform[3]  = glm::simdVec4(particle.position, 1.0f);
+                                                transform[3]  = particle.position;
+                                                //transform[3]  = glm::simdVec4(particle.position, 1.0f);
 
                                                 glm::simdVec4 position0 = transform * glm::simdVec4(-0.5f, -0.5f, 0.0f, 1.0f);
                                                 glm::simdVec4 position1 = transform * glm::simdVec4( 0.5f, -0.5f, 0.0f, 1.0f);
@@ -618,10 +620,10 @@ namespace GTEngine
                                                 glm::vec2 texcoord2 = glm::vec2(1.0f, 1.0f);
                                                 glm::vec2 texcoord3 = glm::vec2(0.0f, 1.0f);
 
-                                                glm::vec3 normal0   = absoluteOrientation * glm::vec3(0.0f, 0.0f, 1.0f);
-                                                glm::vec3 normal1   = normal0;
-                                                glm::vec3 normal2   = normal0;
-                                                glm::vec3 normal3   = normal0;
+                                                glm::simdVec4 normal0   = absoluteOrientation * glm::simdVec4(0.0f, 0.0f, 1.0f, 0.0f);
+                                                glm::simdVec4 normal1   = normal0;
+                                                glm::simdVec4 normal2   = normal0;
+                                                glm::simdVec4 normal3   = normal0;
 
                                                 glm::vec4 colour0   = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
                                                 glm::vec4 colour1   = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -681,7 +683,7 @@ namespace GTEngine
                 }
             }
         }
-
+#endif
 
 
 

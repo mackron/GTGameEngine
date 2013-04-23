@@ -6,6 +6,63 @@
 
 namespace GTEngine
 {
+    inline __m128 vec_abs(__m128 x)
+    {
+        static const __m128 sign_mask = _mm_set1_ps(-0.f);
+
+        return _mm_andnot_ps(sign_mask, x);
+    }
+
+    inline __m128 MixFromOriginSin(__m128 x)
+    {
+        static const __m128 b = _mm_set1_ps( 4.0f / glm::pi<float>());
+        static const __m128 c = _mm_set1_ps(-4.0f / (glm::pi<float>() * glm::pi<float>()));
+        static const __m128 p = _mm_set1_ps(0.225f);
+
+        __m128 y = _mm_add_ps(_mm_mul_ps(b, x), _mm_mul_ps(c, _mm_mul_ps(x, vec_abs(x))));
+               y = _mm_add_ps(_mm_mul_ps(p, _mm_sub_ps(_mm_mul_ps(y, vec_abs(y)), y)), y);
+
+        return y;
+    }
+
+    inline glm::simdQuat MixFromOrigin(const glm::simdQuat &q, float a)
+    {
+        float angle = glm::fastAcos(q.w);
+
+#if 0
+        const float s0 = Math::fastSin((1.0f - a) * angle);
+        const float s1 = Math::fastSin(a * angle);
+        const float d  = 1.0f / Math::fastSin(angle);
+#endif
+
+        
+        __m128 s = _mm_set_ps(
+            (1.0f - a) * angle,
+            a * angle,
+            angle,
+            0.0f);
+
+        s = MixFromOriginSin(s);
+
+        GLM_ALIGN(16) float results[4];
+        _mm_store_ps(results, s);
+
+        const float s0 =        results[3];
+        const float s1 =        results[2];
+        const float d  = 1.0f / results[1];
+        
+
+        
+
+        glm::simdQuat result    = s1 * q;
+                      result.w += s0;
+                      result    = result * d;
+
+        return result;
+    }
+
+
+
     ParticleEmitter::ParticleEmitter()
         : name(""), position(), orientation(),
           flags(0), durationInSeconds(0.0), delayInSeconds(0.0),
@@ -20,6 +77,7 @@ namespace GTEngine
           random(),
           timeSinceLastEmission(1.0 / emissionRatePerSecond),
           particles(),
+          aabbMin(), aabbMax(),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
     {
         this->SetMaterial("engine/materials/simple-diffuse.material");
@@ -39,6 +97,7 @@ namespace GTEngine
           random(other.random),
           timeSinceLastEmission(other.timeSinceLastEmission),
           particles(other.particles),
+          aabbMin(other.aabbMin), aabbMax(other.aabbMax),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
     {
         // The functions need to be copied over.
@@ -106,9 +165,19 @@ namespace GTEngine
     }
 
 
-    void ParticleEmitter::Update(double deltaTimeInSeconds, const glm::vec3 &gravity)
+    void ParticleEmitter::Update(double deltaTimeInSeconds, const glm::vec3 &gravityIn)
     {
-        float deltaTimeInSecondsF = static_cast<float>(deltaTimeInSeconds);
+        // To begin with, we'll preallocate a buffer that should be about the right size.
+        if (this->particles.GetBufferSize() == 0)
+        {
+            this->particles.Resize(static_cast<size_t>(this->lifetimeMax * this->emissionRatePerSecond));
+        }
+
+
+
+        float         deltaTimeInSecondsF = static_cast<float>(deltaTimeInSeconds);
+        glm::simdVec4 gravity             = glm::simdVec4(gravityIn.x, gravityIn.y, gravityIn.z, 1.0f) * static_cast<float>(this->gravityFactor * deltaTimeInSeconds);
+        glm::simdQuat orientationSIMD     = glm::simdQuat(this->orientation);
 
 
         // Now we need to spawn some particles if applicable. We need to do this before stepping particles because we want
@@ -168,15 +237,15 @@ namespace GTEngine
 
             // The spawning position and direction is different depending on the spawn shape. The position and direction is calculated
             // in local space, which is then later transformed by the emitters transform.
-            glm::vec3 spawnPosition  = glm::vec3(0.0f, 0.0f,  0.0f);
-            glm::vec3 spawnDirection = glm::vec3(0.0f, 0.0f, -1.0f);
+            glm::simdVec4 spawnPosition  = glm::simdVec4(0.0f, 0.0f,  0.0f, 1.0f);
+            glm::simdVec4 spawnDirection = glm::simdVec4(0.0f, 0.0f, -1.0f, 1.0f);
 
             switch (this->emissionShapeType)
             {
             case EmissionShapeType_Cone:
                 {
                     // We first get an untransformed random position on the surface of a circle. The z axis will be 0.0.
-                    glm::vec3 normalizedPosition;
+                    glm::simdVec4 normalizedPosition;
                     this->random.NextCircle(1.0f, normalizedPosition.x, normalizedPosition.y);
 
                     float distanceFactor = glm::length(normalizedPosition);
@@ -187,9 +256,9 @@ namespace GTEngine
 
                     // Now we need an untransformed direction.
                     float rotationAngle    = this->emissionShapeCone.angle * distanceFactor;
-                    glm::vec3 rotationAxis = glm::cross(glm::vec3(0.0f, 0.0f, -1.0f), glm::normalize(normalizedPosition));
+                    glm::simdVec4 rotationAxis = glm::cross(glm::simdVec4(0.0f, 0.0f, -1.0f, 1.0f), glm::normalize(normalizedPosition));
                     
-                    spawnDirection = glm::normalize(glm::angleAxis(rotationAngle, rotationAxis) * glm::vec3(0.0f, 0.0f, -1.0f));
+                    spawnDirection = glm::normalize(glm::angleAxisSIMD(rotationAngle, glm::vec3(rotationAxis.x, rotationAxis.y, rotationAxis.z)) * glm::simdVec4(0.0f, 0.0f, -1.0f, 1.0f));
 
 
                     break;
@@ -217,21 +286,22 @@ namespace GTEngine
 
 
             // Now we need to transform the position and calculate the velocity.
-            glm::mat4 transform = glm::mat4_cast(this->orientation);
-            transform[3]        = glm::vec4(this->position, 1.0f);
+            glm::simdMat4 transform = glm::mat4_cast(orientationSIMD);
+            transform[3] = glm::simdVec4(this->position, 1.0f);
 
-            particle.scale = glm::vec3(
+            particle.scale = glm::simdVec4(
                 this->random.Next(this->startScaleMin.x, this->startScaleMax.x),
                 this->random.Next(this->startScaleMin.y, this->startScaleMax.y),
-                this->random.Next(this->startScaleMin.z, this->startScaleMax.z));
+                this->random.Next(this->startScaleMin.z, this->startScaleMax.z),
+                1.0f);
 
-            particle.orientation = Math::quatFromEulerFast(glm::radians(glm::vec3(
+            particle.orientation = Math::simdQuatFromEulerFast(glm::radians(glm::vec3(
                 this->random.Next(this->startRotationMin.x, this->startRotationMax.x),
                 this->random.Next(this->startRotationMin.y, this->startRotationMax.y),
                 this->random.Next(this->startRotationMin.z, this->startRotationMax.z))));
 
-            particle.position            = glm::vec3(transform * glm::vec4(spawnPosition, 1.0f));
-            particle.spawnLinearVelocity = this->orientation * spawnDirection * static_cast<float>(this->random.Next(this->startSpeedMin, this->startSpeedMax));
+            particle.position            = transform * spawnPosition;
+            particle.spawnLinearVelocity = (orientationSIMD * spawnDirection) * static_cast<float>(this->random.Next(this->startSpeedMin, this->startSpeedMax));
 
 
             particle.timeLeftToDeath = particle.lifetime = this->random.Next(this->lifetimeMin, this->lifetimeMax);
@@ -241,6 +311,16 @@ namespace GTEngine
 
 
         // Here we will update any still-alive particles.
+        this->aabbMin = glm::vec3( FLT_MAX);
+        this->aabbMax = glm::vec3(-FLT_MAX);
+
+        //glm::simdVec4 aabbMinSIMD( FLT_MAX);
+        //glm::simdVec4 aabbMaxSIMD(-FLT_MAX);
+
+        __m128 m128_aabbMin = _mm_set1_ps( FLT_MAX);
+        __m128 m128_aabbMax = _mm_set1_ps(-FLT_MAX);
+
+
         size_t iParticle = 0;
         while (iParticle < this->particles.GetCount())
         {
@@ -257,12 +337,11 @@ namespace GTEngine
                     // The particle is still alive. We need to update it.
                     //
                     // For now, we will just move it in the direction of the emitter for the sake of testing.
-                    particle.gravityLinearVelocity += gravity * static_cast<float>(this->gravityFactor * deltaTimeInSeconds);
+                    particle.gravityLinearVelocity += gravity;
+                    particle.linearVelocity         = particle.gravityLinearVelocity + particle.spawnLinearVelocity + particle.functionLinearVelocity;
 
-                    particle.linearVelocity  = particle.gravityLinearVelocity + particle.spawnLinearVelocity + particle.functionLinearVelocity;
-                    particle.position       += particle.linearVelocity * deltaTimeInSecondsF;
-                    particle.orientation     = particle.orientation * Math::fastMix(glm::quat(), particle.angularVelocity, deltaTimeInSecondsF);
-
+                    particle.position              += particle.linearVelocity * deltaTimeInSecondsF;
+                    particle.orientation            = particle.orientation * MixFromOrigin(particle.angularVelocity, deltaTimeInSecondsF);
 
                     // At this point we need to run all of the functions that are currently being used by the emitter.
                     float lifetimeRatio = static_cast<float>(1.0 - (particle.timeLeftToDeath / particle.lifetime));
@@ -276,11 +355,26 @@ namespace GTEngine
                     }
 
 
+                    // We need to check the position against the AABB.
+                    m128_aabbMin = _mm_min_ps(m128_aabbMin, particle.position.Data);
+                    m128_aabbMax = _mm_max_ps(m128_aabbMax, particle.position.Data);
+
+
                     ++iParticle;
                 }
             }
         }
 
+
+        GLM_ALIGN(16) float aabbMinFloats[4];
+        GLM_ALIGN(16) float aabbMaxFloats[4];
+
+        _mm_store_ps(aabbMinFloats, m128_aabbMin);
+        _mm_store_ps(aabbMaxFloats, m128_aabbMax);
+
+
+        this->aabbMin = glm::vec3(aabbMinFloats[0], aabbMinFloats[1], aabbMinFloats[2]);
+        this->aabbMax = glm::vec3(aabbMaxFloats[0], aabbMaxFloats[1], aabbMaxFloats[2]);
 
 
         // We need to have the emitter know that the first emission has been performed.

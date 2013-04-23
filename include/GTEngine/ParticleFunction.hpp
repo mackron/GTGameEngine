@@ -48,6 +48,20 @@ namespace GTEngine
 
         /// The type of this function.
         ParticleFunctionType type;
+
+
+
+    public: // Aligned new/delete.
+
+        void* operator new(size_t size)
+        {
+            return _mm_malloc(size, 16);
+        }
+
+        void operator delete(void* buffer)
+        {
+            _mm_free(buffer);
+        }
     };
 
 
@@ -195,7 +209,7 @@ namespace GTEngine
 
 
     /// The Angular Velocity over Time particle function.
-    class ParticleFunction_AngularVelocityOverTime : public ParticleFunction_Vector3
+    GLM_ALIGN(16) class ParticleFunction_AngularVelocityOverTime : public ParticleFunction_Vector3
     {
     public:
 
@@ -225,10 +239,10 @@ namespace GTEngine
     private:
 
         /// The min value in the range, as a quaternion.
-        glm::quat rangeMinQuat;
+        glm::simdQuat rangeMinQuat;
 
         /// The max value in the range, as a quaternion.
-        glm::quat rangeMaxQuat;
+        glm::simdQuat rangeMaxQuat;
     };
 }
 

@@ -82,7 +82,7 @@ namespace GTEngine
 
     void ParticleFunction_SizeOverTime::Execute(Particle &particle, float lifetimeRatio)
     {
-        particle.scale = glm::vec3(this->Evaluate(lifetimeRatio));
+        particle.scale = glm::simdVec4(this->Evaluate(lifetimeRatio));
     }
 
 
@@ -92,7 +92,8 @@ namespace GTEngine
 
     void ParticleFunction_LinearVelocityOverTime::Execute(Particle &particle, float lifetimeRatio)
     {
-        particle.functionLinearVelocity = this->Evaluate(lifetimeRatio);
+        glm::vec3 temp = this->Evaluate(lifetimeRatio);
+        particle.functionLinearVelocity = glm::simdVec4(temp.x, temp.y, temp.z, 1.0f);
     }
     
 
@@ -109,7 +110,7 @@ namespace GTEngine
     {
         ParticleFunction_Vector3::SetRange(rangeMin, rangeMax);
 
-        this->rangeMinQuat = Math::quatFromEulerFast(glm::radians(rangeMin));
-        this->rangeMaxQuat = Math::quatFromEulerFast(glm::radians(rangeMax));
+        this->rangeMinQuat = Math::simdQuatFromEulerFast(glm::radians(rangeMin));
+        this->rangeMaxQuat = Math::simdQuatFromEulerFast(glm::radians(rangeMax));
     }
 }
