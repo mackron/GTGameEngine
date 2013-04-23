@@ -8,13 +8,13 @@
     //#pragma GCC diagnostic ignored "-Wstrict-aliasing"
     #pragma GCC diagnostic ignored "-Winline"
     #pragma GCC diagnostic ignored "-Weffc++"
-    
+
     #if defined(__clang__)
         #pragma GCC diagnostic ignored "-Wunused-parameter"
     #endif
 #endif
 #define GLM_FORCE_ONLY_XYZW
-#define GLM_FORCE_SSE3
+#define GLM_FORCE_SSE2
 #define GLM_SIMD_ENABLE_XYZW_UNION
 #define GLM_SIMD_ENABLE_DEFAULT_INIT
 #include <glm/glm.hpp>
@@ -50,7 +50,7 @@ namespace GTEngine
             const T c = T(-4) / (glm::pi<T>() * glm::pi<T>());
 
             T y = b * x + c * x * glm::abs(x);
-            
+
             y = T(0.225) * (y * glm::abs(y) - y) + y;
 
             return y;
@@ -65,7 +65,7 @@ namespace GTEngine
 
 
         /// A fast quaternion constructor from Euler angles.
-        template <typename T, glm::precision P> 
+        template <typename T, glm::precision P>
 	    GLM_FUNC_QUALIFIER glm::simdQuat simdQuatFromEulerFast
 	    (
 		    glm::detail::tvec3<T, P> const & eulerAngle
@@ -75,7 +75,7 @@ namespace GTEngine
 
 		    glm::detail::tvec3<T, P> c = Math::fastCos(eulerAngle * T(0.5));
 		    glm::detail::tvec3<T, P> s = Math::fastSin(eulerAngle * T(0.5));
-		
+
 		    result.w = c.x * c.y * c.z + s.x * s.y * s.z;
 		    result.x = s.x * c.y * c.z - c.x * s.y * s.z;
 		    result.y = c.x * s.y * c.z + s.x * c.y * s.z;
@@ -86,11 +86,11 @@ namespace GTEngine
 
 
         /// A fast quaternion mix function.
-        template <typename T> 
+        template <typename T>
 	    GLM_FUNC_QUALIFIER glm::detail::fquatSIMD fastMix
 	    (
-		    glm::detail::fquatSIMD const & x, 
-		    glm::detail::fquatSIMD const & y, 
+		    glm::detail::fquatSIMD const & x,
+		    glm::detail::fquatSIMD const & y,
 		    T const & a
 	    )
 	    {
@@ -122,7 +122,7 @@ namespace GTEngine
         /// Calculates a trainsform matrix from a position and orientation.
         void CalculateTransformMatrix(const glm::vec3 &position, const glm::quat &orientation, glm::mat4 &result);
         void CalculateTransformMatrix(const glm::vec3 &position, const glm::quat &orientation, btTransform &result);
-        
+
 
 
         /// Retrieves the frustum planes of the given matrix.
