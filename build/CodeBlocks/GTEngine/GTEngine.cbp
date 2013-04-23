@@ -28,8 +28,8 @@
 				<Option compiler="mingww64" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-Wall" />
 					<Add option="-O2" />
+					<Add option="-Wall" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -228,6 +228,9 @@
 		<Unit filename="../../../include/GTEngine/NavigationMesh.hpp" />
 		<Unit filename="../../../include/GTEngine/Particle.hpp" />
 		<Unit filename="../../../include/GTEngine/ParticleEmitter.hpp" />
+		<Unit filename="../../../include/GTEngine/ParticleFunction.hpp" />
+		<Unit filename="../../../include/GTEngine/ParticleFunctionTypes.hpp" />
+		<Unit filename="../../../include/GTEngine/ParticleList.hpp" />
 		<Unit filename="../../../include/GTEngine/ParticleSystem.hpp" />
 		<Unit filename="../../../include/GTEngine/ParticleSystemDefinition.hpp" />
 		<Unit filename="../../../include/GTEngine/ParticleSystemLibrary.hpp" />
@@ -344,7 +347,6 @@
 		<Unit filename="../../../include/GTEngine/ThreadCache.hpp" />
 		<Unit filename="../../../include/GTEngine/Utilities/CharacterControllerEventHandler.hpp" />
 		<Unit filename="../../../include/GTEngine/Utilities/DynamicCharacterController.hpp" />
-		<Unit filename="../../../include/GTEngine/Utilities/KinematicCharacterController.hpp" />
 		<Unit filename="../../../include/GTEngine/VertexArrayLibrary.hpp" />
 		<Unit filename="../../../include/GTEngine/rapidxml.hpp" />
 		<Unit filename="../../../source/Animation/Animation.cpp" />
@@ -435,6 +437,8 @@
 		<Unit filename="../../../source/NavigationMesh.cpp" />
 		<Unit filename="../../../source/Particle.cpp" />
 		<Unit filename="../../../source/ParticleEmitter.cpp" />
+		<Unit filename="../../../source/ParticleFunction.cpp" />
+		<Unit filename="../../../source/ParticleList.cpp" />
 		<Unit filename="../../../source/ParticleSystem.cpp" />
 		<Unit filename="../../../source/ParticleSystemDefinition.cpp" />
 		<Unit filename="../../../source/ParticleSystemLibrary.cpp" />
