@@ -249,14 +249,18 @@ namespace GTEngine
 
 
 
-
-
         /// Retrieves the number of alive particles.
         size_t GetParticleCount() const { return this->particles.GetCount(); }
 
         /// Retrieves a reference to the particle at the given index.
               Particle & GetParticle(size_t index)       { return this->particles.GetParticle(index); }
         const Particle & GetParticle(size_t index) const { return this->particles.GetParticle(index); }
+
+
+
+        /// Retrieves the AABB of the emitter.
+        void GetAABB(glm::vec3 &aabbMinOut, glm::vec3 &aabbMaxOut) const;
+
 
 
         /// Retrieves a reference to the internal vertex array.
