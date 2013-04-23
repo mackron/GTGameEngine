@@ -2,6 +2,7 @@
 
 #include <GTEngine/ParticleList.hpp>
 #include <new>
+#include <cstring>  // For memcpy()
 
 namespace GTEngine
 {
@@ -20,7 +21,7 @@ namespace GTEngine
             this->count      = other.count;
             this->bufferSize = other.bufferSize;
             this->buffer     = static_cast<Particle*>(malloc(other.bufferSize * sizeof(Particle)));
-            
+
             memcpy(this->buffer, other.buffer, other.bufferSize * sizeof(Particle));
         }
     }
@@ -90,7 +91,7 @@ namespace GTEngine
         }
     }
 
-    
+
     size_t ParticleList::GetCount() const
     {
         return this->count;
