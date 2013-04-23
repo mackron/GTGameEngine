@@ -14,7 +14,7 @@
     #endif
 #endif
 #define GLM_FORCE_ONLY_XYZW
-#define GLM_FORCE_SSE2
+#define GLM_FORCE_SSE4
 #define GLM_SIMD_ENABLE_XYZW_UNION
 #define GLM_SIMD_ENABLE_DEFAULT_INIT
 #include <glm/glm.hpp>
@@ -27,6 +27,7 @@
 #include <glm/gtx/fast_square_root.hpp>
 #include <glm/gtx/fast_exponential.hpp>
 #include <glm/gtx/simd_mat4.hpp>
+#include <glm/gtx/simd_quat.hpp>
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif
@@ -64,16 +65,16 @@ namespace GTEngine
 
 
         /// A fast quaternion constructor from Euler angles.
-        template <typename T> 
-	    GLM_FUNC_QUALIFIER glm::detail::tquat<T> quatFromEulerFast
+        template <typename T, glm::precision P> 
+	    GLM_FUNC_QUALIFIER glm::simdQuat simdQuatFromEulerFast
 	    (
-		    glm::detail::tvec3<T> const & eulerAngle
+		    glm::detail::tvec3<T, P> const & eulerAngle
 	    )
 	    {
-            glm::detail::tquat<T> result;
+            glm::simdQuat result;
 
-		    glm::detail::tvec3<T> c = Math::fastCos(eulerAngle * T(0.5));
-		    glm::detail::tvec3<T> s = Math::fastSin(eulerAngle * T(0.5));
+		    glm::detail::tvec3<T, P> c = Math::fastCos(eulerAngle * T(0.5));
+		    glm::detail::tvec3<T, P> s = Math::fastSin(eulerAngle * T(0.5));
 		
 		    result.w = c.x * c.y * c.z + s.x * s.y * s.z;
 		    result.x = s.x * c.y * c.z - c.x * s.y * s.z;
@@ -86,65 +87,30 @@ namespace GTEngine
 
         /// A fast quaternion mix function.
         template <typename T> 
-	    GLM_FUNC_QUALIFIER glm::detail::tquat<T> fastMix
+	    GLM_FUNC_QUALIFIER glm::detail::fquatSIMD fastMix
 	    (
-		    glm::detail::tquat<T> const & x, 
-		    glm::detail::tquat<T> const & y, 
+		    glm::detail::fquatSIMD const & x, 
+		    glm::detail::fquatSIMD const & y, 
 		    T const & a
 	    )
 	    {
-#if 0
-            __m128 simdResult;
-            __m128 simdX = _mm_set_ps(x.x, x.y, x.z, x.w);
-            __m128 simdY = _mm_set_ps(y.x, y.y, y.z, y.w);
+            float cosTheta = glm::dot(x, y);
 
-            float cosTheta;
-            _mm_store_ss(&cosTheta, glm::detail::sse_dot_ss(simdX, simdY));
-
-
-            if (cosTheta > T(1) - glm::epsilon<T>())
+            if (cosTheta > 1.0f - glm::epsilon<float>())
             {
-	            simdResult = _mm_add_ps(simdX, _mm_mul_ps(_mm_set1_ps(a), _mm_sub_ps(simdY, simdX)));
+	            return _mm_add_ps(x.Data, _mm_mul_ps(_mm_set1_ps(a), _mm_sub_ps(y.Data, x.Data)));
             }
             else
             {
-                T angle = glm::fastAcos(cosTheta);
+                float angle = glm::fastAcos(cosTheta);
 
-                __m128 scalarA = _mm_set1_ps(Math::fastSin((T(1.0) - a) * angle));
-                __m128 scalarB = _mm_set1_ps(Math::fastSin(a * angle));
-                __m128 scalarC = _mm_set1_ps(T(1.0) / Math::fastSin(angle));
+                float s0 = Math::fastSin((1.0f - a) * angle);
+                float s1 = Math::fastSin(a * angle);
+                float d  = 1.0f / Math::fastSin(angle);
 
-                simdResult = _mm_mul_ps(_mm_add_ps(_mm_mul_ps(scalarA, simdX), _mm_mul_ps(scalarB, simdY)), scalarC);
+                return (s0 * x + s1 * y) * d;
             }
-
-            float result[4];
-            _mm_store_ps(result, simdResult);
-
-            return glm::detail::tquat<T>(result[0], result[1], result[2], result[3]);
-#endif
-
-#if 1
-            T cosTheta = glm::dot(x, y);
-
-		    // Perform a linear interpolation when cosTheta is close to 1 to avoid side effect of sin(angle) becoming a zero denominator
-		    if(cosTheta > T(1) - glm::epsilon<T>())
-		    {
-			    // Linear interpolation
-			    return glm::detail::tquat<T>(
-				    glm::mix(x.w, y.w, a),
-				    glm::mix(x.x, y.x, a),
-				    glm::mix(x.y, y.y, a),
-				    glm::mix(x.z, y.z, a));
-		    }
-		    else
-		    {
-			    // Essential Mathematics, page 467
-                T angle = glm::fastAcos(cosTheta);
-			    return (Math::fastSin((T(1) - a) * angle) * x + Math::fastSin(a * angle) * y) * (1.0f / Math::fastSin(angle));
-		    }
-#endif
 	    }
-
 
 
         /// Calculates a view matrix from a position and orientation.

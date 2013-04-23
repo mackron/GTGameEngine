@@ -51,12 +51,25 @@ namespace GTEngine
 
         /// Clears the list.
         void Clear();
+
+
+        /// Retrieves the size of the internal buffer, in Particles.
+        size_t GetBufferSize() const;
+
+        /// Resizes the internal buffer, making sure everything is copied over appropriately.
+        ///
+        /// @param [in] The new size of the internal buffer, in Particles.
+        ///
+        /// @remarks
+        ///     This does not modify the particle count, only the size of the internal buffer.
+        void Resize(size_t newBufferSize);
+
+        
         
 
     private:
 
-        /// Resizes the internal buffer, making sure everything is copied over appropriately.
-        void Resize(size_t newBufferSize);
+        
 
 
 

@@ -14,39 +14,40 @@ namespace GTEngine
 
         /// Constructor.
         Particle()
-            : position(), orientation(), scale(1.0f, 1.0f, 1.0f), linearVelocity(), angularVelocity(),
-              spawnLinearVelocity(), gravityLinearVelocity(), functionLinearVelocity(),
-              timeLeftToDeath(1.0)
+            : position(0.0f, 0.0f, 0.0f, 1.0f), orientation(1.0f, 0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f, 1.0f),
+              linearVelocity(0.0f, 0.0f, 0.0f, 1.0f), angularVelocity(1.0f, 0.0f, 0.0f, 0.0f),
+              spawnLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f), gravityLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f), functionLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f),
+              lifetime(1.0), timeLeftToDeath(1.0)
         {
         }
 
 
 
         /// The position of the particle.
-        glm::vec3 position;
+        glm::simdVec4 position;
 
         /// The orienation of the particle.
-        glm::quat orientation;
+        glm::simdQuat orientation;
 
         /// The scale of the particle.e
-        glm::vec3 scale;
+        glm::simdVec4 scale;
 
 
         /// The current linear velocity of the particle.
-        glm::vec3 linearVelocity;
+        glm::simdVec4 linearVelocity;
 
         /// The current angular velocity of the particle.
-        glm::quat angularVelocity;
+        glm::simdQuat angularVelocity;
 
 
         /// The linear velocity of the particle when it was spawned.
-        glm::vec3 spawnLinearVelocity;
+        glm::simdVec4 spawnLinearVelocity;
 
         /// The current linear velocity applied to the particle due to gravity.
-        glm::vec3 gravityLinearVelocity;
+        glm::simdVec4 gravityLinearVelocity;
 
         /// The linear velocity of the particle as defined by the linear-velocity functions.
-        glm::vec3 functionLinearVelocity;
+        glm::simdVec4 functionLinearVelocity;
 
 
         /// The lifetime of the particle.

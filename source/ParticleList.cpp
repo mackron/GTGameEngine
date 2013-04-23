@@ -27,7 +27,7 @@ namespace GTEngine
 
     ParticleList::~ParticleList()
     {
-        free(this->buffer);
+        _mm_free(this->buffer);
     }
 
 
@@ -39,7 +39,7 @@ namespace GTEngine
             this->Resize((this->bufferSize == 0) ? 1 : this->bufferSize * 2);
         }
 
-        auto result = new (this->buffer + ((this->startIndex + this->count) % this->bufferSize)) Particle;      // TODO: See if we can avoid this constructor. Will need to document.
+        auto result = new (this->buffer + ((this->startIndex + this->count) % this->bufferSize)) Particle();      // TODO: See if we can avoid this constructor. Will need to document.
         this->count += 1;
 
         return *result;
@@ -114,9 +114,10 @@ namespace GTEngine
     }
 
 
-
-    ////////////////////////////////////////////
-    // Private
+    size_t ParticleList::GetBufferSize() const
+    {
+        return this->bufferSize;
+    }
 
     void ParticleList::Resize(size_t newBufferSize)
     {
@@ -124,7 +125,7 @@ namespace GTEngine
         {
             auto oldBufferSize = this->bufferSize;
             auto oldBuffer     = this->buffer;
-            auto newBuffer     = static_cast<Particle*>(malloc(newBufferSize * sizeof(Particle)));
+            auto newBuffer     = static_cast<Particle*>(_mm_malloc(newBufferSize * sizeof(Particle), 16));
 
             if (oldBuffer != nullptr)
             {
@@ -144,7 +145,7 @@ namespace GTEngine
                     memcpy(newBuffer, oldBuffer + this->startIndex, this->count * sizeof(Particle));
                 }
 
-                free(oldBuffer);
+                _mm_free(oldBuffer);
             }
 
             this->bufferSize   = newBufferSize;

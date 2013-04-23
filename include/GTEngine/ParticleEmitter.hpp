@@ -439,6 +439,8 @@ namespace GTEngine
         ParticleList particles;
 
 
+        glm::vec3 aabbMin;
+        glm::vec3 aabbMax;
         
 
         /// The vertex array for rendering. This will only be used by the renderer.
