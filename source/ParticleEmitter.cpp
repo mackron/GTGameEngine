@@ -35,7 +35,6 @@ namespace GTEngine
         const float d  = 1.0f / Math::fastSin(angle);
 #endif
 
-        
         __m128 s = _mm_set_ps(
             (1.0f - a) * angle,
             a * angle,
@@ -50,7 +49,6 @@ namespace GTEngine
         const float s0 =        results[3];
         const float s1 =        results[2];
         const float d  = 1.0f / results[1];
-        
 
         
 
@@ -286,7 +284,7 @@ namespace GTEngine
 
 
             // Now we need to transform the position and calculate the velocity.
-            glm::simdMat4 transform = glm::mat4_cast(orientationSIMD);
+            glm::simdMat4 transform = glm::mat4SIMD_cast(orientationSIMD);
             transform[3] = glm::simdVec4(this->position, 1.0f);
 
             particle.scale = glm::simdVec4(
@@ -313,9 +311,6 @@ namespace GTEngine
         // Here we will update any still-alive particles.
         this->aabbMin = glm::vec3( FLT_MAX);
         this->aabbMax = glm::vec3(-FLT_MAX);
-
-        //glm::simdVec4 aabbMinSIMD( FLT_MAX);
-        //glm::simdVec4 aabbMaxSIMD(-FLT_MAX);
 
         __m128 m128_aabbMin = _mm_set1_ps( FLT_MAX);
         __m128 m128_aabbMax = _mm_set1_ps(-FLT_MAX);

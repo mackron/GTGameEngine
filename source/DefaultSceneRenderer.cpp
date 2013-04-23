@@ -603,7 +603,7 @@ namespace GTEngine
                                                 glm::simdQuat absoluteOrientation = inverseView * particle.orientation;
 
 
-                                                glm::simdMat4 transform = glm::mat4_cast(absoluteOrientation);
+                                                glm::simdMat4 transform = glm::mat4SIMD_cast(absoluteOrientation);
                                                 transform[0] *= particle.scale.x;
                                                 transform[1] *= particle.scale.y;
                                                 transform[2] *= particle.scale.z;
