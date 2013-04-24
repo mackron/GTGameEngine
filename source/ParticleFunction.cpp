@@ -118,14 +118,14 @@ namespace GTEngine
 
     void ParticleFunction_AngularVelocityOverTime::Execute(Particle &particle, float lifetimeRatio)
     {
-        particle.angularVelocity = Math::fastMix(this->rangeMinQuat, this->rangeMaxQuat, lifetimeRatio);
+        particle.angularVelocity = glm::fastMix(this->rangeMinQuat, this->rangeMaxQuat, lifetimeRatio);
     }
 
     void ParticleFunction_AngularVelocityOverTime::SetRange(const glm::vec3 &rangeMin, const glm::vec3 &rangeMax)
     {
         ParticleFunction_Vector3::SetRange(rangeMin, rangeMax);
 
-        this->rangeMinQuat = Math::simdQuatFromEulerFast(glm::radians(rangeMin));
-        this->rangeMaxQuat = Math::simdQuatFromEulerFast(glm::radians(rangeMax));
+        this->rangeMinQuat = glm::simdQuat(glm::radians(rangeMin));
+        this->rangeMaxQuat = glm::simdQuat(glm::radians(rangeMax));
     }
 }
