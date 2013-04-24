@@ -550,7 +550,7 @@ namespace GTEngine
         }
 
 
-#if 1
+
         // Now we need to build the mesh to draw for each particle system.
         glm::simdQuat inverseView = glm::simdQuat(glm::inverse(glm::quat_cast(this->viewMatrix)));
 
@@ -608,7 +608,6 @@ namespace GTEngine
                                                 transform[1] *= particle.scale.y;
                                                 transform[2] *= particle.scale.z;
                                                 transform[3]  = particle.position;
-                                                //transform[3]  = glm::simdVec4(particle.position, 1.0f);
 
                                                 glm::simdVec4 position0 = transform * glm::simdVec4(-0.5f, -0.5f, 0.0f, 1.0f);
                                                 glm::simdVec4 position1 = transform * glm::simdVec4( 0.5f, -0.5f, 0.0f, 1.0f);
@@ -683,8 +682,6 @@ namespace GTEngine
                 }
             }
         }
-#endif
-
 
 
 

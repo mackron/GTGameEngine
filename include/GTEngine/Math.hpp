@@ -64,55 +64,6 @@ namespace GTEngine
         }
 
 
-        /// A fast quaternion constructor from Euler angles.
-        template <typename T, glm::precision P>
-	    GLM_FUNC_QUALIFIER glm::simdQuat simdQuatFromEulerFast
-	    (
-		    glm::detail::tvec3<T, P> const & eulerAngle
-	    )
-	    {
-            glm::simdQuat result;
-
-		    glm::detail::tvec3<T, P> c = Math::fastCos(eulerAngle * T(0.5));
-		    glm::detail::tvec3<T, P> s = Math::fastSin(eulerAngle * T(0.5));
-
-		    result.w = c.x * c.y * c.z + s.x * s.y * s.z;
-		    result.x = s.x * c.y * c.z - c.x * s.y * s.z;
-		    result.y = c.x * s.y * c.z + s.x * c.y * s.z;
-		    result.z = c.x * c.y * s.z - s.x * s.y * c.z;
-
-            return result;
-	    }
-
-
-        /// A fast quaternion mix function.
-        template <typename T>
-	    GLM_FUNC_QUALIFIER glm::detail::fquatSIMD fastMix
-	    (
-		    glm::detail::fquatSIMD const & x,
-		    glm::detail::fquatSIMD const & y,
-		    T const & a
-	    )
-	    {
-            float cosTheta = glm::dot(x, y);
-
-            if (cosTheta > 1.0f - glm::epsilon<float>())
-            {
-	            return _mm_add_ps(x.Data, _mm_mul_ps(_mm_set1_ps(a), _mm_sub_ps(y.Data, x.Data)));
-            }
-            else
-            {
-                float angle = glm::fastAcos(cosTheta);
-
-                float s0 = Math::fastSin((1.0f - a) * angle);
-                float s1 = Math::fastSin(a * angle);
-                float d  = 1.0f / Math::fastSin(angle);
-
-                return (s0 * x + s1 * y) * d;
-            }
-	    }
-
-
         /// Calculates a view matrix from a position and orientation.
         void CalculateViewMatrix(const glm::vec3 &position, const glm::quat &orientation, glm::mat4 &result);
 
