@@ -133,6 +133,35 @@ namespace GTEngine
     }
 
 
+    void ParticleSystem::GetAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const
+    {
+        if (this->emitters.count > 0)
+        {
+            aabbMin = glm::vec3( FLT_MAX);
+            aabbMax = glm::vec3(-FLT_MAX);
+
+            for (size_t iEmitter = 0; iEmitter < this->emitters.count; ++iEmitter)
+            {
+                auto emitter = this->emitters[iEmitter];
+                assert(emitter != nullptr);
+                {
+                    glm::vec3 emitterAABBMin;
+                    glm::vec3 emitterAABBMax;
+                    emitter->GetAABB(emitterAABBMin, emitterAABBMax);
+
+                    aabbMin = glm::min(aabbMin, emitterAABBMin);
+                    aabbMax = glm::max(aabbMax, emitterAABBMax);
+                }
+            }
+        }
+        else
+        {
+            aabbMin = glm::vec3(0.0f, 0.0f, 0.0f);
+            aabbMax = glm::vec3(0.0f, 0.0f, 0.0f);
+        }
+    }
+
+
     void ParticleSystem::SetGravity(const glm::vec3 &newGravity)
     {
         this->gravity = newGravity;

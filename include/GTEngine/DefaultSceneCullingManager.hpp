@@ -106,6 +106,12 @@ namespace GTEngine
         virtual void UpdateOccluderScale(SceneNode &sceneNode);
 
 
+        /// SceneCullingManager::UpdateModelAABB().
+        virtual void UpdateModelAABB(SceneNode &sceneNode);
+
+        /// SceneCullingManager::UpdateParticleSystemAABB().
+        virtual void UpdateParticleSystemAABB(SceneNode &sceneNode);
+
 
         /// SceneCullingManager::GetGlobalAABB().
         virtual void GetGlobalAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const;
@@ -194,7 +200,7 @@ namespace GTEngine
         GTCore::Vector<const SceneNode*> directionalLights;
 
         /// The particle system objects.
-        GTCore::Map<const SceneNode*, ParticleSystemMetadata*> particleSystems;
+        GTCore::Map<const SceneNode*, CullingObject*> particleSystems;
 
 
 
@@ -830,14 +836,22 @@ namespace GTEngine
                 {
                     if (sceneNodeA != &this->light)
                     {
-                        assert(sceneNodeA->HasComponent<ModelComponent>());
+                        if (sceneNodeA->HasComponent<ModelComponent>())
+                        {
+                            this->callback.ProcessModel(*sceneNodeA);
+                        }
+                        else if (sceneNodeA->HasComponent<ParticleSystemComponent>())
                         {
                             this->callback.ProcessModel(*sceneNodeA);
                         }
                     }
                     else
                     {
-                        assert(sceneNodeB->HasComponent<ModelComponent>());
+                        if (sceneNodeB->HasComponent<ModelComponent>())
+                        {
+                            this->callback.ProcessModel(*sceneNodeB);
+                        }
+                        else if (sceneNodeB->HasComponent<ParticleSystemComponent>())
                         {
                             this->callback.ProcessModel(*sceneNodeB);
                         }

@@ -83,7 +83,7 @@ namespace GTEngine
 
             this->world.AddCollisionObject(*metadata->collisionObject,
                 CollisionGroups::PointLight,
-                CollisionGroups::Model);
+                CollisionGroups::Model | CollisionGroups::ParticleSystem);
 
             this->pointLights.Add(&sceneNode, metadata);
         }
@@ -113,7 +113,7 @@ namespace GTEngine
 
             this->world.AddCollisionObject(*metadata->collisionObject,
                 CollisionGroups::SpotLight,
-                CollisionGroups::Model);
+                CollisionGroups::Model | CollisionGroups::ParticleSystem);
 
             this->spotLights.Add(&sceneNode, metadata);
         }
@@ -166,11 +166,34 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::AddParticleSystem(SceneNode &sceneNode)
     {
-        // TODO: Implement proper culling for particle systems.
         auto particleSystemComponent = sceneNode.GetComponent<ParticleSystemComponent>();
         assert(particleSystemComponent != nullptr);
         {
-            this->particleSystems.Add(&sceneNode, new ParticleSystemMetadata);
+            auto particleSystem = particleSystemComponent->GetParticleSystem();
+            assert(particleSystem != nullptr);
+            {
+                glm::vec3 aabbMin;
+                glm::vec3 aabbMax;
+                particleSystem->GetAABB(aabbMin, aabbMax);
+
+                auto cullingObject = new CullingObject_AABB(CollisionGroups::ParticleSystem, CollisionGroups::PointLight | CollisionGroups::SpotLight, aabbMin, aabbMax);
+                cullingObject->collisionObject.setUserPointer(&sceneNode);
+
+
+                // The transform needs to be set properly.
+                btTransform worldTransform;
+                sceneNode.GetWorldTransform(worldTransform);
+
+                cullingObject->SetTransform(worldTransform);
+
+
+                // The culling object needs to be added to the world...
+                this->world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
+
+
+                // With everything setup we now just add the store a pointer culling object.
+                this->particleSystems.Add(&sceneNode, cullingObject);
+            }
         }
     }
 
@@ -272,8 +295,18 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::UpdateParticleSystemTransform(SceneNode &sceneNode)
     {
-        // For now, nothing to actually do here.
-        (void)sceneNode;
+        auto iCullingObject = this->particleSystems.Find(&sceneNode);
+        assert(iCullingObject != nullptr);
+        {
+            auto cullingObject = iCullingObject->value;
+            assert(cullingObject != nullptr);
+            {
+                btTransform transform;
+                sceneNode.GetWorldTransform(transform);
+
+                cullingObject->SetTransform(transform);
+            }
+        }
     }
 
     void DefaultSceneCullingManager::UpdateOccluderTransform(SceneNode &sceneNode)
@@ -297,6 +330,22 @@ namespace GTEngine
 
 
     void DefaultSceneCullingManager::UpdateModelScale(SceneNode &sceneNode)
+    {
+        this->UpdateModelAABB(sceneNode);
+    }
+
+    void DefaultSceneCullingManager::UpdateOccluderScale(SceneNode &sceneNode)
+    {
+        auto occluderComponent = sceneNode.GetComponent<OccluderComponent>();
+        assert(occluderComponent != nullptr);
+        {
+            occluderComponent->ApplyScaling(sceneNode.GetWorldScale());
+        }
+    }
+
+
+
+    void DefaultSceneCullingManager::UpdateModelAABB(SceneNode &sceneNode)
     {
         auto iMetadata = this->models.Find(&sceneNode);
         assert(iMetadata != nullptr);
@@ -324,14 +373,34 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneCullingManager::UpdateOccluderScale(SceneNode &sceneNode)
+    void DefaultSceneCullingManager::UpdateParticleSystemAABB(SceneNode &sceneNode)
     {
-        auto occluderComponent = sceneNode.GetComponent<OccluderComponent>();
-        assert(occluderComponent != nullptr);
+        auto iCullingObject = this->particleSystems.Find(&sceneNode);
+        assert(iCullingObject != nullptr);
         {
-            occluderComponent->ApplyScaling(sceneNode.GetWorldScale());
+            auto cullingObject = iCullingObject->value;
+            assert(cullingObject != nullptr);
+            {
+                auto particleSystemComponent = sceneNode.GetComponent<ParticleSystemComponent>();
+                assert(particleSystemComponent != nullptr);
+                {
+                    auto particleSystem = particleSystemComponent->GetParticleSystem();
+                    assert(particleSystem != nullptr);
+                    {
+                        glm::vec3 aabbMin;
+                        glm::vec3 aabbMax;
+                        particleSystem->GetAABB(aabbMin, aabbMax);
+
+                        aabbMin *= sceneNode.GetWorldScale();
+                        aabbMax *= sceneNode.GetWorldScale();
+
+                        static_cast<CullingObject_AABB*>(cullingObject)->SetAABB(aabbMin, aabbMax);
+                    }
+                }
+            }
         }
     }
+
 
 
     void DefaultSceneCullingManager::GetGlobalAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const
@@ -413,13 +482,6 @@ namespace GTEngine
         for (size_t i = 0; i < this->directionalLights.count; ++i)
         {
             callbackIn.ProcessDirectionalLight(*this->directionalLights[i]);
-        }
-
-
-        // TODO: Implement proper culling for particle systems. Currently we will just have all particle systems be "visible".
-        for (size_t i = 0; i < this->particleSystems.count; ++i)
-        {
-            callbackIn.ProcessParticleSystem(*this->particleSystems.buffer[i]->key);
         }
     }
 
@@ -626,6 +688,17 @@ namespace GTEngine
                     assert(sceneNode->GetComponent<SpotLightComponent>() != nullptr);
 
                     this->cullingManager.ProcessVisibleSpotLight(*sceneNode, *this->callback);
+                }
+                else if (proxy->m_collisionFilterGroup & CollisionGroups::ParticleSystem)
+                {
+                    auto particleSystemComponent = sceneNode->GetComponent<ParticleSystemComponent>();
+                    assert(particleSystemComponent != nullptr);
+                    {
+                        if (particleSystemComponent->GetParticleSystem() != nullptr)
+                        {
+                            this->cullingManager.ProcessVisibleParticleSystem(*sceneNode, *this->callback);
+                        }
+                    }
                 }
             }
         }
