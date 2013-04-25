@@ -31,17 +31,30 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             assert(model != nullptr);
             {
+                glm::vec3 aabbMin;
+                glm::vec3 aabbMax;
+                model->GetBaseAABB(aabbMin, aabbMax);
+
+                aabbMin *= sceneNode.GetWorldScale();
+                aabbMax *= sceneNode.GetWorldScale();
+
+                auto cullingObject = new CullingObject_AABB(CollisionGroups::Model, CollisionGroups::PointLight | CollisionGroups::SpotLight, aabbMin, aabbMax);
+                cullingObject->collisionObject.setUserPointer(&sceneNode);
+
+                
+                // The transform needs to be set properly.
                 btTransform worldTransform;
                 sceneNode.GetWorldTransform(worldTransform);
 
-                auto metadata = new ModelMetadata(*model, worldTransform, sceneNode.GetWorldScale());
-                metadata->collisionObject->setUserPointer(&sceneNode);
+                cullingObject->SetTransform(worldTransform);
 
-                this->world.AddCollisionObject(*metadata->collisionObject,
-                    CollisionGroups::Model,
-                    CollisionGroups::PointLight | CollisionGroups::SpotLight);
 
-                this->models.Add(&sceneNode, metadata);
+                // The culling object needs to be added to the world...
+                this->world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
+
+
+                // With everything setup we now just add the store a pointer culling object.
+                this->models.Add(&sceneNode, cullingObject);
             }
         }
     }
@@ -208,7 +221,7 @@ namespace GTEngine
                 btTransform transform;
                 sceneNode.GetWorldTransform(transform);
 
-                metadata->UpdateTransform(transform);
+                metadata->SetTransform(transform);
             }
         }
     }
@@ -291,7 +304,22 @@ namespace GTEngine
             auto metadata = iMetadata->value;
             assert(metadata != nullptr);
             {
-                metadata->UpdateScale(sceneNode.GetWorldScale());
+                auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+                assert(modelComponent != nullptr);
+                {
+                    auto model = modelComponent->GetModel();
+                    assert(model != nullptr);
+                    {
+                        glm::vec3 aabbMin;
+                        glm::vec3 aabbMax;
+                        model->GetBaseAABB(aabbMin, aabbMax);
+
+                        aabbMin *= sceneNode.GetWorldScale();
+                        aabbMax *= sceneNode.GetWorldScale();
+
+                        static_cast<CullingObject_AABB*>(metadata)->SetAABB(aabbMin, aabbMax);
+                    }
+                }
             }
         }
     }
