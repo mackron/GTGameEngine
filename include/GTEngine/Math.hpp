@@ -35,6 +35,8 @@
 #include "Math/Plane.hpp"
 #include "AABB.hpp"
 
+#include <LinearMath/btMatrix3x3.h>     // <-- Will include btVector3 and btQuaternion.
+
 namespace GTEngine
 {
     namespace Math
@@ -95,6 +97,66 @@ namespace GTEngine
 
         /// Calculates a look-at matrix.
         glm::mat3 CalculateLookAtMatrix(const glm::vec3 &origin, const glm::vec3 &target, const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+
+        // GLM -> Bullet casts.
+
+        inline btVector3 btVector3_cast(const glm::vec3 &other)
+        {
+            return btVector3(other.x, other.y, other.z);
+        }
+
+        inline btVector3 btVector3_cast(const glm::vec4 &other)
+        {
+            return btVector3(other.x, other.y, other.z);
+        }
+
+        inline btVector3 btVector3_cast(const glm::simdVec4 &other)
+        {
+            return btVector3(other.x, other.y, other.z);
+        }
+
+
+        inline btQuaternion btQuaternion_cast(const glm::quat &other)
+        {
+            return btQuaternion(other.x, other.y, other.z, other.w);
+        }
+
+        inline btQuaternion btQuaternion_cast(const glm::simdQuat &other)
+        {
+            return btQuaternion(other.x, other.y, other.z, other.w);
+        }
+
+
+
+        // Bullet -> GLM casts.
+        
+        inline glm::vec3 vec3_cast(const btVector3 &other)
+        {
+            return glm::vec3(other.x(), other.y(), other.z());
+        }
+
+        inline glm::vec4 vec4_cast(const btVector3 &other)
+        {
+            return glm::vec4(other.x(), other.y(), other.z(), 0.0f);
+        }
+        
+        inline glm::simdVec4 vec4SIMD_cast(const btVector3 &other)
+        {
+            return glm::simdVec4(other.x(), other.y(), other.z(), 0.0f);
+        }
+
+
+        inline glm::quat quat_cast(const btQuaternion &other)
+        {
+            return glm::quat(other.w(), other.x(), other.y(), other.z());
+        }
+
+        inline glm::simdQuat quatSIMD_cast(const btQuaternion &other)
+        {
+            return glm::simdQuat(other.w(), other.x(), other.y(), other.z());
+        }
 
 
 
