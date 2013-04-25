@@ -376,7 +376,6 @@ namespace GTEngine
                     particle.linearVelocity         = particle.gravityLinearVelocity + particle.spawnLinearVelocity + particle.functionLinearVelocity;
 
                     particle.position              += particle.linearVelocity * deltaTimeInSecondsF;
-                    //particle.orientation            = particle.orientation * MixFromOrigin(particle.angularVelocity, deltaTimeInSecondsF);
                     particle.orientation            = particle.orientation * MixFromOrigin(particle.angularVelocity, deltaTimeInSecondsF);
 
                     // At this point we need to run all of the functions that are currently being used by the emitter.
