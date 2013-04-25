@@ -229,6 +229,13 @@ namespace GTEngine
         Material* GetMaterial() const { return this->material; }
 
 
+        /// Sets the texture tiling values.
+        void SetTextureTiling(unsigned int xTileCount, unsigned int yTileCount);
+
+        /// Retrieves the texture tiling values.
+        void GetTextureTiling(unsigned int &xTileCount, unsigned int &yTileCount) const;
+
+
 
         /// Retrieves the number of functions attached to the emitter.
         size_t GetFunctionCount() const;
@@ -424,6 +431,13 @@ namespace GTEngine
 
         /// The material that will be cloned for each particle.
         Material* material;
+
+
+        /// The number of texture tiles on the x axis.
+        uint32_t textureTilesX;
+
+        /// The number of texture tiles on the y axis.
+        uint32_t textureTilesY;
 
 
         /// The list of functions to apply to each particle as time goes on.

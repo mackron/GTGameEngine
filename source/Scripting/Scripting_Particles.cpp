@@ -156,6 +156,15 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.ParticleEmitter:SetTextureTiling(xTileCount, yTileCount)"
+                "    return GTEngine.System.ParticleEmitter.SetTextureTiling(self._internalPtr, xTileCount, yTileCount);"
+                "end;"
+
+                "function GTEngine.ParticleEmitter:GetTextureTiling()"
+                "    return GTEngine.System.ParticleEmitter.GetTextureTiling(self._internalPtr);"
+                "end;"
+
+
                 "function GTEngine.ParticleEmitter:GetFunctionCount()"
                 "    return GTEngine.System.ParticleEmitter.GetFunctionCount(self._internalPtr);"
                 "end;"
@@ -221,6 +230,8 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetEmissionShapeProperties",       ParticleEmitterFFI::GetEmissionShapeProperties);
                             script.SetTableFunction(-1, "SetBillboardMaterial",             ParticleEmitterFFI::SetBillboardMaterial);
                             script.SetTableFunction(-1, "GetBillboardMaterialRelativePath", ParticleEmitterFFI::GetBillboardMaterialRelativePath);
+                            script.SetTableFunction(-1, "SetTextureTiling",                 ParticleEmitterFFI::SetTextureTiling);
+                            script.SetTableFunction(-1, "GetTextureTiling",                 ParticleEmitterFFI::GetTextureTiling);
                             script.SetTableFunction(-1, "GetFunctionCount",                 ParticleEmitterFFI::GetFunctionCount);
                             script.SetTableFunction(-1, "GetFunctionByIndex",               ParticleEmitterFFI::GetFunctionByIndex);
                             script.SetTableFunction(-1, "RemoveFunctionByIndex",            ParticleEmitterFFI::RemoveFunctionByIndex);
@@ -864,6 +875,41 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+
+            int SetTextureTiling(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    unsigned int xTileCount = static_cast<unsigned int>(script.ToInteger(2));
+                    unsigned int yTileCount = static_cast<unsigned int>(script.ToInteger(3));
+                    emitter->SetTextureTiling(xTileCount, yTileCount);
+                }
+
+                return 0;
+            }
+
+            int GetTextureTiling(GTCore::Script &script)
+            {
+                auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
+                if (emitter != nullptr)
+                {
+                    unsigned int xTileCount;
+                    unsigned int yTileCount;
+                    emitter->GetTextureTiling(xTileCount, yTileCount);
+
+                    script.Push(static_cast<int>(xTileCount));
+                    script.Push(static_cast<int>(yTileCount));
+                }
+                else
+                {
+                    script.Push(1);
+                    script.Push(1);
+                }
+
+                return 2;
             }
 
 

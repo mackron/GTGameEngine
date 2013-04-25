@@ -87,8 +87,12 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Billboard].ShapeType = GTEngine.ParticleShapeTypes.Billboard;
     self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Model].ShapeType     = GTEngine.ParticleShapeTypes.Model;
     
-    self.BillboardShapeProperties          = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                     .. "' styleclass='particle-editor-panel-particle-shape-container' />");
-    self.BillboardShapeProperties.Material = GTGUI.Server.New("<div parentid='" .. self.BillboardShapeProperties:GetID() .. "' styleclass='textbox' style='width:100%; margin:0px 2px;' />");
+    self.BillboardShapeProperties               = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                     .. "' styleclass='particle-editor-panel-particle-shape-container' />");
+    self.BillboardShapeProperties.Material      = GTGUI.Server.New("<div parentid='" .. self.BillboardShapeProperties:GetID() .. "' styleclass='textbox' style='width:100%; margin:0px 2px;' />");
+    self.BillboardShapeProperties.TextureTiling = GTGUI.Server.CreateElement(self.BillboardShapeProperties, "labelled-vector2-input");
+    self.BillboardShapeProperties.TextureTiling:LabelledVector2Input("Texture Tiling");
+    self.BillboardShapeProperties.TextureTiling:SetValue(math.vec2(emitter:GetTextureTiling()));
+    self.BillboardShapeProperties.TextureTiling:SetStyle("margin-top", "4px");
     
     self.ModelShapeProperties          = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' styleclass='particle-editor-panel-particle-shape-container' />");
     self.ModelShapeProperties.Message  = GTGUI.Server.New("<div parentid='" .. self.ModelShapeProperties:GetID() .. "' style='margin:0px 2px; text-color:#666; font-style:bold; horizontal-align:center;'>Not currently supported.</div>");
@@ -219,6 +223,11 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
             self.OwnerEditor:OnChange();
         end
     end)
+    
+    self.BillboardShapeProperties.TextureTiling:OnValueChanged(function(data)
+        self.Emitter:SetTextureTiling(data.x, data.y);
+        self.OwnerEditor:OnChange();
+    end);
     
     
     
