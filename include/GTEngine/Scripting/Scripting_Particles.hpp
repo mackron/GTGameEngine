@@ -233,6 +233,22 @@ namespace GTEngine
             ///     Argument 1: A pointer to the particle emitter.
             int GetBillboardMaterialRelativePath(GTCore::Script &script);
 
+            
+            /// Sets the texture tiling counts.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle system.
+            ///     Argument 2: The x tile count.
+            ///     Argument 3: The y tile count.
+            int SetTextureTiling(GTCore::Script &script);
+
+            /// Retrieves the texture tiling counts, as two integers.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle system.
+            int GetTextureTiling(GTCore::Script &script);
+
+
 
             /// Retrieves the number of functions that are attached to the emitter.
             ///

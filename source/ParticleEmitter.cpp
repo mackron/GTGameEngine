@@ -114,6 +114,7 @@ namespace GTEngine
           startScaleMin(1.0f, 1.0f, 1.0f), startScaleMax(1.0f, 1.0f, 1.0f),
           lifetimeMin(5.0), lifetimeMax(5.0),
           material(nullptr),
+          textureTilesX(1), textureTilesY(1),
           functions(),
           random(),
           timeSinceLastEmission(1.0 / emissionRatePerSecond),
@@ -134,6 +135,7 @@ namespace GTEngine
           startScaleMin(other.startScaleMin), startScaleMax(other.startScaleMax),
           lifetimeMin(other.lifetimeMin), lifetimeMax(other.lifetimeMax),
           material((other.material != nullptr) ? MaterialLibrary::CreateCopy(*other.material) : nullptr),
+          textureTilesX(other.textureTilesX), textureTilesY(other.textureTilesY),
           functions(),
           random(other.random),
           timeSinceLastEmission(other.timeSinceLastEmission),
@@ -656,6 +658,22 @@ namespace GTEngine
     }
 
 
+    void ParticleEmitter::SetTextureTiling(unsigned int xTileCount, unsigned int yTileCount)
+    {
+        if (xTileCount == 0) xTileCount = 1;
+        if (yTileCount == 0) yTileCount = 1;
+
+        this->textureTilesX = xTileCount;
+        this->textureTilesY = yTileCount;
+    }
+
+    void ParticleEmitter::GetTextureTiling(unsigned int &xTileCount, unsigned int &yTileCount) const
+    {
+        xTileCount = this->textureTilesX;
+        yTileCount = this->textureTilesY;
+    }
+
+
     size_t ParticleEmitter::GetFunctionCount() const
     {
         return this->functions.count;
@@ -727,6 +745,8 @@ namespace GTEngine
         intermediarySerializer.Write(this->lifetimeMin);
         intermediarySerializer.Write(this->lifetimeMax);
         intermediarySerializer.WriteString(this->material->GetDefinition().relativePath.c_str());
+        intermediarySerializer.Write(this->textureTilesX);
+        intermediarySerializer.Write(this->textureTilesY);
 
         // Functions.
         uint32_t functionCount = static_cast<uint32_t>(this->functions.count);
@@ -828,6 +848,9 @@ namespace GTEngine
                 GTCore::String materialRelativePath;
                 deserializer.ReadString(materialRelativePath);
                 this->SetMaterial(materialRelativePath.c_str());
+
+                deserializer.Read(this->textureTilesX);
+                deserializer.Read(this->textureTilesY);
 
 
                 // Functions.
