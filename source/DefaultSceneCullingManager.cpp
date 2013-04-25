@@ -180,13 +180,6 @@ namespace GTEngine
                 cullingObject->collisionObject.setUserPointer(&sceneNode);
 
 
-                // The transform needs to be set properly.
-                btTransform worldTransform;
-                sceneNode.GetWorldTransform(worldTransform);
-
-                cullingObject->SetTransform(worldTransform);
-
-
                 // The culling object needs to be added to the world...
                 this->world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
 
