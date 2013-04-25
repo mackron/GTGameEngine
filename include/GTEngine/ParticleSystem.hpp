@@ -66,6 +66,13 @@ namespace GTEngine
         void SetTransform(const glm::vec3 &newPosition, const glm::quat &newOrientation);
 
 
+        /// Retrieves the AABB of the particle system.
+        ///
+        /// @param aabbMin [out] A reference to the variable that will receive the minimum bounds of the AABB.
+        /// @param aabbMax [out] A reference to the variable that will receive the maximum bounds of the AABB.
+        void GetAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const;
+
+
         /// Sets the gravity velocity.
         ///
         /// @remarks

@@ -240,7 +240,8 @@ namespace GTEngine
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
           paused(false),
-          viewports(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(), sceneNodesWithProximityComponents(),
+          viewports(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
+          sceneNodesWithProximityComponents(), sceneNodesWithParticleSystemComponents(),
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true),
@@ -253,7 +254,8 @@ namespace GTEngine
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
           paused(false),
-          viewports(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(), sceneNodesWithProximityComponents(),
+          viewports(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
+          sceneNodesWithProximityComponents(), sceneNodesWithParticleSystemComponents(),
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true),
@@ -638,6 +640,20 @@ namespace GTEngine
         if (!this->IsPaused())
         {
             this->updateManager.Step(deltaTimeInSeconds);
+        }
+
+
+        // We want to update the AABBs of each particle system.
+        for (size_t iParticleSystem = 0; iParticleSystem < this->sceneNodesWithParticleSystemComponents.count; ++iParticleSystem)
+        {
+            auto particleSystemComponent = this->sceneNodesWithParticleSystemComponents.buffer[iParticleSystem]->value;
+            assert(particleSystemComponent != nullptr);
+            {
+                if (particleSystemComponent->GetParticleSystem() != nullptr)
+                {
+                    this->cullingManager.UpdateParticleSystemAABB(particleSystemComponent->GetNode());
+                }
+            }
         }
 
 
@@ -1884,9 +1900,11 @@ namespace GTEngine
         }
         else if (GTCore::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
         {
+            auto &particleSystemComponent = static_cast<ParticleSystemComponent &>(component);
+
             if (node.IsVisible())
             {
-                auto particleSystem = static_cast<ParticleSystemComponent &>(component).GetParticleSystem();
+                auto particleSystem = particleSystemComponent.GetParticleSystem();
                 if (particleSystem != nullptr)
                 {
                     this->cullingManager.AddParticleSystem(node);
@@ -1895,6 +1913,9 @@ namespace GTEngine
                     particleSystem->SetGravity(this->GetGravity());
                 }
             }
+
+            // We want the scene know about this scene node so we can easily update AABBs.
+            this->sceneNodesWithParticleSystemComponents.Add(node.GetID(), &particleSystemComponent);
         }
         else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
         {
@@ -2046,6 +2067,9 @@ namespace GTEngine
         else if (GTCore::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
         {
             this->cullingManager.RemoveParticleSystem(node);
+
+            // The scene needs to know about this.
+            this->sceneNodesWithParticleSystemComponents.RemoveByKey(node.GetID());
         }
         else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
         {

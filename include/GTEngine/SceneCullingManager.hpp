@@ -223,6 +223,17 @@ namespace GTEngine
         virtual void UpdateOccluderScale(SceneNode &sceneNode) = 0;
 
 
+        /// Updates the culling of a model scene node based on it's AABB.
+        ///
+        /// @param sceneNode [in] A reference to the scene node with an attached ModelComponent whose culling object is being updated.
+        virtual void UpdateModelAABB(SceneNode &sceneNode) = 0;
+
+        /// Updates the culling of a particle system scene node based on it's AABB.
+        ///
+        /// @param sceneNode [in] A reference to the scene node with an attached ParticleSystemComponent whose culling object is being updated.
+        virtual void UpdateParticleSystemAABB(SceneNode &sceneNode) = 0;
+
+
 
         /// Retrieves the global bounds of every object.
         ///
