@@ -299,7 +299,7 @@ namespace GTEngine
                     float rotationAngle    = this->emissionShapeCone.angle * distanceFactor;
                     glm::simdVec4 rotationAxis = glm::cross(glm::simdVec4(0.0f, 0.0f, -1.0f, 1.0f), glm::normalize(normalizedPosition));
                     
-                    spawnDirection = glm::normalize(glm::angleAxisSIMD(rotationAngle, glm::vec3(rotationAxis.x, rotationAxis.y, rotationAxis.z)) * glm::simdVec4(0.0f, 0.0f, -1.0f, 1.0f));
+                    spawnDirection = glm::normalize(glm::angleAxisSIMD(rotationAngle, glm::vec3(rotationAxis.x, rotationAxis.y, rotationAxis.z)) * glm::simdVec4(0.0f, 0.0f, -1.0f, 0.0f));
 
 
                     break;
@@ -352,9 +352,6 @@ namespace GTEngine
 
 
         // Here we will update any still-alive particles.
-        this->aabbMin = glm::vec3( FLT_MAX);
-        this->aabbMax = glm::vec3(-FLT_MAX);
-
         __m128 m128_aabbMin = _mm_set1_ps( FLT_MAX);
         __m128 m128_aabbMax = _mm_set1_ps(-FLT_MAX);
 
@@ -405,15 +402,16 @@ namespace GTEngine
         }
 
 
+        
         GLM_ALIGN(16) float aabbMinFloats[4];
         GLM_ALIGN(16) float aabbMaxFloats[4];
 
         _mm_store_ps(aabbMinFloats, m128_aabbMin);
         _mm_store_ps(aabbMaxFloats, m128_aabbMax);
 
-
         this->aabbMin = glm::vec3(aabbMinFloats[0], aabbMinFloats[1], aabbMinFloats[2]);
         this->aabbMax = glm::vec3(aabbMaxFloats[0], aabbMaxFloats[1], aabbMaxFloats[2]);
+        
 
         // AABB padding. Should probably find a way to do this more accurately.
         this->aabbMin -= glm::vec3(4.0f, 4.0f, 4.0f);
