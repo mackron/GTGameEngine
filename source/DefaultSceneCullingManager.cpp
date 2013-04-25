@@ -295,18 +295,9 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::UpdateParticleSystemTransform(SceneNode &sceneNode)
     {
-        auto iCullingObject = this->particleSystems.Find(&sceneNode);
-        assert(iCullingObject != nullptr);
-        {
-            auto cullingObject = iCullingObject->value;
-            assert(cullingObject != nullptr);
-            {
-                btTransform transform;
-                sceneNode.GetWorldTransform(transform);
-
-                cullingObject->SetTransform(transform);
-            }
-        }
+        // The particles in a particle system are always defined in world space, so we don't actually want to do anything when
+        // a particle system is translated.
+        (void)sceneNode;
     }
 
     void DefaultSceneCullingManager::UpdateOccluderTransform(SceneNode &sceneNode)
