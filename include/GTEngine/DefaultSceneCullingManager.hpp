@@ -168,17 +168,18 @@ namespace GTEngine
 
     protected:
 
-        struct ModelMetadata;
         struct PointLightMetadata;
         struct SpotLightMetadata;
         struct ParticleSystemMetadata;
+
+        struct CullingObject;
 
 
         /// The collision world containing collision objects for everything needing culling.
         CollisionWorld world;
 
         /// A container for mapping metadata for models to scene nodes.
-        GTCore::Map<const SceneNode*, ModelMetadata*> models;
+        GTCore::Map<const SceneNode*, CullingObject*> models;
 
         /// A container for mapping metadata for point lights to scene nodes.
         GTCore::Map<const SceneNode*, PointLightMetadata*> pointLights;
@@ -196,127 +197,170 @@ namespace GTEngine
         GTCore::Map<const SceneNode*, ParticleSystemMetadata*> particleSystems;
 
 
-        /// Structure containing metadata for each model.
-        struct ModelMetadata
+
+        /// Base structure containing the culling object of a scene node.
+        struct CullingObject
         {
-            ModelMetadata(Model &model, const btTransform &worldTransform, const glm::vec3 &scale)
-                : collisionObject(nullptr), collisionShape(nullptr), collisionObjectAABBMin(), collisionObjectAABBMax()
+            /// The container shape of the object. This needs to be a compound shape so that an offset can be applied to sub-shapes.
+            btCompoundShape collisionShapeContainer;
+
+            /// The collision object that'll be used for culling.
+            CollisionObject collisionObject;
+
+            /// The collision group. This is used in determining the type of the object.
+            short collisionGroup;
+
+            /// The collision mask. This is used in determining the types of objects this can be culled against.
+            short collisionMask;
+
+
+            /// Constructor.
+            CullingObject(short collisionGroupIn, short collisionMaskIn)
+                : collisionShapeContainer(), collisionObject(),
+                  collisionGroup(collisionGroupIn), collisionMask(collisionMaskIn)
             {
-                this->collisionObject = new CollisionObject;
-                this->collisionShape  = new btCompoundShape;
-
-                // We attach a single box to the compound shape, which will be the size of the AABB.
-                model.GetBaseAABB(this->collisionObjectAABBMin, this->collisionObjectAABBMax);
-
-                glm::vec3 aabbMin     = this->collisionObjectAABBMin * scale;
-                glm::vec3 aabbMax     = this->collisionObjectAABBMax * scale;
-                glm::vec3 halfExtents = (aabbMax - aabbMin) * 0.5f;
-
-                btTransform boxTransform;
-                boxTransform.setIdentity();
-                boxTransform.setOrigin(btVector3(aabbMin.x + halfExtents.x, aabbMin.y + halfExtents.y, aabbMin.z + halfExtents.z));
-
-                this->collisionShape->addChildShape(boxTransform, new btBoxShape(btVector3(halfExtents.x, halfExtents.y, halfExtents.z)));
-                this->collisionShape->recalculateLocalAabb();
-
-
-                this->collisionObject->setCollisionShape(this->collisionShape);
-                this->collisionObject->setWorldTransform(worldTransform);
             }
 
-            ~ModelMetadata()
+            /// Destructor.
+            virtual ~CullingObject()
             {
-                if (this->collisionShape != nullptr)
-                {
-                    while (this->collisionShape->getNumChildShapes() > 0)
-                    {
-                        auto child = this->collisionShape->getChildShape(0);
-                        this->collisionShape->removeChildShapeByIndex(0);
+            }
 
-                        delete child;
-                    }
+
+            /// Attaches a culling shape to the object.
+            ///
+            /// @param shape [in] A reference to the shape to attach.
+            void AttachShape(btCollisionShape &shape, const glm::quat &orientationOffset, const glm::vec3 &positionOffset)
+            {
+                auto world = this->collisionObject.GetWorld();
+                if (world != nullptr)
+                {
+                    world->RemoveCollisionObject(this->collisionObject);
                 }
 
-                delete this->collisionObject;
-                delete this->collisionShape;
+                
+                // Attach the shape to the shape container.
+                btTransform transform;
+                transform.setIdentity();
+                transform.setBasis(btMatrix3x3(Math::btQuaternion_cast(orientationOffset)));
+                transform.setOrigin(Math::btVector3_cast(positionOffset));
+                this->collisionShapeContainer.addChildShape(transform, &shape);
 
-                this->collisionObject = nullptr;
-                this->collisionShape  = nullptr;
-            }
+                // Make sure the shape container is the shape of the collision object.
+                this->collisionObject.setCollisionShape(&this->collisionShapeContainer);
 
 
-            /// Updates the transform.
-            void UpdateTransform(const btTransform &transform)
-            {
-                assert(this->collisionObject != nullptr);
+
+                if (world != nullptr)
                 {
-                    this->collisionObject->setWorldTransform(transform);
-                    this->collisionObject->GetWorld()->UpdateAABB(*this->collisionObject);
+                    world->AddCollisionObject(this->collisionObject, this->collisionGroup, this->collisionMask);
                 }
             }
 
-            /// Updates the scale.
-            void UpdateScale(const glm::vec3 &scale)
+            /// Detaches the given culling shape.
+            ///
+            /// @param shape [in] A reference to theshape to detach.
+            void DetachShape(btCollisionShape &shape)
             {
-                assert(this->collisionObject != nullptr);
+                auto world = this->collisionObject.GetWorld();
+                if (world != nullptr)
                 {
-                    auto world = this->collisionObject->GetWorld();
-                    if (world != nullptr)
-                    {
-                        world->RemoveCollisionObject(*this->collisionObject);
-                    }
+                    world->RemoveCollisionObject(this->collisionObject);
+                }
 
 
-                    // We need to remove the shape and re-add a new one.
-                    delete this->collisionShape->getChildShape(0);
-                    this->collisionShape->removeChildShapeByIndex(0);
+                this->collisionShapeContainer.removeChildShape(&shape);
 
 
-                    glm::vec3 aabbMin     = this->collisionObjectAABBMin * scale;
-                    glm::vec3 aabbMax     = this->collisionObjectAABBMax * scale;
-                    glm::vec3 halfExtents = (aabbMax - aabbMin) * 0.5f;
-
-                    btTransform boxTransform;
-                    boxTransform.setIdentity();
-                    boxTransform.setOrigin(btVector3(aabbMin.x + halfExtents.x, aabbMin.y + halfExtents.y, aabbMin.z + halfExtents.z));
-
-
-                    this->collisionShape->addChildShape(boxTransform, new btBoxShape(btVector3(halfExtents.x, halfExtents.y, halfExtents.z)));
-                    this->collisionShape->recalculateLocalAabb();
-
-
-                    if (world != nullptr)
-                    {
-                        world->AddCollisionObject(*this->collisionObject,
-                            CollisionGroups::Model,
-                            CollisionGroups::PointLight | CollisionGroups::SpotLight);
-                    }
+                if (world != nullptr && this->collisionShapeContainer.getNumChildShapes() > 0)
+                {
+                    world->AddCollisionObject(this->collisionObject, this->collisionGroup, this->collisionMask);
                 }
             }
 
 
+            /// Updates the transformation of the culling object.
+            void SetTransform(const btTransform &transform)
+            {
+                this->collisionObject.setWorldTransform(transform);
 
-            ////////////////////////////////////////////////////////////
-            // Attributes.
-
-            /// A pointer to the collision object for the model component. Can be null.
-            CollisionObject* collisionObject;
-
-            /// The collision shape to use for culling the model. Can be null only if <modelCollisionObject> is also null. A model's culling shape
-            /// is defined by it's AABB, which will require an offset to be applied. Thus, we're going to use a compound shape.
-            btCompoundShape* collisionShape;
-
-            /// The min bounds of the model's unscaled AABB.
-            glm::vec3 collisionObjectAABBMin;
-
-            /// The max bounds of the model's unscaled AABB.
-            glm::vec3 collisionObjectAABBMax;
+                auto world = this->collisionObject.GetWorld();
+                if (world != nullptr)
+                {
+                    world->UpdateAABB(this->collisionObject);
+                }
+            }
 
 
         private:    // No copying.
-            ModelMetadata(const ModelMetadata &);
-            ModelMetadata & operator=(const ModelMetadata &);
+            CullingObject(const CullingObject &);
+            CullingObject & operator=(const CullingObject &);
         };
+
+
+
+        /////////////////////////////////////
+        // Model Culling Object.
+
+        /// Structure representing the culling object of a model.
+        struct CullingObject_AABB : public CullingObject
+        {
+            /// The min bounds of the AABB.
+            glm::vec3 aabbMin;
+
+            /// The max bounds of the AABB.
+            glm::vec3 aabbMax;
+
+            /// The collision shape representing the AABB.
+            btBoxShape aabbShape;
+
+
+            /// Constructor.
+            CullingObject_AABB(short collisionGroup, short collisionMask, const glm::vec3 &aabbMinIn, const glm::vec3 &aabbMaxIn)
+                : CullingObject(collisionGroup, collisionMask),
+                  aabbMin(aabbMinIn), aabbMax(aabbMaxIn),
+                  aabbShape(Math::btVector3_cast((aabbMax - aabbMin) * 0.5f))
+            {
+                this->AttachShape(this->aabbShape, glm::quat(), aabbMin + ((aabbMax - aabbMin) * 0.5f));
+            }
+
+
+            /// Sets the AABB.
+            ///
+            /// @remarks
+            ///     This will update the collision shape appropriately.
+            void SetAABB(const glm::vec3 &aabbMinIn, const glm::vec3 &aabbMaxIn)
+            {
+                // We might need to re-add the object to the world, so we'll grab it here.
+                auto world = this->collisionObject.GetWorld();
+
+
+                // 1) Detach the shape.
+                this->DetachShape(this->aabbShape);
+
+                // 2) Resize the shape.
+                this->aabbMin = aabbMinIn;
+                this->aabbMax = aabbMaxIn;
+                this->aabbShape.setImplicitShapeDimensions(Math::btVector3_cast((aabbMax - aabbMin) * 0.5f));
+
+                // 3) Re-attach the shape.
+                this->AttachShape(this->aabbShape, glm::quat(), aabbMin + ((aabbMax - aabbMin) * 0.5f));
+
+
+                // Re-add the object to the world if needed.
+                if (this->collisionObject.GetWorld() == nullptr && world != nullptr)
+                {
+                    world->AddCollisionObject(this->collisionObject, this->collisionGroup, this->collisionMask);
+                }
+            }
+
+
+
+        private:    // No copying.
+            CullingObject_AABB(const CullingObject_AABB &);
+            CullingObject_AABB & operator=(const CullingObject_AABB &);
+        };
+
 
 
         /// Structure containing the metadata for each point light.
