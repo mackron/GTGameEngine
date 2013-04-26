@@ -614,41 +614,41 @@ namespace GTEngine
                                                 glm::simdVec4 position2 = transform * glm::simdVec4( 0.5f,  0.5f, 0.0f, 1.0f);
                                                 glm::simdVec4 position3 = transform * glm::simdVec4(-0.5f,  0.5f, 0.0f, 1.0f);
 
-                                                glm::vec2 texcoord0 = glm::vec2(particle.uTexCoordMin, particle.vTexCoordMin);
-                                                glm::vec2 texcoord1 = glm::vec2(particle.uTexCoordMax, particle.vTexCoordMin);
-                                                glm::vec2 texcoord2 = glm::vec2(particle.uTexCoordMax, particle.vTexCoordMax);
-                                                glm::vec2 texcoord3 = glm::vec2(particle.uTexCoordMin, particle.vTexCoordMax);
+                                                glm::vec4 texcoord0     = glm::vec4(particle.uTexCoordMin0, particle.vTexCoordMin0, particle.uTexCoordMin1, particle.vTexCoordMin1);
+                                                glm::vec4 texcoord1     = glm::vec4(particle.uTexCoordMax0, particle.vTexCoordMin0, particle.uTexCoordMax1, particle.vTexCoordMin1);
+                                                glm::vec4 texcoord2     = glm::vec4(particle.uTexCoordMax0, particle.vTexCoordMax0, particle.uTexCoordMax1, particle.vTexCoordMax1);
+                                                glm::vec4 texcoord3     = glm::vec4(particle.uTexCoordMin0, particle.vTexCoordMax0, particle.uTexCoordMin1, particle.vTexCoordMax1);
 
-                                                glm::simdVec4 normal0   = absoluteOrientation * glm::simdVec4(0.0f, 0.0f, 1.0f, 0.0f);
+                                                glm::simdVec4 normal0   = absoluteOrientation * glm::simdVec4(0.0f, 0.0f, 1.0f, 0.0f); normal0.w = particle.uvTileInterpolationFactor;
                                                 glm::simdVec4 normal1   = normal0;
                                                 glm::simdVec4 normal2   = normal0;
                                                 glm::simdVec4 normal3   = normal0;
 
-                                                glm::vec4 colour0   = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-                                                glm::vec4 colour1   = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-                                                glm::vec4 colour2   = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-                                                glm::vec4 colour3   = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour0       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour1       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour2       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour3       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 
-                                                vertex0[0] = position0.x; vertex0[1] = position0.y; vertex0[2]  = position0.z;
-                                                vertex0[3] = texcoord0.x; vertex0[4] = texcoord0.y;
-                                                vertex0[5] = normal0.x;   vertex0[6] = normal0.y;   vertex0[7]  = normal0.z;
-                                                vertex0[8] = colour0.x;   vertex0[9] = colour0.y;   vertex0[10] = colour0.z;   vertex0[11] = colour0.w;
+                                                vertex0[0]  = position0.x; vertex0[1]  = position0.y; vertex0[2]  = position0.z; vertex0[3]  = 1.0f;
+                                                vertex0[4]  = texcoord0.x; vertex0[5]  = texcoord0.y; vertex0[6]  = texcoord0.z; vertex0[7]  = texcoord0.w;
+                                                vertex0[8]  = normal0.x;   vertex0[9]  = normal0.y;   vertex0[10] = normal0.z;   vertex0[11] = normal0.w;
+                                                vertex0[12] = colour0.x;   vertex0[13] = colour0.y;   vertex0[14] = colour0.z;   vertex0[15] = colour0.w;
 
-                                                vertex1[0] = position1.x; vertex1[1] = position1.y; vertex1[2]  = position1.z;
-                                                vertex1[3] = texcoord1.x; vertex1[4] = texcoord1.y;
-                                                vertex1[5] = normal1.x;   vertex1[6] = normal1.y;   vertex1[7]  = normal1.z;
-                                                vertex1[8] = colour1.x;   vertex1[9] = colour1.y;   vertex1[10] = colour1.z;   vertex1[11] = colour1.w;
+                                                vertex1[0]  = position1.x; vertex1[1]  = position1.y; vertex1[2]  = position1.z; vertex1[3]  = 1.1f;
+                                                vertex1[4]  = texcoord1.x; vertex1[5]  = texcoord1.y; vertex1[6]  = texcoord1.z; vertex1[7]  = texcoord1.w;
+                                                vertex1[8]  = normal1.x;   vertex1[9]  = normal1.y;   vertex1[10] = normal1.z;   vertex1[11] = normal1.w;
+                                                vertex1[12] = colour1.x;   vertex1[13] = colour1.y;   vertex1[14] = colour1.z;   vertex1[15] = colour1.w;
 
-                                                vertex2[0] = position2.x; vertex2[1] = position2.y; vertex2[2]  = position2.z;
-                                                vertex2[3] = texcoord2.x; vertex2[4] = texcoord2.y;
-                                                vertex2[5] = normal2.x;   vertex2[6] = normal2.y;   vertex2[7]  = normal2.z;
-                                                vertex2[8] = colour2.x;   vertex2[9] = colour2.y;   vertex2[10] = colour2.z;   vertex2[11] = colour2.w;
+                                                vertex2[0]  = position2.x; vertex2[1]  = position2.y; vertex2[2]  = position2.z; vertex2[3]  = 1.2f;
+                                                vertex2[4]  = texcoord2.x; vertex2[5]  = texcoord2.y; vertex2[6]  = texcoord2.z; vertex2[7]  = texcoord2.w;
+                                                vertex2[8]  = normal2.x;   vertex2[9]  = normal2.y;   vertex2[10] = normal2.z;   vertex2[11] = normal2.w;
+                                                vertex2[12] = colour2.x;   vertex2[13] = colour2.y;   vertex2[14] = colour2.z;   vertex2[15] = colour2.w;
 
-                                                vertex3[0] = position3.x; vertex3[1] = position3.y; vertex3[2]  = position3.z;
-                                                vertex3[3] = texcoord3.x; vertex3[4] = texcoord3.y;
-                                                vertex3[5] = normal3.x;   vertex3[6] = normal3.y;   vertex3[7]  = normal3.z;
-                                                vertex3[8] = colour3.x;   vertex3[9] = colour3.y;   vertex3[10] = colour3.z;   vertex3[11] = colour3.w;
+                                                vertex3[0]  = position3.x; vertex3[1]  = position3.y; vertex3[2]  = position3.z; vertex3[3]  = 1.3f;
+                                                vertex3[4]  = texcoord3.x; vertex3[5]  = texcoord3.y; vertex3[6]  = texcoord3.z; vertex3[7]  = texcoord3.w;
+                                                vertex3[8]  = normal3.x;   vertex3[9]  = normal3.y;   vertex3[10] = normal3.z;   vertex3[11] = normal3.w;
+                                                vertex3[12] = colour3.x;   vertex3[13] = colour3.y;   vertex3[14] = colour3.z;   vertex3[15] = colour3.w;
 
 
 

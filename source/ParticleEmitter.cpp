@@ -77,7 +77,7 @@ namespace GTEngine
           timeSinceLastEmission(1.0 / emissionRatePerSecond),
           particles(),
           aabbMin(), aabbMax(),
-          vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
+          vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P4T4N4C4))
     {
         this->SetMaterial("engine/materials/simple-diffuse.material");
     }
@@ -98,7 +98,7 @@ namespace GTEngine
           timeSinceLastEmission(other.timeSinceLastEmission),
           particles(other.particles),
           aabbMin(other.aabbMin), aabbMax(other.aabbMax),
-          vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3T2N3C4))
+          vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P4T4N4C4))
     {
         // The functions need to be copied over.
         for (size_t iFunction = 0; iFunction < other.GetFunctionCount(); ++iFunction)
@@ -315,6 +315,11 @@ namespace GTEngine
         __m128 m128_aabbMax = _mm_set1_ps(-FLT_MAX);
 
 
+        const float    uTexCoordSize  = 1.0f / this->textureTilesX;
+        const float    vTexCoordSize  = 1.0f / this->textureTilesY;
+        const uint32_t tileCount      = this->textureTilesX * this->textureTilesY;
+
+
         size_t iParticle = 0;
         while (iParticle < this->particles.GetCount())
         {
@@ -350,23 +355,31 @@ namespace GTEngine
 
 
                     // The tile we pick will depend on the lifetime ratio of the particle.
-                    float currentTile = glm::floor(lifetimeRatio * static_cast<float>(this->textureTilesX * this->textureTilesY));
+                    float currentTile = glm::floor(lifetimeRatio * (tileCount - 1));
 
-                    float uTexCoordSize  = 1.0f / this->textureTilesX;
-                    float vTexCoordSize  = 1.0f / this->textureTilesY;
+                    float uvTile0 = currentTile;
+                    float uvTile1 = (currentTile < tileCount - 1) ? currentTile + 1 : currentTile;
+                    
 
-                    float uStartTile     = glm::mod(currentTile, static_cast<float>(this->textureTilesX));
-                    float vStartTile     = glm::floor(currentTile / this->textureTilesX);
+                    float uStartTile0      = glm::mod(uvTile0, static_cast<float>(this->textureTilesX));
+                    float vStartTile0      = glm::floor(uvTile0 / this->textureTilesX);
 
-                    float uTexCoordStart =        uStartTile / this->textureTilesX;
-                    float vTexCoordStart = 1.0f - vStartTile / this->textureTilesY - vTexCoordSize;
+                    particle.uTexCoordMin0 =        uStartTile0 / this->textureTilesX;
+                    particle.uTexCoordMax0 = particle.uTexCoordMin0 + uTexCoordSize;
+                    particle.vTexCoordMin0 = 1.0f - vStartTile0 / this->textureTilesY - vTexCoordSize;
+                    particle.vTexCoordMax0 = particle.vTexCoordMin0 + vTexCoordSize;
 
 
-                    particle.uTexCoordMin = uTexCoordStart;
-                    particle.uTexCoordMax = particle.uTexCoordMin + uTexCoordSize;
+                    float uStartTile1      = glm::mod(uvTile1, static_cast<float>(this->textureTilesX));
+                    float vStartTile1      = glm::floor(uvTile1 / this->textureTilesX);
 
-                    particle.vTexCoordMin = vTexCoordStart;
-                    particle.vTexCoordMax = particle.vTexCoordMin + vTexCoordSize;
+                    particle.uTexCoordMin1 =        uStartTile1 / this->textureTilesX;
+                    particle.uTexCoordMax1 = particle.uTexCoordMin1 + uTexCoordSize;
+                    particle.vTexCoordMin1 = 1.0f - vStartTile1 / this->textureTilesY - vTexCoordSize;
+                    particle.vTexCoordMax1 = particle.vTexCoordMin1 + vTexCoordSize;
+
+
+                    particle.uvTileInterpolationFactor = (uvTile1 - (lifetimeRatio * (tileCount - 1)));
 
 
                     // We need to check the position against the AABB.

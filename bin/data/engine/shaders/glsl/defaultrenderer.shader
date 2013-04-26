@@ -419,7 +419,7 @@
     in  vec3 VertexInput_Position;
     in  vec3 VertexInput_PositionVS;
     in  vec4 VertexInput_TexCoord;
-    in  vec3 VertexInput_Normal;
+    in  vec4 VertexInput_Normal;
     in  vec3 VertexInput_Tangent;
     in  vec3 VertexInput_Bitangent;
     
@@ -428,7 +428,7 @@
     out vec4 VertexOutput_PositionVS;
     out vec4 VertexOutput_PositionWS;
     out vec4 VertexOutput_TexCoord;
-    out vec3 VertexOutput_Normal;
+    out vec4 VertexOutput_Normal;
     out vec3 VertexOutput_Tangent;
     out vec3 VertexOutput_Bitangent;
     
@@ -445,7 +445,7 @@
         VertexOutput_PositionVS = ViewModelMatrix * vec4(VertexInput_Position, 1.0);
         VertexOutput_PositionWS = ModelMatrix     * vec4(VertexInput_Position, 1.0);
         VertexOutput_TexCoord   = VertexInput_TexCoord;
-        VertexOutput_Normal     = normalize(NormalMatrix * VertexInput_Normal);
+        VertexOutput_Normal.xyz = normalize(NormalMatrix * VertexInput_Normal.xyz); VertexOutput_Normal.w = VertexInput_Normal.w;
         VertexOutput_Tangent    = normalize(NormalMatrix * VertexInput_Tangent);
         VertexOutput_Bitangent  = normalize(NormalMatrix * VertexInput_Bitangent);
         
@@ -466,7 +466,7 @@
     in vec4 VertexOutput_PositionVS;
     in vec4 VertexOutput_PositionWS;
     in vec4 VertexOutput_TexCoord;
-    in vec3 VertexOutput_Normal;
+    in vec4 VertexOutput_Normal;
     in vec3 VertexOutput_Tangent;
     in vec3 VertexOutput_Bitangent;
     
@@ -497,7 +497,7 @@
     
     void main()
     {
-        vec3 normal = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal) * Normal());
+        vec3 normal = normalize(mat3(VertexOutput_Tangent, VertexOutput_Bitangent, VertexOutput_Normal.xyz) * Normal());
         
         vec3 diffuse;
         vec3 specular;
@@ -604,7 +604,7 @@
     in  vec3 VertexInput_Position;
     in  vec3 VertexInput_PositionVS;
     in  vec4 VertexInput_TexCoord;
-    in  vec3 VertexInput_Normal;
+    in  vec4 VertexInput_Normal;
     in  vec3 VertexInput_Tangent;
     in  vec3 VertexInput_Bitangent;
     
@@ -612,7 +612,7 @@
     out vec4 VertexOutput_PositionVS;
     out vec4 VertexOutput_PositionWS;
     out vec4 VertexOutput_TexCoord;
-    out vec3 VertexOutput_Normal;
+    out vec4 VertexOutput_Normal;
     out vec3 VertexOutput_Tangent;
     out vec3 VertexOutput_Bitangent;
     
@@ -632,7 +632,7 @@
         VertexOutput_PositionVS = ViewModelMatrix * vec4(VertexInput_Position, 1.0);
         VertexOutput_PositionWS = ModelMatrix     * vec4(VertexInput_Position, 1.0);
         VertexOutput_TexCoord   = VertexInput_TexCoord;
-        VertexOutput_Normal     = normalize(NormalMatrix * VertexInput_Normal);
+        VertexOutput_Normal.xyz = normalize(NormalMatrix * VertexInput_Normal.xyz); VertexOutput_Normal.w = VertexInput_Normal.w;
         VertexOutput_Tangent    = normalize(NormalMatrix * VertexInput_Tangent);
         VertexOutput_Bitangent  = normalize(NormalMatrix * VertexInput_Bitangent);
         
@@ -678,7 +678,7 @@
     in  vec3 VertexInput_Position;
     in  vec3 VertexInput_PositionVS;
     in  vec4 VertexInput_TexCoord;
-    in  vec3 VertexInput_Normal;
+    in  vec4 VertexInput_Normal;
     in  vec3 VertexInput_Tangent;
     in  vec3 VertexInput_Bitangent;
     
@@ -686,7 +686,7 @@
     out vec4 VertexOutput_PositionVS;
     out vec4 VertexOutput_PositionWS;
     out vec4 VertexOutput_TexCoord;
-    out vec3 VertexOutput_Normal;
+    out vec4 VertexOutput_Normal;
     out vec3 VertexOutput_Tangent;
     out vec3 VertexOutput_Bitangent;
     
@@ -708,7 +708,7 @@
         VertexOutput_PositionVS = ViewModelMatrix * vec4(VertexInput_Position, 1.0);
         VertexOutput_PositionWS = ModelMatrix     * vec4(VertexInput_Position, 1.0);
         VertexOutput_TexCoord   = VertexInput_TexCoord;
-        VertexOutput_Normal     = normalize(NormalMatrix * VertexInput_Normal);
+        VertexOutput_Normal.xyz = normalize(NormalMatrix * VertexInput_Normal.xyz); VertexOutput_Normal.w = VertexInput_Normal.w;
         VertexOutput_Tangent    = normalize(NormalMatrix * VertexInput_Tangent);
         VertexOutput_Bitangent  = normalize(NormalMatrix * VertexInput_Bitangent);
         
@@ -877,14 +877,14 @@
     
     in  vec3 VertexInput_Position;
     in  vec4 VertexInput_TexCoord;
-    in  vec3 VertexInput_Normal;
+    in  vec4 VertexInput_Normal;
     in  vec3 VertexInput_Tangent;
     in  vec3 VertexInput_Bitangent;
     
     out vec4 VertexOutput_Position;
     out vec4 VertexOutput_PositionVS;
     out vec4 VertexOutput_TexCoord;
-    out vec3 VertexOutput_Normal;
+    out vec4 VertexOutput_Normal;
     out vec3 VertexOutput_Tangent;
     out vec3 VertexOutput_Bitangent;
     out vec2 lightUV;
@@ -898,7 +898,7 @@
         VertexOutput_Position   = PVMMatrix       * vec4(VertexInput_Position, 1.0);
         VertexOutput_PositionVS = ViewModelMatrix * vec4(VertexInput_Position, 1.0);
         VertexOutput_TexCoord   = VertexInput_TexCoord;
-        VertexOutput_Normal     = normalize(NormalMatrix * VertexInput_Normal);
+        VertexOutput_Normal.xyz = normalize(NormalMatrix * VertexInput_Normal.xyz); VertexOutput_Normal.w = VertexInput_Normal.w;
         VertexOutput_Tangent    = normalize(NormalMatrix * VertexInput_Tangent);
         VertexOutput_Bitangent  = normalize(NormalMatrix * VertexInput_Bitangent);
         
@@ -919,7 +919,7 @@
     in vec4 VertexOutput_Position;
     in vec4 VertexOutput_PositionVS;
     in vec4 VertexOutput_TexCoord;
-    in vec3 VertexOutput_Normal;
+    in vec4 VertexOutput_Normal;
     in vec3 VertexOutput_Tangent;
     in vec3 VertexOutput_Bitangent;
     
@@ -958,7 +958,7 @@
     in vec4 VertexOutput_Position;
     in vec4 VertexOutput_PositionVS;
     in vec4 VertexOutput_TexCoord;
-    in vec3 VertexOutput_Normal;
+    in vec4 VertexOutput_Normal;
     in vec3 VertexOutput_Tangent;
     in vec3 VertexOutput_Bitangent;
     
