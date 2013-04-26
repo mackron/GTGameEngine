@@ -146,6 +146,7 @@ namespace GTEngine
         static VertexFormat P2C4;       // 2D position, 4D colour.
         static VertexFormat P2T2C4;     // 2D position, 2D texture coord, 4D colour.
         static VertexFormat P3T2N3C4;   // 3D position, 2D texture coord, 3D normal, 4D colour.
+        static VertexFormat P4T4N4C4;   // 4D position, 4D texture coord, 4D normal, 4D colour.
     };
 }
 

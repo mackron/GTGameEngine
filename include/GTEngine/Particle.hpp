@@ -18,8 +18,11 @@ namespace GTEngine
               linearVelocity(0.0f, 0.0f, 0.0f, 1.0f), angularVelocity(1.0f, 0.0f, 0.0f, 0.0f),
               spawnLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f), gravityLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f), functionLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f),
               lifetime(1.0), timeLeftToDeath(1.0),
-              uTexCoordMin(0.0f), uTexCoordMax(1.0f),
-              vTexCoordMin(0.0f), vTexCoordMax(1.0f)
+              uvTileInterpolationFactor(0.0f),
+              uTexCoordMin0(0.0f), uTexCoordMax0(1.0f),
+              vTexCoordMin0(0.0f), vTexCoordMax0(1.0f),
+              uTexCoordMin1(0.0f), uTexCoordMax1(1.0f),
+              vTexCoordMin1(0.0f), vTexCoordMax1(1.0f)
         {
         }
 
@@ -59,17 +62,35 @@ namespace GTEngine
         double timeLeftToDeath;
 
 
-        /// The low U texture coordinate to use with the particle.
-        float uTexCoordMin;
 
-        /// The high U texture coordinate to use with the particle.
-        float uTexCoordMax;
+        /// The interpolation factor to use when interpolating between texture tiles.
+        float uvTileInterpolationFactor;
 
-        /// The low V texture coordinate to use with the particle.
-        float vTexCoordMin;
 
-        /// The high V texture coordinate to use with the particle.
-        float vTexCoordMax;
+        /// The first low U texture coordinate to use with the particle.
+        float uTexCoordMin0;
+
+        /// The first high U texture coordinate to use with the particle.
+        float uTexCoordMax0;
+
+        /// The first low V texture coordinate to use with the particle.
+        float vTexCoordMin0;
+
+        /// The first high V texture coordinate to use with the particle.
+        float vTexCoordMax0;
+
+
+        /// The second low U texture coordinate to use with the particle.
+        float uTexCoordMin1;
+
+        /// The second high U texture coordinate to use with the particle.
+        float uTexCoordMax1;
+
+        /// The second low V texture coordinate to use with the particle.
+        float vTexCoordMin1;
+
+        /// The second high V texture coordinate to use with the particle.
+        float vTexCoordMax1;
     };
 }
 
