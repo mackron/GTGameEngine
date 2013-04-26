@@ -139,7 +139,10 @@ namespace GTEngine
             auto name  = texture2DUniforms.buffer[i]->key;
             auto value = texture2DUniforms.buffer[i]->value.value;
             
-            this->SetUniform(name, value);
+            if (value != nullptr)
+            {
+                this->SetUniform(name, value);
+            }
         }
 
         // TextureCube
@@ -148,7 +151,10 @@ namespace GTEngine
             auto name  = textureCubeUniforms.buffer[i]->key;
             auto value = textureCubeUniforms.buffer[i]->value.value;
             
-            this->SetUniform(name, value);
+            if (value != nullptr)
+            {
+                this->SetUniform(name, value);
+            }
         }
 
 

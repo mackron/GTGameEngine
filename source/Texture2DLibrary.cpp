@@ -131,7 +131,7 @@ namespace GTEngine
 
     Texture2D* Texture2DLibrary::Acquire(Texture2D* texture)
     {
-        assert(texture != nullptr);
+        if (texture != nullptr)
         {
             texture->IncrementReferenceCounter();
         }
