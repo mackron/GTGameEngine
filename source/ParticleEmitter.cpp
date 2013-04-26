@@ -6,48 +6,6 @@
 
 namespace GTEngine
 {
-#if 0
-    inline __m128 vec_abs(__m128 x)
-    {
-        static const __m128 sign_mask = _mm_set1_ps(-0.f);
-
-        return _mm_andnot_ps(sign_mask, x);
-    }
-
-    inline void MixFromOriginSin(float angle, float a, float &s0, float &s1, float &d)
-    {
-        static const __m128 b = _mm_set1_ps( 4.0f / glm::pi<float>());
-        static const __m128 c = _mm_set1_ps(-4.0f / (glm::pi<float>() * glm::pi<float>()));
-        static const __m128 p = _mm_set1_ps(0.225f);
-
-        __m128 x = _mm_set_ps((1.0f - a) * angle, a * angle, angle, 0.0f);
-
-        __m128 y = _mm_add_ps(_mm_mul_ps(b, x), _mm_mul_ps(c, _mm_mul_ps(x, vec_abs(x))));
-               y = _mm_add_ps(_mm_mul_ps(p, _mm_sub_ps(_mm_mul_ps(y, vec_abs(y)), y)), y);
-
-
-        GLM_ALIGN(16) float results[4];
-        _mm_store_ps(results, y);
-
-        s0 =        results[3];
-        s1 =        results[2];
-        d  = 1.0f / results[1];
-        
-
-        /*
-        s0 = glm::fastSin((1.0f - a) * angle);
-        s1 = glm::fastSin(a * angle);
-        d  = 1.0f / glm::fastSin(angle);
-
-
-        5 mul
-        3 add
-        2 abs
-        */
-    }
-#endif
-
-#if 1
     inline void MixFromOriginSin(float angle, float a, float &s0, float &s1, float &d)
     {
         static const __m128 c0 = _mm_set1_ps(0.16666666666666666666666666666667f);
@@ -75,7 +33,6 @@ namespace GTEngine
         s1 =        results[2];
         d  = 1.0f / results[1];
     }
-#endif
 
 
     inline glm::simdQuat MixFromOrigin(const glm::simdQuat &q, float a)
