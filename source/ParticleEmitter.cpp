@@ -392,6 +392,27 @@ namespace GTEngine
                     }
 
 
+                    // The tile we pick will depend on the lifetime ratio of the particle.
+                    float currentTile = glm::floor(lifetimeRatio * static_cast<float>(this->textureTilesX * this->textureTilesY));
+
+                    float uTexCoordSize  = 1.0f / this->textureTilesX;
+                    float vTexCoordSize  = 1.0f / this->textureTilesY;
+
+                    float uStartTile     = glm::mod(currentTile, static_cast<float>(this->textureTilesX));
+                    float vStartTile     = glm::floor(currentTile / this->textureTilesX);
+
+                    float uTexCoordStart =        uStartTile / this->textureTilesX;
+                    float vTexCoordStart = 1.0f - vStartTile / this->textureTilesY - vTexCoordSize;
+
+
+
+                    particle.uTexCoordMin = uTexCoordStart;
+                    particle.uTexCoordMax = particle.uTexCoordMin + uTexCoordSize;
+
+                    particle.vTexCoordMin = vTexCoordStart;
+                    particle.vTexCoordMax = particle.vTexCoordMin + vTexCoordSize;
+
+
                     // We need to check the position against the AABB.
                     m128_aabbMin = _mm_min_ps(m128_aabbMin, particle.position.Data);
                     m128_aabbMax = _mm_max_ps(m128_aabbMax, particle.position.Data);

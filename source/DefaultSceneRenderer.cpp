@@ -614,10 +614,10 @@ namespace GTEngine
                                                 glm::simdVec4 position2 = transform * glm::simdVec4( 0.5f,  0.5f, 0.0f, 1.0f);
                                                 glm::simdVec4 position3 = transform * glm::simdVec4(-0.5f,  0.5f, 0.0f, 1.0f);
 
-                                                glm::vec2 texcoord0 = glm::vec2(0.0f, 0.0f);
-                                                glm::vec2 texcoord1 = glm::vec2(1.0f, 0.0f);
-                                                glm::vec2 texcoord2 = glm::vec2(1.0f, 1.0f);
-                                                glm::vec2 texcoord3 = glm::vec2(0.0f, 1.0f);
+                                                glm::vec2 texcoord0 = glm::vec2(particle.uTexCoordMin, particle.vTexCoordMin);
+                                                glm::vec2 texcoord1 = glm::vec2(particle.uTexCoordMax, particle.vTexCoordMin);
+                                                glm::vec2 texcoord2 = glm::vec2(particle.uTexCoordMax, particle.vTexCoordMax);
+                                                glm::vec2 texcoord3 = glm::vec2(particle.uTexCoordMin, particle.vTexCoordMax);
 
                                                 glm::simdVec4 normal0   = absoluteOrientation * glm::simdVec4(0.0f, 0.0f, 1.0f, 0.0f);
                                                 glm::simdVec4 normal1   = normal0;

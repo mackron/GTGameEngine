@@ -17,7 +17,9 @@ namespace GTEngine
             : position(0.0f, 0.0f, 0.0f, 1.0f), orientation(1.0f, 0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f, 1.0f),
               linearVelocity(0.0f, 0.0f, 0.0f, 1.0f), angularVelocity(1.0f, 0.0f, 0.0f, 0.0f),
               spawnLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f), gravityLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f), functionLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f),
-              lifetime(1.0), timeLeftToDeath(1.0)
+              lifetime(1.0), timeLeftToDeath(1.0),
+              uTexCoordMin(0.0f), uTexCoordMax(1.0f),
+              vTexCoordMin(0.0f), vTexCoordMax(1.0f)
         {
         }
 
@@ -55,6 +57,19 @@ namespace GTEngine
 
         /// The amount of time left before the particle dies.
         double timeLeftToDeath;
+
+
+        /// The low U texture coordinate to use with the particle.
+        float uTexCoordMin;
+
+        /// The high U texture coordinate to use with the particle.
+        float uTexCoordMax;
+
+        /// The low V texture coordinate to use with the particle.
+        float vTexCoordMin;
+
+        /// The high V texture coordinate to use with the particle.
+        float vTexCoordMax;
     };
 }
 
