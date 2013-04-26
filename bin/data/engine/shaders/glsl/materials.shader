@@ -117,7 +117,7 @@
     
     vec4 Diffuse()
     {
-        return texture2D(DiffuseTexture, VertexOutput_TexCoord);
+        return texture2D(DiffuseTexture, VertexOutput_TexCoord.xy);
     }
 </shader>
 
@@ -126,7 +126,7 @@
     
     vec3 Normal()
     {
-        return normalize(texture2D(NormalMap, VertexOutput_TexCoord).rgb * 2.0 - 1.0);
+        return normalize(texture2D(NormalMap, VertexOutput_TexCoord.xy).rgb * 2.0 - 1.0);
     }
 </shader>
 
@@ -135,7 +135,7 @@
     
     vec3 Emissive()
     {
-        return texture2D(EmissiveTexture, VertexOutput_TexCoord).rgb;
+        return texture2D(EmissiveTexture, VertexOutput_TexCoord.xy).rgb;
     }
 </shader>
 
@@ -144,7 +144,7 @@
     
     vec3 Refraction()
     {
-        return normalize(texture2D(RefractionMap, VertexOutput_TexCoord).rgb * 2.0 - 1.0);
+        return normalize(texture2D(RefractionMap, VertexOutput_TexCoord.xy).rgb * 2.0 - 1.0);
     }
 </shader>
 

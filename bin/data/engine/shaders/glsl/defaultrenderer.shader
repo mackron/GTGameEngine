@@ -62,9 +62,9 @@
     #version 330
     
     in vec3 VertexInput_Position;
-    in vec2 VertexInput_TexCoord;
+    in vec4 VertexInput_TexCoord;
 
-    out vec2 VertexOutput_TexCoord;
+    out vec4 VertexOutput_TexCoord;
     
     void main()
     {
@@ -78,7 +78,7 @@
 <![CDATA[
     #version 330
     
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     
     layout(location = 0) out vec4 ColourOut;
     
@@ -86,7 +86,7 @@
     
     void main()
     {
-        vec2  uv       = VertexOutput_TexCoord;
+        vec2  uv       = VertexOutput_TexCoord.xy;
         float uvOffset = 1.0 / float(textureSize(Texture, 0));
     
         float coefficients[21] = float[]
@@ -113,7 +113,7 @@
 <![CDATA[
     #version 330
     
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     
     layout(location = 0) out vec4 ColourOut;
     
@@ -121,7 +121,7 @@
     
     void main()
     {
-        vec2  uv       = VertexOutput_TexCoord;
+        vec2  uv       = VertexOutput_TexCoord.xy;
         float uvOffset = 1.0 / textureSize(Texture, 0).x;
     
         float coefficients[21] = float[]
@@ -148,7 +148,7 @@
 <![CDATA[
     #version 330
     
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     
     layout(location = 0) out vec4 ColourOut;
     
@@ -156,7 +156,7 @@
     
     void main()
     {
-        vec2  uv       = VertexOutput_TexCoord;
+        vec2  uv       = VertexOutput_TexCoord.xy;
         float uvOffset = 1.0 / float(textureSize(Texture, 0));
     
         float coefficients[7] = float[]
@@ -179,7 +179,7 @@
 <![CDATA[
     #version 330
     
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     
     layout(location = 0) out vec4 ColourOut;
     
@@ -187,7 +187,7 @@
     
     void main()
     {
-        vec2  uv       = VertexOutput_TexCoord;
+        vec2  uv       = VertexOutput_TexCoord.xy;
         float uvOffset = 1.0 / float(textureSize(Texture, 0));
     
         float coefficients[7] = float[]
@@ -211,7 +211,7 @@
 <![CDATA[
     #version 330
     
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     
     layout(location = 0) out vec4 ColourOut;
     
@@ -219,7 +219,7 @@
     
     void main()
     {
-        vec2  uv       = VertexOutput_TexCoord;
+        vec2  uv       = VertexOutput_TexCoord.xy;
         float uvOffset = 1.0 / float(textureSize(Texture, 0));
     
         float coefficients[11] = float[]
@@ -244,7 +244,7 @@
 <![CDATA[
     #version 330
     
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     
     layout(location = 0) out vec4 ColourOut;
     
@@ -252,7 +252,7 @@
     
     void main()
     {
-        vec2  uv       = VertexOutput_TexCoord;
+        vec2  uv       = VertexOutput_TexCoord.xy;
         float uvOffset = 1.0 / float(textureSize(Texture, 0));
     
         float coefficients[11] = float[]
@@ -278,7 +278,7 @@
 <![CDATA[
     #version 330
     
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     
     layout(location = 0) out vec4 ColourOut;
     
@@ -286,7 +286,7 @@
     
     void main()
     {
-        vec2  uv       = VertexOutput_TexCoord;
+        vec2  uv       = VertexOutput_TexCoord.xy;
         float uvOffset = 1.0 / float(textureSize(Texture, 0));
     
         float coefficients[15] = float[]
@@ -311,7 +311,7 @@
 <![CDATA[
     #version 330
     
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     
     layout(location = 0) out vec4 ColourOut;
     
@@ -319,7 +319,7 @@
     
     void main()
     {
-        vec2  uv       = VertexOutput_TexCoord;
+        vec2  uv       = VertexOutput_TexCoord.xy;
         float uvOffset = 1.0 / float(textureSize(Texture, 0));
     
         float coefficients[15] = float[]
@@ -418,7 +418,7 @@
     
     in  vec3 VertexInput_Position;
     in  vec3 VertexInput_PositionVS;
-    in  vec2 VertexInput_TexCoord;
+    in  vec4 VertexInput_TexCoord;
     in  vec3 VertexInput_Normal;
     in  vec3 VertexInput_Tangent;
     in  vec3 VertexInput_Bitangent;
@@ -427,7 +427,7 @@
     out vec4 VertexOutput_PositionLS;
     out vec4 VertexOutput_PositionVS;
     out vec4 VertexOutput_PositionWS;
-    out vec2 VertexOutput_TexCoord;
+    out vec4 VertexOutput_TexCoord;
     out vec3 VertexOutput_Normal;
     out vec3 VertexOutput_Tangent;
     out vec3 VertexOutput_Bitangent;
@@ -465,7 +465,7 @@
     in vec4 VertexOutput_PositionLS;
     in vec4 VertexOutput_PositionVS;
     in vec4 VertexOutput_PositionWS;
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     in vec3 VertexOutput_Normal;
     in vec3 VertexOutput_Tangent;
     in vec3 VertexOutput_Bitangent;
@@ -603,7 +603,7 @@
     
     in  vec3 VertexInput_Position;
     in  vec3 VertexInput_PositionVS;
-    in  vec2 VertexInput_TexCoord;
+    in  vec4 VertexInput_TexCoord;
     in  vec3 VertexInput_Normal;
     in  vec3 VertexInput_Tangent;
     in  vec3 VertexInput_Bitangent;
@@ -611,7 +611,7 @@
     out vec4 VertexOutput_Position;
     out vec4 VertexOutput_PositionVS;
     out vec4 VertexOutput_PositionWS;
-    out vec2 VertexOutput_TexCoord;
+    out vec4 VertexOutput_TexCoord;
     out vec3 VertexOutput_Normal;
     out vec3 VertexOutput_Tangent;
     out vec3 VertexOutput_Bitangent;
@@ -677,7 +677,7 @@
     
     in  vec3 VertexInput_Position;
     in  vec3 VertexInput_PositionVS;
-    in  vec2 VertexInput_TexCoord;
+    in  vec4 VertexInput_TexCoord;
     in  vec3 VertexInput_Normal;
     in  vec3 VertexInput_Tangent;
     in  vec3 VertexInput_Bitangent;
@@ -685,7 +685,7 @@
     out vec4 VertexOutput_Position;
     out vec4 VertexOutput_PositionVS;
     out vec4 VertexOutput_PositionWS;
-    out vec2 VertexOutput_TexCoord;
+    out vec4 VertexOutput_TexCoord;
     out vec3 VertexOutput_Normal;
     out vec3 VertexOutput_Tangent;
     out vec3 VertexOutput_Bitangent;
@@ -876,14 +876,14 @@
     #version 330
     
     in  vec3 VertexInput_Position;
-    in  vec2 VertexInput_TexCoord;
+    in  vec4 VertexInput_TexCoord;
     in  vec3 VertexInput_Normal;
     in  vec3 VertexInput_Tangent;
     in  vec3 VertexInput_Bitangent;
     
     out vec4 VertexOutput_Position;
     out vec4 VertexOutput_PositionVS;
-    out vec2 VertexOutput_TexCoord;
+    out vec4 VertexOutput_TexCoord;
     out vec3 VertexOutput_Normal;
     out vec3 VertexOutput_Tangent;
     out vec3 VertexOutput_Bitangent;
@@ -918,7 +918,7 @@
     
     in vec4 VertexOutput_Position;
     in vec4 VertexOutput_PositionVS;
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     in vec3 VertexOutput_Normal;
     in vec3 VertexOutput_Tangent;
     in vec3 VertexOutput_Bitangent;
@@ -957,7 +957,7 @@
     
     in vec4 VertexOutput_Position;
     in vec4 VertexOutput_PositionVS;
-    in vec2 VertexOutput_TexCoord;
+    in vec4 VertexOutput_TexCoord;
     in vec3 VertexOutput_Normal;
     in vec3 VertexOutput_Tangent;
     in vec3 VertexOutput_Bitangent;

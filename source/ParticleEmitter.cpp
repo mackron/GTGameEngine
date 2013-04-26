@@ -405,7 +405,6 @@ namespace GTEngine
                     float vTexCoordStart = 1.0f - vStartTile / this->textureTilesY - vTexCoordSize;
 
 
-
                     particle.uTexCoordMin = uTexCoordStart;
                     particle.uTexCoordMax = particle.uTexCoordMin + uTexCoordSize;
 
