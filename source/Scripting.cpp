@@ -589,54 +589,6 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void SyncScriptDefinitionsWithLibrary(GTCore::Script &script)
-        {
-            script.GetGlobal("GTEngine");
-            assert(script.IsTable(-1));
-            {
-                script.Push("ScriptDefinitions");
-                script.GetTableValue(-2);
-                assert(script.IsTable(-1));
-                {
-                    // 1) Find the definitions to remove.
-                    GTCore::Vector<GTCore::String> definitionsToRemove;
-
-                    for (script.PushNil(); script.Next(-2); script.Pop(1))
-                    {
-                        auto relativePath = script.ToString(-2);
-                        if (!ScriptLibrary::IsLoaded(relativePath))
-                        {
-                            definitionsToRemove.PushBack(relativePath);
-                        }
-                    }
-
-                    // 2) Remove applicable definitions.
-                    for (size_t i = 0; i < definitionsToRemove.count; ++i)
-                    {
-                        script.Push(definitionsToRemove[i].c_str());
-                        script.PushNil();
-                        script.SetTableValue(-3);
-                    }
-
-
-                    // 3) Update existing definitions and add new definitions.
-                    size_t definitionCount = ScriptLibrary::GetLoadedDefinitionCount();
-                    for (size_t i = 0; i < definitionCount; ++i)
-                    {
-                        auto definition = ScriptLibrary::GetLoadedDefinitionByIndex(i);
-                        assert(definition != nullptr);
-                        {
-                            Scripting::LoadScriptDefinition(script, definition->GetRelativePath(), definition->GetScriptString());
-                        }
-                    }
-                }
-                script.Pop(1);
-            }
-            script.Pop(1);
-        }
-
-
-
 
         namespace FFI
         {

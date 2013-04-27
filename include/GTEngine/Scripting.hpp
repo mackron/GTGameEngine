@@ -98,14 +98,6 @@ namespace GTEngine
         /// @param scriptRelativePath [in] The relative path of the script to unload.
         void UnloadScriptDefinition(GTCore::Script &script, const char* scriptRelativePath);
 
-        /// Synchronizes the script definitions with the script library.
-        ///
-        /// @remarks
-        ///     This will unload any no-longer-loaded definitions, load newly loaded ones and refresh existing ones.
-        ///     @par
-        ///     This does not update any scene nodes connected to the applicable definitions.
-        void SyncScriptDefinitionsWithLibrary(GTCore::Script &script);
-
 
 
         namespace FFI
