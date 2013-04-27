@@ -72,8 +72,14 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.Scene:UninstantiateSceneNode(sceneNodeID)"
-                "    self._sceneNodes[sceneNodeID]                = nil;"
-                "    self._sceneNodesWithOnMouseMove[sceneNodeID] = nil;"
+                "    self._sceneNodes[sceneNodeID]                             = nil;"
+                "    self._sceneNodesWithOnMouseMove[sceneNodeID]              = nil;"
+                "    self._sceneNodesWithOnMouseWheel[sceneNodeID]             = nil;"
+                "    self._sceneNodesWithOnMouseButtonDown[sceneNodeID]        = nil;"
+                "    self._sceneNodesWithOnMouseButtonUp[sceneNodeID]          = nil;"
+                "    self._sceneNodesWithOnMouseButtonDoubleClick[sceneNodeID] = nil;"
+                "    self._sceneNodesWithOnKeyPressed[sceneNodeID]             = nil;"
+                "    self._sceneNodesWithOnKeyReleased[sceneNodeID]            = nil;"
                 "end;"
 
                 "function GTEngine.Scene:GetSceneNodeByID(sceneNodeID)"
