@@ -1567,7 +1567,7 @@ namespace GTEngine
 
 
         // The scene node will need to be uninstantiated if the scene is registered to a script.
-        if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
+        if (this->registeredScript != nullptr)
         {
             Scripting::UninstantiateSceneNode(*this->registeredScript, node);
         }
