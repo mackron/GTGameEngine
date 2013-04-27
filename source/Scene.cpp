@@ -270,10 +270,7 @@ namespace GTEngine
 
 
         // We need to unregister after removing every object.
-        if (this->registeredScript != nullptr)
-        {
-            Scripting::UnregisterScene(*this->registeredScript, *this);
-        }
+        this->UnregisterFromScript();
 
 
         if (deleteRenderer)
