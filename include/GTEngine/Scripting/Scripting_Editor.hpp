@@ -331,7 +331,6 @@ namespace GTEngine
             ///     Argument 2: The ID of the scene node to retrieve.
             int GetSceneNodePtrByID(GTCore::Script &script);
 
-
             /// Retrieves a array of pointers to the scene nodes in the scene.
             ///
             /// @remarks
