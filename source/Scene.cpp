@@ -245,7 +245,7 @@ namespace GTEngine
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true),
-          registeredScript(nullptr)
+          registeredScript(nullptr), isScriptEventsBlocked(false)
     {
     }
 
@@ -259,7 +259,7 @@ namespace GTEngine
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true),
-          registeredScript(nullptr)
+          registeredScript(nullptr), isScriptEventsBlocked(false)
     {
     }
 
@@ -674,7 +674,7 @@ namespace GTEngine
                         // TODO: Call the C++ events.
 
                         // If we're linked to a script we'll need to notify the script about this.
-                        if (this->registeredScript != nullptr)
+                        if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
                         {
                             // OnObjectEnter().
                             auto scriptComponent = sceneNode->GetComponent<ScriptComponent>();
@@ -707,7 +707,7 @@ namespace GTEngine
                         // TODO: Call the C++ events.
 
                         // If we're linked to a script we'll need to notify the script about this.
-                        if (this->registeredScript != nullptr)
+                        if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
                         {
                             // OnObjectLeave().
                             auto scriptComponent = sceneNode->GetComponent<ScriptComponent>();
@@ -1053,6 +1053,23 @@ namespace GTEngine
         this->stateStack.StageUpdate(sceneNodeID);
     }
 
+
+    void Scene::BlockScriptEvents()
+    {
+        this->isScriptEventsBlocked = true;
+        this->updateManager.BlockScriptEvents();
+    }
+
+    void Scene::UnblockScriptEvents()
+    {
+        this->isScriptEventsBlocked = false;
+        this->updateManager.UnblockScriptEvents();
+    }
+
+    bool Scene::IsScriptEventsBlocked() const
+    {
+        return this->isScriptEventsBlocked;
+    }
 
 
 
@@ -2233,7 +2250,7 @@ namespace GTEngine
 
     void Scene::PostSceneNodeScriptEvent_OnStartup()
     {
-        if (this->registeredScript != nullptr)
+        if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
         {
             size_t sceneNodeCount = this->sceneNodes.GetCount();
             for (size_t i = 0; i < sceneNodeCount; ++i)
@@ -2249,7 +2266,7 @@ namespace GTEngine
 
     void Scene::PostSceneNodeScriptEvent_OnStartup(SceneNode &sceneNode)
     {
-        if (this->registeredScript != nullptr)
+        if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
         {
             auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
             if (scriptComponent != nullptr && !scriptComponent->HasOnStartupBeenCalled())
@@ -2267,7 +2284,7 @@ namespace GTEngine
 
     void Scene::PostSceneNodeScriptEvent_OnShutdown()
     {
-        if (this->registeredScript != nullptr)
+        if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
         {
             size_t sceneNodeCount = this->sceneNodes.GetCount();
             for (size_t i = 0; i < sceneNodeCount; ++i)
@@ -2283,7 +2300,7 @@ namespace GTEngine
 
     void Scene::PostSceneNodeScriptEvent_OnShutdown(SceneNode &sceneNode)
     {
-        if (this->registeredScript != nullptr)
+        if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
         {
             auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
             if (scriptComponent != nullptr && scriptComponent->HasOnStartupBeenCalled())
@@ -2383,7 +2400,7 @@ namespace GTEngine
             this->eventHandlers[i]->OnSceneNodeShow(node);
         }
 
-        if (this->registeredScript != nullptr)
+        if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
         {
             auto scriptComponent = node.GetComponent<ScriptComponent>();
             if (scriptComponent != nullptr && scriptComponent->HasOnShow())
@@ -2400,7 +2417,7 @@ namespace GTEngine
             this->eventHandlers[i]->OnSceneNodeHide(node);
         }
 
-        if (this->registeredScript != nullptr)
+        if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
         {
             auto scriptComponent = node.GetComponent<ScriptComponent>();
             if (scriptComponent != nullptr && scriptComponent->HasOnHide())

@@ -19,8 +19,16 @@ namespace GTEngine
     {
     public:
 
+        /// Constructor.
+        SceneUpdateManager()
+            : isScriptEventsBlocked(false)
+        {
+        }
+
         /// Destructor.
-        virtual ~SceneUpdateManager() {}
+        virtual ~SceneUpdateManager()
+        {
+        }
 
 
         /// Determines whether or not a scene node needs updating.
@@ -54,6 +62,36 @@ namespace GTEngine
         /// @remarks
         ///     This should step everything that needs stepping, not including physics.
         virtual void Step(double deltaTimeInSeconds) = 0;
+
+
+
+        /////////////////////////////////////////////
+        // Non-virtual.
+
+        /// Lets the manager know that events should not be posted to scripts.
+        void BlockScriptEvents()
+        {
+            this->isScriptEventsBlocked = true;
+        }
+
+        /// Lets the manager know that events are allowed to be posted to scripts.
+        void UnblockScriptEvents()
+        {
+            this->isScriptEventsBlocked = false;
+        }
+
+        /// Determines whether or not events should be blocked from being posted to scripts.
+        bool IsScriptEventsBlocks() const
+        {
+            return this->isScriptEventsBlocked;
+        }
+
+
+
+    private:
+
+        /// Keeps track of whether or not script events are blocked.
+        bool isScriptEventsBlocked;
     };
 }
 

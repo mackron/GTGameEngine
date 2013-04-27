@@ -517,6 +517,16 @@ namespace GTEngine
 
 
 
+        /// Prevents script events being posted to scene node scripts.
+        void BlockScriptEvents();
+
+        /// Allows script events to be posted to scene node scripts.
+        void UnblockScriptEvents();
+
+        /// Determines whether or not events are being blocked from being posted to scripts.
+        bool IsScriptEventsBlocked() const;
+
+
     // Collision Tests.
     public:
 
@@ -920,6 +930,9 @@ namespace GTEngine
 
         /// A pointer to the script the scene is current registered to.
         GTCore::Script* registeredScript;
+
+        /// Keeps track of whether or not script events are blocked. False by default.
+        bool isScriptEventsBlocked;
 
 
     private:    // No copying.
