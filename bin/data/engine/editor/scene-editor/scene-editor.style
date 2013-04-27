@@ -1,0 +1,12 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+scene-editor-main
+{
+    width:            100%
+    height:           100%
+    
+    child-plane:      horizontal
+    flex-child-width: true
+    
+    horizontal-align: right     // Need this for allowing resizing.
+}
