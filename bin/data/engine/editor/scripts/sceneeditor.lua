@@ -2281,7 +2281,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:SceneEditorContextMenu(self);
     
 
-    self.Scene                   = GTEngine.Scene:Create(GTEngine.System.SceneEditor.GetScenePtr(_internalPtr));
+    self.Scene                   = GTEngine.RegisteredScenes[GTEngine.System.SceneEditor.GetScenePtr(_internalPtr)];
     self.SelectedSceneNode       = nil;
     self.IsLMBDown               = false;
     self.IsRMBDown               = false;
