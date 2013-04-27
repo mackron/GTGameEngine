@@ -2007,8 +2007,265 @@ function GTGUI.Element:SceneEditorTransformPanel(parentPanel)
 end
 
 
+
+function LinkSceneEditorToSystemAPI(sceneEditor)
+
+    -- Helper for retrieving a scene node based on the type of input.
+    --
+    -- 'sceneNode' can be a table (assuming a SceneNode table), pointer (assuming a SceneNode C++ pointer) or an number (assuming scene node ID).
+    function sceneEditor:GetSceneNodePtr(sceneNode)
+        if     type(sceneNode) == 'table'    then
+            return sceneNode._internalPtr;
+        elseif type(sceneNode) == 'userdata' then
+            return sceneNode;
+        elseif type(sceneNode) == 'number'   then
+            return GTEngine.System.SceneEditor.GetSceneNodePtrByID(self._internalPtr, sceneNode);
+        end
+        
+        return nil;
+    end
+
+
+
+    function sceneEditor:GetScenePtr()
+        return GTEngine.System.SceneEditor.GetScenePtr();
+    end
+    
+    function sceneEditor:DeselectAll()
+        GTEngine.System.SceneEditor.DeselectAll(self._internalPtr);
+    end
+    
+    function sceneEditor:SelectSceneNode(nodeToSelect, dontPostBackNotification)
+        local sceneNodeToSelectPtr = self:GetSceneNodePtr(nodeToSelect);
+        
+        if sceneNodeToSelectPtr ~= nil then
+            GTEngine.System.SceneEditor.SelectSceneNode(self._internalPtr, sceneNodeToSelectPtr, dontPostBackNotification);
+        end
+    end
+    
+    function sceneEditor:DeselectSceneNode(nodeToDeselect, dontPostBackNotification)
+        local sceneNodeToDeselectPtr = self:GetSceneNodePtr(nodeToDeselect);
+    
+        if sceneNodeToDeselectPtr ~= nil then
+            GTEngine.System.SceneEditor.DeselectSceneNode(self._internalPtr, sceneNodeToDeselectPtr, dontPostBackNotification);
+        end
+    end
+    
+    function sceneEditor:GetSelectedSceneNodeCount()
+        return GTEngine.System.SceneEditor.GetSelectedSceneNodeCount(self._internalPtr);
+    end
+    
+    function sceneEditor:GetFirstSelectedSceneNodePtr()
+        return GTEngine.System.SceneEditor.GetFirstSelectedSceneNodePtr(self._internalPtr);
+    end
+    
+    function sceneEditor:GetSelectedSceneNodeIDs()
+        return GTEngine.System.SceneEditor.GetSelectedSceneNodeIDs(self._internalPtr);
+    end
+    
+    function sceneEditor:IsSceneNodeSelectedByID(sceneNodeID)
+        return GTEngine.System.SceneEditor.IsSceneNodeSelectedByID(self._internalPtr, sceneNodeID);
+    end
+    
+    
+    function sceneEditor:TryGizmoMouseSelect()
+        return GTEngine.System.SceneEditor.TryGizmoMouseSelect(self._internalPtr);
+    end
+    
+    function sceneEditor:DoMouseSelection()
+        GTEngine.System.SceneEditor.DoMouseSelection(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:RemoveSelectedSceneNodes()
+        GTEngine.System.SceneEditor.RemoveSelectedSceneNodes(self._internalPtr);
+    end
+    
+    function sceneEditor:RemoveSceneNode(sceneNode)
+        local sceneNodeToRemovePtr = self:GetSceneNodePtr(nodeToDeselect);
+        
+        if sceneNodeToRemovePtr ~= nil then
+            GTEngine.System.SceneEditor.RemoveSceneNode(self._internalPtr, sceneNodeToRemovePtr);
+        end
+    end
+    
+    
+    function sceneEditor:DuplicateSelectedSceneNodes()
+        GTEngine.System.SceneEditor.DuplicateSelectedSceneNodes(self._internalPtr);
+    end
+    
+    function sceneEditor:DuplicateSceneNode(sceneNodeToDuplicate)
+        local sceneNodeToDuplicatePtr = self:GetSceneNodePtr(sceneNodeToDuplicate);
+    
+        if sceneNodeToDuplicatePtr ~= nil then
+            GTEngine.System.SceneEditor.DuplicateSceneNode(self._internalPtr, sceneNodeToDuplicatePtr);
+        end
+    end
+    
+    
+    function sceneEditor:SwitchGizmoToTranslateMode()
+        GTEngine.System.SceneEditor.SwitchGizmoToTranslateMode(self._internalPtr);
+    end
+    
+    function sceneEditor:SwitchGizmoToRotateMode()
+        GTEngine.System.SceneEditor.SwitchGizmoToRotateMode(self._internalPtr);
+    end
+    
+    function sceneEditor:SwitchGizmoToScaleMode()
+        GTEngine.System.SceneEditor.SwitchGizmoToScaleMode(self._internalPtr);
+    end
+    
+    function sceneEditor:SwitchGizmoToLocalSpace()
+        GTEngine.System.SceneEditor.SwitchGizmoToLocalSpace(self._internalPtr);
+    end
+    
+    function sceneEditor:SwitchGizmoToGlobalSpace()
+        GTEngine.System.SceneEditor.SwitchGizmoToGlobalSpace(self._internalPtr);
+    end
+    
+    function sceneEditor:ToggleGizmoSpace()
+        GTEngine.System.SceneEditor.ToggleGizmoSpace(self._internalPtr);
+    end
+    
+    function sceneEditor:IsGizmoInLocalSpace()
+        return GTEngine.System.SceneEditor.IsGizmoInLocalSpace(self._internalPtr);
+    end
+    
+    function sceneEditor:IsGizmoInGlobalSpace()
+        return GTEngine.System.SceneEditor.IsGizmoInGlobalSpace(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:StartPlaying()
+        GTEngine.System.SceneEditor.StartPlaying(self._internalPtr);
+    end
+    
+    function sceneEditor:PausePlaying()
+        GTEngine.System.SceneEditor.PausePlaying(self._internalPtr);
+    end
+    
+    function sceneEditor:StopPlaying()
+        GTEngine.System.SceneEditor.StopPlaying(self._internalPtr);
+    end
+    
+    function sceneEditor:IsPlaying()
+        return GTEngine.System.SceneEditor.IsPlaying(self._internalPtr);
+    end
+    
+    function sceneEditor:IsPaused()
+        return GTEngine.System.SceneEditor.IsPaused(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:EnablePhysicsSimulation()
+        GTEngine.System.SceneEditor.EnablePhysicsSimulation(self._internalPtr);
+    end
+    
+    function sceneEditor:DisablePhysicsSimulation()
+        GTEngine.System.SceneEditor.DisablePhysicsSimulation(self._internalPtr);
+    end
+    
+    function sceneEditor:IsPhysicsSimulationEnabled()
+        return GTEngine.System.SceneEditor.IsPhysicsSimulationEnabled(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:CommitStateStackFrame()
+        GTEngine.System.SceneEditor.CommitStateStackFrame(self._internalPtr);
+    end
+    
+    function sceneEditor:Undo()
+        GTEngine.System.SceneEditor.Undo(self._internalPtr);
+    end
+    
+    function sceneEditor:Redo()
+        GTEngine.System.SceneEditor.Redo(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:InstantiatePrefab(relativePath)
+        local rootSceneNodePtr = GTEngine.System.SceneEditor.InstantiatePrefab(self._internalPtr, relativePath);
+        
+        GTEngine.System.SceneEditor.PositionSceneNodeInFrontOfCamera(self._internalPtr, rootSceneNodePtr);
+        
+        return rootSceneNodePtr;
+    end
+    
+    
+    function sceneEditor:GetSceneNodePtrByID(sceneNodeID)
+        return GTEngine.System.SceneEditor.GetSceneNodePtrByID(self._internalPtr, sceneNodeID);
+    end
+    
+    function sceneEditor:GetSceneNodes()
+        return GTEngine.System.SceneEditor.GetSceneNodes(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:PositionSceneNodeInFrontOfCamera(sceneNode)
+        local sceneNodePtr = self:GetSceneNodePtr(sceneNode);
+    
+        if sceneNodePtr ~= nil then
+            GTEngine.System.SceneEditor.PositionSceneNodeInFrontOfCamera(self._internalPtr, sceneNodePtr);
+        end
+    end
+    
+    
+    function sceneEditor:ShowGrid()
+        GTEngine.System.SceneEditor.ShowGrid(self._internalPtr);
+    end
+    
+    function sceneEditor:HideGrid()
+        GTEngine.System.SceneEditor.HideGrid(self._internalPtr);
+    end
+    
+    function sceneEditor:IsShowingGrid()
+        return GTEngine.System.SceneEditor.IsShowingGrid(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:ShowAxisArrows()
+        GTEngine.System.SceneEditor.ShowAxisArrows(self._internalPtr);
+    end
+    
+    function sceneEditor:HideAxisArrows()
+        GTEngine.System.SceneEditor.HideAxisArrows(self._internalPtr);
+    end
+    
+    function sceneEditor:IsShowingAxisArrows()
+        return GTEngine.System.SceneEditor.IsShowingAxisArrows(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:EnableHDR()
+        GTEngine.System.SceneEditor.EnableHDR(self._internalPtr);
+    end
+    
+    function sceneEditor:DisableHDR()
+        GTEngine.System.SceneEditor.DisableHDR(self._internalPtr);
+    end
+    
+    function sceneEditor:IsHDREnabled()
+        return GTEngine.System.SceneEditor.IsHDREnabled(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:EnableBloom()
+        GTEngine.System.SceneEditor.EnableBloom(self._internalPtr);
+    end
+    
+    function sceneEditor:DisableBloom()
+        GTEngine.System.SceneEditor.DisableBloom(self._internalPtr);
+    end
+    
+    function sceneEditor:IsBloomEnabled()
+        return GTEngine.System.SceneEditor.IsBloomEnabled(self._internalPtr);
+    end
+end
+
+
 function GTGUI.Element:SceneEditor(_internalPtr)
-    self:SubEditor();
+    self:SubEditor(_internalPtr);
+    LinkSceneEditorToSystemAPI(self);
     
     self.Viewport        = GTGUI.Server.CreateElement(self, "scene-editor-viewport");
     self.Viewport:SceneEditorViewport();
@@ -2024,8 +2281,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:SceneEditorContextMenu(self);
     
 
-    self._internalPtr            = _internalPtr;
-    self.Scene                   = GTEngine.Scene:Create(GTEngine.System.SceneEditor.GetScenePtr(_internalPtr));
+    self.Scene                   = GTEngine.Scene:Create(GTEngine.System.SceneEditor.GetScenePtr());
     self.SelectedSceneNode       = nil;
     self.IsLMBDown               = false;
     self.IsRMBDown               = false;
@@ -2041,36 +2297,13 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
 
     
-    
-    function self:GetScenePtr()
-        return self.Scene._internalPtr;
-    end
-    
-    
-    function self:DeselectAll()
-        GTEngine.System.SceneEditor.DeselectAll(self._internalPtr);
-    end
-    
-    function self:SelectSceneNode(nodeToSelect, dontPostBackNotification)
-        GTEngine.System.SceneEditor.SelectSceneNode(self._internalPtr, nodeToSelect._internalPtr, dontPostBackNotification);
-    end
-    
+
     function self:SelectSceneNodeByID(nodeToSelectID, dontPostBackNotification)
         GTEngine.System.SceneEditor.SelectSceneNode(self._internalPtr, self:GetSceneNodePtrByID(nodeToSelectID), dontPostBackNotification);
     end
     
-    
-    function self:DeselectSceneNode(nodeToSelect, dontPostBackNotification)
-        GTEngine.System.SceneEditor.DeselectSceneNode(self._internalPtr, nodeToSelect._internalPtr, dontPostBackNotification);
-    end
-    
     function self:DeselectSceneNodeByID(nodeToSelectID, dontPostBackNotification)
         GTEngine.System.SceneEditor.DeselectSceneNode(self._internalPtr, self:GetSceneNodePtrByID(nodeToSelectID), dontPostBackNotification);
-    end
-    
-    
-    function self:GetSelectedSceneNodeCount()
-        return GTEngine.System.SceneEditor.GetSelectedSceneNodeCount(self._internalPtr);
     end
     
     function self:GetSelectedSceneNode()
@@ -2085,59 +2318,17 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         end
     end
     
-    function self:GetSelectedSceneNodeIDs()
-        return GTEngine.System.SceneEditor.GetSelectedSceneNodeIDs(self._internalPtr);
-    end
-    
-    function self:IsSceneNodeSelectedByID(sceneNodeID)
-        return GTEngine.System.SceneEditor.IsSceneNodeSelectedByID(self._internalPtr, sceneNodeID);
-    end
-    
-    
     function self:OrphanSceneNodeByID(sceneNodeID)
         GTEngine.System.SceneNode.Orphan(self:GetSceneNodePtrByID(sceneNodeID), true);
     end
     
-    
-    
-    
-    function self:TryGizmoMouseSelect()
-        return GTEngine.System.SceneEditor.TryGizmoMouseSelect(self._internalPtr);
+    function self:DeleteSelectedSceneNodes()
+        self:RemoveSelectedSceneNodes();
     end
     
-    function self:DoMouseSelection()
-        GTEngine.System.SceneEditor.DoMouseSelection(self._internalPtr);
-    end
-    
-
-    
-    function self:SwitchGizmoToTranslateMode()
-        GTEngine.System.SceneEditor.SwitchGizmoToTranslateMode(self._internalPtr);
-    end
-    
-    function self:SwitchGizmoToRotateMode()
-        GTEngine.System.SceneEditor.SwitchGizmoToRotateMode(self._internalPtr);
-    end
-    
-    function self:SwitchGizmoToScaleMode()
-        GTEngine.System.SceneEditor.SwitchGizmoToScaleMode(self._internalPtr);
-    end
-    
-    function self:SwitchGizmoToLocalSpace()
-        GTEngine.System.SceneEditor.SwitchGizmoToLocalSpace(self._internalPtr);
-    end
-    
-    function self:SwitchGizmoToGlobalSpace()
-        GTEngine.System.SceneEditor.SwitchGizmoToGlobalSpace(self._internalPtr);
-    end
-    
-    function self:ToggleGizmoSpace()
-        GTEngine.System.SceneEditor.ToggleGizmoSpace(self._internalPtr);
-    end
-    
-    
-    function self:DuplicateSelectedSceneNodes()
-        GTEngine.System.SceneEditor.DuplicateSelectedSceneNodes(self._internalPtr);
+    function self:DeleteSceneNodeByID(sceneNodeID)
+        GTEngine.System.SceneEditor.RemoveSceneNode(self._internalPtr, self:GetSceneNodePtrByID(sceneNodeID));
+        self:CommitStateStackFrame();
     end
     
     function self:DuplicateSceneNodeByID(sceneNodeID)
@@ -2146,41 +2337,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
     
     
-    function self:DeleteSelectedSceneNodes()
-        GTEngine.System.SceneEditor.RemoveSelectedSceneNodes(self._internalPtr);
-    end
-    
-    function self:DeleteSceneNodeByID(sceneNodeID)
-        GTEngine.System.SceneEditor.RemoveSceneNode(self._internalPtr, self:GetSceneNodePtrByID(sceneNodeID));
-        self:CommitStateStackFrame();
-    end
-    
-    
-    function self:CommitStateStackFrame()
-        GTEngine.System.SceneEditor.CommitStateStackFrame(self._internalPtr);
-    end
-    
-    function self:Undo()
-        GTEngine.System.SceneEditor.Undo(self._internalPtr);
-    end
-    
-    function self:Redo()
-        GTEngine.System.SceneEditor.Redo(self._internalPtr);
-    end
-    
-    function self:InstantiatePrefab(relativePath)
-        local rootSceneNodePtr = GTEngine.System.SceneEditor.InstantiatePrefab(self._internalPtr, relativePath);
-        
-        GTEngine.System.SceneEditor.PositionSceneNodeInFrontOfCamera(self._internalPtr, rootSceneNodePtr);
-        
-        return rootSceneNodePtr;
-    end
-    
-    
-    
-    function self:GetSceneNodePtrByID(sceneNodeID)
-        return GTEngine.System.SceneEditor.GetSceneNodePtrByID(self._internalPtr, sceneNodeID);
-    end
     
     function self:GetParentSceneNodePtrByID(sceneNodeID)
         return GTEngine.System.SceneNode.GetParentPtr(self:GetSceneNodePtrByID(sceneNodeID));
@@ -2189,67 +2345,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     function self:GetParentSceneNodeIDByID(sceneNodeID)
         return GTEngine.System.SceneNode.GetID(self:GetParentSceneNodePtrByID(sceneNodeID));
     end
-    
-    
-    function self:PositionSceneNodeInFrontOfCamera(sceneNode)
-        GTEngine.System.SceneEditor.PositionSceneNodeInFrontOfCamera(self._internalPtr, sceneNode._internalPtr);
-    end
-    
-    
-    
-    function self:ShowGrid()
-        GTEngine.System.SceneEditor.ShowGrid(self._internalPtr);
-    end
-    
-    function self:HideGrid()
-        GTEngine.System.SceneEditor.HideGrid(self._internalPtr);
-    end
-    
-    function self:IsShowingGrid()
-        return GTEngine.System.SceneEditor.IsShowingGrid(self._internalPtr);
-    end
-    
-    
-    function self:ShowAxisArrows()
-        GTEngine.System.SceneEditor.ShowAxisArrows(self._internalPtr);
-    end
-    
-    function self:HideAxisArrows()
-        GTEngine.System.SceneEditor.HideAxisArrows(self._internalPtr);
-    end
-    
-    function self:IsShowingAxisArrows()
-        return GTEngine.System.SceneEditor.IsShowingAxisArrows(self._internalPtr);
-    end
-    
-    
-    function self:EnableHDR()
-        GTEngine.System.SceneEditor.EnableHDR(self._internalPtr);
-    end
-    
-    function self:DisableHDR()
-        GTEngine.System.SceneEditor.DisableHDR(self._internalPtr);
-    end
-    
-    function self:IsHDREnabled()
-        return GTEngine.System.SceneEditor.IsHDREnabled(self._internalPtr);
-    end
-    
-    
-    function self:EnableBloom()
-        GTEngine.System.SceneEditor.EnableBloom(self._internalPtr);
-    end
-    
-    function self:DisableBloom()
-        GTEngine.System.SceneEditor.DisableBloom(self._internalPtr);
-    end
-    
-    function self:IsBloomEnabled()
-        return GTEngine.System.SceneEditor.IsBloomEnabled(self._internalPtr);
-    end
-    
-    
 
+    
     
     function self:HidePropertyPanels(message)
         self.PropertiesPanel:HidePanels(message);
