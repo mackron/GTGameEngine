@@ -1,5 +1,6 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
+#include <GTEngine/GTEngine.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Scripting.hpp>
@@ -86,6 +87,12 @@ namespace GTEngine
                     auto newDefinition = new ScriptDefinition(absolutePath.c_str(), relativePath.c_str(), scriptString.c_str());
                     LoadedDefinitions.Add(absolutePath.c_str(), ScriptDefinitionReference(newDefinition, 1));
 
+
+                    assert(GlobalGame != nullptr);
+                    {
+                        Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath.c_str(), scriptString.c_str());
+                    }
+
                     return newDefinition;
                 }
                 else
@@ -131,6 +138,11 @@ namespace GTEngine
 
                         if (value.second == 0)
                         {
+                            assert(GlobalGame != nullptr);
+                            {
+                                Scripting::UnloadScriptDefinition(GlobalGame->GetScript(), scriptDefinitionToUnacquire->GetRelativePath());
+                            }
+
                             delete value.first;
                             LoadedDefinitions.RemoveByIndex(i);
                         }
@@ -205,6 +217,12 @@ namespace GTEngine
                     {
                         definition->~ScriptDefinition();
                         new (definition) ScriptDefinition(absolutePath.c_str(), relativePath.c_str(), scriptString.c_str());
+
+
+                        assert(GlobalGame != nullptr);
+                        {
+                            Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath.c_str(), scriptString.c_str());
+                        }
 
                         return true;
                     }
