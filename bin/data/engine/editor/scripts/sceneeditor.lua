@@ -2281,7 +2281,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:SceneEditorContextMenu(self);
     
 
-    self.Scene                   = GTEngine.Scene:Create(GTEngine.System.SceneEditor.GetScenePtr());
+    self.Scene                   = GTEngine.Scene:Create(GTEngine.System.SceneEditor.GetScenePtr(_internalPtr));
     self.SelectedSceneNode       = nil;
     self.IsLMBDown               = false;
     self.IsRMBDown               = false;
@@ -2297,6 +2297,20 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
 
     
+    
+    function self:GetSelectedSceneNode()
+        return self.SelectedSceneNode;
+    end
+    
+    function self:SetSelectedSceneNode(sceneNodeInternalPtr)
+        if sceneNodeInternalPtr ~= nil then
+            self.SelectedSceneNode = self.Scene:GetSceneNodeByID(GTEngine.System.SceneNode.GetID(sceneNodeInternalPtr));
+        else
+            self.SelectedSceneNode = nil;
+        end
+    end
+    
+    
 
     function self:SelectSceneNodeByID(nodeToSelectID, dontPostBackNotification)
         GTEngine.System.SceneEditor.SelectSceneNode(self._internalPtr, self:GetSceneNodePtrByID(nodeToSelectID), dontPostBackNotification);
@@ -2304,18 +2318,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     function self:DeselectSceneNodeByID(nodeToSelectID, dontPostBackNotification)
         GTEngine.System.SceneEditor.DeselectSceneNode(self._internalPtr, self:GetSceneNodePtrByID(nodeToSelectID), dontPostBackNotification);
-    end
-    
-    function self:GetSelectedSceneNode()
-        return self.SelectedSceneNode;
-    end
-    
-    function self:SetSelectedSceneNode(internalPtr)
-        if internalPtr ~= nil then
-            self.SelectedSceneNode = GTEngine.SceneNode:Create(internalPtr);
-        else
-            self.SelectedSceneNode = nil;
-        end
     end
     
     function self:OrphanSceneNodeByID(sceneNodeID)
