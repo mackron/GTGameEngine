@@ -69,6 +69,8 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
         GTEngine.System.SceneEditor.StopPlaying(sceneEditor._internalPtr);
     end);
     
+    
+    
     function self:UpdatePlaybackControls()
         if not GTEngine.System.SceneEditor.IsPlaying(sceneEditor._internalPtr) or GTEngine.System.SceneEditor.IsPaused(sceneEditor._internalPtr) then
             self.PlayPauseButton:DetachStyleClass("scene-editor-toolbar-pause-button");
@@ -83,6 +85,14 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
         else
             self.StopButton:Disable();
         end
+    end
+    
+    
+    function self:UpdateViewMenu()
+        self.MenuBar.View.GridCheckBox:SetChecked(sceneEditor:IsShowingGrid(), true);
+        self.MenuBar.View.AxisArrowsCheckBox:SetChecked(sceneEditor:IsShowingAxisArrows(), true);
+        self.MenuBar.View.EnableHDRCheckBox:SetChecked(sceneEditor:IsHDREnabled(), true);
+        self.MenuBar.View.EnableBloomCheckBox:SetChecked(sceneEditor:IsBloomEnabled(), true);
     end
     
     

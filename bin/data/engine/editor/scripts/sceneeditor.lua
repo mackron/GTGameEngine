@@ -2365,11 +2365,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
 
     
     function self:UpdateViewMenu()
-        -- The 'true' arguments mean to block events from being posted.
-        self.ToolBar.MenuBar.View.GridCheckBox:SetChecked(self:IsShowingGrid(), true);
-        self.ToolBar.MenuBar.View.AxisArrowsCheckBox:SetChecked(self:IsShowingAxisArrows(), true);
-        self.ToolBar.MenuBar.View.EnableHDRCheckBox:SetChecked(self:IsHDREnabled(), true);
-        self.ToolBar.MenuBar.View.EnableBloomCheckBox:SetChecked(self:IsBloomEnabled(), true);
+        self.ToolBar:UpdateViewMenu();
     end
     
     
