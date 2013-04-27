@@ -69,6 +69,11 @@ namespace GTEngine
     {
         this->scene.AttachEventHandler(this->sceneEventHandler);
 
+        // We're going to register the scene to the scripting environment right from the start.
+        this->scene.RegisterToScript(this->GetScript());
+        this->scene.BlockScriptEvents();                        // <-- Don't want any events posted to scripts while in edit mode.
+
+
         // We will add the system scene nodes to the scene before setting the minimum automatic scene node IDs. This will save
         // us from having to manually set IDs on the system nodes.
         this->CreateAndAddSystemNodes();
@@ -276,16 +281,12 @@ namespace GTEngine
                 );
 
 
-                // We want to make sure the scripting environment is synced up with the script library just in case anything has changed.
-                Scripting::SyncScriptDefinitionsWithLibrary(this->GetScript());
-
-                // The scene needs to be registered.
-                this->scene.RegisterToScript(this->GetScript());
-
-
                 // All particle system should be reset.
                 this->ResetAllParticleSystems();
 
+
+                // We want to unblock script events before posting OnStartup.
+                this->scene.UnblockScriptEvents();
 
                 // We'll call OnStartup on all scene nodes here.
                 this->scene.PostSceneNodeScriptEvent_OnStartup();
@@ -324,15 +325,9 @@ namespace GTEngine
                 // We'll call OnShutdown on all scene nodes here.
                 this->scene.PostSceneNodeScriptEvent_OnShutdown();
 
+                // Events need to be blocked from being posted to scripts since we're now in proper edit mode.
+                this->scene.BlockScriptEvents();
 
-                // The scene needs to be unregistered.
-                this->scene.UnregisterFromScript();
-
-                // If the scene was paused it needs to be resumed.
-                if (this->isPaused)
-                {
-                    //this->scene.Resume();
-                }
 
                 this->isPlaying = false;
                 this->isPaused  = false;
