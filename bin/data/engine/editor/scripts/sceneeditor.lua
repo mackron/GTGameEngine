@@ -2007,7 +2007,6 @@ function GTGUI.Element:SceneEditorTransformPanel(parentPanel)
 end
 
 
-
 function GTGUI.Element:SceneEditor(_internalPtr)
     self:SubEditor();
     
@@ -2021,11 +2020,10 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     self.ToolBar:SceneEditorToolBar(self);
     
+    self.ContextMenu     = GTGUI.Server.CreateElement(nil, "scene-editor-context-menu");
+    self.ContextMenu:SceneEditorContextMenu(self);
     
 
-    self.ContextMenu       = GTGUI.Server.New("<div                                                     styleclass='menu'                     style='z-index:100; positioning:absolute; visible:false' />");
-
-    
     self._internalPtr            = _internalPtr;
     self.Scene                   = GTEngine.Scene:Create(GTEngine.System.SceneEditor.GetScenePtr(_internalPtr));
     self.SelectedSceneNode       = nil;
@@ -2035,100 +2033,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.HasMouseCapture         = false;
     self.IsMouseOverViewport     = false;
     
-    
-    
-    self.ContextMenu:Menu();
-    self.ContextMenu:EnableDefaultEvents();
-    
-    self.ContextMenu:AppendItem("Add Empty"):OnPressed(function()
-        local newNode = self.Scene:CreateNewSceneNode();
-        newNode:SetName("Empty");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata);
-        
-        self:PositionSceneNodeInFrontOfCamera(newNode);
-        
-        self:DeselectAll();
-        self:SelectSceneNode(newNode);
-        
-        self:CommitStateStackFrame();
-    end);
-    
-    self.ContextMenu:AppendSeparator();
 
-    self.ContextMenu:AppendItem("Add Cube"):OnPressed(function()
-        local newNode = self.Scene:CreateNewSceneNode();
-        newNode:SetName("Cube");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata);
-        newNode:AddComponent(GTEngine.Components.Model):SetModel("engine/models/default-1x1.dae");
-        newNode:AddComponent(GTEngine.Components.Dynamics):AddBoxCollisionShape(0.5, 0.5, 0.5);
-        
-        self:PositionSceneNodeInFrontOfCamera(newNode);
-        
-        self:DeselectAll();
-        self:SelectSceneNode(newNode);
-        
-        self:CommitStateStackFrame();
-    end);
-    
-    self.ContextMenu:AppendSeparator();
-    
-    self.ContextMenu:AppendItem("Add Point Light"):OnPressed(function()
-        local newNode = self.Scene:CreateNewSceneNode();
-        newNode:SetName("PointLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
-        newNode:AddComponent(GTEngine.Components.PointLight);
-        
-        self:PositionSceneNodeInFrontOfCamera(newNode);
-        
-        self:DeselectAll();
-        self:SelectSceneNode(newNode);
-        
-        self:CommitStateStackFrame();
-    end);
-    
-    self.ContextMenu:AppendItem("Add Spot Light"):OnPressed(function()
-        local newNode = self.Scene:CreateNewSceneNode();
-        newNode:SetName("SpotLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
-        newNode:AddComponent(GTEngine.Components.SpotLight);
-        
-        self:PositionSceneNodeInFrontOfCamera(newNode);
-        
-        self:DeselectAll();
-        self:SelectSceneNode(newNode);
-        
-        self:CommitStateStackFrame();
-    end);
-    
-    self.ContextMenu:AppendItem("Add Directional Light"):OnPressed(function()
-        local newNode = self.Scene:CreateNewSceneNode();
-        newNode:SetName("DirectionalLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
-        newNode:AddComponent(GTEngine.Components.DirectionalLight);
-        
-        self:PositionSceneNodeInFrontOfCamera(newNode);
-        
-        self:DeselectAll();
-        self:SelectSceneNode(newNode);
-        
-        self:CommitStateStackFrame();
-    end);
-    
-    self.ContextMenu:AppendItem("Add Ambient Light"):OnPressed(function()
-        local newNode = self.Scene:CreateNewSceneNode();
-        newNode:SetName("AmbientLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
-        newNode:AddComponent(GTEngine.Components.AmbientLight);
-        
-        self:PositionSceneNodeInFrontOfCamera(newNode);
-        
-        self:DeselectAll();
-        self:SelectSceneNode(newNode);
-        
-        self:CommitStateStackFrame();
-    end);
-    
-    
     
     -- Updates the playback control buttons.
     function self:UpdatePlaybackControls()

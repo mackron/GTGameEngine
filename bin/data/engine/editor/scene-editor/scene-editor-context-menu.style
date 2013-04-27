@@ -1,0 +1,8 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+scene-editor-context-menu includes menu
+{
+    z-index:     100
+    positioning: absolute
+    visible:     false
+}
