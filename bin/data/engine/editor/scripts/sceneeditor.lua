@@ -2019,24 +2019,12 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.PropertiesPanel = self.Panel.PropertiesPanel;
     self.HierarchyPanel  = self.Panel.HierarchyPanel;
     
-    
-    
+    self.ToolBar:SceneEditorToolBar(self);
     
     
 
     self.ContextMenu       = GTGUI.Server.New("<div                                                     styleclass='menu'                     style='z-index:100; positioning:absolute; visible:false' />");
-    
-    self.MenuBar           = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()           .. "' styleclass='menubar' />");
-    
-    self.PlaybackContainer = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()           .. "' styleclass='playback-container' style='margin-left:8px;' />");
-    self.PlayPauseButton   = GTGUI.Server.New("<div parentid='" .. self.PlaybackContainer:GetID() .. "' styleclass='play-button' />");
-    self.StopButton        = GTGUI.Server.New("<div parentid='" .. self.PlaybackContainer:GetID() .. "' styleclass='stop-button' style='enabled:false;' />");
-    
-    self.PhysicsButton     = GTGUI.Server.New("<div parentid='" .. self.ToolBar:GetID()           .. "' styleclass='physics-button-container' style='' />");
-    self.PhysicsButtonIcon = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID()     .. "' styleclass='physics-button-icon'      style='' />");
-    self.PhysicsButtonText = GTGUI.Server.New("<div parentid='" .. self.PhysicsButton:GetID()     .. "' styleclass='physics-button-text'      style=''>Physics</div>");
-    
-    
+
     
     self._internalPtr            = _internalPtr;
     self.Scene                   = GTEngine.Scene:Create(GTEngine.System.SceneEditor.GetScenePtr(_internalPtr));
@@ -2046,68 +2034,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.MouseMovedWhileCaptured = false;                -- Used to determine whether or not to show the right-click context menu.
     self.HasMouseCapture         = false;
     self.IsMouseOverViewport     = false;
-    
-
-    
-    
-    self.MenuBar:MenuBar();
-    self.MenuBar.View = self.MenuBar:AppendItem("View");
-    self.MenuBar.View.menu:SetStyle("padding",   "8px");
-    self.MenuBar.View.menu:SetStyle("min-width", "300px");
-    
-    self.MenuBar.View.GridCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' />");
-    self.MenuBar.View.GridCheckBox:CheckBox("Show Grid");
-    self.MenuBar.View.GridCheckBox:OnChecked(function()
-        self:ShowGrid();
-    end);
-    self.MenuBar.View.GridCheckBox:OnUnchecked(function()
-        self:HideGrid();
-    end);
-    
-    self.MenuBar.View.AxisArrowsCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' style='margin-top:4px;' />");
-    self.MenuBar.View.AxisArrowsCheckBox:CheckBox("Show Axis Guide");
-    self.MenuBar.View.AxisArrowsCheckBox:OnChecked(function()
-        self:ShowAxisArrows();
-    end);
-    self.MenuBar.View.AxisArrowsCheckBox:OnUnchecked(function()
-        self:HideAxisArrows();
-    end);
-    
-    GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' style='width:100%; height:1px; background-color:#5a5a5a; margin:0px 8px;' />");
-    
-    self.MenuBar.View.EnableHDRCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' />");
-    self.MenuBar.View.EnableHDRCheckBox:CheckBox("Enable HDR");
-    self.MenuBar.View.EnableHDRCheckBox:OnChecked(function()
-        self:EnableHDR();
-    end);
-    self.MenuBar.View.EnableHDRCheckBox:OnUnchecked(function()
-        self:DisableHDR();
-    end);
-    
-    self.MenuBar.View.EnableBloomCheckBox = GTGUI.Server.New("<div parentid='" .. self.MenuBar.View.menu:GetID() .. "' styleclass='checkbox' style='margin-top:4px;' />");
-    self.MenuBar.View.EnableBloomCheckBox:CheckBox("Enable Bloom");
-    self.MenuBar.View.EnableBloomCheckBox:OnChecked(function()
-        self:EnableBloom();
-    end);
-    self.MenuBar.View.EnableBloomCheckBox:OnUnchecked(function()
-        self:DisableBloom();
-    end);
-    
-    
-    --[[
-    self.MenuBar.View.ShowGrid = self.MenuBar.View.menu:AppendItem("Show Grid"):OnPressed(function()
-        self.MenuBar:CollapseMenu();
-    end);
-    self.MenuBar.View.HideGrid = self.MenuBar.View.menu:AppendItem("Hide Grid"):OnPressed(function()
-        self.MenuBar:CollapseMenu();
-    end);
-    
-    self.MenuBar.View.menu:AppendSeparator();
-    
-    self.MenuBar.View.RenderingSettings = self.MenuBar.View.menu:AppendItem("Rendering Settings..."):OnPressed(function()
-        self.MenuBar:CollapseMenu();
-    end);
-    ]]
     
     
     
@@ -2204,82 +2130,17 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     
     
-    self.PlayPauseButton:OnPressed(function()
-        if not GTEngine.System.SceneEditor.IsPlaying(self._internalPtr) or GTEngine.System.SceneEditor.IsPaused(self._internalPtr) then
-            GTEngine.System.SceneEditor.StartPlaying(self._internalPtr);
-        else
-            GTEngine.System.SceneEditor.PausePlaying(self._internalPtr);
-        end
-    end);
-    
-    self.StopButton:OnPressed(function()
-        GTEngine.System.SceneEditor.StopPlaying(self._internalPtr);
-    end);
-    
     -- Updates the playback control buttons.
     function self:UpdatePlaybackControls()
-        if not GTEngine.System.SceneEditor.IsPlaying(self._internalPtr) or GTEngine.System.SceneEditor.IsPaused(self._internalPtr) then
-            self.PlayPauseButton:DetachStyleClass("pause-button");
-            self.PlayPauseButton:AttachStyleClass("play-button");
-        else
-            self.PlayPauseButton:DetachStyleClass("play-button");
-            self.PlayPauseButton:AttachStyleClass("pause-button");
-        end
-        
-        if GTEngine.System.SceneEditor.IsPlaying(self._internalPtr) then
-            self.StopButton:Enable();
-        else
-            self.StopButton:Disable();
-        end
+        self.ToolBar:UpdatePlaybackControls();
     end
-    
-    -- Updates the "Play" button icon to show the correct icon based on whether or not the game is playing. This is never
-    -- actually called from the scripting environment, and instead is called from the C++ side.
-    function self:UpdatePlayButtonIcon()
-        if GTEngine.System.SceneEditor.IsPlaying(self._internalPtr) then
-            self.PlayButtonIcon:AttachStyleClass("physics-button-icon-stop");
-        else
-            self.PlayButtonIcon:DetachStyleClass("physics-button-icon-stop");
-        end
-    end
-    
-    
-    
-    self.PhysicsButton:OnPressed(function()
-        if GTEngine.System.SceneEditor.IsPhysicsSimulationEnabled(self._internalPtr) then
-            GTEngine.System.SceneEditor.DisablePhysicsSimulation(self._internalPtr);
-        else
-            GTEngine.System.SceneEditor.EnablePhysicsSimulation(self._internalPtr);
-        end
-    end);
-    
-    -- Updates the physics button icon to show the correct icon based on whether or not the simulation is enabled. This is never
-    -- actually called from the scripting environment, and instead is called from the C++ side.
-    function self:UpdatePhysicsButtonIcon()
-        if GTEngine.System.SceneEditor.IsPhysicsSimulationEnabled(self._internalPtr) then
-            self.PhysicsButtonIcon:AttachStyleClass("physics-button-icon-stop");
-        else
-            self.PhysicsButtonIcon:DetachStyleClass("physics-button-icon-stop");
-        end
-    end
-    
-    
+
     
     
     function self:GetScenePtr()
         return self.Scene._internalPtr;
     end
     
-    --[[
-    function self:AddSceneNode(name)
-        local node = GTEngine.SceneNode:Create();
-        node:SetName(name);
-        
-        self.Scene:AddSceneNode(node);
-
-        return node;
-    end
-    ]]
     
     function self:DeselectAll()
         GTEngine.System.SceneEditor.DeselectAll(self._internalPtr);
@@ -2508,10 +2369,10 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     function self:UpdateViewMenu()
         -- The 'true' arguments mean to block events from being posted.
-        self.MenuBar.View.GridCheckBox:SetChecked(self:IsShowingGrid(), true);
-        self.MenuBar.View.AxisArrowsCheckBox:SetChecked(self:IsShowingAxisArrows(), true);
-        self.MenuBar.View.EnableHDRCheckBox:SetChecked(self:IsHDREnabled(), true);
-        self.MenuBar.View.EnableBloomCheckBox:SetChecked(self:IsBloomEnabled(), true);
+        self.ToolBar.MenuBar.View.GridCheckBox:SetChecked(self:IsShowingGrid(), true);
+        self.ToolBar.MenuBar.View.AxisArrowsCheckBox:SetChecked(self:IsShowingAxisArrows(), true);
+        self.ToolBar.MenuBar.View.EnableHDRCheckBox:SetChecked(self:IsHDREnabled(), true);
+        self.ToolBar.MenuBar.View.EnableBloomCheckBox:SetChecked(self:IsBloomEnabled(), true);
     end
     
     
