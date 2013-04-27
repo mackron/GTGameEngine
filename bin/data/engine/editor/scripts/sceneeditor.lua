@@ -2081,8 +2081,8 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         GTEngine.System.SceneEditor.RemoveSelectedSceneNodes(self._internalPtr);
     end
     
-    function sceneEditor:RemoveSceneNode(sceneNode)
-        local sceneNodeToRemovePtr = self:GetSceneNodePtr(nodeToDeselect);
+    function sceneEditor:RemoveSceneNode(sceneNodeToRemove)
+        local sceneNodeToRemovePtr = self:GetSceneNodePtr(sceneNodeToRemove);
         
         if sceneNodeToRemovePtr ~= nil then
             GTEngine.System.SceneEditor.RemoveSceneNode(self._internalPtr, sceneNodeToRemovePtr);
@@ -2310,42 +2310,35 @@ function GTGUI.Element:SceneEditor(_internalPtr)
         end
     end
     
-    
-
-    function self:SelectSceneNodeByID(nodeToSelectID, dontPostBackNotification)
-        GTEngine.System.SceneEditor.SelectSceneNode(self._internalPtr, self:GetSceneNodePtrByID(nodeToSelectID), dontPostBackNotification);
-    end
-    
-    function self:DeselectSceneNodeByID(nodeToSelectID, dontPostBackNotification)
-        GTEngine.System.SceneEditor.DeselectSceneNode(self._internalPtr, self:GetSceneNodePtrByID(nodeToSelectID), dontPostBackNotification);
-    end
-    
-    function self:OrphanSceneNodeByID(sceneNodeID)
-        GTEngine.System.SceneNode.Orphan(self:GetSceneNodePtrByID(sceneNodeID), true);
-    end
-    
     function self:DeleteSelectedSceneNodes()
         self:RemoveSelectedSceneNodes();
     end
     
-    function self:DeleteSceneNodeByID(sceneNodeID)
-        GTEngine.System.SceneEditor.RemoveSceneNode(self._internalPtr, self:GetSceneNodePtrByID(sceneNodeID));
-        self:CommitStateStackFrame();
-    end
-    
-    function self:DuplicateSceneNodeByID(sceneNodeID)
-        GTEngine.System.SceneEditor.DuplicateSceneNode(self._internalPtr, self:GetSceneNodePtrByID(sceneNodeID));
+    function self:DeleteSceneNode(sceneNode)
+        self:RemoveSceneNode(sceneNode);
         self:CommitStateStackFrame();
     end
     
     
+    function self:OrphanSceneNode(sceneNode)
+        local sceneNodePtr = self:GetSceneNodePtr(sceneNode);
     
-    function self:GetParentSceneNodePtrByID(sceneNodeID)
-        return GTEngine.System.SceneNode.GetParentPtr(self:GetSceneNodePtrByID(sceneNodeID));
+        if sceneNodePtr ~= nil then
+            GTEngine.System.SceneNode.Orphan(sceneNodePtr, true);
+        end
     end
     
-    function self:GetParentSceneNodeIDByID(sceneNodeID)
-        return GTEngine.System.SceneNode.GetID(self:GetParentSceneNodePtrByID(sceneNodeID));
+    
+    function self:GetParentSceneNodePtr(sceneNode)
+        local sceneNodePtr = self:GetSceneNodePtr(sceneNode);
+    
+        if sceneNodePtr ~= nil then
+            return GTEngine.System.SceneNode.GetParentPtr(sceneNodePtr);
+        end
+    end
+    
+    function self:GetParentSceneNodeID(sceneNode)
+        return GTEngine.System.SceneNode.GetID(self:GetParentSceneNodePtr(sceneNode));
     end
 
     
