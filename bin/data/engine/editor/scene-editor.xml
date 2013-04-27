@@ -5,10 +5,12 @@
 <style  url="scene-editor/scene-editor.style"          />
 <style  url="scene-editor/scene-editor-panel.style"    />
 <style  url="scene-editor/scene-editor-viewport.style" />
+<style  url="scene-editor/scene-editor-toolbar.style"  />
 
 <script url="scene-editor/scene-editor.lua"            />
 <script url="scene-editor/scene-editor-panel.lua"      />
 <script url="scene-editor/scene-editor-viewport.lua"   />
+<script url="scene-editor/scene-editor-toolbar.lua"    />
 
 
 

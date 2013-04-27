@@ -467,9 +467,6 @@ namespace GTEngine
         /// Updates the icon on the "Play" button.
         void UpdatePlaybackControls();
 
-        /// Updates the icon on the Physics button.
-        void UpdatePhysicsButtonIcon();
-
 
         /// Recursively maps a scene node to a prefab.
         void MapSceneNodeToPrefab(SceneNode &sceneNode, SceneNodeClass &prefab, size_t &prefabSceneNodeIndex);

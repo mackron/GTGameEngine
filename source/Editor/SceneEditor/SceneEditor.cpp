@@ -410,8 +410,6 @@ namespace GTEngine
             this->selectedNodesBeforePhysicsSimulation = this->selectedNodes;
             this->physicsManager.EnableSimulation();
             this->physicsManager.ActivateAllRigidBodies();
-
-            this->UpdatePhysicsButtonIcon();
         }
     }
 
@@ -430,8 +428,6 @@ namespace GTEngine
                 // We want to revert the selections, but we don't want to stage these on the state stack.
                 this->DeselectAll(SelectionOption_NoStateStaging);
                 this->SelectSceneNodes(this->selectedNodesBeforePhysicsSimulation, SelectionOption_NoStateStaging);
-
-                this->UpdatePhysicsButtonIcon();
             }
             this->isUpdatingFromStateStack = false;
         }
@@ -2627,27 +2623,6 @@ namespace GTEngine
             assert(script.IsTable(-1));
             {
                 script.Push("UpdatePlaybackControls");
-                script.GetTableValue(-2);
-                assert(script.IsFunction(-1));
-                {
-                    script.PushValue(-2);   // <-- 'self'.
-                    script.Call(1, 0);
-                }
-            }
-            script.Pop(1);
-        }
-    }
-
-    void SceneEditor::UpdatePhysicsButtonIcon()
-    {
-        if (this->GUI.Main != nullptr)
-        {
-            auto &script = this->GetScript();
-
-            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-            assert(script.IsTable(-1));
-            {
-                script.Push("UpdatePhysicsButtonIcon");
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
