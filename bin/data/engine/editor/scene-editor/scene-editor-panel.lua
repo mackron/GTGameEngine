@@ -306,7 +306,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             
             if GTEngine.System.SceneNode.GetParentPtr(sceneNodePtr) ~= nil then
                 GTEngine.System.SceneNode.Orphan(sceneNodePtr, true);
-                self.SceneEditor:SelectSceneNodeByID(data.droppedElement.sceneNodeID);
+                self.SceneEditor:SelectSceneNode(data.droppedElement.sceneNodeID);
                 
                 -- Undo/Redo point.
                 self.SceneEditor:CommitStateStackFrame();
@@ -320,19 +320,19 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
     self.ContextMenu:EnableDefaultEvents();
     
     self.ContextMenu.Duplicate = self.ContextMenu:AppendItem("Duplicate"):OnPressed(function()
-        self.SceneEditor:DuplicateSceneNodeByID(self.ContextMenu.SceneNodeID);
+        self.SceneEditor:DuplicateSceneNode(self.ContextMenu.SceneNodeID);
     end);
     
     self.ContextMenu.Duplicate = self.ContextMenu:AppendItem("Delete"):OnPressed(function()
-        self.SceneEditor:DeleteSceneNodeByID(self.ContextMenu.SceneNodeID);
+        self.SceneEditor:DeleteSceneNode(self.ContextMenu.SceneNodeID);
     end);
     
     
     self.ContextMenu:AppendSeparator();
     
     self.ContextMenu.Orphan = self.ContextMenu:AppendItem("Orphan"):OnPressed(function()
-        self.SceneEditor:OrphanSceneNodeByID(self.ContextMenu.SceneNodeID);
-        self.SceneEditor:SelectSceneNodeByID(self.ContextMenu.SceneNodeID);
+        self.SceneEditor:OrphanSceneNode(self.ContextMenu.SceneNodeID);
+        self.SceneEditor:SelectSceneNode(self.ContextMenu.SceneNodeID);
         
         -- Undo/Redo point.
         self.SceneEditor:CommitStateStackFrame();
@@ -343,7 +343,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
         self.ContextMenu.SceneNodeID = item.SceneNodeID;
         
         -- Some buttons might need to be disabled.
-        if self.SceneEditor:GetParentSceneNodePtrByID(item.SceneNodeID) == nil then
+        if self.SceneEditor:GetParentSceneNodePtr(item.SceneNodeID) == nil then
             self.ContextMenu.Orphan:Disable();
         else
             self.ContextMenu.Orphan:Enable();
@@ -426,7 +426,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
                         
                         if parentSceneNodePtr ~= nil and childSceneNodePtr ~= nil and not GTEngine.System.SceneNode.IsAncestor(parentSceneNodePtr, childSceneNodePtr) then
                             GTEngine.System.SceneNode.AttachChild(parentSceneNodePtr, childSceneNodePtr, true);
-                            self.SceneEditor:SelectSceneNodeByID(childSceneNodeID);
+                            self.SceneEditor:SelectSceneNode(childSceneNodeID);
                             
                             -- Undo/Redo point.
                             self.SceneEditor:CommitStateStackFrame();
@@ -450,11 +450,11 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             
             
             item:OnSelected(function()
-                self.SceneEditor:SelectSceneNodeByID(item.SceneNodeID);
+                self.SceneEditor:SelectSceneNode(item.SceneNodeID);
             end);
             
             item:OnDeselected(function()
-                self.SceneEditor:DeselectSceneNodeByID(item.SceneNodeID);
+                self.SceneEditor:DeselectSceneNode(item.SceneNodeID);
             end);
             
             

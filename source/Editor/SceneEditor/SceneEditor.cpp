@@ -1015,6 +1015,8 @@ namespace GTEngine
         auto &newNode = this->CopySceneNodeAndChildren(sceneNodeToDuplicate, sceneNodeToDuplicate.GetParent());
         this->SelectSceneNode(newNode, SelectionOption_Force);
 
+        this->CommitStateStackFrame();
+
         return newNode;
     }
 
