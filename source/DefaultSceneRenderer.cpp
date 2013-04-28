@@ -65,7 +65,7 @@ namespace GTEngine
           shadowDirectionalLights(), shadowPointLights(), shadowSpotLights(),
           visibleModels(), modelsToAnimate(),
           visibleParticleSystems(),
-          allLightIndices(),
+          allLights(),
           projectionMatrix(), viewMatrix(), projectionViewMatrix()
     {
         auto cameraNode = viewportIn.GetCameraNode();
@@ -152,7 +152,7 @@ namespace GTEngine
         {
             if (!this->visibleModels.Exists(modelComponent))
             {
-                this->visibleModels.Add(modelComponent, new LightIndices);
+                this->visibleModels.Add(modelComponent, new LightGroup);
             }
         }
     }
@@ -169,14 +169,14 @@ namespace GTEngine
                 light = new SceneRendererPointLight;
                 this->pointLights.Add(lightComponent, light);
 
-                this->allLightIndices.pointLights.PushBack(this->pointLights.count - 1);
+                this->allLights.pointLights.PushBack(this->pointLights.count - 1);
             }
             else
             {
                 light = new DefaultSceneRendererShadowPointLight;
                 this->shadowPointLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowPointLight*>(light));
 
-                this->allLightIndices.shadowPointLights.PushBack(this->shadowPointLights.count - 1);
+                this->allLights.shadowPointLights.PushBack(this->shadowPointLights.count - 1);
             }
 
 
@@ -216,14 +216,14 @@ namespace GTEngine
                 light = new SceneRendererSpotLight;
                 this->spotLights.Add(lightComponent, light);
 
-                this->allLightIndices.spotLights.PushBack(this->spotLights.count - 1);
+                this->allLights.spotLights.PushBack(this->spotLights.count - 1);
             }
             else
             {
                 light = new DefaultSceneRendererShadowSpotLight;
                 this->shadowSpotLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowSpotLight*>(light));
 
-                this->allLightIndices.shadowSpotLights.PushBack(this->shadowSpotLights.count - 1);
+                this->allLights.shadowSpotLights.PushBack(this->shadowSpotLights.count - 1);
             }
 
 
@@ -256,7 +256,7 @@ namespace GTEngine
 
             this->ambientLights.Add(lightComponent, light);
 
-            this->allLightIndices.ambientLights.PushBack(this->ambientLights.count - 1);
+            this->allLights.ambientLights.PushBack(this->ambientLights.count - 1);
         }
     }
 
@@ -272,14 +272,14 @@ namespace GTEngine
                 light = new SceneRendererDirectionalLight;
                 this->directionalLights.Add(lightComponent, light);
 
-                this->allLightIndices.directionalLights.PushBack(this->directionalLights.count - 1);
+                this->allLights.directionalLights.PushBack(this->directionalLights.count - 1);
             }
             else
             {
                 light = new DefaultSceneRendererShadowDirectionalLight;
                 this->shadowDirectionalLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowDirectionalLight*>(light));
 
-                this->allLightIndices.shadowDirectionalLights.PushBack(this->shadowDirectionalLights.count - 1);
+                this->allLights.shadowDirectionalLights.PushBack(this->shadowDirectionalLights.count - 1);
             }
 
 
@@ -302,14 +302,14 @@ namespace GTEngine
         {
             if (!this->visibleParticleSystems.Exists(particleSystemComponent))
             {
-                this->visibleParticleSystems.Add(particleSystemComponent, new LightIndices);
+                this->visibleParticleSystems.Add(particleSystemComponent, new LightGroup);
             }
         }
     }
 
 
 
-    void DefaultSceneRendererVisibleObjects::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightIndices* lights, bool drawHighlight)
+    void DefaultSceneRendererVisibleObjects::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightGroup* lights, bool drawHighlight)
     {
         // TODO: Consider ways to remove these const_casts. Don't want to make the pointers in SceneRendererMesh constant because
         //       the user of that structure probably won't want a constant pointer.
@@ -390,7 +390,7 @@ namespace GTEngine
                 // If the lights pointer is null, we're going to make it affected by every light.
                 if (mesh.touchingLights == nullptr)
                 {
-                    const_cast<DefaultSceneRendererMesh &>(mesh).touchingLights = &this->allLightIndices;
+                    const_cast<DefaultSceneRendererMesh &>(mesh).touchingLights = &this->allLights;
                 }
 
                 objectList->PushBack(mesh);
@@ -763,6 +763,56 @@ namespace GTEngine
                         }
                     }
                 }
+            }
+        }
+
+
+
+        // We need to look at each mesh and sub-divide touching lights into groups.
+        this->PostProcess_AllocateLightGroups();
+    }
+
+
+    void DefaultSceneRendererVisibleObjects::PostProcess_AllocateLightGroups()
+    {
+        for (size_t iMesh = 0; iMesh < this->blendedTransparentObjects.count; ++iMesh)
+        {
+            auto &mesh = this->blendedTransparentObjects[iMesh];
+
+            assert(mesh.touchingLights != nullptr);
+            {
+                this->PostProcess_SubdivideLightGroup(*mesh.touchingLights, mesh.lightGroups);
+            }
+        }
+    }
+
+    void DefaultSceneRendererVisibleObjects::PostProcess_SubdivideLightGroup(const LightGroup &source, GTCore::Vector<LightGroup*> &output)
+    {
+        // For starters, all shadowed lights need to be in their own group.
+        for (size_t i = 0; i < source.shadowDirectionalLights.count; ++i)
+        {
+            auto lightGroup = new LightGroup;
+            {
+                lightGroup->shadowDirectionalLights.PushBack(source.shadowDirectionalLights[i]);
+                lightGroup->id.AddShadowDirectionalLight();
+            }
+        }
+
+        for (size_t i = 0; i < source.shadowPointLights.count; ++i)
+        {
+            auto lightGroup = new LightGroup;
+            {
+                lightGroup->shadowPointLights.PushBack(source.shadowPointLights[i]);
+                lightGroup->id.AddShadowPointLight();
+            }
+        }
+
+        for (size_t i = 0; i < source.shadowSpotLights.count; ++i)
+        {
+            auto lightGroup = new LightGroup;
+            {
+                lightGroup->shadowSpotLights.PushBack(source.shadowSpotLights[i]);
+                lightGroup->id.AddShadowSpotLight();
             }
         }
     }
