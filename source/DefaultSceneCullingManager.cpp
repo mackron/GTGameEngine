@@ -426,11 +426,12 @@ namespace GTEngine
             {
                 auto collisionObject = collisionObjects[i];
                 assert(collisionObject != nullptr);
-
-                auto sceneNode = static_cast<SceneNode*>(collisionObject->getUserPointer());
-                if (sceneNode != nullptr)
                 {
-                    this->ProcessVisibleSceneNode(*sceneNode, callbackIn);
+                    auto cullingObject = static_cast<CullingObject*>(collisionObject->getUserPointer());
+                    assert(cullingObject != nullptr);
+                    {
+                        this->ProcessVisibleSceneNode(cullingObject->sceneNode, callbackIn);
+                    }
                 }
             }
         }
@@ -649,10 +650,12 @@ namespace GTEngine
         assert(collisionObject != nullptr);
 
 
-        auto sceneNode = static_cast<SceneNode*>(collisionObject->getUserPointer());
-        if (sceneNode != nullptr)
+        auto cullingObject = static_cast<CullingObject*>(collisionObject->getUserPointer());
+        assert(cullingObject != nullptr);
         {
-            if (sceneNode->IsVisible())
+            auto &sceneNode = cullingObject->sceneNode;
+
+            if (sceneNode.IsVisible())
             {
                 // We check the objects collision group to determine the type of the component we're retrieving.
                 if (proxy->m_collisionFilterGroup & CollisionGroups::Occluder)
@@ -666,34 +669,34 @@ namespace GTEngine
                 }
                 else if (proxy->m_collisionFilterGroup & CollisionGroups::Model)
                 {
-                    auto modelComponent = sceneNode->GetComponent<ModelComponent>();
+                    auto modelComponent = sceneNode.GetComponent<ModelComponent>();
                     assert(modelComponent != nullptr);
 
                     if (modelComponent->GetModel() != nullptr && modelComponent->IsModelVisible())
                     {
-                        this->cullingManager.ProcessVisibleModel(*sceneNode, *this->callback);
+                        this->cullingManager.ProcessVisibleModel(sceneNode, *this->callback);
                     }
                 }
                 else if (proxy->m_collisionFilterGroup & CollisionGroups::PointLight)
                 {
-                    assert(sceneNode->GetComponent<PointLightComponent>() != nullptr);
+                    assert(sceneNode.GetComponent<PointLightComponent>() != nullptr);
 
-                    this->cullingManager.ProcessVisiblePointLight(*sceneNode, *this->callback);
+                    this->cullingManager.ProcessVisiblePointLight(sceneNode, *this->callback);
                 }
                 else if (proxy->m_collisionFilterGroup & CollisionGroups::SpotLight)
                 {
-                    assert(sceneNode->GetComponent<SpotLightComponent>() != nullptr);
+                    assert(sceneNode.GetComponent<SpotLightComponent>() != nullptr);
 
-                    this->cullingManager.ProcessVisibleSpotLight(*sceneNode, *this->callback);
+                    this->cullingManager.ProcessVisibleSpotLight(sceneNode, *this->callback);
                 }
                 else if (proxy->m_collisionFilterGroup & CollisionGroups::ParticleSystem)
                 {
-                    auto particleSystemComponent = sceneNode->GetComponent<ParticleSystemComponent>();
+                    auto particleSystemComponent = sceneNode.GetComponent<ParticleSystemComponent>();
                     assert(particleSystemComponent != nullptr);
                     {
                         if (particleSystemComponent->GetParticleSystem() != nullptr)
                         {
-                            this->cullingManager.ProcessVisibleParticleSystem(*sceneNode, *this->callback);
+                            this->cullingManager.ProcessVisibleParticleSystem(sceneNode, *this->callback);
                         }
                     }
                 }
