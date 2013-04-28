@@ -61,11 +61,11 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::RemoveModel(SceneNode &sceneNode)
     {
-        auto iMetadata = this->models.Find(&sceneNode);
-        if (iMetadata != nullptr)
+        auto iCullingObject = this->models.Find(&sceneNode);
+        if (iCullingObject != nullptr)
         {
-            delete iMetadata->value;
-            this->models.RemoveByIndex(iMetadata->index);
+            delete iCullingObject->value;
+            this->models.RemoveByIndex(iCullingObject->index);
         }
     }
 
@@ -75,27 +75,35 @@ namespace GTEngine
         auto pointLightComponent = sceneNode.GetComponent<PointLightComponent>();
         assert(pointLightComponent != nullptr);
         {
+            float radius = pointLightComponent->GetRadius();
+
+            auto cullingObject = new CullingObject_Sphere(CollisionGroups::PointLight, CollisionGroups::Model | CollisionGroups::ParticleSystem, radius);
+            cullingObject->collisionObject.setUserPointer(&sceneNode);
+
+
+            // The transform needs to be set properly.
             btTransform worldTransform;
             sceneNode.GetWorldTransform(worldTransform);
 
-            auto metadata = new PointLightMetadata(pointLightComponent->GetRadius(), worldTransform);
-            metadata->collisionObject->setUserPointer(&sceneNode);
+            cullingObject->SetTransform(worldTransform);
 
-            this->world.AddCollisionObject(*metadata->collisionObject,
-                CollisionGroups::PointLight,
-                CollisionGroups::Model | CollisionGroups::ParticleSystem);
 
-            this->pointLights.Add(&sceneNode, metadata);
+            // The culling object needs to be added to the world...
+            this->world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
+
+
+            // With everything setup we now just add the store a pointer culling object.
+            this->pointLights.Add(&sceneNode, cullingObject);
         }
     }
 
     void DefaultSceneCullingManager::RemovePointLight(SceneNode &sceneNode)
     {
-        auto iMetadata = this->pointLights.Find(&sceneNode);
-        if (iMetadata != nullptr)
+        auto iCullingObject = this->pointLights.Find(&sceneNode);
+        if (iCullingObject != nullptr)
         {
-            delete iMetadata->value;
-            this->pointLights.RemoveByIndex(iMetadata->index);
+            delete iCullingObject->value;
+            this->pointLights.RemoveByIndex(iCullingObject->index);
         }
     }
 
@@ -105,27 +113,36 @@ namespace GTEngine
         auto spotLightComponent = sceneNode.GetComponent<SpotLightComponent>();
         assert(spotLightComponent != nullptr);
         {
+            float outerAngle = spotLightComponent->GetOuterAngle();
+            float height     = spotLightComponent->GetLength();
+
+            auto cullingObject = new CullingObject_SpotLightCone(CollisionGroups::SpotLight, CollisionGroups::Model | CollisionGroups::ParticleSystem, outerAngle, height);
+            cullingObject->collisionObject.setUserPointer(&sceneNode);
+
+
+            // The transform needs to be set properly.
             btTransform worldTransform;
             sceneNode.GetWorldTransform(worldTransform);
 
-            auto metadata = new SpotLightMetadata(spotLightComponent->GetOuterAngle(), spotLightComponent->GetLength(), worldTransform);
-            metadata->collisionObject->setUserPointer(&sceneNode);
+            cullingObject->SetTransform(worldTransform);
 
-            this->world.AddCollisionObject(*metadata->collisionObject,
-                CollisionGroups::SpotLight,
-                CollisionGroups::Model | CollisionGroups::ParticleSystem);
 
-            this->spotLights.Add(&sceneNode, metadata);
+            // The culling object needs to be added to the world...
+            this->world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
+
+
+            // With everything setup we now just add the store a pointer culling object.
+            this->spotLights.Add(&sceneNode, cullingObject);
         }
     }
 
     void DefaultSceneCullingManager::RemoveSpotLight(SceneNode &sceneNode)
     {
-        auto iMetadata = this->spotLights.Find(&sceneNode);
-        if (iMetadata != nullptr)
+        auto iCullingObject = this->spotLights.Find(&sceneNode);
+        if (iCullingObject != nullptr)
         {
-            delete iMetadata->value;
-            this->spotLights.RemoveByIndex(iMetadata->index);
+            delete iCullingObject->value;
+            this->spotLights.RemoveByIndex(iCullingObject->index);
         }
     }
 
@@ -192,11 +209,11 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::RemoveParticleSystem(SceneNode &sceneNode)
     {
-        auto iMetadata = this->particleSystems.Find(&sceneNode);
-        if (iMetadata != nullptr)
+        auto iCullingObject = this->particleSystems.Find(&sceneNode);
+        if (iCullingObject != nullptr)
         {
-            delete iMetadata->value;
-            this->particleSystems.RemoveByIndex(iMetadata->index);
+            delete iCullingObject->value;
+            this->particleSystems.RemoveByIndex(iCullingObject->index);
         }
     }
 
@@ -228,48 +245,48 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::UpdateModelTransform(SceneNode &sceneNode)
     {
-        auto iMetadata = this->models.Find(&sceneNode);
-        assert(iMetadata != nullptr);
+        auto iCullingObject = this->models.Find(&sceneNode);
+        assert(iCullingObject != nullptr);
         {
-            auto metadata = iMetadata->value;
-            assert(metadata != nullptr);
+            auto cullingObject = iCullingObject->value;
+            assert(cullingObject != nullptr);
             {
                 btTransform transform;
                 sceneNode.GetWorldTransform(transform);
 
-                metadata->SetTransform(transform);
+                cullingObject->SetTransform(transform);
             }
         }
     }
 
     void DefaultSceneCullingManager::UpdatePointLightTransform(SceneNode &sceneNode)
     {
-        auto iMetadata = this->pointLights.Find(&sceneNode);
-        assert(iMetadata != nullptr);
+        auto iCullingObject = this->pointLights.Find(&sceneNode);
+        assert(iCullingObject != nullptr);
         {
-            auto metadata = iMetadata->value;
-            assert(metadata != nullptr);
+            auto cullingObject = iCullingObject->value;
+            assert(cullingObject != nullptr);
             {
                 btTransform transform;
                 sceneNode.GetWorldTransform(transform);
 
-                metadata->UpdateTransform(transform);
+                cullingObject->SetTransform(transform);
             }
         }
     }
 
     void DefaultSceneCullingManager::UpdateSpotLightTransform(SceneNode &sceneNode)
     {
-        auto iMetadata = this->spotLights.Find(&sceneNode);
-        assert(iMetadata != nullptr);
+        auto iCullingObject = this->spotLights.Find(&sceneNode);
+        assert(iCullingObject != nullptr);
         {
-            auto metadata = iMetadata->value;
-            assert(metadata != nullptr);
+            auto cullingObject = iCullingObject->value;
+            assert(cullingObject != nullptr);
             {
                 btTransform transform;
                 sceneNode.GetWorldTransform(transform);
 
-                metadata->UpdateTransform(transform);
+                cullingObject->SetTransform(transform);
             }
         }
     }
@@ -331,11 +348,11 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::UpdateModelAABB(SceneNode &sceneNode)
     {
-        auto iMetadata = this->models.Find(&sceneNode);
-        assert(iMetadata != nullptr);
+        auto iCullingObject = this->models.Find(&sceneNode);
+        assert(iCullingObject != nullptr);
         {
-            auto metadata = iMetadata->value;
-            assert(metadata != nullptr);
+            auto cullingObject = iCullingObject->value;
+            assert(cullingObject != nullptr);
             {
                 auto modelComponent = sceneNode.GetComponent<ModelComponent>();
                 assert(modelComponent != nullptr);
@@ -350,7 +367,7 @@ namespace GTEngine
                         aabbMin *= sceneNode.GetWorldScale();
                         aabbMax *= sceneNode.GetWorldScale();
 
-                        static_cast<CullingObject_AABB*>(metadata)->SetAABB(aabbMin, aabbMax);
+                        static_cast<CullingObject_AABB*>(cullingObject)->SetAABB(aabbMin, aabbMax);
                     }
                 }
             }
@@ -471,28 +488,28 @@ namespace GTEngine
 
     void DefaultSceneCullingManager::QueryPointLightContacts(const SceneNode &light, VisibilityCallback &callbackIn) const
     {
-        auto iMetadata = this->pointLights.Find(&light);
-        assert(iMetadata != nullptr);
+        auto iCullingObject = this->pointLights.Find(&light);
+        assert(iCullingObject != nullptr);
         {
-            auto metadata = iMetadata->value;
-            assert(metadata != nullptr);
+            auto cullingObject = iCullingObject->value;
+            assert(cullingObject != nullptr);
             {
-                LightContactTestCallback callback(light, callbackIn, CollisionGroups::PointLight, CollisionGroups::Model | CollisionGroups::ParticleSystem);
-                this->world.ContactTest(*metadata->collisionObject, callback);
+                LightContactTestCallback callback(light, callbackIn, cullingObject->collisionGroup, cullingObject->collisionMask);
+                this->world.ContactTest(cullingObject->collisionObject, callback);
             }
         }
     }
 
     void DefaultSceneCullingManager::QuerySpotLightContacts(const SceneNode &light, VisibilityCallback &callbackIn) const
     {
-        auto iMetadata = this->spotLights.Find(&light);
-        assert(iMetadata != nullptr);
+        auto iCullingManager = this->spotLights.Find(&light);
+        assert(iCullingManager != nullptr);
         {
-            auto metadata = iMetadata->value;
-            assert(metadata != nullptr);
+            auto cullingObject = iCullingManager->value;
+            assert(cullingObject != nullptr);
             {
-                LightContactTestCallback callback(light, callbackIn, CollisionGroups::SpotLight, CollisionGroups::Model | CollisionGroups::ParticleSystem);
-                this->world.ContactTest(*metadata->collisionObject, callback);
+                LightContactTestCallback callback(light, callbackIn, cullingObject->collisionGroup, cullingObject->collisionMask);
+                this->world.ContactTest(cullingObject->collisionObject, callback);
             }
         }
     }
