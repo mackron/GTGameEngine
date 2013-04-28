@@ -3,10 +3,10 @@
 #ifndef __GTEngine_DefaultSceneRenderer_hpp_
 #define __GTEngine_DefaultSceneRenderer_hpp_
 
-#include "SceneRenderer.hpp"
-#include "Scene.hpp"
-#include "MaterialLibrary.hpp"
-#include "Rendering/Renderer.hpp"
+#include "../SceneRenderer.hpp"
+#include "../Scene.hpp"
+#include "../MaterialLibrary.hpp"
+#include "../Rendering/Renderer.hpp"
 
 #include <GTCore/Map.hpp>
 #include <utility>
