@@ -203,6 +203,9 @@ namespace GTEngine
         /// Base structure containing the culling object of a scene node.
         struct CullingObject
         {
+            /// A reference to the owner scene node.
+            SceneNode &sceneNode;
+
             /// The container shape of the object. This needs to be a compound shape so that an offset can be applied to sub-shapes.
             btCompoundShape collisionShapeContainer;
 
@@ -217,10 +220,12 @@ namespace GTEngine
 
 
             /// Constructor.
-            CullingObject(short collisionGroupIn, short collisionMaskIn)
-                : collisionShapeContainer(), collisionObject(),
+            CullingObject(SceneNode &sceneNodeIn, short collisionGroupIn, short collisionMaskIn)
+                : sceneNode(sceneNodeIn),
+                  collisionShapeContainer(), collisionObject(),
                   collisionGroup(collisionGroupIn), collisionMask(collisionMaskIn)
             {
+                this->collisionObject.setUserPointer(&sceneNode);
             }
 
             /// Destructor.
@@ -318,8 +323,8 @@ namespace GTEngine
 
 
             /// Constructor.
-            CullingObject_AABB(short collisionGroup, short collisionMask, const glm::vec3 &aabbMinIn, const glm::vec3 &aabbMaxIn)
-                : CullingObject(collisionGroup, collisionMask),
+            CullingObject_AABB(SceneNode &sceneNode, short collisionGroup, short collisionMask, const glm::vec3 &aabbMinIn, const glm::vec3 &aabbMaxIn)
+                : CullingObject(sceneNode, collisionGroup, collisionMask),
                   aabbMin(aabbMinIn), aabbMax(aabbMaxIn),
                   aabbShape(Math::btVector3_cast((aabbMax - aabbMin) * 0.5f))
             {
@@ -378,8 +383,8 @@ namespace GTEngine
 
 
             /// Constructor.
-            CullingObject_Sphere(short collisionGroup, short collisionMask, float radiusIn)
-                : CullingObject(collisionGroup, collisionMask),
+            CullingObject_Sphere(SceneNode &sceneNode, short collisionGroup, short collisionMask, float radiusIn)
+                : CullingObject(sceneNode, collisionGroup, collisionMask),
                   radius(radiusIn),
                   sphereShape(radiusIn)
             {
@@ -439,8 +444,8 @@ namespace GTEngine
 
 
             /// Constructor.
-            CullingObject_SpotLightCone(short collisionGroup, short collisionMask, float outerAngleIn, float heightIn)
-                : CullingObject(collisionGroup, collisionMask),
+            CullingObject_SpotLightCone(SceneNode &sceneNode, short collisionGroup, short collisionMask, float outerAngleIn, float heightIn)
+                : CullingObject(sceneNode, collisionGroup, collisionMask),
                   outerAngle(outerAngleIn),
                   height(heightIn),
                   coneShape(glm::sin(glm::radians(outerAngle)) * height, height)
