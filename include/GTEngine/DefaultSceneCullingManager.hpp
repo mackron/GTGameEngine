@@ -832,6 +832,7 @@ namespace GTEngine
                 auto sceneNodeA = static_cast<SceneNode*>(colObj0->getCollisionObject()->getUserPointer());
                 auto sceneNodeB = static_cast<SceneNode*>(colObj1->getCollisionObject()->getUserPointer());
 
+
                 if (sceneNodeA != nullptr && sceneNodeB != nullptr)             // <-- Assert this?
                 {
                     if (sceneNodeA != &this->light)
@@ -840,9 +841,10 @@ namespace GTEngine
                         {
                             this->callback.ProcessModel(*sceneNodeA);
                         }
-                        else if (sceneNodeA->HasComponent<ParticleSystemComponent>())
+                        
+                        if (sceneNodeA->HasComponent<ParticleSystemComponent>())
                         {
-                            this->callback.ProcessModel(*sceneNodeA);
+                            this->callback.ProcessParticleSystem(*sceneNodeA);
                         }
                     }
                     else
@@ -851,9 +853,10 @@ namespace GTEngine
                         {
                             this->callback.ProcessModel(*sceneNodeB);
                         }
-                        else if (sceneNodeB->HasComponent<ParticleSystemComponent>())
+                        
+                        if (sceneNodeB->HasComponent<ParticleSystemComponent>())
                         {
-                            this->callback.ProcessModel(*sceneNodeB);
+                            this->callback.ProcessParticleSystem(*sceneNodeB);
                         }
                     }
                 }

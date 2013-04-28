@@ -477,7 +477,7 @@ namespace GTEngine
             auto metadata = iMetadata->value;
             assert(metadata != nullptr);
             {
-                LightContactTestCallback callback(light, callbackIn, CollisionGroups::PointLight, CollisionGroups::Model);
+                LightContactTestCallback callback(light, callbackIn, CollisionGroups::PointLight, CollisionGroups::Model | CollisionGroups::ParticleSystem);
                 this->world.ContactTest(*metadata->collisionObject, callback);
             }
         }
@@ -491,7 +491,7 @@ namespace GTEngine
             auto metadata = iMetadata->value;
             assert(metadata != nullptr);
             {
-                LightContactTestCallback callback(light, callbackIn, CollisionGroups::SpotLight, CollisionGroups::Model);
+                LightContactTestCallback callback(light, callbackIn, CollisionGroups::SpotLight, CollisionGroups::Model | CollisionGroups::ParticleSystem);
                 this->world.ContactTest(*metadata->collisionObject, callback);
             }
         }
