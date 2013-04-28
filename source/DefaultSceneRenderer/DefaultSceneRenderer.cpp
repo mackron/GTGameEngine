@@ -152,7 +152,7 @@ namespace GTEngine
         {
             if (!this->visibleModels.Exists(modelComponent))
             {
-                this->visibleModels.Add(modelComponent, new LightGroup);
+                this->visibleModels.Add(modelComponent, new DefaultSceneRenderer_LightGroup);
             }
         }
     }
@@ -169,14 +169,14 @@ namespace GTEngine
                 light = new SceneRendererPointLight;
                 this->pointLights.Add(lightComponent, light);
 
-                this->allLights.pointLights.PushBack(this->pointLights.count - 1);
+                this->allLights.AddPointLight(this->pointLights.count - 1);
             }
             else
             {
                 light = new DefaultSceneRendererShadowPointLight;
                 this->shadowPointLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowPointLight*>(light));
 
-                this->allLights.shadowPointLights.PushBack(this->shadowPointLights.count - 1);
+                this->allLights.AddShadowPointLight(this->shadowPointLights.count - 1);
             }
 
 
@@ -216,14 +216,14 @@ namespace GTEngine
                 light = new SceneRendererSpotLight;
                 this->spotLights.Add(lightComponent, light);
 
-                this->allLights.spotLights.PushBack(this->spotLights.count - 1);
+                this->allLights.AddSpotLight(this->spotLights.count - 1);
             }
             else
             {
                 light = new DefaultSceneRendererShadowSpotLight;
                 this->shadowSpotLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowSpotLight*>(light));
 
-                this->allLights.shadowSpotLights.PushBack(this->shadowSpotLights.count - 1);
+                this->allLights.AddShadowSpotLight(this->shadowSpotLights.count - 1);
             }
 
 
@@ -256,7 +256,7 @@ namespace GTEngine
 
             this->ambientLights.Add(lightComponent, light);
 
-            this->allLights.ambientLights.PushBack(this->ambientLights.count - 1);
+            this->allLights.AddAmbientLight(this->ambientLights.count - 1);
         }
     }
 
@@ -272,14 +272,14 @@ namespace GTEngine
                 light = new SceneRendererDirectionalLight;
                 this->directionalLights.Add(lightComponent, light);
 
-                this->allLights.directionalLights.PushBack(this->directionalLights.count - 1);
+                this->allLights.AddDirectionalLight(this->directionalLights.count - 1);
             }
             else
             {
                 light = new DefaultSceneRendererShadowDirectionalLight;
                 this->shadowDirectionalLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowDirectionalLight*>(light));
 
-                this->allLights.shadowDirectionalLights.PushBack(this->shadowDirectionalLights.count - 1);
+                this->allLights.AddShadowDirectionalLight(this->shadowDirectionalLights.count - 1);
             }
 
 
@@ -302,14 +302,14 @@ namespace GTEngine
         {
             if (!this->visibleParticleSystems.Exists(particleSystemComponent))
             {
-                this->visibleParticleSystems.Add(particleSystemComponent, new LightGroup);
+                this->visibleParticleSystems.Add(particleSystemComponent, new DefaultSceneRenderer_LightGroup);
             }
         }
     }
 
 
 
-    void DefaultSceneRendererVisibleObjects::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightGroup* lights, bool drawHighlight)
+    void DefaultSceneRendererVisibleObjects::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const DefaultSceneRenderer_LightGroup* lights, bool drawHighlight)
     {
         // TODO: Consider ways to remove these const_casts. Don't want to make the pointers in SceneRendererMesh constant because
         //       the user of that structure probably won't want a constant pointer.
@@ -409,20 +409,20 @@ namespace GTEngine
             {
                 for (size_t iAmbientLight = 0; iAmbientLight < this->ambientLights.count; ++iAmbientLight)
                 {
-                    modelLights->ambientLights.PushBack(static_cast<uint32_t>(iAmbientLight));
+                    modelLights->AddAmbientLight(static_cast<uint32_t>(iAmbientLight));
                 }
 
 
                 // Non-shadow directional lights.
                 for (size_t iDirectionalLight = 0; iDirectionalLight < this->directionalLights.count; ++iDirectionalLight)
                 {
-                    modelLights->directionalLights.PushBack(static_cast<uint32_t>(iDirectionalLight));
+                    modelLights->AddDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
                 }
 
                 // Shadow-casting directional lights.
                 for (size_t iDirectionalLight = 0; iDirectionalLight < this->shadowDirectionalLights.count; ++iDirectionalLight)
                 {
-                    modelLights->shadowDirectionalLights.PushBack(static_cast<uint32_t>(iDirectionalLight));
+                    modelLights->AddShadowDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
                 }
             }
         }
@@ -435,20 +435,20 @@ namespace GTEngine
             {
                 for (size_t iAmbientLight = 0; iAmbientLight < this->ambientLights.count; ++iAmbientLight)
                 {
-                    particleSystemLights->ambientLights.PushBack(static_cast<uint32_t>(iAmbientLight));
+                    particleSystemLights->AddAmbientLight(static_cast<uint32_t>(iAmbientLight));
                 }
 
 
                 // Non-shadow directional lights.
                 for (size_t iDirectionalLight = 0; iDirectionalLight < this->directionalLights.count; ++iDirectionalLight)
                 {
-                    particleSystemLights->directionalLights.PushBack(static_cast<uint32_t>(iDirectionalLight));
+                    particleSystemLights->AddDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
                 }
 
                 // Shadow-casting directional lights.
                 for (size_t iDirectionalLight = 0; iDirectionalLight < this->shadowDirectionalLights.count; ++iDirectionalLight)
                 {
-                    particleSystemLights->shadowDirectionalLights.PushBack(static_cast<uint32_t>(iDirectionalLight));
+                    particleSystemLights->AddShadowDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
                 }
             }
         }
@@ -773,6 +773,7 @@ namespace GTEngine
     }
 
 
+#if 0
     void DefaultSceneRendererVisibleObjects::PostProcess_AllocateLightGroups()
     {
         for (size_t iMesh = 0; iMesh < this->blendedTransparentObjects.count; ++iMesh)
@@ -816,6 +817,7 @@ namespace GTEngine
             }
         }
     }
+#endif
 
 
 
@@ -2500,11 +2502,20 @@ namespace GTEngine
             Renderer::SetBlendFunction(BlendFunc_One, BlendFunc_One);
 
 
+            auto ambientLightStartIndex           = lights->GetAmbientLightStartIndex();
+            auto directionalLightStartIndex       = lights->GetDirectionalLightStartIndex();
+            auto pointLightStartIndex             = lights->GetPointLightStartIndex();
+            auto spotLightStartIndex              = lights->GetSpotLightStartIndex();
+            auto shadowDirectionalLightStartIndex = lights->GetShadowDirectionalLightStartIndex();
+            auto shadowPointLightStartIndex       = lights->GetShadowPointLightStartIndex();
+            auto shadowSpotLightStartIndex        = lights->GetSpotLightStartIndex();
+
+
             // Ambient Lights.
             auto ambientLightShader = this->GetMaterialAmbientLightShader(*mesh.material);
-            for (size_t i = 0; i < lights->ambientLights.count; ++i)
+            for (size_t i = 0; i < lights->GetAmbientLightCount(); ++i)
             {
-                auto light  = visibleObjects.ambientLights.buffer[lights->ambientLights[i]]->value;
+                auto light  = visibleObjects.ambientLights.buffer[lights->lightIDs[i + ambientLightStartIndex]]->value;
                 auto shader = ambientLightShader;
 
 
@@ -2536,9 +2547,9 @@ namespace GTEngine
 
             // Directional Lights.
             auto directionalLightShader = this->GetMaterialDirectionalLightShader(*mesh.material);
-            for (size_t i = 0; i < lights->directionalLights.count; ++i)
+            for (size_t i = 0; i < lights->GetDirectionalLightCount(); ++i)
             {
-                auto light  = visibleObjects.directionalLights.buffer[lights->directionalLights[i]]->value;
+                auto light  = visibleObjects.directionalLights.buffer[lights->lightIDs[i + directionalLightStartIndex]]->value;
                 auto shader = directionalLightShader;
 
 
@@ -2568,9 +2579,9 @@ namespace GTEngine
                 }
             }
 
-            for (size_t i = 0; i < lights->shadowDirectionalLights.count; ++i)
+            for (size_t i = 0; i < lights->GetShadowDirectionalLightCount(); ++i)
             {
-                auto light  = visibleObjects.shadowDirectionalLights.buffer[lights->shadowDirectionalLights[i]]->value;
+                auto light  = visibleObjects.shadowDirectionalLights.buffer[lights->lightIDs[i + shadowDirectionalLightStartIndex]]->value;
                 auto shader = directionalLightShader;
 
 
@@ -2604,9 +2615,9 @@ namespace GTEngine
 
             // Point Lights.
             auto pointLightShader = this->GetMaterialPointLightShader(*mesh.material);
-            for (size_t i = 0; i < lights->pointLights.count; ++i)
+            for (size_t i = 0; i < lights->GetPointLightCount(); ++i)
             {
-                auto light  = visibleObjects.pointLights.buffer[lights->pointLights[i]]->value;
+                auto light  = visibleObjects.pointLights.buffer[lights->lightIDs[i + pointLightStartIndex]]->value;
                 auto shader = pointLightShader;
 
 
@@ -2639,9 +2650,9 @@ namespace GTEngine
                 }
             }
 
-            for (size_t i = 0; i < lights->shadowPointLights.count; ++i)
+            for (size_t i = 0; i < lights->GetShadowPointLightCount(); ++i)
             {
-                auto light  = visibleObjects.shadowPointLights.buffer[lights->shadowPointLights[i]]->value;
+                auto light  = visibleObjects.shadowPointLights.buffer[lights->lightIDs[i + shadowPointLightStartIndex]]->value;
                 auto shader = pointLightShader;
 
 
@@ -2676,9 +2687,9 @@ namespace GTEngine
 
             // Spot Lights.
             auto spotLightShader = this->GetMaterialSpotLightShader(*mesh.material);
-            for (size_t i = 0; i < lights->spotLights.count; ++i)
+            for (size_t i = 0; i < lights->GetSpotLightCount(); ++i)
             {
-                auto light  = visibleObjects.spotLights.buffer[lights->spotLights[i]]->value;
+                auto light  = visibleObjects.spotLights.buffer[lights->lightIDs[i + spotLightStartIndex]]->value;
                 auto shader = spotLightShader;
 
 
@@ -2713,9 +2724,9 @@ namespace GTEngine
                 }
             }
 
-            for (size_t i = 0; i < lights->shadowSpotLights.count; ++i)
+            for (size_t i = 0; i < lights->GetShadowSpotLightCount(); ++i)
             {
-                auto light  = visibleObjects.shadowSpotLights.buffer[lights->shadowSpotLights[i]]->value;
+                auto light  = visibleObjects.shadowSpotLights.buffer[lights->lightIDs[i + shadowSpotLightStartIndex]]->value;
                 auto shader = spotLightShader;
 
 

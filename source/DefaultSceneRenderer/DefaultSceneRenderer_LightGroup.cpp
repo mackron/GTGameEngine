@@ -12,44 +12,44 @@ namespace GTEngine
 
     void DefaultSceneRenderer_LightGroup::AddAmbientLight(uint32_t lightID)
     {
-        this->id.AddAmbientLight();
         this->lightIDs.InsertAt(lightID, this->GetAmbientLightStartIndex() + this->GetAmbientLightCount());
+        this->id.AddAmbientLight();
     }
 
     void DefaultSceneRenderer_LightGroup::AddDirectionalLight(uint32_t lightID)
     {
-        this->id.AddDirectionalLight();
         this->lightIDs.InsertAt(lightID, this->GetDirectionalLightStartIndex() + this->GetDirectionalLightCount());
+        this->id.AddDirectionalLight();
     }
 
     void DefaultSceneRenderer_LightGroup::AddPointLight(uint32_t lightID)
     {
-        this->id.AddPointLight();
         this->lightIDs.InsertAt(lightID, this->GetPointLightStartIndex() + this->GetPointLightCount());
+        this->id.AddPointLight();
     }
 
     void DefaultSceneRenderer_LightGroup::AddSpotLight(uint32_t lightID)
     {
-        this->id.AddSpotLight();
         this->lightIDs.InsertAt(lightID, this->GetSpotLightStartIndex() + this->GetSpotLightCount());
+        this->id.AddSpotLight();
     }
 
     void DefaultSceneRenderer_LightGroup::AddShadowDirectionalLight(uint32_t lightID)
     {
-        this->id.AddShadowDirectionalLight();
         this->lightIDs.InsertAt(lightID, this->GetShadowDirectionalLightStartIndex() + this->GetShadowDirectionalLightCount());
+        this->id.AddShadowDirectionalLight();
     }
 
     void DefaultSceneRenderer_LightGroup::AddShadowPointLight(uint32_t lightID)
     {
-        this->id.AddShadowPointLight();
         this->lightIDs.InsertAt(lightID, this->GetShadowPointLightStartIndex() + this->GetShadowPointLightCount());
+        this->id.AddShadowPointLight();
     }
 
     void DefaultSceneRenderer_LightGroup::AddShadowSpotLight(uint32_t lightID)
     {
-        this->id.AddShadowSpotLight();
         this->lightIDs.InsertAt(lightID, this->GetShadowSpotLightStartIndex() + this->GetShadowSpotLightCount());
+        this->id.AddShadowSpotLight();
     }
 
 

@@ -5,6 +5,11 @@
 
 #include <GTCore/Vector.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4351)   // new behavior: elements of array will be default initialized
+#endif
+
 namespace GTEngine
 {
     /// Structure representing a value for identifying a combination of light types.
@@ -312,5 +317,9 @@ namespace GTEngine
         uint16_t GetShadowSpotLightCount() const;
     };
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 #endif
