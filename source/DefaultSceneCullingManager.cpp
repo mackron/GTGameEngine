@@ -38,8 +38,7 @@ namespace GTEngine
                 aabbMin *= sceneNode.GetWorldScale();
                 aabbMax *= sceneNode.GetWorldScale();
 
-                auto cullingObject = new CullingObject_AABB(CollisionGroups::Model, CollisionGroups::PointLight | CollisionGroups::SpotLight, aabbMin, aabbMax);
-                cullingObject->collisionObject.setUserPointer(&sceneNode);
+                auto cullingObject = new CullingObject_AABB(sceneNode, CollisionGroups::Model, CollisionGroups::PointLight | CollisionGroups::SpotLight, aabbMin, aabbMax);
 
                 
                 // The transform needs to be set properly.
@@ -77,8 +76,7 @@ namespace GTEngine
         {
             float radius = pointLightComponent->GetRadius();
 
-            auto cullingObject = new CullingObject_Sphere(CollisionGroups::PointLight, CollisionGroups::Model | CollisionGroups::ParticleSystem, radius);
-            cullingObject->collisionObject.setUserPointer(&sceneNode);
+            auto cullingObject = new CullingObject_Sphere(sceneNode, CollisionGroups::PointLight, CollisionGroups::Model | CollisionGroups::ParticleSystem, radius);
 
 
             // The transform needs to be set properly.
@@ -116,8 +114,7 @@ namespace GTEngine
             float outerAngle = spotLightComponent->GetOuterAngle();
             float height     = spotLightComponent->GetLength();
 
-            auto cullingObject = new CullingObject_SpotLightCone(CollisionGroups::SpotLight, CollisionGroups::Model | CollisionGroups::ParticleSystem, outerAngle, height);
-            cullingObject->collisionObject.setUserPointer(&sceneNode);
+            auto cullingObject = new CullingObject_SpotLightCone(sceneNode, CollisionGroups::SpotLight, CollisionGroups::Model | CollisionGroups::ParticleSystem, outerAngle, height);
 
 
             // The transform needs to be set properly.
@@ -193,8 +190,7 @@ namespace GTEngine
                 glm::vec3 aabbMax;
                 particleSystem->GetAABB(aabbMin, aabbMax);
 
-                auto cullingObject = new CullingObject_AABB(CollisionGroups::ParticleSystem, CollisionGroups::PointLight | CollisionGroups::SpotLight, aabbMin, aabbMax);
-                cullingObject->collisionObject.setUserPointer(&sceneNode);
+                auto cullingObject = new CullingObject_AABB(sceneNode, CollisionGroups::ParticleSystem, CollisionGroups::PointLight | CollisionGroups::SpotLight, aabbMin, aabbMax);
 
 
                 // The culling object needs to be added to the world...
