@@ -423,9 +423,211 @@ namespace GTEngine
 
 
 
-    /// Structure containing indices of the different kinds of lights.
-    struct LightIndices
+    /// Structure representing a value for identifying a combination of light types.
+    ///
+    /// Each type of light is allocated 8 bits.
+    ///      1 - 8  = Ambient Lights
+    ///      9 - 16 = Directional Lights
+    ///     17 - 24 = Point Lights
+    ///     25 - 32 = Spot Lights
+    ///     33 - 40 = Shadowed Directional Lights
+    ///     41 - 48 = Shadowed Point Lights
+    ///     49 - 56 = Shadowed Spot Lights
+    ///
+    /// We want to leave room for future expansion.
+    struct LightsID
     {
+        uint32_t value0;
+        uint32_t value1;
+        uint32_t value2;
+        uint32_t value3;
+
+
+        LightsID()
+            : value0(0), value1(0), value2(0), value3(0)
+        {
+        }
+
+
+        void SetAmbientLightCount(uint32_t count)
+        {
+            assert(count <= 255);
+            {
+                value0 = (value0 & 0xFFFFFF00) | count;
+            }
+        }
+
+        void SetDirectionalLightCount(uint32_t count)
+        {
+            assert(count <= 255);
+            {
+                value0 = (value0 & 0xFFFF00FF) | (count << 8);
+            }
+        }
+
+        void SetPointLightCount(uint32_t count)
+        {
+            assert(count <= 255);
+            {
+                value0 = (value0 & 0xFF00FFFF) | (count << 16);
+            }
+        }
+
+        void SetSpotLightCount(uint32_t count)
+        {
+            assert(count <= 255);
+            {
+                value0 = (value0 & 0x00FFFFFF) | (count << 24);
+            }
+        }
+
+        void SetShadowDirectionalLightCount(uint32_t count)
+        {
+            assert(count <= 255);
+            {
+                value1 = (value1 & 0xFFFFFF00) | count;
+            }
+        }
+
+        void SetShadowPointLightCount(uint32_t count)
+        {
+            assert(count <= 255);
+            {
+                value1 = (value1 & 0xFFFF00FF) | (count << 8);
+            }
+        }
+
+        void SetShadowSpotLightCount(uint32_t count)
+        {
+            assert(count <= 255);
+            {
+                value1 = (value1 & 0xFF00FFFF) | (count << 16);
+            }
+        }
+
+
+
+        uint32_t GetAmbientLightCount() const
+        {
+            return (value0 & 0x000000FF);
+        }
+
+        uint32_t GetDirectionalLightCount() const
+        {
+            return (value0 & 0x0000FF00);
+        }
+
+        uint32_t GetPointLightCount() const
+        {
+            return (value0 & 0x00FF0000);
+        }
+
+        uint32_t GetSpotLightCount() const
+        {
+            return (value0 & 0xFF000000);
+        }
+
+        uint32_t GetShadowDirectionalLightCount() const
+        {
+            return (value1 & 0x000000FF);
+        }
+
+        uint32_t GetShadowPointLightCount() const
+        {
+            return (value1 & 0x0000FF00);
+        }
+
+        uint32_t GetShadowSpotLightCount() const
+        {
+            return (value1 & 0x00FF0000);
+        }
+
+
+
+
+        void AddAmbientLight()
+        {
+            this->SetAmbientLightCount(this->GetAmbientLightCount() + 1);
+        }
+
+        void AddDirectionalLight()
+        {
+            this->SetDirectionalLightCount(this->GetDirectionalLightCount() + 1);
+        }
+
+        void AddPointLight()
+        {
+            this->SetPointLightCount(this->GetPointLightCount() + 1);
+        }
+
+        void AddSpotLight()
+        {
+            this->SetSpotLightCount(this->GetSpotLightCount() + 1);
+        }
+
+        void AddShadowDirectionalLight()
+        {
+            this->SetShadowDirectionalLightCount(this->GetShadowDirectionalLightCount() + 1);
+        }
+
+        void AddShadowPointLight()
+        {
+            this->SetShadowPointLightCount(this->GetShadowPointLightCount() + 1);
+        }
+
+        void AddShadowSpotLight()
+        {
+            this->SetShadowSpotLightCount(this->GetShadowSpotLightCount() + 1);
+        }
+
+
+
+        void RemoveAmbientLight()
+        {
+            this->SetAmbientLightCount(this->GetAmbientLightCount() - 1);
+        }
+
+        void RemoveDirectionalLight()
+        {
+            this->SetDirectionalLightCount(this->GetDirectionalLightCount() - 1);
+        }
+
+        void RemovePointLight()
+        {
+            this->SetPointLightCount(this->GetPointLightCount() - 1);
+        }
+
+        void RemoveSpotLight()
+        {
+            this->SetSpotLightCount(this->GetSpotLightCount() - 1);
+        }
+
+        void RemoveShadowDirectionalLight()
+        {
+            this->SetShadowDirectionalLightCount(this->GetShadowDirectionalLightCount() - 1);
+        }
+
+        void RemoveShadowPointLight()
+        {
+            this->SetShadowPointLightCount(this->GetShadowPointLightCount() - 1);
+        }
+
+        void RemoveShadowSpotLight()
+        {
+            this->SetShadowSpotLightCount(this->GetShadowSpotLightCount() - 1);
+        }
+    };
+
+
+    /// Structure representing a group of lights.
+    ///
+    /// Only indices to the lights are stored.
+    struct LightGroup
+    {
+        /// The ID of the light group.
+        LightsID id;
+
+
         /// The indices of the ambient lights.
         GTCore::Vector<uint32_t> ambientLights;
 
@@ -450,19 +652,25 @@ namespace GTEngine
 
 
         /// Constructor.
-        LightIndices()
-            : ambientLights(), directionalLights(), pointLights(), spotLights(),
+        LightGroup()
+            : id(),
+              ambientLights(), directionalLights(), pointLights(), spotLights(),
               shadowDirectionalLights(), shadowPointLights(), shadowSpotLights()
         {
         }
     };
 
 
+
+
     /// Structure representing a mesh in the default renderer.
     struct DefaultSceneRendererMesh : public SceneRendererMesh
     {
         /// The indices of the lights that are touching this mesh.
-        const LightIndices* touchingLights;
+        const LightGroup* touchingLights;
+
+        /// The light groups that affect this mesh.
+        GTCore::Vector<LightGroup*> lightGroups;
 
 
 
@@ -476,6 +684,15 @@ namespace GTEngine
         DefaultSceneRendererMesh(const DefaultSceneRendererMesh &other)
             : SceneRendererMesh(other), touchingLights(other.touchingLights)
         {
+        }
+
+        /// Destructor.
+        ~DefaultSceneRendererMesh()
+        {
+            for (size_t i = 0; i < this->lightGroups.count; ++i)
+            {
+                delete this->lightGroups[i];
+            }
         }
 
 
@@ -657,11 +874,17 @@ namespace GTEngine
 
 
         /// Adds the given mesh.
-        void AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightIndices* lights, bool drawHighlight);     // <-- TODO: Remove 'drawHighlight' later on.
+        void AddMesh(const Mesh &mesh, const glm::mat4 &transform, const LightGroup* lights, bool drawHighlight);     // <-- TODO: Remove 'drawHighlight' later on.
         void AddMesh(const DefaultSceneRendererMesh &mesh);
 
         /// Performs an optimization step that arranges everything in a way where the renderer can be a bit more efficient.
         void PostProcess();
+
+        /// Takes the light groups of each visible mesh and sub-divides them into the groups that will be used when rendering.
+        void PostProcess_AllocateLightGroups();
+
+        /// Sub-divides the given light group into renderable chunks.
+        void PostProcess_SubdivideLightGroup(const LightGroup &source, GTCore::Vector<LightGroup*> &output);
 
 
 
@@ -717,19 +940,19 @@ namespace GTEngine
 
         /// The flat list of visible models, mapped to the indices of the lights that touch them. We want to store pointers to the component and
         /// not the actual model object because we will later want access to the scene node for it's transformation.
-        GTCore::Map<const ModelComponent*, LightIndices*> visibleModels;
+        GTCore::Map<const ModelComponent*, LightGroup*> visibleModels;
 
         /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess().
         GTCore::Vector<const ModelComponent*> modelsToAnimate;
 
 
         /// The flat list of visible particle systems, mapped to the indices of the lights that touch them.
-        GTCore::Map<const ParticleSystemComponent*, LightIndices*> visibleParticleSystems;
+        GTCore::Map<const ParticleSystemComponent*, LightGroup*> visibleParticleSystems;
 
 
 
         /// The indices of every visible light.
-        LightIndices allLightIndices;
+        LightGroup allLights;
 
 
         /// The projection matrix.
