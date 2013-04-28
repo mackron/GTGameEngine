@@ -769,7 +769,7 @@ namespace GTEngine
 
 
         // We need to look at each mesh and sub-divide touching lights into groups.
-        this->PostProcess_AllocateLightGroups();
+        //this->PostProcess_AllocateLightGroups();
     }
 
 
