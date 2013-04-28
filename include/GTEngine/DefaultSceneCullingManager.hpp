@@ -174,10 +174,6 @@ namespace GTEngine
 
     protected:
 
-        struct PointLightMetadata;
-        struct SpotLightMetadata;
-        struct ParticleSystemMetadata;
-
         struct CullingObject;
 
 
@@ -188,10 +184,10 @@ namespace GTEngine
         GTCore::Map<const SceneNode*, CullingObject*> models;
 
         /// A container for mapping metadata for point lights to scene nodes.
-        GTCore::Map<const SceneNode*, PointLightMetadata*> pointLights;
+        GTCore::Map<const SceneNode*, CullingObject*> pointLights;
 
         /// A container for mapping metadata for spot lights to scene nodes.
-        GTCore::Map<const SceneNode*, SpotLightMetadata*> spotLights;
+        GTCore::Map<const SceneNode*, CullingObject*> spotLights;
 
         /// The ambient light objects.
         GTCore::Vector<const SceneNode*> ambientLights;
@@ -306,9 +302,9 @@ namespace GTEngine
 
 
         /////////////////////////////////////
-        // Model Culling Object.
+        // AABB Culling Object.
 
-        /// Structure representing the culling object of a model.
+        /// Structure representing an AABB culling object.
         struct CullingObject_AABB : public CullingObject
         {
             /// The min bounds of the AABB.
@@ -368,153 +364,132 @@ namespace GTEngine
         };
 
 
+        /////////////////////////////////////
+        // Sphere Culling Object.
 
-        /// Structure containing the metadata for each point light.
-        struct PointLightMetadata
+        /// Structure representing a sphere culling object.
+        struct CullingObject_Sphere : public CullingObject
         {
-            PointLightMetadata(float radius, const btTransform &worldTransform)
-                : collisionObject(nullptr), collisionShape(nullptr)
-            {
-                this->collisionObject = new CollisionObject;
-                this->collisionShape  = new btSphereShape(radius);
+            /// The radius of the sphere.
+            float radius;
 
-                this->collisionObject->setCollisionShape(this->collisionShape);
-                this->collisionObject->setWorldTransform(worldTransform);
+            /// The sphere shape.
+            btSphereShape sphereShape;
+
+
+            /// Constructor.
+            CullingObject_Sphere(short collisionGroup, short collisionMask, float radiusIn)
+                : CullingObject(collisionGroup, collisionMask),
+                  radius(radiusIn),
+                  sphereShape(radiusIn)
+            {
+                this->AttachShape(this->sphereShape, glm::quat(), glm::vec3());
             }
 
-            ~PointLightMetadata()
+
+            /// Sets the radius.
+            ///
+            /// @remarks
+            ///     This will update the collision shape appropriately.
+            void SetRadius(float radiusIn)
             {
-                delete this->collisionObject;
-                delete this->collisionShape;
-            }
+                // We might need to re-add the object to the world, so we'll grab it here.
+                auto world = this->collisionObject.GetWorld();
 
 
-            /// Updates the transformation.
-            void UpdateTransform(const btTransform &transform)
-            {
-                assert(this->collisionObject != nullptr);
+                // 1) Detach the shape.
+                this->DetachShape(this->sphereShape);
+
+                // 2) Resize the shape.
+                this->radius = radiusIn;
+                this->sphereShape.setImplicitShapeDimensions(btVector3(radiusIn, radiusIn, radiusIn));
+
+                // 3) Re-attach the shape.
+                this->AttachShape(this->sphereShape, glm::quat(), glm::vec3());
+
+
+                // Re-add the object to the world if needed.
+                if (this->collisionObject.GetWorld() == nullptr && world != nullptr)
                 {
-                    this->collisionObject->setWorldTransform(transform);
-                    this->collisionObject->GetWorld()->UpdateAABB(*this->collisionObject);
+                    world->AddCollisionObject(this->collisionObject, this->collisionGroup, this->collisionMask);
                 }
             }
 
 
-            ////////////////////////////////////////////////////////////
-            // Attributes.
-
-            /// A pointer to the collision object for the point light component. Can be null.
-            CollisionObject* collisionObject;
-
-            /// The collision shape to use with the point light collision object. Can be null only if <pointLightCollisionObject> is also null.
-            btSphereShape* collisionShape;
-
 
         private:    // No copying.
-            PointLightMetadata(const PointLightMetadata &);
-            PointLightMetadata & operator=(const PointLightMetadata &);
+            CullingObject_Sphere(const CullingObject_Sphere &);
+            CullingObject_Sphere & operator=(const CullingObject_Sphere &);
         };
+
 
 
         /// Structure containing the metadata for each spot light.
-        struct SpotLightMetadata
+        struct CullingObject_SpotLightCone : public CullingObject
         {
-            SpotLightMetadata(float outerAngle, float height, const btTransform &worldTransform)
-                : collisionObject(nullptr), collisionShape(nullptr)
+            /// The outer angle of the cone shape.
+            float outerAngle;
+
+            /// The height/length of the cone shape.
+            float height;
+
+            /// The collision shape.
+            btConeShapeZ coneShape;
+
+
+
+            /// Constructor.
+            CullingObject_SpotLightCone(short collisionGroup, short collisionMask, float outerAngleIn, float heightIn)
+                : CullingObject(collisionGroup, collisionMask),
+                  outerAngle(outerAngleIn),
+                  height(heightIn),
+                  coneShape(glm::sin(glm::radians(outerAngle)) * height, height)
             {
-                this->collisionObject = new CollisionObject;
-                this->collisionShape  = new btCompoundShape;
+                glm::quat rotation = glm::angleAxis(180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+                glm::vec3 position = glm::vec3(0.0f, 0.0f, -height * 0.5f);
 
-                // Here we create the cone shape. We need to offset by half the height because Bullet creates it's cones centered.
-                btQuaternion rotation;
-                rotation.setRotation(btVector3(0.0f, 1.0f, 0.0f), 180.0f);      // <-- Not sure if this is needed...
-
-                btTransform coneTransform;
-                coneTransform.setIdentity();
-                coneTransform.setBasis(btMatrix3x3(rotation));
-                coneTransform.setOrigin(btVector3(0.0f, 0.0f, -height * 0.5f));
-                this->collisionShape->addChildShape(coneTransform, new btConeShapeZ(glm::sin(glm::radians(outerAngle)) * height, height));
-
-                this->collisionObject->setCollisionShape(this->collisionShape);
-                this->collisionObject->setWorldTransform(worldTransform);
+                this->AttachShape(this->coneShape, rotation, position);
             }
 
-            ~SpotLightMetadata()
+
+            /// Sets the cone shape.
+            ///
+            /// @remarks
+            ///     This will update the collision shape appropriately.
+            void SetCone(float outerAngleIn, float heightIn)
             {
-                // Delete the cone shape.
-                assert(this->collisionShape->getNumChildShapes() == 1);
+                // We might need to re-add the object to the world, so we'll grab it here.
+                auto world = this->collisionObject.GetWorld();
+
+
+                // 1) Detach the shape.
+                this->DetachShape(this->coneShape);
+
+                // 2) Resize the shape.
+                this->outerAngle = outerAngleIn;
+                this->height     = heightIn;
+                new (&this->coneShape) btConeShapeZ(glm::sin(glm::radians(outerAngle)) * height, height);
+
+                
+                // 3) Re-attach the shape.
+                glm::quat rotation = glm::angleAxis(180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+                glm::vec3 position = glm::vec3(0.0f, 0.0f, -height * 0.5f);
+
+                this->AttachShape(this->coneShape, rotation, position);
+
+
+                // Re-add the object to the world if needed.
+                if (this->collisionObject.GetWorld() == nullptr && world != nullptr)
                 {
-                    auto childShape = this->collisionShape->getChildShape(0);
-                    assert(childShape != nullptr);
-                    {
-                        delete childShape;
-                        this->collisionShape->removeChildShapeByIndex(0);
-                    }
-                }
-
-
-                delete this->collisionObject;
-                delete this->collisionShape;
-            }
-
-
-            /// Updates the transform.
-            void UpdateTransform(const btTransform &transform)
-            {
-                assert(this->collisionObject != nullptr);
-                {
-                    this->collisionObject->setWorldTransform(transform);
-                    this->collisionObject->GetWorld()->UpdateAABB(*this->collisionObject);
+                    world->AddCollisionObject(this->collisionObject, this->collisionGroup, this->collisionMask);
                 }
             }
 
 
 
-            ////////////////////////////////////////////////////////////
-            // Attributes.
-
-            /// A pointer to the collision object for the spot light component. Can be null.
-            CollisionObject* collisionObject;
-
-            /// The collision shape to use with the spot light collision object. Can be null only if <spotLightCollisionObject> is also null. We
-            /// need to use a compound shape here because the cone will need to be offset by half it's height.
-            btCompoundShape* collisionShape;
-
-
-        private:    // No copying.
-            SpotLightMetadata(const SpotLightMetadata &);
-            SpotLightMetadata & operator=(const SpotLightMetadata &);
-        };
-
-
-
-        // TODO: Implement proper culling for particle systems.
-        /// Structure containing the metadata for each particle system.
-        struct ParticleSystemMetadata
-        {
-            ParticleSystemMetadata()
-            {
-            }
-
-            ~ParticleSystemMetadata()
-            {
-            }
-
-
-            /// Updates the transformation.
-            void UpdateTransform(const btTransform &transform)
-            {
-                (void)transform;
-            }
-
-
-            ////////////////////////////////////////////////////////////
-            // Attributes.
-
-
-        private:    // No copying.
-            ParticleSystemMetadata(const ParticleSystemMetadata &);
-            ParticleSystemMetadata & operator=(const ParticleSystemMetadata &);
+        private:
+            CullingObject_SpotLightCone(const CullingObject_SpotLightCone &);
+            CullingObject_SpotLightCone & operator=(const CullingObject_SpotLightCone &);
         };
 
 
