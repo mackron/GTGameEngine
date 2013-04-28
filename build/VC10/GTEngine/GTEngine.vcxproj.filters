@@ -153,6 +153,12 @@
     <Filter Include="include\Scripting">
       <UniqueIdentifier>{7a3aedfc-b891-4947-899d-bf130afabfc1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\DefaultSceneRenderer">
+      <UniqueIdentifier>{05708e38-32af-4065-ac5b-37b8fae769b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\DefaultSceneRenderer">
+      <UniqueIdentifier>{db3e3a5b-d5b4-410f-bf2d-4c03dd205964}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -803,9 +809,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeEventHandler.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp">
       <Filter>include\Rendering</Filter>
     </ClInclude>
@@ -889,6 +892,36 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\ParticleList.hpp">
       <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_Framebuffers.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_LightGroup.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaders.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_Mesh.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShaderBuilder.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShadowDirectionalLight.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShadowPointLight.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShadowSpotLight.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_VisibilityProcessor.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1441,9 +1474,6 @@
     <ClCompile Include="..\..\..\source\SceneNodeEventHandler.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\DefaultSceneRenderer.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp">
       <Filter>source\Rendering</Filter>
     </ClCompile>
@@ -1509,6 +1539,36 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\ParticleList.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_Framebuffers.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_LightGroup.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaders.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_Mesh.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShaderBuilder.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShadowDirectionalLight.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShadowPointLight.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShadowSpotLight.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_VisibilityProcessor.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
