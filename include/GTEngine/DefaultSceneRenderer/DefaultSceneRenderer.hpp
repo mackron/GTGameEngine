@@ -8,9 +8,13 @@
 #include "../MaterialLibrary.hpp"
 #include "../Rendering/Renderer.hpp"
 
+#include "DefaultSceneRenderer_ShadowVisibilityProcessor.hpp"
 #include "DefaultSceneRenderer_LightGroup.hpp"
 #include "DefaultSceneRenderer_Mesh.hpp"
-#include "DefaultSceneRenderer_ShadowVisibilityProcessor.hpp"
+#include "DefaultSceneRenderer_ShadowDirectionalLight.hpp"
+#include "DefaultSceneRenderer_ShadowPointLight.hpp"
+#include "DefaultSceneRenderer_ShadowSpotLight.hpp"
+
 
 #include <GTCore/Map.hpp>
 #include <utility>
@@ -423,109 +427,6 @@ namespace GTEngine
     private:    // No copying.
         DefaultSceneRendererMaterialShaders(const DefaultSceneRendererMaterialShaders &);
         DefaultSceneRendererMaterialShaders & operator=(const DefaultSceneRendererMaterialShaders &);
-    };
-
-
-
-
-    /// Structure representing a shadow-casting directional light.
-    struct DefaultSceneRendererShadowDirectionalLight : public SceneRendererDirectionalLight
-    {
-        /// A list of meshes to draw when building the shadow map.
-        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshes;
-
-        /// The projection matrix to use when building the shadow map.
-        glm::mat4 projection;
-
-        /// The view matrix to use when building the shadow map.
-        glm::mat4 view;
-
-
-
-        /// Constructor.
-        DefaultSceneRendererShadowDirectionalLight()
-            : containedMeshes(), projection(), view()
-        {
-        }
-    };
-
-    /// Structure representing a shadow-casting point light.
-    struct DefaultSceneRendererShadowPointLight : public SceneRendererPointLight
-    {
-        /// The list of meshes to draw when doing the positive X face.
-        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesPositiveX;
-
-        /// The list of meshes to draw when doing the negative X face.
-        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesNegativeX;
-
-        /// The list of meshes to draw when doing the positive Y face.
-        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesPositiveY;
-
-        /// The list of meshes to draw when doing the negative Y face.
-        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesNegativeY;
-
-        /// The list of meshes to draw when doing the positive Z face.
-        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesPositiveZ;
-
-        /// The list of meshes to draw when doing the negative Z face.
-        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesNegativeZ;
-
-
-        /// The positive X view matrix.
-        glm::mat4 positiveXView;
-
-        /// The negative X view matrix.
-        glm::mat4 negativeXView;
-
-        /// The positive Y view matrix.
-        glm::mat4 positiveYView;
-
-        /// The negative Y view matrix.
-        glm::mat4 negativeYView;
-
-        /// The positive Z view matrix.
-        glm::mat4 positiveZView;
-
-        /// The negative Z view matrix.
-        glm::mat4 negativeZView;
-
-
-        /// The projection matrix.
-        glm::mat4 projection;
-
-
-        /// Constructor.
-        DefaultSceneRendererShadowPointLight()
-            : containedMeshesPositiveX(), containedMeshesNegativeX(),
-              containedMeshesPositiveY(), containedMeshesNegativeY(),
-              containedMeshesPositiveZ(), containedMeshesNegativeZ(),
-              positiveXView(), negativeXView(),
-              positiveYView(), negativeYView(),
-              positiveZView(), negativeZView(),
-              projection()
-        {
-        }
-    };
-
-    /// Structure representing a shadow-casting spot light. The main difference between this and the normal one is that we have a list
-    /// of meshes that need to be drawn when drawing the shadow map.
-    struct DefaultSceneRendererShadowSpotLight : public SceneRendererSpotLight
-    {
-        /// A list of meshes to draw when building the shadow map.
-        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshes;
-
-        /// The projection matrix to use when building the shadow map.
-        glm::mat4 projection;
-
-        /// The view matrix to use when building the shadow map.
-        glm::mat4 view;
-
-
-        /// Constructor.
-        DefaultSceneRendererShadowSpotLight()
-            : containedMeshes(), projection(), view()
-        {
-        }
     };
 
 
