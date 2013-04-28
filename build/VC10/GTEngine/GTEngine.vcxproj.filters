@@ -923,6 +923,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_VisibilityProcessor.hpp">
       <Filter>include\DefaultSceneRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShadowVisibilityProcessor.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1568,6 +1571,9 @@
       <Filter>source\DefaultSceneRenderer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_VisibilityProcessor.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShadowVisibilityProcessor.cpp">
       <Filter>source\DefaultSceneRenderer</Filter>
     </ClCompile>
   </ItemGroup>

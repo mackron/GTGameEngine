@@ -10,6 +10,7 @@
 
 #include "DefaultSceneRenderer_LightGroup.hpp"
 #include "DefaultSceneRenderer_Mesh.hpp"
+#include "DefaultSceneRenderer_ShadowVisibilityProcessor.hpp"
 
 #include <GTCore/Map.hpp>
 #include <utility>
@@ -426,46 +427,12 @@ namespace GTEngine
 
 
 
-    /// Callback class that will be used when querying the visible objects in a lights view frustum.
-    class DefaultSceneRendererShadowObjects : public SceneCullingManager::VisibilityCallback
-    {
-    public:
-
-        /// Constructor.
-        DefaultSceneRendererShadowObjects();
-
-        /// Destructor.
-        ~DefaultSceneRendererShadowObjects();
-
-
-        ////////////////////////////////////////////
-        // Virtual Implementations.
-
-        /// SceneCullingManager::VisibilityCallback::ProcessModel().
-        void ProcessModel(const SceneNode &object);
-
-
-
-        //////////////////////////////////////
-        // Member Variables.
-
-        /// The list of meshes.
-        GTCore::Vector<DefaultSceneRendererMesh> meshes;
-
-
-    private:
-        DefaultSceneRendererShadowObjects(const DefaultSceneRendererShadowObjects &);
-        DefaultSceneRendererShadowObjects & operator=(const DefaultSceneRendererShadowObjects &);
-    };
-
-
-
 
     /// Structure representing a shadow-casting directional light.
     struct DefaultSceneRendererShadowDirectionalLight : public SceneRendererDirectionalLight
     {
         /// A list of meshes to draw when building the shadow map.
-        DefaultSceneRendererShadowObjects containedMeshes;
+        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshes;
 
         /// The projection matrix to use when building the shadow map.
         glm::mat4 projection;
@@ -486,22 +453,22 @@ namespace GTEngine
     struct DefaultSceneRendererShadowPointLight : public SceneRendererPointLight
     {
         /// The list of meshes to draw when doing the positive X face.
-        DefaultSceneRendererShadowObjects containedMeshesPositiveX;
+        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesPositiveX;
 
         /// The list of meshes to draw when doing the negative X face.
-        DefaultSceneRendererShadowObjects containedMeshesNegativeX;
+        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesNegativeX;
 
         /// The list of meshes to draw when doing the positive Y face.
-        DefaultSceneRendererShadowObjects containedMeshesPositiveY;
+        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesPositiveY;
 
         /// The list of meshes to draw when doing the negative Y face.
-        DefaultSceneRendererShadowObjects containedMeshesNegativeY;
+        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesNegativeY;
 
         /// The list of meshes to draw when doing the positive Z face.
-        DefaultSceneRendererShadowObjects containedMeshesPositiveZ;
+        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesPositiveZ;
 
         /// The list of meshes to draw when doing the negative Z face.
-        DefaultSceneRendererShadowObjects containedMeshesNegativeZ;
+        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesNegativeZ;
 
 
         /// The positive X view matrix.
@@ -545,7 +512,7 @@ namespace GTEngine
     struct DefaultSceneRendererShadowSpotLight : public SceneRendererSpotLight
     {
         /// A list of meshes to draw when building the shadow map.
-        DefaultSceneRendererShadowObjects containedMeshes;
+        DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshes;
 
         /// The projection matrix to use when building the shadow map.
         glm::mat4 projection;

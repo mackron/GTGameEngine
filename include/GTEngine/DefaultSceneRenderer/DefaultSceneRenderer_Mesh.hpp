@@ -1,5 +1,8 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
+#ifndef __GTEngine_DefaultSceneRendererMesh_hpp_
+#define __GTEngine_DefaultSceneRendererMesh_hpp_
+
 #include "../SceneRenderer.hpp"
 #include "DefaultSceneRenderer_LightGroup.hpp"
 
@@ -46,3 +49,5 @@ namespace GTEngine
         DefaultSceneRendererMesh & operator=(const DefaultSceneRendererMesh &);
     };
 }
+
+#endif
