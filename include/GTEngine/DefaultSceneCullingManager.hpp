@@ -225,7 +225,7 @@ namespace GTEngine
                   collisionShapeContainer(), collisionObject(),
                   collisionGroup(collisionGroupIn), collisionMask(collisionMaskIn)
             {
-                this->collisionObject.setUserPointer(&sceneNode);
+                this->collisionObject.setUserPointer(this);
             }
 
             /// Destructor.
@@ -808,35 +808,34 @@ namespace GTEngine
                 assert(colObj0 != nullptr);
                 assert(colObj1 != nullptr);
 
-                // We assume the user pointer is the scene node.
-                auto sceneNodeA = static_cast<SceneNode*>(colObj0->getCollisionObject()->getUserPointer());
-                auto sceneNodeB = static_cast<SceneNode*>(colObj1->getCollisionObject()->getUserPointer());
+                
+                // We assume the user pointer is the culling object.
+                auto cullingObject0 = static_cast<CullingObject*>(colObj0->getCollisionObject()->getUserPointer());
+                auto cullingObject1 = static_cast<CullingObject*>(colObj1->getCollisionObject()->getUserPointer());
 
-
-                if (sceneNodeA != nullptr && sceneNodeB != nullptr)             // <-- Assert this?
+                assert(cullingObject0 != nullptr && cullingObject1 != nullptr);
                 {
-                    if (sceneNodeA != &this->light)
+                    // We can determine the object types by looking at the collision group.
+                    if (cullingObject0->collisionGroup == this->m_collisionFilterGroup)
                     {
-                        if (sceneNodeA->HasComponent<ModelComponent>())
+                        if ((cullingObject1->collisionGroup & CollisionGroups::Model))
                         {
-                            this->callback.ProcessModel(*sceneNodeA);
+                            this->callback.ProcessModel(cullingObject1->sceneNode);
                         }
-                        
-                        if (sceneNodeA->HasComponent<ParticleSystemComponent>())
+                        else if ((cullingObject1->collisionGroup & CollisionGroups::ParticleSystem))
                         {
-                            this->callback.ProcessParticleSystem(*sceneNodeA);
+                            this->callback.ProcessParticleSystem(cullingObject1->sceneNode);
                         }
                     }
                     else
                     {
-                        if (sceneNodeB->HasComponent<ModelComponent>())
+                        if ((cullingObject0->collisionGroup & CollisionGroups::Model))
                         {
-                            this->callback.ProcessModel(*sceneNodeB);
+                            this->callback.ProcessModel(cullingObject0->sceneNode);
                         }
-                        
-                        if (sceneNodeB->HasComponent<ParticleSystemComponent>())
+                        else if ((cullingObject0->collisionGroup & CollisionGroups::ParticleSystem))
                         {
-                            this->callback.ProcessParticleSystem(*sceneNodeB);
+                            this->callback.ProcessParticleSystem(cullingObject0->sceneNode);
                         }
                     }
                 }
