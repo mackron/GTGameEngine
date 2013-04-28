@@ -9,6 +9,7 @@
 #include "../Rendering/Renderer.hpp"
 
 #include "DefaultSceneRenderer_LightGroup.hpp"
+#include "DefaultSceneRenderer_Mesh.hpp"
 
 #include <GTCore/Map.hpp>
 #include <utility>
@@ -423,45 +424,6 @@ namespace GTEngine
         DefaultSceneRendererMaterialShaders & operator=(const DefaultSceneRendererMaterialShaders &);
     };
 
-
-    /// Structure representing a mesh in the default renderer.
-    struct DefaultSceneRendererMesh : public SceneRendererMesh
-    {
-        /// The indices of the lights that are touching this mesh.
-        const DefaultSceneRenderer_LightGroup* touchingLights;
-
-        /// The light groups that affect this mesh.
-        //GTCore::Vector<LightGroup*> lightGroups;
-
-
-
-        /// Constructor.
-        DefaultSceneRendererMesh()
-            : touchingLights(nullptr)
-        {
-        }
-
-        /// Copy constructor.
-        DefaultSceneRendererMesh(const DefaultSceneRendererMesh &other)
-            : SceneRendererMesh(other), touchingLights(other.touchingLights)
-        {
-        }
-
-        /// Destructor.
-        ~DefaultSceneRendererMesh()
-        {
-            /*
-            for (size_t i = 0; i < this->lightGroups.count; ++i)
-            {
-                delete this->lightGroups[i];
-            }
-            */
-        }
-
-
-    private:    // No copying.
-        DefaultSceneRendererMesh & operator=(const DefaultSceneRendererMesh &);
-    };
 
 
     /// Callback class that will be used when querying the visible objects in a lights view frustum.
