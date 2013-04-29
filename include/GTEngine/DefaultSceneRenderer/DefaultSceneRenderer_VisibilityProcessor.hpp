@@ -4,9 +4,9 @@
 #define __GTEngine_DefaultSceneRenderer_VisibilityProcessor_hpp_
 
 #include "DefaultSceneRenderer_Mesh.hpp"
-#include "DefaultSceneRenderer_ShadowDirectionalLight.hpp"
-#include "DefaultSceneRenderer_ShadowPointLight.hpp"
-#include "DefaultSceneRenderer_ShadowSpotLight.hpp"
+#include "DefaultSceneRenderer_DirectionalLight.hpp"
+#include "DefaultSceneRenderer_PointLight.hpp"
+#include "DefaultSceneRenderer_SpotLight.hpp"
 
 namespace GTEngine
 {
@@ -53,10 +53,10 @@ namespace GTEngine
         void PostProcess();
 
         /// Takes the light groups of each visible mesh and sub-divides them into the groups that will be used when rendering.
-        //void PostProcess_AllocateLightGroups();
+        void PostProcess_AllocateLightGroups();
 
         /// Sub-divides the given light group into renderable chunks.
-        //void PostProcess_SubdivideLightGroup(const LightGroup &source, GTCore::Vector<LightGroup*> &output);
+        void PostProcess_SubdivideLightGroup(const DefaultSceneRenderer_LightGroup &source, GTCore::Vector<DefaultSceneRenderer_LightGroup> &output);
 
 
 
@@ -90,23 +90,23 @@ namespace GTEngine
         GTCore::Map<const AmbientLightComponent*, SceneRendererAmbientLight*> ambientLights;
 
         /// The list of directional lights.
-        GTCore::Map<const DirectionalLightComponent*, SceneRendererDirectionalLight*> directionalLights;
+        GTCore::Map<const DirectionalLightComponent*, DefaultSceneRendererDirectionalLight*> directionalLights;
 
         /// The list of point lights.
-        GTCore::Map<const PointLightComponent*, SceneRendererPointLight*> pointLights;
+        GTCore::Map<const PointLightComponent*, DefaultSceneRendererPointLight*> pointLights;
 
         /// The list of spot lights.
-        GTCore::Map<const SpotLightComponent*, SceneRendererSpotLight*> spotLights;
+        GTCore::Map<const SpotLightComponent*, DefaultSceneRendererSpotLight*> spotLights;
 
 
         /// The list of shadow-casting directional lights.
-        GTCore::Map<const DirectionalLightComponent*, DefaultSceneRendererShadowDirectionalLight*> shadowDirectionalLights;
+        GTCore::Map<const DirectionalLightComponent*, DefaultSceneRendererDirectionalLight*> shadowDirectionalLights;
 
         /// The list of shadow-casting point lights.
-        GTCore::Map<const PointLightComponent*, DefaultSceneRendererShadowPointLight*> shadowPointLights;
+        GTCore::Map<const PointLightComponent*, DefaultSceneRendererPointLight*> shadowPointLights;
 
         /// The list of shadow-casting spot lights.
-        GTCore::Map<const SpotLightComponent*, DefaultSceneRendererShadowSpotLight*> shadowSpotLights;
+        GTCore::Map<const SpotLightComponent*, DefaultSceneRendererSpotLight*> shadowSpotLights;
 
 
 

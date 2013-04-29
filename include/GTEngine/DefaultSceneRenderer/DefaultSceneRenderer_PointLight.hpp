@@ -8,7 +8,7 @@
 namespace GTEngine
 {
     /// Structure representing a shadow-casting point light.
-    struct DefaultSceneRendererShadowPointLight : public SceneRendererPointLight
+    struct DefaultSceneRendererPointLight : public SceneRendererPointLight
     {
         /// The list of meshes to draw when doing the positive X face.
         DefaultSceneRenderer_ShadowVisibilityProcessor containedMeshesPositiveX;
@@ -53,7 +53,7 @@ namespace GTEngine
 
 
         /// Constructor.
-        DefaultSceneRendererShadowPointLight()
+        DefaultSceneRendererPointLight()
             : containedMeshesPositiveX(), containedMeshesNegativeX(),
               containedMeshesPositiveY(), containedMeshesNegativeY(),
               containedMeshesPositiveZ(), containedMeshesNegativeZ(),
@@ -62,6 +62,17 @@ namespace GTEngine
               positiveZView(), negativeZView(),
               projection()
         {
+        }
+
+        /// Determines whether or not the light casts shadows.
+        bool IsShadowCasting() const
+        {
+            return this->containedMeshesPositiveX.meshes.count > 0 ||
+                   this->containedMeshesNegativeX.meshes.count > 0 ||
+                   this->containedMeshesPositiveY.meshes.count > 0 ||
+                   this->containedMeshesNegativeY.meshes.count > 0 ||
+                   this->containedMeshesPositiveZ.meshes.count > 0 ||
+                   this->containedMeshesNegativeZ.meshes.count > 0;
         }
     };
 }
