@@ -1,0 +1,717 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+
+#include <GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_VisibilityProcessor.hpp>
+#include <GTEngine/Scene.hpp>
+
+namespace GTEngine
+{
+    DefaultSceneRenderer_VisibilityProcessor::DefaultSceneRenderer_VisibilityProcessor(Scene &sceneIn, SceneViewport &viewportIn)
+        : scene(sceneIn),
+          opaqueObjects(),     blendedTransparentObjects(), refractiveTransparentObjects(),
+          opaqueObjectsLast(), blendedTransparentObjectsLast(),
+          ambientLights(), directionalLights(), pointLights(), spotLights(),
+          shadowDirectionalLights(), shadowPointLights(), shadowSpotLights(),
+          visibleModels(), modelsToAnimate(),
+          visibleParticleSystems(),
+          allLights(),
+          projectionMatrix(), viewMatrix(), projectionViewMatrix()
+    {
+        auto cameraNode = viewportIn.GetCameraNode();
+        assert(cameraNode != nullptr);
+        {
+            auto camera = cameraNode->GetComponent<CameraComponent>();
+            assert(camera != nullptr);
+            {
+                this->projectionMatrix     = camera->GetProjectionMatrix();
+                this->viewMatrix           = camera->GetViewMatrix();
+                this->projectionViewMatrix = projectionMatrix * viewMatrix;
+            }
+        }
+    }
+
+    DefaultSceneRenderer_VisibilityProcessor::~DefaultSceneRenderer_VisibilityProcessor()
+    {
+        for (size_t i = 0; i < this->opaqueObjects.count; ++i)
+        {
+            delete this->opaqueObjects.buffer[i]->value;
+        }
+
+        for (size_t i = 0; i < this->opaqueObjectsLast.count; ++i)
+        {
+            delete this->opaqueObjectsLast.buffer[i]->value;
+        }
+
+
+
+        for (size_t i = 0; i < this->ambientLights.count; ++i)
+        {
+            delete this->ambientLights.buffer[i]->value;
+        }
+
+        for (size_t i = 0; i < this->directionalLights.count; ++i)
+        {
+            delete this->directionalLights.buffer[i]->value;
+        }
+
+        for (size_t i = 0; i < this->pointLights.count; ++i)
+        {
+            delete this->pointLights.buffer[i]->value;
+        }
+
+        for (size_t i = 0; i < this->spotLights.count; ++i)
+        {
+            delete this->spotLights.buffer[i]->value;
+        }
+
+
+        for (size_t i = 0; i < this->shadowDirectionalLights.count; ++i)
+        {
+            delete this->shadowDirectionalLights.buffer[i]->value;
+        }
+
+        for (size_t i = 0; i < this->shadowPointLights.count; ++i)
+        {
+            delete this->shadowPointLights.buffer[i]->value;
+        }
+
+        for (size_t i = 0; i < this->shadowSpotLights.count; ++i)
+        {
+            delete this->shadowSpotLights.buffer[i]->value;
+        }
+
+
+
+        for (size_t i = 0; i < this->visibleModels.count; ++i)
+        {
+            delete this->visibleModels.buffer[i]->value;
+        }
+
+        for (size_t i = 0; i < this->visibleParticleSystems.count; ++i)
+        {
+            delete this->visibleParticleSystems.buffer[i]->value;
+        }
+    }
+
+
+    void DefaultSceneRenderer_VisibilityProcessor::ProcessModel(const SceneNode &sceneNode)
+    {
+        auto modelComponent = sceneNode.GetComponent<ModelComponent>();
+        assert(modelComponent != nullptr);
+        {
+            if (!this->visibleModels.Exists(modelComponent))
+            {
+                this->visibleModels.Add(modelComponent, new DefaultSceneRenderer_LightGroup);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer_VisibilityProcessor::ProcessPointLight(const SceneNode &sceneNode)
+    {
+        auto lightComponent = sceneNode.GetComponent<PointLightComponent>();
+        assert(lightComponent != nullptr);
+        {
+            SceneRendererPointLight* light = nullptr;
+
+            if (!lightComponent->IsShadowCastingEnabled())
+            {
+                light = new SceneRendererPointLight;
+                this->pointLights.Add(lightComponent, light);
+
+                this->allLights.AddPointLight(this->pointLights.count - 1);
+            }
+            else
+            {
+                light = new DefaultSceneRendererShadowPointLight;
+                this->shadowPointLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowPointLight*>(light));
+
+                this->allLights.AddShadowPointLight(this->shadowPointLights.count - 1);
+            }
+
+
+            light->position = sceneNode.GetWorldPosition();
+            light->colour   = lightComponent->GetColour();
+            light->radius   = lightComponent->GetRadius();
+            light->falloff  = lightComponent->GetFalloff();
+
+            if (lightComponent->IsShadowCastingEnabled())
+            {
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->projection = glm::perspective(90.0f, 1.0f, 0.1f, light->radius);
+
+                glm::vec3 origin(light->position);
+                glm::vec3 posx(  1.0f, 0.0f, 0.0f);
+                glm::vec3 posy(  0.0f, 1.0f, 0.0f);
+                glm::vec3 posz(  0.0f, 0.0f, 1.0f);
+
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveXView = glm::lookAt(origin, origin + posx, -posy);
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeXView = glm::lookAt(origin, origin - posx, -posy);
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveYView = glm::lookAt(origin, origin + posy,  posz);
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeYView = glm::lookAt(origin, origin - posy, -posz);
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveZView = glm::lookAt(origin, origin + posz, -posy);
+                static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeZView = glm::lookAt(origin, origin - posz, -posy);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer_VisibilityProcessor::ProcessSpotLight(const SceneNode &sceneNode)
+    {
+        auto lightComponent = sceneNode.GetComponent<SpotLightComponent>();
+        assert(lightComponent != nullptr);
+        {
+            SceneRendererSpotLight* light = nullptr;
+
+            if (!lightComponent->IsShadowCastingEnabled())
+            {
+                light = new SceneRendererSpotLight;
+                this->spotLights.Add(lightComponent, light);
+
+                this->allLights.AddSpotLight(this->spotLights.count - 1);
+            }
+            else
+            {
+                light = new DefaultSceneRendererShadowSpotLight;
+                this->shadowSpotLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowSpotLight*>(light));
+
+                this->allLights.AddShadowSpotLight(this->shadowSpotLights.count - 1);
+            }
+
+
+            light->colour      = lightComponent->GetColour();
+            light->position    = sceneNode.GetWorldPosition();
+            light->orientation = sceneNode.GetWorldOrientation();
+            light->length      = lightComponent->GetLength();
+            light->falloff     = lightComponent->GetFalloff();
+            light->innerAngle  = lightComponent->GetInnerAngle();
+            light->outerAngle  = lightComponent->GetOuterAngle();
+
+
+
+            // A few additional properties need to be set if the light is casting a shadow.
+            if (lightComponent->IsShadowCastingEnabled())
+            {
+                static_cast<DefaultSceneRendererShadowSpotLight*>(light)->projection = glm::perspective(light->outerAngle * 2.0f, 1.0f, 0.1f, light->length);
+                static_cast<DefaultSceneRendererShadowSpotLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer_VisibilityProcessor::ProcessAmbientLight(const SceneNode &sceneNode)
+    {
+        auto lightComponent = sceneNode.GetComponent<AmbientLightComponent>();
+        assert(lightComponent != nullptr);
+        {
+            auto light = new SceneRendererAmbientLight;
+            light->colour = lightComponent->GetColour();
+
+            this->ambientLights.Add(lightComponent, light);
+
+            this->allLights.AddAmbientLight(this->ambientLights.count - 1);
+        }
+    }
+
+    void DefaultSceneRenderer_VisibilityProcessor::ProcessDirectionalLight(const SceneNode &sceneNode)
+    {
+        auto lightComponent = sceneNode.GetComponent<DirectionalLightComponent>();
+        assert(lightComponent != nullptr);
+        {
+            SceneRendererDirectionalLight* light = nullptr;
+
+            if (!lightComponent->IsShadowCastingEnabled())
+            {
+                light = new SceneRendererDirectionalLight;
+                this->directionalLights.Add(lightComponent, light);
+
+                this->allLights.AddDirectionalLight(this->directionalLights.count - 1);
+            }
+            else
+            {
+                light = new DefaultSceneRendererShadowDirectionalLight;
+                this->shadowDirectionalLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowDirectionalLight*>(light));
+
+                this->allLights.AddShadowDirectionalLight(this->shadowDirectionalLights.count - 1);
+            }
+
+
+            light->colour      = lightComponent->GetColour();
+            light->position    = sceneNode.GetWorldPosition();
+            light->orientation = sceneNode.GetWorldOrientation();
+
+            if (lightComponent->IsShadowCastingEnabled())
+            {
+                static_cast<DefaultSceneRendererShadowDirectionalLight*>(light)->projection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 500.0f);
+                static_cast<DefaultSceneRendererShadowDirectionalLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer_VisibilityProcessor::ProcessParticleSystem(const SceneNode &sceneNode)
+    {
+        auto particleSystemComponent = sceneNode.GetComponent<ParticleSystemComponent>();
+        assert(particleSystemComponent != nullptr);
+        {
+            if (!this->visibleParticleSystems.Exists(particleSystemComponent))
+            {
+                this->visibleParticleSystems.Add(particleSystemComponent, new DefaultSceneRenderer_LightGroup);
+            }
+        }
+    }
+
+
+
+    void DefaultSceneRenderer_VisibilityProcessor::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const DefaultSceneRenderer_LightGroup* lights, bool drawHighlight)
+    {
+        // TODO: Consider ways to remove these const_casts. Don't want to make the pointers in SceneRendererMesh constant because
+        //       the user of that structure probably won't want a constant pointer.
+
+        DefaultSceneRendererMesh object;
+        object.vertexArray    = const_cast<VertexArray*>(mesh.GetSkinnedGeometry());
+        object.drawMode       = mesh.GetDrawMode();
+        object.material       = const_cast<Material*>(mesh.GetMaterial());
+        object.transform      = transform;
+        object.touchingLights = lights;
+
+        if (drawHighlight)
+        {
+            object.flags |= SceneRendererMesh::DrawHighlight;
+        }
+
+        this->AddMesh(object);
+    }
+
+    void DefaultSceneRenderer_VisibilityProcessor::AddMesh(const DefaultSceneRendererMesh &mesh)
+    {
+        if (mesh.material != nullptr)
+        {
+            GTCore::Vector<DefaultSceneRendererMesh>* objectList = nullptr;
+
+            auto &materialDefinition = mesh.material->GetDefinition();
+            if (mesh.material->IsRefractive())
+            {
+                objectList = &this->refractiveTransparentObjects;
+            }
+            else    // Opaque or Blended
+            {
+                if (mesh.material->IsBlended())
+                {
+                    if (!(mesh.flags & SceneRendererMesh::DrawLast))
+                    {
+                        objectList = &this->blendedTransparentObjects;
+                    }
+                    else
+                    {
+                        objectList = &this->blendedTransparentObjectsLast;
+                    }
+                }
+                else
+                {
+                    if (!(mesh.flags & SceneRendererMesh::DrawLast))
+                    {
+                        auto iObjectList = this->opaqueObjects.Find(&materialDefinition);
+                        if (iObjectList != nullptr)
+                        {
+                            objectList = iObjectList->value;
+                        }
+                        else
+                        {
+                            objectList = new GTCore::Vector<DefaultSceneRendererMesh>(100);
+                            this->opaqueObjects.Add(&materialDefinition, objectList);
+                        }
+                    }
+                    else
+                    {
+                        auto iObjectList = this->opaqueObjectsLast.Find(&materialDefinition);
+                        if (iObjectList != nullptr)
+                        {
+                            objectList = iObjectList->value;
+                        }
+                        else
+                        {
+                            objectList = new GTCore::Vector<DefaultSceneRendererMesh>(100);
+                            this->opaqueObjectsLast.Add(&materialDefinition, objectList);
+                        }
+                    }
+                }
+            }
+
+
+            assert(objectList != nullptr);
+            {
+                // If the lights pointer is null, we're going to make it affected by every light.
+                if (mesh.touchingLights == nullptr)
+                {
+                    const_cast<DefaultSceneRendererMesh &>(mesh).touchingLights = &this->allLights;
+                }
+
+                objectList->PushBack(mesh);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer_VisibilityProcessor::PostProcess()
+    {
+        // We need to now determines which lights are touching which meshes. Ambient and directional lights are easy, but point and
+        // spot lights need to be determined by the scene.
+        for (size_t iModel = 0; iModel < this->visibleModels.count; ++iModel)
+        {
+            auto modelLights = this->visibleModels.buffer[iModel]->value;
+            assert(modelLights != nullptr);
+            {
+                for (size_t iAmbientLight = 0; iAmbientLight < this->ambientLights.count; ++iAmbientLight)
+                {
+                    modelLights->AddAmbientLight(static_cast<uint32_t>(iAmbientLight));
+                }
+
+
+                // Non-shadow directional lights.
+                for (size_t iDirectionalLight = 0; iDirectionalLight < this->directionalLights.count; ++iDirectionalLight)
+                {
+                    modelLights->AddDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
+                }
+
+                // Shadow-casting directional lights.
+                for (size_t iDirectionalLight = 0; iDirectionalLight < this->shadowDirectionalLights.count; ++iDirectionalLight)
+                {
+                    modelLights->AddShadowDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
+                }
+            }
+        }
+
+        // As above, but now with particle systems.
+        for (size_t iParticleSystem = 0; iParticleSystem < this->visibleParticleSystems.count; ++iParticleSystem)
+        {
+            auto particleSystemLights = this->visibleParticleSystems.buffer[iParticleSystem]->value;
+            assert(particleSystemLights != nullptr);
+            {
+                for (size_t iAmbientLight = 0; iAmbientLight < this->ambientLights.count; ++iAmbientLight)
+                {
+                    particleSystemLights->AddAmbientLight(static_cast<uint32_t>(iAmbientLight));
+                }
+
+
+                // Non-shadow directional lights.
+                for (size_t iDirectionalLight = 0; iDirectionalLight < this->directionalLights.count; ++iDirectionalLight)
+                {
+                    particleSystemLights->AddDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
+                }
+
+                // Shadow-casting directional lights.
+                for (size_t iDirectionalLight = 0; iDirectionalLight < this->shadowDirectionalLights.count; ++iDirectionalLight)
+                {
+                    particleSystemLights->AddShadowDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
+                }
+            }
+        }
+
+
+
+        // We need to now query the objects contained inside the volumes of the point and spot lights.
+        const auto &cullingManager = scene.GetCullingManager();
+        {
+            // Point Lights.
+            for (size_t iPointLight = 0; iPointLight < this->pointLights.count; ++iPointLight)              // <-- Non-shadow-casting point lights.
+            {
+                auto lightComponent = this->pointLights.buffer[iPointLight]->key;
+                assert(lightComponent != nullptr);
+                {
+                    PointLightContactsCallback callback(*this, iPointLight, false);                         // <-- 'false' means that we're doing a non-shadow-casting light.
+                    cullingManager.QueryPointLightContacts(lightComponent->GetNode(), callback);
+                }
+            }
+
+            for (size_t iPointLight = 0; iPointLight < this->shadowPointLights.count; ++iPointLight)        // <-- Shadow-casting point lights.
+            {
+                auto lightComponent = this->shadowPointLights.buffer[iPointLight]->key;
+                assert(lightComponent != nullptr);
+                {
+                    PointLightContactsCallback callback(*this, iPointLight, true);                          // <-- 'true' means that we're doing a shadow-casting light.
+                    cullingManager.QueryPointLightContacts(lightComponent->GetNode(), callback);
+                }
+            }
+
+
+            // Spot Lights.
+            for (size_t iSpotLight = 0; iSpotLight < this->spotLights.count; ++iSpotLight)                 // <-- Non-shadow-casting point lights.
+            {
+                auto lightComponent = this->spotLights.buffer[iSpotLight]->key;
+                assert(lightComponent != nullptr);
+                {
+                    SpotLightContactsCallback callback(*this, iSpotLight, false);                         // <-- 'false' means that we're doing a non-shadow-casting light.
+                    cullingManager.QuerySpotLightContacts(lightComponent->GetNode(), callback);
+                }
+            }
+
+            for (size_t iSpotLight = 0; iSpotLight < this->shadowSpotLights.count; ++iSpotLight)           // <-- Shadow-casting point lights.
+            {
+                auto lightComponent = this->shadowSpotLights.buffer[iSpotLight]->key;
+                assert(lightComponent != nullptr);
+                {
+                    SpotLightContactsCallback callback(*this, iSpotLight, true);                          // <-- 'true' means that we're doing a shadow-casting light.
+                    cullingManager.QuerySpotLightContacts(lightComponent->GetNode(), callback);
+                }
+            }
+        }
+
+
+        // We now need to create the mesh objects that will be drawn. These are created from the model components.
+        for (size_t iModel = 0; iModel < this->visibleModels.count; ++iModel)
+        {
+            auto modelComponent = this->visibleModels.buffer[iModel]->key;
+            auto modelLights    = this->visibleModels.buffer[iModel]->value;
+
+            assert(modelComponent != nullptr);
+            assert(modelLights    != nullptr);
+            {
+                auto model = modelComponent->GetModel();
+                if (model != nullptr)                           // <-- Is allowed to be null. Perhaps due to a bad path?
+                {
+                    for (size_t i = 0; i < model->meshes.count; ++i)
+                    {
+                        auto mesh = model->meshes[i];
+                        assert(mesh != nullptr);
+                        {
+                            // If the mesh needs to be animated we don't want to add the mesh straight away. Instead we want to wait until
+                            // after it's been animated. If it's not animated, we just add it straight away.
+                            if (model->IsAnimating())
+                            {
+                                if (!this->modelsToAnimate.Exists(modelComponent))
+                                {
+                                    this->modelsToAnimate.PushBack(modelComponent);
+                                }
+                            }
+                            else
+                            {
+                                // TEMP:
+                                //
+                                /// If the node has an editor component and is selected, we'll draw a highlight.
+                                bool drawHighlight = false;
+                                auto editorMetadata = modelComponent->GetNode().GetComponent<EditorMetadataComponent>();
+                                if (editorMetadata != nullptr && editorMetadata->IsSelected())
+                                {
+                                    drawHighlight = true;
+                                }
+
+                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), modelLights, drawHighlight);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        // Now we need to build the mesh to draw for each particle system.
+        glm::simdQuat inverseView = glm::simdQuat(glm::inverse(glm::quat_cast(this->viewMatrix)));
+
+        for (size_t iParticleSystem = 0; iParticleSystem < this->visibleParticleSystems.count; ++iParticleSystem)
+        {
+            auto particleSystemComponent = this->visibleParticleSystems.buffer[iParticleSystem]->key;
+            auto particleSystemLights    = this->visibleParticleSystems.buffer[iParticleSystem]->value;
+
+            assert(particleSystemComponent != nullptr);
+            assert(particleSystemLights    != nullptr);
+            {
+                auto particleSystem = particleSystemComponent->GetParticleSystem();
+                if (particleSystem != nullptr)
+                {
+                    for (size_t iEmitter = 0; iEmitter < particleSystem->GetEmitterCount(); ++iEmitter)
+                    {
+                        auto emitter = particleSystem->GetEmitter(iEmitter);
+                        assert(emitter != nullptr);
+                        {
+                            auto &vertexArray = emitter->GetVertexArray();
+                            {
+                                size_t particleCount = emitter->GetParticleCount();
+
+                                if (particleCount > 0)
+                                {
+                                    // Pre-allocate.
+                                    vertexArray.SetVertexData(nullptr, particleCount * 4);
+                                    vertexArray.SetIndexData( nullptr, particleCount * 6);
+
+
+                                    // Build the data.
+                                    auto vertices = vertexArray.MapVertexData();
+                                    auto indices  = vertexArray.MapIndexData();
+                                
+                                    assert(vertices != nullptr);
+                                    assert(indices  != nullptr);
+                                    {
+                                        for (size_t iParticle = 0; iParticle < particleCount; ++iParticle)
+                                        {
+                                            auto &particle = emitter->GetParticle(iParticle);
+                                            {
+                                                // Vertices.
+                                                size_t vertexSize = vertexArray.GetFormat().GetSize();
+
+                                                auto vertex0 = vertices + (iParticle * 4 * vertexSize);
+                                                auto vertex1 = vertex0 + vertexSize;
+                                                auto vertex2 = vertex1 + vertexSize;
+                                                auto vertex3 = vertex2 + vertexSize;
+
+                                                glm::simdQuat absoluteOrientation = inverseView * particle.orientation;
+
+
+                                                glm::simdMat4 transform = glm::mat4SIMD_cast(absoluteOrientation);
+                                                transform[0] *= particle.scale.x;
+                                                transform[1] *= particle.scale.y;
+                                                transform[2] *= particle.scale.z;
+                                                transform[3]  = particle.position;
+
+                                                glm::simdVec4 position0 = transform * glm::simdVec4(-0.5f, -0.5f, 0.0f, 1.0f);
+                                                glm::simdVec4 position1 = transform * glm::simdVec4( 0.5f, -0.5f, 0.0f, 1.0f);
+                                                glm::simdVec4 position2 = transform * glm::simdVec4( 0.5f,  0.5f, 0.0f, 1.0f);
+                                                glm::simdVec4 position3 = transform * glm::simdVec4(-0.5f,  0.5f, 0.0f, 1.0f);
+
+                                                glm::vec4 texcoord0     = glm::vec4(particle.uTexCoordMin0, particle.vTexCoordMin0, particle.uTexCoordMin1, particle.vTexCoordMin1);
+                                                glm::vec4 texcoord1     = glm::vec4(particle.uTexCoordMax0, particle.vTexCoordMin0, particle.uTexCoordMax1, particle.vTexCoordMin1);
+                                                glm::vec4 texcoord2     = glm::vec4(particle.uTexCoordMax0, particle.vTexCoordMax0, particle.uTexCoordMax1, particle.vTexCoordMax1);
+                                                glm::vec4 texcoord3     = glm::vec4(particle.uTexCoordMin0, particle.vTexCoordMax0, particle.uTexCoordMin1, particle.vTexCoordMax1);
+
+                                                glm::simdVec4 normal0   = absoluteOrientation * glm::simdVec4(0.0f, 0.0f, 1.0f, 0.0f); normal0.w = particle.uvTileInterpolationFactor;
+                                                glm::simdVec4 normal1   = normal0;
+                                                glm::simdVec4 normal2   = normal0;
+                                                glm::simdVec4 normal3   = normal0;
+
+                                                glm::vec4 colour0       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour1       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour2       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+                                                glm::vec4 colour3       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+                                                vertex0[0]  = position0.x; vertex0[1]  = position0.y; vertex0[2]  = position0.z; vertex0[3]  = 1.0f;
+                                                vertex0[4]  = texcoord0.x; vertex0[5]  = texcoord0.y; vertex0[6]  = texcoord0.z; vertex0[7]  = texcoord0.w;
+                                                vertex0[8]  = normal0.x;   vertex0[9]  = normal0.y;   vertex0[10] = normal0.z;   vertex0[11] = normal0.w;
+                                                vertex0[12] = colour0.x;   vertex0[13] = colour0.y;   vertex0[14] = colour0.z;   vertex0[15] = colour0.w;
+
+                                                vertex1[0]  = position1.x; vertex1[1]  = position1.y; vertex1[2]  = position1.z; vertex1[3]  = 1.1f;
+                                                vertex1[4]  = texcoord1.x; vertex1[5]  = texcoord1.y; vertex1[6]  = texcoord1.z; vertex1[7]  = texcoord1.w;
+                                                vertex1[8]  = normal1.x;   vertex1[9]  = normal1.y;   vertex1[10] = normal1.z;   vertex1[11] = normal1.w;
+                                                vertex1[12] = colour1.x;   vertex1[13] = colour1.y;   vertex1[14] = colour1.z;   vertex1[15] = colour1.w;
+
+                                                vertex2[0]  = position2.x; vertex2[1]  = position2.y; vertex2[2]  = position2.z; vertex2[3]  = 1.2f;
+                                                vertex2[4]  = texcoord2.x; vertex2[5]  = texcoord2.y; vertex2[6]  = texcoord2.z; vertex2[7]  = texcoord2.w;
+                                                vertex2[8]  = normal2.x;   vertex2[9]  = normal2.y;   vertex2[10] = normal2.z;   vertex2[11] = normal2.w;
+                                                vertex2[12] = colour2.x;   vertex2[13] = colour2.y;   vertex2[14] = colour2.z;   vertex2[15] = colour2.w;
+
+                                                vertex3[0]  = position3.x; vertex3[1]  = position3.y; vertex3[2]  = position3.z; vertex3[3]  = 1.3f;
+                                                vertex3[4]  = texcoord3.x; vertex3[5]  = texcoord3.y; vertex3[6]  = texcoord3.z; vertex3[7]  = texcoord3.w;
+                                                vertex3[8]  = normal3.x;   vertex3[9]  = normal3.y;   vertex3[10] = normal3.z;   vertex3[11] = normal3.w;
+                                                vertex3[12] = colour3.x;   vertex3[13] = colour3.y;   vertex3[14] = colour3.z;   vertex3[15] = colour3.w;
+
+
+
+                                                // Indices.
+                                                indices[(iParticle * 6) + 0] = (iParticle * 4) + 0;
+                                                indices[(iParticle * 6) + 1] = (iParticle * 4) + 1;
+                                                indices[(iParticle * 6) + 2] = (iParticle * 4) + 2;
+                                                indices[(iParticle * 6) + 3] = (iParticle * 4) + 2;
+                                                indices[(iParticle * 6) + 4] = (iParticle * 4) + 3;
+                                                indices[(iParticle * 6) + 5] = (iParticle * 4) + 0;
+                                            }
+                                        }
+                                    }
+                                
+                                    vertexArray.UnmapVertexData();
+                                    vertexArray.UnmapIndexData();
+                                
+
+
+                                    DefaultSceneRendererMesh mesh;
+                                    mesh.vertexArray    = &vertexArray;
+                                    mesh.drawMode       = DrawMode_Triangles;
+                                    mesh.material       = emitter->GetMaterial();
+                                    mesh.transform      = glm::mat4();
+                                    mesh.touchingLights = particleSystemLights;
+                                    this->AddMesh(mesh);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        // We need to retrieve the visible objects of each shadow casting light.
+
+        // Shadow-Casting Directional Lights.
+        for (size_t i = 0; i < this->shadowDirectionalLights.count; ++i)
+        {
+            auto light = this->shadowDirectionalLights.buffer[i]->value;
+            assert(light != nullptr);
+            {
+                scene.QueryVisibleSceneNodes(light->projection * light->view, light->containedMeshes);
+            }
+        }
+
+
+        // Shadow-Casting Point Lights.
+        for (size_t i = 0; i < this->shadowPointLights.count; ++i)
+        {
+            auto light = this->shadowPointLights.buffer[i]->value;
+            assert(light != nullptr);
+            {
+                // We need to do 6 queries here - one for each face.
+                scene.QueryVisibleSceneNodes(light->projection * light->positiveXView, light->containedMeshesPositiveX);
+                scene.QueryVisibleSceneNodes(light->projection * light->negativeXView, light->containedMeshesNegativeX);
+                scene.QueryVisibleSceneNodes(light->projection * light->positiveYView, light->containedMeshesPositiveY);
+                scene.QueryVisibleSceneNodes(light->projection * light->negativeYView, light->containedMeshesNegativeY);
+                scene.QueryVisibleSceneNodes(light->projection * light->positiveZView, light->containedMeshesPositiveZ);
+                scene.QueryVisibleSceneNodes(light->projection * light->negativeZView, light->containedMeshesNegativeZ);
+            }
+        }
+
+
+        // Shadow-Casting Spot Lights.
+        for (size_t i = 0; i < this->shadowSpotLights.count; ++i)
+        {
+            auto light = this->shadowSpotLights.buffer[i]->value;
+            assert(light != nullptr);
+            {
+                scene.QueryVisibleSceneNodes(light->projection * light->view, light->containedMeshes);
+            }
+        }
+
+
+
+        // Apply skinning.
+        for (size_t i = 0; i < this->modelsToAnimate.count; ++i)
+        {
+            auto modelComponent = this->modelsToAnimate[i];
+            assert(modelComponent != nullptr);
+            {
+                auto model = modelComponent->GetModel();
+                assert(model != nullptr);
+                {
+                    for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
+                    {
+                        auto mesh = model->meshes[iMesh];
+                        assert(mesh != nullptr);
+                        {
+                            mesh->ApplySkinning();
+
+                            // Now we now give the renderer the mesh so it can render it.
+                            auto iModelLights = this->visibleModels.Find(modelComponent);
+                            assert(iModelLights != nullptr);
+                            {
+                                // TEMP:
+                                //
+                                /// If the node has an editor component and is selected, we'll draw a highlight.
+                                bool drawHighlight = false;
+                                auto editorMetadata = modelComponent->GetNode().GetComponent<EditorMetadataComponent>();
+                                if (editorMetadata != nullptr && editorMetadata->IsSelected())
+                                {
+                                    drawHighlight = true;
+                                }
+
+                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), iModelLights->value, drawHighlight);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
