@@ -110,19 +110,19 @@ namespace GTEngine
         auto lightComponent = sceneNode.GetComponent<PointLightComponent>();
         assert(lightComponent != nullptr);
         {
-            SceneRendererPointLight* light = nullptr;
+            DefaultSceneRendererPointLight* light = nullptr;
 
             if (!lightComponent->IsShadowCastingEnabled())
             {
-                light = new SceneRendererPointLight;
+                light = new DefaultSceneRendererPointLight;
                 this->pointLights.Add(lightComponent, light);
 
                 this->allLights.AddPointLight(this->pointLights.count - 1);
             }
             else
             {
-                light = new DefaultSceneRendererShadowPointLight;
-                this->shadowPointLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowPointLight*>(light));
+                light = new DefaultSceneRendererPointLight;
+                this->shadowPointLights.Add(lightComponent, static_cast<DefaultSceneRendererPointLight*>(light));
 
                 this->allLights.AddShadowPointLight(this->shadowPointLights.count - 1);
             }
@@ -135,19 +135,19 @@ namespace GTEngine
 
             if (lightComponent->IsShadowCastingEnabled())
             {
-                static_cast<DefaultSceneRendererShadowPointLight*>(light)->projection = glm::perspective(90.0f, 1.0f, 0.1f, light->radius);
+                static_cast<DefaultSceneRendererPointLight*>(light)->projection = glm::perspective(90.0f, 1.0f, 0.1f, light->radius);
 
                 glm::vec3 origin(light->position);
                 glm::vec3 posx(  1.0f, 0.0f, 0.0f);
                 glm::vec3 posy(  0.0f, 1.0f, 0.0f);
                 glm::vec3 posz(  0.0f, 0.0f, 1.0f);
 
-                static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveXView = glm::lookAt(origin, origin + posx, -posy);
-                static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeXView = glm::lookAt(origin, origin - posx, -posy);
-                static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveYView = glm::lookAt(origin, origin + posy,  posz);
-                static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeYView = glm::lookAt(origin, origin - posy, -posz);
-                static_cast<DefaultSceneRendererShadowPointLight*>(light)->positiveZView = glm::lookAt(origin, origin + posz, -posy);
-                static_cast<DefaultSceneRendererShadowPointLight*>(light)->negativeZView = glm::lookAt(origin, origin - posz, -posy);
+                static_cast<DefaultSceneRendererPointLight*>(light)->positiveXView = glm::lookAt(origin, origin + posx, -posy);
+                static_cast<DefaultSceneRendererPointLight*>(light)->negativeXView = glm::lookAt(origin, origin - posx, -posy);
+                static_cast<DefaultSceneRendererPointLight*>(light)->positiveYView = glm::lookAt(origin, origin + posy,  posz);
+                static_cast<DefaultSceneRendererPointLight*>(light)->negativeYView = glm::lookAt(origin, origin - posy, -posz);
+                static_cast<DefaultSceneRendererPointLight*>(light)->positiveZView = glm::lookAt(origin, origin + posz, -posy);
+                static_cast<DefaultSceneRendererPointLight*>(light)->negativeZView = glm::lookAt(origin, origin - posz, -posy);
             }
         }
     }
@@ -157,19 +157,19 @@ namespace GTEngine
         auto lightComponent = sceneNode.GetComponent<SpotLightComponent>();
         assert(lightComponent != nullptr);
         {
-            SceneRendererSpotLight* light = nullptr;
+            DefaultSceneRendererSpotLight* light = nullptr;
 
             if (!lightComponent->IsShadowCastingEnabled())
             {
-                light = new SceneRendererSpotLight;
+                light = new DefaultSceneRendererSpotLight;
                 this->spotLights.Add(lightComponent, light);
 
                 this->allLights.AddSpotLight(this->spotLights.count - 1);
             }
             else
             {
-                light = new DefaultSceneRendererShadowSpotLight;
-                this->shadowSpotLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowSpotLight*>(light));
+                light = new DefaultSceneRendererSpotLight;
+                this->shadowSpotLights.Add(lightComponent, static_cast<DefaultSceneRendererSpotLight*>(light));
 
                 this->allLights.AddShadowSpotLight(this->shadowSpotLights.count - 1);
             }
@@ -188,8 +188,8 @@ namespace GTEngine
             // A few additional properties need to be set if the light is casting a shadow.
             if (lightComponent->IsShadowCastingEnabled())
             {
-                static_cast<DefaultSceneRendererShadowSpotLight*>(light)->projection = glm::perspective(light->outerAngle * 2.0f, 1.0f, 0.1f, light->length);
-                static_cast<DefaultSceneRendererShadowSpotLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
+                static_cast<DefaultSceneRendererSpotLight*>(light)->projection = glm::perspective(light->outerAngle * 2.0f, 1.0f, 0.1f, light->length);
+                static_cast<DefaultSceneRendererSpotLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
             }
         }
     }
@@ -213,19 +213,19 @@ namespace GTEngine
         auto lightComponent = sceneNode.GetComponent<DirectionalLightComponent>();
         assert(lightComponent != nullptr);
         {
-            SceneRendererDirectionalLight* light = nullptr;
+            DefaultSceneRendererDirectionalLight* light = nullptr;
 
             if (!lightComponent->IsShadowCastingEnabled())
             {
-                light = new SceneRendererDirectionalLight;
+                light = new DefaultSceneRendererDirectionalLight;
                 this->directionalLights.Add(lightComponent, light);
 
                 this->allLights.AddDirectionalLight(this->directionalLights.count - 1);
             }
             else
             {
-                light = new DefaultSceneRendererShadowDirectionalLight;
-                this->shadowDirectionalLights.Add(lightComponent, static_cast<DefaultSceneRendererShadowDirectionalLight*>(light));
+                light = new DefaultSceneRendererDirectionalLight;
+                this->shadowDirectionalLights.Add(lightComponent, static_cast<DefaultSceneRendererDirectionalLight*>(light));
 
                 this->allLights.AddShadowDirectionalLight(this->shadowDirectionalLights.count - 1);
             }
@@ -237,8 +237,8 @@ namespace GTEngine
 
             if (lightComponent->IsShadowCastingEnabled())
             {
-                static_cast<DefaultSceneRendererShadowDirectionalLight*>(light)->projection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 500.0f);
-                static_cast<DefaultSceneRendererShadowDirectionalLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
+                static_cast<DefaultSceneRendererDirectionalLight*>(light)->projection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 500.0f);
+                static_cast<DefaultSceneRendererDirectionalLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
             }
         }
     }
@@ -711,6 +711,86 @@ namespace GTEngine
                         }
                     }
                 }
+            }
+        }
+
+
+        // Light groups need to be allocated.
+        this->PostProcess_AllocateLightGroups();
+    }
+
+
+    void DefaultSceneRenderer_VisibilityProcessor::PostProcess_AllocateLightGroups()
+    {
+        for (size_t i = 0; i < this->blendedTransparentObjects.count; ++i)
+        {
+            auto &mesh = this->blendedTransparentObjects[i];
+
+            if (mesh.touchingLights != nullptr)
+            {
+                this->PostProcess_SubdivideLightGroup(*mesh.touchingLights, mesh.lightGroups);
+            }
+        }
+    }
+
+    void DefaultSceneRenderer_VisibilityProcessor::PostProcess_SubdivideLightGroup(const DefaultSceneRenderer_LightGroup &source, GTCore::Vector<DefaultSceneRenderer_LightGroup> &output)
+    {
+        output.Clear();     // TODO: Check that we actually need this clear.
+
+
+        // For now we will make it so every non-shadow-casting light is in a single group. This will need to be split later on.
+
+        output.PushBack(DefaultSceneRenderer_LightGroup());
+        auto &lightGroup = output.GetBack();
+        {
+            for (uint16_t i = 0; i < source.GetAmbientLightCount(); ++i)
+            {
+                lightGroup.AddAmbientLight(source.lightIDs[i + source.GetAmbientLightStartIndex()]);
+            }
+
+            for (uint16_t i = 0; i < source.GetDirectionalLightCount(); ++i)
+            {
+                lightGroup.AddDirectionalLight(source.lightIDs[i + source.GetDirectionalLightStartIndex()]);
+            }
+
+            for (uint16_t i = 0; i < source.GetPointLightCount(); ++i)
+            {
+                lightGroup.AddPointLight(source.lightIDs[i + source.GetPointLightStartIndex()]);
+            }
+
+            for (uint16_t i = 0; i < source.GetSpotLightCount(); ++i)
+            {
+                lightGroup.AddSpotLight(source.lightIDs[i + source.GetSpotLightStartIndex()]);
+            }
+        }
+
+
+        // Each shadow-casting light should have it's own group.
+
+        for (uint16_t i = 0; i < source.GetShadowDirectionalLightCount(); ++i)
+        {
+            output.PushBack(DefaultSceneRenderer_LightGroup());
+            auto &lightGroup = output.GetBack();
+            {
+                lightGroup.AddShadowDirectionalLight(source.lightIDs[i + source.GetShadowDirectionalLightStartIndex()]);
+            }
+        }
+
+        for (uint16_t i = 0; i < source.GetShadowPointLightCount(); ++i)
+        {
+            output.PushBack(DefaultSceneRenderer_LightGroup());
+            auto &lightGroup = output.GetBack();
+            {
+                lightGroup.AddShadowPointLight(source.lightIDs[i + source.GetShadowPointLightStartIndex()]);
+            }
+        }
+
+        for (uint16_t i = 0; i < source.GetShadowSpotLightCount(); ++i)
+        {
+            output.PushBack(DefaultSceneRenderer_LightGroup());
+            auto &lightGroup = output.GetBack();
+            {
+                lightGroup.AddShadowSpotLight(source.lightIDs[i + source.GetShadowSpotLightStartIndex()]);
             }
         }
     }

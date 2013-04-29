@@ -1077,7 +1077,7 @@ namespace GTEngine
         }
     }
 
-    void DefaultSceneRenderer::RenderPointShapowMapFace(const DefaultSceneRendererShadowPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderPointShapowMapFace(const DefaultSceneRendererPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
         // The draw buffer needs to be set. The appropriate framebuffer will have already been set.
         int blurBuffer0Index = 6;

@@ -911,19 +911,19 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShaderBuilder.hpp">
       <Filter>include\DefaultSceneRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShadowDirectionalLight.hpp">
-      <Filter>include\DefaultSceneRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShadowPointLight.hpp">
-      <Filter>include\DefaultSceneRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShadowSpotLight.hpp">
-      <Filter>include\DefaultSceneRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_VisibilityProcessor.hpp">
       <Filter>include\DefaultSceneRenderer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShadowVisibilityProcessor.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_DirectionalLight.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_PointLight.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_SpotLight.hpp">
       <Filter>include\DefaultSceneRenderer</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1561,19 +1561,19 @@
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShaderBuilder.cpp">
       <Filter>source\DefaultSceneRenderer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShadowDirectionalLight.cpp">
-      <Filter>source\DefaultSceneRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShadowPointLight.cpp">
-      <Filter>source\DefaultSceneRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShadowSpotLight.cpp">
-      <Filter>source\DefaultSceneRenderer</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_VisibilityProcessor.cpp">
       <Filter>source\DefaultSceneRenderer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShadowVisibilityProcessor.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_DirectionalLight.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_PointLight.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_SpotLight.cpp">
       <Filter>source\DefaultSceneRenderer</Filter>
     </ClCompile>
   </ItemGroup>
