@@ -9,8 +9,7 @@ namespace GTEngine
         : scene(sceneIn),
           opaqueObjects(),     blendedTransparentObjects(), refractiveTransparentObjects(),
           opaqueObjectsLast(), blendedTransparentObjectsLast(),
-          ambientLights(), directionalLights(), pointLights(), spotLights(),
-          shadowDirectionalLights(), shadowPointLights(), shadowSpotLights(),
+          lightManager(),
           visibleModels(), modelsToAnimate(),
           visibleParticleSystems(),
           allLights(),
@@ -43,42 +42,10 @@ namespace GTEngine
 
 
 
-        for (size_t i = 0; i < this->ambientLights.count; ++i)
+        for (size_t i = 0; i < this->visibleMeshes.count; ++i)
         {
-            delete this->ambientLights.buffer[i]->value;
+            delete this->visibleMeshes.buffer[i]->value;
         }
-
-        for (size_t i = 0; i < this->directionalLights.count; ++i)
-        {
-            delete this->directionalLights.buffer[i]->value;
-        }
-
-        for (size_t i = 0; i < this->pointLights.count; ++i)
-        {
-            delete this->pointLights.buffer[i]->value;
-        }
-
-        for (size_t i = 0; i < this->spotLights.count; ++i)
-        {
-            delete this->spotLights.buffer[i]->value;
-        }
-
-
-        for (size_t i = 0; i < this->shadowDirectionalLights.count; ++i)
-        {
-            delete this->shadowDirectionalLights.buffer[i]->value;
-        }
-
-        for (size_t i = 0; i < this->shadowPointLights.count; ++i)
-        {
-            delete this->shadowPointLights.buffer[i]->value;
-        }
-
-        for (size_t i = 0; i < this->shadowSpotLights.count; ++i)
-        {
-            delete this->shadowSpotLights.buffer[i]->value;
-        }
-
 
 
         for (size_t i = 0; i < this->visibleModels.count; ++i)
@@ -100,7 +67,27 @@ namespace GTEngine
         {
             if (!this->visibleModels.Exists(modelComponent))
             {
-                this->visibleModels.Add(modelComponent, new DefaultSceneRenderer_LightGroup);
+                auto model = modelComponent->GetModel();
+                if (model != nullptr)
+                {
+                    this->visibleModels.Add(modelComponent, new DefaultSceneRenderer_LightGroup);
+
+                    // If the model is animated, we don't want to mark it as such, but not actually apply the animation yet.
+                    if (model->IsAnimating())
+                    {
+                        this->modelsToAnimate.PushBack(modelComponent);
+                    }
+
+
+                    for (size_t iMesh = 0; iMesh < model->meshes.count; ++iMesh)
+                    {
+                        auto mesh = model->meshes[iMesh];
+                        assert(mesh != nullptr);
+                        {
+                            this->visibleMeshes.Add(mesh, new DefaultSceneRendererMesh);
+                        }
+                    }
+                }
             }
         }
     }
@@ -110,45 +97,7 @@ namespace GTEngine
         auto lightComponent = sceneNode.GetComponent<PointLightComponent>();
         assert(lightComponent != nullptr);
         {
-            DefaultSceneRendererPointLight* light = nullptr;
-
-            if (!lightComponent->IsShadowCastingEnabled())
-            {
-                light = new DefaultSceneRendererPointLight;
-                this->pointLights.Add(lightComponent, light);
-
-                this->allLights.AddPointLight(this->pointLights.count - 1);
-            }
-            else
-            {
-                light = new DefaultSceneRendererPointLight;
-                this->shadowPointLights.Add(lightComponent, static_cast<DefaultSceneRendererPointLight*>(light));
-
-                this->allLights.AddShadowPointLight(this->shadowPointLights.count - 1);
-            }
-
-
-            light->position = sceneNode.GetWorldPosition();
-            light->colour   = lightComponent->GetColour();
-            light->radius   = lightComponent->GetRadius();
-            light->falloff  = lightComponent->GetFalloff();
-
-            if (lightComponent->IsShadowCastingEnabled())
-            {
-                static_cast<DefaultSceneRendererPointLight*>(light)->projection = glm::perspective(90.0f, 1.0f, 0.1f, light->radius);
-
-                glm::vec3 origin(light->position);
-                glm::vec3 posx(  1.0f, 0.0f, 0.0f);
-                glm::vec3 posy(  0.0f, 1.0f, 0.0f);
-                glm::vec3 posz(  0.0f, 0.0f, 1.0f);
-
-                static_cast<DefaultSceneRendererPointLight*>(light)->positiveXView = glm::lookAt(origin, origin + posx, -posy);
-                static_cast<DefaultSceneRendererPointLight*>(light)->negativeXView = glm::lookAt(origin, origin - posx, -posy);
-                static_cast<DefaultSceneRendererPointLight*>(light)->positiveYView = glm::lookAt(origin, origin + posy,  posz);
-                static_cast<DefaultSceneRendererPointLight*>(light)->negativeYView = glm::lookAt(origin, origin - posy, -posz);
-                static_cast<DefaultSceneRendererPointLight*>(light)->positiveZView = glm::lookAt(origin, origin + posz, -posy);
-                static_cast<DefaultSceneRendererPointLight*>(light)->negativeZView = glm::lookAt(origin, origin - posz, -posy);
-            }
+            this->lightManager.AddPointLight(lightComponent);
         }
     }
 
@@ -157,40 +106,7 @@ namespace GTEngine
         auto lightComponent = sceneNode.GetComponent<SpotLightComponent>();
         assert(lightComponent != nullptr);
         {
-            DefaultSceneRendererSpotLight* light = nullptr;
-
-            if (!lightComponent->IsShadowCastingEnabled())
-            {
-                light = new DefaultSceneRendererSpotLight;
-                this->spotLights.Add(lightComponent, light);
-
-                this->allLights.AddSpotLight(this->spotLights.count - 1);
-            }
-            else
-            {
-                light = new DefaultSceneRendererSpotLight;
-                this->shadowSpotLights.Add(lightComponent, static_cast<DefaultSceneRendererSpotLight*>(light));
-
-                this->allLights.AddShadowSpotLight(this->shadowSpotLights.count - 1);
-            }
-
-
-            light->colour      = lightComponent->GetColour();
-            light->position    = sceneNode.GetWorldPosition();
-            light->orientation = sceneNode.GetWorldOrientation();
-            light->length      = lightComponent->GetLength();
-            light->falloff     = lightComponent->GetFalloff();
-            light->innerAngle  = lightComponent->GetInnerAngle();
-            light->outerAngle  = lightComponent->GetOuterAngle();
-
-
-
-            // A few additional properties need to be set if the light is casting a shadow.
-            if (lightComponent->IsShadowCastingEnabled())
-            {
-                static_cast<DefaultSceneRendererSpotLight*>(light)->projection = glm::perspective(light->outerAngle * 2.0f, 1.0f, 0.1f, light->length);
-                static_cast<DefaultSceneRendererSpotLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
-            }
+            this->lightManager.AddSpotLight(lightComponent);
         }
     }
 
@@ -199,12 +115,7 @@ namespace GTEngine
         auto lightComponent = sceneNode.GetComponent<AmbientLightComponent>();
         assert(lightComponent != nullptr);
         {
-            auto light = new SceneRendererAmbientLight;
-            light->colour = lightComponent->GetColour();
-
-            this->ambientLights.Add(lightComponent, light);
-
-            this->allLights.AddAmbientLight(this->ambientLights.count - 1);
+            this->lightManager.AddAmbientLight(lightComponent);
         }
     }
 
@@ -213,33 +124,7 @@ namespace GTEngine
         auto lightComponent = sceneNode.GetComponent<DirectionalLightComponent>();
         assert(lightComponent != nullptr);
         {
-            DefaultSceneRendererDirectionalLight* light = nullptr;
-
-            if (!lightComponent->IsShadowCastingEnabled())
-            {
-                light = new DefaultSceneRendererDirectionalLight;
-                this->directionalLights.Add(lightComponent, light);
-
-                this->allLights.AddDirectionalLight(this->directionalLights.count - 1);
-            }
-            else
-            {
-                light = new DefaultSceneRendererDirectionalLight;
-                this->shadowDirectionalLights.Add(lightComponent, static_cast<DefaultSceneRendererDirectionalLight*>(light));
-
-                this->allLights.AddShadowDirectionalLight(this->shadowDirectionalLights.count - 1);
-            }
-
-
-            light->colour      = lightComponent->GetColour();
-            light->position    = sceneNode.GetWorldPosition();
-            light->orientation = sceneNode.GetWorldOrientation();
-
-            if (lightComponent->IsShadowCastingEnabled())
-            {
-                static_cast<DefaultSceneRendererDirectionalLight*>(light)->projection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 500.0f);
-                static_cast<DefaultSceneRendererDirectionalLight*>(light)->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
-            }
+            this->lightManager.AddDirectionalLight(lightComponent);
         }
     }
 
@@ -348,6 +233,40 @@ namespace GTEngine
 
     void DefaultSceneRenderer_VisibilityProcessor::PostProcess()
     {
+        // We need to now query the objects contained inside the volumes of the point and spot lights.
+        const auto &cullingManager = scene.GetCullingManager();
+        {
+            // Point Lights.
+            for (size_t iPointLight = 0; iPointLight < this->lightManager.pointLights.count; ++iPointLight)
+            {
+                auto lightComponent = this->lightManager.pointLights.buffer[iPointLight]->key;
+                auto light          = this->lightManager.pointLights.buffer[iPointLight]->value;
+
+                assert(lightComponent != nullptr);
+                assert(light          != nullptr);
+                {
+                    PointLightContactsCallback callback(*this, iPointLight, light->IsShadowCasting());
+                    cullingManager.QueryPointLightContacts(lightComponent->GetNode(), callback);
+                }
+            }
+
+
+            // Spot Lights.
+            for (size_t iSpotLight = 0; iSpotLight < this->lightManager.spotLights.count; ++iSpotLight)
+            {
+                auto lightComponent = this->lightManager.spotLights.buffer[iSpotLight]->key;
+                auto light          = this->lightManager.spotLights.buffer[iSpotLight]->value;
+
+                assert(lightComponent != nullptr);
+                assert(light          != nullptr);
+                {
+                    SpotLightContactsCallback callback(*this, iSpotLight, light->IsShadowCasting());
+                    cullingManager.QuerySpotLightContacts(lightComponent->GetNode(), callback);
+                }
+            }
+        }
+
+
         // We need to now determines which lights are touching which meshes. Ambient and directional lights are easy, but point and
         // spot lights need to be determined by the scene.
         for (size_t iModel = 0; iModel < this->visibleModels.count; ++iModel)
@@ -355,22 +274,27 @@ namespace GTEngine
             auto modelLights = this->visibleModels.buffer[iModel]->value;
             assert(modelLights != nullptr);
             {
-                for (size_t iAmbientLight = 0; iAmbientLight < this->ambientLights.count; ++iAmbientLight)
+                for (size_t iAmbientLight = 0; iAmbientLight < this->lightManager.ambientLights.count; ++iAmbientLight)
                 {
                     modelLights->AddAmbientLight(static_cast<uint32_t>(iAmbientLight));
                 }
 
 
-                // Non-shadow directional lights.
-                for (size_t iDirectionalLight = 0; iDirectionalLight < this->directionalLights.count; ++iDirectionalLight)
+                // Directional lights.
+                for (size_t iDirectionalLight = 0; iDirectionalLight < this->lightManager.directionalLights.count; ++iDirectionalLight)
                 {
-                    modelLights->AddDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
-                }
-
-                // Shadow-casting directional lights.
-                for (size_t iDirectionalLight = 0; iDirectionalLight < this->shadowDirectionalLights.count; ++iDirectionalLight)
-                {
-                    modelLights->AddShadowDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
+                    auto light = this->lightManager.directionalLights.buffer[iDirectionalLight]->value;
+                    assert(light != nullptr);
+                    {
+                        if (light->IsShadowCasting())
+                        {
+                            modelLights->AddShadowDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
+                        }
+                        else
+                        {
+                            modelLights->AddDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
+                        }
+                    }
                 }
             }
         }
@@ -381,74 +305,34 @@ namespace GTEngine
             auto particleSystemLights = this->visibleParticleSystems.buffer[iParticleSystem]->value;
             assert(particleSystemLights != nullptr);
             {
-                for (size_t iAmbientLight = 0; iAmbientLight < this->ambientLights.count; ++iAmbientLight)
+                for (size_t iAmbientLight = 0; iAmbientLight < this->lightManager.ambientLights.count; ++iAmbientLight)
                 {
                     particleSystemLights->AddAmbientLight(static_cast<uint32_t>(iAmbientLight));
                 }
 
 
-                // Non-shadow directional lights.
-                for (size_t iDirectionalLight = 0; iDirectionalLight < this->directionalLights.count; ++iDirectionalLight)
+                // Directional lights.
+                for (size_t iDirectionalLight = 0; iDirectionalLight < this->lightManager.directionalLights.count; ++iDirectionalLight)
                 {
-                    particleSystemLights->AddDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
-                }
-
-                // Shadow-casting directional lights.
-                for (size_t iDirectionalLight = 0; iDirectionalLight < this->shadowDirectionalLights.count; ++iDirectionalLight)
-                {
-                    particleSystemLights->AddShadowDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
-                }
-            }
-        }
-
-
-
-        // We need to now query the objects contained inside the volumes of the point and spot lights.
-        const auto &cullingManager = scene.GetCullingManager();
-        {
-            // Point Lights.
-            for (size_t iPointLight = 0; iPointLight < this->pointLights.count; ++iPointLight)              // <-- Non-shadow-casting point lights.
-            {
-                auto lightComponent = this->pointLights.buffer[iPointLight]->key;
-                assert(lightComponent != nullptr);
-                {
-                    PointLightContactsCallback callback(*this, iPointLight, false);                         // <-- 'false' means that we're doing a non-shadow-casting light.
-                    cullingManager.QueryPointLightContacts(lightComponent->GetNode(), callback);
-                }
-            }
-
-            for (size_t iPointLight = 0; iPointLight < this->shadowPointLights.count; ++iPointLight)        // <-- Shadow-casting point lights.
-            {
-                auto lightComponent = this->shadowPointLights.buffer[iPointLight]->key;
-                assert(lightComponent != nullptr);
-                {
-                    PointLightContactsCallback callback(*this, iPointLight, true);                          // <-- 'true' means that we're doing a shadow-casting light.
-                    cullingManager.QueryPointLightContacts(lightComponent->GetNode(), callback);
-                }
-            }
-
-
-            // Spot Lights.
-            for (size_t iSpotLight = 0; iSpotLight < this->spotLights.count; ++iSpotLight)                 // <-- Non-shadow-casting point lights.
-            {
-                auto lightComponent = this->spotLights.buffer[iSpotLight]->key;
-                assert(lightComponent != nullptr);
-                {
-                    SpotLightContactsCallback callback(*this, iSpotLight, false);                         // <-- 'false' means that we're doing a non-shadow-casting light.
-                    cullingManager.QuerySpotLightContacts(lightComponent->GetNode(), callback);
-                }
-            }
-
-            for (size_t iSpotLight = 0; iSpotLight < this->shadowSpotLights.count; ++iSpotLight)           // <-- Shadow-casting point lights.
-            {
-                auto lightComponent = this->shadowSpotLights.buffer[iSpotLight]->key;
-                assert(lightComponent != nullptr);
-                {
-                    SpotLightContactsCallback callback(*this, iSpotLight, true);                          // <-- 'true' means that we're doing a shadow-casting light.
-                    cullingManager.QuerySpotLightContacts(lightComponent->GetNode(), callback);
+                    auto light = this->lightManager.directionalLights.buffer[iDirectionalLight]->value;
+                    assert(light != nullptr);
+                    {
+                        if (light->IsShadowCasting())
+                        {
+                            particleSystemLights->AddShadowDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
+                        }
+                        else
+                        {
+                            particleSystemLights->AddDirectionalLight(static_cast<uint32_t>(iDirectionalLight));
+                        }
+                    }
                 }
             }
         }
+
+
+
+        
 
 
         // We now need to create the mesh objects that will be drawn. These are created from the model components.
@@ -637,40 +521,52 @@ namespace GTEngine
         // We need to retrieve the visible objects of each shadow casting light.
 
         // Shadow-Casting Directional Lights.
-        for (size_t i = 0; i < this->shadowDirectionalLights.count; ++i)
+        for (size_t i = 0; i < this->lightManager.shadowDirectionalLights.count; ++i)
         {
-            auto light = this->shadowDirectionalLights.buffer[i]->value;
-            assert(light != nullptr);
+            auto iLight = this->lightManager.directionalLights.Find(this->lightManager.shadowDirectionalLights[i]);
+            if (iLight != nullptr)
             {
-                scene.QueryVisibleSceneNodes(light->projection * light->view, light->containedMeshes);
+                auto light = iLight->value;
+                assert(light != nullptr);
+                {
+                    scene.QueryVisibleSceneNodes(light->projection * light->view, light->containedMeshes);
+                }
             }
         }
 
 
         // Shadow-Casting Point Lights.
-        for (size_t i = 0; i < this->shadowPointLights.count; ++i)
+        for (size_t i = 0; i < this->lightManager.shadowPointLights.count; ++i)
         {
-            auto light = this->shadowPointLights.buffer[i]->value;
-            assert(light != nullptr);
+            auto iLight = this->lightManager.pointLights.Find(this->lightManager.shadowPointLights[i]);
+            if (iLight != nullptr)
             {
-                // We need to do 6 queries here - one for each face.
-                scene.QueryVisibleSceneNodes(light->projection * light->positiveXView, light->containedMeshesPositiveX);
-                scene.QueryVisibleSceneNodes(light->projection * light->negativeXView, light->containedMeshesNegativeX);
-                scene.QueryVisibleSceneNodes(light->projection * light->positiveYView, light->containedMeshesPositiveY);
-                scene.QueryVisibleSceneNodes(light->projection * light->negativeYView, light->containedMeshesNegativeY);
-                scene.QueryVisibleSceneNodes(light->projection * light->positiveZView, light->containedMeshesPositiveZ);
-                scene.QueryVisibleSceneNodes(light->projection * light->negativeZView, light->containedMeshesNegativeZ);
+                auto light = iLight->value;
+                assert(light != nullptr);
+                {
+                    // We need to do 6 queries here - one for each face.
+                    scene.QueryVisibleSceneNodes(light->projection * light->positiveXView, light->containedMeshesPositiveX);
+                    scene.QueryVisibleSceneNodes(light->projection * light->negativeXView, light->containedMeshesNegativeX);
+                    scene.QueryVisibleSceneNodes(light->projection * light->positiveYView, light->containedMeshesPositiveY);
+                    scene.QueryVisibleSceneNodes(light->projection * light->negativeYView, light->containedMeshesNegativeY);
+                    scene.QueryVisibleSceneNodes(light->projection * light->positiveZView, light->containedMeshesPositiveZ);
+                    scene.QueryVisibleSceneNodes(light->projection * light->negativeZView, light->containedMeshesNegativeZ);
+                }
             }
         }
 
 
         // Shadow-Casting Spot Lights.
-        for (size_t i = 0; i < this->shadowSpotLights.count; ++i)
+        for (size_t i = 0; i < this->lightManager.shadowSpotLights.count; ++i)
         {
-            auto light = this->shadowSpotLights.buffer[i]->value;
-            assert(light != nullptr);
+            auto iLight = this->lightManager.spotLights.Find(this->lightManager.shadowSpotLights[i]);
+            if (iLight != nullptr)
             {
-                scene.QueryVisibleSceneNodes(light->projection * light->view, light->containedMeshes);
+                auto light = iLight->value;
+                assert(light != nullptr);
+                {
+                    scene.QueryVisibleSceneNodes(light->projection * light->view, light->containedMeshes);
+                }
             }
         }
 

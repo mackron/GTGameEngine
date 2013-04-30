@@ -926,6 +926,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_SpotLight.hpp">
       <Filter>include\DefaultSceneRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_LightManager.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1574,6 +1577,9 @@
       <Filter>source\DefaultSceneRenderer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_SpotLight.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_LightManager.cpp">
       <Filter>source\DefaultSceneRenderer</Filter>
     </ClCompile>
   </ItemGroup>

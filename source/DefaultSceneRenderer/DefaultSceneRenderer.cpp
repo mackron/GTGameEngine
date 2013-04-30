@@ -428,12 +428,12 @@ namespace GTEngine
             // The first set of lights to render are the non-shadow-casting lights. We can set some rendering state at the start so that we don't
             // have to keep changing it for each individual light. This will be different for shadow-casting lights, though, because they will
             // need to have their shadow maps rendered also.
-            size_t ambientLightsRemaining     = visibleObjects.ambientLights.count;
-            size_t directionalLightsRemaining = visibleObjects.directionalLights.count;
-            size_t pointLightsRemaining       = visibleObjects.pointLights.count;
-            size_t spotLightsRemaining        = visibleObjects.spotLights.count;
+            size_t ambientLightCount     = visibleObjects.lightManager.ambientLights.count;
+            size_t directionalLightCount = visibleObjects.lightManager.directionalLights.count - visibleObjects.lightManager.shadowDirectionalLights.count;
+            size_t pointLightCount       = visibleObjects.lightManager.pointLights.count       - visibleObjects.lightManager.shadowPointLights.count;
+            size_t spotLightCount        = visibleObjects.lightManager.spotLights.count        - visibleObjects.lightManager.shadowSpotLights.count;
 
-            if (ambientLightsRemaining > 0 || directionalLightsRemaining > 0 || pointLightsRemaining > 0 || spotLightsRemaining > 0)
+            if (ambientLightCount > 0 || directionalLightCount > 0 || pointLightCount > 0 || spotLightCount > 0)
             {
                 // Depth is laid down. No need to write.
                 Renderer::DisableDepthWrites();
@@ -442,32 +442,58 @@ namespace GTEngine
 
 
                 // Ambient Lights.
-                while (ambientLightsRemaining > 0)
+                for (size_t iAmbientLight = 0; iAmbientLight < visibleObjects.lightManager.ambientLights.count; ++iAmbientLight)
                 {
-                    this->RenderOpaqueAmbientLightingPass(ambientLightsRemaining - 1, visibleObjects);
-                    ambientLightsRemaining -= 1;
+                    auto light = visibleObjects.lightManager.ambientLights.buffer[iAmbientLight]->value;
+                    assert(light != nullptr);
+                    {
+                        this->RenderOpaqueAmbientLightingPass(iAmbientLight, visibleObjects);
+                    }
                 }
+
 
                 // Directional Lights.
-                while (directionalLightsRemaining > 0)
+                for (size_t iDirectionalLight = 0; iDirectionalLight < visibleObjects.lightManager.directionalLights.count; ++iDirectionalLight)
                 {
-                    this->RenderOpaqueDirectionalLightingPass(directionalLightsRemaining - 1, visibleObjects);
-                    directionalLightsRemaining -= 1;
+                    auto light = visibleObjects.lightManager.directionalLights.buffer[iDirectionalLight]->value;
+                    assert(light != nullptr);
+                    {
+                        if (!light->IsShadowCasting())
+                        {
+                            this->RenderOpaqueDirectionalLightingPass(iDirectionalLight, visibleObjects);
+                        }
+                    }
                 }
+
 
                 // Point Lights.
-                while (pointLightsRemaining > 0)
+                for (size_t iPointLight = 0; iPointLight < visibleObjects.lightManager.pointLights.count; ++iPointLight)
                 {
-                    this->RenderOpaquePointLightingPass(pointLightsRemaining - 1, visibleObjects);
-                    pointLightsRemaining -= 1;
+                    auto light = visibleObjects.lightManager.pointLights.buffer[iPointLight]->value;
+                    assert(light != nullptr);
+                    {
+                        if (!light->IsShadowCasting())
+                        {
+                            this->RenderOpaquePointLightingPass(iPointLight, visibleObjects);
+                        }
+                    }
                 }
 
+
                 // Spot Lights.
-                while (spotLightsRemaining > 0)
+                for (size_t iSpotLight = 0; iSpotLight < visibleObjects.lightManager.spotLights.count; ++iSpotLight)
                 {
-                    this->RenderOpaqueSpotLightingPass(spotLightsRemaining - 1, visibleObjects);
-                    spotLightsRemaining -= 1;
+                    auto light = visibleObjects.lightManager.spotLights.buffer[iSpotLight]->value;
+                    assert(light != nullptr);
+                    {
+                        if (!light->IsShadowCasting())
+                        {
+                            this->RenderOpaqueSpotLightingPass(iSpotLight, visibleObjects);
+                        }
+                    }
                 }
+
+
 
                 // We have finished with the non-shadow casting lights, so now some state needs to be restored. The next lights will have shadow
                 // maps generated which means they will need to handle state changes themselves.
@@ -479,26 +505,43 @@ namespace GTEngine
 
 
             // Shadow-Casting Lights.
-            size_t shadowDirectionalLightsRemaining = visibleObjects.shadowDirectionalLights.count;
-            size_t shadowPointLightsRemaining       = visibleObjects.shadowPointLights.count;
-            size_t shadowSpotLightsRemaining        = visibleObjects.shadowSpotLights.count;
 
-            while (shadowDirectionalLightsRemaining > 0)
+            for (size_t iDirectionalLight = 0; iDirectionalLight < visibleObjects.lightManager.directionalLights.count; ++iDirectionalLight)
             {
-                this->RenderOpaqueShadowDirectionalLightingPass(shadowDirectionalLightsRemaining - 1, visibleObjects, framebuffer);
-                shadowDirectionalLightsRemaining -= 1;
+                auto light = visibleObjects.lightManager.directionalLights.buffer[iDirectionalLight]->value;
+                assert(light != nullptr);
+                {
+                    if (light->IsShadowCasting())
+                    {
+                        this->RenderOpaqueShadowDirectionalLightingPass(iDirectionalLight, visibleObjects, framebuffer);
+                    }
+                }
             }
 
-            while (shadowPointLightsRemaining > 0)
+
+            for (size_t iPointLight = 0; iPointLight < visibleObjects.lightManager.pointLights.count; ++iPointLight)
             {
-                this->RenderOpaqueShadowPointLightingPass(shadowPointLightsRemaining - 1, visibleObjects, framebuffer);
-                shadowPointLightsRemaining -= 1;
+                auto light = visibleObjects.lightManager.pointLights.buffer[iPointLight]->value;
+                assert(light != nullptr);
+                {
+                    if (light->IsShadowCasting())
+                    {
+                        this->RenderOpaqueShadowPointLightingPass(iPointLight, visibleObjects, framebuffer);
+                    }
+                }
             }
 
-            while (shadowSpotLightsRemaining > 0)
+
+            for (size_t iSpotLight = 0; iSpotLight < visibleObjects.lightManager.spotLights.count; ++iSpotLight)
             {
-                this->RenderOpaqueShadowSpotLightingPass(shadowSpotLightsRemaining - 1, visibleObjects, framebuffer);
-                shadowSpotLightsRemaining -= 1;
+                auto light = visibleObjects.lightManager.spotLights.buffer[iSpotLight]->value;
+                assert(light != nullptr);
+                {
+                    if (light->IsShadowCasting())
+                    {
+                        this->RenderOpaqueShadowSpotLightingPass(iSpotLight, visibleObjects, framebuffer);
+                    }
+                }
             }
         }
     }
@@ -626,7 +669,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
-        auto light = visibleObjects.ambientLights.buffer[lightIndex]->value;
+        auto light = visibleObjects.lightManager.ambientLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
             for (size_t iObject = 0; iObject < meshes.count; ++iObject)
@@ -693,7 +736,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
-        auto light = visibleObjects.directionalLights.buffer[lightIndex]->value;
+        auto light = visibleObjects.lightManager.directionalLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
             for (size_t iObject = 0; iObject < meshes.count; ++iObject)
@@ -751,7 +794,7 @@ namespace GTEngine
         Renderer::SetDrawBuffers(1, &colourBufferIndex);
 
 
-        auto light = visibleObjects.shadowDirectionalLights.buffer[lightIndex]->value;
+        auto light = visibleObjects.lightManager.directionalLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
             glm::mat4 projectionView = light->projection * light->view;
@@ -851,7 +894,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
-        auto light = visibleObjects.shadowDirectionalLights.buffer[lightIndex]->value;
+        auto light = visibleObjects.lightManager.directionalLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
             for (size_t iObject = 0; iObject < meshes.count; ++iObject)
@@ -921,7 +964,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
-        auto light = visibleObjects.pointLights.buffer[lightIndex]->value;
+        auto light = visibleObjects.lightManager.pointLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
             for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
@@ -974,7 +1017,8 @@ namespace GTEngine
         Renderer::SetViewport(0, 0, this->pointShadowMapFramebuffer.width, this->pointShadowMapFramebuffer.height);
 
 
-        auto light = visibleObjects.shadowPointLights.buffer[lightIndex]->value;
+        //auto light = visibleObjects.shadowPointLights.buffer[lightIndex]->value;
+        auto light = visibleObjects.lightManager.pointLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
             this->RenderPointShapowMapFace(*light, light->positiveXView, 0, light->containedMeshesPositiveX.meshes);
@@ -1031,7 +1075,8 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
-        auto light = visibleObjects.shadowPointLights.buffer[lightIndex]->value;
+        //auto light = visibleObjects.shadowPointLights.buffer[lightIndex]->value;
+        auto light = visibleObjects.lightManager.pointLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
             for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
@@ -1175,7 +1220,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
-        auto light = visibleObjects.spotLights.buffer[lightIndex]->value;
+        auto light = visibleObjects.lightManager.spotLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
             for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
@@ -1240,7 +1285,7 @@ namespace GTEngine
 
 
 
-        auto light = visibleObjects.shadowSpotLights.buffer[lightIndex]->value;
+        auto light = visibleObjects.lightManager.spotLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
             glm::mat4 projectionView = light->projection * light->view;
@@ -1340,7 +1385,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
     {
-        auto light = visibleObjects.shadowSpotLights.buffer[lightIndex]->value;
+        auto light = visibleObjects.lightManager.spotLights.buffer[lightIndex]->value;
         assert(light != nullptr);
         {
             for (size_t iMesh = 0; iMesh < meshes.count; ++iMesh)
@@ -1700,7 +1745,7 @@ namespace GTEngine
             auto ambientLightShader = this->GetMaterialAmbientLightShader(*mesh.material);
             for (size_t i = 0; i < lights->GetAmbientLightCount(); ++i)
             {
-                auto light  = visibleObjects.ambientLights.buffer[lights->lightIDs[i + ambientLightStartIndex]]->value;
+                auto light  = visibleObjects.lightManager.ambientLights.buffer[lights->lightIDs[i + ambientLightStartIndex]]->value;
                 auto shader = ambientLightShader;
 
 
@@ -1734,7 +1779,7 @@ namespace GTEngine
             auto directionalLightShader = this->GetMaterialDirectionalLightShader(*mesh.material);
             for (size_t i = 0; i < lights->GetDirectionalLightCount(); ++i)
             {
-                auto light  = visibleObjects.directionalLights.buffer[lights->lightIDs[i + directionalLightStartIndex]]->value;
+                auto light  = visibleObjects.lightManager.directionalLights.buffer[lights->lightIDs[i + directionalLightStartIndex]]->value;
                 auto shader = directionalLightShader;
 
 
@@ -1766,7 +1811,7 @@ namespace GTEngine
 
             for (size_t i = 0; i < lights->GetShadowDirectionalLightCount(); ++i)
             {
-                auto light  = visibleObjects.shadowDirectionalLights.buffer[lights->lightIDs[i + shadowDirectionalLightStartIndex]]->value;
+                auto light  = visibleObjects.lightManager.directionalLights.buffer[lights->lightIDs[i + shadowDirectionalLightStartIndex]]->value;
                 auto shader = directionalLightShader;
 
 
@@ -1802,7 +1847,7 @@ namespace GTEngine
             auto pointLightShader = this->GetMaterialPointLightShader(*mesh.material);
             for (size_t i = 0; i < lights->GetPointLightCount(); ++i)
             {
-                auto light  = visibleObjects.pointLights.buffer[lights->lightIDs[i + pointLightStartIndex]]->value;
+                auto light  = visibleObjects.lightManager.pointLights.buffer[lights->lightIDs[i + pointLightStartIndex]]->value;
                 auto shader = pointLightShader;
 
 
@@ -1837,7 +1882,7 @@ namespace GTEngine
 
             for (size_t i = 0; i < lights->GetShadowPointLightCount(); ++i)
             {
-                auto light  = visibleObjects.shadowPointLights.buffer[lights->lightIDs[i + shadowPointLightStartIndex]]->value;
+                auto light  = visibleObjects.lightManager.pointLights.buffer[lights->lightIDs[i + shadowPointLightStartIndex]]->value;
                 auto shader = pointLightShader;
 
 
@@ -1874,7 +1919,7 @@ namespace GTEngine
             auto spotLightShader = this->GetMaterialSpotLightShader(*mesh.material);
             for (size_t i = 0; i < lights->GetSpotLightCount(); ++i)
             {
-                auto light  = visibleObjects.spotLights.buffer[lights->lightIDs[i + spotLightStartIndex]]->value;
+                auto light  = visibleObjects.lightManager.spotLights.buffer[lights->lightIDs[i + spotLightStartIndex]]->value;
                 auto shader = spotLightShader;
 
 
@@ -1911,7 +1956,7 @@ namespace GTEngine
 
             for (size_t i = 0; i < lights->GetShadowSpotLightCount(); ++i)
             {
-                auto light  = visibleObjects.shadowSpotLights.buffer[lights->lightIDs[i + shadowSpotLightStartIndex]]->value;
+                auto light  = visibleObjects.lightManager.spotLights.buffer[lights->lightIDs[i + shadowSpotLightStartIndex]]->value;
                 auto shader = spotLightShader;
 
 

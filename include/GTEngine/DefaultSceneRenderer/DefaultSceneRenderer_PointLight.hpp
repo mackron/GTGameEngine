@@ -52,6 +52,10 @@ namespace GTEngine
         glm::mat4 projection;
 
 
+        /// Keeps track of whether or not the light casts shadows.
+        bool shadowCasting;
+
+
         /// Constructor.
         DefaultSceneRendererPointLight()
             : containedMeshesPositiveX(), containedMeshesNegativeX(),
@@ -60,19 +64,15 @@ namespace GTEngine
               positiveXView(), negativeXView(),
               positiveYView(), negativeYView(),
               positiveZView(), negativeZView(),
-              projection()
+              projection(),
+              shadowCasting(false)
         {
         }
 
         /// Determines whether or not the light casts shadows.
         bool IsShadowCasting() const
         {
-            return this->containedMeshesPositiveX.meshes.count > 0 ||
-                   this->containedMeshesNegativeX.meshes.count > 0 ||
-                   this->containedMeshesPositiveY.meshes.count > 0 ||
-                   this->containedMeshesNegativeY.meshes.count > 0 ||
-                   this->containedMeshesPositiveZ.meshes.count > 0 ||
-                   this->containedMeshesNegativeZ.meshes.count > 0;
+            return this->shadowCasting;
         }
     };
 }
