@@ -19,18 +19,21 @@ namespace GTEngine
         /// The view matrix to use when building the shadow map.
         glm::mat4 view;
 
+        /// Keeps track of whether or not the light casts shadows.
+        bool shadowCasting;
+
 
 
         /// Constructor.
         DefaultSceneRendererDirectionalLight()
-            : containedMeshes(), projection(), view()
+            : containedMeshes(), projection(), view(), shadowCasting(false)
         {
         }
 
         /// Determines whether or not the light casts shadows.
         bool IsShadowCasting() const
         {
-            return this->containedMeshes.meshes.count > 0;
+            return this->shadowCasting;
         }
     };
 }

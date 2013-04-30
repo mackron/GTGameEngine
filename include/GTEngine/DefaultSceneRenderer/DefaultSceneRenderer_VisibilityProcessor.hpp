@@ -3,10 +3,9 @@
 #ifndef __GTEngine_DefaultSceneRenderer_VisibilityProcessor_hpp_
 #define __GTEngine_DefaultSceneRenderer_VisibilityProcessor_hpp_
 
+
 #include "DefaultSceneRenderer_Mesh.hpp"
-#include "DefaultSceneRenderer_DirectionalLight.hpp"
-#include "DefaultSceneRenderer_PointLight.hpp"
-#include "DefaultSceneRenderer_SpotLight.hpp"
+#include "DefaultSceneRenderer_LightManager.hpp"
 
 namespace GTEngine
 {
@@ -84,30 +83,13 @@ namespace GTEngine
         GTCore::Vector<DefaultSceneRendererMesh> blendedTransparentObjectsLast;
 
 
+        /// The light manager for managing lights.
+        DefaultSceneRenderer_LightManager lightManager;
 
 
-        /// The list of ambient lights.
-        GTCore::Map<const AmbientLightComponent*, SceneRendererAmbientLight*> ambientLights;
 
-        /// The list of directional lights.
-        GTCore::Map<const DirectionalLightComponent*, DefaultSceneRendererDirectionalLight*> directionalLights;
-
-        /// The list of point lights.
-        GTCore::Map<const PointLightComponent*, DefaultSceneRendererPointLight*> pointLights;
-
-        /// The list of spot lights.
-        GTCore::Map<const SpotLightComponent*, DefaultSceneRendererSpotLight*> spotLights;
-
-
-        /// The list of shadow-casting directional lights.
-        GTCore::Map<const DirectionalLightComponent*, DefaultSceneRendererDirectionalLight*> shadowDirectionalLights;
-
-        /// The list of shadow-casting point lights.
-        GTCore::Map<const PointLightComponent*, DefaultSceneRendererPointLight*> shadowPointLights;
-
-        /// The list of shadow-casting spot lights.
-        GTCore::Map<const SpotLightComponent*, DefaultSceneRendererSpotLight*> shadowSpotLights;
-
+        /// A map structure for mapping a model's Mesh to a scene renderer mesh.
+        GTCore::Map<const Mesh*, DefaultSceneRendererMesh*> visibleMeshes;
 
 
         /// The flat list of visible models, mapped to the indices of the lights that touch them. We want to store pointers to the component and
