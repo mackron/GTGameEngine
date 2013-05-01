@@ -624,69 +624,7 @@ namespace GTEngine
 
             if (mesh.touchingLights != nullptr)
             {
-                this->PostProcess_SubdivideLightGroup(*mesh.touchingLights, mesh.lightGroups);
-            }
-        }
-    }
-
-    void DefaultSceneRenderer_VisibilityProcessor::PostProcess_SubdivideLightGroup(const DefaultSceneRenderer_LightGroup &source, GTCore::Vector<DefaultSceneRenderer_LightGroup> &output)
-    {
-        output.Clear();     // TODO: Check that we actually need this clear.
-
-
-        // For now we will make it so every non-shadow-casting light is in a single group. This will need to be split later on.
-
-        output.PushBack(DefaultSceneRenderer_LightGroup());
-        auto &lightGroup = output.GetBack();
-        {
-            for (uint16_t i = 0; i < source.GetAmbientLightCount(); ++i)
-            {
-                lightGroup.AddAmbientLight(source.lightIDs[i + source.GetAmbientLightStartIndex()]);
-            }
-
-            for (uint16_t i = 0; i < source.GetDirectionalLightCount(); ++i)
-            {
-                lightGroup.AddDirectionalLight(source.lightIDs[i + source.GetDirectionalLightStartIndex()]);
-            }
-
-            for (uint16_t i = 0; i < source.GetPointLightCount(); ++i)
-            {
-                lightGroup.AddPointLight(source.lightIDs[i + source.GetPointLightStartIndex()]);
-            }
-
-            for (uint16_t i = 0; i < source.GetSpotLightCount(); ++i)
-            {
-                lightGroup.AddSpotLight(source.lightIDs[i + source.GetSpotLightStartIndex()]);
-            }
-        }
-
-
-        // Each shadow-casting light should have it's own group.
-
-        for (uint16_t i = 0; i < source.GetShadowDirectionalLightCount(); ++i)
-        {
-            output.PushBack(DefaultSceneRenderer_LightGroup());
-            auto &lightGroup = output.GetBack();
-            {
-                lightGroup.AddShadowDirectionalLight(source.lightIDs[i + source.GetShadowDirectionalLightStartIndex()]);
-            }
-        }
-
-        for (uint16_t i = 0; i < source.GetShadowPointLightCount(); ++i)
-        {
-            output.PushBack(DefaultSceneRenderer_LightGroup());
-            auto &lightGroup = output.GetBack();
-            {
-                lightGroup.AddShadowPointLight(source.lightIDs[i + source.GetShadowPointLightStartIndex()]);
-            }
-        }
-
-        for (uint16_t i = 0; i < source.GetShadowSpotLightCount(); ++i)
-        {
-            output.PushBack(DefaultSceneRenderer_LightGroup());
-            auto &lightGroup = output.GetBack();
-            {
-                lightGroup.AddShadowSpotLight(source.lightIDs[i + source.GetShadowSpotLightStartIndex()]);
+                this->lightManager.SubdivideLightGroup(*mesh.touchingLights, mesh.lightGroups, DefaultSceneRenderer_LightManager::SubdivideOption_ConvertShadowLights);
             }
         }
     }

@@ -6,6 +6,7 @@
 #include "DefaultSceneRenderer_DirectionalLight.hpp"
 #include "DefaultSceneRenderer_PointLight.hpp"
 #include "DefaultSceneRenderer_SpotLight.hpp"
+#include "DefaultSceneRenderer_LightGroup.hpp"
 
 namespace GTEngine
 {
@@ -42,6 +43,19 @@ namespace GTEngine
 
 
 
+        /// Takes a light group and sub-divides it into smaller chunks for use by the renderer.
+        ///
+        /// @remarks
+        ///     The renderer will use the smaller chunks when doing rendering.
+        void SubdivideLightGroup(const DefaultSceneRenderer_LightGroup &source, GTCore::Vector<DefaultSceneRenderer_LightGroup> &output, unsigned int options = 0);
+
+
+
+        /// Enumerator for sub-division options.
+        enum SubdivideOptions
+        {
+            SubdivideOption_ConvertShadowLights = (1 << 1)      // <-- Shadow-casting lights should be converted to non-shadow-casting lights.
+        };
 
 
         /// The list of ambient lights.
