@@ -9,6 +9,7 @@
 #include "../Rendering/Renderer.hpp"
 
 #include "DefaultSceneRenderer_VisibilityProcessor.hpp"
+#include "DefaultSceneRenderer_MaterialShaders.hpp"
 
 
 #include <GTCore/Map.hpp>
@@ -364,68 +365,7 @@ namespace GTEngine
 
 
 
-    /// Structure containing the shaders associated with a material.
-    struct DefaultSceneRendererMaterialShaders
-    {
-        DefaultSceneRendererMaterialShaders()
-            : ambientLightShader(nullptr),
-              directionalLightShader(nullptr),
-              pointLightShader(nullptr),
-              spotLightShader(nullptr),
-              shadowDirectionalLightShader(nullptr),
-              shadowPointLightShader(nullptr),
-              shadowSpotLightShader(nullptr),
-              materialShader(nullptr)
-        {
-        }
-
-        ~DefaultSceneRendererMaterialShaders()
-        {
-            Renderer::DeleteShader(this->ambientLightShader);
-            Renderer::DeleteShader(this->directionalLightShader);
-            Renderer::DeleteShader(this->pointLightShader);
-            Renderer::DeleteShader(this->spotLightShader);
-            Renderer::DeleteShader(this->shadowDirectionalLightShader);
-            Renderer::DeleteShader(this->shadowPointLightShader);
-            Renderer::DeleteShader(this->shadowSpotLightShader);
-            Renderer::DeleteShader(this->materialShader);
-        }
-
-
-        /// The shader to use when doing an ambient light pass.
-        Shader* ambientLightShader;
-
-        /// The shader to use when doing a directional light pass.
-        Shader* directionalLightShader;
-
-        /// The shader to use when doing a point light pass.
-        Shader* pointLightShader;
-
-        /// The shader to use when doing a spot light pass.
-        Shader* spotLightShader;
-
-
-        /// The shader to use when doing a shadow directional light pass.
-        Shader* shadowDirectionalLightShader;
-
-        /// The shader to use when doing a shadow point light pass.
-        Shader* shadowPointLightShader;
-
-        /// The shader to use when doing a shadow spot light pass.
-        Shader* shadowSpotLightShader;
-
-
-        /// The shader to use when doing the material pass.
-        Shader* materialShader;
-
-
-    private:    // No copying.
-        DefaultSceneRendererMaterialShaders(const DefaultSceneRendererMaterialShaders &);
-        DefaultSceneRendererMaterialShaders & operator=(const DefaultSceneRendererMaterialShaders &);
-    };
-
-
-
+    
     /// Class representing the default scene renderer.
     class DefaultSceneRenderer : public SceneRenderer
     {
@@ -607,7 +547,7 @@ namespace GTEngine
         /// @remarks
         ///     If the structure has not yet been created, it will be created here. Note, this will not create the individual shaders. This will be handled by
         ///     the method responsible for retrieving those specific shaders.
-        DefaultSceneRendererMaterialShaders* GetMaterialShaders(Material &material);
+        DefaultSceneRenderer_MaterialShaders* GetMaterialShaders(Material &material);
 
         /// Retrieves the shader to use for the ambient light pass.
         ///
@@ -659,7 +599,7 @@ namespace GTEngine
         GTCore::Map<SceneViewport*, DefaultSceneRendererFramebuffer*> viewportFramebuffers;
 
         /// Keeps track of the shaders associated with each referenced material definition. Keyed by the material definition.
-        GTCore::Map<const MaterialDefinition*, DefaultSceneRendererMaterialShaders*> materialShaders;
+        GTCore::Map<const MaterialDefinition*, DefaultSceneRenderer_MaterialShaders*> materialShaders;
 
 
         /// The shader to use with the depth pre-pass.
