@@ -2129,14 +2129,14 @@ namespace GTEngine
     ///////////////////////
     // Materials.
 
-    DefaultSceneRendererMaterialShaders* DefaultSceneRenderer::GetMaterialShaders(Material &material)
+    DefaultSceneRenderer_MaterialShaders* DefaultSceneRenderer::GetMaterialShaders(Material &material)
     {
         // A single set of shaders is created for each definition. We map the shaders to the definition, with the definition acting as the key.
         auto iMaterialShaders = this->materialShaders.Find(&material.GetDefinition());
         if (iMaterialShaders == nullptr)
         {
             // The shaders structure has not yet been created, so it needs to be created now.
-            auto shaders = new DefaultSceneRendererMaterialShaders;
+            auto shaders = new DefaultSceneRenderer_MaterialShaders;
             this->materialShaders.Add(&material.GetDefinition(), shaders);
 
             return shaders;
