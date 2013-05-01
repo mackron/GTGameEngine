@@ -3,7 +3,6 @@
 #ifndef __GTEngine_DefaultSceneRenderer_VisibilityProcessor_hpp_
 #define __GTEngine_DefaultSceneRenderer_VisibilityProcessor_hpp_
 
-
 #include "DefaultSceneRenderer_Mesh.hpp"
 #include "DefaultSceneRenderer_LightManager.hpp"
 
@@ -53,9 +52,6 @@ namespace GTEngine
 
         /// Takes the light groups of each visible mesh and sub-divides them into the groups that will be used when rendering.
         void PostProcess_AllocateLightGroups();
-
-        /// Sub-divides the given light group into renderable chunks.
-        void PostProcess_SubdivideLightGroup(const DefaultSceneRenderer_LightGroup &source, GTCore::Vector<DefaultSceneRenderer_LightGroup> &output);
 
 
 
