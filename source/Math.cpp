@@ -78,7 +78,7 @@ namespace GTEngine
             glm::vec3 s = glm::normalize(glm::cross(f, up));
 		    glm::vec3 u = glm::cross(s, f);
 
-            glm::mat3 orientation(glm::mat3::null);
+            glm::mat3 orientation;
             orientation[0][0] =  s.x;
 		    orientation[0][1] =  s.y;
 		    orientation[0][2] =  s.z;
