@@ -10,6 +10,7 @@
 
 #include "DefaultSceneRenderer_VisibilityProcessor.hpp"
 #include "DefaultSceneRenderer_MaterialShaders.hpp"
+#include "DefaultSceneRenderer_ShaderBuilder.hpp"
 
 
 #include <GTCore/Map.hpp>
@@ -646,6 +647,11 @@ namespace GTEngine
         Shader* blurShaderY11x11;
         Shader* blurShaderX15x15;
         Shader* blurShaderY15x15;
+
+
+        /// The shader builder for dynamically building shaders for various things.
+        DefaultSceneRenderer_ShaderBuilder shaderBuilder;
+
 
 
 

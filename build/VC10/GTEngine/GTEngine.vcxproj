@@ -204,6 +204,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_Framebuffers.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_LightGroup.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_LightManager.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaderID.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaders.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_Mesh.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_PointLight.hpp" />
@@ -458,6 +459,7 @@
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_Framebuffers.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_LightGroup.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_LightManager.cpp" />
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaderID.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaders.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_Mesh.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_PointLight.cpp" />
