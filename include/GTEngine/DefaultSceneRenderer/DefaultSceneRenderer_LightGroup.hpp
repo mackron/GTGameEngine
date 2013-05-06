@@ -42,6 +42,19 @@ namespace GTEngine
             value[7] = 0;
         }
 
+        DefaultSceneRenderer_LightGroupID(const DefaultSceneRenderer_LightGroupID &other)
+            : value()
+        {
+            value[0] = other.value[0];
+            value[1] = other.value[1];
+            value[2] = other.value[2];
+            value[3] = other.value[3];
+            value[4] = other.value[4];
+            value[5] = other.value[5];
+            value[6] = other.value[6];
+            value[7] = other.value[7];
+        }
+
 
         void SetAmbientLightCount(uint16_t count)
         {
@@ -216,6 +229,38 @@ namespace GTEngine
             {
                 this->SetShadowSpotLightCount(count - 1);
             }
+        }
+
+
+
+        bool operator<(const DefaultSceneRenderer_LightGroupID &other) const
+        {
+            auto value0      = *reinterpret_cast<const uint64_t*>(this->value + 0);
+            auto value1      = *reinterpret_cast<const uint64_t*>(this->value + 4);
+            auto otherValue0 = *reinterpret_cast<const uint64_t*>(other.value + 0);
+            auto otherValue1 = *reinterpret_cast<const uint64_t*>(other.value + 4);
+
+            return value0 < otherValue0 || (value0 == otherValue0 && value1 < otherValue1);
+        }
+
+        bool operator>(const DefaultSceneRenderer_LightGroupID &other) const
+        {
+            auto value0      = *reinterpret_cast<const uint64_t*>(this->value + 0);
+            auto value1      = *reinterpret_cast<const uint64_t*>(this->value + 4);
+            auto otherValue0 = *reinterpret_cast<const uint64_t*>(other.value + 0);
+            auto otherValue1 = *reinterpret_cast<const uint64_t*>(other.value + 4);
+
+            return value0 > otherValue0 || (value0 == otherValue0 && value1 > otherValue1);
+        }
+
+        bool operator==(const DefaultSceneRenderer_LightGroupID &other) const
+        {
+            auto value0      = *reinterpret_cast<const uint64_t*>(this->value + 0);
+            auto value1      = *reinterpret_cast<const uint64_t*>(this->value + 4);
+            auto otherValue0 = *reinterpret_cast<const uint64_t*>(other.value + 0);
+            auto otherValue1 = *reinterpret_cast<const uint64_t*>(other.value + 4);
+
+            return value0 == otherValue0 && value1 == otherValue1;
         }
     };
 
