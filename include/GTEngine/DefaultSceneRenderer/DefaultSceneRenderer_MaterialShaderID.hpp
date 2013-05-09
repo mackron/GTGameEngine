@@ -45,8 +45,9 @@ namespace GTEngine
         /// Enumerator containing the different flags that can be used in a material shader ID.
         enum Flags
         {
-            IncludeMaterialPass = (1 << 1),
-            NoNormalMapping     = (1 << 2)
+            IncludeMaterialPass     = (1 << 1),
+            NoNormalMapping         = (1 << 2),
+            GetLightingFromTextures = (1 << 3)
         };
 
 
