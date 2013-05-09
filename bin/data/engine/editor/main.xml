@@ -287,9 +287,9 @@ hidden by default.
         border:           1px #222
         background-color: #333
         vertical-align:   top
-        font-family:      liberation mono
-        font-size:        9.5pt
-        text-color:       #ccc
+        font-family:      source code pro
+        font-size:        10pt
+        text-color:       #bbb
     }
 </style>
 
