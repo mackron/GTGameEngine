@@ -206,7 +206,7 @@ namespace GTEngine
 
 
             /// SceneCullingManager::VisibilityCallback::ProcessModel().
-            virtual void ProcesstModel(const SceneNode &sceneNode)
+            virtual void ProcessModel(const SceneNode &sceneNode)
             {
                 auto modelComponent = sceneNode.GetComponent<ModelComponent>();
                 assert(modelComponent != nullptr);

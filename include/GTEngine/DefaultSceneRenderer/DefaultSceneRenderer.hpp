@@ -550,6 +550,23 @@ namespace GTEngine
         ///     the method responsible for retrieving those specific shaders.
         DefaultSceneRenderer_MaterialShaders* GetMaterialShaders(Material &material);
 
+        /// Retrieves a pointer to the shader for the given light group and flags.
+        ///
+        /// @param material     [in] A reference to the material whose shader is being retrieved.
+        /// @param lightGroupID [in] A reference to the ID of the light group.
+        /// @param flags        [in] The additional flags controlling some properties of the shader.
+        Shader* GetMaterialShader(Material &material, const DefaultSceneRenderer_LightGroupID &lightGroupID, uint32_t flags);
+
+        /// Sets the uniforms of the given material shader using the given data.
+        ///
+        /// @param shader         [in] A reference to the shader whose uniforms are being set.
+        /// @param material       [in] A reference to the owner material.
+        /// @param lightGroup     [in] A reference to the light group.
+        /// @param flags          [in] The flags specifying additional properties about the contents of the shader.
+        /// @param visibleObjects [in] A reference to the visibility processor containing information about the lights.
+        void SetMaterialShaderUniforms(Shader &shader, const Material &material, const DefaultSceneRenderer_LightGroup &lightGroup, uint32_t flags, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
+
+
         /// Retrieves the shader to use for the ambient light pass.
         ///
         /// @param material [in] A reference to the material whose shader is being retrieved.

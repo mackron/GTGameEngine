@@ -57,7 +57,7 @@ namespace GTEngine
 
 
         /// Helper for setting the uniforms defined by the given material.
-        void SetUniformsFromMaterial(Material &material);
+        void SetUniformsFromMaterial(const Material &material);
         
 
 
