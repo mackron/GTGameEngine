@@ -54,7 +54,7 @@ namespace GTEngine
     {
     }
 
-    void Shader::SetUniformsFromMaterial(Material &material)
+    void Shader::SetUniformsFromMaterial(const Material &material)
     {
         auto &materialUniforms = material.GetParameters();
 

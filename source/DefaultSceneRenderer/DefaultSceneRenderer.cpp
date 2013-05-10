@@ -1482,74 +1482,102 @@ namespace GTEngine
         }
 
 
+        int colourBuffer[] = {0};
+        Renderer::SetDrawBuffers(1, colourBuffer);
+
+        Renderer::DisableDepthWrites();
+        Renderer::EnableBlending();
+
+
         for (size_t iMesh = 0; iMesh < sortedMeshes.count; ++iMesh)
         {
             auto &mesh = *sortedMeshes[iMesh].mesh;
             {
-                // First step is to draw the lighting.
-                this->RenderMeshLighting(mesh, visibleObjects);
+                auto &   lightGroup  = mesh.lightGroups[0];
+                uint32_t shaderFlags = DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass | DefaultSceneRenderer_MaterialShaderID::NoNormalMapping;
 
-
-                int colourBuffer[] = {0};
-                Renderer::SetDrawBuffers(1, colourBuffer);
-
-                // Now we do the material pass. We need to enable blending and set the equation and factors.
-                Renderer::EnableBlending();
-                Renderer::SetBlendEquation(mesh.material->GetBlendEquation());
-                Renderer::SetBlendFunction(mesh.material->GetBlendSourceFactor(), mesh.material->GetBlendDestinationFactor());
-
-                if (DoesBlendFunctionUseConstantColour(mesh.material->GetBlendSourceFactor()) || DoesBlendFunctionUseConstantColour(mesh.material->GetBlendDestinationFactor()))
+                auto shader = this->GetMaterialShader(*mesh.material, lightGroup.id, shaderFlags);
+                if (shader != nullptr)
                 {
-                    Renderer::SetBlendColour(mesh.material->GetBlendColour());
-                }
-
-
-                // Shader Setup.
-                auto shader = this->GetMaterialMaterialShader(*mesh.material);
-                assert(shader != nullptr);
-                {
+                    // Shader Setup.
                     glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
                     glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
 
-
                     Renderer::SetCurrentShader(shader);
-                    shader->SetUniformsFromMaterial(*mesh.material);
+                    this->SetMaterialShaderUniforms(*shader, *mesh.material, lightGroup, shaderFlags, visibleObjects);
                     shader->SetUniform("ViewModelMatrix",   viewModelMatrix);
                     shader->SetUniform("NormalMatrix",      normalMatrix);
                     shader->SetUniform("PVMMatrix",         visibleObjects.projectionViewMatrix * mesh.transform);
-                    shader->SetUniform("DiffuseLighting",   framebuffer->lightingBuffer0);
-                    shader->SetUniform("SpecularLighting",  framebuffer->lightingBuffer1);
                     Renderer::PushPendingUniforms(*shader);
-                }
-
-                // Draw.
-                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::DisableDepthTest();
-                {
-                    Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
-                }
-                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::EnableDepthTest();
 
 
-                // If we're drawing a highlight, we'll need to draw a solid colour transparent mesh over the top using alpha blending.
-                if ((mesh.flags & SceneRendererMesh::DrawHighlight))
-                {
-                    Renderer::SetBlendColour(1.0f, 0.66f, 0.33f, 1.0f);
-                    Renderer::SetBlendFunction(BlendFunc_Zero, BlendFunc_ConstantColour);
+
+                    // First step is to draw the lighting.
+                    //this->RenderMeshLighting(mesh, visibleObjects);
 
 
-                    // Shader.
-                    Renderer::SetCurrentShader(this->highlightShader);
-                    this->highlightShader->SetUniform("PVMMatrix", visibleObjects.projectionViewMatrix * mesh.transform);
-                    Renderer::PushPendingUniforms(*this->highlightShader);
+                    
 
+                    // Now we do the material pass. We need to enable blending and set the equation and factors.
+                    Renderer::SetBlendEquation(mesh.material->GetBlendEquation());
+                    Renderer::SetBlendFunction(mesh.material->GetBlendSourceFactor(), mesh.material->GetBlendDestinationFactor());
+
+                    if (DoesBlendFunctionUseConstantColour(mesh.material->GetBlendSourceFactor()) || DoesBlendFunctionUseConstantColour(mesh.material->GetBlendDestinationFactor()))
+                    {
+                        Renderer::SetBlendColour(mesh.material->GetBlendColour());
+                    }
+
+
+                    // Shader Setup.
+                    /*
+                    auto shader = this->GetMaterialMaterialShader(*mesh.material);
+                    assert(shader != nullptr);
+                    {
+                        glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                        glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                        Renderer::SetCurrentShader(shader);
+                        shader->SetUniformsFromMaterial(*mesh.material);
+                        shader->SetUniform("ViewModelMatrix",   viewModelMatrix);
+                        shader->SetUniform("NormalMatrix",      normalMatrix);
+                        shader->SetUniform("PVMMatrix",         visibleObjects.projectionViewMatrix * mesh.transform);
+                        shader->SetUniform("DiffuseLighting",   framebuffer->lightingBuffer0);
+                        shader->SetUniform("SpecularLighting",  framebuffer->lightingBuffer1);
+                        Renderer::PushPendingUniforms(*shader);
+                    }
+                    */
 
                     // Draw.
-                    Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
-                }
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::DisableDepthTest();
+                    {
+                        Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
+                    }
+                    if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::EnableDepthTest();
 
-                Renderer::DisableBlending();
+
+                    // If we're drawing a highlight, we'll need to draw a solid colour transparent mesh over the top using alpha blending.
+                    if ((mesh.flags & SceneRendererMesh::DrawHighlight))
+                    {
+                        Renderer::SetBlendColour(1.0f, 0.66f, 0.33f, 1.0f);
+                        Renderer::SetBlendFunction(BlendFunc_Zero, BlendFunc_ConstantColour);
+
+
+                        // Shader.
+                        Renderer::SetCurrentShader(this->highlightShader);
+                        this->highlightShader->SetUniform("PVMMatrix", visibleObjects.projectionViewMatrix * mesh.transform);
+                        Renderer::PushPendingUniforms(*this->highlightShader);
+
+
+                        // Draw.
+                        Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
+                    }
+                }
             }
         }
+
+        Renderer::DisableBlending();
+        Renderer::EnableDepthWrites();
     }
 
     void DefaultSceneRenderer::RenderRefractiveTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects)
@@ -2148,6 +2176,164 @@ namespace GTEngine
             return iMaterialShaders->value;
         }
     }
+
+    Shader* DefaultSceneRenderer::GetMaterialShader(Material &material, const DefaultSceneRenderer_LightGroupID &lightGroupID, uint32_t flags)
+    {
+        auto materialShaders = this->GetMaterialShaders(material);
+        assert(materialShaders != nullptr);
+        {
+            DefaultSceneRenderer_MaterialShaderID shaderID(lightGroupID, flags);
+
+            auto iShader = materialShaders->shaders.Find(shaderID);
+            if (iShader != nullptr)
+            {
+                return iShader->value;
+            }
+            else
+            {
+                auto shader = this->shaderBuilder.CreateShader(shaderID, material);
+                if (shader != nullptr)
+                {
+                    materialShaders->shaders.Add(shaderID, shader);
+                }
+
+                return shader;
+            }
+        }
+    }
+
+    void DefaultSceneRenderer::SetMaterialShaderUniforms(Shader &shader, const Material &material, const DefaultSceneRenderer_LightGroup &lightGroup, uint32_t flags, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects)
+    {
+        // TODO: This needs a speedup. Too slow to create formatted strings for each light uniform. Should consider uniform buffers, a faster way of constructing the strings or just cache the strings.
+
+        uint16_t ambientLightCount            = lightGroup.GetAmbientLightCount();
+        uint16_t directionalLightCount        = lightGroup.GetDirectionalLightCount();
+        uint16_t pointLightCount              = lightGroup.GetPointLightCount();
+        uint16_t spotLightCount               = lightGroup.GetSpotLightCount();
+        uint16_t shadowDirectionalLightCount  = lightGroup.GetShadowDirectionalLightCount();
+        uint16_t shadowPointLightCount        = lightGroup.GetShadowPointLightCount();
+        uint16_t shadowSpotLightCount         = lightGroup.GetShadowSpotLightCount();
+
+        auto ambientLightStartIndex           = lightGroup.GetAmbientLightStartIndex();
+        auto directionalLightStartIndex       = lightGroup.GetDirectionalLightStartIndex();
+        auto pointLightStartIndex             = lightGroup.GetPointLightStartIndex();
+        auto spotLightStartIndex              = lightGroup.GetSpotLightStartIndex();
+        auto shadowDirectionalLightStartIndex = lightGroup.GetShadowDirectionalLightStartIndex();
+        auto shadowPointLightStartIndex       = lightGroup.GetShadowPointLightStartIndex();
+        auto shadowSpotLightStartIndex        = lightGroup.GetSpotLightStartIndex();
+
+        // Ambient Lights.
+        for (int i = 0; i < ambientLightCount; ++i)
+        {
+            auto light = visibleObjects.lightManager.ambientLights.buffer[lightGroup.lightIDs[ambientLightStartIndex + i]]->value;
+            assert(light != nullptr);
+            {
+                shader.SetUniform(GTCore::String::CreateFormatted("AmbientLightFS%d.Colour", i).c_str(), light->colour);
+            }
+        }
+
+        // Directional Lights.
+        for (int i = 0; i < directionalLightCount; ++i)
+        {
+            auto light = visibleObjects.lightManager.directionalLights.buffer[lightGroup.lightIDs[directionalLightStartIndex + i]]->value;
+            assert(light != nullptr);
+            {
+                shader.SetUniform(GTCore::String::CreateFormatted("DirectionalLightFS%d.Colour",    i).c_str(), light->colour);
+                shader.SetUniform(GTCore::String::CreateFormatted("DirectionalLightFS%d.Direction", i).c_str(), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+            }
+        }
+
+        // Point Lights.
+        for (int i = 0; i < pointLightCount; ++i)
+        {
+            auto light = visibleObjects.lightManager.pointLights.buffer[lightGroup.lightIDs[pointLightStartIndex + i]]->value;
+            assert(light != nullptr);
+            {
+                shader.SetUniform(GTCore::String::CreateFormatted("PointLightVS%d.PositionVS", i).c_str(), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                shader.SetUniform(GTCore::String::CreateFormatted("PointLightFS%d.Colour",     i).c_str(), light->colour);
+                shader.SetUniform(GTCore::String::CreateFormatted("PointLightFS%d.Radius",     i).c_str(), light->radius);
+                shader.SetUniform(GTCore::String::CreateFormatted("PointLightFS%d.Falloff",    i).c_str(), light->falloff);
+            }
+        }
+
+        // Spot Lights.
+        for (int i = 0; i < spotLightCount; ++i)
+        {
+            auto light = visibleObjects.lightManager.spotLights.buffer[lightGroup.lightIDs[spotLightStartIndex + i]]->value;
+            assert(light != nullptr);
+            {
+                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.Position",      i).c_str(), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.Colour",        i).c_str(), light->colour);
+                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.Direction",     i).c_str(), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.Length",        i).c_str(), light->length);
+                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.Falloff",       i).c_str(), light->falloff);
+                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.CosAngleInner", i).c_str(), glm::cos(glm::radians(light->innerAngle)));
+                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.CosAngleOuter", i).c_str(), glm::cos(glm::radians(light->outerAngle)));
+            }
+        }
+
+        // Shadow-Casting Directional Lights.
+        for (int i = 0; i < shadowDirectionalLightCount; ++i)
+        {
+            auto iLight = visibleObjects.lightManager.directionalLights.Find(visibleObjects.lightManager.shadowDirectionalLights[lightGroup.lightIDs[shadowDirectionalLightStartIndex + i]]);
+            assert(iLight != nullptr);
+            {
+                auto light = iLight->value;
+                assert(light != nullptr);
+                {
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowDirectionalLightFS%d.Colour",    i).c_str(), light->colour);
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowDirectionalLightFS%d.Direction", i).c_str(), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                
+                    // TODO: set the shadow map.
+                }
+            }
+        }
+
+        // Shadow-Casting Point Lights.
+        for (int i = 0; i < shadowPointLightCount; ++i)
+        {
+            auto iLight = visibleObjects.lightManager.pointLights.Find(visibleObjects.lightManager.shadowPointLights[lightGroup.lightIDs[shadowPointLightStartIndex + i]]);
+            assert(iLight != nullptr);
+            {
+                auto light = iLight->value;
+                assert(light != nullptr);
+                {
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowPointLightVS%d.PositionVS", i).c_str(), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowPointLightFS%d.Colour",     i).c_str(), light->colour);
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowPointLightFS%d.Radius",     i).c_str(), light->radius);
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowPointLightFS%d.Falloff",    i).c_str(), light->falloff);
+
+                    // TODO: set world-spce position.
+                    // TODO: set the shadow map.
+                }
+            }
+        }
+
+        // Shadow-Casting Spot Lights.
+        for (int i = 0; i < shadowSpotLightCount; ++i)
+        {
+            auto iLight = visibleObjects.lightManager.spotLights.Find(visibleObjects.lightManager.shadowSpotLights[lightGroup.lightIDs[shadowSpotLightStartIndex + i]]);
+            assert(iLight != nullptr);
+            {
+                auto light = iLight->value;
+                assert(light != nullptr);
+                {
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.Position",      i).c_str(), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.Colour",        i).c_str(), light->colour);
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.Direction",     i).c_str(), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.Length",        i).c_str(), light->length);
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.Falloff",       i).c_str(), light->falloff);
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.CosAngleInner", i).c_str(), glm::cos(glm::radians(light->innerAngle)));
+                    shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.CosAngleOuter", i).c_str(), glm::cos(glm::radians(light->innerAngle)));
+
+                    // TODO: set the shadow map.
+                }
+            }
+        }
+
+        shader.SetUniformsFromMaterial(material);
+    }
+
 
     Shader* DefaultSceneRenderer::GetMaterialAmbientLightShader(Material &material)
     {

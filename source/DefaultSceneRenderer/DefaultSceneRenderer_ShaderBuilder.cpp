@@ -114,7 +114,7 @@ namespace GTEngine
                 "struct DirectionalLightVS\n"
                 "{\n"
                 "    mat4 PVMMatrix;\n"
-                "}\n"
+                "};\n"
             );
 
             for (uint16_t i = 0; i < directionalLightCount; ++i)
@@ -130,7 +130,7 @@ namespace GTEngine
                 "struct PointLightVS\n"
                 "{\n"
                 "    vec3 PositionVS;\n"
-                "}\n"
+                "};\n"
             );
 
             for (uint16_t i = 0; i < pointLightCount; ++i)
@@ -146,7 +146,7 @@ namespace GTEngine
                 "struct SpotLightVS\n"
                 "{\n"
                 "    mat4 PVMMatrix;\n"
-                "}\n"
+                "};\n"
             );
 
             for (uint16_t i = 0; i < spotLightCount; ++i)
@@ -162,7 +162,7 @@ namespace GTEngine
                 "struct ShadowDirectionalLightVS\n"
                 "{\n"
                 "    mat4 PVMMatrix;\n"
-                "}\n"
+                "};\n"
             );
 
             for (uint16_t i = 0; i < shadowDirectionalLightCount; ++i)
@@ -179,7 +179,7 @@ namespace GTEngine
                 "{\n"
                 "    vec3 PositionVS;\n"
                 "    vec3 PositionWS;\n"
-                "}\n"
+                "};\n"
             );
 
             for (uint16_t i = 0; i < shadowPointLightCount; ++i)
@@ -195,7 +195,7 @@ namespace GTEngine
                 "struct ShadowSpotLightVS\n"
                 "{\n"
                 "    mat4 PVMMatrix;\n"
-                "}\n"
+                "};\n"
             );
 
             for (uint16_t i = 0; i < shadowSpotLightCount; ++i)
@@ -279,7 +279,7 @@ namespace GTEngine
         uint16_t shadowSpotLightCount        = shaderID.lightGroupID.GetShadowSpotLightCount();
 
         auto shadowLightCount = shadowDirectionalLightCount + shadowPointLightCount + shadowSpotLightCount;
-        auto lightCount       = ambientLightCount + directionalLightCount + pointLightCount + shadowLightCount;
+        auto lightCount       = ambientLightCount + directionalLightCount + pointLightCount + spotLightCount + shadowLightCount;
         
 
         bool includeMaterialPass        =  (shaderID.flags & DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass)     && material != nullptr;
@@ -367,7 +367,7 @@ namespace GTEngine
                 fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetNormalShaderID()));
             }
         }
-
+        
 
         // Lighting functions and structures.
         if (lightCount - ambientLightCount > 0)
@@ -422,7 +422,7 @@ namespace GTEngine
                 "struct AmbientLightFS\n"
                 "{\n"
                 "    vec3 Colour;\n"
-                "}\n"
+                "};\n"
                 ""
                 "void AccumulateAmbientLighting(in AmbientLightFS light, in vec3 normal, inout vec3 diffuseOut)\n"
                 "{\n"
@@ -440,7 +440,7 @@ namespace GTEngine
                 "{\n"
                 "    vec3 Colour;\n"
                 "    vec3 Direction;\n"
-                "}\n"
+                "};\n"
             );
 
             if (directionalLightCount > 0)
@@ -490,7 +490,7 @@ namespace GTEngine
                     ""
                     "    float diffuse  = DiffuseFactor(N, L);\n"
                     "    float specular = SpecularFactor(N, H, 64.0f);\n"
-                    "    float shadow   = CalculateDirectionalShadow(shadowMap, lightSpacePosition);"
+                    "    float shadow   = CalculateDirectionalShadow(shadowMap, lightSpacePosition);\n"
                     ""
                     "    diffuseOut  += light.Colour * (diffuse  * shadow);\n"
                     "    specularOut += light.Colour * (specular * shadow);\n"
@@ -509,7 +509,7 @@ namespace GTEngine
                 "    vec3  Colour;\n"
                 "    float Radius;\n"
                 "    float Falloff;\n"
-                "}\n"
+                "};\n"
             );
 
             if (pointLightCount > 0)
@@ -526,8 +526,8 @@ namespace GTEngine
                     "    float specular    = SpecularFactor(N, H, 64.0f);\n"
                     "    float attenuation = AttenuationFactor(light.Radius, light.Falloff, length(lightVector));\n"
                     ""
-                    "    diffuseOut  += light.Colour * diffuse;\n"
-                    "    specularOut += light.Colour * specular;\n"
+                    "    diffuseOut  += light.Colour * (diffuse  * attenuation);\n"
+                    "    specularOut += light.Colour * (specular * attenuation);\n"
                     "}\n"
                 );
             }
@@ -561,8 +561,8 @@ namespace GTEngine
                     "    float attenuation = AttenuationFactor(light.Radius, light.Falloff, length(lightVector));\n"
                     "    float shadow      = CalculatePointShadow(shadowMap, lightSpacePosition);\n"
                     ""
-                    "    diffuseOut  += light.Colour * (diffuse  * shadow);\n"
-                    "    specularOut += light.Colour * (specular * shadow);\n"
+                    "    diffuseOut  += light.Colour * (diffuse  * attenuation * shadow);\n"
+                    "    specularOut += light.Colour * (specular * attenuation * shadow);\n"
                     "}\n"
                 );
             }
@@ -583,7 +583,7 @@ namespace GTEngine
                 "    float Falloff;\n"
                 "    float CosAngleInner;\n"
                 "    float CosAngleOuter;\n"
-                "}\n"
+                "};\n"
             );
 
             if (spotLightCount > 0)
@@ -596,7 +596,7 @@ namespace GTEngine
                     "    vec3 L = light.Position - VertexOutput_PositionVS.xyz;\n"
                     "    vec3 H = normalize(normalize(L) - normalize(VertexOutput_PositionVS.xyz));\n"
                     ""
-                    "    float diffuse     = DiffuseFactor(N, L);\n"
+                    "    float diffuse     = DiffuseFactor(N, normalize(L));\n"
                     "    float specular    = SpecularFactor(N, H, 64.0f);\n"
                     "    float attenuation = AttenuationFactor(light.Length, light.Falloff, length(L));\n"
                     "    float spot        = SpotFactor(normalize(L), light.Direction, light.CosAngleInner, light.CosAngleOuter);\n"
@@ -637,7 +637,7 @@ namespace GTEngine
                     "    float specular    = SpecularFactor(N, H, 64.0f);\n"
                     "    float attenuation = AttenuationFactor(light.Length, light.Falloff, length(L));\n"
                     "    float spot        = SpotFactor(normalize(L), light.Direction, light.CosAngleInner, light.CosAngleOuter);\n"
-                    "    float shadow      = CalculateSpotShadow(shadowMap, lightSpacePosition);"
+                    "    float shadow      = CalculateSpotShadow(shadowMap, lightSpacePosition);\n"
                     ""
                     "    diffuseOut  += light.Colour * (diffuse  * attenuation * spot);\n"
                     "    specularOut += light.Colour * (specular * attenuation * spot);\n"
@@ -783,7 +783,6 @@ namespace GTEngine
                 (
                     "    vec4  materialDiffuse    = Diffuse();\n"
                     "    vec3  materialEmissive   = Emissive();\n"
-                    "    float materialShininess  = Shininess();\n"
                 );
 
                 if (material->IsRefractive())
@@ -791,22 +790,43 @@ namespace GTEngine
                     fragmentSource.Append
                     (
                         "    vec3  materialRefraction = Refraction();\n"
-                        ""
-                        "    lightDiffuse  *= materialDiffuse.a;\n"
-                        "    lightSpecular *= materialDiffuse.a;\n"
                     );
                 }
+
+                if (lightCount > 0 || sourceLightingFromTextures)
+                {
+                    fragmentSource.Append
+                    (
+                        "    float materialShininess  = Shininess();\n"
+                    );
+
+                    if (material->IsRefractive())
+                    {
+                        fragmentSource.Append
+                        (
+                            "    lightDiffuse  *= materialDiffuse.a;\n"
+                            "    lightSpecular *= materialDiffuse.a;\n"
+                        );
+                    }
                 
-                fragmentSource.Append
-                (
-                    "    ColourOut.rgb = (materialDiffuse.rgb * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;"
-                );
+                    fragmentSource.Append
+                    (
+                        "    ColourOut.rgb = (materialDiffuse.rgb * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;\n"
+                    );
+                }
+                else
+                {
+                    fragmentSource.Append
+                    (
+                        "    ColourOut.rgb = materialEmissive;\n"
+                    );
+                }
 
                 if (material->IsRefractive())
                 {
                     fragmentSource.Append
                     (
-                        "    ColourOut.rgb += texture2D(BackgroundTexture, lightUV + (normalize(materialRefraction).xy * 0.01)).rgb * (1.0 - materialDiffuse.a);"
+                        "    ColourOut.rgb += texture2D(BackgroundTexture, lightUV + (normalize(materialRefraction).xy * 0.01)).rgb * (1.0 - materialDiffuse.a);\n"
                     );
                 }
                 else
@@ -917,7 +937,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    DirectionalLight%d_VertexPositionLS = DirectionalLightVS%d.PVMMatrix * vec4(VertexInput_Position, 1.0);",
+            "    DirectionalLight%d_VertexPositionLS = DirectionalLightVS%d.PVMMatrix * vec4(VertexInput_Position, 1.0);\n",
 
             lightIndex,
             lightIndex
@@ -928,7 +948,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    PointLight%d_L = PointLightVS%d.PositionVS - VertexOutput_PositionVS.xyz;",
+            "    PointLight%d_L = PointLightVS%d.PositionVS - VertexOutput_PositionVS.xyz;\n",
 
             lightIndex,
             lightIndex
@@ -939,7 +959,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    SpotLight%d_VertexPositionLS = SpotLightVS%d.PVMMatrix * vec4(VertexInput_Position, 1.0);",
+            "    SpotLight%d_VertexPositionLS = SpotLightVS%d.PVMMatrix * vec4(VertexInput_Position, 1.0);\n",
 
             lightIndex,
             lightIndex
@@ -950,7 +970,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    ShadowDirectionalLight%d_VertexPositionLS = ShadowDirectionalLightVS%d.PVMMatrix * vec4(VertexInput_Position, 1.0);",
+            "    ShadowDirectionalLight%d_VertexPositionLS = ShadowDirectionalLightVS%d.PVMMatrix * vec4(VertexInput_Position, 1.0);\n",
 
             lightIndex,
             lightIndex
@@ -961,8 +981,8 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    ShadowPointLight%d_L           = ShadowPointLightVS%d.PositionVS - VertexOutput_PositionVS.xyz;",
-            "    ShadowPointLight%d_ShadowCoord = VertexOutput_PositionWS.xyz     - ShadowPointLightVS%d.PositionWS;",
+            "    ShadowPointLight%d_L           = ShadowPointLightVS%d.PositionVS - VertexOutput_PositionVS.xyz;\n",
+            "    ShadowPointLight%d_ShadowCoord = VertexOutput_PositionWS.xyz     - ShadowPointLightVS%d.PositionWS;\n",
 
             lightIndex,
             lightIndex,
@@ -975,7 +995,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    ShadowSpotLight%d_VertexPositionLS = ShadowSpotLightVS%d.PVMMatrix * vec4(VertexInput_Position, 1.0);",
+            "    ShadowSpotLight%d_VertexPositionLS = ShadowSpotLightVS%d.PVMMatrix * vec4(VertexInput_Position, 1.0);\n",
 
             lightIndex,
             lightIndex
@@ -1082,7 +1102,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    AccumulateAmbientLighting(AmbientLightFS%d, normal, lightDiffuse);",
+            "    AccumulateAmbientLighting(AmbientLightFS%d, normal, lightDiffuse);\n",
 
             lightIndex
         );
@@ -1092,7 +1112,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    AccumulateDirectionalLighting(DirectionalLightFS%d, normal, lightDiffuse, lightSpecular);",
+            "    AccumulateDirectionalLighting(DirectionalLightFS%d, normal, lightDiffuse, lightSpecular);\n",
 
             lightIndex
         );
@@ -1102,7 +1122,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    AccumulatePointLighting(PointLightFS%d, normal, PointLightFS%d_L, lightDiffuse, lightSpecular);",
+            "    AccumulatePointLighting(PointLightFS%d, normal, PointLight%d_L, lightDiffuse, lightSpecular);\n",
 
             lightIndex,
             lightIndex
@@ -1113,7 +1133,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    AccumulateSpotLighting(SpotLightFS%d, normal, lightDiffuse, lightSpecular);",
+            "    AccumulateSpotLighting(SpotLightFS%d, normal, lightDiffuse, lightSpecular);\n",
 
             lightIndex
         );
@@ -1123,7 +1143,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    AccumulateShadowDirectionalLighting(ShadowDirectionalLightFS%d, normal, ShadowDirectionalLightFS%d_ShadowMap, ShadowDirectionalLight%d_VertexPositionLS, lightDiffuse, lightSpecular);",
+            "    AccumulateShadowDirectionalLighting(ShadowDirectionalLightFS%d, normal, ShadowDirectionalLightFS%d_ShadowMap, ShadowDirectionalLight%d_VertexPositionLS, lightDiffuse, lightSpecular);\n",
 
             lightIndex,
             lightIndex,
@@ -1135,7 +1155,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    AccumulateShadowPointLighting(ShadowPointLightFS%d, normal, ShadowPointLightFS%d_L, ShadowPointLightFS%d_ShadowMap, ShadowPointLight%d_ShadowCoord, lightDiffuse, lightSpecular);",
+            "    AccumulateShadowPointLighting(ShadowPointLightFS%d, normal, ShadowPointLight%d_L, ShadowPointLightFS%d_ShadowMap, ShadowPointLight%d_ShadowCoord, lightDiffuse, lightSpecular);\n",
 
             lightIndex,
             lightIndex,
@@ -1148,7 +1168,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "    AccumulateShadowSpotLighting(ShadowSpotLightFS%d, normal, ShadowSpotLightFS%d_ShadowMap, ShadowSpotLight%d_VertexPositionLS, lightDiffuse, lightSpecular);",
+            "    AccumulateShadowSpotLighting(ShadowSpotLightFS%d, normal, ShadowSpotLightFS%d_ShadowMap, ShadowSpotLight%d_VertexPositionLS, lightDiffuse, lightSpecular);\n",
 
             lightIndex,
             lightIndex,
