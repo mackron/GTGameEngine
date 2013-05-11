@@ -628,20 +628,25 @@ namespace GTEngine
 
 
         /// The framebuffer for drawing shadow maps.
-        DefaultSceneRendererShadowFramebuffer shadowMapFramebuffer;
-
-        /// The shader to use when building shadow maps.
-        Shader* shadowMapShader;
+        DefaultSceneRendererShadowFramebuffer directionalShadowMapFramebuffer;
 
         /// The framebuffer for drawing point light shadow maps.
         DefaultSceneRendererPointShadowFramebuffer pointShadowMapFramebuffer;
 
+        /// The framebuffer for drawing spot light shadow maps.
+        DefaultSceneRendererShadowFramebuffer spotShadowMapFramebuffer;
+
+        
+        /// Vertex array for drawing a full screen triangle. This is in P3T2 format. The z coordinate is at 0.
+        VertexArray* fullscreenTriangleVA;
+
+
+        /// The shader to use when building directional and point shadow maps.
+        Shader* shadowMapShader;
+
         /// The shader to use when building point light shadow maps.
         Shader* pointShadowMapShader;
 
-
-        /// Vertex array for drawing a full screen triangle. This is in P3T2 format. The z coordinate is at 0.
-        VertexArray* fullscreenTriangleVA;
 
         /// The shader to use when doing the final composition.
         Shader* finalCompositionShaderHDR;
@@ -686,6 +691,15 @@ namespace GTEngine
 
         /// Keeps track of the bloom factor.
         float bloomFactor;
+
+        /// Keeps track of the size of directional light shadow maps.
+        unsigned int directionalShadowMapSize;
+
+        /// Keeps track of the size of point light shadow maps.
+        unsigned int pointShadowMapSize;
+
+        /// Keeps track of the size of spot light shadow maps.
+        unsigned int spotShadowMapSize;
 
 
 

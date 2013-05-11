@@ -12,14 +12,22 @@ namespace GTEngine
 {
     DefaultSceneRenderer::DefaultSceneRenderer()
         : viewportFramebuffers(), materialShaders(), depthPassShader(nullptr), externalMeshes(),
-          shadowMapFramebuffer(512, 512), shadowMapShader(nullptr), pointShadowMapFramebuffer(256, 256), pointShadowMapShader(nullptr),
-          fullscreenTriangleVA(nullptr), finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
+          directionalShadowMapFramebuffer(1, 1), pointShadowMapFramebuffer(1, 1), spotShadowMapFramebuffer(1, 1),
+          fullscreenTriangleVA(nullptr),
+          shadowMapShader(nullptr), pointShadowMapShader(nullptr),
+          finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
           bloomShader(nullptr), highlightShader(nullptr),
           blurShaderX(nullptr), blurShaderY(nullptr), blurShaderX7x7(nullptr), blurShaderY7x7(nullptr), blurShaderX11x11(nullptr), blurShaderY11x11(nullptr), blurShaderX15x15(nullptr), blurShaderY15x15(nullptr),
           shaderBuilder(),
           isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(1.0f),
+          directionalShadowMapSize(512), pointShadowMapSize(256), spotShadowMapSize(512),
           materialLibraryEventHandler(*this)
     {
+        this->directionalShadowMapFramebuffer.Resize(this->directionalShadowMapSize, this->directionalShadowMapSize);
+        this->pointShadowMapFramebuffer.Resize(this->pointShadowMapSize, this->pointShadowMapSize);
+        this->spotShadowMapFramebuffer.Resize(this->spotShadowMapSize, this->spotShadowMapSize);
+
+
         this->depthPassShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
         this->shadowMapShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapFS"));
         this->pointShadowMapShader             = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapVS"),   ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapFS"));
@@ -782,9 +790,9 @@ namespace GTEngine
     void DefaultSceneRenderer::RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
     {
         // We first need to build the shadow map.
-        Renderer::SetCurrentFramebuffer(this->shadowMapFramebuffer.framebuffer);
+        Renderer::SetCurrentFramebuffer(this->directionalShadowMapFramebuffer.framebuffer);
         Renderer::SetCurrentShader(this->shadowMapShader);
-        Renderer::SetViewport(0, 0, this->shadowMapFramebuffer.width, this->shadowMapFramebuffer.height);
+        Renderer::SetViewport(0, 0, this->directionalShadowMapFramebuffer.width, this->directionalShadowMapFramebuffer.height);
 
         Renderer::SetClearColour(1.0f, 1.0f, 1.0f, 1.0f);
         Renderer::SetClearDepth(1.0f);
@@ -827,7 +835,7 @@ namespace GTEngine
 
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderX);
-            this->blurShaderX->SetUniform("Texture", this->shadowMapFramebuffer.colourBuffer);
+            this->blurShaderX->SetUniform("Texture", this->directionalShadowMapFramebuffer.colourBuffer);
             Renderer::PushPendingUniforms(*this->blurShaderX);
 
             // Draw.
@@ -840,7 +848,7 @@ namespace GTEngine
 
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderY);
-            this->blurShaderY->SetUniform("Texture", this->shadowMapFramebuffer.blurBuffer);
+            this->blurShaderY->SetUniform("Texture", this->directionalShadowMapFramebuffer.blurBuffer);
             Renderer::PushPendingUniforms(*this->blurShaderY);
 
             // Draw.
@@ -921,7 +929,7 @@ namespace GTEngine
                             shader->SetUniform("LightPVMMatrix",  light->projection * light->view * mesh.transform);
                             shader->SetUniform("Colour",          light->colour);
                             shader->SetUniform("Direction",       glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
-                            shader->SetUniform("ShadowMap",       this->shadowMapFramebuffer.colourBuffer);
+                            shader->SetUniform("ShadowMap",       this->directionalShadowMapFramebuffer.colourBuffer);
                             Renderer::PushPendingUniforms(*shader);
                         }
 
@@ -1272,9 +1280,9 @@ namespace GTEngine
     void DefaultSceneRenderer::RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer)
     {
         // We first need to build the shadow map.
-        Renderer::SetCurrentFramebuffer(this->shadowMapFramebuffer.framebuffer);
+        Renderer::SetCurrentFramebuffer(this->spotShadowMapFramebuffer.framebuffer);
         Renderer::SetCurrentShader(this->shadowMapShader);
-        Renderer::SetViewport(0, 0, this->shadowMapFramebuffer.width, this->shadowMapFramebuffer.height);
+        Renderer::SetViewport(0, 0, this->spotShadowMapFramebuffer.width, this->spotShadowMapFramebuffer.height);
 
         Renderer::SetClearColour(1.0f, 1.0f, 1.0f, 1.0f);
         Renderer::SetClearDepth(1.0f);
@@ -1318,7 +1326,7 @@ namespace GTEngine
 
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderX11x11);
-            this->blurShaderX11x11->SetUniform("Texture", this->shadowMapFramebuffer.colourBuffer);
+            this->blurShaderX11x11->SetUniform("Texture", this->spotShadowMapFramebuffer.colourBuffer);
             Renderer::PushPendingUniforms(*this->blurShaderX11x11);
 
             // Draw.
@@ -1331,7 +1339,7 @@ namespace GTEngine
 
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderY11x11);
-            this->blurShaderY11x11->SetUniform("Texture", this->shadowMapFramebuffer.blurBuffer);
+            this->blurShaderY11x11->SetUniform("Texture", this->spotShadowMapFramebuffer.blurBuffer);
             Renderer::PushPendingUniforms(*this->blurShaderY11x11);
 
             // Draw.
@@ -1417,7 +1425,7 @@ namespace GTEngine
                             shader->SetUniform("Falloff",              light->falloff);
                             shader->SetUniform("CosAngleInner",        glm::cos(glm::radians(light->innerAngle)));
                             shader->SetUniform("CosAngleOuter",        glm::cos(glm::radians(light->outerAngle)));
-                            shader->SetUniform("ShadowMap",            this->shadowMapFramebuffer.colourBuffer);
+                            shader->SetUniform("ShadowMap",            this->spotShadowMapFramebuffer.colourBuffer);
                             Renderer::PushPendingUniforms(*shader);
                         }
 
