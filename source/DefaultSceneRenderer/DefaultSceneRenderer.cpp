@@ -1507,7 +1507,17 @@ namespace GTEngine
                 auto shader = this->GetMaterialShader(*mesh.material, lightGroup.id, shaderFlags);
                 if (shader != nullptr)
                 {
-                    // Shader Setup.
+                    // Blending setup.
+                    Renderer::SetBlendEquation(mesh.material->GetBlendEquation());
+                    Renderer::SetBlendFunction(mesh.material->GetBlendSourceFactor(), mesh.material->GetBlendDestinationFactor());
+
+                    if (DoesBlendFunctionUseConstantColour(mesh.material->GetBlendSourceFactor()) || DoesBlendFunctionUseConstantColour(mesh.material->GetBlendDestinationFactor()))
+                    {
+                        Renderer::SetBlendColour(mesh.material->GetBlendColour());
+                    }
+
+
+                    // Shader setup.
                     glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
                     glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
 
@@ -1518,43 +1528,6 @@ namespace GTEngine
                     shader->SetUniform("PVMMatrix",         visibleObjects.projectionViewMatrix * mesh.transform);
                     Renderer::PushPendingUniforms(*shader);
 
-
-
-                    // First step is to draw the lighting.
-                    //this->RenderMeshLighting(mesh, visibleObjects);
-
-
-                    
-
-                    // Now we do the material pass. We need to enable blending and set the equation and factors.
-                    Renderer::SetBlendEquation(mesh.material->GetBlendEquation());
-                    Renderer::SetBlendFunction(mesh.material->GetBlendSourceFactor(), mesh.material->GetBlendDestinationFactor());
-
-                    if (DoesBlendFunctionUseConstantColour(mesh.material->GetBlendSourceFactor()) || DoesBlendFunctionUseConstantColour(mesh.material->GetBlendDestinationFactor()))
-                    {
-                        Renderer::SetBlendColour(mesh.material->GetBlendColour());
-                    }
-
-
-                    // Shader Setup.
-                    /*
-                    auto shader = this->GetMaterialMaterialShader(*mesh.material);
-                    assert(shader != nullptr);
-                    {
-                        glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
-                        glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
-
-
-                        Renderer::SetCurrentShader(shader);
-                        shader->SetUniformsFromMaterial(*mesh.material);
-                        shader->SetUniform("ViewModelMatrix",   viewModelMatrix);
-                        shader->SetUniform("NormalMatrix",      normalMatrix);
-                        shader->SetUniform("PVMMatrix",         visibleObjects.projectionViewMatrix * mesh.transform);
-                        shader->SetUniform("DiffuseLighting",   framebuffer->lightingBuffer0);
-                        shader->SetUniform("SpecularLighting",  framebuffer->lightingBuffer1);
-                        Renderer::PushPendingUniforms(*shader);
-                    }
-                    */
 
                     // Draw.
                     if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::DisableDepthTest();
