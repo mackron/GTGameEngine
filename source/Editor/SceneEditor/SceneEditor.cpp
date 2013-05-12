@@ -248,6 +248,7 @@ namespace GTEngine
             if (this->IsPaused())
             {
                 this->updateManager.Enable();
+                this->updateManager.EnableParticles();
                 this->physicsManager.EnableSimulation();
             }
             else
@@ -310,6 +311,7 @@ namespace GTEngine
             this->isPaused = true;
 
             this->updateManager.Disable();
+            this->updateManager.DisableParticles();
             this->physicsManager.DisableSimulation();
 
             this->UpdatePlaybackControls();
