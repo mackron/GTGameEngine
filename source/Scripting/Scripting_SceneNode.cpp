@@ -302,6 +302,32 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.SceneNode:Forward()"
+                "    return GTEngine.System.SceneNode.Forward(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:Up()"
+                "    return GTEngine.System.SceneNode.Up(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:Right()"
+                "    return GTEngine.System.SceneNode.Right(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:WorldForward()"
+                "    return GTEngine.System.SceneNode.WorldForward(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:WorldUp()"
+                "    return GTEngine.System.SceneNode.WorldUp(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:WorldRight()"
+                "    return GTEngine.System.SceneNode.WorldRight(self._internalPtr);"
+                "end;"
+
+
+
 
                 "function GTEngine.SceneNode:Show()"
                 "    GTEngine.System.SceneNode.Show(self._internalPtr);"
@@ -417,6 +443,12 @@ namespace GTEngine
                             script.SetTableFunction(-1, "LookAt",                  SceneNodeFFI::LookAt);
                             script.SetTableFunction(-1, "LookAtSceneNode",         SceneNodeFFI::LookAtSceneNode);
                             script.SetTableFunction(-1, "LookInDirection",         SceneNodeFFI::LookInDirection);
+                            script.SetTableFunction(-1, "Forward",                 SceneNodeFFI::Forward);
+                            script.SetTableFunction(-1, "Up",                      SceneNodeFFI::Up);
+                            script.SetTableFunction(-1, "Right",                   SceneNodeFFI::Right);
+                            script.SetTableFunction(-1, "WorldForward",            SceneNodeFFI::WorldForward);
+                            script.SetTableFunction(-1, "WorldUp",                 SceneNodeFFI::WorldUp);
+                            script.SetTableFunction(-1, "WorldRight",              SceneNodeFFI::WorldRight);
 
                             // Visibility.
                             script.SetTableFunction(-1, "Show",                    SceneNodeFFI::Show);
@@ -1634,6 +1666,98 @@ namespace GTEngine
 
                 return 0;
             }
+
+
+            int Forward(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    Scripting::PushNewVector3(script, sceneNode->GetForwardVector());
+                }
+                else
+                {
+                    Scripting::PushNewVector3(script, 0.0f, 0.0f, -1.0f);
+                }
+
+                return 1;
+            }
+
+            int Up(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    Scripting::PushNewVector3(script, sceneNode->GetUpVector());
+                }
+                else
+                {
+                    Scripting::PushNewVector3(script, 0.0f, 1.0f, 0.0f);
+                }
+
+                return 1;
+            }
+
+            int Right(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    Scripting::PushNewVector3(script, sceneNode->GetRightVector());
+                }
+                else
+                {
+                    Scripting::PushNewVector3(script, 1.0f, 0.0f, 0.0f);
+                }
+
+                return 1;
+            }
+
+            int WorldForward(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    Scripting::PushNewVector3(script, sceneNode->GetWorldForwardVector());
+                }
+                else
+                {
+                    Scripting::PushNewVector3(script, 0.0f, 0.0f, -1.0f);
+                }
+
+                return 1;
+            }
+
+            int WorldUp(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    Scripting::PushNewVector3(script, sceneNode->GetWorldUpVector());
+                }
+                else
+                {
+                    Scripting::PushNewVector3(script, 0.0f, 1.0f, 0.0f);
+                }
+
+                return 1;
+            }
+
+            int WorldRight(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    Scripting::PushNewVector3(script, sceneNode->GetWorldRightVector());
+                }
+                else
+                {
+                    Scripting::PushNewVector3(script, 1.0f, 0.0f, 0.0f);
+                }
+
+                return 1;
+            }
+
 
 
 
