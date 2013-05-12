@@ -447,7 +447,7 @@ namespace GTEngine
         void UpdateSelecteSceneNodeScriptPropertiesGUI();
 
         /// Updates the view menu on the editor GUI.
-        void UpdateViewMenuGUI();
+        void UpdateViewportMenuGUI();
 
 
         /// Refreshes the selections.

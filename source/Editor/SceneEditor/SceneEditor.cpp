@@ -183,7 +183,7 @@ namespace GTEngine
 
 
             // Now we want to update the "view" menu.
-            this->UpdateViewMenuGUI();
+            this->UpdateViewportMenuGUI();
 
 
             // The scene will be done loading by this pointer, so we can close the file.
@@ -1261,15 +1261,22 @@ namespace GTEngine
                 
 
 
-            // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
-            this->PostOnSceneNodeAddedToScript(sceneNode);
-
-
-            // Select the scene node if it's marked as such.
+            // Select the scene node if it's marked as such, but only if we're running. Indeed, if we're running, we actually want to explicitly deselect.
             if (metadata->IsSelected())
             {
-                this->SelectSceneNode(sceneNode, SelectionOption_NoScriptNotify | SelectionOption_Force);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
+                if (this->IsPlaying())
+                {
+                    metadata->Deselect();
+                }
+                else
+                {
+                    this->SelectSceneNode(sceneNode, SelectionOption_NoScriptNotify | SelectionOption_Force);      // <-- 'true' means to force the selection so that the scripting environment is aware of it.
+                }
             }
+
+
+            // We need to let the editor know about this. It will need to do things like add it to the hierarchy explorer.
+            this->PostOnSceneNodeAddedToScript(sceneNode);
         }
     }
 
@@ -2500,14 +2507,14 @@ namespace GTEngine
     }
 
     
-    void SceneEditor::UpdateViewMenuGUI()
+    void SceneEditor::UpdateViewportMenuGUI()
     {
         auto &script = this->GetScript();
 
         script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
         assert(script.IsTable(-1));
         {
-            script.Push("UpdateViewMenu");
+            script.Push("UpdateViewportMenu");
             script.GetTableValue(-2);
             assert(script.IsFunction(-1));
             {

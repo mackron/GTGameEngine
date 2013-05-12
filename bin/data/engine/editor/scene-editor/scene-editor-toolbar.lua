@@ -3,49 +3,49 @@
 function GTGUI.Element:SceneEditorToolBar(sceneEditor)
     self.MenuBar = GTGUI.Server.CreateElement(self, "menubar");
     self.MenuBar:MenuBar();
-    self.MenuBar.View = self.MenuBar:AppendItem("View");
-    self.MenuBar.View.menu:SetStyle("padding",   "8px");
-    self.MenuBar.View.menu:SetStyle("min-width", "300px");
+    self.MenuBar.Viewport = self.MenuBar:AppendItem("Viewport");
+    self.MenuBar.Viewport.menu:SetStyle("padding",   "8px");
+    self.MenuBar.Viewport.menu:SetStyle("min-width", "300px");
     
-    self.MenuBar.View.GridCheckBox = GTGUI.Server.CreateElement(self.MenuBar.View.menu, "checkbox");
-    self.MenuBar.View.GridCheckBox:CheckBox("Show Grid");
-    self.MenuBar.View.GridCheckBox:OnChecked(function()
+    self.MenuBar.Viewport.GridCheckBox = GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "checkbox");
+    self.MenuBar.Viewport.GridCheckBox:CheckBox("Show Grid");
+    self.MenuBar.Viewport.GridCheckBox:OnChecked(function()
         sceneEditor:ShowGrid();
     end);
-    self.MenuBar.View.GridCheckBox:OnUnchecked(function()
+    self.MenuBar.Viewport.GridCheckBox:OnUnchecked(function()
         sceneEditor:HideGrid();
     end);
     
-    self.MenuBar.View.AxisArrowsCheckBox = GTGUI.Server.CreateElement(self.MenuBar.View.menu, "checkbox");
-    self.MenuBar.View.AxisArrowsCheckBox:SetStyle("margin-top", "4px");
-    self.MenuBar.View.AxisArrowsCheckBox:CheckBox("Show Axis Guide");
-    self.MenuBar.View.AxisArrowsCheckBox:OnChecked(function()
+    self.MenuBar.Viewport.AxisArrowsCheckBox = GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "checkbox");
+    self.MenuBar.Viewport.AxisArrowsCheckBox:SetStyle("margin-top", "4px");
+    self.MenuBar.Viewport.AxisArrowsCheckBox:CheckBox("Show Axis Guide");
+    self.MenuBar.Viewport.AxisArrowsCheckBox:OnChecked(function()
         sceneEditor:ShowAxisArrows();
     end);
-    self.MenuBar.View.AxisArrowsCheckBox:OnUnchecked(function()
+    self.MenuBar.Viewport.AxisArrowsCheckBox:OnUnchecked(function()
         sceneEditor:HideAxisArrows();
     end);
 
     
-    GTGUI.Server.CreateElement(self.MenuBar.View.menu, "scene-editor-toolbar-viewport-menu-separator");
+    GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "scene-editor-toolbar-viewport-menu-separator");
     
 
-    self.MenuBar.View.EnableHDRCheckBox = GTGUI.Server.CreateElement(self.MenuBar.View.menu, "checkbox");
-    self.MenuBar.View.EnableHDRCheckBox:CheckBox("Enable HDR");
-    self.MenuBar.View.EnableHDRCheckBox:OnChecked(function()
+    self.MenuBar.Viewport.EnableHDRCheckBox = GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "checkbox");
+    self.MenuBar.Viewport.EnableHDRCheckBox:CheckBox("Enable HDR");
+    self.MenuBar.Viewport.EnableHDRCheckBox:OnChecked(function()
         sceneEditor:EnableHDR();
     end);
-    self.MenuBar.View.EnableHDRCheckBox:OnUnchecked(function()
+    self.MenuBar.Viewport.EnableHDRCheckBox:OnUnchecked(function()
         sceneEditor:DisableHDR();
     end);
     
-    self.MenuBar.View.EnableBloomCheckBox = GTGUI.Server.CreateElement(self.MenuBar.View.menu, "checkbox");
-    self.MenuBar.View.EnableBloomCheckBox:SetStyle("margin-top", "4px");
-    self.MenuBar.View.EnableBloomCheckBox:CheckBox("Enable Bloom");
-    self.MenuBar.View.EnableBloomCheckBox:OnChecked(function()
+    self.MenuBar.Viewport.EnableBloomCheckBox = GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "checkbox");
+    self.MenuBar.Viewport.EnableBloomCheckBox:SetStyle("margin-top", "4px");
+    self.MenuBar.Viewport.EnableBloomCheckBox:CheckBox("Enable Bloom");
+    self.MenuBar.Viewport.EnableBloomCheckBox:OnChecked(function()
         sceneEditor:EnableBloom();
     end);
-    self.MenuBar.View.EnableBloomCheckBox:OnUnchecked(function()
+    self.MenuBar.Viewport.EnableBloomCheckBox:OnUnchecked(function()
         sceneEditor:DisableBloom();
     end);
     
@@ -88,11 +88,11 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
     end
     
     
-    function self:UpdateViewMenu()
-        self.MenuBar.View.GridCheckBox:SetChecked(sceneEditor:IsShowingGrid(), true);
-        self.MenuBar.View.AxisArrowsCheckBox:SetChecked(sceneEditor:IsShowingAxisArrows(), true);
-        self.MenuBar.View.EnableHDRCheckBox:SetChecked(sceneEditor:IsHDREnabled(), true);
-        self.MenuBar.View.EnableBloomCheckBox:SetChecked(sceneEditor:IsBloomEnabled(), true);
+    function self:UpdateViewportMenu()
+        self.MenuBar.Viewport.GridCheckBox:SetChecked(sceneEditor:IsShowingGrid(), true);
+        self.MenuBar.Viewport.AxisArrowsCheckBox:SetChecked(sceneEditor:IsShowingAxisArrows(), true);
+        self.MenuBar.Viewport.EnableHDRCheckBox:SetChecked(sceneEditor:IsHDREnabled(), true);
+        self.MenuBar.Viewport.EnableBloomCheckBox:SetChecked(sceneEditor:IsBloomEnabled(), true);
     end
     
     
