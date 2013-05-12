@@ -95,6 +95,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the scene.
             ///     Argument 2: The index of the viewport.
             int ApplyViewportCameraAspectRatio(GTCore::Script &script);
+
+
+            /// Determines whether or not script events are blocked.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            int IsScriptEventsBlocked(GTCore::Script &script);
         }
     }
 }
