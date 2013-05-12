@@ -17,17 +17,22 @@ namespace GTEngine
         /// The light groups that affect this mesh.
         GTCore::Vector<DefaultSceneRenderer_LightGroup> lightGroups;
 
+        /// The highlight colour.
+        glm::vec3 highlightColour;
+
 
 
         /// Constructor.
         DefaultSceneRendererMesh()
-            : touchingLights(nullptr), lightGroups()
+            : touchingLights(nullptr), lightGroups(),
+              highlightColour(1.0f, 1.0f, 1.0f)
         {
         }
 
         /// Copy constructor.
         DefaultSceneRendererMesh(const DefaultSceneRendererMesh &other)
-            : SceneRendererMesh(other), touchingLights(other.touchingLights), lightGroups(other.lightGroups)
+            : SceneRendererMesh(other), touchingLights(other.touchingLights), lightGroups(other.lightGroups),
+              highlightColour(other.highlightColour)
         {
         }
 

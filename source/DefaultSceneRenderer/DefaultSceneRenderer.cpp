@@ -629,7 +629,7 @@ namespace GTEngine
                     if ((mesh.flags & SceneRendererMesh::DrawHighlight))
                     {
                         Renderer::EnableBlending();
-                        Renderer::SetBlendColour(1.0f, 0.66f, 0.33f, 1.0f);
+                        Renderer::SetBlendColour(mesh.highlightColour.x, mesh.highlightColour.y, mesh.highlightColour.z, 1.0f);
                         Renderer::SetBlendFunction(BlendFunc_Zero, BlendFunc_ConstantColour);
 
 
@@ -1540,7 +1540,7 @@ namespace GTEngine
                     // If we're drawing a highlight, we'll need to draw a solid colour transparent mesh over the top using alpha blending.
                     if ((mesh.flags & SceneRendererMesh::DrawHighlight))
                     {
-                        Renderer::SetBlendColour(1.0f, 0.66f, 0.33f, 1.0f);
+                        Renderer::SetBlendColour(mesh.highlightColour.x, mesh.highlightColour.y, mesh.highlightColour.z, 1.0f);
                         Renderer::SetBlendFunction(BlendFunc_Zero, BlendFunc_ConstantColour);
 
 
@@ -1680,7 +1680,7 @@ namespace GTEngine
                 if ((mesh.flags & SceneRendererMesh::DrawHighlight))
                 {
                     Renderer::EnableBlending();
-                    Renderer::SetBlendColour(1.0f, 0.66f, 0.33f, 1.0f);
+                    Renderer::SetBlendColour(mesh.highlightColour.x, mesh.highlightColour.y, mesh.highlightColour.z, 1.0f);
                     Renderer::SetBlendFunction(BlendFunc_Zero, BlendFunc_ConstantColour);
 
 
