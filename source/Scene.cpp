@@ -1565,6 +1565,11 @@ namespace GTEngine
         }
 
 
+        // After the delete has been staged on the state stack, we need to completely disable state stack staging on the scene node. If we don't do this, removing
+        // components will cause an Update to be placed in the staging area.
+        node.DisableStateStackStaging();
+
+
         // We now need to post the OnShutdown event if applicable.
         this->PostSceneNodeScriptEvent_OnShutdown(node);
 
