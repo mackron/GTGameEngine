@@ -146,7 +146,7 @@ namespace GTEngine
 
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnMouseMove(mousePosX, mousePosY)"
-                "    if not self:IsPaused() then"
+                "    if not self:IsPaused() and not self:IsScriptEventsBlocked() then"
                 "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseMove) do"
                 "            sceneNode:OnMouseMove(mousePosX, mousePosY);"
                 "        end;"
@@ -154,7 +154,7 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnMouseWheel(mousePosX, mousePosY, delta)"
-                "    if not self:IsPaused() then"
+                "    if not self:IsPaused() and not self:IsScriptEventsBlocked() then"
                 "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseWheel) do"
                 "            sceneNode:OnMouseWheel(mousePosX, mousePosY, delta);"
                 "        end;"
@@ -162,7 +162,7 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnMouseButtonDown(mousePosX, mousePosY, button)"
-                "    if not self:IsPaused() then"
+                "    if not self:IsPaused() and not self:IsScriptEventsBlocked() then"
                 "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseButtonDown) do"
                 "            sceneNode:OnMouseButtonDown(mousePosX, mousePosY, button);"
                 "        end;"
@@ -170,7 +170,7 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnMouseButtonUp(mousePosX, mousePosY, button)"
-                "    if not self:IsPaused() then"
+                "    if not self:IsPaused() and not self:IsScriptEventsBlocked() then"
                 "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseButtonUp) do"
                 "            sceneNode:OnMouseButtonUp(mousePosX, mousePosY, button);"
                 "        end;"
@@ -178,7 +178,7 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnMouseButtonDoubleClick(mousePosX, mousePosY, button)"
-                "    if not self:IsPaused() then"
+                "    if not self:IsPaused() and not self:IsScriptEventsBlocked() then"
                 "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnMouseButtonDoubleClick) do"
                 "            sceneNode:OnMouseButtonDoubleClick(mousePosX, mousePosY, button);"
                 "        end;"
@@ -186,7 +186,7 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnKeyPressed(key)"
-                "    if not self:IsPaused() then"
+                "    if not self:IsPaused() and not self:IsScriptEventsBlocked() then"
                 "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnKeyPressed) do"
                 "            sceneNode:OnKeyPressed(key);"
                 "        end;"
@@ -194,7 +194,7 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.Scene:PostSceneNodeEvent_OnKeyReleased(key)"
-                "    if not self:IsPaused() then"
+                "    if not self:IsPaused() and not self:IsScriptEventsBlocked() then"
                 "        for sceneNodeID,sceneNode in pairs(self._sceneNodesWithOnKeyReleased) do"
                 "            sceneNode:OnKeyReleased(key);"
                 "        end;"
@@ -218,6 +218,10 @@ namespace GTEngine
                 "    GTEngine.System.Scene.ApplyViewportCameraAspectRatio(self._internalPtr, viewportIndex);"
                 "end;"
 
+
+                "function GTEngine.Scene:IsScriptEventsBlocked()"
+                "    return GTEngine.System.Scene.IsScriptEventsBlocked(self._internalPtr);"
+                "end;"
 
 
                 "GTEngine.RegisteredScenes = {};"
@@ -243,6 +247,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "IsPaused",                       SceneFFI::IsPaused);
                             script.SetTableFunction(-1, "SetViewportCamera",              SceneFFI::SetViewportCamera);
                             script.SetTableFunction(-1, "ApplyViewportCameraAspectRatio", SceneFFI::ApplyViewportCameraAspectRatio);
+                            script.SetTableFunction(-1, "IsScriptEventsBlocked",          SceneFFI::IsScriptEventsBlocked);
                         }
                         script.SetTableValue(-3);
                     }
@@ -490,6 +495,22 @@ namespace GTEngine
                 }
 
                 return 0;
+            }
+
+
+            int IsScriptEventsBlocked(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    script.Push(scene->IsScriptEventsBlocked());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
             }
         }
     }
