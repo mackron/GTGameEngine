@@ -1930,6 +1930,12 @@ namespace GTEngine
                     
                     // Gravity needs to be set.
                     particleSystem->SetGravity(this->GetGravity());
+
+                    // We will want to start playing immediately if applicable.
+                    if (particleSystemComponent.IsPlayingOnStartup())
+                    {
+                        particleSystemComponent.Play();
+                    }
                 }
             }
 
