@@ -145,6 +145,12 @@ namespace GTEngine
                 "    return GTEngine.System.SceneNode.GetComponent(self._internalPtr, componentID);"
                 "end;"
 
+                "function GTEngine.SceneNode:GetAttachedComponentIDs()"
+                "    return GTEngine.System.SceneNode.GetAttachedComponentIDs(self._internalPtr);"
+                "end;"
+
+
+
 
                 "function GTEngine.SceneNode:GetPosition()"
                 "    return GTEngine.System.SceneNode.GetPosition(self._internalPtr);"
@@ -214,10 +220,87 @@ namespace GTEngine
                 "end;"
 
 
-
-                "function GTEngine.SceneNode:GetAttachedComponentIDs()"
-                "    return GTEngine.System.SceneNode.GetAttachedComponentIDs(self._internalPtr);"
+                "function GTEngine.SceneNode:Translate(x, y, z)"
+                "    return GTEngine.System.SceneNode.Translate(self._internalPtr, x, y, z);"
                 "end;"
+
+                "function GTEngine.SceneNode:Rotate(angle, x, y, z)"
+                "    return GTEngine.System.SceneNode.Rotate(self._internalPtr, angle, x, y, z);"
+                "end;"
+
+                "function GTEngine.SceneNode:Scale(x, y, z)"
+                "    return GTEngine.System.SceneNode.Scale(self._internalPtr, x, y, z);"
+                "end;"
+
+
+                "function GTEngine.SceneNode:TranslateX(x)"
+                "    return GTEngine.System.SceneNode.Translate(self._internalPtr, x, 0.0, 0.0);"
+                "end;"
+
+                "function GTEngine.SceneNode:TranslateY(y)"
+                "    return GTEngine.System.SceneNode.Translate(self._internalPtr, 0.0, y, 0.0);"
+                "end;"
+
+                "function GTEngine.SceneNode:TranslateZ(z)"
+                "    return GTEngine.System.SceneNode.Translate(self._internalPtr, 0.0, 0.0, z);"
+                "end;"
+
+
+                "function GTEngine.SceneNode.RotateX(angle)"
+                "    return GTEngine.System.SceneNode.Rotate(self._internalPtr, angle, 1.0, 0.0, 0.0);"
+                "end;"
+
+                "function GTEngine.SceneNode.RotateY(angle)"
+                "    return GTEngine.System.SceneNode.Rotate(self._internalPtr, angle, 0.0, 1.0, 0.0);"
+                "end;"
+
+                "function GTEngine.SceneNode.RotateZ(angle)"
+                "    return GTEngine.System.SceneNode.Rotate(self._internalPtr, angle, 0.0, 0.0, 1.0);"
+                "end;"
+
+
+                "function GTEngine.SceneNode:ScaleX(x)"
+                "    return GTEngine.System.SceneNode.Scale(self._internalPtr, x, 1.0, 1.0);"
+                "end;"
+
+                "function GTEngine.SceneNode:ScaleY(y)"
+                "    return GTEngine.System.SceneNode.Scale(self._internalPtr, 1.0, y, 1.0);"
+                "end;"
+
+                "function GTEngine.SceneNode:ScaleZ(z)"
+                "    return GTEngine.System.SceneNode.Scale(self._internalPtr, 1.0, 1.0, z);"
+                "end;"
+
+
+                "function GTEngine.SceneNode:InterpolatePosition(dest, a)"
+                "    return GTEngine.System.SceneNode.InterpolatePosition(self._internalPtr, dest, a);"
+                "end;"
+
+                "function GTEngine.SceneNode:InterpolateOrientation(dest, a)"
+                "    return GTEngine.System.SceneNode.InterpolateOrientation(self._internalPtr, dest, a);"
+                "end;"
+
+                "function GTEngine.SceneNode:InterpolateScale(dest, a)"
+                "    return GTEngine.System.SceneNode.InterpolateScale(self._internalPtr, dest, a);"
+                "end;"
+
+                "function GTEngine.SceneNode:Slerp(dest, a)"
+                "    return GTEngine.System.SceneNode.Slerp(self._internalPtr, dest, a);"
+                "end;"
+
+
+                "function GTEngine.SceneNode:LookAt(target, up)"
+                "    return GTEngine.System.SceneNode.LookAt(self._internalPtr, target, up);"
+                "end;"
+
+                "function GTEngine.SceneNode:LookAtSceneNode(target, up)"
+                "    return GTEngine.System.SceneNode.LookAtSceneNode(self._internalPtr, target._internalPtr, up);"
+                "end;"
+
+                "function GTEngine.SceneNode:LookInDirection(target, up)"
+                "    return GTEngine.System.SceneNode.LookInDirection(self._internalPtr, target, up);"
+                "end;"
+
 
 
                 "function GTEngine.SceneNode:Show()"
@@ -231,6 +314,7 @@ namespace GTEngine
                 "function GTEngine.SceneNode:IsVisible()"
                 "    return GTEngine.System.SceneNode.IsVisible(self._internalPtr);"
                 "end;"
+
 
 
                 "function GTEngine.SceneNode:GetScenePtr()"
@@ -286,10 +370,12 @@ namespace GTEngine
                             script.SetTableFunction(-1, "Create",                  SceneNodeFFI::Create);
                             script.SetTableFunction(-1, "Delete",                  SceneNodeFFI::Delete);
 
+                            // Identification.
                             script.SetTableFunction(-1, "GetID",                   SceneNodeFFI::GetID);
                             script.SetTableFunction(-1, "GetName",                 SceneNodeFFI::GetName);
                             script.SetTableFunction(-1, "SetName",                 SceneNodeFFI::SetName);
 
+                            // Hierarchy.
                             script.SetTableFunction(-1, "GetParentPtr",            SceneNodeFFI::GetParentPtr);
                             script.SetTableFunction(-1, "AttachChild",             SceneNodeFFI::AttachChild);
                             script.SetTableFunction(-1, "Orphan",                  SceneNodeFFI::Orphan);
@@ -298,10 +384,13 @@ namespace GTEngine
                             script.SetTableFunction(-1, "IsRelative",              SceneNodeFFI::IsRelative);
                             script.SetTableFunction(-1, "GetChildrenIDs",          SceneNodeFFI::GetChildrenIDs);
 
+                            // Components.
                             script.SetTableFunction(-1, "AddComponent",            SceneNodeFFI::AddComponent);
                             script.SetTableFunction(-1, "RemoveComponent",         SceneNodeFFI::RemoveComponent);
                             script.SetTableFunction(-1, "GetComponent",            SceneNodeFFI::GetComponent);
+                            script.SetTableFunction(-1, "GetAttachedComponentIDs", SceneNodeFFI::GetAttachedComponentIDs);
 
+                            // Transformations.
                             script.SetTableFunction(-1, "GetPosition",             SceneNodeFFI::GetPosition);
                             script.SetTableFunction(-1, "GetWorldPosition",        SceneNodeFFI::GetWorldPosition);
                             script.SetTableFunction(-1, "SetPosition",             SceneNodeFFI::SetPosition);
@@ -318,13 +407,23 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetWorldScale",           SceneNodeFFI::GetWorldScale);
                             script.SetTableFunction(-1, "SetScale",                SceneNodeFFI::SetScale);
                             script.SetTableFunction(-1, "SetWorldScale",           SceneNodeFFI::SetWorldScale);
+                            script.SetTableFunction(-1, "Translate",               SceneNodeFFI::Translate);
+                            script.SetTableFunction(-1, "Rotate",                  SceneNodeFFI::Rotate);
+                            script.SetTableFunction(-1, "Scale",                   SceneNodeFFI::Scale);
+                            script.SetTableFunction(-1, "InterpolatePosition",     SceneNodeFFI::InterpolatePosition);
+                            script.SetTableFunction(-1, "InterpolateOrientation",  SceneNodeFFI::InterpolateOrientation);
+                            script.SetTableFunction(-1, "InterpolateScale",        SceneNodeFFI::InterpolateScale);
+                            script.SetTableFunction(-1, "Slerp",                   SceneNodeFFI::Slerp);
+                            script.SetTableFunction(-1, "LookAt",                  SceneNodeFFI::LookAt);
+                            script.SetTableFunction(-1, "LookAtSceneNode",         SceneNodeFFI::LookAtSceneNode);
+                            script.SetTableFunction(-1, "LookInDirection",         SceneNodeFFI::LookInDirection);
 
-                            script.SetTableFunction(-1, "GetAttachedComponentIDs", SceneNodeFFI::GetAttachedComponentIDs);
-
+                            // Visibility.
                             script.SetTableFunction(-1, "Show",                    SceneNodeFFI::Show);
                             script.SetTableFunction(-1, "Hide",                    SceneNodeFFI::Hide);
                             script.SetTableFunction(-1, "IsVisible",               SceneNodeFFI::IsVisible);
 
+                            // Misc.
                             script.SetTableFunction(-1, "GetScenePtr",             SceneNodeFFI::GetScenePtr);
                         }
                         script.SetTableValue(-3);
@@ -1252,6 +1351,285 @@ namespace GTEngine
 
                         sceneNode->SetWorldScale(x, y, z);
                     }
+                }
+
+                return 0;
+            }
+
+
+            int Translate(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    glm::vec3 translation;
+
+                    if (script.IsTable(2))
+                    {
+                        translation = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        translation.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        translation.y = script.IsNumber(3) ? script.ToFloat(3) : translation.x;
+                        translation.z = script.IsNumber(4) ? script.ToFloat(4) : translation.x;
+                    }
+
+                    sceneNode->Translate(translation);
+                }
+
+                return 0;
+            }
+
+            int Rotate(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    float     angle = script.ToFloat(2);
+                    glm::vec3 axis;
+
+                    if (script.IsTable(3))
+                    {
+                        axis = Scripting::ToVector3(script, 3);
+                    }
+                    else
+                    {
+                        axis.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                        axis.y = script.IsNumber(4) ? script.ToFloat(4) : axis.x;
+                        axis.z = script.IsNumber(5) ? script.ToFloat(5) : axis.x;
+
+                        if (axis.x == 0.0f && axis.y == 0.0f && axis.z == 0.0f)
+                        {
+                            axis.z = 1.0f;
+                        }
+                    }
+
+                    sceneNode->Rotate(angle, axis);
+                }
+
+                return 0;
+            }
+
+            int Scale(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    glm::vec3 scale;
+
+                    if (script.IsTable(2))
+                    {
+                        scale = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        scale.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        scale.y = script.IsNumber(3) ? script.ToFloat(3) : scale.x;
+                        scale.z = script.IsNumber(4) ? script.ToFloat(4) : scale.x;
+                    }
+
+                    sceneNode->Scale(scale);
+                }
+
+                return 0;
+            }
+
+
+            int TranslateWorld(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    glm::vec3 translation;
+
+                    if (script.IsTable(2))
+                    {
+                        translation = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        translation.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        translation.y = script.IsNumber(3) ? script.ToFloat(3) : translation.x;
+                        translation.z = script.IsNumber(4) ? script.ToFloat(4) : translation.x;
+                    }
+
+                    sceneNode->SetWorldPosition(sceneNode->GetWorldPosition() + translation);
+                }
+
+                return 0;
+            }
+
+            int RotateWorld(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    float     angle = script.ToFloat(2);
+                    glm::vec3 axis;
+
+                    if (script.IsTable(3))
+                    {
+                        axis = Scripting::ToVector3(script, 3);
+                    }
+                    else
+                    {
+                        axis.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                        axis.y = script.IsNumber(4) ? script.ToFloat(4) : axis.x;
+                        axis.z = script.IsNumber(5) ? script.ToFloat(5) : axis.x;
+
+                        if (axis.x == 0.0f && axis.y == 0.0f && axis.z == 0.0f)
+                        {
+                            axis.z = 1.0f;
+                        }
+                    }
+
+                    sceneNode->RotateAroundWorldAxis(angle, axis);
+                }
+
+                return 0;
+            }
+
+            int RotateWorldAroundPivot(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    float     angle = script.ToFloat(2);
+                    glm::vec3 axis;
+                    glm::vec3 pivot;
+
+                    if (script.IsTable(3))
+                    {
+                        axis = Scripting::ToVector3(script, 3);
+                        
+                        if (script.IsTable(4))
+                        {
+                            pivot = Scripting::ToVector3(script, 4);
+                        }
+                        else
+                        {
+                            pivot.x = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                            pivot.y = script.IsNumber(5) ? script.ToFloat(5) : pivot.x;
+                            pivot.z = script.IsNumber(6) ? script.ToFloat(6) : pivot.x;
+                        }
+                    }
+                    else
+                    {
+                        axis.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                        axis.y = script.IsNumber(4) ? script.ToFloat(4) : axis.x;
+                        axis.z = script.IsNumber(5) ? script.ToFloat(5) : axis.x;
+
+                        if (axis.x == 0.0f && axis.y == 0.0f && axis.z == 0.0f)
+                        {
+                            axis.z = 1.0f;
+                        }
+
+
+                        if (script.IsTable(6))
+                        {
+                            pivot = Scripting::ToVector3(script, 6);
+                        }
+                        else
+                        {
+                            pivot.x = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                            pivot.y = script.IsNumber(7) ? script.ToFloat(7) : pivot.x;
+                            pivot.z = script.IsNumber(8) ? script.ToFloat(8) : pivot.x;
+                        }
+                    }
+
+                    sceneNode->RotateAtPivotAroundWorldAxis(angle, axis, pivot);
+                }
+
+                return 0;
+            }
+
+
+            int InterpolatePosition(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->InterpolatePosition(Scripting::ToVector3(script, 2), script.ToFloat(3));
+                }
+
+                return 0;
+            }
+
+            int InterpolateOrientation(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->InterpolateOrientation(Scripting::ToQuaternion(script, 2), script.ToFloat(3));
+                }
+
+                return 0;
+            }
+
+            int InterpolateScale(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->InterpolateScale(Scripting::ToVector3(script, 2), script.ToFloat(3));
+                }
+
+                return 0;
+            }
+
+            int Slerp(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->Slerp(Scripting::ToQuaternion(script, 2), script.ToFloat(3));
+                }
+
+                return 0;
+            }
+
+
+            int LookAt(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    glm::vec3 target = Scripting::ToVector3(script, 2);
+                    glm::vec3 up     = (script.IsTable(3)) ? Scripting::ToVector3(script, 3) : glm::vec3(0.0f, 1.0f, 0.0f);
+
+                    sceneNode->LookAt(target, up);
+                }
+
+                return 0;
+            }
+
+            int LookAtSceneNode(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    auto targetSceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+                    if (targetSceneNode != nullptr)
+                    {
+                        glm::vec3 up = (script.IsTable(3)) ? Scripting::ToVector3(script, 3) : glm::vec3(0.0f, 1.0f, 0.0f);
+
+                        sceneNode->LookAt(*targetSceneNode, up);
+                    }
+                }
+
+                return 0;
+            }
+
+            int LookInDirection(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    glm::vec3 target = Scripting::ToVector3(script, 2);
+                    glm::vec3 up     = (script.IsTable(3)) ? Scripting::ToVector3(script, 3) : glm::vec3(0.0f, 1.0f, 0.0f);
+
+                    sceneNode->LookInDirection(target, up);
                 }
 
                 return 0;

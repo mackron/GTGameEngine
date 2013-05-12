@@ -745,13 +745,19 @@ namespace GTEngine
 
     void SceneNode::InterpolateOrientation(const glm::quat &dest, float a)
     {
-        this->SetOrientation(glm::slerp(this->orientation, dest, a));
+        this->SetOrientation(glm::mix(this->orientation, dest, a));
     }
 
     void SceneNode::InterpolateScale(const glm::vec3 &dest, float a)
     {
         this->SetScale(glm::mix(this->scale, dest, a));
     }
+
+    void SceneNode::Slerp(const glm::quat &dest, float a)
+    {
+        this->SetOrientation(glm::slerp(this->orientation, dest, a));
+    }
+
 
 
     glm::vec3 SceneNode::GetForwardVector() const
