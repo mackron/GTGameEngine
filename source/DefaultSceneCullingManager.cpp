@@ -388,9 +388,6 @@ namespace GTEngine
                         glm::vec3 aabbMax;
                         particleSystem->GetAABB(aabbMin, aabbMax);
 
-                        aabbMin *= sceneNode.GetWorldScale();
-                        aabbMax *= sceneNode.GetWorldScale();
-
                         static_cast<CullingObject_AABB*>(cullingObject)->SetAABB(aabbMin, aabbMax);
                     }
                 }
