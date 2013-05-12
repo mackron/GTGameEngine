@@ -394,13 +394,23 @@ namespace GTEngine
         ///
         /// @param dest [in] The destination orientation.
         /// @param a    [in] The factor controlling how far to rotate towards <dest>.
+        ///
+        /// @remarks
+        ///     Use Slerp() to perform a shortest-path interpolation.
         void InterpolateOrientation(const glm::quat &dest, float a);
 
         /// Performs a linear interpolation of the object's scale.
         ///
         /// @param dest [in] The destination scale.
         /// @param a    [in] The factor controlling how far to scale towards <dest>.
-        void InterpolateScale(const glm::vec3 &scale, float a);
+        void InterpolateScale(const glm::vec3 &dest, float a);
+
+        /// Performs a shortest-path spherical-linear interpolation of the objects orientation.
+        ///
+        /// @param dest [in] The destination orientation.
+        /// @param a    [in] The interpolation delta.
+        void Slerp(const glm::quat &dest, float a);
+
 
 
         /// Retrieves a normalised vector pointing in the forward direction of the object.

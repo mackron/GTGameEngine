@@ -265,6 +265,12 @@ namespace GTEngine
             ///     This will instantiate a new table every time it is called. If the given scene node does not have a component of the given name, this will return nil.
             int GetComponent(GTCore::Script &script);
 
+            /// Returns a table containing the component IDs (names) that are attached to the given node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node whose component IDs are being retrieved.
+            int GetAttachedComponentIDs(GTCore::Script &script);
+
 
             /// Retrieves the local position of the given scene node as 3 return values.
             ///
@@ -394,11 +400,117 @@ namespace GTEngine
             int SetWorldScale(GTCore::Script &script);
 
 
-            /// Returns a table containing the component IDs (names) that are attached to the given node.
+            /// Translates the given scene node along it's local axis.
             ///
             /// @remarks
-            ///     Argument 1: A pointer to the scene node whose component IDs are being retrieved.
-            int GetAttachedComponentIDs(GTCore::Script &script);
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The amount of translation to apply as a math.vec3.
+            int Translate(GTCore::Script &script);
+
+            /// Rotates the given scene node around it's local axis.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The rotation angle.
+            ///     Argument 3: The rotation axis as a math.vec3.
+            int Rotate(GTCore::Script &script);
+
+            /// Scales the given scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The amount to scale as a math.vec3.
+            int Scale(GTCore::Script &script);
+
+
+            /// Translates the given scene node along the world axis.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The amount of translation to apply as a math.vec3.
+            int TranslateWorld(GTCore::Script &script);
+
+            /// Rotates the scene node about the world axis.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The rotation angle.
+            ///     Argument 3: The rotation axis.
+            int RotateWorld(GTCore::Script &script);
+
+            /// Rotates the scene node around the world axis, around the given pivot point.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The rotation angle.
+            ///     Argument 3: The rotation axis.
+            ///     Argument 4: The pivot point.
+            int RotateWorldAroundPivot(GTCore::Script &script);
+
+
+            /// Interpolates the position of the scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The destination position.
+            ///     Argument 3: The interpolation delta (typically between 0 and 1).
+            int InterpolatePosition(GTCore::Script &script);
+
+            /// Interpolates the orientation of the scene node.
+            ///
+            /// @remarks
+            ///     This does not perform a shortest-path interpolation. Use Slerp() for that.
+            ///
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The destination orientation.
+            ///     Argument 3: The interpolation delta (typically between 0 and 1).
+            int InterpolateOrientation(GTCore::Script &script);
+
+            /// Interpolates the scale of the scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The destination scale.
+            ///     Argument 3: The interpolation delta (typically between 0 and 1).
+            int InterpolateScale(GTCore::Script &script);
+
+            /// Performs a shortest-path interpolation of the orientation of the given scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The destination orientation.
+            ///     Argument 3: The delta (typically between 0 and 1).
+            int Slerp(GTCore::Script &script);
+
+
+            /// Looks at the given point in the world.
+            ///
+            /// @remarks
+            ///     The up vector is expected to be normalized.
+            ///
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The target to look at.
+            ///     Argument 3: The up vector.
+            int LookAt(GTCore::Script &script);
+
+            /// Looks at the given scene node.
+            ///
+            /// @remarks
+            ///     The up vector is expected to be normalized.
+            ///
+            ///     Argument 1: A pointer to the scene node to orientate.
+            ///     Argument 2: A pointer to the scene node to look at.
+            ///     Argument 3: The up vector.
+            int LookAtSceneNode(GTCore::Script &script);
+
+            /// Orientates the scene to look in the given direction.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: A normalized math.vec3 representing the direction to look in.
+            ///     Argument 3: The up vector.
+            int LookInDirection(GTCore::Script &script);
+
 
 
             /// Shows the scene node.
