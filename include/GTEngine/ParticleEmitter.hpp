@@ -269,6 +269,9 @@ namespace GTEngine
         void GetAABB(glm::vec3 &aabbMinOut, glm::vec3 &aabbMaxOut) const;
 
 
+        /// Seeds the random number generator.
+        void Seed(int32_t seed = 0);
+
 
         /// Retrieves a reference to the internal vertex array.
         VertexArray & GetVertexArray() const { return *this->vertexArray; }

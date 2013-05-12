@@ -704,6 +704,18 @@ namespace GTEngine
     }
 
 
+    void ParticleEmitter::Seed(int32_t seed)
+    {
+        if (seed == 0)
+        {
+            this->random.Seed();
+        }
+        else
+        {
+            this->random.Seed(seed);
+        }
+    }
+
 
 
     ////////////////////////////////////////////////

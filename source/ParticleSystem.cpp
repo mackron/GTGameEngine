@@ -32,6 +32,7 @@ namespace GTEngine
                 auto newEmitter = new ParticleEmitter(*definitionEmitter);
                 newEmitter->SetPosition(this->position);
                 newEmitter->SetOrientation(this->orientation);
+                newEmitter->Seed();
 
                 this->emitters.PushBack(newEmitter);
             }
