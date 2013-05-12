@@ -512,6 +512,43 @@ namespace GTEngine
             int LookInDirection(GTCore::Script &script);
 
 
+            /// Retrieves a normalized vector pointing in the direction of the given scene nodes local forward direction (-Z).
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int Forward(GTCore::Script &script);
+
+            /// Retrieves a normalized vector pointing in the direction of the given scene nodes local up direction (+Y).
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int Up(GTCore::Script &script);
+
+            /// Retrieves a normalized vector pointing in the direction of the given scene nodes local right direction (+X).
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int Right(GTCore::Script &script);
+
+            /// Retrieves a normalized vector pointing in the direction of the given scene nodes world forward direction (-Z).
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int WorldForward(GTCore::Script &script);
+
+            /// Retrieves a normalized vector pointing in the direction of the given scene nodes world up direction (+Y).
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int WorldUp(GTCore::Script &script);
+
+            /// Retrieves a normalized vector pointing in the direction of the given scene nodes world right direction (+X).
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int WorldRight(GTCore::Script &script);
+
+
 
             /// Shows the scene node.
             ///
