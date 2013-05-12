@@ -163,6 +163,23 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.SceneNode:GetOrientation()"
+                "    return GTEngine.System.SceneNode.GetOrientation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:GetWorldOrientation()"
+                "    return GTEngine.System.SceneNode.GetWorldOrientation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:SetOrientation(x, y, z, w)"
+                "    return GTEngine.System.SceneNode.SetOrientation(self._internalPtr, x, y, z, w);"
+                "end;"
+
+                "function GTEngine.SceneNode:SetWorldOrientation(x, y, z, w)"
+                "    return GTEngine.System.SceneNode.SetWorldOrientation(self._internalPtr, x, y, z, w);"
+                "end;"
+
+
                 "function GTEngine.SceneNode:GetEulerRotation()"
                 "    return GTEngine.System.SceneNode.GetEulerRotation(self._internalPtr);"
                 "end;"
@@ -289,6 +306,10 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetWorldPosition",        SceneNodeFFI::GetWorldPosition);
                             script.SetTableFunction(-1, "SetPosition",             SceneNodeFFI::SetPosition);
                             script.SetTableFunction(-1, "SetWorldPosition",        SceneNodeFFI::SetWorldPosition);
+                            script.SetTableFunction(-1, "GetOrientation",          SceneNodeFFI::GetOrientation);
+                            script.SetTableFunction(-1, "GetWorldOrientation",     SceneNodeFFI::GetWorldOrientation);
+                            script.SetTableFunction(-1, "SetOrientation",          SceneNodeFFI::SetOrientation);
+                            script.SetTableFunction(-1, "SetWorldOrientation",     SceneNodeFFI::SetWorldOrientation);
                             script.SetTableFunction(-1, "GetEulerRotation",        SceneNodeFFI::GetEulerRotation);
                             script.SetTableFunction(-1, "GetWorldEulerRotation",   SceneNodeFFI::GetWorldEulerRotation);
                             script.SetTableFunction(-1, "SetEulerRotation",        SceneNodeFFI::SetEulerRotation);
@@ -971,6 +992,92 @@ namespace GTEngine
             }
 
 
+            int GetOrientation(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    Scripting::PushNewQuaternion(script, sceneNode->GetOrientation());
+                }
+                else
+                {
+                    Scripting::PushNewQuaternion(script, glm::quat());
+                }
+
+                return 1;
+            }
+
+            int GetWorldOrientation(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    Scripting::PushNewQuaternion(script, sceneNode->GetWorldOrientation());
+                }
+                else
+                {
+                    Scripting::PushNewQuaternion(script, glm::quat());
+                }
+
+                return 1;
+            }
+
+            int SetOrientation(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    glm::quat orientation;
+
+                    if (script.IsTable(2))
+                    {
+                        orientation = Scripting::ToQuaternion(script, 2);
+                    }
+                    else
+                    {
+                        if (script.IsNumber(2) && script.IsNumber(3) && script.IsNumber(4) && script.IsNumber(5))
+                        {
+                            orientation.x = script.ToFloat(2);
+                            orientation.y = script.ToFloat(3);
+                            orientation.z = script.ToFloat(4);
+                            orientation.w = script.ToFloat(5);
+                        }
+                    }
+
+                    sceneNode->SetOrientation(orientation);
+                }
+
+                return 0;
+            }
+
+            int SetWorldOrientation(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    glm::quat orientation;
+
+                    if (script.IsTable(2))
+                    {
+                        orientation = Scripting::ToQuaternion(script, 2);
+                    }
+                    else
+                    {
+                        if (script.IsNumber(2) && script.IsNumber(3) && script.IsNumber(4) && script.IsNumber(5))
+                        {
+                            orientation.x = script.ToFloat(2);
+                            orientation.y = script.ToFloat(3);
+                            orientation.z = script.ToFloat(4);
+                            orientation.w = script.ToFloat(5);
+                        }
+                    }
+
+                    sceneNode->SetWorldOrientation(orientation);
+                }
+
+                return 0;
+            }
+
 
             int GetEulerRotation(GTCore::Script &script)
             {
@@ -1018,9 +1125,9 @@ namespace GTEngine
                     {
                         glm::vec3 rotation = Scripting::ToVector3(script, 2);
 
-                        pitch = glm::radians(rotation.x);
-                        yaw   = glm::radians(rotation.y);
-                        roll  = glm::radians(rotation.z);
+                        pitch = rotation.x;
+                        yaw   = rotation.y;
+                        roll  = rotation.z;
                     }
                     else
                     {
@@ -1028,6 +1135,10 @@ namespace GTEngine
                         yaw   = script.IsNumber(3) ? script.ToFloat(3) : pitch;
                         roll  = script.IsNumber(4) ? script.ToFloat(4) : pitch;
                     }
+
+                    pitch = glm::radians(pitch);
+                    yaw   = glm::radians(yaw);
+                    roll  = glm::radians(roll);
 
                     sceneNode->SetOrientation(glm::quat(glm::vec3(pitch, yaw, roll)));
                 }
@@ -1048,9 +1159,9 @@ namespace GTEngine
                     {
                         glm::vec3 rotation = Scripting::ToVector3(script, 2);
 
-                        pitch = glm::radians(rotation.x);
-                        yaw   = glm::radians(rotation.y);
-                        roll  = glm::radians(rotation.z);
+                        pitch = rotation.x;
+                        yaw   = rotation.y;
+                        roll  = rotation.z;
                     }
                     else
                     {
@@ -1058,6 +1169,10 @@ namespace GTEngine
                         yaw   = script.IsNumber(3) ? script.ToFloat(3) : pitch;
                         roll  = script.IsNumber(4) ? script.ToFloat(4) : pitch;
                     }
+
+                    pitch = glm::radians(pitch);
+                    yaw   = glm::radians(yaw);
+                    roll  = glm::radians(roll);
 
                     sceneNode->SetWorldOrientation(glm::quat(glm::vec3(pitch, yaw, roll)));
                 }
