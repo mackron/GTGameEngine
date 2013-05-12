@@ -1269,7 +1269,15 @@ namespace GTEngine
                     auto component = this->AddComponentByName(name.c_str());
                     if (component != nullptr)
                     {
-                        component->Deserialize(deserializer);
+                        // Special cases.
+                        if (name == ScriptComponent::Name)
+                        {
+                            static_cast<ScriptComponent*>(component)->Deserialize(deserializer, (flags & SceneNode::NoScriptPublicVariableOverride) != 0);
+                        }
+                        else
+                        {
+                            component->Deserialize(deserializer);
+                        }
                     }
                     else
                     {

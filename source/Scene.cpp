@@ -2037,6 +2037,7 @@ namespace GTEngine
                         if (this->registeredScript != nullptr)
                         {
                             Scripting::InstantiateSceneNode(*this->registeredScript, node);
+                            Scripting::RegisterScriptComponent(*this->registeredScript, node);
                         }
                     }
                 }

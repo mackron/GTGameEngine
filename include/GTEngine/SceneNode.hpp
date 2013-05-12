@@ -849,8 +849,9 @@ namespace GTEngine
 
         enum SerializationFlags
         {
-            NoID                      = (1 << 1),           // <-- Set the ID to 0 when serializing.
-            NoEditorMetadataComponent = (1 << 2),           // <-- Do not save the EditorMetadataComponent if it exists.
+            NoID                           = (1 << 1),           // <-- Set the ID to 0 when serializing.
+            NoEditorMetadataComponent      = (1 << 2),           // <-- Do not save the EditorMetadataComponent if it exists.
+            NoScriptPublicVariableOverride = (1 << 3),           // <-- Do not override public variables of a script component.
         };
 
 
