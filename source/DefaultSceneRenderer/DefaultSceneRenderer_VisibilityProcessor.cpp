@@ -638,9 +638,66 @@ namespace GTEngine
 
     void DefaultSceneRenderer_VisibilityProcessor::PostProcess_AllocateLightGroups()
     {
+        for (size_t iMeshList = 0; iMeshList < this->opaqueObjects.count; ++iMeshList)
+        {
+            auto meshList = this->opaqueObjects.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
+                {
+                    auto &mesh = meshList->buffer[iMesh];
+
+                    if (mesh.touchingLights != nullptr)
+                    {
+                        this->lightManager.SubdivideLightGroup(*mesh.touchingLights, mesh.lightGroups, 0);
+                    }
+                }
+            }
+        }
+
+        for (size_t iMeshList = 0; iMeshList < this->opaqueObjectsLast.count; ++iMeshList)
+        {
+            auto meshList = this->opaqueObjectsLast.buffer[iMeshList]->value;
+            assert(meshList != nullptr);
+            {
+                for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
+                {
+                    auto &mesh = meshList->buffer[iMesh];
+
+                    if (mesh.touchingLights != nullptr)
+                    {
+                        this->lightManager.SubdivideLightGroup(*mesh.touchingLights, mesh.lightGroups, 0);
+                    }
+                }
+            }
+        }
+
+
+
         for (size_t i = 0; i < this->blendedTransparentObjects.count; ++i)
         {
             auto &mesh = this->blendedTransparentObjects[i];
+
+            if (mesh.touchingLights != nullptr)
+            {
+                this->lightManager.SubdivideLightGroup(*mesh.touchingLights, mesh.lightGroups, DefaultSceneRenderer_LightManager::SubdivideOption_ConvertShadowLights);
+            }
+        }
+
+        for (size_t i = 0; i < this->blendedTransparentObjectsLast.count; ++i)
+        {
+            auto &mesh = this->blendedTransparentObjectsLast[i];
+
+            if (mesh.touchingLights != nullptr)
+            {
+                this->lightManager.SubdivideLightGroup(*mesh.touchingLights, mesh.lightGroups, DefaultSceneRenderer_LightManager::SubdivideOption_ConvertShadowLights);
+            }
+        }
+
+
+        for (size_t i = 0; i < this->refractiveTransparentObjects.count; ++i)
+        {
+            auto &mesh = this->refractiveTransparentObjects[i];
 
             if (mesh.touchingLights != nullptr)
             {

@@ -410,9 +410,6 @@ namespace GTEngine
 
     void DefaultSceneRenderer::RenderOpaqueLightingPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects)
     {
-        // TODO: This needs a big improvement here. Need to combine lights into a single pass for objects.
-
-
         if (visibleObjects.opaqueObjects.count > 0 || visibleObjects.opaqueObjectsLast.count > 0)
         {
             // The lighting buffers must be cleared to black. Also need to clear the depth/stencil buffer.
@@ -434,6 +431,68 @@ namespace GTEngine
             Renderer::SetBlendFunction(BlendFunc_One, BlendFunc_One);
 
 
+            // Non-shadow casting lights.
+            Renderer::DisableDepthWrites();
+            Renderer::SetDepthFunction(RendererFunction_Equal);
+            Renderer::EnableBlending();
+            
+            for (size_t iMeshList = 0; iMeshList < visibleObjects.opaqueObjects.count; ++iMeshList)
+            {
+                auto meshList = visibleObjects.opaqueObjects.buffer[iMeshList]->value;
+                assert(meshList != nullptr);
+                {
+                    for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
+                    {
+                        auto &mesh = meshList->buffer[iMesh];
+                        {
+                            for (size_t iLightGroup = 0; iLightGroup < mesh.lightGroups.count; ++iLightGroup)
+                            {
+                                auto &   lightGroup  = mesh.lightGroups[iLightGroup];
+                                uint32_t shaderFlags = 0;
+                                
+                                if (lightGroup.GetShadowLightCount() == 0)
+                                {
+                                    auto shader = this->GetMaterialShader(*mesh.material, lightGroup.id, shaderFlags);
+                                    if (shader != nullptr)
+                                    {
+                                        // Shader setup.
+                                        glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                                        glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+                                        Renderer::SetCurrentShader(shader);
+                                        this->SetMaterialShaderUniforms(*shader, *mesh.material, lightGroup, shaderFlags, visibleObjects);
+                                        shader->SetUniform("ViewModelMatrix",   viewModelMatrix);
+                                        shader->SetUniform("NormalMatrix",      normalMatrix);
+                                        shader->SetUniform("PVMMatrix",         visibleObjects.projectionViewMatrix * mesh.transform);
+                                        Renderer::PushPendingUniforms(*shader);
+
+
+                                        // Draw.
+                                        if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::DisableDepthTest();
+                                        {
+                                            Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
+                                        }
+                                        if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::EnableDepthTest();
+                                    }
+                                }
+                                else
+                                {
+                                    // The first shadow-casting group marks the end of non-shadow lights. Thus, we can break out of the loop here.
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // We have finished with the non-shadow casting lights, so now some state needs to be restored. The next lights will have shadow
+            // maps generated which means they will need to handle state changes themselves.
+            Renderer::EnableDepthWrites();
+            Renderer::SetDepthFunction(RendererFunction_LEqual);
+            Renderer::DisableBlending();
+
+#if 0
             // The first set of lights to render are the non-shadow-casting lights. We can set some rendering state at the start so that we don't
             // have to keep changing it for each individual light. This will be different for shadow-casting lights, though, because they will
             // need to have their shadow maps rendered also.
@@ -510,7 +569,7 @@ namespace GTEngine
                 Renderer::SetDepthFunction(RendererFunction_LEqual);
                 Renderer::DisableBlending();
             }
-
+#endif
 
 
             // Shadow-Casting Lights.
