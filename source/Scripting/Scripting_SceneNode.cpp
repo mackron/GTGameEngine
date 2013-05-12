@@ -150,6 +150,14 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.SceneNode:GetChildByName(name)"
+                "    return self.Scene:GetSceneNodeByID(self:GetChildIDByName(name));"
+                "end;"
+
+                "function GTEngine.SceneNode:GetChildIDByName(name)"
+                "    return GTEngine.System.SceneNode.GetChildIDByName(self._internalPtr, name);"
+                "end;"
+
 
 
                 "function GTEngine.SceneNode:GetPosition()"
@@ -409,6 +417,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "IsDescendant",            SceneNodeFFI::IsDescendant);
                             script.SetTableFunction(-1, "IsRelative",              SceneNodeFFI::IsRelative);
                             script.SetTableFunction(-1, "GetChildrenIDs",          SceneNodeFFI::GetChildrenIDs);
+                            script.SetTableFunction(-1, "GetChildIDByName",        SceneNodeFFI::GetChildIDByName);
 
                             // Components.
                             script.SetTableFunction(-1, "AddComponent",            SceneNodeFFI::AddComponent);
@@ -923,6 +932,30 @@ namespace GTEngine
 
                 return 1;
             }
+
+            int GetChildIDByName(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    auto child = sceneNode->FindFirstChild(script.ToString(2));
+                    if (child != nullptr)
+                    {
+                        script.Push(static_cast<int>(child->GetID()));
+                    }
+                    else
+                    {
+                        script.Push(0);
+                    }
+                }
+                else
+                {
+                    script.Push(0);
+                }
+
+                return 1;
+            }
+
 
 
             int AddComponent(GTCore::Script &script)
