@@ -2688,7 +2688,7 @@ namespace GTEngine
                 auto newSceneNode = new SceneNode;
                 
                 GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
-                newSceneNode->Deserialize(deserializer);
+                newSceneNode->Deserialize(deserializer, SceneNode::NoScriptPublicVariableOverride);
 
                 // Important that we set the ID to 0 here.
                 newSceneNode->SetID(0);
@@ -2810,7 +2810,7 @@ namespace GTEngine
                                 glm::vec3 worldScale       = sceneNode->GetWorldScale();
 
                                 GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
-                                sceneNode->Deserialize(deserializer, SceneNode::NoID);      // <-- Super important! SceneNode::NoID will cause the deserializer to keep the original ID.
+                                sceneNode->Deserialize(deserializer, SceneNode::NoID | SceneNode::NoScriptPublicVariableOverride);      // <-- Super important! SceneNode::NoID will cause the deserializer to keep the original ID.
 
                                 sceneNode->SetWorldPosition(worldPosition);
                                 sceneNode->SetWorldOrientation(worldOrientation);

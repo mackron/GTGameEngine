@@ -29,7 +29,7 @@ namespace GTEngine
         ///     If the script is already loaded, this will do nothing and return the existing definition.
         ///     @par
         ///     If the script can not be loaded the component will be left unmodified and null will be returned.
-        ScriptDefinition* AddScript(const char* relativePath);
+        ScriptDefinition* AddScript(const char* relativePath, bool dontPostOnChange = false);
 
         /// Removes a script by it's file name.
         ///
@@ -182,7 +182,7 @@ namespace GTEngine
 
 
         /// Clears the component of all scripts.
-        void Clear();
+        void Clear(bool clearPublicVariables = true);
 
 
         /// Sets the internal flag keeping track of whether of not the OnStartup event has been called.
@@ -239,7 +239,7 @@ namespace GTEngine
         void Serialize(GTCore::Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTCore::Deserializer &deserializer, bool noPublicVariableOverride = false);
 
 
 

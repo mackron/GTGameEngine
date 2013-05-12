@@ -7,6 +7,8 @@
 
 namespace GTEngine
 {
+    static const bool DontPostOnChange = true;
+
     GTENGINE_IMPL_COMPONENT_ATTRIBS(ScriptComponent, "Script");
 
     ScriptComponent::ScriptComponent(SceneNode &node)
@@ -20,7 +22,7 @@ namespace GTEngine
     }
 
 
-    ScriptDefinition* ScriptComponent::AddScript(const char* relativePath)
+    ScriptDefinition* ScriptComponent::AddScript(const char* relativePath, bool dontPostOnChange)
     {
         auto definition = this->GetScriptDefinitionByRelativePath(relativePath);
         if (definition == nullptr)
@@ -39,7 +41,10 @@ namespace GTEngine
                     this->MergePublicVariables(*definition);
                 }
 
-                this->OnChanged();
+                if (!dontPostOnChange)
+                {
+                    this->OnChanged();
+                }
             }
         }
 
@@ -422,7 +427,7 @@ namespace GTEngine
     }
 
 
-    void ScriptComponent::Clear()
+    void ScriptComponent::Clear(bool clearPublicVariables)
     {
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
@@ -431,11 +436,14 @@ namespace GTEngine
         this->scripts.Clear();
 
 
-        for (size_t i = 0; i < this->publicVariables.count; ++i)
+        if (clearPublicVariables)
         {
-            delete this->publicVariables[i];
+            for (size_t i = 0; i < this->publicVariables.count; ++i)
+            {
+                delete this->publicVariables[i];
+            }
+            this->publicVariables.Clear();
         }
-        this->publicVariables.Clear();
     }
 
 
@@ -695,11 +703,8 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ScriptComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void ScriptComponent::Deserialize(GTCore::Deserializer &deserializer, bool noPublicVariableOverride)
     {
-        // We want to clear everything before adding deserializing.
-        this->Clear();
-
         Serialization::ChunkHeader header;
         deserializer.Read(header);
         assert(header.id == Serialization::ChunkID_ScriptComponent_Main);
@@ -708,6 +713,10 @@ namespace GTEngine
             {
             case 1:
                 {
+                    // We want to clear everything before adding deserializing.
+                    this->Clear(!noPublicVariableOverride);
+
+
                     uint32_t scriptCount;
                     deserializer.Read(scriptCount);
 
@@ -716,7 +725,7 @@ namespace GTEngine
                         GTCore::String relativePath;
                         deserializer.ReadString(relativePath);
 
-                        this->AddScript(relativePath.c_str());
+                        this->AddScript(relativePath.c_str(), DontPostOnChange);
                     }
 
 
@@ -740,7 +749,7 @@ namespace GTEngine
                                 deserializer.Read(value);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());
-                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Number)
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Number && !noPublicVariableOverride)
                                 {
                                     static_cast<ScriptVariable_Number*>(variable)->SetValue(value);
                                 }
@@ -756,7 +765,7 @@ namespace GTEngine
                                 deserializer.Read(y);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());
-                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Vec2)
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Vec2 && !noPublicVariableOverride)
                                 {
                                     static_cast<ScriptVariable_Vec2*>(variable)->SetValue(x, y);
                                 }
@@ -775,7 +784,7 @@ namespace GTEngine
                                 deserializer.Read(z);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());
-                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Vec3)
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Vec3 && !noPublicVariableOverride)
                                 {
                                     static_cast<ScriptVariable_Vec3*>(variable)->SetValue(x, y, z);
                                 }
@@ -796,7 +805,7 @@ namespace GTEngine
                                 deserializer.Read(w);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());
-                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Vec4)
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Vec4 && !noPublicVariableOverride)
                                 {
                                     static_cast<ScriptVariable_Vec4*>(variable)->SetValue(x, y, z, w);
                                 }
@@ -811,7 +820,7 @@ namespace GTEngine
                                 deserializer.Read(value);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());
-                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Boolean)
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Boolean && !noPublicVariableOverride)
                                 {
                                     static_cast<ScriptVariable_Boolean*>(variable)->SetValue(value);
                                 }
@@ -826,7 +835,7 @@ namespace GTEngine
                                 deserializer.ReadString(value);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());
-                                if (variable != nullptr && variable->GetType() == ScriptVariableType_String)
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_String && !noPublicVariableOverride)
                                 {
                                     static_cast<ScriptVariable_String*>(variable)->SetValue(value.c_str());
                                 }
@@ -841,7 +850,7 @@ namespace GTEngine
                                 deserializer.ReadString(value);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());
-                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Prefab)
+                                if (variable != nullptr && variable->GetType() == ScriptVariableType_Prefab && !noPublicVariableOverride)
                                 {
                                     static_cast<ScriptVariable_Prefab*>(variable)->SetValue(value.c_str());
                                 }
@@ -855,6 +864,7 @@ namespace GTEngine
                     }
 
 
+                    this->OnChanged();
                     break;
                 }
 
@@ -867,6 +877,8 @@ namespace GTEngine
                 }
             }
         }
+
+        
     }
 
 
