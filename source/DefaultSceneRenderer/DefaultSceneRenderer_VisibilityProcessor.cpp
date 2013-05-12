@@ -5,6 +5,9 @@
 
 namespace GTEngine
 {
+    static const glm::vec3 HighlightColour      = glm::vec3(1.0f, 0.66f, 0.33f);
+    static const glm::vec3 ChildHighlightColour = glm::vec3(1.0f, 0.8f, 0.6f);
+
     DefaultSceneRenderer_VisibilityProcessor::DefaultSceneRenderer_VisibilityProcessor(Scene &sceneIn, SceneViewport &viewportIn)
         : scene(sceneIn),
           opaqueObjects(),     blendedTransparentObjects(), refractiveTransparentObjects(),
@@ -142,7 +145,7 @@ namespace GTEngine
 
 
 
-    void DefaultSceneRenderer_VisibilityProcessor::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const DefaultSceneRenderer_LightGroup* lights, bool drawHighlight)
+    void DefaultSceneRenderer_VisibilityProcessor::AddMesh(const Mesh &mesh, const glm::mat4 &transform, const DefaultSceneRenderer_LightGroup* lights, bool drawHighlight, const glm::vec3 &highlightColour)
     {
         // TODO: Consider ways to remove these const_casts. Don't want to make the pointers in SceneRendererMesh constant because
         //       the user of that structure probably won't want a constant pointer.
@@ -157,6 +160,7 @@ namespace GTEngine
         if (drawHighlight)
         {
             object.flags |= SceneRendererMesh::DrawHighlight;
+            object.highlightColour = highlightColour;
         }
 
         this->AddMesh(object);
@@ -363,17 +367,25 @@ namespace GTEngine
                             }
                             else
                             {
-                                // TEMP:
-                                //
                                 /// If the node has an editor component and is selected, we'll draw a highlight.
-                                bool drawHighlight = false;
+                                bool      drawHighlight   = false;
+                                glm::vec3 highlightColour = HighlightColour;
+
                                 auto editorMetadata = modelComponent->GetNode().GetComponent<EditorMetadataComponent>();
-                                if (editorMetadata != nullptr && editorMetadata->IsSelected())
+                                if (editorMetadata != nullptr)
                                 {
-                                    drawHighlight = true;
+                                    if (editorMetadata->IsSelected())
+                                    {
+                                        drawHighlight = true;
+                                    }
+                                    else if (editorMetadata->IsAncestorSelected())
+                                    {
+                                        drawHighlight   = true;
+                                        highlightColour = ChildHighlightColour;
+                                    }
                                 }
 
-                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), modelLights, drawHighlight);
+                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), modelLights, drawHighlight, highlightColour);
                             }
                         }
                     }
@@ -592,17 +604,25 @@ namespace GTEngine
                             auto iModelLights = this->visibleModels.Find(modelComponent);
                             assert(iModelLights != nullptr);
                             {
-                                // TEMP:
-                                //
                                 /// If the node has an editor component and is selected, we'll draw a highlight.
-                                bool drawHighlight = false;
+                                bool      drawHighlight   = false;
+                                glm::vec3 highlightColour = HighlightColour;
+
                                 auto editorMetadata = modelComponent->GetNode().GetComponent<EditorMetadataComponent>();
-                                if (editorMetadata != nullptr && editorMetadata->IsSelected())
+                                if (editorMetadata != nullptr)
                                 {
-                                    drawHighlight = true;
+                                    if (editorMetadata->IsSelected())
+                                    {
+                                        drawHighlight = true;
+                                    }
+                                    else if (editorMetadata->IsAncestorSelected())
+                                    {
+                                        drawHighlight   = true;
+                                        highlightColour = ChildHighlightColour;
+                                    }
                                 }
 
-                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), iModelLights->value, drawHighlight);
+                                this->AddMesh(*mesh, modelComponent->GetNode().GetWorldTransform(), iModelLights->value, drawHighlight, highlightColour);
                             }
                         }
                     }

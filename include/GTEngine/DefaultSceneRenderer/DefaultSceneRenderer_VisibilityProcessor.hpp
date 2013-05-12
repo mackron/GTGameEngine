@@ -44,7 +44,7 @@ namespace GTEngine
 
 
         /// Adds the given mesh.
-        void AddMesh(const Mesh &mesh, const glm::mat4 &transform, const DefaultSceneRenderer_LightGroup* lights, bool drawHighlight);     // <-- TODO: Remove 'drawHighlight' later on.
+        void AddMesh(const Mesh &mesh, const glm::mat4 &transform, const DefaultSceneRenderer_LightGroup* lights, bool drawHighlight, const glm::vec3 &highlightColour);
         void AddMesh(const DefaultSceneRendererMesh &mesh);
 
         /// Performs an optimization step that arranges everything in a way where the renderer can be a bit more efficient.
