@@ -239,6 +239,12 @@ namespace GTEngine
             ///     Argument 1: A pointer to the scene node in question.
             int GetChildrenIDs(GTCore::Script &script);
 
+            /// Retrieves the ID of the first child scene node with the given name.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node whose child is being retrieved.
+            int GetChildIDByName(GTCore::Script &script);
+
 
             /// Adds a new component to the given scene node.
             ///
