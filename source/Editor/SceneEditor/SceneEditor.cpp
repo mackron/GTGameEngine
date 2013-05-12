@@ -1353,20 +1353,7 @@ namespace GTEngine
 
             if (this->selectedNodes.count == 1 && node.GetID() == this->selectedNodes[0])
             {
-                auto &script = this->GetScript();
-
-                script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-                assert(script.IsTable(-1));
-                {
-                    script.Push("UpdatePropertiesTransformPanel");
-                    script.GetTableValue(-2);
-                    assert(script.IsFunction(-1));
-                    {
-                        script.PushValue(-2);       // 'self'.
-                        script.Call(1, 0);
-                    }
-                }
-                script.Pop(1);
+                this->UpdatePropertiesTransformPanel();
             }
         }
     }
@@ -1396,6 +1383,11 @@ namespace GTEngine
                 {
                     this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                 }
+            }
+
+            if (this->selectedNodes.count == 1 && node.GetID() == this->selectedNodes[0])
+            {
+                this->UpdatePropertiesTransformPanel();
             }
         }
     }
@@ -2469,6 +2461,24 @@ namespace GTEngine
                 }
             }
         }
+    }
+
+    void SceneEditor::UpdatePropertiesTransformPanel()
+    {
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("UpdatePropertiesTransformPanel");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);       // 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
     }
 
     void SceneEditor::UpdateSelecteSceneNodeScriptPropertiesGUI()
