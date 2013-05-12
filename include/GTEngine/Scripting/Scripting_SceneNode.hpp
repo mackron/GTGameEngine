@@ -299,6 +299,35 @@ namespace GTEngine
             int SetWorldPosition(GTCore::Script &script);
 
 
+            /// Retrieves the local orientation of the given scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node whose orientation is being retrieved.
+            ///     Return:     A math.quat containing the local orientation.
+            int GetOrientation(GTCore::Script &script);
+
+            /// Retrieves the world orientation of the given scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node whose orientation is being retrieved.
+            ///     Return:     A math.quat containing the world orientation.
+            int GetWorldOrientation(GTCore::Script &script);
+
+            /// Sets the local orientation of the given scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The math.quat containing the orientation.
+            int SetOrientation(GTCore::Script &script);
+
+            /// Sets the world orientation of the given scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The math.quat containing the orientation.
+            int SetWorldOrientation(GTCore::Script &script);
+
+
             /// Retrieves the local Euler angles representing the rotation of the given scene node.
             ///
             /// @remarks
