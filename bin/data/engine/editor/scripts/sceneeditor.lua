@@ -2364,8 +2364,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
 
     
-    function self:UpdateViewMenu()
-        self.ToolBar:UpdateViewMenu();
+    function self:UpdateViewportMenu()
+        self.ToolBar:UpdateViewportMenu();
     end
     
     
