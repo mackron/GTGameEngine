@@ -50,6 +50,7 @@ namespace GTEngine
             (
                 "math.__vec2 = {};"
                 "math.__vec2.__index = math.__vec2;"
+                "math.__vec2.isVec2  = true;"
 
                 "math.__vec2.__add = function(a, b)"
                 "    if     type(a) == 'number' then"
@@ -201,6 +202,7 @@ namespace GTEngine
             (
                 "math.__vec3 = {};"
                 "math.__vec3.__index = math.__vec3;"
+                "math.__vec3.isVec3  = true;"
 
                 "math.__vec3.__add = function(a, b)"
                 "    if     type(a) == 'number' then"
@@ -372,6 +374,7 @@ namespace GTEngine
             (
                 "math.__vec4 = {};"
                 "math.__vec4.__index = math.__vec4;"
+                "math.__vec4.isVec4  = true;"
 
                 "math.__vec4.__add = function(a, b)"
                 "    if     type(a) == 'number' then"
@@ -541,6 +544,7 @@ namespace GTEngine
             (
                 "math.__quat = {};"
                 "math.__quat.__index = math.__quat;"
+                "math.__quat.isQuat  = true;"
 
                 "math.__quat.__add = function(a, b)"
                 "    return math.quat(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);"
@@ -556,12 +560,30 @@ namespace GTEngine
                 "    elseif type(b) == 'number' then"
                 "        return math.quat(a.x * b, a.y * b, a.z * b, a.w * b);"
                 "    else"
-                "        return math.quat("
-                "            b.w * a.w - b.x * a.x - b.y * a.y - b.z * a.z,"
-			    "            b.w * a.x + b.x * a.w + b.y * a.z - b.z * a.y,"
-			    "            b.w * a.y + b.y * a.w + b.z * a.x - b.x * a.z,"
-			    "            b.w * a.z + b.z * a.w + b.x * a.y - b.y * a.x"
-                "        );"
+                "        if a.isQuat then"
+                "            if b.isQuat then"
+                "                return math.quat("
+                "                    b.w * a.w - b.x * a.x - b.y * a.y - b.z * a.z,"
+			    "                    b.w * a.x + b.x * a.w + b.y * a.z - b.z * a.y,"
+			    "                    b.w * a.y + b.y * a.w + b.z * a.x - b.x * a.z,"
+			    "                    b.w * a.z + b.z * a.w + b.x * a.y - b.y * a.x"
+                "                );"
+                "            else"
+                "                local uv  = math.vec3_cross(a, b);"
+                "                local uuv = math.vec3_cross(a, uv);"
+                ""
+                "                uv  = uv  * (2.0 * a.w);"
+                "                uuv = uuv * (2.0);"
+                ""
+                "                if b.isVec4 then"
+                "                    return math.vec4(b.x + uv.x + uuv.x, b.y + uv.y + uuv.y, b.z + uv.z + uuv.z, b.w);"
+                "                else"
+                "                    return math.vec3(b.x + uv.x + uuv.x, b.y + uv.y + uuv.y, b.z + uv.z + uuv.z);"
+                "                end"
+                "            end;"
+                "        else"
+                "            return math.quat_inverse(b) * a;"
+                "        end;"
                 "    end;"
                 "end;"
 
@@ -589,11 +611,30 @@ namespace GTEngine
                 "end;"
 
                 "math.__quat.lerp = function(self, y, a)"
-                "    return math.quat_lerp(self, y, a);"
+                "    local result = math.quat_lerp(self, y, a);"
+                ""
+                "    self.x = result.x;"
+                "    self.y = result.y;"
+                "    self.z = result.z;"
+                "    self.w = result.w;"
                 "end;"
 
                 "math.__quat.slerp = function(self, y, a)"
-                "    return math.quat_slerp(self, y, a);"
+                "    local result = math.quat_slerp(self, y, a);"
+                ""
+                "    self.x = result.x;"
+                "    self.y = result.y;"
+                "    self.z = result.z;"
+                "    self.w = result.w;"
+                "end;"
+
+                "math.__quat.inverse = function(self)"
+                "    local result = math.quat_inverse(self);"
+                ""
+                "    self.x = result.x;"
+                "    self.y = result.y;"
+                "    self.z = result.z;"
+                "    self.w = result.w;"
                 "end;"
 
 
@@ -656,6 +697,14 @@ namespace GTEngine
                 ""
                 "        return ((s0 * x) + (s1 * y)) / s;"
                 "    end;"
+                "end;"
+
+                "function math.quat_conjugate(q)"
+                "    return math.quat(-q.x, -q.y, -q.z, q.w);"
+                "end;"
+
+                "function math.quat_inverse(q)"
+                "    return math.quat_conjugate(q) / math.quat_dot(q, q);"
                 "end;"
             );
 
