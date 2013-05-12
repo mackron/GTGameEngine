@@ -62,7 +62,7 @@ namespace GTEngine
           translateSnapSize(0.25f),/* rotateSnapSize(5.625f), scaleSnapSize(0.25f),*/
           transformedObjectWithGizmo(false),
           isDeserializing(false), isUpdatingFromStateStack(false),
-          isPlaying(false), isPaused(false),
+          isPlaying(false), isPaused(false), wasPlayingBeforeHide(false),
           GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), viewport),
           grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false),
           axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false)
@@ -1679,6 +1679,13 @@ namespace GTEngine
 
     void SceneEditor::Show()
     {
+        if (this->IsPaused() && this->wasPlayingBeforeHide)
+        {
+            this->StartPlaying();
+            this->wasPlayingBeforeHide = false;
+        }
+
+
         auto &script = this->GetScript();
 
         script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
@@ -1700,10 +1707,11 @@ namespace GTEngine
 
     void SceneEditor::Hide()
     {
-        // When the editor is hidden, we need to stop playing.
-        if (this->IsPlaying())
+        // When the editor is hidden, we need to pause playback, but not stop entirely. When the editor is re-shown, it will be resumed.
+        if (this->IsPlaying() && !this->IsPaused())
         {
-            this->StopPlaying();
+            this->PausePlaying();
+            this->wasPlayingBeforeHide = true;
         }
 
 

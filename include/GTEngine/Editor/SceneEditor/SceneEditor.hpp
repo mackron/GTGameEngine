@@ -642,6 +642,11 @@ namespace GTEngine
         bool isPaused;
 
 
+        /// Keeps track of whether or not the game was playing when the editor is hidden.
+        bool wasPlayingBeforeHide;
+
+
+
         /// Structure containing the GUI elements of the editor.
         struct _GUI
         {
