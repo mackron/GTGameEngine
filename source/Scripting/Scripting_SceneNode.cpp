@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Scripting/Scripting_SceneNode.hpp>
+#include <GTEngine/Scripting/Scripting_Math.hpp>
 
 namespace GTEngine
 {
@@ -162,20 +163,20 @@ namespace GTEngine
                 "end;"
 
 
-                "function GTEngine.SceneNode:GetRotationXYZ()"
-                "    return GTEngine.System.SceneNode.GetRotationXYZ(self._internalPtr);"
+                "function GTEngine.SceneNode:GetEulerRotation()"
+                "    return GTEngine.System.SceneNode.GetEulerRotation(self._internalPtr);"
                 "end;"
 
-                "function GTEngine.SceneNode:GetWorldRotationXYZ()"
-                "    return GTEngine.System.SceneNode.GetWorldRotationXYZ(self._internalPtr);"
+                "function GTEngine.SceneNode:GetWorldEulerRotation()"
+                "    return GTEngine.System.SceneNode.GetWorldEulerRotation(self._internalPtr);"
                 "end;"
 
-                "function GTEngine.SceneNode:SetRotationXYZ(x, y, z)"
-                "    return GTEngine.System.SceneNode.SetRotationXYZ(self._internalPtr, x, y, z);"
+                "function GTEngine.SceneNode:SetEulerRotation(x, y, z)"
+                "    return GTEngine.System.SceneNode.SetEulerRotation(self._internalPtr, x, y, z);"
                 "end;"
 
-                "function GTEngine.SceneNode:SetWorldRotationXYZ(x, y, z)"
-                "    return GTEngine.System.SceneNode.SetWorldRotationXYZ(self._internalPtr, x, y, z);"
+                "function GTEngine.SceneNode:SetWorldEulerRotation(x, y, z)"
+                "    return GTEngine.System.SceneNode.SetWorldEulerRotation(self._internalPtr, x, y, z);"
                 "end;"
 
 
@@ -288,10 +289,10 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetWorldPosition",        SceneNodeFFI::GetWorldPosition);
                             script.SetTableFunction(-1, "SetPosition",             SceneNodeFFI::SetPosition);
                             script.SetTableFunction(-1, "SetWorldPosition",        SceneNodeFFI::SetWorldPosition);
-                            script.SetTableFunction(-1, "GetRotationXYZ",          SceneNodeFFI::GetRotationXYZ);
-                            script.SetTableFunction(-1, "GetWorldRotationXYZ",     SceneNodeFFI::GetWorldRotationXYZ);
-                            script.SetTableFunction(-1, "SetRotationXYZ",          SceneNodeFFI::SetRotationXYZ);
-                            script.SetTableFunction(-1, "SetWorldRotationXYZ",     SceneNodeFFI::SetWorldRotationXYZ);
+                            script.SetTableFunction(-1, "GetEulerRotation",        SceneNodeFFI::GetEulerRotation);
+                            script.SetTableFunction(-1, "GetWorldEulerRotation",   SceneNodeFFI::GetWorldEulerRotation);
+                            script.SetTableFunction(-1, "SetEulerRotation",        SceneNodeFFI::SetEulerRotation);
+                            script.SetTableFunction(-1, "SetWorldEulerRotation",   SceneNodeFFI::SetWorldEulerRotation);
                             script.SetTableFunction(-1, "GetScale",                SceneNodeFFI::GetScale);
                             script.SetTableFunction(-1, "GetWorldScale",           SceneNodeFFI::GetWorldScale);
                             script.SetTableFunction(-1, "SetScale",                SceneNodeFFI::SetScale);
@@ -899,20 +900,14 @@ namespace GTEngine
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    auto &position = sceneNode->GetPosition();
-
-                    script.Push(position.x);
-                    script.Push(position.y);
-                    script.Push(position.z);
+                    Scripting::PushNewVector3(script, sceneNode->GetPosition());
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, 0.0f, 0.0f, 0.0f);
                 }
 
-                return 3;
+                return 1;
             }
 
             int GetWorldPosition(GTCore::Script &script)
@@ -920,20 +915,14 @@ namespace GTEngine
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    auto position = sceneNode->GetWorldPosition();
-
-                    script.Push(position.x);
-                    script.Push(position.y);
-                    script.Push(position.z);
+                    Scripting::PushNewVector3(script, sceneNode->GetWorldPosition());
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, 0.0f, 0.0f, 0.0f);
                 }
 
-                return 3;
+                return 1;
             }
 
 
@@ -942,7 +931,18 @@ namespace GTEngine
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    sceneNode->SetPosition(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    if (script.IsTable(2))
+                    {
+                        sceneNode->SetPosition(Scripting::ToVector3(script, 2));
+                    }
+                    else
+                    {
+                        float x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        float y = script.IsNumber(3) ? script.ToFloat(3) : x;
+                        float z = script.IsNumber(4) ? script.ToFloat(4) : x;
+
+                        sceneNode->SetPosition(x, y, z);
+                    }
                 }
 
                 return 0;
@@ -953,7 +953,18 @@ namespace GTEngine
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    sceneNode->SetWorldPosition(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    if (script.IsTable(2))
+                    {
+                        sceneNode->SetWorldPosition(Scripting::ToVector3(script, 2));
+                    }
+                    else
+                    {
+                        float x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        float y = script.IsNumber(3) ? script.ToFloat(3) : x;
+                        float z = script.IsNumber(4) ? script.ToFloat(4) : x;
+
+                        sceneNode->SetWorldPosition(x, y, z);
+                    }
                 }
 
                 return 0;
@@ -961,73 +972,98 @@ namespace GTEngine
 
 
 
-            int GetRotationXYZ(GTCore::Script &script)
+            int GetEulerRotation(GTCore::Script &script)
             {
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
                     auto &orientation = sceneNode->GetOrientation();
-
-                    script.Push(glm::pitch(orientation));
-                    script.Push(glm::yaw(orientation));
-                    script.Push(glm::roll(orientation));
+                    Scripting::PushNewVector3(script, glm::pitch(orientation), glm::yaw(orientation), glm::roll(orientation));
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, 0.0f, 0.0f, 0.0f);
                 }
 
-                return 3;
+                return 1;
             }
 
-            int GetWorldRotationXYZ(GTCore::Script &script)
+            int GetWorldEulerRotation(GTCore::Script &script)
             {
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
                     auto orientation = sceneNode->GetWorldOrientation();
-
-                    script.Push(glm::pitch(orientation));
-                    script.Push(glm::yaw(orientation));
-                    script.Push(glm::roll(orientation));
+                    Scripting::PushNewVector3(script, glm::pitch(orientation), glm::yaw(orientation), glm::roll(orientation));
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, 0.0f, 0.0f, 0.0f);
                 }
 
-                return 3;
+                return 1;
             }
 
 
-            int SetRotationXYZ(GTCore::Script &script)
+            int SetEulerRotation(GTCore::Script &script)
             {
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    // Order: pitch/yaw/roll
-                    sceneNode->SetOrientation(glm::quat(glm::vec3(glm::radians(script.ToFloat(2)), glm::radians(script.ToFloat(3)), glm::radians(script.ToFloat(4)))));
+                    float pitch;
+                    float yaw;
+                    float roll;
+
+                    if (script.IsTable(2))
+                    {
+                        glm::vec3 rotation = Scripting::ToVector3(script, 2);
+
+                        pitch = glm::radians(rotation.x);
+                        yaw   = glm::radians(rotation.y);
+                        roll  = glm::radians(rotation.z);
+                    }
+                    else
+                    {
+                        pitch = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        yaw   = script.IsNumber(3) ? script.ToFloat(3) : pitch;
+                        roll  = script.IsNumber(4) ? script.ToFloat(4) : pitch;
+                    }
+
+                    sceneNode->SetOrientation(glm::quat(glm::vec3(pitch, yaw, roll)));
                 }
 
                 return 0;
             }
 
-            int SetWorldRotationXYZ(GTCore::Script &script)
+            int SetWorldEulerRotation(GTCore::Script &script)
             {
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    // Order: pitch/yaw/roll
-                    sceneNode->SetWorldOrientation(glm::quat(glm::vec3(glm::radians(script.ToFloat(2)), glm::radians(script.ToFloat(3)), glm::radians(script.ToFloat(4)))));
+                    float pitch;
+                    float yaw;
+                    float roll;
+
+                    if (script.IsTable(2))
+                    {
+                        glm::vec3 rotation = Scripting::ToVector3(script, 2);
+
+                        pitch = glm::radians(rotation.x);
+                        yaw   = glm::radians(rotation.y);
+                        roll  = glm::radians(rotation.z);
+                    }
+                    else
+                    {
+                        pitch = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        yaw   = script.IsNumber(3) ? script.ToFloat(3) : pitch;
+                        roll  = script.IsNumber(4) ? script.ToFloat(4) : pitch;
+                    }
+
+                    sceneNode->SetWorldOrientation(glm::quat(glm::vec3(pitch, yaw, roll)));
                 }
 
                 return 0;
             }
-
 
 
 
@@ -1036,20 +1072,14 @@ namespace GTEngine
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    auto &scale = sceneNode->GetScale();
-
-                    script.Push(scale.x);
-                    script.Push(scale.y);
-                    script.Push(scale.z);
+                    Scripting::PushNewVector3(script, sceneNode->GetScale());
                 }
                 else
                 {
-                    script.Push(1.0f);
-                    script.Push(1.0f);
-                    script.Push(1.0f);
+                    Scripting::PushNewVector3(script, 1.0f, 1.0f, 1.0f);
                 }
 
-                return 3;
+                return 1;
             }
 
             int GetWorldScale(GTCore::Script &script)
@@ -1057,20 +1087,14 @@ namespace GTEngine
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    auto scale = sceneNode->GetWorldScale();
-
-                    script.Push(scale.x);
-                    script.Push(scale.y);
-                    script.Push(scale.z);
+                    Scripting::PushNewVector3(script, sceneNode->GetWorldScale());
                 }
                 else
                 {
-                    script.Push(1.0f);
-                    script.Push(1.0f);
-                    script.Push(1.0f);
+                    Scripting::PushNewVector3(script, 1.0f, 1.0f, 1.0f);
                 }
 
-                return 3;
+                return 1;
             }
 
 
@@ -1079,7 +1103,18 @@ namespace GTEngine
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    sceneNode->SetScale(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    if (script.IsTable(2))
+                    {
+                        sceneNode->SetScale(Scripting::ToVector3(script, 2));
+                    }
+                    else
+                    {
+                        float x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        float y = script.IsNumber(3) ? script.ToFloat(3) : x;
+                        float z = script.IsNumber(4) ? script.ToFloat(4) : x;
+
+                        sceneNode->SetScale(x, y, z);
+                    }
                 }
 
                 return 0;
@@ -1090,7 +1125,18 @@ namespace GTEngine
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    sceneNode->SetWorldScale(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    if (script.IsTable(2))
+                    {
+                        sceneNode->SetWorldScale(Scripting::ToVector3(script, 2));
+                    }
+                    else
+                    {
+                        float x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        float y = script.IsNumber(3) ? script.ToFloat(3) : x;
+                        float z = script.IsNumber(4) ? script.ToFloat(4) : x;
+
+                        sceneNode->SetWorldScale(x, y, z);
+                    }
                 }
 
                 return 0;

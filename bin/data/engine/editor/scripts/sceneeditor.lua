@@ -1975,9 +1975,9 @@ function GTGUI.Element:SceneEditorTransformPanel(parentPanel)
     function self:Update(node)
         self.SceneNode = node;
         
-        self.PositionInput:SetFromXYZ(node:GetPosition());
-        self.RotationInput:SetFromXYZ(node:GetRotationXYZ());
-        self.ScaleInput:SetFromXYZ(node:GetScale());
+        self.PositionInput:SetValue(node:GetPosition());
+        self.RotationInput:SetValue(node:GetEulerRotation());
+        self.ScaleInput:SetValue(node:GetScale());
     end
     
     
@@ -1991,7 +1991,7 @@ function GTGUI.Element:SceneEditorTransformPanel(parentPanel)
     
     self.RotationInput:OnValueChanged(function(data)
         if self.SceneNode ~= nil then
-            self.SceneNode:SetRotationXYZ(data.x, data.y, data.z);
+            self.SceneNode:SetEulerRotation(data.x, data.y, data.z);
             self.ParentPanel:OnSceneNodeChanged();
         end
     end);

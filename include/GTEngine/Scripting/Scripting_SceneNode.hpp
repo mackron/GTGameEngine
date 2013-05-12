@@ -270,19 +270,21 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene node whose position is being retrieved.
+            ///     Return:     A math.vec3() containing the position, relative to the parent.
             int GetPosition(GTCore::Script &script);
 
             /// Retrieves the world position of the given scene node as 3 floats.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene node whose world position is being retrieved.
+            ///     Return:     A math.vec3() containing the world position.
             int GetWorldPosition(GTCore::Script &script);
 
             /// Sets the local position of the given scene node.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene node whose position is being set.
-            ///     Argument 2: The x position.
+            ///     Argument 2: The x position or a math.vec3() containing the position.
             ///     Argument 3: The y position.
             ///     Argument 4: The z position.
             int SetPosition(GTCore::Script &script);
@@ -291,60 +293,64 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene node whose position is being set.
-            ///     Argument 2: The x position.
+            ///     Argument 2: The x position or a math.vec3() containing the position.
             ///     Argument 3: The y position.
             ///     Argument 4: The z position.
             int SetWorldPosition(GTCore::Script &script);
 
 
-            /// Retrieves the local XYZ rotation of the given scene node as 3 return values.
+            /// Retrieves the local Euler angles representing the rotation of the given scene node.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene node whose rotation is being retrieved.
-            int GetRotationXYZ(GTCore::Script &script);
+            ///     Return:     A math.vec3 containing the Euler angles in degrees.
+            int GetEulerRotation(GTCore::Script &script);
 
-            /// Retrieves the world XYZ rotation of the given scene node as 3 return values.
+            /// Retrieves the world Euler angles representing the rotation of the given scene node.
             ///
             /// @remarks
-            ///     Argument 1: A pointer to the scene node whose world rotation is being retrieved.
-            int GetWorldRotationXYZ(GTCore::Script &script);
+            ///     Argument 1: A pointer to the scene node whose rotation is being retrieved.
+            ///     Return:     A math.vec3 containing the Euler angles in degrees.
+            int GetWorldEulerRotation(GTCore::Script &script);
 
-            /// Sets the local rotation of the given scene node.
+            /// Sets the local rotation of the given scene nodes as Euler angles.
             ///
             /// @remarks
-            ///     Argument 1: A pointer to the scene node whose rotation is being set.
-            ///     Argument 2: The x rotation.
-            ///     Argument 3: The y rotation.
-            ///     Argument 4: The z rotation.
-            int SetRotationXYZ(GTCore::Script &script);
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The x rotation (pitch) or a math.vec3 containing the pitch, yaw and roll.
+            ///     Argument 3: The y rotation (yaw).
+            ///     Argument 4: The z rotation (roll).
+            int SetEulerRotation(GTCore::Script &script);
 
-            /// Sets the world rotation of the given scene node.
+            /// Sets the world rotation of the given scene nodes as Euler angles.
             ///
             /// @remarks
-            ///     Argument 1: A pointer to the scene node whose rotation is being set.
-            ///     Argument 2: The x rotation.
-            ///     Argument 3: The y rotation.
-            ///     Argument 4: The z rotation.
-            int SetWorldRotationXYZ(GTCore::Script &script);
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The x rotation (pitch) or a math.vec3 containing the pitch, yaw and roll.
+            ///     Argument 3: The y rotation (yaw).
+            ///     Argument 4: The z rotation (roll).
+            int SetWorldEulerRotation(GTCore::Script &script);
 
 
             /// Retrieves the local scale of the given scene node as 3 return values.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene node whose scale is being retrieved.
+            ///     Return:     A math.vec3 containing the scale.
             int GetScale(GTCore::Script &script);
 
             /// Retrieves the world scale of the given scene node as 3 return values.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene node whose scale is being retrieved.
+            ///     Return:     A math.vec3 containing the scale.
             int GetWorldScale(GTCore::Script &script);
 
             /// Sets the local scale of the given scene node.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene node whose scale is being set.
-            ///     Argument 2: The x scale.
+            ///     Argument 2: The x scale or a math.vec3 containing the scale.
             ///     Argument 3: The y scale.
             ///     Argument 4: The z scale.
             int SetScale(GTCore::Script &script);
@@ -353,7 +359,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene node whose scale is being set.
-            ///     Argument 2: The x scale.
+            ///     Argument 2: The x scale or a math.vec3 containing the scale.
             ///     Argument 3: The y scale.
             ///     Argument 4: The z scale.
             int SetWorldScale(GTCore::Script &script);
