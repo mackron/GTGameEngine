@@ -360,6 +360,25 @@ namespace GTEngine
 
         /// Retrieves the number of shadow-casting spot lights in the group.
         uint16_t GetShadowSpotLightCount() const;
+
+
+        /// Retrieves the total number of lights.
+        uint16_t GetLightCount() const
+        {
+            return this->GetAmbientLightCount()     + 
+                   this->GetDirectionalLightCount() + 
+                   this->GetPointLightCount()       +
+                   this->GetSpotLightCount()        +
+                   this->GetShadowLightCount();
+        }
+
+        /// Retrieves the total number of shadow-casting lights.
+        uint16_t GetShadowLightCount() const
+        {
+            return this->GetShadowDirectionalLightCount() +
+                   this->GetShadowPointLightCount() +
+                   this->GetShadowSpotLightCount();
+        }
     };
 }
 
