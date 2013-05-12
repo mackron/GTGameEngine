@@ -51,6 +51,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: The internal pointer to the scene that is having the scene node added to it.
+            ///     Argument 2: Optional. If present, can be a string which will assume a prefab is being spawned.
             ///     Return:     The internal pointer to the new scene node.
             int CreateNewSceneNode(GTCore::Script &script);
 

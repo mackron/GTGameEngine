@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Scripting/Scripting_Scene.hpp>
+#include <GTEngine/SceneNodeClassLibrary.hpp>
 
 namespace GTEngine
 {
@@ -91,10 +92,18 @@ namespace GTEngine
                 "end;"
 
 
-                "function GTEngine.Scene:CreateNewSceneNode()"
-                "    local sceneNodePtr = GTEngine.System.Scene.CreateNewSceneNode(self._internalPtr);"
+                "function GTEngine.Scene:CreateNewSceneNode(prefabFileName)"
+                "    local sceneNodePtr = GTEngine.System.Scene.CreateNewSceneNode(self._internalPtr, prefabFileName);"
                 "    if sceneNodePtr ~= nil then"
                 "        return GTEngine.SceneNode:Create(sceneNodePtr);"
+                "    end;"
+                ""
+                "    return nil;"
+                "end;"
+
+                "function GTEngine.Scene:InstantiatePrefab(prefabFileName)"
+                "    if prefabFileName ~= nil then"
+                "        return self:CreateNewSceneNode(prefabFileName);"
                 "    end;"
                 ""
                 "    return nil;"
@@ -350,7 +359,30 @@ namespace GTEngine
                 auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
                 if (scene != nullptr)
                 {
-                    script.Push(scene->CreateNewSceneNode());
+                    if (script.IsString(2))
+                    {
+                        auto prefab = SceneNodeClassLibrary::Acquire(script.ToString(2));
+                        if (prefab != nullptr)
+                        {
+                            auto sceneNode = scene->CreateNewSceneNode(*prefab);
+                            if (sceneNode != nullptr)
+                            {
+                                script.Push(sceneNode);
+                            }
+                            else
+                            {
+                                script.PushNil();
+                            }
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+                    }
+                    else
+                    {
+                        script.Push(scene->CreateNewSceneNode());
+                    }
                 }
                 else
                 {
